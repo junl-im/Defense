@@ -26,7 +26,7 @@ export class Tower extends Phaser.GameObjects.Container {
   rangeCircle: Phaser.GameObjects.Arc;
   private levelText: Phaser.GameObjects.Text;
   private top: Phaser.GameObjects.Arc;
-  private roof: Phaser.GameObjects.GameObject;
+  private roof: Phaser.GameObjects.Shape;
   private sprite?: Phaser.GameObjects.Image;
   private permanentUpgrades: TowerUpgradeSnapshot = { ...DEFAULT_UPGRADES };
 
@@ -238,7 +238,7 @@ export class Tower extends Phaser.GameObjects.Container {
     return '●';
   }
 
-  private makeRoof(scene: Phaser.Scene, config: TowerConfig): Phaser.GameObjects.GameObject {
+  private makeRoof(scene: Phaser.Scene, config: TowerConfig): Phaser.GameObjects.Shape {
     if (config.kind === 'artillery') {
       return scene.add.rectangle(0, -10, 36, 11, 0x25170a, 1).setStrokeStyle(1, 0xffd4a3, 0.25);
     }
