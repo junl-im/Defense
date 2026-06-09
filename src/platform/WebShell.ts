@@ -40,6 +40,11 @@ function safeHide(el: HTMLElement): void {
 
 async function requestFullscreenAndLandscape(): Promise<void> {
   const info = flags();
+
+  // v2.3: PC에서는 전체화면/회전 개입을 전부 끈다.
+  // 데스크톱 브라우저는 사용자가 창 크기를 직접 제어하므로, 게임이 임의로 전체화면을 다시 켜면 오히려 불편하다.
+  if (!info.isMobile) return;
+
   const root = document.documentElement as HTMLElement & {
     webkitRequestFullscreen?: () => Promise<void> | void;
     msRequestFullscreen?: () => Promise<void> | void;
@@ -57,11 +62,8 @@ async function requestFullscreenAndLandscape(): Promise<void> {
       else if (anyRoot.msRequestFullscreen) await anyRoot.msRequestFullscreen();
     }
   } catch (error) {
-    console.warn('Fullscreen request was blocked by the browser:', error);
+    console.warn('Mobile fullscreen request was blocked by the browser:', error);
   }
-
-  // PC는 절대 회전하지 않는다. 브라우저 창이 세로로 좁아져도 데스크톱은 정상 가로 캔버스만 유지.
-  if (!info.isMobile) return;
 
   try {
     const orientation = screen.orientation as ScreenOrientation & {
@@ -104,7 +106,7 @@ function createStartGate(): void {
       <div class="shell-title-mark">KINGDOM SEED</div>
       <div class="shell-title-sword"></div>
       <h1>전투 시작</h1>
-      <p>화면을 터치하면 바로 전장으로 진입합니다.</p>
+      <p>PC는 창 그대로, 모바일은 가로 전장으로 바로 진입합니다.</p>
       <div class="shell-tap-rune">TAP</div>
     </div>
   `;

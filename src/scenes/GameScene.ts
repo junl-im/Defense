@@ -10,9 +10,9 @@ import type { PlayerSave } from '../services/firebase';
 import { fetchLeaderboard, saveStageClear, submitLeaderboard } from '../services/firebase';
 import { pulseButton, shakeCamera, spawnBuildDust, spawnExplosionBurst, spawnImpactRing, spawnWaveBanner } from '../game/Effects';
 import { isMuted, playMusic, playSfx, setMuted } from '../game/AudioManager';
-import { requestGameFullscreen } from '../platform/WebShell';
 import { getRelicBattleBonuses, modifierLabel, type DailyChallenge } from '../game/MegaSystems';
 import { createQualityToggleButton, drawBattlePolish, installScenePerformanceWatch } from '../game/VisualPolish';
+import { addPremiumBattleObjects } from '../game/BattlefieldArt';
 
 type CastingSpell = 'meteor' | 'mercenary' | undefined;
 
@@ -55,6 +55,9 @@ export class GameScene extends Phaser.Scene {
   heroSkillText!: Phaser.GameObjects.Text;
   speedText!: Phaser.GameObjects.Text;
   soundText!: Phaser.GameObjects.Text;
+  waveButtonText!: Phaser.GameObjects.Text;
+  waveAutoTimer?: Phaser.Time.TimerEvent;
+  nextWaveCountdownMs = 0;
 
   constructor() {
     super('GameScene');
@@ -84,12 +87,15 @@ export class GameScene extends Phaser.Scene {
     this.mercenaryCooldownMs = 0;
     this.gameSpeed = 1;
     this.paused = false;
+    this.waveAutoTimer = undefined;
+    this.nextWaveCountdownMs = 0;
   }
 
   create(): void {
     this.time.timeScale = 1;
     this.startTime = Date.now();
     this.drawMap();
+    addPremiumBattleObjects(this, this.stage);
     drawBattlePolish(this, this.stage.theme);
     installScenePerformanceWatch(this);
     this.createHud();
@@ -105,6 +111,7 @@ export class GameScene extends Phaser.Scene {
     if (this.dailyChallenge) {
       this.time.delayedCall(520, () => this.showMessage(`일일 도전: ${this.dailyChallenge!.modifiers.map(modifierLabel).join(' / ')}`));
     }
+    this.scheduleNextWave(10000, true);
     this.events.on('kingdom-seed:boss-pattern', (payload: { label: string; pattern: string }) => {
       this.showMessage(`보스 패턴 발동: ${payload.label} - ${payload.pattern}`);
       playMusic(this, 'bgm_boss', 0.22);
@@ -115,6 +122,9 @@ export class GameScene extends Phaser.Scene {
     if (this.ended || this.paused) return;
     this.meteorCooldownMs = Math.max(0, this.meteorCooldownMs - delta);
     this.mercenaryCooldownMs = Math.max(0, this.mercenaryCooldownMs - delta);
+    if (!this.waveRunning && this.waveIndex < this.stage.waves.length - 1) {
+      this.nextWaveCountdownMs = Math.max(0, this.nextWaveCountdownMs - delta);
+    }
 
     this.enemies.forEach((enemy) => enemy.update(delta));
     this.towers.forEach((tower) => tower.update(delta, this.enemies));
@@ -148,11 +158,13 @@ export class GameScene extends Phaser.Scene {
       if (this.waveIndex >= this.stage.waves.length - 1) void this.finishStage();
       else {
         playMusic(this, 'bgm_battle', 0.18);
-        this.showMessage('웨이브 클리어! 조기 호출로 추가 골드 획득 가능');
+        this.showMessage('웨이브 정리 완료. 10초 후 다음 웨이브가 진행됩니다.');
+        this.scheduleNextWave(10000, false);
       }
     }
 
     this.refreshSpellHud();
+    this.refreshHud();
   }
 
   private drawMap(): void {
@@ -320,46 +332,45 @@ export class GameScene extends Phaser.Scene {
   }
 
   private createHud(): void {
-    this.livesText = this.add.text(24, 18, '', { fontSize: '24px', color: '#ff8080', fontStyle: 'bold' }).setDepth(75);
-    this.goldText = this.add.text(140, 18, '', { fontSize: '24px', color: '#f7d36b', fontStyle: 'bold' }).setDepth(75);
-    this.waveText = this.add.text(280, 18, '', { fontSize: '24px', color: '#ffffff', fontStyle: 'bold' }).setDepth(75);
-    this.stageText = this.add.text(480, 17, `STAGE ${this.stage.number}: ${this.stage.title}`, { fontSize: '21px', color: '#dbe7ff', fontStyle: 'bold' }).setOrigin(0.5, 0).setDepth(75);
+    const statStyle: Phaser.Types.GameObjects.Text.TextStyle = {
+      fontSize: '19px',
+      color: '#fff7d6',
+      fontStyle: 'bold',
+      shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 1, fill: true }
+    };
+
+    const makePlaque = (x: number, w: number, label: string, color: number) => {
+      const back = this.add.rectangle(x, 31, w, 42, 0x140e0a, 0.72).setDepth(74);
+      back.setStrokeStyle(2, color, 0.45);
+      this.add.rectangle(x, 14, w - 10, 4, color, 0.26).setDepth(75);
+      this.add.text(x - w / 2 + 10, 13, label, {
+        fontSize: '9px', color: '#c8b184', fontStyle: 'bold'
+      }).setDepth(76);
+    };
+
+    makePlaque(68, 104, 'LIFE', 0xff7070);
+    makePlaque(178, 106, 'GOLD', 0xf7d36b);
+    makePlaque(312, 142, 'WAVE', 0x9ad7ff);
+    makePlaque(510, 224, 'BATTLEFIELD', 0x9dd08b);
+
+    this.livesText = this.add.text(28, 23, '', statStyle).setDepth(77);
+    this.goldText = this.add.text(138, 23, '', statStyle).setDepth(77);
+    this.waveText = this.add.text(250, 23, '', { ...statStyle, fontSize: '18px' }).setDepth(77);
+    this.stageText = this.add.text(510, 22, `STAGE ${this.stage.number}: ${this.stage.title}`, {
+      fontSize: '18px', color: '#dbe7ff', fontStyle: 'bold',
+      shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 1, fill: true }
+    }).setOrigin(0.5, 0).setDepth(77);
+
     this.messageText = this.add.text(480, 82, '', {
       fontSize: '18px',
-      color: '#ffffff',
-      backgroundColor: '#000000aa',
-      padding: { x: 12, y: 7 }
+      color: '#fff7d6',
+      backgroundColor: '#19100bcc',
+      padding: { x: 14, y: 8 },
+      shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 1, fill: true }
     }).setOrigin(0.5).setVisible(false).setDepth(90);
 
-    const waveButton = this.makeUiButton(762, 30, 150, 42, 0x9a3c2f, '조기 웨이브', 18, 80);
-    waveButton.on('pointerdown', () => {
-      pulseButton(this, waveButton);
-      this.startNextWave(true);
-    });
-
-    const speedButton = this.makeUiButton(870, 30, 58, 42, 0x24486b, '', 16, 80);
-    this.speedText = this.add.text(870, 30, '1x', { fontSize: '18px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
-    speedButton.on('pointerdown', () => {
-      pulseButton(this, speedButton);
-      this.toggleSpeed();
-    });
-
-    const pauseButton = this.makeUiButton(925, 30, 46, 42, 0x2f3440, 'Ⅱ', 20, 80);
-    pauseButton.on('pointerdown', () => {
-      pulseButton(this, pauseButton);
-      playSfx(this, 'sfx_click');
-      this.openPauseOverlay();
-    });
-
-    const fullscreenButton = this.makeUiButton(700, 30, 46, 42, 0x263c52, '⛶', 18, 80);
-    fullscreenButton.on('pointerdown', () => {
-      pulseButton(this, fullscreenButton);
-      playSfx(this, 'sfx_click');
-      void requestGameFullscreen();
-    });
-
-    const soundButton = this.makeUiButton(640, 30, 46, 42, 0x263c52, '', 18, 80);
-    this.soundText = this.add.text(640, 30, isMuted() ? '🔇' : '🔊', { fontSize: '17px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
+    const soundButton = this.makeUiButton(660, 31, 44, 40, 0x263c52, '', 18, 80);
+    this.soundText = this.add.text(660, 31, isMuted() ? '🔇' : '🔊', { fontSize: '17px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
     soundButton.on('pointerdown', () => {
       const next = !isMuted();
       setMuted(next);
@@ -367,21 +378,65 @@ export class GameScene extends Phaser.Scene {
       if (!next) playSfx(this, 'sfx_click');
     });
 
+    const waveButton = this.makeUiButton(762, 31, 154, 40, 0x9a3c2f, '', 16, 80);
+    this.waveButtonText = this.add.text(762, 31, '진행', {
+      fontSize: '17px', color: '#fff8cf', fontStyle: 'bold',
+      shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 1, fill: true }
+    }).setOrigin(0.5).setDepth(82);
+    waveButton.on('pointerdown', () => {
+      pulseButton(this, waveButton);
+      this.startNextWave(true);
+    });
+
+    const speedButton = this.makeUiButton(876, 31, 58, 40, 0x24486b, '', 16, 80);
+    this.speedText = this.add.text(876, 31, '1x', { fontSize: '18px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
+    speedButton.on('pointerdown', () => {
+      pulseButton(this, speedButton);
+      this.toggleSpeed();
+    });
+
+    const pauseButton = this.makeUiButton(930, 31, 44, 40, 0x2f3440, 'Ⅱ', 20, 80);
+    pauseButton.on('pointerdown', () => {
+      pulseButton(this, pauseButton);
+      playSfx(this, 'sfx_click');
+      this.openPauseOverlay();
+    });
+
     this.refreshHud();
   }
 
   private createTowerSpots(): void {
     this.stage.spots.forEach((spot) => {
-      const glow = this.add.circle(spot.x, spot.y, 35, 0xf7d36b, 0.08).setDepth(12);
-      const base = this.add.circle(spot.x, spot.y, 27, 0x3d3d3d, 0.85).setStrokeStyle(3, 0xf7d36b, 0.45).setDepth(13);
-      const plus = this.add.text(spot.x, spot.y - 2, '+', { fontSize: '34px', color: '#fff4c2', fontStyle: 'bold' }).setOrigin(0.5).setDepth(14);
-      base.setInteractive({ useHandCursor: true });
-      base.on('pointerdown', () => this.openBuildMenu(spot.x, spot.y, base, glow, plus));
-      this.tweens.add({ targets: glow, alpha: 0.17, duration: 900, yoyo: true, repeat: -1 });
+      const shadow = this.add.ellipse(spot.x + 4, spot.y + 14, 74, 23, 0x000000, 0.24).setDepth(11);
+      const rim = this.add.ellipse(spot.x, spot.y + 4, 68, 35, 0x3b2818, 0.92).setStrokeStyle(3, 0xffd36b, 0.36).setDepth(12);
+      const stone = this.add.ellipse(spot.x, spot.y, 56, 28, 0x7b6b57, 0.96).setStrokeStyle(2, 0x2b1b12, 0.48).setDepth(13);
+      const light = this.add.ellipse(spot.x - 10, spot.y - 6, 26, 8, 0xffe1a0, 0.22).setDepth(14);
+      const hammer = this.add.text(spot.x, spot.y - 8, '⚒', { fontSize: '21px', color: '#fff4c2', fontStyle: 'bold' }).setOrigin(0.5).setDepth(15);
+      const tagBg = this.add.rectangle(spot.x, spot.y + 30, 72, 22, 0x130d09, 0.78).setStrokeStyle(1, 0xffd36b, 0.35).setDepth(16);
+      const tag = this.add.text(spot.x, spot.y + 30, '건설지', { fontSize: '12px', color: '#ffefb4', fontStyle: 'bold' }).setOrigin(0.5).setDepth(17);
+
+      stone.setInteractive({ useHandCursor: true });
+      stone.on('pointerover', () => {
+        rim.setStrokeStyle(4, 0xfff0a3, 0.78);
+        tag.setText('타워 건설');
+      });
+      stone.on('pointerout', () => {
+        rim.setStrokeStyle(3, 0xffd36b, 0.36);
+        tag.setText('건설지');
+      });
+      stone.on('pointerdown', () => this.openBuildMenu(spot.x, spot.y, stone, rim, hammer, [shadow, light, tagBg, tag]));
+      this.tweens.add({ targets: [rim, light], alpha: '+=0.14', duration: 900, yoyo: true, repeat: -1 });
     });
   }
 
-  private openBuildMenu(x: number, y: number, spot: Phaser.GameObjects.Arc, glow: Phaser.GameObjects.Arc, plus: Phaser.GameObjects.Text): void {
+  private openBuildMenu(
+    x: number,
+    y: number,
+    spot: Phaser.GameObjects.Arc,
+    rim: Phaser.GameObjects.Arc,
+    hammer: Phaser.GameObjects.Text,
+    extras: Phaser.GameObjects.GameObject[] = []
+  ): void {
     if (this.settingRallyFor && this.time.now >= this.rallyReadyAt) {
       this.settingRallyFor.setRallyPoint(x, y);
       this.settingRallyFor = undefined;
@@ -390,29 +445,46 @@ export class GameScene extends Phaser.Scene {
     }
 
     this.destroySelectedPanel();
-    const menu = this.add.container(x, y).setDepth(55);
-    const center = this.add.circle(0, 0, 32, 0x0b1220, 0.9).setStrokeStyle(2, 0xf7d36b, 0.8);
-    menu.add(center);
-    const kinds: TowerKind[] = ['archer', 'mage', 'barracks', 'artillery'];
-    kinds.forEach((kind, idx) => {
-      const angle = -Math.PI / 2 + idx * (Math.PI * 2 / kinds.length);
-      const bx = Math.cos(angle) * 68;
-      const by = Math.sin(angle) * 68;
+    const menu = this.add.container(x, y).setDepth(58);
+    const bg = this.add.rectangle(0, 0, 326, 194, 0x130d09, 0.94).setStrokeStyle(3, 0xffd36b, 0.58);
+    const header = this.add.text(0, -82, '타워 건설', {
+      fontSize: '20px', color: '#fff4c2', fontStyle: 'bold',
+      shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 1, fill: true }
+    }).setOrigin(0.5);
+    const hint = this.add.text(0, -59, '역할과 비용을 보고 선택하세요', { fontSize: '12px', color: '#d8c39a' }).setOrigin(0.5);
+    menu.add([bg, header, hint]);
+
+    const positions = [
+      { kind: 'archer' as TowerKind, x: -82, y: -16 },
+      { kind: 'mage' as TowerKind, x: 82, y: -16 },
+      { kind: 'barracks' as TowerKind, x: -82, y: 58 },
+      { kind: 'artillery' as TowerKind, x: 82, y: 58 },
+    ];
+
+    positions.forEach(({ kind, x: bx, y: by }) => {
       const cfg = TOWERS[kind];
-      const b = this.add.circle(bx, by, 30, cfg.color, 1).setStrokeStyle(3, 0xffffff, 0.7).setInteractive({ useHandCursor: true });
-      const icon = this.add.text(bx, by - 4, this.towerSymbol(kind), { fontSize: '21px', color: '#101820', fontStyle: 'bold' }).setOrigin(0.5);
       const cost = this.towerCost(kind, cfg.cost);
-      const price = this.add.text(bx, by + 25, `$${cost}`, { fontSize: '11px', color: '#ffffff', backgroundColor: '#00000099', padding: { x: 3, y: 1 } }).setOrigin(0.5);
-      b.on('pointerdown', () => {
+      const canBuy = this.gold >= cost;
+      const card = this.add.rectangle(bx, by, 148, 60, canBuy ? 0x23170f : 0x2b2b2b, 0.98)
+        .setStrokeStyle(2, canBuy ? cfg.color : 0x5b5b5b, canBuy ? 0.65 : 0.45)
+        .setInteractive({ useHandCursor: true });
+      const iconBack = this.add.circle(bx - 52, by - 4, 20, cfg.color, canBuy ? 0.95 : 0.38).setStrokeStyle(2, 0xffffff, 0.18);
+      const icon = this.add.text(bx - 52, by - 7, this.towerSymbol(kind), { fontSize: '19px', color: '#101820', fontStyle: 'bold' }).setOrigin(0.5);
+      const name = this.add.text(bx - 24, by - 20, cfg.label, { fontSize: '14px', color: canBuy ? '#fff4c2' : '#aaa', fontStyle: 'bold' }).setOrigin(0, 0.5);
+      const role = this.add.text(bx - 24, by - 2, this.towerRole(kind), { fontSize: '11px', color: canBuy ? '#dbe7ff' : '#888' }).setOrigin(0, 0.5);
+      const price = this.add.text(bx - 24, by + 17, `$${cost}`, { fontSize: '12px', color: canBuy ? '#f7d36b' : '#999', fontStyle: 'bold' }).setOrigin(0, 0.5);
+      card.on('pointerover', () => card.setStrokeStyle(3, 0xfff0a3, 0.9));
+      card.on('pointerout', () => card.setStrokeStyle(2, canBuy ? cfg.color : 0x5b5b5b, canBuy ? 0.65 : 0.45));
+      card.on('pointerdown', () => {
         if (this.gold < cost) {
-          this.showMessage(`골드 부족: ${cfg.label} 필요 ${cost}`);
-          menu.destroy();
+          this.showMessage(`${cfg.label} 건설에는 $${cost}가 필요합니다.`);
           return;
         }
         this.gold -= cost;
         spot.disableInteractive().setVisible(false);
-        glow.destroy();
-        plus.destroy();
+        rim.destroy();
+        hammer.destroy();
+        extras.forEach((item) => item.destroy());
         const tower = new Tower(this, x, y, cfg);
         playSfx(this, 'sfx_build');
         spawnBuildDust(this, x, y);
@@ -422,14 +494,15 @@ export class GameScene extends Phaser.Scene {
         this.towers.push(tower);
         menu.destroy();
         this.refreshHud();
-        this.showMessage(`${cfg.label} 건설 완료`);
+        this.showMessage(`${cfg.label} 건설 완료 - ${this.towerRole(kind)}`);
       });
-      menu.add([b, icon, price]);
+      menu.add([card, iconBack, icon, name, role, price]);
     });
 
-    this.time.delayedCall(3000, () => menu.active && menu.destroy());
+    const close = this.add.text(0, 90, '빈 곳을 누르면 닫힘', { fontSize: '11px', color: '#b99c73' }).setOrigin(0.5);
+    menu.add(close);
+    this.time.delayedCall(6500, () => menu.active && menu.destroy());
   }
-
 
   private towerCost(kind: TowerKind, baseCost: number): number {
     let cost = baseCost;
@@ -644,13 +717,46 @@ export class GameScene extends Phaser.Scene {
     this.tweens.add({ targets: warning, scale: 1.08, duration: 180, yoyo: true, repeat: 3, onComplete: () => warning.destroy() });
   }
 
+  private scheduleNextWave(delayMs: number, initial = false): void {
+    if (this.ended || this.paused) return;
+    if (this.waveRunning) return;
+    if (this.waveIndex >= this.stage.waves.length - 1) return;
+    this.waveAutoTimer?.remove(false);
+    this.nextWaveCountdownMs = delayMs;
+    this.updateWaveButton();
+    if (initial) this.showMessage('10초 후 첫 웨이브가 자동 진행됩니다. 준비되면 [진행]을 누르세요.');
+    this.waveAutoTimer = this.time.delayedCall(delayMs, () => this.startNextWave(false));
+  }
+
+  private clearAutoWave(): void {
+    this.waveAutoTimer?.remove(false);
+    this.waveAutoTimer = undefined;
+    this.nextWaveCountdownMs = 0;
+    this.updateWaveButton();
+  }
+
+  private updateWaveButton(): void {
+    if (!this.waveButtonText) return;
+    if (this.waveRunning) {
+      this.waveButtonText.setText('진행중');
+      return;
+    }
+    if (this.waveIndex >= this.stage.waves.length - 1) {
+      this.waveButtonText.setText('완료');
+      return;
+    }
+    const sec = Math.ceil(this.nextWaveCountdownMs / 1000);
+    this.waveButtonText.setText(sec > 0 ? `진행 ${sec}` : '진행 ▶');
+  }
+
   private startNextWave(early: boolean): void {
     if (this.waveRunning) return;
     if (this.waveIndex >= this.stage.waves.length - 1) return;
+    this.clearAutoWave();
     if (early && this.waveIndex >= 0) {
       const bonus = 20 + this.stage.number * 5;
       this.gold += bonus;
-      this.showMessage(`조기 호출 보너스 +$${bonus}`);
+      this.showMessage(`진행 보너스 +$${bonus}`);
     }
     this.waveIndex += 1;
     this.waveRunning = true;
@@ -705,7 +811,12 @@ export class GameScene extends Phaser.Scene {
   private refreshHud(): void {
     this.livesText.setText(`♥ ${this.lives}`);
     this.goldText.setText(`$ ${this.gold}`);
-    this.waveText.setText(`WAVE ${Math.max(0, this.waveIndex + 1)}/${this.stage.waves.length}`);
+    const waveNow = Math.max(0, this.waveIndex + 1);
+    const suffix = !this.waveRunning && this.waveIndex < this.stage.waves.length - 1 && this.nextWaveCountdownMs > 0
+      ? ` · ${Math.ceil(this.nextWaveCountdownMs / 1000)}s`
+      : '';
+    this.waveText.setText(`${waveNow}/${this.stage.waves.length}${suffix}`);
+    this.updateWaveButton();
   }
 
   private showMessage(text: string): void {
@@ -768,11 +879,20 @@ export class GameScene extends Phaser.Scene {
   }
 
   private makeUiButton(x: number, y: number, width: number, height: number, color: number, label: string, fontSize = 18, depth = 10): Phaser.GameObjects.Rectangle {
-    const rect = this.add.rectangle(x, y, width, height, color, 1).setStrokeStyle(2, 0xfff1c2, 0.35).setInteractive({ useHandCursor: true }).setDepth(depth);
-    if (label) this.add.text(x, y, label, { fontSize: `${fontSize}px`, color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(depth + 1);
+    const shadow = this.add.rectangle(x + 3, y + 5, width, height, 0x000000, 0.28).setDepth(depth - 1);
+    const rect = this.add.rectangle(x, y, width, height, color, 1)
+      .setStrokeStyle(2, 0xfff1c2, 0.42)
+      .setInteractive({ useHandCursor: true })
+      .setDepth(depth);
+    const shine = this.add.rectangle(x, y - height * 0.28, Math.max(8, width - 12), 4, 0xffffff, 0.11).setDepth(depth + 1);
+    if (label) this.add.text(x, y - 1, label, {
+      fontSize: `${fontSize}px`, color: '#ffffff', fontStyle: 'bold',
+      shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 1, fill: true }
+    }).setOrigin(0.5).setDepth(depth + 2);
     rect.on('pointerdown', () => playSfx(this, 'sfx_click'));
-    rect.on('pointerover', () => rect.setAlpha(0.86));
-    rect.on('pointerout', () => rect.setAlpha(1));
+    rect.on('pointerover', () => { rect.setAlpha(0.9); shine.setAlpha(0.2); });
+    rect.on('pointerout', () => { rect.setAlpha(1); shine.setAlpha(0.11); });
+    rect.once('destroy', () => { shadow.destroy(); shine.destroy(); });
     return rect;
   }
 
@@ -781,6 +901,13 @@ export class GameScene extends Phaser.Scene {
     const text = this.add.text(x, y, label, { fontSize: '15px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
     panel.add([rect, text]);
     return rect;
+  }
+
+  private towerRole(kind: TowerKind): string {
+    if (kind === 'archer') return '공중/빠른 적';
+    if (kind === 'mage') return '중갑 카운터';
+    if (kind === 'barracks') return '길막/전선 유지';
+    return '광역 폭발';
   }
 
   private towerSymbol(kind: TowerKind): string {
