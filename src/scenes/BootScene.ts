@@ -4,7 +4,10 @@ import { unlockAudio } from '../game/AudioManager';
 
 const ENEMY_KEYS: EnemyKind[] = [
   'goblin', 'wolf', 'brute', 'bat', 'orc', 'shield', 'shaman', 'wasp', 'ogre',
-  'spider', 'specter', 'troll', 'raider', 'gargoyle', 'warlock', 'golem', 'demonlord'
+  'spider', 'specter', 'troll', 'raider', 'gargoyle', 'warlock', 'golem', 'demonlord',
+  'cultist', 'assassin', 'wyvern', 'necromancer', 'abomination',
+  'fireImp', 'hellhound', 'obsidianKnight', 'phoenix', 'dragon',
+  'voidling', 'voidPriest', 'nightmare', 'titan'
 ];
 
 const TOWER_KEYS: TowerKind[] = ['archer', 'mage', 'barracks', 'artillery'];
@@ -57,14 +60,26 @@ export class BootScene extends Phaser.Scene {
     this.load.image('map-thumb-stage-002', 'assets/maps/map_stage_002.png');
     this.load.image('map-thumb-stage-003', 'assets/maps/map_stage_003.png');
     this.load.image('map-thumb-stage-004', 'assets/maps/map_stage_004.png');
+    this.load.image('map-thumb-stage-005', 'assets/maps/map_stage_005.png');
+    this.load.image('map-thumb-stage-006', 'assets/maps/map_stage_006.png');
+    this.load.image('map-thumb-stage-007', 'assets/maps/map_stage_007.png');
+    this.load.image('map-thumb-stage-008', 'assets/maps/map_stage_008.png');
     this.load.image('map-card-stage-001', 'assets/maps/stage_card_001.png');
     this.load.image('map-card-stage-002', 'assets/maps/stage_card_002.png');
     this.load.image('map-card-stage-003', 'assets/maps/stage_card_003.png');
     this.load.image('map-card-stage-004', 'assets/maps/stage_card_004.png');
+    this.load.image('map-card-stage-005', 'assets/maps/stage_card_005.png');
+    this.load.image('map-card-stage-006', 'assets/maps/stage_card_006.png');
+    this.load.image('map-card-stage-007', 'assets/maps/stage_card_007.png');
+    this.load.image('map-card-stage-008', 'assets/maps/stage_card_008.png');
     this.load.image('battle-bg-stage_001', 'assets/maps/battle_stage_001.png');
     this.load.image('battle-bg-stage_002', 'assets/maps/battle_stage_002.png');
     this.load.image('battle-bg-stage_003', 'assets/maps/battle_stage_003.png');
     this.load.image('battle-bg-stage_004', 'assets/maps/battle_stage_004.png');
+    this.load.image('battle-bg-stage_005', 'assets/maps/battle_stage_005.png');
+    this.load.image('battle-bg-stage_006', 'assets/maps/battle_stage_006.png');
+    this.load.image('battle-bg-stage_007', 'assets/maps/battle_stage_007.png');
+    this.load.image('battle-bg-stage_008', 'assets/maps/battle_stage_008.png');
 
     this.load.spritesheet('hero-knight', 'assets/sprites/hero_knight.png', { frameWidth: 32, frameHeight: 32 });
     this.load.spritesheet('soldier-blue', 'assets/sprites/soldier_blue.png', { frameWidth: 32, frameHeight: 32 });

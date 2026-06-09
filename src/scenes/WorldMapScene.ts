@@ -697,6 +697,10 @@ export class WorldMapScene extends Phaser.Scene {
     if (stage.id === 'stage_002') return '오우거';
     if (stage.id === 'stage_003') return '늪 트롤';
     if (stage.id === 'stage_004') return '관문 군주';
+    if (stage.id === 'stage_005') return '살점 괴물';
+    if (stage.id === 'stage_006') return '화산룡';
+    if (stage.id === 'stage_007') return '공허 거신';
+    if (stage.id === 'stage_008') return '삼중 보스';
     return '';
   }
 
@@ -727,10 +731,14 @@ export class WorldMapScene extends Phaser.Scene {
   }
 
   private chapterStyle(stage: StageConfig): ChapterStyle {
-    if (stage.theme === 'forest') return { title: 'CHAPTER I · 숲의 입구', subtitle: '왕국 변방을 지키는 첫 전선', color: 0x2f7d46, fogColor: 0xb9f5cf };
-    if (stage.theme === 'canyon') return { title: 'CHAPTER II · 붉은 협곡', subtitle: '오크 부대가 협곡을 따라 진격합니다', color: 0xaa512d, fogColor: 0xffd19a };
-    if (stage.theme === 'swamp') return { title: 'CHAPTER III · 그림자 늪지', subtitle: '저항과 공포, 은신한 괴물의 늪', color: 0x3d7f67, fogColor: 0xb8fff0 };
-    return { title: 'CHAPTER IV · 마왕의 관문', subtitle: '보스 웨이브가 기다리는 최종 방어선', color: 0x8e2f42, fogColor: 0xffb7c8 };
+    if (stage.id === 'stage_001') return { title: 'CHAPTER I · 숲의 입구', subtitle: '왕국 변방을 지키는 첫 전선', color: 0x2f7d46, fogColor: 0xb9f5cf };
+    if (stage.id === 'stage_002') return { title: 'CHAPTER II · 붉은 협곡', subtitle: '오크 부대가 협곡을 따라 진격합니다', color: 0xaa512d, fogColor: 0xffd19a };
+    if (stage.id === 'stage_003') return { title: 'CHAPTER III · 그림자 늪지', subtitle: '저항과 공포, 은신한 괴물의 늪', color: 0x3d7f67, fogColor: 0xb8fff0 };
+    if (stage.id === 'stage_004') return { title: 'CHAPTER IV · 마왕의 관문', subtitle: '보스 웨이브가 기다리는 최종 방어선', color: 0x8e2f42, fogColor: 0xffb7c8 };
+    if (stage.id === 'stage_005') return { title: 'CHAPTER V · 검은 성채', subtitle: '광신도와 강령술사의 야간 공성전', color: 0x6e2f48, fogColor: 0xff9fba };
+    if (stage.id === 'stage_006') return { title: 'CHAPTER VI · 용의 화산', subtitle: '불사조와 화산룡이 하늘을 막습니다', color: 0xc75c26, fogColor: 0xffdc91 };
+    if (stage.id === 'stage_007') return { title: 'CHAPTER VII · 공허의 탑', subtitle: '균열 너머에서 압도적인 파도가 밀려옵니다', color: 0x5548a7, fogColor: 0xa8f4ff };
+    return { title: 'FINAL CHAPTER · 왕의 최후 방어선', subtitle: '모든 보스가 한 전장에 집결합니다', color: 0x9d1f2f, fogColor: 0xfff1a6 };
   }
 
   private updateChapterPresentation(animated: boolean): void {

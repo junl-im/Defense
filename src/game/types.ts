@@ -15,10 +15,32 @@ export type EnemyKind =
   | 'gargoyle'
   | 'warlock'
   | 'golem'
-  | 'demonlord';
+  | 'demonlord'
+  | 'cultist'
+  | 'assassin'
+  | 'wyvern'
+  | 'necromancer'
+  | 'abomination'
+  | 'fireImp'
+  | 'hellhound'
+  | 'obsidianKnight'
+  | 'phoenix'
+  | 'dragon'
+  | 'voidling'
+  | 'voidPriest'
+  | 'nightmare'
+  | 'titan';
 
 export type TowerKind = 'archer' | 'mage' | 'barracks' | 'artillery';
-export type StageId = 'stage_001' | 'stage_002' | 'stage_003' | 'stage_004';
+export type StageId =
+  | 'stage_001'
+  | 'stage_002'
+  | 'stage_003'
+  | 'stage_004'
+  | 'stage_005'
+  | 'stage_006'
+  | 'stage_007'
+  | 'stage_008';
 
 export type PathPoint = { x: number; y: number };
 
