@@ -19,7 +19,6 @@ const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   parent: 'game',
   backgroundColor: '#101820',
-  resolution: profile.resolution,
   fps: makeGameFpsConfig(),
   scale: {
     mode: Phaser.Scale.FIT,

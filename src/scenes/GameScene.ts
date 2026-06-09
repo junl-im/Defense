@@ -432,8 +432,8 @@ export class GameScene extends Phaser.Scene {
   private openBuildMenu(
     x: number,
     y: number,
-    spot: Phaser.GameObjects.Arc,
-    rim: Phaser.GameObjects.Arc,
+    spot: Phaser.GameObjects.Ellipse,
+    rim: Phaser.GameObjects.Ellipse,
     hammer: Phaser.GameObjects.Text,
     extras: Phaser.GameObjects.GameObject[] = []
   ): void {
