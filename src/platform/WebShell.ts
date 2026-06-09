@@ -3,6 +3,7 @@ type BrowserFlags = {
   isAndroid: boolean;
   isIOS: boolean;
   isMobile: boolean;
+  isDesktop: boolean;
 };
 
 let allowExit = false;
@@ -12,11 +13,13 @@ let activated = false;
 
 function flags(): BrowserFlags {
   const ua = navigator.userAgent || '';
+  const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
   return {
     isKakaoTalk: /KAKAOTALK/i.test(ua),
     isAndroid: /Android/i.test(ua),
     isIOS: /iPhone|iPad|iPod/i.test(ua),
-    isMobile: /Android|iPhone|iPad|iPod|Mobile/i.test(ua),
+    isMobile,
+    isDesktop: !isMobile,
   };
 }
 
@@ -29,6 +32,7 @@ function safeHide(el: HTMLElement): void {
 }
 
 async function requestFullscreenAndLandscape(): Promise<void> {
+  const info = flags();
   const root = document.documentElement as HTMLElement & {
     webkitRequestFullscreen?: () => Promise<void> | void;
     msRequestFullscreen?: () => Promise<void> | void;
@@ -49,6 +53,9 @@ async function requestFullscreenAndLandscape(): Promise<void> {
     console.warn('Fullscreen request was blocked by the browser:', error);
   }
 
+  // PC는 이미 가로 화면이 기본이므로 회전/방향 고정을 시도하지 않는다.
+  if (!info.isMobile) return;
+
   try {
     const orientation = screen.orientation as ScreenOrientation & {
       lock?: (orientation: 'landscape') => Promise<void>;
@@ -60,12 +67,16 @@ async function requestFullscreenAndLandscape(): Promise<void> {
 }
 
 function updateOrientationClass(): void {
-  const landscape = window.innerWidth >= window.innerHeight;
   const info = flags();
+  const landscape = window.innerWidth >= window.innerHeight;
+  const needsPortraitRotation = info.isMobile && !landscape;
+
   document.documentElement.classList.toggle('is-landscape', landscape);
   document.documentElement.classList.toggle('is-portrait', !landscape);
   document.documentElement.classList.toggle('is-kakao-webview', info.isKakaoTalk);
   document.documentElement.classList.toggle('is-mobile-webview', info.isMobile);
+  document.documentElement.classList.toggle('is-desktop', info.isDesktop);
+  document.documentElement.classList.toggle('needs-portrait-rotation', needsPortraitRotation);
 }
 
 async function activateGameShell(): Promise<void> {
@@ -155,7 +166,7 @@ function installBackGuard(): void {
   });
 }
 
-function installAggressiveImmersiveMode(): void {
+function installImmersiveMode(): void {
   const tryRestore = (): void => {
     if (!activated) return;
     void requestFullscreenAndLandscape();
@@ -178,7 +189,7 @@ export function installWebShell(): void {
   createStartGate();
   createExitModal();
   installBackGuard();
-  installAggressiveImmersiveMode();
+  installImmersiveMode();
 }
 
 export function requestGameFullscreen(): Promise<void> {

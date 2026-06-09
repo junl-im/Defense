@@ -268,9 +268,10 @@ export class WorldMapScene extends Phaser.Scene {
   }
 
   private createFooterControls(): void {
-    this.makeImageButton(90, 508, '연구소', 'ui-button-blue', () => this.scene.start('LabScene', { user: this.user, save: this.save }), 136, 42);
-    this.makeImageButton(230, 508, '도감', 'ui-button-gold', () => this.scene.start('CodexScene', { user: this.user, save: this.save }), 110, 42);
-    this.makeImageButton(382, 508, '기록 새로고침', 'ui-button-primary', () => void this.refreshSaveAndLeaderboard(), 174, 42, 18);
+    this.makeImageButton(82, 508, '연구소', 'ui-button-blue', () => this.scene.start('LabScene', { user: this.user, save: this.save }), 124, 42);
+    this.makeImageButton(206, 508, '도감', 'ui-button-gold', () => this.scene.start('CodexScene', { user: this.user, save: this.save }), 96, 42);
+    this.makeImageButton(346, 508, '유물/도전', 'ui-button-red', () => this.scene.start('MetaScene', { user: this.user, save: this.save }), 142, 42, 17);
+    this.makeImageButton(504, 508, '기록 새로고침', 'ui-button-primary', () => void this.refreshSaveAndLeaderboard(), 170, 42, 17);
     this.startButton = this.makeImageButton(810, 497, '전투 시작', 'ui-button-red', () => this.startSelectedStage(), 230, 58, 24);
     this.startButtonLabel = this.startButton.getByName('label') as Phaser.GameObjects.Text;
   }

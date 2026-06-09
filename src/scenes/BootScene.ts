@@ -103,6 +103,17 @@ export class BootScene extends Phaser.Scene {
 
     this.load.image('ui-panel-parchment', 'assets/ui/panel_parchment.png');
 
+    this.load.image('ui-import-button', 'assets/imported/ui/ui_wenrexa_button.png');
+    this.load.image('ui-import-panel', 'assets/imported/ui/ui_wenrexa_panel.png');
+    this.load.image('ui-import-arrow-left', 'assets/imported/ui/ui_wenrexa_arrow_left.png');
+    this.load.image('ui-import-arrow-right', 'assets/imported/ui/ui_wenrexa_arrow_right.png');
+    this.load.image('ui-import-medieval-sheet', 'assets/imported/ui/ui_medieval_sheet.png');
+    this.load.image('ui-import-circle', 'assets/imported/ui/ui_wenrexa_circle.png');
+    this.load.image('import-tiny-soldier-walk', 'assets/imported/characters/tiny_soldier_walk.png');
+    this.load.image('import-tiny-orc-walk', 'assets/imported/characters/tiny_orc_walk.png');
+    this.load.image('import-loot-adventurer', 'assets/imported/characters/loot_adventurer_32_sheet.png');
+    this.load.image('import-infernus-altar', 'assets/imported/tiles/infernus_altar.png');
+
     const audioMap: Record<string, string> = {
       sfx_click: 'click.wav',
       sfx_build: 'build.wav',

@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import type { EnemyConfig, PathPoint } from './types';
 import { spawnDeathPoof, spawnFloatingText, spawnHitSpark, spawnImpactRing } from './Effects';
 import { playSfx } from './AudioManager';
+import { bossPatternCooldown, bossPatternLabel } from './MegaSystems';
 
 type EnemyMotion = 'walk' | 'attack' | 'death';
 type EnemyDirection = 'down' | 'side' | 'up';
@@ -27,6 +28,10 @@ export class Enemy extends Phaser.GameObjects.Container {
   private currentDirection: EnemyDirection = 'down';
   private movingLeft = false;
   private deathStarted = false;
+  private bossSkillCooldownMs = 1800;
+  private bossShieldUntil = 0;
+  private bossSpeedUntil = 0;
+  private bossSpeedMultiplier = 1;
 
   constructor(scene: Phaser.Scene, config: EnemyConfig, private readonly path: PathPoint[]) {
     super(scene, path[0].x, path[0].y);
@@ -65,6 +70,7 @@ export class Enemy extends Phaser.GameObjects.Container {
     if (this.dead || this.reachedGoal) return;
 
     if (this.aura) this.aura.rotation += deltaMs / 450;
+    this.updateBossPattern(deltaMs);
     if (this.config.flying) this.y += Math.sin(this.scene.time.now / 150) * 0.18;
 
     this.blockedMs = Math.max(0, this.blockedMs - deltaMs);
@@ -79,7 +85,7 @@ export class Enemy extends Phaser.GameObjects.Container {
       return;
     }
 
-    const speedModifier = this.scene.time.now < this.slowUntil ? this.slowFactor : 1;
+    const speedModifier = (this.scene.time.now < this.slowUntil ? this.slowFactor : 1) * (this.scene.time.now < this.bossSpeedUntil ? this.bossSpeedMultiplier : 1);
     const dist = Phaser.Math.Distance.Between(this.x, this.y, target.x, target.y);
     const step = (this.config.speed * speedModifier * deltaMs) / 1000;
     if (dist <= step) {
@@ -137,6 +143,7 @@ export class Enemy extends Phaser.GameObjects.Container {
     let finalDamage = amount;
     if (damageType === 'physical') finalDamage *= 1 - this.config.armor;
     if (damageType === 'magic') finalDamage *= 1 - this.config.magicResist;
+    if (this.config.threat === 'boss' && this.scene.time.now < this.bossShieldUntil) finalDamage *= 0.55;
     this.hp = Math.max(0, this.hp - finalDamage);
 
     const barWidth = 28 * (this.config.scale ?? 1);
@@ -233,6 +240,102 @@ export class Enemy extends Phaser.GameObjects.Container {
       duration: 180,
       onComplete: () => this.destroy()
     });
+  }
+
+
+
+  private updateBossPattern(deltaMs: number): void {
+    if (this.config.threat !== 'boss' || this.dead || this.reachedGoal) return;
+    this.bossSkillCooldownMs -= deltaMs;
+    if (this.bossSkillCooldownMs > 0) return;
+
+    this.bossSkillCooldownMs = bossPatternCooldown(this.config.kind) + Phaser.Math.Between(-700, 900);
+    this.scene.events.emit('kingdom-seed:boss-pattern', {
+      kind: this.config.kind,
+      label: this.config.label,
+      pattern: bossPatternLabel(this.config.kind),
+      x: this.x,
+      y: this.y,
+    });
+
+    if (this.config.kind === 'demonlord') {
+      this.castBossShield(2500, 0xffb347);
+      this.bossSpeedUntil = this.scene.time.now + 1800;
+      this.bossSpeedMultiplier = 1.22;
+      return;
+    }
+
+    if (this.config.kind === 'dragon') {
+      this.castBossRoar(0xff6b2a);
+      this.bossSpeedUntil = this.scene.time.now + 2200;
+      this.bossSpeedMultiplier = 1.35;
+      return;
+    }
+
+    if (this.config.kind === 'titan') {
+      this.castBossHeal(0.065, 0x88e7ff);
+      this.bossSpeedUntil = this.scene.time.now + 1400;
+      this.bossSpeedMultiplier = 1.55;
+      return;
+    }
+
+    if (this.config.kind === 'phoenix') {
+      this.castBossHeal(0.08, 0xffd36b);
+      this.castBossRoar(0xffaa2a);
+      return;
+    }
+
+    if (this.config.kind === 'ogre' || this.config.kind === 'golem' || this.config.kind === 'abomination') {
+      this.castBossRoar(this.config.accentColor ?? 0xfff1c2);
+      this.castBossShield(1500, this.config.accentColor ?? 0xfff1c2);
+      return;
+    }
+
+    this.castBossRoar(this.config.accentColor ?? 0xfff1c2);
+  }
+
+  private castBossShield(durationMs: number, color: number): void {
+    this.bossShieldUntil = Math.max(this.bossShieldUntil, this.scene.time.now + durationMs);
+    spawnFloatingText(this.scene, this.x, this.y - 56, '보스 장막', '#fff1a6', 18);
+    spawnImpactRing(this.scene, this.x, this.y, 44 * (this.config.scale ?? 1), color, 0.24, 520);
+    const shield = this.scene.add.circle(this.x, this.y, 28 * (this.config.scale ?? 1), color, 0.12)
+      .setStrokeStyle(3, color, 0.72)
+      .setDepth(33);
+    this.scene.tweens.add({
+      targets: shield,
+      scale: 1.65,
+      alpha: 0,
+      duration: durationMs,
+      ease: 'Sine.easeOut',
+      onComplete: () => shield.destroy(),
+    });
+  }
+
+  private castBossRoar(color: number): void {
+    spawnFloatingText(this.scene, this.x, this.y - 56, bossPatternLabel(this.config.kind), '#ffdf9a', 14);
+    spawnImpactRing(this.scene, this.x, this.y, 64 * (this.config.scale ?? 1), color, 0.22, 620);
+    const wave = this.scene.add.circle(this.x, this.y, 38 * (this.config.scale ?? 1), color, 0.1)
+      .setStrokeStyle(4, color, 0.58)
+      .setDepth(34);
+    this.scene.tweens.add({
+      targets: wave,
+      scale: 2.1,
+      alpha: 0,
+      duration: 420,
+      ease: 'Quad.easeOut',
+      onComplete: () => wave.destroy(),
+    });
+    this.scene.cameras.main.shake(120, 0.0025);
+  }
+
+  private castBossHeal(ratio: number, color: number): void {
+    const amount = Math.max(30, Math.round(this.maxHp * ratio));
+    this.hp = Math.min(this.maxHp, this.hp + amount);
+    const barWidth = 28 * (this.config.scale ?? 1);
+    this.hpBar.width = Math.max(1, barWidth * (this.hp / this.maxHp));
+    this.hpBar.fillColor = 0x1ee65b;
+    spawnFloatingText(this.scene, this.x, this.y - 56, `회복 +${amount}`, '#71ff70', 18);
+    spawnImpactRing(this.scene, this.x, this.y, 48 * (this.config.scale ?? 1), color, 0.16, 540);
   }
 
 

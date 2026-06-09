@@ -11,6 +11,7 @@ import { fetchLeaderboard, saveStageClear, submitLeaderboard } from '../services
 import { pulseButton, shakeCamera, spawnBuildDust, spawnExplosionBurst, spawnImpactRing, spawnWaveBanner } from '../game/Effects';
 import { isMuted, playMusic, playSfx, setMuted } from '../game/AudioManager';
 import { requestGameFullscreen } from '../platform/WebShell';
+import { getRelicBattleBonuses, modifierLabel, type DailyChallenge } from '../game/MegaSystems';
 
 type CastingSpell = 'meteor' | 'mercenary' | undefined;
 
@@ -40,6 +41,8 @@ export class GameScene extends Phaser.Scene {
   gameSpeed = 1;
   paused = false;
   pauseOverlay?: Phaser.GameObjects.Container;
+  dailyChallenge?: DailyChallenge;
+  relicBonuses = getRelicBattleBonuses();
 
   goldText!: Phaser.GameObjects.Text;
   livesText!: Phaser.GameObjects.Text;
@@ -56,11 +59,14 @@ export class GameScene extends Phaser.Scene {
     super('GameScene');
   }
 
-  init(data: { user: User; save: PlayerSave; stageId?: string }): void {
+  init(data: { user: User; save: PlayerSave; stageId?: string; dailyChallenge?: DailyChallenge }): void {
     this.user = data.user;
     this.save = data.save;
     this.stage = getStageConfig(data.stageId);
-    this.gold = this.stage.startGold;
+    this.dailyChallenge = data.dailyChallenge;
+    this.relicBonuses = getRelicBattleBonuses();
+    this.gold = this.stage.startGold + this.relicBonuses.startGoldBonus;
+    if (this.dailyChallenge?.modifiers.includes('gold_rush')) this.gold = Math.round(this.gold * 1.25);
     this.lives = this.stage.maxLives;
     this.waveIndex = -1;
     this.enemies = [];
@@ -86,12 +92,20 @@ export class GameScene extends Phaser.Scene {
     this.createHud();
     this.createTowerSpots();
     this.hero = new Hero(this, this.stage.path[0].x + 120, this.stage.path[0].y - 35);
+    if (this.dailyChallenge?.modifiers.includes('hero_trial')) this.hero.damage = Math.round(this.hero.damage * 1.35);
     this.hero.on('pointerdown', () => this.showMessage('영웅 레온 선택됨. 빈 맵 터치로 이동합니다.'));
     this.createSpells();
     this.createInputHandlers();
     playMusic(this, 'bgm_battle', 0.18);
     window.addEventListener('kingdom-seed:user-activated', () => playMusic(this, 'bgm_battle', 0.18), { once: true });
     this.showMessage(`${this.stage.title}: ${this.stage.tip}`);
+    if (this.dailyChallenge) {
+      this.time.delayedCall(520, () => this.showMessage(`일일 도전: ${this.dailyChallenge!.modifiers.map(modifierLabel).join(' / ')}`));
+    }
+    this.events.on('kingdom-seed:boss-pattern', (payload: { label: string; pattern: string }) => {
+      this.showMessage(`보스 패턴 발동: ${payload.label} - ${payload.pattern}`);
+      playMusic(this, 'bgm_boss', 0.22);
+    });
   }
 
   update(_: number, delta: number): void {
@@ -384,14 +398,15 @@ export class GameScene extends Phaser.Scene {
       const cfg = TOWERS[kind];
       const b = this.add.circle(bx, by, 30, cfg.color, 1).setStrokeStyle(3, 0xffffff, 0.7).setInteractive({ useHandCursor: true });
       const icon = this.add.text(bx, by - 4, this.towerSymbol(kind), { fontSize: '21px', color: '#101820', fontStyle: 'bold' }).setOrigin(0.5);
-      const price = this.add.text(bx, by + 25, `$${cfg.cost}`, { fontSize: '11px', color: '#ffffff', backgroundColor: '#00000099', padding: { x: 3, y: 1 } }).setOrigin(0.5);
+      const cost = this.towerCost(kind, cfg.cost);
+      const price = this.add.text(bx, by + 25, `$${cost}`, { fontSize: '11px', color: '#ffffff', backgroundColor: '#00000099', padding: { x: 3, y: 1 } }).setOrigin(0.5);
       b.on('pointerdown', () => {
-        if (this.gold < cfg.cost) {
-          this.showMessage(`골드 부족: ${cfg.label} 필요 ${cfg.cost}`);
+        if (this.gold < cost) {
+          this.showMessage(`골드 부족: ${cfg.label} 필요 ${cost}`);
           menu.destroy();
           return;
         }
-        this.gold -= cfg.cost;
+        this.gold -= cost;
         spot.disableInteractive().setVisible(false);
         glow.destroy();
         plus.destroy();
@@ -410,6 +425,14 @@ export class GameScene extends Phaser.Scene {
     });
 
     this.time.delayedCall(3000, () => menu.active && menu.destroy());
+  }
+
+
+  private towerCost(kind: TowerKind, baseCost: number): number {
+    let cost = baseCost;
+    if (this.dailyChallenge?.modifiers.includes('no_mage') && kind === 'mage') cost = Math.round(cost * 1.65);
+    if (this.dailyChallenge?.modifiers.includes('iron_wall') && kind === 'mage') cost = Math.round(cost * 0.92);
+    return cost;
   }
 
   private selectTower(tower: Tower): void {
@@ -531,7 +554,7 @@ export class GameScene extends Phaser.Scene {
 
   private castMeteor(x: number, y: number): void {
     const radius = 78;
-    this.meteorCooldownMs = 24000;
+    this.meteorCooldownMs = Math.round(24000 * this.relicBonuses.meteorCooldownMultiplier * (this.dailyChallenge?.modifiers.includes('meteor_storm') ? 0.72 : 1));
     playSfx(this, 'sfx_explosion');
     const warning = this.add.circle(x, y, radius, 0xff3b2f, 0.14).setStrokeStyle(2, 0xfff0a3, 0.8).setDepth(50);
     this.tweens.add({ targets: warning, scale: 0.75, duration: 160, yoyo: true, onComplete: () => warning.destroy() });
@@ -644,9 +667,23 @@ export class GameScene extends Phaser.Scene {
   private spawnWave(groups: WaveSpawn[]): void {
     let delay = 0;
     groups.forEach((group) => {
-      for (let i = 0; i < group.count; i++) {
+      const count = group.count + (this.dailyChallenge?.modifiers.includes('gold_rush') ? Math.max(1, Math.floor(group.count * 0.16)) : 0);
+      for (let i = 0; i < count; i++) {
         this.time.delayedCall(delay, () => {
-          const enemy = new Enemy(this, { ...ENEMIES[group.kind] }, this.stage.path);
+          const cfg = { ...ENEMIES[group.kind] };
+          if (this.dailyChallenge?.modifiers.includes('air_raid') && cfg.flying) {
+            cfg.hp = Math.round(cfg.hp * 1.12);
+            cfg.reward = Math.round(cfg.reward * 1.18);
+          }
+          if (this.dailyChallenge?.modifiers.includes('iron_wall') && (cfg.threat === 'tank' || cfg.threat === 'boss')) {
+            cfg.armor = Math.min(0.78, cfg.armor + 0.12);
+            cfg.hp = Math.round(cfg.hp * 1.08);
+          }
+          if (this.dailyChallenge?.modifiers.includes('boss_contract') && cfg.threat === 'boss') {
+            cfg.hp = Math.round(cfg.hp * 1.16);
+            cfg.reward = Math.round(cfg.reward * 1.25);
+          }
+          const enemy = new Enemy(this, cfg, this.stage.path);
           this.enemies.push(enemy);
           spawnImpactRing(this, enemy.x, enemy.y, 18, enemy.config.accentColor ?? 0xffffff, 0.12, 260);
         });

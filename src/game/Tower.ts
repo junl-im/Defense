@@ -4,6 +4,7 @@ import { Enemy } from './Enemy';
 import { Soldier } from './Soldier';
 import { shakeCamera, spawnExplosionBurst, spawnHitSpark, spawnImpactRing, spawnMuzzleFlash, spawnProjectile, spawnTowerSkillCutIn, spawnUpgradeBurst } from './Effects';
 import { playSfx } from './AudioManager';
+import { getRelicBattleBonuses } from './MegaSystems';
 
 export type TowerUpgradeSnapshot = {
   archerDamage: number;
@@ -30,6 +31,7 @@ export class Tower extends Phaser.GameObjects.Container {
   private sprite?: Phaser.GameObjects.Image;
   private permanentUpgrades: TowerUpgradeSnapshot = { ...DEFAULT_UPGRADES };
   private skillCutInCooldownMs = 0;
+  private relicBonuses = getRelicBattleBonuses();
 
   constructor(scene: Phaser.Scene, x: number, y: number, public readonly config: TowerConfig) {
     super(scene, x, y);
@@ -80,18 +82,25 @@ export class Tower extends Phaser.GameObjects.Container {
 
   get currentDamage(): number {
     let multiplier = 1 + (this.level - 1) * 0.42;
-    if (this.config.kind === 'archer') multiplier += this.permanentUpgrades.archerDamage * 0.08;
-    if (this.config.kind === 'mage') multiplier += this.permanentUpgrades.mageDamage * 0.1;
+    if (this.config.kind === 'archer') {
+      multiplier += this.permanentUpgrades.archerDamage * 0.08;
+      multiplier *= this.relicBonuses.archerDamageMultiplier;
+    }
+    if (this.config.kind === 'mage') {
+      multiplier += this.permanentUpgrades.mageDamage * 0.1;
+      multiplier *= this.relicBonuses.mageDamageMultiplier;
+    }
     return Math.round(this.config.damage * multiplier);
   }
 
   get currentFireRateMs(): number {
-    return Math.max(260, Math.round(this.config.fireRateMs * (1 - (this.level - 1) * 0.1)));
+    const relicRate = this.config.kind === 'archer' ? this.relicBonuses.archerFireRateMultiplier : 1;
+    return Math.max(230, Math.round(this.config.fireRateMs * (1 - (this.level - 1) * 0.1) * relicRate));
   }
 
   get currentSplashRadius(): number | undefined {
     if (!this.config.splashRadius) return undefined;
-    return this.config.splashRadius + (this.level - 1) * 8 + this.permanentUpgrades.artillerySplash * 6;
+    return this.config.splashRadius + (this.level - 1) * 8 + this.permanentUpgrades.artillerySplash * 6 + this.relicBonuses.artillerySplashBonus;
   }
 
   get upgradeCost(): number | null {
@@ -152,8 +161,8 @@ export class Tower extends Phaser.GameObjects.Container {
   }
 
   private soldierOptions() {
-    const damage = Math.round(this.config.damage * (1 + (this.level - 1) * 0.5));
-    const maxHp = 70 + (this.level - 1) * 35 + this.permanentUpgrades.barracksHp * 20;
+    const damage = Math.round(this.config.damage * (1 + (this.level - 1) * 0.5) * this.relicBonuses.barracksDamageMultiplier);
+    const maxHp = 70 + (this.level - 1) * 35 + this.permanentUpgrades.barracksHp * 20 + this.relicBonuses.barracksHpBonus;
     const blockMs = this.level >= 3 ? 420 : 250 + (this.level - 1) * 55;
     return { damage, maxHp, blockMs, color: this.level >= 3 ? 0x7cc7ff : 0x4fa3ff };
   }
@@ -189,6 +198,7 @@ export class Tower extends Phaser.GameObjects.Container {
     spawnProjectile(this.scene, launchX, launchY, impactX, impactY, color, style, duration, () => {
       if (!target.active || target.dead) return;
       target.receiveDamage(this.currentDamage, isMage ? 'magic' : 'physical');
+      if (target.config.threat === 'boss' && this.relicBonuses.trueDamageBonus > 0) target.receiveDamage(this.relicBonuses.trueDamageBonus, 'true');
       if (this.level >= 3 && this.config.kind === 'archer') {
         this.showSkillCutIn();
         target.receivePoison(this.currentDamage * 0.65, 3000);
@@ -220,6 +230,7 @@ export class Tower extends Phaser.GameObjects.Container {
       enemies.forEach((enemy) => {
         if (!enemy.dead && !enemy.config.flying && Phaser.Math.Distance.Between(impactX, impactY, enemy.x, enemy.y) <= radius) {
           enemy.receiveDamage(this.currentDamage, 'physical');
+          if (enemy.config.threat === 'boss' && this.relicBonuses.trueDamageBonus > 0) enemy.receiveDamage(this.relicBonuses.trueDamageBonus, 'true');
           if (this.level >= 3) {
             this.showSkillCutIn();
             enemy.receiveSlow(0.68, 1400);

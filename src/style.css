@@ -37,7 +37,7 @@ canvas {
   image-rendering: crisp-edges;
 }
 
-html.is-portrait #game {
+html.needs-portrait-rotation #game {
   width: 100dvh;
   height: 100vw;
   left: 50%;
@@ -231,4 +231,20 @@ html.is-portrait #game {
     opacity: 0.42;
     width: 42px;
   }
+}
+
+
+html.is-desktop #game {
+  transform: none;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100dvh;
+}
+
+html.is-desktop canvas {
+  max-width: 100vw;
+  max-height: 100dvh;
 }

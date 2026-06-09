@@ -5,6 +5,7 @@ import { WorldMapScene } from './scenes/WorldMapScene';
 import { LabScene } from './scenes/LabScene';
 import { GameScene } from './scenes/GameScene';
 import { CodexScene } from './scenes/CodexScene';
+import { MetaScene } from './scenes/MetaScene';
 import { installGlobalAudioUnlock } from './game/AudioManager';
 import { installWebShell } from './platform/WebShell';
 import './style.css';
@@ -32,7 +33,7 @@ const config: Phaser.Types.Core.GameConfig = {
     pixelArt: true,
     antialias: false
   },
-  scene: [BootScene, MenuScene, WorldMapScene, LabScene, CodexScene, GameScene]
+  scene: [BootScene, MenuScene, WorldMapScene, LabScene, CodexScene, MetaScene, GameScene]
 };
 
 const game = new Phaser.Game(config);

@@ -1,0 +1,101 @@
+[
+  {
+    "output": "public/assets/imported/ui/ui_wenrexa_button.png",
+    "source_archive": "Wenrexa Interface UI KIT #4.zip",
+    "source_file": "Wenrexa Interface UI KIT #4/PNG/Btn01.png",
+    "size": [
+      357,
+      57
+    ]
+  },
+  {
+    "output": "public/assets/imported/ui/ui_wenrexa_panel.png",
+    "source_archive": "Wenrexa Interface UI KIT #4.zip",
+    "source_file": "Wenrexa Interface UI KIT #4/PNG/Panel04.png",
+    "size": [
+      443,
+      49
+    ]
+  },
+  {
+    "output": "public/assets/imported/ui/ui_wenrexa_arrow_left.png",
+    "source_archive": "Wenrexa Interface UI KIT #4.zip",
+    "source_file": "Wenrexa Interface UI KIT #4/PNG/Icons/ArrowsLeft.png",
+    "size": [
+      48,
+      84
+    ]
+  },
+  {
+    "output": "public/assets/imported/ui/ui_wenrexa_arrow_right.png",
+    "source_archive": "Wenrexa Interface UI KIT #4.zip",
+    "source_file": "Wenrexa Interface UI KIT #4/PNG/Icons/ArrowsRight.png",
+    "size": [
+      48,
+      84
+    ]
+  },
+  {
+    "output": "public/assets/imported/ui/ui_wenrexa_circle.png",
+    "source_archive": "Wenrexa Interface UI KIT #4.zip",
+    "source_file": "Wenrexa Interface UI KIT #4/PNG/Icons/Circle01.png",
+    "size": [
+      130,
+      130
+    ]
+  },
+  {
+    "output": "public/assets/imported/ui/ui_medieval_sheet.png",
+    "source_archive": "UIBundleFree.zip",
+    "source_file": "UIBundleFree/MediavelFree.png",
+    "size": [
+      256,
+      128
+    ]
+  },
+  {
+    "output": "public/assets/imported/characters/tiny_soldier_walk.png",
+    "source_archive": "Tiny RPG Character Asset Pack v1.03b -Free Soldier&Orc.zip",
+    "source_file": "Tiny RPG Character Asset Pack v1.03 -Free Soldier&Orc/Characters(100x100)/Soldier/Soldier/Soldier-Walk.png",
+    "size": [
+      800,
+      100
+    ]
+  },
+  {
+    "output": "public/assets/imported/characters/tiny_orc_walk.png",
+    "source_archive": "Tiny RPG Character Asset Pack v1.03b -Free Soldier&Orc.zip",
+    "source_file": "Tiny RPG Character Asset Pack v1.03 -Free Soldier&Orc/Characters(100x100)/Orc/Orc/Orc-Walk.png",
+    "size": [
+      800,
+      100
+    ]
+  },
+  {
+    "output": "public/assets/imported/characters/loot_adventurer_32_sheet.png",
+    "source_archive": "LOOT PIXELS - Adventure Pack_v1.1_.zip",
+    "source_file": "adventurer_001/adventurer_001_32_spritesheet.png",
+    "size": [
+      384,
+      320
+    ]
+  },
+  {
+    "output": "public/assets/imported/tiles/infernus_altar.png",
+    "source_archive": "PVGames_Infernus_Free.zip",
+    "source_file": "Infernus_Tiles/Infernus_Altar1_1.png",
+    "size": [
+      128,
+      128
+    ]
+  },
+  {
+    "output": "public/assets/imported/tiles/infernus_lightsources.png",
+    "source_archive": "PVGames_Infernus_Free.zip",
+    "source_file": "Infernus_Tiles/Anim_Infernus_Lightsources_1.png",
+    "size": [
+      192,
+      384
+    ]
+  }
+]
