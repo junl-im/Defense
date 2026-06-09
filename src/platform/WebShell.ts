@@ -98,6 +98,12 @@ async function activateGameShell(): Promise<void> {
 }
 
 function createStartGate(): void {
+  const info = flags();
+  if (info.isDesktop) {
+    activated = true;
+    window.setTimeout(() => window.dispatchEvent(new CustomEvent('kingdom-seed:user-activated')), 0);
+    return;
+  }
   startGate = document.createElement('div');
   startGate.id = 'start-gate';
   startGate.className = 'shell-overlay shell-start-gate';
@@ -106,7 +112,7 @@ function createStartGate(): void {
       <div class="shell-title-mark">KINGDOM SEED</div>
       <div class="shell-title-sword"></div>
       <h1>전투 시작</h1>
-      <p>PC는 창 그대로, 모바일은 가로 전장으로 바로 진입합니다.</p>
+      <p>탭하면 가로 전장으로 바로 진입합니다.</p>
       <div class="shell-tap-rune">TAP</div>
     </div>
   `;
@@ -184,9 +190,9 @@ function installImmersiveMode(): void {
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) window.setTimeout(tryRestore, 180);
   });
-  document.addEventListener('fullscreenchange', () => window.setTimeout(tryRestore, 80));
-  window.addEventListener('focus', () => window.setTimeout(tryRestore, 120));
-  window.addEventListener('pointerdown', () => window.setTimeout(tryRestore, 40));
+  document.addEventListener('fullscreenchange', () => { if (flags().isMobile) window.setTimeout(tryRestore, 80); });
+  window.addEventListener('focus', () => { if (flags().isMobile) window.setTimeout(tryRestore, 120); });
+  window.addEventListener('pointerdown', () => { if (flags().isMobile) window.setTimeout(tryRestore, 40); });
 }
 
 export function installWebShell(): void {

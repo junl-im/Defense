@@ -13,6 +13,7 @@ import { isMuted, playMusic, playSfx, setMuted } from '../game/AudioManager';
 import { getRelicBattleBonuses, modifierLabel, type DailyChallenge } from '../game/MegaSystems';
 import { createQualityToggleButton, drawBattlePolish, installScenePerformanceWatch } from '../game/VisualPolish';
 import { addPremiumBattleObjects } from '../game/BattlefieldArt';
+import { addBuildSpotPreview, addPremiumPlaque, drawCinematicCombatFrame } from '../game/PremiumUx';
 
 type CastingSpell = 'meteor' | 'mercenary' | undefined;
 
@@ -97,6 +98,7 @@ export class GameScene extends Phaser.Scene {
     this.drawMap();
     addPremiumBattleObjects(this, this.stage);
     drawBattlePolish(this, this.stage.theme);
+    drawCinematicCombatFrame(this, this.stage.theme);
     installScenePerformanceWatch(this);
     this.createHud();
     this.createTowerSpots();
@@ -333,33 +335,41 @@ export class GameScene extends Phaser.Scene {
 
   private createHud(): void {
     const statStyle: Phaser.Types.GameObjects.Text.TextStyle = {
-      fontSize: '19px',
+      fontSize: '18px',
       color: '#fff7d6',
       fontStyle: 'bold',
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 1, fill: true }
     };
 
-    const makePlaque = (x: number, w: number, label: string, color: number) => {
-      const back = this.add.rectangle(x, 31, w, 42, 0x140e0a, 0.72).setDepth(74);
-      back.setStrokeStyle(2, color, 0.45);
-      this.add.rectangle(x, 14, w - 10, 4, color, 0.26).setDepth(75);
-      this.add.text(x - w / 2 + 10, 13, label, {
-        fontSize: '9px', color: '#c8b184', fontStyle: 'bold'
-      }).setDepth(76);
+    const makeStat = (x: number, w: number, label: string, icon: string, accent: number): Phaser.GameObjects.Text => {
+      addPremiumPlaque(this, x, 31, w, 42, accent, 74);
+      this.add.text(x - w / 2 + 12, 14, label, {
+        fontSize: '9px', color: '#c8b184', fontStyle: 'bold',
+        shadow: { offsetX: 0, offsetY: 1, color: '#000000', blur: 1, fill: true }
+      }).setDepth(79);
+      this.add.text(x - w / 2 + 13, 32, icon, {
+        fontSize: '16px', color: '#ffffff', fontStyle: 'bold',
+        shadow: { offsetX: 0, offsetY: 1, color: '#000000', blur: 1, fill: true }
+      }).setOrigin(0, 0.5).setDepth(79);
+      return this.add.text(x - w / 2 + 38, 31, '', statStyle).setOrigin(0, 0.5).setDepth(80);
     };
 
-    makePlaque(68, 104, 'LIFE', 0xff7070);
-    makePlaque(178, 106, 'GOLD', 0xf7d36b);
-    makePlaque(312, 142, 'WAVE', 0x9ad7ff);
-    makePlaque(510, 224, 'BATTLEFIELD', 0x9dd08b);
+    this.livesText = makeStat(60, 104, 'LIFE', '♥', 0xff7070);
+    this.goldText = makeStat(172, 112, 'GOLD', '$', 0xf7d36b);
+    this.waveText = makeStat(312, 146, 'WAVE', '▶', 0x9ad7ff);
 
-    this.livesText = this.add.text(28, 23, '', statStyle).setDepth(77);
-    this.goldText = this.add.text(138, 23, '', statStyle).setDepth(77);
-    this.waveText = this.add.text(250, 23, '', { ...statStyle, fontSize: '18px' }).setDepth(77);
-    this.stageText = this.add.text(510, 22, `STAGE ${this.stage.number}: ${this.stage.title}`, {
-      fontSize: '18px', color: '#dbe7ff', fontStyle: 'bold',
+    addPremiumPlaque(this, 514, 31, 236, 42, 0x9dd08b, 74);
+    this.add.text(406, 14, 'BATTLEFIELD', {
+      fontSize: '9px', color: '#c8b184', fontStyle: 'bold',
+      shadow: { offsetX: 0, offsetY: 1, color: '#000000', blur: 1, fill: true }
+    }).setDepth(79);
+    const stageLabel = `S${this.stage.number}  ${this.stage.title}`;
+    this.stageText = this.add.text(514, 32, stageLabel, {
+      fontSize: '14px', color: '#dbe7ff', fontStyle: 'bold',
+      fixedWidth: 218,
+      align: 'center',
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 1, fill: true }
-    }).setOrigin(0.5, 0).setDepth(77);
+    }).setOrigin(0.5).setDepth(80);
 
     this.messageText = this.add.text(480, 82, '', {
       fontSize: '18px',
@@ -369,18 +379,18 @@ export class GameScene extends Phaser.Scene {
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 1, fill: true }
     }).setOrigin(0.5).setVisible(false).setDepth(90);
 
-    const soundButton = this.makeUiButton(660, 31, 44, 40, 0x263c52, '', 18, 80);
-    this.soundText = this.add.text(660, 31, isMuted() ? '🔇' : '🔊', { fontSize: '17px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
+    const soundButton = this.makeUiButton(676, 31, 44, 40, 0x263c52, '', 18, 80);
+    this.soundText = this.add.text(676, 31, isMuted() ? 'OFF' : 'ON', { fontSize: '13px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
     soundButton.on('pointerdown', () => {
       const next = !isMuted();
       setMuted(next);
-      this.soundText.setText(next ? '🔇' : '🔊');
+      this.soundText.setText(next ? 'OFF' : 'ON');
       if (!next) playSfx(this, 'sfx_click');
     });
 
-    const waveButton = this.makeUiButton(762, 31, 154, 40, 0x9a3c2f, '', 16, 80);
-    this.waveButtonText = this.add.text(762, 31, '진행', {
-      fontSize: '17px', color: '#fff8cf', fontStyle: 'bold',
+    const waveButton = this.makeUiButton(770, 31, 132, 40, 0xa94732, '', 16, 80);
+    this.waveButtonText = this.add.text(770, 31, 'NEXT', {
+      fontSize: '16px', color: '#fff8cf', fontStyle: 'bold',
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 1, fill: true }
     }).setOrigin(0.5).setDepth(82);
     waveButton.on('pointerdown', () => {
@@ -388,14 +398,14 @@ export class GameScene extends Phaser.Scene {
       this.startNextWave(true);
     });
 
-    const speedButton = this.makeUiButton(876, 31, 58, 40, 0x24486b, '', 16, 80);
-    this.speedText = this.add.text(876, 31, '1x', { fontSize: '18px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
+    const speedButton = this.makeUiButton(873, 31, 58, 40, 0x24486b, '', 16, 80);
+    this.speedText = this.add.text(873, 31, '1x', { fontSize: '18px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
     speedButton.on('pointerdown', () => {
       pulseButton(this, speedButton);
       this.toggleSpeed();
     });
 
-    const pauseButton = this.makeUiButton(930, 31, 44, 40, 0x2f3440, 'Ⅱ', 20, 80);
+    const pauseButton = this.makeUiButton(932, 31, 44, 40, 0x2f3440, 'Ⅱ', 20, 80);
     pauseButton.on('pointerdown', () => {
       pulseButton(this, pauseButton);
       playSfx(this, 'sfx_click');
@@ -404,6 +414,7 @@ export class GameScene extends Phaser.Scene {
 
     this.refreshHud();
   }
+
 
   private createTowerSpots(): void {
     this.stage.spots.forEach((spot) => {
@@ -414,17 +425,21 @@ export class GameScene extends Phaser.Scene {
       const hammer = this.add.text(spot.x, spot.y - 8, '⚒', { fontSize: '21px', color: '#fff4c2', fontStyle: 'bold' }).setOrigin(0.5).setDepth(15);
       const tagBg = this.add.rectangle(spot.x, spot.y + 30, 72, 22, 0x130d09, 0.78).setStrokeStyle(1, 0xffd36b, 0.35).setDepth(16);
       const tag = this.add.text(spot.x, spot.y + 30, '건설지', { fontSize: '12px', color: '#ffefb4', fontStyle: 'bold' }).setOrigin(0.5).setDepth(17);
+      const premiumPreview = addBuildSpotPreview(this, spot.x, spot.y, 0xffd36b);
+      premiumPreview.setVisible(false);
 
       stone.setInteractive({ useHandCursor: true });
       stone.on('pointerover', () => {
         rim.setStrokeStyle(4, 0xfff0a3, 0.78);
         tag.setText('타워 건설');
+        premiumPreview.setVisible(true);
       });
       stone.on('pointerout', () => {
         rim.setStrokeStyle(3, 0xffd36b, 0.36);
         tag.setText('건설지');
+        premiumPreview.setVisible(false);
       });
-      stone.on('pointerdown', () => this.openBuildMenu(spot.x, spot.y, stone, rim, hammer, [shadow, light, tagBg, tag]));
+      stone.on('pointerdown', () => this.openBuildMenu(spot.x, spot.y, stone, rim, hammer, [shadow, light, tagBg, tag, premiumPreview]));
       this.tweens.add({ targets: [rim, light], alpha: '+=0.14', duration: 900, yoyo: true, repeat: -1 });
     });
   }
@@ -724,7 +739,7 @@ export class GameScene extends Phaser.Scene {
     this.waveAutoTimer?.remove(false);
     this.nextWaveCountdownMs = delayMs;
     this.updateWaveButton();
-    if (initial) this.showMessage('10초 후 첫 웨이브가 자동 진행됩니다. 준비되면 [진행]을 누르세요.');
+    if (initial) this.showMessage('10초 후 자동 출격합니다. 준비됐다면 [NEXT]로 즉시 진행하세요.');
     this.waveAutoTimer = this.time.delayedCall(delayMs, () => this.startNextWave(false));
   }
 
@@ -738,7 +753,7 @@ export class GameScene extends Phaser.Scene {
   private updateWaveButton(): void {
     if (!this.waveButtonText) return;
     if (this.waveRunning) {
-      this.waveButtonText.setText('진행중');
+      this.waveButtonText.setText('전투중');
       return;
     }
     if (this.waveIndex >= this.stage.waves.length - 1) {
@@ -746,7 +761,7 @@ export class GameScene extends Phaser.Scene {
       return;
     }
     const sec = Math.ceil(this.nextWaveCountdownMs / 1000);
-    this.waveButtonText.setText(sec > 0 ? `진행 ${sec}` : '진행 ▶');
+    this.waveButtonText.setText(sec > 0 ? `NEXT ${sec}` : 'NEXT ▶');
   }
 
   private startNextWave(early: boolean): void {
@@ -756,7 +771,7 @@ export class GameScene extends Phaser.Scene {
     if (early && this.waveIndex >= 0) {
       const bonus = 20 + this.stage.number * 5;
       this.gold += bonus;
-      this.showMessage(`진행 보너스 +$${bonus}`);
+      this.showMessage(`선제 출격 보너스 +$${bonus}`);
     }
     this.waveIndex += 1;
     this.waveRunning = true;
