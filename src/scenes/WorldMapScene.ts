@@ -55,8 +55,9 @@ export class WorldMapScene extends Phaser.Scene {
     }).setOrigin(0, 0).setDepth(5);
 
     this.renderStageNodes();
-    this.makeButton(150, 486, '연구소', () => this.scene.start('LabScene', { user: this.user, save: this.save }), 180, 48, 0x284f39);
-    this.makeButton(374, 486, '새로고침', () => void this.refreshSaveAndLeaderboard(), 180, 48, 0x24486b);
+    this.makeButton(122, 486, '연구소', () => this.scene.start('LabScene', { user: this.user, save: this.save }), 160, 48, 0x284f39);
+    this.makeButton(300, 486, '도감', () => this.scene.start('CodexScene', { user: this.user, save: this.save }), 140, 48, 0x5a3f6b);
+    this.makeButton(478, 486, '새로고침', () => void this.refreshSaveAndLeaderboard(), 160, 48, 0x24486b);
     this.startButton = this.makeButton(800, 486, '전투 시작', () => this.startSelectedStage(), 220, 52, 0x9a3c2f);
 
     this.refreshHeader();
@@ -85,6 +86,7 @@ export class WorldMapScene extends Phaser.Scene {
     g.lineTo(780, 362);
     g.lineTo(900, 252);
     g.lineTo(610, 165);
+    g.lineTo(885, 165);
     g.strokePath();
 
     g.lineStyle(9, 0xc19055, 1);
@@ -96,10 +98,13 @@ export class WorldMapScene extends Phaser.Scene {
     g.lineTo(780, 362);
     g.lineTo(900, 252);
     g.lineTo(610, 165);
+    g.lineTo(885, 165);
     g.strokePath();
 
     g.fillStyle(0x1d3b33, 1);
     g.fillEllipse(600, 165, 250, 150);
+    g.fillStyle(0x34272f, 1);
+    g.fillEllipse(884, 168, 220, 130);
     g.fillStyle(0x70a075, 0.16);
     g.fillEllipse(575, 170, 120, 45);
 
@@ -120,7 +125,8 @@ export class WorldMapScene extends Phaser.Scene {
     const positions: Record<StageId, { x: number; y: number }> = {
       stage_001: { x: 455, y: 282 },
       stage_002: { x: 780, y: 362 },
-      stage_003: { x: 610, y: 165 }
+      stage_003: { x: 610, y: 165 },
+      stage_004: { x: 884, y: 168 }
     };
 
     STAGE_LIST.forEach((stage) => {
@@ -131,7 +137,7 @@ export class WorldMapScene extends Phaser.Scene {
       const stars = best?.bestStars ?? 0;
       const selected = this.selectedStage.id === stage.id;
 
-      const themeColor = stage.theme === 'forest' ? 0x24486b : stage.theme === 'canyon' ? 0x8c4129 : 0x2f5a43;
+      const themeColor = stage.theme === 'forest' ? 0x24486b : stage.theme === 'canyon' ? 0x8c4129 : stage.theme === 'swamp' ? 0x2f5a43 : 0x6c1f2a;
       const color = unlocked ? themeColor : 0x444444;
       const ring = this.add.circle(0, 0, selected ? 78 : 68, 0xffffff, selected ? 0.08 : 0).setStrokeStyle(selected ? 4 : 2, selected ? 0xf7d36b : 0xffffff, selected ? 0.8 : 0.22);
       const core = this.add.circle(0, 0, 56, color, 1).setStrokeStyle(4, unlocked ? 0xf7d36b : 0x888888, unlocked ? 0.75 : 0.38);

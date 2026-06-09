@@ -10,10 +10,15 @@ export type EnemyKind =
   | 'ogre'
   | 'spider'
   | 'specter'
-  | 'troll';
+  | 'troll'
+  | 'raider'
+  | 'gargoyle'
+  | 'warlock'
+  | 'golem'
+  | 'demonlord';
 
 export type TowerKind = 'archer' | 'mage' | 'barracks' | 'artillery';
-export type StageId = 'stage_001' | 'stage_002' | 'stage_003';
+export type StageId = 'stage_001' | 'stage_002' | 'stage_003' | 'stage_004';
 
 export type PathPoint = { x: number; y: number };
 
@@ -57,7 +62,7 @@ export type StageConfig = {
   number: number;
   title: string;
   subtitle: string;
-  theme: 'forest' | 'canyon' | 'swamp';
+  theme: 'forest' | 'canyon' | 'swamp' | 'fortress';
   difficulty: string;
   startGold: number;
   maxLives: number;

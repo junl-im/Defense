@@ -162,6 +162,21 @@ export class Enemy extends Phaser.GameObjects.Container {
     if (config.kind === 'troll') {
       return this.scene.add.rectangle(7 * scale, 7 * scale, 15 * scale, 5 * scale, 0x2d1710, 0.9).setRotation(-0.35);
     }
+    if (config.kind === 'raider') {
+      return this.scene.add.triangle(0, 8 * scale, -8 * scale, 5 * scale, 8 * scale, 5 * scale, 0, 15 * scale, 0xd45656, 0.9);
+    }
+    if (config.kind === 'gargoyle') {
+      return this.scene.add.triangle(0, 2 * scale, -22 * scale, -4 * scale, 0, 2 * scale, 22 * scale, -4 * scale, 0x29303a, 0.6);
+    }
+    if (config.kind === 'warlock') {
+      return this.scene.add.star(0, 8 * scale, 6, 4 * scale, 11 * scale, 0xf06fff, 0.75);
+    }
+    if (config.kind === 'golem') {
+      return this.scene.add.rectangle(0, 8 * scale, 24 * scale, 10 * scale, 0x3d342c, 0.9).setStrokeStyle(1, 0xffd36b, 0.25);
+    }
+    if (config.kind === 'demonlord') {
+      return this.scene.add.triangle(0, -4 * scale, -18 * scale, -16 * scale, 0, -4 * scale, 18 * scale, -16 * scale, 0xffb347, 0.85);
+    }
     return this.scene.add.circle(0, 8 * scale, 3 * scale, config.accentColor ?? 0xffffff, 0.7);
   }
 

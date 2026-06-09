@@ -3,6 +3,7 @@ import type { EnemyConfig, EnemyKind, StageConfig, StageId, TowerConfig, TowerKi
 export const STAGE_1_ID: StageId = 'stage_001';
 export const STAGE_2_ID: StageId = 'stage_002';
 export const STAGE_3_ID: StageId = 'stage_003';
+export const STAGE_4_ID: StageId = 'stage_004';
 
 // Backward-compatible defaults for older imports.
 export const STAGE_ID = STAGE_1_ID;
@@ -55,6 +56,26 @@ export const ENEMIES: Record<EnemyKind, EnemyConfig> = {
   troll: {
     kind: 'troll', label: '늪 트롤', hp: 260, speed: 38, reward: 38,
     armor: 0.38, magicResist: 0.08, color: 0x57713b, accentColor: 0x243015, scale: 1.22, threat: 'tank'
+  },
+  raider: {
+    kind: 'raider', label: '검은 약탈자', hp: 115, speed: 92, reward: 18,
+    armor: 0.2, magicResist: 0.08, color: 0x2b2b34, accentColor: 0xd45656, scale: 1.05, threat: 'fast'
+  },
+  gargoyle: {
+    kind: 'gargoyle', label: '가고일', hp: 140, speed: 68, reward: 26,
+    armor: 0.28, magicResist: 0.22, flying: true, color: 0x7d8490, accentColor: 0x29303a, scale: 1.12, threat: 'flying'
+  },
+  warlock: {
+    kind: 'warlock', label: '흑마도사', hp: 150, speed: 48, reward: 34,
+    armor: 0.04, magicResist: 0.62, color: 0x6a45a8, accentColor: 0xf06fff, scale: 1.08, threat: 'support'
+  },
+  golem: {
+    kind: 'golem', label: '공성 골렘', hp: 640, speed: 25, reward: 72,
+    armor: 0.48, magicResist: 0.18, color: 0x8b7765, accentColor: 0x3d342c, scale: 1.45, threat: 'tank'
+  },
+  demonlord: {
+    kind: 'demonlord', label: '관문 군주', hp: 1350, speed: 22, reward: 190,
+    armor: 0.32, magicResist: 0.34, color: 0x9d1f2f, accentColor: 0xffb347, scale: 1.68, threat: 'boss'
   }
 };
 
@@ -121,6 +142,24 @@ const STAGE_3_WAVES: WaveSpawn[][] = [
   [{ kind: 'ogre', count: 3, gapMs: 1300 }, { kind: 'specter', count: 20, gapMs: 300 }, { kind: 'spider', count: 34, gapMs: 190 }]
 ];
 
+
+const STAGE_4_WAVES: WaveSpawn[][] = [
+  [{ kind: 'raider', count: 16, gapMs: 340 }, { kind: 'shield', count: 6, gapMs: 620 }],
+  [{ kind: 'gargoyle', count: 8, gapMs: 650 }, { kind: 'raider', count: 12, gapMs: 360 }],
+  [{ kind: 'warlock', count: 4, gapMs: 920 }, { kind: 'raider', count: 20, gapMs: 290 }],
+  [{ kind: 'golem', count: 2, gapMs: 1300 }, { kind: 'goblin', count: 26, gapMs: 240 }],
+  [{ kind: 'gargoyle', count: 12, gapMs: 520 }, { kind: 'warlock', count: 4, gapMs: 900 }],
+  [{ kind: 'raider', count: 26, gapMs: 260 }, { kind: 'shield', count: 10, gapMs: 520 }],
+  [{ kind: 'golem', count: 4, gapMs: 1050 }, { kind: 'warlock', count: 5, gapMs: 760 }],
+  [{ kind: 'gargoyle', count: 18, gapMs: 390 }, { kind: 'raider', count: 24, gapMs: 260 }],
+  [{ kind: 'golem', count: 5, gapMs: 920 }, { kind: 'gargoyle', count: 12, gapMs: 420 }],
+  [{ kind: 'warlock', count: 7, gapMs: 650 }, { kind: 'shield', count: 14, gapMs: 450 }, { kind: 'raider', count: 20, gapMs: 240 }],
+  [{ kind: 'demonlord', count: 1, gapMs: 1000 }, { kind: 'golem', count: 4, gapMs: 1000 }, { kind: 'gargoyle', count: 14, gapMs: 360 }],
+  [{ kind: 'demonlord', count: 1, gapMs: 1000 }, { kind: 'warlock', count: 8, gapMs: 540 }, { kind: 'raider', count: 34, gapMs: 190 }],
+  [{ kind: 'demonlord', count: 2, gapMs: 1800 }, { kind: 'golem', count: 6, gapMs: 780 }, { kind: 'gargoyle', count: 20, gapMs: 310 }],
+  [{ kind: 'demonlord', count: 3, gapMs: 1600 }, { kind: 'warlock', count: 8, gapMs: 480 }, { kind: 'raider', count: 44, gapMs: 160 }]
+];
+
 export const STAGES: Record<StageId, StageConfig> = {
   stage_001: {
     id: 'stage_001', number: 1, title: '숲길 방어전', subtitle: '고블린 침입로', theme: 'forest', difficulty: '입문',
@@ -166,12 +205,29 @@ export const STAGES: Record<StageId, StageConfig> = {
     ],
     waves: STAGE_3_WAVES,
     tip: '망령은 공중 판정이고 마법 저항이 높습니다. 궁수와 포탑, 병영 길막 조합을 강하게 가져가세요.'
+  },
+  stage_004: {
+    id: 'stage_004', number: 4, title: '마왕의 관문', subtitle: '공성 골렘과 관문 군주', theme: 'fortress', difficulty: '매우 어려움',
+    startGold: 520, maxLives: 18, unlockRequires: 'stage_003',
+    path: [
+      { x: -30, y: 420 }, { x: 130, y: 420 }, { x: 230, y: 315 }, { x: 160, y: 205 },
+      { x: 330, y: 120 }, { x: 485, y: 205 }, { x: 610, y: 120 }, { x: 775, y: 185 },
+      { x: 705, y: 330 }, { x: 810, y: 430 }, { x: 990, y: 430 }
+    ],
+    spots: [
+      { x: 125, y: 330 }, { x: 250, y: 220 }, { x: 345, y: 65 },
+      { x: 465, y: 295 }, { x: 595, y: 210 }, { x: 715, y: 115 },
+      { x: 760, y: 345 }, { x: 870, y: 365 }, { x: 875, y: 470 }
+    ],
+    waves: STAGE_4_WAVES,
+    tip: '관문 군주는 라이프를 크게 깎습니다. 병영을 여러 겹으로 배치하고 포탑 충격탄으로 보스 행렬을 늦추세요.'
   }
 };
 
-export const STAGE_LIST: StageConfig[] = [STAGES.stage_001, STAGES.stage_002, STAGES.stage_003];
+export const STAGE_LIST: StageConfig[] = [STAGES.stage_001, STAGES.stage_002, STAGES.stage_003, STAGES.stage_004];
 
 export function getStageConfig(stageId?: string): StageConfig {
+  if (stageId === STAGE_4_ID) return STAGES.stage_004;
   if (stageId === STAGE_3_ID) return STAGES.stage_003;
   if (stageId === STAGE_2_ID) return STAGES.stage_002;
   return STAGES.stage_001;

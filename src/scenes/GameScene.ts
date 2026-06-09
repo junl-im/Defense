@@ -35,6 +35,9 @@ export class GameScene extends Phaser.Scene {
   ended = false;
   meteorCooldownMs = 0;
   mercenaryCooldownMs = 0;
+  gameSpeed = 1;
+  paused = false;
+  pauseOverlay?: Phaser.GameObjects.Container;
 
   goldText!: Phaser.GameObjects.Text;
   livesText!: Phaser.GameObjects.Text;
@@ -44,6 +47,7 @@ export class GameScene extends Phaser.Scene {
   meteorText!: Phaser.GameObjects.Text;
   mercenaryText!: Phaser.GameObjects.Text;
   heroSkillText!: Phaser.GameObjects.Text;
+  speedText!: Phaser.GameObjects.Text;
 
   constructor() {
     super('GameScene');
@@ -68,9 +72,12 @@ export class GameScene extends Phaser.Scene {
     this.ended = false;
     this.meteorCooldownMs = 0;
     this.mercenaryCooldownMs = 0;
+    this.gameSpeed = 1;
+    this.paused = false;
   }
 
   create(): void {
+    this.time.timeScale = 1;
     this.startTime = Date.now();
     this.drawMap();
     this.createHud();
@@ -83,7 +90,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   update(_: number, delta: number): void {
-    if (this.ended) return;
+    if (this.ended || this.paused) return;
     this.meteorCooldownMs = Math.max(0, this.meteorCooldownMs - delta);
     this.mercenaryCooldownMs = Math.max(0, this.mercenaryCooldownMs - delta);
 
@@ -125,11 +132,11 @@ export class GameScene extends Phaser.Scene {
 
   private drawMap(): void {
     const theme = this.stage.theme;
-    const sky = theme === 'forest' ? 0x142734 : theme === 'canyon' ? 0x281a18 : 0x101922;
-    const ground = theme === 'forest' ? 0x203c2b : theme === 'canyon' ? 0x6a3824 : 0x1e352c;
-    const ground2 = theme === 'forest' ? 0x2e5a35 : theme === 'canyon' ? 0x8a5130 : 0x31483a;
-    const pathEdge = theme === 'forest' ? 0x6b4f2d : theme === 'canyon' ? 0x5b2f20 : 0x304136;
-    const pathMain = theme === 'forest' ? 0xb08a52 : theme === 'canyon' ? 0xc2834e : 0x79816a;
+    const sky = theme === 'forest' ? 0x142734 : theme === 'canyon' ? 0x281a18 : theme === 'swamp' ? 0x101922 : 0x15131a;
+    const ground = theme === 'forest' ? 0x203c2b : theme === 'canyon' ? 0x6a3824 : theme === 'swamp' ? 0x1e352c : 0x2b2630;
+    const ground2 = theme === 'forest' ? 0x2e5a35 : theme === 'canyon' ? 0x8a5130 : theme === 'swamp' ? 0x31483a : 0x40333a;
+    const pathEdge = theme === 'forest' ? 0x6b4f2d : theme === 'canyon' ? 0x5b2f20 : theme === 'swamp' ? 0x304136 : 0x161116;
+    const pathMain = theme === 'forest' ? 0xb08a52 : theme === 'canyon' ? 0xc2834e : theme === 'swamp' ? 0x79816a : 0x7c6b5e;
 
     this.add.rectangle(480, 270, 960, 540, sky, 1);
 
@@ -144,7 +151,8 @@ export class GameScene extends Phaser.Scene {
 
     if (theme === 'forest') this.drawForestDetails();
     else if (theme === 'canyon') this.drawCanyonDetails();
-    else this.drawSwampDetails();
+    else if (theme === 'swamp') this.drawSwampDetails();
+    else this.drawFortressDetails();
 
     this.drawPath(pathEdge, 48);
     this.drawPath(pathMain, 30);
@@ -202,6 +210,25 @@ export class GameScene extends Phaser.Scene {
     this.add.ellipse(112, 418, 112, 26, 0x6fb38c, 0.12).setDepth(3);
   }
 
+
+  private drawFortressDetails(): void {
+    this.add.rectangle(480, 96, 960, 64, 0x221820, 0.55).setDepth(2);
+    for (let i = 0; i < 13; i++) {
+      const x = 28 + i * 76;
+      this.add.rectangle(x, 92, 44, 70, 0x3a3036, 1).setStrokeStyle(2, 0x0e0a0d, 0.35).setDepth(2);
+      this.add.triangle(x, 42, -25, 28, 0, -14, 25, 28, 0x6c1f2a, 1).setDepth(3);
+      if (i % 2 === 0) this.add.circle(x + 18, 122, 5, 0xff7a42, 0.36).setDepth(4);
+    }
+    for (let i = 0; i < 18; i++) {
+      const x = (i * 73 + 55) % 930;
+      const y = 150 + ((i * 89) % 330);
+      if (this.nearPath(x, y, 62)) continue;
+      this.add.rectangle(x, y, 54, 22, 0x3d342c, 0.95).setRotation((i % 5 - 2) * 0.08).setStrokeStyle(1, 0x0e0a0d, 0.35).setDepth(2);
+      if (i % 3 === 0) this.add.circle(x + 24, y - 10, 7, 0xffb347, 0.18).setDepth(3);
+    }
+    this.add.circle(850, 112, 44, 0xff5a3d, 0.12).setStrokeStyle(2, 0xffb347, 0.2).setDepth(3);
+  }
+
   private nearPath(x: number, y: number, threshold: number): boolean {
     for (const p of this.stage.path) {
       if (Phaser.Math.Distance.Between(x, y, p.x, p.y) < threshold) return true;
@@ -221,11 +248,25 @@ export class GameScene extends Phaser.Scene {
       padding: { x: 12, y: 7 }
     }).setOrigin(0.5).setVisible(false).setDepth(90);
 
-    const waveButton = this.makeUiButton(840, 30, 184, 42, 0x9a3c2f, '조기 웨이브', 20, 80);
+    const waveButton = this.makeUiButton(762, 30, 150, 42, 0x9a3c2f, '조기 웨이브', 18, 80);
     waveButton.on('pointerdown', () => {
       pulseButton(this, waveButton);
       this.startNextWave(true);
     });
+
+    const speedButton = this.makeUiButton(870, 30, 58, 42, 0x24486b, '', 16, 80);
+    this.speedText = this.add.text(870, 30, '1x', { fontSize: '18px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
+    speedButton.on('pointerdown', () => {
+      pulseButton(this, speedButton);
+      this.toggleSpeed();
+    });
+
+    const pauseButton = this.makeUiButton(925, 30, 46, 42, 0x2f3440, 'Ⅱ', 20, 80);
+    pauseButton.on('pointerdown', () => {
+      pulseButton(this, pauseButton);
+      this.openPauseOverlay();
+    });
+
     this.refreshHud();
   }
 
@@ -438,6 +479,52 @@ export class GameScene extends Phaser.Scene {
     this.heroSkillText.setText(this.hero.skillCooldownMs > 0 ? `🦁 ${Math.ceil(this.hero.skillCooldownMs / 1000)}s` : '🦁 대지강타');
   }
 
+
+  private toggleSpeed(): void {
+    this.gameSpeed = this.gameSpeed === 1 ? 2 : 1;
+    if (!this.paused) this.time.timeScale = this.gameSpeed;
+    this.speedText?.setText(`${this.gameSpeed}x`);
+    this.showMessage(this.gameSpeed === 2 ? '전투 속도 2배' : '전투 속도 1배');
+  }
+
+  private openPauseOverlay(): void {
+    if (this.pauseOverlay?.active) return;
+    this.paused = true;
+    this.time.timeScale = 0;
+    const panel = this.add.container(480, 270).setDepth(120);
+    const bg = this.add.rectangle(0, 0, 500, 300, 0x0b1220, 0.95).setStrokeStyle(2, 0xf7d36b, 0.5);
+    const title = this.add.text(0, -102, 'PAUSED', { fontSize: '42px', color: '#f7d36b', fontStyle: 'bold' }).setOrigin(0.5);
+    const desc = this.add.text(0, -40, `${this.stage.title}
+속도 ${this.gameSpeed}x / Wave ${Math.max(0, this.waveIndex + 1)}/${this.stage.waves.length}`, {
+      fontSize: '20px', color: '#dbe7ff', align: 'center', lineSpacing: 8
+    }).setOrigin(0.5);
+    const resume = this.add.rectangle(-115, 80, 180, 48, 0x284f39, 1).setStrokeStyle(2, 0xffffff, 0.25).setInteractive({ useHandCursor: true });
+    const resumeText = this.add.text(-115, 80, '계속하기', { fontSize: '22px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
+    const world = this.add.rectangle(115, 80, 180, 48, 0x24486b, 1).setStrokeStyle(2, 0xffffff, 0.25).setInteractive({ useHandCursor: true });
+    const worldText = this.add.text(115, 80, '월드맵', { fontSize: '22px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
+    resume.on('pointerdown', () => this.closePauseOverlay());
+    world.on('pointerdown', () => {
+      this.time.timeScale = 1;
+      this.scene.start('WorldMapScene', { user: this.user, save: this.save });
+    });
+    panel.add([bg, title, desc, resume, resumeText, world, worldText]);
+    this.pauseOverlay = panel;
+  }
+
+  private closePauseOverlay(): void {
+    this.pauseOverlay?.destroy();
+    this.pauseOverlay = undefined;
+    this.paused = false;
+    this.time.timeScale = this.gameSpeed;
+  }
+
+  private showBossWarning(): void {
+    const warning = this.add.text(480, 118, '⚠ 보스 웨이브 접근 ⚠', {
+      fontSize: '32px', color: '#ffb347', fontStyle: 'bold', backgroundColor: '#2b0f0faa', padding: { x: 18, y: 8 }
+    }).setOrigin(0.5).setDepth(95);
+    this.tweens.add({ targets: warning, scale: 1.08, duration: 180, yoyo: true, repeat: 3, onComplete: () => warning.destroy() });
+  }
+
   private startNextWave(early: boolean): void {
     if (this.waveRunning) return;
     if (this.waveIndex >= this.stage.waves.length - 1) return;
@@ -450,8 +537,12 @@ export class GameScene extends Phaser.Scene {
     this.waveRunning = true;
     this.refreshHud();
     const waveNumber = this.waveIndex + 1;
-    spawnWaveBanner(this, `WAVE ${waveNumber}`, this.describeWave(this.stage.waves[this.waveIndex]));
-    this.spawnWave(this.stage.waves[this.waveIndex]);
+    const waveGroups = this.stage.waves[this.waveIndex];
+    spawnWaveBanner(this, `WAVE ${waveNumber}`, this.describeWave(waveGroups));
+    if (waveGroups.some((group) => ENEMIES[group.kind].threat === 'boss')) {
+      this.showBossWarning();
+    }
+    this.spawnWave(waveGroups);
   }
 
   private spawnWave(groups: WaveSpawn[]): void {
@@ -492,10 +583,10 @@ export class GameScene extends Phaser.Scene {
     this.add.text(480, 180, 'DEFENSE FAILED', { fontSize: '40px', color: '#ff8080', fontStyle: 'bold' }).setOrigin(0.5).setDepth(93);
     this.add.text(480, 242, `${this.stage.title} / Wave ${this.waveIndex + 1} / Score ${this.score}`, { fontSize: '21px', color: '#ffffff' }).setOrigin(0.5).setDepth(93);
     const world = this.makeUiButton(370, 330, 180, 48, 0x284f39, '월드맵', 22, 93);
-    world.on('pointerdown', () => this.scene.start('WorldMapScene', { user: this.user, save: this.save }));
+    world.on('pointerdown', () => { this.time.timeScale = 1; this.scene.start('WorldMapScene', { user: this.user, save: this.save }); });
 
     const retry = this.makeUiButton(590, 330, 180, 48, 0x24486b, '다시 도전', 22, 93);
-    retry.on('pointerdown', () => this.scene.restart({ user: this.user, save: this.save, stageId: this.stage.id }));
+    retry.on('pointerdown', () => { this.time.timeScale = 1; this.scene.restart({ user: this.user, save: this.save, stageId: this.stage.id }); });
   }
 
   private async finishStage(): Promise<void> {
@@ -531,10 +622,10 @@ export class GameScene extends Phaser.Scene {
     const lines = top.slice(0, 5).map((s, i) => `${i + 1}. ${s.nickname}  ${s.score}`).join('\n');
     this.add.text(480, 250, `오늘의 ${this.stage.title} 명예의 전당\n${lines || '아직 기록 없음'}`, { fontSize: '21px', color: '#dbe7ff', align: 'center' }).setOrigin(0.5).setDepth(93);
     const world = this.makeUiButton(370, 420, 180, 48, 0x284f39, '월드맵', 22, 93);
-    world.on('pointerdown', () => this.scene.start('WorldMapScene', { user: this.user, save: this.save }));
+    world.on('pointerdown', () => { this.time.timeScale = 1; this.scene.start('WorldMapScene', { user: this.user, save: this.save }); });
 
     const retry = this.makeUiButton(590, 420, 180, 48, 0x24486b, '다시 도전', 22, 93);
-    retry.on('pointerdown', () => this.scene.restart({ user: this.user, save: this.save, stageId: this.stage.id }));
+    retry.on('pointerdown', () => { this.time.timeScale = 1; this.scene.restart({ user: this.user, save: this.save, stageId: this.stage.id }); });
   }
 
   private makeUiButton(x: number, y: number, width: number, height: number, color: number, label: string, fontSize = 18, depth = 10): Phaser.GameObjects.Rectangle {
