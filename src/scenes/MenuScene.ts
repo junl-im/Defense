@@ -38,8 +38,8 @@ export class MenuScene extends Phaser.Scene {
       color: '#98a6c2'
     }).setOrigin(0.5);
 
-    this.makeButton(480, 250, '익명으로 바로 시작', () => void this.startAnonymous());
-    this.makeButton(480, 312, 'Google 로그인으로 시작', () => void this.startGoogle());
+    this.makeButton(480, 250, '익명으로 시작 / 월드맵', () => void this.startAnonymous());
+    this.makeButton(480, 312, 'Google 로그인 / 월드맵', () => void this.startGoogle());
     this.makeButton(480, 374, '이메일 로그인', () => void this.startEmailLogin());
     this.makeButton(480, 436, '이메일 회원가입', () => void this.startEmailRegister());
 
@@ -61,7 +61,7 @@ export class MenuScene extends Phaser.Scene {
       }
       this.currentUser = existing;
       this.currentSave = await loadOrCreateSave(existing);
-      this.statusText.setText(`${this.currentSave.nickname} 로그인됨. 버튼을 눌러 시작하세요.`);
+      this.statusText.setText(`${this.currentSave.nickname} 로그인됨. 시작하면 월드맵으로 이동합니다.`);
     } catch (error) {
       console.error(error);
       this.statusText.setText('Firebase 로그인 확인 실패. 설정/도메인을 확인하세요.');
@@ -72,7 +72,7 @@ export class MenuScene extends Phaser.Scene {
     await this.withLoading(async () => {
       const user = await ensureAnonymousUser();
       const save = await loadOrCreateSave(user);
-      this.scene.start('GameScene', { user, save });
+      this.scene.start('WorldMapScene', { user, save });
     });
   }
 
@@ -84,7 +84,7 @@ export class MenuScene extends Phaser.Scene {
         return;
       }
       const save = await loadOrCreateSave(user);
-      this.scene.start('GameScene', { user, save });
+      this.scene.start('WorldMapScene', { user, save });
     });
   }
 
@@ -97,7 +97,7 @@ export class MenuScene extends Phaser.Scene {
     await this.withLoading(async () => {
       const user = await loginWithEmail(email, password);
       const save = await loadOrCreateSave(user);
-      this.scene.start('GameScene', { user, save });
+      this.scene.start('WorldMapScene', { user, save });
     });
   }
 
@@ -110,7 +110,7 @@ export class MenuScene extends Phaser.Scene {
     await this.withLoading(async () => {
       const user = await registerWithEmail(email, password);
       const save = await loadOrCreateSave(user);
-      this.scene.start('GameScene', { user, save });
+      this.scene.start('WorldMapScene', { user, save });
     });
   }
 

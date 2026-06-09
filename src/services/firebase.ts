@@ -111,6 +111,74 @@ const defaultUpgrades: PlayerSave["upgrades"] = {
   artillerySplash: 0,
 };
 
+
+
+export type UpgradeKey = keyof PlayerSave["upgrades"];
+
+export const UPGRADE_META: Record<UpgradeKey, { label: string; description: string; maxLevel: number }> = {
+  archerDamage: {
+    label: "궁수 피해 연구",
+    description: "궁수 탑의 기본 피해량이 레벨당 8% 증가합니다.",
+    maxLevel: 3,
+  },
+  mageDamage: {
+    label: "마법 관통 연구",
+    description: "마법사 탑의 기본 피해량이 레벨당 10% 증가합니다.",
+    maxLevel: 3,
+  },
+  barracksHp: {
+    label: "병영 방패 연구",
+    description: "병영 병사의 체력이 레벨당 20 증가합니다.",
+    maxLevel: 3,
+  },
+  artillerySplash: {
+    label: "포탑 화약 연구",
+    description: "포탑의 폭발 범위가 레벨당 6 증가합니다.",
+    maxLevel: 3,
+  },
+};
+
+export function getUpgradeCost(key: UpgradeKey, currentLevel: number): number | null {
+  const meta = UPGRADE_META[key];
+  if (currentLevel >= meta.maxLevel) return null;
+  return [1, 1, 2][currentLevel] ?? 3;
+}
+
+export async function purchasePermanentUpgrade(
+  user: User,
+  save: PlayerSave,
+  key: UpgradeKey
+): Promise<PlayerSave> {
+  const currentLevel = Number(save.upgrades[key] ?? 0);
+  const cost = getUpgradeCost(key, currentLevel);
+  if (cost === null) throw new Error("이미 최대 연구 레벨입니다.");
+  if (save.stars < cost) throw new Error(`별이 부족합니다. 필요 별: ${cost}`);
+
+  const nextSave: PlayerSave = {
+    ...save,
+    stars: save.stars - cost,
+    upgrades: {
+      ...save.upgrades,
+      [key]: currentLevel + 1,
+    },
+    updatedAt: serverTimestamp(),
+  };
+
+  await setDoc(
+    doc(db, "users", user.uid),
+    {
+      nickname: nextSave.nickname,
+      stars: nextSave.stars,
+      clearedStages: nextSave.clearedStages,
+      upgrades: nextSave.upgrades,
+      updatedAt: serverTimestamp(),
+    },
+    { merge: true }
+  );
+
+  return nextSave;
+}
+
 function makeGuestName(user: User): string {
   return `Guest${user.uid.slice(0, 5).toUpperCase()}`;
 }

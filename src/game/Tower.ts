@@ -3,6 +3,20 @@ import type { TowerConfig } from './types';
 import { Enemy } from './Enemy';
 import { Soldier } from './Soldier';
 
+export type TowerUpgradeSnapshot = {
+  archerDamage: number;
+  mageDamage: number;
+  barracksHp: number;
+  artillerySplash: number;
+};
+
+const DEFAULT_UPGRADES: TowerUpgradeSnapshot = {
+  archerDamage: 0,
+  mageDamage: 0,
+  barracksHp: 0,
+  artillerySplash: 0,
+};
+
 export class Tower extends Phaser.GameObjects.Container {
   level = 1;
   cooldownMs = 0;
@@ -10,6 +24,7 @@ export class Tower extends Phaser.GameObjects.Container {
   rangeCircle: Phaser.GameObjects.Arc;
   private levelText: Phaser.GameObjects.Text;
   private top: Phaser.GameObjects.Arc;
+  private permanentUpgrades: TowerUpgradeSnapshot = { ...DEFAULT_UPGRADES };
 
   constructor(scene: Phaser.Scene, x: number, y: number, public readonly config: TowerConfig) {
     super(scene, x, y);
@@ -25,12 +40,27 @@ export class Tower extends Phaser.GameObjects.Container {
     this.setInteractive(new Phaser.Geom.Circle(0, 0, 28), Phaser.Geom.Circle.Contains);
   }
 
+  applyPermanentUpgrades(upgrades: Partial<TowerUpgradeSnapshot> | undefined): void {
+    this.permanentUpgrades = {
+      ...DEFAULT_UPGRADES,
+      ...(upgrades ?? {}),
+    };
+    this.rangeCircle.setRadius(this.currentRange);
+    if (this.config.kind === 'barracks' && this.soldiers.length > 0) {
+      const opts = this.soldierOptions();
+      this.soldiers.forEach((soldier) => soldier.setStats(opts.damage ?? 7, opts.maxHp ?? 70, opts.blockMs ?? 250));
+    }
+  }
+
   get currentRange(): number {
     return this.config.range + (this.level - 1) * 18;
   }
 
   get currentDamage(): number {
-    return Math.round(this.config.damage * (1 + (this.level - 1) * 0.42));
+    let multiplier = 1 + (this.level - 1) * 0.42;
+    if (this.config.kind === 'archer') multiplier += this.permanentUpgrades.archerDamage * 0.08;
+    if (this.config.kind === 'mage') multiplier += this.permanentUpgrades.mageDamage * 0.1;
+    return Math.round(this.config.damage * multiplier);
   }
 
   get currentFireRateMs(): number {
@@ -39,7 +69,7 @@ export class Tower extends Phaser.GameObjects.Container {
 
   get currentSplashRadius(): number | undefined {
     if (!this.config.splashRadius) return undefined;
-    return this.config.splashRadius + (this.level - 1) * 8;
+    return this.config.splashRadius + (this.level - 1) * 8 + this.permanentUpgrades.artillerySplash * 6;
   }
 
   get upgradeCost(): number | null {
@@ -91,7 +121,7 @@ export class Tower extends Phaser.GameObjects.Container {
 
   private soldierOptions() {
     const damage = Math.round(this.config.damage * (1 + (this.level - 1) * 0.5));
-    const maxHp = 70 + (this.level - 1) * 35;
+    const maxHp = 70 + (this.level - 1) * 35 + this.permanentUpgrades.barracksHp * 20;
     const blockMs = this.level >= 3 ? 420 : 250 + (this.level - 1) * 55;
     return { damage, maxHp, blockMs, color: this.level >= 3 ? 0x7cc7ff : 0x4fa3ff };
   }

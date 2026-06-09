@@ -195,6 +195,7 @@ export class GameScene extends Phaser.Scene {
         this.gold -= cfg.cost;
         spot.disableInteractive().setVisible(false);
         const tower = new Tower(this, x, y, cfg);
+        tower.applyPermanentUpgrades(this.save.upgrades);
         if (kind === 'barracks') tower.spawnSoldiers();
         tower.on('pointerdown', () => this.selectTower(tower));
         this.towers.push(tower);
@@ -395,8 +396,12 @@ export class GameScene extends Phaser.Scene {
     this.add.rectangle(480, 270, 560, 310, 0x0b1220, 0.94).setDepth(90);
     this.add.text(480, 185, 'DEFENSE FAILED', { fontSize: '40px', color: '#ff8080', fontStyle: 'bold' }).setOrigin(0.5).setDepth(91);
     this.add.text(480, 245, `Wave ${this.waveIndex + 1} / Score ${this.score}`, { fontSize: '22px', color: '#ffffff' }).setOrigin(0.5).setDepth(91);
-    const retry = this.add.rectangle(480, 330, 180, 48, 0x24486b, 1).setStrokeStyle(2, 0x7cc7ff).setInteractive({ useHandCursor: true }).setDepth(91);
-    this.add.text(480, 330, '다시 도전', { fontSize: '22px', color: '#ffffff' }).setOrigin(0.5).setDepth(92);
+    const world = this.add.rectangle(370, 330, 180, 48, 0x284f39, 1).setStrokeStyle(2, 0xa6ffb0).setInteractive({ useHandCursor: true }).setDepth(91);
+    this.add.text(370, 330, '월드맵', { fontSize: '22px', color: '#ffffff' }).setOrigin(0.5).setDepth(92);
+    world.on('pointerdown', () => this.scene.start('WorldMapScene', { user: this.user, save: this.save }));
+
+    const retry = this.add.rectangle(590, 330, 180, 48, 0x24486b, 1).setStrokeStyle(2, 0x7cc7ff).setInteractive({ useHandCursor: true }).setDepth(91);
+    this.add.text(590, 330, '다시 도전', { fontSize: '22px', color: '#ffffff' }).setOrigin(0.5).setDepth(92);
     retry.on('pointerdown', () => this.scene.restart({ user: this.user, save: this.save }));
   }
 
@@ -432,8 +437,12 @@ export class GameScene extends Phaser.Scene {
     this.add.text(480, 160, `Score ${score} / Lives ${this.lives} / Stars ${this.save.stars}`, { fontSize: '24px', color: '#ffffff' }).setOrigin(0.5).setDepth(51);
     const lines = top.slice(0, 5).map((s, i) => `${i + 1}. ${s.nickname}  ${s.score}`).join('\n');
     this.add.text(480, 250, `오늘의 명예의 전당\n${lines || '아직 기록 없음'}`, { fontSize: '22px', color: '#dbe7ff', align: 'center' }).setOrigin(0.5).setDepth(51);
-    const retry = this.add.rectangle(480, 420, 180, 48, 0x24486b, 1).setStrokeStyle(2, 0x7cc7ff).setInteractive({ useHandCursor: true }).setDepth(51);
-    this.add.text(480, 420, '다시 도전', { fontSize: '22px', color: '#ffffff' }).setOrigin(0.5).setDepth(52);
+    const world = this.add.rectangle(370, 420, 180, 48, 0x284f39, 1).setStrokeStyle(2, 0xa6ffb0).setInteractive({ useHandCursor: true }).setDepth(51);
+    this.add.text(370, 420, '월드맵', { fontSize: '22px', color: '#ffffff' }).setOrigin(0.5).setDepth(52);
+    world.on('pointerdown', () => this.scene.start('WorldMapScene', { user: this.user, save: this.save }));
+
+    const retry = this.add.rectangle(590, 420, 180, 48, 0x24486b, 1).setStrokeStyle(2, 0x7cc7ff).setInteractive({ useHandCursor: true }).setDepth(51);
+    this.add.text(590, 420, '다시 도전', { fontSize: '22px', color: '#ffffff' }).setOrigin(0.5).setDepth(52);
     retry.on('pointerdown', () => this.scene.restart({ user: this.user, save: this.save }));
   }
 }
