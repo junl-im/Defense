@@ -40,7 +40,7 @@ export class Tower extends Phaser.GameObjects.Container {
     this.roof = this.makeRoof(scene, config);
     const label = scene.add.text(0, -8, this.symbolFor(config.kind), { fontSize: '18px', color: '#101820', fontStyle: 'bold' }).setOrigin(0.5);
     this.levelText = scene.add.text(0, 23, 'Ⅰ', { fontSize: '14px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
-    const spriteKey = `tower-${config.kind}`;
+    const spriteKey = this.resolveTowerTextureKey();
     if (scene.textures.exists(spriteKey)) {
       this.sprite = scene.add.image(0, 0, spriteKey).setScale(1.08);
       base.setAlpha(0);
@@ -135,6 +135,7 @@ export class Tower extends Phaser.GameObjects.Container {
     this.rangeCircle.setRadius(this.currentRange);
     this.levelText.setText(this.level === 2 ? 'Ⅱ' : 'Ⅲ');
     this.top.setRadius(this.level === 2 ? 20 : 22);
+    this.updateSpriteForLevel();
     this.scene.tweens.add({ targets: [this.top, this.roof, this.sprite].filter(Boolean), scale: 1.18, duration: 100, yoyo: true });
     playSfx(this.scene, 'sfx_upgrade');
     spawnImpactRing(this.scene, this.x, this.y - 10, 34, this.config.color, 0.18, 360);
@@ -210,6 +211,22 @@ export class Tower extends Phaser.GameObjects.Container {
         }
       });
     });
+  }
+
+
+  private resolveTowerTextureKey(): string {
+    const levelKey = `tower-${this.config.kind}-lv${this.level}`;
+    if (this.scene.textures.exists(levelKey)) return levelKey;
+    return `tower-${this.config.kind}`;
+  }
+
+  private updateSpriteForLevel(): void {
+    if (!this.sprite) return;
+    const nextKey = this.resolveTowerTextureKey();
+    if (this.scene.textures.exists(nextKey)) {
+      this.sprite.setTexture(nextKey);
+      this.sprite.setScale(this.level >= 3 ? 1.18 : this.level === 2 ? 1.13 : 1.08);
+    }
   }
 
   private symbolFor(kind: TowerConfig['kind']): string {

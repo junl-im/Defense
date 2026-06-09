@@ -8,6 +8,7 @@ const ENEMY_KEYS: EnemyKind[] = [
 ];
 
 const TOWER_KEYS: TowerKind[] = ['archer', 'mage', 'barracks', 'artillery'];
+const TOWER_LEVELS = [1, 2, 3] as const;
 
 export class BootScene extends Phaser.Scene {
   constructor() {
@@ -33,10 +34,22 @@ export class BootScene extends Phaser.Scene {
     this.load.image('ui-icon-spark', 'assets/ui/icon_spark.png');
     this.load.spritesheet('ui-particles', 'assets/ui/particles_magic.png', { frameWidth: 32, frameHeight: 32 });
 
+    this.load.image('ui-world-map-bg', 'assets/ui/world_map_painted.png');
+    this.load.image('ui-stage-card-frame', 'assets/ui/stage_card_frame.png');
+    this.load.image('ui-stage-card-locked', 'assets/ui/stage_card_locked.png');
+    this.load.image('ui-panel-detail-large', 'assets/ui/panel_detail_large.png');
+    this.load.image('ui-banner-worldmap', 'assets/ui/banner_worldmap.png');
+    this.load.image('ui-icon-star-large', 'assets/ui/icon_star_large.png');
+    this.load.image('ui-icon-lock', 'assets/ui/icon_lock.png');
+
     this.load.image('map-thumb-stage-001', 'assets/maps/map_stage_001.png');
     this.load.image('map-thumb-stage-002', 'assets/maps/map_stage_002.png');
     this.load.image('map-thumb-stage-003', 'assets/maps/map_stage_003.png');
     this.load.image('map-thumb-stage-004', 'assets/maps/map_stage_004.png');
+    this.load.image('map-card-stage-001', 'assets/maps/stage_card_001.png');
+    this.load.image('map-card-stage-002', 'assets/maps/stage_card_002.png');
+    this.load.image('map-card-stage-003', 'assets/maps/stage_card_003.png');
+    this.load.image('map-card-stage-004', 'assets/maps/stage_card_004.png');
 
     this.load.spritesheet('hero-knight', 'assets/sprites/hero_knight.png', { frameWidth: 32, frameHeight: 32 });
     this.load.spritesheet('soldier-blue', 'assets/sprites/soldier_blue.png', { frameWidth: 32, frameHeight: 32 });
@@ -49,6 +62,9 @@ export class BootScene extends Phaser.Scene {
 
     TOWER_KEYS.forEach((kind) => {
       this.load.image(`tower-${kind}`, `assets/sprites/tower_${kind}.png`);
+      TOWER_LEVELS.forEach((level) => {
+        this.load.image(`tower-${kind}-lv${level}`, `assets/sprites/tower_${kind}_lv${level}.png`);
+      });
     });
 
     this.load.image('ui-panel-parchment', 'assets/ui/panel_parchment.png');
