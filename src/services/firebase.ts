@@ -1,136 +1,156 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics, isSupported, type Analytics } from "firebase/analytics";
 import {
+  browserLocalPersistence,
+  createUserWithEmailAndPassword,
   getAuth,
+  getRedirectResult,
+  GoogleAuthProvider,
   onAuthStateChanged,
+  setPersistence,
   signInAnonymously,
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
   signInWithPopup,
   signInWithRedirect,
-  GoogleAuthProvider,
-  updateProfile,
   type User,
 } from "firebase/auth";
 import {
-  getFirestore,
+  collection,
   doc,
   getDoc,
-  setDoc,
-  updateDoc,
-  collection,
   getDocs,
+  getFirestore,
   limit,
   orderBy,
   query,
   serverTimestamp,
+  setDoc,
   type DocumentData,
 } from "firebase/firestore";
-
-const env = (import.meta as unknown as { env?: Record<string, string | undefined> }).env ?? {};
+import { getAnalytics, isSupported } from "firebase/analytics";
 
 const firebaseConfig = {
-  apiKey: env.VITE_FIREBASE_API_KEY || "AIzaSyD0DWQWMSmGqYMAkJSZULmFmjsk7x8HRxE",
-  authDomain: env.VITE_FIREBASE_AUTH_DOMAIN || "web-game2.firebaseapp.com",
-  projectId: env.VITE_FIREBASE_PROJECT_ID || "web-game2",
-  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET || "web-game2.firebasestorage.app",
-  messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID || "91491483724",
-  appId: env.VITE_FIREBASE_APP_ID || "1:91491483724:web:0a3e02dcc4c8badd76b4e9",
-  measurementId: env.VITE_FIREBASE_MEASUREMENT_ID || "G-SPYS3QERB5",
+  apiKey:
+    import.meta.env.VITE_FIREBASE_API_KEY ||
+    "AIzaSyD0DWQWMSmGqYMAkJSZULmFmjsk7x8HRxE",
+  authDomain:
+    import.meta.env.VITE_FIREBASE_AUTH_DOMAIN ||
+    "web-game2.firebaseapp.com",
+  projectId:
+    import.meta.env.VITE_FIREBASE_PROJECT_ID ||
+    "web-game2",
+  storageBucket:
+    import.meta.env.VITE_FIREBASE_STORAGE_BUCKET ||
+    "web-game2.firebasestorage.app",
+  messagingSenderId:
+    import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID ||
+    "91491483724",
+  appId:
+    import.meta.env.VITE_FIREBASE_APP_ID ||
+    "1:91491483724:web:0a3e02dcc4c8badd76b4e9",
+  measurementId:
+    import.meta.env.VITE_FIREBASE_MEASUREMENT_ID ||
+    "G-SPYS3QERB5",
 };
 
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-let analyticsPromise: Promise<Analytics | null> | null = null;
+void setPersistence(auth, browserLocalPersistence).catch((error) => {
+  console.warn("Firebase auth persistence failed:", error);
+});
 
-export function initAnalytics(): Promise<Analytics | null> {
-  if (!analyticsPromise) {
-    analyticsPromise = isSupported()
-      .then((supported) => (supported ? getAnalytics(app) : null))
-      .catch(() => null);
-  }
+void isSupported()
+  .then((supported) => {
+    if (supported && firebaseConfig.measurementId) {
+      getAnalytics(app);
+    }
+  })
+  .catch(() => {
+    // Analytics is optional. Ignore unsupported browser/runtime errors.
+  });
 
-  return analyticsPromise;
-}
+export type ClearedStage = {
+  bestStars: number;
+  bestScore: number;
+  bestLives: number;
+  clearCount: number;
+  updatedAt?: unknown;
+};
 
-const googleProvider = new GoogleAuthProvider();
-googleProvider.setCustomParameters({ prompt: "select_account" });
-
-export type TowerUpgradeKey =
-  | "archerDamage"
-  | "mageDamage"
-  | "barracksHp"
-  | "artillerySplash";
-
-export type UserSave = {
+export type PlayerSave = {
   uid: string;
   nickname: string;
   stars: number;
-  clearedStages: Record<
-    string,
-    {
-      bestStars: number;
-      bestScore: number;
-      bestLives?: number;
-      bestClearTimeMs?: number;
-      updatedAt?: unknown;
-    }
-  >;
-  upgrades: Record<TowerUpgradeKey, number>;
+  clearedStages: Record<string, ClearedStage>;
+  upgrades: {
+    archerDamage: number;
+    mageDamage: number;
+    barracksHp: number;
+    artillerySplash: number;
+  };
   createdAt?: unknown;
   updatedAt?: unknown;
 };
 
-export type LeaderboardEntry = {
-  uid: string;
+export type LeaderboardScore = {
+  uid?: string;
   nickname: string;
   score: number;
   lives: number;
   wave: number;
   clearTimeMs: number;
+  stageId?: string;
   updatedAt?: unknown;
 };
 
-export type StageClearPayload = {
-  stageId: string;
-  starsEarned: number;
-  score: number;
-  lives: number;
-  wave: number;
-  clearTimeMs: number;
+const defaultUpgrades: PlayerSave["upgrades"] = {
+  archerDamage: 0,
+  mageDamage: 0,
+  barracksHp: 0,
+  artillerySplash: 0,
 };
 
-function guestNameFromUid(uid: string): string {
-  return `Guest${uid.slice(0, 5).toUpperCase()}`;
+function makeGuestName(user: User): string {
+  return `Guest${user.uid.slice(0, 5).toUpperCase()}`;
 }
 
-function todayBoardId(stageId: string, date = new Date()): string {
-  const yyyy = date.getFullYear();
-  const mm = String(date.getMonth() + 1).padStart(2, "0");
-  const dd = String(date.getDate()).padStart(2, "0");
-  return `${yyyy}${mm}${dd}_${stageId}`;
-}
-
-function normalizeSave(uid: string, raw?: DocumentData): UserSave {
+function normalizeSave(user: User, data?: DocumentData): PlayerSave {
   return {
-    uid,
-    nickname: typeof raw?.nickname === "string" ? raw.nickname : guestNameFromUid(uid),
-    stars: typeof raw?.stars === "number" ? raw.stars : 0,
-    clearedStages: raw?.clearedStages && typeof raw.clearedStages === "object" ? raw.clearedStages : {},
+    uid: user.uid,
+    nickname:
+      typeof data?.nickname === "string" && data.nickname.trim().length > 0
+        ? data.nickname
+        : user.displayName || makeGuestName(user),
+    stars: typeof data?.stars === "number" ? data.stars : 0,
+    clearedStages:
+      data?.clearedStages && typeof data.clearedStages === "object"
+        ? (data.clearedStages as Record<string, ClearedStage>)
+        : {},
     upgrades: {
-      archerDamage: Number(raw?.upgrades?.archerDamage ?? 0),
-      mageDamage: Number(raw?.upgrades?.mageDamage ?? 0),
-      barracksHp: Number(raw?.upgrades?.barracksHp ?? 0),
-      artillerySplash: Number(raw?.upgrades?.artillerySplash ?? 0),
+      ...defaultUpgrades,
+      ...(data?.upgrades && typeof data.upgrades === "object"
+        ? data.upgrades
+        : {}),
     },
-    createdAt: raw?.createdAt,
-    updatedAt: raw?.updatedAt,
+    createdAt: data?.createdAt,
+    updatedAt: data?.updatedAt,
   };
 }
 
-export function waitForAuthReady(): Promise<User | null> {
+export async function completePendingRedirectSignIn(): Promise<User | null> {
+  try {
+    const result = await getRedirectResult(auth);
+    return result?.user ?? auth.currentUser;
+  } catch (error) {
+    console.warn("Google redirect sign-in failed:", error);
+    return auth.currentUser;
+  }
+}
+
+export async function waitForUser(): Promise<User | null> {
+  if (auth.currentUser) return auth.currentUser;
+
   return new Promise((resolve) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       unsubscribe();
@@ -140,211 +160,228 @@ export function waitForAuthReady(): Promise<User | null> {
 }
 
 export async function ensureAnonymousUser(): Promise<User> {
-  const current = auth.currentUser ?? (await waitForAuthReady());
-
-  if (current) {
-    return current;
-  }
-
+  if (auth.currentUser) return auth.currentUser;
   const credential = await signInAnonymously(auth);
+  return credential.user;
+}
+
+export async function loginWithEmail(
+  email: string,
+  password: string
+): Promise<User> {
+  const credential = await signInWithEmailAndPassword(auth, email, password);
   return credential.user;
 }
 
 export async function registerWithEmail(
   email: string,
-  password: string,
-  nickname?: string,
+  password: string
 ): Promise<User> {
-  const credential = await createUserWithEmailAndPassword(auth, email, password);
-
-  if (nickname?.trim()) {
-    await updateProfile(credential.user, { displayName: nickname.trim() });
-  }
-
-  await loadOrCreateSave(credential.user);
-  return credential.user;
-}
-
-export async function loginWithEmail(email: string, password: string): Promise<User> {
-  const credential = await signInWithEmailAndPassword(auth, email, password);
-  await loadOrCreateSave(credential.user);
+  const credential = await createUserWithEmailAndPassword(
+    auth,
+    email,
+    password
+  );
   return credential.user;
 }
 
 export async function loginWithGoogle(): Promise<User | null> {
+  const provider = new GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: "select_account" });
+
   try {
-    const credential = await signInWithPopup(auth, googleProvider);
-    await loadOrCreateSave(credential.user);
+    const credential = await signInWithPopup(auth, provider);
     return credential.user;
   } catch (error) {
-    const code = (error as { code?: string }).code;
-
-    if (
-      code === "auth/popup-blocked" ||
-      code === "auth/popup-closed-by-user" ||
-      code === "auth/cancelled-popup-request" ||
-      code === "auth/operation-not-supported-in-this-environment"
-    ) {
-      await signInWithRedirect(auth, googleProvider);
-      return null;
-    }
-
-    throw error;
+    console.warn("Google popup failed. Falling back to redirect:", error);
+    await signInWithRedirect(auth, provider);
+    return null;
   }
 }
 
-export async function loadOrCreateSave(user: User): Promise<UserSave> {
+export async function loadOrCreateSave(user: User): Promise<PlayerSave> {
   const ref = doc(db, "users", user.uid);
   const snap = await getDoc(ref);
 
   if (snap.exists()) {
-    return normalizeSave(user.uid, snap.data());
+    const save = normalizeSave(user, snap.data());
+    await setDoc(
+      ref,
+      {
+        nickname: save.nickname,
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true }
+    );
+    return save;
   }
 
-  const save: UserSave = {
-    uid: user.uid,
-    nickname: user.displayName || guestNameFromUid(user.uid),
-    stars: 0,
-    clearedStages: {},
-    upgrades: {
-      archerDamage: 0,
-      mageDamage: 0,
-      barracksHp: 0,
-      artillerySplash: 0,
-    },
+  const save = normalizeSave(user);
+  await setDoc(ref, {
+    nickname: save.nickname,
+    stars: save.stars,
+    clearedStages: save.clearedStages,
+    upgrades: save.upgrades,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
-  };
+  });
 
-  await setDoc(ref, save);
   return save;
 }
 
-export async function updateNickname(user: User, nickname: string): Promise<void> {
-  const cleaned = nickname.trim().slice(0, 16);
-
-  if (!cleaned) {
-    throw new Error("닉네임을 입력하세요.");
-  }
-
-  await updateProfile(user, { displayName: cleaned });
-  await setDoc(
-    doc(db, "users", user.uid),
-    {
-      nickname: cleaned,
-      updatedAt: serverTimestamp(),
-    },
-    { merge: true },
-  );
+function calcStars(lives: number): number {
+  if (lives >= 18) return 3;
+  if (lives >= 10) return 2;
+  return 1;
 }
 
-export async function saveStageClear(user: User, payload: StageClearPayload): Promise<UserSave> {
-  const currentSave = await loadOrCreateSave(user);
-  const previous = currentSave.clearedStages[payload.stageId];
+export async function saveStageClear(
+  user: User,
+  saveOrStageId: PlayerSave | string,
+  stageIdOrScore?: string | number,
+  scoreOrLives?: number,
+  livesArg?: number
+): Promise<PlayerSave> {
+  const currentSave =
+    typeof saveOrStageId === "string"
+      ? await loadOrCreateSave(user)
+      : saveOrStageId;
 
-  const bestScore = Math.max(previous?.bestScore ?? 0, payload.score);
-  const bestStars = Math.max(previous?.bestStars ?? 0, payload.starsEarned);
-  const earnedNewStars = Math.max(0, bestStars - (previous?.bestStars ?? 0));
-  const nextStars = currentSave.stars + earnedNewStars;
+  const stageId =
+    typeof saveOrStageId === "string"
+      ? saveOrStageId
+      : typeof stageIdOrScore === "string"
+        ? stageIdOrScore
+        : "stage_001";
 
-  const nextSavePatch = {
-    stars: nextStars,
-    [`clearedStages.${payload.stageId}`]: {
-      bestStars,
-      bestScore,
-      bestLives: Math.max(previous?.bestLives ?? 0, payload.lives),
-      bestClearTimeMs: previous?.bestClearTimeMs
-        ? Math.min(previous.bestClearTimeMs, payload.clearTimeMs)
-        : payload.clearTimeMs,
-      updatedAt: serverTimestamp(),
+  const score =
+    typeof saveOrStageId === "string"
+      ? typeof stageIdOrScore === "number"
+        ? stageIdOrScore
+        : 0
+      : typeof scoreOrLives === "number"
+        ? scoreOrLives
+        : 0;
+
+  const lives =
+    typeof saveOrStageId === "string"
+      ? typeof scoreOrLives === "number"
+        ? scoreOrLives
+        : 0
+      : typeof livesArg === "number"
+        ? livesArg
+        : 0;
+
+  const previous = currentSave.clearedStages[stageId];
+  const earnedStars = calcStars(lives);
+  const previousBestStars = previous?.bestStars ?? 0;
+  const additionalStars = Math.max(0, earnedStars - previousBestStars);
+
+  const updatedStage: ClearedStage = {
+    bestStars: Math.max(previousBestStars, earnedStars),
+    bestScore: Math.max(previous?.bestScore ?? 0, score),
+    bestLives: Math.max(previous?.bestLives ?? 0, lives),
+    clearCount: (previous?.clearCount ?? 0) + 1,
+    updatedAt: serverTimestamp(),
+  };
+
+  const updatedSave: PlayerSave = {
+    ...currentSave,
+    stars: currentSave.stars + additionalStars,
+    clearedStages: {
+      ...currentSave.clearedStages,
+      [stageId]: updatedStage,
     },
     updatedAt: serverTimestamp(),
   };
 
-  await updateDoc(doc(db, "users", user.uid), nextSavePatch);
+  await setDoc(
+    doc(db, "users", user.uid),
+    {
+      nickname: updatedSave.nickname,
+      stars: updatedSave.stars,
+      clearedStages: updatedSave.clearedStages,
+      upgrades: updatedSave.upgrades,
+      updatedAt: serverTimestamp(),
+    },
+    { merge: true }
+  );
 
-  await submitLeaderboard(user, {
-    stageId: payload.stageId,
-    score: payload.score,
-    lives: payload.lives,
-    wave: payload.wave,
-    clearTimeMs: payload.clearTimeMs,
-  });
-
-  return loadOrCreateSave(user);
+  return updatedSave;
 }
 
-export async function spendStarsForUpgrade(
-  user: User,
-  key: TowerUpgradeKey,
-  cost: number,
-): Promise<UserSave> {
-  const save = await loadOrCreateSave(user);
-
-  if (save.stars < cost) {
-    throw new Error("별이 부족합니다.");
-  }
-
-  const currentLevel = save.upgrades[key] ?? 0;
-
-  await updateDoc(doc(db, "users", user.uid), {
-    stars: save.stars - cost,
-    [`upgrades.${key}`]: currentLevel + 1,
-    updatedAt: serverTimestamp(),
-  });
-
-  return loadOrCreateSave(user);
+function todayBoardId(stageId = "stage_001"): string {
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = `${now.getMonth() + 1}`.padStart(2, "0");
+  const dd = `${now.getDate()}`.padStart(2, "0");
+  return `${yyyy}${mm}${dd}_${stageId}`;
 }
 
 export async function submitLeaderboard(
   user: User,
-  payload: {
-    stageId: string;
-    score: number;
-    lives: number;
-    wave: number;
-    clearTimeMs: number;
-  },
+  nicknameOrScoreData: string | Partial<LeaderboardScore>,
+  maybeScoreData?: Partial<LeaderboardScore>
 ): Promise<void> {
-  const boardId = todayBoardId(payload.stageId);
-  const scoreRef = doc(db, "leaderboards", boardId, "scores", user.uid);
-  const prev = await getDoc(scoreRef);
-  const prevScore = prev.exists() ? Number(prev.data().score ?? 0) : 0;
+  const nickname =
+    typeof nicknameOrScoreData === "string"
+      ? nicknameOrScoreData
+      : user.displayName || makeGuestName(user);
 
-  if (payload.score < prevScore) {
-    return;
+  const scoreData =
+    typeof nicknameOrScoreData === "string"
+      ? maybeScoreData ?? {}
+      : nicknameOrScoreData;
+
+  const stageId = scoreData.stageId ?? "stage_001";
+  const boardId = todayBoardId(stageId);
+  const ref = doc(db, "leaderboards", boardId, "scores", user.uid);
+
+  const nextScore: LeaderboardScore = {
+    uid: user.uid,
+    nickname,
+    score: Number(scoreData.score ?? 0),
+    lives: Number(scoreData.lives ?? 0),
+    wave: Number(scoreData.wave ?? 0),
+    clearTimeMs: Number(scoreData.clearTimeMs ?? 0),
+    stageId,
+    updatedAt: serverTimestamp(),
+  };
+
+  const current = await getDoc(ref);
+  if (current.exists()) {
+    const prevScore = Number(current.data().score ?? 0);
+    if (prevScore > nextScore.score) {
+      return;
+    }
   }
 
-  await setDoc(scoreRef, {
-    uid: user.uid,
-    nickname: user.displayName || guestNameFromUid(user.uid),
-    score: payload.score,
-    lives: payload.lives,
-    wave: payload.wave,
-    clearTimeMs: payload.clearTimeMs,
-    updatedAt: serverTimestamp(),
-  });
+  await setDoc(ref, nextScore, { merge: true });
 }
 
 export async function fetchLeaderboard(
-  stageId: string,
-  maxResults = 20,
-): Promise<LeaderboardEntry[]> {
+  stageId = "stage_001",
+  maxResults = 20
+): Promise<LeaderboardScore[]> {
   const boardId = todayBoardId(stageId);
-  const scoresRef = collection(db, "leaderboards", boardId, "scores");
-  const q = query(scoresRef, orderBy("score", "desc"), limit(maxResults));
+  const q = query(
+    collection(db, "leaderboards", boardId, "scores"),
+    orderBy("score", "desc"),
+    limit(maxResults)
+  );
+
   const snap = await getDocs(q);
-
-  return snap.docs.map((scoreDoc) => {
-    const data = scoreDoc.data();
-
+  return snap.docs.map((item) => {
+    const data = item.data();
     return {
-      uid: String(data.uid ?? scoreDoc.id),
-      nickname: String(data.nickname ?? "Guest"),
+      uid: item.id,
+      nickname:
+        typeof data.nickname === "string" ? data.nickname : `Guest${item.id.slice(0, 5)}`,
       score: Number(data.score ?? 0),
       lives: Number(data.lives ?? 0),
       wave: Number(data.wave ?? 0),
       clearTimeMs: Number(data.clearTimeMs ?? 0),
+      stageId: typeof data.stageId === "string" ? data.stageId : stageId,
       updatedAt: data.updatedAt,
     };
   });
