@@ -4,6 +4,7 @@ type BrowserFlags = {
   isIOS: boolean;
   isMobile: boolean;
   isDesktop: boolean;
+  isPortrait: boolean;
 };
 
 let allowExit = false;
@@ -13,13 +14,19 @@ let activated = false;
 
 function flags(): BrowserFlags {
   const ua = navigator.userAgent || '';
-  const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
+  const coarsePointer = window.matchMedia?.('(pointer: coarse)').matches ?? false;
+  const smallScreen = Math.min(window.screen.width, window.screen.height) <= 820;
+  const mobileUA = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
+  const isMobile = mobileUA || (coarsePointer && smallScreen);
+  const isPortrait = window.innerHeight > window.innerWidth;
+
   return {
     isKakaoTalk: /KAKAOTALK/i.test(ua),
     isAndroid: /Android/i.test(ua),
     isIOS: /iPhone|iPad|iPod/i.test(ua),
     isMobile,
     isDesktop: !isMobile,
+    isPortrait,
   };
 }
 
@@ -53,7 +60,7 @@ async function requestFullscreenAndLandscape(): Promise<void> {
     console.warn('Fullscreen request was blocked by the browser:', error);
   }
 
-  // PC는 이미 가로 화면이 기본이므로 회전/방향 고정을 시도하지 않는다.
+  // PC는 절대 회전하지 않는다. 브라우저 창이 세로로 좁아져도 데스크톱은 정상 가로 캔버스만 유지.
   if (!info.isMobile) return;
 
   try {

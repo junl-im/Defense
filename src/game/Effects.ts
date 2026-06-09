@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { scaledDuration, scaledFxCount, scaledShake, shouldSpawnFx } from './QualityManager';
 
 export type ProjectileStyle = 'arrow' | 'magic' | 'shell' | 'slash' | 'spark';
 
@@ -10,6 +11,7 @@ export function spawnFloatingText(
   color = '#ffffff',
   fontSize = 16
 ): void {
+  if (!shouldSpawnFx(scene, 0.45)) return;
   const label = scene.add.text(x, y, text, {
     fontSize: `${fontSize}px`,
     color,
@@ -23,27 +25,27 @@ export function spawnFloatingText(
     y: y - 34,
     alpha: 0,
     scale: 1.14,
-    duration: 640,
+    duration: scaledDuration(640),
     ease: 'Quad.easeOut',
     onComplete: () => label.destroy()
   });
 }
 
 export function spawnHitSpark(scene: Phaser.Scene, x: number, y: number, color = 0xfff1c2): void {
-  const sparks: Phaser.GameObjects.GameObject[] = [];
-  for (let i = 0; i < 7; i++) {
-    const angle = (Math.PI * 2 * i) / 7 + Phaser.Math.FloatBetween(-0.22, 0.22);
+  if (!shouldSpawnFx(scene, 0.9)) return;
+  const count = scaledFxCount(7, 2);
+  for (let i = 0; i < count; i++) {
+    const angle = (Math.PI * 2 * i) / count + Phaser.Math.FloatBetween(-0.22, 0.22);
     const dist = Phaser.Math.Between(14, 28);
     const spark = scene.add.rectangle(x, y, Phaser.Math.Between(4, 8), 2, color, 0.9)
       .setRotation(angle)
       .setDepth(60);
-    sparks.push(spark);
     scene.tweens.add({
       targets: spark,
       x: x + Math.cos(angle) * dist,
       y: y + Math.sin(angle) * dist,
       alpha: 0,
-      duration: 230,
+      duration: scaledDuration(230),
       ease: 'Quad.easeOut',
       onComplete: () => spark.destroy()
     });
@@ -59,6 +61,7 @@ export function spawnImpactRing(
   alpha = 0.22,
   duration = 320
 ): void {
+  if (!shouldSpawnFx(scene, 0.7)) return;
   const ring = scene.add.circle(x, y, radius * 0.52, color, alpha)
     .setStrokeStyle(2, color, Math.min(0.8, alpha + 0.36))
     .setDepth(58);
@@ -66,19 +69,20 @@ export function spawnImpactRing(
     targets: ring,
     scale: 1.75,
     alpha: 0,
-    duration,
+    duration: scaledDuration(duration),
     ease: 'Quad.easeOut',
     onComplete: () => ring.destroy()
   });
 }
 
 export function spawnMuzzleFlash(scene: Phaser.Scene, x: number, y: number, color = 0xffffff): void {
+  if (!shouldSpawnFx(scene, 0.45)) return;
   const flash = scene.add.star(x, y, 7, 3, 12, color, 0.86).setDepth(62);
   scene.tweens.add({
     targets: flash,
     scale: 1.55,
     alpha: 0,
-    duration: 120,
+    duration: scaledDuration(120),
     onComplete: () => flash.destroy()
   });
 }
@@ -94,6 +98,11 @@ export function spawnProjectile(
   duration: number,
   onImpact: () => void
 ): void {
+  if (!shouldSpawnFx(scene, style === 'shell' ? 1.2 : 0.85)) {
+    scene.time.delayedCall(Math.max(40, duration), onImpact);
+    return;
+  }
+
   let projectile: Phaser.GameObjects.Arc | Phaser.GameObjects.Rectangle | Phaser.GameObjects.Star | Phaser.GameObjects.Ellipse;
   if (style === 'arrow') {
     projectile = scene.add.rectangle(fromX, fromY, 22, 4, color, 1).setStrokeStyle(1, 0x2b1808, 0.55);
@@ -116,7 +125,7 @@ export function spawnProjectile(
     targets: [projectile, glow],
     x: toX,
     y: toY,
-    duration,
+    duration: scaledDuration(duration),
     ease: style === 'shell' ? 'Quad.easeIn' : 'Linear',
     onComplete: () => {
       projectile.destroy();
@@ -127,30 +136,35 @@ export function spawnProjectile(
 }
 
 export function spawnWaveBanner(scene: Phaser.Scene, title: string, subtitle: string): void {
-  const group = scene.add.container(480, -70).setDepth(98);
-  const bg = scene.add.rectangle(0, 0, 620, 72, 0x0b1220, 0.92)
-    .setStrokeStyle(2, 0xf7d36b, 0.55);
-  const topLine = scene.add.text(0, -13, title, {
-    fontSize: '27px',
+  const group = scene.add.container(480, -76).setDepth(98);
+  const shadow = scene.add.rectangle(0, 10, 660, 84, 0x000000, 0.28);
+  const bg = scene.add.rectangle(0, 0, 640, 76, 0x0b1220, 0.94)
+    .setStrokeStyle(3, 0xf7d36b, 0.62);
+  const inner = scene.add.rectangle(0, 0, 618, 58, 0x263247, 0.18)
+    .setStrokeStyle(1, 0xffffff, 0.12);
+  const topLine = scene.add.text(0, -14, title, {
+    fontSize: '28px',
     color: '#f7d36b',
     fontStyle: 'bold',
     stroke: '#000000',
     strokeThickness: 4
   }).setOrigin(0.5);
-  const bottomLine = scene.add.text(0, 20, subtitle, {
+  const bottomLine = scene.add.text(0, 21, subtitle, {
     fontSize: '16px',
     color: '#dbe7ff',
     fontStyle: 'bold'
   }).setOrigin(0.5);
-  group.add([bg, topLine, bottomLine]);
+  const leftGem = scene.add.star(-304, 0, 6, 8, 18, 0xf7d36b, 0.82);
+  const rightGem = scene.add.star(304, 0, 6, 8, 18, 0xf7d36b, 0.82);
+  group.add([shadow, bg, inner, leftGem, rightGem, topLine, bottomLine]);
 
-  scene.tweens.add({ targets: group, y: 86, duration: 260, ease: 'Back.easeOut' });
+  scene.tweens.add({ targets: group, y: 86, duration: scaledDuration(260), ease: 'Back.easeOut' });
   scene.time.delayedCall(1450, () => {
     scene.tweens.add({
       targets: group,
       y: -90,
       alpha: 0,
-      duration: 260,
+      duration: scaledDuration(260),
       ease: 'Quad.easeIn',
       onComplete: () => group.destroy()
     });
@@ -161,7 +175,7 @@ export function pulseButton(scene: Phaser.Scene, target: Phaser.GameObjects.Game
   scene.tweens.add({
     targets: target,
     scale: 1.06,
-    duration: 90,
+    duration: scaledDuration(90),
     yoyo: true,
     ease: 'Quad.easeOut'
   });
@@ -169,7 +183,7 @@ export function pulseButton(scene: Phaser.Scene, target: Phaser.GameObjects.Game
 
 export function shakeCamera(scene: Phaser.Scene, intensity = 0.004, duration = 120): void {
   const camera = scene.cameras.main;
-  if (camera) camera.shake(duration, intensity);
+  if (camera) camera.shake(scaledDuration(duration), scaledShake(intensity));
 }
 
 function spawnSheetFx(
@@ -179,18 +193,21 @@ function spawnSheetFx(
   x: number,
   y: number,
   scale = 1,
-  depth = 70
+  depth = 70,
+  cost = 1
 ): void {
-  if (!scene.textures.exists(textureKey)) return;
+  if (!scene.textures.exists(textureKey) || !shouldSpawnFx(scene, cost)) return;
   const fx = scene.add.sprite(x, y, textureKey, 0).setScale(scale).setDepth(depth);
   fx.play(animationKey);
   fx.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => fx.destroy());
 }
 
 export function spawnBuildDust(scene: Phaser.Scene, x: number, y: number): void {
-  spawnSheetFx(scene, 'fx-build-dust', 'fx-build-dust-play', x, y + 8, 1.12, 68);
-  for (let i = 0; i < 8; i++) {
-    const angle = -Math.PI + (Math.PI * i) / 7;
+  spawnSheetFx(scene, 'fx-build-dust', 'fx-build-dust-play', x, y + 8, 1.12, 68, 1.3);
+  if (!shouldSpawnFx(scene, 0.8)) return;
+  const count = scaledFxCount(8, 3);
+  for (let i = 0; i < count; i++) {
+    const angle = -Math.PI + (Math.PI * i) / Math.max(1, count - 1);
     const chip = scene.add.rectangle(x, y + 14, 6, 4, 0xc79c5a, 0.88)
       .setRotation(angle)
       .setDepth(67);
@@ -199,7 +216,7 @@ export function spawnBuildDust(scene: Phaser.Scene, x: number, y: number): void 
       x: x + Math.cos(angle) * Phaser.Math.Between(20, 42),
       y: y + 14 + Math.sin(angle) * Phaser.Math.Between(8, 26),
       alpha: 0,
-      duration: 380,
+      duration: scaledDuration(380),
       ease: 'Quad.easeOut',
       onComplete: () => chip.destroy()
     });
@@ -207,10 +224,12 @@ export function spawnBuildDust(scene: Phaser.Scene, x: number, y: number): void 
 }
 
 export function spawnUpgradeBurst(scene: Phaser.Scene, x: number, y: number, color = 0xffd36b): void {
-  spawnSheetFx(scene, 'fx-upgrade-burst', 'fx-upgrade-burst-play', x, y - 4, 1.2, 72);
+  spawnSheetFx(scene, 'fx-upgrade-burst', 'fx-upgrade-burst-play', x, y - 4, 1.2, 72, 1.5);
   spawnImpactRing(scene, x, y - 2, 42, color, 0.18, 420);
-  for (let i = 0; i < 10; i++) {
-    const angle = (Math.PI * 2 * i) / 10;
+  if (!shouldSpawnFx(scene, 1.1)) return;
+  const count = scaledFxCount(10, 4);
+  for (let i = 0; i < count; i++) {
+    const angle = (Math.PI * 2 * i) / count;
     const gem = scene.add.polygon(x, y - 4, [0, -9, 7, 0, 0, 9, -7, 0], color, 0.86).setDepth(73);
     scene.tweens.add({
       targets: gem,
@@ -218,7 +237,7 @@ export function spawnUpgradeBurst(scene: Phaser.Scene, x: number, y: number, col
       y: y - 4 + Math.sin(angle) * 34,
       scale: 0.2,
       alpha: 0,
-      duration: 470,
+      duration: scaledDuration(470),
       ease: 'Quad.easeOut',
       onComplete: () => gem.destroy()
     });
@@ -226,11 +245,11 @@ export function spawnUpgradeBurst(scene: Phaser.Scene, x: number, y: number, col
 }
 
 export function spawnDeathPoof(scene: Phaser.Scene, x: number, y: number, scale = 1): void {
-  spawnSheetFx(scene, 'fx-death-poof', 'fx-death-poof-play', x, y, scale, 76);
+  spawnSheetFx(scene, 'fx-death-poof', 'fx-death-poof-play', x, y, scale, 76, 1.2);
 }
 
 export function spawnExplosionBurst(scene: Phaser.Scene, x: number, y: number, scale = 1): void {
-  spawnSheetFx(scene, 'fx-explosion-burst', 'fx-explosion-burst-play', x, y, scale, 78);
+  spawnSheetFx(scene, 'fx-explosion-burst', 'fx-explosion-burst-play', x, y, scale, 78, 1.8);
 }
 
 export function spawnTowerSkillCutIn(
@@ -276,7 +295,7 @@ export function spawnTowerSkillCutIn(
   scene.tweens.add({
     targets: group,
     x: 0,
-    duration: 210,
+    duration: scaledDuration(210),
     ease: 'Cubic.easeOut',
     onComplete: () => {
       scene.time.delayedCall(720, () => {
@@ -284,7 +303,7 @@ export function spawnTowerSkillCutIn(
           targets: group,
           x: width,
           alpha: 0,
-          duration: 230,
+          duration: scaledDuration(230),
           ease: 'Cubic.easeIn',
           onComplete: () => group.destroy()
         });
@@ -292,6 +311,6 @@ export function spawnTowerSkillCutIn(
     }
   });
 
-  scene.tweens.add({ targets: icon, scale: '+=0.18', duration: 240, yoyo: true, repeat: 2 });
-  scene.cameras.main?.shake(120, 0.0025);
+  scene.tweens.add({ targets: icon, scale: '+=0.18', duration: scaledDuration(240), yoyo: true, repeat: 2 });
+  scene.cameras.main?.shake(scaledDuration(120), scaledShake(0.0025));
 }

@@ -12,6 +12,7 @@ import { pulseButton, shakeCamera, spawnBuildDust, spawnExplosionBurst, spawnImp
 import { isMuted, playMusic, playSfx, setMuted } from '../game/AudioManager';
 import { requestGameFullscreen } from '../platform/WebShell';
 import { getRelicBattleBonuses, modifierLabel, type DailyChallenge } from '../game/MegaSystems';
+import { createQualityToggleButton, drawBattlePolish, installScenePerformanceWatch } from '../game/VisualPolish';
 
 type CastingSpell = 'meteor' | 'mercenary' | undefined;
 
@@ -89,6 +90,8 @@ export class GameScene extends Phaser.Scene {
     this.time.timeScale = 1;
     this.startTime = Date.now();
     this.drawMap();
+    drawBattlePolish(this, this.stage.theme);
+    installScenePerformanceWatch(this);
     this.createHud();
     this.createTowerSpots();
     this.hero = new Hero(this, this.stage.path[0].x + 120, this.stage.path[0].y - 35);
@@ -613,6 +616,7 @@ export class GameScene extends Phaser.Scene {
 속도 ${this.gameSpeed}x / Wave ${Math.max(0, this.waveIndex + 1)}/${this.stage.waves.length}`, {
       fontSize: '20px', color: '#dbe7ff', align: 'center', lineSpacing: 8
     }).setOrigin(0.5);
+    const quality = createQualityToggleButton(this, 0, 28);
     const resume = this.add.rectangle(-115, 80, 180, 48, 0x284f39, 1).setStrokeStyle(2, 0xffffff, 0.25).setInteractive({ useHandCursor: true });
     const resumeText = this.add.text(-115, 80, '계속하기', { fontSize: '22px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
     const world = this.add.rectangle(115, 80, 180, 48, 0x24486b, 1).setStrokeStyle(2, 0xffffff, 0.25).setInteractive({ useHandCursor: true });
@@ -622,7 +626,7 @@ export class GameScene extends Phaser.Scene {
       this.time.timeScale = 1;
       this.scene.start('WorldMapScene', { user: this.user, save: this.save });
     });
-    panel.add([bg, title, desc, resume, resumeText, world, worldText]);
+    panel.add([bg, title, desc, quality, resume, resumeText, world, worldText]);
     this.pauseOverlay = panel;
   }
 
