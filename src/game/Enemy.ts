@@ -134,6 +134,7 @@ export class Enemy extends Phaser.GameObjects.Container {
     spawnHitSpark(this.scene, this.x, this.y, damageType === 'magic' ? 0xb88cff : damageType === 'true' ? 0xfff1a6 : 0xffdf9a);
     playSfx(this.scene, damageType === 'magic' ? 'sfx_magic' : 'sfx_hit');
     this.scene.tweens.add({ targets: this.bodyCircle, scale: 1.22, duration: 55, yoyo: true });
+    this.playHitReaction(damageType);
     if (this.hp <= 0) {
       this.dead = true;
       this.poisonTimer?.remove(false);
@@ -148,6 +149,30 @@ export class Enemy extends Phaser.GameObjects.Container {
         onComplete: () => this.destroy()
       });
     }
+  }
+
+
+  private playHitReaction(damageType: 'physical' | 'magic' | 'true'): void {
+    const tint = damageType === 'magic' ? 0xcda8ff : damageType === 'true' ? 0xfff1a6 : 0xffd4b0;
+    if (this.sprite) {
+      this.sprite.setTint(tint);
+      const dir = this.scaleX < 0 ? 1 : -1;
+      this.sprite.x = dir * 3;
+      this.scene.tweens.add({
+        targets: this.sprite,
+        x: 0,
+        duration: 90,
+        ease: 'Back.easeOut',
+        onComplete: () => this.sprite?.clearTint()
+      });
+    }
+    this.scene.tweens.add({
+      targets: this,
+      angle: this.x % 2 > 1 ? 2 : -2,
+      duration: 45,
+      yoyo: true,
+      onComplete: () => this.setAngle(0)
+    });
   }
 
   private makeBadge(config: EnemyConfig, scale: number): Phaser.GameObjects.GameObject {

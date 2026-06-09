@@ -19,6 +19,8 @@ export class Soldier extends Phaser.GameObjects.Container {
   target?: Enemy;
   bodyCircle: Phaser.GameObjects.Arc;
   private sprite?: Phaser.GameObjects.Sprite;
+  private spriteBaseKey: 'soldier' | 'mercenary' = 'soldier';
+  private currentMotion: 'idle' | 'move' | 'attack' = 'idle';
   expiresAt?: number;
   blockMs: number;
 
@@ -32,16 +34,19 @@ export class Soldier extends Phaser.GameObjects.Container {
 
     const isMercenary = (options.color ?? 0x4fa3ff) === 0xa6ffb0;
     const spriteKey = isMercenary ? 'mercenary-green' : 'soldier-blue';
+    this.spriteBaseKey = isMercenary ? 'mercenary' : 'soldier';
+    const shadow = scene.add.ellipse(0, 12, 22, 8, 0x000000, 0.22);
     if (scene.textures.exists(spriteKey)) {
-      this.sprite = scene.add.sprite(0, -2, spriteKey, 0).setScale(0.95);
-      this.sprite.play(isMercenary ? 'mercenary-idle' : 'soldier-idle');
+      this.sprite = scene.add.sprite(0, -3, spriteKey, 0).setScale(isMercenary ? 1.0 : 0.97);
+      this.playMotion('idle');
     }
     this.bodyCircle = scene.add.circle(0, 0, 9, options.color ?? 0x4fa3ff, this.sprite ? 0 : 1);
     const sword = scene.add.rectangle(9, 0, 10, 3, 0xffffff, this.sprite ? 0 : 1);
-    const visuals: Phaser.GameObjects.GameObject[] = [this.bodyCircle, sword];
+    const visuals: Phaser.GameObjects.GameObject[] = [shadow, this.bodyCircle, sword];
     if (this.sprite) visuals.push(this.sprite);
     this.add(visuals);
     scene.add.existing(this);
+    this.setDepth(isMercenary ? 25 : 24);
   }
 
   update(deltaMs: number, enemies: Enemy[]): void {
@@ -57,14 +62,11 @@ export class Soldier extends Phaser.GameObjects.Container {
     this.target = enemies.find((e) => !e.dead && !e.reachedGoal && !e.config.flying && Phaser.Math.Distance.Between(this.x, this.y, e.x, e.y) <= 30);
 
     if (this.target) {
+      this.facePoint(this.target.x);
       this.target.blockFor(this.blockMs);
       if (this.attackCooldownMs <= 0) {
-        this.target.receiveDamage(this.damage, 'physical');
-        spawnMuzzleFlash(this.scene, this.x + 7, this.y, 0xffffff);
-        spawnHitSpark(this.scene, this.target.x, this.target.y, 0xdbe7ff);
-        playSfx(this.scene, 'sfx_hit');
+        this.swingAt(this.target);
         this.attackCooldownMs = 700;
-        this.scene.tweens.add({ targets: this.bodyCircle, scale: 1.25, duration: 70, yoyo: true });
       }
       return;
     }
@@ -75,6 +77,10 @@ export class Soldier extends Phaser.GameObjects.Container {
       const speed = 90;
       this.x += Math.cos(angle) * speed * deltaMs / 1000;
       this.y += Math.sin(angle) * speed * deltaMs / 1000;
+      this.facePoint(this.rallyX);
+      this.playMotion('move');
+    } else {
+      this.playMotion('idle');
     }
   }
 
@@ -88,5 +94,42 @@ export class Soldier extends Phaser.GameObjects.Container {
     this.maxHp = maxHp;
     this.hp = Math.min(this.hp, this.maxHp);
     this.blockMs = blockMs;
+  }
+
+  private swingAt(target: Enemy): void {
+    this.playAttackAnimation();
+    target.receiveDamage(this.damage, 'physical');
+    spawnMuzzleFlash(this.scene, this.x + (target.x >= this.x ? 7 : -7), this.y, 0xffffff);
+    spawnHitSpark(this.scene, target.x, target.y, 0xdbe7ff);
+    playSfx(this.scene, 'sfx_hit');
+    const dir = target.x >= this.x ? 1 : -1;
+    if (this.sprite) {
+      this.sprite.x = dir * 3;
+      this.scene.tweens.add({ targets: this.sprite, x: 0, duration: 105, ease: 'Back.easeOut' });
+    }
+    this.scene.tweens.add({ targets: this.bodyCircle, scale: 1.25, duration: 70, yoyo: true });
+  }
+
+  private playAttackAnimation(): void {
+    this.currentMotion = 'attack';
+    if (!this.sprite) return;
+    this.sprite.play(`${this.spriteBaseKey}-attack`, true);
+    this.sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+      this.currentMotion = 'idle';
+      this.playMotion('idle');
+    });
+  }
+
+  private playMotion(motion: 'idle' | 'move'): void {
+    if (!this.sprite || this.currentMotion === 'attack') return;
+    if (this.currentMotion === motion) return;
+    this.currentMotion = motion;
+    this.sprite.play(`${this.spriteBaseKey}-${motion}`, true);
+  }
+
+  private facePoint(x: number): void {
+    if (!this.sprite) return;
+    if (Math.abs(x - this.x) < 2) return;
+    this.sprite.setFlipX(x < this.x);
   }
 }

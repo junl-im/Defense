@@ -3,7 +3,7 @@ import type { User } from 'firebase/auth';
 import { fetchLeaderboard, loadOrCreateSave, type LeaderboardScore, type PlayerSave } from '../services/firebase';
 import { STAGE_LIST, getStageConfig } from '../game/balance';
 import type { StageConfig, StageId } from '../game/types';
-import { playSfx } from '../game/AudioManager';
+import { playMusic, playSfx } from '../game/AudioManager';
 
 type StageNodeView = {
   container: Phaser.GameObjects.Container;
@@ -34,6 +34,8 @@ export class WorldMapScene extends Phaser.Scene {
   }
 
   create(): void {
+    playMusic(this, 'bgm_world', 0.22);
+    window.addEventListener('kingdom-seed:user-activated', () => playMusic(this, 'bgm_world', 0.22), { once: true });
     this.drawBackground();
     this.createHeader();
     this.createRightPanel();

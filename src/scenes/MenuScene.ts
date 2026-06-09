@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import type { User } from 'firebase/auth';
-import { playSfx } from '../game/AudioManager';
+import { playMusic, playSfx } from '../game/AudioManager';
 import {
   completePendingRedirectSignIn,
   ensureAnonymousUser,
@@ -37,6 +37,8 @@ export class MenuScene extends Phaser.Scene {
   }
 
   create(): void {
+    playMusic(this, 'bgm_world', 0.18);
+    window.addEventListener('kingdom-seed:user-activated', () => playMusic(this, 'bgm_world', 0.18), { once: true });
     this.createBackground();
     this.createTitleArea();
     this.createLoginPanel();

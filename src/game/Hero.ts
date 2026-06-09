@@ -13,13 +13,14 @@ export class Hero extends Phaser.GameObjects.Container {
   private bodyCircle: Phaser.GameObjects.Arc;
   private skillRing: Phaser.GameObjects.Arc;
   private sprite?: Phaser.GameObjects.Sprite;
+  private currentMotion: 'idle' | 'move' | 'attack' = 'idle';
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
-    const shadow = scene.add.ellipse(0, 14, 30, 10, 0x000000, 0.25);
+    const shadow = scene.add.ellipse(0, 15, 32, 11, 0x000000, 0.28);
     if (scene.textures.exists('hero-knight')) {
-      this.sprite = scene.add.sprite(0, -2, 'hero-knight', 0).setScale(1.18);
-      this.sprite.play('hero-idle');
+      this.sprite = scene.add.sprite(0, -4, 'hero-knight', 0).setScale(1.22);
+      this.playMotion('idle');
     }
     this.bodyCircle = scene.add.circle(0, 0, 14, 0xf7d36b, this.sprite ? 0 : 1).setStrokeStyle(3, 0xffffff, this.sprite ? 0 : 0.35);
     const helm = scene.add.triangle(0, -7, -8, 0, 8, 0, 0, -14, 0xd2d8e8, this.sprite ? 0 : 1);
@@ -28,6 +29,7 @@ export class Hero extends Phaser.GameObjects.Container {
     if (this.sprite) visuals.push(this.sprite);
     this.add(visuals);
     scene.add.existing(this);
+    this.setDepth(26);
     this.setSize(42, 42);
     this.setInteractive(new Phaser.Geom.Circle(0, 0, 24), Phaser.Geom.Circle.Contains);
   }
@@ -38,28 +40,33 @@ export class Hero extends Phaser.GameObjects.Container {
 
     const target = enemies.find((enemy) => !enemy.dead && !enemy.reachedGoal && !enemy.config.flying && Phaser.Math.Distance.Between(this.x, this.y, enemy.x, enemy.y) <= 38);
     if (target) {
+      this.destination = undefined;
+      this.facePoint(target.x);
       target.blockFor(260);
       if (this.attackCooldownMs <= 0) {
-        target.receiveDamage(this.damage, 'physical');
-        spawnMuzzleFlash(this.scene, this.x + 10, this.y - 4, 0xfff1c2);
-        spawnHitSpark(this.scene, target.x, target.y, 0xfff1c2);
-        playSfx(this.scene, 'sfx_hit');
+        this.swingAt(target);
         this.attackCooldownMs = 560;
-        this.scene.tweens.add({ targets: this.bodyCircle, scale: 1.18, duration: 80, yoyo: true });
       }
       return;
     }
 
-    if (!this.destination) return;
+    if (!this.destination) {
+      this.playMotion('idle');
+      return;
+    }
+
     const d = Phaser.Math.Distance.Between(this.x, this.y, this.destination.x, this.destination.y);
     if (d <= 4) {
       this.destination = undefined;
+      this.playMotion('idle');
       return;
     }
     const angle = Phaser.Math.Angle.Between(this.x, this.y, this.destination.x, this.destination.y);
     const speed = 155;
     this.x += Math.cos(angle) * speed * deltaMs / 1000;
     this.y += Math.sin(angle) * speed * deltaMs / 1000;
+    this.facePoint(this.destination.x);
+    this.playMotion('move');
   }
 
   moveToPoint(x: number, y: number): void {
@@ -72,6 +79,8 @@ export class Hero extends Phaser.GameObjects.Container {
   castStomp(enemies: Enemy[]): boolean {
     if (this.skillCooldownMs > 0) return false;
     this.skillCooldownMs = 18000;
+    this.destination = undefined;
+    this.playAttackAnimation();
     this.skillRing.setVisible(true);
     this.scene.tweens.add({ targets: this.skillRing, scale: 1.8, alpha: 0, duration: 360, onComplete: () => {
       this.skillRing.setScale(1).setAlpha(1).setVisible(false);
@@ -87,5 +96,42 @@ export class Hero extends Phaser.GameObjects.Container {
       }
     });
     return true;
+  }
+
+  private swingAt(target: Enemy): void {
+    this.playAttackAnimation();
+    target.receiveDamage(this.damage, 'physical');
+    spawnMuzzleFlash(this.scene, this.x + (target.x >= this.x ? 11 : -11), this.y - 4, 0xfff1c2);
+    spawnHitSpark(this.scene, target.x, target.y, 0xfff1c2);
+    playSfx(this.scene, 'sfx_hit');
+    const dir = target.x >= this.x ? 1 : -1;
+    if (this.sprite) {
+      this.sprite.x = dir * 4;
+      this.scene.tweens.add({ targets: this.sprite, x: 0, duration: 105, ease: 'Back.easeOut' });
+    }
+    this.scene.tweens.add({ targets: this.bodyCircle, scale: 1.18, duration: 80, yoyo: true });
+  }
+
+  private playAttackAnimation(): void {
+    this.currentMotion = 'attack';
+    if (!this.sprite) return;
+    this.sprite.play('hero-attack', true);
+    this.sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+      this.currentMotion = 'idle';
+      this.playMotion('idle');
+    });
+  }
+
+  private playMotion(motion: 'idle' | 'move'): void {
+    if (!this.sprite || this.currentMotion === 'attack') return;
+    if (this.currentMotion === motion) return;
+    this.currentMotion = motion;
+    this.sprite.play(motion === 'move' ? 'hero-move' : 'hero-idle', true);
+  }
+
+  private facePoint(x: number): void {
+    if (!this.sprite) return;
+    if (Math.abs(x - this.x) < 2) return;
+    this.sprite.setFlipX(x < this.x);
   }
 }

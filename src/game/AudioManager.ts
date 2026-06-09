@@ -13,8 +13,18 @@ const SFX_VOLUME: Record<string, number> = {
   sfx_lose: 0.5,
 };
 
+const MUSIC_VOLUME: Record<string, number> = {
+  bgm_world: 0.22,
+  bgm_battle: 0.18,
+  bgm_boss: 0.24,
+  bgm_battle_old: 0.18,
+};
+
+const MUSIC_KEYS = ['bgm_world', 'bgm_battle', 'bgm_boss', 'bgm_battle_old'];
+
 let unlocked = false;
 let muted = false;
+let currentMusicKey: string | undefined;
 
 function keyExists(scene: Phaser.Scene, key: string): boolean {
   try {
@@ -65,13 +75,31 @@ export function playSfx(scene: Phaser.Scene, key: string, volume?: number): void
   }
 }
 
-export function playMusic(scene: Phaser.Scene, key: string, volume = 0.18): void {
+export function stopAllMusic(scene: Phaser.Scene): void {
+  MUSIC_KEYS.forEach((key) => {
+    const existing = scene.sound.get(key);
+    if (existing?.isPlaying) existing.stop();
+  });
+  currentMusicKey = undefined;
+}
+
+export function playMusic(scene: Phaser.Scene, key: string, volume = MUSIC_VOLUME[key] ?? 0.18): void {
   if (muted || !unlocked) return;
   if (!keyExists(scene, key)) return;
+
   const existing = scene.sound.get(key);
-  if (existing?.isPlaying) return;
+  if (currentMusicKey === key && existing?.isPlaying) return;
+
+  MUSIC_KEYS.forEach((musicKey) => {
+    if (musicKey === key) return;
+    const other = scene.sound.get(musicKey);
+    if (other?.isPlaying) other.stop();
+  });
+
   try {
+    if (existing?.isPlaying) existing.stop();
     scene.sound.play(key, { volume, loop: true });
+    currentMusicKey = key;
   } catch (error) {
     console.warn(`Music play failed: ${key}`, error);
   }
@@ -80,4 +108,5 @@ export function playMusic(scene: Phaser.Scene, key: string, volume = 0.18): void
 export function stopMusic(scene: Phaser.Scene, key: string): void {
   const existing = scene.sound.get(key);
   if (existing?.isPlaying) existing.stop();
+  if (currentMusicKey === key) currentMusicKey = undefined;
 }

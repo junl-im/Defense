@@ -89,8 +89,8 @@ export class GameScene extends Phaser.Scene {
     this.hero.on('pointerdown', () => this.showMessage('영웅 레온 선택됨. 빈 맵 터치로 이동합니다.'));
     this.createSpells();
     this.createInputHandlers();
-    playMusic(this, 'bgm_battle');
-    window.addEventListener('kingdom-seed:user-activated', () => playMusic(this, 'bgm_battle'), { once: true });
+    playMusic(this, 'bgm_battle', 0.18);
+    window.addEventListener('kingdom-seed:user-activated', () => playMusic(this, 'bgm_battle', 0.18), { once: true });
     this.showMessage(`${this.stage.title}: ${this.stage.tip}`);
   }
 
@@ -129,7 +129,10 @@ export class GameScene extends Phaser.Scene {
     if (this.waveRunning && this.enemies.length === 0) {
       this.waveRunning = false;
       if (this.waveIndex >= this.stage.waves.length - 1) void this.finishStage();
-      else this.showMessage('웨이브 클리어! 조기 호출로 추가 골드 획득 가능');
+      else {
+        playMusic(this, 'bgm_battle', 0.18);
+        this.showMessage('웨이브 클리어! 조기 호출로 추가 골드 획득 가능');
+      }
     }
 
     this.refreshSpellHud();
@@ -630,7 +633,10 @@ export class GameScene extends Phaser.Scene {
     playSfx(this, 'sfx_wave');
     spawnWaveBanner(this, `WAVE ${waveNumber}`, this.describeWave(waveGroups));
     if (waveGroups.some((group) => ENEMIES[group.kind].threat === 'boss')) {
+      playMusic(this, 'bgm_boss', 0.24);
       this.showBossWarning();
+    } else {
+      playMusic(this, 'bgm_battle', 0.18);
     }
     this.spawnWave(waveGroups);
   }

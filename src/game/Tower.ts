@@ -179,6 +179,7 @@ export class Tower extends Phaser.GameObjects.Container {
     const style = isMage ? 'magic' : 'arrow';
     const color = isMage ? 0xb88cff : 0xffe0a3;
     const duration = isMage ? 150 : 95;
+    this.playAttackMotion(impactX, impactY);
     spawnMuzzleFlash(this.scene, launchX, launchY, this.config.color);
     playSfx(this.scene, isMage ? 'sfx_magic' : 'sfx_shoot');
 
@@ -194,6 +195,7 @@ export class Tower extends Phaser.GameObjects.Container {
   private fireArtillery(target: Enemy, enemies: Enemy[]): void {
     const impactX = target.x;
     const impactY = target.y;
+    this.playAttackMotion(impactX, impactY, true);
     spawnMuzzleFlash(this.scene, this.x, this.y - 20, 0xffd36b);
     playSfx(this.scene, 'sfx_shoot');
     spawnProjectile(this.scene, this.x, this.y - 20, impactX, impactY, 0x2c1a0a, 'shell', 170, () => {
@@ -215,6 +217,33 @@ export class Tower extends Phaser.GameObjects.Container {
     });
   }
 
+
+
+  private playAttackMotion(targetX: number, targetY: number, heavy = false): void {
+    const angle = Phaser.Math.Angle.Between(this.x, this.y, targetX, targetY);
+    const recoilX = -Math.cos(angle) * (heavy ? 7 : 4);
+    const recoilY = -Math.sin(angle) * (heavy ? 5 : 3);
+    const targets: Phaser.GameObjects.GameObject[] = [];
+    if (this.sprite) targets.push(this.sprite);
+    else targets.push(this.top, this.roof);
+
+    targets.forEach((target) => {
+      this.scene.tweens.add({
+        targets: target,
+        x: recoilX,
+        y: recoilY,
+        scale: heavy ? 1.1 : 1.05,
+        duration: heavy ? 95 : 70,
+        yoyo: true,
+        ease: 'Quad.easeOut'
+      });
+    });
+
+    if (this.sprite) {
+      this.sprite.setTint(this.config.kind === 'mage' ? 0xd9b8ff : this.config.kind === 'artillery' ? 0xffd36b : 0xfff1c2);
+      this.scene.time.delayedCall(95, () => this.sprite?.clearTint());
+    }
+  }
 
   private resolveTowerTextureKey(): string {
     const levelKey = `tower-${this.config.kind}-lv${this.level}`;

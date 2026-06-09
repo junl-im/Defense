@@ -10,6 +10,15 @@ const ENEMY_KEYS: EnemyKind[] = [
 const TOWER_KEYS: TowerKind[] = ['archer', 'mage', 'barracks', 'artillery'];
 const TOWER_LEVELS = [1, 2, 3] as const;
 
+type AnimSpec = {
+  key: string;
+  texture: string;
+  start: number;
+  end: number;
+  frameRate: number;
+  repeat: number;
+};
+
 export class BootScene extends Phaser.Scene {
   constructor() {
     super('BootScene');
@@ -90,7 +99,10 @@ export class BootScene extends Phaser.Scene {
       sfx_wave: 'wave.wav',
       sfx_win: 'win.wav',
       sfx_lose: 'lose.wav',
-      bgm_battle: 'music_loop.wav',
+      bgm_world: 'bgm_world.wav',
+      bgm_battle: 'bgm_battle.wav',
+      bgm_boss: 'bgm_boss.wav',
+      bgm_battle_old: 'music_loop.wav',
     };
 
     Object.entries(audioMap).forEach(([key, file]) => {
@@ -106,23 +118,44 @@ export class BootScene extends Phaser.Scene {
   }
 
   private createAnimations(): void {
-    this.anims.create({ key: 'hero-idle', frames: this.anims.generateFrameNumbers('hero-knight', { start: 0, end: 3 }), frameRate: 5, repeat: -1 });
-    this.anims.create({ key: 'soldier-idle', frames: this.anims.generateFrameNumbers('soldier-blue', { start: 0, end: 3 }), frameRate: 6, repeat: -1 });
-    this.anims.create({ key: 'mercenary-idle', frames: this.anims.generateFrameNumbers('mercenary-green', { start: 0, end: 3 }), frameRate: 6, repeat: -1 });
+    const anims: AnimSpec[] = [
+      { key: 'hero-idle', texture: 'hero-knight', start: 0, end: 3, frameRate: 5, repeat: -1 },
+      { key: 'hero-move', texture: 'hero-knight', start: 4, end: 7, frameRate: 9, repeat: -1 },
+      { key: 'hero-attack', texture: 'hero-knight', start: 8, end: 11, frameRate: 14, repeat: 0 },
+      { key: 'soldier-idle', texture: 'soldier-blue', start: 0, end: 3, frameRate: 6, repeat: -1 },
+      { key: 'soldier-move', texture: 'soldier-blue', start: 4, end: 7, frameRate: 9, repeat: -1 },
+      { key: 'soldier-attack', texture: 'soldier-blue', start: 8, end: 11, frameRate: 13, repeat: 0 },
+      { key: 'mercenary-idle', texture: 'mercenary-green', start: 0, end: 3, frameRate: 6, repeat: -1 },
+      { key: 'mercenary-move', texture: 'mercenary-green', start: 4, end: 7, frameRate: 9, repeat: -1 },
+      { key: 'mercenary-attack', texture: 'mercenary-green', start: 8, end: 11, frameRate: 13, repeat: 0 },
+      { key: 'ui-particle-glow', texture: 'ui-particles', start: 0, end: 3, frameRate: 4, repeat: -1 },
+      { key: 'fx-build-dust-play', texture: 'fx-build-dust', start: 0, end: 5, frameRate: 18, repeat: 0 },
+      { key: 'fx-upgrade-burst-play', texture: 'fx-upgrade-burst', start: 0, end: 7, frameRate: 20, repeat: 0 },
+      { key: 'fx-death-poof-play', texture: 'fx-death-poof', start: 0, end: 5, frameRate: 18, repeat: 0 },
+      { key: 'fx-explosion-burst-play', texture: 'fx-explosion-burst', start: 0, end: 6, frameRate: 20, repeat: 0 },
+    ];
 
-    this.anims.create({ key: 'ui-particle-glow', frames: this.anims.generateFrameNumbers('ui-particles', { start: 0, end: 3 }), frameRate: 4, repeat: -1 });
-    this.anims.create({ key: 'fx-build-dust-play', frames: this.anims.generateFrameNumbers('fx-build-dust', { start: 0, end: 5 }), frameRate: 18, repeat: 0 });
-    this.anims.create({ key: 'fx-upgrade-burst-play', frames: this.anims.generateFrameNumbers('fx-upgrade-burst', { start: 0, end: 7 }), frameRate: 20, repeat: 0 });
-    this.anims.create({ key: 'fx-death-poof-play', frames: this.anims.generateFrameNumbers('fx-death-poof', { start: 0, end: 5 }), frameRate: 18, repeat: 0 });
-    this.anims.create({ key: 'fx-explosion-burst-play', frames: this.anims.generateFrameNumbers('fx-explosion-burst', { start: 0, end: 6 }), frameRate: 20, repeat: 0 });
+    anims.forEach((spec) => this.makeAnim(spec));
 
     ENEMY_KEYS.forEach((kind) => {
-      this.anims.create({
+      this.makeAnim({
         key: `enemy-${kind}-walk`,
-        frames: this.anims.generateFrameNumbers(`enemy-${kind}`, { start: 0, end: 3 }),
+        texture: `enemy-${kind}`,
+        start: 0,
+        end: 3,
         frameRate: 6,
         repeat: -1,
       });
+    });
+  }
+
+  private makeAnim(spec: AnimSpec): void {
+    if (this.anims.exists(spec.key) || !this.textures.exists(spec.texture)) return;
+    this.anims.create({
+      key: spec.key,
+      frames: this.anims.generateFrameNumbers(spec.texture, { start: spec.start, end: spec.end }),
+      frameRate: spec.frameRate,
+      repeat: spec.repeat,
     });
   }
 }
