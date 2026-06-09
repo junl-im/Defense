@@ -8,16 +8,16 @@ export class Hero extends Phaser.GameObjects.Container {
   attackCooldownMs = 0;
   skillCooldownMs = 0;
   private destination?: Phaser.Math.Vector2;
-  private body: Phaser.GameObjects.Arc;
+  private bodyCircle: Phaser.GameObjects.Arc;
   private skillRing: Phaser.GameObjects.Arc;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
     const shadow = scene.add.ellipse(0, 14, 30, 10, 0x000000, 0.25);
-    this.body = scene.add.circle(0, 0, 14, 0xf7d36b, 1).setStrokeStyle(3, 0xffffff, 0.35);
+    this.bodyCircle = scene.add.circle(0, 0, 14, 0xf7d36b, 1).setStrokeStyle(3, 0xffffff, 0.35);
     const helm = scene.add.triangle(0, -7, -8, 0, 8, 0, 0, -14, 0xd2d8e8, 1);
     this.skillRing = scene.add.circle(0, 0, 38, 0xfff0a3, 0.07).setStrokeStyle(1, 0xfff0a3, 0.25).setVisible(false);
-    this.add([this.skillRing, shadow, this.body, helm]);
+    this.add([this.skillRing, shadow, this.bodyCircle, helm]);
     scene.add.existing(this);
     this.setSize(42, 42);
     this.setInteractive(new Phaser.Geom.Circle(0, 0, 24), Phaser.Geom.Circle.Contains);
@@ -33,7 +33,7 @@ export class Hero extends Phaser.GameObjects.Container {
       if (this.attackCooldownMs <= 0) {
         target.receiveDamage(this.damage, 'physical');
         this.attackCooldownMs = 560;
-        this.scene.tweens.add({ targets: this.body, scale: 1.18, duration: 80, yoyo: true });
+        this.scene.tweens.add({ targets: this.bodyCircle, scale: 1.18, duration: 80, yoyo: true });
       }
       return;
     }
@@ -50,7 +50,7 @@ export class Hero extends Phaser.GameObjects.Container {
     this.y += Math.sin(angle) * speed * deltaMs / 1000;
   }
 
-  moveTo(x: number, y: number): void {
+  moveToPoint(x: number, y: number): void {
     this.destination = new Phaser.Math.Vector2(x, y);
     const flag = this.scene.add.circle(x, y, 7, 0xf7d36b, 0.7).setDepth(25);
     this.scene.tweens.add({ targets: flag, scale: 2, alpha: 0, duration: 360, onComplete: () => flag.destroy() });

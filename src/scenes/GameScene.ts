@@ -316,7 +316,7 @@ export class GameScene extends Phaser.Scene {
         return;
       }
 
-      this.hero.moveTo(p.x, p.y);
+      this.hero.moveToPoint(p.x, p.y);
     });
   }
 

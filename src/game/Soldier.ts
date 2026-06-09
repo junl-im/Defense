@@ -15,7 +15,7 @@ export class Soldier extends Phaser.GameObjects.Container {
   damage: number;
   attackCooldownMs = 0;
   target?: Enemy;
-  body: Phaser.GameObjects.Arc;
+  bodyCircle: Phaser.GameObjects.Arc;
   expiresAt?: number;
   blockMs: number;
 
@@ -27,9 +27,9 @@ export class Soldier extends Phaser.GameObjects.Container {
     this.blockMs = options.blockMs ?? 250;
     this.expiresAt = options.expiresInMs ? scene.time.now + options.expiresInMs : undefined;
 
-    this.body = scene.add.circle(0, 0, 9, options.color ?? 0x4fa3ff, 1);
+    this.bodyCircle = scene.add.circle(0, 0, 9, options.color ?? 0x4fa3ff, 1);
     const sword = scene.add.rectangle(9, 0, 10, 3, 0xffffff, 1);
-    this.add([this.body, sword]);
+    this.add([this.bodyCircle, sword]);
     scene.add.existing(this);
   }
 
@@ -50,7 +50,7 @@ export class Soldier extends Phaser.GameObjects.Container {
       if (this.attackCooldownMs <= 0) {
         this.target.receiveDamage(this.damage, 'physical');
         this.attackCooldownMs = 700;
-        this.scene.tweens.add({ targets: this.body, scale: 1.25, duration: 70, yoyo: true });
+        this.scene.tweens.add({ targets: this.bodyCircle, scale: 1.25, duration: 70, yoyo: true });
       }
       return;
     }
