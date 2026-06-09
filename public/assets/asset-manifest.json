@@ -1,0 +1,33 @@
+{
+  "version": "0.8",
+  "ui": {
+    "titleBackground": "assets/ui/title_background.png",
+    "titleLogo": "assets/ui/title_logo.png",
+    "loginPanel": "assets/ui/panel_login_ornate.png",
+    "statusPlaque": "assets/ui/status_plaque.png",
+    "buttons": {
+      "primary": "assets/ui/button_primary.png",
+      "blue": "assets/ui/button_blue.png",
+      "gold": "assets/ui/button_gold.png",
+      "red": "assets/ui/button_red.png"
+    },
+    "icons": {
+      "anonymous": "assets/ui/icon_anonymous.png",
+      "google": "assets/ui/icon_google.png",
+      "email": "assets/ui/icon_email.png",
+      "register": "assets/ui/icon_register.png",
+      "shield": "assets/ui/icon_shield.png",
+      "spark": "assets/ui/icon_spark.png"
+    }
+  },
+  "maps": {
+    "stage_001": "assets/maps/map_stage_001.png",
+    "stage_002": "assets/maps/map_stage_002.png",
+    "stage_003": "assets/maps/map_stage_003.png",
+    "stage_004": "assets/maps/map_stage_004.png"
+  },
+  "sprites": {
+    "frame": "32x32 horizontal 4 frames",
+    "tower": "48x48 single image"
+  }
+}
