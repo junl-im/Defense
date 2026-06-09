@@ -138,13 +138,62 @@ export class BootScene extends Phaser.Scene {
     anims.forEach((spec) => this.makeAnim(spec));
 
     ENEMY_KEYS.forEach((kind) => {
+      const directions = [
+        { id: 'down', walk: [0, 3], attack: [12, 15], death: [24, 27] },
+        { id: 'side', walk: [4, 7], attack: [16, 19], death: [28, 31] },
+        { id: 'up', walk: [8, 11], attack: [20, 23], death: [32, 35] },
+      ] as const;
+
+      directions.forEach((dir) => {
+        this.makeAnim({
+          key: `enemy-${kind}-walk-${dir.id}`,
+          texture: `enemy-${kind}`,
+          start: dir.walk[0],
+          end: dir.walk[1],
+          frameRate: 7,
+          repeat: -1,
+        });
+        this.makeAnim({
+          key: `enemy-${kind}-attack-${dir.id}`,
+          texture: `enemy-${kind}`,
+          start: dir.attack[0],
+          end: dir.attack[1],
+          frameRate: 12,
+          repeat: -1,
+        });
+        this.makeAnim({
+          key: `enemy-${kind}-death-${dir.id}`,
+          texture: `enemy-${kind}`,
+          start: dir.death[0],
+          end: dir.death[1],
+          frameRate: 14,
+          repeat: 0,
+        });
+      });
+
       this.makeAnim({
         key: `enemy-${kind}-walk`,
         texture: `enemy-${kind}`,
         start: 0,
         end: 3,
-        frameRate: 6,
+        frameRate: 7,
         repeat: -1,
+      });
+      this.makeAnim({
+        key: `enemy-${kind}-attack`,
+        texture: `enemy-${kind}`,
+        start: 12,
+        end: 15,
+        frameRate: 12,
+        repeat: -1,
+      });
+      this.makeAnim({
+        key: `enemy-${kind}-death`,
+        texture: `enemy-${kind}`,
+        start: 24,
+        end: 27,
+        frameRate: 14,
+        repeat: 0,
       });
     });
   }

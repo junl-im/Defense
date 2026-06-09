@@ -232,3 +232,66 @@ export function spawnDeathPoof(scene: Phaser.Scene, x: number, y: number, scale 
 export function spawnExplosionBurst(scene: Phaser.Scene, x: number, y: number, scale = 1): void {
   spawnSheetFx(scene, 'fx-explosion-burst', 'fx-explosion-burst-play', x, y, scale, 78);
 }
+
+export function spawnTowerSkillCutIn(
+  scene: Phaser.Scene,
+  towerKind: string,
+  towerLabel: string,
+  skillName: string,
+  color = 0xffd36b
+): void {
+  const width = 960;
+  const group = scene.add.container(-width, 270).setDepth(140);
+  const veil = scene.add.rectangle(width / 2, 0, width, 540, 0x000000, 0.38);
+  const slash = scene.add.polygon(width / 2, 0, [0, -84, 760, -132, 880, 0, 760, 132, 0, 84], color, 0.92)
+    .setStrokeStyle(4, 0xfff1c2, 0.6);
+  const dark = scene.add.polygon(width / 2, 0, [20, -66, 720, -108, 816, 0, 720, 108, 20, 66], 0x0b1220, 0.92)
+    .setStrokeStyle(2, 0xffffff, 0.16);
+  const title = scene.add.text(445, -34, towerLabel, {
+    fontSize: '28px',
+    color: '#fff4c2',
+    fontStyle: 'bold',
+    stroke: '#2a1007',
+    strokeThickness: 5
+  }).setOrigin(0, 0.5);
+  const skill = scene.add.text(445, 18, skillName, {
+    fontSize: '42px',
+    color: '#ffffff',
+    fontStyle: 'bold',
+    stroke: '#000000',
+    strokeThickness: 6
+  }).setOrigin(0, 0.5);
+  const badge = scene.add.circle(365, 0, 54, 0xfff1c2, 0.18).setStrokeStyle(3, 0xfff1c2, 0.85);
+  const textureKey = `tower-${towerKind}-lv3`;
+  let icon: Phaser.GameObjects.GameObject;
+  if (scene.textures.exists(textureKey)) {
+    icon = scene.add.image(365, 0, textureKey).setScale(1.5);
+  } else {
+    icon = scene.add.star(365, 0, 7, 18, 46, color, 0.9).setStrokeStyle(2, 0xfff1c2, 0.8);
+  }
+  const lineTop = scene.add.rectangle(515, -74, 380, 3, 0xfff1c2, 0.65);
+  const lineBottom = scene.add.rectangle(515, 74, 380, 3, 0xfff1c2, 0.65);
+  group.add([veil, slash, dark, badge, icon, title, skill, lineTop, lineBottom]);
+
+  scene.tweens.add({
+    targets: group,
+    x: 0,
+    duration: 210,
+    ease: 'Cubic.easeOut',
+    onComplete: () => {
+      scene.time.delayedCall(720, () => {
+        scene.tweens.add({
+          targets: group,
+          x: width,
+          alpha: 0,
+          duration: 230,
+          ease: 'Cubic.easeIn',
+          onComplete: () => group.destroy()
+        });
+      });
+    }
+  });
+
+  scene.tweens.add({ targets: icon, scale: '+=0.18', duration: 240, yoyo: true, repeat: 2 });
+  scene.cameras.main?.shake(120, 0.0025);
+}

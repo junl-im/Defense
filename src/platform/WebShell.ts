@@ -7,7 +7,8 @@ type BrowserFlags = {
 
 let allowExit = false;
 let exitModal: HTMLDivElement | undefined;
-let kakaoBanner: HTMLDivElement | undefined;
+let startGate: HTMLDivElement | undefined;
+let activated = false;
 
 function flags(): BrowserFlags {
   const ua = navigator.userAgent || '';
@@ -25,17 +26,6 @@ function safeShow(el: HTMLElement): void {
 
 function safeHide(el: HTMLElement): void {
   el.classList.add('hidden');
-}
-
-function currentHttpsUrl(): string {
-  const url = new URL(window.location.href);
-  url.hash = '';
-  return url.toString();
-}
-
-function chromeIntentUrl(): string {
-  const withoutScheme = currentHttpsUrl().replace(/^https?:\/\//, '');
-  return `intent://${withoutScheme}#Intent;scheme=https;package=com.android.chrome;end`;
 }
 
 async function requestFullscreenAndLandscape(): Promise<void> {
@@ -56,7 +46,7 @@ async function requestFullscreenAndLandscape(): Promise<void> {
       else if (anyRoot.msRequestFullscreen) await anyRoot.msRequestFullscreen();
     }
   } catch (error) {
-    console.warn('Fullscreen request was blocked:', error);
+    console.warn('Fullscreen request was blocked by the browser:', error);
   }
 
   try {
@@ -71,37 +61,39 @@ async function requestFullscreenAndLandscape(): Promise<void> {
 
 function updateOrientationClass(): void {
   const landscape = window.innerWidth >= window.innerHeight;
+  const info = flags();
   document.documentElement.classList.toggle('is-landscape', landscape);
   document.documentElement.classList.toggle('is-portrait', !landscape);
+  document.documentElement.classList.toggle('is-kakao-webview', info.isKakaoTalk);
+  document.documentElement.classList.toggle('is-mobile-webview', info.isMobile);
+}
+
+async function activateGameShell(): Promise<void> {
+  if (activated) return;
+  activated = true;
+  await requestFullscreenAndLandscape();
+  window.dispatchEvent(new CustomEvent('kingdom-seed:user-activated'));
+  startGate?.classList.add('start-gate-out');
+  window.setTimeout(() => startGate?.remove(), 180);
 }
 
 function createStartGate(): void {
-  const gate = document.createElement('div');
-  gate.id = 'start-gate';
-  gate.className = 'shell-overlay';
-  gate.innerHTML = `
-    <div class="shell-panel shell-panel-wide">
-      <div class="shell-kicker">KINGDOM SEED</div>
-      <h1>가로 전체화면으로 시작</h1>
-      <p>모바일에서는 첫 터치 후 전체화면/가로 고정/사운드가 활성화됩니다. 지원하지 않는 브라우저에서는 게임 화면을 강제로 가로 배치합니다.</p>
-      <button id="start-fullscreen-btn" class="shell-primary">전체화면으로 플레이</button>
-      <button id="start-window-btn" class="shell-secondary">창 모드로 계속</button>
-      <small>권장: Chrome / Safari / Samsung Internet. 카카오톡 인앱 브라우저에서는 외부 브라우저 열기를 권장합니다.</small>
+  startGate = document.createElement('div');
+  startGate.id = 'start-gate';
+  startGate.className = 'shell-overlay shell-start-gate';
+  startGate.innerHTML = `
+    <div class="shell-start-card" role="button" aria-label="게임 시작">
+      <div class="shell-title-mark">KINGDOM SEED</div>
+      <div class="shell-title-sword"></div>
+      <h1>전투 시작</h1>
+      <p>화면을 터치하면 바로 전장으로 진입합니다.</p>
+      <div class="shell-tap-rune">TAP</div>
     </div>
   `;
-  document.body.appendChild(gate);
+  document.body.appendChild(startGate);
 
-  const start = gate.querySelector<HTMLButtonElement>('#start-fullscreen-btn');
-  const windowed = gate.querySelector<HTMLButtonElement>('#start-window-btn');
-  start?.addEventListener('click', async () => {
-    await requestFullscreenAndLandscape();
-    window.dispatchEvent(new CustomEvent('kingdom-seed:user-activated'));
-    gate.remove();
-  });
-  windowed?.addEventListener('click', () => {
-    window.dispatchEvent(new CustomEvent('kingdom-seed:user-activated'));
-    gate.remove();
-  });
+  startGate.addEventListener('pointerdown', () => void activateGameShell(), { once: true });
+  startGate.addEventListener('click', () => void activateGameShell(), { once: true });
 }
 
 function createExitModal(): void {
@@ -124,6 +116,7 @@ function createExitModal(): void {
   exitModal.querySelector<HTMLButtonElement>('#exit-stay-btn')?.addEventListener('click', () => {
     safeHide(exitModal!);
     history.pushState({ kingdomSeedGuard: true }, '', window.location.href);
+    void requestFullscreenAndLandscape();
   });
 
   exitModal.querySelector<HTMLButtonElement>('#exit-confirm-btn')?.addEventListener('click', () => {
@@ -132,9 +125,7 @@ function createExitModal(): void {
     history.back();
     setTimeout(() => {
       window.close();
-      if (!document.hidden) {
-        window.location.href = 'about:blank';
-      }
+      if (!document.hidden) window.location.href = 'about:blank';
     }, 80);
   });
 }
@@ -148,13 +139,12 @@ function installBackGuard(): void {
   }
 
   window.addEventListener('popstate', () => {
-    if (allowExit) return;
-    if (!exitModal) return;
+    if (allowExit || !exitModal) return;
     safeShow(exitModal);
     try {
       history.pushState({ kingdomSeedGuard: true }, '', window.location.href);
     } catch {
-      // Ignore history failures inside restrictive in-app browsers.
+      // Restrictive in-app browsers may reject history operations.
     }
   });
 
@@ -165,40 +155,18 @@ function installBackGuard(): void {
   });
 }
 
-function createKakaoBanner(): void {
-  const info = flags();
-  if (!info.isKakaoTalk) return;
+function installAggressiveImmersiveMode(): void {
+  const tryRestore = (): void => {
+    if (!activated) return;
+    void requestFullscreenAndLandscape();
+  };
 
-  kakaoBanner = document.createElement('div');
-  kakaoBanner.id = 'kakao-browser-banner';
-  kakaoBanner.className = 'kakao-banner';
-  kakaoBanner.innerHTML = `
-    <div>
-      <strong>카카오톡 브라우저 감지</strong>
-      <span>전체화면/가로고정/사운드가 제한될 수 있어요.</span>
-    </div>
-    <button id="open-external-btn">외부 브라우저</button>
-    <button id="copy-link-btn">링크복사</button>
-    <button id="hide-kakao-btn">×</button>
-  `;
-  document.body.appendChild(kakaoBanner);
-
-  kakaoBanner.querySelector<HTMLButtonElement>('#open-external-btn')?.addEventListener('click', () => {
-    if (info.isAndroid) {
-      window.location.href = chromeIntentUrl();
-      return;
-    }
-    void navigator.clipboard?.writeText(currentHttpsUrl()).catch(() => undefined);
-    alert('iOS 카카오톡에서는 우측 상단 메뉴 또는 공유 버튼에서 Safari로 열어주세요. 링크는 클립보드에 복사했습니다.');
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) window.setTimeout(tryRestore, 180);
   });
-
-  kakaoBanner.querySelector<HTMLButtonElement>('#copy-link-btn')?.addEventListener('click', () => {
-    void navigator.clipboard?.writeText(currentHttpsUrl()).then(() => alert('링크를 복사했습니다.'));
-  });
-
-  kakaoBanner.querySelector<HTMLButtonElement>('#hide-kakao-btn')?.addEventListener('click', () => {
-    kakaoBanner?.remove();
-  });
+  document.addEventListener('fullscreenchange', () => window.setTimeout(tryRestore, 80));
+  window.addEventListener('focus', () => window.setTimeout(tryRestore, 120));
+  window.addEventListener('pointerdown', () => window.setTimeout(tryRestore, 40));
 }
 
 export function installWebShell(): void {
@@ -209,10 +177,11 @@ export function installWebShell(): void {
 
   createStartGate();
   createExitModal();
-  createKakaoBanner();
   installBackGuard();
+  installAggressiveImmersiveMode();
 }
 
 export function requestGameFullscreen(): Promise<void> {
+  activated = true;
   return requestFullscreenAndLandscape();
 }

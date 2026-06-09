@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import type { TowerConfig } from './types';
 import { Enemy } from './Enemy';
 import { Soldier } from './Soldier';
-import { shakeCamera, spawnExplosionBurst, spawnHitSpark, spawnImpactRing, spawnMuzzleFlash, spawnProjectile, spawnUpgradeBurst } from './Effects';
+import { shakeCamera, spawnExplosionBurst, spawnHitSpark, spawnImpactRing, spawnMuzzleFlash, spawnProjectile, spawnTowerSkillCutIn, spawnUpgradeBurst } from './Effects';
 import { playSfx } from './AudioManager';
 
 export type TowerUpgradeSnapshot = {
@@ -29,6 +29,7 @@ export class Tower extends Phaser.GameObjects.Container {
   private roof: Phaser.GameObjects.Shape;
   private sprite?: Phaser.GameObjects.Image;
   private permanentUpgrades: TowerUpgradeSnapshot = { ...DEFAULT_UPGRADES };
+  private skillCutInCooldownMs = 0;
 
   constructor(scene: Phaser.Scene, x: number, y: number, public readonly config: TowerConfig) {
     super(scene, x, y);
@@ -100,6 +101,7 @@ export class Tower extends Phaser.GameObjects.Container {
 
   update(deltaMs: number, enemies: Enemy[]): void {
     this.cooldownMs = Math.max(0, this.cooldownMs - deltaMs);
+    this.skillCutInCooldownMs = Math.max(0, this.skillCutInCooldownMs - deltaMs);
     if (this.config.kind === 'barracks') {
       this.soldiers = this.soldiers.filter((soldier) => soldier.active);
       this.soldiers.forEach((s) => s.update(deltaMs, enemies));
@@ -140,6 +142,7 @@ export class Tower extends Phaser.GameObjects.Container {
     playSfx(this.scene, 'sfx_upgrade');
     spawnUpgradeBurst(this.scene, this.x, this.y - 10, this.config.color);
     spawnImpactRing(this.scene, this.x, this.y - 10, 34, this.config.color, 0.18, 360);
+    if (this.level >= 3) this.showSkillCutIn(true);
 
     if (this.config.kind === 'barracks') {
       if (this.soldiers.length === 0) this.spawnSoldiers();
@@ -186,8 +189,14 @@ export class Tower extends Phaser.GameObjects.Container {
     spawnProjectile(this.scene, launchX, launchY, impactX, impactY, color, style, duration, () => {
       if (!target.active || target.dead) return;
       target.receiveDamage(this.currentDamage, isMage ? 'magic' : 'physical');
-      if (this.level >= 3 && this.config.kind === 'archer') target.receivePoison(this.currentDamage * 0.65, 3000);
-      if (this.level >= 3 && this.config.kind === 'mage') target.receiveSlow(0.55, 2200);
+      if (this.level >= 3 && this.config.kind === 'archer') {
+        this.showSkillCutIn();
+        target.receivePoison(this.currentDamage * 0.65, 3000);
+      }
+      if (this.level >= 3 && this.config.kind === 'mage') {
+        this.showSkillCutIn();
+        target.receiveSlow(0.55, 2200);
+      }
       spawnImpactRing(this.scene, impactX, impactY, isMage ? 20 : 13, color, isMage ? 0.18 : 0.1, 210);
     });
   }
@@ -211,12 +220,29 @@ export class Tower extends Phaser.GameObjects.Container {
       enemies.forEach((enemy) => {
         if (!enemy.dead && !enemy.config.flying && Phaser.Math.Distance.Between(impactX, impactY, enemy.x, enemy.y) <= radius) {
           enemy.receiveDamage(this.currentDamage, 'physical');
-          if (this.level >= 3) enemy.receiveSlow(0.68, 1400);
+          if (this.level >= 3) {
+            this.showSkillCutIn();
+            enemy.receiveSlow(0.68, 1400);
+          }
         }
       });
     });
   }
 
+
+
+  private showSkillCutIn(force = false): void {
+    if (this.level < 3) return;
+    if (!force && this.skillCutInCooldownMs > 0) return;
+    this.skillCutInCooldownMs = force ? 9000 : 15000;
+    spawnTowerSkillCutIn(
+      this.scene,
+      this.config.kind,
+      this.config.label,
+      this.config.maxSkill,
+      this.config.color
+    );
+  }
 
 
   private playAttackMotion(targetX: number, targetY: number, heavy = false): void {

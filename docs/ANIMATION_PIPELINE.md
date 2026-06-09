@@ -1,50 +1,51 @@
-# Animation Pipeline v1.1
+# Kingdom Seed Animation Pipeline v1.2
 
-## 목표
+## Enemy sprite sheet
 
-Kingdom Seed의 전투 손맛을 올리기 위해 모든 전투 유닛을 단일 idle strip에서 상태별 애니메이션 strip으로 확장합니다.
-
-## 유닛 스프라이트 규격
-
-- 파일 형식: PNG, 투명 배경
-- 프레임 크기: 32x32
-- 배치 방식: 가로 strip
-- 총 프레임: 12프레임
-- 총 이미지 크기: 384x32
+v1.2부터 적 스프라이트는 32x32 프레임 36장을 가로로 배치합니다.
 
 ```txt
-프레임 0-3   idle
-프레임 4-7   move
-프레임 8-11  attack
+0-3    walk_down
+4-7    walk_side
+8-11   walk_up
+12-15  attack_down
+16-19  attack_side
+20-23  attack_up
+24-27  death_down
+28-31  death_side
+32-35  death_up
 ```
 
-## 파일명 규칙
+파일 위치:
 
 ```txt
-public/assets/sprites/hero_knight.png
-public/assets/sprites/soldier_blue.png
-public/assets/sprites/mercenary_green.png
+public/assets/sprites/enemy_goblin.png
+public/assets/sprites/enemy_wolf.png
+...
 ```
 
-## 차후 확장 규격
+규칙:
 
-v1.2 이후에는 적도 12프레임 규격으로 확장할 수 있습니다.
+- 이동 방향이 좌우면 side 모션을 사용하고, 왼쪽 이동은 `flipX`로 처리합니다.
+- 위/아래 이동은 각각 up/down 모션으로 분리합니다.
+- 병영/영웅에게 막힌 적은 attack 모션으로 전환합니다.
+- HP가 0이 되면 death 모션을 1회 재생한 뒤 제거됩니다.
+
+## Tower skill cut-in
+
+타워가 Lv.3이 되거나 Lv.3 특수 효과가 전투 중 발동될 때 컷인 연출이 나옵니다.
+
+컷인은 별도 이미지 없이 Phaser 도형 + 타워 Lv.3 스프라이트를 조합합니다.
+나중에 전용 컷인 이미지를 붙일 경우 아래 키를 추가하는 방식으로 확장하면 됩니다.
 
 ```txt
-enemy_goblin.png
-0-3    walk
-4-7    attack 또는 cast
-8-11   death
+public/assets/ui/cutin_archer.png
+public/assets/ui/cutin_mage.png
+public/assets/ui/cutin_barracks.png
+public/assets/ui/cutin_artillery.png
 ```
 
-현재 적은 기존 4프레임 walk를 유지하고, 코드에서 피격 틴트/흔들림/사망 poof로 보강합니다.
+## Web shell
 
-## BGM 규격
-
-```txt
-public/assets/audio/bgm_world.wav   월드맵/로그인
-public/assets/audio/bgm_battle.wav  일반 전투
-public/assets/audio/bgm_boss.wav    보스 웨이브
-```
-
-웹 배포 용량을 고려해 짧고 반복 가능한 loop 파일을 권장합니다.
+v1.2에서는 카카오톡 인앱 브라우저 감지 문구를 표시하지 않습니다.
+첫 터치 시 즉시 전체화면과 가로 고정을 시도하고, 실패 시 CSS 회전 fallback으로 가로 전투 화면을 유지합니다.

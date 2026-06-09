@@ -3,6 +3,9 @@ import type { EnemyConfig, PathPoint } from './types';
 import { spawnDeathPoof, spawnFloatingText, spawnHitSpark, spawnImpactRing } from './Effects';
 import { playSfx } from './AudioManager';
 
+type EnemyMotion = 'walk' | 'attack' | 'death';
+type EnemyDirection = 'down' | 'side' | 'up';
+
 export class Enemy extends Phaser.GameObjects.Container {
   readonly config: EnemyConfig;
   hp: number;
@@ -20,6 +23,10 @@ export class Enemy extends Phaser.GameObjects.Container {
   private slowFactor = 1;
   private poisonTimer?: Phaser.Time.TimerEvent;
   private aura?: Phaser.GameObjects.Arc;
+  private currentMotion: EnemyMotion = 'walk';
+  private currentDirection: EnemyDirection = 'down';
+  private movingLeft = false;
+  private deathStarted = false;
 
   constructor(scene: Phaser.Scene, config: EnemyConfig, private readonly path: PathPoint[]) {
     super(scene, path[0].x, path[0].y);
@@ -32,7 +39,7 @@ export class Enemy extends Phaser.GameObjects.Container {
     const spriteKey = `enemy-${config.kind}`;
     if (scene.textures.exists(spriteKey)) {
       this.sprite = scene.add.sprite(0, 0, spriteKey, 0).setScale(scale * 1.08);
-      this.sprite.play(`enemy-${config.kind}-walk`);
+      this.playMotion('walk', 'down', true);
     }
     this.bodyCircle = scene.add.circle(0, 0, (config.flying ? 10 : 12) * scale, config.color, this.sprite ? 0.0 : 1).setStrokeStyle(2, config.accentColor ?? 0x000000, this.sprite ? 0.0 : 0.65);
     this.hpBack = scene.add.rectangle(0, -20 * scale, 28 * scale, 5, 0x2c1010, 1).setOrigin(0.5);
@@ -61,7 +68,10 @@ export class Enemy extends Phaser.GameObjects.Container {
     if (this.config.flying) this.y += Math.sin(this.scene.time.now / 150) * 0.18;
 
     this.blockedMs = Math.max(0, this.blockedMs - deltaMs);
-    if (this.blockedMs > 0) return;
+    if (this.blockedMs > 0) {
+      this.playMotion('attack');
+      return;
+    }
 
     const target = this.path[this.pathIndex + 1];
     if (!target) {
@@ -80,13 +90,17 @@ export class Enemy extends Phaser.GameObjects.Container {
     }
 
     const angle = Phaser.Math.Angle.Between(this.x, this.y, target.x, target.y);
+    this.updateFacing(angle);
+    this.playMotion('walk');
     this.x += Math.cos(angle) * step;
     this.y += Math.sin(angle) * step;
-    this.scaleX = Math.cos(angle) < -0.05 ? -Math.abs(this.scaleX) : Math.abs(this.scaleX);
   }
 
   blockFor(ms: number): void {
-    if (!this.dead && !this.config.flying) this.blockedMs = Math.max(this.blockedMs, ms);
+    if (this.dead || this.config.flying) return;
+    const wasFree = this.blockedMs <= 0;
+    this.blockedMs = Math.max(this.blockedMs, ms);
+    if (wasFree) this.playMotion('attack');
   }
 
   receiveSlow(factor: number, durationMs: number): void {
@@ -138,16 +152,7 @@ export class Enemy extends Phaser.GameObjects.Container {
     if (this.hp <= 0) {
       this.dead = true;
       this.poisonTimer?.remove(false);
-      this.sprite?.stop();
-      this.sprite?.setTint(0xffe0c2);
-      this.spawnDeathPop();
-      this.scene.tweens.add({
-        targets: this,
-        alpha: 0,
-        scale: 0.4,
-        duration: 180,
-        onComplete: () => this.destroy()
-      });
+      this.startDeathAnimation();
     }
   }
 
@@ -156,7 +161,7 @@ export class Enemy extends Phaser.GameObjects.Container {
     const tint = damageType === 'magic' ? 0xcda8ff : damageType === 'true' ? 0xfff1a6 : 0xffd4b0;
     if (this.sprite) {
       this.sprite.setTint(tint);
-      const dir = this.scaleX < 0 ? 1 : -1;
+      const dir = this.movingLeft ? 1 : -1;
       this.sprite.x = dir * 3;
       this.scene.tweens.add({
         targets: this.sprite,
@@ -174,6 +179,62 @@ export class Enemy extends Phaser.GameObjects.Container {
       onComplete: () => this.setAngle(0)
     });
   }
+
+  private updateFacing(angle: number): void {
+    const vx = Math.cos(angle);
+    const vy = Math.sin(angle);
+    this.movingLeft = vx < -0.05;
+    if (Math.abs(vy) > Math.abs(vx) * 1.15) {
+      this.currentDirection = vy < 0 ? 'up' : 'down';
+    } else {
+      this.currentDirection = 'side';
+    }
+    if (this.sprite) this.sprite.setFlipX(this.currentDirection === 'side' && this.movingLeft);
+    else this.scaleX = this.movingLeft ? -Math.abs(this.scaleX) : Math.abs(this.scaleX);
+  }
+
+  private playMotion(motion: EnemyMotion, direction = this.currentDirection, force = false): void {
+    if (!this.sprite) return;
+    if (this.deathStarted && motion !== 'death') return;
+    if (!force && this.currentMotion === motion && this.currentDirection === direction) return;
+
+    this.currentMotion = motion;
+    this.currentDirection = direction;
+    const directionalKey = `enemy-${this.config.kind}-${motion}-${direction}`;
+    const fallbackKey = `enemy-${this.config.kind}-${motion}`;
+    const key = this.scene.anims.exists(directionalKey) ? directionalKey : fallbackKey;
+    if (this.scene.anims.exists(key)) this.sprite.play(key, true);
+  }
+
+  private startDeathAnimation(): void {
+    if (this.deathStarted) return;
+    this.deathStarted = true;
+    this.spawnDeathPop();
+    this.hpBack.setVisible(false);
+    this.hpBar.setVisible(false);
+    this.bodyCircle.setVisible(false);
+
+    if (this.sprite) {
+      this.sprite.clearTint();
+      this.playMotion('death', this.currentDirection, true);
+      this.sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+        if (this.active) this.destroy();
+      });
+      this.scene.time.delayedCall(620, () => {
+        if (this.active) this.destroy();
+      });
+      return;
+    }
+
+    this.scene.tweens.add({
+      targets: this,
+      alpha: 0,
+      scale: 0.4,
+      duration: 180,
+      onComplete: () => this.destroy()
+    });
+  }
+
 
   private makeBadge(config: EnemyConfig, scale: number): Phaser.GameObjects.GameObject {
     if (config.flying) {
