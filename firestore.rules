@@ -1,0 +1,100 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function validNickname(name) {
+      return name is string && name.size() >= 2 && name.size() <= 16;
+    }
+
+    function validUserCreate(uid) {
+      return isOwner(uid)
+        && request.resource.data.keys().hasOnly([
+          'nickname', 'stars', 'clearedStages', 'upgrades', 'createdAt', 'updatedAt'
+        ])
+        && validNickname(request.resource.data.nickname)
+        && request.resource.data.stars is int
+        && request.resource.data.stars >= 0
+        && request.resource.data.stars <= 9999
+        && request.resource.data.clearedStages is map
+        && request.resource.data.upgrades is map;
+    }
+
+    function validUserUpdate(uid) {
+      return isOwner(uid)
+        && request.resource.data.keys().hasOnly([
+          'nickname', 'stars', 'clearedStages', 'upgrades', 'createdAt', 'updatedAt'
+        ])
+        && request.resource.data.createdAt == resource.data.createdAt
+        && validNickname(request.resource.data.nickname)
+        && request.resource.data.stars is int
+        && request.resource.data.stars >= 0
+        && request.resource.data.stars <= 9999
+        && request.resource.data.clearedStages is map
+        && request.resource.data.upgrades is map;
+    }
+
+    function validScoreId(uid) {
+      return isOwner(uid);
+    }
+
+    function validScore() {
+      return request.resource.data.keys().hasOnly([
+          'uid', 'nickname', 'score', 'stageId', 'lives', 'wave', 'clearTimeMs', 'updatedAt'
+        ])
+        && request.resource.data.uid == request.auth.uid
+        && validNickname(request.resource.data.nickname)
+        && request.resource.data.stageId is string
+        && request.resource.data.stageId.size() >= 3
+        && request.resource.data.stageId.size() <= 32
+        && request.resource.data.score is int
+        && request.resource.data.score >= 0
+        && request.resource.data.score <= 10000000
+        && request.resource.data.lives is int
+        && request.resource.data.lives >= 0
+        && request.resource.data.lives <= 20
+        && request.resource.data.wave is int
+        && request.resource.data.wave >= 1
+        && request.resource.data.wave <= 100
+        && request.resource.data.clearTimeMs is int
+        && request.resource.data.clearTimeMs >= 30000
+        && request.resource.data.clearTimeMs <= 3600000;
+    }
+
+    match /users/{uid} {
+      allow get: if isOwner(uid);
+      allow list: if false;
+      allow create: if validUserCreate(uid);
+      allow update: if validUserUpdate(uid);
+      allow delete: if false;
+    }
+
+    // Collection path: /leaderboards/{boardId}/scores/{uid}
+    // boardId example: 20260609_stage_001
+    match /leaderboards/{boardId}/scores/{uid} {
+      allow get, list: if true;
+      allow create: if validScoreId(uid) && validScore();
+      allow update: if validScoreId(uid)
+        && validScore()
+        && request.resource.data.score >= resource.data.score;
+      allow delete: if false;
+    }
+
+    // Daily seed/config can be shipped in code or manually written from Firebase Console.
+    // Client can read but cannot create/update it.
+    match /dailySeeds/{dateId} {
+      allow get, list: if true;
+      allow write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

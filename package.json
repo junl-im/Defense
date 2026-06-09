@@ -1,0 +1,21 @@
+{
+  "name": "kingdom-seed",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "deploy:rules": "firebase deploy --only firestore:rules,firestore:indexes"
+  },
+  "dependencies": {
+    "@vitejs/plugin-basic-ssl": "latest",
+    "firebase": "latest",
+    "phaser": "latest"
+  },
+  "devDependencies": {
+    "typescript": "latest",
+    "vite": "latest"
+  }
+}
