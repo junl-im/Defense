@@ -3,6 +3,7 @@ import type { TowerConfig } from './types';
 import { Enemy } from './Enemy';
 import { Soldier } from './Soldier';
 import { shakeCamera, spawnHitSpark, spawnImpactRing, spawnMuzzleFlash, spawnProjectile } from './Effects';
+import { playSfx } from './AudioManager';
 
 export type TowerUpgradeSnapshot = {
   archerDamage: number;
@@ -26,6 +27,7 @@ export class Tower extends Phaser.GameObjects.Container {
   private levelText: Phaser.GameObjects.Text;
   private top: Phaser.GameObjects.Arc;
   private roof: Phaser.GameObjects.GameObject;
+  private sprite?: Phaser.GameObjects.Image;
   private permanentUpgrades: TowerUpgradeSnapshot = { ...DEFAULT_UPGRADES };
 
   constructor(scene: Phaser.Scene, x: number, y: number, public readonly config: TowerConfig) {
@@ -38,8 +40,20 @@ export class Tower extends Phaser.GameObjects.Container {
     this.roof = this.makeRoof(scene, config);
     const label = scene.add.text(0, -8, this.symbolFor(config.kind), { fontSize: '18px', color: '#101820', fontStyle: 'bold' }).setOrigin(0.5);
     this.levelText = scene.add.text(0, 23, 'Ⅰ', { fontSize: '14px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
+    const spriteKey = `tower-${config.kind}`;
+    if (scene.textures.exists(spriteKey)) {
+      this.sprite = scene.add.image(0, 0, spriteKey).setScale(1.08);
+      base.setAlpha(0);
+      stone.setAlpha(0);
+      this.top.setAlpha(0);
+      this.roof.setAlpha(0);
+      label.setAlpha(0);
+    }
     this.rangeCircle = scene.add.circle(0, 0, this.currentRange, 0xffffff, 0.055).setStrokeStyle(1, 0xffffff, 0.26).setVisible(false);
-    this.add([this.rangeCircle, pad, stone, base, this.roof, this.top, label, this.levelText]);
+    const visuals: Phaser.GameObjects.GameObject[] = [this.rangeCircle, pad, stone, base, this.roof, this.top, label];
+    if (this.sprite) visuals.push(this.sprite);
+    visuals.push(this.levelText);
+    this.add(visuals);
     scene.add.existing(this);
 
     this.setDepth(22);
@@ -121,7 +135,8 @@ export class Tower extends Phaser.GameObjects.Container {
     this.rangeCircle.setRadius(this.currentRange);
     this.levelText.setText(this.level === 2 ? 'Ⅱ' : 'Ⅲ');
     this.top.setRadius(this.level === 2 ? 20 : 22);
-    this.scene.tweens.add({ targets: [this.top, this.roof], scale: 1.18, duration: 100, yoyo: true });
+    this.scene.tweens.add({ targets: [this.top, this.roof, this.sprite].filter(Boolean), scale: 1.18, duration: 100, yoyo: true });
+    playSfx(this.scene, 'sfx_upgrade');
     spawnImpactRing(this.scene, this.x, this.y - 10, 34, this.config.color, 0.18, 360);
 
     if (this.config.kind === 'barracks') {
@@ -163,6 +178,7 @@ export class Tower extends Phaser.GameObjects.Container {
     const color = isMage ? 0xb88cff : 0xffe0a3;
     const duration = isMage ? 150 : 95;
     spawnMuzzleFlash(this.scene, launchX, launchY, this.config.color);
+    playSfx(this.scene, isMage ? 'sfx_magic' : 'sfx_shoot');
 
     spawnProjectile(this.scene, launchX, launchY, impactX, impactY, color, style, duration, () => {
       if (!target.active || target.dead) return;
@@ -177,6 +193,7 @@ export class Tower extends Phaser.GameObjects.Container {
     const impactX = target.x;
     const impactY = target.y;
     spawnMuzzleFlash(this.scene, this.x, this.y - 20, 0xffd36b);
+    playSfx(this.scene, 'sfx_shoot');
     spawnProjectile(this.scene, this.x, this.y - 20, impactX, impactY, 0x2c1a0a, 'shell', 170, () => {
       const radius = this.currentSplashRadius ?? 50;
       const impact = this.scene.add.circle(impactX, impactY, radius, 0xffb347, 0.2).setDepth(34);
@@ -185,6 +202,7 @@ export class Tower extends Phaser.GameObjects.Container {
       spawnHitSpark(this.scene, impactX, impactY, 0xffd36b);
       spawnImpactRing(this.scene, impactX, impactY, radius, 0xffb347, 0.18, 340);
       shakeCamera(this.scene, 0.0035, 110);
+      playSfx(this.scene, 'sfx_explosion');
       enemies.forEach((enemy) => {
         if (!enemy.dead && !enemy.config.flying && Phaser.Math.Distance.Between(impactX, impactY, enemy.x, enemy.y) <= radius) {
           enemy.receiveDamage(this.currentDamage, 'physical');

@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import type { EnemyConfig, PathPoint } from './types';
 import { spawnFloatingText, spawnHitSpark, spawnImpactRing } from './Effects';
+import { playSfx } from './AudioManager';
 
 export class Enemy extends Phaser.GameObjects.Container {
   readonly config: EnemyConfig;
@@ -11,6 +12,7 @@ export class Enemy extends Phaser.GameObjects.Container {
   dead = false;
 
   private bodyCircle: Phaser.GameObjects.Arc;
+  private sprite?: Phaser.GameObjects.Sprite;
   private hpBar: Phaser.GameObjects.Rectangle;
   private hpBack: Phaser.GameObjects.Rectangle;
   private blockedMs = 0;
@@ -27,7 +29,12 @@ export class Enemy extends Phaser.GameObjects.Container {
 
     const scale = config.scale ?? 1;
     const shadow = scene.add.ellipse(0, config.flying ? 18 : 14, 28 * scale, 9 * scale, 0x000000, config.flying ? 0.14 : 0.28);
-    this.bodyCircle = scene.add.circle(0, 0, (config.flying ? 10 : 12) * scale, config.color, 1).setStrokeStyle(2, config.accentColor ?? 0x000000, 0.65);
+    const spriteKey = `enemy-${config.kind}`;
+    if (scene.textures.exists(spriteKey)) {
+      this.sprite = scene.add.sprite(0, 0, spriteKey, 0).setScale(scale * 1.08);
+      this.sprite.play(`enemy-${config.kind}-walk`);
+    }
+    this.bodyCircle = scene.add.circle(0, 0, (config.flying ? 10 : 12) * scale, config.color, this.sprite ? 0.0 : 1).setStrokeStyle(2, config.accentColor ?? 0x000000, this.sprite ? 0.0 : 0.65);
     this.hpBack = scene.add.rectangle(0, -20 * scale, 28 * scale, 5, 0x2c1010, 1).setOrigin(0.5);
     this.hpBar = scene.add.rectangle(0, -20 * scale, 28 * scale, 5, 0x1ee65b, 1).setOrigin(0.5);
 
@@ -41,7 +48,8 @@ export class Enemy extends Phaser.GameObjects.Container {
       this.add([this.aura]);
     }
 
-    this.add([shadow, this.bodyCircle, face, face2, healthGem, badge, this.hpBack, this.hpBar]);
+    if (this.sprite) this.add([shadow, this.sprite, this.bodyCircle, healthGem, this.hpBack, this.hpBar]);
+    else this.add([shadow, this.bodyCircle, face, face2, healthGem, badge, this.hpBack, this.hpBar]);
     scene.add.existing(this);
     this.setDepth(config.flying ? 18 : 12);
   }
@@ -124,6 +132,7 @@ export class Enemy extends Phaser.GameObjects.Container {
 
     spawnFloatingText(this.scene, this.x, this.y - 24, `${Math.round(finalDamage)}`, damageType === 'magic' ? '#cda8ff' : damageType === 'true' ? '#fff1a6' : '#ffffff', damageType === 'true' ? 18 : 15);
     spawnHitSpark(this.scene, this.x, this.y, damageType === 'magic' ? 0xb88cff : damageType === 'true' ? 0xfff1a6 : 0xffdf9a);
+    playSfx(this.scene, damageType === 'magic' ? 'sfx_magic' : 'sfx_hit');
     this.scene.tweens.add({ targets: this.bodyCircle, scale: 1.22, duration: 55, yoyo: true });
     if (this.hp <= 0) {
       this.dead = true;

@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { Enemy } from './Enemy';
 import { shakeCamera, spawnHitSpark, spawnImpactRing, spawnMuzzleFlash } from './Effects';
+import { playSfx } from './AudioManager';
 
 export class Hero extends Phaser.GameObjects.Container {
   hp = 220;
@@ -11,14 +12,21 @@ export class Hero extends Phaser.GameObjects.Container {
   private destination?: Phaser.Math.Vector2;
   private bodyCircle: Phaser.GameObjects.Arc;
   private skillRing: Phaser.GameObjects.Arc;
+  private sprite?: Phaser.GameObjects.Sprite;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
     const shadow = scene.add.ellipse(0, 14, 30, 10, 0x000000, 0.25);
-    this.bodyCircle = scene.add.circle(0, 0, 14, 0xf7d36b, 1).setStrokeStyle(3, 0xffffff, 0.35);
-    const helm = scene.add.triangle(0, -7, -8, 0, 8, 0, 0, -14, 0xd2d8e8, 1);
+    if (scene.textures.exists('hero-knight')) {
+      this.sprite = scene.add.sprite(0, -2, 'hero-knight', 0).setScale(1.18);
+      this.sprite.play('hero-idle');
+    }
+    this.bodyCircle = scene.add.circle(0, 0, 14, 0xf7d36b, this.sprite ? 0 : 1).setStrokeStyle(3, 0xffffff, this.sprite ? 0 : 0.35);
+    const helm = scene.add.triangle(0, -7, -8, 0, 8, 0, 0, -14, 0xd2d8e8, this.sprite ? 0 : 1);
     this.skillRing = scene.add.circle(0, 0, 38, 0xfff0a3, 0.07).setStrokeStyle(1, 0xfff0a3, 0.25).setVisible(false);
-    this.add([this.skillRing, shadow, this.bodyCircle, helm]);
+    const visuals: Phaser.GameObjects.GameObject[] = [this.skillRing, shadow, this.bodyCircle, helm];
+    if (this.sprite) visuals.push(this.sprite);
+    this.add(visuals);
     scene.add.existing(this);
     this.setSize(42, 42);
     this.setInteractive(new Phaser.Geom.Circle(0, 0, 24), Phaser.Geom.Circle.Contains);
@@ -35,6 +43,7 @@ export class Hero extends Phaser.GameObjects.Container {
         target.receiveDamage(this.damage, 'physical');
         spawnMuzzleFlash(this.scene, this.x + 10, this.y - 4, 0xfff1c2);
         spawnHitSpark(this.scene, target.x, target.y, 0xfff1c2);
+        playSfx(this.scene, 'sfx_hit');
         this.attackCooldownMs = 560;
         this.scene.tweens.add({ targets: this.bodyCircle, scale: 1.18, duration: 80, yoyo: true });
       }
@@ -70,6 +79,7 @@ export class Hero extends Phaser.GameObjects.Container {
 
     spawnImpactRing(this.scene, this.x, this.y, 78, 0xfff0a3, 0.24, 430);
     shakeCamera(this.scene, 0.004, 130);
+    playSfx(this.scene, 'sfx_explosion');
     enemies.forEach((enemy) => {
       if (!enemy.dead && !enemy.reachedGoal && Phaser.Math.Distance.Between(this.x, this.y, enemy.x, enemy.y) <= 78) {
         enemy.receiveDamage(45, 'true');

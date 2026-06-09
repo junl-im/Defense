@@ -9,6 +9,8 @@ import { Tower } from '../game/Tower';
 import type { PlayerSave } from '../services/firebase';
 import { fetchLeaderboard, saveStageClear, submitLeaderboard } from '../services/firebase';
 import { pulseButton, shakeCamera, spawnImpactRing, spawnWaveBanner } from '../game/Effects';
+import { isMuted, playMusic, playSfx, setMuted } from '../game/AudioManager';
+import { requestGameFullscreen } from '../platform/WebShell';
 
 type CastingSpell = 'meteor' | 'mercenary' | undefined;
 
@@ -48,6 +50,7 @@ export class GameScene extends Phaser.Scene {
   mercenaryText!: Phaser.GameObjects.Text;
   heroSkillText!: Phaser.GameObjects.Text;
   speedText!: Phaser.GameObjects.Text;
+  soundText!: Phaser.GameObjects.Text;
 
   constructor() {
     super('GameScene');
@@ -86,6 +89,8 @@ export class GameScene extends Phaser.Scene {
     this.hero.on('pointerdown', () => this.showMessage('영웅 레온 선택됨. 빈 맵 터치로 이동합니다.'));
     this.createSpells();
     this.createInputHandlers();
+    playMusic(this, 'bgm_battle');
+    window.addEventListener('kingdom-seed:user-activated', () => playMusic(this, 'bgm_battle'), { once: true });
     this.showMessage(`${this.stage.title}: ${this.stage.tip}`);
   }
 
@@ -264,7 +269,24 @@ export class GameScene extends Phaser.Scene {
     const pauseButton = this.makeUiButton(925, 30, 46, 42, 0x2f3440, 'Ⅱ', 20, 80);
     pauseButton.on('pointerdown', () => {
       pulseButton(this, pauseButton);
+      playSfx(this, 'sfx_click');
       this.openPauseOverlay();
+    });
+
+    const fullscreenButton = this.makeUiButton(700, 30, 46, 42, 0x263c52, '⛶', 18, 80);
+    fullscreenButton.on('pointerdown', () => {
+      pulseButton(this, fullscreenButton);
+      playSfx(this, 'sfx_click');
+      void requestGameFullscreen();
+    });
+
+    const soundButton = this.makeUiButton(640, 30, 46, 42, 0x263c52, '', 18, 80);
+    this.soundText = this.add.text(640, 30, isMuted() ? '🔇' : '🔊', { fontSize: '17px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
+    soundButton.on('pointerdown', () => {
+      const next = !isMuted();
+      setMuted(next);
+      this.soundText.setText(next ? '🔇' : '🔊');
+      if (!next) playSfx(this, 'sfx_click');
     });
 
     this.refreshHud();
@@ -313,6 +335,7 @@ export class GameScene extends Phaser.Scene {
         glow.destroy();
         plus.destroy();
         const tower = new Tower(this, x, y, cfg);
+        playSfx(this, 'sfx_build');
         tower.applyPermanentUpgrades(this.save.upgrades);
         if (kind === 'barracks') tower.spawnSoldiers();
         tower.on('pointerdown', () => this.selectTower(tower));
@@ -376,6 +399,7 @@ export class GameScene extends Phaser.Scene {
     spawnImpactRing(this, tower.x, tower.y, 48, tower.config.color, 0.2, 380);
     this.refreshHud();
     this.selectTower(tower);
+    playSfx(this, 'sfx_upgrade');
     this.showMessage(tower.level >= 3 ? `${tower.config.maxSkill} 개방!` : `${tower.config.label} Lv.${tower.level}`);
   }
 
@@ -390,6 +414,7 @@ export class GameScene extends Phaser.Scene {
     meteor.on('pointerdown', () => {
       if (this.meteorCooldownMs > 0) return this.showMessage('메테오 쿨타임 중');
       pulseButton(this, meteor);
+      playSfx(this, 'sfx_click');
       this.castingSpell = 'meteor';
       this.showMessage('메테오 지점을 터치하세요');
     });
@@ -399,6 +424,7 @@ export class GameScene extends Phaser.Scene {
     mercenary.on('pointerdown', () => {
       if (this.mercenaryCooldownMs > 0) return this.showMessage('용병소환 쿨타임 중');
       pulseButton(this, mercenary);
+      playSfx(this, 'sfx_click');
       this.castingSpell = 'mercenary';
       this.showMessage('용병을 소환할 길 위를 터치하세요');
     });
@@ -407,6 +433,7 @@ export class GameScene extends Phaser.Scene {
     this.heroSkillText = this.add.text(440, 500, '🦁 대지강타', { fontSize: '18px', color: '#fff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
     heroSkill.on('pointerdown', () => {
       pulseButton(this, heroSkill);
+      playSfx(this, 'sfx_click');
       const ok = this.hero.castStomp(this.enemies);
       this.showMessage(ok ? '대지강타!' : '영웅 스킬 쿨타임 중');
     });
@@ -443,6 +470,7 @@ export class GameScene extends Phaser.Scene {
   private castMeteor(x: number, y: number): void {
     const radius = 78;
     this.meteorCooldownMs = 24000;
+    playSfx(this, 'sfx_explosion');
     const warning = this.add.circle(x, y, radius, 0xff3b2f, 0.14).setStrokeStyle(2, 0xfff0a3, 0.8).setDepth(50);
     this.tweens.add({ targets: warning, scale: 0.75, duration: 160, yoyo: true, onComplete: () => warning.destroy() });
     this.time.delayedCall(170, () => {
@@ -458,6 +486,7 @@ export class GameScene extends Phaser.Scene {
 
   private castMercenaries(x: number, y: number): void {
     this.mercenaryCooldownMs = 20000;
+    playSfx(this, 'sfx_build');
     for (let i = 0; i < 2; i++) {
       const soldier = new Soldier(this, x + i * 18 - 9, y + i * 18 - 9, x + i * 18 - 9, y + i * 18 - 9, {
         color: 0xa6ffb0,
@@ -538,6 +567,7 @@ export class GameScene extends Phaser.Scene {
     this.refreshHud();
     const waveNumber = this.waveIndex + 1;
     const waveGroups = this.stage.waves[this.waveIndex];
+    playSfx(this, 'sfx_wave');
     spawnWaveBanner(this, `WAVE ${waveNumber}`, this.describeWave(waveGroups));
     if (waveGroups.some((group) => ENEMIES[group.kind].threat === 'boss')) {
       this.showBossWarning();
@@ -579,6 +609,7 @@ export class GameScene extends Phaser.Scene {
   private showGameOver(): void {
     if (this.ended) return;
     this.ended = true;
+    playSfx(this, 'sfx_lose');
     this.add.rectangle(480, 270, 580, 320, 0x0b1220, 0.94).setDepth(92).setStrokeStyle(2, 0xff8080, 0.45);
     this.add.text(480, 180, 'DEFENSE FAILED', { fontSize: '40px', color: '#ff8080', fontStyle: 'bold' }).setOrigin(0.5).setDepth(93);
     this.add.text(480, 242, `${this.stage.title} / Wave ${this.waveIndex + 1} / Score ${this.score}`, { fontSize: '21px', color: '#ffffff' }).setOrigin(0.5).setDepth(93);
@@ -607,6 +638,7 @@ export class GameScene extends Phaser.Scene {
         wave: this.stage.waves.length,
         clearTimeMs
       });
+      playSfx(this, 'sfx_win');
       const top = await fetchLeaderboard(this.stage.id);
       this.showResult(roundedScore, top);
     } catch (error) {
@@ -631,6 +663,7 @@ export class GameScene extends Phaser.Scene {
   private makeUiButton(x: number, y: number, width: number, height: number, color: number, label: string, fontSize = 18, depth = 10): Phaser.GameObjects.Rectangle {
     const rect = this.add.rectangle(x, y, width, height, color, 1).setStrokeStyle(2, 0xfff1c2, 0.35).setInteractive({ useHandCursor: true }).setDepth(depth);
     if (label) this.add.text(x, y, label, { fontSize: `${fontSize}px`, color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(depth + 1);
+    rect.on('pointerdown', () => playSfx(this, 'sfx_click'));
     rect.on('pointerover', () => rect.setAlpha(0.86));
     rect.on('pointerout', () => rect.setAlpha(1));
     return rect;

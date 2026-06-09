@@ -1,0 +1,12 @@
+{
+  "name": "Kingdom Seed Defense",
+  "short_name": "Kingdom Seed",
+  "description": "가로모드 웹 타워 디펜스 게임",
+  "start_url": "/Defense/",
+  "scope": "/Defense/",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#101820",
+  "theme_color": "#101820",
+  "icons": []
+}

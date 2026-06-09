@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { Enemy } from './Enemy';
 import { spawnHitSpark, spawnMuzzleFlash } from './Effects';
+import { playSfx } from './AudioManager';
 
 type SoldierOptions = {
   color?: number;
@@ -17,6 +18,7 @@ export class Soldier extends Phaser.GameObjects.Container {
   attackCooldownMs = 0;
   target?: Enemy;
   bodyCircle: Phaser.GameObjects.Arc;
+  private sprite?: Phaser.GameObjects.Sprite;
   expiresAt?: number;
   blockMs: number;
 
@@ -28,9 +30,17 @@ export class Soldier extends Phaser.GameObjects.Container {
     this.blockMs = options.blockMs ?? 250;
     this.expiresAt = options.expiresInMs ? scene.time.now + options.expiresInMs : undefined;
 
-    this.bodyCircle = scene.add.circle(0, 0, 9, options.color ?? 0x4fa3ff, 1);
-    const sword = scene.add.rectangle(9, 0, 10, 3, 0xffffff, 1);
-    this.add([this.bodyCircle, sword]);
+    const isMercenary = (options.color ?? 0x4fa3ff) === 0xa6ffb0;
+    const spriteKey = isMercenary ? 'mercenary-green' : 'soldier-blue';
+    if (scene.textures.exists(spriteKey)) {
+      this.sprite = scene.add.sprite(0, -2, spriteKey, 0).setScale(0.95);
+      this.sprite.play(isMercenary ? 'mercenary-idle' : 'soldier-idle');
+    }
+    this.bodyCircle = scene.add.circle(0, 0, 9, options.color ?? 0x4fa3ff, this.sprite ? 0 : 1);
+    const sword = scene.add.rectangle(9, 0, 10, 3, 0xffffff, this.sprite ? 0 : 1);
+    const visuals: Phaser.GameObjects.GameObject[] = [this.bodyCircle, sword];
+    if (this.sprite) visuals.push(this.sprite);
+    this.add(visuals);
     scene.add.existing(this);
   }
 
@@ -52,6 +62,7 @@ export class Soldier extends Phaser.GameObjects.Container {
         this.target.receiveDamage(this.damage, 'physical');
         spawnMuzzleFlash(this.scene, this.x + 7, this.y, 0xffffff);
         spawnHitSpark(this.scene, this.target.x, this.target.y, 0xdbe7ff);
+        playSfx(this.scene, 'sfx_hit');
         this.attackCooldownMs = 700;
         this.scene.tweens.add({ targets: this.bodyCircle, scale: 1.25, duration: 70, yoyo: true });
       }
