@@ -24,20 +24,26 @@ export class Tower extends Phaser.GameObjects.Container {
   rangeCircle: Phaser.GameObjects.Arc;
   private levelText: Phaser.GameObjects.Text;
   private top: Phaser.GameObjects.Arc;
+  private roof: Phaser.GameObjects.GameObject;
   private permanentUpgrades: TowerUpgradeSnapshot = { ...DEFAULT_UPGRADES };
 
   constructor(scene: Phaser.Scene, x: number, y: number, public readonly config: TowerConfig) {
     super(scene, x, y);
-    const base = scene.add.rectangle(0, 8, 44, 24, 0x3a2c1a, 1).setStrokeStyle(2, 0x120c07);
-    this.top = scene.add.circle(0, -6, 18, config.color, 1).setStrokeStyle(3, 0xffffff, 0.18);
-    const label = scene.add.text(0, -8, config.label[0], { fontSize: '18px', color: '#101820', fontStyle: 'bold' }).setOrigin(0.5);
-    this.levelText = scene.add.text(0, 18, 'Ⅰ', { fontSize: '14px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
-    this.rangeCircle = scene.add.circle(0, 0, this.currentRange, 0xffffff, 0.06).setStrokeStyle(1, 0xffffff, 0.24).setVisible(false);
-    this.add([this.rangeCircle, base, this.top, label, this.levelText]);
+
+    const pad = scene.add.ellipse(0, 18, 58, 18, 0x000000, 0.24);
+    const base = scene.add.rectangle(0, 8, 46, 28, 0x4a321e, 1).setStrokeStyle(2, 0x140b05);
+    const stone = scene.add.rectangle(0, 22, 52, 13, 0x6d5b49, 1).setStrokeStyle(1, 0x20140b);
+    this.top = scene.add.circle(0, -8, 18, config.color, 1).setStrokeStyle(3, 0xffffff, 0.2);
+    this.roof = this.makeRoof(scene, config);
+    const label = scene.add.text(0, -8, this.symbolFor(config.kind), { fontSize: '18px', color: '#101820', fontStyle: 'bold' }).setOrigin(0.5);
+    this.levelText = scene.add.text(0, 23, 'Ⅰ', { fontSize: '14px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
+    this.rangeCircle = scene.add.circle(0, 0, this.currentRange, 0xffffff, 0.055).setStrokeStyle(1, 0xffffff, 0.26).setVisible(false);
+    this.add([this.rangeCircle, pad, stone, base, this.roof, this.top, label, this.levelText]);
     scene.add.existing(this);
 
-    this.setSize(50, 50);
-    this.setInteractive(new Phaser.Geom.Circle(0, 0, 28), Phaser.Geom.Circle.Contains);
+    this.setDepth(22);
+    this.setSize(58, 58);
+    this.setInteractive(new Phaser.Geom.Circle(0, 0, 32), Phaser.Geom.Circle.Contains);
   }
 
   applyPermanentUpgrades(upgrades: Partial<TowerUpgradeSnapshot> | undefined): void {
@@ -103,6 +109,9 @@ export class Tower extends Phaser.GameObjects.Container {
 
   setRallyPoint(x: number, y: number): void {
     this.soldiers.forEach((soldier, idx) => soldier.setRally(x, y + idx * 18 - 18));
+    const flag = this.scene.add.triangle(x, y - 20, 0, 0, 0, 24, 22, 8, 0xffe0a3, 0.9).setDepth(40);
+    const pole = this.scene.add.rectangle(x - 2, y - 7, 4, 32, 0x3a2c1a, 1).setDepth(39);
+    this.scene.time.delayedCall(1000, () => { flag.destroy(); pole.destroy(); });
   }
 
   upgrade(): void {
@@ -110,7 +119,8 @@ export class Tower extends Phaser.GameObjects.Container {
     this.level += 1;
     this.rangeCircle.setRadius(this.currentRange);
     this.levelText.setText(this.level === 2 ? 'Ⅱ' : 'Ⅲ');
-    this.scene.tweens.add({ targets: this.top, scale: 1.18, duration: 100, yoyo: true });
+    this.top.setRadius(this.level === 2 ? 20 : 22);
+    this.scene.tweens.add({ targets: [this.top, this.roof], scale: 1.18, duration: 100, yoyo: true });
 
     if (this.config.kind === 'barracks') {
       if (this.soldiers.length === 0) this.spawnSoldiers();
@@ -137,25 +147,59 @@ export class Tower extends Phaser.GameObjects.Container {
   }
 
   private fireAt(target: Enemy, enemies: Enemy[]): void {
-    const graphics = this.scene.add.graphics();
-    graphics.lineStyle(this.level >= 3 ? 5 : 3, this.config.color, 0.9);
-    graphics.lineBetween(this.x, this.y - 12, target.x, target.y);
-    this.scene.time.delayedCall(70, () => graphics.destroy());
-
     if (this.config.kind === 'artillery' && this.currentSplashRadius) {
-      const impact = this.scene.add.circle(target.x, target.y, this.currentSplashRadius, 0xffb347, 0.18).setDepth(10);
-      this.scene.tweens.add({ targets: impact, scale: 1.35, alpha: 0, duration: 260, onComplete: () => impact.destroy() });
-      enemies.forEach((enemy) => {
-        if (!enemy.dead && !enemy.config.flying && Phaser.Math.Distance.Between(target.x, target.y, enemy.x, enemy.y) <= this.currentSplashRadius!) {
-          enemy.receiveDamage(this.currentDamage, 'physical');
-          if (this.level >= 3) enemy.receiveSlow(0.68, 1400);
-        }
-      });
+      this.fireArtillery(target, enemies);
       return;
     }
+
+    const graphics = this.scene.add.graphics().setDepth(35);
+    graphics.lineStyle(this.level >= 3 ? 5 : 3, this.config.color, 0.88);
+    graphics.lineBetween(this.x, this.y - 16, target.x, target.y);
+    this.scene.time.delayedCall(70, () => graphics.destroy());
 
     target.receiveDamage(this.currentDamage, this.config.kind === 'mage' ? 'magic' : 'physical');
     if (this.level >= 3 && this.config.kind === 'archer') target.receivePoison(this.currentDamage * 0.65, 3000);
     if (this.level >= 3 && this.config.kind === 'mage') target.receiveSlow(0.55, 2200);
+  }
+
+  private fireArtillery(target: Enemy, enemies: Enemy[]): void {
+    const shot = this.scene.add.circle(this.x, this.y - 18, 6, 0x2c1a0a, 1).setDepth(36);
+    this.scene.tweens.add({
+      targets: shot,
+      x: target.x,
+      y: target.y,
+      duration: 160,
+      ease: 'Quad.easeIn',
+      onComplete: () => {
+        shot.destroy();
+        const radius = this.currentSplashRadius ?? 50;
+        const impact = this.scene.add.circle(target.x, target.y, radius, 0xffb347, 0.2).setDepth(34);
+        const ring = this.scene.add.circle(target.x, target.y, radius * 0.55, 0xfff1c2, 0.14).setStrokeStyle(2, 0xfff1c2, 0.55).setDepth(35);
+        this.scene.tweens.add({ targets: [impact, ring], scale: 1.35, alpha: 0, duration: 260, onComplete: () => { impact.destroy(); ring.destroy(); } });
+        enemies.forEach((enemy) => {
+          if (!enemy.dead && !enemy.config.flying && Phaser.Math.Distance.Between(target.x, target.y, enemy.x, enemy.y) <= radius) {
+            enemy.receiveDamage(this.currentDamage, 'physical');
+            if (this.level >= 3) enemy.receiveSlow(0.68, 1400);
+          }
+        });
+      }
+    });
+  }
+
+  private symbolFor(kind: TowerConfig['kind']): string {
+    if (kind === 'archer') return '➶';
+    if (kind === 'mage') return '✦';
+    if (kind === 'barracks') return '♜';
+    return '●';
+  }
+
+  private makeRoof(scene: Phaser.Scene, config: TowerConfig): Phaser.GameObjects.GameObject {
+    if (config.kind === 'artillery') {
+      return scene.add.rectangle(0, -10, 36, 11, 0x25170a, 1).setStrokeStyle(1, 0xffd4a3, 0.25);
+    }
+    if (config.kind === 'barracks') {
+      return scene.add.triangle(0, -20, -25, 18, 0, -8, 25, 18, 0x2b3b5c, 1).setStrokeStyle(1, 0xffffff, 0.2);
+    }
+    return scene.add.triangle(0, -23, -24, 18, 0, -9, 24, 18, config.kind === 'mage' ? 0x38205b : 0x315a2f, 1).setStrokeStyle(1, 0xffffff, 0.2);
   }
 }

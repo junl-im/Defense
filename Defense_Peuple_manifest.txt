@@ -1,0 +1,47 @@
+Archive:  /mnt/data/Defense_Peuple.zip
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+        0  2019-08-22 17:24   Defense_Peuple/Data/
+     2517  2019-08-22 17:23   Defense_Peuple/Data/Actors.rvdata2
+   218533  2019-08-22 17:23   Defense_Peuple/Data/Animations.rvdata2
+    11124  2019-08-22 17:23   Defense_Peuple/Data/Armors.rvdata2
+    21051  2019-08-22 17:23   Defense_Peuple/Data/Classes.rvdata2
+     1353  2019-08-22 17:23   Defense_Peuple/Data/CommonEvents.rvdata2
+    11182  2019-08-22 17:23   Defense_Peuple/Data/Enemies.rvdata2
+     3288  2019-08-22 17:23   Defense_Peuple/Data/Items.rvdata2
+     5187  2019-08-22 16:57   Defense_Peuple/Data/Map001.rvdata2
+    13156  2019-08-22 17:20   Defense_Peuple/Data/Map002.rvdata2
+     5754  2019-08-22 17:11   Defense_Peuple/Data/Map003.rvdata2
+    13651  2019-08-22 17:20   Defense_Peuple/Data/Map004.rvdata2
+     4625  2019-08-22 17:22   Defense_Peuple/Data/Map005.rvdata2
+      282  2019-08-22 17:23   Defense_Peuple/Data/MapInfos.rvdata2
+   229288  2019-08-22 17:23   Defense_Peuple/Data/Scripts.rvdata2
+    32165  2019-08-22 17:23   Defense_Peuple/Data/Skills.rvdata2
+     5106  2019-08-22 17:23   Defense_Peuple/Data/States.rvdata2
+      693  2019-08-22 17:21   Defense_Peuple/Data/StaticDB.rvdata2
+     4618  2019-08-22 17:23   Defense_Peuple/Data/System.rvdata2
+    66315  2019-08-22 17:23   Defense_Peuple/Data/Tilesets.rvdata2
+     4997  2019-08-22 17:23   Defense_Peuple/Data/Troops.rvdata2
+    12944  2019-08-22 17:23   Defense_Peuple/Data/Weapons.rvdata2
+        0  2019-08-22 17:24   Defense_Peuple/Database/
+        0  2019-08-22 17:24   Defense_Peuple/Database/tables/
+      141  2019-08-22 10:32   Defense_Peuple/Database/tables/IColor.csv
+       50  2019-08-22 10:32   Defense_Peuple/Database/tables/ISkipTitle.csv
+      103  2019-08-22 10:32   Defense_Peuple/Database/tables/ITextFieldProfile.csv
+      322  2019-08-22 10:32   Defense_Peuple/Database/tables/ITextProfile.csv
+       65  2019-08-22 10:32   Defense_Peuple/Database/tables/ITone.csv
+       66  2019-08-22 10:32   Defense_Peuple/Database/tables/IWindowProfile.csv
+        0  2019-08-22 17:24   Defense_Peuple/Database/views/
+       58  2019-08-22 10:32   Defense_Peuple/Database/views/IColor.rvdata2
+       67  2019-08-22 10:32   Defense_Peuple/Database/views/ISkipTitle.rvdata2
+      107  2019-08-22 10:32   Defense_Peuple/Database/views/ITextFieldProfile.rvdata2
+      123  2019-08-22 10:32   Defense_Peuple/Database/views/ITextProfile.rvdata2
+       57  2019-08-22 10:32   Defense_Peuple/Database/views/ITone.rvdata2
+       68  2019-08-22 10:32   Defense_Peuple/Database/views/IWindowProfile.rvdata2
+   141312  2019-07-03 19:11   Defense_Peuple/Game.exe
+      107  2019-08-22 17:23   Defense_Peuple/Game.ini
+       13  2019-08-22 17:23   Defense_Peuple/Game.rvproj2
+        0  2019-08-22 17:24   Defense_Peuple/System/
+  1088512  2011-11-07 02:00   Defense_Peuple/System/RGSS300.dll
+---------                     -------
+  1899000                     42 files
