@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { Enemy } from './Enemy';
+import { shakeCamera, spawnHitSpark, spawnImpactRing, spawnMuzzleFlash } from './Effects';
 
 export class Hero extends Phaser.GameObjects.Container {
   hp = 220;
@@ -32,6 +33,8 @@ export class Hero extends Phaser.GameObjects.Container {
       target.blockFor(260);
       if (this.attackCooldownMs <= 0) {
         target.receiveDamage(this.damage, 'physical');
+        spawnMuzzleFlash(this.scene, this.x + 10, this.y - 4, 0xfff1c2);
+        spawnHitSpark(this.scene, target.x, target.y, 0xfff1c2);
         this.attackCooldownMs = 560;
         this.scene.tweens.add({ targets: this.bodyCircle, scale: 1.18, duration: 80, yoyo: true });
       }
@@ -53,6 +56,7 @@ export class Hero extends Phaser.GameObjects.Container {
   moveToPoint(x: number, y: number): void {
     this.destination = new Phaser.Math.Vector2(x, y);
     const flag = this.scene.add.circle(x, y, 7, 0xf7d36b, 0.7).setDepth(25);
+    spawnImpactRing(this.scene, x, y, 16, 0xf7d36b, 0.16, 360);
     this.scene.tweens.add({ targets: flag, scale: 2, alpha: 0, duration: 360, onComplete: () => flag.destroy() });
   }
 
@@ -64,6 +68,8 @@ export class Hero extends Phaser.GameObjects.Container {
       this.skillRing.setScale(1).setAlpha(1).setVisible(false);
     }});
 
+    spawnImpactRing(this.scene, this.x, this.y, 78, 0xfff0a3, 0.24, 430);
+    shakeCamera(this.scene, 0.004, 130);
     enemies.forEach((enemy) => {
       if (!enemy.dead && !enemy.reachedGoal && Phaser.Math.Distance.Between(this.x, this.y, enemy.x, enemy.y) <= 78) {
         enemy.receiveDamage(45, 'true');

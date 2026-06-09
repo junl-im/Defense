@@ -2,6 +2,7 @@ import type { EnemyConfig, EnemyKind, StageConfig, StageId, TowerConfig, TowerKi
 
 export const STAGE_1_ID: StageId = 'stage_001';
 export const STAGE_2_ID: StageId = 'stage_002';
+export const STAGE_3_ID: StageId = 'stage_003';
 
 // Backward-compatible defaults for older imports.
 export const STAGE_ID = STAGE_1_ID;
@@ -42,6 +43,18 @@ export const ENEMIES: Record<EnemyKind, EnemyConfig> = {
   ogre: {
     kind: 'ogre', label: '오우거', hp: 420, speed: 34, reward: 55,
     armor: 0.22, magicResist: 0.16, color: 0x7f4b2a, accentColor: 0x2d1710, scale: 1.32, threat: 'boss'
+  },
+  spider: {
+    kind: 'spider', label: '늪지 거미', hp: 58, speed: 96, reward: 12,
+    armor: 0.04, magicResist: 0.12, color: 0x2f3038, accentColor: 0x9cff62, threat: 'fast'
+  },
+  specter: {
+    kind: 'specter', label: '망령', hp: 74, speed: 70, reward: 18,
+    armor: 0.1, magicResist: 0.58, flying: true, color: 0xb4d7ff, accentColor: 0xe6f6ff, threat: 'flying'
+  },
+  troll: {
+    kind: 'troll', label: '늪 트롤', hp: 260, speed: 38, reward: 38,
+    armor: 0.38, magicResist: 0.08, color: 0x57713b, accentColor: 0x243015, scale: 1.22, threat: 'tank'
   }
 };
 
@@ -92,6 +105,22 @@ const STAGE_2_WAVES: WaveSpawn[][] = [
   [{ kind: 'ogre', count: 3, gapMs: 1500 }, { kind: 'wasp', count: 18, gapMs: 320 }, { kind: 'shaman', count: 5, gapMs: 720 }]
 ];
 
+
+const STAGE_3_WAVES: WaveSpawn[][] = [
+  [{ kind: 'spider', count: 14, gapMs: 360 }, { kind: 'orc', count: 8, gapMs: 560 }],
+  [{ kind: 'specter', count: 8, gapMs: 620 }, { kind: 'spider', count: 12, gapMs: 330 }],
+  [{ kind: 'troll', count: 4, gapMs: 950 }, { kind: 'goblin', count: 18, gapMs: 320 }],
+  [{ kind: 'shaman', count: 5, gapMs: 820 }, { kind: 'spider', count: 18, gapMs: 280 }],
+  [{ kind: 'specter', count: 12, gapMs: 500 }, { kind: 'shield', count: 6, gapMs: 720 }],
+  [{ kind: 'troll', count: 6, gapMs: 780 }, { kind: 'wasp', count: 12, gapMs: 390 }],
+  [{ kind: 'spider', count: 30, gapMs: 230 }, { kind: 'shaman', count: 4, gapMs: 830 }],
+  [{ kind: 'troll', count: 8, gapMs: 650 }, { kind: 'specter', count: 10, gapMs: 450 }],
+  [{ kind: 'ogre', count: 1, gapMs: 1000 }, { kind: 'troll', count: 7, gapMs: 640 }, { kind: 'spider', count: 20, gapMs: 250 }],
+  [{ kind: 'specter', count: 18, gapMs: 340 }, { kind: 'shield', count: 12, gapMs: 530 }, { kind: 'shaman', count: 5, gapMs: 720 }],
+  [{ kind: 'ogre', count: 2, gapMs: 1400 }, { kind: 'troll', count: 9, gapMs: 540 }, { kind: 'wasp', count: 14, gapMs: 310 }],
+  [{ kind: 'ogre', count: 3, gapMs: 1300 }, { kind: 'specter', count: 20, gapMs: 300 }, { kind: 'spider', count: 34, gapMs: 190 }]
+];
+
 export const STAGES: Record<StageId, StageConfig> = {
   stage_001: {
     id: 'stage_001', number: 1, title: '숲길 방어전', subtitle: '고블린 침입로', theme: 'forest', difficulty: '입문',
@@ -121,12 +150,29 @@ export const STAGES: Record<StageId, StageConfig> = {
     ],
     waves: STAGE_2_WAVES,
     tip: '방패병은 마법으로, 말벌은 궁수와 마법으로 빠르게 처리하세요.'
+  },
+  stage_003: {
+    id: 'stage_003', number: 3, title: '그림자 늪지', subtitle: '망령과 늪 트롤의 소굴', theme: 'swamp', difficulty: '어려움',
+    startGold: 470, maxLives: 18, unlockRequires: 'stage_002',
+    path: [
+      { x: -30, y: 160 }, { x: 125, y: 160 }, { x: 245, y: 260 }, { x: 145, y: 385 },
+      { x: 350, y: 430 }, { x: 520, y: 320 }, { x: 450, y: 170 }, { x: 640, y: 105 },
+      { x: 785, y: 210 }, { x: 720, y: 390 }, { x: 990, y: 390 }
+    ],
+    spots: [
+      { x: 120, y: 250 }, { x: 260, y: 165 }, { x: 310, y: 355 },
+      { x: 470, y: 405 }, { x: 535, y: 210 }, { x: 675, y: 180 },
+      { x: 785, y: 310 }, { x: 850, y: 455 }
+    ],
+    waves: STAGE_3_WAVES,
+    tip: '망령은 공중 판정이고 마법 저항이 높습니다. 궁수와 포탑, 병영 길막 조합을 강하게 가져가세요.'
   }
 };
 
-export const STAGE_LIST: StageConfig[] = [STAGES.stage_001, STAGES.stage_002];
+export const STAGE_LIST: StageConfig[] = [STAGES.stage_001, STAGES.stage_002, STAGES.stage_003];
 
 export function getStageConfig(stageId?: string): StageConfig {
+  if (stageId === STAGE_3_ID) return STAGES.stage_003;
   if (stageId === STAGE_2_ID) return STAGES.stage_002;
   return STAGES.stage_001;
 }

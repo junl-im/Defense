@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { Enemy } from './Enemy';
+import { spawnHitSpark, spawnMuzzleFlash } from './Effects';
 
 type SoldierOptions = {
   color?: number;
@@ -49,6 +50,8 @@ export class Soldier extends Phaser.GameObjects.Container {
       this.target.blockFor(this.blockMs);
       if (this.attackCooldownMs <= 0) {
         this.target.receiveDamage(this.damage, 'physical');
+        spawnMuzzleFlash(this.scene, this.x + 7, this.y, 0xffffff);
+        spawnHitSpark(this.scene, this.target.x, this.target.y, 0xdbe7ff);
         this.attackCooldownMs = 700;
         this.scene.tweens.add({ targets: this.bodyCircle, scale: 1.25, duration: 70, yoyo: true });
       }

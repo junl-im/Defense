@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import type { EnemyConfig, PathPoint } from './types';
+import { spawnFloatingText, spawnHitSpark, spawnImpactRing } from './Effects';
 
 export class Enemy extends Phaser.GameObjects.Container {
   readonly config: EnemyConfig;
@@ -32,6 +33,7 @@ export class Enemy extends Phaser.GameObjects.Container {
 
     const face = scene.add.circle(-4 * scale, -3 * scale, 2.2 * scale, 0x101010, 1);
     const face2 = scene.add.circle(4 * scale, -3 * scale, 2.2 * scale, 0x101010, 1);
+    const healthGem = scene.add.circle(0, -13 * scale, 2.5 * scale, this.threatGemColor(config), 0.92);
     const badge = this.makeBadge(config, scale);
 
     if (config.threat === 'support') {
@@ -39,7 +41,7 @@ export class Enemy extends Phaser.GameObjects.Container {
       this.add([this.aura]);
     }
 
-    this.add([shadow, this.bodyCircle, face, face2, badge, this.hpBack, this.hpBar]);
+    this.add([shadow, this.bodyCircle, face, face2, healthGem, badge, this.hpBack, this.hpBar]);
     scene.add.existing(this);
     this.setDepth(config.flying ? 18 : 12);
   }
@@ -120,6 +122,8 @@ export class Enemy extends Phaser.GameObjects.Container {
     if (this.hp / this.maxHp < 0.36) this.hpBar.fillColor = 0xff6058;
     else if (this.hp / this.maxHp < 0.68) this.hpBar.fillColor = 0xffd36b;
 
+    spawnFloatingText(this.scene, this.x, this.y - 24, `${Math.round(finalDamage)}`, damageType === 'magic' ? '#cda8ff' : damageType === 'true' ? '#fff1a6' : '#ffffff', damageType === 'true' ? 18 : 15);
+    spawnHitSpark(this.scene, this.x, this.y, damageType === 'magic' ? 0xb88cff : damageType === 'true' ? 0xfff1a6 : 0xffdf9a);
     this.scene.tweens.add({ targets: this.bodyCircle, scale: 1.22, duration: 55, yoyo: true });
     if (this.hp <= 0) {
       this.dead = true;
@@ -149,11 +153,31 @@ export class Enemy extends Phaser.GameObjects.Container {
     if (config.kind === 'ogre') {
       return this.scene.add.rectangle(0, 7 * scale, 20 * scale, 6 * scale, 0x2d1710, 0.8);
     }
+    if (config.kind === 'spider') {
+      return this.scene.add.rectangle(0, 6 * scale, 24 * scale, 3 * scale, 0x101010, 0.55);
+    }
+    if (config.kind === 'specter') {
+      return this.scene.add.circle(0, 7 * scale, 9 * scale, 0xd6edff, 0.25).setStrokeStyle(1, 0xd6edff, 0.7);
+    }
+    if (config.kind === 'troll') {
+      return this.scene.add.rectangle(7 * scale, 7 * scale, 15 * scale, 5 * scale, 0x2d1710, 0.9).setRotation(-0.35);
+    }
     return this.scene.add.circle(0, 8 * scale, 3 * scale, config.accentColor ?? 0xffffff, 0.7);
   }
 
   private spawnDeathPop(): void {
+    spawnImpactRing(this.scene, this.x, this.y, 16 * (this.config.scale ?? 1), this.config.accentColor ?? 0xfff1c2, 0.26, 360);
     const pop = this.scene.add.circle(this.x, this.y, 12 * (this.config.scale ?? 1), 0xfff1c2, 0.25).setDepth(35);
     this.scene.tweens.add({ targets: pop, scale: 2.0, alpha: 0, duration: 220, onComplete: () => pop.destroy() });
+    spawnFloatingText(this.scene, this.x, this.y - 34, `+$${this.config.reward}`, '#f7d36b', 16);
+  }
+
+  private threatGemColor(config: EnemyConfig): number {
+    if (config.threat === 'boss') return 0xff4d4d;
+    if (config.threat === 'tank') return 0xffb347;
+    if (config.threat === 'flying') return 0x7cc7ff;
+    if (config.threat === 'support') return 0x99fff2;
+    if (config.threat === 'fast') return 0xffffff;
+    return 0x71ff70;
   }
 }

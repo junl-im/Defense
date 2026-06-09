@@ -8,6 +8,7 @@ import { Soldier } from '../game/Soldier';
 import { Tower } from '../game/Tower';
 import type { PlayerSave } from '../services/firebase';
 import { fetchLeaderboard, saveStageClear, submitLeaderboard } from '../services/firebase';
+import { pulseButton, shakeCamera, spawnImpactRing, spawnWaveBanner } from '../game/Effects';
 
 type CastingSpell = 'meteor' | 'mercenary' | undefined;
 
@@ -124,11 +125,11 @@ export class GameScene extends Phaser.Scene {
 
   private drawMap(): void {
     const theme = this.stage.theme;
-    const sky = theme === 'forest' ? 0x142734 : 0x281a18;
-    const ground = theme === 'forest' ? 0x203c2b : 0x6a3824;
-    const ground2 = theme === 'forest' ? 0x2e5a35 : 0x8a5130;
-    const pathEdge = theme === 'forest' ? 0x6b4f2d : 0x5b2f20;
-    const pathMain = theme === 'forest' ? 0xb08a52 : 0xc2834e;
+    const sky = theme === 'forest' ? 0x142734 : theme === 'canyon' ? 0x281a18 : 0x101922;
+    const ground = theme === 'forest' ? 0x203c2b : theme === 'canyon' ? 0x6a3824 : 0x1e352c;
+    const ground2 = theme === 'forest' ? 0x2e5a35 : theme === 'canyon' ? 0x8a5130 : 0x31483a;
+    const pathEdge = theme === 'forest' ? 0x6b4f2d : theme === 'canyon' ? 0x5b2f20 : 0x304136;
+    const pathMain = theme === 'forest' ? 0xb08a52 : theme === 'canyon' ? 0xc2834e : 0x79816a;
 
     this.add.rectangle(480, 270, 960, 540, sky, 1);
 
@@ -142,7 +143,8 @@ export class GameScene extends Phaser.Scene {
     }
 
     if (theme === 'forest') this.drawForestDetails();
-    else this.drawCanyonDetails();
+    else if (theme === 'canyon') this.drawCanyonDetails();
+    else this.drawSwampDetails();
 
     this.drawPath(pathEdge, 48);
     this.drawPath(pathMain, 30);
@@ -185,6 +187,21 @@ export class GameScene extends Phaser.Scene {
     this.add.rectangle(850, 92, 180, 44, 0x38170f, 0.45).setDepth(2);
   }
 
+
+  private drawSwampDetails(): void {
+    for (let i = 0; i < 26; i++) {
+      const x = (i * 67 + 39) % 930;
+      const y = 78 + ((i * 61) % 390);
+      if (this.nearPath(x, y, 56)) continue;
+      this.add.ellipse(x, y, 54, 20, 0x0f231d, 0.5).setDepth(2);
+      this.add.circle(x - 8, y - 3, 7, 0x5da77a, 0.42).setDepth(3);
+      this.add.circle(x + 11, y + 2, 5, 0x89d68a, 0.28).setDepth(3);
+      if (i % 5 === 0) this.add.circle(x + 16, y - 14, 5, 0xc2ff9a, 0.2).setDepth(4);
+    }
+    this.add.ellipse(92, 414, 165, 58, 0x0b1716, 0.5).setDepth(2);
+    this.add.ellipse(112, 418, 112, 26, 0x6fb38c, 0.12).setDepth(3);
+  }
+
   private nearPath(x: number, y: number, threshold: number): boolean {
     for (const p of this.stage.path) {
       if (Phaser.Math.Distance.Between(x, y, p.x, p.y) < threshold) return true;
@@ -205,7 +222,10 @@ export class GameScene extends Phaser.Scene {
     }).setOrigin(0.5).setVisible(false).setDepth(90);
 
     const waveButton = this.makeUiButton(840, 30, 184, 42, 0x9a3c2f, '조기 웨이브', 20, 80);
-    waveButton.on('pointerdown', () => this.startNextWave(true));
+    waveButton.on('pointerdown', () => {
+      pulseButton(this, waveButton);
+      this.startNextWave(true);
+    });
     this.refreshHud();
   }
 
@@ -312,6 +332,7 @@ export class GameScene extends Phaser.Scene {
     }
     this.gold -= cost;
     tower.upgrade();
+    spawnImpactRing(this, tower.x, tower.y, 48, tower.config.color, 0.2, 380);
     this.refreshHud();
     this.selectTower(tower);
     this.showMessage(tower.level >= 3 ? `${tower.config.maxSkill} 개방!` : `${tower.config.label} Lv.${tower.level}`);
@@ -327,6 +348,7 @@ export class GameScene extends Phaser.Scene {
     this.meteorText = this.add.text(96, 500, '⚡ 메테오', { fontSize: '19px', color: '#fff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
     meteor.on('pointerdown', () => {
       if (this.meteorCooldownMs > 0) return this.showMessage('메테오 쿨타임 중');
+      pulseButton(this, meteor);
       this.castingSpell = 'meteor';
       this.showMessage('메테오 지점을 터치하세요');
     });
@@ -335,6 +357,7 @@ export class GameScene extends Phaser.Scene {
     this.mercenaryText = this.add.text(260, 500, '🛡️ 용병소환', { fontSize: '18px', color: '#fff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
     mercenary.on('pointerdown', () => {
       if (this.mercenaryCooldownMs > 0) return this.showMessage('용병소환 쿨타임 중');
+      pulseButton(this, mercenary);
       this.castingSpell = 'mercenary';
       this.showMessage('용병을 소환할 길 위를 터치하세요');
     });
@@ -342,6 +365,7 @@ export class GameScene extends Phaser.Scene {
     const heroSkill = this.makeUiButton(440, 500, 170, 46, 0x4f3d1f, '', 18, 80);
     this.heroSkillText = this.add.text(440, 500, '🦁 대지강타', { fontSize: '18px', color: '#fff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
     heroSkill.on('pointerdown', () => {
+      pulseButton(this, heroSkill);
       const ok = this.hero.castStomp(this.enemies);
       this.showMessage(ok ? '대지강타!' : '영웅 스킬 쿨타임 중');
     });
@@ -382,6 +406,8 @@ export class GameScene extends Phaser.Scene {
     this.tweens.add({ targets: warning, scale: 0.75, duration: 160, yoyo: true, onComplete: () => warning.destroy() });
     this.time.delayedCall(170, () => {
       const boom = this.add.circle(x, y, radius, 0xfff0a3, 0.35).setDepth(51);
+      spawnImpactRing(this, x, y, radius, 0xffd36b, 0.3, 420);
+      shakeCamera(this, 0.006, 160);
       this.tweens.add({ targets: boom, scale: 1.5, alpha: 0, duration: 300, onComplete: () => boom.destroy() });
       this.enemies.forEach((enemy) => {
         if (!enemy.dead && Phaser.Math.Distance.Between(x, y, enemy.x, enemy.y) <= radius) enemy.receiveDamage(100, 'true');
@@ -416,13 +442,15 @@ export class GameScene extends Phaser.Scene {
     if (this.waveRunning) return;
     if (this.waveIndex >= this.stage.waves.length - 1) return;
     if (early && this.waveIndex >= 0) {
-      const bonus = this.stage.id === 'stage_002' ? 30 : 25;
+      const bonus = 20 + this.stage.number * 5;
       this.gold += bonus;
       this.showMessage(`조기 호출 보너스 +$${bonus}`);
     }
     this.waveIndex += 1;
     this.waveRunning = true;
     this.refreshHud();
+    const waveNumber = this.waveIndex + 1;
+    spawnWaveBanner(this, `WAVE ${waveNumber}`, this.describeWave(this.stage.waves[this.waveIndex]));
     this.spawnWave(this.stage.waves[this.waveIndex]);
   }
 
@@ -433,11 +461,17 @@ export class GameScene extends Phaser.Scene {
         this.time.delayedCall(delay, () => {
           const enemy = new Enemy(this, { ...ENEMIES[group.kind] }, this.stage.path);
           this.enemies.push(enemy);
+          spawnImpactRing(this, enemy.x, enemy.y, 18, enemy.config.accentColor ?? 0xffffff, 0.12, 260);
         });
         delay += group.gapMs;
       }
       delay += group.delayAfterMs ?? 800;
     });
+  }
+
+
+  private describeWave(groups: WaveSpawn[]): string {
+    return groups.map((group) => `${ENEMIES[group.kind].label} x${group.count}`).join('  /  ');
   }
 
   private refreshHud(): void {
