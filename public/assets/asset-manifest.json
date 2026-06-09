@@ -1,5 +1,5 @@
 {
-  "version": "0.9.0",
+  "version": "1.0.0",
   "ui": {
     "worldMapBackground": "assets/ui/world_map_painted.png",
     "stageCardFrame": "assets/ui/stage_card_frame.png",
@@ -7,7 +7,9 @@
     "stageDetailPanel": "assets/ui/panel_detail_large.png",
     "worldMapBanner": "assets/ui/banner_worldmap.png",
     "starIcon": "assets/ui/icon_star_large.png",
-    "lockIcon": "assets/ui/icon_lock.png"
+    "lockIcon": "assets/ui/icon_lock.png",
+    "hudTopPanel": "assets/ui/hud_top_panel.png",
+    "hudBottomPanel": "assets/ui/hud_bottom_panel.png"
   },
   "stageCards": {
     "stage_001": "assets/maps/stage_card_001.png",
@@ -36,5 +38,17 @@
       "assets/sprites/tower_artillery_lv2.png",
       "assets/sprites/tower_artillery_lv3.png"
     ]
+  },
+  "battleMaps": {
+    "stage_001": "assets/maps/battle_stage_001.png",
+    "stage_002": "assets/maps/battle_stage_002.png",
+    "stage_003": "assets/maps/battle_stage_003.png",
+    "stage_004": "assets/maps/battle_stage_004.png"
+  },
+  "effects": {
+    "buildDust": "assets/effects/fx_build_dust.png",
+    "upgradeBurst": "assets/effects/fx_upgrade_burst.png",
+    "deathPoof": "assets/effects/fx_death_poof.png",
+    "explosionBurst": "assets/effects/fx_explosion_burst.png"
   }
 }

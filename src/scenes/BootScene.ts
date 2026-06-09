@@ -41,6 +41,8 @@ export class BootScene extends Phaser.Scene {
     this.load.image('ui-banner-worldmap', 'assets/ui/banner_worldmap.png');
     this.load.image('ui-icon-star-large', 'assets/ui/icon_star_large.png');
     this.load.image('ui-icon-lock', 'assets/ui/icon_lock.png');
+    this.load.image('ui-hud-top-panel', 'assets/ui/hud_top_panel.png');
+    this.load.image('ui-hud-bottom-panel', 'assets/ui/hud_bottom_panel.png');
 
     this.load.image('map-thumb-stage-001', 'assets/maps/map_stage_001.png');
     this.load.image('map-thumb-stage-002', 'assets/maps/map_stage_002.png');
@@ -50,11 +52,19 @@ export class BootScene extends Phaser.Scene {
     this.load.image('map-card-stage-002', 'assets/maps/stage_card_002.png');
     this.load.image('map-card-stage-003', 'assets/maps/stage_card_003.png');
     this.load.image('map-card-stage-004', 'assets/maps/stage_card_004.png');
+    this.load.image('battle-bg-stage_001', 'assets/maps/battle_stage_001.png');
+    this.load.image('battle-bg-stage_002', 'assets/maps/battle_stage_002.png');
+    this.load.image('battle-bg-stage_003', 'assets/maps/battle_stage_003.png');
+    this.load.image('battle-bg-stage_004', 'assets/maps/battle_stage_004.png');
 
     this.load.spritesheet('hero-knight', 'assets/sprites/hero_knight.png', { frameWidth: 32, frameHeight: 32 });
     this.load.spritesheet('soldier-blue', 'assets/sprites/soldier_blue.png', { frameWidth: 32, frameHeight: 32 });
     this.load.spritesheet('mercenary-green', 'assets/sprites/mercenary_green.png', { frameWidth: 32, frameHeight: 32 });
     this.load.spritesheet('projectiles', 'assets/sprites/projectiles.png', { frameWidth: 16, frameHeight: 16 });
+    this.load.spritesheet('fx-build-dust', 'assets/effects/fx_build_dust.png', { frameWidth: 64, frameHeight: 64 });
+    this.load.spritesheet('fx-upgrade-burst', 'assets/effects/fx_upgrade_burst.png', { frameWidth: 64, frameHeight: 64 });
+    this.load.spritesheet('fx-death-poof', 'assets/effects/fx_death_poof.png', { frameWidth: 64, frameHeight: 64 });
+    this.load.spritesheet('fx-explosion-burst', 'assets/effects/fx_explosion_burst.png', { frameWidth: 64, frameHeight: 64 });
 
     ENEMY_KEYS.forEach((kind) => {
       this.load.spritesheet(`enemy-${kind}`, `assets/sprites/enemy_${kind}.png`, { frameWidth: 32, frameHeight: 32 });
@@ -101,6 +111,10 @@ export class BootScene extends Phaser.Scene {
     this.anims.create({ key: 'mercenary-idle', frames: this.anims.generateFrameNumbers('mercenary-green', { start: 0, end: 3 }), frameRate: 6, repeat: -1 });
 
     this.anims.create({ key: 'ui-particle-glow', frames: this.anims.generateFrameNumbers('ui-particles', { start: 0, end: 3 }), frameRate: 4, repeat: -1 });
+    this.anims.create({ key: 'fx-build-dust-play', frames: this.anims.generateFrameNumbers('fx-build-dust', { start: 0, end: 5 }), frameRate: 18, repeat: 0 });
+    this.anims.create({ key: 'fx-upgrade-burst-play', frames: this.anims.generateFrameNumbers('fx-upgrade-burst', { start: 0, end: 7 }), frameRate: 20, repeat: 0 });
+    this.anims.create({ key: 'fx-death-poof-play', frames: this.anims.generateFrameNumbers('fx-death-poof', { start: 0, end: 5 }), frameRate: 18, repeat: 0 });
+    this.anims.create({ key: 'fx-explosion-burst-play', frames: this.anims.generateFrameNumbers('fx-explosion-burst', { start: 0, end: 6 }), frameRate: 20, repeat: 0 });
 
     ENEMY_KEYS.forEach((kind) => {
       this.anims.create({

@@ -8,7 +8,7 @@ import { Soldier } from '../game/Soldier';
 import { Tower } from '../game/Tower';
 import type { PlayerSave } from '../services/firebase';
 import { fetchLeaderboard, saveStageClear, submitLeaderboard } from '../services/firebase';
-import { pulseButton, shakeCamera, spawnImpactRing, spawnWaveBanner } from '../game/Effects';
+import { pulseButton, shakeCamera, spawnBuildDust, spawnExplosionBurst, spawnImpactRing, spawnWaveBanner } from '../game/Effects';
 import { isMuted, playMusic, playSfx, setMuted } from '../game/AudioManager';
 import { requestGameFullscreen } from '../platform/WebShell';
 
@@ -137,11 +137,25 @@ export class GameScene extends Phaser.Scene {
 
   private drawMap(): void {
     const theme = this.stage.theme;
+    const bgKey = `battle-bg-${this.stage.id}`;
+    const pathEdge = theme === 'forest' ? 0x6b4f2d : theme === 'canyon' ? 0x5b2f20 : theme === 'swamp' ? 0x304136 : 0x161116;
+    const pathMain = theme === 'forest' ? 0xb08a52 : theme === 'canyon' ? 0xc2834e : theme === 'swamp' ? 0x79816a : 0x7c6b5e;
+
+    if (this.textures.exists(bgKey)) {
+      this.add.image(480, 270, bgKey).setDisplaySize(960, 540).setDepth(0);
+      this.createAmbientMapFx();
+      this.drawPath(0x17100a, 54, 0.36);
+      this.drawPath(pathEdge, 44, 0.78);
+      this.drawPath(pathMain, 29, 0.92);
+      this.drawPath(0xfff0a3, 3, 0.24);
+      this.drawMapVignette();
+      this.drawHudChrome();
+      return;
+    }
+
     const sky = theme === 'forest' ? 0x142734 : theme === 'canyon' ? 0x281a18 : theme === 'swamp' ? 0x101922 : 0x15131a;
     const ground = theme === 'forest' ? 0x203c2b : theme === 'canyon' ? 0x6a3824 : theme === 'swamp' ? 0x1e352c : 0x2b2630;
     const ground2 = theme === 'forest' ? 0x2e5a35 : theme === 'canyon' ? 0x8a5130 : theme === 'swamp' ? 0x31483a : 0x40333a;
-    const pathEdge = theme === 'forest' ? 0x6b4f2d : theme === 'canyon' ? 0x5b2f20 : theme === 'swamp' ? 0x304136 : 0x161116;
-    const pathMain = theme === 'forest' ? 0xb08a52 : theme === 'canyon' ? 0xc2834e : theme === 'swamp' ? 0x79816a : 0x7c6b5e;
 
     this.add.rectangle(480, 270, 960, 540, sky, 1);
 
@@ -162,9 +176,53 @@ export class GameScene extends Phaser.Scene {
     this.drawPath(pathEdge, 48);
     this.drawPath(pathMain, 30);
     this.drawPath(0xe8bd70, 4, 0.28);
+    this.drawHudChrome();
+  }
 
-    this.add.rectangle(480, 30, 960, 60, 0x0b1220, 0.9).setDepth(70);
-    this.add.rectangle(480, 510, 960, 60, 0x0b1220, 0.82).setDepth(70);
+  private drawHudChrome(): void {
+    if (this.textures.exists('ui-hud-top-panel')) {
+      this.add.image(480, 32, 'ui-hud-top-panel').setDisplaySize(960, 64).setDepth(70);
+    } else {
+      this.add.rectangle(480, 30, 960, 60, 0x0b1220, 0.9).setDepth(70);
+    }
+
+    if (this.textures.exists('ui-hud-bottom-panel')) {
+      this.add.image(480, 510, 'ui-hud-bottom-panel').setDisplaySize(960, 64).setDepth(70);
+    } else {
+      this.add.rectangle(480, 510, 960, 60, 0x0b1220, 0.82).setDepth(70);
+    }
+  }
+
+  private drawMapVignette(): void {
+    const shade = this.add.graphics().setDepth(3);
+    shade.fillStyle(0x000000, 0.13).fillRect(0, 64, 960, 42);
+    shade.fillStyle(0x000000, 0.16).fillRect(0, 438, 960, 42);
+    shade.fillStyle(0x000000, 0.12).fillRect(0, 64, 42, 416);
+    shade.fillStyle(0x000000, 0.12).fillRect(918, 64, 42, 416);
+  }
+
+  private createAmbientMapFx(): void {
+    const theme = this.stage.theme;
+    const color = theme === 'forest' ? 0xb7ff93 : theme === 'canyon' ? 0xffc16b : theme === 'swamp' ? 0xa8ffc4 : 0xff6b4d;
+    const alpha = theme === 'fortress' ? 0.12 : 0.09;
+    const count = theme === 'swamp' ? 13 : 9;
+    for (let i = 0; i < count; i++) {
+      const x = 55 + ((i * 103) % 850);
+      const y = 92 + ((i * 67) % 340);
+      if (this.nearPath(x, y, 58)) continue;
+      const mote = this.add.circle(x, y, theme === 'swamp' ? 5 : 3, color, alpha).setDepth(5);
+      this.tweens.add({
+        targets: mote,
+        y: y - Phaser.Math.Between(12, 28),
+        x: x + Phaser.Math.Between(-14, 14),
+        alpha: alpha * 0.2,
+        duration: 1600 + i * 110,
+        delay: i * 90,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut'
+      });
+    }
   }
 
   private drawPath(color: number, width: number, alpha = 1): void {
@@ -336,6 +394,7 @@ export class GameScene extends Phaser.Scene {
         plus.destroy();
         const tower = new Tower(this, x, y, cfg);
         playSfx(this, 'sfx_build');
+        spawnBuildDust(this, x, y);
         tower.applyPermanentUpgrades(this.save.upgrades);
         if (kind === 'barracks') tower.spawnSoldiers();
         tower.on('pointerdown', () => this.selectTower(tower));
@@ -475,6 +534,7 @@ export class GameScene extends Phaser.Scene {
     this.tweens.add({ targets: warning, scale: 0.75, duration: 160, yoyo: true, onComplete: () => warning.destroy() });
     this.time.delayedCall(170, () => {
       const boom = this.add.circle(x, y, radius, 0xfff0a3, 0.35).setDepth(51);
+      spawnExplosionBurst(this, x, y, 1.35);
       spawnImpactRing(this, x, y, radius, 0xffd36b, 0.3, 420);
       shakeCamera(this, 0.006, 160);
       this.tweens.add({ targets: boom, scale: 1.5, alpha: 0, duration: 300, onComplete: () => boom.destroy() });

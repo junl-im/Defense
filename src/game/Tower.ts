@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import type { TowerConfig } from './types';
 import { Enemy } from './Enemy';
 import { Soldier } from './Soldier';
-import { shakeCamera, spawnHitSpark, spawnImpactRing, spawnMuzzleFlash, spawnProjectile } from './Effects';
+import { shakeCamera, spawnExplosionBurst, spawnHitSpark, spawnImpactRing, spawnMuzzleFlash, spawnProjectile, spawnUpgradeBurst } from './Effects';
 import { playSfx } from './AudioManager';
 
 export type TowerUpgradeSnapshot = {
@@ -138,6 +138,7 @@ export class Tower extends Phaser.GameObjects.Container {
     this.updateSpriteForLevel();
     this.scene.tweens.add({ targets: [this.top, this.roof, this.sprite].filter(Boolean), scale: 1.18, duration: 100, yoyo: true });
     playSfx(this.scene, 'sfx_upgrade');
+    spawnUpgradeBurst(this.scene, this.x, this.y - 10, this.config.color);
     spawnImpactRing(this.scene, this.x, this.y - 10, 34, this.config.color, 0.18, 360);
 
     if (this.config.kind === 'barracks') {
@@ -197,6 +198,7 @@ export class Tower extends Phaser.GameObjects.Container {
     playSfx(this.scene, 'sfx_shoot');
     spawnProjectile(this.scene, this.x, this.y - 20, impactX, impactY, 0x2c1a0a, 'shell', 170, () => {
       const radius = this.currentSplashRadius ?? 50;
+      spawnExplosionBurst(this.scene, impactX, impactY, Math.max(0.9, radius / 52));
       const impact = this.scene.add.circle(impactX, impactY, radius, 0xffb347, 0.2).setDepth(34);
       const ring = this.scene.add.circle(impactX, impactY, radius * 0.55, 0xfff1c2, 0.14).setStrokeStyle(2, 0xfff1c2, 0.55).setDepth(35);
       this.scene.tweens.add({ targets: [impact, ring], scale: 1.35, alpha: 0, duration: 260, onComplete: () => { impact.destroy(); ring.destroy(); } });

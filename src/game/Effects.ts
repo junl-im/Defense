@@ -171,3 +171,64 @@ export function shakeCamera(scene: Phaser.Scene, intensity = 0.004, duration = 1
   const camera = scene.cameras.main;
   if (camera) camera.shake(duration, intensity);
 }
+
+function spawnSheetFx(
+  scene: Phaser.Scene,
+  textureKey: string,
+  animationKey: string,
+  x: number,
+  y: number,
+  scale = 1,
+  depth = 70
+): void {
+  if (!scene.textures.exists(textureKey)) return;
+  const fx = scene.add.sprite(x, y, textureKey, 0).setScale(scale).setDepth(depth);
+  fx.play(animationKey);
+  fx.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => fx.destroy());
+}
+
+export function spawnBuildDust(scene: Phaser.Scene, x: number, y: number): void {
+  spawnSheetFx(scene, 'fx-build-dust', 'fx-build-dust-play', x, y + 8, 1.12, 68);
+  for (let i = 0; i < 8; i++) {
+    const angle = -Math.PI + (Math.PI * i) / 7;
+    const chip = scene.add.rectangle(x, y + 14, 6, 4, 0xc79c5a, 0.88)
+      .setRotation(angle)
+      .setDepth(67);
+    scene.tweens.add({
+      targets: chip,
+      x: x + Math.cos(angle) * Phaser.Math.Between(20, 42),
+      y: y + 14 + Math.sin(angle) * Phaser.Math.Between(8, 26),
+      alpha: 0,
+      duration: 380,
+      ease: 'Quad.easeOut',
+      onComplete: () => chip.destroy()
+    });
+  }
+}
+
+export function spawnUpgradeBurst(scene: Phaser.Scene, x: number, y: number, color = 0xffd36b): void {
+  spawnSheetFx(scene, 'fx-upgrade-burst', 'fx-upgrade-burst-play', x, y - 4, 1.2, 72);
+  spawnImpactRing(scene, x, y - 2, 42, color, 0.18, 420);
+  for (let i = 0; i < 10; i++) {
+    const angle = (Math.PI * 2 * i) / 10;
+    const gem = scene.add.polygon(x, y - 4, [0, -9, 7, 0, 0, 9, -7, 0], color, 0.86).setDepth(73);
+    scene.tweens.add({
+      targets: gem,
+      x: x + Math.cos(angle) * 44,
+      y: y - 4 + Math.sin(angle) * 34,
+      scale: 0.2,
+      alpha: 0,
+      duration: 470,
+      ease: 'Quad.easeOut',
+      onComplete: () => gem.destroy()
+    });
+  }
+}
+
+export function spawnDeathPoof(scene: Phaser.Scene, x: number, y: number, scale = 1): void {
+  spawnSheetFx(scene, 'fx-death-poof', 'fx-death-poof-play', x, y, scale, 76);
+}
+
+export function spawnExplosionBurst(scene: Phaser.Scene, x: number, y: number, scale = 1): void {
+  spawnSheetFx(scene, 'fx-explosion-burst', 'fx-explosion-burst-play', x, y, scale, 78);
+}

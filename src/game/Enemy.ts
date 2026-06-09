@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import type { EnemyConfig, PathPoint } from './types';
-import { spawnFloatingText, spawnHitSpark, spawnImpactRing } from './Effects';
+import { spawnDeathPoof, spawnFloatingText, spawnHitSpark, spawnImpactRing } from './Effects';
 import { playSfx } from './AudioManager';
 
 export class Enemy extends Phaser.GameObjects.Container {
@@ -137,6 +137,8 @@ export class Enemy extends Phaser.GameObjects.Container {
     if (this.hp <= 0) {
       this.dead = true;
       this.poisonTimer?.remove(false);
+      this.sprite?.stop();
+      this.sprite?.setTint(0xffe0c2);
       this.spawnDeathPop();
       this.scene.tweens.add({
         targets: this,
@@ -190,6 +192,7 @@ export class Enemy extends Phaser.GameObjects.Container {
   }
 
   private spawnDeathPop(): void {
+    spawnDeathPoof(this.scene, this.x, this.y, Math.max(0.9, this.config.scale ?? 1));
     spawnImpactRing(this.scene, this.x, this.y, 16 * (this.config.scale ?? 1), this.config.accentColor ?? 0xfff1c2, 0.26, 360);
     const pop = this.scene.add.circle(this.x, this.y, 12 * (this.config.scale ?? 1), 0xfff1c2, 0.25).setDepth(35);
     this.scene.tweens.add({ targets: pop, scale: 2.0, alpha: 0, duration: 220, onComplete: () => pop.destroy() });
