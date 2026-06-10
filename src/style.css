@@ -1,149 +1,101 @@
-html,
-body {
-  width: 100%;
-  height: 100%;
+:root {
+  --ks-bg: #06070b;
+  --ks-panel: rgba(20, 16, 14, 0.92);
+  --ks-gold: #f1c46a;
+  --ks-gold-soft: rgba(241, 196, 106, 0.45);
+  --ks-blue: #63d7ff;
+  --ks-danger: #ff6a58;
+  --ks-safe-top: env(safe-area-inset-top, 0px);
+  --ks-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --ks-safe-left: env(safe-area-inset-left, 0px);
+  --ks-safe-right: env(safe-area-inset-right, 0px);
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color-scheme: dark;
+}
+
+html, body, #app, #game-root, canvas {
   margin: 0;
   padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+html, body {
   overflow: hidden;
-  background: #050812;
-  touch-action: none;
-  user-select: none;
-  -webkit-user-select: none;
-  font-family: "Trebuchet MS", "Noto Serif KR", "Malgun Gothic", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   overscroll-behavior: none;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: geometricPrecision;
-}
-
-body {
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100dvh;
-  color: #fff;
-}
-
-#game {
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100dvh;
-  overflow: hidden;
   background:
-    radial-gradient(circle at 50% 38%, rgba(94, 75, 44, 0.28), transparent 36%),
-    radial-gradient(circle at 50% 110%, rgba(0,0,0,0.85), rgba(0,0,0,0.96)),
-    linear-gradient(180deg, #142333, #050812 72%);
-  transform-origin: center center;
+    radial-gradient(circle at 50% 18%, rgba(80, 66, 48, 0.32), transparent 36%),
+    radial-gradient(circle at 12% 80%, rgba(34, 73, 90, 0.25), transparent 34%),
+    linear-gradient(180deg, #090b12 0%, #050507 100%);
+  -webkit-touch-callout: none;
+  user-select: none;
+  touch-action: none;
 }
 
 canvas {
   display: block;
   image-rendering: auto;
-  filter: saturate(1.1) contrast(1.045) brightness(1.015);
-  backface-visibility: hidden;
+  filter: saturate(1.06) contrast(1.04);
 }
 
-:root {
-  --ks-gold: #f6d879;
-  --ks-gold-soft: #fff0ad;
-  --ks-ink: #060a13;
-  --ks-panel: #111b2b;
-  --ks-red: #c34a34;
-  --ks-blue: #4f9ccc;
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(circle at 50% 40%, rgba(255, 219, 112, 0.07), transparent 38%),
-    linear-gradient(180deg, rgba(255,255,255,0.035), transparent 22%, rgba(0,0,0,0.2));
-  z-index: 1;
-}
-
-/* Desktop must never rotate or force fullscreen. Mobile portrait fallback only. */
-html.needs-portrait-rotation #game {
-  width: 100dvh;
-  height: 100vw;
-  left: 50%;
-  top: 50%;
-  right: auto;
-  bottom: auto;
-  transform: translate(-50%, -50%) rotate(90deg);
-}
-
-@media (hover: hover) and (pointer: fine), (min-width: 960px) {
-  html.needs-portrait-rotation #game {
-    width: 100vw;
-    height: 100dvh;
-    left: 0;
-    top: 0;
-    transform: none !important;
-  }
-
-  .shell-overlay.shell-start-gate {
-    display: none !important;
+/* PC: never rotate, never force fullscreen layout. Keep a premium letterbox shell. */
+@media (hover: hover) and (pointer: fine) {
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(90deg, rgba(0,0,0,.36), transparent 18%, transparent 82%, rgba(0,0,0,.36)),
+      linear-gradient(180deg, rgba(255,230,160,.05), transparent 20%, transparent 78%, rgba(0,0,0,.25));
+    z-index: 999998;
   }
 }
 
-.shell-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display: grid;
-  place-items: center;
-  padding: max(18px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) max(18px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
-  box-sizing: border-box;
-  background:
-    radial-gradient(circle at 50% 18%, rgba(235, 180, 79, 0.18), transparent 30%),
-    radial-gradient(circle at 50% 120%, rgba(4, 7, 11, 0.72), rgba(4, 7, 11, 0.98)),
-    linear-gradient(180deg, #172838, #08111c 68%, #03070d);
-  color: #fff;
-  text-align: center;
+/* Mobile safe area and landscape shell helpers. */
+@media (hover: none) and (pointer: coarse) {
+  body {
+    padding-top: var(--ks-safe-top);
+    padding-bottom: var(--ks-safe-bottom);
+    padding-left: var(--ks-safe-left);
+    padding-right: var(--ks-safe-right);
+  }
 }
 
-.shell-overlay.hidden { display: none; }
-.shell-start-gate { cursor: pointer; transition: opacity 180ms ease, transform 180ms ease; }
-.start-gate-out { opacity: 0; transform: scale(1.035); pointer-events: none; }
-
-.shell-start-card {
-  width: min(78vw, 640px);
-  min-height: 300px;
-  padding: 26px 34px 30px;
-  box-sizing: border-box;
-  border: 3px solid rgba(247, 211, 107, 0.72);
-  border-radius: 26px;
-  background:
-    linear-gradient(180deg, rgba(52, 37, 24, 0.94), rgba(12, 18, 29, 0.97)),
-    radial-gradient(circle at 50% 15%, rgba(255, 221, 131, 0.15), transparent 55%);
+.kingdom-toast,
+.kingdom-modal,
+.kingdom-dock,
+.kingdom-floating-panel {
+  backdrop-filter: blur(8px) saturate(1.2);
+  -webkit-backdrop-filter: blur(8px) saturate(1.2);
+  border: 1px solid var(--ks-gold-soft);
   box-shadow:
-    0 28px 100px rgba(0, 0, 0, 0.72),
-    inset 0 0 0 2px rgba(255, 255, 255, 0.08),
-    inset 0 -24px 66px rgba(0, 0, 0, 0.32);
-  position: relative;
-  overflow: hidden;
+    0 18px 50px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 232, 170, 0.22),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.45);
 }
 
-.shell-title-mark { letter-spacing: 0.22em; color: #f7d36b; font-size: 13px; font-weight: 900; text-shadow: 0 3px 0 #000; }
-.shell-title-sword { width: 260px; height: 12px; margin: 16px auto 8px; border-radius: 999px; background: linear-gradient(90deg, transparent, #d7e3ef 22%, #fff6c7 50%, #d7e3ef 78%, transparent); box-shadow: 0 0 20px rgba(255, 240, 163, 0.46); }
-.shell-start-card h1 { margin: 8px 0 8px; font-size: clamp(38px, 8vw, 70px); line-height: 0.95; color: #fff4c2; text-shadow: 0 5px 0 #4c1e12, 0 12px 24px rgba(0,0,0,0.62); }
-.shell-start-card p { margin: 0 auto 18px; width: min(470px, 82%); color: #e9d5a8; font-weight: 800; line-height: 1.45; text-shadow: 0 2px 0 rgba(0,0,0,0.65); }
-.shell-tap-rune { display: inline-grid; place-items: center; width: 112px; height: 50px; border-radius: 999px; background: linear-gradient(180deg, #e09b4d, #83331e); border: 2px solid #ffedb0; color: #fff8cf; font-weight: 1000; letter-spacing: 0.16em; box-shadow: 0 7px 0 #351408, 0 0 28px rgba(255, 211, 107, 0.36); animation: tapPulse 980ms infinite ease-in-out; }
-@keyframes tapPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.075); } }
+.kingdom-button {
+  position: relative;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #7d5228 0%, #3a2112 100%);
+  border: 1px solid rgba(255, 222, 142, 0.6);
+  color: #ffe8ac;
+  text-shadow: 0 2px 2px #000;
+  box-shadow: 0 8px 0 #1d1009, 0 14px 28px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.25);
+}
 
-.shell-panel { width: min(92vw, 460px); padding: 24px; border: 2px solid rgba(247, 211, 107, 0.62); border-radius: 18px; background: linear-gradient(180deg, rgba(15, 26, 39, 0.98), rgba(8, 13, 22, 0.98)); box-shadow: 0 18px 70px rgba(0, 0, 0, 0.55), inset 0 0 0 1px rgba(255, 255, 255, 0.08); }
-.shell-kicker { letter-spacing: 0.18em; color: #f7d36b; font-size: 12px; font-weight: 800; margin-bottom: 8px; }
-.shell-panel h2 { margin: 0 0 12px; line-height: 1.15; }
-.shell-panel p { margin: 0 0 18px; color: #dbe7ff; line-height: 1.55; }
-.shell-row { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-.shell-secondary, .shell-danger { border: 0; border-radius: 12px; min-width: 132px; height: 44px; color: #fff; font-weight: 900; cursor: pointer; box-shadow: 0 8px 18px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.12); }
-.shell-secondary { background: linear-gradient(180deg, #456787, #213246); }
-.shell-danger { background: linear-gradient(180deg, #ad513e, #552018); }
+.kingdom-button:active {
+  transform: translateY(3px) scale(.985);
+  box-shadow: 0 4px 0 #1d1009, 0 8px 18px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.18);
+}
 
-@media (max-width: 720px) {
-  .shell-start-card { width: min(92vw, 560px); min-height: 250px; padding: 20px 22px 24px; }
-  .shell-start-card h1 { font-size: clamp(34px, 12vw, 58px); }
-  .shell-start-card p { width: 92%; font-size: 14px; }
+.kingdom-button[disabled], .kingdom-disabled {
+  filter: grayscale(.6) brightness(.65);
+  opacity: .72;
+}
+
+.kingdom-readable-number {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .02em;
 }
