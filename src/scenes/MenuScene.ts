@@ -97,7 +97,7 @@ export class MenuScene extends Phaser.Scene {
       }).setOrigin(0.5));
     });
 
-    this.add.text(18, 15, 'v4.9 CLEAN VISUAL', {
+    this.add.text(18, 15, 'PREMIUM ART PASS', {
       fontSize: '9px',
       color: '#eef6ff',
       fontStyle: 'bold',
@@ -108,17 +108,17 @@ export class MenuScene extends Phaser.Scene {
 
   private createBoutiqueTitle(): void {
     const ornamentKey = this.textureKey('ui-title-ornaments-boutique-v49', this.textureKey('ui-title-ornaments-v48', 'ui-status-plaque'));
-    this.add.image(480, 86, ornamentKey).setDisplaySize(310, 104).setDepth(17).setAlpha(0.66);
+    this.add.image(480, 82, ornamentKey).setDisplaySize(286, 96).setDepth(17).setAlpha(0.58);
 
     const logoKey = this.textureKey('ui-title-logo-boutique-v49', this.textureKey('ui-title-logo-compact-v48', 'ui-title-logo'));
-    const logo = this.add.image(480, 86, logoKey).setDisplaySize(326, 113).setDepth(22);
+    const logo = this.add.image(480, 82, logoKey).setDisplaySize(300, 102).setDepth(22);
     this.tweens.add({ targets: logo, y: 83, duration: 1900, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
 
     if (this.textures.exists('ui-jewel-divider-boutique-v49')) {
       this.add.image(480, 142, 'ui-jewel-divider-boutique-v49').setDisplaySize(116, 17).setDepth(23).setAlpha(0.88);
     }
 
-    this.add.text(480, 158, '작고 선명한 왕국 방어 로비', {
+    this.add.text(480, 150, '프리미엄 왕국 방어 로비', {
       fontSize: '12px',
       color: '#ffffff',
       fontStyle: 'bold',
@@ -138,7 +138,7 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private createBoutiqueCommandPanel(): void {
-    this.loginPanel = this.add.container(480, 320).setDepth(40);
+    this.loginPanel = this.add.container(480, 316).setDepth(40);
 
     const panelKey = this.textureKey('ui-login-panel-boutique-v49', this.textureKey('ui-login-panel-compact-v48', 'ui-login-panel'));
     const primaryKey = this.textureKey('ui-button-boutique-gold-v49', this.textureKey('ui-button-compact-gold-v48', 'ui-button-primary'));
@@ -146,13 +146,13 @@ export class MenuScene extends Phaser.Scene {
     const whiteKey = this.textureKey('ui-button-boutique-white-v49', this.textureKey('ui-button-compact-white-v48', 'ui-button-gold'));
     const redKey = this.textureKey('ui-button-boutique-red-v49', this.textureKey('ui-button-compact-red-v48', 'ui-button-red'));
 
-    this.loginPanel.add(this.add.image(0, 0, panelKey).setDisplaySize(338, 232));
+    this.loginPanel.add(this.add.image(0, 0, panelKey).setDisplaySize(318, 214));
 
     this.statusText = this.add.text(0, -63, '로그인 확인 중...', {
       fontSize: '11px',
       color: '#3a5d96',
       align: 'center',
-      fixedWidth: 260,
+      fixedWidth: 248,
       backgroundColor: '#f2f8ffdd',
       padding: { x: 7, y: 3 }
     }).setOrigin(0.5);
@@ -161,8 +161,8 @@ export class MenuScene extends Phaser.Scene {
     this.loginPanel.add(addPremiumButton(this, {
       x: 0,
       y: -18,
-      width: 252,
-      height: 42,
+      width: 238,
+      height: 38,
       texture: primaryKey,
       icon: 'ui-icon-anonymous',
       label: '바로 시작',
@@ -171,9 +171,9 @@ export class MenuScene extends Phaser.Scene {
 
     this.loginPanel.add(addPremiumButton(this, {
       x: 0,
-      y: 32,
-      width: 252,
-      height: 42,
+      y: 28,
+      width: 238,
+      height: 38,
       texture: blueKey,
       icon: 'ui-icon-google',
       label: 'Google 연동',
@@ -181,10 +181,10 @@ export class MenuScene extends Phaser.Scene {
     }));
 
     this.loginPanel.add(addPremiumButton(this, {
-      x: -65,
-      y: 82,
-      width: 118,
-      height: 38,
+      x: -61,
+      y: 74,
+      width: 112,
+      height: 35,
       texture: whiteKey,
       icon: 'ui-icon-email',
       label: '이메일',
@@ -192,31 +192,31 @@ export class MenuScene extends Phaser.Scene {
     }));
 
     this.loginPanel.add(addPremiumButton(this, {
-      x: 65,
-      y: 82,
-      width: 118,
-      height: 38,
+      x: 61,
+      y: 74,
+      width: 112,
+      height: 35,
       texture: redKey,
       icon: 'ui-icon-register',
       label: '가입',
       onClick: () => void this.startEmailRegister()
     }));
 
-    this.loginPanel.add(this.add.text(0, 109, '게스트 진행 가능 · 연동 시 저장 유지', {
+    this.loginPanel.add(this.add.text(0, 99, '게스트 진행 가능 · 연동 시 저장 유지', {
       fontSize: '10px',
       color: '#5d789e',
       fontStyle: 'bold'
     }).setOrigin(0.5));
 
-    this.loginPanel.setAlpha(0).setScale(0.965).setY(330);
-    this.tweens.add({ targets: this.loginPanel, alpha: 1, y: 320, scaleX: 1, scaleY: 1, duration: 310, ease: 'Back.easeOut' });
+    this.loginPanel.setAlpha(0).setScale(0.965).setY(326);
+    this.tweens.add({ targets: this.loginPanel, alpha: 1, y: 316, scaleX: 1, scaleY: 1, duration: 310, ease: 'Back.easeOut' });
   }
 
   private createBoutiqueStatusBar(): void {
     const stripKey = this.textureKey('ui-footer-strip-boutique-v49', this.textureKey('ui-footer-strip-compact-v48', 'ui-status-plaque'));
-    this.add.image(480, 505, stripKey).setDisplaySize(370, 40).setDepth(18).setAlpha(0.95);
+    this.add.image(480, 505, stripKey).setDisplaySize(342, 36).setDepth(18).setAlpha(0.94);
     this.add.text(480, 504, '영웅 · 유물 · 타워 진화 · 보스 토벌', {
-      fontSize: '11px',
+      fontSize: '10px',
       color: '#ffffff',
       align: 'center',
       fontStyle: 'bold',

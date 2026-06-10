@@ -1,20 +1,14 @@
 # Visual Guide
 
-## Current direction
+## 현재 방향
 
-- 밝고 선명한 애니메이션 왕국 판타지
+- 밝은 왕국 판타지 배경
 - 블루/화이트/골드 UI
-- 로비 화면은 크고 무거운 UI보다 작고 정돈된 구성을 우선
-- 버튼은 손가락 터치가 가능한 크기는 유지하되, 화면을 가리지 않게 배치
+- 작고 정돈된 로그인 패널
+- 과도한 풀스크린 UI 대신 배경을 보여주는 프리미엄 로비
+- 인게임은 작은 패널 + 강한 테두리 + 명확한 클릭 반응
 
-## Login screen scale guide
+## 유지 원칙
 
-- Logo: 326 x 113
-- Login panel: 338 x 232
-- Primary buttons: 252 x 42
-- Sub buttons: 118 x 38
-- Footer strip: 370 x 40
-
-## Future patches
-
-패치 문서는 버전명 파일을 만들지 않고 이 문서와 `PATCH_NOTES.md`만 갱신합니다.
+- 새 패치마다 버전별 README를 만들지 않습니다.
+- 문서는 `README.md`, `docs/PATCH_NOTES.md`, `docs/VISUAL_GUIDE.md`, `docs/ASSET_MANIFEST.json`만 갱신합니다.
