@@ -41,25 +41,25 @@ function flags(): BrowserFlags {
 function ensureShellStyles(): void {
   if (document.getElementById('kingdom-shell-v47-style')) return;
   const style = document.createElement('style');
-  style.id = 'kingdom-shell-v47-style';
+  style.id = 'kingdom-shell-v48-style';
   style.textContent = `
     #game { width: 100vw; height: 100dvh; min-height: 100dvh; }
     .shell-overlay { position: fixed; inset: 0; z-index: 10000; display: flex; align-items: center; justify-content: center; padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); background: radial-gradient(circle at 50% 24%, rgba(101,165,255,.28), rgba(6,14,31,.86) 58%, rgba(3,7,16,.94)); color: white; box-sizing: border-box; transition: opacity 180ms ease, transform 180ms ease; }
     .shell-overlay.hidden { display: none !important; }
     .shell-overlay.fading { opacity: 0; transform: scale(1.02); pointer-events: none; }
     .shell-start-gate { cursor: pointer; }
-    .shell-start-card, .shell-panel { width: min(520px, 92vw); border: 2px solid rgba(255,218,123,.88); border-radius: 28px; padding: 26px 24px; text-align: center; background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(220,235,255,.92)); color: #244a86; box-shadow: 0 30px 90px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.9); }
-    .shell-title-mark { font-size: 34px; line-height: 1; font-weight: 1000; letter-spacing: .04em; color: #2d5bab; text-shadow: 0 2px 0 #fff, 0 5px 16px rgba(37,82,168,.28); }
+    .shell-start-card, .shell-panel { width: min(390px, 88vw); border: 2px solid rgba(255,218,123,.88); border-radius: 28px; padding: 18px 18px; text-align: center; background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(220,235,255,.92)); color: #244a86; box-shadow: 0 30px 90px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.9); }
+    .shell-title-mark { font-size: 25px; line-height: 1; font-weight: 1000; letter-spacing: .04em; color: #2d5bab; text-shadow: 0 2px 0 #fff, 0 5px 16px rgba(37,82,168,.28); }
     .shell-title-sword { width: 72%; height: 3px; margin: 14px auto 0; background: linear-gradient(90deg, transparent, #e7b94e, transparent); }
-    .shell-start-card h1, .shell-panel h2 { margin: 14px 0 7px; font-size: 28px; color: #193e7d; }
+    .shell-start-card h1, .shell-panel h2 { margin: 14px 0 7px; font-size: 21px; color: #193e7d; }
     .shell-start-card p, .shell-panel p { margin: 0; font-weight: 800; color: #5e789f; }
-    .shell-tap-rune { display: inline-flex; margin-top: 20px; width: 82px; height: 82px; align-items: center; justify-content: center; border-radius: 999px; color: #fff; font-weight: 1000; background: linear-gradient(180deg, #5fa1ff, #255ab5); border: 3px solid #ffd979; box-shadow: 0 12px 34px rgba(27,82,180,.34), inset 0 1px 0 rgba(255,255,255,.46); animation: ksTapPulseV47 1.25s ease-in-out infinite; }
+    .shell-tap-rune { display: inline-flex; margin-top: 14px; width: 62px; height: 62px; align-items: center; justify-content: center; border-radius: 999px; color: #fff; font-weight: 1000; background: linear-gradient(180deg, #5fa1ff, #255ab5); border: 3px solid #ffd979; box-shadow: 0 12px 34px rgba(27,82,180,.34), inset 0 1px 0 rgba(255,255,255,.46); animation: ksTapPulseV48 1.25s ease-in-out infinite; }
     .shell-loading-text { margin-top: 14px; color: #244a86; font-weight: 1000; }
-    .shell-row { display: flex; gap: 12px; justify-content: center; margin-top: 20px; }
+    .shell-row { display: flex; gap: 12px; justify-content: center; margin-top: 14px; }
     .shell-row button { appearance: none; border: 0; border-radius: 16px; padding: 13px 24px; color: #fff; font-weight: 1000; font-size: 16px; }
     .shell-secondary { background: linear-gradient(180deg, #5d94e6, #2658b5); }
     .shell-danger { background: linear-gradient(180deg, #ff8d86, #b43142); }
-    @keyframes ksTapPulseV47 { 0%,100% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.07); filter: brightness(1.12); } }
+    @keyframes ksTapPulseV48 { 0%,100% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.07); filter: brightness(1.12); } }
   `;
   document.head.appendChild(style);
 }
@@ -109,12 +109,13 @@ function markSceneReady(): void {
   sceneReady = true;
   lastSceneReadyAt = Date.now();
   if (activated) fadeRemove(startGate);
+  suppressExitGuardUntil = Date.now() + 2800;
 }
 
 async function activateGameShell(): Promise<void> {
   if (activated) return;
   activated = true;
-  suppressExitGuardUntil = Date.now() + 2200;
+  suppressExitGuardUntil = Date.now() + 4200;
   if (startGate) {
     const note = startGate.querySelector<HTMLElement>('.shell-loading-text');
     if (note) note.textContent = '왕국 기록을 불러오는 중...';
@@ -204,7 +205,7 @@ function showExitGuard(reason: string): void {
   if (allowExit || !exitModal || !flags().isMobile || !activated) return;
   if (document.visibilityState !== 'visible') return;
   if (exitModal.isConnected && !exitModal.classList.contains('hidden')) return;
-  if (now < suppressExitGuardUntil || now - lastPointerAt < 420 || now - lastSceneReadyAt < 1200 || now - lastGuardAt < 900) {
+  if (now < suppressExitGuardUntil || now - lastPointerAt < 900 || now - lastSceneReadyAt < 2600 || now - lastGuardAt < 1300) {
     window.setTimeout(() => armBackGuard(true), 60);
     return;
   }
@@ -224,8 +225,13 @@ function installBackGuard(): void {
 
   window.addEventListener('popstate', (event) => {
     if (allowExit || !flags().isMobile) return;
+    const now = Date.now();
     const state = event.state as Record<string, unknown> | null;
     if (state?.[GUARD_STATE_KEY]) return;
+    if (!activated || now < suppressExitGuardUntil || now - lastPointerAt < 900 || now - lastSceneReadyAt < 2600) {
+      window.setTimeout(() => armBackGuard(true), 80);
+      return;
+    }
     showExitGuard('popstate');
   });
 
@@ -264,7 +270,7 @@ export function installWebShell(): void {
 
 export function requestGameFullscreen(): Promise<void> {
   activated = true;
-  suppressExitGuardUntil = Date.now() + 2200;
+  suppressExitGuardUntil = Date.now() + 4200;
   window.setTimeout(() => armBackGuard(true), 900);
   return requestFullscreenAndLandscape();
 }

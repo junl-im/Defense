@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import type { User } from 'firebase/auth';
 import { playSfx } from '../game/AudioManager';
-import { addPremiumButton, addPremiumTitle, addSoftBackdrop } from '../game/PremiumSkinV44';
+import { addPremiumButton, addSoftBackdrop } from '../game/PremiumSkinV44';
 import {
   completePendingRedirectSignIn,
   ensureAnonymousUser,
@@ -26,9 +26,9 @@ export class MenuScene extends Phaser.Scene {
   create(): void {
     this.createPremiumBackground();
     this.createTopUtilityHints();
-    this.createHeroTitle();
-    this.createCommandPanel();
-    this.createStatusBar();
+    this.createCompactTitle();
+    this.createCompactCommandPanel();
+    this.createCompactStatusBar();
     this.time.delayedCall(0, () => {
       window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MenuScene', at: Date.now() } }));
     });
@@ -39,171 +39,178 @@ export class MenuScene extends Phaser.Scene {
     if (this.textures.exists('ui-title-bg')) {
       this.add.image(480, 270, 'ui-title-bg').setDisplaySize(960, 540).setDepth(0);
     } else {
-      this.add.rectangle(480, 270, 960, 540, 0x77b9ff, 1).setDepth(0);
+      this.add.rectangle(480, 270, 960, 540, 0x7fbfff, 1).setDepth(0);
       this.add.text(480, 270, 'KINGDOM SEED', { fontSize: '42px', color: '#ffffff', fontStyle: 'bold', stroke: '#1b4b96', strokeThickness: 6 }).setOrigin(0.5).setDepth(1);
     }
     addSoftBackdrop(this, 1);
+    this.add.rectangle(480, 270, 960, 540, 0xffffff, 0.035).setDepth(2);
+    this.add.rectangle(480, 508, 960, 64, 0x071a38, 0.34).setDepth(3);
 
-    const sun = this.add.ellipse(616, 89, 260, 124, 0xffffff, 0.16).setDepth(2);
-    this.tweens.add({ targets: sun, alpha: 0.25, scaleX: 1.08, scaleY: 1.08, duration: 1800, yoyo: true, repeat: -1 });
+    const glow = this.add.ellipse(480, 112, 490, 126, 0x8cc4ff, 0.13).setDepth(4);
+    this.tweens.add({ targets: glow, alpha: 0.22, scaleX: 1.04, scaleY: 1.08, duration: 1800, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
 
-    for (let i = 0; i < 28; i++) {
+    for (let i = 0; i < 18; i += 1) {
       if (!this.textures.exists('ui-particles')) break;
       const p = this.add.sprite(
-        Phaser.Math.Between(70, 890),
-        Phaser.Math.Between(52, 500),
+        Phaser.Math.Between(82, 878),
+        Phaser.Math.Between(54, 500),
         'ui-particles',
         Phaser.Math.Between(0, 3)
-      ).setDepth(3).setAlpha(Phaser.Math.FloatBetween(0.1, 0.32)).setScale(Phaser.Math.FloatBetween(0.32, 0.75));
-
+      ).setDepth(5).setAlpha(Phaser.Math.FloatBetween(0.08, 0.22)).setScale(Phaser.Math.FloatBetween(0.24, 0.56));
       p.play('ui-particle-glow');
       this.tweens.add({
         targets: p,
-        x: p.x + Phaser.Math.Between(-26, 26),
-        y: p.y - Phaser.Math.Between(10, 34),
-        alpha: Phaser.Math.FloatBetween(0.04, 0.24),
-        duration: Phaser.Math.Between(2000, 4600),
+        x: p.x + Phaser.Math.Between(-18, 18),
+        y: p.y - Phaser.Math.Between(8, 26),
+        alpha: Phaser.Math.FloatBetween(0.04, 0.18),
+        duration: Phaser.Math.Between(2300, 4700),
         yoyo: true,
         repeat: -1,
         ease: 'Sine.easeInOut'
       });
     }
-
-    this.add.rectangle(480, 526, 960, 42, 0x0a1e3f, 0.42).setDepth(4);
   }
 
   private createTopUtilityHints(): void {
+    const topChip = this.textures.exists('ui-top-chip-compact-v48') ? 'ui-top-chip-compact-v48' : 'ui-button-blue';
     const items = [
-      { x: 792, icon: '📢', label: '공지사항' },
-      { x: 852, icon: '🎧', label: '고객센터' },
-      { x: 912, icon: '⚙', label: '설정' },
+      { x: 756, icon: '📢', label: '공지' },
+      { x: 836, icon: '🎧', label: '문의' },
+      { x: 916, icon: '⚙', label: '설정' },
     ];
 
     items.forEach((item) => {
-      const c = this.add.container(item.x, 44).setDepth(15);
-      const circle = this.add.ellipse(0, 0, 44, 44, 0x315fae, 0.76).setStrokeStyle(2, 0xffdf81, 0.95);
-      const icon = this.add.text(0, -2, item.icon, { fontSize: '21px' }).setOrigin(0.5);
-      const label = this.add.text(0, 33, item.label, {
+      const c = this.add.container(item.x, 31).setDepth(25);
+      c.add(this.add.image(0, 0, topChip).setDisplaySize(72, 30).setAlpha(0.92));
+      c.add(this.add.text(-18, -1, item.icon, { fontSize: '14px' }).setOrigin(0.5));
+      c.add(this.add.text(12, -1, item.label, {
         fontSize: '10px',
         color: '#ffffff',
         fontStyle: 'bold',
         stroke: '#153066',
-        strokeThickness: 3
-      }).setOrigin(0.5);
-      c.add([circle, icon, label]);
+        strokeThickness: 2
+      }).setOrigin(0.5));
     });
 
-    this.add.text(18, 20, 'v4.7 PREMIUM STABILITY PASS', {
-      fontSize: '12px',
+    this.add.text(18, 17, 'v4.8 COMPACT PREMIUM', {
+      fontSize: '10px',
       color: '#eef6ff',
       fontStyle: 'bold',
-      backgroundColor: '#09245199',
-      padding: { x: 8, y: 4 }
-    }).setDepth(16);
+      backgroundColor: '#09245188',
+      padding: { x: 7, y: 3 }
+    }).setDepth(26);
   }
 
-  private createHeroTitle(): void {
-    addPremiumTitle(this, 480, 112);
-    this.add.text(480, 184, '시네마틱 왕국 방어 전략', {
-      fontSize: '19px',
+  private createCompactTitle(): void {
+    if (this.textures.exists('ui-title-ornaments-v48')) {
+      this.add.image(480, 102, 'ui-title-ornaments-v48').setDisplaySize(360, 160).setDepth(17).setAlpha(0.78);
+    }
+
+    const logoKey = this.textures.exists('ui-title-logo-compact-v48') ? 'ui-title-logo-compact-v48' : 'ui-title-logo';
+    const logo = this.add.image(480, 96, logoKey).setDisplaySize(390, 132).setDepth(22);
+    this.tweens.add({ targets: logo, y: 92, duration: 1750, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+
+    this.add.text(480, 165, '작지만 또렷하게 정리한 프리미엄 로그인', {
+      fontSize: '14px',
       color: '#ffffff',
       fontStyle: 'bold',
       stroke: '#144081',
-      strokeThickness: 4,
-      shadow: { offsetX: 0, offsetY: 3, color: '#000000', blur: 5, fill: true },
-    }).setOrigin(0.5).setDepth(22);
+      strokeThickness: 3,
+      shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 4, fill: true },
+    }).setOrigin(0.5).setDepth(23);
+
+    if (this.textures.exists('fx-compact-shimmer-v48')) {
+      for (let i = 0; i < 4; i += 1) {
+        const s = this.add.sprite(346 + i * 88, 76 + (i % 2) * 34, 'fx-compact-shimmer-v48').setDepth(24).setScale(0.7).setAlpha(0.72);
+        s.play({ key: 'fx-compact-shimmer-v48-anim', repeat: -1, frameRate: 8, startFrame: i % 8 });
+      }
+    }
   }
 
-  private createCommandPanel(): void {
-    this.loginPanel = this.add.container(480, 332).setDepth(30);
+  private createCompactCommandPanel(): void {
+    this.loginPanel = this.add.container(480, 330).setDepth(40);
 
-    const panel = this.add.image(0, 0, 'ui-login-panel').setDisplaySize(458, 344);
-    this.loginPanel.add(panel);
+    const panelKey = this.textures.exists('ui-login-panel-compact-v48') ? 'ui-login-panel-compact-v48' : 'ui-login-panel';
+    const primaryKey = this.textures.exists('ui-button-compact-gold-v48') ? 'ui-button-compact-gold-v48' : 'ui-button-primary';
+    const blueKey = this.textures.exists('ui-button-compact-blue-v48') ? 'ui-button-compact-blue-v48' : 'ui-button-blue';
+    const whiteKey = this.textures.exists('ui-button-compact-white-v48') ? 'ui-button-compact-white-v48' : 'ui-button-gold';
+    const redKey = this.textures.exists('ui-button-compact-red-v48') ? 'ui-button-compact-red-v48' : 'ui-button-red';
 
-    const header = this.add.text(0, -128, 'DEFENSE COMMAND', {
-      fontSize: '25px',
-      color: '#ffffff',
-      fontStyle: 'bold',
-      stroke: '#204a94',
-      strokeThickness: 5
-    }).setOrigin(0.5);
-    this.loginPanel.add(header);
+    this.loginPanel.add(this.add.image(0, 0, panelKey).setDisplaySize(382, 276));
 
-    const subtitle = this.add.text(0, -95, '전장을 수호할 지휘관으로 입장하세요!', {
-      fontSize: '14px',
-      color: '#65789c',
-      fontStyle: 'bold'
-    }).setOrigin(0.5);
-    this.loginPanel.add(subtitle);
-
-    this.statusText = this.add.text(0, -64, '로그인 상태 확인 중...', {
-      fontSize: '13px',
+    this.statusText = this.add.text(0, -83, '로그인 상태 확인 중...', {
+      fontSize: '12px',
       color: '#3a5d96',
       align: 'center',
-      fixedWidth: 360,
-      backgroundColor: '#f2f8ffff',
-      padding: { x: 10, y: 5 }
+      fixedWidth: 294,
+      backgroundColor: '#f2f8ffee',
+      padding: { x: 8, y: 4 }
     }).setOrigin(0.5);
     this.loginPanel.add(this.statusText);
 
     this.loginPanel.add(addPremiumButton(this, {
       x: 0,
-      y: -12,
-      width: 340,
-      height: 66,
-      texture: 'ui-button-primary',
+      y: -29,
+      width: 292,
+      height: 50,
+      texture: primaryKey,
       icon: 'ui-icon-anonymous',
-      label: '빠른 시작',
-      subLabel: '게스트 지휘관으로 즉시 전장 진입',
+      label: '바로 시작',
       onClick: () => void this.startAnonymous()
     }));
 
     this.loginPanel.add(addPremiumButton(this, {
       x: 0,
-      y: 62,
-      width: 340,
-      height: 62,
-      texture: 'ui-button-blue',
+      y: 29,
+      width: 292,
+      height: 50,
+      texture: blueKey,
       icon: 'ui-icon-google',
-      label: 'Google 로그인',
-      subLabel: '계정 연동 후 세이브 유지',
+      label: 'Google 연동',
       onClick: () => void this.startGoogle()
     }));
 
     this.loginPanel.add(addPremiumButton(this, {
-      x: -88,
-      y: 135,
-      width: 160,
-      height: 54,
-      texture: 'ui-button-gold',
+      x: -74,
+      y: 92,
+      width: 136,
+      height: 44,
+      texture: whiteKey,
       icon: 'ui-icon-email',
       label: '이메일',
       onClick: () => void this.startEmailLogin()
     }));
 
     this.loginPanel.add(addPremiumButton(this, {
-      x: 88,
-      y: 135,
-      width: 160,
-      height: 54,
-      texture: 'ui-button-red',
+      x: 74,
+      y: 92,
+      width: 136,
+      height: 44,
+      texture: redKey,
       icon: 'ui-icon-register',
-      label: '회원가입',
+      label: '가입',
       onClick: () => void this.startEmailRegister()
     }));
 
-    this.loginPanel.setAlpha(0).setScale(0.96).setY(346);
-    this.tweens.add({ targets: this.loginPanel, alpha: 1, y: 332, scaleX: 1, scaleY: 1, duration: 420, ease: 'Back.easeOut' });
+    this.loginPanel.add(this.add.text(0, 128, '계정 없이도 진행 가능 · 연동 시 저장 유지', {
+      fontSize: '11px',
+      color: '#5d789e',
+      fontStyle: 'bold'
+    }).setOrigin(0.5));
+
+    this.loginPanel.setAlpha(0).setScale(0.96).setY(342);
+    this.tweens.add({ targets: this.loginPanel, alpha: 1, y: 330, scaleX: 1, scaleY: 1, duration: 330, ease: 'Back.easeOut' });
   }
 
-  private createStatusBar(): void {
-    this.add.image(480, 506, 'ui-status-plaque').setDisplaySize(560, 70).setDepth(18).setAlpha(0.94);
-    this.add.text(480, 504, '영웅 전당 · 유물 제작소 · 타워 진화 · 일일 원정 · 보스 토벌', {
-      fontSize: '15px',
+  private createCompactStatusBar(): void {
+    const stripKey = this.textures.exists('ui-footer-strip-compact-v48') ? 'ui-footer-strip-compact-v48' : 'ui-status-plaque';
+    this.add.image(480, 505, stripKey).setDisplaySize(420, 48).setDepth(18).setAlpha(0.96);
+    this.add.text(480, 504, '영웅 · 유물 · 타워 진화 · 원정 · 보스 토벌', {
+      fontSize: '12px',
       color: '#ffffff',
       align: 'center',
       fontStyle: 'bold',
-      fixedWidth: 520,
+      fixedWidth: 390,
       stroke: '#183c80',
       strokeThickness: 3
     }).setOrigin(0.5).setDepth(19);
@@ -219,10 +226,10 @@ export class MenuScene extends Phaser.Scene {
       }
       this.currentUser = existing;
       this.currentSave = await loadOrCreateSave(existing);
-      this.statusText.setText(`${this.currentSave.nickname} 로그인됨. 빠른 시작으로 이어서 플레이하세요!`);
+      this.statusText.setText(`${this.currentSave.nickname} · 이어서 가능`);
     } catch (error) {
       console.error(error);
-      this.statusText.setText('Firebase 로그인 확인 실패. 설정/도메인을 확인하세요.');
+      this.statusText.setText('로그인 확인 실패. 설정/도메인을 확인하세요.');
     }
   }
 
@@ -238,7 +245,7 @@ export class MenuScene extends Phaser.Scene {
     await this.withLoading(async () => {
       const user = await loginWithGoogle();
       if (!user) {
-        this.statusText.setText('Google 리다이렉트 중입니다. 돌아오면 자동으로 이어집니다.');
+        this.statusText.setText('Google 이동 중... 돌아오면 이어집니다.');
         return;
       }
       const save = await loadOrCreateSave(user);
@@ -275,7 +282,7 @@ export class MenuScene extends Phaser.Scene {
   private async withLoading(task: () => Promise<void>): Promise<void> {
     try {
       playSfx(this, 'sfx_click');
-      this.statusText.setText('왕국 기록 보관소와 연결 중...');
+      this.statusText.setText('왕국 기록 연결 중...');
       await task();
     } catch (error) {
       console.error(error);
@@ -285,7 +292,7 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private enterWorldMap(user: User, save: PlayerSave): void {
-    this.cameras.main.fadeOut(260, 0, 0, 0);
-    this.time.delayedCall(260, () => this.scene.start('WorldMapScene', { user, save }));
+    this.cameras.main.fadeOut(240, 255, 255, 255);
+    this.time.delayedCall(240, () => this.scene.start('WorldMapScene', { user, save }));
   }
 }

@@ -36,6 +36,18 @@ export class BootScene extends Phaser.Scene {
 
     this.load.image('ui-title-bg', 'assets/ui/title_background.png');
     this.load.image('ui-title-logo', 'assets/ui/title_logo.png');
+
+    this.load.image('ui-title-logo-compact-v48', 'assets/ui/title_logo_compact_v48.png');
+    this.load.image('ui-login-panel-compact-v48', 'assets/ui/login_panel_compact_v48.png');
+    this.load.image('ui-button-compact-gold-v48', 'assets/ui/button_compact_gold_v48.png');
+    this.load.image('ui-button-compact-blue-v48', 'assets/ui/button_compact_blue_v48.png');
+    this.load.image('ui-button-compact-red-v48', 'assets/ui/button_compact_red_v48.png');
+    this.load.image('ui-button-compact-white-v48', 'assets/ui/button_compact_white_v48.png');
+    this.load.image('ui-footer-strip-compact-v48', 'assets/ui/footer_strip_compact_v48.png');
+    this.load.image('ui-top-chip-compact-v48', 'assets/ui/top_chip_compact_v48.png');
+    this.load.image('ui-title-ornaments-v48', 'assets/ui/title_side_ornaments_v48.png');
+    this.load.spritesheet('fx-compact-shimmer-v48', 'assets/effects/compact_shimmer_v48.png', { frameWidth: 32, frameHeight: 32 });
+
     this.load.image('ui-login-panel', 'assets/ui/panel_login_ornate.png');
     this.load.image('ui-status-plaque', 'assets/ui/status_plaque.png');
     this.load.image('ui-button-primary', 'assets/ui/button_primary.png');
@@ -291,6 +303,11 @@ export class BootScene extends Phaser.Scene {
 }
 
   create(): void {
+
+    if (this.textures.exists('fx-compact-shimmer-v48') && !this.anims.exists('fx-compact-shimmer-v48-anim')) {
+      this.anims.create({ key: 'fx-compact-shimmer-v48-anim', frames: this.anims.generateFrameNumbers('fx-compact-shimmer-v48', { start: 0, end: 7 }), frameRate: 8, repeat: -1 });
+    }
+
     this.createAnimations();
     window.addEventListener('kingdom-seed:user-activated', () => unlockAudio(this), { once: true });
     this.input.once('pointerdown', () => unlockAudio(this));

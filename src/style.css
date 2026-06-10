@@ -237,3 +237,21 @@ canvas {
   transform: scale(1.02);
   pointer-events: none;
 }
+
+
+/* v4.8 compact login polish */
+:root {
+  --ks-v48-ui-scale: 0.96;
+}
+#game canvas {
+  image-rendering: auto;
+  filter: saturate(1.04) contrast(1.015);
+}
+html.is-desktop #game canvas {
+  filter: saturate(1.02) contrast(1.01);
+}
+html.is-mobile-webview .shell-start-card,
+html.is-mobile-webview .shell-panel {
+  transform: scale(.94);
+  transform-origin: center center;
+}
