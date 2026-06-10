@@ -1,0 +1,14 @@
+{
+  "version": "4.3",
+  "theme": "premium anime-fantasy defense UI",
+  "source_references": [
+    "public/assets/ui/reference_board_user_v43.png",
+    "public/assets/ui/reference_title_user_v43.png"
+  ],
+  "asset_rules": {
+    "ui": "blue-white-gold, glass panel, beveled buttons, gold filigree corners",
+    "battle": "bright 2.5D fantasy battlefield, strong readable paths and build spots",
+    "monster": "32x32, 36 frames horizontal, direction/action compatible",
+    "tower": "96x96 level images, evolution images 112x112"
+  }
+}
