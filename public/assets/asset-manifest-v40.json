@@ -1,0 +1,37 @@
+{
+  "version": "4.0",
+  "kind": "premium-polish-pass",
+  "assets": {
+    "ui": [
+      "button_primary.png",
+      "button_gold.png",
+      "button_blue.png",
+      "button_red.png",
+      "panel_detail_large.png",
+      "hud_top_panel.png",
+      "hud_bottom_panel.png",
+      "world_map_premium_v40.png"
+    ],
+    "maps": [
+      "battle_stage_001.png",
+      "battle_stage_002.png",
+      "battle_stage_003.png",
+      "battle_stage_004.png",
+      "battle_stage_005.png",
+      "battle_stage_006.png",
+      "battle_stage_007.png",
+      "battle_stage_008.png"
+    ],
+    "effects": [
+      "fx_premium_hit_v40.png",
+      "fx_magic_bloom_v40.png",
+      "fx_gold_reward_v40.png",
+      "fx_ui_ripple_v40.png"
+    ]
+  },
+  "notes": [
+    "Desktop no-rotation/no-forced-fullscreen CSS hardening",
+    "Premium UI surface pass",
+    "Safe area and touch feedback polish"
+  ]
+}

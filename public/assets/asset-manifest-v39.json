@@ -1,0 +1,14 @@
+{
+  "version": "3.9",
+  "theme": "premium-polish",
+  "newAssets": [
+    "public/assets/ui/modal_frame_v39.png",
+    "public/assets/ui/dock_frame_v39.png",
+    "public/assets/ui/tooltip_gold_v39.png",
+    "public/assets/ui/wave_banner_v39.png",
+    "public/assets/ui/screen_transition_v39.png",
+    "public/assets/effects/fx_ui_spark_v39.png",
+    "public/assets/effects/fx_reward_burst_v39.png",
+    "public/assets/effects/fx_button_glint_v39.png"
+  ]
+}

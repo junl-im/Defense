@@ -6,6 +6,9 @@ import { LabScene } from './scenes/LabScene';
 import { GameScene } from './scenes/GameScene';
 import { CodexScene } from './scenes/CodexScene';
 import { MetaScene } from './scenes/MetaScene';
+import { HeroHallScene } from './scenes/HeroHallScene';
+import { MissionBoardScene } from './scenes/MissionBoardScene';
+import { ArtifactForgeScene } from './scenes/ArtifactForgeScene';
 import { installGlobalAudioUnlock } from './game/AudioManager';
 import { getRenderProfile, makeGameFpsConfig } from './game/QualityManager';
 import { installWebShell } from './platform/WebShell';
@@ -34,12 +37,12 @@ const config: Phaser.Types.Core.GameConfig = {
     disableWebAudio: false,
   },
   render: {
-    pixelArt: true,
-    antialias: false,
-    roundPixels: true,
+    pixelArt: false,
+    antialias: true,
+    roundPixels: false,
     powerPreference: profile.tier === 'low' ? 'low-power' : 'high-performance',
   },
-  scene: [BootScene, MenuScene, WorldMapScene, LabScene, CodexScene, MetaScene, GameScene],
+  scene: [BootScene, MenuScene, WorldMapScene, LabScene, CodexScene, MetaScene, HeroHallScene, MissionBoardScene, ArtifactForgeScene, GameScene],
 };
 
 const game = new Phaser.Game(config);

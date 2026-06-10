@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import type { User } from 'firebase/auth';
-import { playMusic, playSfx } from '../game/AudioManager';
+import { playSfx } from '../game/AudioManager';
 import {
   completePendingRedirectSignIn,
   ensureAnonymousUser,
@@ -37,8 +37,6 @@ export class MenuScene extends Phaser.Scene {
   }
 
   create(): void {
-    playMusic(this, 'bgm_world', 0.18);
-    window.addEventListener('kingdom-seed:user-activated', () => playMusic(this, 'bgm_world', 0.18), { once: true });
     this.createBackground();
     this.createTitleArea();
     this.createLoginPanel();
@@ -82,7 +80,7 @@ export class MenuScene extends Phaser.Scene {
     this.tweens.add({ targets: glow, alpha: 0.18, scaleX: 1.04, duration: 1400, yoyo: true, repeat: -1 });
 
     this.add.image(480, 84, 'ui-title-logo').setDisplaySize(560, 136).setDepth(6);
-    this.add.text(480, 150, '고정 스폿형 미드코어 웹 디펜스', {
+    this.add.text(480, 150, '시네마틱 왕국 방어 작전', {
       fontSize: '18px',
       color: '#fff1c2',
       fontStyle: 'bold',
@@ -90,7 +88,7 @@ export class MenuScene extends Phaser.Scene {
       strokeThickness: 4
     }).setOrigin(0.5).setDepth(7);
 
-    this.add.text(18, 18, 'v0.8 ART PIPELINE', {
+    this.add.text(18, 18, 'v3.7 PREMIUM ART PASS', {
       fontSize: '13px',
       color: '#dbe7ff',
       backgroundColor: '#00000075',
@@ -107,13 +105,13 @@ export class MenuScene extends Phaser.Scene {
     const spark = this.add.image(178, -132, 'ui-icon-spark').setDisplaySize(46, 46);
     this.loginPanel.add([shield, spark]);
 
-    const title = this.add.text(0, -128, '왕국 방어 사령부', {
+    const title = this.add.text(0, -128, '왕국 방위 사령부', {
       fontSize: '26px',
       color: '#2e1b11',
       fontStyle: 'bold'
     }).setOrigin(0.5);
 
-    const desc = this.add.text(0, -94, '오늘의 전장에 입장할 지휘관을 선택하세요', {
+    const desc = this.add.text(0, -94, '전장을 수복할 지휘관으로 입장하세요', {
       fontSize: '15px',
       color: '#5a371f',
       fontStyle: 'bold'
@@ -181,7 +179,7 @@ export class MenuScene extends Phaser.Scene {
 
   private createFooterHints(): void {
     this.add.image(480, 506, 'ui-status-plaque').setDisplaySize(560, 72).setDepth(8).setAlpha(0.92);
-    this.add.text(480, 500, '가로모드 전체화면 권장 · 병영으로 묶고 포탑으로 터뜨리세요 · 매일 같은 전장에서 랭킹 경쟁', {
+    this.add.text(480, 500, '영웅 전당 · 유물 제작소 · 타워 진화 · 일일 원정 · 보스 토벌', {
       fontSize: '15px',
       color: '#fff1c2',
       align: 'center',

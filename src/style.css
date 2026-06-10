@@ -5,12 +5,14 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background: #07101a;
+  background: #050812;
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: "Trebuchet MS", "Noto Serif KR", "Malgun Gothic", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
 }
 
 body {
@@ -27,16 +29,41 @@ body {
   width: 100vw;
   height: 100dvh;
   overflow: hidden;
-  background: radial-gradient(circle at 50% 40%, #21394c, #07101a 72%);
+  background:
+    radial-gradient(circle at 50% 38%, rgba(94, 75, 44, 0.28), transparent 36%),
+    radial-gradient(circle at 50% 110%, rgba(0,0,0,0.85), rgba(0,0,0,0.96)),
+    linear-gradient(180deg, #142333, #050812 72%);
   transform-origin: center center;
 }
 
 canvas {
   display: block;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
+  image-rendering: auto;
+  filter: saturate(1.1) contrast(1.045) brightness(1.015);
+  backface-visibility: hidden;
 }
 
+:root {
+  --ks-gold: #f6d879;
+  --ks-gold-soft: #fff0ad;
+  --ks-ink: #060a13;
+  --ks-panel: #111b2b;
+  --ks-red: #c34a34;
+  --ks-blue: #4f9ccc;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255, 219, 112, 0.07), transparent 38%),
+    linear-gradient(180deg, rgba(255,255,255,0.035), transparent 22%, rgba(0,0,0,0.2));
+  z-index: 1;
+}
+
+/* Desktop must never rotate or force fullscreen. Mobile portrait fallback only. */
 html.needs-portrait-rotation #game {
   width: 100dvh;
   height: 100vw;
@@ -47,234 +74,76 @@ html.needs-portrait-rotation #game {
   transform: translate(-50%, -50%) rotate(90deg);
 }
 
+@media (hover: hover) and (pointer: fine), (min-width: 960px) {
+  html.needs-portrait-rotation #game {
+    width: 100vw;
+    height: 100dvh;
+    left: 0;
+    top: 0;
+    transform: none !important;
+  }
+
+  .shell-overlay.shell-start-gate {
+    display: none !important;
+  }
+}
+
 .shell-overlay {
   position: fixed;
   inset: 0;
   z-index: 9999;
   display: grid;
   place-items: center;
-  padding: 18px;
+  padding: max(18px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) max(18px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
   box-sizing: border-box;
   background:
-    radial-gradient(circle at 50% 25%, rgba(96, 71, 39, 0.28), transparent 34%),
-    radial-gradient(circle at 50% 120%, rgba(4, 7, 11, 0.7), rgba(4, 7, 11, 0.98)),
+    radial-gradient(circle at 50% 18%, rgba(235, 180, 79, 0.18), transparent 30%),
+    radial-gradient(circle at 50% 120%, rgba(4, 7, 11, 0.72), rgba(4, 7, 11, 0.98)),
     linear-gradient(180deg, #172838, #08111c 68%, #03070d);
   color: #fff;
   text-align: center;
 }
 
-.shell-overlay.hidden {
-  display: none;
-}
-
-.shell-start-gate {
-  cursor: pointer;
-  transition: opacity 180ms ease, transform 180ms ease;
-}
-
-.start-gate-out {
-  opacity: 0;
-  transform: scale(1.035);
-  pointer-events: none;
-}
+.shell-overlay.hidden { display: none; }
+.shell-start-gate { cursor: pointer; transition: opacity 180ms ease, transform 180ms ease; }
+.start-gate-out { opacity: 0; transform: scale(1.035); pointer-events: none; }
 
 .shell-start-card {
-  width: min(78vw, 620px);
-  min-height: 280px;
+  width: min(78vw, 640px);
+  min-height: 300px;
   padding: 26px 34px 30px;
   box-sizing: border-box;
-  border: 3px solid rgba(247, 211, 107, 0.7);
-  border-radius: 24px;
+  border: 3px solid rgba(247, 211, 107, 0.72);
+  border-radius: 26px;
   background:
-    linear-gradient(180deg, rgba(48, 34, 20, 0.92), rgba(14, 20, 30, 0.96)),
-    radial-gradient(circle at 50% 15%, rgba(255, 221, 131, 0.14), transparent 55%);
+    linear-gradient(180deg, rgba(52, 37, 24, 0.94), rgba(12, 18, 29, 0.97)),
+    radial-gradient(circle at 50% 15%, rgba(255, 221, 131, 0.15), transparent 55%);
   box-shadow:
-    0 24px 90px rgba(0, 0, 0, 0.65),
+    0 28px 100px rgba(0, 0, 0, 0.72),
     inset 0 0 0 2px rgba(255, 255, 255, 0.08),
-    inset 0 -20px 60px rgba(0, 0, 0, 0.3);
+    inset 0 -24px 66px rgba(0, 0, 0, 0.32);
   position: relative;
   overflow: hidden;
 }
 
-.shell-start-card::before,
-.shell-start-card::after {
-  content: '';
-  position: absolute;
-  top: 24px;
-  width: 58px;
-  height: 168px;
-  border-radius: 16px 16px 6px 6px;
-  background: linear-gradient(180deg, #4b3220, #20130c);
-  box-shadow: inset 0 0 0 3px rgba(255,255,255,0.08), 0 14px 28px rgba(0,0,0,0.34);
-}
+.shell-title-mark { letter-spacing: 0.22em; color: #f7d36b; font-size: 13px; font-weight: 900; text-shadow: 0 3px 0 #000; }
+.shell-title-sword { width: 260px; height: 12px; margin: 16px auto 8px; border-radius: 999px; background: linear-gradient(90deg, transparent, #d7e3ef 22%, #fff6c7 50%, #d7e3ef 78%, transparent); box-shadow: 0 0 20px rgba(255, 240, 163, 0.46); }
+.shell-start-card h1 { margin: 8px 0 8px; font-size: clamp(38px, 8vw, 70px); line-height: 0.95; color: #fff4c2; text-shadow: 0 5px 0 #4c1e12, 0 12px 24px rgba(0,0,0,0.62); }
+.shell-start-card p { margin: 0 auto 18px; width: min(470px, 82%); color: #e9d5a8; font-weight: 800; line-height: 1.45; text-shadow: 0 2px 0 rgba(0,0,0,0.65); }
+.shell-tap-rune { display: inline-grid; place-items: center; width: 112px; height: 50px; border-radius: 999px; background: linear-gradient(180deg, #e09b4d, #83331e); border: 2px solid #ffedb0; color: #fff8cf; font-weight: 1000; letter-spacing: 0.16em; box-shadow: 0 7px 0 #351408, 0 0 28px rgba(255, 211, 107, 0.36); animation: tapPulse 980ms infinite ease-in-out; }
+@keyframes tapPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.075); } }
 
-.shell-start-card::before { left: 26px; }
-.shell-start-card::after { right: 26px; }
+.shell-panel { width: min(92vw, 460px); padding: 24px; border: 2px solid rgba(247, 211, 107, 0.62); border-radius: 18px; background: linear-gradient(180deg, rgba(15, 26, 39, 0.98), rgba(8, 13, 22, 0.98)); box-shadow: 0 18px 70px rgba(0, 0, 0, 0.55), inset 0 0 0 1px rgba(255, 255, 255, 0.08); }
+.shell-kicker { letter-spacing: 0.18em; color: #f7d36b; font-size: 12px; font-weight: 800; margin-bottom: 8px; }
+.shell-panel h2 { margin: 0 0 12px; line-height: 1.15; }
+.shell-panel p { margin: 0 0 18px; color: #dbe7ff; line-height: 1.55; }
+.shell-row { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.shell-secondary, .shell-danger { border: 0; border-radius: 12px; min-width: 132px; height: 44px; color: #fff; font-weight: 900; cursor: pointer; box-shadow: 0 8px 18px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.12); }
+.shell-secondary { background: linear-gradient(180deg, #456787, #213246); }
+.shell-danger { background: linear-gradient(180deg, #ad513e, #552018); }
 
-.shell-title-mark {
-  letter-spacing: 0.2em;
-  color: #f7d36b;
-  font-size: 13px;
-  font-weight: 900;
-  text-shadow: 0 3px 0 #000;
-}
-
-.shell-title-sword {
-  width: 240px;
-  height: 12px;
-  margin: 16px auto 8px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, transparent, #d7e3ef 22%, #fff6c7 50%, #d7e3ef 78%, transparent);
-  box-shadow: 0 0 18px rgba(255, 240, 163, 0.42);
-}
-
-.shell-start-card h1 {
-  margin: 8px 0 8px;
-  font-size: clamp(38px, 8vw, 68px);
-  line-height: 0.95;
-  color: #fff4c2;
-  text-shadow: 0 5px 0 #4c1e12, 0 10px 20px rgba(0,0,0,0.55);
-}
-
-.shell-start-card p {
-  margin: 0 auto 18px;
-  width: min(460px, 82%);
-  color: #e9d5a8;
-  font-weight: 800;
-  line-height: 1.45;
-  text-shadow: 0 2px 0 rgba(0,0,0,0.65);
-}
-
-.shell-tap-rune {
-  display: inline-grid;
-  place-items: center;
-  width: 104px;
-  height: 48px;
-  border-radius: 999px;
-  background: linear-gradient(180deg, #d3843c, #7f311c);
-  border: 2px solid #ffedb0;
-  color: #fff8cf;
-  font-weight: 1000;
-  letter-spacing: 0.16em;
-  box-shadow: 0 6px 0 #351408, 0 0 24px rgba(255, 211, 107, 0.32);
-  animation: tapPulse 980ms infinite ease-in-out;
-}
-
-@keyframes tapPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.075); }
-}
-
-.shell-panel {
-  width: min(92vw, 460px);
-  padding: 24px;
-  border: 2px solid rgba(247, 211, 107, 0.62);
-  border-radius: 18px;
-  background: linear-gradient(180deg, rgba(15, 26, 39, 0.98), rgba(8, 13, 22, 0.98));
-  box-shadow: 0 18px 70px rgba(0, 0, 0, 0.55), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
-}
-
-.shell-kicker {
-  letter-spacing: 0.18em;
-  color: #f7d36b;
-  font-size: 12px;
-  font-weight: 800;
-  margin-bottom: 8px;
-}
-
-.shell-panel h2 {
-  margin: 0 0 12px;
-  line-height: 1.15;
-}
-
-.shell-panel p {
-  margin: 0 0 18px;
-  color: #dbe7ff;
-  line-height: 1.55;
-}
-
-.shell-row {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.shell-secondary,
-.shell-danger {
-  border: 0;
-  border-radius: 12px;
-  padding: 13px 18px;
-  font-weight: 800;
-  color: #fff;
-  cursor: pointer;
-  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.2);
-}
-
-.shell-secondary {
-  background: linear-gradient(180deg, #355878, #213850);
-}
-
-.shell-danger {
-  background: linear-gradient(180deg, #b64141, #762121);
-}
-
-@media (orientation: portrait) {
-  .shell-start-card {
-    width: min(88vw, 520px);
-    min-height: 240px;
-    padding: 22px 22px 26px;
-  }
-
-  .shell-start-card::before,
-  .shell-start-card::after {
-    opacity: 0.42;
-    width: 42px;
-  }
-}
-
-
-html.is-desktop #game {
-  transform: none;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 100vw;
-  height: 100dvh;
-}
-
-html.is-desktop canvas {
-  max-width: 100vw;
-  max-height: 100dvh;
-}
-
-/* v2.2: desktop never rotates, even when the browser window is narrow. */
-html.is-desktop.needs-portrait-rotation #game,
-html.is-desktop #game {
-  transform: none !important;
-  left: 0 !important;
-  top: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  width: 100vw !important;
-  height: 100dvh !important;
-}
-
-html.ks-quality-low canvas {
-  image-rendering: pixelated;
-}
-
-html.ks-quality-low .shell-overlay {
-  background:
-    radial-gradient(circle at 50% 120%, rgba(4, 7, 11, 0.76), rgba(4, 7, 11, 0.98)),
-    linear-gradient(180deg, #172838, #08111c 68%, #03070d);
-}
-
-html.ks-quality-high .shell-start-card {
-  box-shadow:
-    0 30px 110px rgba(0, 0, 0, 0.72),
-    0 0 46px rgba(247, 211, 107, 0.1),
-    inset 0 0 0 2px rgba(255, 255, 255, 0.09),
-    inset 0 -20px 60px rgba(0, 0, 0, 0.3);
+@media (max-width: 720px) {
+  .shell-start-card { width: min(92vw, 560px); min-height: 250px; padding: 20px 22px 24px; }
+  .shell-start-card h1 { font-size: clamp(34px, 12vw, 58px); }
+  .shell-start-card p { width: 92%; font-size: 14px; }
 }

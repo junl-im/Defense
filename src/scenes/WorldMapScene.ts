@@ -99,15 +99,22 @@ export class WorldMapScene extends Phaser.Scene {
   }
 
   private drawBackground(): void {
-    if (this.textures.exists('ui-world-map-bg')) {
+    if (this.textures.exists('ui-world-map-bg-v29')) {
+      this.add.image(480, 270, 'ui-world-map-bg-v29').setDisplaySize(960, 540).setDepth(0);
+    } else if (this.textures.exists('ui-world-map-bg-v28')) {
+      this.add.image(480, 270, 'ui-world-map-bg-v28').setDisplaySize(960, 540).setDepth(0);
+    } else if (this.textures.exists('ui-world-map-bg-v27')) {
+      this.add.image(480, 270, 'ui-world-map-bg-v27').setDisplaySize(960, 540).setDepth(0);
+    } else if (this.textures.exists('ui-world-map-bg')) {
       this.add.image(480, 270, 'ui-world-map-bg').setDisplaySize(960, 540).setDepth(0);
     } else {
       this.drawFallbackMap();
     }
 
     this.add.rectangle(480, 270, 960, 540, 0x06080d, 0.25).setDepth(1);
-    this.add.rectangle(480, 49, 960, 98, 0x120905, 0.72).setDepth(3);
-    this.add.rectangle(480, 514, 960, 56, 0x120905, 0.82).setStrokeStyle(2, 0xf0c56b, 0.28).setDepth(3);
+    this.add.rectangle(480, 49, 960, 98, 0x0b0f18, 0.78).setDepth(3);
+    this.add.rectangle(480, 95, 850, 2, 0xf6d879, 0.28).setDepth(4);
+    this.add.rectangle(480, 514, 960, 56, 0x0b0f18, 0.86).setStrokeStyle(2, 0xf0c56b, 0.28).setDepth(3);
 
     const mist = this.add.graphics().setDepth(2);
     for (let i = 0; i < 9; i++) {
@@ -189,8 +196,8 @@ export class WorldMapScene extends Phaser.Scene {
     }
 
     this.titleText = this.add.text(480, 36, 'KINGDOM SEED', {
-      fontSize: '39px',
-      color: '#ffe38c',
+      fontSize: '42px',
+      color: '#fff1bf',
       fontStyle: 'bold',
       stroke: '#2b1208',
       strokeThickness: 7,
@@ -207,8 +214,8 @@ export class WorldMapScene extends Phaser.Scene {
   }
 
   private createCarouselArea(): void {
-    this.add.rectangle(360, 287, 608, 306, 0x000000, 0.26)
-      .setStrokeStyle(2, 0xffd67a, 0.2)
+    this.add.rectangle(360, 287, 628, 318, 0x070b12, 0.34)
+      .setStrokeStyle(3, 0xf6d879, 0.22)
       .setDepth(8);
     this.chapterTitleText = this.add.text(360, 114, '', {
       fontSize: '23px',
@@ -219,7 +226,7 @@ export class WorldMapScene extends Phaser.Scene {
       shadow: { offsetX: 0, offsetY: 3, color: '#000000', blur: 4, fill: true },
     }).setOrigin(0.5).setDepth(13);
 
-    this.chapterSubText = this.add.text(360, 139, '좌우로 밀어 다음 전장을 탐색하세요', {
+    this.chapterSubText = this.add.text(360, 139, '스와이프하여 캠페인을 지휘하세요', {
       fontSize: '15px',
       color: '#ffe7ad',
       fontStyle: 'bold',
@@ -268,10 +275,12 @@ export class WorldMapScene extends Phaser.Scene {
   }
 
   private createFooterControls(): void {
-    this.makeImageButton(82, 508, '연구소', 'ui-button-blue', () => this.scene.start('LabScene', { user: this.user, save: this.save }), 124, 42);
-    this.makeImageButton(206, 508, '도감', 'ui-button-gold', () => this.scene.start('CodexScene', { user: this.user, save: this.save }), 96, 42);
-    this.makeImageButton(346, 508, '유물/도전', 'ui-button-red', () => this.scene.start('MetaScene', { user: this.user, save: this.save }), 142, 42, 17);
-    this.makeImageButton(504, 508, '기록 새로고침', 'ui-button-primary', () => void this.refreshSaveAndLeaderboard(), 170, 42, 17);
+    this.makeImageButton(62, 508, '영웅', 'ui-button-gold', () => this.scene.start('HeroHallScene', { user: this.user, save: this.save }), 82, 42, 16);
+    this.makeImageButton(150, 508, '임무', 'ui-button-red', () => this.scene.start('MissionBoardScene', { user: this.user, save: this.save }), 82, 42, 16);
+    this.makeImageButton(248, 508, '연구소', 'ui-button-blue', () => this.scene.start('LabScene', { user: this.user, save: this.save }), 98, 42, 16);
+    this.makeImageButton(354, 508, '제작소', 'ui-button-gold', () => this.scene.start('ArtifactForgeScene', { user: this.user, save: this.save }), 102, 42, 16);
+    this.makeImageButton(456, 508, '도감', 'ui-button-blue', () => this.scene.start('CodexScene', { user: this.user, save: this.save }), 82, 42, 16);
+    this.makeImageButton(570, 508, '기록 갱신', 'ui-button-primary', () => void this.refreshSaveAndLeaderboard(), 118, 42, 15);
     this.startButton = this.makeImageButton(810, 497, '전투 시작', 'ui-button-red', () => this.startSelectedStage(), 230, 58, 24);
     this.startButtonLabel = this.startButton.getByName('label') as Phaser.GameObjects.Text;
   }

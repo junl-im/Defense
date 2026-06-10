@@ -12,6 +12,10 @@ const ENEMY_KEYS: EnemyKind[] = [
 
 const TOWER_KEYS: TowerKind[] = ['archer', 'mage', 'barracks', 'artillery'];
 const TOWER_LEVELS = [1, 2, 3] as const;
+const TOWER_MASTERIES = [
+  'archer_longbow', 'archer_sniper', 'mage_arcane', 'mage_hex',
+  'barracks_paladin', 'barracks_assault', 'artillery_mortar', 'artillery_shock'
+] as const;
 
 type AnimSpec = {
   key: string;
@@ -55,6 +59,47 @@ export class BootScene extends Phaser.Scene {
     this.load.image('ui-icon-lock', 'assets/ui/icon_lock.png');
     this.load.image('ui-hud-top-panel', 'assets/ui/hud_top_panel.png');
     this.load.image('ui-hud-bottom-panel', 'assets/ui/hud_bottom_panel.png');
+    this.load.image('ui-world-map-bg-v27', 'assets/ui/world_map_premium_v27.png');
+    this.load.image('ui-panel-obsidian', 'assets/ui/panel_obsidian_gold.png');
+    this.load.image('ui-button-elite', 'assets/ui/button_elite.png');
+    this.load.image('ui-wave-intel-frame-v31', 'assets/ui/wave_intel_frame_v31.png');
+    this.load.image('ui-boss-cutin-frame-v31', 'assets/ui/boss_cutin_frame_v31.png');
+    this.load.image('ui-boss-sigil-v31', 'assets/ui/boss_warning_sigil_v31.png');
+    this.load.image('ui-tower-card-premium', 'assets/ui/tower_card_premium.png');
+    this.load.image('ui-master-badge', 'assets/ui/mastery_badge.png');
+    this.load.image('ui-world-map-bg-v28', 'assets/ui/world_map_premium_v28.png');
+    this.load.image('ui-world-map-bg-v29', 'assets/ui/world_map_premium_v28.png');
+    this.load.image('ui-hero-hall-bg', 'assets/ui/hero_hall_bg.png');
+    this.load.image('ui-mission-board-bg', 'assets/ui/mission_board_bg.png');
+    this.load.image('ui-glass-panel-v28', 'assets/ui/ui-glass-panel-v28.png');
+    this.load.image('ui-hero-card-v28', 'assets/ui/ui-hero-card-v28.png');
+    this.load.image('ui-mission-card-v28', 'assets/ui/ui-mission-card-v28.png');
+    this.load.image('ui-reward-chest-v28', 'assets/ui/ui-reward-chest-v28.png');
+    this.load.image('ui-reward-panel-v35', 'assets/ui/reward_panel_v35.png');
+    this.load.image('ui-reward-chest-v35', 'assets/ui/reward_chest_v35.png');
+    this.load.image('ui-objective-ribbon-v35', 'assets/ui/objective_ribbon_v35.png');
+    this.load.image('ui-medal-bronze-v35', 'assets/ui/medal_bronze_v35.png');
+    this.load.image('ui-medal-silver-v35', 'assets/ui/medal_silver_v35.png');
+    this.load.image('ui-medal-gold-v35', 'assets/ui/medal_gold_v35.png');
+    this.load.image('ui-medal-legend-v35', 'assets/ui/medal_legend_v35.png');
+    this.load.image('ui-forge-bg-v36', 'assets/ui/forge_bg_v36.png');
+    this.load.image('ui-forge-result-panel-v36', 'assets/ui/forge_result_panel_v36.png');
+    this.load.image('ui-forge-detail-panel-v36', 'assets/ui/forge_detail_panel_v36.png');
+    this.load.image('ui-forge-resource-panel-v36', 'assets/ui/forge_resource_panel_v36.png');
+    this.load.image('ui-chest-wood-v36', 'assets/ui/chest_wood_v36.png');
+    this.load.image('ui-chest-iron-v36', 'assets/ui/chest_iron_v36.png');
+    this.load.image('ui-chest-royal-v36', 'assets/ui/chest_royal_v36.png');
+    this.load.image('ui-chest-mythic-v36', 'assets/ui/chest_mythic_v36.png');
+    ['oakLongbow','arcaneCore','captainsBanner','thunderPowder','merchantLedger','sunstoneAmulet','hexedHourglass','royalBulwark','shadowDagger','dragonScale','voidPrism','kingsCrown'].forEach((artifact) => {
+      this.load.image(`ui-artifact-${artifact}-v36`, `assets/ui/artifact_${artifact}_v36.png`);
+    });
+    this.load.image('portrait-knight', 'assets/ui/portrait_knight.png');
+    this.load.image('portrait-ranger', 'assets/ui/portrait_ranger.png');
+    this.load.image('portrait-mage', 'assets/ui/portrait_mage.png');
+    this.load.image('icon-hero-knight', 'assets/icons/icon_hero_knight.png');
+    this.load.image('icon-hero-ranger', 'assets/icons/icon_hero_ranger.png');
+    this.load.image('icon-hero-mage', 'assets/icons/icon_hero_mage.png');
+    this.load.image('icon-reward-chest', 'assets/icons/icon_reward_chest.png');
 
     this.load.image('map-thumb-stage-001', 'assets/maps/map_stage_001.png');
     this.load.image('map-thumb-stage-002', 'assets/maps/map_stage_002.png');
@@ -89,6 +134,21 @@ export class BootScene extends Phaser.Scene {
     this.load.spritesheet('fx-upgrade-burst', 'assets/effects/fx_upgrade_burst.png', { frameWidth: 64, frameHeight: 64 });
     this.load.spritesheet('fx-death-poof', 'assets/effects/fx_death_poof.png', { frameWidth: 64, frameHeight: 64 });
     this.load.spritesheet('fx-explosion-burst', 'assets/effects/fx_explosion_burst.png', { frameWidth: 64, frameHeight: 64 });
+    this.load.spritesheet('fx-meteor-impact-v32', 'assets/effects/fx_meteor_impact_v32.png', { frameWidth: 96, frameHeight: 96 });
+    this.load.spritesheet('fx-arcane-surge-v32', 'assets/effects/fx_arcane_surge_v32.png', { frameWidth: 96, frameHeight: 96 });
+    this.load.spritesheet('fx-holy-gate-v32', 'assets/effects/fx_holy_gate_v32.png', { frameWidth: 96, frameHeight: 96 });
+    this.load.spritesheet('fx-earth-stomp-v32', 'assets/effects/fx_earth_stomp_v32.png', { frameWidth: 96, frameHeight: 96 });
+    this.load.spritesheet('fx-boss-arena-v32', 'assets/effects/fx_boss_arena_v32.png', { frameWidth: 96, frameHeight: 96 });
+    this.load.image('ui-spell-meteor-card-v32', 'assets/ui/spell_meteor_card_v32.png');
+    this.load.image('ui-spell-mercenary-card-v32', 'assets/ui/spell_mercenary_card_v32.png');
+    this.load.image('ui-spell-hero-card-v32', 'assets/ui/spell_hero_card_v32.png');
+    this.load.image('ui-boss-pattern-banner-v32', 'assets/ui/boss_pattern_banner_v32.png');
+    this.load.image('ui-spell-status-bar-v32', 'assets/ui/spell_status_bar_v32.png');
+    this.load.image('ui-tower-cutin-v33', 'assets/ui/tower_cutin_panel_v33.png');
+    this.load.image('ui-tower-seal-v33', 'assets/ui/tower_skill_seal_v33.png');
+    this.load.image('ui-boss-status-v33', 'assets/ui/boss_status_panel_v33.png');
+    this.load.spritesheet('fx-projectile-trail-v33', 'assets/effects/fx_projectile_trail_v33.png', { frameWidth: 96, frameHeight: 32 });
+    this.load.spritesheet('fx-tower-impact-v33', 'assets/effects/fx_tower_impact_v33.png', { frameWidth: 96, frameHeight: 96 });
 
     ENEMY_KEYS.forEach((kind) => {
       this.load.spritesheet(`enemy-${kind}`, `assets/sprites/enemy_${kind}.png`, { frameWidth: 32, frameHeight: 32 });
@@ -101,7 +161,19 @@ export class BootScene extends Phaser.Scene {
       });
     });
 
+    TOWER_MASTERIES.forEach((mastery) => {
+      const kind = mastery.split('_')[0];
+      this.load.image(`tower-${kind}-${mastery}`, `assets/sprites/tower_${mastery}.png`);
+    });
+
     this.load.image('ui-panel-parchment', 'assets/ui/panel_parchment.png');
+
+    ['armor','magic','flying','swift','boss','tank','regen','summon'].forEach((trait) => {
+      this.load.image(`ui-monster-trait-${trait}`, `assets/ui/monster_trait_${trait}.png`);
+    });
+    ['ogre','golem','demonlord','phoenix','dragon','titan'].forEach((boss) => {
+      this.load.image(`ui-boss-nameplate-${boss}`, `assets/ui/boss_nameplate_${boss}.png`);
+    });
 
     this.load.image('ui-import-button', 'assets/imported/ui/ui_wenrexa_button.png');
     this.load.image('ui-import-panel', 'assets/imported/ui/ui_wenrexa_panel.png');
@@ -159,6 +231,13 @@ export class BootScene extends Phaser.Scene {
       { key: 'fx-upgrade-burst-play', texture: 'fx-upgrade-burst', start: 0, end: 7, frameRate: 20, repeat: 0 },
       { key: 'fx-death-poof-play', texture: 'fx-death-poof', start: 0, end: 5, frameRate: 18, repeat: 0 },
       { key: 'fx-explosion-burst-play', texture: 'fx-explosion-burst', start: 0, end: 6, frameRate: 20, repeat: 0 },
+      { key: 'fx-meteor-impact-v32-play', texture: 'fx-meteor-impact-v32', start: 0, end: 7, frameRate: 22, repeat: 0 },
+      { key: 'fx-arcane-surge-v32-play', texture: 'fx-arcane-surge-v32', start: 0, end: 7, frameRate: 20, repeat: 0 },
+      { key: 'fx-holy-gate-v32-play', texture: 'fx-holy-gate-v32', start: 0, end: 7, frameRate: 18, repeat: 0 },
+      { key: 'fx-earth-stomp-v32-play', texture: 'fx-earth-stomp-v32', start: 0, end: 7, frameRate: 20, repeat: 0 },
+      { key: 'fx-boss-arena-v32-play', texture: 'fx-boss-arena-v32', start: 0, end: 7, frameRate: 18, repeat: 0 },
+      { key: 'fx-projectile-trail-v33-play', texture: 'fx-projectile-trail-v33', start: 0, end: 5, frameRate: 22, repeat: 0 },
+      { key: 'fx-tower-impact-v33-play', texture: 'fx-tower-impact-v33', start: 0, end: 7, frameRate: 22, repeat: 0 },
     ];
 
     anims.forEach((spec) => this.makeAnim(spec));
