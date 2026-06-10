@@ -2,36 +2,32 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const root = process.cwd();
-const removePatterns = [
-  /^README-v\d/i,
-  /^README-v\d.*\.md$/i,
+const patterns = [
+  /^README-v\d+(?:\.\d+)*.*\.md$/i,
+  /^kingdom-seed-v\d+(?:\.\d+)*.*\.md$/i,
+];
+const docPatterns = [
+  /_V\d+(?:_\d+)?\.md$/i,
+  /-v\d+(?:\.\d+)*.*\.md$/i,
+  /^asset-manifest-v\d+(?:\.\d+)*\.json$/i,
 ];
 
-const docsRemovePatterns = [
-  /_V\d+\.md$/i,
-  /^asset-manifest-v\d+\.json$/i,
-  /^VISUAL_DIRECTION_V\d+\.md$/i,
-  /^VISUAL_INTEGRATION_V\d+\.md$/i,
-  /^INGAME_PREMIUM_UI_V\d+\.md$/i,
-  /^COMPACT_LOGIN_VISUAL_V\d+\.md$/i,
-];
-
-let removed = 0;
-for (const entry of fs.readdirSync(root)) {
-  if (removePatterns.some((pattern) => pattern.test(entry))) {
-    fs.rmSync(path.join(root, entry), { force: true, recursive: true });
-    removed += 1;
-  }
-}
-
-const docs = path.join(root, 'docs');
-if (fs.existsSync(docs)) {
-  for (const entry of fs.readdirSync(docs)) {
-    if (docsRemovePatterns.some((pattern) => pattern.test(entry))) {
-      fs.rmSync(path.join(docs, entry), { force: true, recursive: true });
-      removed += 1;
+function removeIfMatches(dir, matchers) {
+  if (!fs.existsSync(dir)) return 0;
+  let count = 0;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) continue;
+    if (matchers.some((p) => p.test(entry.name))) {
+      fs.rmSync(full, { force: true });
+      count += 1;
+      console.log('removed', path.relative(root, full));
     }
   }
+  return count;
 }
 
-console.log(`Cleaned ${removed} old versioned patch files.`);
+let removed = 0;
+removed += removeIfMatches(root, patterns);
+removed += removeIfMatches(path.join(root, 'docs'), docPatterns);
+console.log(`cleanup complete: ${removed} old versioned patch files removed`);

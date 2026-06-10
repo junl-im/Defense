@@ -281,3 +281,9 @@ canvas { filter: saturate(1.05) contrast(1.035) brightness(1.01); }
     z-index: 999997;
   }
 }
+
+
+/* v5.1 clean visual stack: prevent duplicate-looking overlays from old UI screenshots. */
+#game canvas { display: block; background: #8ecbff; }
+html.is-desktop #game, html.is-desktop body { background: #07162f; }
+.kingdom-seed-debug-version, .premium-art-pass-label { display: none !important; }

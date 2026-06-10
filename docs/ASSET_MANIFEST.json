@@ -1,18 +1,11 @@
 {
-  "theme": "compact premium anime fantasy defense",
-  "docs_policy": "fixed filenames only",
-  "updated_assets": [
-    "public/assets/ui/title_background.png",
-    "public/assets/ui/title_logo_boutique_v49.png",
-    "public/assets/ui/login_panel_boutique_v49.png",
-    "public/assets/ui/button_boutique_gold_v49.png",
-    "public/assets/ui/worldmap_bottom_dock_v47.png",
-    "public/assets/ui/build_menu_frame_v47.png",
-    "public/assets/ui/tower_panel_anchor_v47.png",
-    "public/assets/ui/wave_card_refined_v47.png",
-    "public/assets/ui/preview_visual_polish.jpg"
+  "visualStack": "clean-v51",
+  "fixed": [
+    "title_background.png",
+    "world_map_premium_v28.png",
+    "login panels",
+    "button textures",
+    "MenuScene"
   ],
-  "carried_forward_fixes": [
-    "src/game/Tower.ts boss applySuppression build fix"
-  ]
+  "policy": "no baked logo/text/buttons in reusable UI textures"
 }
