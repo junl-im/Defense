@@ -37,6 +37,13 @@ export class BootScene extends Phaser.Scene {
     this.load.image('ui-title-bg', 'assets/ui/title_background.png');
     this.load.image('ui-title-logo', 'assets/ui/title_logo.png');
 
+    // v1.0 clean visual stack: backgrounds are image assets; logo/buttons/panels are drawn in code.
+    this.load.image('v1-login-bg', 'assets/backgrounds/login_background_v1_0.png');
+    this.load.image('v1-main-menu-bg', 'assets/backgrounds/main_menu_background_v1_0.png');
+    ['hero_knight','hero_ranger','hero_mage','hero_guardian','hero_druid','tower_crystal','tower_sanctuary','tower_cannon','tower_grove','monster_goblin','monster_orc','monster_wolf','monster_skeleton','monster_dragon'].forEach((asset) => {
+      this.load.image(`v1-${asset.replace(/_/g, '-')}`, `assets/v1_0/decor/${asset}_v1_0.png`);
+    });
+
     this.load.image('ui-title-logo-compact-v48', 'assets/ui/title_logo_compact_v48.png');
     this.load.image('ui-login-panel-compact-v48', 'assets/ui/login_panel_compact_v48.png');
     this.load.image('ui-button-compact-gold-v48', 'assets/ui/button_compact_gold_v48.png');

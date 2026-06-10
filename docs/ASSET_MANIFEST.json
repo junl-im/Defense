@@ -1,11 +1,29 @@
 {
-  "visualStack": "clean-v51",
-  "fixed": [
-    "title_background.png",
-    "world_map_premium_v28.png",
-    "login panels",
-    "button textures",
-    "MenuScene"
+  "visualStack": "v1.0-clean-code-ui",
+  "backgrounds": [
+    "public/assets/backgrounds/login_background_v1_0.png",
+    "public/assets/backgrounds/main_menu_background_v1_0.png"
   ],
-  "policy": "no baked logo/text/buttons in reusable UI textures"
+  "decorAssets": [
+    "public/assets/v1_0/decor/hero_knight_v1_0.png",
+    "public/assets/v1_0/decor/hero_ranger_v1_0.png",
+    "public/assets/v1_0/decor/hero_mage_v1_0.png",
+    "public/assets/v1_0/decor/hero_guardian_v1_0.png",
+    "public/assets/v1_0/decor/hero_druid_v1_0.png",
+    "public/assets/v1_0/decor/tower_crystal_v1_0.png",
+    "public/assets/v1_0/decor/tower_sanctuary_v1_0.png",
+    "public/assets/v1_0/decor/tower_cannon_v1_0.png",
+    "public/assets/v1_0/decor/tower_grove_v1_0.png",
+    "public/assets/v1_0/decor/monster_goblin_v1_0.png",
+    "public/assets/v1_0/decor/monster_orc_v1_0.png",
+    "public/assets/v1_0/decor/monster_wolf_v1_0.png",
+    "public/assets/v1_0/decor/monster_skeleton_v1_0.png",
+    "public/assets/v1_0/decor/monster_dragon_v1_0.png"
+  ],
+  "codeUi": [
+    "src/game/CodeUiKit.ts",
+    "src/scenes/MenuScene.ts",
+    "src/scenes/MainMenuScene.ts"
+  ],
+  "policy": "background image only; logo/buttons/panels/chips/toasts are rendered by code"
 }

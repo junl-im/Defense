@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { BootScene } from './scenes/BootScene';
 import { MenuScene } from './scenes/MenuScene';
+import { MainMenuScene } from './scenes/MainMenuScene';
 import { WorldMapScene } from './scenes/WorldMapScene';
 import { LabScene } from './scenes/LabScene';
 import { GameScene } from './scenes/GameScene';
@@ -44,7 +45,7 @@ const config: Phaser.Types.Core.GameConfig = {
     roundPixels: false,
     powerPreference: profile.tier === 'low' ? 'low-power' : 'high-performance',
   },
-  scene: [BootScene, MenuScene, WorldMapScene, LabScene, CodexScene, MetaScene, HeroHallScene, MissionBoardScene, ArtifactForgeScene, GameScene],
+  scene: [BootScene, MenuScene, MainMenuScene, WorldMapScene, LabScene, CodexScene, MetaScene, HeroHallScene, MissionBoardScene, ArtifactForgeScene, GameScene],
 };
 
 const game = new Phaser.Game(config);
