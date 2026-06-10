@@ -82,6 +82,17 @@ export class BootScene extends Phaser.Scene {
     this.load.image('ui-medal-silver-v35', 'assets/ui/medal_silver_v35.png');
     this.load.image('ui-medal-gold-v35', 'assets/ui/medal_gold_v35.png');
     this.load.image('ui-medal-legend-v35', 'assets/ui/medal_legend_v35.png');
+
+    this.load.image('ui-battle-loading-v42', 'assets/ui/battle_loading_frame_v42.png');
+    this.load.image('ui-loading-crest-v42', 'assets/ui/loading_crest_v42.png');
+    this.load.image('ui-tower-panel-v42', 'assets/ui/tower_panel_v42.png');
+    this.load.image('ui-reward-stage-panel-v42', 'assets/ui/reward_stage_panel_v42.png');
+    this.load.image('ui-button-action-v42', 'assets/ui/button_action_v42.png');
+    this.load.image('ui-button-blue-v42', 'assets/ui/button_blue_v42.png');
+    this.load.image('ui-button-danger-v42', 'assets/ui/button_danger_v42.png');
+    this.load.image('ui-reward-chest-glow-v42', 'assets/ui/reward_chest_glow_v42.png');
+    this.load.image('ui-tower-action-icons-v42', 'assets/ui/tower_action_icons_v42.png');
+    this.load.image('fx-click-burst-v42', 'assets/effects/fx_click_burst_v42.png');
     this.load.image('ui-forge-bg-v36', 'assets/ui/forge_bg_v36.png');
     this.load.image('ui-forge-result-panel-v36', 'assets/ui/forge_result_panel_v36.png');
     this.load.image('ui-forge-detail-panel-v36', 'assets/ui/forge_detail_panel_v36.png');

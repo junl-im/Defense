@@ -10,11 +10,13 @@ import { HeroHallScene } from './scenes/HeroHallScene';
 import { MissionBoardScene } from './scenes/MissionBoardScene';
 import { ArtifactForgeScene } from './scenes/ArtifactForgeScene';
 import { installGlobalAudioUnlock } from './game/AudioManager';
+import { installGlobalPremiumDomFeedback } from './game/PremiumMicroInteractions';
 import { getRenderProfile, makeGameFpsConfig } from './game/QualityManager';
 import { installWebShell } from './platform/WebShell';
 import './style.css';
 
 installWebShell();
+installGlobalPremiumDomFeedback();
 
 const profile = getRenderProfile();
 

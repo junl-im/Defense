@@ -11,6 +11,9 @@ let allowExit = false;
 let exitModal: HTMLDivElement | undefined;
 let startGate: HTMLDivElement | undefined;
 let activated = false;
+let guardArmed = false;
+let lastGuardAt = 0;
+const GUARD_STATE_KEY = 'kingdomSeedBackGuard';
 
 function flags(): BrowserFlags {
   const ua = navigator.userAgent || '';
@@ -38,11 +41,14 @@ function safeHide(el: HTMLElement): void {
   el.classList.add('hidden');
 }
 
+function emitEmergencySave(reason: string): void {
+  window.dispatchEvent(new CustomEvent('kingdom-seed:emergency-save', { detail: { reason, at: Date.now() } }));
+}
+
 async function requestFullscreenAndLandscape(): Promise<void> {
   const info = flags();
 
-  // v2.3: PC에서는 전체화면/회전 개입을 전부 끈다.
-  // 데스크톱 브라우저는 사용자가 창 크기를 직접 제어하므로, 게임이 임의로 전체화면을 다시 켜면 오히려 불편하다.
+  // PC에서는 전체화면/회전을 전혀 개입하지 않는다.
   if (!info.isMobile) return;
 
   const root = document.documentElement as HTMLElement & {
@@ -91,6 +97,7 @@ function updateOrientationClass(): void {
 async function activateGameShell(): Promise<void> {
   if (activated) return;
   activated = true;
+  armBackGuard(true);
   await requestFullscreenAndLandscape();
   window.dispatchEvent(new CustomEvent('kingdom-seed:user-activated'));
   startGate?.classList.add('start-gate-out');
@@ -127,10 +134,10 @@ function createExitModal(): void {
   exitModal.id = 'exit-modal';
   exitModal.className = 'shell-overlay hidden';
   exitModal.innerHTML = `
-    <div class="shell-panel">
+    <div class="shell-panel shell-exit-panel">
       <div class="shell-kicker">EXIT</div>
       <h2>게임을 종료할까요?</h2>
-      <p>진행 중인 웨이브는 저장되지 않을 수 있습니다.</p>
+      <p>진행 중인 전투는 저장되지 않을 수 있습니다.</p>
       <div class="shell-row">
         <button id="exit-stay-btn" class="shell-secondary">계속하기</button>
         <button id="exit-confirm-btn" class="shell-danger">종료</button>
@@ -141,49 +148,90 @@ function createExitModal(): void {
 
   exitModal.querySelector<HTMLButtonElement>('#exit-stay-btn')?.addEventListener('click', () => {
     safeHide(exitModal!);
-    history.pushState({ kingdomSeedGuard: true }, '', window.location.href);
+    armBackGuard(true);
     void requestFullscreenAndLandscape();
   });
 
   exitModal.querySelector<HTMLButtonElement>('#exit-confirm-btn')?.addEventListener('click', () => {
     allowExit = true;
     safeHide(exitModal!);
-    history.back();
+    emitEmergencySave('exit-confirm');
+    try {
+      history.go(-2);
+    } catch {
+      history.back();
+    }
     setTimeout(() => {
       window.close();
       if (!document.hidden) window.location.href = 'about:blank';
-    }, 80);
+    }, 120);
   });
 }
 
-function installBackGuard(): void {
+function armBackGuard(force = false): void {
+  const now = Date.now();
+  if (!force && guardArmed && now - lastGuardAt < 700) return;
+  lastGuardAt = now;
+  guardArmed = true;
+
   try {
-    history.replaceState({ kingdomSeedBase: true }, '', window.location.href);
-    history.pushState({ kingdomSeedGuard: true }, '', window.location.href);
+    const baseState = { ...(history.state || {}), kingdomSeedBase: true };
+    history.replaceState(baseState, '', window.location.href);
+    history.pushState({ [GUARD_STATE_KEY]: 1 }, '', window.location.href);
+    // 카카오톡/일부 Android 인앱 브라우저는 한 번의 history push를 소비하고 바로 닫히는 경우가 있어
+    // 모바일에서는 여분의 가드 상태를 한 장 더 쌓는다.
+    if (flags().isMobile) history.pushState({ [GUARD_STATE_KEY]: 2 }, '', window.location.href);
   } catch (error) {
     console.warn('History guard unavailable:', error);
   }
+}
+
+function showExitGuard(reason: string): void {
+  if (allowExit || !exitModal) return;
+  emitEmergencySave(reason);
+  safeShow(exitModal);
+  armBackGuard(true);
+  if ('vibrate' in navigator) {
+    try { navigator.vibrate?.(24); } catch { /* ignore */ }
+  }
+}
+
+function installBackGuard(): void {
+  armBackGuard(true);
 
   window.addEventListener('popstate', () => {
-    if (allowExit || !exitModal) return;
-    safeShow(exitModal);
-    try {
-      history.pushState({ kingdomSeedGuard: true }, '', window.location.href);
-    } catch {
-      // Restrictive in-app browsers may reject history operations.
-    }
+    showExitGuard('popstate');
+  });
+
+  window.addEventListener('hashchange', () => {
+    if (allowExit) return;
+    showExitGuard('hashchange');
+  });
+
+  window.addEventListener('pagehide', () => {
+    if (!allowExit) emitEmergencySave('pagehide');
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && !allowExit) emitEmergencySave('visibility-hidden');
+    if (!document.hidden && flags().isMobile) armBackGuard(true);
   });
 
   window.addEventListener('beforeunload', (event) => {
     if (allowExit) return;
+    emitEmergencySave('beforeunload');
     event.preventDefault();
     event.returnValue = 'true';
   });
+
+  window.addEventListener('pointerdown', () => {
+    if (flags().isMobile) window.setTimeout(() => armBackGuard(false), 40);
+  }, { passive: true });
 }
 
 function installImmersiveMode(): void {
   const tryRestore = (): void => {
-    if (!activated) return;
+    if (!activated || !flags().isMobile) return;
     void requestFullscreenAndLandscape();
   };
 
@@ -192,7 +240,7 @@ function installImmersiveMode(): void {
   });
   document.addEventListener('fullscreenchange', () => { if (flags().isMobile) window.setTimeout(tryRestore, 80); });
   window.addEventListener('focus', () => { if (flags().isMobile) window.setTimeout(tryRestore, 120); });
-  window.addEventListener('pointerdown', () => { if (flags().isMobile) window.setTimeout(tryRestore, 40); });
+  window.addEventListener('pointerdown', () => { if (flags().isMobile) window.setTimeout(tryRestore, 40); }, { passive: true });
 }
 
 export function installWebShell(): void {

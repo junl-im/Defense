@@ -99,3 +99,70 @@ canvas {
   font-variant-numeric: tabular-nums;
   letter-spacing: .02em;
 }
+
+/* v4.2 premium interaction layer */
+html.is-desktop #game {
+  transform: none !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  left: 0 !important;
+  top: 0 !important;
+}
+
+html.is-desktop .shell-start-gate {
+  display: none !important;
+}
+
+.ks-dom-click-ripple {
+  position: fixed;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  margin-top: -7px;
+  border-radius: 999px;
+  pointer-events: none;
+  z-index: 10050;
+  border: 2px solid rgba(255, 238, 177, 0.88);
+  background: radial-gradient(circle, rgba(255, 224, 128, 0.34), rgba(255, 224, 128, 0.02) 64%);
+  box-shadow: 0 0 16px rgba(255, 216, 128, 0.46);
+  animation: ksRippleV42 420ms cubic-bezier(.2,.85,.2,1) forwards;
+}
+
+@keyframes ksRippleV42 {
+  0% { transform: scale(0.42); opacity: 1; }
+  100% { transform: scale(4.2); opacity: 0; }
+}
+
+.ks-game-tap-pulse canvas {
+  filter: brightness(1.06) saturate(1.04);
+}
+
+.ks-emergency-save-flash::after {
+  content: '자동 보호 저장';
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  top: max(14px, env(safe-area-inset-top));
+  z-index: 10060;
+  padding: 9px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 238, 177, 0.52);
+  background: linear-gradient(180deg, rgba(33, 46, 64, .94), rgba(8, 13, 23, .96));
+  color: #fff4c2;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: .03em;
+  box-shadow: 0 10px 26px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.14);
+  animation: ksSaveFlashV42 220ms ease-out forwards;
+}
+
+@keyframes ksSaveFlashV42 {
+  0% { transform: translateY(-8px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.shell-exit-panel {
+  border-color: rgba(255, 210, 116, 0.72);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 199, 101, .13), transparent 44%),
+    linear-gradient(180deg, rgba(27, 35, 51, .98), rgba(8, 12, 19, .98));
+}
