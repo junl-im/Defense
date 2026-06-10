@@ -6,7 +6,6 @@ import { shakeCamera, spawnExplosionBurst, spawnHitSpark, spawnImpactRing, spawn
 import { playSfx } from './AudioManager';
 import { getRelicBattleBonuses } from './MegaSystems';
 import { getTowerMastery, type TowerMasteryId } from './TowerMastery';
-import { showTowerMasteryCinematic, spawnPremiumProjectileTrail, spawnTowerImpactFinisher, type ProjectileTrailVariant } from './TowerSkillFx';
 
 export type TargetMode = 'first' | 'strong' | 'air' | 'near';
 
@@ -49,11 +48,6 @@ export class Tower extends Phaser.GameObjects.Container {
   private overdriveUntil = 0;
   private overdriveAura?: Phaser.GameObjects.Arc;
   private masteryAura?: Phaser.GameObjects.Arc;
-  private suppressionUntil = 0;
-  private suppressionDamageMultiplier = 1;
-  private suppressionFireRateMultiplier = 1;
-  private suppressionAura?: Phaser.GameObjects.Arc;
-  private suppressionLabel?: Phaser.GameObjects.Text;
 
   constructor(scene: Phaser.Scene, x: number, y: number, public readonly config: TowerConfig) {
     super(scene, x, y);
@@ -83,8 +77,10 @@ export class Tower extends Phaser.GameObjects.Container {
     scene.add.existing(this);
 
     this.setDepth(22);
-    this.setSize(58, 58);
-    this.setInteractive(new Phaser.Geom.Circle(0, 0, 32), Phaser.Geom.Circle.Contains);
+    // v4.6: make the whole visible tower footprint selectable, not only the roof/top.
+    // Local hit area covers tower base, roof, glow, and the readable touch area around it.
+    this.setSize(104, 112);
+    this.setInteractive(new Phaser.Geom.Rectangle(-52, -68, 104, 118), Phaser.Geom.Rectangle.Contains);
   }
 
   applyPermanentUpgrades(upgrades: Partial<TowerUpgradeSnapshot> | undefined): void {
@@ -105,14 +101,6 @@ export class Tower extends Phaser.GameObjects.Container {
 
   get overdriveRemainingSec(): number {
     return Math.max(0, Math.ceil((this.overdriveUntil - this.scene.time.now) / 1000));
-  }
-
-  get isSuppressed(): boolean {
-    return this.scene.time.now < this.suppressionUntil;
-  }
-
-  get suppressionRemainingSec(): number {
-    return Math.max(0, Math.ceil((this.suppressionUntil - this.scene.time.now) / 1000));
   }
 
   get currentRange(): number {
@@ -140,16 +128,14 @@ export class Tower extends Phaser.GameObjects.Container {
     if (this.mastery === 'barracks_assault') multiplier *= 1.18;
     if (this.mastery === 'artillery_mortar') multiplier *= 1.14;
     if (this.isOverdriven) multiplier *= 1.16;
-    if (this.isSuppressed) multiplier *= this.suppressionDamageMultiplier;
     return Math.round(this.config.damage * multiplier);
   }
 
   get currentFireRateMs(): number {
     const relicRate = this.config.kind === 'archer' ? this.relicBonuses.archerFireRateMultiplier : 1;
     const overdriveRate = this.isOverdriven ? 0.58 : 1;
-    const suppressionRate = this.isSuppressed ? this.suppressionFireRateMultiplier : 1;
     const masteryRate = this.mastery === 'archer_longbow' ? 0.72 : this.mastery === 'mage_hex' ? 0.88 : 1;
-    return Math.max(190, Math.round(this.config.fireRateMs * (1 - (this.level - 1) * 0.1) * relicRate * overdriveRate * masteryRate * suppressionRate));
+    return Math.max(190, Math.round(this.config.fireRateMs * (1 - (this.level - 1) * 0.1) * relicRate * overdriveRate * masteryRate));
   }
 
   get currentSplashRadius(): number | undefined {
@@ -205,7 +191,6 @@ export class Tower extends Phaser.GameObjects.Container {
     spawnUpgradeBurst(this.scene, this.x, this.y - 10, mastery.color);
     spawnImpactRing(this.scene, this.x, this.y - 10, 58, mastery.color, 0.2, 520);
     spawnTowerSkillCutIn(this.scene, this.config.kind, mastery.label, mastery.description, mastery.color);
-    showTowerMasteryCinematic(this.scene, this.config.kind, id, 'unlock');
     if (this.config.kind === 'barracks') this.reinforceSoldiers();
     return true;
   }
@@ -238,29 +223,6 @@ export class Tower extends Phaser.GameObjects.Container {
     this.scene.tweens.add({ targets: [this.sprite, this.top, this.roof].filter(Boolean), scale: 1.16, duration: 90, yoyo: true });
   }
 
-  applySuppression(durationMs: number, damageMultiplier = 0.88, fireRateMultiplier = 1.18, color = 0xff5b4f, label = '압박'): void {
-    this.suppressionUntil = Math.max(this.suppressionUntil, this.scene.time.now + durationMs);
-    this.suppressionDamageMultiplier = Math.min(this.suppressionDamageMultiplier, damageMultiplier);
-    this.suppressionFireRateMultiplier = Math.max(this.suppressionFireRateMultiplier, fireRateMultiplier);
-    if (!this.suppressionAura || !this.suppressionAura.active) {
-      this.suppressionAura = this.scene.add.circle(this.x, this.y, 48, color, 0.07)
-        .setStrokeStyle(2, color, 0.48)
-        .setDepth(23)
-        .setBlendMode(Phaser.BlendModes.ADD);
-      this.scene.tweens.add({ targets: this.suppressionAura, scale: 1.25, alpha: 0.02, duration: 480, yoyo: true, repeat: -1 });
-    }
-    this.suppressionLabel?.destroy();
-    this.suppressionLabel = this.scene.add.text(this.x, this.y - 58, label, {
-      fontSize: '11px', color: '#ffb6a4', fontStyle: 'bold',
-      shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 2, fill: true },
-    }).setOrigin(0.5).setDepth(44);
-    this.scene.tweens.add({ targets: this.suppressionLabel, y: this.y - 68, alpha: 0.45, duration: 460, yoyo: true, repeat: 2 });
-    if (this.sprite) {
-      this.sprite.setTint(color);
-      this.scene.time.delayedCall(140, () => this.sprite?.clearTint());
-    }
-  }
-
   reinforceSoldiers(): void {
     if (this.config.kind !== 'barracks') return;
     this.soldiers.forEach((soldier) => soldier.destroy());
@@ -275,8 +237,6 @@ export class Tower extends Phaser.GameObjects.Container {
     this.soldiers = [];
     this.overdriveAura?.destroy();
     this.masteryAura?.destroy();
-    this.suppressionAura?.destroy();
-    this.suppressionLabel?.destroy();
     this.destroy();
   }
 
@@ -292,16 +252,6 @@ export class Tower extends Phaser.GameObjects.Container {
       }
     }
     if (this.masteryAura?.active) this.masteryAura.setPosition(this.x, this.y);
-    if (this.suppressionAura?.active) {
-      this.suppressionAura.setPosition(this.x, this.y);
-      if (!this.isSuppressed) {
-        this.suppressionAura.destroy();
-        this.suppressionAura = undefined;
-        this.suppressionDamageMultiplier = 1;
-        this.suppressionFireRateMultiplier = 1;
-      }
-    }
-    if (this.suppressionLabel?.active) this.suppressionLabel.setPosition(this.x, this.y - 58);
 
     if (this.config.kind === 'barracks') {
       this.soldiers = this.soldiers.filter((soldier) => soldier.active);
@@ -396,38 +346,21 @@ export class Tower extends Phaser.GameObjects.Container {
     const isMage = this.config.kind === 'mage';
     const style = isMage ? 'magic' : 'arrow';
     const color = isMage ? 0xb88cff : 0xffe0a3;
-    const trailVariant: ProjectileTrailVariant = this.mastery === 'archer_sniper' ? 'sniper' : this.mastery === 'mage_arcane' ? 'arcane' : this.mastery === 'mage_hex' ? 'hex' : isMage ? 'arcane' : 'arrow';
     const duration = isMage ? 150 : 95;
     this.playAttackMotion(impactX, impactY);
     spawnMuzzleFlash(this.scene, launchX, launchY, this.config.color);
     playSfx(this.scene, isMage ? 'sfx_magic' : 'sfx_shoot');
-    if (this.mastery || this.level >= 3) spawnPremiumProjectileTrail(this.scene, launchX, launchY, impactX, impactY, color, trailVariant);
 
     spawnProjectile(this.scene, launchX, launchY, impactX, impactY, color, style, duration, () => {
       if (!target.active || target.dead) return;
       const damage = this.currentDamage;
       target.receiveDamage(damage, isMage ? 'magic' : 'physical');
-      if (this.mastery || this.level >= 3) spawnTowerImpactFinisher(this.scene, impactX, impactY, color, trailVariant);
-      if (this.mastery === 'archer_sniper' && (target.config.threat === 'boss' || target.config.flying)) {
-        this.showMasteryProc();
-        target.receiveDamage(Math.round(damage * 0.42), 'true');
-      }
-      if (this.mastery === 'mage_arcane') {
-        this.showMasteryProc();
-        target.receiveDamage(Math.round(damage * 0.24), 'true');
-      }
-      if (this.mastery === 'mage_hex') {
-        this.showMasteryProc();
-        target.receiveSlow(0.42, 3600);
-        enemies.filter((enemy) => enemy !== target && !enemy.dead && Phaser.Math.Distance.Between(target.x, target.y, enemy.x, enemy.y) <= 76).slice(0, 3).forEach((enemy) => enemy.receiveSlow(0.58, 2200));
-      }
+      if (this.mastery === 'archer_sniper' && (target.config.threat === 'boss' || target.config.flying)) target.receiveDamage(Math.round(damage * 0.42), 'true');
+      if (this.mastery === 'mage_arcane') target.receiveDamage(Math.round(damage * 0.24), 'true');
+      if (this.mastery === 'mage_hex') target.receiveSlow(0.42, 3200);
       if (this.mastery === 'archer_longbow') {
-        const second = enemies.find((enemy) => enemy !== target && !enemy.dead && !enemy.reachedGoal && Phaser.Math.Distance.Between(target.x, target.y, enemy.x, enemy.y) <= 70);
-        if (second) {
-          this.showMasteryProc();
-          spawnPremiumProjectileTrail(this.scene, impactX, impactY, second.x, second.y, 0x9dff7a, 'arrow');
-          second.receiveDamage(Math.round(damage * 0.52), 'physical');
-        }
+        const second = enemies.find((enemy) => enemy !== target && !enemy.dead && !enemy.reachedGoal && Phaser.Math.Distance.Between(target.x, target.y, enemy.x, enemy.y) <= 58);
+        if (second) second.receiveDamage(Math.round(damage * 0.46), 'physical');
       }
       if (target.config.threat === 'boss' && this.relicBonuses.trueDamageBonus > 0) target.receiveDamage(this.relicBonuses.trueDamageBonus, 'true');
       if (this.level >= 3 && this.config.kind === 'archer') {
@@ -448,12 +381,9 @@ export class Tower extends Phaser.GameObjects.Container {
     this.playAttackMotion(impactX, impactY, true);
     spawnMuzzleFlash(this.scene, this.x, this.y - 20, 0xffd36b);
     playSfx(this.scene, 'sfx_shoot');
-    const trailVariant: ProjectileTrailVariant = this.mastery === 'artillery_shock' ? 'shock' : 'shell';
-    if (this.mastery || this.level >= 3) spawnPremiumProjectileTrail(this.scene, this.x, this.y - 20, impactX, impactY, this.mastery === 'artillery_shock' ? 0x8ce8ff : 0xffd36b, trailVariant);
     spawnProjectile(this.scene, this.x, this.y - 20, impactX, impactY, 0x2c1a0a, 'shell', 170, () => {
       const radius = this.currentSplashRadius ?? 50;
       spawnExplosionBurst(this.scene, impactX, impactY, Math.max(0.9, radius / 52));
-      if (this.mastery || this.level >= 3) spawnTowerImpactFinisher(this.scene, impactX, impactY, this.mastery === 'artillery_shock' ? 0x8ce8ff : 0xffd36b, trailVariant);
       const impact = this.scene.add.circle(impactX, impactY, radius, 0xffb347, 0.2).setDepth(34);
       const ring = this.scene.add.circle(impactX, impactY, radius * 0.55, 0xfff1c2, 0.14).setStrokeStyle(2, 0xfff1c2, 0.55).setDepth(35);
       this.scene.tweens.add({ targets: [impact, ring], scale: 1.35, alpha: 0, duration: 260, onComplete: () => { impact.destroy(); ring.destroy(); } });
@@ -469,8 +399,7 @@ export class Tower extends Phaser.GameObjects.Container {
           if (enemy.config.threat === 'boss' && this.relicBonuses.trueDamageBonus > 0) enemy.receiveDamage(this.relicBonuses.trueDamageBonus, 'true');
           if (this.level >= 3) {
             this.showSkillCutIn();
-            if (this.mastery) this.showMasteryProc();
-            enemy.receiveSlow(this.mastery === 'artillery_shock' ? 0.42 : 0.64, this.mastery === 'artillery_shock' ? 2800 : 1600);
+            enemy.receiveSlow(this.mastery === 'artillery_shock' ? 0.45 : 0.68, this.mastery === 'artillery_shock' ? 2400 : 1400);
           }
         }
       });
@@ -489,13 +418,6 @@ export class Tower extends Phaser.GameObjects.Container {
       mastery ? mastery.label : this.config.maxSkill,
       mastery ? mastery.color : this.config.color
     );
-  }
-
-  private showMasteryProc(): void {
-    if (!this.mastery) return;
-    if (this.skillCutInCooldownMs > 0) return;
-    this.skillCutInCooldownMs = 12000;
-    showTowerMasteryCinematic(this.scene, this.config.kind, this.mastery, 'proc');
   }
 
   private playAttackMotion(targetX: number, targetY: number, heavy = false): void {

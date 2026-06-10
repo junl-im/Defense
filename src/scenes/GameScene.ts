@@ -479,8 +479,33 @@ export class GameScene extends Phaser.Scene {
   }
 
 
+  private getSafeMapPoint(x: number, y: number): { x: number; y: number } {
+    // Keep build spots clear of the top HUD, bottom command dock, and phone safe areas.
+    return {
+      x: Phaser.Math.Clamp(x, 72, 888),
+      y: Phaser.Math.Clamp(y, 112, 438),
+    };
+  }
+
+  private clampOverlayPosition(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    margin = 12,
+    bottomReserve = 74
+  ): { x: number; y: number } {
+    return {
+      x: Phaser.Math.Clamp(x, width / 2 + margin, 960 - width / 2 - margin),
+      y: Phaser.Math.Clamp(y, height / 2 + margin, 540 - bottomReserve - height / 2),
+    };
+  }
+
   private createTowerSpots(): void {
-    this.stage.spots.forEach((spot) => this.createBuildSpot(spot.x, spot.y));
+    this.stage.spots.forEach((spot) => {
+      const safe = this.getSafeMapPoint(spot.x, spot.y);
+      this.createBuildSpot(safe.x, safe.y);
+    });
   }
 
   private createBuildSpot(x: number, y: number, autoOpen = false): void {
@@ -493,20 +518,29 @@ export class GameScene extends Phaser.Scene {
     const tag = this.add.text(x, y + 30, '건설 가능', { fontSize: '12px', color: '#ffefb4', fontStyle: 'bold' }).setOrigin(0.5).setDepth(17);
     const premiumPreview = addBuildSpotPreview(this, x, y, 0xffd36b);
     premiumPreview.setVisible(false);
-    const extras: Phaser.GameObjects.GameObject[] = [shadow, light, tagBg, tag, premiumPreview];
+    const largeHitZone = this.add.rectangle(x, y + 2, 106, 82, 0xffffff, 0.001)
+      .setDepth(19)
+      .setInteractive({ useHandCursor: true });
+    const extras: Phaser.GameObjects.GameObject[] = [shadow, light, tagBg, tag, premiumPreview, largeHitZone];
 
     stone.setInteractive({ useHandCursor: true });
-    stone.on('pointerover', () => {
+    const handleOver = (): void => {
       rim.setStrokeStyle(4, 0xfff0a3, 0.78);
       tag.setText('타워 선택');
       premiumPreview.setVisible(true);
-    });
-    stone.on('pointerout', () => {
+    };
+    const handleOut = (): void => {
       rim.setStrokeStyle(3, 0xffd36b, 0.36);
       tag.setText('건설 가능');
       premiumPreview.setVisible(false);
-    });
-    stone.on('pointerdown', () => this.openBuildMenu(x, y, stone, rim, hammer, extras));
+    };
+    const handleOpen = (): void => this.openBuildMenu(x, y, stone, rim, hammer, extras);
+    stone.on('pointerover', handleOver);
+    stone.on('pointerout', handleOut);
+    stone.on('pointerdown', handleOpen);
+    largeHitZone.on('pointerover', handleOver);
+    largeHitZone.on('pointerout', handleOut);
+    largeHitZone.on('pointerdown', handleOpen);
     this.tweens.add({ targets: [rim, light], alpha: '+=0.14', duration: 900, yoyo: true, repeat: -1 });
 
     if (autoOpen) {
@@ -532,7 +566,14 @@ export class GameScene extends Phaser.Scene {
     }
 
     this.destroySelectedPanel();
-    const menu = this.add.container(x, y).setDepth(58);
+    const menuPos = this.clampOverlayPosition(x, y, 326, 214, 12, 78);
+    const menu = this.add.container(menuPos.x, menuPos.y).setDepth(58);
+    if (Math.abs(menuPos.x - x) > 4 || Math.abs(menuPos.y - y) > 4) {
+      const guide = this.add.line(0, 0, x - menuPos.x, y - menuPos.y, 0, -88, 0xffd36b, 0.42)
+        .setLineWidth(2)
+        .setAlpha(0.72);
+      menu.add(guide);
+    }
     const bg = this.add.rectangle(0, 0, 326, 194, 0x130d09, 0.94).setStrokeStyle(3, 0xffd36b, 0.58);
     const header = this.add.text(0, -82, '방어 시설 선택', {
       fontSize: '20px', color: '#fff4c2', fontStyle: 'bold',
@@ -577,6 +618,13 @@ export class GameScene extends Phaser.Scene {
         spawnBuildDust(this, x, y);
         tower.applyPermanentUpgrades(this.save.upgrades);
         if (kind === 'barracks') tower.spawnSoldiers();
+        const towerHitHalo = this.add.ellipse(x, y - 6, 96, 96, 0xffffff, 0.001)
+          .setDepth(23)
+          .setInteractive({ useHandCursor: true });
+        towerHitHalo.on('pointerover', () => tower.setScale(1.035));
+        towerHitHalo.on('pointerout', () => tower.setScale(1));
+        towerHitHalo.on('pointerdown', () => this.selectTower(tower));
+        tower.once('destroy', () => towerHitHalo.destroy());
         tower.on('pointerdown', () => this.selectTower(tower));
         this.towers.push(tower);
         menu.destroy();
@@ -609,7 +657,16 @@ export class GameScene extends Phaser.Scene {
   private createTowerPanel(tower: Tower): void {
     const hasMasteryChoices = tower.level >= 3 && tower.canChooseMastery();
     const panelHeight = hasMasteryChoices ? 332 : tower.config.kind === 'barracks' ? 286 : 270;
-    const panel = this.add.container(768, 364).setDepth(82);
+    const preferredX = tower.x < 500 ? tower.x + 260 : tower.x - 260;
+    const preferredY = tower.y + 18;
+    const panelPos = this.clampOverlayPosition(preferredX, preferredY, 390, panelHeight + 28, 10, 80);
+    const panel = this.add.container(panelPos.x, panelPos.y).setDepth(82);
+    if (Math.abs(panelPos.x - preferredX) > 8 || Math.abs(panelPos.y - preferredY) > 8) {
+      const clampedBadge = this.add.text(0, -panelHeight / 2 - 12, '화면 안쪽으로 자동 정렬', {
+        fontSize: '10px', color: '#fff4c2', fontStyle: 'bold', backgroundColor: '#07101ecc', padding: { x: 6, y: 3 }
+      }).setOrigin(0.5);
+      panel.add(clampedBadge);
+    }
     addTowerPanelSurface(this, panel, 390, panelHeight, tower.config.color);
     addPremiumPanelGlints(this, panel, 390, panelHeight);
 

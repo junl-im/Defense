@@ -13,7 +13,7 @@
   color-scheme: dark;
 }
 
-html, body, #app, #game-root, canvas {
+html, body, #app, #game, #game-root, canvas {
   margin: 0;
   padding: 0;
   width: 100%;
@@ -166,3 +166,52 @@ html.is-desktop .shell-start-gate {
     radial-gradient(circle at 50% 0%, rgba(255, 199, 101, .13), transparent 44%),
     linear-gradient(180deg, rgba(27, 35, 51, .98), rgba(8, 12, 19, .98));
 }
+
+
+/* v4.6 first-load and browser-guard hardening */
+#game {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
+.shell-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  box-sizing: border-box;
+  color: #fff;
+  background: radial-gradient(circle at 50% 24%, rgba(101,165,255,.28), rgba(6,14,31,.86) 58%, rgba(3,7,16,.94));
+}
+
+.shell-overlay.hidden { display: none !important; }
+.shell-start-gate { cursor: pointer; }
+.shell-start-card,
+.shell-panel {
+  width: min(520px, 92vw);
+  border: 2px solid rgba(255,218,123,.88);
+  border-radius: 28px;
+  padding: 26px 24px;
+  text-align: center;
+  background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(220,235,255,.92));
+  color: #244a86;
+  box-shadow: 0 30px 90px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.9);
+}
+.shell-title-mark { font-size: 34px; line-height: 1; font-weight: 1000; letter-spacing: .04em; color: #2d5bab; text-shadow: 0 2px 0 #fff, 0 5px 16px rgba(37,82,168,.28); }
+.shell-title-sword { width: 72%; height: 3px; margin: 14px auto 0; background: linear-gradient(90deg, transparent, #e7b94e, transparent); }
+.shell-start-card h1, .shell-panel h2 { margin: 14px 0 7px; font-size: 28px; color: #193e7d; }
+.shell-start-card p, .shell-panel p { margin: 0; font-weight: 800; color: #5e789f; }
+.shell-tap-rune { display: inline-flex; margin-top: 20px; width: 82px; height: 82px; align-items: center; justify-content: center; border-radius: 999px; color: #fff; font-weight: 1000; background: linear-gradient(180deg, #5fa1ff, #255ab5); border: 3px solid #ffd979; box-shadow: 0 12px 34px rgba(27,82,180,.34), inset 0 1px 0 rgba(255,255,255,.46); animation: ksTapPulseV46 1.25s ease-in-out infinite; }
+.shell-row { display: flex; gap: 12px; justify-content: center; margin-top: 20px; }
+.shell-row button { appearance: none; border: 0; border-radius: 16px; padding: 13px 24px; color: #fff; font-weight: 1000; font-size: 16px; }
+.shell-secondary { background: linear-gradient(180deg, #5d94e6, #2658b5); }
+.shell-danger { background: linear-gradient(180deg, #ff8d86, #b43142); }
+.start-gate-out { opacity: 0; transform: scale(1.03); transition: opacity 160ms ease, transform 160ms ease; }
+@keyframes ksTapPulseV46 { 0%,100% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.07); filter: brightness(1.12); } }

@@ -228,7 +228,51 @@ export class BootScene extends Phaser.Scene {
     Object.entries(audioMap).forEach(([key, file]) => {
       this.load.audio(key, [`assets/audio/${file}`]);
     });
-  }
+  
+
+    this.load.image('ui-tower-panel-premium-v45', 'assets/ui/tower_panel_premium_v45.png');
+    this.load.image('ui-tower-evolution-panel-v45', 'assets/ui/tower_evolution_panel_v45.png');
+    this.load.image('ui-reward-open-panel-v45', 'assets/ui/reward_open_panel_v45.png');
+    this.load.image('ui-monster-intel-panel-v45', 'assets/ui/monster_intel_panel_v45.png');
+    this.load.image('ui-combat-loading-panel-v45', 'assets/ui/combat_loading_panel_v45.png');
+    this.load.image('ui-wave-preview-panel-v45', 'assets/ui/wave_preview_panel_v45.png');
+    this.load.image('ui-toast-panel-v45', 'assets/ui/toast_panel_v45.png');
+    this.load.image('ui-tower-btn-upgrade-v45', 'assets/ui/tower_button_upgrade_v45.png');
+    this.load.image('ui-tower-btn-sell-v45', 'assets/ui/tower_button_sell_v45.png');
+    this.load.image('ui-tower-btn-swap-v45', 'assets/ui/tower_button_swap_v45.png');
+    this.load.image('ui-tower-btn-boost-v45', 'assets/ui/tower_button_boost_v45.png');
+    this.load.image('ui-tower-btn-target-v45', 'assets/ui/tower_button_target_v45.png');
+    this.load.image('ui-tower-btn-rally-v45', 'assets/ui/tower_button_rally_v45.png');
+    this.load.image('ui-reward-open-button-v45', 'assets/ui/reward_open_button_v45.png');
+    this.load.image('ui-confirm-button-v45', 'assets/ui/confirm_button_v45.png');
+    this.load.image('ui-cancel-button-v45', 'assets/ui/cancel_button_v45.png');
+    this.load.image('ui-stat-hp-v45', 'assets/ui/stat_bar_hp_v45.png');
+    this.load.image('ui-stat-damage-v45', 'assets/ui/stat_bar_damage_v45.png');
+    this.load.image('ui-stat-range-v45', 'assets/ui/stat_bar_range_v45.png');
+    this.load.image('ui-stat-speed-v45', 'assets/ui/stat_bar_speed_v45.png');
+    this.load.image('ui-tower-role-archer-v45', 'assets/ui/tower_role_archer_v45.png');
+    this.load.image('ui-tower-role-mage-v45', 'assets/ui/tower_role_mage_v45.png');
+    this.load.image('ui-tower-role-barracks-v45', 'assets/ui/tower_role_barracks_v45.png');
+    this.load.image('ui-tower-role-artillery-v45', 'assets/ui/tower_role_artillery_v45.png');
+
+    this.load.image('ui-safe-battle-frame-v46', 'assets/ui/safe_battle_frame_v46.png');
+    this.load.image('ui-start-gate-card-v46', 'assets/ui/start_gate_card_v46.png');
+    this.load.image('ui-back-guard-card-v46', 'assets/ui/back_guard_card_v46.png');
+    this.load.image('ui-tower-click-ring-v46', 'assets/ui/tower_click_ring_v46.png');
+    this.load.image('ui-map-edge-shadow-v46', 'assets/ui/map_edge_shadow_v46.png');
+
+    for (let i = 0; i < 8; i += 1) {
+      this.load.image(`fx-reward-open-v45-${i}`, `assets/effects/reward_open_fx_v45_${i}.png`);
+    }
+
+    ['armor','magic','flying','swift','boss','tank'].forEach((trait) => {
+      this.load.image(`ui-trait-${trait}`, `assets/ui/monster_trait_${trait}.png`);
+    });
+
+    ['goblin','wolf','bat','orc','shield','shaman','wasp','ogre','raider','gargoyle','dark_mage','golem','gate_lord','cultist','assassin','wyvern','necromancer','flesh_golem','fire_imp','hellhound','obsidian_knight','phoenix','dragon','voidling','void_priest','nightmare_knight','titan','skeleton','zombie','demon','boss'].forEach((enemy) => {
+      this.load.image(`ui-enemy-portrait-${enemy}`, `assets/ui/enemy_portrait_${enemy}.png`);
+    });
+}
 
   create(): void {
     this.createAnimations();

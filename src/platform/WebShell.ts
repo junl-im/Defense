@@ -12,8 +12,10 @@ let exitModal: HTMLDivElement | undefined;
 let startGate: HTMLDivElement | undefined;
 let activated = false;
 let guardArmed = false;
+let suppressExitGuardUntil = 0;
 let lastGuardAt = 0;
 const GUARD_STATE_KEY = 'kingdomSeedBackGuard';
+const GUARD_SESSION = Math.random().toString(36).slice(2);
 
 function flags(): BrowserFlags {
   const ua = navigator.userAgent || '';
@@ -33,6 +35,31 @@ function flags(): BrowserFlags {
   };
 }
 
+function ensureShellStyles(): void {
+  if (document.getElementById('kingdom-shell-v46-style')) return;
+  const style = document.createElement('style');
+  style.id = 'kingdom-shell-v46-style';
+  style.textContent = `
+    #game { width: 100vw; height: 100dvh; min-height: 100dvh; }
+    .shell-overlay { position: fixed; inset: 0; z-index: 10000; display: flex; align-items: center; justify-content: center; padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); background: radial-gradient(circle at 50% 24%, rgba(101,165,255,.28), rgba(6,14,31,.86) 58%, rgba(3,7,16,.94)); color: white; box-sizing: border-box; }
+    .shell-overlay.hidden { display: none !important; }
+    .shell-start-gate { cursor: pointer; }
+    .shell-start-card, .shell-panel { width: min(520px, 92vw); border: 2px solid rgba(255,218,123,.88); border-radius: 28px; padding: 26px 24px; text-align: center; background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(220,235,255,.92)); color: #244a86; box-shadow: 0 30px 90px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.9); }
+    .shell-title-mark { font-size: 34px; line-height: 1; font-weight: 1000; letter-spacing: .04em; color: #2d5bab; text-shadow: 0 2px 0 #fff, 0 5px 16px rgba(37,82,168,.28); }
+    .shell-title-sword { width: 72%; height: 3px; margin: 14px auto 0; background: linear-gradient(90deg, transparent, #e7b94e, transparent); }
+    .shell-start-card h1, .shell-panel h2 { margin: 14px 0 7px; font-size: 28px; color: #193e7d; }
+    .shell-start-card p, .shell-panel p { margin: 0; font-weight: 800; color: #5e789f; }
+    .shell-tap-rune { display: inline-flex; margin-top: 20px; width: 82px; height: 82px; align-items: center; justify-content: center; border-radius: 999px; color: #fff; font-weight: 1000; background: linear-gradient(180deg, #5fa1ff, #255ab5); border: 3px solid #ffd979; box-shadow: 0 12px 34px rgba(27,82,180,.34), inset 0 1px 0 rgba(255,255,255,.46); animation: ksTapPulseV46 1.25s ease-in-out infinite; }
+    .shell-row { display: flex; gap: 12px; justify-content: center; margin-top: 20px; }
+    .shell-row button { appearance: none; border: 0; border-radius: 16px; padding: 13px 24px; color: #fff; font-weight: 1000; font-size: 16px; }
+    .shell-secondary { background: linear-gradient(180deg, #5d94e6, #2658b5); }
+    .shell-danger { background: linear-gradient(180deg, #ff8d86, #b43142); }
+    .start-gate-out { opacity: 0; transform: scale(1.03); transition: opacity 160ms ease, transform 160ms ease; }
+    @keyframes ksTapPulseV46 { 0%,100% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.07); filter: brightness(1.12); } }
+  `;
+  document.head.appendChild(style);
+}
+
 function safeShow(el: HTMLElement): void {
   el.classList.remove('hidden');
 }
@@ -47,8 +74,6 @@ function emitEmergencySave(reason: string): void {
 
 async function requestFullscreenAndLandscape(): Promise<void> {
   const info = flags();
-
-  // PC에서는 전체화면/회전을 전혀 개입하지 않는다.
   if (!info.isMobile) return;
 
   const root = document.documentElement as HTMLElement & {
@@ -72,9 +97,7 @@ async function requestFullscreenAndLandscape(): Promise<void> {
   }
 
   try {
-    const orientation = screen.orientation as ScreenOrientation & {
-      lock?: (orientation: 'landscape') => Promise<void>;
-    };
+    const orientation = screen.orientation as ScreenOrientation & { lock?: (orientation: 'landscape') => Promise<void> };
     if (orientation?.lock) await orientation.lock('landscape');
   } catch (error) {
     console.warn('Landscape lock was blocked or unsupported:', error);
@@ -97,6 +120,7 @@ function updateOrientationClass(): void {
 async function activateGameShell(): Promise<void> {
   if (activated) return;
   activated = true;
+  suppressExitGuardUntil = Date.now() + 900;
   armBackGuard(true);
   await requestFullscreenAndLandscape();
   window.dispatchEvent(new CustomEvent('kingdom-seed:user-activated'));
@@ -111,6 +135,7 @@ function createStartGate(): void {
     window.setTimeout(() => window.dispatchEvent(new CustomEvent('kingdom-seed:user-activated')), 0);
     return;
   }
+
   startGate = document.createElement('div');
   startGate.id = 'start-gate';
   startGate.className = 'shell-overlay shell-start-gate';
@@ -125,8 +150,11 @@ function createStartGate(): void {
   `;
   document.body.appendChild(startGate);
 
-  startGate.addEventListener('pointerdown', () => void activateGameShell(), { once: true });
-  startGate.addEventListener('click', () => void activateGameShell(), { once: true });
+  const start = (): void => void activateGameShell();
+  startGate.addEventListener('pointerdown', start, { once: true });
+  startGate.addEventListener('touchstart', start, { once: true, passive: true });
+  startGate.addEventListener('click', start, { once: true });
+  document.addEventListener('pointerdown', () => { if (!activated && startGate?.isConnected) start(); }, { once: true, passive: true });
 }
 
 function createExitModal(): void {
@@ -137,7 +165,7 @@ function createExitModal(): void {
     <div class="shell-panel shell-exit-panel">
       <div class="shell-kicker">EXIT</div>
       <h2>게임을 종료할까요?</h2>
-      <p>진행 중인 전투는 저장되지 않을 수 있습니다.</p>
+      <p>진행 중인 전투는 보호 저장을 시도합니다.</p>
       <div class="shell-row">
         <button id="exit-stay-btn" class="shell-secondary">계속하기</button>
         <button id="exit-confirm-btn" class="shell-danger">종료</button>
@@ -148,6 +176,7 @@ function createExitModal(): void {
 
   exitModal.querySelector<HTMLButtonElement>('#exit-stay-btn')?.addEventListener('click', () => {
     safeHide(exitModal!);
+    suppressExitGuardUntil = Date.now() + 700;
     armBackGuard(true);
     void requestFullscreenAndLandscape();
   });
@@ -156,11 +185,7 @@ function createExitModal(): void {
     allowExit = true;
     safeHide(exitModal!);
     emitEmergencySave('exit-confirm');
-    try {
-      history.go(-2);
-    } catch {
-      history.back();
-    }
+    try { history.back(); } catch { /* ignore */ }
     setTimeout(() => {
       window.close();
       if (!document.hidden) window.location.href = 'about:blank';
@@ -169,27 +194,34 @@ function createExitModal(): void {
 }
 
 function armBackGuard(force = false): void {
+  const info = flags();
+  if (!info.isMobile) return;
+
   const now = Date.now();
-  if (!force && guardArmed && now - lastGuardAt < 700) return;
+  if (!force && guardArmed && now - lastGuardAt < 1200) return;
   lastGuardAt = now;
   guardArmed = true;
+  suppressExitGuardUntil = now + 450;
 
   try {
-    const baseState = { ...(history.state || {}), kingdomSeedBase: true };
+    const baseState = { ...(history.state || {}), kingdomSeedBase: true, guardSession: GUARD_SESSION };
     history.replaceState(baseState, '', window.location.href);
-    history.pushState({ [GUARD_STATE_KEY]: 1 }, '', window.location.href);
-    // 카카오톡/일부 Android 인앱 브라우저는 한 번의 history push를 소비하고 바로 닫히는 경우가 있어
-    // 모바일에서는 여분의 가드 상태를 한 장 더 쌓는다.
-    if (flags().isMobile) history.pushState({ [GUARD_STATE_KEY]: 2 }, '', window.location.href);
+    history.pushState({ [GUARD_STATE_KEY]: 1, guardSession: GUARD_SESSION }, '', window.location.href);
   } catch (error) {
     console.warn('History guard unavailable:', error);
   }
 }
 
 function showExitGuard(reason: string): void {
-  if (allowExit || !exitModal) return;
+  if (allowExit || !exitModal || !flags().isMobile) return;
+  if (!activated) return;
+  if (Date.now() < suppressExitGuardUntil) {
+    armBackGuard(true);
+    return;
+  }
   emitEmergencySave(reason);
   safeShow(exitModal);
+  suppressExitGuardUntil = Date.now() + 600;
   armBackGuard(true);
   if ('vibrate' in navigator) {
     try { navigator.vibrate?.(24); } catch { /* ignore */ }
@@ -197,15 +229,11 @@ function showExitGuard(reason: string): void {
 }
 
 function installBackGuard(): void {
-  armBackGuard(true);
-
-  window.addEventListener('popstate', () => {
+  window.addEventListener('popstate', (event) => {
+    if (allowExit || !flags().isMobile) return;
+    const state = event.state as Record<string, unknown> | null;
+    if (state?.[GUARD_STATE_KEY]) return;
     showExitGuard('popstate');
-  });
-
-  window.addEventListener('hashchange', () => {
-    if (allowExit) return;
-    showExitGuard('hashchange');
   });
 
   window.addEventListener('pagehide', () => {
@@ -214,19 +242,11 @@ function installBackGuard(): void {
 
   document.addEventListener('visibilitychange', () => {
     if (document.hidden && !allowExit) emitEmergencySave('visibility-hidden');
-    if (!document.hidden && flags().isMobile) armBackGuard(true);
+    if (!document.hidden && activated && flags().isMobile) {
+      suppressExitGuardUntil = Date.now() + 800;
+      armBackGuard(true);
+    }
   });
-
-  window.addEventListener('beforeunload', (event) => {
-    if (allowExit) return;
-    emitEmergencySave('beforeunload');
-    event.preventDefault();
-    event.returnValue = 'true';
-  });
-
-  window.addEventListener('pointerdown', () => {
-    if (flags().isMobile) window.setTimeout(() => armBackGuard(false), 40);
-  }, { passive: true });
 }
 
 function installImmersiveMode(): void {
@@ -240,10 +260,10 @@ function installImmersiveMode(): void {
   });
   document.addEventListener('fullscreenchange', () => { if (flags().isMobile) window.setTimeout(tryRestore, 80); });
   window.addEventListener('focus', () => { if (flags().isMobile) window.setTimeout(tryRestore, 120); });
-  window.addEventListener('pointerdown', () => { if (flags().isMobile) window.setTimeout(tryRestore, 40); }, { passive: true });
 }
 
 export function installWebShell(): void {
+  ensureShellStyles();
   updateOrientationClass();
   window.addEventListener('resize', updateOrientationClass);
   window.addEventListener('orientationchange', () => setTimeout(updateOrientationClass, 120));
@@ -257,5 +277,7 @@ export function installWebShell(): void {
 
 export function requestGameFullscreen(): Promise<void> {
   activated = true;
+  suppressExitGuardUntil = Date.now() + 900;
+  armBackGuard(true);
   return requestFullscreenAndLandscape();
 }
