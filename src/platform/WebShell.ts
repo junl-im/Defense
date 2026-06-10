@@ -69,9 +69,27 @@ function syncViewportCssVars(): void {
   const viewport = window.visualViewport;
   const width = Math.max(1, Math.round(viewport?.width ?? window.innerWidth));
   const height = Math.max(1, Math.round(viewport?.height ?? window.innerHeight));
+  const landscape = width >= height;
+  const surfaceWidth = landscape ? width : height;
+  const surfaceHeight = landscape ? height : width;
+  const targetAspect = 16 / 9;
+  const surfaceAspect = surfaceWidth / Math.max(1, surfaceHeight);
+  let gameWidth = surfaceWidth;
+  let gameHeight = surfaceHeight;
+
+  if (surfaceAspect > targetAspect) {
+    gameHeight = surfaceHeight;
+    gameWidth = Math.round(gameHeight * targetAspect);
+  } else {
+    gameWidth = surfaceWidth;
+    gameHeight = Math.round(gameWidth / targetAspect);
+  }
+
   const root = document.documentElement;
   root.style.setProperty('--ks-vw-px', `${width}px`);
   root.style.setProperty('--ks-vh-px', `${height}px`);
+  root.style.setProperty('--ks-game-w-px', `${Math.max(1, gameWidth)}px`);
+  root.style.setProperty('--ks-game-h-px', `${Math.max(1, gameHeight)}px`);
   root.style.setProperty('--ks-game-scale', '1');
 }
 

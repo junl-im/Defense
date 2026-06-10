@@ -112,7 +112,7 @@ export class MenuScene extends Phaser.Scene {
     const chip = this.add.graphics().setDepth(53);
     chip.fillStyle(0x071c3e, 0.46).fillRoundedRect(16, 14, 166, 28, 14);
     chip.lineStyle(1, 0xffdc82, 0.45).strokeRoundedRect(16, 14, 166, 28, 14);
-    this.add.text(99, 28, 'v2.0.0 ART QA PASS', {
+    this.add.text(99, 28, 'v2.1.0 CLEAN BATTLE QA', {
       fontSize: '10px',
       color: '#f7fbff',
       fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',

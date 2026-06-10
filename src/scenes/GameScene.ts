@@ -46,6 +46,9 @@ export class GameScene extends Phaser.Scene {
   settingRallyFor?: Tower;
   rallyReadyAt = 0;
   castingSpell: CastingSpell;
+  spellTargetPreview?: Phaser.GameObjects.Container;
+  private spellTargetRadius = 0;
+  private spellTargetLabel?: Phaser.GameObjects.Text;
   waveRunning = false;
   startTime = 0;
   score = 0;
@@ -109,6 +112,9 @@ export class GameScene extends Phaser.Scene {
     this.activeBuildMenu = undefined;
     this.settingRallyFor = undefined;
     this.castingSpell = undefined;
+    this.spellTargetPreview = undefined;
+    this.spellTargetRadius = 0;
+    this.spellTargetLabel = undefined;
     this.waveRunning = false;
     this.score = 0;
     this.ended = false;
@@ -139,6 +145,7 @@ export class GameScene extends Phaser.Scene {
     drawCinematicCombatFrame(this, this.stage.theme);
     installScenePerformanceWatch(this);
     this.createHud();
+    this.createUiInputGuards();
     showBattleStartLoading(this, this.stage.title, '전술 배치 · 공세 분석 · 지휘 HUD 전개');
     this.createTowerSpots();
     const selectedHero = getSelectedHero();
@@ -520,6 +527,60 @@ export class GameScene extends Phaser.Scene {
     };
   }
 
+  private createUiInputGuards(): void {
+    const makeGuard = (x: number, y: number, width: number, height: number, label: string): void => {
+      const guard = this.add.zone(x, y, width, height)
+        .setDepth(73)
+        .setInteractive({ useHandCursor: false });
+      const debug = this.add.container(x, y).setDepth(96);
+      addHitZoneDebug(this, debug, width, height, label, 0x6bd7ff, 9);
+      guard.once('destroy', () => debug.destroy());
+    };
+    makeGuard(480, 47, 960, 94, 'HUD safe zone');
+    makeGuard(480, 492, 960, 96, 'skill dock safe zone');
+  }
+
+  private beginSpellTargeting(kind: Exclude<CastingSpell, undefined>, label: string, radius: number, color: number): void {
+    this.clearSpellTargetPreview();
+    this.castingSpell = kind;
+    this.spellTargetRadius = radius;
+
+    const preview = this.add.container(this.input.activePointer.x, this.input.activePointer.y).setDepth(89);
+    const base = this.textures.exists('v1-target-reticle')
+      ? this.add.image(0, 0, 'v1-target-reticle').setDisplaySize(radius * 2.3, radius * 2.3).setAlpha(0.82).setBlendMode(Phaser.BlendModes.ADD)
+      : this.add.circle(0, 0, radius, color, 0.08).setStrokeStyle(2, color, 0.62);
+    const fill = this.add.circle(0, 0, radius, color, kind === 'meteor' ? 0.06 : 0.035)
+      .setStrokeStyle(2, color, 0.48)
+      .setBlendMode(Phaser.BlendModes.ADD);
+    const dot = this.add.circle(0, 0, 5, 0xffffff, 0.78).setStrokeStyle(2, color, 0.92);
+    this.spellTargetLabel = this.add.text(0, -radius - 20, label, {
+      fontSize: '13px', color: '#fff7d6', fontStyle: 'bold',
+      backgroundColor: '#07101ecc', padding: { x: 8, y: 4 },
+      fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
+      shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 2, fill: true }
+    }).setOrigin(0.5);
+    preview.add([fill, base, dot, this.spellTargetLabel]);
+    this.tweens.add({ targets: [fill, base], scale: 1.08, alpha: '+=0.12', duration: 620, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+    this.spellTargetPreview = preview;
+    this.updateSpellTargetPreview(this.input.activePointer);
+    this.showMessage(label);
+  }
+
+  private updateSpellTargetPreview(pointer: Phaser.Input.Pointer): void {
+    if (!this.spellTargetPreview?.active || !this.castingSpell) return;
+    const safeY = pointer.y >= 88 && pointer.y <= 442;
+    this.spellTargetPreview.setPosition(pointer.x, pointer.y);
+    this.spellTargetPreview.setAlpha(safeY ? 1 : 0.42);
+    this.spellTargetLabel?.setText(safeY ? (this.castingSpell === 'meteor' ? '메테오 착탄 지점' : '용병 소환 지점') : '전장 안쪽을 터치하세요');
+  }
+
+  private clearSpellTargetPreview(): void {
+    this.spellTargetPreview?.destroy();
+    this.spellTargetPreview = undefined;
+    this.spellTargetLabel = undefined;
+    this.spellTargetRadius = 0;
+  }
+
   private createTowerSpots(): void {
     this.stage.spots.forEach((spot) => {
       const safe = this.getSafeMapPoint(spot.x, spot.y);
@@ -598,6 +659,8 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
+    this.clearSpellTargetPreview();
+    this.castingSpell = undefined;
     this.destroySelectedPanel();
     this.destroyBuildMenu();
     const menuPos = this.clampOverlayPosition(x, y - 18, 356, 240, 12, 100);
@@ -1006,8 +1069,7 @@ export class GameScene extends Phaser.Scene {
       if (this.meteorCooldownMs > 0) return this.showMessage('메테오 쿨타임 중');
       pulseButton(this, meteor);
       playSfx(this, 'sfx_click');
-      this.castingSpell = 'meteor';
-      this.showMessage('메테오 지점을 터치하세요');
+      this.beginSpellTargeting('meteor', '메테오 착탄 지점 선택', 82, 0xffd36b);
     });
 
     const mercenary = makeSpellHit(260, 500, 160, 46, 0x2f4f35);
@@ -1021,8 +1083,7 @@ export class GameScene extends Phaser.Scene {
       if (this.mercenaryCooldownMs > 0) return this.showMessage('용병소환 쿨타임 중');
       pulseButton(this, mercenary);
       playSfx(this, 'sfx_click');
-      this.castingSpell = 'mercenary';
-      this.showMessage('용병을 소환할 길 위를 터치하세요');
+      this.beginSpellTargeting('mercenary', '용병 소환 지점 선택', 36, 0x7cc7ff);
     });
 
     const heroSkill = makeSpellHit(440, 500, 170, 46, 0x4f3d1f);
@@ -1056,9 +1117,13 @@ export class GameScene extends Phaser.Scene {
   }
 
   private createInputHandlers(): void {
+    this.input.on('pointermove', (p: Phaser.Input.Pointer) => this.updateSpellTargetPreview(p));
     this.input.on('pointerdown', (p: Phaser.Input.Pointer, currentlyOver: Phaser.GameObjects.GameObject[]) => {
       if (currentlyOver.length > 0) return;
-      if (p.y < 70 || p.y > 470) return;
+      if (p.y < 88 || p.y > 442) {
+        if (this.castingSpell) this.showMessage('스킬은 전장 안쪽에만 사용할 수 있습니다.');
+        return;
+      }
 
       if (this.settingRallyFor && this.time.now >= this.rallyReadyAt) {
         this.settingRallyFor.setRallyPoint(p.x, p.y);
@@ -1068,12 +1133,14 @@ export class GameScene extends Phaser.Scene {
       }
 
       if (this.castingSpell === 'meteor') {
+        this.clearSpellTargetPreview();
         this.castMeteor(p.x, p.y);
         this.castingSpell = undefined;
         return;
       }
 
       if (this.castingSpell === 'mercenary') {
+        this.clearSpellTargetPreview();
         this.castMercenaries(p.x, p.y);
         this.castingSpell = undefined;
         return;
