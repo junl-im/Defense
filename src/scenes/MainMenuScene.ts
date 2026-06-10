@@ -3,6 +3,7 @@ import type { User } from 'firebase/auth';
 import { playMusic, playSfx } from '../game/AudioManager';
 import { STAGE_LIST } from '../game/balance';
 import { addCoverImage } from '../game/CodeUiKit';
+import { addHitZoneDebug } from '../game/HitZoneDebug';
 import type { PlayerSave } from '../services/firebase';
 
 type HotspotTone = 'gold' | 'blue' | 'white' | 'red' | 'green';
@@ -60,12 +61,12 @@ export class MainMenuScene extends Phaser.Scene {
     this.createSmallStatusToast();
 
     this.time.delayedCall(0, () => {
-      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MainMenuScene', version: '1.4', at: Date.now() } }));
+      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MainMenuScene', version: '2.0', at: Date.now() } }));
     });
   }
 
   private createIllustrationLedLobby(): void {
-    const key = this.textures.exists('v1-main-menu-splash') ? 'v1-main-menu-splash' : 'v1-main-menu-bg';
+    const key = this.textures.exists('v1-main-menu-splash-v18') ? 'v1-main-menu-splash-v18' : this.textures.exists('v1-main-menu-splash') ? 'v1-main-menu-splash' : 'v1-main-menu-bg';
     addCoverImage(this, key, 960, 540, 0);
 
     const topGlow = this.add.rectangle(480, 3, 950, 12, 0xc6efff, 0.18)
@@ -127,6 +128,7 @@ export class MainMenuScene extends Phaser.Scene {
 
     const hit = this.add.zone(0, 0, options.width, options.height).setInteractive({ useHandCursor: true });
     c.add([hover, glint, hit]);
+    addHitZoneDebug(this, c, options.width, options.height, `hotspot ${Math.round(options.x)},${Math.round(options.y)}`, tint, radius);
 
     hit.on('pointerover', () => {
       this.tweens.add({ targets: hover, alpha: 1, duration: 115, ease: 'Sine.easeOut' });

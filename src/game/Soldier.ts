@@ -18,7 +18,8 @@ export class Soldier extends Phaser.GameObjects.Container {
   attackCooldownMs = 0;
   target?: Enemy;
   bodyCircle: Phaser.GameObjects.Arc;
-  private sprite?: Phaser.GameObjects.Sprite;
+  private sprite?: Phaser.GameObjects.Sprite | Phaser.GameObjects.Image;
+  private animatedSprite = false;
   private spriteBaseKey: 'soldier' | 'mercenary' = 'soldier';
   private currentMotion: 'idle' | 'move' | 'attack' = 'idle';
   expiresAt?: number;
@@ -36,8 +37,14 @@ export class Soldier extends Phaser.GameObjects.Container {
     const spriteKey = isMercenary ? 'mercenary-green' : 'soldier-blue';
     this.spriteBaseKey = isMercenary ? 'mercenary' : 'soldier';
     const shadow = scene.add.ellipse(0, 12, 22, 8, 0x000000, 0.22);
-    if (scene.textures.exists(spriteKey)) {
+    const artKey = isMercenary ? 'v1-hero-art-druid' : 'v1-hero-art-paladin';
+    if (scene.textures.exists(artKey)) {
+      this.sprite = scene.add.image(0, -7, artKey);
+      const targetHeight = isMercenary ? 50 : 52;
+      this.sprite.setDisplaySize(this.sprite.width * (targetHeight / Math.max(1, this.sprite.height)), targetHeight);
+    } else if (scene.textures.exists(spriteKey)) {
       this.sprite = scene.add.sprite(0, -3, spriteKey, 0).setScale(isMercenary ? 1.0 : 0.97);
+      this.animatedSprite = true;
       this.playMotion('idle');
     }
     this.bodyCircle = scene.add.circle(0, 0, 9, options.color ?? 0x4fa3ff, this.sprite ? 0 : 1);
@@ -113,8 +120,13 @@ export class Soldier extends Phaser.GameObjects.Container {
   private playAttackAnimation(): void {
     this.currentMotion = 'attack';
     if (!this.sprite) return;
-    this.sprite.play(`${this.spriteBaseKey}-attack`, true);
-    this.sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+    if (!this.animatedSprite) {
+      this.scene.tweens.add({ targets: this.sprite, scaleX: this.sprite.scaleX * 1.08, scaleY: this.sprite.scaleY * 1.08, duration: 90, yoyo: true, ease: 'Back.easeOut' });
+      this.scene.time.delayedCall(170, () => { this.currentMotion = 'idle'; });
+      return;
+    }
+    (this.sprite as Phaser.GameObjects.Sprite).play(`${this.spriteBaseKey}-attack`, true);
+    (this.sprite as Phaser.GameObjects.Sprite).once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
       this.currentMotion = 'idle';
       this.playMotion('idle');
     });
@@ -124,7 +136,8 @@ export class Soldier extends Phaser.GameObjects.Container {
     if (!this.sprite || this.currentMotion === 'attack') return;
     if (this.currentMotion === motion) return;
     this.currentMotion = motion;
-    this.sprite.play(`${this.spriteBaseKey}-${motion}`, true);
+    if (!this.animatedSprite) return;
+    (this.sprite as Phaser.GameObjects.Sprite).play(`${this.spriteBaseKey}-${motion}`, true);
   }
 
   private facePoint(x: number): void {

@@ -287,3 +287,198 @@ canvas { filter: saturate(1.05) contrast(1.035) brightness(1.01); }
 #game canvas { display: block; background: #8ecbff; }
 html.is-desktop #game, html.is-desktop body { background: #07162f; }
 .kingdom-seed-debug-version, .premium-art-pass-label { display: none !important; }
+
+/* v1.8 mobile viewport fix: never show the 16:9 game as a tiny strip in portrait.
+   The game canvas is rotated into a landscape-fit surface on phones, while Phaser
+   still uses the same 960x540 coordinate system for art/hit-zone alignment. */
+@media (hover: none) and (pointer: coarse) and (orientation: portrait) {
+  html, body {
+    width: 100dvw;
+    height: 100dvh;
+    overflow: hidden;
+    background: #061833;
+  }
+
+  #game {
+    position: fixed !important;
+    top: 0 !important;
+    left: 100dvw !important;
+    width: 100dvh !important;
+    height: 100dvw !important;
+    min-width: 100dvh !important;
+    min-height: 100dvw !important;
+    padding: 0 !important;
+    transform: rotate(90deg) !important;
+    transform-origin: top left !important;
+    overflow: hidden !important;
+  }
+
+  #game canvas {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    object-fit: contain;
+  }
+
+  .shell-overlay:not(.hidden) {
+    writing-mode: horizontal-tb;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) and (orientation: landscape) {
+  #game {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100dvw !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    padding: 0 !important;
+    transform: none !important;
+  }
+}
+
+/* v1.9 mobile viewport hardening
+   Keep Phaser's 960x540 coordinate system, but make the canvas visually fill the phone viewport.
+   This replaces the v1.8 left:100dvw rotation that could leave the game looking tiny on some mobile browsers. */
+@media (hover: none) and (pointer: coarse) and (orientation: portrait) {
+  html, body {
+    position: fixed;
+    inset: 0;
+    width: 100dvw !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    overflow: hidden !important;
+    background: #061833 !important;
+  }
+
+  #game {
+    position: fixed !important;
+    left: 50% !important;
+    top: 50% !important;
+    width: 100dvh !important;
+    height: 100dvw !important;
+    min-width: 100dvh !important;
+    min-height: 100dvw !important;
+    padding: 0 !important;
+    transform-origin: center center !important;
+    transform: translate(-50%, -50%) rotate(90deg) !important;
+    overflow: hidden !important;
+    background: #061833 !important;
+  }
+
+  #game canvas {
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 100% !important;
+    min-height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    object-fit: fill !important;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) and (orientation: landscape) {
+  html, body {
+    position: fixed;
+    inset: 0;
+    width: 100dvw !important;
+    height: 100dvh !important;
+    overflow: hidden !important;
+  }
+
+  #game {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100dvw !important;
+    height: 100dvh !important;
+    min-width: 100dvw !important;
+    min-height: 100dvh !important;
+    padding: 0 !important;
+    transform: none !important;
+    overflow: hidden !important;
+  }
+
+  #game canvas {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    object-fit: fill !important;
+  }
+}
+
+html.ks-hit-debug canvas {
+  outline: 2px solid rgba(255, 226, 120, .72);
+  outline-offset: -2px;
+}
+
+/* v2.0 viewport QA: final mobile canvas sizing override.
+   Uses visualViewport CSS variables injected by WebShell so Android/iOS address-bar
+   changes do not shrink the 16:9 game into a tiny strip. */
+:root {
+  --ks-vw-px: 100vw;
+  --ks-vh-px: 100dvh;
+  --ks-game-scale: 1;
+}
+
+#game canvas {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 100% !important;
+  min-height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+}
+
+@media (hover: none) and (pointer: coarse) and (orientation: portrait) {
+  html, body {
+    width: var(--ks-vw-px) !important;
+    height: var(--ks-vh-px) !important;
+    min-width: var(--ks-vw-px) !important;
+    min-height: var(--ks-vh-px) !important;
+  }
+
+  #game {
+    left: 50% !important;
+    top: 50% !important;
+    width: var(--ks-vh-px) !important;
+    height: var(--ks-vw-px) !important;
+    min-width: var(--ks-vh-px) !important;
+    min-height: var(--ks-vw-px) !important;
+    max-width: none !important;
+    max-height: none !important;
+    transform-origin: center center !important;
+    transform: translate(-50%, -50%) rotate(90deg) scale(var(--ks-game-scale)) !important;
+    background: #061833 !important;
+  }
+
+  #game canvas {
+    object-fit: fill !important;
+    transform: translateZ(0);
+  }
+}
+
+@media (hover: none) and (pointer: coarse) and (orientation: landscape) {
+  html, body {
+    width: var(--ks-vw-px) !important;
+    height: var(--ks-vh-px) !important;
+    min-width: var(--ks-vw-px) !important;
+    min-height: var(--ks-vh-px) !important;
+  }
+
+  #game {
+    inset: 0 !important;
+    width: var(--ks-vw-px) !important;
+    height: var(--ks-vh-px) !important;
+    min-width: var(--ks-vw-px) !important;
+    min-height: var(--ks-vh-px) !important;
+    max-width: none !important;
+    max-height: none !important;
+    transform: none !important;
+  }
+
+  #game canvas { object-fit: fill !important; }
+}

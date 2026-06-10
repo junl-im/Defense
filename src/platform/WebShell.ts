@@ -39,9 +39,9 @@ function flags(): BrowserFlags {
 }
 
 function ensureShellStyles(): void {
-  if (document.getElementById('kingdom-shell-v47-style')) return;
+  if (document.getElementById('kingdom-shell-v49-style')) return;
   const style = document.createElement('style');
-  style.id = 'kingdom-shell-v48-style';
+  style.id = 'kingdom-shell-v49-style';
   style.textContent = `
     #game { width: 100vw; height: 100dvh; min-height: 100dvh; }
     .shell-overlay { position: fixed; inset: 0; z-index: 10000; display: flex; align-items: center; justify-content: center; padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); background: radial-gradient(circle at 50% 24%, rgba(101,165,255,.28), rgba(6,14,31,.86) 58%, rgba(3,7,16,.94)); color: white; box-sizing: border-box; transition: opacity 180ms ease, transform 180ms ease; }
@@ -62,6 +62,17 @@ function ensureShellStyles(): void {
     @keyframes ksTapPulseV48 { 0%,100% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.07); filter: brightness(1.12); } }
   `;
   document.head.appendChild(style);
+}
+
+
+function syncViewportCssVars(): void {
+  const viewport = window.visualViewport;
+  const width = Math.max(1, Math.round(viewport?.width ?? window.innerWidth));
+  const height = Math.max(1, Math.round(viewport?.height ?? window.innerHeight));
+  const root = document.documentElement;
+  root.style.setProperty('--ks-vw-px', `${width}px`);
+  root.style.setProperty('--ks-vh-px', `${height}px`);
+  root.style.setProperty('--ks-game-scale', '1');
 }
 
 function safeShow(el: HTMLElement): void { el.classList.remove('hidden'); el.classList.remove('fading'); }
@@ -95,14 +106,27 @@ async function requestFullscreenAndLandscape(): Promise<void> {
 }
 
 function updateOrientationClass(): void {
+  syncViewportCssVars();
   const info = flags();
   const landscape = window.innerWidth >= window.innerHeight;
-  document.documentElement.classList.toggle('is-landscape', landscape);
-  document.documentElement.classList.toggle('is-portrait', !landscape);
-  document.documentElement.classList.toggle('is-kakao-webview', info.isKakaoTalk);
-  document.documentElement.classList.toggle('is-mobile-webview', info.isMobile);
-  document.documentElement.classList.toggle('is-desktop', info.isDesktop);
-  document.documentElement.classList.toggle('needs-portrait-rotation', info.isMobile && !landscape);
+  const root = document.documentElement;
+  root.classList.toggle('is-landscape', landscape);
+  root.classList.toggle('is-portrait', !landscape);
+  root.classList.toggle('is-kakao-webview', info.isKakaoTalk);
+  root.classList.toggle('is-mobile-webview', info.isMobile);
+  root.classList.toggle('is-desktop', info.isDesktop);
+  root.classList.toggle('needs-portrait-rotation', info.isMobile && !landscape);
+  root.classList.toggle('ks-hit-debug', new URLSearchParams(window.location.search).has('hit') || localStorage.getItem('ksHitDebug') === '1');
+
+  // v1.9: several mobile browsers report viewport dimensions in stages while
+  // address bars collapse/expand. Send a short burst of resize notifications so
+  // Phaser recalculates after the CSS-rotated container has reached its final size.
+  [0, 60, 180, 360].forEach((delay) => {
+    window.setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+      window.dispatchEvent(new CustomEvent('kingdom-seed:viewport-changed', { detail: { landscape, mobile: info.isMobile, at: Date.now() } }));
+    }, delay);
+  });
 }
 
 function markSceneReady(): void {
@@ -259,6 +283,8 @@ export function installWebShell(): void {
   ensureShellStyles();
   updateOrientationClass();
   window.addEventListener('resize', updateOrientationClass);
+  window.visualViewport?.addEventListener('resize', updateOrientationClass);
+  window.visualViewport?.addEventListener('scroll', updateOrientationClass);
   window.addEventListener('orientationchange', () => setTimeout(updateOrientationClass, 120));
   document.addEventListener('fullscreenchange', updateOrientationClass);
   window.addEventListener('kingdom-seed:scene-ready', markSceneReady);

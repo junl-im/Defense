@@ -51,6 +51,21 @@ const config: Phaser.Types.Core.GameConfig = {
 const game = new Phaser.Game(config);
 installGlobalAudioUnlock(game);
 
+const refreshScale = (): void => {
+  // Mobile browsers often change the visual viewport after fullscreen/orientation requests.
+  // Refreshing the ScaleManager keeps the 960x540 game coordinate system aligned with the
+  // CSS-filled canvas and prevents tiny portrait letterboxing after returning from background.
+  try {
+    game.scale.refresh();
+  } catch (error) {
+    console.warn('Scale refresh skipped:', error);
+  }
+};
+
+window.addEventListener('kingdom-seed:viewport-changed', refreshScale);
+window.addEventListener('orientationchange', () => [0, 120, 320].forEach((delay) => window.setTimeout(refreshScale, delay)));
+window.addEventListener('resize', () => window.setTimeout(refreshScale, 40));
+
 window.addEventListener('kingdom-seed:quality-changed', () => {
   // Phaser resolution is fixed at boot. Reloading is the cleanest way to apply
   // the selected render tier without leaving stale WebGL state in mobile webviews.

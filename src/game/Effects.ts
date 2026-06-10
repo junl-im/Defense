@@ -121,8 +121,28 @@ export function spawnProjectile(
   projectile.setDepth(61);
 
   const glow = scene.add.circle(fromX, fromY, style === 'shell' ? 13 : 10, color, 0.16).setDepth(60);
+  const trail = scene.add.ellipse(
+    fromX - Math.cos(angle) * (style === 'shell' ? 8 : 14),
+    fromY - Math.sin(angle) * (style === 'shell' ? 8 : 14),
+    style === 'shell' ? 22 : 34,
+    style === 'shell' ? 10 : 8,
+    color,
+    style === 'magic' ? 0.20 : 0.14
+  ).setRotation(angle).setDepth(59).setBlendMode(Phaser.BlendModes.ADD);
+  const pin = scene.add.circle(fromX, fromY, style === 'magic' ? 4 : 3, 0xffffff, style === 'shell' ? 0.18 : 0.34)
+    .setDepth(62)
+    .setBlendMode(Phaser.BlendModes.ADD);
+
   scene.tweens.add({
-    targets: [projectile, glow],
+    targets: trail,
+    alpha: 0.03,
+    scaleX: 0.55,
+    scaleY: 0.7,
+    duration: scaledDuration(Math.max(80, duration * 0.92)),
+    ease: 'Quad.easeOut',
+  });
+  scene.tweens.add({
+    targets: [projectile, glow, pin],
     x: toX,
     y: toY,
     duration: scaledDuration(duration),
@@ -130,6 +150,8 @@ export function spawnProjectile(
     onComplete: () => {
       projectile.destroy();
       glow.destroy();
+      pin.destroy();
+      trail.destroy();
       onImpact();
     }
   });

@@ -12,14 +12,20 @@ export class Hero extends Phaser.GameObjects.Container {
   private destination?: Phaser.Math.Vector2;
   private bodyCircle: Phaser.GameObjects.Arc;
   private skillRing: Phaser.GameObjects.Arc;
-  private sprite?: Phaser.GameObjects.Sprite;
+  private sprite?: Phaser.GameObjects.Sprite | Phaser.GameObjects.Image;
+  private animatedSprite = false;
   private currentMotion: 'idle' | 'move' | 'attack' = 'idle';
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
     const shadow = scene.add.ellipse(0, 15, 32, 11, 0x000000, 0.28);
-    if (scene.textures.exists('hero-knight')) {
+    if (scene.textures.exists('v1-hero-art-knight')) {
+      this.sprite = scene.add.image(0, -9, 'v1-hero-art-knight');
+      const targetHeight = 66;
+      this.sprite.setDisplaySize(this.sprite.width * (targetHeight / Math.max(1, this.sprite.height)), targetHeight);
+    } else if (scene.textures.exists('hero-knight')) {
       this.sprite = scene.add.sprite(0, -4, 'hero-knight', 0).setScale(1.22);
+      this.animatedSprite = true;
       this.playMotion('idle');
     }
     this.bodyCircle = scene.add.circle(0, 0, 14, 0xf7d36b, this.sprite ? 0 : 1).setStrokeStyle(3, 0xffffff, this.sprite ? 0 : 0.35);
@@ -115,8 +121,13 @@ export class Hero extends Phaser.GameObjects.Container {
   private playAttackAnimation(): void {
     this.currentMotion = 'attack';
     if (!this.sprite) return;
-    this.sprite.play('hero-attack', true);
-    this.sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+    if (!this.animatedSprite) {
+      this.scene.tweens.add({ targets: this.sprite, scaleX: this.sprite.scaleX * 1.08, scaleY: this.sprite.scaleY * 1.08, duration: 90, yoyo: true, ease: 'Back.easeOut' });
+      this.scene.time.delayedCall(170, () => { this.currentMotion = 'idle'; });
+      return;
+    }
+    (this.sprite as Phaser.GameObjects.Sprite).play('hero-attack', true);
+    (this.sprite as Phaser.GameObjects.Sprite).once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
       this.currentMotion = 'idle';
       this.playMotion('idle');
     });
@@ -126,7 +137,8 @@ export class Hero extends Phaser.GameObjects.Container {
     if (!this.sprite || this.currentMotion === 'attack') return;
     if (this.currentMotion === motion) return;
     this.currentMotion = motion;
-    this.sprite.play(motion === 'move' ? 'hero-move' : 'hero-idle', true);
+    if (!this.animatedSprite) return;
+    (this.sprite as Phaser.GameObjects.Sprite).play(motion === 'move' ? 'hero-move' : 'hero-idle', true);
   }
 
   private facePoint(x: number): void {

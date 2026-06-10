@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import type { User } from 'firebase/auth';
 import { playSfx } from '../game/AudioManager';
 import { addCoverImage } from '../game/CodeUiKit';
+import { addHitZoneDebug } from '../game/HitZoneDebug';
 import {
   completePendingRedirectSignIn,
   ensureAnonymousUser,
@@ -34,23 +35,55 @@ export class MenuScene extends Phaser.Scene {
     this.createUtilityHitZones();
 
     this.time.delayedCall(0, () => {
-      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MenuScene', version: '1.6', at: Date.now() } }));
+      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MenuScene', version: '2.0', at: Date.now() } }));
     });
 
     void this.bootstrapRedirectOrExistingUser();
   }
 
   private createCinematicSplash(): void {
-    const key = this.textures.exists('v1-login-refined')
-      ? 'v1-login-refined'
-      : this.textures.exists('v1-login-splash')
-        ? 'v1-login-splash'
-        : 'v1-login-bg';
-    addCoverImage(this, key, 960, 540, 0);
+    const bgKey = this.textures.exists('v1-login-clean-bg') ? 'v1-login-clean-bg' : 'v1-login-polished';
+    addCoverImage(this, bgKey, 960, 540, 0);
 
-    // v1.6: background/logo/panel/buttons are a refined baked art layer,
-    // while version text, state text, and hit-zones are controlled by code.
-    const bottomGlow = this.add.ellipse(480, 520, 510, 42, 0x8cdcff, 0.08)
+    const topFade = this.add.graphics().setDepth(2);
+    topFade.fillGradientStyle(0x000000, 0x000000, 0x000000, 0x000000, 0.24, 0.24, 0, 0);
+    topFade.fillRect(0, 0, 960, 126);
+
+    const logoKey = this.textures.exists('v1-title-logo-clean') ? 'v1-title-logo-clean' : 'ui-title-logo';
+    this.add.image(480, 116, logoKey).setDisplaySize(390, 141).setDepth(10);
+
+    if (this.textures.exists('v1-login-panel-v18')) {
+      this.add.image(480, 355, 'v1-login-panel-v18').setDisplaySize(430, 300).setDepth(20);
+    } else {
+      const fallback = this.add.graphics().setDepth(20);
+      fallback.fillStyle(0xf6fbff, 0.92).fillRoundedRect(265, 232, 430, 300, 28);
+      fallback.lineStyle(4, 0xf1c46a, 0.9).strokeRoundedRect(265, 232, 430, 300, 28);
+    }
+
+    this.add.text(480, 257, 'DEFENSE COMMAND', {
+      fontSize: '21px',
+      color: '#f8fbff',
+      align: 'center',
+      fixedWidth: 320,
+      fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Malgun Gothic, Arial, sans-serif',
+      fontStyle: 'bold',
+      stroke: '#17366c',
+      strokeThickness: 4,
+      shadow: { offsetX: 0, offsetY: 3, color: '#0a2d6a', blur: 4, fill: true },
+    }).setOrigin(0.5).setDepth(31);
+
+    this.add.text(480, 282, '전장을 수호할 지휘관으로 입장하세요!', {
+      fontSize: '12px',
+      color: '#8298b8',
+      align: 'center',
+      fixedWidth: 320,
+      fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Malgun Gothic, Arial, sans-serif',
+      fontStyle: 'bold',
+      stroke: '#ffffff',
+      strokeThickness: 2,
+    }).setOrigin(0.5).setDepth(31);
+
+    const bottomGlow = this.add.ellipse(480, 526, 520, 42, 0x8cdcff, 0.08)
       .setDepth(3)
       .setBlendMode(Phaser.BlendModes.ADD);
     this.tweens.add({ targets: bottomGlow, alpha: 0.14, scaleX: 1.025, duration: 1800, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
@@ -59,146 +92,186 @@ export class MenuScene extends Phaser.Scene {
   private createStatusOverlay(): void {
     const statusBack = this.add.graphics().setDepth(52);
     statusBack.fillStyle(0xf7fbff, 0.90);
-    statusBack.fillRoundedRect(334, 294, 292, 22, 11);
+    statusBack.fillRoundedRect(336, 300, 288, 25, 12);
     statusBack.lineStyle(1, 0xb9d4ef, 0.82);
-    statusBack.strokeRoundedRect(334, 294, 292, 22, 11);
-    statusBack.lineStyle(1, 0xffffff, 0.52);
-    statusBack.strokeRoundedRect(339, 299, 282, 12, 6);
+    statusBack.strokeRoundedRect(336, 300, 288, 25, 12);
+    statusBack.lineStyle(1, 0xffffff, 0.58);
+    statusBack.strokeRoundedRect(343, 306, 274, 10, 5);
 
-    this.statusText = this.add.text(480, 305, '로그인 확인 중...', {
+    this.statusText = this.add.text(480, 312, '로그인 확인 중...', {
       fontSize: '11px',
       color: '#2f5f9e',
       align: 'center',
-      fixedWidth: 276,
+      fixedWidth: 272,
       fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Malgun Gothic, Arial, sans-serif',
       fontStyle: 'bold',
       stroke: '#ffffff',
       strokeThickness: 2,
     }).setOrigin(0.5).setDepth(53);
 
-    this.add.text(18, 18, 'v1.6.0 ART UI PASS', {
-      fontSize: '12px',
+    const chip = this.add.graphics().setDepth(53);
+    chip.fillStyle(0x071c3e, 0.46).fillRoundedRect(16, 14, 166, 28, 14);
+    chip.lineStyle(1, 0xffdc82, 0.45).strokeRoundedRect(16, 14, 166, 28, 14);
+    this.add.text(99, 28, 'v2.0.0 ART QA PASS', {
+      fontSize: '10px',
       color: '#f7fbff',
       fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
       fontStyle: 'bold',
       shadow: { offsetX: 0, offsetY: 2, color: '#08315f', blur: 3, fill: true },
-    }).setDepth(53).setAlpha(0.88);
+    }).setOrigin(0.5).setDepth(54).setAlpha(0.92);
   }
 
   private createLoginHitZones(): void {
-    // Coordinates are locked to the v1.6 refined login art at 960x540.
-    // This fixes the previous mismatch where the visible premium buttons and click areas were offset.
-    this.addCinematicHotspot({
-      x: 490,
-      y: 353,
-      width: 292,
-      height: 42,
-      radius: 22,
-      tint: 0xffdf8f,
+    // v1.8: positions match the separated image buttons exactly.
+    this.addLoginButton({
+      x: 480,
+      y: 360,
+      width: 304,
+      height: 52,
+      imageKey: 'v1-login-button-gold-v18',
+      label: '빠른 시작',
+      icon: '⚔',
+      color: '#174080',
       onClick: () => void this.startQuick(),
     });
 
-    this.addCinematicHotspot({
-      x: 490,
-      y: 405,
-      width: 292,
-      height: 40,
-      radius: 22,
-      tint: 0xbfdcff,
+    this.addLoginButton({
+      x: 480,
+      y: 416,
+      width: 304,
+      height: 52,
+      imageKey: 'v1-login-button-white-v18',
+      label: 'Google 로그인',
+      icon: 'G',
+      color: '#315f9c',
       onClick: () => void this.startGoogle(),
     });
 
-    this.addCinematicHotspot({
-      x: 414,
-      y: 456,
-      width: 132,
-      height: 36,
-      radius: 18,
-      tint: 0xffffff,
+    this.addLoginButton({
+      x: 402,
+      y: 470,
+      width: 152,
+      height: 42,
+      imageKey: 'v1-login-button-small-v18',
+      label: '이메일 로그인',
+      icon: '✉',
+      color: '#315f9c',
+      small: true,
       onClick: () => void this.startEmailLogin(),
     });
 
-    this.addCinematicHotspot({
-      x: 566,
-      y: 456,
-      width: 132,
-      height: 36,
-      radius: 18,
-      tint: 0xffd5dc,
+    this.addLoginButton({
+      x: 558,
+      y: 470,
+      width: 152,
+      height: 42,
+      imageKey: 'v1-login-button-small-v18',
+      label: '회원가입',
+      icon: '♥',
+      color: '#315f9c',
+      small: true,
       onClick: () => void this.startEmailRegister(),
     });
   }
 
   private createUtilityHitZones(): void {
-    this.addCinematicHotspot({
-      x: 840,
-      y: 36,
-      width: 50,
-      height: 50,
-      radius: 25,
-      tint: 0xffffff,
-      onClick: () => this.setUtilityStatus('공지사항은 준비 중입니다.'),
-    });
-    this.addCinematicHotspot({
-      x: 890,
-      y: 36,
-      width: 50,
-      height: 50,
-      radius: 25,
-      tint: 0xffffff,
-      onClick: () => this.setUtilityStatus('고객센터는 준비 중입니다.'),
-    });
-    this.addCinematicHotspot({
-      x: 940,
-      y: 36,
-      width: 50,
-      height: 50,
-      radius: 25,
-      tint: 0xffffff,
-      onClick: () => this.setUtilityStatus('설정 메뉴는 다음 패치에서 연결합니다.'),
-    });
+    const utilities = [
+      { x: 820, label: '공지사항', icon: '📣', message: '공지사항은 준비 중입니다.' },
+      { x: 878, label: '고객센터', icon: '🎧', message: '고객센터는 준비 중입니다.' },
+      { x: 930, label: '설정', icon: '⚙', message: '설정 메뉴는 다음 패치에서 연결합니다.' },
+    ];
+    utilities.forEach((item) => this.addUtilityButton(item.x, 42, item.icon, item.label, () => this.setUtilityStatus(item.message)));
   }
 
-  private addCinematicHotspot(options: {
+  private addLoginButton(options: {
     x: number;
     y: number;
     width: number;
     height: number;
-    radius: number;
-    tint: number;
+    imageKey: string;
+    label: string;
+    icon: string;
+    color: string;
+    small?: boolean;
     onClick: () => void;
   }): void {
     const c = this.add.container(options.x, options.y).setDepth(60);
+    const image = this.textures.exists(options.imageKey)
+      ? this.add.image(0, 0, options.imageKey).setDisplaySize(options.width, options.height)
+      : this.add.rectangle(0, 0, options.width, options.height, 0xffffff, 0.88).setStrokeStyle(2, 0xdcae62, 0.9);
+    const iconBubble = this.add.circle(-options.width / 2 + (options.small ? 24 : 32), 0, options.small ? 15 : 18, 0xffffff, 0.68)
+      .setStrokeStyle(1, 0xd2aa66, 0.70);
+    const icon = this.add.text(iconBubble.x, 0, options.icon, {
+      fontSize: options.small ? '14px' : '18px',
+      color: options.icon === '♥' ? '#dd506a' : '#2f6cb3',
+      fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
+      fontStyle: 'bold',
+    }).setOrigin(0.5);
+    const label = this.add.text(options.small ? 10 : 8, 0, options.label, {
+      fontSize: options.small ? '14px' : '19px',
+      color: options.color,
+      align: 'center',
+      fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Malgun Gothic, Arial, sans-serif',
+      fontStyle: 'bold',
+      stroke: '#ffffff',
+      strokeThickness: 2,
+      fixedWidth: options.small ? 112 : 210,
+    }).setOrigin(0.5);
     const hover = this.add.graphics();
-    hover.fillStyle(options.tint, 0.12);
-    hover.fillRoundedRect(-options.width / 2, -options.height / 2, options.width, options.height, options.radius);
-    hover.lineStyle(2, 0xffffff, 0.38);
-    hover.strokeRoundedRect(-options.width / 2 + 1, -options.height / 2 + 1, options.width - 2, options.height - 2, Math.max(4, options.radius - 1));
+    hover.fillStyle(0xffffff, 0.18).fillRoundedRect(-options.width / 2 + 8, -options.height / 2 + 6, options.width - 16, Math.max(8, options.height * 0.24), options.height * 0.18);
     hover.setAlpha(0);
-
-    const sheen = this.add.graphics();
-    sheen.fillStyle(0xffffff, 0.20);
-    sheen.fillRoundedRect(-options.width / 2 + 10, -options.height / 2 + 5, options.width - 20, Math.max(6, options.height * 0.26), Math.max(3, options.radius - 5));
-    sheen.setAlpha(0);
-
     const hit = this.add.zone(0, 0, options.width, options.height).setInteractive({ useHandCursor: true });
-    c.add([hover, sheen, hit]);
+    c.add([image, iconBubble, icon, label, hover, hit]);
+    addHitZoneDebug(this, c, options.width, options.height, options.label, options.small ? 0x7cc7ff : 0xffd56c, Math.min(18, options.height / 2));
+    this.wireButtonHit(c, hover, hit, options.onClick);
+  }
 
+  private addUtilityButton(x: number, y: number, iconText: string, labelText: string, onClick: () => void): void {
+    const c = this.add.container(x, y).setDepth(60);
+    const image = this.textures.exists('v1-login-utility-button-v18')
+      ? this.add.image(0, 0, 'v1-login-utility-button-v18').setDisplaySize(50, 50)
+      : this.add.circle(0, 0, 24, 0x1e5bb6, 0.9).setStrokeStyle(2, 0xffdc82, 0.8);
+    const icon = this.add.text(0, -2, iconText, {
+      fontSize: '21px',
+      color: '#ffffff',
+      fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
+      fontStyle: 'bold',
+      stroke: '#17366c',
+      strokeThickness: 2,
+    }).setOrigin(0.5);
+    const label = this.add.text(0, 33, labelText, {
+      fontSize: '11px',
+      color: '#f8fbff',
+      fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
+      fontStyle: 'bold',
+      stroke: '#17366c',
+      strokeThickness: 3,
+    }).setOrigin(0.5);
+    const hover = this.add.circle(0, 0, 26, 0xffffff, 0.16).setAlpha(0).setBlendMode(Phaser.BlendModes.ADD);
+    const hit = this.add.zone(0, 0, 54, 62).setInteractive({ useHandCursor: true });
+    c.add([image, hover, icon, label, hit]);
+    addHitZoneDebug(this, c, 54, 62, labelText, 0x7cc7ff, 18);
+    this.wireButtonHit(c, hover, hit, onClick);
+  }
+
+  private wireButtonHit(
+    container: Phaser.GameObjects.Container,
+    hover: Phaser.GameObjects.GameObject & { alpha: number },
+    hit: Phaser.GameObjects.Zone,
+    onClick: () => void
+  ): void {
     hit.on('pointerover', () => {
       this.tweens.add({ targets: hover, alpha: 1, duration: 120, ease: 'Sine.easeOut' });
-      this.tweens.add({ targets: sheen, alpha: 1, duration: 120, ease: 'Sine.easeOut' });
+      this.tweens.add({ targets: container, scaleX: 1.018, scaleY: 1.018, duration: 120, ease: 'Sine.easeOut' });
     });
-
     hit.on('pointerout', () => {
       this.tweens.add({ targets: hover, alpha: 0, duration: 120, ease: 'Sine.easeOut' });
-      this.tweens.add({ targets: sheen, alpha: 0, duration: 120, ease: 'Sine.easeOut' });
-      this.tweens.add({ targets: c, scaleX: 1, scaleY: 1, duration: 80, ease: 'Sine.easeOut' });
+      this.tweens.add({ targets: container, scaleX: 1, scaleY: 1, duration: 90, ease: 'Sine.easeOut' });
     });
-
     hit.on('pointerdown', () => {
       if (this.isTransitioning) return;
-      this.tweens.add({ targets: c, scaleX: 0.985, scaleY: 0.985, duration: 52, yoyo: true, ease: 'Quad.easeOut' });
-      options.onClick();
+      this.tweens.add({ targets: container, scaleX: 0.982, scaleY: 0.982, duration: 52, yoyo: true, ease: 'Quad.easeOut' });
+      onClick();
     });
   }
 

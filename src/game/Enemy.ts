@@ -16,7 +16,8 @@ export class Enemy extends Phaser.GameObjects.Container {
   dead = false;
 
   private bodyCircle: Phaser.GameObjects.Arc;
-  private sprite?: Phaser.GameObjects.Sprite;
+  private sprite?: Phaser.GameObjects.Sprite | Phaser.GameObjects.Image;
+  private animatedSprite = false;
   private hpBar: Phaser.GameObjects.Rectangle;
   private hpBack: Phaser.GameObjects.Rectangle;
   private blockedMs = 0;
@@ -40,11 +41,19 @@ export class Enemy extends Phaser.GameObjects.Container {
     this.maxHp = config.hp;
 
     const scale = config.scale ?? 1;
-    const shadow = scene.add.ellipse(0, config.flying ? 18 : 14, 28 * scale, 9 * scale, 0x000000, config.flying ? 0.14 : 0.28);
-    const spriteKey = `enemy-${config.kind}`;
-    if (scene.textures.exists(spriteKey)) {
-      this.sprite = scene.add.sprite(0, 0, spriteKey, 0).setScale(scale * 1.08);
-      this.playMotion('walk', 'down', true);
+    const shadow = scene.add.ellipse(0, config.flying ? 20 : 16, 36 * scale, 12 * scale, 0x000000, config.flying ? 0.14 : 0.28);
+    const artKey = this.resolveV18EnemyArtKey(config.kind);
+    if (artKey && scene.textures.exists(artKey)) {
+      this.sprite = scene.add.image(0, config.flying ? -8 : -10, artKey);
+      const targetHeight = (config.threat === 'boss' ? 84 : config.threat === 'tank' ? 64 : config.flying ? 56 : 58) * scale;
+      this.sprite.setDisplaySize(this.sprite.width * (targetHeight / Math.max(1, this.sprite.height)), targetHeight);
+    } else {
+      const spriteKey = `enemy-${config.kind}`;
+      if (scene.textures.exists(spriteKey)) {
+        this.sprite = scene.add.sprite(0, 0, spriteKey, 0).setScale(scale * 1.08);
+        this.animatedSprite = true;
+        this.playMotion('walk', 'down', true);
+      }
     }
     this.bodyCircle = scene.add.circle(0, 0, (config.flying ? 10 : 12) * scale, config.color, this.sprite ? 0.0 : 1).setStrokeStyle(2, config.accentColor ?? 0x000000, this.sprite ? 0.0 : 0.65);
     this.hpBack = scene.add.rectangle(0, -20 * scale, 28 * scale, 5, 0x2c1010, 1).setOrigin(0.5);
@@ -163,6 +172,20 @@ export class Enemy extends Phaser.GameObjects.Container {
     }
   }
 
+  private resolveV18EnemyArtKey(kind: string): string | undefined {
+    const family: Record<string, string> = {
+      goblin: 'goblin', raider: 'goblin', spider: 'goblin',
+      brute: 'orc', orc: 'orc', shield: 'orc', shaman: 'orc', ogre: 'orc', troll: 'orc', golem: 'boar', abomination: 'boar', titan: 'boar',
+      wolf: 'wolf', hellhound: 'wolf', nightmare: 'wolf',
+      bat: 'bat', wasp: 'bat', gargoyle: 'bat', wyvern: 'dragon', phoenix: 'dragon', dragon: 'dragon',
+      skeleton: 'skeleton', zombie: 'skeleton', specter: 'skeleton',
+      cultist: 'rogue', assassin: 'rogue', warlock: 'rogue', necromancer: 'rogue', voidling: 'rogue', voidPriest: 'rogue',
+      demonlord: 'dragon', fireImp: 'dragon', obsidianKnight: 'skeleton',
+    };
+    const resolved = family[kind];
+    return resolved ? `v1-enemy-art-${resolved}` : undefined;
+  }
+
 
   private playHitReaction(damageType: 'physical' | 'magic' | 'true'): void {
     const tint = damageType === 'magic' ? 0xcda8ff : damageType === 'true' ? 0xfff1a6 : 0xffd4b0;
@@ -201,7 +224,7 @@ export class Enemy extends Phaser.GameObjects.Container {
   }
 
   private playMotion(motion: EnemyMotion, direction = this.currentDirection, force = false): void {
-    if (!this.sprite) return;
+    if (!this.sprite || !this.animatedSprite) return;
     if (this.deathStarted && motion !== 'death') return;
     if (!force && this.currentMotion === motion && this.currentDirection === direction) return;
 
@@ -210,7 +233,7 @@ export class Enemy extends Phaser.GameObjects.Container {
     const directionalKey = `enemy-${this.config.kind}-${motion}-${direction}`;
     const fallbackKey = `enemy-${this.config.kind}-${motion}`;
     const key = this.scene.anims.exists(directionalKey) ? directionalKey : fallbackKey;
-    if (this.scene.anims.exists(key)) this.sprite.play(key, true);
+    if (this.scene.anims.exists(key)) (this.sprite as Phaser.GameObjects.Sprite).play(key, true);
   }
 
   private startDeathAnimation(): void {
@@ -221,10 +244,10 @@ export class Enemy extends Phaser.GameObjects.Container {
     this.hpBar.setVisible(false);
     this.bodyCircle.setVisible(false);
 
-    if (this.sprite) {
+    if (this.sprite && this.animatedSprite) {
       this.sprite.clearTint();
       this.playMotion('death', this.currentDirection, true);
-      this.sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+      (this.sprite as Phaser.GameObjects.Sprite).once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
         if (this.active) this.destroy();
       });
       this.scene.time.delayedCall(620, () => {

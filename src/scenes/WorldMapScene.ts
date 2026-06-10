@@ -4,6 +4,7 @@ import { STAGE_LIST, getStageConfig } from '../game/balance';
 import type { StageConfig, StageId } from '../game/types';
 import { playMusic, playSfx } from '../game/AudioManager';
 import { addCoverImage } from '../game/CodeUiKit';
+import { addHitZoneDebug } from '../game/HitZoneDebug';
 import type { PlayerSave } from '../services/firebase';
 
 type HotspotTone = 'gold' | 'blue' | 'white' | 'red' | 'green';
@@ -82,7 +83,7 @@ export class WorldMapScene extends Phaser.Scene {
     this.refreshSelectedStage(false);
 
     this.time.delayedCall(0, () => {
-      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'WorldMapScene', version: '1.5', at: Date.now() } }));
+      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'WorldMapScene', version: '2.0', at: Date.now() } }));
     });
   }
 
@@ -95,7 +96,7 @@ export class WorldMapScene extends Phaser.Scene {
   }
 
   private createIllustratedWorldMap(): void {
-    const key = this.textures.exists('v1-worldmap-splash') ? 'v1-worldmap-splash' : 'v1-worldmap-bg';
+    const key = this.textures.exists('v1-worldmap-splash-v18') ? 'v1-worldmap-splash-v18' : this.textures.exists('v1-worldmap-splash') ? 'v1-worldmap-splash' : 'v1-worldmap-bg';
     addCoverImage(this, key, 960, 540, 0);
 
     const dust = this.add.container(0, 0).setDepth(5);
@@ -261,6 +262,7 @@ export class WorldMapScene extends Phaser.Scene {
       .setBlendMode(Phaser.BlendModes.ADD);
     const hit = this.add.zone(0, 0, options.width, options.height).setInteractive({ useHandCursor: true });
     container.add([hover, shine, hit]);
+    addHitZoneDebug(this, container, options.width, options.height, `hotspot ${Math.round(options.x)},${Math.round(options.y)}`, tint, radius);
 
     hit.on('pointerover', () => {
       this.tweens.add({ targets: hover, alpha: 1, duration: 90, ease: 'Sine.easeOut' });

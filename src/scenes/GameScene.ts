@@ -24,6 +24,7 @@ import { computeBattleRewards, rankMedal, showRewardChestOverlay, showStageObjec
 import { grantBattleRewardInventory } from '../game/ArtifactForge';
 import { showChestOpeningCinematic } from '../game/PremiumRewardForgeUi';
 import { addPremiumChestSpotlight, addPremiumPanelGlints, addTowerPanelSurface, installPremiumButtonFx, showBattleStartLoading, showPremiumChestCharge, showPremiumToast } from '../game/PremiumFlowUi';
+import { addHitZoneDebug } from '../game/HitZoneDebug';
 
 type CastingSpell = 'meteor' | 'mercenary' | undefined;
 
@@ -41,6 +42,7 @@ export class GameScene extends Phaser.Scene {
   hero!: Hero;
   selectedTower?: Tower;
   selectedPanel?: Phaser.GameObjects.Container;
+  activeBuildMenu?: Phaser.GameObjects.Container;
   settingRallyFor?: Tower;
   rallyReadyAt = 0;
   castingSpell: CastingSpell;
@@ -104,6 +106,7 @@ export class GameScene extends Phaser.Scene {
     this.mercenaries = [];
     this.selectedTower = undefined;
     this.selectedPanel = undefined;
+    this.activeBuildMenu = undefined;
     this.settingRallyFor = undefined;
     this.castingSpell = undefined;
     this.waveRunning = false;
@@ -267,7 +270,7 @@ export class GameScene extends Phaser.Scene {
 
   private drawHudChrome(): void {
     if (this.textures.exists('v1-combat-top-hud')) {
-      this.add.image(480, 42, 'v1-combat-top-hud').setDisplaySize(960, 84).setDepth(70);
+      this.add.image(480, 44, 'v1-combat-top-hud').setDisplaySize(960, 96).setDepth(70);
     } else if (this.textures.exists('ui-hud-top-panel')) {
       this.add.image(480, 32, 'ui-hud-top-panel').setDisplaySize(960, 64).setDepth(70);
     } else {
@@ -275,7 +278,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     if (this.textures.exists('v1-combat-bottom-dock')) {
-      this.add.image(480, 500, 'v1-combat-bottom-dock').setDisplaySize(960, 86).setDepth(70);
+      this.add.image(480, 492, 'v1-combat-bottom-dock').setDisplaySize(960, 104).setDepth(70);
     } else if (this.textures.exists('ui-hud-bottom-panel')) {
       this.add.image(480, 510, 'ui-hud-bottom-panel').setDisplaySize(960, 64).setDepth(70);
     } else {
@@ -451,8 +454,8 @@ export class GameScene extends Phaser.Scene {
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 2, fill: true }
     }).setOrigin(0.5).setDepth(91).setVisible(false);
 
-    const soundButton = this.makeUiButton(682, 31, 50, 40, 0x263c52, '', 18, 80);
-    this.soundText = this.add.text(682, 31, isMuted() ? 'OFF' : 'ON', { fontSize: '13px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
+    const soundButton = this.makeUiButton(678, 31, 50, 40, 0x263c52, '', 18, 80);
+    this.soundText = this.add.text(678, 31, isMuted() ? 'OFF' : 'ON', { fontSize: '13px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
     soundButton.on('pointerdown', () => {
       const next = !isMuted();
       setMuted(next);
@@ -460,8 +463,8 @@ export class GameScene extends Phaser.Scene {
       if (!next) playSfx(this, 'sfx_click');
     });
 
-    const waveButton = this.makeUiButton(784, 31, 154, 40, 0xa94732, '', 16, 80);
-    this.waveButtonText = this.add.text(784, 31, '전투 시작', {
+    const waveButton = this.makeUiButton(778, 31, 154, 40, 0xa94732, '', 16, 80);
+    this.waveButtonText = this.add.text(778, 31, '전투 시작', {
       fontSize: '16px', color: '#fff8cf', fontStyle: 'bold',
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 1, fill: true }
     }).setOrigin(0.5).setDepth(82);
@@ -470,14 +473,14 @@ export class GameScene extends Phaser.Scene {
       this.startNextWave(true);
     });
 
-    const speedButton = this.makeUiButton(898, 31, 54, 40, 0x24486b, '', 16, 80);
-    this.speedText = this.add.text(898, 31, '1x', { fontSize: '18px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
+    const speedButton = this.makeUiButton(888, 31, 54, 40, 0x24486b, '', 16, 80);
+    this.speedText = this.add.text(888, 31, '1x', { fontSize: '18px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
     speedButton.on('pointerdown', () => {
       pulseButton(this, speedButton);
       this.toggleSpeed();
     });
 
-    const pauseButton = this.makeUiButton(946, 31, 32, 40, 0x2f3440, 'Ⅱ', 19, 80);
+    const pauseButton = this.makeUiButton(936, 31, 38, 40, 0x2f3440, 'Ⅱ', 19, 80);
     pauseButton.on('pointerdown', () => {
       pulseButton(this, pauseButton);
       playSfx(this, 'sfx_click');
@@ -532,12 +535,26 @@ export class GameScene extends Phaser.Scene {
     const hammer = this.add.text(x, y - 8, '⚒', { fontSize: '21px', color: '#fff4c2', fontStyle: 'bold' }).setOrigin(0.5).setDepth(15);
     const tagBg = this.add.rectangle(x, y + 30, 82, 22, 0x130d09, 0.78).setStrokeStyle(1, 0xffd36b, 0.35).setDepth(16);
     const tag = this.add.text(x, y + 30, '건설 가능', { fontSize: '12px', color: '#ffefb4', fontStyle: 'bold' }).setOrigin(0.5).setDepth(17);
+    const premiumPad = this.textures.exists('v1-build-spot')
+      ? this.add.image(x, y + 2, 'v1-build-spot').setDisplaySize(112, 86).setDepth(13)
+      : undefined;
+    if (premiumPad) {
+      shadow.setVisible(false);
+      rim.setAlpha(0.001);
+      stone.setAlpha(0.001);
+      light.setVisible(false);
+      hammer.setVisible(false);
+      tagBg.setAlpha(0.58).setFillStyle(0x07101e, 0.58).setStrokeStyle(1, 0x8fdcff, 0.42);
+      tag.setText('건설').setColor('#eaf6ff');
+    }
     const premiumPreview = addBuildSpotPreview(this, x, y, 0xffd36b);
     premiumPreview.setVisible(false);
     const largeHitZone = this.add.rectangle(x, y + 2, 136, 104, 0xffffff, 0.001)
       .setDepth(19)
       .setInteractive({ useHandCursor: true });
-    const extras: Phaser.GameObjects.GameObject[] = [shadow, light, tagBg, tag, premiumPreview, largeHitZone];
+    const spotDebug = this.add.container(x, y + 2).setDepth(20);
+    addHitZoneDebug(this, spotDebug, 136, 104, 'build spot', 0xffd56c, 18);
+    const extras: Phaser.GameObjects.GameObject[] = [shadow, light, tagBg, tag, premiumPreview, largeHitZone, spotDebug, ...(premiumPad ? [premiumPad] : [])];
 
     stone.setInteractive({ useHandCursor: true });
     const handleOver = (): void => {
@@ -582,8 +599,13 @@ export class GameScene extends Phaser.Scene {
     }
 
     this.destroySelectedPanel();
+    this.destroyBuildMenu();
     const menuPos = this.clampOverlayPosition(x, y - 18, 356, 240, 12, 100);
     const menu = this.add.container(menuPos.x, menuPos.y).setDepth(58);
+    this.activeBuildMenu = menu;
+    menu.once('destroy', () => {
+      if (this.activeBuildMenu === menu) this.activeBuildMenu = undefined;
+    });
     if (Math.abs(menuPos.x - x) > 4 || Math.abs(menuPos.y - y) > 4) {
       const guide = this.add.line(0, 0, x - menuPos.x, y - menuPos.y, 0, -88, 0xffd36b, 0.42)
         .setLineWidth(2)
@@ -685,7 +707,9 @@ export class GameScene extends Phaser.Scene {
         this.refreshHud();
         this.showMessage(`${cfg.label} 배치 완료 · ${this.towerRole(kind)}`);
       });
-      menu.add([card, ...(roleIcon ? [roleIcon] : []), ...(iconBack ? [iconBack] : []), ...(icon ? [icon] : []), name, role, price]);
+      const cardDebug = this.add.container(bx, by);
+      addHitZoneDebug(this, cardDebug, 150, 66, cfg.label, canBuy ? cfg.color : 0x999999, 10);
+      menu.add([card, ...(roleIcon ? [roleIcon] : []), ...(iconBack ? [iconBack] : []), ...(icon ? [icon] : []), name, role, price, cardDebug]);
     });
 
     const close = this.add.text(0, 92, '빈 곳을 누르면 닫힘', { fontSize: '11px', color: '#355d96', fontStyle: 'bold' }).setOrigin(0.5);
@@ -752,7 +776,7 @@ export class GameScene extends Phaser.Scene {
     const statBox = this.add.rectangle(0, -panelHeight / 2 + 134, 342, 42, 0x050914, 0.58)
       .setStrokeStyle(1, 0xffe9a0, 0.17);
     const stat = this.add.text(-162, -panelHeight / 2 + 124, this.towerStatLine(tower), {
-      fontSize: '12px', color: '#3f5578', fixedWidth: 324, wordWrap: { width: 324 }, fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif'
+      fontSize: '12px', color: this.textures.exists('v1-tower-command-panel') ? '#eaf6ff' : '#3f5578', fixedWidth: 324, wordWrap: { width: 324 }, fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif'
     });
     panel.add([icon, symbol, title, role, masteryLine, mode, statBox, stat]);
 
@@ -950,6 +974,11 @@ export class GameScene extends Phaser.Scene {
     return `피해 ${tower.currentDamage} · 사거리 ${Math.round(tower.currentRange)} · ${tower.targetModeLabel()}${splash}`;
   }
 
+  private destroyBuildMenu(): void {
+    this.activeBuildMenu?.destroy();
+    this.activeBuildMenu = undefined;
+  }
+
   private destroySelectedPanel(): void {
     this.selectedPanel?.destroy();
     this.selectedPanel = undefined;
@@ -1047,6 +1076,18 @@ export class GameScene extends Phaser.Scene {
       if (this.castingSpell === 'mercenary') {
         this.castMercenaries(p.x, p.y);
         this.castingSpell = undefined;
+        return;
+      }
+
+      if (this.activeBuildMenu?.active) {
+        this.destroyBuildMenu();
+        return;
+      }
+
+      if (this.selectedPanel?.active || this.selectedTower) {
+        this.selectedTower?.rangeCircle.setVisible(false);
+        this.destroySelectedPanel();
+        this.selectedTower = undefined;
         return;
       }
 
@@ -1473,11 +1514,12 @@ export class GameScene extends Phaser.Scene {
   }
 
   private buttonAssetForColor(color: number): string | undefined {
-    if (color === 0xa94732 || color === 0x4f1f1f || color === 0x693434) return 'v1-button-red';
-    if (color === 0x6a4a1f || color === 0x4f3d1f || color === 0x754928 || color === 0xf7d36b) return 'v1-button-gold';
-    if (color === 0x2f4f35 || color === 0x3f5f2f || color === 0x2f5f58) return 'v1-button-green';
+    const choose = (preferred: string, fallback: string): string => this.textures.exists(preferred) ? preferred : fallback;
+    if (color === 0xa94732 || color === 0x4f1f1f || color === 0x693434) return choose('v1-combat-button-red-v18', 'v1-button-red');
+    if (color === 0x6a4a1f || color === 0x4f3d1f || color === 0x754928 || color === 0xf7d36b) return choose('v1-combat-button-gold-v18', 'v1-button-gold');
+    if (color === 0x2f4f35 || color === 0x3f5f2f || color === 0x2f5f58 || color === 0x284f39) return choose('v1-combat-button-green-v18', 'v1-button-green');
     if (color === 0x2f3440 || color === 0x333333) return 'v1-button-dark';
-    return 'v1-button-blue';
+    return choose('v1-combat-button-blue-v18', 'v1-button-blue');
   }
 
   private makeUiButton(x: number, y: number, width: number, height: number, color: number, label: string, fontSize = 18, depth = 10): Phaser.GameObjects.Rectangle {
@@ -1491,11 +1533,11 @@ export class GameScene extends Phaser.Scene {
       .setInteractive({ useHandCursor: true })
       .setDepth(depth + 1);
     const shine = this.add.rectangle(x, y - height * 0.28, Math.max(8, width - 12), 4, 0xffffff, image ? 0 : 0.11).setDepth(depth + 2);
-    if (label) this.add.text(x, y - 1, label, {
+    const text = label ? this.add.text(x, y - 1, label, {
       fontSize: `${fontSize}px`, color: '#ffffff', fontStyle: 'bold',
       fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif',
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 1, fill: true }
-    }).setOrigin(0.5).setDepth(depth + 3);
+    }).setOrigin(0.5).setDepth(depth + 3) : undefined;
     rect.on('pointerdown', () => playSfx(this, 'sfx_click'));
     installPremiumButtonFx(this, rect);
     rect.on('pointerover', () => {
@@ -1508,7 +1550,7 @@ export class GameScene extends Phaser.Scene {
       image?.setScale(1);
       shine.setAlpha(image ? 0 : 0.11);
     });
-    rect.once('destroy', () => { shadow.destroy(); shine.destroy(); image?.destroy(); });
+    rect.once('destroy', () => { shadow.destroy(); shine.destroy(); image?.destroy(); text?.destroy(); });
     return rect;
   }
 

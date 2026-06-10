@@ -37,8 +37,20 @@ export class BootScene extends Phaser.Scene {
     this.load.image('ui-title-bg', 'assets/ui/title_background.png');
     this.load.image('ui-title-logo', 'assets/ui/title_logo.png');
 
+    // v1.8: clean separated illustration layers. Background/logo/panels/buttons are image assets; text and hit-zones are code-owned.
+    this.load.image('v1-login-clean-bg', 'assets/backgrounds/login_background_clean_v2_0.png');
+    this.load.image('v1-title-logo-clean', 'assets/ui/title_logo_v1_9.png');
+    this.load.image('v1-login-panel-v18', 'assets/ui/v2_0/login_panel_v2_0.png');
+    this.load.image('v1-login-button-gold-v18', 'assets/ui/v2_0/login_button_gold_v2_0.png');
+    this.load.image('v1-login-button-white-v18', 'assets/ui/v2_0/login_button_white_v2_0.png');
+    this.load.image('v1-login-button-small-v18', 'assets/ui/v2_0/login_button_small_v2_0.png');
+    this.load.image('v1-login-utility-button-v18', 'assets/ui/v2_0/login_utility_button_v2_0.png');
+    this.load.image('v1-main-menu-splash-v18', 'assets/backgrounds/main_menu_splash_v2_0.png');
+    this.load.image('v1-worldmap-splash-v18', 'assets/backgrounds/worldmap_splash_v2_0.png');
+
     // v1.3+ screens use premium baked art compositions,
     // with transparent code hit-zones layered above for interaction.
+    this.load.image('v1-login-polished', 'assets/backgrounds/login_screen_v1_7.png');
     this.load.image('v1-login-refined', 'assets/backgrounds/login_screen_v1_6.png');
     this.load.image('v1-login-splash', 'assets/backgrounds/login_splash_v1_3.png');
     this.load.image('v1-login-bg', 'assets/backgrounds/login_background_v1_2.png');
@@ -131,16 +143,28 @@ export class BootScene extends Phaser.Scene {
     this.load.image('ui-medal-gold-v35', 'assets/ui/medal_gold_v35.png');
     this.load.image('ui-medal-legend-v35', 'assets/ui/medal_legend_v35.png');
 
-    this.load.image('v1-combat-top-hud', 'assets/ui/v1_6/combat_top_hud_v1_6.png');
-    this.load.image('v1-combat-bottom-dock', 'assets/ui/v1_6/combat_bottom_dock_v1_6.png');
-    this.load.image('v1-tower-build-menu', 'assets/ui/v1_6/tower_build_menu_v1_6.png');
-    this.load.image('v1-tower-build-card', 'assets/ui/v1_6/tower_build_card_v1_6.png');
-    this.load.image('v1-tower-command-panel', 'assets/ui/v1_6/tower_command_panel_v1_6.png');
-    this.load.image('v1-button-blue', 'assets/ui/v1_6/button_blue_v1_6.png');
-    this.load.image('v1-button-gold', 'assets/ui/v1_6/button_gold_v1_6.png');
-    this.load.image('v1-button-red', 'assets/ui/v1_6/button_red_v1_6.png');
-    this.load.image('v1-button-dark', 'assets/ui/v1_6/button_dark_v1_6.png');
-    this.load.image('v1-button-green', 'assets/ui/v1_6/button_green_v1_6.png');
+    this.load.image('v1-combat-top-hud', 'assets/ui/v2_0/combat_top_hud_v2_0.png');
+    this.load.image('v1-combat-bottom-dock', 'assets/ui/v2_0/combat_bottom_dock_v2_0.png');
+    this.load.image('v1-tower-build-menu', 'assets/ui/v2_0/tower_build_menu_v2_0.png');
+    this.load.image('v1-tower-build-card', 'assets/ui/v2_0/tower_build_card_v2_0.png');
+    this.load.image('v1-tower-command-panel', 'assets/ui/v2_0/tower_command_panel_v2_0.png');
+    this.load.image('v1-build-spot', 'assets/ui/v2_0/build_spot_v2_0.png');
+    this.load.image('v1-button-blue', 'assets/ui/v2_0/button_blue_v2_0.png');
+    this.load.image('v1-button-gold', 'assets/ui/v2_0/button_gold_v2_0.png');
+    this.load.image('v1-button-red', 'assets/ui/v2_0/button_red_v2_0.png');
+    this.load.image('v1-button-dark', 'assets/ui/v2_0/button_dark_v2_0.png');
+    this.load.image('v1-button-green', 'assets/ui/v2_0/button_green_v2_0.png');
+
+    this.load.image('v1-combat-button-blue-v18', 'assets/ui/v2_0/button_blue_v2_0.png');
+    this.load.image('v1-combat-button-gold-v18', 'assets/ui/v2_0/button_gold_v2_0.png');
+    this.load.image('v1-combat-button-green-v18', 'assets/ui/v2_0/button_green_v2_0.png');
+    this.load.image('v1-combat-button-red-v18', 'assets/ui/v2_0/button_red_v2_0.png');
+    ['goblin','orc','wolf','skeleton','rogue','boar','bat','dragon'].forEach((unit) => {
+      this.load.image(`v1-enemy-art-${unit}`, `assets/units/v2_0/enemy_${unit}_v2_0.png`);
+    });
+    ['knight','archer','mage','paladin','druid'].forEach((hero) => {
+      this.load.image(`v1-hero-art-${hero}`, `assets/units/v2_0/hero_${hero}_v2_0.png`);
+    });
 
     this.load.image('ui-battle-loading-v42', 'assets/ui/battle_loading_frame_v42.png');
     this.load.image('ui-loading-crest-v42', 'assets/ui/loading_crest_v42.png');
@@ -187,14 +211,14 @@ export class BootScene extends Phaser.Scene {
     this.load.image('map-card-stage-006', 'assets/maps/stage_card_006.png');
     this.load.image('map-card-stage-007', 'assets/maps/stage_card_007.png');
     this.load.image('map-card-stage-008', 'assets/maps/stage_card_008.png');
-    this.load.image('battle-bg-stage_001', 'assets/maps/battle_stage_001.png');
-    this.load.image('battle-bg-stage_002', 'assets/maps/battle_stage_002.png');
-    this.load.image('battle-bg-stage_003', 'assets/maps/battle_stage_003.png');
-    this.load.image('battle-bg-stage_004', 'assets/maps/battle_stage_004.png');
-    this.load.image('battle-bg-stage_005', 'assets/maps/battle_stage_005.png');
-    this.load.image('battle-bg-stage_006', 'assets/maps/battle_stage_006.png');
-    this.load.image('battle-bg-stage_007', 'assets/maps/battle_stage_007.png');
-    this.load.image('battle-bg-stage_008', 'assets/maps/battle_stage_008.png');
+    this.load.image('battle-bg-stage_001', 'assets/maps/v2_0/battle_stage_001_v2_0.png');
+    this.load.image('battle-bg-stage_002', 'assets/maps/v2_0/battle_stage_002_v2_0.png');
+    this.load.image('battle-bg-stage_003', 'assets/maps/v2_0/battle_stage_003_v2_0.png');
+    this.load.image('battle-bg-stage_004', 'assets/maps/v2_0/battle_stage_004_v2_0.png');
+    this.load.image('battle-bg-stage_005', 'assets/maps/v2_0/battle_stage_005_v2_0.png');
+    this.load.image('battle-bg-stage_006', 'assets/maps/v2_0/battle_stage_006_v2_0.png');
+    this.load.image('battle-bg-stage_007', 'assets/maps/v2_0/battle_stage_007_v2_0.png');
+    this.load.image('battle-bg-stage_008', 'assets/maps/v2_0/battle_stage_008_v2_0.png');
 
     this.load.spritesheet('hero-knight', 'assets/sprites/hero_knight.png', { frameWidth: 32, frameHeight: 32 });
     this.load.spritesheet('soldier-blue', 'assets/sprites/soldier_blue.png', { frameWidth: 32, frameHeight: 32 });
@@ -225,15 +249,15 @@ export class BootScene extends Phaser.Scene {
     });
 
     TOWER_KEYS.forEach((kind) => {
-      this.load.image(`tower-${kind}`, `assets/sprites/tower_${kind}.png`);
+      this.load.image(`tower-${kind}`, `assets/towers/v2_0/tower_${kind}.png`);
       TOWER_LEVELS.forEach((level) => {
-        this.load.image(`tower-${kind}-lv${level}`, `assets/sprites/tower_${kind}_lv${level}.png`);
+        this.load.image(`tower-${kind}-lv${level}`, `assets/towers/v2_0/tower_${kind}_lv${level}.png`);
       });
     });
 
     TOWER_MASTERIES.forEach((mastery) => {
       const kind = mastery.split('_')[0];
-      this.load.image(`tower-${kind}-${mastery}`, `assets/sprites/tower_${mastery}.png`);
+      this.load.image(`tower-${kind}-${mastery}`, `assets/towers/v2_0/tower_${mastery}.png`);
     });
 
     this.load.image('ui-panel-parchment', 'assets/ui/panel_parchment.png');

@@ -67,7 +67,8 @@ export class Tower extends Phaser.GameObjects.Container {
     this.levelText = scene.add.text(0, 23, 'Ⅰ', { fontSize: '14px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
     const spriteKey = this.resolveTowerTextureKey();
     if (scene.textures.exists(spriteKey)) {
-      this.sprite = scene.add.image(0, 0, spriteKey).setScale(1.08);
+      this.sprite = scene.add.image(0, 0, spriteKey);
+      this.applyTowerArtSize();
       base.setAlpha(0);
       stone.setAlpha(0);
       this.top.setAlpha(0);
@@ -506,17 +507,32 @@ export class Tower extends Phaser.GameObjects.Container {
     if (this.sprite) targets.push(this.sprite);
     else targets.push(this.top, this.roof);
 
-    targets.forEach((target) => {
+    if (this.sprite) {
+      const sx = this.sprite.scaleX;
+      const sy = this.sprite.scaleY;
       this.scene.tweens.add({
-        targets: target,
+        targets: this.sprite,
         x: recoilX,
         y: recoilY,
-        scale: heavy ? 1.1 : 1.05,
+        scaleX: sx * (heavy ? 1.08 : 1.045),
+        scaleY: sy * (heavy ? 1.08 : 1.045),
         duration: heavy ? 95 : 70,
         yoyo: true,
         ease: 'Quad.easeOut'
       });
-    });
+    } else {
+      targets.forEach((target) => {
+        this.scene.tweens.add({
+          targets: target,
+          x: recoilX,
+          y: recoilY,
+          scale: heavy ? 1.1 : 1.05,
+          duration: heavy ? 95 : 70,
+          yoyo: true,
+          ease: 'Quad.easeOut'
+        });
+      });
+    }
 
     if (this.sprite) {
       this.sprite.setTint(this.config.kind === 'mage' ? 0xd9b8ff : this.config.kind === 'artillery' ? 0xffd36b : 0xfff1c2);
@@ -539,8 +555,19 @@ export class Tower extends Phaser.GameObjects.Container {
     const nextKey = this.resolveTowerTextureKey();
     if (this.scene.textures.exists(nextKey)) {
       this.sprite.setTexture(nextKey);
-      this.sprite.setScale(this.level >= 3 ? 1.18 : this.level === 2 ? 1.13 : 1.08);
+      this.applyTowerArtSize();
     }
+  }
+
+  private applyTowerArtSize(): void {
+    if (!this.sprite) return;
+    const baseHeight = this.config.kind === 'artillery' ? 84 : this.config.kind === 'barracks' ? 92 : 96;
+    const levelBoost = this.level >= 3 ? 1.09 : this.level === 2 ? 1.045 : 1;
+    const targetHeight = baseHeight * levelBoost;
+    const sourceHeight = Math.max(1, this.sprite.height);
+    const sourceWidth = Math.max(1, this.sprite.width);
+    this.sprite.setDisplaySize(sourceWidth * (targetHeight / sourceHeight), targetHeight);
+    this.sprite.setPosition(0, this.config.kind === 'artillery' ? -6 : -12);
   }
 
   private symbolFor(kind: TowerConfig['kind']): string {
