@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import type { User } from 'firebase/auth';
 import { playSfx } from '../game/AudioManager';
-import { addCodeButton, addCodeLogo, addCodePanel, addCoverImage, addFloatingSparkles, addSceneVignette } from '../game/CodeUiKit';
+import { addCoverImage } from '../game/CodeUiKit';
 import {
   completePendingRedirectSignIn,
   ensureAnonymousUser,
@@ -17,7 +17,7 @@ export class MenuScene extends Phaser.Scene {
   private statusText!: Phaser.GameObjects.Text;
   private currentUser: User | null = null;
   private currentSave: PlayerSave | null = null;
-  private loginPanel!: Phaser.GameObjects.Container;
+  private isTransitioning = false;
 
   constructor() {
     super('MenuScene');
@@ -25,42 +25,167 @@ export class MenuScene extends Phaser.Scene {
 
   create(): void {
     this.children.removeAll(true);
+    this.isTransitioning = false;
     this.cameras.main.setBackgroundColor('#8fd5ff');
-    this.createBackgroundLayer();
-    this.createTopUtilityBar();
-    this.createTitleBlock();
-    this.createLoginPanel();
-    this.createFooterStrip();
+
+    this.createCinematicSplash();
+    this.createStatusOverlay();
+    this.createLoginHitZones();
+    this.createUtilityHitZones();
 
     this.time.delayedCall(0, () => {
-      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MenuScene', version: '1.2', at: Date.now() } }));
+      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MenuScene', version: '1.3', at: Date.now() } }));
     });
 
     void this.bootstrapRedirectOrExistingUser();
   }
 
-  private createBackgroundLayer(): void {
-    addCoverImage(this, 'v1-login-bg', 960, 540, 0);
-    addSceneVignette(this, 1, 0.10);
+  private createCinematicSplash(): void {
+    addCoverImage(this, this.textures.exists('v1-login-splash') ? 'v1-login-splash' : 'v1-login-bg', 960, 540, 0);
 
-    const focus = this.add.ellipse(480, 248, 520, 350, 0xffffff, 0.08).setDepth(4);
-    this.tweens.add({ targets: focus, alpha: 0.14, scaleX: 1.035, scaleY: 1.035, duration: 2300, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
-    addFloatingSparkles(this, 14, 6);
+    // The v1.3 start screen is intentionally image-led: the premium logo, panel,
+    // Korean title treatment, and button rendering come from the provided art style.
+    // Only subtle code layers are placed above it so the screen remains interactive.
+    const topDim = this.add.rectangle(480, 0, 960, 76, 0x071b34, 0.03).setDepth(2);
+    const bottomGlow = this.add.ellipse(480, 524, 520, 46, 0x8cdcff, 0.08)
+      .setDepth(3)
+      .setBlendMode(Phaser.BlendModes.ADD);
+    this.tweens.add({ targets: bottomGlow, alpha: 0.13, scaleX: 1.025, duration: 1800, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+    this.tweens.add({ targets: topDim, alpha: 0.05, duration: 2200, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
   }
 
-  private createTopUtilityBar(): void {
-    const versionChip = addCodePanel(this, { x: 94, y: 28, width: 156, height: 28, radius: 14, depth: 18, fill: 0x183d72, fillAlpha: 0.66, stroke: 0x9ed7ff, strokeAlpha: 0.42 });
-    versionChip.add(this.add.text(0, 0, 'v1.2.0  HIGH QUALITY ART PASS', {
-      fontSize: '10px',
-      color: '#ffffff',
-      fontStyle: 'bold',
-      stroke: '#12386f',
-      strokeThickness: 2,
-    }).setOrigin(0.5));
+  private createStatusOverlay(): void {
+    const statusBack = this.add.graphics().setDepth(52);
+    statusBack.fillStyle(0xf7fbff, 0.86);
+    statusBack.fillRoundedRect(332, 267, 296, 21, 10);
+    statusBack.lineStyle(1, 0xcbd9ef, 0.70);
+    statusBack.strokeRoundedRect(332, 267, 296, 21, 10);
 
-    addCodeButton(this, { x: 770, y: 31, width: 62, height: 28, label: '공지', iconText: '📢', tone: 'blue', fontSize: 10, depth: 20, onClick: () => this.setUtilityStatus('공지사항은 준비 중입니다.') });
-    addCodeButton(this, { x: 844, y: 31, width: 70, height: 28, label: '문의', iconText: '🎧', tone: 'blue', fontSize: 10, depth: 20, onClick: () => this.setUtilityStatus('고객센터는 준비 중입니다.') });
-    addCodeButton(this, { x: 922, y: 31, width: 64, height: 28, label: '설정', iconText: '⚙', tone: 'blue', fontSize: 10, depth: 20, onClick: () => this.setUtilityStatus('설정 메뉴는 다음 패치에서 연결합니다.') });
+    this.statusText = this.add.text(480, 278, '로그인 확인 중...', {
+      fontSize: '11px',
+      color: '#2f5f9e',
+      align: 'center',
+      fixedWidth: 282,
+      fontFamily: 'Inter, Pretendard, Noto Sans KR, Arial, sans-serif',
+      fontStyle: 'bold',
+      stroke: '#ffffff',
+      strokeThickness: 2,
+    }).setOrigin(0.5).setDepth(53);
+  }
+
+  private createLoginHitZones(): void {
+    this.addCinematicHotspot({
+      x: 480,
+      y: 312,
+      width: 286,
+      height: 42,
+      radius: 22,
+      tint: 0xffdf8f,
+      onClick: () => void this.startQuick(),
+    });
+
+    this.addCinematicHotspot({
+      x: 480,
+      y: 362,
+      width: 286,
+      height: 40,
+      radius: 22,
+      tint: 0xbfdcff,
+      onClick: () => void this.startGoogle(),
+    });
+
+    this.addCinematicHotspot({
+      x: 410,
+      y: 417,
+      width: 136,
+      height: 36,
+      radius: 18,
+      tint: 0xffffff,
+      onClick: () => void this.startEmailLogin(),
+    });
+
+    this.addCinematicHotspot({
+      x: 552,
+      y: 417,
+      width: 136,
+      height: 36,
+      radius: 18,
+      tint: 0xffd5dc,
+      onClick: () => void this.startEmailRegister(),
+    });
+  }
+
+  private createUtilityHitZones(): void {
+    this.addCinematicHotspot({
+      x: 798,
+      y: 36,
+      width: 58,
+      height: 58,
+      radius: 28,
+      tint: 0xffffff,
+      onClick: () => this.setUtilityStatus('공지사항은 준비 중입니다.'),
+    });
+    this.addCinematicHotspot({
+      x: 855,
+      y: 36,
+      width: 58,
+      height: 58,
+      radius: 28,
+      tint: 0xffffff,
+      onClick: () => this.setUtilityStatus('고객센터는 준비 중입니다.'),
+    });
+    this.addCinematicHotspot({
+      x: 912,
+      y: 36,
+      width: 58,
+      height: 58,
+      radius: 28,
+      tint: 0xffffff,
+      onClick: () => this.setUtilityStatus('설정 메뉴는 다음 패치에서 연결합니다.'),
+    });
+  }
+
+  private addCinematicHotspot(options: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    radius: number;
+    tint: number;
+    onClick: () => void;
+  }): void {
+    const c = this.add.container(options.x, options.y).setDepth(60);
+    const hover = this.add.graphics();
+    hover.fillStyle(options.tint, 0.12);
+    hover.fillRoundedRect(-options.width / 2, -options.height / 2, options.width, options.height, options.radius);
+    hover.lineStyle(2, 0xffffff, 0.38);
+    hover.strokeRoundedRect(-options.width / 2 + 1, -options.height / 2 + 1, options.width - 2, options.height - 2, Math.max(4, options.radius - 1));
+    hover.setAlpha(0);
+
+    const sheen = this.add.graphics();
+    sheen.fillStyle(0xffffff, 0.20);
+    sheen.fillRoundedRect(-options.width / 2 + 10, -options.height / 2 + 5, options.width - 20, Math.max(6, options.height * 0.26), Math.max(3, options.radius - 5));
+    sheen.setAlpha(0);
+
+    const hit = this.add.zone(0, 0, options.width, options.height).setInteractive({ useHandCursor: true });
+    c.add([hover, sheen, hit]);
+
+    hit.on('pointerover', () => {
+      this.tweens.add({ targets: hover, alpha: 1, duration: 120, ease: 'Sine.easeOut' });
+      this.tweens.add({ targets: sheen, alpha: 1, duration: 120, ease: 'Sine.easeOut' });
+    });
+
+    hit.on('pointerout', () => {
+      this.tweens.add({ targets: hover, alpha: 0, duration: 120, ease: 'Sine.easeOut' });
+      this.tweens.add({ targets: sheen, alpha: 0, duration: 120, ease: 'Sine.easeOut' });
+      this.tweens.add({ targets: c, scaleX: 1, scaleY: 1, duration: 80, ease: 'Sine.easeOut' });
+    });
+
+    hit.on('pointerdown', () => {
+      if (this.isTransitioning) return;
+      this.tweens.add({ targets: c, scaleX: 0.985, scaleY: 0.985, duration: 52, yoyo: true, ease: 'Quad.easeOut' });
+      options.onClick();
+    });
   }
 
   private setUtilityStatus(message: string): void {
@@ -68,62 +193,6 @@ export class MenuScene extends Phaser.Scene {
     if (this.statusText) {
       this.statusText.setText(message);
     }
-  }
-
-  private createTitleBlock(): void {
-    addCodeLogo(this, 480, 86, 0.68);
-    this.add.text(480, 142, '시네마틱 왕국 방어 전략', {
-      fontSize: '14px',
-      color: '#ffffff',
-      fontStyle: 'bold',
-      stroke: '#144081',
-      strokeThickness: 4,
-      shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 4, fill: true },
-    }).setOrigin(0.5).setDepth(27);
-  }
-
-  private createLoginPanel(): void {
-    this.loginPanel = this.add.container(480, 318).setDepth(35);
-    this.loginPanel.add(addCodePanel(this, { x: 0, y: 0, width: 344, height: 232, radius: 28, fill: 0xfafdff, fillAlpha: 0.86, stroke: 0xe3bb54, strokeAlpha: 0.96, glow: 0x9eeeff, title: 'LOGIN' }));
-
-    this.loginPanel.add(this.add.text(0, -80, 'DEFENSE COMMAND', {
-      fontSize: '13px',
-      color: '#2e66a4',
-      fontStyle: 'bold',
-      stroke: '#ffffff',
-      strokeThickness: 3,
-    }).setOrigin(0.5));
-
-    this.statusText = this.add.text(0, -52, '로그인 확인 중...', {
-      fontSize: '11px',
-      color: '#3a5d96',
-      align: 'center',
-      fixedWidth: 250,
-      backgroundColor: '#f2f8ffdd',
-      padding: { x: 7, y: 3 },
-    }).setOrigin(0.5);
-    this.loginPanel.add(this.statusText);
-
-    this.loginPanel.add(addCodeButton(this, { x: 0, y: -11, width: 236, height: 38, tone: 'gold', iconKey: 'ui-icon-anonymous', label: '바로 시작', fontSize: 17, onClick: () => void this.startAnonymous() }));
-    this.loginPanel.add(addCodeButton(this, { x: 0, y: 36, width: 236, height: 38, tone: 'blue', iconKey: 'ui-icon-google', label: 'Google 연동', fontSize: 16, onClick: () => void this.startGoogle() }));
-    this.loginPanel.add(addCodeButton(this, { x: -61, y: 81, width: 112, height: 34, tone: 'white', iconKey: 'ui-icon-email', label: '이메일', fontSize: 13, onClick: () => void this.startEmailLogin() }));
-    this.loginPanel.add(addCodeButton(this, { x: 61, y: 81, width: 112, height: 34, tone: 'red', iconKey: 'ui-icon-register', label: '가입', fontSize: 13, onClick: () => void this.startEmailRegister() }));
-
-    this.loginPanel.setAlpha(0).setScale(0.965).setY(330);
-    this.tweens.add({ targets: this.loginPanel, alpha: 1, y: 318, scaleX: 1, scaleY: 1, duration: 320, ease: 'Back.easeOut' });
-  }
-
-  private createFooterStrip(): void {
-    const strip = addCodePanel(this, { x: 480, y: 502, width: 360, height: 36, radius: 18, depth: 18, fill: 0x15477e, fillAlpha: 0.70, stroke: 0xe3bb54, strokeAlpha: 0.56 });
-    strip.add(this.add.text(0, 0, '영웅 · 유물 · 타워 진화 · 보스 토벌', {
-      fontSize: '11px',
-      color: '#ffffff',
-      align: 'center',
-      fontStyle: 'bold',
-      fixedWidth: 340,
-      stroke: '#183c80',
-      strokeThickness: 3,
-    }).setOrigin(0.5));
   }
 
   private async bootstrapRedirectOrExistingUser(): Promise<void> {
@@ -136,14 +205,20 @@ export class MenuScene extends Phaser.Scene {
       }
       this.currentUser = existing;
       this.currentSave = await loadOrCreateSave(existing);
-      this.statusText.setText(`${this.currentSave.nickname} · 이어서 가능`);
+      this.statusText.setText(`${this.currentSave.nickname} 로그인됨. 빠른 시작으로 이어서 플레이하세요!`);
     } catch (error) {
       console.error(error);
       this.statusText.setText('로그인 확인 실패. 설정/도메인 확인');
     }
   }
 
-  private async startAnonymous(): Promise<void> {
+  private async startQuick(): Promise<void> {
+    if (this.currentUser && this.currentSave) {
+      playSfx(this, 'sfx_click');
+      this.enterMainMenu(this.currentUser, this.currentSave);
+      return;
+    }
+
     await this.withLoading(async () => {
       const user = await ensureAnonymousUser();
       const save = await loadOrCreateSave(user);
@@ -202,7 +277,9 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private enterMainMenu(user: User, save: PlayerSave): void {
-    this.cameras.main.fadeOut(180, 255, 255, 255);
-    this.time.delayedCall(180, () => this.scene.start('MainMenuScene', { user, save }));
+    if (this.isTransitioning) return;
+    this.isTransitioning = true;
+    this.cameras.main.fadeOut(220, 255, 255, 255);
+    this.time.delayedCall(220, () => this.scene.start('MainMenuScene', { user, save }));
   }
 }

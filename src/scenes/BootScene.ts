@@ -37,7 +37,8 @@ export class BootScene extends Phaser.Scene {
     this.load.image('ui-title-bg', 'assets/ui/title_background.png');
     this.load.image('ui-title-logo', 'assets/ui/title_logo.png');
 
-    // v1.2 art-quality stack: backgrounds stay pure art; logo/buttons/panels are drawn in code.
+    // v1.3 login splash uses a premium baked title composition, with transparent code hit-zones layered above.
+    this.load.image('v1-login-splash', 'assets/backgrounds/login_splash_v1_3.png');
     this.load.image('v1-login-bg', 'assets/backgrounds/login_background_v1_2.png');
     this.load.image('v1-main-menu-bg', 'assets/backgrounds/main_menu_background_v1_2.png');
     this.load.image('v1-worldmap-bg', 'assets/backgrounds/worldmap_background_v1_2.png');
