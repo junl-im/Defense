@@ -105,7 +105,7 @@ export class WorldMapScene extends Phaser.Scene {
     addCoverImage(this, 'v1-worldmap-bg', 960, 540, 0);
     addSceneVignette(this, 1, 0.10);
 
-    // v1.1: background stays as art only. Route, nodes, panels and buttons are code UI.
+    // v1.2: background stays as art only. Route, nodes, panels and buttons are code UI.
     this.add.rectangle(480, 270, 960, 540, 0xeaf9ff, 0.026).setDepth(2);
     this.add.rectangle(480, 44, 960, 88, 0x0b376f, 0.42).setDepth(3);
     this.add.rectangle(480, 510, 960, 72, 0x0b376f, 0.52).setDepth(3);
