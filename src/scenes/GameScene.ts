@@ -266,13 +266,17 @@ export class GameScene extends Phaser.Scene {
   }
 
   private drawHudChrome(): void {
-    if (this.textures.exists('ui-hud-top-panel')) {
+    if (this.textures.exists('v1-combat-top-hud')) {
+      this.add.image(480, 42, 'v1-combat-top-hud').setDisplaySize(960, 84).setDepth(70);
+    } else if (this.textures.exists('ui-hud-top-panel')) {
       this.add.image(480, 32, 'ui-hud-top-panel').setDisplaySize(960, 64).setDepth(70);
     } else {
       this.add.rectangle(480, 30, 960, 60, 0x0b1220, 0.9).setDepth(70);
     }
 
-    if (this.textures.exists('ui-hud-bottom-panel')) {
+    if (this.textures.exists('v1-combat-bottom-dock')) {
+      this.add.image(480, 500, 'v1-combat-bottom-dock').setDisplaySize(960, 86).setDepth(70);
+    } else if (this.textures.exists('ui-hud-bottom-panel')) {
       this.add.image(480, 510, 'ui-hud-bottom-panel').setDisplaySize(960, 64).setDepth(70);
     } else {
       this.add.rectangle(480, 510, 960, 60, 0x0b1220, 0.82).setDepth(70);
@@ -393,10 +397,11 @@ export class GameScene extends Phaser.Scene {
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 1, fill: true }
     };
 
+    const usingV1Hud = this.textures.exists('v1-combat-top-hud');
     const makeStat = (x: number, w: number, label: string, icon: string, accent: number): Phaser.GameObjects.Text => {
-      addPremiumPlaque(this, x, 31, w, 42, accent, 74);
+      if (!usingV1Hud) addPremiumPlaque(this, x, 31, w, 42, accent, 74);
       this.add.text(x - w / 2 + 12, 14, label, {
-        fontSize: '9px', color: '#c8b184', fontStyle: 'bold',
+        fontSize: '9px', color: usingV1Hud ? '#dbe7ff' : '#c8b184', fontStyle: 'bold',
         shadow: { offsetX: 0, offsetY: 1, color: '#000000', blur: 1, fill: true }
       }).setDepth(79);
       this.add.text(x - w / 2 + 13, 32, icon, {
@@ -410,7 +415,7 @@ export class GameScene extends Phaser.Scene {
     this.goldText = makeStat(188, 118, 'GOLD', '$', 0xf7d36b);
     this.waveText = makeStat(320, 128, 'WAVE', '◆', 0x9ad7ff);
 
-    addPremiumPlaque(this, 516, 31, 252, 42, 0x9dd08b, 74);
+    if (!usingV1Hud) addPremiumPlaque(this, 516, 31, 252, 42, 0x9dd08b, 74);
     this.add.text(398, 14, 'BATTLEFIELD', {
       fontSize: '9px', color: '#c8b184', fontStyle: 'bold',
       shadow: { offsetX: 0, offsetY: 1, color: '#000000', blur: 1, fill: true }
@@ -431,7 +436,7 @@ export class GameScene extends Phaser.Scene {
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 1, fill: true }
     }).setOrigin(0.5).setVisible(false).setDepth(90);
 
-    addPremiumPlaque(this, 482, 462, 292, 42, 0x7b58ff, 74);
+    if (!this.textures.exists('v1-combat-bottom-dock')) addPremiumPlaque(this, 482, 462, 292, 42, 0x7b58ff, 74);
     this.objectiveText = this.add.text(482, 462, '', {
       fontSize: '11px', color: '#fff4c2', fontStyle: 'bold', align: 'center', fixedWidth: 276,
       shadow: { offsetX: 0, offsetY: 1, color: '#000000', blur: 1, fill: true }
@@ -585,14 +590,20 @@ export class GameScene extends Phaser.Scene {
         .setAlpha(0.72);
       menu.add(guide);
     }
-    const bg = this.textures.exists('ui-build-menu-frame-v47')
-      ? this.add.image(0, 0, 'ui-build-menu-frame-v47').setDisplaySize(356, 232)
-      : this.add.rectangle(0, 0, 356, 232, 0x130d09, 0.94).setStrokeStyle(3, 0xffd36b, 0.58);
-    const header = this.add.text(0, -82, '방어 시설 선택', {
-      fontSize: '20px', color: '#fff4c2', fontStyle: 'bold',
-      shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 1, fill: true }
+    const bg = this.textures.exists('v1-tower-build-menu')
+      ? this.add.image(0, 0, 'v1-tower-build-menu').setDisplaySize(356, 232)
+      : this.textures.exists('ui-build-menu-frame-v47')
+        ? this.add.image(0, 0, 'ui-build-menu-frame-v47').setDisplaySize(356, 232)
+        : this.add.rectangle(0, 0, 356, 232, 0x130d09, 0.94).setStrokeStyle(3, 0xffd36b, 0.58);
+    const header = this.add.text(0, -83, '방어 시설 선택', {
+      fontSize: '20px', color: '#fff8d2', fontStyle: 'bold',
+      fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif',
+      shadow: { offsetX: 0, offsetY: 2, color: '#001b45', blur: 2, fill: true }
     }).setOrigin(0.5);
-    const hint = this.add.text(0, -59, '길목을 막고 딜 범위를 겹치게 배치하세요', { fontSize: '12px', color: '#d8c39a' }).setOrigin(0.5);
+    const hint = this.add.text(0, -58, '길목을 막고 딜 범위를 겹치게 배치하세요', {
+      fontSize: '12px', color: '#355d96', fontStyle: 'bold',
+      fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif'
+    }).setOrigin(0.5);
     menu.add([bg, header, hint]);
 
     const positions = [
@@ -606,16 +617,34 @@ export class GameScene extends Phaser.Scene {
       const cfg = TOWERS[kind];
       const cost = this.towerCost(kind, cfg.cost);
       const canBuy = this.gold >= cost;
-      const card = this.add.rectangle(bx, by, 148, 60, canBuy ? 0x23170f : 0x2b2b2b, 0.98)
-        .setStrokeStyle(2, canBuy ? cfg.color : 0x5b5b5b, canBuy ? 0.65 : 0.45)
-        .setInteractive({ useHandCursor: true });
-      const iconBack = this.add.circle(bx - 52, by - 4, 20, cfg.color, canBuy ? 0.95 : 0.38).setStrokeStyle(2, 0xffffff, 0.18);
-      const icon = this.add.text(bx - 52, by - 7, this.towerSymbol(kind), { fontSize: '19px', color: '#101820', fontStyle: 'bold' }).setOrigin(0.5);
-      const name = this.add.text(bx - 24, by - 20, cfg.label, { fontSize: '14px', color: canBuy ? '#fff4c2' : '#aaa', fontStyle: 'bold' }).setOrigin(0, 0.5);
-      const role = this.add.text(bx - 24, by - 2, this.towerRole(kind), { fontSize: '11px', color: canBuy ? '#dbe7ff' : '#888' }).setOrigin(0, 0.5);
-      const price = this.add.text(bx - 24, by + 17, `$${cost}`, { fontSize: '12px', color: canBuy ? '#f7d36b' : '#999', fontStyle: 'bold' }).setOrigin(0, 0.5);
-      card.on('pointerover', () => card.setStrokeStyle(3, 0xfff0a3, 0.9));
-      card.on('pointerout', () => card.setStrokeStyle(2, canBuy ? cfg.color : 0x5b5b5b, canBuy ? 0.65 : 0.45));
+      const card = this.textures.exists('v1-tower-build-card')
+        ? this.add.image(bx, by, 'v1-tower-build-card').setDisplaySize(150, 66).setInteractive({ useHandCursor: true })
+        : this.add.rectangle(bx, by, 148, 60, canBuy ? 0x23170f : 0x2b2b2b, 0.98)
+          .setStrokeStyle(2, canBuy ? cfg.color : 0x5b5b5b, canBuy ? 0.65 : 0.45)
+          .setInteractive({ useHandCursor: true });
+      card.setAlpha(canBuy ? 1 : 0.55);
+      const roleIconKey = `ui-tower-role-${kind}-v45`;
+      const roleIcon = this.textures.exists(roleIconKey)
+        ? this.add.image(bx - 52, by - 5, roleIconKey).setDisplaySize(42, 42).setAlpha(canBuy ? 1 : 0.45)
+        : undefined;
+      const iconBack = roleIcon ? undefined : this.add.circle(bx - 52, by - 4, 20, cfg.color, canBuy ? 0.95 : 0.38).setStrokeStyle(2, 0xffffff, 0.18);
+      const icon = roleIcon ? undefined : this.add.text(bx - 52, by - 7, this.towerSymbol(kind), { fontSize: '19px', color: '#101820', fontStyle: 'bold' }).setOrigin(0.5);
+      const name = this.add.text(bx - 24, by - 20, cfg.label, {
+        fontSize: '14px', color: canBuy ? '#fff4c2' : '#aaa', fontStyle: 'bold',
+        fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
+        shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 2, fill: true }
+      }).setOrigin(0, 0.5);
+      const role = this.add.text(bx - 24, by - 2, this.towerRole(kind), {
+        fontSize: '11px', color: canBuy ? '#dbe7ff' : '#888', fontStyle: 'bold',
+        fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
+      }).setOrigin(0, 0.5);
+      const price = this.add.text(bx - 24, by + 17, `$${cost}`, {
+        fontSize: '12px', color: canBuy ? '#f7d36b' : '#999', fontStyle: 'bold',
+        fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
+        shadow: { offsetX: 0, offsetY: 1, color: '#000000', blur: 1, fill: true }
+      }).setOrigin(0, 0.5);
+      card.on('pointerover', () => { card.setScale(1.03); card.setAlpha(canBuy ? 1 : 0.66); });
+      card.on('pointerout', () => { card.setScale(1); card.setAlpha(canBuy ? 1 : 0.55); });
       card.on('pointerdown', () => {
         if (this.gold < cost) {
           this.showMessage(`${cfg.label} 건설에는 $${cost}가 필요합니다.`);
@@ -656,10 +685,10 @@ export class GameScene extends Phaser.Scene {
         this.refreshHud();
         this.showMessage(`${cfg.label} 배치 완료 · ${this.towerRole(kind)}`);
       });
-      menu.add([card, iconBack, icon, name, role, price]);
+      menu.add([card, ...(roleIcon ? [roleIcon] : []), ...(iconBack ? [iconBack] : []), ...(icon ? [icon] : []), name, role, price]);
     });
 
-    const close = this.add.text(0, 90, '빈 곳을 누르면 닫힘', { fontSize: '11px', color: '#b99c73' }).setOrigin(0.5);
+    const close = this.add.text(0, 92, '빈 곳을 누르면 닫힘', { fontSize: '11px', color: '#355d96', fontStyle: 'bold' }).setOrigin(0.5);
     menu.add(close);
     this.time.delayedCall(6500, () => menu.active && menu.destroy());
   }
@@ -692,8 +721,12 @@ export class GameScene extends Phaser.Scene {
       }).setOrigin(0.5);
       panel.add(clampedBadge);
     }
-    addTowerPanelSurface(this, panel, 390, panelHeight, tower.config.color);
-    addPremiumPanelGlints(this, panel, 390, panelHeight);
+    if (this.textures.exists('v1-tower-command-panel')) {
+      panel.add(this.add.image(0, 0, 'v1-tower-command-panel').setDisplaySize(430, panelHeight + 34));
+    } else {
+      addTowerPanelSurface(this, panel, 390, panelHeight, tower.config.color);
+      addPremiumPanelGlints(this, panel, 390, panelHeight);
+    }
 
     const icon = this.add.circle(-166, -panelHeight / 2 + 33, 18, tower.config.color, 0.9)
       .setStrokeStyle(2, 0xfff1c2, 0.55);
@@ -702,6 +735,7 @@ export class GameScene extends Phaser.Scene {
     }).setOrigin(0.5);
     const title = this.add.text(-138, -panelHeight / 2 + 17, `${tower.config.label}  Lv.${tower.level}`, {
       fontSize: '21px', color: '#fff1bf', fontStyle: 'bold',
+      fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif',
       shadow: { offsetX: 0, offsetY: 3, color: '#000000', blur: 3, fill: true }
     });
     const role = this.add.text(-138, -panelHeight / 2 + 45, this.towerRole(tower.config.kind), {
@@ -710,14 +744,15 @@ export class GameScene extends Phaser.Scene {
 
     const masteryLabel = tower.level >= 3 ? `전문화: ${tower.masteryLabel}` : `Lv.3 특수: ${tower.config.maxSkill}`;
     const masteryLine = this.add.text(-174, -panelHeight / 2 + 78, masteryLabel, {
-      fontSize: '13px', color: tower.level >= 3 ? '#a6ffb0' : '#dbe7ff', fontStyle: 'bold', fixedWidth: 342
+      fontSize: '13px', color: tower.level >= 3 ? '#0d8f57' : '#295f9e', fontStyle: 'bold', fixedWidth: 342,
+      fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif'
     });
     const modeLabel = tower.config.kind === 'barracks' ? '전선 유지 / 집결지 운용' : `타겟 정책: ${tower.targetModeLabel()}`;
-    const mode = this.add.text(-174, -panelHeight / 2 + 101, modeLabel, { fontSize: '12px', color: '#dbe7ff', fontStyle: 'bold' });
+    const mode = this.add.text(-174, -panelHeight / 2 + 101, modeLabel, { fontSize: '12px', color: '#295f9e', fontStyle: 'bold', fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif' });
     const statBox = this.add.rectangle(0, -panelHeight / 2 + 134, 342, 42, 0x050914, 0.58)
       .setStrokeStyle(1, 0xffe9a0, 0.17);
     const stat = this.add.text(-162, -panelHeight / 2 + 124, this.towerStatLine(tower), {
-      fontSize: '12px', color: '#c8b184', fixedWidth: 324, wordWrap: { width: 324 }
+      fontSize: '12px', color: '#3f5578', fixedWidth: 324, wordWrap: { width: 324 }, fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif'
     });
     panel.add([icon, symbol, title, role, masteryLine, mode, statBox, stat]);
 
@@ -921,9 +956,23 @@ export class GameScene extends Phaser.Scene {
   }
 
   private createSpells(): void {
-    const meteor = this.makeUiButton(96, 500, 150, 46, 0x4f1f1f, '', 18, 80);
-    if (this.textures.exists('ui-spell-meteor-card-v32')) this.add.image(96, 500, 'ui-spell-meteor-card-v32').setDisplaySize(150, 50).setDepth(81);
-    this.meteorText = this.add.text(96, 500, '☄ 메테오', { fontSize: '19px', color: '#fff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
+    const useV1Dock = this.textures.exists('v1-combat-bottom-dock');
+    const makeSpellHit = (x: number, y: number, w: number, h: number, fallbackColor: number): Phaser.GameObjects.GameObject => {
+      if (useV1Dock) {
+        return this.add.zone(x, y, w, h)
+          .setDepth(84)
+          .setInteractive({ useHandCursor: true });
+      }
+      return this.makeUiButton(x, y, w, h, fallbackColor, '', 18, 80);
+    };
+
+    const meteor = makeSpellHit(96, 500, 150, 46, 0x4f1f1f);
+    if (!useV1Dock && this.textures.exists('ui-spell-meteor-card-v32')) this.add.image(96, 500, 'ui-spell-meteor-card-v32').setDisplaySize(150, 50).setDepth(81);
+    this.meteorText = this.add.text(96, 500, '☄ 메테오', {
+      fontSize: '18px', color: '#fff', fontStyle: 'bold',
+      fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif',
+      shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 2, fill: true }
+    }).setOrigin(0.5).setDepth(86);
     meteor.on('pointerdown', () => {
       if (this.meteorCooldownMs > 0) return this.showMessage('메테오 쿨타임 중');
       pulseButton(this, meteor);
@@ -932,9 +981,13 @@ export class GameScene extends Phaser.Scene {
       this.showMessage('메테오 지점을 터치하세요');
     });
 
-    const mercenary = this.makeUiButton(260, 500, 160, 46, 0x2f4f35, '', 18, 80);
-    if (this.textures.exists('ui-spell-mercenary-card-v32')) this.add.image(260, 500, 'ui-spell-mercenary-card-v32').setDisplaySize(160, 50).setDepth(81);
-    this.mercenaryText = this.add.text(260, 500, '🛡️ 용병소환', { fontSize: '18px', color: '#fff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
+    const mercenary = makeSpellHit(260, 500, 160, 46, 0x2f4f35);
+    if (!useV1Dock && this.textures.exists('ui-spell-mercenary-card-v32')) this.add.image(260, 500, 'ui-spell-mercenary-card-v32').setDisplaySize(160, 50).setDepth(81);
+    this.mercenaryText = this.add.text(260, 500, '🛡️ 용병소환', {
+      fontSize: '17px', color: '#fff', fontStyle: 'bold',
+      fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif',
+      shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 2, fill: true }
+    }).setOrigin(0.5).setDepth(86);
     mercenary.on('pointerdown', () => {
       if (this.mercenaryCooldownMs > 0) return this.showMessage('용병소환 쿨타임 중');
       pulseButton(this, mercenary);
@@ -943,9 +996,13 @@ export class GameScene extends Phaser.Scene {
       this.showMessage('용병을 소환할 길 위를 터치하세요');
     });
 
-    const heroSkill = this.makeUiButton(440, 500, 170, 46, 0x4f3d1f, '', 18, 80);
-    if (this.textures.exists('ui-spell-hero-card-v32')) this.add.image(440, 500, 'ui-spell-hero-card-v32').setDisplaySize(170, 50).setDepth(81);
-    this.heroSkillText = this.add.text(440, 500, '🦁 대지강타', { fontSize: '18px', color: '#fff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
+    const heroSkill = makeSpellHit(440, 500, 170, 46, 0x4f3d1f);
+    if (!useV1Dock && this.textures.exists('ui-spell-hero-card-v32')) this.add.image(440, 500, 'ui-spell-hero-card-v32').setDisplaySize(170, 50).setDepth(81);
+    this.heroSkillText = this.add.text(440, 500, '🦁 대지강타', {
+      fontSize: '17px', color: '#fff', fontStyle: 'bold',
+      fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif',
+      shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 2, fill: true }
+    }).setOrigin(0.5).setDepth(86);
     heroSkill.on('pointerdown', () => {
       pulseButton(this, heroSkill);
       playSfx(this, 'sfx_click');
@@ -954,16 +1011,18 @@ export class GameScene extends Phaser.Scene {
       this.showMessage(ok ? '대지강타!' : '영웅 스킬 쿨타임 중');
     });
 
-    addPremiumPlaque(this, 754, 500, 344, 46, 0xf7d36b, 74);
+    if (!useV1Dock) addPremiumPlaque(this, 754, 500, 344, 46, 0xf7d36b, 74);
     this.add.text(602, 482, '공세 정보', {
-      fontSize: '10px', color: '#c8b184', fontStyle: 'bold',
+      fontSize: '10px', color: useV1Dock ? '#dbe7ff' : '#c8b184', fontStyle: 'bold',
+      fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
       shadow: { offsetX: 0, offsetY: 1, color: '#000000', blur: 1, fill: true }
-    }).setDepth(82);
+    }).setDepth(86);
     this.wavePreviewText = this.add.text(910, 483, '', {
       fontSize: '10px', color: '#f7d36b', fontStyle: 'bold',
+      fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
       shadow: { offsetX: 0, offsetY: 1, color: '#000000', blur: 1, fill: true }
-    }).setOrigin(1, 0).setDepth(82);
-    this.waveIntelPanel = this.add.container(754, 510).setDepth(83);
+    }).setOrigin(1, 0).setDepth(86);
+    this.waveIntelPanel = this.add.container(754, 510).setDepth(86);
     this.refreshWavePreview();
   }
 
@@ -1413,34 +1472,65 @@ export class GameScene extends Phaser.Scene {
     this.tweens.add({ targets: [objectivePanel, objectiveTitle, objectiveLines, leaderboardPanel, leaderboardTitle, leaderboardText], alpha: { from: 0, to: 1 }, y: '+=0', duration: 280, delay: 180 });
   }
 
+  private buttonAssetForColor(color: number): string | undefined {
+    if (color === 0xa94732 || color === 0x4f1f1f || color === 0x693434) return 'v1-button-red';
+    if (color === 0x6a4a1f || color === 0x4f3d1f || color === 0x754928 || color === 0xf7d36b) return 'v1-button-gold';
+    if (color === 0x2f4f35 || color === 0x3f5f2f || color === 0x2f5f58) return 'v1-button-green';
+    if (color === 0x2f3440 || color === 0x333333) return 'v1-button-dark';
+    return 'v1-button-blue';
+  }
+
   private makeUiButton(x: number, y: number, width: number, height: number, color: number, label: string, fontSize = 18, depth = 10): Phaser.GameObjects.Rectangle {
-    const shadow = this.add.rectangle(x + 3, y + 5, width, height, 0x000000, 0.28).setDepth(depth - 1);
-    const rect = this.add.rectangle(x, y, width, height, color, 1)
-      .setStrokeStyle(2, 0xfff1c2, 0.42)
+    const assetKey = this.buttonAssetForColor(color);
+    const shadow = this.add.rectangle(x + 3, y + 5, width, height, 0x000000, 0.22).setDepth(depth - 1);
+    const image = assetKey && this.textures.exists(assetKey)
+      ? this.add.image(x, y, assetKey).setDisplaySize(width, height + 4).setDepth(depth)
+      : undefined;
+    const rect = this.add.rectangle(x, y, width, height, color, image ? 0.001 : 1)
+      .setStrokeStyle(image ? 0 : 2, 0xfff1c2, image ? 0 : 0.42)
       .setInteractive({ useHandCursor: true })
-      .setDepth(depth);
-    const shine = this.add.rectangle(x, y - height * 0.28, Math.max(8, width - 12), 4, 0xffffff, 0.11).setDepth(depth + 1);
+      .setDepth(depth + 1);
+    const shine = this.add.rectangle(x, y - height * 0.28, Math.max(8, width - 12), 4, 0xffffff, image ? 0 : 0.11).setDepth(depth + 2);
     if (label) this.add.text(x, y - 1, label, {
       fontSize: `${fontSize}px`, color: '#ffffff', fontStyle: 'bold',
+      fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif',
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 1, fill: true }
-    }).setOrigin(0.5).setDepth(depth + 2);
+    }).setOrigin(0.5).setDepth(depth + 3);
     rect.on('pointerdown', () => playSfx(this, 'sfx_click'));
     installPremiumButtonFx(this, rect);
-    rect.on('pointerover', () => { rect.setAlpha(0.9); shine.setAlpha(0.2); });
-    rect.on('pointerout', () => { rect.setAlpha(1); shine.setAlpha(0.11); });
-    rect.once('destroy', () => { shadow.destroy(); shine.destroy(); });
+    rect.on('pointerover', () => {
+      rect.setAlpha(0.9);
+      image?.setScale(1.03);
+      shine.setAlpha(image ? 0.16 : 0.2);
+    });
+    rect.on('pointerout', () => {
+      rect.setAlpha(1);
+      image?.setScale(1);
+      shine.setAlpha(image ? 0 : 0.11);
+    });
+    rect.once('destroy', () => { shadow.destroy(); shine.destroy(); image?.destroy(); });
     return rect;
   }
 
   private makePanelButton(panel: Phaser.GameObjects.Container, x: number, y: number, width: number, height: number, color: number, label: string): Phaser.GameObjects.Rectangle {
-    const shadow = this.add.rectangle(x + 2, y + 3, width, height, 0x000000, 0.28);
-    const rect = this.add.rectangle(x, y, width, height, color, 1).setStrokeStyle(2, 0xfff1c2, 0.36).setInteractive({ useHandCursor: true });
+    const assetKey = this.buttonAssetForColor(color);
+    const shadow = this.add.rectangle(x + 2, y + 3, width, height, 0x000000, 0.22);
+    const image = assetKey && this.textures.exists(assetKey)
+      ? this.add.image(x, y, assetKey).setDisplaySize(width, height + 4)
+      : undefined;
+    const rect = this.add.rectangle(x, y, width, height, color, image ? 0.001 : 1)
+      .setStrokeStyle(image ? 0 : 2, 0xfff1c2, image ? 0 : 0.36)
+      .setInteractive({ useHandCursor: true });
     installPremiumButtonFx(this, rect);
-    const shine = this.add.rectangle(x, y - height * 0.28, Math.max(8, width - 14), 3, 0xffffff, 0.12);
-    const text = this.add.text(x, y, label, { fontSize: '14px', color: '#ffffff', fontStyle: 'bold', shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 1, fill: true } }).setOrigin(0.5);
-    rect.on('pointerover', () => { rect.setAlpha(0.9); shine.setAlpha(0.24); });
-    rect.on('pointerout', () => { rect.setAlpha(1); shine.setAlpha(0.12); });
-    panel.add([shadow, rect, shine, text]);
+    const shine = this.add.rectangle(x, y - height * 0.28, Math.max(8, width - 14), 3, 0xffffff, image ? 0 : 0.12);
+    const text = this.add.text(x, y, label, {
+      fontSize: '13px', color: '#ffffff', fontStyle: 'bold',
+      fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif',
+      shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 1, fill: true }
+    }).setOrigin(0.5);
+    rect.on('pointerover', () => { rect.setAlpha(0.9); image?.setScale(1.03); shine.setAlpha(image ? 0.14 : 0.24); });
+    rect.on('pointerout', () => { rect.setAlpha(1); image?.setScale(1); shine.setAlpha(image ? 0 : 0.12); });
+    panel.add([shadow, ...(image ? [image] : []), rect, shine, text]);
     return rect;
   }
 

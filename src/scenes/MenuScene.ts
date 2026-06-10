@@ -34,50 +34,64 @@ export class MenuScene extends Phaser.Scene {
     this.createUtilityHitZones();
 
     this.time.delayedCall(0, () => {
-      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MenuScene', version: '1.3', at: Date.now() } }));
+      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MenuScene', version: '1.6', at: Date.now() } }));
     });
 
     void this.bootstrapRedirectOrExistingUser();
   }
 
   private createCinematicSplash(): void {
-    addCoverImage(this, this.textures.exists('v1-login-splash') ? 'v1-login-splash' : 'v1-login-bg', 960, 540, 0);
+    const key = this.textures.exists('v1-login-refined')
+      ? 'v1-login-refined'
+      : this.textures.exists('v1-login-splash')
+        ? 'v1-login-splash'
+        : 'v1-login-bg';
+    addCoverImage(this, key, 960, 540, 0);
 
-    // The v1.3 start screen is intentionally image-led: the premium logo, panel,
-    // Korean title treatment, and button rendering come from the provided art style.
-    // Only subtle code layers are placed above it so the screen remains interactive.
-    const topDim = this.add.rectangle(480, 0, 960, 76, 0x071b34, 0.03).setDepth(2);
-    const bottomGlow = this.add.ellipse(480, 524, 520, 46, 0x8cdcff, 0.08)
+    // v1.6: background/logo/panel/buttons are a refined baked art layer,
+    // while version text, state text, and hit-zones are controlled by code.
+    const bottomGlow = this.add.ellipse(480, 520, 510, 42, 0x8cdcff, 0.08)
       .setDepth(3)
       .setBlendMode(Phaser.BlendModes.ADD);
-    this.tweens.add({ targets: bottomGlow, alpha: 0.13, scaleX: 1.025, duration: 1800, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
-    this.tweens.add({ targets: topDim, alpha: 0.05, duration: 2200, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+    this.tweens.add({ targets: bottomGlow, alpha: 0.14, scaleX: 1.025, duration: 1800, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
   }
 
   private createStatusOverlay(): void {
     const statusBack = this.add.graphics().setDepth(52);
-    statusBack.fillStyle(0xf7fbff, 0.86);
-    statusBack.fillRoundedRect(332, 267, 296, 21, 10);
-    statusBack.lineStyle(1, 0xcbd9ef, 0.70);
-    statusBack.strokeRoundedRect(332, 267, 296, 21, 10);
+    statusBack.fillStyle(0xf7fbff, 0.90);
+    statusBack.fillRoundedRect(334, 294, 292, 22, 11);
+    statusBack.lineStyle(1, 0xb9d4ef, 0.82);
+    statusBack.strokeRoundedRect(334, 294, 292, 22, 11);
+    statusBack.lineStyle(1, 0xffffff, 0.52);
+    statusBack.strokeRoundedRect(339, 299, 282, 12, 6);
 
-    this.statusText = this.add.text(480, 278, '로그인 확인 중...', {
+    this.statusText = this.add.text(480, 305, '로그인 확인 중...', {
       fontSize: '11px',
       color: '#2f5f9e',
       align: 'center',
-      fixedWidth: 282,
-      fontFamily: 'Inter, Pretendard, Noto Sans KR, Arial, sans-serif',
+      fixedWidth: 276,
+      fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Malgun Gothic, Arial, sans-serif',
       fontStyle: 'bold',
       stroke: '#ffffff',
       strokeThickness: 2,
     }).setOrigin(0.5).setDepth(53);
+
+    this.add.text(18, 18, 'v1.6.0 ART UI PASS', {
+      fontSize: '12px',
+      color: '#f7fbff',
+      fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
+      fontStyle: 'bold',
+      shadow: { offsetX: 0, offsetY: 2, color: '#08315f', blur: 3, fill: true },
+    }).setDepth(53).setAlpha(0.88);
   }
 
   private createLoginHitZones(): void {
+    // Coordinates are locked to the v1.6 refined login art at 960x540.
+    // This fixes the previous mismatch where the visible premium buttons and click areas were offset.
     this.addCinematicHotspot({
-      x: 480,
-      y: 312,
-      width: 286,
+      x: 490,
+      y: 353,
+      width: 292,
       height: 42,
       radius: 22,
       tint: 0xffdf8f,
@@ -85,9 +99,9 @@ export class MenuScene extends Phaser.Scene {
     });
 
     this.addCinematicHotspot({
-      x: 480,
-      y: 362,
-      width: 286,
+      x: 490,
+      y: 405,
+      width: 292,
       height: 40,
       radius: 22,
       tint: 0xbfdcff,
@@ -95,9 +109,9 @@ export class MenuScene extends Phaser.Scene {
     });
 
     this.addCinematicHotspot({
-      x: 410,
-      y: 417,
-      width: 136,
+      x: 414,
+      y: 456,
+      width: 132,
       height: 36,
       radius: 18,
       tint: 0xffffff,
@@ -105,9 +119,9 @@ export class MenuScene extends Phaser.Scene {
     });
 
     this.addCinematicHotspot({
-      x: 552,
-      y: 417,
-      width: 136,
+      x: 566,
+      y: 456,
+      width: 132,
       height: 36,
       radius: 18,
       tint: 0xffd5dc,
@@ -117,29 +131,29 @@ export class MenuScene extends Phaser.Scene {
 
   private createUtilityHitZones(): void {
     this.addCinematicHotspot({
-      x: 798,
+      x: 840,
       y: 36,
-      width: 58,
-      height: 58,
-      radius: 28,
+      width: 50,
+      height: 50,
+      radius: 25,
       tint: 0xffffff,
       onClick: () => this.setUtilityStatus('공지사항은 준비 중입니다.'),
     });
     this.addCinematicHotspot({
-      x: 855,
+      x: 890,
       y: 36,
-      width: 58,
-      height: 58,
-      radius: 28,
+      width: 50,
+      height: 50,
+      radius: 25,
       tint: 0xffffff,
       onClick: () => this.setUtilityStatus('고객센터는 준비 중입니다.'),
     });
     this.addCinematicHotspot({
-      x: 912,
+      x: 940,
       y: 36,
-      width: 58,
-      height: 58,
-      radius: 28,
+      width: 50,
+      height: 50,
+      radius: 25,
       tint: 0xffffff,
       onClick: () => this.setUtilityStatus('설정 메뉴는 다음 패치에서 연결합니다.'),
     });

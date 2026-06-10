@@ -39,6 +39,7 @@ export class BootScene extends Phaser.Scene {
 
     // v1.3+ screens use premium baked art compositions,
     // with transparent code hit-zones layered above for interaction.
+    this.load.image('v1-login-refined', 'assets/backgrounds/login_screen_v1_6.png');
     this.load.image('v1-login-splash', 'assets/backgrounds/login_splash_v1_3.png');
     this.load.image('v1-login-bg', 'assets/backgrounds/login_background_v1_2.png');
     this.load.image('v1-main-menu-splash', 'assets/backgrounds/main_menu_splash_v1_4.png');
@@ -129,6 +130,17 @@ export class BootScene extends Phaser.Scene {
     this.load.image('ui-medal-silver-v35', 'assets/ui/medal_silver_v35.png');
     this.load.image('ui-medal-gold-v35', 'assets/ui/medal_gold_v35.png');
     this.load.image('ui-medal-legend-v35', 'assets/ui/medal_legend_v35.png');
+
+    this.load.image('v1-combat-top-hud', 'assets/ui/v1_6/combat_top_hud_v1_6.png');
+    this.load.image('v1-combat-bottom-dock', 'assets/ui/v1_6/combat_bottom_dock_v1_6.png');
+    this.load.image('v1-tower-build-menu', 'assets/ui/v1_6/tower_build_menu_v1_6.png');
+    this.load.image('v1-tower-build-card', 'assets/ui/v1_6/tower_build_card_v1_6.png');
+    this.load.image('v1-tower-command-panel', 'assets/ui/v1_6/tower_command_panel_v1_6.png');
+    this.load.image('v1-button-blue', 'assets/ui/v1_6/button_blue_v1_6.png');
+    this.load.image('v1-button-gold', 'assets/ui/v1_6/button_gold_v1_6.png');
+    this.load.image('v1-button-red', 'assets/ui/v1_6/button_red_v1_6.png');
+    this.load.image('v1-button-dark', 'assets/ui/v1_6/button_dark_v1_6.png');
+    this.load.image('v1-button-green', 'assets/ui/v1_6/button_green_v1_6.png');
 
     this.load.image('ui-battle-loading-v42', 'assets/ui/battle_loading_frame_v42.png');
     this.load.image('ui-loading-crest-v42', 'assets/ui/loading_crest_v42.png');
