@@ -37,9 +37,11 @@ export class BootScene extends Phaser.Scene {
     this.load.image('ui-title-bg', 'assets/ui/title_background.png');
     this.load.image('ui-title-logo', 'assets/ui/title_logo.png');
 
-    // v1.3 login splash uses a premium baked title composition, with transparent code hit-zones layered above.
+    // v1.3 login splash and v1.4 main menu use premium baked art compositions,
+    // with transparent code hit-zones layered above for interaction.
     this.load.image('v1-login-splash', 'assets/backgrounds/login_splash_v1_3.png');
     this.load.image('v1-login-bg', 'assets/backgrounds/login_background_v1_2.png');
+    this.load.image('v1-main-menu-splash', 'assets/backgrounds/main_menu_splash_v1_4.png');
     this.load.image('v1-main-menu-bg', 'assets/backgrounds/main_menu_background_v1_2.png');
     this.load.image('v1-worldmap-bg', 'assets/backgrounds/worldmap_background_v1_2.png');
     ['hero_knight','hero_ranger','hero_mage','hero_guardian','hero_druid','tower_crystal','tower_sanctuary','tower_cannon','tower_grove','monster_goblin','monster_orc','monster_wolf','monster_skeleton','monster_dragon'].forEach((asset) => {
