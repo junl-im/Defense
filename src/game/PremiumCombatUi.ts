@@ -39,7 +39,7 @@ export function renderWaveIntelPanel(
     const textureKey = `enemy-${group.kind}`;
     if (scene.textures.exists(textureKey)) {
       const sprite = scene.add.sprite(x - 34, 1, textureKey, 0).setScale(cfg.threat === 'boss' ? 1.15 : 1.05);
-      sprite.setTintFill(0xffffff);
+      sprite.setTint(0xffffff);
       scene.time.delayedCall(70, () => sprite.clearTint());
       panel.add(sprite);
     } else {
