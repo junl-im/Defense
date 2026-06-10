@@ -29,11 +29,19 @@ export class MenuScene extends Phaser.Scene {
     this.createHeroTitle();
     this.createCommandPanel();
     this.createStatusBar();
+    this.time.delayedCall(0, () => {
+      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MenuScene', at: Date.now() } }));
+    });
     void this.bootstrapRedirectOrExistingUser();
   }
 
   private createPremiumBackground(): void {
-    this.add.image(480, 270, 'ui-title-bg').setDisplaySize(960, 540).setDepth(0);
+    if (this.textures.exists('ui-title-bg')) {
+      this.add.image(480, 270, 'ui-title-bg').setDisplaySize(960, 540).setDepth(0);
+    } else {
+      this.add.rectangle(480, 270, 960, 540, 0x77b9ff, 1).setDepth(0);
+      this.add.text(480, 270, 'KINGDOM SEED', { fontSize: '42px', color: '#ffffff', fontStyle: 'bold', stroke: '#1b4b96', strokeThickness: 6 }).setOrigin(0.5).setDepth(1);
+    }
     addSoftBackdrop(this, 1);
 
     const sun = this.add.ellipse(616, 89, 260, 124, 0xffffff, 0.16).setDepth(2);
@@ -85,7 +93,7 @@ export class MenuScene extends Phaser.Scene {
       c.add([circle, icon, label]);
     });
 
-    this.add.text(18, 20, 'v4.4 PREMIUM UI INTEGRATION', {
+    this.add.text(18, 20, 'v4.7 PREMIUM STABILITY PASS', {
       fontSize: '12px',
       color: '#eef6ff',
       fontStyle: 'bold',

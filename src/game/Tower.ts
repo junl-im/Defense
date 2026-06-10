@@ -77,10 +77,10 @@ export class Tower extends Phaser.GameObjects.Container {
     scene.add.existing(this);
 
     this.setDepth(22);
-    // v4.6: make the whole visible tower footprint selectable, not only the roof/top.
-    // Local hit area covers tower base, roof, glow, and the readable touch area around it.
-    this.setSize(104, 112);
-    this.setInteractive(new Phaser.Geom.Rectangle(-52, -68, 104, 118), Phaser.Geom.Rectangle.Contains);
+    // v4.7: make the complete tower footprint selectable on mobile.
+    // The hit area intentionally covers the base, roof, level badge, glow, and a small finger buffer.
+    this.setSize(138, 144);
+    this.setInteractive(new Phaser.Geom.Rectangle(-69, -82, 138, 150), Phaser.Geom.Rectangle.Contains);
   }
 
   applyPermanentUpgrades(upgrades: Partial<TowerUpgradeSnapshot> | undefined): void {

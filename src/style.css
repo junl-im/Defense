@@ -215,3 +215,25 @@ html.is-desktop .shell-start-gate {
 .shell-danger { background: linear-gradient(180deg, #ff8d86, #b43142); }
 .start-gate-out { opacity: 0; transform: scale(1.03); transition: opacity 160ms ease, transform 160ms ease; }
 @keyframes ksTapPulseV46 { 0%,100% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.07); filter: brightness(1.12); } }
+
+
+/* v4.7 stability and safe-area polish */
+html, body, #game {
+  overscroll-behavior: none;
+  touch-action: manipulation;
+  background: #081832;
+}
+canvas {
+  image-rendering: auto;
+  -webkit-tap-highlight-color: transparent;
+}
+.is-mobile-webview #game {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  box-sizing: border-box;
+}
+.shell-overlay.fading {
+  opacity: 0;
+  transform: scale(1.02);
+  pointer-events: none;
+}

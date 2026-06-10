@@ -1,0 +1,17 @@
+{
+  "version": "4.7",
+  "focus": [
+    "tower click footprint",
+    "overlay clamp",
+    "mobile start fallback",
+    "back guard debounce",
+    "premium visual polish"
+  ],
+  "assets": [
+    "build_menu_frame_v47.png",
+    "tower_click_ring_v47.png",
+    "safe_area_overlay_v47.png",
+    "worldmap_bottom_dock_v47.png",
+    "fx_pointer_spark_v47.png"
+  ]
+}

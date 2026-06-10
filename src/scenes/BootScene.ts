@@ -261,6 +261,22 @@ export class BootScene extends Phaser.Scene {
     this.load.image('ui-tower-click-ring-v46', 'assets/ui/tower_click_ring_v46.png');
     this.load.image('ui-map-edge-shadow-v46', 'assets/ui/map_edge_shadow_v46.png');
 
+    this.load.image('ui-build-menu-frame-v47', 'assets/ui/build_menu_frame_v47.png');
+    this.load.image('ui-tower-panel-anchor-v47', 'assets/ui/tower_panel_anchor_v47.png');
+    this.load.image('ui-start-loading-card-v47', 'assets/ui/start_loading_card_v47.png');
+    this.load.image('ui-guard-exit-card-v47', 'assets/ui/guard_exit_card_v47.png');
+    this.load.image('ui-wave-card-refined-v47', 'assets/ui/wave_card_refined_v47.png');
+    this.load.image('ui-tower-click-ring-v47', 'assets/ui/tower_click_ring_v47.png');
+    this.load.image('ui-panel-anchor-arrow-v47', 'assets/ui/panel_anchor_arrow_v47.png');
+    this.load.image('ui-safe-area-overlay-v47', 'assets/ui/safe_area_overlay_v47.png');
+    this.load.image('ui-worldmap-bottom-dock-v47', 'assets/ui/worldmap_bottom_dock_v47.png');
+    this.load.image('ui-combat-hud-refine-v47', 'assets/ui/combat_hud_refine_v47.png');
+    this.load.image('fx-pointer-spark-v47', 'assets/effects/fx_pointer_spark_v47.png');
+    for (let i = 1; i <= 4; i += 1) {
+      this.load.image(`ui-stage-glow-frame-v47-${i}`, `assets/ui/stage_glow_frame_v47_${i}.png`);
+    }
+
+
     for (let i = 0; i < 8; i += 1) {
       this.load.image(`fx-reward-open-v45-${i}`, `assets/effects/reward_open_fx_v45_${i}.png`);
     }
