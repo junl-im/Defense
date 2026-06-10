@@ -50,6 +50,17 @@ export class BootScene extends Phaser.Scene {
     this.load.image('ui-icon-spark', 'assets/ui/icon_spark.png');
     this.load.spritesheet('ui-particles', 'assets/ui/particles_magic.png', { frameWidth: 32, frameHeight: 32 });
 
+    this.load.image('ui-panel-premium-v43', 'assets/ui/panel_premium_v43.png');
+    this.load.image('ui-modal-frame-v43', 'assets/ui/modal_frame_v43.png');
+    this.load.image('ui-button-gold-v43', 'assets/ui/button_gold_v43.png');
+    this.load.image('ui-button-blue-v43', 'assets/ui/button_blue_v43.png');
+    this.load.image('ui-stage-card-frame-v43', 'assets/ui/stage_card_frame_v43.png');
+    this.load.image('ui-world-map-bg-v43', 'assets/maps/worldmap_premium_v43.png');
+    this.load.image('ui-fx-spell-burst-v43', 'assets/effects/fx_spell_burst_v43.png');
+    this.load.image('ui-fx-reward-glimmer-v43', 'assets/effects/fx_reward_glimmer_v43.png');
+    this.load.image('ui-fx-tower-upgrade-v43', 'assets/effects/fx_tower_upgrade_v43.png');
+
+
     this.load.image('ui-world-map-bg', 'assets/ui/world_map_painted.png');
     this.load.image('ui-stage-card-frame', 'assets/ui/stage_card_frame.png');
     this.load.image('ui-stage-card-locked', 'assets/ui/stage_card_locked.png');
