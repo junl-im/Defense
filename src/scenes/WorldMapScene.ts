@@ -4,6 +4,7 @@ import { fetchLeaderboard, loadOrCreateSave, type LeaderboardScore, type PlayerS
 import { STAGE_LIST, getStageConfig } from '../game/balance';
 import type { StageConfig, StageId } from '../game/types';
 import { playMusic, playSfx } from '../game/AudioManager';
+import { addCodeButton, addCodeLogo, addCodePanel, addCoverImage, addFloatingSparkles, addSceneVignette } from '../game/CodeUiKit';
 
 type StageDotView = {
   container: Phaser.GameObjects.Container;
@@ -49,11 +50,13 @@ export class WorldMapScene extends Phaser.Scene {
   private leaderboardText!: Phaser.GameObjects.Text;
   private cardRoot!: Phaser.GameObjects.Container;
   private stageDots: StageDotView[] = [];
+  private stageDotRail?: Phaser.GameObjects.Graphics;
   private startButton?: Phaser.GameObjects.Container;
   private startButtonLabel?: Phaser.GameObjects.Text;
   private leftArrow?: Phaser.GameObjects.Container;
   private rightArrow?: Phaser.GameObjects.Container;
   private cloudLayer!: Phaser.GameObjects.Container;
+  private routeRoot?: Phaser.GameObjects.Container;
   private chapterTitleText!: Phaser.GameObjects.Text;
   private chapterSubText!: Phaser.GameObjects.Text;
   private routeGlow?: Phaser.GameObjects.Arc;
@@ -99,49 +102,23 @@ export class WorldMapScene extends Phaser.Scene {
   }
 
   private drawBackground(): void {
-    if (this.textures.exists('ui-world-map-bg-v29')) {
-      this.add.image(480, 270, 'ui-world-map-bg-v29').setDisplaySize(960, 540).setDepth(0);
-    } else if (this.textures.exists('ui-world-map-bg-v28')) {
-      this.add.image(480, 270, 'ui-world-map-bg-v28').setDisplaySize(960, 540).setDepth(0);
-    } else if (this.textures.exists('ui-world-map-bg-v27')) {
-      this.add.image(480, 270, 'ui-world-map-bg-v27').setDisplaySize(960, 540).setDepth(0);
-    } else if (this.textures.exists('ui-world-map-bg')) {
-      this.add.image(480, 270, 'ui-world-map-bg').setDisplaySize(960, 540).setDepth(0);
-    } else {
-      this.drawFallbackMap();
+    addCoverImage(this, 'v1-worldmap-bg', 960, 540, 0);
+    addSceneVignette(this, 1, 0.10);
+
+    // v1.1: background stays as art only. Route, nodes, panels and buttons are code UI.
+    this.add.rectangle(480, 270, 960, 540, 0xeaf9ff, 0.026).setDepth(2);
+    this.add.rectangle(480, 44, 960, 88, 0x0b376f, 0.42).setDepth(3);
+    this.add.rectangle(480, 510, 960, 72, 0x0b376f, 0.52).setDepth(3);
+    this.add.ellipse(362, 284, 690, 365, 0xffffff, 0.055).setDepth(4);
+    this.add.ellipse(813, 280, 330, 380, 0xffffff, 0.065).setDepth(4);
+
+    const mist = this.add.graphics().setDepth(5);
+    for (let i = 0; i < 12; i += 1) {
+      mist.fillStyle(0xffffff, 0.038);
+      mist.fillEllipse(Phaser.Math.Between(20, 940), Phaser.Math.Between(105, 465), Phaser.Math.Between(130, 250), Phaser.Math.Between(22, 50));
     }
 
-    this.add.rectangle(480, 270, 960, 540, 0x06080d, 0.25).setDepth(1);
-    this.add.rectangle(480, 49, 960, 98, 0x0b0f18, 0.78).setDepth(3);
-    this.add.rectangle(480, 95, 850, 2, 0xf6d879, 0.28).setDepth(4);
-    this.add.rectangle(480, 514, 960, 56, 0x0b0f18, 0.86).setStrokeStyle(2, 0xf0c56b, 0.28).setDepth(3);
-
-    const mist = this.add.graphics().setDepth(2);
-    for (let i = 0; i < 9; i++) {
-      mist.fillStyle(0xffffff, 0.035);
-      mist.fillEllipse(Phaser.Math.Between(20, 940), Phaser.Math.Between(110, 470), Phaser.Math.Between(140, 260), Phaser.Math.Between(22, 48));
-    }
-
-    for (let i = 0; i < 26; i++) {
-      if (!this.textures.exists('ui-particles')) break;
-      const particle = this.add.sprite(
-        Phaser.Math.Between(45, 920),
-        Phaser.Math.Between(85, 465),
-        'ui-particles',
-        Phaser.Math.Between(0, 3)
-      ).setDepth(4).setAlpha(Phaser.Math.FloatBetween(0.08, 0.24)).setScale(Phaser.Math.FloatBetween(0.28, 0.64));
-      particle.play('ui-particle-glow');
-      this.tweens.add({
-        targets: particle,
-        y: particle.y - Phaser.Math.Between(12, 32),
-        x: particle.x + Phaser.Math.Between(-14, 14),
-        alpha: Phaser.Math.FloatBetween(0.04, 0.2),
-        duration: Phaser.Math.Between(1800, 3600),
-        yoyo: true,
-        repeat: -1,
-        ease: 'Sine.easeInOut',
-      });
-    }
+    addFloatingSparkles(this, 18, 7);
   }
 
   private drawFallbackMap(): void {
@@ -191,52 +168,77 @@ export class WorldMapScene extends Phaser.Scene {
   }
 
   private createHeader(): void {
-    if (this.textures.exists('ui-banner-worldmap')) {
-      this.add.image(480, 45, 'ui-banner-worldmap').setDisplaySize(468, 84).setDepth(10);
-    }
+    addCodeLogo(this, 142, 51, 0.34);
 
-    this.titleText = this.add.text(480, 36, 'KINGDOM SEED', {
-      fontSize: '42px',
-      color: '#fff1bf',
+    const header = addCodePanel(this, {
+      x: 501,
+      y: 48,
+      width: 530,
+      height: 58,
+      radius: 24,
+      depth: 12,
+      fill: 0xf5fbff,
+      fillAlpha: 0.78,
+      stroke: 0xe3bb54,
+      strokeAlpha: 0.62,
+      glow: 0x9eeeff,
+    });
+
+    this.titleText = this.add.text(0, -10, 'WORLD MAP', {
+      fontSize: '22px',
+      color: '#24528f',
       fontStyle: 'bold',
-      stroke: '#2b1208',
-      strokeThickness: 7,
-      shadow: { offsetX: 0, offsetY: 4, color: '#000000', blur: 5, fill: true },
-    }).setOrigin(0.5).setDepth(11);
-
-    this.infoText = this.add.text(480, 85, '', {
-      fontSize: '16px',
-      color: '#fff1bf',
+      stroke: '#ffffff',
+      strokeThickness: 4,
+    }).setOrigin(0.5);
+    this.infoText = this.add.text(0, 13, '', {
+      fontSize: '11px',
+      color: '#4f72a2',
       align: 'center',
-      stroke: '#1d1009',
-      strokeThickness: 3,
-    }).setOrigin(0.5).setDepth(11);
+      fontStyle: 'bold',
+      fixedWidth: 470,
+    }).setOrigin(0.5);
+    header.add([this.titleText, this.infoText]);
+
+    addCodeButton(this, { x: 836, y: 47, width: 92, height: 34, label: '메인', iconText: '🏰', tone: 'blue', fontSize: 12, depth: 18, onClick: () => this.scene.start('MainMenuScene', { user: this.user, save: this.save }) });
+    addCodeButton(this, { x: 925, y: 47, width: 62, height: 34, label: '갱신', iconText: '⟳', tone: 'white', fontSize: 11, depth: 18, onClick: () => void this.refreshSaveAndLeaderboard() });
   }
 
   private createCarouselArea(): void {
-    this.add.rectangle(360, 287, 628, 318, 0x070b12, 0.34)
-      .setStrokeStyle(3, 0xf6d879, 0.22)
-      .setDepth(8);
-    this.chapterTitleText = this.add.text(360, 114, '', {
-      fontSize: '23px',
-      color: '#ffe38c',
+    addCodePanel(this, {
+      x: 360,
+      y: 292,
+      width: 640,
+      height: 328,
+      radius: 30,
+      depth: 8,
+      fill: 0xf8fcff,
+      fillAlpha: 0.58,
+      stroke: 0x6db4ff,
+      strokeAlpha: 0.34,
+      glow: 0x9eeeff,
+    });
+
+    this.chapterTitleText = this.add.text(360, 113, '', {
+      fontSize: '22px',
+      color: '#24528f',
       fontStyle: 'bold',
-      stroke: '#120706',
+      stroke: '#ffffff',
       strokeThickness: 5,
-      shadow: { offsetX: 0, offsetY: 3, color: '#000000', blur: 4, fill: true },
+      shadow: { offsetX: 0, offsetY: 2, color: '#1c4b83', blur: 3, fill: true },
     }).setOrigin(0.5).setDepth(13);
 
-    this.chapterSubText = this.add.text(360, 139, '스와이프하여 캠페인을 지휘하세요', {
-      fontSize: '15px',
-      color: '#ffe7ad',
+    this.chapterSubText = this.add.text(360, 140, '스와이프하여 캠페인을 지휘하세요', {
+      fontSize: '13px',
+      color: '#476a9c',
       fontStyle: 'bold',
-      stroke: '#120706',
-      strokeThickness: 4,
-    }).setOrigin(0.5).setDepth(12);
+      stroke: '#ffffff',
+      strokeThickness: 3,
+    }).setOrigin(0.5).setDepth(13);
 
-    this.cardRoot = this.add.container(360, 278).setDepth(20);
+    this.cardRoot = this.add.container(360, 282).setDepth(20);
 
-    const hit = this.add.rectangle(360, 278, 620, 300, 0xffffff, 0.001)
+    const hit = this.add.rectangle(360, 282, 620, 308, 0xffffff, 0.001)
       .setInteractive({ useHandCursor: true })
       .setDepth(19);
     hit.on('pointerdown', (pointer: Phaser.Input.Pointer) => this.beginDrag(pointer));
@@ -244,44 +246,106 @@ export class WorldMapScene extends Phaser.Scene {
     hit.on('pointerup', (pointer: Phaser.Input.Pointer) => this.endDrag(pointer));
     hit.on('pointerupoutside', (pointer: Phaser.Input.Pointer) => this.endDrag(pointer));
 
-    this.leftArrow = this.makeArrowButton(43, 278, '‹', () => this.slideBy(-1));
-    this.rightArrow = this.makeArrowButton(677, 278, '›', () => this.slideBy(1));
+    this.leftArrow = this.makeArrowButton(47, 282, '‹', () => this.slideBy(-1));
+    this.rightArrow = this.makeArrowButton(673, 282, '›', () => this.slideBy(1));
   }
 
   private createDetailPanel(): void {
-    if (this.textures.exists('ui-panel-detail-large')) {
-      this.add.image(812, 282, 'ui-panel-detail-large').setDisplaySize(292, 346).setDepth(10);
-    } else {
-      this.add.rectangle(812, 282, 292, 346, 0xd3aa6b, 0.88).setStrokeStyle(4, 0x5a2d12, 0.5).setDepth(10);
-    }
+    addCodePanel(this, {
+      x: 812,
+      y: 286,
+      width: 292,
+      height: 344,
+      radius: 28,
+      depth: 10,
+      fill: 0xf8fcff,
+      fillAlpha: 0.82,
+      stroke: 0xe3bb54,
+      strokeAlpha: 0.84,
+      glow: 0x9eeeff,
+      title: 'STAGE INTEL',
+    });
 
-    this.stageDetailText = this.add.text(692, 119, '', {
-      fontSize: '15px',
-      color: '#35200e',
-      align: 'left',
-      lineSpacing: 5,
-      wordWrap: { width: 242 },
-      fontStyle: 'bold',
-    }).setOrigin(0, 0).setDepth(15);
+    this.addDecorImage('v1-tower-crystal', 914, 197, 88, 14);
+    this.addDecorImage('v1-monster-goblin', 718, 430, 66, 14, true);
 
-    this.leaderboardText = this.add.text(696, 326, '명예의 전당 로딩 중...', {
-      fontSize: '14px',
-      color: '#2b1b0e',
+    this.stageDetailText = this.add.text(688, 128, '', {
+      fontSize: '13px',
+      color: '#264d7c',
       align: 'left',
       lineSpacing: 4,
-      wordWrap: { width: 236 },
+      wordWrap: { width: 244 },
       fontStyle: 'bold',
     }).setOrigin(0, 0).setDepth(15);
+
+    const board = addCodePanel(this, {
+      x: 812,
+      y: 401,
+      width: 244,
+      height: 112,
+      radius: 20,
+      depth: 14,
+      fill: 0xffffff,
+      fillAlpha: 0.62,
+      stroke: 0x6db4ff,
+      strokeAlpha: 0.36,
+    });
+    board.add(this.add.text(0, -42, '명예의 전당', {
+      fontSize: '13px',
+      color: '#24528f',
+      fontStyle: 'bold',
+      stroke: '#ffffff',
+      strokeThickness: 3,
+    }).setOrigin(0.5));
+
+    this.leaderboardText = this.add.text(696, 376, '기록 로딩 중...', {
+      fontSize: '11px',
+      color: '#416593',
+      align: 'left',
+      lineSpacing: 3,
+      wordWrap: { width: 232 },
+      fontStyle: 'bold',
+    }).setOrigin(0, 0).setDepth(16);
   }
 
   private createFooterControls(): void {
-    this.makeImageButton(62, 508, '영웅', 'ui-button-gold', () => this.scene.start('HeroHallScene', { user: this.user, save: this.save }), 82, 42, 16);
-    this.makeImageButton(150, 508, '임무', 'ui-button-red', () => this.scene.start('MissionBoardScene', { user: this.user, save: this.save }), 82, 42, 16);
-    this.makeImageButton(248, 508, '연구소', 'ui-button-blue', () => this.scene.start('LabScene', { user: this.user, save: this.save }), 98, 42, 16);
-    this.makeImageButton(354, 508, '제작소', 'ui-button-gold', () => this.scene.start('ArtifactForgeScene', { user: this.user, save: this.save }), 102, 42, 16);
-    this.makeImageButton(456, 508, '도감', 'ui-button-blue', () => this.scene.start('CodexScene', { user: this.user, save: this.save }), 82, 42, 16);
-    this.makeImageButton(570, 508, '기록 갱신', 'ui-button-primary', () => void this.refreshSaveAndLeaderboard(), 118, 42, 15);
-    this.startButton = this.makeImageButton(810, 497, '전투 시작', 'ui-button-red', () => this.startSelectedStage(), 230, 58, 24);
+    addCodePanel(this, {
+      x: 480,
+      y: 508,
+      width: 902,
+      height: 58,
+      radius: 24,
+      depth: 24,
+      fill: 0x143f7a,
+      fillAlpha: 0.76,
+      stroke: 0xe3bb54,
+      strokeAlpha: 0.56,
+    });
+
+    const dockItems = [
+      { x: 72, label: '메인', icon: '🏰', tone: 'blue' as const, go: () => this.scene.start('MainMenuScene', { user: this.user, save: this.save }) },
+      { x: 166, label: '영웅', icon: '🛡', tone: 'gold' as const, go: () => this.scene.start('HeroHallScene', { user: this.user, save: this.save }) },
+      { x: 260, label: '임무', icon: '📜', tone: 'white' as const, go: () => this.scene.start('MissionBoardScene', { user: this.user, save: this.save }) },
+      { x: 360, label: '연구', icon: '🔬', tone: 'green' as const, go: () => this.scene.start('LabScene', { user: this.user, save: this.save }) },
+      { x: 460, label: '제작', icon: '💎', tone: 'blue' as const, go: () => this.scene.start('ArtifactForgeScene', { user: this.user, save: this.save }) },
+      { x: 560, label: '도감', icon: '📘', tone: 'white' as const, go: () => this.scene.start('CodexScene', { user: this.user, save: this.save }) },
+      { x: 660, label: '갱신', icon: '⟳', tone: 'blue' as const, go: () => void this.refreshSaveAndLeaderboard() },
+    ];
+
+    dockItems.forEach((item) => addCodeButton(this, {
+      x: item.x,
+      y: 508,
+      width: 84,
+      height: 36,
+      label: item.label,
+      iconText: item.icon,
+      tone: item.tone,
+      fontSize: 11,
+      depth: 32,
+      onClick: () => { playSfx(this, 'sfx_click'); item.go(); },
+    }));
+
+    this.startButton = addCodeButton(this, { x: 826, y: 508, width: 210, height: 46, label: '전투 시작', iconText: '⚔', tone: 'red', fontSize: 20, depth: 34, onClick: () => this.startSelectedStage() });
     this.startButtonLabel = this.startButton.getByName('label') as Phaser.GameObjects.Text;
   }
 
@@ -308,109 +372,126 @@ export class WorldMapScene extends Phaser.Scene {
     const abs = Math.abs(distance);
     const card = this.add.container(0, 0);
     const thumbKey = this.stageCardKey(stage.id);
+    const themeColor = this.stageColor(stage);
 
-    const shadow = this.add.rectangle(8, 12, CARD_WIDTH, CARD_HEIGHT, 0x000000, selected ? 0.38 : 0.22);
-    shadow.setOrigin(0.5).setScale(selected ? 1.02 : 0.93);
+    const shadow = this.add.graphics();
+    shadow.fillStyle(0x06112a, selected ? 0.34 : 0.22);
+    shadow.fillRoundedRect(-CARD_WIDTH / 2 + 8, -CARD_HEIGHT / 2 + 12, CARD_WIDTH, CARD_HEIGHT, 28);
 
-    const gradeGlow = this.add.rectangle(0, 0, CARD_WIDTH + 8, CARD_HEIGHT + 8, grade.color, selected ? grade.alpha : grade.alpha * 0.44)
-      .setStrokeStyle(selected ? 4 : 2, grade.accent, unlocked ? 0.84 : 0.18);
-    gradeGlow.setOrigin(0.5).setScale(selected ? 1.02 : 0.92);
+    const aura = this.add.graphics();
+    aura.fillStyle(grade.color, selected ? grade.alpha + 0.12 : grade.alpha * 0.58);
+    aura.fillRoundedRect(-CARD_WIDTH / 2 - 12, -CARD_HEIGHT / 2 - 10, CARD_WIDTH + 24, CARD_HEIGHT + 20, 34);
 
-    const thumb = this.add.image(0, 0, thumbKey).setDisplaySize(CARD_WIDTH - 28, CARD_HEIGHT - 38);
-    thumb.setAlpha(unlocked ? 1 : 0.33);
+    const body = this.add.graphics();
+    body.fillStyle(0xf8fcff, unlocked ? 0.92 : 0.58);
+    body.fillRoundedRect(-CARD_WIDTH / 2, -CARD_HEIGHT / 2, CARD_WIDTH, CARD_HEIGHT, 26);
+    body.lineStyle(selected ? 5 : 3, selected ? 0xffd66d : 0x6db4ff, selected ? 0.94 : 0.42);
+    body.strokeRoundedRect(-CARD_WIDTH / 2, -CARD_HEIGHT / 2, CARD_WIDTH, CARD_HEIGHT, 26);
+    body.lineStyle(1, 0xffffff, 0.72);
+    body.strokeRoundedRect(-CARD_WIDTH / 2 + 7, -CARD_HEIGHT / 2 + 7, CARD_WIDTH - 14, CARD_HEIGHT - 14, 20);
 
-    const frameKey = unlocked ? 'ui-stage-card-frame' : 'ui-stage-card-locked';
-    const frame = this.textures.exists(frameKey)
-      ? this.add.image(0, 0, frameKey).setDisplaySize(CARD_WIDTH, CARD_HEIGHT)
-      : this.add.rectangle(0, 0, CARD_WIDTH, CARD_HEIGHT, unlocked ? 0x8c6239 : 0x595959, 0.92).setStrokeStyle(4, 0xffd67a, unlocked ? 0.65 : 0.2);
+    const thumb = this.add.image(0, -13, thumbKey).setDisplaySize(CARD_WIDTH - 30, 112);
+    thumb.setAlpha(unlocked ? 1 : 0.38);
 
-    const shade = this.add.rectangle(0, 0, CARD_WIDTH - 30, CARD_HEIGHT - 40, 0x000000, unlocked ? 0.08 : 0.58);
-    const stageRibbon = this.add.rectangle(0, -68, 210, 28, this.stageColor(stage), unlocked ? 0.95 : 0.45).setStrokeStyle(2, 0xffe38c, unlocked ? 0.38 : 0.14);
+    const thumbGloss = this.add.graphics();
+    thumbGloss.fillStyle(0xffffff, unlocked ? 0.18 : 0.06);
+    thumbGloss.fillRoundedRect(-CARD_WIDTH / 2 + 20, -CARD_HEIGHT / 2 + 16, CARD_WIDTH - 40, 38, 16);
+
+    const thumbFrame = this.add.graphics();
+    thumbFrame.lineStyle(3, 0xffffff, 0.54);
+    thumbFrame.strokeRoundedRect(-CARD_WIDTH / 2 + 15, -CARD_HEIGHT / 2 + 14, CARD_WIDTH - 30, 112, 18);
+    thumbFrame.lineStyle(2, themeColor, unlocked ? 0.45 : 0.12);
+    thumbFrame.strokeRoundedRect(-CARD_WIDTH / 2 + 19, -CARD_HEIGHT / 2 + 18, CARD_WIDTH - 38, 104, 14);
+
+    const bottom = this.add.graphics();
+    bottom.fillStyle(0xffffff, unlocked ? 0.82 : 0.42);
+    bottom.fillRoundedRect(-CARD_WIDTH / 2 + 13, 35, CARD_WIDTH - 26, 60, 18);
+    bottom.lineStyle(2, 0x8eb4da, unlocked ? 0.26 : 0.10);
+    bottom.strokeRoundedRect(-CARD_WIDTH / 2 + 13, 35, CARD_WIDTH - 26, 60, 18);
+
+    const stageRibbon = this.add.graphics();
+    stageRibbon.fillStyle(themeColor, unlocked ? 0.96 : 0.46);
+    stageRibbon.fillRoundedRect(-76, -84, 152, 30, 13);
+    stageRibbon.lineStyle(2, 0xffe38c, unlocked ? 0.58 : 0.18);
+    stageRibbon.strokeRoundedRect(-76, -84, 152, 30, 13);
+
     const stageNo = this.add.text(0, -69, `STAGE ${stage.number}`, {
-      fontSize: '18px',
+      fontSize: '16px',
       color: '#fff2bb',
       fontStyle: 'bold',
-      stroke: '#1b0d07',
+      stroke: '#14335e',
       strokeThickness: 4,
     }).setOrigin(0.5);
 
-    const title = this.add.text(0, -18, stage.title, {
-      fontSize: selected ? '24px' : '21px',
-      color: unlocked ? '#ffffff' : '#c7c7c7',
+    const title = this.add.text(0, 46, stage.title, {
+      fontSize: selected ? '21px' : '19px',
+      color: unlocked ? '#24528f' : '#8a97a6',
       fontStyle: 'bold',
-      stroke: '#1b0d07',
-      strokeThickness: 5,
+      stroke: '#ffffff',
+      strokeThickness: 4,
       align: 'center',
     }).setOrigin(0.5);
 
-    const sub = this.add.text(0, 14, stage.subtitle, {
-      fontSize: '15px',
-      color: unlocked ? '#ffe7ad' : '#aaaaaa',
+    const sub = this.add.text(0, 67, stage.subtitle, {
+      fontSize: '11px',
+      color: unlocked ? '#4f72a2' : '#9aa7b5',
       fontStyle: 'bold',
-      stroke: '#1b0d07',
-      strokeThickness: 3,
+      stroke: '#ffffff',
+      strokeThickness: 2,
     }).setOrigin(0.5);
 
-    card.add([shadow, gradeGlow, thumb, shade, frame, stageRibbon, stageNo, title, sub]);
+    card.add([shadow, aura, body, thumb, thumbGloss, thumbFrame, bottom, stageRibbon, stageNo, title, sub]);
 
     if (best?.bestStars) {
-      const clearRibbon = this.add.rectangle(-95, -51, 70, 22, grade.color, 0.92)
-        .setStrokeStyle(2, grade.accent, 0.7)
-        .setAngle(-10);
-      const clearText = this.add.text(-95, -52, grade.label, {
-        fontSize: '12px',
+      const clearRibbon = this.add.graphics();
+      clearRibbon.fillStyle(grade.color, 0.94);
+      clearRibbon.fillRoundedRect(-128, -74, 84, 24, 10);
+      clearRibbon.lineStyle(2, grade.accent, 0.74);
+      clearRibbon.strokeRoundedRect(-128, -74, 84, 24, 10);
+      clearRibbon.setAngle(-8);
+      const clearText = this.add.text(-86, -62, grade.label, {
+        fontSize: '11px',
         color: '#fff8d7',
         fontStyle: 'bold',
-        stroke: '#1b0d07',
+        stroke: '#14335e',
         strokeThickness: 3,
-      }).setOrigin(0.5).setAngle(-10);
+      }).setOrigin(0.5).setAngle(-8);
       card.add([clearRibbon, clearText]);
     }
 
     if (this.stageHasBoss(stage)) {
-      card.add(this.makeBossBadge(98, 50, stage, unlocked));
+      card.add(this.makeBossBadge(104, 38, stage, unlocked));
     }
 
     if (!unlocked) {
+      const lockFog = this.add.rectangle(0, -13, CARD_WIDTH - 30, 112, 0x06112a, 0.54);
       const lock = this.textures.exists('ui-icon-lock')
-        ? this.add.image(0, 39, 'ui-icon-lock').setScale(0.74)
-        : this.add.text(0, 38, '🔒', { fontSize: '30px' }).setOrigin(0.5);
-      const lockFog = this.add.rectangle(0, 0, CARD_WIDTH - 36, CARD_HEIGHT - 46, 0x050505, 0.22);
-      const lockText = this.add.text(0, 68, 'LOCKED', {
-        fontSize: '16px',
-        color: '#ff9f9f',
+        ? this.add.image(0, -10, 'ui-icon-lock').setScale(0.62)
+        : this.add.text(0, -8, '🔒', { fontSize: '28px' }).setOrigin(0.5);
+      const lockText = this.add.text(0, 16, 'LOCKED', {
+        fontSize: '14px',
+        color: '#ffb0a5',
         fontStyle: 'bold',
-        stroke: '#1b0d07',
+        stroke: '#14335e',
         strokeThickness: 4,
       }).setOrigin(0.5);
       card.add([lockFog, lock, lockText]);
     } else {
       const stars = best?.bestStars ?? 0;
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < 3; i += 1) {
         const star = this.textures.exists('ui-icon-star-large')
-          ? this.add.image(-36 + i * 36, 62, 'ui-icon-star-large').setScale(0.54).setAlpha(i < stars ? 1 : 0.22)
-          : this.add.text(-36 + i * 36, 62, i < stars ? '★' : '☆', { fontSize: '24px', color: '#ffe38c' }).setOrigin(0.5);
+          ? this.add.image(-34 + i * 34, 86, 'ui-icon-star-large').setScale(0.43).setAlpha(i < stars ? 1 : 0.24)
+          : this.add.text(-34 + i * 34, 86, i < stars ? '★' : '☆', { fontSize: '22px', color: '#e5a94a' }).setOrigin(0.5);
         card.add(star);
       }
     }
 
-    const gradeLabel = best?.bestStars
-      ? this.add.text(0, 40, `${grade.label} CLEAR`, {
-          fontSize: '13px',
-          color: '#fff8d7',
-          fontStyle: 'bold',
-          stroke: '#120706',
-          strokeThickness: 3,
-        }).setOrigin(0.5)
-      : undefined;
-    if (gradeLabel) card.add(gradeLabel);
-
-    const progress = this.add.text(0, 91, this.cardProgressText(stage), {
-      fontSize: '13px',
-      color: unlocked ? '#fff2bb' : '#a9a9a9',
+    const progress = this.add.text(0, 18, this.cardProgressText(stage), {
+      fontSize: '11px',
+      color: unlocked ? '#416593' : '#9aa7b5',
       fontStyle: 'bold',
-      stroke: '#120706',
-      strokeThickness: 3,
+      stroke: '#ffffff',
+      strokeThickness: 2,
     }).setOrigin(0.5);
     card.add(progress);
 
@@ -434,32 +515,50 @@ export class WorldMapScene extends Phaser.Scene {
     card.setScale(targetScale);
     card.setAlpha(abs > 1 ? 0.18 : selected ? 1 : 0.52);
 
+    if (selected) {
+      this.tweens.add({ targets: aura, alpha: 0.70, duration: 1200, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+    }
+
     return card;
   }
 
   private renderStageDots(): void {
     this.stageDots.forEach((dot) => dot.container.destroy());
+    this.stageDotRail?.destroy();
     this.stageDots = [];
 
-    const totalWidth = (STAGE_LIST.length - 1) * 68;
+    const totalWidth = (STAGE_LIST.length - 1) * 58;
     const startX = 360 - totalWidth / 2;
     const y = 455;
+
+    const rail = this.add.graphics().setDepth(23);
+    this.stageDotRail = rail;
+    rail.lineStyle(5, 0xffffff, 0.36);
+    rail.beginPath();
+    rail.moveTo(startX, y);
+    rail.lineTo(startX + totalWidth, y);
+    rail.strokePath();
+    rail.lineStyle(2, 0x6db4ff, 0.34);
+    rail.beginPath();
+    rail.moveTo(startX, y);
+    rail.lineTo(startX + totalWidth, y);
+    rail.strokePath();
 
     STAGE_LIST.forEach((stage, index) => {
       const unlocked = this.isStageUnlocked(stage);
       const selected = index === this.selectedIndex;
-      const x = startX + index * 68;
+      const x = startX + index * 58;
       const container = this.add.container(x, y).setDepth(24);
-      const halo = this.add.circle(0, 0, selected ? 22 : 17, 0xffe38c, selected ? 0.22 : 0.03).setStrokeStyle(selected ? 3 : 1, 0xffe38c, selected ? 0.8 : 0.25);
-      const dot = this.add.circle(0, 0, 12, unlocked ? this.stageColor(stage) : 0x575757, 1).setStrokeStyle(2, unlocked ? 0xffe38c : 0xa9a9a9, unlocked ? 0.65 : 0.28);
+      const halo = this.add.circle(0, 0, selected ? 19 : 15, selected ? 0xffd66d : 0xffffff, selected ? 0.28 : 0.06).setStrokeStyle(selected ? 3 : 1, selected ? 0xffd66d : 0xffffff, selected ? 0.92 : 0.28);
+      const dot = this.add.circle(0, 0, 10, unlocked ? this.stageColor(stage) : 0x9aa7b5, unlocked ? 1 : 0.72).setStrokeStyle(2, unlocked ? 0xfff0b6 : 0xffffff, unlocked ? 0.72 : 0.36);
       const label = this.add.text(0, 0, `${stage.number}`, {
-        fontSize: '13px',
+        fontSize: '11px',
         color: '#ffffff',
         fontStyle: 'bold',
-        stroke: '#100604',
+        stroke: '#14335e',
         strokeThickness: 3,
       }).setOrigin(0.5);
-      const hit = this.add.circle(0, 0, 25, 0xffffff, 0.001).setInteractive({ useHandCursor: true });
+      const hit = this.add.circle(0, 0, 22, 0xffffff, 0.001).setInteractive({ useHandCursor: true });
       container.add([halo, dot, label, hit]);
       hit.on('pointerdown', () => this.slideToIndex(index));
       this.stageDots.push({ container, halo, label });
@@ -471,29 +570,91 @@ export class WorldMapScene extends Phaser.Scene {
     const best = this.save.clearedStages[stage.id];
     const unlocked = this.isStageUnlocked(stage);
     const lockText = !unlocked && stage.unlockRequires
-      ? `잠김: Stage ${getStageConfig(stage.unlockRequires).number} 클리어 필요`
+      ? `잠김 · Stage ${getStageConfig(stage.unlockRequires).number} 클리어 필요`
       : '입장 가능';
     const bestText = best
-      ? `최고점수 ${best.bestScore}\n최고별 ${best.bestStars} / 최고 라이프 ${best.bestLives}`
+      ? `BEST ${best.bestScore}점 · ★${best.bestStars} · ♥${best.bestLives}`
       : '아직 클리어 기록 없음';
 
     this.stageDetailText.setText(
-      `선택 전장\n` +
       `Stage ${stage.number}. ${stage.title}\n` +
       `${stage.subtitle}\n\n` +
-      `챕터: ${this.chapterStyle(stage).title}\n` +
-      `클리어 등급: ${this.clearGrade(best?.bestStars ?? 0).label}\n` +
-      `보스: ${this.stageBossName(stage) || '없음'}\n` +
-      `난이도: ${stage.difficulty}\n` +
-      `웨이브: ${stage.waves.length}\n` +
-      `초기 골드: $${stage.startGold}\n\n` +
+      `챕터  ${this.chapterStyle(stage).title.replace(' · ', '\n       ')}\n` +
+      `등급  ${this.clearGrade(best?.bestStars ?? 0).label}\n` +
+      `보스  ${this.stageBossName(stage) || '없음'}\n` +
+      `난이도 ${stage.difficulty}\n` +
+      `웨이브 ${stage.waves.length} · 시작 골드 $${stage.startGold}\n\n` +
       `${lockText}\n${bestText}\n\n` +
-      `TIP: ${stage.tip}`
+      `TIP. ${stage.tip}`
     );
 
     this.startButton?.setAlpha(unlocked ? 1 : 0.58);
     this.startButtonLabel?.setText(unlocked ? '전투 시작' : '잠김');
     this.updateChapterPresentation(false);
+    this.renderRouteOverlay();
+  }
+
+  private renderRouteOverlay(): void {
+    this.routeRoot?.destroy();
+    this.routeRoot = this.add.container(0, 0).setDepth(6);
+
+    const points = [
+      { x: 94, y: 390 },
+      { x: 200, y: 334 },
+      { x: 304, y: 384 },
+      { x: 416, y: 293 },
+      { x: 529, y: 336 },
+      { x: 628, y: 259 },
+      { x: 739, y: 306 },
+      { x: 858, y: 219 },
+    ];
+
+    const path = this.add.graphics();
+    path.lineStyle(10, 0x06112a, 0.22);
+    path.beginPath();
+    path.moveTo(points[0].x, points[0].y);
+    points.slice(1).forEach((point) => path.lineTo(point.x, point.y));
+    path.strokePath();
+    path.lineStyle(6, 0xffe38c, 0.78);
+    path.beginPath();
+    path.moveTo(points[0].x, points[0].y);
+    points.slice(1).forEach((point) => path.lineTo(point.x, point.y));
+    path.strokePath();
+    path.lineStyle(2, 0x9eeeff, 0.72);
+    path.beginPath();
+    path.moveTo(points[0].x, points[0].y);
+    points.slice(1).forEach((point) => path.lineTo(point.x, point.y));
+    path.strokePath();
+    this.routeRoot.add(path);
+
+    points.forEach((point, index) => {
+      const stage = STAGE_LIST[index];
+      const unlocked = stage ? this.isStageUnlocked(stage) : false;
+      const selected = index === this.selectedIndex;
+      const node = this.add.container(point.x, point.y).setDepth(7);
+      const glow = this.add.circle(0, 0, selected ? 31 : 24, selected ? 0x9eeeff : 0xffffff, selected ? 0.26 : 0.09);
+      const outer = this.add.circle(0, 0, selected ? 22 : 18, unlocked ? 0xfff0b6 : 0x8796a5, unlocked ? 0.92 : 0.50).setStrokeStyle(3, 0x14335e, unlocked ? 0.74 : 0.32);
+      const inner = this.add.circle(0, 0, selected ? 14 : 11, unlocked ? 0x236ab8 : 0x647382, unlocked ? 1 : 0.72).setStrokeStyle(2, 0xffffff, 0.78);
+      const label = this.add.text(0, 0, String(index + 1), {
+        fontSize: selected ? '15px' : '12px',
+        color: '#ffffff',
+        fontStyle: 'bold',
+        stroke: '#14335e',
+        strokeThickness: 3,
+      }).setOrigin(0.5);
+      const hit = this.add.circle(0, 0, 29, 0xffffff, 0.001).setInteractive({ useHandCursor: true });
+      node.add([glow, outer, inner, label, hit]);
+      hit.on('pointerdown', () => this.slideToIndex(index));
+      if (selected) {
+        this.tweens.add({ targets: glow, scaleX: 1.22, scaleY: 1.22, alpha: 0.36, duration: 1200, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+      }
+      this.routeRoot?.add(node);
+    });
+
+    const travel = this.add.circle(points[this.selectedIndex].x, points[this.selectedIndex].y, 5, 0xffffff, 0.88)
+      .setStrokeStyle(2, 0x9eeeff, 0.72);
+    this.routeRoot.add(travel);
+    this.tweens.add({ targets: travel, scaleX: 1.8, scaleY: 1.8, alpha: 0.2, duration: 820, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
   }
 
   private beginDrag(pointer: Phaser.Input.Pointer): void {
@@ -645,20 +806,23 @@ export class WorldMapScene extends Phaser.Scene {
 
   private makeArrowButton(x: number, y: number, label: string, onClick: () => void): Phaser.GameObjects.Container {
     const container = this.add.container(x, y).setDepth(26);
-    const shadow = this.add.circle(4, 5, 30, 0x000000, 0.32);
-    const base = this.add.circle(0, 0, 31, 0x5b2a16, 0.94).setStrokeStyle(3, 0xffd67a, 0.7);
-    const icon = this.add.text(0, -3, label, {
-      fontSize: '52px',
-      color: '#ffe7ad',
+    const shadow = this.add.circle(4, 6, 31, 0x06112a, 0.28);
+    const glow = this.add.circle(0, 0, 36, 0x9eeeff, 0.12);
+    const base = this.add.circle(0, 0, 31, 0xf8fcff, 0.82).setStrokeStyle(4, 0xe3bb54, 0.78);
+    const inner = this.add.circle(0, 0, 23, 0x236ab8, 0.88).setStrokeStyle(2, 0xffffff, 0.48);
+    const icon = this.add.text(0, -4, label, {
+      fontSize: '48px',
+      color: '#ffffff',
       fontStyle: 'bold',
-      stroke: '#1b0d07',
+      stroke: '#14335e',
       strokeThickness: 5,
     }).setOrigin(0.5);
-    const hit = this.add.circle(0, 0, 38, 0xffffff, 0.001).setInteractive({ useHandCursor: true });
-    container.add([shadow, base, icon, hit]);
-    hit.on('pointerdown', () => onClick());
-    hit.on('pointerover', () => this.tweens.add({ targets: container, scale: 1.08, duration: 90 }));
-    hit.on('pointerout', () => this.tweens.add({ targets: container, scale: 1, duration: 90 }));
+    const hit = this.add.circle(0, 0, 39, 0xffffff, 0.001).setInteractive({ useHandCursor: true });
+    container.add([shadow, glow, base, inner, icon, hit]);
+    hit.on('pointerdown', () => { playSfx(this, 'sfx_click'); onClick(); });
+    hit.on('pointerover', () => this.tweens.add({ targets: container, scale: 1.08, duration: 90, ease: 'Back.easeOut' }));
+    hit.on('pointerout', () => this.tweens.add({ targets: container, scale: 1, duration: 90, ease: 'Sine.easeOut' }));
+    this.tweens.add({ targets: glow, scaleX: 1.15, scaleY: 1.15, alpha: 0.22, duration: 1600, repeat: -1, yoyo: true, ease: 'Sine.easeInOut' });
     return container;
   }
 
@@ -691,6 +855,17 @@ export class WorldMapScene extends Phaser.Scene {
     return container;
   }
 
+
+  private addDecorImage(key: string, x: number, y: number, maxHeight: number, depth: number, flip = false): void {
+    if (!this.textures.exists(key)) return;
+    const texture = this.textures.get(key);
+    const source = texture.getSourceImage() as { width: number; height: number };
+    const image = this.add.image(x, y, key).setDepth(depth).setOrigin(0.5, 1);
+    const scale = maxHeight / source.height;
+    image.setScale(flip ? -scale : scale, scale);
+    image.setAlpha(0.94);
+    this.tweens.add({ targets: image, y: y - 4, duration: Phaser.Math.Between(1800, 2600), yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+  }
 
   private clearGrade(stars: number): ClearGrade {
     if (stars >= 3) return { label: 'LEGEND', color: 0xd4a62a, accent: 0xffef9f, alpha: 0.34 };
@@ -754,7 +929,7 @@ export class WorldMapScene extends Phaser.Scene {
   private updateChapterPresentation(animated: boolean): void {
     if (!this.chapterTitleText || !this.chapterSubText) return;
     const chapter = this.chapterStyle(this.selectedStage);
-    this.chapterTitleText.setText(chapter.title).setColor(this.colorToCss(chapter.fogColor));
+    this.chapterTitleText.setText(chapter.title).setColor(this.colorToCss(chapter.color));
     this.chapterSubText.setText(chapter.subtitle);
 
     this.routeGlow?.destroy();

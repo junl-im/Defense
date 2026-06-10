@@ -33,7 +33,7 @@ export class MenuScene extends Phaser.Scene {
     this.createFooterStrip();
 
     this.time.delayedCall(0, () => {
-      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MenuScene', version: '1.0', at: Date.now() } }));
+      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MenuScene', version: '1.1', at: Date.now() } }));
     });
 
     void this.bootstrapRedirectOrExistingUser();
@@ -50,7 +50,7 @@ export class MenuScene extends Phaser.Scene {
 
   private createTopUtilityBar(): void {
     const versionChip = addCodePanel(this, { x: 94, y: 28, width: 156, height: 28, radius: 14, depth: 18, fill: 0x183d72, fillAlpha: 0.66, stroke: 0x9ed7ff, strokeAlpha: 0.42 });
-    versionChip.add(this.add.text(0, 0, 'v1.0.0  PREMIUM ART PASS', {
+    versionChip.add(this.add.text(0, 0, 'v1.1.0  WORLD MAP ART PASS', {
       fontSize: '10px',
       color: '#ffffff',
       fontStyle: 'bold',

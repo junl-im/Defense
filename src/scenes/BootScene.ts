@@ -40,6 +40,7 @@ export class BootScene extends Phaser.Scene {
     // v1.0 clean visual stack: backgrounds are image assets; logo/buttons/panels are drawn in code.
     this.load.image('v1-login-bg', 'assets/backgrounds/login_background_v1_0.png');
     this.load.image('v1-main-menu-bg', 'assets/backgrounds/main_menu_background_v1_0.png');
+    this.load.image('v1-worldmap-bg', 'assets/backgrounds/worldmap_background_v1_1.png');
     ['hero_knight','hero_ranger','hero_mage','hero_guardian','hero_druid','tower_crystal','tower_sanctuary','tower_cannon','tower_grove','monster_goblin','monster_orc','monster_wolf','monster_skeleton','monster_dragon'].forEach((asset) => {
       this.load.image(`v1-${asset.replace(/_/g, '-')}`, `assets/v1_0/decor/${asset}_v1_0.png`);
     });
