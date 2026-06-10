@@ -26,13 +26,17 @@ export class MenuScene extends Phaser.Scene {
   create(): void {
     this.createPremiumBackground();
     this.createTopUtilityHints();
-    this.createCompactTitle();
-    this.createCompactCommandPanel();
-    this.createCompactStatusBar();
+    this.createBoutiqueTitle();
+    this.createBoutiqueCommandPanel();
+    this.createBoutiqueStatusBar();
     this.time.delayedCall(0, () => {
       window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MenuScene', at: Date.now() } }));
     });
     void this.bootstrapRedirectOrExistingUser();
+  }
+
+  private textureKey(primary: string, fallback: string): string {
+    return this.textures.exists(primary) ? primary : fallback;
   }
 
   private createPremiumBackground(): void {
@@ -42,28 +46,29 @@ export class MenuScene extends Phaser.Scene {
       this.add.rectangle(480, 270, 960, 540, 0x7fbfff, 1).setDepth(0);
       this.add.text(480, 270, 'KINGDOM SEED', { fontSize: '42px', color: '#ffffff', fontStyle: 'bold', stroke: '#1b4b96', strokeThickness: 6 }).setOrigin(0.5).setDepth(1);
     }
+
     addSoftBackdrop(this, 1);
-    this.add.rectangle(480, 270, 960, 540, 0xffffff, 0.035).setDepth(2);
-    this.add.rectangle(480, 508, 960, 64, 0x071a38, 0.34).setDepth(3);
+    this.add.rectangle(480, 270, 960, 540, 0xffffff, 0.026).setDepth(2);
+    this.add.rectangle(480, 516, 960, 48, 0x071a38, 0.28).setDepth(3);
 
-    const glow = this.add.ellipse(480, 112, 490, 126, 0x8cc4ff, 0.13).setDepth(4);
-    this.tweens.add({ targets: glow, alpha: 0.22, scaleX: 1.04, scaleY: 1.08, duration: 1800, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+    const glow = this.add.ellipse(480, 91, 410, 104, 0x8cc4ff, 0.11).setDepth(4);
+    this.tweens.add({ targets: glow, alpha: 0.19, scaleX: 1.035, scaleY: 1.055, duration: 1850, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
 
-    for (let i = 0; i < 18; i += 1) {
+    for (let i = 0; i < 14; i += 1) {
       if (!this.textures.exists('ui-particles')) break;
       const p = this.add.sprite(
-        Phaser.Math.Between(82, 878),
-        Phaser.Math.Between(54, 500),
+        Phaser.Math.Between(96, 864),
+        Phaser.Math.Between(58, 488),
         'ui-particles',
         Phaser.Math.Between(0, 3)
-      ).setDepth(5).setAlpha(Phaser.Math.FloatBetween(0.08, 0.22)).setScale(Phaser.Math.FloatBetween(0.24, 0.56));
+      ).setDepth(5).setAlpha(Phaser.Math.FloatBetween(0.06, 0.18)).setScale(Phaser.Math.FloatBetween(0.18, 0.44));
       p.play('ui-particle-glow');
       this.tweens.add({
         targets: p,
-        x: p.x + Phaser.Math.Between(-18, 18),
-        y: p.y - Phaser.Math.Between(8, 26),
-        alpha: Phaser.Math.FloatBetween(0.04, 0.18),
-        duration: Phaser.Math.Between(2300, 4700),
+        x: p.x + Phaser.Math.Between(-14, 14),
+        y: p.y - Phaser.Math.Between(6, 20),
+        alpha: Phaser.Math.FloatBetween(0.03, 0.15),
+        duration: Phaser.Math.Between(2500, 5000),
         yoyo: true,
         repeat: -1,
         ease: 'Sine.easeInOut'
@@ -72,19 +77,19 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private createTopUtilityHints(): void {
-    const topChip = this.textures.exists('ui-top-chip-compact-v48') ? 'ui-top-chip-compact-v48' : 'ui-button-blue';
+    const topChip = this.textureKey('ui-top-chip-boutique-v49', this.textureKey('ui-top-chip-compact-v48', 'ui-button-blue'));
     const items = [
-      { x: 756, icon: '📢', label: '공지' },
-      { x: 836, icon: '🎧', label: '문의' },
-      { x: 916, icon: '⚙', label: '설정' },
+      { x: 770, icon: '📢', label: '공지' },
+      { x: 842, icon: '🎧', label: '문의' },
+      { x: 914, icon: '⚙', label: '설정' },
     ];
 
     items.forEach((item) => {
-      const c = this.add.container(item.x, 31).setDepth(25);
-      c.add(this.add.image(0, 0, topChip).setDisplaySize(72, 30).setAlpha(0.92));
-      c.add(this.add.text(-18, -1, item.icon, { fontSize: '14px' }).setOrigin(0.5));
-      c.add(this.add.text(12, -1, item.label, {
-        fontSize: '10px',
+      const c = this.add.container(item.x, 29).setDepth(25);
+      c.add(this.add.image(0, 0, topChip).setDisplaySize(62, 26).setAlpha(0.92));
+      c.add(this.add.text(-14, -1, item.icon, { fontSize: '12px' }).setOrigin(0.5));
+      c.add(this.add.text(10, -1, item.label, {
+        fontSize: '9px',
         color: '#ffffff',
         fontStyle: 'bold',
         stroke: '#153066',
@@ -92,26 +97,29 @@ export class MenuScene extends Phaser.Scene {
       }).setOrigin(0.5));
     });
 
-    this.add.text(18, 17, 'v4.8 COMPACT PREMIUM', {
-      fontSize: '10px',
+    this.add.text(18, 15, 'v4.9 CLEAN VISUAL', {
+      fontSize: '9px',
       color: '#eef6ff',
       fontStyle: 'bold',
-      backgroundColor: '#09245188',
-      padding: { x: 7, y: 3 }
+      backgroundColor: '#09245177',
+      padding: { x: 6, y: 3 }
     }).setDepth(26);
   }
 
-  private createCompactTitle(): void {
-    if (this.textures.exists('ui-title-ornaments-v48')) {
-      this.add.image(480, 102, 'ui-title-ornaments-v48').setDisplaySize(360, 160).setDepth(17).setAlpha(0.78);
+  private createBoutiqueTitle(): void {
+    const ornamentKey = this.textureKey('ui-title-ornaments-boutique-v49', this.textureKey('ui-title-ornaments-v48', 'ui-status-plaque'));
+    this.add.image(480, 86, ornamentKey).setDisplaySize(310, 104).setDepth(17).setAlpha(0.66);
+
+    const logoKey = this.textureKey('ui-title-logo-boutique-v49', this.textureKey('ui-title-logo-compact-v48', 'ui-title-logo'));
+    const logo = this.add.image(480, 86, logoKey).setDisplaySize(326, 113).setDepth(22);
+    this.tweens.add({ targets: logo, y: 83, duration: 1900, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+
+    if (this.textures.exists('ui-jewel-divider-boutique-v49')) {
+      this.add.image(480, 142, 'ui-jewel-divider-boutique-v49').setDisplaySize(116, 17).setDepth(23).setAlpha(0.88);
     }
 
-    const logoKey = this.textures.exists('ui-title-logo-compact-v48') ? 'ui-title-logo-compact-v48' : 'ui-title-logo';
-    const logo = this.add.image(480, 96, logoKey).setDisplaySize(390, 132).setDepth(22);
-    this.tweens.add({ targets: logo, y: 92, duration: 1750, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
-
-    this.add.text(480, 165, '작지만 또렷하게 정리한 프리미엄 로그인', {
-      fontSize: '14px',
+    this.add.text(480, 158, '작고 선명한 왕국 방어 로비', {
+      fontSize: '12px',
       color: '#ffffff',
       fontStyle: 'bold',
       stroke: '#144081',
@@ -119,40 +127,42 @@ export class MenuScene extends Phaser.Scene {
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 4, fill: true },
     }).setOrigin(0.5).setDepth(23);
 
-    if (this.textures.exists('fx-compact-shimmer-v48')) {
-      for (let i = 0; i < 4; i += 1) {
-        const s = this.add.sprite(346 + i * 88, 76 + (i % 2) * 34, 'fx-compact-shimmer-v48').setDepth(24).setScale(0.7).setAlpha(0.72);
-        s.play({ key: 'fx-compact-shimmer-v48-anim', repeat: -1, frameRate: 8, startFrame: i % 8 });
+    const shimmerKey = this.textures.exists('fx-boutique-shimmer-v49') ? 'fx-boutique-shimmer-v49' : 'fx-compact-shimmer-v48';
+    const animKey = this.textures.exists('fx-boutique-shimmer-v49') ? 'fx-boutique-shimmer-v49-anim' : 'fx-compact-shimmer-v48-anim';
+    if (this.textures.exists(shimmerKey) && this.anims.exists(animKey)) {
+      for (let i = 0; i < 3; i += 1) {
+        const s = this.add.sprite(382 + i * 49, 67 + (i % 2) * 28, shimmerKey).setDepth(24).setScale(0.62).setAlpha(0.72);
+        s.play({ key: animKey, repeat: -1, frameRate: 8, startFrame: i % 8 });
       }
     }
   }
 
-  private createCompactCommandPanel(): void {
-    this.loginPanel = this.add.container(480, 330).setDepth(40);
+  private createBoutiqueCommandPanel(): void {
+    this.loginPanel = this.add.container(480, 320).setDepth(40);
 
-    const panelKey = this.textures.exists('ui-login-panel-compact-v48') ? 'ui-login-panel-compact-v48' : 'ui-login-panel';
-    const primaryKey = this.textures.exists('ui-button-compact-gold-v48') ? 'ui-button-compact-gold-v48' : 'ui-button-primary';
-    const blueKey = this.textures.exists('ui-button-compact-blue-v48') ? 'ui-button-compact-blue-v48' : 'ui-button-blue';
-    const whiteKey = this.textures.exists('ui-button-compact-white-v48') ? 'ui-button-compact-white-v48' : 'ui-button-gold';
-    const redKey = this.textures.exists('ui-button-compact-red-v48') ? 'ui-button-compact-red-v48' : 'ui-button-red';
+    const panelKey = this.textureKey('ui-login-panel-boutique-v49', this.textureKey('ui-login-panel-compact-v48', 'ui-login-panel'));
+    const primaryKey = this.textureKey('ui-button-boutique-gold-v49', this.textureKey('ui-button-compact-gold-v48', 'ui-button-primary'));
+    const blueKey = this.textureKey('ui-button-boutique-blue-v49', this.textureKey('ui-button-compact-blue-v48', 'ui-button-blue'));
+    const whiteKey = this.textureKey('ui-button-boutique-white-v49', this.textureKey('ui-button-compact-white-v48', 'ui-button-gold'));
+    const redKey = this.textureKey('ui-button-boutique-red-v49', this.textureKey('ui-button-compact-red-v48', 'ui-button-red'));
 
-    this.loginPanel.add(this.add.image(0, 0, panelKey).setDisplaySize(382, 276));
+    this.loginPanel.add(this.add.image(0, 0, panelKey).setDisplaySize(338, 232));
 
-    this.statusText = this.add.text(0, -83, '로그인 상태 확인 중...', {
-      fontSize: '12px',
+    this.statusText = this.add.text(0, -63, '로그인 확인 중...', {
+      fontSize: '11px',
       color: '#3a5d96',
       align: 'center',
-      fixedWidth: 294,
-      backgroundColor: '#f2f8ffee',
-      padding: { x: 8, y: 4 }
+      fixedWidth: 260,
+      backgroundColor: '#f2f8ffdd',
+      padding: { x: 7, y: 3 }
     }).setOrigin(0.5);
     this.loginPanel.add(this.statusText);
 
     this.loginPanel.add(addPremiumButton(this, {
       x: 0,
-      y: -29,
-      width: 292,
-      height: 50,
+      y: -18,
+      width: 252,
+      height: 42,
       texture: primaryKey,
       icon: 'ui-icon-anonymous',
       label: '바로 시작',
@@ -161,9 +171,9 @@ export class MenuScene extends Phaser.Scene {
 
     this.loginPanel.add(addPremiumButton(this, {
       x: 0,
-      y: 29,
-      width: 292,
-      height: 50,
+      y: 32,
+      width: 252,
+      height: 42,
       texture: blueKey,
       icon: 'ui-icon-google',
       label: 'Google 연동',
@@ -171,10 +181,10 @@ export class MenuScene extends Phaser.Scene {
     }));
 
     this.loginPanel.add(addPremiumButton(this, {
-      x: -74,
-      y: 92,
-      width: 136,
-      height: 44,
+      x: -65,
+      y: 82,
+      width: 118,
+      height: 38,
       texture: whiteKey,
       icon: 'ui-icon-email',
       label: '이메일',
@@ -182,35 +192,35 @@ export class MenuScene extends Phaser.Scene {
     }));
 
     this.loginPanel.add(addPremiumButton(this, {
-      x: 74,
-      y: 92,
-      width: 136,
-      height: 44,
+      x: 65,
+      y: 82,
+      width: 118,
+      height: 38,
       texture: redKey,
       icon: 'ui-icon-register',
       label: '가입',
       onClick: () => void this.startEmailRegister()
     }));
 
-    this.loginPanel.add(this.add.text(0, 128, '계정 없이도 진행 가능 · 연동 시 저장 유지', {
-      fontSize: '11px',
+    this.loginPanel.add(this.add.text(0, 109, '게스트 진행 가능 · 연동 시 저장 유지', {
+      fontSize: '10px',
       color: '#5d789e',
       fontStyle: 'bold'
     }).setOrigin(0.5));
 
-    this.loginPanel.setAlpha(0).setScale(0.96).setY(342);
-    this.tweens.add({ targets: this.loginPanel, alpha: 1, y: 330, scaleX: 1, scaleY: 1, duration: 330, ease: 'Back.easeOut' });
+    this.loginPanel.setAlpha(0).setScale(0.965).setY(330);
+    this.tweens.add({ targets: this.loginPanel, alpha: 1, y: 320, scaleX: 1, scaleY: 1, duration: 310, ease: 'Back.easeOut' });
   }
 
-  private createCompactStatusBar(): void {
-    const stripKey = this.textures.exists('ui-footer-strip-compact-v48') ? 'ui-footer-strip-compact-v48' : 'ui-status-plaque';
-    this.add.image(480, 505, stripKey).setDisplaySize(420, 48).setDepth(18).setAlpha(0.96);
-    this.add.text(480, 504, '영웅 · 유물 · 타워 진화 · 원정 · 보스 토벌', {
-      fontSize: '12px',
+  private createBoutiqueStatusBar(): void {
+    const stripKey = this.textureKey('ui-footer-strip-boutique-v49', this.textureKey('ui-footer-strip-compact-v48', 'ui-status-plaque'));
+    this.add.image(480, 505, stripKey).setDisplaySize(370, 40).setDepth(18).setAlpha(0.95);
+    this.add.text(480, 504, '영웅 · 유물 · 타워 진화 · 보스 토벌', {
+      fontSize: '11px',
       color: '#ffffff',
       align: 'center',
       fontStyle: 'bold',
-      fixedWidth: 390,
+      fixedWidth: 350,
       stroke: '#183c80',
       strokeThickness: 3
     }).setOrigin(0.5).setDepth(19);
@@ -245,7 +255,7 @@ export class MenuScene extends Phaser.Scene {
     await this.withLoading(async () => {
       const user = await loginWithGoogle();
       if (!user) {
-        this.statusText.setText('Google 이동 중... 돌아오면 이어집니다.');
+        this.statusText.setText('Google 이동 중...');
         return;
       }
       const save = await loadOrCreateSave(user);
@@ -292,7 +302,7 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private enterWorldMap(user: User, save: PlayerSave): void {
-    this.cameras.main.fadeOut(240, 255, 255, 255);
-    this.time.delayedCall(240, () => this.scene.start('WorldMapScene', { user, save }));
+    this.cameras.main.fadeOut(220, 255, 255, 255);
+    this.time.delayedCall(220, () => this.scene.start('WorldMapScene', { user, save }));
   }
 }

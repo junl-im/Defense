@@ -1,0 +1,21 @@
+{
+  "latestPatch": "v4.9",
+  "stableDocsOnly": true,
+  "docPolicy": [
+    "README.md",
+    "docs/PATCH_NOTES.md",
+    "docs/VISUAL_GUIDE.md",
+    "docs/ASSET_MANIFEST.json",
+    "docs/CLEANUP_POLICY.md"
+  ],
+  "newAssets": [
+    "public/assets/ui/title_logo_boutique_v49.png",
+    "public/assets/ui/login_panel_boutique_v49.png",
+    "public/assets/ui/button_boutique_gold_v49.png",
+    "public/assets/ui/button_boutique_blue_v49.png",
+    "public/assets/ui/button_boutique_red_v49.png",
+    "public/assets/ui/button_boutique_white_v49.png",
+    "public/assets/ui/footer_strip_boutique_v49.png",
+    "public/assets/effects/boutique_shimmer_v49.png"
+  ]
+}

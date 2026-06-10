@@ -48,6 +48,11 @@ export class Tower extends Phaser.GameObjects.Container {
   private overdriveUntil = 0;
   private overdriveAura?: Phaser.GameObjects.Arc;
   private masteryAura?: Phaser.GameObjects.Arc;
+  private suppressionUntil = 0;
+  private suppressionDamageMultiplier = 1;
+  private suppressionFireRateMultiplier = 1;
+  private suppressionAura?: Phaser.GameObjects.Arc;
+  private suppressionLabel?: Phaser.GameObjects.Text;
 
   constructor(scene: Phaser.Scene, x: number, y: number, public readonly config: TowerConfig) {
     super(scene, x, y);
@@ -103,6 +108,66 @@ export class Tower extends Phaser.GameObjects.Container {
     return Math.max(0, Math.ceil((this.overdriveUntil - this.scene.time.now) / 1000));
   }
 
+  get isSuppressed(): boolean {
+    return this.scene.time.now < this.suppressionUntil;
+  }
+
+  applySuppression(
+    durationMs = 1800,
+    damageMultiplier = 0.9,
+    fireRateMultiplier = 1.12,
+    color = 0xff5b4f,
+    label = '압박'
+  ): void {
+    this.suppressionUntil = Math.max(this.suppressionUntil, this.scene.time.now + durationMs);
+    this.suppressionDamageMultiplier = Math.min(this.suppressionDamageMultiplier, damageMultiplier);
+    this.suppressionFireRateMultiplier = Math.max(this.suppressionFireRateMultiplier, fireRateMultiplier);
+
+    if (!this.suppressionAura || !this.suppressionAura.active) {
+      this.suppressionAura = this.scene.add.circle(this.x, this.y, 50, color, 0.08)
+        .setStrokeStyle(2, color, 0.48)
+        .setDepth(23);
+      this.scene.tweens.add({
+        targets: this.suppressionAura,
+        scale: 1.18,
+        alpha: 0.02,
+        duration: 520,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut',
+      });
+    }
+
+    this.suppressionAura.setFillStyle(color, 0.08).setStrokeStyle(2, color, 0.48);
+    this.suppressionLabel?.destroy();
+    this.suppressionLabel = this.scene.add.text(this.x, this.y - 68, label, {
+      fontSize: '12px',
+      color: '#ffe8b8',
+      fontStyle: 'bold',
+      stroke: '#2a0e0e',
+      strokeThickness: 3,
+    }).setOrigin(0.5).setDepth(72);
+    this.scene.tweens.add({
+      targets: this.suppressionLabel,
+      y: this.y - 82,
+      alpha: 0,
+      duration: Math.min(900, Math.max(420, durationMs * 0.32)),
+      ease: 'Cubic.easeOut',
+      onComplete: () => {
+        this.suppressionLabel?.destroy();
+        this.suppressionLabel = undefined;
+      },
+    });
+
+    this.scene.tweens.add({
+      targets: [this.sprite, this.top, this.roof].filter(Boolean),
+      tint: color,
+      duration: 80,
+      yoyo: true,
+      onComplete: () => this.sprite?.clearTint(),
+    });
+  }
+
   get currentRange(): number {
     let range = this.config.range + (this.level - 1) * 18 + (this.isOverdriven ? 10 : 0);
     if (this.mastery === 'archer_longbow') range += 22;
@@ -128,6 +193,7 @@ export class Tower extends Phaser.GameObjects.Container {
     if (this.mastery === 'barracks_assault') multiplier *= 1.18;
     if (this.mastery === 'artillery_mortar') multiplier *= 1.14;
     if (this.isOverdriven) multiplier *= 1.16;
+    if (this.isSuppressed) multiplier *= this.suppressionDamageMultiplier;
     return Math.round(this.config.damage * multiplier);
   }
 
@@ -135,7 +201,8 @@ export class Tower extends Phaser.GameObjects.Container {
     const relicRate = this.config.kind === 'archer' ? this.relicBonuses.archerFireRateMultiplier : 1;
     const overdriveRate = this.isOverdriven ? 0.58 : 1;
     const masteryRate = this.mastery === 'archer_longbow' ? 0.72 : this.mastery === 'mage_hex' ? 0.88 : 1;
-    return Math.max(190, Math.round(this.config.fireRateMs * (1 - (this.level - 1) * 0.1) * relicRate * overdriveRate * masteryRate));
+    const suppressionRate = this.isSuppressed ? this.suppressionFireRateMultiplier : 1;
+    return Math.max(190, Math.round(this.config.fireRateMs * (1 - (this.level - 1) * 0.1) * relicRate * overdriveRate * masteryRate * suppressionRate));
   }
 
   get currentSplashRadius(): number | undefined {
@@ -237,6 +304,8 @@ export class Tower extends Phaser.GameObjects.Container {
     this.soldiers = [];
     this.overdriveAura?.destroy();
     this.masteryAura?.destroy();
+    this.suppressionAura?.destroy();
+    this.suppressionLabel?.destroy();
     this.destroy();
   }
 
@@ -249,6 +318,15 @@ export class Tower extends Phaser.GameObjects.Container {
       if (!this.isOverdriven) {
         this.overdriveAura.destroy();
         this.overdriveAura = undefined;
+      }
+    }
+    if (this.suppressionAura?.active) {
+      this.suppressionAura.setPosition(this.x, this.y);
+      if (!this.isSuppressed) {
+        this.suppressionAura.destroy();
+        this.suppressionAura = undefined;
+        this.suppressionDamageMultiplier = 1;
+        this.suppressionFireRateMultiplier = 1;
       }
     }
     if (this.masteryAura?.active) this.masteryAura.setPosition(this.x, this.y);

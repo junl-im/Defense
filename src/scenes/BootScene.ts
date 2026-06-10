@@ -47,6 +47,18 @@ export class BootScene extends Phaser.Scene {
     this.load.image('ui-top-chip-compact-v48', 'assets/ui/top_chip_compact_v48.png');
     this.load.image('ui-title-ornaments-v48', 'assets/ui/title_side_ornaments_v48.png');
     this.load.spritesheet('fx-compact-shimmer-v48', 'assets/effects/compact_shimmer_v48.png', { frameWidth: 32, frameHeight: 32 });
+    this.load.image('ui-title-logo-boutique-v49', 'assets/ui/title_logo_boutique_v49.png');
+    this.load.image('ui-login-panel-boutique-v49', 'assets/ui/login_panel_boutique_v49.png');
+    this.load.image('ui-button-boutique-gold-v49', 'assets/ui/button_boutique_gold_v49.png');
+    this.load.image('ui-button-boutique-blue-v49', 'assets/ui/button_boutique_blue_v49.png');
+    this.load.image('ui-button-boutique-red-v49', 'assets/ui/button_boutique_red_v49.png');
+    this.load.image('ui-button-boutique-white-v49', 'assets/ui/button_boutique_white_v49.png');
+    this.load.image('ui-footer-strip-boutique-v49', 'assets/ui/footer_strip_boutique_v49.png');
+    this.load.image('ui-top-chip-boutique-v49', 'assets/ui/top_chip_boutique_v49.png');
+    this.load.image('ui-title-ornaments-boutique-v49', 'assets/ui/title_ornaments_boutique_v49.png');
+    this.load.image('ui-jewel-divider-boutique-v49', 'assets/ui/jewel_divider_boutique_v49.png');
+    this.load.spritesheet('fx-boutique-shimmer-v49', 'assets/effects/boutique_shimmer_v49.png', { frameWidth: 28, frameHeight: 28 });
+
 
     this.load.image('ui-login-panel', 'assets/ui/panel_login_ornate.png');
     this.load.image('ui-status-plaque', 'assets/ui/status_plaque.png');
@@ -306,6 +318,10 @@ export class BootScene extends Phaser.Scene {
 
     if (this.textures.exists('fx-compact-shimmer-v48') && !this.anims.exists('fx-compact-shimmer-v48-anim')) {
       this.anims.create({ key: 'fx-compact-shimmer-v48-anim', frames: this.anims.generateFrameNumbers('fx-compact-shimmer-v48', { start: 0, end: 7 }), frameRate: 8, repeat: -1 });
+    }
+
+    if (this.textures.exists('fx-boutique-shimmer-v49') && !this.anims.exists('fx-boutique-shimmer-v49-anim')) {
+      this.anims.create({ key: 'fx-boutique-shimmer-v49-anim', frames: this.anims.generateFrameNumbers('fx-boutique-shimmer-v49', { start: 0, end: 7 }), frameRate: 9, repeat: -1 });
     }
 
     this.createAnimations();
