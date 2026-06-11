@@ -64,7 +64,7 @@ export class MainMenuScene extends Phaser.Scene {
     this.createSmallStatusToast();
 
     this.time.delayedCall(0, () => {
-      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MainMenuScene', version: '2.14', at: Date.now() } }));
+      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MainMenuScene', version: '2.15', at: Date.now() } }));
     });
   }
 
@@ -77,12 +77,12 @@ export class MainMenuScene extends Phaser.Scene {
     };
 
     const nav = this.add.graphics().setDepth(6);
-    nav.fillStyle(0x06142c, 0.34).fillRoundedRect(118, 470, 724, 50, 23);
-    nav.lineStyle(1, 0xffdc82, 0.30).strokeRoundedRect(118, 470, 724, 50, 23);
-    nav.lineStyle(1, 0x9fe8ff, 0.17).strokeRoundedRect(130, 476, 700, 38, 19);
+    nav.fillStyle(0x06142c, 0.30).fillRoundedRect(132, 472, 696, 46, 22);
+    nav.lineStyle(1, 0xffdc82, 0.28).strokeRoundedRect(132, 472, 696, 46, 22);
+    nav.lineStyle(1, 0x9fe8ff, 0.15).strokeRoundedRect(144, 478, 672, 34, 18);
 
     [
-      [203, 501, 166, 42], [480, 501, 194, 48], [754, 501, 166, 42],
+      [208, 501, 158, 38], [480, 501, 184, 44], [752, 501, 158, 38],
     ].forEach(([x, y, w, h]) => addAsset('v2-lobby-side-button-v210', Number(x), Number(y), Number(w), Number(h), 8));
 
     [
@@ -129,9 +129,9 @@ export class MainMenuScene extends Phaser.Scene {
         .setDepth(9);
     };
 
-    addLabel(203, 501, '월드맵', 13, 174);
-    addLabel(480, 500, '전투', 15, 190);
-    addLabel(754, 501, '모험', 13, 174);
+    addLabel(208, 501, '월드맵', 12, 162);
+    addLabel(480, 500, '전투', 14, 184);
+    addLabel(752, 501, '모험', 12, 162);
 
     [
       ['상점', 86, 270], ['영웅', 86, 322], ['도감', 86, 374], ['우편함', 86, 426], ['이벤트', 86, 478],
@@ -178,9 +178,9 @@ export class MainMenuScene extends Phaser.Scene {
 
   private createPremiumHitZones(): void {
     // Bottom primary navigation from the baked premium lobby art.
-    this.addHotspot({ x: 203, y: 502, width: 174, height: 44, radius: 25, tone: 'blue', onClick: () => this.goWorldMap() });
-    this.addHotspot({ x: 480, y: 501, width: 198, height: 50, radius: 30, tone: 'gold', onClick: () => this.quickBattle() });
-    this.addHotspot({ x: 754, y: 502, width: 174, height: 44, radius: 25, tone: 'blue', onClick: () => this.goScene('MissionBoardScene') });
+    this.addHotspot({ x: 208, y: 502, width: 158, height: 38, radius: 25, tone: 'blue', onClick: () => this.goWorldMap() });
+    this.addHotspot({ x: 480, y: 501, width: 184, height: 44, radius: 30, tone: 'gold', onClick: () => this.quickBattle() });
+    this.addHotspot({ x: 752, y: 502, width: 158, height: 38, radius: 25, tone: 'blue', onClick: () => this.goScene('MissionBoardScene') });
 
     // Left vertical lobby buttons.
     this.addHotspot({ x: 86, y: 271, width: 112, height: 34, radius: 17, tone: 'white', onClick: () => this.showToast('상점은 원화급 상점 패스에서 연결합니다.') });
@@ -266,11 +266,11 @@ export class MainMenuScene extends Phaser.Scene {
 
     this.toastBack.clear();
     this.toastBack.fillStyle(0x071c3e, 0.66);
-    this.toastBack.fillRoundedRect(260, 439, 440, 40, 19);
+    this.toastBack.fillRoundedRect(276, 441, 408, 36, 18);
     this.toastBack.lineStyle(2, 0xffdc82, 0.60);
-    this.toastBack.strokeRoundedRect(260, 439, 440, 40, 19);
+    this.toastBack.strokeRoundedRect(276, 441, 408, 36, 18);
     this.toastBack.lineStyle(1, 0xffffff, 0.28);
-    this.toastBack.strokeRoundedRect(265, 444, 430, 30, 15);
+    this.toastBack.strokeRoundedRect(281, 446, 398, 26, 13);
 
     this.toastText.setText(message);
     this.tweens.killTweensOf([this.toastBack, this.toastText]);

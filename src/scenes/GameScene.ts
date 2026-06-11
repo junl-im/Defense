@@ -342,19 +342,19 @@ export class GameScene extends Phaser.Scene {
 
   private drawHudChrome(): void {
     if (this.textures.exists('v1-combat-top-hud')) {
-      this.add.image(480, 25, 'v1-combat-top-hud').setDisplaySize(940, 48).setDepth(70);
+      this.add.image(480, 24, 'v1-combat-top-hud').setDisplaySize(930, 44).setDepth(70);
     } else if (this.textures.exists('ui-hud-top-panel')) {
       this.add.image(480, 32, 'ui-hud-top-panel').setDisplaySize(960, 64).setDepth(70);
     } else {
-      this.add.rectangle(480, 30, 960, 60, 0x0b1220, 0.9).setDepth(70);
+      this.add.rectangle(480, 28, 960, 56, 0x0b1220, 0.9).setDepth(70);
     }
 
     if (this.textures.exists('v1-combat-bottom-dock')) {
-      this.add.image(480, 509, 'v1-combat-bottom-dock').setDisplaySize(924, 58).setDepth(70);
+      this.add.image(480, 511, 'v1-combat-bottom-dock').setDisplaySize(916, 54).setDepth(70);
     } else if (this.textures.exists('ui-hud-bottom-panel')) {
       this.add.image(480, 510, 'ui-hud-bottom-panel').setDisplaySize(960, 64).setDepth(70);
     } else {
-      this.add.rectangle(480, 510, 960, 60, 0x0b1220, 0.82).setDepth(70);
+      this.add.rectangle(480, 512, 960, 56, 0x0b1220, 0.82).setDepth(70);
     }
   }
 
@@ -791,17 +791,17 @@ export class GameScene extends Phaser.Scene {
     this.tacticalOrderDraft = root;
     const blocker = this.add.rectangle(0, 0, 960, 540, 0x020611, 0.48).setInteractive({ useHandCursor: false });
     const panel = this.textures.exists('v2-order-panel-v27')
-      ? this.add.image(0, 4, 'v2-order-panel-v27').setDisplaySize(900, 310)
-      : this.add.rectangle(0, 4, 900, 310, 0x07101e, 0.92).setStrokeStyle(3, 0xffd56c, 0.62);
-    const title = this.add.text(0, -132, reason === 'opening' ? '오늘의 작전 명령 선택' : '전황 카드 선택', {
+      ? this.add.image(0, 4, 'v2-order-panel-v27').setDisplaySize(820, 286)
+      : this.add.rectangle(0, 4, 820, 286, 0x07101e, 0.92).setStrokeStyle(3, 0xffd56c, 0.62);
+    const title = this.add.text(0, -122, reason === 'opening' ? '오늘의 작전 명령 선택' : '전황 카드 선택', {
       fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
-      fontSize: '20px',
+      fontSize: '18px',
       fontStyle: 'bold',
       color: '#fff4c2',
       stroke: '#092247',
       strokeThickness: 4,
     }).setOrigin(0.5);
-    const subtitle = this.add.text(0, -104, '모바일 전투 흐름에 맞춰 한 장을 골라 이번 전투를 강화하세요.', {
+    const subtitle = this.add.text(0, -98, '모바일 전투 흐름에 맞춰 한 장을 골라 이번 전투를 강화하세요.', {
       fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
       fontSize: '10px',
       fontStyle: 'bold',
@@ -810,11 +810,11 @@ export class GameScene extends Phaser.Scene {
     root.add([blocker, panel, title, subtitle]);
 
     choices.forEach((choice, index) => {
-      const card = renderTacticalOrderCard(this, -276 + index * 276, 22, choice, () => this.pickTacticalOrder(choice));
+      const card = renderTacticalOrderCard(this, -248 + index * 248, 18, choice, () => this.pickTacticalOrder(choice));
       root.add(card);
     });
 
-    const skip = this.add.text(0, 142, reason === 'manual' ? '닫기' : '이번에는 건너뛰기', {
+    const skip = this.add.text(0, 129, reason === 'manual' ? '닫기' : '이번에는 건너뛰기', {
       fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
       fontSize: '10px',
       fontStyle: 'bold',
@@ -974,7 +974,7 @@ export class GameScene extends Phaser.Scene {
     const tagBg = this.add.rectangle(x, y + 18, 42, 13, 0x130d09, 0.78).setStrokeStyle(1, 0xffd36b, 0.35).setDepth(16);
     const tag = this.add.text(x, y + 18, '건설', { fontSize: '7px', color: '#ffefb4', fontStyle: 'bold' }).setOrigin(0.5).setDepth(17);
     const premiumPad = this.textures.exists('v1-build-spot')
-      ? this.add.image(x, y + 1, 'v1-build-spot').setDisplaySize(34, 25).setDepth(13)
+      ? this.add.image(x, y + 1, 'v1-build-spot').setDisplaySize(31, 23).setDepth(13)
       : undefined;
     if (premiumPad) {
       shadow.setVisible(false);
@@ -986,7 +986,7 @@ export class GameScene extends Phaser.Scene {
       tag.setText('건설').setColor('#eaf6ff');
     }
     const premiumPreview = addBuildSpotPreview(this, x, y, 0xffd36b);
-    premiumPreview.setScale(0.58);
+    premiumPreview.setScale(0.52);
     premiumPreview.setVisible(false);
     const largeHitZone = this.add.rectangle(x, y + 1, V210_BUILD_HIT.width, V210_BUILD_HIT.height, 0xffffff, 0.001)
       .setDepth(19)
@@ -1041,7 +1041,7 @@ export class GameScene extends Phaser.Scene {
     this.castingSpell = undefined;
     this.destroySelectedPanel();
     this.destroyBuildMenu();
-    const menuPos = this.clampOverlayPosition(x, y - 10, V210_BUILD_MENU.width, V210_BUILD_MENU.height, 8, 86);
+    const menuPos = this.clampOverlayPosition(x, y - 8, V210_BUILD_MENU.width, V210_BUILD_MENU.height, 7, 80);
     const menu = this.add.container(menuPos.x, menuPos.y).setDepth(58);
     this.activeBuildMenu = menu;
     menu.once('destroy', () => {
@@ -1059,23 +1059,23 @@ export class GameScene extends Phaser.Scene {
         ? this.add.image(0, 0, 'ui-build-menu-frame-v47').setDisplaySize(V210_BUILD_MENU.width, V210_BUILD_MENU.height)
         : this.add.rectangle(0, 0, V210_BUILD_MENU.width, V210_BUILD_MENU.height, 0x130d09, 0.94).setStrokeStyle(3, 0xffd36b, 0.58);
     const header = this.add.text(0, -56, '방어 시설 선택', {
-      fontSize: '9px', color: '#fff8d2', fontStyle: 'bold',
+      fontSize: '8px', color: '#fff8d2', fontStyle: 'bold',
       fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif',
       shadow: { offsetX: 0, offsetY: 2, color: '#001b45', blur: 2, fill: true }
     }).setOrigin(0.5);
     const nextGroups = this.stage.waves[Math.max(0, this.waveRunning ? this.waveIndex : this.waveIndex + 1)] ?? [];
     const buildAdvisor = recommendTowerForWaveV29(nextGroups, ENEMIES);
-    const hint = this.add.text(0, -41, `${buildAdvisor.title} · ${towerRoleLineV29(buildAdvisor.recommendedTower)}`, {
-      fontSize: '8px', color: '#355d96', fontStyle: 'bold',
+    const hint = this.add.text(0, -39, `${buildAdvisor.title} · ${towerRoleLineV29(buildAdvisor.recommendedTower)}`, {
+      fontSize: '7px', color: '#355d96', fontStyle: 'bold',
       fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif'
     }).setOrigin(0.5);
     menu.add([bg, header, hint]);
 
     const positions = [
-      { kind: 'archer' as TowerKind, x: -52, y: -5 },
-      { kind: 'mage' as TowerKind, x: 52, y: -5 },
-      { kind: 'barracks' as TowerKind, x: -52, y: 32 },
-      { kind: 'artillery' as TowerKind, x: 52, y: 32 },
+      { kind: 'archer' as TowerKind, x: -49, y: -4 },
+      { kind: 'mage' as TowerKind, x: 49, y: -4 },
+      { kind: 'barracks' as TowerKind, x: -49, y: 29 },
+      { kind: 'artillery' as TowerKind, x: 49, y: 29 },
     ];
 
     positions.forEach(({ kind, x: bx, y: by }) => {
@@ -1126,7 +1126,7 @@ export class GameScene extends Phaser.Scene {
         tower.applyPermanentUpgrades(this.save.upgrades);
         if (kind === 'barracks') tower.spawnSoldiers();
         const towerClickRing = this.textures.exists('v2-tower-selection-ring')
-          ? this.add.image(x, y + 1, 'v2-tower-selection-ring').setDisplaySize(56, 36).setDepth(21).setAlpha(0).setBlendMode(Phaser.BlendModes.ADD)
+          ? this.add.image(x, y + 1, 'v2-tower-selection-ring').setDisplaySize(50, 32).setDepth(21).setAlpha(0).setBlendMode(Phaser.BlendModes.ADD)
           : this.textures.exists('ui-tower-click-ring-v47')
             ? this.add.image(x, y + 2, 'ui-tower-click-ring-v47').setDisplaySize(148, 128).setDepth(21).setAlpha(0)
             : undefined;
@@ -1159,7 +1159,7 @@ export class GameScene extends Phaser.Scene {
       menu.add([card, ...(roleIcon ? [roleIcon] : []), ...(iconBack ? [iconBack] : []), ...(icon ? [icon] : []), name, role, price, cardDebug]);
     });
 
-    const close = this.add.text(0, 53, '빈 곳 터치: 닫기', { fontSize: '8px', color: '#355d96', fontStyle: 'bold' }).setOrigin(0.5);
+    const close = this.add.text(0, 53, '빈 곳 터치: 닫기', { fontSize: '7px', color: '#355d96', fontStyle: 'bold' }).setOrigin(0.5);
     menu.add(close);
     this.time.delayedCall(6500, () => menu.active && menu.destroy());
   }
@@ -1182,11 +1182,11 @@ export class GameScene extends Phaser.Scene {
 
   private createTowerPanel(tower: Tower): void {
     const hasMasteryChoices = tower.level >= 3 && tower.canChooseMastery();
-    const panelHeight = hasMasteryChoices ? 242 : tower.config.kind === 'barracks' ? 204 : 190;
+    const panelHeight = hasMasteryChoices ? 228 : tower.config.kind === 'barracks' ? 194 : 180;
     const panelWidth = V210_TOWER_PANEL.width;
     const preferredX = tower.x < 500 ? tower.x + V210_TOWER_PANEL.compactOffset : tower.x - V210_TOWER_PANEL.compactOffset;
     const preferredY = tower.y + 12;
-    const panelPos = this.clampOverlayPosition(preferredX, preferredY - 6, panelWidth, panelHeight + 22, 8, 84);
+    const panelPos = this.clampOverlayPosition(preferredX, preferredY - 6, panelWidth, panelHeight + 18, 7, 80);
     const panel = this.add.container(panelPos.x, panelPos.y).setDepth(82);
     if (Math.abs(panelPos.x - preferredX) > 8 || Math.abs(panelPos.y - preferredY) > 8) {
       const clampedBadge = this.add.text(0, -panelHeight / 2 - 12, '화면 안쪽으로 자동 정렬', {
@@ -1201,47 +1201,47 @@ export class GameScene extends Phaser.Scene {
       addPremiumPanelGlints(this, panel, panelWidth, panelHeight);
     }
 
-    const icon = this.add.circle(-116, -panelHeight / 2 + 24, 13, tower.config.color, 0.9)
+    const icon = this.add.circle(-110, -panelHeight / 2 + 24, 13, tower.config.color, 0.9)
       .setStrokeStyle(2, 0xfff1c2, 0.55);
-    const symbol = this.add.text(-116, -panelHeight / 2 + 23, this.towerSymbol(tower.config.kind), {
+    const symbol = this.add.text(-110, -panelHeight / 2 + 23, this.towerSymbol(tower.config.kind), {
       fontSize: '11px', color: '#101820', fontStyle: 'bold'
     }).setOrigin(0.5);
-    const title = this.add.text(-96, -panelHeight / 2 + 10, `${tower.config.label}  Lv.${tower.level}`, {
+    const title = this.add.text(-90, -panelHeight / 2 + 10, `${tower.config.label}  Lv.${tower.level}`, {
       fontSize: '9px', color: '#fff1bf', fontStyle: 'bold',
       fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif',
       shadow: { offsetX: 0, offsetY: 3, color: '#000000', blur: 3, fill: true }
     });
-    const role = this.add.text(-96, -panelHeight / 2 + 29, this.towerRole(tower.config.kind), {
+    const role = this.add.text(-90, -panelHeight / 2 + 29, this.towerRole(tower.config.kind), {
       fontSize: '8px', color: '#d8c39a', fontStyle: 'bold'
     });
 
     const masteryLabel = tower.level >= 3 ? `전문화: ${tower.masteryLabel}` : `Lv.3 특수: ${tower.config.maxSkill}`;
-    const masteryLine = this.add.text(-120, -panelHeight / 2 + 52, masteryLabel, {
-      fontSize: '8px', color: tower.level >= 3 ? '#0d8f57' : '#295f9e', fontStyle: 'bold', fixedWidth: 232,
+    const masteryLine = this.add.text(-114, -panelHeight / 2 + 52, masteryLabel, {
+      fontSize: '7px', color: tower.level >= 3 ? '#0d8f57' : '#295f9e', fontStyle: 'bold', fixedWidth: 218,
       fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif'
     });
     const modeLabel = tower.config.kind === 'barracks' ? '전선 유지 / 집결지 운용' : `타겟 정책: ${tower.targetModeLabel()}`;
-    const mode = this.add.text(-120, -panelHeight / 2 + 68, modeLabel, { fontSize: '8px', color: '#295f9e', fontStyle: 'bold', fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif' });
-    const statBox = this.add.rectangle(0, -panelHeight / 2 + 91, 232, 28, 0x050914, 0.58)
+    const mode = this.add.text(-114, -panelHeight / 2 + 68, modeLabel, { fontSize: '7px', color: '#295f9e', fontStyle: 'bold', fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif' });
+    const statBox = this.add.rectangle(0, -panelHeight / 2 + 88, 218, 26, 0x050914, 0.58)
       .setStrokeStyle(1, 0xffe9a0, 0.17);
-    const stat = this.add.text(-110, -panelHeight / 2 + 84, this.towerStatLine(tower), {
-      fontSize: '8px', color: this.textures.exists('v1-tower-command-panel') ? '#eaf6ff' : '#3f5578', fixedWidth: 220, wordWrap: { width: 220 }, fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif'
+    const stat = this.add.text(-104, -panelHeight / 2 + 82, this.towerStatLine(tower), {
+      fontSize: '7px', color: this.textures.exists('v1-tower-command-panel') ? '#eaf6ff' : '#3f5578', fixedWidth: 208, wordWrap: { width: 208 }, fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif'
     });
     panel.add([icon, symbol, title, role, masteryLine, mode, statBox, stat]);
 
-    let actionY = -panelHeight / 2 + 112;
+    let actionY = -panelHeight / 2 + 104;
     if (hasMasteryChoices) {
-      const header = this.add.text(-136, actionY - 13, '최종 진화 선택', { fontSize: '9px', color: '#f7d36b', fontStyle: 'bold' });
+      const header = this.add.text(-112, actionY - 12, '최종 진화 선택', { fontSize: '9px', color: '#f7d36b', fontStyle: 'bold' });
       panel.add(header);
       const choices = getTowerMasteries(tower.config.kind);
       choices.forEach((choice, index) => {
-        const x = index === 0 ? -78 : 78;
-        const y = actionY + 18;
+        const x = index === 0 ? -58 : 58;
+        const y = actionY + 15;
         const canBuy = this.gold >= tower.masteryCost;
-        const btn = this.makePanelButton(panel, x, y, 106, 24, canBuy ? choice.color : 0x333333, `${choice.shortLabel} $${tower.masteryCost}`);
+        const btn = this.makePanelButton(panel, x, y, 98, 22, canBuy ? choice.color : 0x333333, `${choice.shortLabel} $${tower.masteryCost}`);
         btn.on('pointerdown', () => this.chooseTowerMastery(choice.id));
-        const desc = this.add.text(x, y + 31, choice.description, {
-          fontSize: '8px', color: canBuy ? '#d8c39a' : '#888888', align: 'center', fixedWidth: 104, wordWrap: { width: 104 }
+        const desc = this.add.text(x, y + 27, choice.description, {
+          fontSize: '7px', color: canBuy ? '#d8c39a' : '#888888', align: 'center', fixedWidth: 94, wordWrap: { width: 94 }
         }).setOrigin(0.5, 0);
         panel.add(desc);
       });
@@ -1249,40 +1249,40 @@ export class GameScene extends Phaser.Scene {
     }
 
     const cost = tower.upgradeCost;
-    const up = this.makePanelButton(panel, -58, actionY, 104, 24, cost ? 0x24486b : 0x333333, cost ? `업그레이드 $${cost}` : '최고 레벨');
+    const up = this.makePanelButton(panel, -55, actionY, 98, 22, cost ? 0x24486b : 0x333333, cost ? `업그레이드 $${cost}` : '최고 레벨');
     up.on('pointerdown', () => this.upgradeSelectedTower());
 
     const overdriveCost = this.towerOverdriveCost(tower);
     const overLabel = tower.isOverdriven ? `강화중 ${tower.overdriveRemainingSec}s` : `긴급 강화 $${overdriveCost}`;
-    const over = this.makePanelButton(panel, 58, actionY, 104, 24, tower.isOverdriven ? 0x3a3a3a : 0x6a4a1f, overLabel);
+    const over = this.makePanelButton(panel, 55, actionY, 98, 22, tower.isOverdriven ? 0x3a3a3a : 0x6a4a1f, overLabel);
     over.on('pointerdown', () => this.overdriveSelectedTower());
 
     if (tower.config.kind !== 'barracks') {
-      const target = this.makePanelButton(panel, -58, actionY + 29, 104, 24, 0x3c355e, '타겟 변경');
+      const target = this.makePanelButton(panel, -55, actionY + 27, 98, 22, 0x3c355e, '타겟 변경');
       target.on('pointerdown', () => this.cycleSelectedTowerTarget());
       const guide = this.add.text(72, actionY + 33, '상황에 맞춰 선두/강적/공중 우선순위를 바꾸세요.', {
-        fontSize: '8px', color: '#9eb6d8', fixedWidth: 104, wordWrap: { width: 104 }, align: 'center'
+        fontSize: '7px', color: '#9eb6d8', fixedWidth: 100, wordWrap: { width: 94 }, align: 'center'
       }).setOrigin(0.5);
       panel.add(guide);
     } else {
-      const rally = this.makePanelButton(panel, -58, actionY + 29, 104, 24, 0x3f5f2f, '집결지');
+      const rally = this.makePanelButton(panel, -55, actionY + 27, 98, 22, 0x3f5f2f, '집결지');
       rally.on('pointerdown', () => {
         this.settingRallyFor = tower;
         this.rallyReadyAt = this.time.now + 120;
         this.showMessage('집결지를 놓을 길 위를 터치하세요');
       });
       const reinforceCost = this.towerReinforceCost(tower);
-      const reinforce = this.makePanelButton(panel, 58, actionY + 29, 104, 24, 0x2f5f58, `병력 보충 $${reinforceCost}`);
+      const reinforce = this.makePanelButton(panel, 55, actionY + 27, 98, 22, 0x2f5f58, `병력 보충 $${reinforceCost}`);
       reinforce.on('pointerdown', () => this.reinforceSelectedBarracks());
     }
 
-    const sell = this.makePanelButton(panel, -58, actionY + 58, 104, 24, 0x693434, `철거 +$${tower.sellValue}`);
+    const sell = this.makePanelButton(panel, -55, actionY + 54, 98, 22, 0x693434, `철거 +$${tower.sellValue}`);
     sell.on('pointerdown', () => this.sellSelectedTower(false));
 
-    const replace = this.makePanelButton(panel, 58, actionY + 58, 104, 24, 0x754928, '교체 건설');
+    const replace = this.makePanelButton(panel, 55, actionY + 54, 98, 22, 0x754928, '교체 건설');
     replace.on('pointerdown', () => this.sellSelectedTower(true));
 
-    const close = this.makePanelButton(panel, 0, panelHeight / 2 - 14, 86, 22, 0x2f3440, '닫기');
+    const close = this.makePanelButton(panel, 0, panelHeight / 2 - 13, 80, 20, 0x2f3440, '닫기');
     close.on('pointerdown', () => {
       tower.rangeCircle.setVisible(false);
       this.destroySelectedPanel();

@@ -874,3 +874,25 @@ html body .shell-loading-text { font-size: 10px !important; margin-top: 10px !im
   margin-top: 8px; width: 100%; border: 0; border-radius: 12px; padding: 9px 12px;
   color: #261008; background: linear-gradient(180deg, #ffe09a, #f4a83b); font-weight: 1000;
 }
+
+
+/* v2.15 design QA: keep the launch card visible after the v2.14.1 rescue, but trim mobile clutter. */
+html body .shell-start-card,
+html body .shell-panel {
+  width: min(334px, 84vw) !important;
+  min-width: min(286px, 80vw) !important;
+  padding: 15px 14px !important;
+  border-radius: 20px !important;
+  background: radial-gradient(circle at 50% 0%, rgba(126, 214, 255, .20), transparent 42%), linear-gradient(180deg, rgba(27, 48, 84, .98), rgba(6, 15, 36, .985)) !important;
+}
+html body .shell-title-mark { font-size: 19px !important; }
+html body .shell-start-card h1,
+html body .shell-panel h2 { font-size: 17px !important; margin: 9px 0 4px !important; }
+html body .shell-start-card p,
+html body .shell-panel p { font-size: 11px !important; line-height: 1.24 !important; }
+html body .shell-tap-rune { width: 54px !important; height: 54px !important; margin-top: 10px !important; font-size: 11px !important; }
+html body .shell-loading-text { font-size: 9px !important; margin-top: 8px !important; }
+@media (hover: none) and (pointer: coarse) and (max-height: 390px) {
+  html body .shell-start-card, html body .shell-panel { transform: scale(.78) !important; }
+}
+html.ks-hit-debug .shell-start-card { outline: 1px dashed rgba(255, 226, 120, .58); }

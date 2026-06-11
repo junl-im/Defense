@@ -4,10 +4,10 @@ import { lowPowerMode } from './QualityManager';
 
 // v2.5: mobile-first battlefield safe zones. The top HUD and bottom dock are slimmer now,
 // so the active map area is wider without letting skill/tower menus overlap the chrome.
-export const BATTLE_SAFE_TOP = 56;
-export const BATTLE_SAFE_BOTTOM = 466;
-export const BATTLE_SAFE_LEFT = 18;
-export const BATTLE_SAFE_RIGHT = 942;
+export const BATTLE_SAFE_TOP = 52;
+export const BATTLE_SAFE_BOTTOM = 470;
+export const BATTLE_SAFE_LEFT = 20;
+export const BATTLE_SAFE_RIGHT = 940;
 
 export function isBattlefieldPoint(x: number, y: number): boolean {
   return x >= BATTLE_SAFE_LEFT && x <= BATTLE_SAFE_RIGHT && y >= BATTLE_SAFE_TOP && y <= BATTLE_SAFE_BOTTOM;
@@ -54,11 +54,11 @@ export function installCombatVisualDirector(scene: Phaser.Scene, stage: StageCon
 
   const start = path[0];
   const goal = path[path.length - 1];
-  const entry = scene.add.circle(start.x + 36, start.y, 34, 0x72e8ff, 0.07)
+  const entry = scene.add.circle(start.x + 34, start.y, 30, 0x72e8ff, 0.07)
     .setStrokeStyle(2, 0x72e8ff, 0.32)
     .setDepth(7)
     .setBlendMode(Phaser.BlendModes.ADD);
-  const exit = scene.add.circle(goal.x - 36, goal.y, 36, 0xffd36b, 0.08)
+  const exit = scene.add.circle(goal.x - 34, goal.y, 32, 0xffd36b, 0.08)
     .setStrokeStyle(2, 0xffd36b, 0.34)
     .setDepth(7)
     .setBlendMode(Phaser.BlendModes.ADD);

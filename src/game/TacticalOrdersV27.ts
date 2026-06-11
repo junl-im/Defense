@@ -10,11 +10,7 @@ export type TacticalOrderId =
   | 'rapid_command'
   | 'ranger_lanes'
   | 'arcane_bloom'
-  | 'mercenary_contract'
-  | 'coin_reserve'
-  | 'sky_watch'
-  | 'field_medic'
-  | 'siege_tuning';
+  | 'mercenary_contract';
 
 export type TacticalOrderChoice = {
   id: TacticalOrderId;
@@ -154,46 +150,6 @@ const ORDER_POOL: TacticalOrderChoice[] = [
     priority: 'offense',
     effects: { towerDamageMultiplier: 1.045, cooldownReductionMs: 2400, preferredTower: 'mage' },
   },
-  {
-    id: 'coin_reserve',
-    title: '비상 금고 개방',
-    tag: '경제',
-    description: '즉시 보급과 건설비 완화가 동시에 적용됩니다.',
-    icon: 'v2-contract-icon-build',
-    color: 0xffd56c,
-    priority: 'economy',
-    effects: { instantGold: 54, costMultiplier: 0.97 },
-  },
-  {
-    id: 'sky_watch',
-    title: '공중 감시단',
-    tag: '대공',
-    description: '궁수 중심 운영에 좋은 대공 화력 보정입니다.',
-    icon: 'v2-contract-icon-kill',
-    color: 0x9fd7ff,
-    priority: 'offense',
-    effects: { towerDamageMultiplier: 1.04, preferredTower: 'archer' },
-  },
-  {
-    id: 'field_medic',
-    title: '야전 의무대',
-    tag: '회복',
-    description: '생명력을 회복하고 영웅의 교전력을 올립니다.',
-    icon: 'v2-contract-icon-flawless',
-    color: 0xa6ffb0,
-    priority: 'defense',
-    effects: { healLives: 2, heroDamageMultiplier: 1.07 },
-  },
-  {
-    id: 'siege_tuning',
-    title: '공성 조율 명령',
-    tag: '포격',
-    description: '포탑/광역 운용에 적합한 화력 보정입니다.',
-    icon: 'v2-contract-icon-combo',
-    color: 0xffb347,
-    priority: 'offense',
-    effects: { towerDamageMultiplier: 1.04, preferredTower: 'artillery' },
-  },
 ];
 
 function hashString(value: string): number {
@@ -274,47 +230,47 @@ export function renderTacticalOrderCard(
 ): Phaser.GameObjects.Container {
   const card = scene.add.container(x, y);
   const bg = scene.textures.exists('v2-order-card-v27')
-    ? scene.add.image(0, 0, 'v2-order-card-v27').setDisplaySize(252, 162)
-    : scene.add.rectangle(0, 0, 252, 162, 0x09162a, 0.94).setStrokeStyle(3, choice.color, 0.72);
-  const halo = scene.add.circle(-88, -44, 28, choice.color, 0.16).setStrokeStyle(2, choice.color, 0.58).setBlendMode(Phaser.BlendModes.ADD);
+    ? scene.add.image(0, 0, 'v2-order-card-v27').setDisplaySize(232, 146)
+    : scene.add.rectangle(0, 0, 232, 146, 0x09162a, 0.94).setStrokeStyle(3, choice.color, 0.72);
+  const halo = scene.add.circle(-80, -39, 24, choice.color, 0.16).setStrokeStyle(2, choice.color, 0.58).setBlendMode(Phaser.BlendModes.ADD);
   const icon = scene.textures.exists(choice.icon)
-    ? scene.add.image(-88, -44, choice.icon).setDisplaySize(42, 42)
-    : scene.add.star(-88, -44, 5, 7, 22, choice.color, 0.86);
-  const tag = scene.add.text(78, -55, choice.tag, {
+    ? scene.add.image(-80, -39, choice.icon).setDisplaySize(36, 36)
+    : scene.add.star(-80, -39, 5, 6, 19, choice.color, 0.86);
+  const tag = scene.add.text(72, -49, choice.tag, {
     fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
-    fontSize: '10px',
+    fontSize: '9px',
     fontStyle: 'bold',
     color: '#092247',
     backgroundColor: '#fff2bd',
     padding: { x: 7, y: 3 },
   }).setOrigin(0.5);
-  const title = scene.add.text(-58, -59, choice.title, {
+  const title = scene.add.text(-50, -52, choice.title, {
     fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
-    fontSize: '15px',
+    fontSize: '11px',
     fontStyle: 'bold',
     color: '#fff4c2',
     stroke: '#092247',
     strokeThickness: 3,
-    fixedWidth: 142,
+    fixedWidth: 132,
   }).setOrigin(0, 0.5);
-  const desc = scene.add.text(-104, -12, choice.description, {
+  const desc = scene.add.text(-96, -8, choice.description, {
     fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
-    fontSize: '11px',
+    fontSize: '9px',
     fontStyle: 'bold',
     color: '#dbe7ff',
-    fixedWidth: 208,
+    fixedWidth: 192,
     lineSpacing: 4,
-    wordWrap: { width: 208, useAdvancedWrap: true },
+    wordWrap: { width: 192, useAdvancedWrap: true },
   }).setOrigin(0, 0.5);
-  const pick = scene.add.text(0, 59, '선택', {
+  const pick = scene.add.text(0, 53, '선택', {
     fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
-    fontSize: '13px',
+    fontSize: '11px',
     fontStyle: 'bold',
     color: '#fff9d8',
     stroke: '#2a1608',
     strokeThickness: 3,
   }).setOrigin(0.5);
-  const hit = scene.add.zone(0, 0, 252, 162).setInteractive({ useHandCursor: true });
+  const hit = scene.add.zone(0, 0, 232, 146).setInteractive({ useHandCursor: true });
   card.add([bg, halo, icon, tag, title, desc, pick, hit]);
   hit.on('pointerover', () => scene.tweens.add({ targets: card, scaleX: 1.035, scaleY: 1.035, duration: 110, ease: 'Sine.easeOut' }));
   hit.on('pointerout', () => scene.tweens.add({ targets: card, scaleX: 1, scaleY: 1, duration: 120, ease: 'Sine.easeOut' }));
