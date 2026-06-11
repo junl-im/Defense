@@ -4,8 +4,8 @@ import { lowPowerMode } from './QualityManager';
 
 // v2.5: mobile-first battlefield safe zones. The top HUD and bottom dock are slimmer now,
 // so the active map area is wider without letting skill/tower menus overlap the chrome.
-export const BATTLE_SAFE_TOP = 58;
-export const BATTLE_SAFE_BOTTOM = 462;
+export const BATTLE_SAFE_TOP = 56;
+export const BATTLE_SAFE_BOTTOM = 466;
 export const BATTLE_SAFE_LEFT = 18;
 export const BATTLE_SAFE_RIGHT = 942;
 

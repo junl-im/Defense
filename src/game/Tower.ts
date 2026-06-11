@@ -89,10 +89,10 @@ export class Tower extends Phaser.GameObjects.Container {
     this.setDepth(22);
     // v2.5: tighter mobile hit area. Selection should match the visible tower base,
     // not the whole attack range/ornament silhouette. External GameScene halos use the same footprint.
-    this.setSize(38, 54);
-    // v2.13: selection footprint follows the visible base more closely.
-    // The attack range, glow and mastery aura must not become touch area.
-    this.setInteractive(new Phaser.Geom.Ellipse(0, -14, 30, 48), Phaser.Geom.Ellipse.Contains);
+    this.setSize(34, 48);
+    // v2.14: selection footprint follows the visible tower body only.
+    // The attack range, glow, shadow and mastery aura must not become touch area.
+    this.setInteractive(new Phaser.Geom.Ellipse(0, -13, 26, 42), Phaser.Geom.Ellipse.Contains);
   }
 
   applyPermanentUpgrades(upgrades: Partial<TowerUpgradeSnapshot> | undefined): void {

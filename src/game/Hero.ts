@@ -22,7 +22,7 @@ export class Hero extends Phaser.GameObjects.Container {
     if (scene.textures.exists('v1-hero-art-knight')) {
       this.sprite = scene.add.image(0, -7, 'v1-hero-art-knight');
       // v2.5: smaller, cleaner mobile battlefield hero footprint.
-      const targetHeight = 50;
+      const targetHeight = 47;
       this.sprite.setDisplaySize(this.sprite.width * (targetHeight / Math.max(1, this.sprite.height)), targetHeight);
     } else if (scene.textures.exists('hero-knight')) {
       this.sprite = scene.add.sprite(0, -4, 'hero-knight', 0).setScale(1.22);
@@ -37,8 +37,8 @@ export class Hero extends Phaser.GameObjects.Container {
     this.add(visuals);
     scene.add.existing(this);
     this.setDepth(26);
-    this.setSize(30, 36);
-    this.setInteractive(new Phaser.Geom.Circle(0, -2, 16), Phaser.Geom.Circle.Contains);
+    this.setSize(28, 34);
+    this.setInteractive(new Phaser.Geom.Circle(0, -2, 14), Phaser.Geom.Circle.Contains);
   }
 
   update(deltaMs: number, enemies: Enemy[]): void {

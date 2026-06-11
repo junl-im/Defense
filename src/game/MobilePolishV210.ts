@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
 
-export const V210_BUILD_HIT = { width: 28, height: 20, radius: 8 } as const;
-export const V210_TOWER_HIT = { width: 24, height: 32, offsetY: -16, radius: 10 } as const;
-export const V210_BUILD_MENU = { width: 228, height: 126, cardWidth: 88, cardHeight: 30 } as const;
-export const V210_TOWER_PANEL = { width: 254, compactOffset: 136 } as const;
+export const V210_BUILD_HIT = { width: 26, height: 19, radius: 7 } as const;
+export const V210_TOWER_HIT = { width: 23, height: 30, offsetY: -15, radius: 8 } as const;
+export const V210_BUILD_MENU = { width: 222, height: 120, cardWidth: 84, cardHeight: 28 } as const;
+export const V210_TOWER_PANEL = { width: 246, compactOffset: 130 } as const;
 
 export function mobileTextV210(size: number, color = '#f7fbff', fixedWidth?: number): Phaser.Types.GameObjects.Text.TextStyle {
   return {
@@ -19,10 +19,10 @@ export function mobileTextV210(size: number, color = '#f7fbff', fixedWidth?: num
 export function installV210BattlePolish(scene: Phaser.Scene): void {
   const lite = new URLSearchParams(window.location.search).has('lite') || new URLSearchParams(window.location.search).has('battery');
   const depth = 71;
-  const topLine = scene.add.rectangle(480, 50, 760, 1, 0x9fe8ff, 0.20).setDepth(depth).setBlendMode(Phaser.BlendModes.ADD);
-  const bottomLine = scene.add.rectangle(480, 465, 720, 1, 0xffdf8a, 0.12).setDepth(depth).setBlendMode(Phaser.BlendModes.ADD);
-  const leftRail = scene.add.rectangle(9, 270, 2, 344, 0x7bdcff, 0.10).setDepth(6).setBlendMode(Phaser.BlendModes.ADD);
-  const rightRail = scene.add.rectangle(951, 270, 2, 344, 0xffd46b, 0.08).setDepth(6).setBlendMode(Phaser.BlendModes.ADD);
+  const topLine = scene.add.rectangle(480, 48, 740, 1, 0x9fe8ff, 0.18).setDepth(depth).setBlendMode(Phaser.BlendModes.ADD);
+  const bottomLine = scene.add.rectangle(480, 467, 700, 1, 0xffdf8a, 0.11).setDepth(depth).setBlendMode(Phaser.BlendModes.ADD);
+  const leftRail = scene.add.rectangle(9, 270, 2, 336, 0x7bdcff, 0.10).setDepth(6).setBlendMode(Phaser.BlendModes.ADD);
+  const rightRail = scene.add.rectangle(951, 270, 2, 336, 0xffd46b, 0.08).setDepth(6).setBlendMode(Phaser.BlendModes.ADD);
   if (!lite) {
     scene.tweens.add({ targets: [topLine, bottomLine], alpha: '+=0.10', duration: 1350, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
     scene.tweens.add({ targets: [leftRail, rightRail], alpha: '+=0.06', duration: 1800, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });

@@ -342,7 +342,7 @@ export class GameScene extends Phaser.Scene {
 
   private drawHudChrome(): void {
     if (this.textures.exists('v1-combat-top-hud')) {
-      this.add.image(480, 27, 'v1-combat-top-hud').setDisplaySize(922, 52).setDepth(70);
+      this.add.image(480, 25, 'v1-combat-top-hud').setDisplaySize(940, 48).setDepth(70);
     } else if (this.textures.exists('ui-hud-top-panel')) {
       this.add.image(480, 32, 'ui-hud-top-panel').setDisplaySize(960, 64).setDepth(70);
     } else {
@@ -350,7 +350,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     if (this.textures.exists('v1-combat-bottom-dock')) {
-      this.add.image(480, 506, 'v1-combat-bottom-dock').setDisplaySize(930, 66).setDepth(70);
+      this.add.image(480, 509, 'v1-combat-bottom-dock').setDisplaySize(924, 58).setDepth(70);
     } else if (this.textures.exists('ui-hud-bottom-panel')) {
       this.add.image(480, 510, 'ui-hud-bottom-panel').setDisplaySize(960, 64).setDepth(70);
     } else {
@@ -966,15 +966,15 @@ export class GameScene extends Phaser.Scene {
   }
 
   private createBuildSpot(x: number, y: number, autoOpen = false): void {
-    const shadow = this.add.ellipse(x + 2, y + 10, 44, 14, 0x000000, 0.24).setDepth(11);
-    const rim = this.add.ellipse(x, y + 2, 42, 24, 0x3b2818, 0.92).setStrokeStyle(3, 0xffd36b, 0.36).setDepth(12);
-    const stone = this.add.ellipse(x, y, 34, 19, 0x7b6b57, 0.96).setStrokeStyle(2, 0x2b1b12, 0.48).setDepth(13);
-    const light = this.add.ellipse(x - 6, y - 4, 14, 5, 0xffe1a0, 0.22).setDepth(14);
-    const hammer = this.add.text(x, y - 7, '⚒', { fontSize: '12px', color: '#fff4c2', fontStyle: 'bold' }).setOrigin(0.5).setDepth(15);
-    const tagBg = this.add.rectangle(x, y + 21, 50, 15, 0x130d09, 0.78).setStrokeStyle(1, 0xffd36b, 0.35).setDepth(16);
-    const tag = this.add.text(x, y + 21, '건설', { fontSize: '8px', color: '#ffefb4', fontStyle: 'bold' }).setOrigin(0.5).setDepth(17);
+    const shadow = this.add.ellipse(x + 2, y + 9, 38, 12, 0x000000, 0.24).setDepth(11);
+    const rim = this.add.ellipse(x, y + 1, 38, 22, 0x3b2818, 0.92).setStrokeStyle(3, 0xffd36b, 0.36).setDepth(12);
+    const stone = this.add.ellipse(x, y, 30, 17, 0x7b6b57, 0.96).setStrokeStyle(2, 0x2b1b12, 0.48).setDepth(13);
+    const light = this.add.ellipse(x - 5, y - 3, 12, 4, 0xffe1a0, 0.22).setDepth(14);
+    const hammer = this.add.text(x, y - 6, '⚒', { fontSize: '10px', color: '#fff4c2', fontStyle: 'bold' }).setOrigin(0.5).setDepth(15);
+    const tagBg = this.add.rectangle(x, y + 18, 42, 13, 0x130d09, 0.78).setStrokeStyle(1, 0xffd36b, 0.35).setDepth(16);
+    const tag = this.add.text(x, y + 18, '건설', { fontSize: '7px', color: '#ffefb4', fontStyle: 'bold' }).setOrigin(0.5).setDepth(17);
     const premiumPad = this.textures.exists('v1-build-spot')
-      ? this.add.image(x, y + 1, 'v1-build-spot').setDisplaySize(38, 27).setDepth(13)
+      ? this.add.image(x, y + 1, 'v1-build-spot').setDisplaySize(34, 25).setDepth(13)
       : undefined;
     if (premiumPad) {
       shadow.setVisible(false);
@@ -986,7 +986,7 @@ export class GameScene extends Phaser.Scene {
       tag.setText('건설').setColor('#eaf6ff');
     }
     const premiumPreview = addBuildSpotPreview(this, x, y, 0xffd36b);
-    premiumPreview.setScale(0.68);
+    premiumPreview.setScale(0.58);
     premiumPreview.setVisible(false);
     const largeHitZone = this.add.rectangle(x, y + 1, V210_BUILD_HIT.width, V210_BUILD_HIT.height, 0xffffff, 0.001)
       .setDepth(19)
@@ -1041,7 +1041,7 @@ export class GameScene extends Phaser.Scene {
     this.castingSpell = undefined;
     this.destroySelectedPanel();
     this.destroyBuildMenu();
-    const menuPos = this.clampOverlayPosition(x, y - 12, V210_BUILD_MENU.width, V210_BUILD_MENU.height, 8, 90);
+    const menuPos = this.clampOverlayPosition(x, y - 10, V210_BUILD_MENU.width, V210_BUILD_MENU.height, 8, 86);
     const menu = this.add.container(menuPos.x, menuPos.y).setDepth(58);
     this.activeBuildMenu = menu;
     menu.once('destroy', () => {
@@ -1058,24 +1058,24 @@ export class GameScene extends Phaser.Scene {
       : this.textures.exists('ui-build-menu-frame-v47')
         ? this.add.image(0, 0, 'ui-build-menu-frame-v47').setDisplaySize(V210_BUILD_MENU.width, V210_BUILD_MENU.height)
         : this.add.rectangle(0, 0, V210_BUILD_MENU.width, V210_BUILD_MENU.height, 0x130d09, 0.94).setStrokeStyle(3, 0xffd36b, 0.58);
-    const header = this.add.text(0, -60, '방어 시설 선택', {
+    const header = this.add.text(0, -56, '방어 시설 선택', {
       fontSize: '9px', color: '#fff8d2', fontStyle: 'bold',
       fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif',
       shadow: { offsetX: 0, offsetY: 2, color: '#001b45', blur: 2, fill: true }
     }).setOrigin(0.5);
     const nextGroups = this.stage.waves[Math.max(0, this.waveRunning ? this.waveIndex : this.waveIndex + 1)] ?? [];
     const buildAdvisor = recommendTowerForWaveV29(nextGroups, ENEMIES);
-    const hint = this.add.text(0, -44, `${buildAdvisor.title} · ${towerRoleLineV29(buildAdvisor.recommendedTower)}`, {
+    const hint = this.add.text(0, -41, `${buildAdvisor.title} · ${towerRoleLineV29(buildAdvisor.recommendedTower)}`, {
       fontSize: '8px', color: '#355d96', fontStyle: 'bold',
       fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif'
     }).setOrigin(0.5);
     menu.add([bg, header, hint]);
 
     const positions = [
-      { kind: 'archer' as TowerKind, x: -54, y: -6 },
-      { kind: 'mage' as TowerKind, x: 54, y: -6 },
-      { kind: 'barracks' as TowerKind, x: -54, y: 35 },
-      { kind: 'artillery' as TowerKind, x: 54, y: 35 },
+      { kind: 'archer' as TowerKind, x: -52, y: -5 },
+      { kind: 'mage' as TowerKind, x: 52, y: -5 },
+      { kind: 'barracks' as TowerKind, x: -52, y: 32 },
+      { kind: 'artillery' as TowerKind, x: 52, y: 32 },
     ];
 
     positions.forEach(({ kind, x: bx, y: by }) => {
@@ -1126,7 +1126,7 @@ export class GameScene extends Phaser.Scene {
         tower.applyPermanentUpgrades(this.save.upgrades);
         if (kind === 'barracks') tower.spawnSoldiers();
         const towerClickRing = this.textures.exists('v2-tower-selection-ring')
-          ? this.add.image(x, y + 2, 'v2-tower-selection-ring').setDisplaySize(60, 38).setDepth(21).setAlpha(0).setBlendMode(Phaser.BlendModes.ADD)
+          ? this.add.image(x, y + 1, 'v2-tower-selection-ring').setDisplaySize(56, 36).setDepth(21).setAlpha(0).setBlendMode(Phaser.BlendModes.ADD)
           : this.textures.exists('ui-tower-click-ring-v47')
             ? this.add.image(x, y + 2, 'ui-tower-click-ring-v47').setDisplaySize(148, 128).setDepth(21).setAlpha(0)
             : undefined;
@@ -1159,7 +1159,7 @@ export class GameScene extends Phaser.Scene {
       menu.add([card, ...(roleIcon ? [roleIcon] : []), ...(iconBack ? [iconBack] : []), ...(icon ? [icon] : []), name, role, price, cardDebug]);
     });
 
-    const close = this.add.text(0, 58, '빈 곳 터치: 닫기', { fontSize: '8px', color: '#355d96', fontStyle: 'bold' }).setOrigin(0.5);
+    const close = this.add.text(0, 53, '빈 곳 터치: 닫기', { fontSize: '8px', color: '#355d96', fontStyle: 'bold' }).setOrigin(0.5);
     menu.add(close);
     this.time.delayedCall(6500, () => menu.active && menu.destroy());
   }
@@ -1182,7 +1182,7 @@ export class GameScene extends Phaser.Scene {
 
   private createTowerPanel(tower: Tower): void {
     const hasMasteryChoices = tower.level >= 3 && tower.canChooseMastery();
-    const panelHeight = hasMasteryChoices ? 250 : tower.config.kind === 'barracks' ? 212 : 198;
+    const panelHeight = hasMasteryChoices ? 242 : tower.config.kind === 'barracks' ? 204 : 190;
     const panelWidth = V210_TOWER_PANEL.width;
     const preferredX = tower.x < 500 ? tower.x + V210_TOWER_PANEL.compactOffset : tower.x - V210_TOWER_PANEL.compactOffset;
     const preferredY = tower.y + 12;

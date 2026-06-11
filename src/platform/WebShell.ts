@@ -201,7 +201,7 @@ function createStartGate(): void {
       <h1>탭해서 시작</h1>
       <p>사운드와 화면을 준비하고 바로 진입합니다.</p>
       <div class="shell-tap-rune">TAP</div>
-      <div class="shell-loading-text">v2.13 모바일 UI 정리 로딩</div>
+      <div class="shell-loading-text">v2.14 디자인 정리 로딩</div>
     </div>`;
   document.body.appendChild(startGate);
   const start = (): void => void activateGameShell();
