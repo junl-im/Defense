@@ -69,7 +69,7 @@ const WEBP_ENABLED =
 const WEBP_RASTER_PATTERNS = [
   /assets\/backgrounds\/(login_background_clean_v2_15|login_background_clean_v2_6|login_background_clean_v2_4|main_menu_splash_v2_15|main_menu_splash_v2_6|main_menu_splash_v2_4|worldmap_splash_v2_15|worldmap_splash_v2_1)\.png$/,
   /assets\/maps\/(v2_15|v2_14|v2_13|v2_12|v2_6|v2_4)\/[^/]+\.png$/,
-  /assets\/ui\/(v2_2|v2_3|v2_4|v2_6|v2_7|v2_8|v2_9|v2_10|v2_11|v2_12|v2_13|v2_14|v2_15|v2_16|v2_17|v2_18|v2_19|v2_20|v2_21|v2_22|v2_24|v2_25)\/[^/]+\.png$/,
+  /assets\/ui\/(v2_2|v2_3|v2_4|v2_6|v2_7|v2_8|v2_9|v2_10|v2_11|v2_12|v2_13|v2_14|v2_15|v2_16|v2_17|v2_18|v2_19|v2_20|v2_21|v2_22|v2_24|v2_25|v2_26)\/[^/]+\.png$/,
   /assets\/props\/v2_6\/[^/]+\.png$/,
   /assets\/maps\/(stage_card_009|stage_card_010|stage_card_011|stage_card_012|map_stage_009|map_stage_010|map_stage_011|map_stage_012)\.png$/,
   /assets\/units\/(v2_1|v2_4)\/[^/]+\.png$/,
@@ -104,7 +104,7 @@ function shouldFastBootSkip(key: string, path: string): boolean {
   if (FAST_START_MODE) {
     // v2.23: keep the first tap fast. Cumulative cute-art passes stay in the project,
     // but they are not uploaded to GPU during boot unless the URL has ?fullart.
-    if (/assets\/ui\/v2_(16|17|18|19|20|21|22|24|25)\//.test(path)) return true;
+    if (/assets\/ui\/v2_(16|17|18|19|20|21|22|24|25|26)\//.test(path)) return true;
     if (
       /assets\/maps\/(map_stage_00[2-9]|map_stage_01[0-2]|stage_card_00[2-9]|stage_card_01[0-2])\.png$/.test(
         path,

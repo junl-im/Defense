@@ -74,3 +74,12 @@
 - BootScene WebP 최적화 로더 대상에 `v2_22` UI 경로를 포함하고 중복 로드 1건을 정리했습니다.
 - `SceneSafety.ts` 헬퍼를 보강하고 전투/보상/프리미엄 토스트/전술 HUD 일부 지연 호출을 안전 호출로 교체했습니다.
 - QA: `npx tsc --noEmit --pretty false` 및 `npm run build` 통과.
+
+## v2.26.0 - Atelier Ultra Polish + Performance QA
+- `public/assets/ui/v2_26/`에 PNG 138개 + WebP 138개, 총 276개 원화풍 아틀리에 에셋을 추가했습니다.
+- `PremiumIllustrationArtV226.ts`를 추가해 로그인/로비/월드맵/전투 화면의 고퀄 레이어를 확장했습니다.
+- `ProgressiveAssetLoader.ts`에 로딩 큐와 씬별 코어 에셋 예산을 추가해 첫 탭/첫 전환 중 로더가 몰리지 않도록 정리했습니다.
+- 로그인 화면의 고퀄 아트 스트리밍과 Firebase 확인을 지연시켜 첫 시작 직후 CPU/네트워크 경쟁을 줄였습니다.
+- v2.26 핵심 아트는 기본 모드에서 제한 로드, 대량 갤러리 아트는 `?fullart`/`?galleryart`에서만 로드합니다.
+- QA: `npx tsc --noEmit --pretty false` 통과. `npm run build`는 원본 zip의 기존 `node_modules` 권한/optional binding 문제로 의존성 재설치가 필요합니다.
+

@@ -149,6 +149,177 @@ const GALLERY_BUNDLES: Record<ProgressiveArtBundle, AssetDef[]> = {
   ],
 };
 
+const V226_CORE_BUNDLES: Record<ProgressiveArtBundle, AssetDef[]> = {
+  login: [
+    { key: "v226-login-atelier-bg", path: "assets/ui/v2_26/login_atelier_bg_v2_26.png" },
+    { key: "v226-login-lacquer-card", path: "assets/ui/v2_26/login_lacquer_card_v2_26.png" },
+    { key: "v226-login-glass-title-plaque", path: "assets/ui/v2_26/login_glass_title_plaque_v2_26.png" },
+    { key: "v226-login-prismatic-rays", path: "assets/ui/v2_26/login_prismatic_rays_v2_26.png" },
+    { key: "v226-login-start-button-gold", path: "assets/ui/v2_26/login_start_button_gold_v2_26.png" },
+    { key: "v226-login-cloud-button-pearl", path: "assets/ui/v2_26/login_cloud_button_pearl_v2_26.png" },
+    { key: "v226-login-small-button-ivory", path: "assets/ui/v2_26/login_small_button_ivory_v2_26.png" },
+    { key: "v226-login-left-gold-filigree", path: "assets/ui/v2_26/login_left_gold_filigree_v2_26.png" },
+    { key: "v226-login-right-gold-filigree", path: "assets/ui/v2_26/login_right_gold_filigree_v2_26.png" },
+    { key: "v226-login-mascot-fox-duke", path: "assets/ui/v2_26/login_mascot_fox_duke_v2_26.png" },
+    { key: "v226-login-mascot-deer-mage", path: "assets/ui/v2_26/login_mascot_deer_mage_v2_26.png" },
+    { key: "v226-login-latency-shield-badge", path: "assets/ui/v2_26/login_latency_shield_badge_v2_26.png" },
+    { key: "v226-login-local-save-badge", path: "assets/ui/v2_26/login_local_save_badge_v2_26.png" },
+    { key: "v226-login-micro-gloss-divider", path: "assets/ui/v2_26/login_micro_gloss_divider_v2_26.png" },
+  ],
+  lobby: [
+    { key: "v226-lobby-atelier-bg", path: "assets/ui/v2_26/lobby_atelier_bg_v2_26.png" },
+    { key: "v226-lobby-royal-header-banner", path: "assets/ui/v2_26/lobby_royal_header_banner_v2_26.png" },
+    { key: "v226-lobby-velvet-nav-frame", path: "assets/ui/v2_26/lobby_velvet_nav_frame_v2_26.png" },
+    { key: "v226-lobby-profile-glass-panel", path: "assets/ui/v2_26/lobby_profile_glass_panel_v2_26.png" },
+    { key: "v226-lobby-resource-star-relic", path: "assets/ui/v2_26/lobby_resource_star_relic_v2_26.png" },
+    { key: "v226-lobby-resource-coin-relic", path: "assets/ui/v2_26/lobby_resource_coin_relic_v2_26.png" },
+    { key: "v226-lobby-resource-gem-relic", path: "assets/ui/v2_26/lobby_resource_gem_relic_v2_26.png" },
+    { key: "v226-lobby-shop-gilded-stall", path: "assets/ui/v2_26/lobby_shop_gilded_stall_v2_26.png" },
+    { key: "v226-lobby-quest-illuminated-book", path: "assets/ui/v2_26/lobby_quest_illuminated_book_v2_26.png" },
+    { key: "v226-lobby-mail-crystal-bird", path: "assets/ui/v2_26/lobby_mail_crystal_bird_v2_26.png" },
+    { key: "v226-lobby-event-moon-lantern", path: "assets/ui/v2_26/lobby_event_moon_lantern_v2_26.png" },
+    { key: "v226-lobby-npc-raccoon-curator", path: "assets/ui/v2_26/lobby_npc_raccoon_curator_v2_26.png" },
+    { key: "v226-lobby-npc-rabbit-cartographer", path: "assets/ui/v2_26/lobby_npc_rabbit_cartographer_v2_26.png" },
+    { key: "v226-lobby-perf-budget-badge", path: "assets/ui/v2_26/lobby_perf_budget_badge_v2_26.png" },
+  ],
+  world: [
+    { key: "v226-world-atlas-bg", path: "assets/ui/v2_26/world_atlas_bg_v2_26.png" },
+    { key: "v226-world-preview-oil-frame", path: "assets/ui/v2_26/world_preview_oil_frame_v2_26.png" },
+    { key: "v226-world-stage-gem-ring", path: "assets/ui/v2_26/world_stage_gem_ring_v2_26.png" },
+    { key: "v226-world-route-aurora-thread", path: "assets/ui/v2_26/world_route_aurora_thread_v2_26.png" },
+    { key: "v226-world-boss-aurora-gate", path: "assets/ui/v2_26/world_boss_aurora_gate_v2_26.png" },
+    { key: "v226-world-lock-velvet-seal", path: "assets/ui/v2_26/world_lock_velvet_seal_v2_26.png" },
+    { key: "v226-world-reward-crystal-bloom", path: "assets/ui/v2_26/world_reward_crystal_bloom_v2_26.png" },
+    { key: "v226-world-selected-crown-glow", path: "assets/ui/v2_26/world_selected_crown_glow_v2_26.png" },
+    { key: "v226-world-cloud-chapter-panel", path: "assets/ui/v2_26/world_cloud_chapter_panel_v2_26.png" },
+    { key: "v226-world-compass-enamel", path: "assets/ui/v2_26/world_compass_enamel_v2_26.png" },
+    { key: "v226-world-chapter-badge", path: "assets/ui/v2_26/world_chapter_badge_v2_26.png" },
+    { key: "v226-world-mist-watercolor", path: "assets/ui/v2_26/world_mist_watercolor_v2_26.png" },
+    { key: "v226-world-island-soft-shadow", path: "assets/ui/v2_26/world_island_soft_shadow_v2_26.png" },
+    { key: "v226-world-node-crown-micro", path: "assets/ui/v2_26/world_node_crown_micro_v2_26.png" },
+  ],
+  battle: [
+    { key: "v226-battle-painterly-overlay", path: "assets/ui/v2_26/battle_painterly_overlay_v2_26.png" },
+    { key: "v226-battle-top-hud-lacquer", path: "assets/ui/v2_26/battle_top_hud_lacquer_v2_26.png" },
+    { key: "v226-battle-bottom-skill-bar", path: "assets/ui/v2_26/battle_bottom_skill_bar_v2_26.png" },
+    { key: "v226-battle-side-vine-left", path: "assets/ui/v2_26/battle_side_vine_left_v2_26.png" },
+    { key: "v226-battle-side-vine-right", path: "assets/ui/v2_26/battle_side_vine_right_v2_26.png" },
+    { key: "v226-battle-skill-meteor-card", path: "assets/ui/v2_26/battle_skill_meteor_card_v2_26.png" },
+    { key: "v226-battle-skill-guard-card", path: "assets/ui/v2_26/battle_skill_guard_card_v2_26.png" },
+    { key: "v226-battle-skill-hero-card", path: "assets/ui/v2_26/battle_skill_hero_card_v2_26.png" },
+    { key: "v226-battle-combo-crystal-badge", path: "assets/ui/v2_26/battle_combo_crystal_badge_v2_26.png" },
+    { key: "v226-battle-boss-cut-warning", path: "assets/ui/v2_26/battle_boss_cut_warning_v2_26.png" },
+    { key: "v226-battle-mana-lacquer-drop", path: "assets/ui/v2_26/battle_mana_lacquer_drop_v2_26.png" },
+    { key: "v226-battle-safe-corner-left", path: "assets/ui/v2_26/battle_safe_corner_left_v2_26.png" },
+    { key: "v226-battle-safe-corner-right", path: "assets/ui/v2_26/battle_safe_corner_right_v2_26.png" },
+    { key: "v226-battle-frame-budget-badge", path: "assets/ui/v2_26/battle_frame_budget_badge_v2_26.png" },
+  ],
+};
+
+const V226_GALLERY_BUNDLES: Record<ProgressiveArtBundle, AssetDef[]> = {
+  login: [
+    { key: "v226-login-gallery-masterpiece-01", path: "assets/ui/v2_26/login_gallery_masterpiece_01_v2_26.png" },
+    { key: "v226-login-gallery-masterpiece-02", path: "assets/ui/v2_26/login_gallery_masterpiece_02_v2_26.png" },
+    { key: "v226-login-gallery-masterpiece-03", path: "assets/ui/v2_26/login_gallery_masterpiece_03_v2_26.png" },
+    { key: "v226-login-gallery-masterpiece-04", path: "assets/ui/v2_26/login_gallery_masterpiece_04_v2_26.png" },
+    { key: "v226-login-gallery-masterpiece-05", path: "assets/ui/v2_26/login_gallery_masterpiece_05_v2_26.png" },
+    { key: "v226-login-gallery-masterpiece-06", path: "assets/ui/v2_26/login_gallery_masterpiece_06_v2_26.png" },
+    { key: "v226-login-gallery-masterpiece-07", path: "assets/ui/v2_26/login_gallery_masterpiece_07_v2_26.png" },
+    { key: "v226-login-gallery-masterpiece-08", path: "assets/ui/v2_26/login_gallery_masterpiece_08_v2_26.png" },
+    { key: "v226-login-gallery-masterpiece-09", path: "assets/ui/v2_26/login_gallery_masterpiece_09_v2_26.png" },
+    { key: "v226-login-gallery-masterpiece-10", path: "assets/ui/v2_26/login_gallery_masterpiece_10_v2_26.png" },
+    { key: "v226-login-gallery-masterpiece-11", path: "assets/ui/v2_26/login_gallery_masterpiece_11_v2_26.png" },
+    { key: "v226-login-gallery-masterpiece-12", path: "assets/ui/v2_26/login_gallery_masterpiece_12_v2_26.png" },
+    { key: "v226-login-gallery-masterpiece-13", path: "assets/ui/v2_26/login_gallery_masterpiece_13_v2_26.png" },
+    { key: "v226-login-gallery-masterpiece-14", path: "assets/ui/v2_26/login_gallery_masterpiece_14_v2_26.png" },
+  ],
+  lobby: [
+    { key: "v226-lobby-gallery-masterpiece-01", path: "assets/ui/v2_26/lobby_gallery_masterpiece_01_v2_26.png" },
+    { key: "v226-lobby-gallery-masterpiece-02", path: "assets/ui/v2_26/lobby_gallery_masterpiece_02_v2_26.png" },
+    { key: "v226-lobby-gallery-masterpiece-03", path: "assets/ui/v2_26/lobby_gallery_masterpiece_03_v2_26.png" },
+    { key: "v226-lobby-gallery-masterpiece-04", path: "assets/ui/v2_26/lobby_gallery_masterpiece_04_v2_26.png" },
+    { key: "v226-lobby-gallery-masterpiece-05", path: "assets/ui/v2_26/lobby_gallery_masterpiece_05_v2_26.png" },
+    { key: "v226-lobby-gallery-masterpiece-06", path: "assets/ui/v2_26/lobby_gallery_masterpiece_06_v2_26.png" },
+    { key: "v226-lobby-gallery-masterpiece-07", path: "assets/ui/v2_26/lobby_gallery_masterpiece_07_v2_26.png" },
+    { key: "v226-lobby-gallery-masterpiece-08", path: "assets/ui/v2_26/lobby_gallery_masterpiece_08_v2_26.png" },
+    { key: "v226-lobby-gallery-masterpiece-09", path: "assets/ui/v2_26/lobby_gallery_masterpiece_09_v2_26.png" },
+    { key: "v226-lobby-gallery-masterpiece-10", path: "assets/ui/v2_26/lobby_gallery_masterpiece_10_v2_26.png" },
+    { key: "v226-lobby-gallery-masterpiece-11", path: "assets/ui/v2_26/lobby_gallery_masterpiece_11_v2_26.png" },
+    { key: "v226-lobby-gallery-masterpiece-12", path: "assets/ui/v2_26/lobby_gallery_masterpiece_12_v2_26.png" },
+    { key: "v226-lobby-gallery-masterpiece-13", path: "assets/ui/v2_26/lobby_gallery_masterpiece_13_v2_26.png" },
+    { key: "v226-lobby-gallery-masterpiece-14", path: "assets/ui/v2_26/lobby_gallery_masterpiece_14_v2_26.png" },
+    { key: "v226-lobby-gallery-masterpiece-15", path: "assets/ui/v2_26/lobby_gallery_masterpiece_15_v2_26.png" },
+    { key: "v226-lobby-gallery-masterpiece-16", path: "assets/ui/v2_26/lobby_gallery_masterpiece_16_v2_26.png" },
+    { key: "v226-lobby-gallery-masterpiece-17", path: "assets/ui/v2_26/lobby_gallery_masterpiece_17_v2_26.png" },
+    { key: "v226-lobby-gallery-masterpiece-18", path: "assets/ui/v2_26/lobby_gallery_masterpiece_18_v2_26.png" },
+    { key: "v226-shared-gallery-masterpiece-01", path: "assets/ui/v2_26/shared_gallery_masterpiece_01_v2_26.png" },
+    { key: "v226-shared-gallery-masterpiece-02", path: "assets/ui/v2_26/shared_gallery_masterpiece_02_v2_26.png" },
+    { key: "v226-shared-gallery-masterpiece-03", path: "assets/ui/v2_26/shared_gallery_masterpiece_03_v2_26.png" },
+    { key: "v226-shared-gallery-masterpiece-04", path: "assets/ui/v2_26/shared_gallery_masterpiece_04_v2_26.png" },
+    { key: "v226-shared-gallery-masterpiece-05", path: "assets/ui/v2_26/shared_gallery_masterpiece_05_v2_26.png" },
+    { key: "v226-shared-gallery-masterpiece-06", path: "assets/ui/v2_26/shared_gallery_masterpiece_06_v2_26.png" },
+    { key: "v226-shared-gallery-masterpiece-07", path: "assets/ui/v2_26/shared_gallery_masterpiece_07_v2_26.png" },
+    { key: "v226-shared-gallery-masterpiece-08", path: "assets/ui/v2_26/shared_gallery_masterpiece_08_v2_26.png" },
+    { key: "v226-shared-gallery-masterpiece-09", path: "assets/ui/v2_26/shared_gallery_masterpiece_09_v2_26.png" },
+    { key: "v226-shared-gallery-masterpiece-10", path: "assets/ui/v2_26/shared_gallery_masterpiece_10_v2_26.png" },
+    { key: "v226-shared-gallery-masterpiece-11", path: "assets/ui/v2_26/shared_gallery_masterpiece_11_v2_26.png" },
+    { key: "v226-shared-gallery-masterpiece-12", path: "assets/ui/v2_26/shared_gallery_masterpiece_12_v2_26.png" },
+    { key: "v226-shared-gallery-masterpiece-13", path: "assets/ui/v2_26/shared_gallery_masterpiece_13_v2_26.png" },
+    { key: "v226-shared-gallery-masterpiece-14", path: "assets/ui/v2_26/shared_gallery_masterpiece_14_v2_26.png" },
+    { key: "v226-shared-gallery-masterpiece-15", path: "assets/ui/v2_26/shared_gallery_masterpiece_15_v2_26.png" },
+    { key: "v226-shared-gallery-masterpiece-16", path: "assets/ui/v2_26/shared_gallery_masterpiece_16_v2_26.png" },
+  ],
+  world: [
+    { key: "v226-world-gallery-masterpiece-01", path: "assets/ui/v2_26/world_gallery_masterpiece_01_v2_26.png" },
+    { key: "v226-world-gallery-masterpiece-02", path: "assets/ui/v2_26/world_gallery_masterpiece_02_v2_26.png" },
+    { key: "v226-world-gallery-masterpiece-03", path: "assets/ui/v2_26/world_gallery_masterpiece_03_v2_26.png" },
+    { key: "v226-world-gallery-masterpiece-04", path: "assets/ui/v2_26/world_gallery_masterpiece_04_v2_26.png" },
+    { key: "v226-world-gallery-masterpiece-05", path: "assets/ui/v2_26/world_gallery_masterpiece_05_v2_26.png" },
+    { key: "v226-world-gallery-masterpiece-06", path: "assets/ui/v2_26/world_gallery_masterpiece_06_v2_26.png" },
+    { key: "v226-world-gallery-masterpiece-07", path: "assets/ui/v2_26/world_gallery_masterpiece_07_v2_26.png" },
+    { key: "v226-world-gallery-masterpiece-08", path: "assets/ui/v2_26/world_gallery_masterpiece_08_v2_26.png" },
+    { key: "v226-world-gallery-masterpiece-09", path: "assets/ui/v2_26/world_gallery_masterpiece_09_v2_26.png" },
+    { key: "v226-world-gallery-masterpiece-10", path: "assets/ui/v2_26/world_gallery_masterpiece_10_v2_26.png" },
+    { key: "v226-world-gallery-masterpiece-11", path: "assets/ui/v2_26/world_gallery_masterpiece_11_v2_26.png" },
+    { key: "v226-world-gallery-masterpiece-12", path: "assets/ui/v2_26/world_gallery_masterpiece_12_v2_26.png" },
+    { key: "v226-world-gallery-masterpiece-13", path: "assets/ui/v2_26/world_gallery_masterpiece_13_v2_26.png" },
+    { key: "v226-world-gallery-masterpiece-14", path: "assets/ui/v2_26/world_gallery_masterpiece_14_v2_26.png" },
+    { key: "v226-world-gallery-masterpiece-15", path: "assets/ui/v2_26/world_gallery_masterpiece_15_v2_26.png" },
+    { key: "v226-world-gallery-masterpiece-16", path: "assets/ui/v2_26/world_gallery_masterpiece_16_v2_26.png" },
+  ],
+  battle: [
+    { key: "v226-battle-gallery-masterpiece-01", path: "assets/ui/v2_26/battle_gallery_masterpiece_01_v2_26.png" },
+    { key: "v226-battle-gallery-masterpiece-02", path: "assets/ui/v2_26/battle_gallery_masterpiece_02_v2_26.png" },
+    { key: "v226-battle-gallery-masterpiece-03", path: "assets/ui/v2_26/battle_gallery_masterpiece_03_v2_26.png" },
+    { key: "v226-battle-gallery-masterpiece-04", path: "assets/ui/v2_26/battle_gallery_masterpiece_04_v2_26.png" },
+    { key: "v226-battle-gallery-masterpiece-05", path: "assets/ui/v2_26/battle_gallery_masterpiece_05_v2_26.png" },
+    { key: "v226-battle-gallery-masterpiece-06", path: "assets/ui/v2_26/battle_gallery_masterpiece_06_v2_26.png" },
+    { key: "v226-battle-gallery-masterpiece-07", path: "assets/ui/v2_26/battle_gallery_masterpiece_07_v2_26.png" },
+    { key: "v226-battle-gallery-masterpiece-08", path: "assets/ui/v2_26/battle_gallery_masterpiece_08_v2_26.png" },
+    { key: "v226-battle-gallery-masterpiece-09", path: "assets/ui/v2_26/battle_gallery_masterpiece_09_v2_26.png" },
+    { key: "v226-battle-gallery-masterpiece-10", path: "assets/ui/v2_26/battle_gallery_masterpiece_10_v2_26.png" },
+    { key: "v226-battle-gallery-masterpiece-11", path: "assets/ui/v2_26/battle_gallery_masterpiece_11_v2_26.png" },
+    { key: "v226-battle-gallery-masterpiece-12", path: "assets/ui/v2_26/battle_gallery_masterpiece_12_v2_26.png" },
+    { key: "v226-battle-gallery-masterpiece-13", path: "assets/ui/v2_26/battle_gallery_masterpiece_13_v2_26.png" },
+    { key: "v226-battle-gallery-masterpiece-14", path: "assets/ui/v2_26/battle_gallery_masterpiece_14_v2_26.png" },
+    { key: "v226-battle-gallery-masterpiece-15", path: "assets/ui/v2_26/battle_gallery_masterpiece_15_v2_26.png" },
+    { key: "v226-battle-gallery-masterpiece-16", path: "assets/ui/v2_26/battle_gallery_masterpiece_16_v2_26.png" },
+    { key: "v226-battle-gallery-masterpiece-17", path: "assets/ui/v2_26/battle_gallery_masterpiece_17_v2_26.png" },
+    { key: "v226-battle-gallery-masterpiece-18", path: "assets/ui/v2_26/battle_gallery_masterpiece_18_v2_26.png" },
+  ],
+};
+
+const DEFAULT_PROGRESSIVE_CORE_CAP: Record<ProgressiveArtBundle, number> = {
+  login: 14,
+  lobby: 18,
+  world: 16,
+  battle: 16,
+};
+
+type SceneWithProgressiveQueue = Phaser.Scene & {
+  __kingdomSeedProgressiveQueue?: Promise<void>;
+};
+
 const query = new URLSearchParams(
   typeof window !== "undefined" ? window.location.search : "",
 );
@@ -185,6 +356,53 @@ function sceneIsLive(scene: Phaser.Scene): boolean {
   return scene.scene.isActive(scene.scene.key);
 }
 
+function getProgressiveBundleDefinitions(
+  bundle: ProgressiveArtBundle,
+  includeGallery: boolean,
+): AssetDef[] {
+  const core = [...V226_CORE_BUNDLES[bundle], ...CORE_BUNDLES[bundle]];
+  if (includeGallery) {
+    return [
+      ...core,
+      ...V226_GALLERY_BUNDLES[bundle],
+      ...GALLERY_BUNDLES[bundle],
+    ];
+  }
+
+  const cap = DEFAULT_PROGRESSIVE_CORE_CAP[bundle];
+  const lowCap = Math.max(8, Math.ceil(cap * 0.65));
+  return core.slice(0, isLowDeviceProfile() ? lowCap : cap);
+}
+
+function enqueueProgressiveLoad(
+  scene: Phaser.Scene,
+  task: () => Promise<void>,
+): void {
+  const scoped = scene as SceneWithProgressiveQueue;
+  scoped.__kingdomSeedProgressiveQueue = (scoped.__kingdomSeedProgressiveQueue ?? Promise.resolve())
+    .then(task)
+    .catch((error) => console.warn("Progressive art load skipped:", error));
+}
+
+function loadMissingAssets(scene: Phaser.Scene, assets: AssetDef[]): Promise<void> {
+  const toLoad = assets.filter((asset) => !scene.textures.exists(asset.key));
+  if (toLoad.length === 0) return Promise.resolve();
+  return new Promise((resolve) => {
+    const loader = scene.load as Phaser.Loader.LoaderPlugin & {
+      maxParallelDownloads?: number;
+      isLoading?: () => boolean;
+    };
+    loader.maxParallelDownloads = isLowDeviceProfile() ? 1 : 2;
+    const done = (): void => {
+      loader.off("complete", done);
+      resolve();
+    };
+    loader.once("complete", done);
+    toLoad.forEach((asset) => loader.image(asset.key, assetUrl(asset.path)));
+    if (!loader.isLoading?.()) loader.start();
+  });
+}
+
 export function loadProgressiveArtBundle(
   scene: Phaser.Scene,
   bundle: ProgressiveArtBundle,
@@ -195,27 +413,18 @@ export function loadProgressiveArtBundle(
   safeDelayedCall(scene, delayMs, () => {
     if (!sceneIsLive(scene)) return;
     const includeGallery = options.includeGallery ?? (fullArtEnabled() && !isLowDeviceProfile());
-    const defs = includeGallery
-      ? [...CORE_BUNDLES[bundle], ...GALLERY_BUNDLES[bundle]]
-      : CORE_BUNDLES[bundle];
+    const defs = getProgressiveBundleDefinitions(bundle, includeGallery);
     const missing = defs.filter((asset) => !scene.textures.exists(asset.key));
     if (missing.length === 0) {
       safeDelayedCall(scene, 0, onComplete);
       return;
     }
 
-    const loader = scene.load as Phaser.Loader.LoaderPlugin & {
-      maxParallelDownloads?: number;
-      isLoading?: () => boolean;
-    };
-    loader.maxParallelDownloads = isLowDeviceProfile() ? 2 : 3;
-    const done = (): void => {
-      loader.off("complete", done);
+    enqueueProgressiveLoad(scene, async () => {
+      if (!sceneIsLive(scene)) return;
+      await loadMissingAssets(scene, missing);
       if (sceneIsLive(scene)) onComplete();
-    };
-    loader.once("complete", done);
-    missing.forEach((asset) => loader.image(asset.key, assetUrl(asset.path)));
-    if (!loader.isLoading?.()) loader.start();
+    });
   });
 }
 

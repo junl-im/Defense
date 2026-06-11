@@ -13,6 +13,7 @@ import { addV221LobbyArt } from "../game/CuteFantasyArtV221";
 import { addV222LobbyArt } from "../game/CuteFantasyArtV222";
 import { addV224LobbyArt } from "../game/PremiumIllustrationArtV224";
 import { addV225LobbyArt } from "../game/PremiumIllustrationArtV225";
+import { addV226LobbyArt } from "../game/PremiumIllustrationArtV226";
 import { loadProgressiveArtBundle, warmProgressiveArtBundle } from "../game/ProgressiveAssetLoader";
 import { clearTimer, safeDelayedCall } from "../game/SceneSafety";
 import { useCumulativeArtLayers } from "../game/PerformanceMode";
@@ -91,7 +92,7 @@ export class MainMenuScene extends Phaser.Scene {
     safeDelayedCall(this, 0, () => {
       window.dispatchEvent(
         new CustomEvent("kingdom-seed:scene-ready", {
-          detail: { scene: "MainMenuScene", version: "2.25.0", at: Date.now() },
+          detail: { scene: "MainMenuScene", version: "2.26.0", at: Date.now() },
         }),
       );
     });
@@ -102,8 +103,9 @@ export class MainMenuScene extends Phaser.Scene {
     loadProgressiveArtBundle(this, "lobby", () => {
       if (!this.scene.isActive("MainMenuScene")) return;
       addV225LobbyArt(this, this.save.nickname, this.save.stars);
-      warmProgressiveArtBundle(this, "world", { delayMs: 900 });
-    }, { delayMs: 90 });
+      addV226LobbyArt(this, this.save.nickname, this.save.stars);
+      warmProgressiveArtBundle(this, "world", { delayMs: 1400 });
+    }, { delayMs: 420 });
   }
 
   private createV210CleanChrome(): void {

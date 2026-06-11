@@ -152,6 +152,7 @@ import { addV221BattleArt } from "../game/CuteFantasyArtV221";
 import { addV222BattleArt } from "../game/CuteFantasyArtV222";
 import { addV224BattleArt } from "../game/PremiumIllustrationArtV224";
 import { addV225BattleArt } from "../game/PremiumIllustrationArtV225";
+import { addV226BattleArt } from "../game/PremiumIllustrationArtV226";
 import { loadProgressiveArtBundle } from "../game/ProgressiveAssetLoader";
 import { clearTimer, safeDelayedCall } from "../game/SceneSafety";
 import { useCumulativeArtLayers } from "../game/PerformanceMode";
@@ -249,7 +250,8 @@ export class GameScene extends Phaser.Scene {
     loadProgressiveArtBundle(this, "battle", () => {
       if (!this.scene.isActive("GameScene") || this.ended) return;
       addV225BattleArt(this, this.stage.theme);
-    }, { delayMs: 40 });
+      addV226BattleArt(this, this.stage.theme);
+    }, { delayMs: 180 });
   }
 
   private isSceneLive(): boolean {
