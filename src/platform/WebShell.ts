@@ -10,6 +10,8 @@ type BrowserFlags = {
 let allowExit = false;
 let exitModal: HTMLDivElement | undefined;
 let startGate: HTMLDivElement | undefined;
+let bootErrorOverlay: HTMLDivElement | undefined;
+let bootWatchdogTimer: number | undefined;
 let activated = false;
 let sceneReady = false;
 let guardArmed = false;
@@ -44,17 +46,19 @@ function ensureShellStyles(): void {
   style.id = 'kingdom-shell-v211-style';
   style.textContent = `
     #game { width: 100vw; height: 100dvh; min-height: 100dvh; }
-    .shell-overlay { position: fixed; inset: 0; z-index: 10000; display: flex; align-items: center; justify-content: center; padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); background: radial-gradient(circle at 50% 24%, rgba(101,165,255,.28), rgba(6,14,31,.86) 58%, rgba(3,7,16,.94)); color: white; box-sizing: border-box; transition: opacity 180ms ease, transform 180ms ease; }
+    .shell-overlay { position: fixed; inset: 0; z-index: 10000; display: flex; align-items: center; justify-content: center; padding: max(14px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) max(14px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left)); background: radial-gradient(circle at 50% 22%, rgba(83,169,255,.38), rgba(8,18,43,.88) 58%, rgba(2,5,12,.96)); color: white; box-sizing: border-box; transition: opacity 180ms ease, transform 180ms ease; }
     .shell-overlay.hidden { display: none !important; }
     .shell-overlay.fading { opacity: 0; transform: scale(1.02); pointer-events: none; }
     .shell-start-gate { cursor: pointer; }
-    .shell-start-card, .shell-panel { width: min(340px, 84vw); border: 2px solid rgba(255,218,123,.88); border-radius: 22px; padding: 15px 14px; text-align: center; background: radial-gradient(circle at 50% 0%, rgba(120,215,255,.16), transparent 44%), linear-gradient(180deg, rgba(27,43,70,.96), rgba(7,14,31,.97)); color: #f7fbff; box-shadow: 0 30px 90px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.9); }
-    .shell-title-mark { font-size: 19px; line-height: 1; font-weight: 1000; letter-spacing: .04em; color: #fff0b8; text-shadow: 0 2px 0 rgba(0,0,0,.45), 0 0 18px rgba(255,220,126,.22); }
+    .shell-start-card, .shell-panel { width: min(356px, 86vw); border: 2px solid rgba(255,218,123,.92); border-radius: 22px; padding: 18px 16px; text-align: center; background: radial-gradient(circle at 50% 0%, rgba(120,215,255,.20), transparent 44%), linear-gradient(180deg, rgba(33,52,84,.98), rgba(8,17,38,.98)); color: #f7fbff; box-shadow: 0 24px 70px rgba(0,0,0,.48), 0 0 0 1px rgba(255,255,255,.08), inset 0 1px 0 rgba(255,255,255,.22); }
+    .shell-title-mark { font-size: 20px; line-height: 1; font-weight: 1000; letter-spacing: .04em; color: #fff0b8; text-shadow: 0 2px 0 rgba(0,0,0,.45), 0 0 18px rgba(255,220,126,.22); }
     .shell-title-sword { width: 68%; height: 2px; margin: 10px auto 0; background: linear-gradient(90deg, transparent, #e7b94e, transparent); }
     .shell-start-card h1, .shell-panel h2 { margin: 10px 0 5px; font-size: 18px; color: #eaf6ff; }
     .shell-start-card p, .shell-panel p { margin: 0; font-weight: 800; font-size: 12px; color: #bcd7ff; }
-    .shell-tap-rune { display: inline-flex; margin-top: 11px; width: 54px; height: 54px; align-items: center; justify-content: center; border-radius: 999px; color: #fff; font-weight: 1000; background: linear-gradient(180deg, #5fa1ff, #255ab5); border: 3px solid #ffd979; box-shadow: 0 12px 34px rgba(27,82,180,.34), inset 0 1px 0 rgba(255,255,255,.46); animation: ksTapPulseV48 1.25s ease-in-out infinite; }
-    .shell-loading-text { margin-top: 10px; color: #fff0b8; font-weight: 1000; font-size: 9px; }
+    .shell-tap-rune { display: inline-flex; margin-top: 12px; width: 58px; height: 58px; align-items: center; justify-content: center; border-radius: 999px; color: #fff; font-weight: 1000; background: linear-gradient(180deg, #5fa1ff, #255ab5); border: 3px solid #ffd979; box-shadow: 0 12px 34px rgba(27,82,180,.34), inset 0 1px 0 rgba(255,255,255,.46); animation: ksTapPulseV48 1.25s ease-in-out infinite; }
+    .shell-loading-text { margin-top: 10px; color: #fff0b8; font-weight: 1000; font-size: 10px; }
+    .shell-boot-error { position: fixed; left: 50%; bottom: max(12px, env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 10020; width: min(520px, 92vw); padding: 12px 14px; border-radius: 16px; border: 1px solid rgba(255,130,105,.82); background: linear-gradient(180deg, rgba(43,17,20,.96), rgba(13,7,11,.98)); color: #ffe8dc; font-weight: 900; font-size: 12px; line-height: 1.35; box-shadow: 0 16px 42px rgba(0,0,0,.44); }
+    .shell-boot-error button { margin-top: 8px; width: 100%; border: 0; border-radius: 12px; padding: 9px 12px; color: #261008; background: linear-gradient(180deg, #ffe09a, #f4a83b); font-weight: 1000; }
     .shell-row { display: flex; gap: 12px; justify-content: center; margin-top: 14px; }
     .shell-row button { appearance: none; border: 0; border-radius: 16px; padding: 13px 24px; color: #fff; font-weight: 1000; font-size: 16px; }
     .shell-secondary { background: linear-gradient(180deg, #5d94e6, #2658b5); }
@@ -118,6 +122,27 @@ function emitEmergencySave(reason: string): void {
   window.dispatchEvent(new CustomEvent('kingdom-seed:emergency-save', { detail: { reason, at: Date.now() } }));
 }
 
+function formatBootError(error: unknown): string {
+  if (error instanceof Error) return error.message || error.name;
+  if (typeof error === 'string') return error;
+  try { return JSON.stringify(error); } catch { return String(error); }
+}
+
+function showBootError(reason: string, error: unknown): void {
+  const message = formatBootError(error);
+  console.error('[Kingdom Seed boot error]', reason, error);
+  if (!bootErrorOverlay) {
+    bootErrorOverlay = document.createElement('div');
+    bootErrorOverlay.className = 'shell-boot-error';
+    document.body.appendChild(bootErrorOverlay);
+  }
+  bootErrorOverlay.innerHTML = `
+    <div>시작 화면 초기화 중 문제가 감지됐어요.</div>
+    <div style="margin-top:4px;opacity:.82;font-size:10px;word-break:break-word;">${reason}: ${message.slice(0, 180)}</div>
+    <button type="button">다시 불러오기</button>`;
+  bootErrorOverlay.querySelector('button')?.addEventListener('click', () => window.location.reload(), { once: true });
+}
+
 async function requestFullscreenAndLandscape(): Promise<void> {
   const info = flags();
   if (!info.isMobile) return;
@@ -161,6 +186,10 @@ function updateOrientationClass(): void {
 
 function markSceneReady(): void {
   sceneReady = true;
+  if (bootWatchdogTimer !== undefined) {
+    window.clearTimeout(bootWatchdogTimer);
+    bootWatchdogTimer = undefined;
+  }
   lastSceneReadyAt = Date.now();
   if (activated) fadeRemove(startGate);
   suppressExitGuardUntil = Date.now() + 2800;
@@ -201,13 +230,18 @@ function createStartGate(): void {
       <h1>탭해서 시작</h1>
       <p>사운드와 화면을 준비하고 바로 진입합니다.</p>
       <div class="shell-tap-rune">TAP</div>
-      <div class="shell-loading-text">v2.14 디자인 정리 로딩</div>
+      <div class="shell-loading-text">v2.14.1 시작 화면 복구 로딩</div>
     </div>`;
   document.body.appendChild(startGate);
   const start = (): void => void activateGameShell();
   startGate.addEventListener('pointerdown', start, { once: true });
   startGate.addEventListener('touchstart', start, { once: true, passive: true });
   startGate.addEventListener('click', start, { once: true });
+  bootWatchdogTimer = window.setTimeout(() => {
+    if (sceneReady) return;
+    const note = startGate?.querySelector<HTMLElement>('.shell-loading-text');
+    if (note) note.textContent = '로딩이 멈춘 경우 화면을 한 번 더 탭하세요';
+  }, 4200);
 }
 
 function createExitModal(): void {
@@ -321,6 +355,8 @@ export function installWebShell(): void {
   window.addEventListener('orientationchange', () => setTimeout(updateOrientationClass, 120));
   document.addEventListener('fullscreenchange', updateOrientationClass);
   window.addEventListener('kingdom-seed:scene-ready', markSceneReady);
+  window.addEventListener('error', (event) => showBootError('runtime', event.error ?? event.message));
+  window.addEventListener('unhandledrejection', (event) => showBootError('promise', event.reason));
   createStartGate();
   createExitModal();
   installBackGuard();
