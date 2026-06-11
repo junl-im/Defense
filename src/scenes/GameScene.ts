@@ -25,6 +25,11 @@ import { grantBattleRewardInventory } from '../game/ArtifactForge';
 import { showChestOpeningCinematic } from '../game/PremiumRewardForgeUi';
 import { addPremiumChestSpotlight, addPremiumPanelGlints, addTowerPanelSurface, installPremiumButtonFx, showBattleStartLoading, showPremiumChestCharge, showPremiumToast } from '../game/PremiumFlowUi';
 import { addHitZoneDebug } from '../game/HitZoneDebug';
+import { BATTLE_SAFE_BOTTOM, BATTLE_SAFE_LEFT, BATTLE_SAFE_RIGHT, BATTLE_SAFE_TOP, clampToBattlefield, installCombatVisualDirector, isBattlefieldPoint } from '../game/BattleVisualDirector';
+import { addStageV26Decor, applyWaveEventOpening, mutateEnemyForWaveEvent, type WaveEventRuntime } from '../game/CampaignExpansionV26';
+import { applyRunModifiersToEnemy, getRunStartAdjustments, getStageRunModifiers, getTowerAura, runModifierColor, runModifierSummary, type RunModifier } from '../game/RunModifiers';
+import { createTacticalOrderState, pickTacticalOrderChoices, shouldOfferTacticalOrder, applyTacticalOrderChoice, renderTacticalOrderCard, tacticalOrderSummary, type TacticalOrderChoice, type TacticalOrderState } from '../game/TacticalOrdersV27';
+import { battleContractDetailLines, battleContractHudLine, battleContractResultLines, createBattleContractState, createStageBattleContracts, recordBattleContractEvent, type BattleContractEvent, type BattleContractState } from '../game/BattleContractsV28';
 
 type CastingSpell = 'meteor' | 'mercenary' | undefined;
 
@@ -60,6 +65,10 @@ export class GameScene extends Phaser.Scene {
   pauseOverlay?: Phaser.GameObjects.Container;
   dailyChallenge?: DailyChallenge;
   relicBonuses = getRelicBattleBonuses();
+  runModifiers: RunModifier[] = [];
+  private runModifierText?: Phaser.GameObjects.Text;
+  private synergyText?: Phaser.GameObjects.Text;
+  private commandAuraLabel = '기본';
 
   goldText!: Phaser.GameObjects.Text;
   livesText!: Phaser.GameObjects.Text;
@@ -88,6 +97,15 @@ export class GameScene extends Phaser.Scene {
   private comboText?: Phaser.GameObjects.Text;
   private directorText?: Phaser.GameObjects.Text;
   private tacticalHintCooldownMs = 0;
+  private nextHudRefreshAt = 0;
+  private nextSpellHudRefreshAt = 0;
+  private activeWaveEvent?: WaveEventRuntime;
+  private tacticalOrderState: TacticalOrderState = createTacticalOrderState();
+  private tacticalOrderHudText?: Phaser.GameObjects.Text;
+  private tacticalOrderDraft?: Phaser.GameObjects.Container;
+  private battleContractState: BattleContractState = createBattleContractState();
+  private battleContractHudText?: Phaser.GameObjects.Text;
+  private battleContractDetailText?: Phaser.GameObjects.Text;
 
   constructor() {
     super('GameScene');
@@ -99,10 +117,12 @@ export class GameScene extends Phaser.Scene {
     this.stage = getStageConfig(data.stageId);
     this.dailyChallenge = data.dailyChallenge;
     this.relicBonuses = getRelicBattleBonuses();
+    this.runModifiers = getStageRunModifiers(this.stage, data.user?.uid ?? 'guest');
     const heroBonus = getHeroBattleBonus();
-    this.gold = this.stage.startGold + this.relicBonuses.startGoldBonus + heroBonus.startGold;
+    const runStart = getRunStartAdjustments(this.runModifiers);
+    this.gold = this.stage.startGold + this.relicBonuses.startGoldBonus + heroBonus.startGold + runStart.gold;
     if (this.dailyChallenge?.modifiers.includes('gold_rush')) this.gold = Math.round(this.gold * 1.25);
-    this.lives = this.stage.maxLives + heroBonus.extraLives;
+    this.lives = this.stage.maxLives + heroBonus.extraLives + runStart.lives;
     this.waveIndex = -1;
     this.enemies = [];
     this.towers = [];
@@ -133,6 +153,18 @@ export class GameScene extends Phaser.Scene {
     this.totalKills = 0;
     this.totalLeaks = 0;
     this.tacticalHintCooldownMs = 0;
+    this.nextHudRefreshAt = 0;
+    this.nextSpellHudRefreshAt = 0;
+    this.runModifierText = undefined;
+    this.synergyText = undefined;
+    this.commandAuraLabel = '기본';
+    this.activeWaveEvent = undefined;
+    this.tacticalOrderState = createTacticalOrderState();
+    this.tacticalOrderHudText = undefined;
+    this.tacticalOrderDraft = undefined;
+    this.battleContractState = createStageBattleContracts(this.stage, data.user?.uid ?? 'guest');
+    this.battleContractHudText = undefined;
+    this.battleContractDetailText = undefined;
   }
 
   create(): void {
@@ -140,18 +172,26 @@ export class GameScene extends Phaser.Scene {
     this.input.setTopOnly(true);
     this.startTime = Date.now();
     this.drawMap();
+    installCombatVisualDirector(this, this.stage);
     addPremiumBattleObjects(this, this.stage);
     drawBattlePolish(this, this.stage.theme);
     drawCinematicCombatFrame(this, this.stage.theme);
+    addStageV26Decor(this, this.stage);
     installScenePerformanceWatch(this);
     this.createHud();
+    this.createRunModifierHud();
+    this.createTacticalOrderHud();
+    this.createBattleContractHud();
     this.createUiInputGuards();
+    this.installSceneCleanup();
     showBattleStartLoading(this, this.stage.title, '전술 배치 · 공세 분석 · 지휘 HUD 전개');
+    this.showRunModifierBanner();
+    this.time.delayedCall(760, () => this.showTacticalOrderDraft('opening'));
     this.createTowerSpots();
     const selectedHero = getSelectedHero();
     installBattleDirectorHud(this, this.stage, selectedHero);
     this.hero = new Hero(this, this.stage.path[0].x + 120, this.stage.path[0].y - 35);
-    this.hero.damage = Math.round(this.hero.damage * getHeroBattleBonus(selectedHero.id).heroDamage);
+    this.hero.damage = Math.round(this.hero.damage * getHeroBattleBonus(selectedHero.id).heroDamage * this.tacticalOrderState.heroDamageMultiplier);
     if (this.dailyChallenge?.modifiers.includes('hero_trial')) this.hero.damage = Math.round(this.hero.damage * 1.35);
     this.hero.on('pointerdown', () => this.showMessage('영웅 레온 선택됨. 빈 맵 터치로 이동합니다.'));
     this.createSpells();
@@ -165,7 +205,7 @@ export class GameScene extends Phaser.Scene {
     if (this.dailyChallenge) {
       this.time.delayedCall(520, () => this.showMessage(`일일 도전: ${this.dailyChallenge!.modifiers.map(modifierLabel).join(' / ')}`));
     }
-    // v2.5: 첫 웨이브는 자동 카운트하지 않는다. 플레이어가 전투 시작 버튼을 눌러 개시한다.
+    // v2.2: 첫 웨이브는 자동 카운트하지 않는다. 플레이어가 전투 시작 버튼을 눌러 개시한다.
     this.nextWaveCountdownMs = 0;
     this.updateWaveButton();
     this.events.on('kingdom-seed:boss-pattern', (payload: { label: string; pattern: string; kind?: EnemyKind; x?: number; y?: number }) => {
@@ -191,22 +231,28 @@ export class GameScene extends Phaser.Scene {
     this.mercenaries = this.mercenaries.filter((soldier) => soldier.active);
     this.mercenaries.forEach((soldier) => soldier.update(delta, this.enemies));
 
-    for (const enemy of [...this.enemies]) {
+    let needsEnemyCompact = false;
+    for (let i = this.enemies.length - 1; i >= 0; i -= 1) {
+      const enemy = this.enemies[i];
       if (enemy.reachedGoal) {
-        this.lives -= enemy.config.threat === 'boss' ? 3 : 1;
-        this.totalLeaks += enemy.config.threat === 'boss' ? 3 : 1;
+        const leakAmount = enemy.config.threat === 'boss' ? 3 : 1;
+        this.lives -= leakAmount;
+        this.totalLeaks += leakAmount;
+        this.recordBattleContract({ type: 'leak', amount: leakAmount });
         this.killStreak = 0;
         this.refreshObjectivePanel();
         enemy.destroy();
         enemy.dead = true;
-        this.refreshHud();
+        needsEnemyCompact = true;
+        this.forceHudRefresh();
       } else if (enemy.dead && enemy.hp === 0) {
         this.registerKill(enemy);
         enemy.hp = -9999;
-        this.refreshHud();
+        needsEnemyCompact = true;
+        this.forceHudRefresh();
       }
     }
-    this.enemies = this.enemies.filter((e) => e.active && !e.reachedGoal);
+    if (needsEnemyCompact) this.enemies = this.enemies.filter((e) => e.active && !e.reachedGoal);
 
     if (this.lives <= 0) {
       this.showGameOver();
@@ -221,11 +267,12 @@ export class GameScene extends Phaser.Scene {
         playMusic(this, 'bgm_battle', 0.18);
         this.showMessage('방어 성공! 10초 후 다음 공격이 시작됩니다.');
         this.scheduleNextWave(10000, false);
+        this.time.delayedCall(260, () => this.showTacticalOrderDraft('wave'));
       }
     }
 
-    this.refreshSpellHud();
-    this.refreshHud();
+    this.refreshSpellHudThrottled();
+    this.refreshHudThrottled();
   }
 
   private drawMap(): void {
@@ -277,7 +324,7 @@ export class GameScene extends Phaser.Scene {
 
   private drawHudChrome(): void {
     if (this.textures.exists('v1-combat-top-hud')) {
-      this.add.image(480, 44, 'v1-combat-top-hud').setDisplaySize(960, 96).setDepth(70);
+      this.add.image(480, 31, 'v1-combat-top-hud').setDisplaySize(960, 68).setDepth(70);
     } else if (this.textures.exists('ui-hud-top-panel')) {
       this.add.image(480, 32, 'ui-hud-top-panel').setDisplaySize(960, 64).setDepth(70);
     } else {
@@ -285,7 +332,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     if (this.textures.exists('v1-combat-bottom-dock')) {
-      this.add.image(480, 492, 'v1-combat-bottom-dock').setDisplaySize(960, 104).setDepth(70);
+      this.add.image(480, 499, 'v1-combat-bottom-dock').setDisplaySize(960, 82).setDepth(70);
     } else if (this.textures.exists('ui-hud-bottom-panel')) {
       this.add.image(480, 510, 'ui-hud-bottom-panel').setDisplaySize(960, 64).setDepth(70);
     } else {
@@ -401,7 +448,7 @@ export class GameScene extends Phaser.Scene {
 
   private createHud(): void {
     const statStyle: Phaser.Types.GameObjects.Text.TextStyle = {
-      fontSize: '18px',
+      fontSize: '13px',
       color: '#fff7d6',
       fontStyle: 'bold',
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 1, fill: true }
@@ -410,59 +457,59 @@ export class GameScene extends Phaser.Scene {
     const usingV1Hud = this.textures.exists('v1-combat-top-hud');
     const makeStat = (x: number, w: number, label: string, icon: string, accent: number): Phaser.GameObjects.Text => {
       if (!usingV1Hud) addPremiumPlaque(this, x, 31, w, 42, accent, 74);
-      this.add.text(x - w / 2 + 12, 14, label, {
-        fontSize: '9px', color: usingV1Hud ? '#dbe7ff' : '#c8b184', fontStyle: 'bold',
+      this.add.text(x - w / 2 + 10, 10, label, {
+        fontSize: '8px', color: usingV1Hud ? '#dbe7ff' : '#c8b184', fontStyle: 'bold',
         shadow: { offsetX: 0, offsetY: 1, color: '#000000', blur: 1, fill: true }
       }).setDepth(79);
-      this.add.text(x - w / 2 + 13, 32, icon, {
-        fontSize: '16px', color: '#ffffff', fontStyle: 'bold',
+      this.add.text(x - w / 2 + 11, 28, icon, {
+        fontSize: '14px', color: '#ffffff', fontStyle: 'bold',
         shadow: { offsetX: 0, offsetY: 1, color: '#000000', blur: 1, fill: true }
       }).setOrigin(0, 0.5).setDepth(79);
-      return this.add.text(x - w / 2 + 38, 31, '', statStyle).setOrigin(0, 0.5).setDepth(80);
+      return this.add.text(x - w / 2 + 32, 28, '', statStyle).setOrigin(0, 0.5).setDepth(80);
     };
 
-    this.livesText = makeStat(64, 112, 'LIFE', '♥', 0xff7070);
-    this.goldText = makeStat(188, 118, 'GOLD', '$', 0xf7d36b);
-    this.waveText = makeStat(320, 128, 'WAVE', '◆', 0x9ad7ff);
+    this.livesText = makeStat(54, 86, 'LIFE', '♥', 0xff7070);
+    this.goldText = makeStat(154, 96, 'GOLD', '$', 0xf7d36b);
+    this.waveText = makeStat(265, 104, 'WAVE', '◆', 0x9ad7ff);
 
-    if (!usingV1Hud) addPremiumPlaque(this, 516, 31, 252, 42, 0x9dd08b, 74);
-    this.add.text(398, 14, 'BATTLEFIELD', {
+    if (!usingV1Hud) addPremiumPlaque(this, 470, 28, 210, 36, 0x9dd08b, 74);
+    this.add.text(370, 9, 'BATTLEFIELD', {
       fontSize: '9px', color: '#c8b184', fontStyle: 'bold',
       shadow: { offsetX: 0, offsetY: 1, color: '#000000', blur: 1, fill: true }
     }).setDepth(79);
     const stageLabel = `S${this.stage.number}  ${this.stage.title}`;
-    this.stageText = this.add.text(514, 32, stageLabel, {
-      fontSize: '14px', color: '#dbe7ff', fontStyle: 'bold',
-      fixedWidth: 232,
+    this.stageText = this.add.text(470, 28, stageLabel, {
+      fontSize: '11px', color: '#dbe7ff', fontStyle: 'bold',
+      fixedWidth: 200,
       align: 'center',
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 1, fill: true }
     }).setOrigin(0.5).setDepth(80);
 
-    this.messageText = this.add.text(480, 82, '', {
-      fontSize: '18px',
+    this.messageText = this.add.text(480, 72, '', {
+      fontSize: '10px',
       color: '#fff7d6',
       backgroundColor: '#19100bcc',
-      padding: { x: 14, y: 8 },
+      padding: { x: 10, y: 6 },
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 1, fill: true }
     }).setOrigin(0.5).setVisible(false).setDepth(90);
 
     if (!this.textures.exists('v1-combat-bottom-dock')) addPremiumPlaque(this, 482, 462, 292, 42, 0x7b58ff, 74);
     this.objectiveText = this.add.text(482, 462, '', {
-      fontSize: '11px', color: '#fff4c2', fontStyle: 'bold', align: 'center', fixedWidth: 276,
+      fontSize: '10px', color: '#fff4c2', fontStyle: 'bold', align: 'center', fixedWidth: 276,
       shadow: { offsetX: 0, offsetY: 1, color: '#000000', blur: 1, fill: true }
     }).setOrigin(0.5).setDepth(83);
     this.comboText = this.add.text(342, 432, '', {
-      fontSize: '18px', color: '#ffef9a', fontStyle: 'bold',
+      fontSize: '15px', color: '#ffef9a', fontStyle: 'bold',
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 2, fill: true }
     }).setOrigin(0.5).setDepth(92).setVisible(false);
     this.directorText = this.add.text(480, 118, '', {
-      fontSize: '17px', color: '#dbe7ff', fontStyle: 'bold', backgroundColor: '#07101ecc',
+      fontSize: '14px', color: '#dbe7ff', fontStyle: 'bold', backgroundColor: '#07101ecc',
       padding: { x: 14, y: 7 }, align: 'center',
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 2, fill: true }
     }).setOrigin(0.5).setDepth(91).setVisible(false);
 
-    const soundButton = this.makeUiButton(678, 31, 50, 40, 0x263c52, '', 18, 80);
-    this.soundText = this.add.text(678, 31, isMuted() ? 'OFF' : 'ON', { fontSize: '13px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
+    const soundButton = this.makeUiButton(628, 28, 40, 30, 0x263c52, '', 18, 80);
+    this.soundText = this.add.text(628, 28, isMuted() ? 'OFF' : 'ON', { fontSize: '11px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
     soundButton.on('pointerdown', () => {
       const next = !isMuted();
       setMuted(next);
@@ -470,9 +517,9 @@ export class GameScene extends Phaser.Scene {
       if (!next) playSfx(this, 'sfx_click');
     });
 
-    const waveButton = this.makeUiButton(778, 31, 154, 40, 0xa94732, '', 16, 80);
-    this.waveButtonText = this.add.text(778, 31, '전투 시작', {
-      fontSize: '16px', color: '#fff8cf', fontStyle: 'bold',
+    const waveButton = this.makeUiButton(726, 28, 122, 30, 0xa94732, '', 16, 80);
+    this.waveButtonText = this.add.text(726, 28, '전투 시작', {
+      fontSize: '12px', color: '#fff8cf', fontStyle: 'bold',
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 1, fill: true }
     }).setOrigin(0.5).setDepth(82);
     waveButton.on('pointerdown', () => {
@@ -480,14 +527,14 @@ export class GameScene extends Phaser.Scene {
       this.startNextWave(true);
     });
 
-    const speedButton = this.makeUiButton(888, 31, 54, 40, 0x24486b, '', 16, 80);
-    this.speedText = this.add.text(888, 31, '1x', { fontSize: '18px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
+    const speedButton = this.makeUiButton(836, 28, 44, 30, 0x24486b, '', 16, 80);
+    this.speedText = this.add.text(836, 28, '1x', { fontSize: '12px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
     speedButton.on('pointerdown', () => {
       pulseButton(this, speedButton);
       this.toggleSpeed();
     });
 
-    const pauseButton = this.makeUiButton(936, 31, 38, 40, 0x2f3440, 'Ⅱ', 19, 80);
+    const pauseButton = this.makeUiButton(896, 28, 38, 30, 0x2f3440, 'Ⅱ', 15, 80);
     pauseButton.on('pointerdown', () => {
       pulseButton(this, pauseButton);
       playSfx(this, 'sfx_click');
@@ -497,13 +544,254 @@ export class GameScene extends Phaser.Scene {
     this.refreshHud();
   }
 
+  private createRunModifierHud(): void {
+    if (this.runModifiers.length === 0) return;
+    const width = 160;
+    const startX = 618;
+    this.runModifiers.slice(0, 2).forEach((modifier, index) => {
+      const x = startX + index * 168;
+      if (this.textures.exists('v2-season-chip')) {
+        this.add.image(x, 68, 'v2-season-chip').setDisplaySize(width, 36).setDepth(81).setAlpha(0.92);
+      } else {
+        this.add.rectangle(x, 68, width, 34, 0x071c3e, 0.68).setDepth(81).setStrokeStyle(1, runModifierColor(modifier.tone), 0.55);
+      }
+      this.add.text(x - 64, 68, modifier.shortLabel, {
+        fontSize: '9px', color: '#fff7d6', fontStyle: 'bold',
+        fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
+        stroke: '#12366d', strokeThickness: 2,
+      }).setOrigin(0, 0.5).setDepth(82);
+      this.add.text(x - 4, 68, modifier.label, {
+        fontSize: '9px', color: '#dff4ff', fontStyle: 'bold',
+        fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
+        fixedWidth: 94,
+      }).setOrigin(0, 0.5).setDepth(82);
+    });
+    this.runModifierText = this.add.text(480, 91, '', {
+      fontSize: '9px', color: '#eaffff', fontStyle: 'bold', align: 'center',
+      fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
+      backgroundColor: '#07101e99', padding: { x: 8, y: 4 },
+      fixedWidth: 520,
+      shadow: { offsetX: 0, offsetY: 1, color: '#00152d', blur: 2, fill: true },
+    }).setOrigin(0.5).setDepth(82).setAlpha(0.0);
+    this.runModifierText.setText(runModifierSummary(this.runModifiers));
+    this.tweens.add({ targets: this.runModifierText, alpha: 0.95, duration: 220, delay: 360, yoyo: true, hold: 1700, onComplete: () => this.runModifierText?.setAlpha(0) });
+
+    if (this.textures.exists('v2-synergy-panel')) {
+      this.add.image(182, 68, 'v2-synergy-panel').setDisplaySize(250, 42).setDepth(81).setAlpha(0.86);
+    } else {
+      this.add.rectangle(182, 68, 250, 40, 0x082a36, 0.68).setDepth(81).setStrokeStyle(1, 0x8be878, 0.44);
+    }
+    this.synergyText = this.add.text(182, 68, '시너지: 타워 조합 대기', {
+      fontSize: '9px', color: '#eafff2', fontStyle: 'bold', align: 'center', fixedWidth: 228,
+      fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
+      stroke: '#06382f', strokeThickness: 2,
+    }).setOrigin(0.5).setDepth(82);
+    this.refreshArmySynergy();
+  }
+
+  private showRunModifierBanner(): void {
+    if (this.runModifiers.length === 0) return;
+    const text = this.runModifiers.map((modifier) => modifier.label).join('  /  ');
+    this.time.delayedCall(620, () => {
+      if (this.ended) return;
+      this.showMessage(`작전 변수: ${text}`);
+    });
+  }
+
+  private refreshArmySynergy(): void {
+    if (!this.synergyText) return;
+    const kinds = new Set(this.towers.filter((tower) => tower.active).map((tower) => tower.config.kind));
+    const aura = getTowerAura(this.runModifiers);
+    let damageMultiplier = aura.damageMultiplier;
+    let fireRateMultiplier = aura.fireRateMultiplier;
+    let label = aura.label;
+
+    if (kinds.size >= 4) {
+      damageMultiplier *= 1.08;
+      fireRateMultiplier *= 0.94;
+      label = '왕국 연합';
+    } else if (kinds.size >= 3) {
+      damageMultiplier *= 1.05;
+      label = '삼각 전술';
+    } else if (kinds.size >= 2) {
+      damageMultiplier *= 1.025;
+      label = '복합 방어';
+    }
+
+    damageMultiplier *= this.tacticalOrderState.towerDamageMultiplier;
+    fireRateMultiplier *= this.tacticalOrderState.towerFireRateMultiplier;
+    if (this.tacticalOrderState.chosen.length > 0 && label === '기본') label = '작전 지휘';
+    this.commandAuraLabel = label;
+    this.towers.forEach((tower) => tower.setCommandAura(damageMultiplier, fireRateMultiplier, label));
+    const damageText = `${Math.round((damageMultiplier - 1) * 100)}%`;
+    const speedText = fireRateMultiplier < 1 ? ` / 속도 +${Math.round((1 - fireRateMultiplier) * 100)}%` : '';
+    this.synergyText.setText(kinds.size > 0 ? `시너지 ${label} · 화력 +${damageText}${speedText}` : '시너지: 타워 조합 대기');
+  }
+
+
+
+  private createTacticalOrderHud(): void {
+    const bg = this.textures.exists('v2-command-scroll-v27')
+      ? this.add.image(778, 68, 'v2-command-scroll-v27').setDisplaySize(254, 42).setDepth(81).setAlpha(0.90)
+      : this.add.rectangle(778, 68, 254, 38, 0x07101e, 0.70).setStrokeStyle(1, 0xffd56c, 0.42).setDepth(81);
+    bg.setInteractive({ useHandCursor: true }).on('pointerdown', () => this.showTacticalOrderDraft('manual'));
+    this.tacticalOrderHudText = this.add.text(778, 68, tacticalOrderSummary(this.tacticalOrderState), {
+      fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
+      fontSize: '9px',
+      fontStyle: 'bold',
+      color: '#fff4c2',
+      align: 'center',
+      fixedWidth: 230,
+      stroke: '#092247',
+      strokeThickness: 2,
+    }).setOrigin(0.5).setDepth(82);
+  }
+
+  private refreshTacticalOrderHud(): void {
+    this.tacticalOrderHudText?.setText(tacticalOrderSummary(this.tacticalOrderState));
+  }
+
+  private createBattleContractHud(): void {
+    const bg = this.textures.exists('v2-contract-chip')
+      ? this.add.image(182, 108, 'v2-contract-chip').setDisplaySize(254, 44).setDepth(81).setAlpha(0.92)
+      : this.add.rectangle(182, 108, 254, 42, 0x07101e, 0.74).setStrokeStyle(1, 0x7ce8ff, 0.42).setDepth(81);
+    bg.setInteractive({ useHandCursor: true }).on('pointerdown', () => this.showBattleContractSummary());
+    this.battleContractHudText = this.add.text(182, 103, battleContractHudLine(this.battleContractState), {
+      fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
+      fontSize: '9px',
+      fontStyle: 'bold',
+      color: '#eaf8ff',
+      align: 'center',
+      fixedWidth: 230,
+      stroke: '#061730',
+      strokeThickness: 2,
+    }).setOrigin(0.5).setDepth(82);
+    this.battleContractDetailText = this.add.text(182, 120, battleContractDetailLines(this.battleContractState).join('   '), {
+      fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
+      fontSize: '8px',
+      fontStyle: 'bold',
+      color: '#fff4c2',
+      align: 'center',
+      fixedWidth: 238,
+      stroke: '#061730',
+      strokeThickness: 2,
+    }).setOrigin(0.5).setDepth(82);
+  }
+
+  private refreshBattleContractHud(): void {
+    this.battleContractHudText?.setText(battleContractHudLine(this.battleContractState));
+    this.battleContractDetailText?.setText(battleContractDetailLines(this.battleContractState).join('   '));
+  }
+
+  private showBattleContractSummary(): void {
+    const lines = this.battleContractState.contracts
+      .map((contract) => `${contract.completed ? '완료' : contract.failed ? '실패' : '진행'} · ${contract.title}  ${contract.progress}/${contract.goal}`)
+      .join(' / ');
+    this.showMessage(lines || '전장 계약 대기');
+  }
+
+  private recordBattleContract(event: BattleContractEvent): void {
+    const completed = recordBattleContractEvent(this.battleContractState, event);
+    completed.forEach((contract, index) => {
+      this.gold += contract.rewardGold;
+      this.time.delayedCall(index * 180, () => {
+        if (!this.ended) this.showMessage(`전장 계약 완료: ${contract.shortTitle} +$${contract.rewardGold}`);
+      });
+    });
+    if (completed.length > 0) {
+      playSfx(this, 'sfx_reward');
+      showPremiumToast(this, `전장 계약 ${completed.length}개 완료`, 'success');
+      this.forceHudRefresh();
+    } else {
+      this.refreshBattleContractHud();
+    }
+  }
+
+  private showTacticalOrderDraft(reason: 'opening' | 'wave' | 'manual'): void {
+    if (this.ended || this.tacticalOrderDraft?.active) return;
+    if (reason !== 'manual' && !shouldOfferTacticalOrder(this.tacticalOrderState, this.waveIndex, this.stage.waves.length)) return;
+    if (reason === 'manual' && this.tacticalOrderState.chosen.length >= 4) {
+      this.showMessage('이번 전투의 작전 카드는 모두 선택했습니다.');
+      return;
+    }
+
+    const choices = pickTacticalOrderChoices(this.stage, this.user?.uid ?? 'guest', this.waveIndex, this.tacticalOrderState);
+    if (choices.length === 0) return;
+
+    const root = this.add.container(480, 270).setDepth(132);
+    this.tacticalOrderDraft = root;
+    const blocker = this.add.rectangle(0, 0, 960, 540, 0x020611, 0.48).setInteractive({ useHandCursor: false });
+    const panel = this.textures.exists('v2-order-panel-v27')
+      ? this.add.image(0, 4, 'v2-order-panel-v27').setDisplaySize(900, 310)
+      : this.add.rectangle(0, 4, 900, 310, 0x07101e, 0.92).setStrokeStyle(3, 0xffd56c, 0.62);
+    const title = this.add.text(0, -132, reason === 'opening' ? '오늘의 작전 명령 선택' : '전황 카드 선택', {
+      fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
+      fontSize: '20px',
+      fontStyle: 'bold',
+      color: '#fff4c2',
+      stroke: '#092247',
+      strokeThickness: 4,
+    }).setOrigin(0.5);
+    const subtitle = this.add.text(0, -104, '모바일 전투 흐름에 맞춰 한 장을 골라 이번 전투를 강화하세요.', {
+      fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
+      fontSize: '11px',
+      fontStyle: 'bold',
+      color: '#dbe7ff',
+    }).setOrigin(0.5);
+    root.add([blocker, panel, title, subtitle]);
+
+    choices.forEach((choice, index) => {
+      const card = renderTacticalOrderCard(this, -276 + index * 276, 22, choice, () => this.pickTacticalOrder(choice));
+      root.add(card);
+    });
+
+    const skip = this.add.text(0, 142, reason === 'manual' ? '닫기' : '이번에는 건너뛰기', {
+      fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
+      fontSize: '12px',
+      fontStyle: 'bold',
+      color: '#fff4c2',
+      backgroundColor: '#07101ecc',
+      padding: { x: 16, y: 7 },
+    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+    skip.on('pointerdown', () => this.closeTacticalOrderDraft());
+    root.add(skip);
+    this.tweens.add({ targets: root, alpha: { from: 0, to: 1 }, scaleX: { from: 0.985, to: 1 }, scaleY: { from: 0.985, to: 1 }, duration: 180, ease: 'Sine.easeOut' });
+  }
+
+  private closeTacticalOrderDraft(): void {
+    const draft = this.tacticalOrderDraft;
+    this.tacticalOrderDraft = undefined;
+    if (!draft?.active) return;
+    this.tweens.add({ targets: draft, alpha: 0, y: draft.y - 8, duration: 150, ease: 'Sine.easeIn', onComplete: () => draft.destroy() });
+  }
+
+  private pickTacticalOrder(choice: TacticalOrderChoice): void {
+    applyTacticalOrderChoice(this.tacticalOrderState, choice, this.waveIndex);
+    const effects = choice.effects;
+    if (effects.instantGold) this.gold += Math.round(effects.instantGold + this.stage.number * 6);
+    if (effects.healLives) this.lives += effects.healLives;
+    if (effects.cooldownReductionMs) this.reduceAllCooldowns(effects.cooldownReductionMs);
+    if (effects.heroDamageMultiplier && this.hero) this.hero.damage = Math.round(this.hero.damage * effects.heroDamageMultiplier);
+    if (effects.overdriveMs) this.towers.forEach((tower) => tower.activateOverdrive(effects.overdriveMs));
+    this.refreshArmySynergy();
+    this.forceHudRefresh();
+    this.closeTacticalOrderDraft();
+    this.showMessage(`${choice.title} 적용 · ${choice.tag}`);
+    showPremiumToast(this, `${choice.title} 적용`, 'info');
+  }
+
+  private reduceAllCooldowns(amountMs: number): void {
+    this.meteorCooldownMs = Math.max(0, this.meteorCooldownMs - amountMs);
+    this.mercenaryCooldownMs = Math.max(0, this.mercenaryCooldownMs - amountMs);
+    if (this.hero) this.hero.skillCooldownMs = Math.max(0, this.hero.skillCooldownMs - amountMs);
+  }
 
   private getSafeMapPoint(x: number, y: number): { x: number; y: number } {
     // v4.7: keep build spots away from the top HUD, bottom dock, and phone safe areas.
     // This prevents top-edge tower menus from opening outside the screen.
     return {
-      x: Phaser.Math.Clamp(x, 88, 872),
-      y: Phaser.Math.Clamp(y, 132, 408),
+      x: Phaser.Math.Clamp(x, Math.max(88, BATTLE_SAFE_LEFT + 56), Math.min(872, BATTLE_SAFE_RIGHT - 56)),
+      y: Phaser.Math.Clamp(y, BATTLE_SAFE_TOP + 36, BATTLE_SAFE_BOTTOM - 32),
     };
   }
 
@@ -515,7 +803,7 @@ export class GameScene extends Phaser.Scene {
     margin = 12,
     bottomReserve = 98
   ): { x: number; y: number } {
-    const topReserve = 88;
+    const topReserve = BATTLE_SAFE_TOP - 8;
     const minX = width / 2 + margin;
     const maxX = 960 - width / 2 - margin;
     const minY = Math.max(height / 2 + margin, topReserve + height / 2);
@@ -527,6 +815,25 @@ export class GameScene extends Phaser.Scene {
     };
   }
 
+  private installSceneCleanup(): void {
+    const cleanup = (): void => {
+      this.waveAutoTimer?.remove(false);
+      this.waveAutoTimer = undefined;
+      this.spawnEvents.forEach((event) => event.remove(false));
+      this.spawnEvents = [];
+      this.clearSpellTargetPreview();
+      this.tacticalOrderDraft?.destroy();
+      this.tacticalOrderDraft = undefined;
+      this.destroyBuildMenu();
+      this.destroySelectedPanel();
+      this.input.off('pointermove');
+      this.input.off('pointerdown');
+      this.time.timeScale = 1;
+    };
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, cleanup);
+    this.events.once(Phaser.Scenes.Events.DESTROY, cleanup);
+  }
+
   private createUiInputGuards(): void {
     const makeGuard = (x: number, y: number, width: number, height: number, label: string): void => {
       const guard = this.add.zone(x, y, width, height)
@@ -536,8 +843,8 @@ export class GameScene extends Phaser.Scene {
       addHitZoneDebug(this, debug, width, height, label, 0x6bd7ff, 9);
       guard.once('destroy', () => debug.destroy());
     };
-    makeGuard(480, 47, 960, 94, 'HUD safe zone');
-    makeGuard(480, 492, 960, 96, 'skill dock safe zone');
+    makeGuard(480, BATTLE_SAFE_TOP / 2, 960, BATTLE_SAFE_TOP, 'HUD safe zone');
+    makeGuard(480, (540 + BATTLE_SAFE_BOTTOM) / 2, 960, 540 - BATTLE_SAFE_BOTTOM, 'skill dock safe zone');
   }
 
   private beginSpellTargeting(kind: Exclude<CastingSpell, undefined>, label: string, radius: number, color: number): void {
@@ -568,10 +875,11 @@ export class GameScene extends Phaser.Scene {
 
   private updateSpellTargetPreview(pointer: Phaser.Input.Pointer): void {
     if (!this.spellTargetPreview?.active || !this.castingSpell) return;
-    const safeY = pointer.y >= 88 && pointer.y <= 442;
-    this.spellTargetPreview.setPosition(pointer.x, pointer.y);
-    this.spellTargetPreview.setAlpha(safeY ? 1 : 0.42);
-    this.spellTargetLabel?.setText(safeY ? (this.castingSpell === 'meteor' ? '메테오 착탄 지점' : '용병 소환 지점') : '전장 안쪽을 터치하세요');
+    const safePoint = isBattlefieldPoint(pointer.x, pointer.y);
+    const target = safePoint ? { x: pointer.x, y: pointer.y } : clampToBattlefield(pointer.x, pointer.y);
+    this.spellTargetPreview.setPosition(target.x, target.y);
+    this.spellTargetPreview.setAlpha(safePoint ? 1 : 0.50);
+    this.spellTargetLabel?.setText(safePoint ? (this.castingSpell === 'meteor' ? '메테오 착탄 지점' : '용병 소환 지점') : '전장 안쪽으로 자동 보정');
   }
 
   private clearSpellTargetPreview(): void {
@@ -589,15 +897,15 @@ export class GameScene extends Phaser.Scene {
   }
 
   private createBuildSpot(x: number, y: number, autoOpen = false): void {
-    const shadow = this.add.ellipse(x + 4, y + 14, 74, 23, 0x000000, 0.24).setDepth(11);
-    const rim = this.add.ellipse(x, y + 4, 68, 35, 0x3b2818, 0.92).setStrokeStyle(3, 0xffd36b, 0.36).setDepth(12);
-    const stone = this.add.ellipse(x, y, 56, 28, 0x7b6b57, 0.96).setStrokeStyle(2, 0x2b1b12, 0.48).setDepth(13);
-    const light = this.add.ellipse(x - 10, y - 6, 26, 8, 0xffe1a0, 0.22).setDepth(14);
-    const hammer = this.add.text(x, y - 8, '⚒', { fontSize: '21px', color: '#fff4c2', fontStyle: 'bold' }).setOrigin(0.5).setDepth(15);
-    const tagBg = this.add.rectangle(x, y + 30, 82, 22, 0x130d09, 0.78).setStrokeStyle(1, 0xffd36b, 0.35).setDepth(16);
-    const tag = this.add.text(x, y + 30, '건설 가능', { fontSize: '12px', color: '#ffefb4', fontStyle: 'bold' }).setOrigin(0.5).setDepth(17);
+    const shadow = this.add.ellipse(x + 3, y + 12, 58, 18, 0x000000, 0.24).setDepth(11);
+    const rim = this.add.ellipse(x, y + 3, 54, 28, 0x3b2818, 0.92).setStrokeStyle(3, 0xffd36b, 0.36).setDepth(12);
+    const stone = this.add.ellipse(x, y, 46, 23, 0x7b6b57, 0.96).setStrokeStyle(2, 0x2b1b12, 0.48).setDepth(13);
+    const light = this.add.ellipse(x - 8, y - 5, 20, 6, 0xffe1a0, 0.22).setDepth(14);
+    const hammer = this.add.text(x, y - 7, '⚒', { fontSize: '14px', color: '#fff4c2', fontStyle: 'bold' }).setOrigin(0.5).setDepth(15);
+    const tagBg = this.add.rectangle(x, y + 24, 62, 18, 0x130d09, 0.78).setStrokeStyle(1, 0xffd36b, 0.35).setDepth(16);
+    const tag = this.add.text(x, y + 24, '건설', { fontSize: '9px', color: '#ffefb4', fontStyle: 'bold' }).setOrigin(0.5).setDepth(17);
     const premiumPad = this.textures.exists('v1-build-spot')
-      ? this.add.image(x, y + 2, 'v1-build-spot').setDisplaySize(112, 86).setDepth(13)
+      ? this.add.image(x, y + 1, 'v1-build-spot').setDisplaySize(74, 56).setDepth(13)
       : undefined;
     if (premiumPad) {
       shadow.setVisible(false);
@@ -610,11 +918,11 @@ export class GameScene extends Phaser.Scene {
     }
     const premiumPreview = addBuildSpotPreview(this, x, y, 0xffd36b);
     premiumPreview.setVisible(false);
-    const largeHitZone = this.add.rectangle(x, y + 2, 136, 104, 0xffffff, 0.001)
+    const largeHitZone = this.add.rectangle(x, y + 1, 62, 48, 0xffffff, 0.001)
       .setDepth(19)
       .setInteractive({ useHandCursor: true });
     const spotDebug = this.add.container(x, y + 2).setDepth(20);
-    addHitZoneDebug(this, spotDebug, 136, 104, 'build spot', 0xffd56c, 18);
+    addHitZoneDebug(this, spotDebug, 62, 48, 'build spot', 0xffd56c, 18);
     const extras: Phaser.GameObjects.GameObject[] = [shadow, light, tagBg, tag, premiumPreview, largeHitZone, spotDebug, ...(premiumPad ? [premiumPad] : [])];
 
     stone.setInteractive({ useHandCursor: true });
@@ -625,7 +933,7 @@ export class GameScene extends Phaser.Scene {
     };
     const handleOut = (): void => {
       rim.setStrokeStyle(3, 0xffd36b, 0.36);
-      tag.setText('건설 가능');
+      tag.setText(premiumPad ? '건설' : '건설 가능');
       premiumPreview.setVisible(false);
     };
     const handleOpen = (): void => this.openBuildMenu(x, y, stone, rim, hammer, extras);
@@ -663,7 +971,7 @@ export class GameScene extends Phaser.Scene {
     this.castingSpell = undefined;
     this.destroySelectedPanel();
     this.destroyBuildMenu();
-    const menuPos = this.clampOverlayPosition(x, y - 18, 356, 240, 12, 100);
+    const menuPos = this.clampOverlayPosition(x, y - 10, 292, 196, 8, 92);
     const menu = this.add.container(menuPos.x, menuPos.y).setDepth(58);
     this.activeBuildMenu = menu;
     menu.once('destroy', () => {
@@ -676,26 +984,26 @@ export class GameScene extends Phaser.Scene {
       menu.add(guide);
     }
     const bg = this.textures.exists('v1-tower-build-menu')
-      ? this.add.image(0, 0, 'v1-tower-build-menu').setDisplaySize(356, 232)
+      ? this.add.image(0, 0, 'v1-tower-build-menu').setDisplaySize(292, 196)
       : this.textures.exists('ui-build-menu-frame-v47')
-        ? this.add.image(0, 0, 'ui-build-menu-frame-v47').setDisplaySize(356, 232)
-        : this.add.rectangle(0, 0, 356, 232, 0x130d09, 0.94).setStrokeStyle(3, 0xffd36b, 0.58);
-    const header = this.add.text(0, -83, '방어 시설 선택', {
-      fontSize: '20px', color: '#fff8d2', fontStyle: 'bold',
+        ? this.add.image(0, 0, 'ui-build-menu-frame-v47').setDisplaySize(292, 196)
+        : this.add.rectangle(0, 0, 292, 196, 0x130d09, 0.94).setStrokeStyle(3, 0xffd36b, 0.58);
+    const header = this.add.text(0, -70, '방어 시설 선택', {
+      fontSize: '13px', color: '#fff8d2', fontStyle: 'bold',
       fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif',
       shadow: { offsetX: 0, offsetY: 2, color: '#001b45', blur: 2, fill: true }
     }).setOrigin(0.5);
-    const hint = this.add.text(0, -58, '길목을 막고 딜 범위를 겹치게 배치하세요', {
-      fontSize: '12px', color: '#355d96', fontStyle: 'bold',
+    const hint = this.add.text(0, -51, '길목 차단 · 화력 겹치기', {
+      fontSize: '9px', color: '#355d96', fontStyle: 'bold',
       fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif'
     }).setOrigin(0.5);
     menu.add([bg, header, hint]);
 
     const positions = [
-      { kind: 'archer' as TowerKind, x: -82, y: -16 },
-      { kind: 'mage' as TowerKind, x: 82, y: -16 },
-      { kind: 'barracks' as TowerKind, x: -82, y: 58 },
-      { kind: 'artillery' as TowerKind, x: 82, y: 58 },
+      { kind: 'archer' as TowerKind, x: -66, y: -12 },
+      { kind: 'mage' as TowerKind, x: 66, y: -12 },
+      { kind: 'barracks' as TowerKind, x: -66, y: 45 },
+      { kind: 'artillery' as TowerKind, x: 66, y: 45 },
     ];
 
     positions.forEach(({ kind, x: bx, y: by }) => {
@@ -703,28 +1011,28 @@ export class GameScene extends Phaser.Scene {
       const cost = this.towerCost(kind, cfg.cost);
       const canBuy = this.gold >= cost;
       const card = this.textures.exists('v1-tower-build-card')
-        ? this.add.image(bx, by, 'v1-tower-build-card').setDisplaySize(150, 66).setInteractive({ useHandCursor: true })
-        : this.add.rectangle(bx, by, 148, 60, canBuy ? 0x23170f : 0x2b2b2b, 0.98)
+        ? this.add.image(bx, by, 'v1-tower-build-card').setDisplaySize(122, 50).setInteractive({ useHandCursor: true })
+        : this.add.rectangle(bx, by, 122, 50, canBuy ? 0x23170f : 0x2b2b2b, 0.98)
           .setStrokeStyle(2, canBuy ? cfg.color : 0x5b5b5b, canBuy ? 0.65 : 0.45)
           .setInteractive({ useHandCursor: true });
       card.setAlpha(canBuy ? 1 : 0.55);
       const roleIconKey = `ui-tower-role-${kind}-v45`;
       const roleIcon = this.textures.exists(roleIconKey)
-        ? this.add.image(bx - 52, by - 5, roleIconKey).setDisplaySize(42, 42).setAlpha(canBuy ? 1 : 0.45)
+        ? this.add.image(bx - 41, by - 3, roleIconKey).setDisplaySize(28, 28).setAlpha(canBuy ? 1 : 0.45)
         : undefined;
-      const iconBack = roleIcon ? undefined : this.add.circle(bx - 52, by - 4, 20, cfg.color, canBuy ? 0.95 : 0.38).setStrokeStyle(2, 0xffffff, 0.18);
-      const icon = roleIcon ? undefined : this.add.text(bx - 52, by - 7, this.towerSymbol(kind), { fontSize: '19px', color: '#101820', fontStyle: 'bold' }).setOrigin(0.5);
-      const name = this.add.text(bx - 24, by - 20, cfg.label, {
-        fontSize: '14px', color: canBuy ? '#fff4c2' : '#aaa', fontStyle: 'bold',
+      const iconBack = roleIcon ? undefined : this.add.circle(bx - 41, by - 3, 14, cfg.color, canBuy ? 0.95 : 0.38).setStrokeStyle(2, 0xffffff, 0.18);
+      const icon = roleIcon ? undefined : this.add.text(bx - 41, by - 5, this.towerSymbol(kind), { fontSize: '16px', color: '#101820', fontStyle: 'bold' }).setOrigin(0.5);
+      const name = this.add.text(bx - 16, by - 15, cfg.label, {
+        fontSize: '11px', color: canBuy ? '#fff4c2' : '#aaa', fontStyle: 'bold',
         fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
         shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 2, fill: true }
       }).setOrigin(0, 0.5);
-      const role = this.add.text(bx - 24, by - 2, this.towerRole(kind), {
-        fontSize: '11px', color: canBuy ? '#dbe7ff' : '#888', fontStyle: 'bold',
+      const role = this.add.text(bx - 16, by - 1, this.towerRole(kind), {
+        fontSize: '8px', color: canBuy ? '#dbe7ff' : '#888', fontStyle: 'bold',
         fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
       }).setOrigin(0, 0.5);
-      const price = this.add.text(bx - 24, by + 17, `$${cost}`, {
-        fontSize: '12px', color: canBuy ? '#f7d36b' : '#999', fontStyle: 'bold',
+      const price = this.add.text(bx - 16, by + 13, `$${cost}`, {
+        fontSize: '9px', color: canBuy ? '#f7d36b' : '#999', fontStyle: 'bold',
         fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
         shadow: { offsetX: 0, offsetY: 1, color: '#000000', blur: 1, fill: true }
       }).setOrigin(0, 0.5);
@@ -745,14 +1053,16 @@ export class GameScene extends Phaser.Scene {
         spawnBuildDust(this, x, y);
         tower.applyPermanentUpgrades(this.save.upgrades);
         if (kind === 'barracks') tower.spawnSoldiers();
-        const towerClickRing = this.textures.exists('ui-tower-click-ring-v47')
-          ? this.add.image(x, y + 2, 'ui-tower-click-ring-v47').setDisplaySize(148, 128).setDepth(21).setAlpha(0)
-          : undefined;
-        const towerHitHalo = this.add.zone(x, y - 8, 150, 142)
+        const towerClickRing = this.textures.exists('v2-tower-selection-ring')
+          ? this.add.image(x, y + 2, 'v2-tower-selection-ring').setDisplaySize(86, 86).setDepth(21).setAlpha(0).setBlendMode(Phaser.BlendModes.ADD)
+          : this.textures.exists('ui-tower-click-ring-v47')
+            ? this.add.image(x, y + 2, 'ui-tower-click-ring-v47').setDisplaySize(148, 128).setDepth(21).setAlpha(0)
+            : undefined;
+        const towerHitHalo = this.add.zone(x, y - 13, 58, 76)
           .setDepth(76)
           .setInteractive({ useHandCursor: true });
         towerHitHalo.on('pointerover', () => {
-          tower.setScale(1.04);
+          tower.setScale(1.025);
           towerClickRing?.setAlpha(0.92);
         });
         towerHitHalo.on('pointerout', () => {
@@ -766,16 +1076,18 @@ export class GameScene extends Phaser.Scene {
         });
         tower.on('pointerdown', () => this.selectTower(tower));
         this.towers.push(tower);
+        this.recordBattleContract({ type: 'build', towerKind: kind });
+        this.refreshArmySynergy();
         menu.destroy();
         this.refreshHud();
         this.showMessage(`${cfg.label} 배치 완료 · ${this.towerRole(kind)}`);
       });
       const cardDebug = this.add.container(bx, by);
-      addHitZoneDebug(this, cardDebug, 150, 66, cfg.label, canBuy ? cfg.color : 0x999999, 10);
+      addHitZoneDebug(this, cardDebug, 122, 50, cfg.label, canBuy ? cfg.color : 0x999999, 10);
       menu.add([card, ...(roleIcon ? [roleIcon] : []), ...(iconBack ? [iconBack] : []), ...(icon ? [icon] : []), name, role, price, cardDebug]);
     });
 
-    const close = this.add.text(0, 92, '빈 곳을 누르면 닫힘', { fontSize: '11px', color: '#355d96', fontStyle: 'bold' }).setOrigin(0.5);
+    const close = this.add.text(0, 79, '빈 곳 터치: 닫기', { fontSize: '9px', color: '#355d96', fontStyle: 'bold' }).setOrigin(0.5);
     menu.add(close);
     this.time.delayedCall(6500, () => menu.active && menu.destroy());
   }
@@ -784,6 +1096,7 @@ export class GameScene extends Phaser.Scene {
     let cost = baseCost;
     if (this.dailyChallenge?.modifiers.includes('no_mage') && kind === 'mage') cost = Math.round(cost * 1.65);
     if (this.dailyChallenge?.modifiers.includes('iron_wall') && kind === 'mage') cost = Math.round(cost * 0.92);
+    cost = Math.max(1, Math.round(cost * this.tacticalOrderState.costMultiplier));
     return cost;
   }
 
@@ -797,10 +1110,11 @@ export class GameScene extends Phaser.Scene {
 
   private createTowerPanel(tower: Tower): void {
     const hasMasteryChoices = tower.level >= 3 && tower.canChooseMastery();
-    const panelHeight = hasMasteryChoices ? 332 : tower.config.kind === 'barracks' ? 286 : 270;
-    const preferredX = tower.x < 500 ? tower.x + 260 : tower.x - 260;
+    const panelHeight = hasMasteryChoices ? 292 : tower.config.kind === 'barracks' ? 248 : 232;
+    const panelWidth = 330;
+    const preferredX = tower.x < 500 ? tower.x + 194 : tower.x - 194;
     const preferredY = tower.y + 18;
-    const panelPos = this.clampOverlayPosition(preferredX, preferredY - 10, 430, panelHeight + 44, 10, 104);
+    const panelPos = this.clampOverlayPosition(preferredX, preferredY - 8, panelWidth, panelHeight + 34, 10, 98);
     const panel = this.add.container(panelPos.x, panelPos.y).setDepth(82);
     if (Math.abs(panelPos.x - preferredX) > 8 || Math.abs(panelPos.y - preferredY) > 8) {
       const clampedBadge = this.add.text(0, -panelHeight / 2 - 12, '화면 안쪽으로 자동 정렬', {
@@ -809,94 +1123,94 @@ export class GameScene extends Phaser.Scene {
       panel.add(clampedBadge);
     }
     if (this.textures.exists('v1-tower-command-panel')) {
-      panel.add(this.add.image(0, 0, 'v1-tower-command-panel').setDisplaySize(430, panelHeight + 34));
+      panel.add(this.add.image(0, 0, 'v1-tower-command-panel').setDisplaySize(panelWidth, panelHeight + 22));
     } else {
-      addTowerPanelSurface(this, panel, 390, panelHeight, tower.config.color);
-      addPremiumPanelGlints(this, panel, 390, panelHeight);
+      addTowerPanelSurface(this, panel, panelWidth, panelHeight, tower.config.color);
+      addPremiumPanelGlints(this, panel, panelWidth, panelHeight);
     }
 
-    const icon = this.add.circle(-166, -panelHeight / 2 + 33, 18, tower.config.color, 0.9)
+    const icon = this.add.circle(-140, -panelHeight / 2 + 29, 15, tower.config.color, 0.9)
       .setStrokeStyle(2, 0xfff1c2, 0.55);
-    const symbol = this.add.text(-166, -panelHeight / 2 + 32, this.towerSymbol(tower.config.kind), {
-      fontSize: '19px', color: '#101820', fontStyle: 'bold'
+    const symbol = this.add.text(-140, -panelHeight / 2 + 28, this.towerSymbol(tower.config.kind), {
+      fontSize: '15px', color: '#101820', fontStyle: 'bold'
     }).setOrigin(0.5);
-    const title = this.add.text(-138, -panelHeight / 2 + 17, `${tower.config.label}  Lv.${tower.level}`, {
-      fontSize: '21px', color: '#fff1bf', fontStyle: 'bold',
+    const title = this.add.text(-118, -panelHeight / 2 + 14, `${tower.config.label}  Lv.${tower.level}`, {
+      fontSize: '14px', color: '#fff1bf', fontStyle: 'bold',
       fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif',
       shadow: { offsetX: 0, offsetY: 3, color: '#000000', blur: 3, fill: true }
     });
-    const role = this.add.text(-138, -panelHeight / 2 + 45, this.towerRole(tower.config.kind), {
+    const role = this.add.text(-118, -panelHeight / 2 + 38, this.towerRole(tower.config.kind), {
       fontSize: '12px', color: '#d8c39a', fontStyle: 'bold'
     });
 
     const masteryLabel = tower.level >= 3 ? `전문화: ${tower.masteryLabel}` : `Lv.3 특수: ${tower.config.maxSkill}`;
-    const masteryLine = this.add.text(-174, -panelHeight / 2 + 78, masteryLabel, {
-      fontSize: '13px', color: tower.level >= 3 ? '#0d8f57' : '#295f9e', fontStyle: 'bold', fixedWidth: 342,
+    const masteryLine = this.add.text(-148, -panelHeight / 2 + 65, masteryLabel, {
+      fontSize: '9px', color: tower.level >= 3 ? '#0d8f57' : '#295f9e', fontStyle: 'bold', fixedWidth: 288,
       fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif'
     });
     const modeLabel = tower.config.kind === 'barracks' ? '전선 유지 / 집결지 운용' : `타겟 정책: ${tower.targetModeLabel()}`;
-    const mode = this.add.text(-174, -panelHeight / 2 + 101, modeLabel, { fontSize: '12px', color: '#295f9e', fontStyle: 'bold', fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif' });
-    const statBox = this.add.rectangle(0, -panelHeight / 2 + 134, 342, 42, 0x050914, 0.58)
+    const mode = this.add.text(-148, -panelHeight / 2 + 84, modeLabel, { fontSize: '10px', color: '#295f9e', fontStyle: 'bold', fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif' });
+    const statBox = this.add.rectangle(0, -panelHeight / 2 + 112, 288, 36, 0x050914, 0.58)
       .setStrokeStyle(1, 0xffe9a0, 0.17);
-    const stat = this.add.text(-162, -panelHeight / 2 + 124, this.towerStatLine(tower), {
-      fontSize: '12px', color: this.textures.exists('v1-tower-command-panel') ? '#eaf6ff' : '#3f5578', fixedWidth: 324, wordWrap: { width: 324 }, fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif'
+    const stat = this.add.text(-136, -panelHeight / 2 + 103, this.towerStatLine(tower), {
+      fontSize: '9px', color: this.textures.exists('v1-tower-command-panel') ? '#eaf6ff' : '#3f5578', fixedWidth: 272, wordWrap: { width: 272 }, fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif'
     });
     panel.add([icon, symbol, title, role, masteryLine, mode, statBox, stat]);
 
-    let actionY = -panelHeight / 2 + 176;
+    let actionY = -panelHeight / 2 + 141;
     if (hasMasteryChoices) {
-      const header = this.add.text(-174, actionY - 14, '최종 진화 선택', { fontSize: '13px', color: '#f7d36b', fontStyle: 'bold' });
+      const header = this.add.text(-174, actionY - 14, '최종 진화 선택', { fontSize: '11px', color: '#f7d36b', fontStyle: 'bold' });
       panel.add(header);
       const choices = getTowerMasteries(tower.config.kind);
       choices.forEach((choice, index) => {
         const x = index === 0 ? -92 : 92;
         const y = actionY + 18;
         const canBuy = this.gold >= tower.masteryCost;
-        const btn = this.makePanelButton(panel, x, y, 164, 42, canBuy ? choice.color : 0x333333, `${choice.shortLabel} $${tower.masteryCost}`);
+        const btn = this.makePanelButton(panel, x, y, 132, 31, canBuy ? choice.color : 0x333333, `${choice.shortLabel} $${tower.masteryCost}`);
         btn.on('pointerdown', () => this.chooseTowerMastery(choice.id));
         const desc = this.add.text(x, y + 31, choice.description, {
-          fontSize: '10px', color: canBuy ? '#d8c39a' : '#888888', align: 'center', fixedWidth: 158, wordWrap: { width: 158 }
+          fontSize: '9px', color: canBuy ? '#d8c39a' : '#888888', align: 'center', fixedWidth: 126, wordWrap: { width: 126 }
         }).setOrigin(0.5, 0);
         panel.add(desc);
       });
-      actionY += 88;
+      actionY += 62;
     }
 
     const cost = tower.upgradeCost;
-    const up = this.makePanelButton(panel, -92, actionY, 164, 36, cost ? 0x24486b : 0x333333, cost ? `업그레이드 $${cost}` : '최고 레벨');
+    const up = this.makePanelButton(panel, -78, actionY, 132, 30, cost ? 0x24486b : 0x333333, cost ? `업그레이드 $${cost}` : '최고 레벨');
     up.on('pointerdown', () => this.upgradeSelectedTower());
 
     const overdriveCost = this.towerOverdriveCost(tower);
     const overLabel = tower.isOverdriven ? `강화중 ${tower.overdriveRemainingSec}s` : `긴급 강화 $${overdriveCost}`;
-    const over = this.makePanelButton(panel, 92, actionY, 164, 36, tower.isOverdriven ? 0x3a3a3a : 0x6a4a1f, overLabel);
+    const over = this.makePanelButton(panel, 78, actionY, 132, 30, tower.isOverdriven ? 0x3a3a3a : 0x6a4a1f, overLabel);
     over.on('pointerdown', () => this.overdriveSelectedTower());
 
     if (tower.config.kind !== 'barracks') {
-      const target = this.makePanelButton(panel, -92, actionY + 46, 164, 36, 0x3c355e, '타겟 변경');
+      const target = this.makePanelButton(panel, -78, actionY + 36, 132, 30, 0x3c355e, '타겟 변경');
       target.on('pointerdown', () => this.cycleSelectedTowerTarget());
-      const guide = this.add.text(92, actionY + 46, '상황에 맞춰 선두/강적/공중 우선순위를 바꾸세요.', {
-        fontSize: '10px', color: '#9eb6d8', fixedWidth: 158, wordWrap: { width: 158 }, align: 'center'
+      const guide = this.add.text(78, actionY + 36, '상황에 맞춰 선두/강적/공중 우선순위를 바꾸세요.', {
+        fontSize: '10px', color: '#9eb6d8', fixedWidth: 126, wordWrap: { width: 126 }, align: 'center'
       }).setOrigin(0.5);
       panel.add(guide);
     } else {
-      const rally = this.makePanelButton(panel, -92, actionY + 46, 164, 36, 0x3f5f2f, '집결지');
+      const rally = this.makePanelButton(panel, -78, actionY + 36, 132, 30, 0x3f5f2f, '집결지');
       rally.on('pointerdown', () => {
         this.settingRallyFor = tower;
         this.rallyReadyAt = this.time.now + 120;
         this.showMessage('집결지를 놓을 길 위를 터치하세요');
       });
       const reinforceCost = this.towerReinforceCost(tower);
-      const reinforce = this.makePanelButton(panel, 92, actionY + 46, 164, 36, 0x2f5f58, `병력 보충 $${reinforceCost}`);
+      const reinforce = this.makePanelButton(panel, 78, actionY + 36, 132, 30, 0x2f5f58, `병력 보충 $${reinforceCost}`);
       reinforce.on('pointerdown', () => this.reinforceSelectedBarracks());
     }
 
-    const sell = this.makePanelButton(panel, -92, actionY + 92, 164, 36, 0x693434, `철거 +$${tower.sellValue}`);
+    const sell = this.makePanelButton(panel, -78, actionY + 72, 132, 30, 0x693434, `철거 +$${tower.sellValue}`);
     sell.on('pointerdown', () => this.sellSelectedTower(false));
 
-    const replace = this.makePanelButton(panel, 92, actionY + 92, 164, 36, 0x754928, '교체 건설');
+    const replace = this.makePanelButton(panel, 78, actionY + 72, 132, 30, 0x754928, '교체 건설');
     replace.on('pointerdown', () => this.sellSelectedTower(true));
 
-    const close = this.makePanelButton(panel, 0, panelHeight / 2 - 24, 152, 31, 0x2f3440, '닫기');
+    const close = this.makePanelButton(panel, 0, panelHeight / 2 - 20, 118, 26, 0x2f3440, '닫기');
     close.on('pointerdown', () => {
       tower.rangeCircle.setVisible(false);
       this.destroySelectedPanel();
@@ -923,6 +1237,7 @@ export class GameScene extends Phaser.Scene {
     this.gold -= cost;
     if (tower.chooseMastery(id)) {
       playSfx(this, 'sfx_upgrade');
+      this.refreshArmySynergy();
       this.refreshHud();
       this.selectTower(tower);
       this.showMessage(`${tower.masteryLabel} 완성! 전술 성능이 크게 변화합니다.`);
@@ -944,6 +1259,7 @@ export class GameScene extends Phaser.Scene {
     this.gold -= cost;
     tower.upgrade();
     spawnImpactRing(this, tower.x, tower.y, 48, tower.config.color, 0.2, 380);
+    this.refreshArmySynergy();
     this.refreshHud();
     this.selectTower(tower);
     playSfx(this, 'sfx_upgrade');
@@ -960,6 +1276,7 @@ export class GameScene extends Phaser.Scene {
     const refund = tower.sellValue;
     this.gold += refund;
     this.towers = this.towers.filter((item) => item !== tower);
+    this.refreshArmySynergy();
     this.destroySelectedPanel();
     this.selectedTower = undefined;
     tower.demolish();
@@ -1058,10 +1375,10 @@ export class GameScene extends Phaser.Scene {
       return this.makeUiButton(x, y, w, h, fallbackColor, '', 18, 80);
     };
 
-    const meteor = makeSpellHit(96, 500, 150, 46, 0x4f1f1f);
-    if (!useV1Dock && this.textures.exists('ui-spell-meteor-card-v32')) this.add.image(96, 500, 'ui-spell-meteor-card-v32').setDisplaySize(150, 50).setDepth(81);
-    this.meteorText = this.add.text(96, 500, '☄ 메테오', {
-      fontSize: '18px', color: '#fff', fontStyle: 'bold',
+    const meteor = makeSpellHit(88, 500, 138, 42, 0x4f1f1f);
+    if (!useV1Dock && this.textures.exists('ui-spell-meteor-card-v32')) this.add.image(88, 500, 'ui-spell-meteor-card-v32').setDisplaySize(150, 50).setDepth(81);
+    this.meteorText = this.add.text(88, 500, '☄ 메테오', {
+      fontSize: '12px', color: '#fff', fontStyle: 'bold',
       fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif',
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 2, fill: true }
     }).setOrigin(0.5).setDepth(86);
@@ -1072,10 +1389,10 @@ export class GameScene extends Phaser.Scene {
       this.beginSpellTargeting('meteor', '메테오 착탄 지점 선택', 82, 0xffd36b);
     });
 
-    const mercenary = makeSpellHit(260, 500, 160, 46, 0x2f4f35);
-    if (!useV1Dock && this.textures.exists('ui-spell-mercenary-card-v32')) this.add.image(260, 500, 'ui-spell-mercenary-card-v32').setDisplaySize(160, 50).setDepth(81);
-    this.mercenaryText = this.add.text(260, 500, '🛡️ 용병소환', {
-      fontSize: '17px', color: '#fff', fontStyle: 'bold',
+    const mercenary = makeSpellHit(238, 500, 140, 42, 0x2f4f35);
+    if (!useV1Dock && this.textures.exists('ui-spell-mercenary-card-v32')) this.add.image(238, 500, 'ui-spell-mercenary-card-v32').setDisplaySize(160, 50).setDepth(81);
+    this.mercenaryText = this.add.text(238, 500, '🛡️ 용병', {
+      fontSize: '12px', color: '#fff', fontStyle: 'bold',
       fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif',
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 2, fill: true }
     }).setOrigin(0.5).setDepth(86);
@@ -1086,10 +1403,10 @@ export class GameScene extends Phaser.Scene {
       this.beginSpellTargeting('mercenary', '용병 소환 지점 선택', 36, 0x7cc7ff);
     });
 
-    const heroSkill = makeSpellHit(440, 500, 170, 46, 0x4f3d1f);
-    if (!useV1Dock && this.textures.exists('ui-spell-hero-card-v32')) this.add.image(440, 500, 'ui-spell-hero-card-v32').setDisplaySize(170, 50).setDepth(81);
-    this.heroSkillText = this.add.text(440, 500, '🦁 대지강타', {
-      fontSize: '17px', color: '#fff', fontStyle: 'bold',
+    const heroSkill = makeSpellHit(392, 500, 140, 42, 0x4f3d1f);
+    if (!useV1Dock && this.textures.exists('ui-spell-hero-card-v32')) this.add.image(392, 500, 'ui-spell-hero-card-v32').setDisplaySize(170, 50).setDepth(81);
+    this.heroSkillText = this.add.text(392, 500, '🦁 강타', {
+      fontSize: '12px', color: '#fff', fontStyle: 'bold',
       fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif',
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 2, fill: true }
     }).setOrigin(0.5).setDepth(86);
@@ -1097,22 +1414,25 @@ export class GameScene extends Phaser.Scene {
       pulseButton(this, heroSkill);
       playSfx(this, 'sfx_click');
       const ok = this.hero.castStomp(this.enemies);
-      if (ok) castHeroStompPremiumFx(this, this.hero.x, this.hero.y);
+      if (ok) {
+        castHeroStompPremiumFx(this, this.hero.x, this.hero.y);
+        this.recordBattleContract({ type: 'spell', spell: 'hero' });
+      }
       this.showMessage(ok ? '대지강타!' : '영웅 스킬 쿨타임 중');
     });
 
-    if (!useV1Dock) addPremiumPlaque(this, 754, 500, 344, 46, 0xf7d36b, 74);
-    this.add.text(602, 482, '공세 정보', {
+    if (!useV1Dock) addPremiumPlaque(this, 746, 500, 368, 42, 0xf7d36b, 74);
+    this.add.text(584, 482, '공세 정보', {
       fontSize: '10px', color: useV1Dock ? '#dbe7ff' : '#c8b184', fontStyle: 'bold',
       fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
       shadow: { offsetX: 0, offsetY: 1, color: '#000000', blur: 1, fill: true }
     }).setDepth(86);
-    this.wavePreviewText = this.add.text(910, 483, '', {
+    this.wavePreviewText = this.add.text(916, 483, '', {
       fontSize: '10px', color: '#f7d36b', fontStyle: 'bold',
       fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
       shadow: { offsetX: 0, offsetY: 1, color: '#000000', blur: 1, fill: true }
     }).setOrigin(1, 0).setDepth(86);
-    this.waveIntelPanel = this.add.container(754, 510).setDepth(86);
+    this.waveIntelPanel = this.add.container(746, 510).setDepth(86);
     this.refreshWavePreview();
   }
 
@@ -1120,7 +1440,7 @@ export class GameScene extends Phaser.Scene {
     this.input.on('pointermove', (p: Phaser.Input.Pointer) => this.updateSpellTargetPreview(p));
     this.input.on('pointerdown', (p: Phaser.Input.Pointer, currentlyOver: Phaser.GameObjects.GameObject[]) => {
       if (currentlyOver.length > 0) return;
-      if (p.y < 88 || p.y > 442) {
+      if (!isBattlefieldPoint(p.x, p.y)) {
         if (this.castingSpell) this.showMessage('스킬은 전장 안쪽에만 사용할 수 있습니다.');
         return;
       }
@@ -1164,22 +1484,27 @@ export class GameScene extends Phaser.Scene {
 
   private castMeteor(x: number, y: number): void {
     const radius = 82;
+    this.recordBattleContract({ type: 'spell', spell: 'meteor' });
     this.meteorCooldownMs = Math.round(24000 * this.relicBonuses.meteorCooldownMultiplier * (this.dailyChallenge?.modifiers.includes('meteor_storm') ? 0.72 : 1));
     castPremiumMeteor(this, x, y, radius, () => {
       spawnExplosionBurst(this, x, y, 1.45);
       spawnImpactRing(this, x, y, radius, 0xffd36b, 0.3, 420);
       shakeCamera(this, 0.006, 160);
+      const meteorDamage = Math.round(112 * this.tacticalOrderState.meteorDamageMultiplier);
       this.enemies.forEach((enemy) => {
-        if (!enemy.dead && Phaser.Math.Distance.Between(x, y, enemy.x, enemy.y) <= radius) enemy.receiveDamage(112, 'true');
+        if (!enemy.dead && Phaser.Math.Distance.Between(x, y, enemy.x, enemy.y) <= radius) enemy.receiveDamage(meteorDamage, 'true');
       });
     });
   }
 
   private castMercenaries(x: number, y: number): void {
+    this.recordBattleContract({ type: 'spell', spell: 'mercenary' });
     this.mercenaryCooldownMs = 20000;
     playSfx(this, 'sfx_build');
-    for (let i = 0; i < 2; i++) {
-      const soldier = new Soldier(this, x + i * 18 - 9, y + i * 18 - 9, x + i * 18 - 9, y + i * 18 - 9, {
+    const summonCount = 2 + this.tacticalOrderState.mercenaryExtra;
+    for (let i = 0; i < summonCount; i++) {
+      const spread = (i - (summonCount - 1) / 2) * 16;
+      const soldier = new Soldier(this, x + spread, y + (i % 2) * 12 - 6, x + spread, y + (i % 2) * 12 - 6, {
         color: 0xa6ffb0,
         damage: 9,
         maxHp: 55,
@@ -1189,7 +1514,7 @@ export class GameScene extends Phaser.Scene {
       this.mercenaries.push(soldier);
     }
     castMercenaryGateFx(this, x, y);
-    this.showMessage('용병 2명 소환! 15초 동안 길막합니다');
+    this.showMessage(`용병 ${summonCount}명 소환! 15초 동안 길막합니다`);
   }
 
   private refreshWavePreview(): void {
@@ -1209,6 +1534,26 @@ export class GameScene extends Phaser.Scene {
     const next = this.stage.waves[nextIndex];
     this.wavePreviewText.setText(`W${nextIndex + 1} 대기`);
     renderWaveIntelPanel(this, this.waveIntelPanel, next, { nextWaveNumber: nextIndex + 1 });
+  }
+
+
+  private refreshSpellHudThrottled(): void {
+    if (this.time.now < this.nextSpellHudRefreshAt) return;
+    this.nextSpellHudRefreshAt = this.time.now + 160;
+    this.refreshSpellHud();
+  }
+
+  private refreshHudThrottled(): void {
+    if (this.time.now < this.nextHudRefreshAt) return;
+    this.nextHudRefreshAt = this.time.now + 180;
+    this.refreshHud();
+  }
+
+  private forceHudRefresh(): void {
+    this.nextHudRefreshAt = 0;
+    this.nextSpellHudRefreshAt = 0;
+    this.refreshHud();
+    this.refreshSpellHud();
   }
 
   private refreshSpellHud(): void {
@@ -1288,6 +1633,8 @@ export class GameScene extends Phaser.Scene {
     this.totalKills = 0;
     this.totalLeaks = 0;
     this.tacticalHintCooldownMs = 0;
+    this.nextHudRefreshAt = 0;
+    this.nextSpellHudRefreshAt = 0;
     this.updateWaveButton();
     this.refreshWavePreview();
   }
@@ -1317,6 +1664,7 @@ export class GameScene extends Phaser.Scene {
     if (early && this.waveIndex >= 0) {
       const bonus = 20 + this.stage.number * 5;
       this.gold += bonus;
+      this.recordBattleContract({ type: 'earlyWave' });
       this.showMessage(`선제 출격 보너스 +$${bonus}`);
     }
     this.waveIndex += 1;
@@ -1326,6 +1674,22 @@ export class GameScene extends Phaser.Scene {
     const waveGroups = this.stage.waves[this.waveIndex];
     playSfx(this, 'sfx_wave');
     spawnWaveBanner(this, `WAVE ${waveNumber}`, this.describeWave(waveGroups));
+    this.activeWaveEvent = applyWaveEventOpening(
+      this,
+      this.stage,
+      this.waveIndex,
+      this.towers,
+      this.hero,
+      (amount) => {
+        this.gold += amount;
+        this.forceHudRefresh();
+        this.showMessage(`왕실 보급품 +$${amount}`);
+      },
+      (amountMs) => {
+        this.reduceAllCooldowns(amountMs)
+        this.forceHudRefresh();
+      }
+    );
     const bossGroup = waveGroups.find((group) => ENEMIES[group.kind].threat === 'boss');
     if (bossGroup) {
       playMusic(this, 'bgm_boss', 0.24);
@@ -1345,38 +1709,51 @@ export class GameScene extends Phaser.Scene {
     this.pendingWaveSpawns = 0;
 
     let delay = 0;
+    let globalSpawnIndex = 0;
     groups.forEach((group) => {
       const count = group.count + (this.dailyChallenge?.modifiers.includes('gold_rush') ? Math.max(1, Math.floor(group.count * 0.16)) : 0);
-      for (let i = 0; i < count; i++) {
-        this.pendingWaveSpawns += 1;
-        const event = this.time.delayedCall(delay, () => {
-          this.pendingWaveSpawns = Math.max(0, this.pendingWaveSpawns - 1);
-          if (this.ended) return;
-          const cfg = { ...ENEMIES[group.kind] };
-          if (this.dailyChallenge?.modifiers.includes('air_raid') && cfg.flying) {
-            cfg.hp = Math.round(cfg.hp * 1.12);
-            cfg.reward = Math.round(cfg.reward * 1.18);
-          }
-          if (this.dailyChallenge?.modifiers.includes('iron_wall') && (cfg.threat === 'tank' || cfg.threat === 'boss')) {
-            cfg.armor = Math.min(0.78, cfg.armor + 0.12);
-            cfg.hp = Math.round(cfg.hp * 1.08);
-          }
-          if (this.dailyChallenge?.modifiers.includes('boss_contract') && cfg.threat === 'boss') {
-            cfg.hp = Math.round(cfg.hp * 1.16);
-            cfg.reward = Math.round(cfg.reward * 1.25);
-          }
-          const enemy = new Enemy(this, cfg, this.stage.path);
-          this.enemies.push(enemy);
-          spawnImpactRing(this, enemy.x, enemy.y, 18, enemy.config.accentColor ?? 0xffffff, 0.12, 260);
-          if (cfg.threat === 'boss' || cfg.magicResist > 0.3) showArcaneSurge(this, enemy.x, enemy.y, enemy.config.accentColor ?? 0x8fdcff);
-        });
-        this.spawnEvents.push(event);
-        delay += group.gapMs;
-      }
-      delay += group.delayAfterMs ?? 800;
+      const gap = Math.max(70, group.gapMs);
+      this.pendingWaveSpawns += count;
+
+      const spawnOne = (): void => {
+        this.pendingWaveSpawns = Math.max(0, this.pendingWaveSpawns - 1);
+        if (this.ended) return;
+        globalSpawnIndex += 1;
+        let cfg = mutateEnemyForWaveEvent({ ...ENEMIES[group.kind] }, this.activeWaveEvent);
+        cfg = applyRunModifiersToEnemy(cfg, this.runModifiers, this.waveIndex + 1, globalSpawnIndex);
+        if (this.dailyChallenge?.modifiers.includes('air_raid') && cfg.flying) {
+          cfg.hp = Math.round(cfg.hp * 1.12);
+          cfg.reward = Math.round(cfg.reward * 1.18);
+        }
+        if (this.dailyChallenge?.modifiers.includes('iron_wall') && (cfg.threat === 'tank' || cfg.threat === 'boss')) {
+          cfg.armor = Math.min(0.78, cfg.armor + 0.12);
+          cfg.hp = Math.round(cfg.hp * 1.08);
+        }
+        if (this.dailyChallenge?.modifiers.includes('boss_contract') && cfg.threat === 'boss') {
+          cfg.hp = Math.round(cfg.hp * 1.16);
+          cfg.reward = Math.round(cfg.reward * 1.25);
+        }
+        const enemy = new Enemy(this, cfg, this.stage.path);
+        this.enemies.push(enemy);
+        spawnImpactRing(this, enemy.x, enemy.y, cfg.label.startsWith('정예') ? 24 : 18, enemy.config.accentColor ?? 0xffffff, cfg.label.startsWith('정예') ? 0.22 : 0.12, 260);
+        if (cfg.label.startsWith('정예') && this.textures.exists('v2-elite-badge')) {
+          const badge = this.add.image(enemy.x, enemy.y - 44, 'v2-elite-badge').setDisplaySize(34, 34).setDepth(74).setAlpha(0.95);
+          this.tweens.add({ targets: badge, y: enemy.y - 60, alpha: 0, duration: 720, ease: 'Cubic.easeOut', onComplete: () => badge.destroy() });
+        }
+        if (cfg.threat === 'boss' || cfg.magicResist > 0.3) showArcaneSurge(this, enemy.x, enemy.y, enemy.config.accentColor ?? 0x8fdcff);
+      };
+
+      const opener = this.time.delayedCall(delay, () => {
+        spawnOne();
+        if (count > 1) {
+          const stream = this.time.addEvent({ delay: gap, repeat: count - 2, callback: spawnOne });
+          this.spawnEvents.push(stream);
+        }
+      });
+      this.spawnEvents.push(opener);
+      delay += gap * count + (group.delayAfterMs ?? 800);
     });
   }
-
 
   private describeWave(groups: WaveSpawn[]): string {
     return groups.map((group) => `${ENEMIES[group.kind].label} x${group.count}`).join('  /  ');
@@ -1390,6 +1767,8 @@ export class GameScene extends Phaser.Scene {
     this.refreshWavePreview();
     this.updateWaveButton();
     this.refreshObjectivePanel();
+    this.refreshTacticalOrderHud();
+    this.refreshBattleContractHud();
   }
 
   private registerKill(enemy: Enemy): void {
@@ -1398,6 +1777,13 @@ export class GameScene extends Phaser.Scene {
     this.lastKillAt = now;
     this.bestKillStreak = Math.max(this.bestKillStreak, this.killStreak);
     this.totalKills += 1;
+    this.recordBattleContract({
+      type: 'kill',
+      enemyKind: enemy.config.kind,
+      threat: enemy.config.threat,
+      flying: enemy.config.flying,
+      armor: enemy.config.armor,
+    });
 
     const threatBonus = enemy.config.threat === 'boss' ? 8 : enemy.config.threat === 'tank' ? 3 : 1;
     const streakBonus = this.killStreak >= 10 ? Math.min(14, Math.floor(this.killStreak / 5) * 2) : 0;
@@ -1405,7 +1791,10 @@ export class GameScene extends Phaser.Scene {
     this.gold += reward;
     this.score += enemy.config.reward * 10 * threatBonus + this.lives * 2 + this.killStreak * 3;
 
-    if (this.killStreak >= 5) this.showComboToast(this.killStreak, streakBonus);
+    if (this.killStreak >= 5) {
+      this.showComboToast(this.killStreak, streakBonus);
+      this.recordBattleContract({ type: 'combo', streak: this.killStreak });
+    }
     if (enemy.config.threat === 'boss') this.showTacticalHint('보스 격파! 남은 웨이브는 타워 교체/진화로 마무리하세요.');
   }
 
@@ -1487,7 +1876,8 @@ export class GameScene extends Phaser.Scene {
     if (this.ended) return;
     this.ended = true;
     const clearTimeMs = Date.now() - this.startTime;
-    const finalScore = this.score + this.lives * 500 + Math.max(0, 600000 - clearTimeMs) / 100 + this.stage.number * 1000;
+    this.recordBattleContract({ type: 'finish', clearTimeMs });
+    const finalScore = this.score + this.battleContractState.contractScoreEarned + this.lives * 500 + Math.max(0, 600000 - clearTimeMs) / 100 + this.stage.number * 1000;
     const roundedScore = Math.floor(finalScore);
 
     try {
@@ -1529,7 +1919,7 @@ export class GameScene extends Phaser.Scene {
     }).setOrigin(0.5).setDepth(93);
 
     this.add.text(480, 137, `${this.stage.title}   SCORE ${score}   LIFE ${this.lives}`, {
-      fontSize: '19px', color: '#ffffff', fontStyle: 'bold'
+      fontSize: '15px', color: '#ffffff', fontStyle: 'bold'
     }).setOrigin(0.5).setDepth(93);
 
     addPremiumChestSpotlight(this, 480, 214);
@@ -1539,9 +1929,10 @@ export class GameScene extends Phaser.Scene {
     const objectivePanel = this.add.rectangle(252, 333, 314, 126, 0x111927, 0.92)
       .setDepth(93).setStrokeStyle(2, 0x8fdcff, 0.26);
     const objectiveTitle = this.add.text(252, 282, '전술 목표 결과', {
-      fontSize: '17px', color: '#dbe7ff', fontStyle: 'bold'
+      fontSize: '14px', color: '#dbe7ff', fontStyle: 'bold'
     }).setOrigin(0.5).setDepth(94);
-    const objectiveLines = this.add.text(252, 337, reward.lines.join('\n'), {
+    const contractLines = battleContractResultLines(this.battleContractState);
+    const objectiveLines = this.add.text(252, 337, [...reward.lines.slice(0, 3), ...contractLines.slice(0, 3)].join('\n'), {
       fontSize: '14px', color: '#fff4c2', align: 'left', lineSpacing: 6,
       shadow: { offsetX: 0, offsetY: 1, color: '#000000', blur: 1, fill: true }
     }).setOrigin(0.5).setDepth(94);
@@ -1549,7 +1940,7 @@ export class GameScene extends Phaser.Scene {
     const leaderboardPanel = this.add.rectangle(708, 333, 314, 126, 0x111927, 0.92)
       .setDepth(93).setStrokeStyle(2, 0xf7d36b, 0.26);
     const leaderboardTitle = this.add.text(708, 282, '오늘의 명예의 전당', {
-      fontSize: '17px', color: '#f7d36b', fontStyle: 'bold'
+      fontSize: '14px', color: '#f7d36b', fontStyle: 'bold'
     }).setOrigin(0.5).setDepth(94);
     const lines = top.slice(0, 5).map((s, i) => `${rankMedal(i)} ${s.nickname}  ${s.score}`).join('\n');
     const leaderboardText = this.add.text(708, 337, lines || '아직 기록 없음', {
@@ -1633,11 +2024,11 @@ export class GameScene extends Phaser.Scene {
     installPremiumButtonFx(this, rect);
     const shine = this.add.rectangle(x, y - height * 0.28, Math.max(8, width - 14), 3, 0xffffff, image ? 0 : 0.12);
     const text = this.add.text(x, y, label, {
-      fontSize: '13px', color: '#ffffff', fontStyle: 'bold',
+      fontSize: '10px', color: '#ffffff', fontStyle: 'bold',
       fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif',
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 1, fill: true }
     }).setOrigin(0.5);
-    rect.on('pointerover', () => { rect.setAlpha(0.9); image?.setScale(1.03); shine.setAlpha(image ? 0.14 : 0.24); });
+    rect.on('pointerover', () => { rect.setAlpha(0.92); image?.setScale(1.015); shine.setAlpha(image ? 0.12 : 0.20); });
     rect.on('pointerout', () => { rect.setAlpha(1); image?.setScale(1); shine.setAlpha(image ? 0 : 0.12); });
     panel.add([shadow, ...(image ? [image] : []), rect, shine, text]);
     return rect;

@@ -35,7 +35,7 @@ export class MenuScene extends Phaser.Scene {
     this.createUtilityHitZones();
 
     this.time.delayedCall(0, () => {
-      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MenuScene', version: '2.0', at: Date.now() } }));
+      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MenuScene', version: '2.8', at: Date.now() } }));
     });
 
     void this.bootstrapRedirectOrExistingUser();
@@ -50,18 +50,18 @@ export class MenuScene extends Phaser.Scene {
     topFade.fillRect(0, 0, 960, 126);
 
     const logoKey = this.textures.exists('v1-title-logo-clean') ? 'v1-title-logo-clean' : 'ui-title-logo';
-    this.add.image(480, 116, logoKey).setDisplaySize(390, 141).setDepth(10);
+    this.add.image(480, 102, logoKey).setDisplaySize(332, 120).setDepth(10);
 
     if (this.textures.exists('v1-login-panel-v18')) {
-      this.add.image(480, 355, 'v1-login-panel-v18').setDisplaySize(430, 300).setDepth(20);
+      this.add.image(480, 350, 'v1-login-panel-v18').setDisplaySize(416, 292).setDepth(20);
     } else {
       const fallback = this.add.graphics().setDepth(20);
       fallback.fillStyle(0xf6fbff, 0.92).fillRoundedRect(265, 232, 430, 300, 28);
       fallback.lineStyle(4, 0xf1c46a, 0.9).strokeRoundedRect(265, 232, 430, 300, 28);
     }
 
-    this.add.text(480, 257, 'DEFENSE COMMAND', {
-      fontSize: '21px',
+    this.add.text(480, 253, 'DEFENSE COMMAND', {
+      fontSize: '17px',
       color: '#f8fbff',
       align: 'center',
       fixedWidth: 320,
@@ -72,8 +72,8 @@ export class MenuScene extends Phaser.Scene {
       shadow: { offsetX: 0, offsetY: 3, color: '#0a2d6a', blur: 4, fill: true },
     }).setOrigin(0.5).setDepth(31);
 
-    this.add.text(480, 282, '전장을 수호할 지휘관으로 입장하세요!', {
-      fontSize: '12px',
+    this.add.text(480, 277, '전장을 수호할 지휘관으로 입장하세요!', {
+      fontSize: '10px',
       color: '#8298b8',
       align: 'center',
       fixedWidth: 320,
@@ -92,17 +92,17 @@ export class MenuScene extends Phaser.Scene {
   private createStatusOverlay(): void {
     const statusBack = this.add.graphics().setDepth(52);
     statusBack.fillStyle(0xf7fbff, 0.90);
-    statusBack.fillRoundedRect(336, 300, 288, 25, 12);
+    statusBack.fillRoundedRect(342, 298, 276, 23, 12);
     statusBack.lineStyle(1, 0xb9d4ef, 0.82);
-    statusBack.strokeRoundedRect(336, 300, 288, 25, 12);
+    statusBack.strokeRoundedRect(342, 298, 276, 23, 12);
     statusBack.lineStyle(1, 0xffffff, 0.58);
-    statusBack.strokeRoundedRect(343, 306, 274, 10, 5);
+    statusBack.strokeRoundedRect(349, 304, 262, 9, 5);
 
-    this.statusText = this.add.text(480, 312, '로그인 확인 중...', {
-      fontSize: '11px',
+    this.statusText = this.add.text(480, 309, '로그인 확인 중...', {
+      fontSize: '10px',
       color: '#2f5f9e',
       align: 'center',
-      fixedWidth: 272,
+      fixedWidth: 260,
       fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Malgun Gothic, Arial, sans-serif',
       fontStyle: 'bold',
       stroke: '#ffffff',
@@ -110,10 +110,10 @@ export class MenuScene extends Phaser.Scene {
     }).setOrigin(0.5).setDepth(53);
 
     const chip = this.add.graphics().setDepth(53);
-    chip.fillStyle(0x071c3e, 0.46).fillRoundedRect(16, 14, 166, 28, 14);
-    chip.lineStyle(1, 0xffdc82, 0.45).strokeRoundedRect(16, 14, 166, 28, 14);
-    this.add.text(99, 28, 'v2.1.0 CLEAN BATTLE QA', {
-      fontSize: '10px',
+    chip.fillStyle(0x071c3e, 0.46).fillRoundedRect(16, 14, 150, 24, 14);
+    chip.lineStyle(1, 0xffdc82, 0.45).strokeRoundedRect(16, 14, 150, 24, 14);
+    this.add.text(91, 26, 'v2.8.0 CONTRACT QA', {
+      fontSize: '8px',
       color: '#f7fbff',
       fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
       fontStyle: 'bold',
@@ -125,9 +125,9 @@ export class MenuScene extends Phaser.Scene {
     // v1.8: positions match the separated image buttons exactly.
     this.addLoginButton({
       x: 480,
-      y: 360,
-      width: 304,
-      height: 52,
+      y: 356,
+      width: 292,
+      height: 50,
       imageKey: 'v1-login-button-gold-v18',
       label: '빠른 시작',
       icon: '⚔',
@@ -137,9 +137,9 @@ export class MenuScene extends Phaser.Scene {
 
     this.addLoginButton({
       x: 480,
-      y: 416,
-      width: 304,
-      height: 52,
+      y: 410,
+      width: 292,
+      height: 50,
       imageKey: 'v1-login-button-white-v18',
       label: 'Google 로그인',
       icon: 'G',
@@ -148,10 +148,10 @@ export class MenuScene extends Phaser.Scene {
     });
 
     this.addLoginButton({
-      x: 402,
-      y: 470,
-      width: 152,
-      height: 42,
+      x: 405,
+      y: 462,
+      width: 142,
+      height: 39,
       imageKey: 'v1-login-button-small-v18',
       label: '이메일 로그인',
       icon: '✉',
@@ -161,10 +161,10 @@ export class MenuScene extends Phaser.Scene {
     });
 
     this.addLoginButton({
-      x: 558,
-      y: 470,
-      width: 152,
-      height: 42,
+      x: 555,
+      y: 462,
+      width: 142,
+      height: 39,
       imageKey: 'v1-login-button-small-v18',
       label: '회원가입',
       icon: '♥',
@@ -176,11 +176,11 @@ export class MenuScene extends Phaser.Scene {
 
   private createUtilityHitZones(): void {
     const utilities = [
-      { x: 820, label: '공지사항', icon: '📣', message: '공지사항은 준비 중입니다.' },
-      { x: 878, label: '고객센터', icon: '🎧', message: '고객센터는 준비 중입니다.' },
-      { x: 930, label: '설정', icon: '⚙', message: '설정 메뉴는 다음 패치에서 연결합니다.' },
+      { x: 810, label: '공지사항', icon: '📣', message: '공지사항은 준비 중입니다.' },
+      { x: 868, label: '고객센터', icon: '🎧', message: '고객센터는 준비 중입니다.' },
+      { x: 926, label: '설정', icon: '⚙', message: '설정 메뉴는 다음 패치에서 연결합니다.' },
     ];
-    utilities.forEach((item) => this.addUtilityButton(item.x, 42, item.icon, item.label, () => this.setUtilityStatus(item.message)));
+    utilities.forEach((item) => this.addUtilityButton(item.x, 39, item.icon, item.label, () => this.setUtilityStatus(item.message)));
   }
 
   private addLoginButton(options: {
@@ -202,20 +202,20 @@ export class MenuScene extends Phaser.Scene {
     const iconBubble = this.add.circle(-options.width / 2 + (options.small ? 24 : 32), 0, options.small ? 15 : 18, 0xffffff, 0.68)
       .setStrokeStyle(1, 0xd2aa66, 0.70);
     const icon = this.add.text(iconBubble.x, 0, options.icon, {
-      fontSize: options.small ? '14px' : '18px',
+      fontSize: options.small ? '12px' : '16px',
       color: options.icon === '♥' ? '#dd506a' : '#2f6cb3',
       fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
       fontStyle: 'bold',
     }).setOrigin(0.5);
     const label = this.add.text(options.small ? 10 : 8, 0, options.label, {
-      fontSize: options.small ? '14px' : '19px',
+      fontSize: options.small ? '11px' : '16px',
       color: options.color,
       align: 'center',
       fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Malgun Gothic, Arial, sans-serif',
       fontStyle: 'bold',
       stroke: '#ffffff',
       strokeThickness: 2,
-      fixedWidth: options.small ? 112 : 210,
+      fixedWidth: options.small ? 98 : 196,
     }).setOrigin(0.5);
     const hover = this.add.graphics();
     hover.fillStyle(0xffffff, 0.18).fillRoundedRect(-options.width / 2 + 8, -options.height / 2 + 6, options.width - 16, Math.max(8, options.height * 0.24), options.height * 0.18);

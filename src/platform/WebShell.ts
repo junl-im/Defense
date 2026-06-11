@@ -48,13 +48,13 @@ function ensureShellStyles(): void {
     .shell-overlay.hidden { display: none !important; }
     .shell-overlay.fading { opacity: 0; transform: scale(1.02); pointer-events: none; }
     .shell-start-gate { cursor: pointer; }
-    .shell-start-card, .shell-panel { width: min(390px, 88vw); border: 2px solid rgba(255,218,123,.88); border-radius: 28px; padding: 18px 18px; text-align: center; background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(220,235,255,.92)); color: #244a86; box-shadow: 0 30px 90px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.9); }
-    .shell-title-mark { font-size: 25px; line-height: 1; font-weight: 1000; letter-spacing: .04em; color: #2d5bab; text-shadow: 0 2px 0 #fff, 0 5px 16px rgba(37,82,168,.28); }
-    .shell-title-sword { width: 72%; height: 3px; margin: 14px auto 0; background: linear-gradient(90deg, transparent, #e7b94e, transparent); }
-    .shell-start-card h1, .shell-panel h2 { margin: 14px 0 7px; font-size: 21px; color: #193e7d; }
-    .shell-start-card p, .shell-panel p { margin: 0; font-weight: 800; color: #5e789f; }
-    .shell-tap-rune { display: inline-flex; margin-top: 14px; width: 62px; height: 62px; align-items: center; justify-content: center; border-radius: 999px; color: #fff; font-weight: 1000; background: linear-gradient(180deg, #5fa1ff, #255ab5); border: 3px solid #ffd979; box-shadow: 0 12px 34px rgba(27,82,180,.34), inset 0 1px 0 rgba(255,255,255,.46); animation: ksTapPulseV48 1.25s ease-in-out infinite; }
-    .shell-loading-text { margin-top: 14px; color: #244a86; font-weight: 1000; }
+    .shell-start-card, .shell-panel { width: min(340px, 84vw); border: 2px solid rgba(255,218,123,.88); border-radius: 22px; padding: 15px 14px; text-align: center; background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(220,235,255,.92)); color: #244a86; box-shadow: 0 30px 90px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.9); }
+    .shell-title-mark { font-size: 21px; line-height: 1; font-weight: 1000; letter-spacing: .04em; color: #2d5bab; text-shadow: 0 2px 0 #fff, 0 5px 16px rgba(37,82,168,.28); }
+    .shell-title-sword { width: 68%; height: 2px; margin: 10px auto 0; background: linear-gradient(90deg, transparent, #e7b94e, transparent); }
+    .shell-start-card h1, .shell-panel h2 { margin: 10px 0 5px; font-size: 18px; color: #193e7d; }
+    .shell-start-card p, .shell-panel p { margin: 0; font-weight: 800; font-size: 12px; color: #5e789f; }
+    .shell-tap-rune { display: inline-flex; margin-top: 11px; width: 54px; height: 54px; align-items: center; justify-content: center; border-radius: 999px; color: #fff; font-weight: 1000; background: linear-gradient(180deg, #5fa1ff, #255ab5); border: 3px solid #ffd979; box-shadow: 0 12px 34px rgba(27,82,180,.34), inset 0 1px 0 rgba(255,255,255,.46); animation: ksTapPulseV48 1.25s ease-in-out infinite; }
+    .shell-loading-text { margin-top: 10px; color: #244a86; font-weight: 1000; font-size: 11px; }
     .shell-row { display: flex; gap: 12px; justify-content: center; margin-top: 14px; }
     .shell-row button { appearance: none; border: 0; border-radius: 16px; padding: 13px 24px; color: #fff; font-weight: 1000; font-size: 16px; }
     .shell-secondary { background: linear-gradient(180deg, #5d94e6, #2658b5); }
@@ -74,10 +74,19 @@ function syncViewportCssVars(): void {
   const surfaceHeight = landscape ? height : width;
   const targetAspect = 16 / 9;
   const surfaceAspect = surfaceWidth / Math.max(1, surfaceHeight);
+  const viewportFit = new URLSearchParams(window.location.search).get('fit') ?? localStorage.getItem('ksViewportFit') ?? 'auto';
+  const compactShell = new URLSearchParams(window.location.search).get('shell') !== 'large';
+  const portraitFill = !landscape && viewportFit !== 'contain';
   let gameWidth = surfaceWidth;
   let gameHeight = surfaceHeight;
 
-  if (surfaceAspect > targetAspect) {
+  if (portraitFill) {
+    // v2.2: on portrait phones, use the whole rotated visual viewport.
+    // Phaser still maps pointers correctly, and this avoids the tiny 16:9 strip problem
+    // on browsers where orientation lock/fullscreen is blocked.
+    gameWidth = surfaceWidth;
+    gameHeight = surfaceHeight;
+  } else if (surfaceAspect > targetAspect) {
     gameHeight = surfaceHeight;
     gameWidth = Math.round(gameHeight * targetAspect);
   } else {
@@ -91,6 +100,9 @@ function syncViewportCssVars(): void {
   root.style.setProperty('--ks-game-w-px', `${Math.max(1, gameWidth)}px`);
   root.style.setProperty('--ks-game-h-px', `${Math.max(1, gameHeight)}px`);
   root.style.setProperty('--ks-game-scale', '1');
+  root.style.setProperty('--ks-shell-card-scale', compactShell ? '0.86' : '1');
+  root.classList.toggle('ks-portrait-fill', portraitFill);
+  root.classList.toggle('ks-compact-shell', compactShell);
 }
 
 function safeShow(el: HTMLElement): void { el.classList.remove('hidden'); el.classList.remove('fading'); }
@@ -136,7 +148,7 @@ function updateOrientationClass(): void {
   root.classList.toggle('needs-portrait-rotation', info.isMobile && !landscape);
   root.classList.toggle('ks-hit-debug', new URLSearchParams(window.location.search).has('hit') || localStorage.getItem('ksHitDebug') === '1');
 
-  // v1.9: several mobile browsers report viewport dimensions in stages while
+  // v2.2: several mobile browsers report viewport dimensions in stages while
   // address bars collapse/expand. Send a short burst of resize notifications so
   // Phaser recalculates after the CSS-rotated container has reached its final size.
   [0, 60, 180, 360].forEach((delay) => {
@@ -162,11 +174,14 @@ async function activateGameShell(): Promise<void> {
     const note = startGate.querySelector<HTMLElement>('.shell-loading-text');
     if (note) note.textContent = '왕국 기록을 불러오는 중...';
   }
-  await requestFullscreenAndLandscape();
   window.dispatchEvent(new CustomEvent('kingdom-seed:user-activated'));
-  window.setTimeout(() => armBackGuard(true), 900);
-  window.setTimeout(() => { if (sceneReady) fadeRemove(startGate); }, 320);
-  window.setTimeout(() => fadeRemove(startGate), 2200);
+  // v2.5: do not block the first scene behind fullscreen/orientation promises.
+  // Some mobile webviews hold these calls for hundreds of ms; start loading immediately
+  // and let the shell settle in the background.
+  void requestFullscreenAndLandscape();
+  window.setTimeout(() => armBackGuard(true), 520);
+  window.setTimeout(() => { if (sceneReady) fadeRemove(startGate); }, 80);
+  window.setTimeout(() => fadeRemove(startGate), 1200);
 }
 
 function createStartGate(): void {
@@ -183,10 +198,10 @@ function createStartGate(): void {
     <div class="shell-start-card" role="button" aria-label="게임 시작">
       <div class="shell-title-mark">KINGDOM SEED</div>
       <div class="shell-title-sword"></div>
-      <h1>전투 시작</h1>
-      <p>탭하면 가로 전장으로 바로 진입합니다.</p>
+      <h1>시작</h1>
+      <p>한 번 터치하면 사운드와 전체화면을 준비합니다.</p>
       <div class="shell-tap-rune">TAP</div>
-      <div class="shell-loading-text">첫 터치로 사운드와 화면을 활성화합니다.</div>
+      <div class="shell-loading-text">WebP 경량 리소스로 빠르게 진입 중</div>
     </div>`;
   document.body.appendChild(startGate);
   const start = (): void => void activateGameShell();

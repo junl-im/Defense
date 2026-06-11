@@ -18,17 +18,18 @@ export class Hero extends Phaser.GameObjects.Container {
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
-    const shadow = scene.add.ellipse(0, 15, 32, 11, 0x000000, 0.28);
+    const shadow = scene.add.ellipse(0, 13, 24, 8, 0x000000, 0.24);
     if (scene.textures.exists('v1-hero-art-knight')) {
-      this.sprite = scene.add.image(0, -9, 'v1-hero-art-knight');
-      const targetHeight = 66;
+      this.sprite = scene.add.image(0, -7, 'v1-hero-art-knight');
+      // v2.5: smaller, cleaner mobile battlefield hero footprint.
+      const targetHeight = 50;
       this.sprite.setDisplaySize(this.sprite.width * (targetHeight / Math.max(1, this.sprite.height)), targetHeight);
     } else if (scene.textures.exists('hero-knight')) {
       this.sprite = scene.add.sprite(0, -4, 'hero-knight', 0).setScale(1.22);
       this.animatedSprite = true;
       this.playMotion('idle');
     }
-    this.bodyCircle = scene.add.circle(0, 0, 14, 0xf7d36b, this.sprite ? 0 : 1).setStrokeStyle(3, 0xffffff, this.sprite ? 0 : 0.35);
+    this.bodyCircle = scene.add.circle(0, 0, 12, 0xf7d36b, this.sprite ? 0 : 1).setStrokeStyle(3, 0xffffff, this.sprite ? 0 : 0.35);
     const helm = scene.add.triangle(0, -7, -8, 0, 8, 0, 0, -14, 0xd2d8e8, this.sprite ? 0 : 1);
     this.skillRing = scene.add.circle(0, 0, 38, 0xfff0a3, 0.07).setStrokeStyle(1, 0xfff0a3, 0.25).setVisible(false);
     const visuals: Phaser.GameObjects.GameObject[] = [this.skillRing, shadow, this.bodyCircle, helm];
@@ -36,8 +37,8 @@ export class Hero extends Phaser.GameObjects.Container {
     this.add(visuals);
     scene.add.existing(this);
     this.setDepth(26);
-    this.setSize(42, 42);
-    this.setInteractive(new Phaser.Geom.Circle(0, 0, 24), Phaser.Geom.Circle.Contains);
+    this.setSize(30, 36);
+    this.setInteractive(new Phaser.Geom.Circle(0, -2, 16), Phaser.Geom.Circle.Contains);
   }
 
   update(deltaMs: number, enemies: Enemy[]): void {
@@ -68,7 +69,7 @@ export class Hero extends Phaser.GameObjects.Container {
       return;
     }
     const angle = Phaser.Math.Angle.Between(this.x, this.y, this.destination.x, this.destination.y);
-    const speed = 155;
+    const speed = 148;
     this.x += Math.cos(angle) * speed * deltaMs / 1000;
     this.y += Math.sin(angle) * speed * deltaMs / 1000;
     this.facePoint(this.destination.x);

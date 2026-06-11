@@ -40,7 +40,11 @@ export type StageId =
   | 'stage_005'
   | 'stage_006'
   | 'stage_007'
-  | 'stage_008';
+  | 'stage_008'
+  | 'stage_009'
+  | 'stage_010'
+  | 'stage_011'
+  | 'stage_012';
 
 export type PathPoint = { x: number; y: number };
 

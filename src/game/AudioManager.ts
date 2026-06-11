@@ -26,6 +26,39 @@ let unlocked = false;
 let muted = false;
 let currentMusicKey: string | undefined;
 
+const AUDIO_FILE_BY_KEY: Record<string, string> = {
+  sfx_click: 'click.wav',
+  sfx_build: 'build.wav',
+  sfx_upgrade: 'upgrade.wav',
+  sfx_shoot: 'shoot.wav',
+  sfx_hit: 'hit.wav',
+  sfx_magic: 'magic.wav',
+  sfx_explosion: 'explosion.wav',
+  sfx_wave: 'wave.wav',
+  sfx_win: 'win.wav',
+  sfx_lose: 'lose.wav',
+  bgm_world: 'bgm_world.wav',
+  bgm_battle: 'bgm_battle.wav',
+  bgm_boss: 'bgm_boss.wav',
+  bgm_battle_old: 'music_loop.wav',
+};
+
+const pendingAudioLoads = new Set<string>();
+
+function ensureAudio(scene: Phaser.Scene, key: string, onReady?: () => void): boolean {
+  if (keyExists(scene, key)) return true;
+  const file = AUDIO_FILE_BY_KEY[key];
+  if (!file || pendingAudioLoads.has(key)) return false;
+  pendingAudioLoads.add(key);
+  scene.load.audio(key, [`assets/audio/${file}`]);
+  scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
+    pendingAudioLoads.delete(key);
+    if (keyExists(scene, key)) onReady?.();
+  });
+  if (!scene.load.isLoading()) scene.load.start();
+  return false;
+}
+
 function keyExists(scene: Phaser.Scene, key: string): boolean {
   try {
     return scene.cache.audio.exists(key);
@@ -67,7 +100,7 @@ export function isMuted(): boolean {
 
 export function playSfx(scene: Phaser.Scene, key: string, volume?: number): void {
   if (muted || !unlocked) return;
-  if (!keyExists(scene, key)) return;
+  if (!keyExists(scene, key) && !ensureAudio(scene, key, () => playSfx(scene, key, volume))) return;
   try {
     scene.sound.play(key, { volume: volume ?? SFX_VOLUME[key] ?? 0.35 });
   } catch (error) {
@@ -85,7 +118,7 @@ export function stopAllMusic(scene: Phaser.Scene): void {
 
 export function playMusic(scene: Phaser.Scene, key: string, volume = MUSIC_VOLUME[key] ?? 0.18): void {
   if (muted || !unlocked) return;
-  if (!keyExists(scene, key)) return;
+  if (!keyExists(scene, key) && !ensureAudio(scene, key, () => playMusic(scene, key, volume))) return;
 
   const existing = scene.sound.get(key);
   if (currentMusicKey === key && existing?.isPlaying) return;

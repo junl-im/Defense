@@ -53,6 +53,10 @@ export class Tower extends Phaser.GameObjects.Container {
   private suppressionFireRateMultiplier = 1;
   private suppressionAura?: Phaser.GameObjects.Arc;
   private suppressionLabel?: Phaser.GameObjects.Text;
+  private commandAuraDamageMultiplier = 1;
+  private commandAuraFireRateMultiplier = 1;
+  private commandAura?: Phaser.GameObjects.Image | Phaser.GameObjects.Arc;
+  private commandAuraLabel?: Phaser.GameObjects.Text;
 
   constructor(scene: Phaser.Scene, x: number, y: number, public readonly config: TowerConfig) {
     super(scene, x, y);
@@ -83,10 +87,10 @@ export class Tower extends Phaser.GameObjects.Container {
     scene.add.existing(this);
 
     this.setDepth(22);
-    // v4.7: make the complete tower footprint selectable on mobile.
-    // The hit area intentionally covers the base, roof, level badge, glow, and a small finger buffer.
-    this.setSize(138, 144);
-    this.setInteractive(new Phaser.Geom.Rectangle(-69, -82, 138, 150), Phaser.Geom.Rectangle.Contains);
+    // v2.5: tighter mobile hit area. Selection should match the visible tower base,
+    // not the whole attack range/ornament silhouette. External GameScene halos use the same footprint.
+    this.setSize(58, 82);
+    this.setInteractive(new Phaser.Geom.Ellipse(0, -14, 56, 78), Phaser.Geom.Ellipse.Contains);
   }
 
   applyPermanentUpgrades(upgrades: Partial<TowerUpgradeSnapshot> | undefined): void {
@@ -195,6 +199,7 @@ export class Tower extends Phaser.GameObjects.Container {
     if (this.mastery === 'artillery_mortar') multiplier *= 1.14;
     if (this.isOverdriven) multiplier *= 1.16;
     if (this.isSuppressed) multiplier *= this.suppressionDamageMultiplier;
+    multiplier *= this.commandAuraDamageMultiplier;
     return Math.round(this.config.damage * multiplier);
   }
 
@@ -203,7 +208,7 @@ export class Tower extends Phaser.GameObjects.Container {
     const overdriveRate = this.isOverdriven ? 0.58 : 1;
     const masteryRate = this.mastery === 'archer_longbow' ? 0.72 : this.mastery === 'mage_hex' ? 0.88 : 1;
     const suppressionRate = this.isSuppressed ? this.suppressionFireRateMultiplier : 1;
-    return Math.max(190, Math.round(this.config.fireRateMs * (1 - (this.level - 1) * 0.1) * relicRate * overdriveRate * masteryRate * suppressionRate));
+    return Math.max(170, Math.round(this.config.fireRateMs * (1 - (this.level - 1) * 0.1) * relicRate * overdriveRate * masteryRate * suppressionRate * this.commandAuraFireRateMultiplier));
   }
 
   get currentSplashRadius(): number | undefined {
@@ -281,6 +286,34 @@ export class Tower extends Phaser.GameObjects.Container {
     return this.targetMode;
   }
 
+
+  setCommandAura(damageMultiplier = 1, fireRateMultiplier = 1, label = '', color = 0x8fffd8): void {
+    this.commandAuraDamageMultiplier = damageMultiplier;
+    this.commandAuraFireRateMultiplier = fireRateMultiplier;
+    const active = Math.abs(damageMultiplier - 1) > 0.001 || Math.abs(fireRateMultiplier - 1) > 0.001;
+    if (!active) {
+      this.commandAura?.destroy();
+      this.commandAuraLabel?.destroy();
+      this.commandAura = undefined;
+      this.commandAuraLabel = undefined;
+      return;
+    }
+    if (!this.commandAura || !this.commandAura.active) {
+      this.commandAura = this.scene.textures.exists('v2-command-aura')
+        ? this.scene.add.image(this.x, this.y + 2, 'v2-command-aura').setDisplaySize(72, 72).setDepth(20).setAlpha(0.52).setBlendMode(Phaser.BlendModes.ADD)
+        : this.scene.add.circle(this.x, this.y, 42, color, 0.06).setStrokeStyle(2, color, 0.38).setDepth(20);
+      this.scene.tweens.add({ targets: this.commandAura, angle: 360, duration: 5200, repeat: -1, ease: 'Linear' });
+    }
+    this.commandAura.setPosition(this.x, this.y + 2);
+    this.commandAuraLabel?.destroy();
+    if (label) {
+      this.commandAuraLabel = this.scene.add.text(this.x, this.y + 44, label, {
+        fontSize: '9px', color: '#eafff2', fontStyle: 'bold', stroke: '#06382f', strokeThickness: 2,
+        fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
+      }).setOrigin(0.5).setDepth(72).setAlpha(0.92);
+    }
+  }
+
   activateOverdrive(durationMs = 12000): void {
     this.overdriveUntil = Math.max(this.overdriveUntil, this.scene.time.now + durationMs);
     this.rangeCircle.setRadius(this.currentRange);
@@ -304,6 +337,8 @@ export class Tower extends Phaser.GameObjects.Container {
     this.soldiers.forEach((soldier) => soldier.destroy());
     this.soldiers = [];
     this.overdriveAura?.destroy();
+    this.commandAura?.destroy();
+    this.commandAuraLabel?.destroy();
     this.masteryAura?.destroy();
     this.suppressionAura?.destroy();
     this.suppressionLabel?.destroy();
@@ -331,6 +366,8 @@ export class Tower extends Phaser.GameObjects.Container {
       }
     }
     if (this.masteryAura?.active) this.masteryAura.setPosition(this.x, this.y);
+    if (this.commandAura?.active) this.commandAura.setPosition(this.x, this.y + 2);
+    if (this.commandAuraLabel?.active) this.commandAuraLabel.setPosition(this.x, this.y + 44);
 
     if (this.config.kind === 'barracks') {
       this.soldiers = this.soldiers.filter((soldier) => soldier.active);
@@ -385,7 +422,7 @@ export class Tower extends Phaser.GameObjects.Container {
   private soldierOptions() {
     const overdriveMultiplier = this.isOverdriven ? 1.18 : 1;
     const masteryDamage = this.mastery === 'barracks_assault' ? 1.34 : this.mastery === 'barracks_paladin' ? 1.08 : 1;
-    const damage = Math.round(this.config.damage * (1 + (this.level - 1) * 0.5) * this.relicBonuses.barracksDamageMultiplier * overdriveMultiplier * masteryDamage);
+    const damage = Math.round(this.config.damage * (1 + (this.level - 1) * 0.5) * this.relicBonuses.barracksDamageMultiplier * overdriveMultiplier * masteryDamage * this.commandAuraDamageMultiplier);
     const masteryHp = this.mastery === 'barracks_paladin' ? 70 : this.mastery === 'barracks_assault' ? 20 : 0;
     const maxHp = 70 + (this.level - 1) * 35 + this.permanentUpgrades.barracksHp * 20 + this.relicBonuses.barracksHpBonus + masteryHp + (this.isOverdriven ? 18 : 0);
     const blockMs = this.mastery === 'barracks_paladin' ? 620 : this.level >= 3 ? 420 : 250 + (this.level - 1) * 55;

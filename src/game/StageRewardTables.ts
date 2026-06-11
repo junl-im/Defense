@@ -66,6 +66,35 @@ export const STAGE_REWARD_TABLES: Record<string, StageRewardTable> = {
     shardBonus: 10,
     flavor: '왕의 보물고: 희귀 유물 파편과 왕실 토큰 획득률이 높습니다.',
   },
+
+  stage_009: {
+    stageId: 'stage_009',
+    chestBias: ['voidPrism', 'oakLongbow', 'hexedHourglass'],
+    guaranteedDust: 17,
+    shardBonus: 11,
+    flavor: '수정 숲 원정품: 공허와 궁수 계열 파편이 함께 등장합니다.',
+  },
+  stage_010: {
+    stageId: 'stage_010',
+    chestBias: ['dragonScale', 'thunderPowder', 'sunstoneAmulet'],
+    guaranteedDust: 19,
+    shardBonus: 12,
+    flavor: '화염 왕관 전리품: 폭발과 공중 대응 유물 파편이 강화됩니다.',
+  },
+  stage_011: {
+    stageId: 'stage_011',
+    chestBias: ['voidPrism', 'arcaneCore', 'royalBulwark'],
+    guaranteedDust: 21,
+    shardBonus: 13,
+    flavor: '공허 정원 결정: 마법 관통과 전선 유지 파편이 더 자주 나옵니다.',
+  },
+  stage_012: {
+    stageId: 'stage_012',
+    chestBias: ['kingsCrown', 'dragonScale', 'voidPrism'],
+    guaranteedDust: 25,
+    shardBonus: 16,
+    flavor: '천공 왕좌 보상: 최상위 유물 파편과 왕실 토큰 획득률이 높습니다.',
+  },
 };
 
 export function getStageRewardTable(stageId: string): StageRewardTable {

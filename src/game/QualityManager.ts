@@ -59,16 +59,30 @@ export function getQualityTier(): QualityTier {
   return saved ?? hardwareTier();
 }
 
-export function setQualityTier(tier: QualityTier): RenderProfile {
-  try {
-    localStorage.setItem(STORAGE_KEY, tier);
-  } catch {
-    // Ignore storage failures in restrictive webviews.
+function applyQualityTier(tier: QualityTier, options: { persist: boolean; notify: boolean }): RenderProfile {
+  if (options.persist) {
+    try {
+      localStorage.setItem(STORAGE_KEY, tier);
+    } catch {
+      // Ignore storage failures in restrictive webviews.
+    }
   }
   cachedProfile = makeProfile(tier);
   applyQualityClasses(cachedProfile);
-  window.dispatchEvent(new CustomEvent('kingdom-seed:quality-changed', { detail: cachedProfile }));
+  if (options.notify) {
+    window.dispatchEvent(new CustomEvent('kingdom-seed:quality-changed', { detail: cachedProfile }));
+  }
   return cachedProfile;
+}
+
+export function setQualityTier(tier: QualityTier): RenderProfile {
+  return applyQualityTier(tier, { persist: true, notify: true });
+}
+
+export function setRuntimeQualityTier(tier: QualityTier): RenderProfile {
+  // v2.7: auto performance fallback must not reload the game mid-battle.
+  // It applies DOM classes and runtime budgets immediately, while manual quality changes still reload cleanly.
+  return applyQualityTier(tier, { persist: false, notify: false });
 }
 
 function makeProfile(tier: QualityTier): RenderProfile {

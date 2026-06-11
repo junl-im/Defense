@@ -159,26 +159,41 @@ export function spawnProjectile(
 
 export function spawnWaveBanner(scene: Phaser.Scene, title: string, subtitle: string): void {
   const group = scene.add.container(480, -76).setDepth(98);
-  const shadow = scene.add.rectangle(0, 10, 660, 84, 0x000000, 0.28);
-  const bg = scene.add.rectangle(0, 0, 640, 76, 0x0b1220, 0.94)
-    .setStrokeStyle(3, 0xf7d36b, 0.62);
-  const inner = scene.add.rectangle(0, 0, 618, 58, 0x263247, 0.18)
-    .setStrokeStyle(1, 0xffffff, 0.12);
+  let frameObjects: Phaser.GameObjects.GameObject[];
+  if (scene.textures.exists('v2-wave-banner-frame')) {
+    const frame = scene.add.image(0, 0, 'v2-wave-banner-frame').setDisplaySize(720, 102);
+    const gleam = scene.add.rectangle(-260, -24, 150, 6, 0xffffff, 0.16)
+      .setRotation(-0.12)
+      .setBlendMode(Phaser.BlendModes.ADD);
+    frameObjects = [frame, gleam];
+    scene.tweens.add({ targets: gleam, x: 260, alpha: 0, duration: scaledDuration(760), delay: 220, ease: 'Sine.easeOut' });
+  } else {
+    const shadow = scene.add.rectangle(0, 10, 660, 84, 0x000000, 0.28);
+    const bg = scene.add.rectangle(0, 0, 640, 76, 0x0b1220, 0.94)
+      .setStrokeStyle(3, 0xf7d36b, 0.62);
+    const inner = scene.add.rectangle(0, 0, 618, 58, 0x263247, 0.18)
+      .setStrokeStyle(1, 0xffffff, 0.12);
+    const leftGem = scene.add.star(-304, 0, 6, 8, 18, 0xf7d36b, 0.82);
+    const rightGem = scene.add.star(304, 0, 6, 8, 18, 0xf7d36b, 0.82);
+    frameObjects = [shadow, bg, inner, leftGem, rightGem];
+  }
   const topLine = scene.add.text(0, -14, title, {
     fontSize: '28px',
-    color: '#f7d36b',
+    color: '#fff1b7',
     fontStyle: 'bold',
-    stroke: '#000000',
-    strokeThickness: 4
+    fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
+    stroke: '#061a45',
+    strokeThickness: 5
   }).setOrigin(0.5);
-  const bottomLine = scene.add.text(0, 21, subtitle, {
-    fontSize: '16px',
-    color: '#dbe7ff',
-    fontStyle: 'bold'
+  const bottomLine = scene.add.text(0, 22, subtitle, {
+    fontSize: '15px',
+    color: '#e5f5ff',
+    fontStyle: 'bold',
+    fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
+    stroke: '#0a2a5d',
+    strokeThickness: 3
   }).setOrigin(0.5);
-  const leftGem = scene.add.star(-304, 0, 6, 8, 18, 0xf7d36b, 0.82);
-  const rightGem = scene.add.star(304, 0, 6, 8, 18, 0xf7d36b, 0.82);
-  group.add([shadow, bg, inner, leftGem, rightGem, topLine, bottomLine]);
+  group.add([...frameObjects, topLine, bottomLine]);
 
   scene.tweens.add({ targets: group, y: 86, duration: scaledDuration(260), ease: 'Back.easeOut' });
   scene.time.delayedCall(1450, () => {

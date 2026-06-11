@@ -27,14 +27,18 @@ type StageNode = {
 };
 
 const STAGE_NODES: StageNode[] = [
-  { id: 'stage_001', x: 95, y: 390, radius: 28 },
-  { id: 'stage_002', x: 200, y: 334, radius: 28 },
-  { id: 'stage_003', x: 304, y: 386, radius: 28 },
-  { id: 'stage_004', x: 416, y: 295, radius: 28 },
-  { id: 'stage_005', x: 528, y: 338, radius: 28 },
-  { id: 'stage_006', x: 628, y: 239, radius: 28 },
-  { id: 'stage_007', x: 740, y: 314, radius: 28 },
-  { id: 'stage_008', x: 860, y: 219, radius: 28 },
+  { id: 'stage_001', x: 94, y: 390, radius: 24 },
+  { id: 'stage_002', x: 178, y: 332, radius: 24 },
+  { id: 'stage_003', x: 262, y: 386, radius: 24 },
+  { id: 'stage_004', x: 350, y: 292, radius: 24 },
+  { id: 'stage_005', x: 442, y: 338, radius: 24 },
+  { id: 'stage_006', x: 528, y: 238, radius: 24 },
+  { id: 'stage_007', x: 612, y: 310, radius: 24 },
+  { id: 'stage_008', x: 694, y: 224, radius: 24 },
+  { id: 'stage_009', x: 758, y: 304, radius: 23 },
+  { id: 'stage_010', x: 832, y: 210, radius: 23 },
+  { id: 'stage_011', x: 862, y: 336, radius: 23 },
+  { id: 'stage_012', x: 878, y: 424, radius: 24 },
 ];
 
 const TONE_TINT: Record<HotspotTone, number> = {
@@ -83,7 +87,7 @@ export class WorldMapScene extends Phaser.Scene {
     this.refreshSelectedStage(false);
 
     this.time.delayedCall(0, () => {
-      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'WorldMapScene', version: '2.0', at: Date.now() } }));
+      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'WorldMapScene', version: '2.8', at: Date.now() } }));
     });
   }
 
@@ -173,6 +177,17 @@ export class WorldMapScene extends Phaser.Scene {
       fixedWidth: 386,
       align: 'center',
     }).setOrigin(0, 0.5).setDepth(24);
+
+    this.add.text(707, 118, 'ACT II  원정 루트 개방', {
+      fontFamily: 'NanumSquareRound, Pretendard, Noto Sans KR, Arial, sans-serif',
+      fontSize: '12px',
+      fontStyle: 'bold',
+      color: '#fff3b8',
+      stroke: '#0b356f',
+      strokeThickness: 3,
+      fixedWidth: 225,
+      align: 'center',
+    }).setDepth(24);
 
     this.selectedMarker = this.add.container(0, 0).setDepth(26);
     const outer = this.add.circle(0, 0, 27, 0x7ce8ff, 0.22).setBlendMode(Phaser.BlendModes.ADD);

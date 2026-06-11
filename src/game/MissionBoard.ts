@@ -48,7 +48,7 @@ function clearCount(save: PlayerSave): number {
 export function getMissionStates(save: PlayerSave): MissionState[] {
   const stars = totalStars(save);
   const clears = clearCount(save);
-  const bossClear = ['stage_004', 'stage_006', 'stage_007', 'stage_008'].some((id) => Boolean(save.clearedStages?.[id]?.bestStars));
+  const bossClear = ['stage_004', 'stage_006', 'stage_007', 'stage_008', 'stage_010', 'stage_012'].some((id) => Boolean(save.clearedStages?.[id]?.bestStars));
 
   return MISSIONS.map((mission) => {
     let progress = 0;

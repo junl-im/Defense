@@ -546,3 +546,138 @@ html.ks-hit-debug #game::after {
   font-weight: 1000;
   pointer-events: none;
 }
+
+/* v2.2 mobile viewport QA
+   Portrait phones default to full rotated-viewport fill so the game no longer appears as a small strip
+   when fullscreen/orientation lock is blocked by the browser. Add ?fit=contain to compare the old safe 16:9 fit. */
+html.ks-portrait-fill #game {
+  background: #061833 !important;
+}
+@media (hover: none) and (pointer: coarse) and (orientation: portrait) {
+  html.ks-portrait-fill #game {
+    left: 50% !important;
+    top: 50% !important;
+    width: var(--ks-game-w-px) !important;
+    height: var(--ks-game-h-px) !important;
+    min-width: var(--ks-game-w-px) !important;
+    min-height: var(--ks-game-h-px) !important;
+    transform: translate(-50%, -50%) rotate(90deg) scale(var(--ks-game-scale)) !important;
+    transform-origin: center center !important;
+  }
+  html.ks-portrait-fill #game canvas {
+    object-fit: fill !important;
+    image-rendering: auto !important;
+  }
+}
+html.ks-hit-debug.ks-portrait-fill #game::before {
+  content: 'PORTRAIT FILL · ?fit=contain';
+  position: fixed;
+  right: max(12px, env(safe-area-inset-right));
+  bottom: max(12px, env(safe-area-inset-bottom));
+  z-index: 10041;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(8, 20, 44, .78);
+  border: 1px solid rgba(124, 232, 255, .62);
+  color: #eaf8ff;
+  font-size: 10px;
+  font-weight: 1000;
+  pointer-events: none;
+}
+
+/* v2.3 mobile-first readability pass: compact start gate and prevent oversized dev overlays. */
+.shell-start-card,
+.shell-panel {
+  width: min(340px, 84vw) !important;
+  border-radius: 22px !important;
+  padding: 15px 14px !important;
+}
+.shell-title-mark { font-size: 21px !important; }
+.shell-start-card h1, .shell-panel h2 { font-size: 18px !important; margin: 10px 0 5px !important; }
+.shell-start-card p, .shell-panel p { font-size: 12px !important; line-height: 1.35 !important; }
+.shell-tap-rune { width: 54px !important; height: 54px !important; margin-top: 11px !important; font-size: 13px !important; }
+.shell-loading-text { margin-top: 10px !important; font-size: 11px !important; }
+html.ks-hit-debug #game::after,
+html.ks-hit-debug.ks-portrait-fill #game::before {
+  font-size: 9px !important;
+  padding: 4px 8px !important;
+}
+
+/* v2.4 final mobile shell/layout override: compact start gate, consistent rotated surface, small debug labels. */
+:root {
+  --ks-shell-card-scale: 0.86;
+}
+html.ks-compact-shell .shell-overlay {
+  padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left)) !important;
+}
+html.ks-compact-shell .shell-start-card,
+html.ks-compact-shell .shell-panel {
+  width: min(300px, 78vw) !important;
+  max-height: calc(100svh - 24px) !important;
+  border-radius: 18px !important;
+  padding: 12px 12px !important;
+  transform: scale(var(--ks-shell-card-scale)) !important;
+  transform-origin: center center !important;
+}
+html.ks-compact-shell .shell-title-mark { font-size: 18px !important; letter-spacing: .03em !important; }
+html.ks-compact-shell .shell-title-sword { margin-top: 7px !important; height: 2px !important; }
+html.ks-compact-shell .shell-start-card h1,
+html.ks-compact-shell .shell-panel h2 { font-size: 16px !important; margin: 7px 0 4px !important; }
+html.ks-compact-shell .shell-start-card p,
+html.ks-compact-shell .shell-panel p { font-size: 11px !important; line-height: 1.25 !important; }
+html.ks-compact-shell .shell-tap-rune { width: 48px !important; height: 48px !important; margin-top: 9px !important; font-size: 12px !important; border-width: 2px !important; }
+html.ks-compact-shell .shell-loading-text { margin-top: 8px !important; font-size: 10px !important; }
+@media (hover: none) and (pointer: coarse) and (orientation: portrait) {
+  html.ks-portrait-fill #game {
+    left: 50% !important;
+    top: 50% !important;
+    width: var(--ks-game-w-px) !important;
+    height: var(--ks-game-h-px) !important;
+    min-width: var(--ks-game-w-px) !important;
+    min-height: var(--ks-game-h-px) !important;
+    max-width: none !important;
+    max-height: none !important;
+    transform: translate(-50%, -50%) rotate(90deg) scale(var(--ks-game-scale)) !important;
+    transform-origin: center center !important;
+  }
+}
+html.ks-hit-debug #game::after,
+html.ks-hit-debug.ks-portrait-fill #game::before {
+  font-size: 8px !important;
+  padding: 3px 7px !important;
+  opacity: .82 !important;
+}
+
+/* v2.7 runtime performance fallback: when the battle auto-drops quality, avoid extra CSS post-processing cost. */
+html.ks-quality-low #game canvas {
+  filter: none !important;
+}
+html.ks-quality-medium #game canvas {
+  filter: saturate(1.02) contrast(1.01) !important;
+}
+@media (hover: none) and (pointer: coarse) and (max-height: 430px) {
+  html.ks-compact-shell .shell-start-card,
+  html.ks-compact-shell .shell-panel {
+    transform: scale(.78) !important;
+  }
+}
+
+/* v2.8 mobile runtime polish: keep launch overlay light and avoid expensive filters on low-end devices. */
+html.ks-quality-low .shell-overlay,
+html.ks-quality-medium .shell-overlay {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+html.ks-quality-low .ks-dom-click-ripple {
+  display: none !important;
+}
+@media (hover: none) and (pointer: coarse) {
+  .shell-overlay {
+    background: radial-gradient(circle at 50% 20%, rgba(78, 145, 255, .20), rgba(6, 14, 31, .82) 58%, rgba(3, 7, 16, .94)) !important;
+  }
+  html.ks-compact-shell .shell-start-card,
+  html.ks-compact-shell .shell-panel {
+    width: min(286px, 76vw) !important;
+    padding: 10px 11px !important;
+  }
+}

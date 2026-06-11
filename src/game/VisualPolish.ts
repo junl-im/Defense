@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { getRenderProfile, lowPowerMode, setQualityTier, type QualityTier } from './QualityManager';
+import { getRenderProfile, lowPowerMode, setQualityTier, setRuntimeQualityTier, type QualityTier } from './QualityManager';
 
 export type StageTheme = 'forest' | 'canyon' | 'swamp' | 'fortress' | string;
 
@@ -91,7 +91,7 @@ export function installScenePerformanceWatch(scene: Phaser.Scene): void {
     }).setOrigin(1, 0).setDepth(160);
   }
 
-  scene.events.on(Phaser.Scenes.Events.UPDATE, (_time: number, delta: number) => {
+  const updateHandler = (_time: number, delta: number): void => {
     sample.elapsed += delta;
     sample.frames += 1;
     if (sample.elapsed < 1800) return;
@@ -105,14 +105,24 @@ export function installScenePerformanceWatch(scene: Phaser.Scene): void {
 
     if (sample.badWindows >= 3) {
       const next: QualityTier = profile.tier === 'high' ? 'medium' : 'low';
-      setQualityTier(next);
+      setRuntimeQualityTier(next);
       sample.badWindows = 0;
       sample.label?.setText(`${getRenderProfile().label} auto`);
+      scene.events.emit('kingdom-seed:runtime-quality-fallback', getRenderProfile());
     }
 
     sample.elapsed = 0;
     sample.frames = 0;
-  });
+  };
+
+  scene.events.on(Phaser.Scenes.Events.UPDATE, updateHandler);
+  const cleanup = (): void => {
+    scene.events.off(Phaser.Scenes.Events.UPDATE, updateHandler);
+    sample.label?.destroy();
+    sample.label = undefined;
+  };
+  scene.events.once(Phaser.Scenes.Events.SHUTDOWN, cleanup);
+  scene.events.once(Phaser.Scenes.Events.DESTROY, cleanup);
 }
 
 export function createQualityToggleButton(scene: Phaser.Scene, x: number, y: number): Phaser.GameObjects.Container {

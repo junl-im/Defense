@@ -8,25 +8,29 @@ export const STAGE_5_ID: StageId = 'stage_005';
 export const STAGE_6_ID: StageId = 'stage_006';
 export const STAGE_7_ID: StageId = 'stage_007';
 export const STAGE_8_ID: StageId = 'stage_008';
+export const STAGE_9_ID: StageId = 'stage_009';
+export const STAGE_10_ID: StageId = 'stage_010';
+export const STAGE_11_ID: StageId = 'stage_011';
+export const STAGE_12_ID: StageId = 'stage_012';
 
 // Backward-compatible defaults for older imports.
 export const STAGE_ID = STAGE_1_ID;
 
 export const ENEMIES: Record<EnemyKind, EnemyConfig> = {
   goblin: {
-    kind: 'goblin', label: '고블린', hp: 42, speed: 72, reward: 8,
+    kind: 'goblin', label: '고블린', hp: 38, speed: 68, reward: 8,
     armor: 0, magicResist: 0, color: 0x7dd957, accentColor: 0x315f2b, threat: 'swarm'
   },
   wolf: {
-    kind: 'wolf', label: '늑대', hp: 34, speed: 122, reward: 9,
+    kind: 'wolf', label: '늑대', hp: 32, speed: 116, reward: 9,
     armor: 0, magicResist: 0, color: 0xd6d6d6, accentColor: 0x6f6f6f, threat: 'fast'
   },
   brute: {
-    kind: 'brute', label: '브루트', hp: 160, speed: 42, reward: 22,
+    kind: 'brute', label: '브루트', hp: 150, speed: 40, reward: 22,
     armor: 0.35, magicResist: 0, color: 0xb5651d, accentColor: 0x5e2e0c, scale: 1.12, threat: 'tank'
   },
   bat: {
-    kind: 'bat', label: '박쥐', hp: 30, speed: 98, reward: 10,
+    kind: 'bat', label: '박쥐', hp: 28, speed: 94, reward: 10,
     armor: 0, magicResist: 0, flying: true, color: 0xd672ff, accentColor: 0x542066, threat: 'flying'
   },
   orc: {
@@ -141,29 +145,29 @@ export const ENEMIES: Record<EnemyKind, EnemyConfig> = {
 
 export const TOWERS: Record<TowerKind, TowerConfig> = {
   archer: {
-    kind: 'archer', label: '궁수', cost: 70, range: 148, fireRateMs: 420,
-    damage: 14, canHitFlying: true, color: 0x8fd14f, maxSkill: '독화살'
+    kind: 'archer', label: '궁수', cost: 62, range: 136, fireRateMs: 430,
+    damage: 17, canHitFlying: true, color: 0x8fd14f, maxSkill: '독화살'
   },
   mage: {
-    kind: 'mage', label: '마법', cost: 100, range: 128, fireRateMs: 900,
-    damage: 42, canHitFlying: true, color: 0xa970ff, maxSkill: '마력 감속'
+    kind: 'mage', label: '마법', cost: 88, range: 122, fireRateMs: 900,
+    damage: 46, canHitFlying: true, color: 0xa970ff, maxSkill: '마력 감속'
   },
   barracks: {
-    kind: 'barracks', label: '병영', cost: 80, range: 86, fireRateMs: 700,
-    damage: 7, canHitFlying: false, color: 0x4fa3ff, maxSkill: '방패 태세'
+    kind: 'barracks', label: '병영', cost: 72, range: 74, fireRateMs: 700,
+    damage: 9, canHitFlying: false, color: 0x4fa3ff, maxSkill: '방패 태세'
   },
   artillery: {
-    kind: 'artillery', label: '포탑', cost: 120, range: 132, fireRateMs: 1420,
-    damage: 50, splashRadius: 50, canHitFlying: false, color: 0xffb347, maxSkill: '충격탄'
+    kind: 'artillery', label: '포탑', cost: 108, range: 124, fireRateMs: 1420,
+    damage: 56, splashRadius: 48, canHitFlying: false, color: 0xffb347, maxSkill: '충격탄'
   }
 };
 
 const STAGE_1_WAVES: WaveSpawn[][] = [
-  [{ kind: 'goblin', count: 10, gapMs: 650 }],
-  [{ kind: 'goblin', count: 14, gapMs: 560 }, { kind: 'wolf', count: 4, gapMs: 760 }],
-  [{ kind: 'wolf', count: 10, gapMs: 520 }],
-  [{ kind: 'goblin', count: 18, gapMs: 420 }, { kind: 'brute', count: 2, gapMs: 1120 }],
-  [{ kind: 'bat', count: 10, gapMs: 600 }],
+  [{ kind: 'goblin', count: 8, gapMs: 720 }],
+  [{ kind: 'goblin', count: 12, gapMs: 620 }, { kind: 'wolf', count: 3, gapMs: 820 }],
+  [{ kind: 'wolf', count: 8, gapMs: 580 }],
+  [{ kind: 'goblin', count: 15, gapMs: 470 }, { kind: 'brute', count: 2, gapMs: 1220 }],
+  [{ kind: 'bat', count: 8, gapMs: 660 }],
   [{ kind: 'brute', count: 5, gapMs: 960 }, { kind: 'goblin', count: 18, gapMs: 420 }],
   [{ kind: 'wolf', count: 16, gapMs: 430 }, { kind: 'bat', count: 8, gapMs: 550 }],
   [{ kind: 'brute', count: 7, gapMs: 850 }, { kind: 'wolf', count: 12, gapMs: 480 }],
@@ -284,10 +288,73 @@ const STAGE_8_WAVES: WaveSpawn[][] = [
   [{ kind: 'voidling', count: 120, gapMs: 55 }, { kind: 'assassin', count: 44, gapMs: 120 }]
 ];
 
+
+const STAGE_9_WAVES: WaveSpawn[][] = [
+  [{ kind: 'goblin', count: 18, gapMs: 230 }, { kind: 'raider', count: 8, gapMs: 420 }],
+  [{ kind: 'spider', count: 20, gapMs: 210 }, { kind: 'shaman', count: 4, gapMs: 760 }],
+  [{ kind: 'specter', count: 10, gapMs: 430 }, { kind: 'wolf', count: 18, gapMs: 250 }],
+  [{ kind: 'troll', count: 5, gapMs: 680 }, { kind: 'wasp', count: 12, gapMs: 360 }],
+  [{ kind: 'assassin', count: 14, gapMs: 260 }, { kind: 'shield', count: 8, gapMs: 520 }],
+  [{ kind: 'ogre', count: 2, gapMs: 1350 }, { kind: 'spider', count: 30, gapMs: 150 }],
+  [{ kind: 'necromancer', count: 5, gapMs: 640 }, { kind: 'specter', count: 14, gapMs: 360 }],
+  [{ kind: 'abomination', count: 3, gapMs: 980 }, { kind: 'raider', count: 26, gapMs: 190 }],
+  [{ kind: 'titan', count: 1, gapMs: 1500 }, { kind: 'voidling', count: 42, gapMs: 95 }],
+  [{ kind: 'ogre', count: 3, gapMs: 1200 }, { kind: 'necromancer', count: 6, gapMs: 520 }, { kind: 'wasp', count: 20, gapMs: 240 }],
+  [{ kind: 'titan', count: 2, gapMs: 1200 }, { kind: 'specter', count: 22, gapMs: 260 }],
+  [{ kind: 'titan', count: 2, gapMs: 1050 }, { kind: 'abomination', count: 5, gapMs: 760 }, { kind: 'voidling', count: 56, gapMs: 80 }]
+];
+
+const STAGE_10_WAVES: WaveSpawn[][] = [
+  [{ kind: 'fireImp', count: 28, gapMs: 170 }, { kind: 'hellhound', count: 10, gapMs: 360 }],
+  [{ kind: 'phoenix', count: 8, gapMs: 520 }, { kind: 'fireImp', count: 32, gapMs: 150 }],
+  [{ kind: 'obsidianKnight', count: 7, gapMs: 610 }, { kind: 'warlock', count: 5, gapMs: 620 }],
+  [{ kind: 'dragon', count: 1, gapMs: 1300 }, { kind: 'hellhound', count: 22, gapMs: 240 }],
+  [{ kind: 'gargoyle', count: 16, gapMs: 330 }, { kind: 'phoenix', count: 8, gapMs: 480 }],
+  [{ kind: 'obsidianKnight', count: 12, gapMs: 450 }, { kind: 'fireImp', count: 44, gapMs: 105 }],
+  [{ kind: 'dragon', count: 2, gapMs: 1450 }, { kind: 'phoenix', count: 12, gapMs: 360 }],
+  [{ kind: 'demonlord', count: 1, gapMs: 1200 }, { kind: 'warlock', count: 8, gapMs: 430 }, { kind: 'hellhound', count: 30, gapMs: 180 }],
+  [{ kind: 'dragon', count: 2, gapMs: 1250 }, { kind: 'obsidianKnight', count: 14, gapMs: 380 }],
+  [{ kind: 'phoenix', count: 22, gapMs: 250 }, { kind: 'fireImp', count: 70, gapMs: 70 }],
+  [{ kind: 'dragon', count: 3, gapMs: 1200 }, { kind: 'demonlord', count: 1, gapMs: 1600 }],
+  [{ kind: 'dragon', count: 3, gapMs: 1050 }, { kind: 'phoenix', count: 28, gapMs: 210 }, { kind: 'hellhound', count: 42, gapMs: 120 }]
+];
+
+const STAGE_11_WAVES: WaveSpawn[][] = [
+  [{ kind: 'voidling', count: 42, gapMs: 90 }, { kind: 'cultist', count: 18, gapMs: 190 }],
+  [{ kind: 'voidPriest', count: 6, gapMs: 520 }, { kind: 'assassin', count: 18, gapMs: 190 }],
+  [{ kind: 'nightmare', count: 7, gapMs: 430 }, { kind: 'specter', count: 14, gapMs: 300 }],
+  [{ kind: 'troll', count: 8, gapMs: 560 }, { kind: 'voidling', count: 54, gapMs: 75 }],
+  [{ kind: 'voidPriest', count: 8, gapMs: 460 }, { kind: 'gargoyle', count: 18, gapMs: 300 }],
+  [{ kind: 'titan', count: 1, gapMs: 1300 }, { kind: 'nightmare', count: 9, gapMs: 390 }],
+  [{ kind: 'necromancer', count: 8, gapMs: 440 }, { kind: 'voidling', count: 70, gapMs: 62 }],
+  [{ kind: 'titan', count: 2, gapMs: 1150 }, { kind: 'voidPriest', count: 8, gapMs: 380 }],
+  [{ kind: 'nightmare', count: 18, gapMs: 260 }, { kind: 'assassin', count: 28, gapMs: 140 }],
+  [{ kind: 'titan', count: 2, gapMs: 1000 }, { kind: 'phoenix', count: 14, gapMs: 330 }],
+  [{ kind: 'titan', count: 3, gapMs: 1050 }, { kind: 'voidPriest', count: 12, gapMs: 300 }],
+  [{ kind: 'titan', count: 3, gapMs: 950 }, { kind: 'nightmare', count: 20, gapMs: 230 }, { kind: 'voidling', count: 88, gapMs: 50 }]
+];
+
+const STAGE_12_WAVES: WaveSpawn[][] = [
+  [{ kind: 'raider', count: 34, gapMs: 120 }, { kind: 'fireImp', count: 34, gapMs: 120 }],
+  [{ kind: 'wyvern', count: 18, gapMs: 290 }, { kind: 'gargoyle', count: 18, gapMs: 290 }],
+  [{ kind: 'abomination', count: 7, gapMs: 720 }, { kind: 'golem', count: 7, gapMs: 720 }],
+  [{ kind: 'demonlord', count: 1, gapMs: 900 }, { kind: 'dragon', count: 1, gapMs: 900 }, { kind: 'titan', count: 1, gapMs: 900 }],
+  [{ kind: 'phoenix', count: 22, gapMs: 230 }, { kind: 'specter', count: 22, gapMs: 230 }],
+  [{ kind: 'voidPriest', count: 12, gapMs: 320 }, { kind: 'necromancer', count: 12, gapMs: 320 }],
+  [{ kind: 'dragon', count: 2, gapMs: 1100 }, { kind: 'demonlord', count: 2, gapMs: 1100 }],
+  [{ kind: 'titan', count: 2, gapMs: 1050 }, { kind: 'nightmare', count: 20, gapMs: 230 }],
+  [{ kind: 'dragon', count: 3, gapMs: 980 }, { kind: 'phoenix', count: 30, gapMs: 190 }],
+  [{ kind: 'demonlord', count: 3, gapMs: 980 }, { kind: 'abomination', count: 10, gapMs: 480 }],
+  [{ kind: 'titan', count: 3, gapMs: 920 }, { kind: 'voidling', count: 120, gapMs: 42 }],
+  [{ kind: 'demonlord', count: 2, gapMs: 880 }, { kind: 'dragon', count: 2, gapMs: 880 }, { kind: 'titan', count: 2, gapMs: 880 }, { kind: 'phoenix', count: 32, gapMs: 160 }],
+  [{ kind: 'demonlord', count: 3, gapMs: 820 }, { kind: 'dragon', count: 3, gapMs: 820 }, { kind: 'titan', count: 3, gapMs: 820 }],
+  [{ kind: 'voidling', count: 160, gapMs: 34 }, { kind: 'assassin', count: 60, gapMs: 92 }, { kind: 'hellhound', count: 52, gapMs: 105 }]
+];
+
 export const STAGES: Record<StageId, StageConfig> = {
   stage_001: {
     id: 'stage_001', number: 1, title: '숲길 방어전', subtitle: '고블린 침입로', theme: 'forest', difficulty: '입문',
-    startGold: 400, maxLives: 20,
+    startGold: 450, maxLives: 24,
     path: [
       { x: -30, y: 285 }, { x: 150, y: 285 }, { x: 225, y: 165 }, { x: 395, y: 165 },
       { x: 500, y: 365 }, { x: 700, y: 365 }, { x: 795, y: 220 }, { x: 990, y: 220 }
@@ -301,7 +368,7 @@ export const STAGES: Record<StageId, StageConfig> = {
   },
   stage_002: {
     id: 'stage_002', number: 2, title: '붉은 협곡', subtitle: '방패병과 말벌 둥지', theme: 'canyon', difficulty: '보통+',
-    startGold: 430, maxLives: 20, unlockRequires: 'stage_001',
+    startGold: 460, maxLives: 22, unlockRequires: 'stage_001',
     path: [
       { x: -30, y: 405 }, { x: 120, y: 405 }, { x: 220, y: 315 }, { x: 150, y: 205 },
       { x: 310, y: 125 }, { x: 470, y: 215 }, { x: 610, y: 150 }, { x: 760, y: 285 },
@@ -316,7 +383,7 @@ export const STAGES: Record<StageId, StageConfig> = {
   },
   stage_003: {
     id: 'stage_003', number: 3, title: '그림자 늪지', subtitle: '망령과 늪 트롤의 소굴', theme: 'swamp', difficulty: '어려움',
-    startGold: 470, maxLives: 18, unlockRequires: 'stage_002',
+    startGold: 500, maxLives: 20, unlockRequires: 'stage_002',
     path: [
       { x: -30, y: 160 }, { x: 125, y: 160 }, { x: 245, y: 260 }, { x: 145, y: 385 },
       { x: 350, y: 430 }, { x: 520, y: 320 }, { x: 450, y: 170 }, { x: 640, y: 105 },
@@ -332,7 +399,7 @@ export const STAGES: Record<StageId, StageConfig> = {
   },
   stage_004: {
     id: 'stage_004', number: 4, title: '마왕의 관문', subtitle: '공성 골렘과 관문 군주', theme: 'fortress', difficulty: '매우 어려움',
-    startGold: 520, maxLives: 18, unlockRequires: 'stage_003',
+    startGold: 550, maxLives: 20, unlockRequires: 'stage_003',
     path: [
       { x: -30, y: 420 }, { x: 130, y: 420 }, { x: 230, y: 315 }, { x: 160, y: 205 },
       { x: 330, y: 120 }, { x: 485, y: 205 }, { x: 610, y: 120 }, { x: 775, y: 185 },
@@ -348,7 +415,7 @@ export const STAGES: Record<StageId, StageConfig> = {
   },
   stage_005: {
     id: 'stage_005', number: 5, title: '검은 성채', subtitle: '광신도와 강령술사의 밤', theme: 'fortress', difficulty: '악몽 입구',
-    startGold: 560, maxLives: 18, unlockRequires: 'stage_004',
+    startGold: 590, maxLives: 19, unlockRequires: 'stage_004',
     path: [
       { x: -30, y: 130 }, { x: 125, y: 130 }, { x: 210, y: 250 }, { x: 110, y: 405 },
       { x: 305, y: 430 }, { x: 465, y: 300 }, { x: 610, y: 360 }, { x: 745, y: 240 },
@@ -363,7 +430,7 @@ export const STAGES: Record<StageId, StageConfig> = {
   },
   stage_006: {
     id: 'stage_006', number: 6, title: '용의 화산', subtitle: '하늘을 뒤덮는 불꽃 군단', theme: 'canyon', difficulty: '화염 지옥',
-    startGold: 610, maxLives: 17, unlockRequires: 'stage_005',
+    startGold: 640, maxLives: 18, unlockRequires: 'stage_005',
     path: [
       { x: -30, y: 440 }, { x: 90, y: 440 }, { x: 180, y: 340 }, { x: 295, y: 390 },
       { x: 410, y: 270 }, { x: 315, y: 145 }, { x: 520, y: 105 }, { x: 680, y: 185 },
@@ -378,7 +445,7 @@ export const STAGES: Record<StageId, StageConfig> = {
   },
   stage_007: {
     id: 'stage_007', number: 7, title: '공허의 탑', subtitle: '현실을 찢는 균열', theme: 'swamp', difficulty: '불가능에 가까움',
-    startGold: 660, maxLives: 16, unlockRequires: 'stage_006',
+    startGold: 690, maxLives: 17, unlockRequires: 'stage_006',
     path: [
       { x: -30, y: 270 }, { x: 140, y: 270 }, { x: 240, y: 120 }, { x: 410, y: 185 },
       { x: 330, y: 350 }, { x: 520, y: 425 }, { x: 680, y: 300 }, { x: 580, y: 150 },
@@ -393,7 +460,7 @@ export const STAGES: Record<StageId, StageConfig> = {
   },
   stage_008: {
     id: 'stage_008', number: 8, title: '왕의 최후 방어선', subtitle: '모든 보스가 몰려오는 결전', theme: 'fortress', difficulty: '최종 결전',
-    startGold: 720, maxLives: 15, unlockRequires: 'stage_007',
+    startGold: 760, maxLives: 16, unlockRequires: 'stage_007',
     path: [
       { x: -30, y: 455 }, { x: 130, y: 455 }, { x: 210, y: 330 }, { x: 120, y: 205 },
       { x: 285, y: 105 }, { x: 450, y: 190 }, { x: 570, y: 100 }, { x: 760, y: 135 },
@@ -405,12 +472,73 @@ export const STAGES: Record<StageId, StageConfig> = {
     ],
     waves: STAGE_8_WAVES,
     tip: '결전 스테이지입니다. 모든 타워의 Lv.3 특수 스킬, 영웅, 용병, 메테오를 전부 순환시켜야 합니다.'
-  }
+  },
+
+  stage_009: {
+    id: 'stage_009', number: 9, title: '수정 숲의 반격', subtitle: '분열된 정령로와 공허 전초대', theme: 'forest', difficulty: '원정 I',
+    startGold: 800, maxLives: 18, unlockRequires: 'stage_008',
+    path: [
+      { x: -30, y: 315 }, { x: 120, y: 315 }, { x: 190, y: 190 }, { x: 350, y: 120 },
+      { x: 505, y: 220 }, { x: 430, y: 390 }, { x: 610, y: 430 }, { x: 760, y: 300 }, { x: 990, y: 300 }
+    ],
+    spots: [
+      { x: 130, y: 220 }, { x: 235, y: 310 }, { x: 350, y: 210 }, { x: 470, y: 115 },
+      { x: 535, y: 340 }, { x: 660, y: 355 }, { x: 745, y: 205 }, { x: 850, y: 375 }
+    ],
+    waves: STAGE_9_WAVES,
+    tip: '새 원정 구간입니다. 분산 길목에 감속과 포탑을 겹치고 빠른 공허 벌레는 병영으로 끊어내세요.'
+  },
+  stage_010: {
+    id: 'stage_010', number: 10, title: '화염 왕관 협곡', subtitle: '불사조와 화산룡의 회랑', theme: 'canyon', difficulty: '원정 II',
+    startGold: 850, maxLives: 17, unlockRequires: 'stage_009',
+    path: [
+      { x: -30, y: 430 }, { x: 100, y: 430 }, { x: 175, y: 310 }, { x: 300, y: 360 },
+      { x: 420, y: 230 }, { x: 330, y: 120 }, { x: 550, y: 105 }, { x: 705, y: 210 },
+      { x: 630, y: 390 }, { x: 825, y: 450 }, { x: 990, y: 350 }
+    ],
+    spots: [
+      { x: 115, y: 335 }, { x: 245, y: 245 }, { x: 350, y: 450 }, { x: 430, y: 130 },
+      { x: 545, y: 205 }, { x: 660, y: 110 }, { x: 705, y: 335 }, { x: 845, y: 385 }, { x: 875, y: 260 }
+    ],
+    waves: STAGE_10_WAVES,
+    tip: '공중 적 비중이 높습니다. 궁수 장궁/저격 분기와 메테오 순환이 핵심입니다.'
+  },
+  stage_011: {
+    id: 'stage_011', number: 11, title: '공허 정원', subtitle: '현실이 접히는 나선 방어선', theme: 'swamp', difficulty: '원정 III',
+    startGold: 900, maxLives: 16, unlockRequires: 'stage_010',
+    path: [
+      { x: -30, y: 170 }, { x: 135, y: 170 }, { x: 260, y: 270 }, { x: 145, y: 410 },
+      { x: 360, y: 430 }, { x: 520, y: 320 }, { x: 445, y: 165 }, { x: 640, y: 105 },
+      { x: 810, y: 210 }, { x: 730, y: 395 }, { x: 990, y: 395 }
+    ],
+    spots: [
+      { x: 120, y: 260 }, { x: 250, y: 160 }, { x: 315, y: 360 }, { x: 470, y: 410 },
+      { x: 530, y: 215 }, { x: 675, y: 180 }, { x: 785, y: 315 }, { x: 855, y: 455 }, { x: 830, y: 115 }
+    ],
+    waves: STAGE_11_WAVES,
+    tip: '공허 사제와 빠른 암살자가 동시에 옵니다. 타겟 우선순위 변경과 영웅 발구르기를 적극 활용하세요.'
+  },
+  stage_012: {
+    id: 'stage_012', number: 12, title: '천공 왕좌 결전', subtitle: '왕국 원정의 최종 시험', theme: 'fortress', difficulty: '원정 최종',
+    startGold: 980, maxLives: 15, unlockRequires: 'stage_011',
+    path: [
+      { x: -30, y: 455 }, { x: 120, y: 455 }, { x: 205, y: 330 }, { x: 120, y: 210 },
+      { x: 290, y: 105 }, { x: 455, y: 195 }, { x: 575, y: 105 }, { x: 760, y: 135 },
+      { x: 690, y: 285 }, { x: 810, y: 405 }, { x: 990, y: 405 }
+    ],
+    spots: [
+      { x: 110, y: 365 }, { x: 230, y: 240 }, { x: 315, y: 55 }, { x: 415, y: 290 },
+      { x: 545, y: 205 }, { x: 640, y: 85 }, { x: 735, y: 245 }, { x: 860, y: 310 }, { x: 860, y: 470 }, { x: 620, y: 430 }
+    ],
+    waves: STAGE_12_WAVES,
+    tip: '모든 보스가 강화되어 등장합니다. 최종 진화, 긴급 강화, 용병, 메테오를 동시에 순환해야 합니다.'
+  },
 };
 
 export const STAGE_LIST: StageConfig[] = [
   STAGES.stage_001, STAGES.stage_002, STAGES.stage_003, STAGES.stage_004,
-  STAGES.stage_005, STAGES.stage_006, STAGES.stage_007, STAGES.stage_008
+  STAGES.stage_005, STAGES.stage_006, STAGES.stage_007, STAGES.stage_008,
+  STAGES.stage_009, STAGES.stage_010, STAGES.stage_011, STAGES.stage_012
 ];
 
 export function getStageConfig(stageId?: string): StageConfig {

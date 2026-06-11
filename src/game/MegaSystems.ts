@@ -15,6 +15,7 @@ export type AchievementId =
   | 'perfect_stage'
   | 'stage_004_clear'
   | 'stage_008_clear'
+  | 'stage_012_clear'
   | 'forest_guardian'
   | 'volcano_breaker'
   | 'void_breaker'
@@ -107,6 +108,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   { id: 'volcano_breaker', title: '화산 돌파자', description: 'Stage 006 용의 화산 클리어', rewardRelicId: 'phoenix_feather', rewardHonor: 30 },
   { id: 'void_breaker', title: '공허 절단자', description: 'Stage 007 공허의 탑 클리어', rewardRelicId: 'void_lens', rewardHonor: 35 },
   { id: 'stage_008_clear', title: '왕국의 수호자', description: 'Stage 008 왕의 최후 방어선 클리어', rewardRelicId: 'royal_seal', rewardHonor: 60 },
+  { id: 'stage_012_clear', title: '원정의 지휘관', description: 'Stage 012 천공 왕좌 결전 클리어', rewardRelicId: 'dragon_scale', rewardHonor: 95 },
   { id: 'daily_challenger', title: '오늘의 지휘관', description: '일일 도전 보상 1회 수령', rewardRelicId: 'dragon_scale', rewardHonor: 22 },
   { id: 'relic_collector', title: '유물 수집가', description: '유물 6개 이상 보유', rewardHonor: 26 },
   { id: 'legend_commander', title: '전설의 지휘관', description: '3별 클리어 스테이지 4개 이상', rewardHonor: 80 },
@@ -267,7 +269,7 @@ function hashString(value: string): number {
 export function getDailyChallenge(date = new Date()): DailyChallenge {
   const dateKey = makeDateKey(date);
   const seed = hashString(`kingdom-seed:${dateKey}`);
-  const stageNumbers: StageId[] = ['stage_002', 'stage_003', 'stage_004', 'stage_005', 'stage_006', 'stage_007', 'stage_008'];
+  const stageNumbers: StageId[] = ['stage_002', 'stage_003', 'stage_004', 'stage_005', 'stage_006', 'stage_007', 'stage_008', 'stage_009', 'stage_010', 'stage_011', 'stage_012'];
   const modifierPool: DailyModifierId[] = ['gold_rush', 'no_mage', 'air_raid', 'iron_wall', 'meteor_storm', 'hero_trial', 'boss_contract'];
   const stageId = stageNumbers[seed % stageNumbers.length];
   const first = modifierPool[(seed >>> 3) % modifierPool.length];
@@ -309,6 +311,7 @@ export function evaluateAchievement(
   if (id === 'volcano_breaker') return isClear('stage_006');
   if (id === 'void_breaker') return isClear('stage_007');
   if (id === 'stage_008_clear') return isClear('stage_008');
+  if (id === 'stage_012_clear') return isClear('stage_012');
   if (id === 'daily_challenger') return state.claimedDailyKeys.length >= 1;
   if (id === 'relic_collector') return state.ownedRelics.length >= 6;
   if (id === 'legend_commander') return perfectCount >= 4;
