@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
 
-export const V210_BUILD_HIT = { width: 34, height: 24, radius: 11 } as const;
-export const V210_TOWER_HIT = { width: 30, height: 40, offsetY: -13, radius: 13 } as const;
-export const V210_BUILD_MENU = { width: 248, height: 152, cardWidth: 102, cardHeight: 36 } as const;
-export const V210_TOWER_PANEL = { width: 292, compactOffset: 160 } as const;
+export const V210_BUILD_HIT = { width: 30, height: 22, radius: 9 } as const;
+export const V210_TOWER_HIT = { width: 26, height: 34, offsetY: -15, radius: 11 } as const;
+export const V210_BUILD_MENU = { width: 236, height: 136, cardWidth: 94, cardHeight: 32 } as const;
+export const V210_TOWER_PANEL = { width: 270, compactOffset: 146 } as const;
 
 export function mobileTextV210(size: number, color = '#f7fbff', fixedWidth?: number): Phaser.Types.GameObjects.Text.TextStyle {
   return {
@@ -19,8 +19,8 @@ export function mobileTextV210(size: number, color = '#f7fbff', fixedWidth?: num
 export function installV210BattlePolish(scene: Phaser.Scene): void {
   const lite = new URLSearchParams(window.location.search).has('lite') || new URLSearchParams(window.location.search).has('battery');
   const depth = 71;
-  const topLine = scene.add.rectangle(480, 59, 880, 1, 0x9fe8ff, 0.20).setDepth(depth).setBlendMode(Phaser.BlendModes.ADD);
-  const bottomLine = scene.add.rectangle(480, 456, 860, 1, 0xffdf8a, 0.12).setDepth(depth).setBlendMode(Phaser.BlendModes.ADD);
+  const topLine = scene.add.rectangle(480, 53, 820, 1, 0x9fe8ff, 0.20).setDepth(depth).setBlendMode(Phaser.BlendModes.ADD);
+  const bottomLine = scene.add.rectangle(480, 462, 800, 1, 0xffdf8a, 0.12).setDepth(depth).setBlendMode(Phaser.BlendModes.ADD);
   const leftRail = scene.add.rectangle(9, 270, 2, 344, 0x7bdcff, 0.10).setDepth(6).setBlendMode(Phaser.BlendModes.ADD);
   const rightRail = scene.add.rectangle(951, 270, 2, 344, 0xffd46b, 0.08).setDepth(6).setBlendMode(Phaser.BlendModes.ADD);
   if (!lite) {

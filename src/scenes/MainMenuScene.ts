@@ -64,7 +64,7 @@ export class MainMenuScene extends Phaser.Scene {
     this.createSmallStatusToast();
 
     this.time.delayedCall(0, () => {
-      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MainMenuScene', version: '2.11', at: Date.now() } }));
+      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MainMenuScene', version: '2.12', at: Date.now() } }));
     });
   }
 

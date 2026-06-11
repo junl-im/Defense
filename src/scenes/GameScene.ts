@@ -466,7 +466,7 @@ export class GameScene extends Phaser.Scene {
 
   private createHud(): void {
     const statStyle: Phaser.Types.GameObjects.Text.TextStyle = {
-      fontSize: '11px',
+      fontSize: '10px',
       color: '#fff7d6',
       fontStyle: 'bold',
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 1, fill: true }
@@ -480,7 +480,7 @@ export class GameScene extends Phaser.Scene {
         shadow: { offsetX: 0, offsetY: 1, color: '#000000', blur: 1, fill: true }
       }).setDepth(79);
       this.add.text(x - w / 2 + 11, 28, icon, {
-        fontSize: '13px', color: '#ffffff', fontStyle: 'bold',
+        fontSize: '11px', color: '#ffffff', fontStyle: 'bold',
         shadow: { offsetX: 0, offsetY: 1, color: '#000000', blur: 1, fill: true }
       }).setOrigin(0, 0.5).setDepth(79);
       return this.add.text(x - w / 2 + 32, 28, '', statStyle).setOrigin(0, 0.5).setDepth(80);
@@ -497,14 +497,14 @@ export class GameScene extends Phaser.Scene {
     }).setDepth(79);
     const stageLabel = `S${this.stage.number}  ${this.stage.title}`;
     this.stageText = this.add.text(470, 28, stageLabel, {
-      fontSize: '11px', color: '#dbe7ff', fontStyle: 'bold',
+      fontSize: '10px', color: '#dbe7ff', fontStyle: 'bold',
       fixedWidth: 200,
       align: 'center',
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 1, fill: true }
     }).setOrigin(0.5).setDepth(80);
 
     this.messageText = this.add.text(480, 72, '', {
-      fontSize: '10px',
+      fontSize: '9px',
       color: '#fff7d6',
       backgroundColor: '#19100bcc',
       padding: { x: 10, y: 6 },
@@ -521,13 +521,13 @@ export class GameScene extends Phaser.Scene {
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 2, fill: true }
     }).setOrigin(0.5).setDepth(92).setVisible(false);
     this.directorText = this.add.text(480, 118, '', {
-      fontSize: '14px', color: '#dbe7ff', fontStyle: 'bold', backgroundColor: '#07101ecc',
+      fontSize: '12px', color: '#dbe7ff', fontStyle: 'bold', backgroundColor: '#07101ecc',
       padding: { x: 14, y: 7 }, align: 'center',
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 2, fill: true }
     }).setOrigin(0.5).setDepth(91).setVisible(false);
 
     const soundButton = this.makeUiButton(626, 27, 38, 28, 0x263c52, '', 18, 80);
-    this.soundText = this.add.text(626, 27, isMuted() ? 'OFF' : 'ON', { fontSize: '11px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
+    this.soundText = this.add.text(626, 27, isMuted() ? 'OFF' : 'ON', { fontSize: '10px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
     soundButton.on('pointerdown', () => {
       const next = !isMuted();
       setMuted(next);
@@ -537,7 +537,7 @@ export class GameScene extends Phaser.Scene {
 
     const waveButton = this.makeUiButton(724, 27, 116, 28, 0xa94732, '', 16, 80);
     this.waveButtonText = this.add.text(724, 27, '전투 시작', {
-      fontSize: '12px', color: '#fff8cf', fontStyle: 'bold',
+      fontSize: '10px', color: '#fff8cf', fontStyle: 'bold',
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 1, fill: true }
     }).setOrigin(0.5).setDepth(82);
     waveButton.on('pointerdown', () => {
@@ -546,7 +546,7 @@ export class GameScene extends Phaser.Scene {
     });
 
     const speedButton = this.makeUiButton(830, 27, 42, 28, 0x24486b, '', 16, 80);
-    this.speedText = this.add.text(830, 27, '1x', { fontSize: '12px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
+    this.speedText = this.add.text(830, 27, '1x', { fontSize: '10px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5).setDepth(82);
     speedButton.on('pointerdown', () => {
       pulseButton(this, speedButton);
       this.toggleSpeed();
@@ -803,7 +803,7 @@ export class GameScene extends Phaser.Scene {
     }).setOrigin(0.5);
     const subtitle = this.add.text(0, -104, '모바일 전투 흐름에 맞춰 한 장을 골라 이번 전투를 강화하세요.', {
       fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
-      fontSize: '11px',
+      fontSize: '10px',
       fontStyle: 'bold',
       color: '#dbe7ff',
     }).setOrigin(0.5);
@@ -816,7 +816,7 @@ export class GameScene extends Phaser.Scene {
 
     const skip = this.add.text(0, 142, reason === 'manual' ? '닫기' : '이번에는 건너뛰기', {
       fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
-      fontSize: '12px',
+      fontSize: '10px',
       fontStyle: 'bold',
       color: '#fff4c2',
       backgroundColor: '#07101ecc',
@@ -930,7 +930,7 @@ export class GameScene extends Phaser.Scene {
       .setBlendMode(Phaser.BlendModes.ADD);
     const dot = this.add.circle(0, 0, 5, 0xffffff, 0.78).setStrokeStyle(2, color, 0.92);
     this.spellTargetLabel = this.add.text(0, -radius - 20, label, {
-      fontSize: '13px', color: '#fff7d6', fontStyle: 'bold',
+      fontSize: '11px', color: '#fff7d6', fontStyle: 'bold',
       backgroundColor: '#07101ecc', padding: { x: 8, y: 4 },
       fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 2, fill: true }
@@ -970,11 +970,11 @@ export class GameScene extends Phaser.Scene {
     const rim = this.add.ellipse(x, y + 3, 54, 28, 0x3b2818, 0.92).setStrokeStyle(3, 0xffd36b, 0.36).setDepth(12);
     const stone = this.add.ellipse(x, y, 46, 23, 0x7b6b57, 0.96).setStrokeStyle(2, 0x2b1b12, 0.48).setDepth(13);
     const light = this.add.ellipse(x - 8, y - 5, 20, 6, 0xffe1a0, 0.22).setDepth(14);
-    const hammer = this.add.text(x, y - 7, '⚒', { fontSize: '14px', color: '#fff4c2', fontStyle: 'bold' }).setOrigin(0.5).setDepth(15);
+    const hammer = this.add.text(x, y - 7, '⚒', { fontSize: '12px', color: '#fff4c2', fontStyle: 'bold' }).setOrigin(0.5).setDepth(15);
     const tagBg = this.add.rectangle(x, y + 24, 62, 18, 0x130d09, 0.78).setStrokeStyle(1, 0xffd36b, 0.35).setDepth(16);
     const tag = this.add.text(x, y + 24, '건설', { fontSize: '9px', color: '#ffefb4', fontStyle: 'bold' }).setOrigin(0.5).setDepth(17);
     const premiumPad = this.textures.exists('v1-build-spot')
-      ? this.add.image(x, y + 1, 'v1-build-spot').setDisplaySize(58, 42).setDepth(13)
+      ? this.add.image(x, y + 1, 'v1-build-spot').setDisplaySize(42, 30).setDepth(13)
       : undefined;
     if (premiumPad) {
       shadow.setVisible(false);
@@ -1059,7 +1059,7 @@ export class GameScene extends Phaser.Scene {
         ? this.add.image(0, 0, 'ui-build-menu-frame-v47').setDisplaySize(V210_BUILD_MENU.width, V210_BUILD_MENU.height)
         : this.add.rectangle(0, 0, V210_BUILD_MENU.width, V210_BUILD_MENU.height, 0x130d09, 0.94).setStrokeStyle(3, 0xffd36b, 0.58);
     const header = this.add.text(0, -60, '방어 시설 선택', {
-      fontSize: '10px', color: '#fff8d2', fontStyle: 'bold',
+      fontSize: '9px', color: '#fff8d2', fontStyle: 'bold',
       fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif',
       shadow: { offsetX: 0, offsetY: 2, color: '#001b45', blur: 2, fill: true }
     }).setOrigin(0.5);
@@ -1204,10 +1204,10 @@ export class GameScene extends Phaser.Scene {
     const icon = this.add.circle(-126, -panelHeight / 2 + 26, 13, tower.config.color, 0.9)
       .setStrokeStyle(2, 0xfff1c2, 0.55);
     const symbol = this.add.text(-126, -panelHeight / 2 + 25, this.towerSymbol(tower.config.kind), {
-      fontSize: '13px', color: '#101820', fontStyle: 'bold'
+      fontSize: '11px', color: '#101820', fontStyle: 'bold'
     }).setOrigin(0.5);
     const title = this.add.text(-106, -panelHeight / 2 + 12, `${tower.config.label}  Lv.${tower.level}`, {
-      fontSize: '12px', color: '#fff1bf', fontStyle: 'bold',
+      fontSize: '10px', color: '#fff1bf', fontStyle: 'bold',
       fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif',
       shadow: { offsetX: 0, offsetY: 3, color: '#000000', blur: 3, fill: true }
     });
@@ -1450,7 +1450,7 @@ export class GameScene extends Phaser.Scene {
     const meteor = makeSpellHit(88, 504, 130, 38, 0x4f1f1f);
     if (!useV1Dock && this.textures.exists('ui-spell-meteor-card-v32')) this.add.image(88, 500, 'ui-spell-meteor-card-v32').setDisplaySize(150, 50).setDepth(81);
     this.meteorText = this.add.text(88, 504, '☄ 메테오', {
-      fontSize: '11px', color: '#fff', fontStyle: 'bold',
+      fontSize: '10px', color: '#fff', fontStyle: 'bold',
       fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif',
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 2, fill: true }
     }).setOrigin(0.5).setDepth(86);
@@ -1464,7 +1464,7 @@ export class GameScene extends Phaser.Scene {
     const mercenary = makeSpellHit(232, 504, 132, 38, 0x2f4f35);
     if (!useV1Dock && this.textures.exists('ui-spell-mercenary-card-v32')) this.add.image(238, 500, 'ui-spell-mercenary-card-v32').setDisplaySize(160, 50).setDepth(81);
     this.mercenaryText = this.add.text(232, 504, '🛡️ 용병', {
-      fontSize: '11px', color: '#fff', fontStyle: 'bold',
+      fontSize: '10px', color: '#fff', fontStyle: 'bold',
       fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif',
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 2, fill: true }
     }).setOrigin(0.5).setDepth(86);
@@ -1478,7 +1478,7 @@ export class GameScene extends Phaser.Scene {
     const heroSkill = makeSpellHit(376, 504, 132, 38, 0x4f3d1f);
     if (!useV1Dock && this.textures.exists('ui-spell-hero-card-v32')) this.add.image(392, 500, 'ui-spell-hero-card-v32').setDisplaySize(170, 50).setDepth(81);
     this.heroSkillText = this.add.text(376, 504, '🦁 강타', {
-      fontSize: '11px', color: '#fff', fontStyle: 'bold',
+      fontSize: '10px', color: '#fff', fontStyle: 'bold',
       fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif',
       shadow: { offsetX: 0, offsetY: 2, color: '#000000', blur: 2, fill: true }
     }).setOrigin(0.5).setDepth(86);
@@ -1495,12 +1495,12 @@ export class GameScene extends Phaser.Scene {
 
     if (!useV1Dock) addPremiumPlaque(this, 746, 504, 356, 38, 0xf7d36b, 74);
     this.add.text(584, 486, '공세 정보', {
-      fontSize: '10px', color: useV1Dock ? '#dbe7ff' : '#c8b184', fontStyle: 'bold',
+      fontSize: '9px', color: useV1Dock ? '#dbe7ff' : '#c8b184', fontStyle: 'bold',
       fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
       shadow: { offsetX: 0, offsetY: 1, color: '#000000', blur: 1, fill: true }
     }).setDepth(86);
     this.wavePreviewText = this.add.text(916, 487, '', {
-      fontSize: '10px', color: '#f7d36b', fontStyle: 'bold',
+      fontSize: '9px', color: '#f7d36b', fontStyle: 'bold',
       fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
       shadow: { offsetX: 0, offsetY: 1, color: '#000000', blur: 1, fill: true }
     }).setOrigin(1, 0).setDepth(86);
@@ -1652,7 +1652,7 @@ export class GameScene extends Phaser.Scene {
     const title = this.add.text(0, -102, 'PAUSED', { fontSize: '30px', color: '#f7d36b', fontStyle: 'bold' }).setOrigin(0.5);
     const desc = this.add.text(0, -40, `${this.stage.title}
 속도 ${this.gameSpeed}x / Wave ${Math.max(0, this.waveIndex + 1)}/${this.stage.waves.length}`, {
-      fontSize: '14px', color: '#dbe7ff', align: 'center', lineSpacing: 8
+      fontSize: '12px', color: '#dbe7ff', align: 'center', lineSpacing: 8
     }).setOrigin(0.5);
     const quality = createQualityToggleButton(this, 0, 28);
     const resume = this.add.rectangle(-100, 74, 150, 40, 0x284f39, 1).setStrokeStyle(2, 0xffffff, 0.25).setInteractive({ useHandCursor: true });
@@ -2013,22 +2013,22 @@ export class GameScene extends Phaser.Scene {
     const objectivePanel = this.add.rectangle(252, 333, 314, 126, 0x111927, 0.92)
       .setDepth(93).setStrokeStyle(2, 0x8fdcff, 0.26);
     const objectiveTitle = this.add.text(252, 282, '전술 목표 결과', {
-      fontSize: '14px', color: '#dbe7ff', fontStyle: 'bold'
+      fontSize: '12px', color: '#dbe7ff', fontStyle: 'bold'
     }).setOrigin(0.5).setDepth(94);
     const contractLines = battleContractResultLines(this.battleContractState);
     const objectiveLines = this.add.text(252, 337, [...reward.lines.slice(0, 3), ...contractLines.slice(0, 3)].join('\n'), {
-      fontSize: '14px', color: '#fff4c2', align: 'left', lineSpacing: 6,
+      fontSize: '12px', color: '#fff4c2', align: 'left', lineSpacing: 6,
       shadow: { offsetX: 0, offsetY: 1, color: '#000000', blur: 1, fill: true }
     }).setOrigin(0.5).setDepth(94);
 
     const leaderboardPanel = this.add.rectangle(708, 333, 314, 126, 0x111927, 0.92)
       .setDepth(93).setStrokeStyle(2, 0xf7d36b, 0.26);
     const leaderboardTitle = this.add.text(708, 282, '오늘의 명예의 전당', {
-      fontSize: '14px', color: '#f7d36b', fontStyle: 'bold'
+      fontSize: '12px', color: '#f7d36b', fontStyle: 'bold'
     }).setOrigin(0.5).setDepth(94);
     const lines = top.slice(0, 5).map((s, i) => `${rankMedal(i)} ${s.nickname}  ${s.score}`).join('\n');
     const leaderboardText = this.add.text(708, 337, lines || '아직 기록 없음', {
-      fontSize: '14px', color: '#dbe7ff', align: 'left', lineSpacing: 6,
+      fontSize: '12px', color: '#dbe7ff', align: 'left', lineSpacing: 6,
       shadow: { offsetX: 0, offsetY: 1, color: '#000000', blur: 1, fill: true }
     }).setOrigin(0.5).setDepth(94);
 

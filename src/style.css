@@ -761,3 +761,25 @@ html.ks-quality-medium #game canvas { filter: none !important; }
   }
 }
 html.ks-hit-debug .ks-dom-click-ripple { display: none !important; }
+
+
+/* v2.12 mobile-first polish: smaller shell, sharper touch affordances, less GPU overdraw. */
+.shell-start-card,
+.shell-panel {
+  width: min(246px, 68vw) !important;
+  padding: 8px 9px !important;
+  border-radius: 14px !important;
+  backdrop-filter: none !important;
+}
+.shell-title-mark { font-size: 15px !important; letter-spacing: .08em !important; }
+.shell-start-card h1,
+.shell-panel h2 { font-size: 13px !important; margin: 6px 0 2px !important; }
+.shell-start-card p,
+.shell-panel p { font-size: 8px !important; line-height: 1.16 !important; }
+.shell-tap-rune { width: 34px !important; height: 34px !important; margin-top: 6px !important; font-size: 9px !important; }
+.shell-loading-text { font-size: 7px !important; opacity: .78 !important; }
+@media (hover: none) and (pointer: coarse) and (max-height: 430px) {
+  .shell-start-card, .shell-panel { transform: scale(.62) !important; }
+}
+html.ks-quality-low .shell-overlay,
+html.ks-quality-medium .shell-overlay { backdrop-filter: none !important; }
