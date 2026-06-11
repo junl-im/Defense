@@ -39,22 +39,22 @@ function flags(): BrowserFlags {
 }
 
 function ensureShellStyles(): void {
-  if (document.getElementById('kingdom-shell-v49-style')) return;
+  if (document.getElementById('kingdom-shell-v211-style')) return;
   const style = document.createElement('style');
-  style.id = 'kingdom-shell-v49-style';
+  style.id = 'kingdom-shell-v211-style';
   style.textContent = `
     #game { width: 100vw; height: 100dvh; min-height: 100dvh; }
     .shell-overlay { position: fixed; inset: 0; z-index: 10000; display: flex; align-items: center; justify-content: center; padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); background: radial-gradient(circle at 50% 24%, rgba(101,165,255,.28), rgba(6,14,31,.86) 58%, rgba(3,7,16,.94)); color: white; box-sizing: border-box; transition: opacity 180ms ease, transform 180ms ease; }
     .shell-overlay.hidden { display: none !important; }
     .shell-overlay.fading { opacity: 0; transform: scale(1.02); pointer-events: none; }
     .shell-start-gate { cursor: pointer; }
-    .shell-start-card, .shell-panel { width: min(340px, 84vw); border: 2px solid rgba(255,218,123,.88); border-radius: 22px; padding: 15px 14px; text-align: center; background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(220,235,255,.92)); color: #244a86; box-shadow: 0 30px 90px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.9); }
-    .shell-title-mark { font-size: 21px; line-height: 1; font-weight: 1000; letter-spacing: .04em; color: #2d5bab; text-shadow: 0 2px 0 #fff, 0 5px 16px rgba(37,82,168,.28); }
+    .shell-start-card, .shell-panel { width: min(340px, 84vw); border: 2px solid rgba(255,218,123,.88); border-radius: 22px; padding: 15px 14px; text-align: center; background: radial-gradient(circle at 50% 0%, rgba(120,215,255,.16), transparent 44%), linear-gradient(180deg, rgba(27,43,70,.96), rgba(7,14,31,.97)); color: #f7fbff; box-shadow: 0 30px 90px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.9); }
+    .shell-title-mark { font-size: 19px; line-height: 1; font-weight: 1000; letter-spacing: .04em; color: #fff0b8; text-shadow: 0 2px 0 rgba(0,0,0,.45), 0 0 18px rgba(255,220,126,.22); }
     .shell-title-sword { width: 68%; height: 2px; margin: 10px auto 0; background: linear-gradient(90deg, transparent, #e7b94e, transparent); }
-    .shell-start-card h1, .shell-panel h2 { margin: 10px 0 5px; font-size: 18px; color: #193e7d; }
-    .shell-start-card p, .shell-panel p { margin: 0; font-weight: 800; font-size: 12px; color: #5e789f; }
+    .shell-start-card h1, .shell-panel h2 { margin: 10px 0 5px; font-size: 18px; color: #eaf6ff; }
+    .shell-start-card p, .shell-panel p { margin: 0; font-weight: 800; font-size: 12px; color: #bcd7ff; }
     .shell-tap-rune { display: inline-flex; margin-top: 11px; width: 54px; height: 54px; align-items: center; justify-content: center; border-radius: 999px; color: #fff; font-weight: 1000; background: linear-gradient(180deg, #5fa1ff, #255ab5); border: 3px solid #ffd979; box-shadow: 0 12px 34px rgba(27,82,180,.34), inset 0 1px 0 rgba(255,255,255,.46); animation: ksTapPulseV48 1.25s ease-in-out infinite; }
-    .shell-loading-text { margin-top: 10px; color: #244a86; font-weight: 1000; font-size: 11px; }
+    .shell-loading-text { margin-top: 10px; color: #fff0b8; font-weight: 1000; font-size: 9px; }
     .shell-row { display: flex; gap: 12px; justify-content: center; margin-top: 14px; }
     .shell-row button { appearance: none; border: 0; border-radius: 16px; padding: 13px 24px; color: #fff; font-weight: 1000; font-size: 16px; }
     .shell-secondary { background: linear-gradient(180deg, #5d94e6, #2658b5); }
@@ -172,7 +172,7 @@ async function activateGameShell(): Promise<void> {
   suppressExitGuardUntil = Date.now() + 4200;
   if (startGate) {
     const note = startGate.querySelector<HTMLElement>('.shell-loading-text');
-    if (note) note.textContent = '왕국 기록을 불러오는 중...';
+    if (note) note.textContent = '전장 리소스 정렬 중...';
   }
   window.dispatchEvent(new CustomEvent('kingdom-seed:user-activated'));
   // v2.5: do not block the first scene behind fullscreen/orientation promises.
@@ -198,10 +198,10 @@ function createStartGate(): void {
     <div class="shell-start-card" role="button" aria-label="게임 시작">
       <div class="shell-title-mark">KINGDOM SEED</div>
       <div class="shell-title-sword"></div>
-      <h1>시작</h1>
-      <p>한 번 터치하면 사운드와 전체화면을 준비합니다.</p>
+      <h1>탭해서 시작</h1>
+      <p>사운드와 화면을 준비하고 바로 진입합니다.</p>
       <div class="shell-tap-rune">TAP</div>
-      <div class="shell-loading-text">WebP 경량 리소스로 빠르게 진입 중</div>
+      <div class="shell-loading-text">v2.11 모바일 디자인 QA 로딩</div>
     </div>`;
   document.body.appendChild(startGate);
   const start = (): void => void activateGameShell();

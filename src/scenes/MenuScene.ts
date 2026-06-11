@@ -35,7 +35,7 @@ export class MenuScene extends Phaser.Scene {
     this.createUtilityHitZones();
 
     this.time.delayedCall(0, () => {
-      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MenuScene', version: '2.8', at: Date.now() } }));
+      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MenuScene', version: '2.11', at: Date.now() } }));
     });
 
     void this.bootstrapRedirectOrExistingUser();
@@ -50,10 +50,10 @@ export class MenuScene extends Phaser.Scene {
     topFade.fillRect(0, 0, 960, 126);
 
     const logoKey = this.textures.exists('v1-title-logo-clean') ? 'v1-title-logo-clean' : 'ui-title-logo';
-    this.add.image(480, 102, logoKey).setDisplaySize(332, 120).setDepth(10);
+    this.add.image(480, 96, logoKey).setDisplaySize(314, 112).setDepth(10);
 
     if (this.textures.exists('v1-login-panel-v18')) {
-      this.add.image(480, 350, 'v1-login-panel-v18').setDisplaySize(416, 292).setDepth(20);
+      this.add.image(480, 350, 'v1-login-panel-v18').setDisplaySize(392, 268).setDepth(20);
     } else {
       const fallback = this.add.graphics().setDepth(20);
       fallback.fillStyle(0xf6fbff, 0.92).fillRoundedRect(265, 232, 430, 300, 28);
@@ -61,7 +61,7 @@ export class MenuScene extends Phaser.Scene {
     }
 
     this.add.text(480, 253, 'DEFENSE COMMAND', {
-      fontSize: '17px',
+      fontSize: '16px',
       color: '#f8fbff',
       align: 'center',
       fixedWidth: 320,
@@ -73,7 +73,7 @@ export class MenuScene extends Phaser.Scene {
     }).setOrigin(0.5).setDepth(31);
 
     this.add.text(480, 277, '전장을 수호할 지휘관으로 입장하세요!', {
-      fontSize: '10px',
+      fontSize: '9px',
       color: '#8298b8',
       align: 'center',
       fixedWidth: 320,
@@ -112,7 +112,7 @@ export class MenuScene extends Phaser.Scene {
     const chip = this.add.graphics().setDepth(53);
     chip.fillStyle(0x071c3e, 0.46).fillRoundedRect(16, 14, 150, 24, 14);
     chip.lineStyle(1, 0xffdc82, 0.45).strokeRoundedRect(16, 14, 150, 24, 14);
-    this.add.text(91, 26, 'v2.8.0 CONTRACT QA', {
+    this.add.text(91, 26, 'v2.11.0 DESIGN QA', {
       fontSize: '8px',
       color: '#f7fbff',
       fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
@@ -125,9 +125,9 @@ export class MenuScene extends Phaser.Scene {
     // v1.8: positions match the separated image buttons exactly.
     this.addLoginButton({
       x: 480,
-      y: 356,
-      width: 292,
-      height: 50,
+      y: 350,
+      width: 276,
+      height: 46,
       imageKey: 'v1-login-button-gold-v18',
       label: '빠른 시작',
       icon: '⚔',
@@ -137,9 +137,9 @@ export class MenuScene extends Phaser.Scene {
 
     this.addLoginButton({
       x: 480,
-      y: 410,
-      width: 292,
-      height: 50,
+      y: 400,
+      width: 276,
+      height: 46,
       imageKey: 'v1-login-button-white-v18',
       label: 'Google 로그인',
       icon: 'G',
@@ -148,10 +148,10 @@ export class MenuScene extends Phaser.Scene {
     });
 
     this.addLoginButton({
-      x: 405,
-      y: 462,
-      width: 142,
-      height: 39,
+      x: 410,
+      y: 448,
+      width: 132,
+      height: 34,
       imageKey: 'v1-login-button-small-v18',
       label: '이메일 로그인',
       icon: '✉',
@@ -161,10 +161,10 @@ export class MenuScene extends Phaser.Scene {
     });
 
     this.addLoginButton({
-      x: 555,
-      y: 462,
-      width: 142,
-      height: 39,
+      x: 550,
+      y: 448,
+      width: 132,
+      height: 34,
       imageKey: 'v1-login-button-small-v18',
       label: '회원가입',
       icon: '♥',
@@ -229,7 +229,7 @@ export class MenuScene extends Phaser.Scene {
   private addUtilityButton(x: number, y: number, iconText: string, labelText: string, onClick: () => void): void {
     const c = this.add.container(x, y).setDepth(60);
     const image = this.textures.exists('v1-login-utility-button-v18')
-      ? this.add.image(0, 0, 'v1-login-utility-button-v18').setDisplaySize(50, 50)
+      ? this.add.image(0, 0, 'v1-login-utility-button-v18').setDisplaySize(42, 42)
       : this.add.circle(0, 0, 24, 0x1e5bb6, 0.9).setStrokeStyle(2, 0xffdc82, 0.8);
     const icon = this.add.text(0, -2, iconText, {
       fontSize: '21px',
@@ -248,9 +248,9 @@ export class MenuScene extends Phaser.Scene {
       strokeThickness: 3,
     }).setOrigin(0.5);
     const hover = this.add.circle(0, 0, 26, 0xffffff, 0.16).setAlpha(0).setBlendMode(Phaser.BlendModes.ADD);
-    const hit = this.add.zone(0, 0, 54, 62).setInteractive({ useHandCursor: true });
+    const hit = this.add.zone(0, 0, 46, 52).setInteractive({ useHandCursor: true });
     c.add([image, hover, icon, label, hit]);
-    addHitZoneDebug(this, c, 54, 62, labelText, 0x7cc7ff, 18);
+    addHitZoneDebug(this, c, 46, 52, labelText, 0x7cc7ff, 18);
     this.wireButtonHit(c, hover, hit, onClick);
   }
 
