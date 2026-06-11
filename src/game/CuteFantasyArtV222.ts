@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 
-export const V222_VERSION_LABEL = 'v2.22.0 MOONBERRY NURSERY MASS QA';
+export const V222_VERSION_LABEL = 'v2.23.0 FAST START PERF QA';
 
 type StageNodeLike = { x: number; y: number; radius?: number };
 type BattleTheme = 'forest' | 'canyon' | 'swamp' | 'fortress' | string;

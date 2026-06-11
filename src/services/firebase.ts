@@ -33,23 +33,17 @@ const firebaseConfig = {
     import.meta.env.VITE_FIREBASE_API_KEY ||
     "AIzaSyD0DWQWMSmGqYMAkJSZULmFmjsk7x8HRxE",
   authDomain:
-    import.meta.env.VITE_FIREBASE_AUTH_DOMAIN ||
-    "web-game2.firebaseapp.com",
-  projectId:
-    import.meta.env.VITE_FIREBASE_PROJECT_ID ||
-    "web-game2",
+    import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "web-game2.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "web-game2",
   storageBucket:
     import.meta.env.VITE_FIREBASE_STORAGE_BUCKET ||
     "web-game2.firebasestorage.app",
   messagingSenderId:
-    import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID ||
-    "91491483724",
+    import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "91491483724",
   appId:
     import.meta.env.VITE_FIREBASE_APP_ID ||
     "1:91491483724:web:0a3e02dcc4c8badd76b4e9",
-  measurementId:
-    import.meta.env.VITE_FIREBASE_MEASUREMENT_ID ||
-    "G-SPYS3QERB5",
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-SPYS3QERB5",
 };
 
 export const app = initializeApp(firebaseConfig);
@@ -111,11 +105,135 @@ const defaultUpgrades: PlayerSave["upgrades"] = {
   artillerySplash: 0,
 };
 
+type LocalSaveSnapshot = Omit<PlayerSave, "uid"> & { uid?: string };
 
+type QuickStartSource = "remote" | "local-timeout" | "local-error";
+
+const LOCAL_GUEST_UID_KEY = "kingdom-seed:local-guest-uid";
+const LOCAL_SAVE_PREFIX = "kingdom-seed:local-save:";
+const QUICK_START_TIMEOUT_MS = 650;
+
+function canUseLocalStorage(): boolean {
+  return typeof window !== "undefined" && Boolean(window.localStorage);
+}
+
+function localSaveKey(uid: string): string {
+  return `${LOCAL_SAVE_PREFIX}${uid}`;
+}
+
+function withTimeout<T>(
+  promise: Promise<T>,
+  timeoutMs: number,
+  fallback: () => T | Promise<T>,
+): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  return new Promise<T>((resolve) => {
+    let settled = false;
+    const finish = (value: T | Promise<T>): void => {
+      if (settled) return;
+      settled = true;
+      if (timer !== undefined) clearTimeout(timer);
+      void Promise.resolve(value).then(resolve);
+    };
+    timer = setTimeout(() => finish(fallback()), Math.max(1, timeoutMs));
+    promise.then(finish).catch(() => finish(fallback()));
+  });
+}
+
+function readJson<T>(key: string): T | undefined {
+  if (!canUseLocalStorage()) return undefined;
+  try {
+    const raw = window.localStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as T) : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+function writeJson(key: string, value: unknown): void {
+  if (!canUseLocalStorage()) return;
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // Local persistence is a speed/fallback layer. Ignore quota/private-mode errors.
+  }
+}
+
+function getOrCreateLocalGuestUid(): string {
+  if (canUseLocalStorage()) {
+    const existing = window.localStorage.getItem(LOCAL_GUEST_UID_KEY);
+    if (existing) return existing;
+  }
+  const random = Math.random().toString(36).slice(2, 10);
+  const uid = `local_guest_${Date.now().toString(36)}_${random}`;
+  if (canUseLocalStorage())
+    window.localStorage.setItem(LOCAL_GUEST_UID_KEY, uid);
+  return uid;
+}
+
+export function makeLocalGuestUser(): User {
+  const uid = getOrCreateLocalGuestUid();
+  return {
+    uid,
+    displayName: `Guest${uid.slice(-5).toUpperCase()}`,
+    isAnonymous: true,
+    email: null,
+  } as User;
+}
+
+export function isLocalGuestUser(
+  user: Pick<User, "uid"> | null | undefined,
+): boolean {
+  return Boolean(user?.uid?.startsWith("local_guest_"));
+}
+
+export function loadLocalSave(user: User): PlayerSave {
+  const stored = readJson<LocalSaveSnapshot>(localSaveKey(user.uid));
+  return normalizeSave(user, stored);
+}
+
+export function persistLocalSave(save: PlayerSave): void {
+  writeJson(localSaveKey(save.uid), {
+    uid: save.uid,
+    nickname: save.nickname,
+    stars: save.stars,
+    clearedStages: save.clearedStages,
+    upgrades: save.upgrades,
+    createdAt: save.createdAt ?? Date.now(),
+    updatedAt: Date.now(),
+  });
+}
+
+export async function ensureQuickStartSession(
+  timeoutMs = QUICK_START_TIMEOUT_MS,
+): Promise<{ user: User; save: PlayerSave; source: QuickStartSource }> {
+  const fallback = (
+    source: QuickStartSource,
+  ): { user: User; save: PlayerSave; source: QuickStartSource } => {
+    const user = makeLocalGuestUser();
+    return { user, save: loadLocalSave(user), source };
+  };
+
+  return withTimeout(
+    (async () => {
+      const user = await ensureAnonymousUser();
+      const save = await loadOrCreateSave(user, {
+        timeoutMs,
+        allowLocalFallback: true,
+      });
+      return { user, save, source: "remote" as const };
+    })(),
+    timeoutMs,
+    () => fallback("local-timeout"),
+  ).catch(() => fallback("local-error"));
+}
 
 export type UpgradeKey = keyof PlayerSave["upgrades"];
 
-export const UPGRADE_META: Record<UpgradeKey, { label: string; description: string; maxLevel: number }> = {
+export const UPGRADE_META: Record<
+  UpgradeKey,
+  { label: string; description: string; maxLevel: number }
+> = {
   archerDamage: {
     label: "궁수 피해 연구",
     description: "궁수 탑의 기본 피해량이 레벨당 8% 증가합니다.",
@@ -138,7 +256,10 @@ export const UPGRADE_META: Record<UpgradeKey, { label: string; description: stri
   },
 };
 
-export function getUpgradeCost(key: UpgradeKey, currentLevel: number): number | null {
+export function getUpgradeCost(
+  key: UpgradeKey,
+  currentLevel: number,
+): number | null {
   const meta = UPGRADE_META[key];
   if (currentLevel >= meta.maxLevel) return null;
   return [1, 1, 2][currentLevel] ?? 3;
@@ -147,7 +268,7 @@ export function getUpgradeCost(key: UpgradeKey, currentLevel: number): number | 
 export async function purchasePermanentUpgrade(
   user: User,
   save: PlayerSave,
-  key: UpgradeKey
+  key: UpgradeKey,
 ): Promise<PlayerSave> {
   const currentLevel = Number(save.upgrades[key] ?? 0);
   const cost = getUpgradeCost(key, currentLevel);
@@ -164,17 +285,24 @@ export async function purchasePermanentUpgrade(
     updatedAt: serverTimestamp(),
   };
 
-  await setDoc(
-    doc(db, "users", user.uid),
-    {
-      nickname: nextSave.nickname,
-      stars: nextSave.stars,
-      clearedStages: nextSave.clearedStages,
-      upgrades: nextSave.upgrades,
-      updatedAt: serverTimestamp(),
-    },
-    { merge: true }
-  );
+  persistLocalSave(nextSave);
+  if (isLocalGuestUser(user)) return nextSave;
+
+  try {
+    await setDoc(
+      doc(db, "users", user.uid),
+      {
+        nickname: nextSave.nickname,
+        stars: nextSave.stars,
+        clearedStages: nextSave.clearedStages,
+        upgrades: nextSave.upgrades,
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true },
+    );
+  } catch (error) {
+    console.warn("Upgrade cloud save failed; kept local save:", error);
+  }
 
   return nextSave;
 }
@@ -206,9 +334,15 @@ function normalizeSave(user: User, data?: DocumentData): PlayerSave {
   };
 }
 
-export async function completePendingRedirectSignIn(): Promise<User | null> {
+export async function completePendingRedirectSignIn(
+  timeoutMs = 900,
+): Promise<User | null> {
   try {
-    const result = await getRedirectResult(auth);
+    const result = await withTimeout(
+      getRedirectResult(auth),
+      timeoutMs,
+      () => null,
+    );
     return result?.user ?? auth.currentUser;
   } catch (error) {
     console.warn("Google redirect sign-in failed:", error);
@@ -216,15 +350,19 @@ export async function completePendingRedirectSignIn(): Promise<User | null> {
   }
 }
 
-export async function waitForUser(): Promise<User | null> {
+export async function waitForUser(timeoutMs = 900): Promise<User | null> {
   if (auth.currentUser) return auth.currentUser;
 
-  return new Promise((resolve) => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      unsubscribe();
-      resolve(user);
-    });
-  });
+  return withTimeout(
+    new Promise<User | null>((resolve) => {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        unsubscribe();
+        resolve(user);
+      });
+    }),
+    timeoutMs,
+    () => null,
+  );
 }
 
 export async function ensureAnonymousUser(): Promise<User> {
@@ -235,7 +373,7 @@ export async function ensureAnonymousUser(): Promise<User> {
 
 export async function loginWithEmail(
   email: string,
-  password: string
+  password: string,
 ): Promise<User> {
   const credential = await signInWithEmailAndPassword(auth, email, password);
   return credential.user;
@@ -243,12 +381,12 @@ export async function loginWithEmail(
 
 export async function registerWithEmail(
   email: string,
-  password: string
+  password: string,
 ): Promise<User> {
   const credential = await createUserWithEmailAndPassword(
     auth,
     email,
-    password
+    password,
   );
   return credential.user;
 }
@@ -267,34 +405,62 @@ export async function loginWithGoogle(): Promise<User | null> {
   }
 }
 
-export async function loadOrCreateSave(user: User): Promise<PlayerSave> {
-  const ref = doc(db, "users", user.uid);
-  const snap = await getDoc(ref);
+export async function loadOrCreateSave(
+  user: User,
+  options: { timeoutMs?: number; allowLocalFallback?: boolean } = {},
+): Promise<PlayerSave> {
+  if (isLocalGuestUser(user)) return loadLocalSave(user);
 
-  if (snap.exists()) {
-    const save = normalizeSave(user, snap.data());
-    await setDoc(
-      ref,
-      {
-        nickname: save.nickname,
-        updatedAt: serverTimestamp(),
-      },
-      { merge: true }
-    );
+  const fallbackSave = (): PlayerSave => {
+    const save = loadLocalSave(user);
+    persistLocalSave(save);
     return save;
+  };
+
+  try {
+    const ref = doc(db, "users", user.uid);
+    const readDoc = getDoc(ref);
+    const snap = options.timeoutMs
+      ? await withTimeout(readDoc, options.timeoutMs, () => null)
+      : await readDoc;
+
+    if (!snap) {
+      if (options.allowLocalFallback) return fallbackSave();
+      return fallbackSave();
+    }
+
+    if (snap.exists()) {
+      const save = normalizeSave(user, snap.data());
+      persistLocalSave(save);
+      // Do not block the first menu transition on a harmless last-seen update.
+      void setDoc(
+        ref,
+        {
+          nickname: save.nickname,
+          updatedAt: serverTimestamp(),
+        },
+        { merge: true },
+      ).catch((error) => console.warn("Deferred save touch failed:", error));
+      return save;
+    }
+
+    const save = normalizeSave(user);
+    persistLocalSave(save);
+    // Creating the first cloud save is now deferred so quick-start never waits on a slow network.
+    void setDoc(ref, {
+      nickname: save.nickname,
+      stars: save.stars,
+      clearedStages: save.clearedStages,
+      upgrades: save.upgrades,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    }).catch((error) => console.warn("Deferred save create failed:", error));
+
+    return save;
+  } catch (error) {
+    console.warn("Cloud save load failed; using local fast-start save:", error);
+    return fallbackSave();
   }
-
-  const save = normalizeSave(user);
-  await setDoc(ref, {
-    nickname: save.nickname,
-    stars: save.stars,
-    clearedStages: save.clearedStages,
-    upgrades: save.upgrades,
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
-  });
-
-  return save;
 }
 
 function calcStars(lives: number): number {
@@ -308,7 +474,7 @@ export async function saveStageClear(
   saveOrStageId: PlayerSave | string,
   stageIdOrScore?: string | number,
   scoreOrLives?: number,
-  livesArg?: number
+  livesArg?: number,
 ): Promise<PlayerSave> {
   const currentSave =
     typeof saveOrStageId === "string"
@@ -363,17 +529,24 @@ export async function saveStageClear(
     updatedAt: serverTimestamp(),
   };
 
-  await setDoc(
-    doc(db, "users", user.uid),
-    {
-      nickname: updatedSave.nickname,
-      stars: updatedSave.stars,
-      clearedStages: updatedSave.clearedStages,
-      upgrades: updatedSave.upgrades,
-      updatedAt: serverTimestamp(),
-    },
-    { merge: true }
-  );
+  persistLocalSave(updatedSave);
+  if (isLocalGuestUser(user)) return updatedSave;
+
+  try {
+    await setDoc(
+      doc(db, "users", user.uid),
+      {
+        nickname: updatedSave.nickname,
+        stars: updatedSave.stars,
+        clearedStages: updatedSave.clearedStages,
+        upgrades: updatedSave.upgrades,
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true },
+    );
+  } catch (error) {
+    console.warn("Stage clear cloud save failed; kept local save:", error);
+  }
 
   return updatedSave;
 }
@@ -389,8 +562,9 @@ function todayBoardId(stageId = "stage_001"): string {
 export async function submitLeaderboard(
   user: User,
   nicknameOrScoreData: string | Partial<LeaderboardScore>,
-  maybeScoreData?: Partial<LeaderboardScore>
+  maybeScoreData?: Partial<LeaderboardScore>,
 ): Promise<void> {
+  if (isLocalGuestUser(user)) return;
   const nickname =
     typeof nicknameOrScoreData === "string"
       ? nicknameOrScoreData
@@ -398,7 +572,7 @@ export async function submitLeaderboard(
 
   const scoreData =
     typeof nicknameOrScoreData === "string"
-      ? maybeScoreData ?? {}
+      ? (maybeScoreData ?? {})
       : nicknameOrScoreData;
 
   const stageId = scoreData.stageId ?? "stage_001";
@@ -416,35 +590,47 @@ export async function submitLeaderboard(
     updatedAt: serverTimestamp(),
   };
 
-  const current = await getDoc(ref);
-  if (current.exists()) {
-    const prevScore = Number(current.data().score ?? 0);
-    if (prevScore > nextScore.score) {
-      return;
+  try {
+    const current = await getDoc(ref);
+    if (current.exists()) {
+      const prevScore = Number(current.data().score ?? 0);
+      if (prevScore > nextScore.score) {
+        return;
+      }
     }
-  }
 
-  await setDoc(ref, nextScore, { merge: true });
+    await setDoc(ref, nextScore, { merge: true });
+  } catch (error) {
+    console.warn("Leaderboard submit skipped while offline/slow:", error);
+  }
 }
 
 export async function fetchLeaderboard(
   stageId = "stage_001",
-  maxResults = 20
+  maxResults = 20,
 ): Promise<LeaderboardScore[]> {
   const boardId = todayBoardId(stageId);
   const q = query(
     collection(db, "leaderboards", boardId, "scores"),
     orderBy("score", "desc"),
-    limit(maxResults)
+    limit(maxResults),
   );
 
-  const snap = await getDocs(q);
+  let snap;
+  try {
+    snap = await getDocs(q);
+  } catch (error) {
+    console.warn("Leaderboard fetch skipped while offline/slow:", error);
+    return [];
+  }
   return snap.docs.map((item) => {
     const data = item.data();
     return {
       uid: item.id,
       nickname:
-        typeof data.nickname === "string" ? data.nickname : `Guest${item.id.slice(0, 5)}`,
+        typeof data.nickname === "string"
+          ? data.nickname
+          : `Guest${item.id.slice(0, 5)}`,
       score: Number(data.score ?? 0),
       lives: Number(data.lives ?? 0),
       wave: Number(data.wave ?? 0),

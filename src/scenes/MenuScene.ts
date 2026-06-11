@@ -1,26 +1,30 @@
-import Phaser from 'phaser';
-import type { User } from 'firebase/auth';
-import { playSfx } from '../game/AudioManager';
-import { addCoverImage } from '../game/CodeUiKit';
-import { addHitZoneDebug } from '../game/HitZoneDebug';
-import { addCuteLoginAccents } from '../game/CuteFantasyPolishV216';
-import { addV217LoginArt } from '../game/CuteFantasyArtV217';
-import { addV218LoginArt } from '../game/CuteFantasyArtV218';
-import { addV219LoginArt } from '../game/CuteFantasyArtV219';
-import { addV220LoginArt } from '../game/CuteFantasyArtV220';
-import { addV221LoginArt } from '../game/CuteFantasyArtV221';
-import { V222_VERSION_LABEL, addV222LoginArt } from '../game/CuteFantasyArtV222';
-import { safeDelayedCall } from '../game/SceneSafety';
+import Phaser from "phaser";
+import type { User } from "firebase/auth";
+import { playSfx } from "../game/AudioManager";
+import { addCoverImage } from "../game/CodeUiKit";
+import { addHitZoneDebug } from "../game/HitZoneDebug";
+import { addCuteLoginAccents } from "../game/CuteFantasyPolishV216";
+import { addV217LoginArt } from "../game/CuteFantasyArtV217";
+import { addV218LoginArt } from "../game/CuteFantasyArtV218";
+import { addV219LoginArt } from "../game/CuteFantasyArtV219";
+import { addV220LoginArt } from "../game/CuteFantasyArtV220";
+import { addV221LoginArt } from "../game/CuteFantasyArtV221";
+import {
+  V222_VERSION_LABEL,
+  addV222LoginArt,
+} from "../game/CuteFantasyArtV222";
+import { safeDelayedCall } from "../game/SceneSafety";
+import { useCumulativeArtLayers } from "../game/PerformanceMode";
 import {
   completePendingRedirectSignIn,
-  ensureAnonymousUser,
+  ensureQuickStartSession,
   loadOrCreateSave,
   loginWithEmail,
   loginWithGoogle,
   registerWithEmail,
   waitForUser,
-  type PlayerSave
-} from '../services/firebase';
+  type PlayerSave,
+} from "../services/firebase";
 
 export class MenuScene extends Phaser.Scene {
   private statusText!: Phaser.GameObjects.Text;
@@ -29,113 +33,176 @@ export class MenuScene extends Phaser.Scene {
   private isTransitioning = false;
 
   constructor() {
-    super('MenuScene');
+    super("MenuScene");
   }
 
   create(): void {
     this.children.removeAll(true);
     this.isTransitioning = false;
-    this.cameras.main.setBackgroundColor('#8fd5ff');
+    this.cameras.main.setBackgroundColor("#8fd5ff");
 
     this.createCinematicSplash();
     addCuteLoginAccents(this);
-    addV217LoginArt(this);
-    addV218LoginArt(this);
-    addV219LoginArt(this);
-    addV220LoginArt(this);
-    addV221LoginArt(this);
+    if (useCumulativeArtLayers()) {
+      addV217LoginArt(this);
+      addV218LoginArt(this);
+      addV219LoginArt(this);
+      addV220LoginArt(this);
+      addV221LoginArt(this);
+    }
     addV222LoginArt(this);
     this.createStatusOverlay();
     this.createLoginHitZones();
     this.createUtilityHitZones();
 
     safeDelayedCall(this, 0, () => {
-      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MenuScene', version: '2.22.0', at: Date.now() } }));
+      window.dispatchEvent(
+        new CustomEvent("kingdom-seed:scene-ready", {
+          detail: { scene: "MenuScene", version: "2.23.0", at: Date.now() },
+        }),
+      );
     });
 
     void this.bootstrapRedirectOrExistingUser();
   }
 
   private createCinematicSplash(): void {
-    const bgKey = this.textures.exists('v1-login-clean-bg') ? 'v1-login-clean-bg' : 'v1-login-polished';
+    const bgKey = this.textures.exists("v1-login-clean-bg")
+      ? "v1-login-clean-bg"
+      : "v1-login-polished";
     addCoverImage(this, bgKey, 960, 540, 0);
 
     const topFade = this.add.graphics().setDepth(2);
-    topFade.fillGradientStyle(0x000000, 0x000000, 0x000000, 0x000000, 0.24, 0.24, 0, 0);
+    topFade.fillGradientStyle(
+      0x000000,
+      0x000000,
+      0x000000,
+      0x000000,
+      0.24,
+      0.24,
+      0,
+      0,
+    );
     topFade.fillRect(0, 0, 960, 126);
 
-    const logoKey = this.textures.exists('v1-title-logo-clean') ? 'v1-title-logo-clean' : 'ui-title-logo';
+    const logoKey = this.textures.exists("v1-title-logo-clean")
+      ? "v1-title-logo-clean"
+      : "ui-title-logo";
     this.add.image(480, 94, logoKey).setDisplaySize(300, 108).setDepth(10);
 
-    if (this.textures.exists('v1-login-panel-v18')) {
-      this.add.image(480, 348, 'v1-login-panel-v18').setDisplaySize(374, 252).setDepth(20);
+    if (this.textures.exists("v1-login-panel-v18")) {
+      this.add
+        .image(480, 348, "v1-login-panel-v18")
+        .setDisplaySize(374, 252)
+        .setDepth(20);
     } else {
       const fallback = this.add.graphics().setDepth(20);
-      fallback.fillStyle(0xf6fbff, 0.92).fillRoundedRect(265, 232, 430, 300, 28);
-      fallback.lineStyle(4, 0xf1c46a, 0.9).strokeRoundedRect(265, 232, 430, 300, 28);
+      fallback
+        .fillStyle(0xf6fbff, 0.92)
+        .fillRoundedRect(265, 232, 430, 300, 28);
+      fallback
+        .lineStyle(4, 0xf1c46a, 0.9)
+        .strokeRoundedRect(265, 232, 430, 300, 28);
     }
 
-    this.add.text(480, 251, 'DEFENSE COMMAND', {
-      fontSize: '16px',
-      color: '#f8fbff',
-      align: 'center',
-      fixedWidth: 320,
-      fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Malgun Gothic, Arial, sans-serif',
-      fontStyle: 'bold',
-      stroke: '#17366c',
-      strokeThickness: 4,
-      shadow: { offsetX: 0, offsetY: 3, color: '#0a2d6a', blur: 4, fill: true },
-    }).setOrigin(0.5).setDepth(31);
+    this.add
+      .text(480, 251, "DEFENSE COMMAND", {
+        fontSize: "16px",
+        color: "#f8fbff",
+        align: "center",
+        fixedWidth: 320,
+        fontFamily:
+          "Pretendard, Noto Sans KR, NanumGothic, Malgun Gothic, Arial, sans-serif",
+        fontStyle: "bold",
+        stroke: "#17366c",
+        strokeThickness: 4,
+        shadow: {
+          offsetX: 0,
+          offsetY: 3,
+          color: "#0a2d6a",
+          blur: 4,
+          fill: true,
+        },
+      })
+      .setOrigin(0.5)
+      .setDepth(31);
 
-    this.add.text(480, 273, '전장을 수호할 지휘관으로 입장하세요!', {
-      fontSize: '9px',
-      color: '#8298b8',
-      align: 'center',
-      fixedWidth: 320,
-      fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Malgun Gothic, Arial, sans-serif',
-      fontStyle: 'bold',
-      stroke: '#ffffff',
-      strokeThickness: 2,
-    }).setOrigin(0.5).setDepth(31);
+    this.add
+      .text(480, 273, "전장을 수호할 지휘관으로 입장하세요!", {
+        fontSize: "9px",
+        color: "#8298b8",
+        align: "center",
+        fixedWidth: 320,
+        fontFamily:
+          "Pretendard, Noto Sans KR, NanumGothic, Malgun Gothic, Arial, sans-serif",
+        fontStyle: "bold",
+        stroke: "#ffffff",
+        strokeThickness: 2,
+      })
+      .setOrigin(0.5)
+      .setDepth(31);
 
-    const bottomGlow = this.add.ellipse(480, 526, 520, 42, 0x8cdcff, 0.08)
+    const bottomGlow = this.add
+      .ellipse(480, 526, 520, 42, 0x8cdcff, 0.08)
       .setDepth(3)
       .setBlendMode(Phaser.BlendModes.ADD);
-    this.tweens.add({ targets: bottomGlow, alpha: 0.14, scaleX: 1.025, duration: 1800, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+    this.tweens.add({
+      targets: bottomGlow,
+      alpha: 0.14,
+      scaleX: 1.025,
+      duration: 1800,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.easeInOut",
+    });
   }
 
   private createStatusOverlay(): void {
     const statusBack = this.add.graphics().setDepth(52);
-    statusBack.fillStyle(0xf7fbff, 0.90);
+    statusBack.fillStyle(0xf7fbff, 0.9);
     statusBack.fillRoundedRect(342, 298, 276, 23, 12);
     statusBack.lineStyle(1, 0xb9d4ef, 0.82);
     statusBack.strokeRoundedRect(342, 298, 276, 23, 12);
     statusBack.lineStyle(1, 0xffffff, 0.58);
     statusBack.strokeRoundedRect(349, 304, 262, 9, 5);
 
-    this.statusText = this.add.text(480, 309, '로그인 확인 중...', {
-      fontSize: '10px',
-      color: '#2f5f9e',
-      align: 'center',
-      fixedWidth: 260,
-      fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Malgun Gothic, Arial, sans-serif',
-      fontStyle: 'bold',
-      stroke: '#ffffff',
-      strokeThickness: 2,
-    }).setOrigin(0.5).setDepth(53);
+    this.statusText = this.add
+      .text(480, 309, "로그인 확인 중...", {
+        fontSize: "10px",
+        color: "#2f5f9e",
+        align: "center",
+        fixedWidth: 260,
+        fontFamily:
+          "Pretendard, Noto Sans KR, NanumGothic, Malgun Gothic, Arial, sans-serif",
+        fontStyle: "bold",
+        stroke: "#ffffff",
+        strokeThickness: 2,
+      })
+      .setOrigin(0.5)
+      .setDepth(53);
 
     const chip = this.add.graphics().setDepth(53);
     chip.fillStyle(0x071c3e, 0.46).fillRoundedRect(16, 14, 188, 24, 14);
     chip.lineStyle(1, 0xffdc82, 0.45).strokeRoundedRect(16, 14, 188, 24, 14);
-    this.add.text(110, 26, V222_VERSION_LABEL, {
-      fontSize: '8px',
-      color: '#f7fbff',
-      fixedWidth: 178,
-      align: 'center',
-      fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
-      fontStyle: 'bold',
-      shadow: { offsetX: 0, offsetY: 2, color: '#08315f', blur: 3, fill: true },
-    }).setOrigin(0.5).setDepth(54).setAlpha(0.92);
+    this.add
+      .text(110, 26, V222_VERSION_LABEL, {
+        fontSize: "8px",
+        color: "#f7fbff",
+        fixedWidth: 178,
+        align: "center",
+        fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
+        fontStyle: "bold",
+        shadow: {
+          offsetX: 0,
+          offsetY: 2,
+          color: "#08315f",
+          blur: 3,
+          fill: true,
+        },
+      })
+      .setOrigin(0.5)
+      .setDepth(54)
+      .setAlpha(0.92);
   }
 
   private createLoginHitZones(): void {
@@ -145,10 +212,10 @@ export class MenuScene extends Phaser.Scene {
       y: 346,
       width: 264,
       height: 42,
-      imageKey: 'v1-login-button-gold-v18',
-      label: '빠른 시작',
-      icon: '⚔',
-      color: '#174080',
+      imageKey: "v1-login-button-gold-v18",
+      label: "빠른 시작",
+      icon: "⚔",
+      color: "#174080",
       onClick: () => void this.startQuick(),
     });
 
@@ -157,10 +224,10 @@ export class MenuScene extends Phaser.Scene {
       y: 394,
       width: 264,
       height: 42,
-      imageKey: 'v1-login-button-white-v18',
-      label: 'Google 로그인',
-      icon: 'G',
-      color: '#315f9c',
+      imageKey: "v1-login-button-white-v18",
+      label: "Google 로그인",
+      icon: "G",
+      color: "#315f9c",
       onClick: () => void this.startGoogle(),
     });
 
@@ -169,10 +236,10 @@ export class MenuScene extends Phaser.Scene {
       y: 439,
       width: 126,
       height: 32,
-      imageKey: 'v1-login-button-small-v18',
-      label: '이메일 로그인',
-      icon: '✉',
-      color: '#315f9c',
+      imageKey: "v1-login-button-small-v18",
+      label: "이메일 로그인",
+      icon: "✉",
+      color: "#315f9c",
       small: true,
       onClick: () => void this.startEmailLogin(),
     });
@@ -182,10 +249,10 @@ export class MenuScene extends Phaser.Scene {
       y: 439,
       width: 126,
       height: 32,
-      imageKey: 'v1-login-button-small-v18',
-      label: '회원가입',
-      icon: '♥',
-      color: '#315f9c',
+      imageKey: "v1-login-button-small-v18",
+      label: "회원가입",
+      icon: "♥",
+      color: "#315f9c",
       small: true,
       onClick: () => void this.startEmailRegister(),
     });
@@ -193,11 +260,30 @@ export class MenuScene extends Phaser.Scene {
 
   private createUtilityHitZones(): void {
     const utilities = [
-      { x: 818, label: '공지사항', icon: '📣', message: '공지사항은 준비 중입니다.' },
-      { x: 872, label: '고객센터', icon: '🎧', message: '고객센터는 준비 중입니다.' },
-      { x: 926, label: '설정', icon: '⚙', message: '설정 메뉴는 다음 패치에서 연결합니다.' },
+      {
+        x: 818,
+        label: "공지사항",
+        icon: "📣",
+        message: "공지사항은 준비 중입니다.",
+      },
+      {
+        x: 872,
+        label: "고객센터",
+        icon: "🎧",
+        message: "고객센터는 준비 중입니다.",
+      },
+      {
+        x: 926,
+        label: "설정",
+        icon: "⚙",
+        message: "설정 메뉴는 다음 패치에서 연결합니다.",
+      },
     ];
-    utilities.forEach((item) => this.addUtilityButton(item.x, 39, item.icon, item.label, () => this.setUtilityStatus(item.message)));
+    utilities.forEach((item) =>
+      this.addUtilityButton(item.x, 39, item.icon, item.label, () =>
+        this.setUtilityStatus(item.message),
+      ),
+    );
   }
 
   private addLoginButton(options: {
@@ -214,58 +300,111 @@ export class MenuScene extends Phaser.Scene {
   }): void {
     const c = this.add.container(options.x, options.y).setDepth(60);
     const image = this.textures.exists(options.imageKey)
-      ? this.add.image(0, 0, options.imageKey).setDisplaySize(options.width, options.height)
-      : this.add.rectangle(0, 0, options.width, options.height, 0xffffff, 0.88).setStrokeStyle(2, 0xdcae62, 0.9);
-    const iconBubble = this.add.circle(-options.width / 2 + (options.small ? 24 : 32), 0, options.small ? 15 : 18, 0xffffff, 0.68)
-      .setStrokeStyle(1, 0xd2aa66, 0.70);
-    const icon = this.add.text(iconBubble.x, 0, options.icon, {
-      fontSize: options.small ? '12px' : '16px',
-      color: options.icon === '♥' ? '#dd506a' : '#2f6cb3',
-      fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
-      fontStyle: 'bold',
-    }).setOrigin(0.5);
-    const label = this.add.text(options.small ? 10 : 8, 0, options.label, {
-      fontSize: options.small ? '11px' : '16px',
-      color: options.color,
-      align: 'center',
-      fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Malgun Gothic, Arial, sans-serif',
-      fontStyle: 'bold',
-      stroke: '#ffffff',
-      strokeThickness: 2,
-      fixedWidth: options.small ? 98 : 196,
-    }).setOrigin(0.5);
+      ? this.add
+          .image(0, 0, options.imageKey)
+          .setDisplaySize(options.width, options.height)
+      : this.add
+          .rectangle(0, 0, options.width, options.height, 0xffffff, 0.88)
+          .setStrokeStyle(2, 0xdcae62, 0.9);
+    const iconBubble = this.add
+      .circle(
+        -options.width / 2 + (options.small ? 24 : 32),
+        0,
+        options.small ? 15 : 18,
+        0xffffff,
+        0.68,
+      )
+      .setStrokeStyle(1, 0xd2aa66, 0.7);
+    const icon = this.add
+      .text(iconBubble.x, 0, options.icon, {
+        fontSize: options.small ? "12px" : "16px",
+        color: options.icon === "♥" ? "#dd506a" : "#2f6cb3",
+        fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
+        fontStyle: "bold",
+      })
+      .setOrigin(0.5);
+    const label = this.add
+      .text(options.small ? 10 : 8, 0, options.label, {
+        fontSize: options.small ? "11px" : "16px",
+        color: options.color,
+        align: "center",
+        fontFamily:
+          "Pretendard, Noto Sans KR, NanumGothic, Malgun Gothic, Arial, sans-serif",
+        fontStyle: "bold",
+        stroke: "#ffffff",
+        strokeThickness: 2,
+        fixedWidth: options.small ? 98 : 196,
+      })
+      .setOrigin(0.5);
     const hover = this.add.graphics();
-    hover.fillStyle(0xffffff, 0.18).fillRoundedRect(-options.width / 2 + 8, -options.height / 2 + 6, options.width - 16, Math.max(8, options.height * 0.24), options.height * 0.18);
+    hover
+      .fillStyle(0xffffff, 0.18)
+      .fillRoundedRect(
+        -options.width / 2 + 8,
+        -options.height / 2 + 6,
+        options.width - 16,
+        Math.max(8, options.height * 0.24),
+        options.height * 0.18,
+      );
     hover.setAlpha(0);
-    const hit = this.add.zone(0, 0, options.width, options.height).setInteractive({ useHandCursor: true });
+    const hit = this.add
+      .zone(0, 0, options.width + 26, Math.max(options.height + 14, 56))
+      .setInteractive({ useHandCursor: true });
     c.add([image, iconBubble, icon, label, hover, hit]);
-    addHitZoneDebug(this, c, options.width, options.height, options.label, options.small ? 0x7cc7ff : 0xffd56c, Math.min(18, options.height / 2));
+    addHitZoneDebug(
+      this,
+      c,
+      options.width + 26,
+      Math.max(options.height + 14, 56),
+      options.label,
+      options.small ? 0x7cc7ff : 0xffd56c,
+      Math.min(22, Math.max(options.height + 14, 56) / 2),
+    );
     this.wireButtonHit(c, hover, hit, options.onClick);
   }
 
-  private addUtilityButton(x: number, y: number, iconText: string, labelText: string, onClick: () => void): void {
+  private addUtilityButton(
+    x: number,
+    y: number,
+    iconText: string,
+    labelText: string,
+    onClick: () => void,
+  ): void {
     const c = this.add.container(x, y).setDepth(60);
-    const image = this.textures.exists('v1-login-utility-button-v18')
-      ? this.add.image(0, 0, 'v1-login-utility-button-v18').setDisplaySize(38, 38)
-      : this.add.circle(0, 0, 24, 0x1e5bb6, 0.9).setStrokeStyle(2, 0xffdc82, 0.8);
-    const icon = this.add.text(0, -2, iconText, {
-      fontSize: '18px',
-      color: '#ffffff',
-      fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
-      fontStyle: 'bold',
-      stroke: '#17366c',
-      strokeThickness: 2,
-    }).setOrigin(0.5);
-    const label = this.add.text(0, 30, labelText, {
-      fontSize: '9px',
-      color: '#f8fbff',
-      fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
-      fontStyle: 'bold',
-      stroke: '#17366c',
-      strokeThickness: 3,
-    }).setOrigin(0.5);
-    const hover = this.add.circle(0, 0, 26, 0xffffff, 0.16).setAlpha(0).setBlendMode(Phaser.BlendModes.ADD);
-    const hit = this.add.zone(0, 0, 40, 48).setInteractive({ useHandCursor: true });
+    const image = this.textures.exists("v1-login-utility-button-v18")
+      ? this.add
+          .image(0, 0, "v1-login-utility-button-v18")
+          .setDisplaySize(38, 38)
+      : this.add
+          .circle(0, 0, 24, 0x1e5bb6, 0.9)
+          .setStrokeStyle(2, 0xffdc82, 0.8);
+    const icon = this.add
+      .text(0, -2, iconText, {
+        fontSize: "18px",
+        color: "#ffffff",
+        fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
+        fontStyle: "bold",
+        stroke: "#17366c",
+        strokeThickness: 2,
+      })
+      .setOrigin(0.5);
+    const label = this.add
+      .text(0, 30, labelText, {
+        fontSize: "9px",
+        color: "#f8fbff",
+        fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
+        fontStyle: "bold",
+        stroke: "#17366c",
+        strokeThickness: 3,
+      })
+      .setOrigin(0.5);
+    const hover = this.add
+      .circle(0, 0, 26, 0xffffff, 0.16)
+      .setAlpha(0)
+      .setBlendMode(Phaser.BlendModes.ADD);
+    const hit = this.add
+      .zone(0, 0, 40, 48)
+      .setInteractive({ useHandCursor: true });
     c.add([image, hover, icon, label, hit]);
     addHitZoneDebug(this, c, 40, 48, labelText, 0x7cc7ff, 18);
     this.wireButtonHit(c, hover, hit, onClick);
@@ -275,25 +414,54 @@ export class MenuScene extends Phaser.Scene {
     container: Phaser.GameObjects.Container,
     hover: Phaser.GameObjects.GameObject & { alpha: number },
     hit: Phaser.GameObjects.Zone,
-    onClick: () => void
+    onClick: () => void,
   ): void {
-    hit.on('pointerover', () => {
-      this.tweens.add({ targets: hover, alpha: 1, duration: 120, ease: 'Sine.easeOut' });
-      this.tweens.add({ targets: container, scaleX: 1.018, scaleY: 1.018, duration: 120, ease: 'Sine.easeOut' });
+    hit.on("pointerover", () => {
+      this.tweens.add({
+        targets: hover,
+        alpha: 1,
+        duration: 120,
+        ease: "Sine.easeOut",
+      });
+      this.tweens.add({
+        targets: container,
+        scaleX: 1.018,
+        scaleY: 1.018,
+        duration: 120,
+        ease: "Sine.easeOut",
+      });
     });
-    hit.on('pointerout', () => {
-      this.tweens.add({ targets: hover, alpha: 0, duration: 120, ease: 'Sine.easeOut' });
-      this.tweens.add({ targets: container, scaleX: 1, scaleY: 1, duration: 90, ease: 'Sine.easeOut' });
+    hit.on("pointerout", () => {
+      this.tweens.add({
+        targets: hover,
+        alpha: 0,
+        duration: 120,
+        ease: "Sine.easeOut",
+      });
+      this.tweens.add({
+        targets: container,
+        scaleX: 1,
+        scaleY: 1,
+        duration: 90,
+        ease: "Sine.easeOut",
+      });
     });
-    hit.on('pointerdown', () => {
+    hit.on("pointerdown", () => {
       if (this.isTransitioning) return;
-      this.tweens.add({ targets: container, scaleX: 0.982, scaleY: 0.982, duration: 52, yoyo: true, ease: 'Quad.easeOut' });
+      this.tweens.add({
+        targets: container,
+        scaleX: 0.982,
+        scaleY: 0.982,
+        duration: 52,
+        yoyo: true,
+        ease: "Quad.easeOut",
+      });
       onClick();
     });
   }
 
   private setUtilityStatus(message: string): void {
-    playSfx(this, 'sfx_click');
+    playSfx(this, "sfx_click");
     if (this.statusText) {
       this.statusText.setText(message);
     }
@@ -301,42 +469,53 @@ export class MenuScene extends Phaser.Scene {
 
   private async bootstrapRedirectOrExistingUser(): Promise<void> {
     try {
-      const redirectUser = await completePendingRedirectSignIn();
-      const existing = redirectUser ?? await waitForUser();
-      if (!this.scene.isActive('MenuScene') || !this.statusText?.active) return;
+      const redirectUser = await completePendingRedirectSignIn(650);
+      const existing = redirectUser ?? (await waitForUser(650));
+      if (!this.scene.isActive("MenuScene") || !this.statusText?.active) return;
       if (!existing) {
-        this.statusText.setText('로그인 방식을 선택하세요.');
+        this.statusText.setText("로그인 방식을 선택하세요.");
         return;
       }
       this.currentUser = existing;
-      this.currentSave = await loadOrCreateSave(existing);
-      if (!this.scene.isActive('MenuScene') || !this.statusText?.active) return;
-      this.statusText.setText(`${this.currentSave.nickname} 로그인됨. 빠른 시작으로 이어서 플레이하세요!`);
+      this.currentSave = await loadOrCreateSave(existing, {
+        timeoutMs: 750,
+        allowLocalFallback: true,
+      });
+      if (!this.scene.isActive("MenuScene") || !this.statusText?.active) return;
+      this.statusText.setText(
+        `${this.currentSave.nickname} 로그인됨. 빠른 시작으로 이어서 플레이하세요!`,
+      );
     } catch (error) {
       console.error(error);
-      if (this.scene.isActive('MenuScene') && this.statusText?.active) this.statusText.setText('로그인 확인 실패. 설정/도메인 확인');
+      if (this.scene.isActive("MenuScene") && this.statusText?.active)
+        this.statusText.setText("로그인 확인 실패. 설정/도메인 확인");
     }
   }
 
   private async startQuick(): Promise<void> {
     if (this.currentUser && this.currentSave) {
-      playSfx(this, 'sfx_click');
+      playSfx(this, "sfx_click");
       this.enterMainMenu(this.currentUser, this.currentSave);
       return;
     }
 
     await this.withLoading(async () => {
-      const user = await ensureAnonymousUser();
-      const save = await loadOrCreateSave(user);
-      this.enterMainMenu(user, save);
-    });
+      const session = await ensureQuickStartSession(650);
+      if (!this.scene.isActive("MenuScene") || !this.statusText?.active) return;
+      if (session.source !== "remote") {
+        this.statusText.setText(
+          "네트워크 대기 없이 즉시 입장합니다. 기록은 기기에 보호 저장됩니다.",
+        );
+      }
+      this.enterMainMenu(session.user, session.save);
+    }, "즉시 입장 준비 중...");
   }
 
   private async startGoogle(): Promise<void> {
     await this.withLoading(async () => {
       const user = await loginWithGoogle();
       if (!user) {
-        this.statusText.setText('Google 이동 중...');
+        this.statusText.setText("Google 이동 중...");
         return;
       }
       const save = await loadOrCreateSave(user);
@@ -345,9 +524,9 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private async startEmailLogin(): Promise<void> {
-    const email = window.prompt('이메일을 입력하세요.');
+    const email = window.prompt("이메일을 입력하세요.");
     if (!email) return;
-    const password = window.prompt('비밀번호를 입력하세요.');
+    const password = window.prompt("비밀번호를 입력하세요.");
     if (!password) return;
 
     await this.withLoading(async () => {
@@ -358,9 +537,9 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private async startEmailRegister(): Promise<void> {
-    const email = window.prompt('가입할 이메일을 입력하세요.');
+    const email = window.prompt("가입할 이메일을 입력하세요.");
     if (!email) return;
-    const password = window.prompt('비밀번호를 입력하세요. 6자 이상 권장');
+    const password = window.prompt("비밀번호를 입력하세요. 6자 이상 권장");
     if (!password) return;
 
     await this.withLoading(async () => {
@@ -370,24 +549,29 @@ export class MenuScene extends Phaser.Scene {
     });
   }
 
-  private async withLoading(task: () => Promise<void>): Promise<void> {
+  private async withLoading(
+    task: () => Promise<void>,
+    label = "왕국 기록 연결 중...",
+  ): Promise<void> {
     try {
-      playSfx(this, 'sfx_click');
-      this.statusText.setText('왕국 기록 연결 중...');
+      playSfx(this, "sfx_click");
+      if (this.statusText?.active) this.statusText.setText(label);
       await task();
     } catch (error) {
       console.error(error);
-      const message = error instanceof Error ? error.message : '알 수 없는 오류';
-      if (this.scene.isActive('MenuScene') && this.statusText?.active) this.statusText.setText(`실패: ${message}`);
+      const message =
+        error instanceof Error ? error.message : "알 수 없는 오류";
+      if (this.scene.isActive("MenuScene") && this.statusText?.active)
+        this.statusText.setText(`실패: ${message}`);
     }
   }
 
   private enterMainMenu(user: User, save: PlayerSave): void {
     if (this.isTransitioning) return;
     this.isTransitioning = true;
-    this.cameras.main.fadeOut(220, 255, 255, 255);
-    safeDelayedCall(this, 220, () => {
-      this.scene.start('MainMenuScene', { user, save });
+    this.cameras.main.fadeOut(120, 255, 255, 255);
+    safeDelayedCall(this, 120, () => {
+      this.scene.start("MainMenuScene", { user, save });
     });
   }
 }
