@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import type { User } from 'firebase/auth';
-import type { PlayerSave } from '../services/firebase';
+import type { PlayerSave } from '../services/localSave';
 import { claimMissionReward, consumeRewardChest, getMissionStates, getRewardChestCount, type MissionId } from '../game/MissionBoard';
 import { playMusic, playSfx } from '../game/AudioManager';
 

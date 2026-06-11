@@ -69,7 +69,7 @@ const WEBP_ENABLED =
 const WEBP_RASTER_PATTERNS = [
   /assets\/backgrounds\/(login_background_clean_v2_15|login_background_clean_v2_6|login_background_clean_v2_4|main_menu_splash_v2_15|main_menu_splash_v2_6|main_menu_splash_v2_4|worldmap_splash_v2_15|worldmap_splash_v2_1)\.png$/,
   /assets\/maps\/(v2_15|v2_14|v2_13|v2_12|v2_6|v2_4)\/[^/]+\.png$/,
-  /assets\/ui\/(v2_2|v2_3|v2_4|v2_6|v2_7|v2_8|v2_9|v2_10|v2_11|v2_12|v2_13|v2_14|v2_15|v2_16|v2_17|v2_18|v2_19|v2_20|v2_21|v2_22)\/[^/]+\.png$/,
+  /assets\/ui\/(v2_2|v2_3|v2_4|v2_6|v2_7|v2_8|v2_9|v2_10|v2_11|v2_12|v2_13|v2_14|v2_15|v2_16|v2_17|v2_18|v2_19|v2_20|v2_21|v2_22|v2_24|v2_25)\/[^/]+\.png$/,
   /assets\/props\/v2_6\/[^/]+\.png$/,
   /assets\/maps\/(stage_card_009|stage_card_010|stage_card_011|stage_card_012|map_stage_009|map_stage_010|map_stage_011|map_stage_012)\.png$/,
   /assets\/units\/(v2_1|v2_4)\/[^/]+\.png$/,
@@ -104,7 +104,7 @@ function shouldFastBootSkip(key: string, path: string): boolean {
   if (FAST_START_MODE) {
     // v2.23: keep the first tap fast. Cumulative cute-art passes stay in the project,
     // but they are not uploaded to GPU during boot unless the URL has ?fullart.
-    if (/assets\/ui\/v2_(16|17|18|19|20|21|22)\//.test(path)) return true;
+    if (/assets\/ui\/v2_(16|17|18|19|20|21|22|24|25)\//.test(path)) return true;
     if (
       /assets\/maps\/(map_stage_00[2-9]|map_stage_01[0-2]|stage_card_00[2-9]|stage_card_01[0-2])\.png$/.test(
         path,
@@ -1969,6 +1969,54 @@ export class BootScene extends Phaser.Scene {
       "v222-world-stage-tag",
       "assets/ui/v2_22/world_stage_tag_v2_22.png",
     );
+
+
+    // v2.24 Premium Illustration fast-start art assets.
+    // Keep this set intentionally small: it gives the default fast path painterly quality without restoring the v2.16-v2.22 boot cost.
+    ([
+      ["v224-battle-boss-warning-medal", "assets/ui/v2_24/battle_boss_warning_medal_v2_24.png"],
+      ["v224-battle-bottom-painted-skill-dock", "assets/ui/v2_24/battle_bottom_painted_skill_dock_v2_24.png"],
+      ["v224-battle-combo-prism-badge", "assets/ui/v2_24/battle_combo_prism_badge_v2_24.png"],
+      ["v224-battle-mana-leaf-crystal", "assets/ui/v2_24/battle_mana_leaf_crystal_v2_24.png"],
+      ["v224-battle-side-vine-left", "assets/ui/v2_24/battle_side_vine_left_v2_24.png"],
+      ["v224-battle-side-vine-right", "assets/ui/v2_24/battle_side_vine_right_v2_24.png"],
+      ["v224-battle-skill-card-guard-oil", "assets/ui/v2_24/battle_skill_card_guard_oil_v2_24.png"],
+      ["v224-battle-skill-card-hero-oil", "assets/ui/v2_24/battle_skill_card_hero_oil_v2_24.png"],
+      ["v224-battle-skill-card-meteor-oil", "assets/ui/v2_24/battle_skill_card_meteor_oil_v2_24.png"],
+      ["v224-battle-top-oilpaint-lace", "assets/ui/v2_24/battle_top_oilpaint_lace_v2_24.png"],
+      ["v224-lobby-event-painted-icon", "assets/ui/v2_24/lobby_event_painted_icon_v2_24.png"],
+      ["v224-lobby-mail-painted-icon", "assets/ui/v2_24/lobby_mail_painted_icon_v2_24.png"],
+      ["v224-lobby-painted-command-banner", "assets/ui/v2_24/lobby_painted_command_banner_v2_24.png"],
+      ["v224-lobby-quest-painted-icon", "assets/ui/v2_24/lobby_quest_painted_icon_v2_24.png"],
+      ["v224-lobby-resource-gem-relic", "assets/ui/v2_24/lobby_resource_gem_relic_v2_24.png"],
+      ["v224-lobby-resource-gold-relic", "assets/ui/v2_24/lobby_resource_gold_relic_v2_24.png"],
+      ["v224-lobby-resource-heart-relic", "assets/ui/v2_24/lobby_resource_heart_relic_v2_24.png"],
+      ["v224-lobby-resource-star-relic", "assets/ui/v2_24/lobby_resource_star_relic_v2_24.png"],
+      ["v224-lobby-shop-painted-icon", "assets/ui/v2_24/lobby_shop_painted_icon_v2_24.png"],
+      ["v224-lobby-storybook-notice-panel", "assets/ui/v2_24/lobby_storybook_notice_panel_v2_24.png"],
+      ["v224-lobby-velvet-nav-rug", "assets/ui/v2_24/lobby_velvet_nav_rug_v2_24.png"],
+      ["v224-login-aurora-ribbon", "assets/ui/v2_24/login_aurora_ribbon_v2_24.png"],
+      ["v224-login-button-premium-glow", "assets/ui/v2_24/login_button_premium_glow_v2_24.png"],
+      ["v224-login-cloud-save-badge", "assets/ui/v2_24/login_cloud_save_badge_v2_24.png"],
+      ["v224-login-fast-start-badge", "assets/ui/v2_24/login_fast_start_badge_v2_24.png"],
+      ["v224-login-glass-title-plaque", "assets/ui/v2_24/login_glass_title_plaque_v2_24.png"],
+      ["v224-login-google-pearl-button", "assets/ui/v2_24/login_google_pearl_button_v2_24.png"],
+      ["v224-login-painterly-card-frame", "assets/ui/v2_24/login_painterly_card_frame_v2_24.png"],
+      ["v224-mascot-luna-fawn-mage", "assets/ui/v2_24/mascot_luna_fawn_mage_v2_24.png"],
+      ["v224-mascot-royal-fox-knight", "assets/ui/v2_24/mascot_royal_fox_knight_v2_24.png"],
+      ["v224-npc-baker-bird-artist", "assets/ui/v2_24/npc_baker_bird_artist_v2_24.png"],
+      ["v224-npc-royal-cat-librarian", "assets/ui/v2_24/npc_royal_cat_librarian_v2_24.png"],
+      ["v224-npc-tea-chef-sprite", "assets/ui/v2_24/npc_tea_chef_sprite_v2_24.png"],
+      ["v224-perf-fast-feather-badge", "assets/ui/v2_24/perf_fast_feather_badge_v2_24.png"],
+      ["v224-world-boss-aurora-gate", "assets/ui/v2_24/world_boss_aurora_gate_v2_24.png"],
+      ["v224-world-cloud-atmosphere-panel", "assets/ui/v2_24/world_cloud_atmosphere_panel_v2_24.png"],
+      ["v224-world-gem-stage-ring", "assets/ui/v2_24/world_gem_stage_ring_v2_24.png"],
+      ["v224-world-locked-story-locket", "assets/ui/v2_24/world_locked_story_locket_v2_24.png"],
+      ["v224-world-preview-oilpaint-frame", "assets/ui/v2_24/world_preview_oilpaint_frame_v2_24.png"],
+      ["v224-world-prismatic-route-beads", "assets/ui/v2_24/world_prismatic_route_beads_v2_24.png"],
+      ["v224-world-reward-painted-bloom", "assets/ui/v2_24/world_reward_painted_bloom_v2_24.png"],
+      ["v224-world-selected-celestial-crown", "assets/ui/v2_24/world_selected_celestial_crown_v2_24.png"],
+    ] as const).forEach(([key, path]) => this.load.image(key, path));
 
     // v2.10 mobile design polish assets: cleaner compact plates, smaller touch UI, and WebP-first frames.
     this.load.image(

@@ -1,4 +1,4 @@
-import type { PlayerSave } from '../services/firebase';
+import type { PlayerSave } from '../services/localSave';
 
 export type MissionId = 'daily_clear' | 'daily_stars' | 'daily_tower' | 'weekly_boss' | 'weekly_mastery';
 

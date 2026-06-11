@@ -2,11 +2,10 @@ import Phaser from 'phaser';
 import type { User } from 'firebase/auth';
 import {
   getUpgradeCost,
-  purchasePermanentUpgrade,
   UPGRADE_META,
   type PlayerSave,
   type UpgradeKey
-} from '../services/firebase';
+} from '../services/localSave';
 
 const UPGRADE_KEYS: UpgradeKey[] = ['archerDamage', 'mageDamage', 'barracksHp', 'artillerySplash'];
 
@@ -107,6 +106,7 @@ export class LabScene extends Phaser.Scene {
   private async buyUpgrade(key: UpgradeKey): Promise<void> {
     try {
       this.messageText.setText('연구 저장 중...');
+      const { purchasePermanentUpgrade } = await import('../services/firebase');
       this.save = await purchasePermanentUpgrade(this.user, this.save, key);
       this.messageText.setText(`${UPGRADE_META[key].label} 완료!`);
       this.renderRows();

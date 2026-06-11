@@ -1,0 +1,1100 @@
+[
+  {
+    "key": "v225-login-masterpiece-bg",
+    "file": "login_masterpiece_bg_v2_25",
+    "w": 960,
+    "h": 540,
+    "group": "login",
+    "core": true,
+    "kind": "bg"
+  },
+  {
+    "key": "v225-login-premium-card-frame",
+    "file": "login_premium_card_frame_v2_25",
+    "w": 540,
+    "h": 330,
+    "group": "login",
+    "core": true,
+    "kind": "frame"
+  },
+  {
+    "key": "v225-login-crystal-title",
+    "file": "login_crystal_title_v2_25",
+    "w": 390,
+    "h": 150,
+    "group": "login",
+    "core": true,
+    "kind": "plaque"
+  },
+  {
+    "key": "v225-login-aurora-vellum-ribbon",
+    "file": "login_aurora_vellum_ribbon_v2_25",
+    "w": 460,
+    "h": 110,
+    "group": "login",
+    "core": true,
+    "kind": "ribbon"
+  },
+  {
+    "key": "v225-login-gold-button-frame",
+    "file": "login_gold_button_frame_v2_25",
+    "w": 330,
+    "h": 88,
+    "group": "login",
+    "core": true,
+    "kind": "button"
+  },
+  {
+    "key": "v225-login-pearl-button-frame",
+    "file": "login_pearl_button_frame_v2_25",
+    "w": 330,
+    "h": 88,
+    "group": "login",
+    "core": true,
+    "kind": "button"
+  },
+  {
+    "key": "v225-login-small-button-frame",
+    "file": "login_small_button_frame_v2_25",
+    "w": 170,
+    "h": 62,
+    "group": "login",
+    "core": true,
+    "kind": "button"
+  },
+  {
+    "key": "v225-login-royal-fox-commander",
+    "file": "login_royal_fox_commander_v2_25",
+    "w": 140,
+    "h": 140,
+    "group": "login",
+    "core": true,
+    "kind": "mascot"
+  },
+  {
+    "key": "v225-login-luna-deer-oracle",
+    "file": "login_luna_deer_oracle_v2_25",
+    "w": 140,
+    "h": 140,
+    "group": "login",
+    "core": true,
+    "kind": "mascot"
+  },
+  {
+    "key": "v225-login-painterly-light-rays",
+    "file": "login_painterly_light_rays_v2_25",
+    "w": 760,
+    "h": 260,
+    "group": "login",
+    "core": true,
+    "kind": "rays"
+  },
+  {
+    "key": "v225-login-corner-floral-left",
+    "file": "login_corner_floral_left_v2_25",
+    "w": 210,
+    "h": 210,
+    "group": "login",
+    "core": true,
+    "kind": "floral"
+  },
+  {
+    "key": "v225-login-corner-floral-right",
+    "file": "login_corner_floral_right_v2_25",
+    "w": 210,
+    "h": 210,
+    "group": "login",
+    "core": true,
+    "kind": "floral"
+  },
+  {
+    "key": "v225-login-instant-badge",
+    "file": "login_instant_badge_v2_25",
+    "w": 70,
+    "h": 70,
+    "group": "login",
+    "core": true,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-login-cloud-sync-badge",
+    "file": "login_cloud_sync_badge_v2_25",
+    "w": 70,
+    "h": 70,
+    "group": "login",
+    "core": true,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-login-gem-divider",
+    "file": "login_gem_divider_v2_25",
+    "w": 300,
+    "h": 40,
+    "group": "login",
+    "core": true,
+    "kind": "divider"
+  },
+  {
+    "key": "v225-login-gallery-starlace",
+    "file": "login_gallery_starlace_v2_25",
+    "w": 128,
+    "h": 128,
+    "group": "login",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-login-gallery-butterfly",
+    "file": "login_gallery_butterfly_v2_25",
+    "w": 128,
+    "h": 128,
+    "group": "login",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-login-gallery-moon_key",
+    "file": "login_gallery_moon_key_v2_25",
+    "w": 128,
+    "h": 128,
+    "group": "login",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-login-gallery-rose_medal",
+    "file": "login_gallery_rose_medal_v2_25",
+    "w": 128,
+    "h": 128,
+    "group": "login",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-login-gallery-glass_spark",
+    "file": "login_gallery_glass_spark_v2_25",
+    "w": 128,
+    "h": 128,
+    "group": "login",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-login-gallery-mini_crown",
+    "file": "login_gallery_mini_crown_v2_25",
+    "w": 128,
+    "h": 128,
+    "group": "login",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-login-gallery-satin_knot",
+    "file": "login_gallery_satin_knot_v2_25",
+    "w": 128,
+    "h": 128,
+    "group": "login",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-login-gallery-page_corner",
+    "file": "login_gallery_page_corner_v2_25",
+    "w": 128,
+    "h": 128,
+    "group": "login",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-login-gallery-tiny_lantern",
+    "file": "login_gallery_tiny_lantern_v2_25",
+    "w": 128,
+    "h": 128,
+    "group": "login",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-login-gallery-petal_stream",
+    "file": "login_gallery_petal_stream_v2_25",
+    "w": 360,
+    "h": 80,
+    "group": "login",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-lobby-masterpiece-bg",
+    "file": "lobby_masterpiece_bg_v2_25",
+    "w": 960,
+    "h": 540,
+    "group": "lobby",
+    "core": true,
+    "kind": "bg"
+  },
+  {
+    "key": "v225-lobby-command-banner",
+    "file": "lobby_command_banner_v2_25",
+    "w": 500,
+    "h": 130,
+    "group": "lobby",
+    "core": true,
+    "kind": "plaque"
+  },
+  {
+    "key": "v225-lobby-nav-velvet-frame",
+    "file": "lobby_nav_velvet_frame_v2_25",
+    "w": 760,
+    "h": 100,
+    "group": "lobby",
+    "core": true,
+    "kind": "frame"
+  },
+  {
+    "key": "v225-lobby-profile-panel",
+    "file": "lobby_profile_panel_v2_25",
+    "w": 210,
+    "h": 92,
+    "group": "lobby",
+    "core": true,
+    "kind": "panel"
+  },
+  {
+    "key": "v225-lobby-resource-star",
+    "file": "lobby_resource_star_v2_25",
+    "w": 82,
+    "h": 46,
+    "group": "lobby",
+    "core": true,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-lobby-resource-gold",
+    "file": "lobby_resource_gold_v2_25",
+    "w": 82,
+    "h": 46,
+    "group": "lobby",
+    "core": true,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-lobby-resource-gem",
+    "file": "lobby_resource_gem_v2_25",
+    "w": 82,
+    "h": 46,
+    "group": "lobby",
+    "core": true,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-lobby-resource-heart",
+    "file": "lobby_resource_heart_v2_25",
+    "w": 82,
+    "h": 46,
+    "group": "lobby",
+    "core": true,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-lobby-shop-atelier",
+    "file": "lobby_shop_atelier_v2_25",
+    "w": 86,
+    "h": 86,
+    "group": "lobby",
+    "core": true,
+    "kind": "icon"
+  },
+  {
+    "key": "v225-lobby-quest-manuscript",
+    "file": "lobby_quest_manuscript_v2_25",
+    "w": 86,
+    "h": 86,
+    "group": "lobby",
+    "core": true,
+    "kind": "icon"
+  },
+  {
+    "key": "v225-lobby-mail-swan",
+    "file": "lobby_mail_swan_v2_25",
+    "w": 78,
+    "h": 78,
+    "group": "lobby",
+    "core": true,
+    "kind": "icon"
+  },
+  {
+    "key": "v225-lobby-event-firefly-lamp",
+    "file": "lobby_event_firefly_lamp_v2_25",
+    "w": 78,
+    "h": 78,
+    "group": "lobby",
+    "core": true,
+    "kind": "icon"
+  },
+  {
+    "key": "v225-lobby-npc-owl-archivist",
+    "file": "lobby_npc_owl_archivist_v2_25",
+    "w": 116,
+    "h": 116,
+    "group": "lobby",
+    "core": true,
+    "kind": "mascot"
+  },
+  {
+    "key": "v225-lobby-npc-fox-tailor",
+    "file": "lobby_npc_fox_tailor_v2_25",
+    "w": 116,
+    "h": 116,
+    "group": "lobby",
+    "core": true,
+    "kind": "mascot"
+  },
+  {
+    "key": "v225-lobby-npc-cat-alchemist",
+    "file": "lobby_npc_cat_alchemist_v2_25",
+    "w": 116,
+    "h": 116,
+    "group": "lobby",
+    "core": true,
+    "kind": "mascot"
+  },
+  {
+    "key": "v225-lobby-flower-lantern-left",
+    "file": "lobby_flower_lantern_left_v2_25",
+    "w": 140,
+    "h": 180,
+    "group": "lobby",
+    "core": true,
+    "kind": "floral"
+  },
+  {
+    "key": "v225-lobby-flower-lantern-right",
+    "file": "lobby_flower_lantern_right_v2_25",
+    "w": 140,
+    "h": 180,
+    "group": "lobby",
+    "core": true,
+    "kind": "floral"
+  },
+  {
+    "key": "v225-lobby-quality-rune",
+    "file": "lobby_quality_rune_v2_25",
+    "w": 72,
+    "h": 72,
+    "group": "lobby",
+    "core": true,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-lobby-gallery-pass_badge",
+    "file": "lobby_gallery_pass_badge_v2_25",
+    "w": 92,
+    "h": 92,
+    "group": "lobby",
+    "core": false,
+    "kind": "icon"
+  },
+  {
+    "key": "v225-lobby-gallery-guild_crest",
+    "file": "lobby_gallery_guild_crest_v2_25",
+    "w": 92,
+    "h": 92,
+    "group": "lobby",
+    "core": false,
+    "kind": "icon"
+  },
+  {
+    "key": "v225-lobby-gallery-ranking_cup",
+    "file": "lobby_gallery_ranking_cup_v2_25",
+    "w": 92,
+    "h": 92,
+    "group": "lobby",
+    "core": false,
+    "kind": "icon"
+  },
+  {
+    "key": "v225-lobby-gallery-settings_gear",
+    "file": "lobby_gallery_settings_gear_v2_25",
+    "w": 92,
+    "h": 92,
+    "group": "lobby",
+    "core": false,
+    "kind": "icon"
+  },
+  {
+    "key": "v225-lobby-gallery-hero_sigil",
+    "file": "lobby_gallery_hero_sigil_v2_25",
+    "w": 92,
+    "h": 92,
+    "group": "lobby",
+    "core": false,
+    "kind": "icon"
+  },
+  {
+    "key": "v225-lobby-gallery-codex_book",
+    "file": "lobby_gallery_codex_book_v2_25",
+    "w": 92,
+    "h": 92,
+    "group": "lobby",
+    "core": false,
+    "kind": "icon"
+  },
+  {
+    "key": "v225-lobby-gallery-forge_hammer",
+    "file": "lobby_gallery_forge_hammer_v2_25",
+    "w": 92,
+    "h": 92,
+    "group": "lobby",
+    "core": false,
+    "kind": "icon"
+  },
+  {
+    "key": "v225-lobby-gallery-mission_scroll",
+    "file": "lobby_gallery_mission_scroll_v2_25",
+    "w": 92,
+    "h": 92,
+    "group": "lobby",
+    "core": false,
+    "kind": "icon"
+  },
+  {
+    "key": "v225-lobby-gallery-jewel_tab",
+    "file": "lobby_gallery_jewel_tab_v2_25",
+    "w": 92,
+    "h": 92,
+    "group": "lobby",
+    "core": false,
+    "kind": "icon"
+  },
+  {
+    "key": "v225-lobby-gallery-painted_coin_stack",
+    "file": "lobby_gallery_painted_coin_stack_v2_25",
+    "w": 92,
+    "h": 92,
+    "group": "lobby",
+    "core": false,
+    "kind": "icon"
+  },
+  {
+    "key": "v225-lobby-gallery-premium_ticket",
+    "file": "lobby_gallery_premium_ticket_v2_25",
+    "w": 92,
+    "h": 92,
+    "group": "lobby",
+    "core": false,
+    "kind": "icon"
+  },
+  {
+    "key": "v225-lobby-gallery-season_leaf",
+    "file": "lobby_gallery_season_leaf_v2_25",
+    "w": 92,
+    "h": 92,
+    "group": "lobby",
+    "core": false,
+    "kind": "icon"
+  },
+  {
+    "key": "v225-world-masterpiece-bg",
+    "file": "world_masterpiece_bg_v2_25",
+    "w": 960,
+    "h": 540,
+    "group": "world",
+    "core": true,
+    "kind": "bg"
+  },
+  {
+    "key": "v225-world-preview-frame",
+    "file": "world_preview_frame_v2_25",
+    "w": 360,
+    "h": 280,
+    "group": "world",
+    "core": true,
+    "kind": "frame"
+  },
+  {
+    "key": "v225-world-stage-ring",
+    "file": "world_stage_ring_v2_25",
+    "w": 92,
+    "h": 92,
+    "group": "world",
+    "core": true,
+    "kind": "ring"
+  },
+  {
+    "key": "v225-world-route-prism",
+    "file": "world_route_prism_v2_25",
+    "w": 150,
+    "h": 46,
+    "group": "world",
+    "core": true,
+    "kind": "route"
+  },
+  {
+    "key": "v225-world-boss-gate",
+    "file": "world_boss_gate_v2_25",
+    "w": 120,
+    "h": 110,
+    "group": "world",
+    "core": true,
+    "kind": "gate"
+  },
+  {
+    "key": "v225-world-locked-seal",
+    "file": "world_locked_seal_v2_25",
+    "w": 64,
+    "h": 64,
+    "group": "world",
+    "core": true,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-world-reward-bloom",
+    "file": "world_reward_bloom_v2_25",
+    "w": 64,
+    "h": 64,
+    "group": "world",
+    "core": true,
+    "kind": "floral"
+  },
+  {
+    "key": "v225-world-selected-crown",
+    "file": "world_selected_crown_v2_25",
+    "w": 66,
+    "h": 66,
+    "group": "world",
+    "core": true,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-world-cloud-panel",
+    "file": "world_cloud_panel_v2_25",
+    "w": 270,
+    "h": 90,
+    "group": "world",
+    "core": true,
+    "kind": "panel"
+  },
+  {
+    "key": "v225-world-map-compass",
+    "file": "world_map_compass_v2_25",
+    "w": 90,
+    "h": 90,
+    "group": "world",
+    "core": true,
+    "kind": "icon"
+  },
+  {
+    "key": "v225-world-chapter-ribbon",
+    "file": "world_chapter_ribbon_v2_25",
+    "w": 330,
+    "h": 70,
+    "group": "world",
+    "core": true,
+    "kind": "ribbon"
+  },
+  {
+    "key": "v225-world-mist-wisp",
+    "file": "world_mist_wisp_v2_25",
+    "w": 240,
+    "h": 120,
+    "group": "world",
+    "core": true,
+    "kind": "rays"
+  },
+  {
+    "key": "v225-world-island-shadow",
+    "file": "world_island_shadow_v2_25",
+    "w": 250,
+    "h": 150,
+    "group": "world",
+    "core": true,
+    "kind": "shadow"
+  },
+  {
+    "key": "v225-world-star-path-dot",
+    "file": "world_star_path_dot_v2_25",
+    "w": 42,
+    "h": 42,
+    "group": "world",
+    "core": true,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-world-gallery-forest_token",
+    "file": "world_gallery_forest_token_v2_25",
+    "w": 88,
+    "h": 88,
+    "group": "world",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-world-gallery-canyon_token",
+    "file": "world_gallery_canyon_token_v2_25",
+    "w": 88,
+    "h": 88,
+    "group": "world",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-world-gallery-swamp_token",
+    "file": "world_gallery_swamp_token_v2_25",
+    "w": 88,
+    "h": 88,
+    "group": "world",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-world-gallery-fortress_token",
+    "file": "world_gallery_fortress_token_v2_25",
+    "w": 88,
+    "h": 88,
+    "group": "world",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-world-gallery-boss_token",
+    "file": "world_gallery_boss_token_v2_25",
+    "w": 88,
+    "h": 88,
+    "group": "world",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-world-gallery-treasure_cache",
+    "file": "world_gallery_treasure_cache_v2_25",
+    "w": 88,
+    "h": 88,
+    "group": "world",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-world-gallery-fog_curl",
+    "file": "world_gallery_fog_curl_v2_25",
+    "w": 88,
+    "h": 88,
+    "group": "world",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-world-gallery-pin_blue",
+    "file": "world_gallery_pin_blue_v2_25",
+    "w": 88,
+    "h": 88,
+    "group": "world",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-world-gallery-pin_gold",
+    "file": "world_gallery_pin_gold_v2_25",
+    "w": 88,
+    "h": 88,
+    "group": "world",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-world-gallery-pin_rose",
+    "file": "world_gallery_pin_rose_v2_25",
+    "w": 88,
+    "h": 88,
+    "group": "world",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-world-gallery-chapter_lock",
+    "file": "world_gallery_chapter_lock_v2_25",
+    "w": 88,
+    "h": 88,
+    "group": "world",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-world-gallery-elite_banner",
+    "file": "world_gallery_elite_banner_v2_25",
+    "w": 88,
+    "h": 88,
+    "group": "world",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-battle-painterly-overlay",
+    "file": "battle_painterly_overlay_v2_25",
+    "w": 960,
+    "h": 540,
+    "group": "battle",
+    "core": true,
+    "kind": "overlay"
+  },
+  {
+    "key": "v225-battle-top-hud-frame",
+    "file": "battle_top_hud_frame_v2_25",
+    "w": 820,
+    "h": 72,
+    "group": "battle",
+    "core": true,
+    "kind": "frame"
+  },
+  {
+    "key": "v225-battle-bottom-skill-dock",
+    "file": "battle_bottom_skill_dock_v2_25",
+    "w": 760,
+    "h": 96,
+    "group": "battle",
+    "core": true,
+    "kind": "frame"
+  },
+  {
+    "key": "v225-battle-side-vine-left",
+    "file": "battle_side_vine_left_v2_25",
+    "w": 88,
+    "h": 330,
+    "group": "battle",
+    "core": true,
+    "kind": "floral"
+  },
+  {
+    "key": "v225-battle-side-vine-right",
+    "file": "battle_side_vine_right_v2_25",
+    "w": 88,
+    "h": 330,
+    "group": "battle",
+    "core": true,
+    "kind": "floral"
+  },
+  {
+    "key": "v225-battle-skill-meteor",
+    "file": "battle_skill_meteor_v2_25",
+    "w": 146,
+    "h": 76,
+    "group": "battle",
+    "core": true,
+    "kind": "card"
+  },
+  {
+    "key": "v225-battle-skill-guard",
+    "file": "battle_skill_guard_v2_25",
+    "w": 146,
+    "h": 76,
+    "group": "battle",
+    "core": true,
+    "kind": "card"
+  },
+  {
+    "key": "v225-battle-skill-hero",
+    "file": "battle_skill_hero_v2_25",
+    "w": 146,
+    "h": 76,
+    "group": "battle",
+    "core": true,
+    "kind": "card"
+  },
+  {
+    "key": "v225-battle-combo-badge",
+    "file": "battle_combo_badge_v2_25",
+    "w": 70,
+    "h": 70,
+    "group": "battle",
+    "core": true,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-battle-boss-warning",
+    "file": "battle_boss_warning_v2_25",
+    "w": 78,
+    "h": 78,
+    "group": "battle",
+    "core": true,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-battle-mana-crystal",
+    "file": "battle_mana_crystal_v2_25",
+    "w": 68,
+    "h": 68,
+    "group": "battle",
+    "core": true,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-battle-safe-corner-left",
+    "file": "battle_safe_corner_left_v2_25",
+    "w": 140,
+    "h": 100,
+    "group": "battle",
+    "core": true,
+    "kind": "corner"
+  },
+  {
+    "key": "v225-battle-safe-corner-right",
+    "file": "battle_safe_corner_right_v2_25",
+    "w": 140,
+    "h": 100,
+    "group": "battle",
+    "core": true,
+    "kind": "corner"
+  },
+  {
+    "key": "v225-battle-wave-banner",
+    "file": "battle_wave_banner_v2_25",
+    "w": 320,
+    "h": 76,
+    "group": "battle",
+    "core": true,
+    "kind": "ribbon"
+  },
+  {
+    "key": "v225-battle-touch-optimized-badge",
+    "file": "battle_touch_optimized_badge_v2_25",
+    "w": 64,
+    "h": 64,
+    "group": "battle",
+    "core": true,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-battle-gallery-tower_archer_card",
+    "file": "battle_gallery_tower_archer_card_v2_25",
+    "w": 110,
+    "h": 90,
+    "group": "battle",
+    "core": false,
+    "kind": "card"
+  },
+  {
+    "key": "v225-battle-gallery-tower_mage_card",
+    "file": "battle_gallery_tower_mage_card_v2_25",
+    "w": 110,
+    "h": 90,
+    "group": "battle",
+    "core": false,
+    "kind": "card"
+  },
+  {
+    "key": "v225-battle-gallery-tower_barracks_card",
+    "file": "battle_gallery_tower_barracks_card_v2_25",
+    "w": 110,
+    "h": 90,
+    "group": "battle",
+    "core": false,
+    "kind": "card"
+  },
+  {
+    "key": "v225-battle-gallery-tower_artillery_card",
+    "file": "battle_gallery_tower_artillery_card_v2_25",
+    "w": 110,
+    "h": 90,
+    "group": "battle",
+    "core": false,
+    "kind": "card"
+  },
+  {
+    "key": "v225-battle-gallery-enemy_elite_medal",
+    "file": "battle_gallery_enemy_elite_medal_v2_25",
+    "w": 110,
+    "h": 90,
+    "group": "battle",
+    "core": false,
+    "kind": "card"
+  },
+  {
+    "key": "v225-battle-gallery-boss_cut_in_flare",
+    "file": "battle_gallery_boss_cut_in_flare_v2_25",
+    "w": 110,
+    "h": 90,
+    "group": "battle",
+    "core": false,
+    "kind": "card"
+  },
+  {
+    "key": "v225-battle-gallery-reward_chest_gold",
+    "file": "battle_gallery_reward_chest_gold_v2_25",
+    "w": 110,
+    "h": 90,
+    "group": "battle",
+    "core": false,
+    "kind": "card"
+  },
+  {
+    "key": "v225-battle-gallery-reward_chest_mythic",
+    "file": "battle_gallery_reward_chest_mythic_v2_25",
+    "w": 110,
+    "h": 90,
+    "group": "battle",
+    "core": false,
+    "kind": "card"
+  },
+  {
+    "key": "v225-battle-gallery-pause_orb",
+    "file": "battle_gallery_pause_orb_v2_25",
+    "w": 110,
+    "h": 90,
+    "group": "battle",
+    "core": false,
+    "kind": "card"
+  },
+  {
+    "key": "v225-battle-gallery-speed_orb",
+    "file": "battle_gallery_speed_orb_v2_25",
+    "w": 110,
+    "h": 90,
+    "group": "battle",
+    "core": false,
+    "kind": "card"
+  },
+  {
+    "key": "v225-battle-gallery-sound_orb",
+    "file": "battle_gallery_sound_orb_v2_25",
+    "w": 110,
+    "h": 90,
+    "group": "battle",
+    "core": false,
+    "kind": "card"
+  },
+  {
+    "key": "v225-battle-gallery-upgrade_spark",
+    "file": "battle_gallery_upgrade_spark_v2_25",
+    "w": 110,
+    "h": 90,
+    "group": "battle",
+    "core": false,
+    "kind": "card"
+  },
+  {
+    "key": "v225-battle-gallery-path_flower",
+    "file": "battle_gallery_path_flower_v2_25",
+    "w": 110,
+    "h": 90,
+    "group": "battle",
+    "core": false,
+    "kind": "card"
+  },
+  {
+    "key": "v225-battle-gallery-impact_prism",
+    "file": "battle_gallery_impact_prism_v2_25",
+    "w": 110,
+    "h": 90,
+    "group": "battle",
+    "core": false,
+    "kind": "card"
+  },
+  {
+    "key": "v225-shared-gallery-royal_palette_chip",
+    "file": "shared_gallery_royal_palette_chip_v2_25",
+    "w": 160,
+    "h": 100,
+    "group": "shared",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-shared-gallery-pearl_noise_wash",
+    "file": "shared_gallery_pearl_noise_wash_v2_25",
+    "w": 160,
+    "h": 100,
+    "group": "shared",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-shared-gallery-gold_leaf_trim",
+    "file": "shared_gallery_gold_leaf_trim_v2_25",
+    "w": 160,
+    "h": 100,
+    "group": "shared",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-shared-gallery-watercolor_cloud",
+    "file": "shared_gallery_watercolor_cloud_v2_25",
+    "w": 160,
+    "h": 100,
+    "group": "shared",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-shared-gallery-velvet_shadow",
+    "file": "shared_gallery_velvet_shadow_v2_25",
+    "w": 160,
+    "h": 100,
+    "group": "shared",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-shared-gallery-ink_outline_spark",
+    "file": "shared_gallery_ink_outline_spark_v2_25",
+    "w": 160,
+    "h": 100,
+    "group": "shared",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-shared-gallery-crystal_drop",
+    "file": "shared_gallery_crystal_drop_v2_25",
+    "w": 160,
+    "h": 100,
+    "group": "shared",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-shared-gallery-flower_cluster",
+    "file": "shared_gallery_flower_cluster_v2_25",
+    "w": 160,
+    "h": 100,
+    "group": "shared",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-shared-gallery-moonberry_leaf",
+    "file": "shared_gallery_moonberry_leaf_v2_25",
+    "w": 160,
+    "h": 100,
+    "group": "shared",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-shared-gallery-aurora_thread",
+    "file": "shared_gallery_aurora_thread_v2_25",
+    "w": 160,
+    "h": 100,
+    "group": "shared",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-shared-gallery-paint_smudge",
+    "file": "shared_gallery_paint_smudge_v2_25",
+    "w": 160,
+    "h": 100,
+    "group": "shared",
+    "core": false,
+    "kind": "badge"
+  },
+  {
+    "key": "v225-shared-gallery-glass_highlight",
+    "file": "shared_gallery_glass_highlight_v2_25",
+    "w": 160,
+    "h": 100,
+    "group": "shared",
+    "core": false,
+    "kind": "badge"
+  }
+]

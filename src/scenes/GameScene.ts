@@ -12,12 +12,7 @@ import { Enemy } from "../game/Enemy";
 import { Hero } from "../game/Hero";
 import { Soldier } from "../game/Soldier";
 import { Tower } from "../game/Tower";
-import type { PlayerSave } from "../services/firebase";
-import {
-  fetchLeaderboard,
-  saveStageClear,
-  submitLeaderboard,
-} from "../services/firebase";
+import type { PlayerSave } from "../services/localSave";
 import {
   pulseButton,
   shakeCamera,
@@ -155,6 +150,9 @@ import { addV219BattleArt } from "../game/CuteFantasyArtV219";
 import { addV220BattleArt } from "../game/CuteFantasyArtV220";
 import { addV221BattleArt } from "../game/CuteFantasyArtV221";
 import { addV222BattleArt } from "../game/CuteFantasyArtV222";
+import { addV224BattleArt } from "../game/PremiumIllustrationArtV224";
+import { addV225BattleArt } from "../game/PremiumIllustrationArtV225";
+import { loadProgressiveArtBundle } from "../game/ProgressiveAssetLoader";
 import { clearTimer, safeDelayedCall } from "../game/SceneSafety";
 import { useCumulativeArtLayers } from "../game/PerformanceMode";
 
@@ -244,6 +242,14 @@ export class GameScene extends Phaser.Scene {
 
   constructor() {
     super("GameScene");
+  }
+
+
+  private installProgressiveBattleArt(): void {
+    loadProgressiveArtBundle(this, "battle", () => {
+      if (!this.scene.isActive("GameScene") || this.ended) return;
+      addV225BattleArt(this, this.stage.theme);
+    }, { delayMs: 40 });
   }
 
   private isSceneLive(): boolean {
@@ -340,15 +346,18 @@ export class GameScene extends Phaser.Scene {
     drawBattlePolish(this, this.stage.theme);
     drawCinematicCombatFrame(this, this.stage.theme);
     installV210BattlePolish(this);
-    addCuteBattleAccents(this, this.stage.theme);
-    if (useCumulativeArtLayers()) {
+    const cumulativeArt = useCumulativeArtLayers();
+    if (cumulativeArt) {
+      addCuteBattleAccents(this, this.stage.theme);
       addV217BattleArt(this, this.stage.theme);
       addV218BattleArt(this, this.stage.theme);
       addV219BattleArt(this, this.stage.theme);
       addV220BattleArt(this, this.stage.theme);
       addV221BattleArt(this, this.stage.theme);
+      addV222BattleArt(this, this.stage.theme);
     }
-    addV222BattleArt(this, this.stage.theme);
+    addV224BattleArt(this, this.stage.theme);
+    this.installProgressiveBattleArt();
     addStageV26Decor(this, this.stage);
     installScenePerformanceWatch(this);
     this.createHud();
@@ -3522,6 +3531,8 @@ export class GameScene extends Phaser.Scene {
     const roundedScore = Math.floor(finalScore);
 
     try {
+      const { fetchLeaderboard, saveStageClear, submitLeaderboard } =
+        await import("../services/firebase");
       this.save = await saveStageClear(
         this.user,
         this.save,

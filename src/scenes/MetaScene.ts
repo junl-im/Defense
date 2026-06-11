@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import type { User } from 'firebase/auth';
-import type { PlayerSave } from '../services/firebase';
+import type { PlayerSave } from '../services/localSave';
 import { getStageConfig } from '../game/balance';
 import {
   ACHIEVEMENTS,

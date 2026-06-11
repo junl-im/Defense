@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import type { User } from 'firebase/auth';
 import { ENEMIES, TOWERS } from '../game/balance';
 import type { EnemyConfig, TowerConfig } from '../game/types';
-import type { PlayerSave } from '../services/firebase';
+import type { PlayerSave } from '../services/localSave';
 
 export class CodexScene extends Phaser.Scene {
   private user!: User;

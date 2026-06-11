@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import type { User } from 'firebase/auth';
-import type { PlayerSave } from '../services/firebase';
+import type { PlayerSave } from '../services/localSave';
 import { getHeroProfiles, getSelectedHero, setSelectedHero, type HeroId, type HeroProfile } from '../game/HeroLoadout';
 import { playMusic, playSfx } from '../game/AudioManager';
 

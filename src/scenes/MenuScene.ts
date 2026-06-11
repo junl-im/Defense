@@ -9,28 +9,26 @@ import { addV218LoginArt } from "../game/CuteFantasyArtV218";
 import { addV219LoginArt } from "../game/CuteFantasyArtV219";
 import { addV220LoginArt } from "../game/CuteFantasyArtV220";
 import { addV221LoginArt } from "../game/CuteFantasyArtV221";
+import { addV222LoginArt } from "../game/CuteFantasyArtV222";
+import { addV224LoginArt } from "../game/PremiumIllustrationArtV224";
 import {
-  V222_VERSION_LABEL,
-  addV222LoginArt,
-} from "../game/CuteFantasyArtV222";
+  V225_VERSION_LABEL,
+  addV225LoginArt,
+} from "../game/PremiumIllustrationArtV225";
+import { loadProgressiveArtBundle } from "../game/ProgressiveAssetLoader";
 import { safeDelayedCall } from "../game/SceneSafety";
 import { useCumulativeArtLayers } from "../game/PerformanceMode";
 import {
-  completePendingRedirectSignIn,
-  ensureQuickStartSession,
-  loadOrCreateSave,
-  loginWithEmail,
-  loginWithGoogle,
-  registerWithEmail,
-  waitForUser,
+  createInstantLocalSession,
   type PlayerSave,
-} from "../services/firebase";
+} from "../services/localSave";
 
 export class MenuScene extends Phaser.Scene {
   private statusText!: Phaser.GameObjects.Text;
   private currentUser: User | null = null;
   private currentSave: PlayerSave | null = null;
   private isTransitioning = false;
+  private firebaseServicePromise?: Promise<typeof import("../services/firebase")>;
 
   constructor() {
     super("MenuScene");
@@ -42,15 +40,18 @@ export class MenuScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor("#8fd5ff");
 
     this.createCinematicSplash();
-    addCuteLoginAccents(this);
-    if (useCumulativeArtLayers()) {
+    const cumulativeArt = useCumulativeArtLayers();
+    if (cumulativeArt) {
+      addCuteLoginAccents(this);
       addV217LoginArt(this);
       addV218LoginArt(this);
       addV219LoginArt(this);
       addV220LoginArt(this);
       addV221LoginArt(this);
+      addV222LoginArt(this);
     }
-    addV222LoginArt(this);
+    addV224LoginArt(this);
+    this.installProgressiveLoginArt();
     this.createStatusOverlay();
     this.createLoginHitZones();
     this.createUtilityHitZones();
@@ -58,12 +59,24 @@ export class MenuScene extends Phaser.Scene {
     safeDelayedCall(this, 0, () => {
       window.dispatchEvent(
         new CustomEvent("kingdom-seed:scene-ready", {
-          detail: { scene: "MenuScene", version: "2.23.0", at: Date.now() },
+          detail: { scene: "MenuScene", version: "2.25.0", at: Date.now() },
         }),
       );
     });
 
-    void this.bootstrapRedirectOrExistingUser();
+    safeDelayedCall(this, 1200, () => void this.bootstrapRedirectOrExistingUser());
+  }
+
+  private getFirebaseService(): Promise<typeof import("../services/firebase")> {
+    this.firebaseServicePromise ??= import("../services/firebase");
+    return this.firebaseServicePromise;
+  }
+
+  private installProgressiveLoginArt(): void {
+    loadProgressiveArtBundle(this, "login", () => {
+      if (!this.scene.isActive("MenuScene") || this.isTransitioning) return;
+      addV225LoginArt(this);
+    }, { delayMs: 320 });
   }
 
   private createCinematicSplash(): void {
@@ -185,7 +198,7 @@ export class MenuScene extends Phaser.Scene {
     chip.fillStyle(0x071c3e, 0.46).fillRoundedRect(16, 14, 188, 24, 14);
     chip.lineStyle(1, 0xffdc82, 0.45).strokeRoundedRect(16, 14, 188, 24, 14);
     this.add
-      .text(110, 26, V222_VERSION_LABEL, {
+      .text(110, 26, V225_VERSION_LABEL, {
         fontSize: "8px",
         color: "#f7fbff",
         fixedWidth: 178,
@@ -468,57 +481,63 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private async bootstrapRedirectOrExistingUser(): Promise<void> {
+    if (this.isTransitioning) return;
     try {
-      const redirectUser = await completePendingRedirectSignIn(650);
-      const existing = redirectUser ?? (await waitForUser(650));
+      const {
+        completePendingRedirectSignIn,
+        loadOrCreateSave,
+        waitForUser,
+      } = await this.getFirebaseService();
+      const redirectUser = await completePendingRedirectSignIn(360);
+      const existing = redirectUser ?? (await waitForUser(360));
       if (!this.scene.isActive("MenuScene") || !this.statusText?.active) return;
       if (!existing) {
-        this.statusText.setText("로그인 방식을 선택하세요.");
+        this.statusText.setText("빠른 시작은 즉시 입장, 계정 연결은 뒤에서 준비됩니다.");
         return;
       }
       this.currentUser = existing;
       this.currentSave = await loadOrCreateSave(existing, {
-        timeoutMs: 750,
+        timeoutMs: 420,
         allowLocalFallback: true,
       });
       if (!this.scene.isActive("MenuScene") || !this.statusText?.active) return;
       this.statusText.setText(
-        `${this.currentSave.nickname} 로그인됨. 빠른 시작으로 이어서 플레이하세요!`,
+        `${this.currentSave.nickname} 기록 준비 완료. 바로 시작할 수 있어요!`,
       );
     } catch (error) {
-      console.error(error);
+      console.warn("Deferred Firebase bootstrap skipped:", error);
       if (this.scene.isActive("MenuScene") && this.statusText?.active)
-        this.statusText.setText("로그인 확인 실패. 설정/도메인 확인");
+        this.statusText.setText("빠른 시작 가능 · 계정 연결은 필요할 때 다시 시도합니다.");
     }
   }
 
-  private async startQuick(): Promise<void> {
+  private startQuick(): void {
     if (this.currentUser && this.currentSave) {
       playSfx(this, "sfx_click");
       this.enterMainMenu(this.currentUser, this.currentSave);
       return;
     }
 
-    await this.withLoading(async () => {
-      const session = await ensureQuickStartSession(650);
-      if (!this.scene.isActive("MenuScene") || !this.statusText?.active) return;
-      if (session.source !== "remote") {
-        this.statusText.setText(
-          "네트워크 대기 없이 즉시 입장합니다. 기록은 기기에 보호 저장됩니다.",
-        );
-      }
-      this.enterMainMenu(session.user, session.save);
-    }, "즉시 입장 준비 중...");
+    playSfx(this, "sfx_click");
+    if (this.statusText?.active)
+      this.statusText.setText("네트워크 대기 없이 바로 입장합니다.");
+    const session = createInstantLocalSession();
+    this.enterMainMenu(session.user, session.save);
+
+    void this.getFirebaseService()
+      .then(({ ensureQuickStartSession }) => ensureQuickStartSession(360))
+      .catch((error) => console.warn("Background quick-start cloud sync skipped:", error));
   }
 
   private async startGoogle(): Promise<void> {
     await this.withLoading(async () => {
+      const { loadOrCreateSave, loginWithGoogle } = await this.getFirebaseService();
       const user = await loginWithGoogle();
       if (!user) {
         this.statusText.setText("Google 이동 중...");
         return;
       }
-      const save = await loadOrCreateSave(user);
+      const save = await loadOrCreateSave(user, { timeoutMs: 900, allowLocalFallback: true });
       this.enterMainMenu(user, save);
     });
   }
@@ -530,8 +549,9 @@ export class MenuScene extends Phaser.Scene {
     if (!password) return;
 
     await this.withLoading(async () => {
+      const { loadOrCreateSave, loginWithEmail } = await this.getFirebaseService();
       const user = await loginWithEmail(email, password);
-      const save = await loadOrCreateSave(user);
+      const save = await loadOrCreateSave(user, { timeoutMs: 900, allowLocalFallback: true });
       this.enterMainMenu(user, save);
     });
   }
@@ -543,15 +563,16 @@ export class MenuScene extends Phaser.Scene {
     if (!password) return;
 
     await this.withLoading(async () => {
+      const { loadOrCreateSave, registerWithEmail } = await this.getFirebaseService();
       const user = await registerWithEmail(email, password);
-      const save = await loadOrCreateSave(user);
+      const save = await loadOrCreateSave(user, { timeoutMs: 900, allowLocalFallback: true });
       this.enterMainMenu(user, save);
     });
   }
 
   private async withLoading(
     task: () => Promise<void>,
-    label = "왕국 기록 연결 중...",
+    label = "계정 연결 중...",
   ): Promise<void> {
     try {
       playSfx(this, "sfx_click");

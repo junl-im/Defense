@@ -12,9 +12,12 @@ import { addV219WorldMapArt } from "../game/CuteFantasyArtV219";
 import { addV220WorldMapArt } from "../game/CuteFantasyArtV220";
 import { addV221WorldMapArt } from "../game/CuteFantasyArtV221";
 import { addV222WorldMapArt } from "../game/CuteFantasyArtV222";
+import { addV224WorldMapArt } from "../game/PremiumIllustrationArtV224";
+import { addV225WorldMapArt } from "../game/PremiumIllustrationArtV225";
+import { loadProgressiveArtBundle, warmProgressiveArtBundle } from "../game/ProgressiveAssetLoader";
 import { clearTimer, safeDelayedCall } from "../game/SceneSafety";
 import { useCumulativeArtLayers } from "../game/PerformanceMode";
-import type { PlayerSave } from "../services/firebase";
+import type { PlayerSave } from "../services/localSave";
 
 type HotspotTone = "gold" | "blue" | "white" | "red" | "green";
 
@@ -93,15 +96,18 @@ export class WorldMapScene extends Phaser.Scene {
     playMusicWhenReady(this, "bgm_world", 0.22);
 
     this.createIllustratedWorldMap();
-    addCuteWorldMapAccents(this, STAGE_NODES);
-    if (useCumulativeArtLayers()) {
+    const cumulativeArt = useCumulativeArtLayers();
+    if (cumulativeArt) {
+      addCuteWorldMapAccents(this, STAGE_NODES);
       addV217WorldMapArt(this, STAGE_NODES);
       addV218WorldMapArt(this, STAGE_NODES);
       addV219WorldMapArt(this, STAGE_NODES);
       addV220WorldMapArt(this, STAGE_NODES);
       addV221WorldMapArt(this, STAGE_NODES);
+      addV222WorldMapArt(this, STAGE_NODES);
     }
-    addV222WorldMapArt(this, STAGE_NODES);
+    addV224WorldMapArt(this, STAGE_NODES);
+    this.installProgressiveWorldArt();
     this.createStagePreviewLayer();
     this.createStageNodeHotspots();
     this.createNavigationHotspots();
@@ -112,10 +118,19 @@ export class WorldMapScene extends Phaser.Scene {
     safeDelayedCall(this, 0, () => {
       window.dispatchEvent(
         new CustomEvent("kingdom-seed:scene-ready", {
-          detail: { scene: "WorldMapScene", version: "2.23.0", at: Date.now() },
+          detail: { scene: "WorldMapScene", version: "2.25.0", at: Date.now() },
         }),
       );
     });
+  }
+
+
+  private installProgressiveWorldArt(): void {
+    loadProgressiveArtBundle(this, "world", () => {
+      if (!this.scene.isActive("WorldMapScene")) return;
+      addV225WorldMapArt(this, STAGE_NODES);
+      warmProgressiveArtBundle(this, "battle", { delayMs: 700 });
+    }, { delayMs: 80 });
   }
 
   private findFirstPlayableIndex(): number {
@@ -599,6 +614,7 @@ export class WorldMapScene extends Phaser.Scene {
       return;
     }
     if (!this.scene.isActive("WorldMapScene")) return;
+    warmProgressiveArtBundle(this, "battle", { delayMs: 0 });
     this.scene.start("GameScene", {
       user: this.user,
       save: this.save,
