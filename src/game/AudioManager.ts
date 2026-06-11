@@ -138,6 +138,17 @@ export function playMusic(scene: Phaser.Scene, key: string, volume = MUSIC_VOLUM
   }
 }
 
+
+export function playMusicWhenReady(scene: Phaser.Scene, key: string, volume = MUSIC_VOLUME[key] ?? 0.18): void {
+  playMusic(scene, key, volume);
+  const handler = (): void => playMusic(scene, key, volume);
+  window.addEventListener('kingdom-seed:user-activated', handler, { once: true });
+
+  const cleanup = (): void => window.removeEventListener('kingdom-seed:user-activated', handler);
+  scene.events.once(Phaser.Scenes.Events.SHUTDOWN, cleanup);
+  scene.events.once(Phaser.Scenes.Events.DESTROY, cleanup);
+}
+
 export function stopMusic(scene: Phaser.Scene, key: string): void {
   const existing = scene.sound.get(key);
   if (existing?.isPlaying) existing.stop();

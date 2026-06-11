@@ -38,3 +38,25 @@
 - WebP 로더 대상에 v2.16 UI 경로를 포함해 모바일 로딩 부담을 줄였습니다.
 - 로비 시작 토스트 중복 호출을 1회로 정리했습니다.
 - QA: `npx tsc --noEmit` 및 `npm run build` 통과.
+
+## v2.18.0 - Massive Plush Kingdom Art Pass + Runtime QA Sweep
+- `public/assets/ui/v2_18/`에 44종 PNG + WebP 세트, 합계 88개 신규 말랑 판타지 에셋을 추가했습니다.
+- 로그인/로비/월드맵/전투 화면에 `CuteFantasyArtV218.ts` 기반 장식 레이어를 추가했습니다.
+- WebP 최적화 로더 대상에 `v2_18` UI 경로를 포함했습니다.
+- 전투 콤보 토스트 타이머를 단일 관리로 정리해 연속 처치 표시가 조기 종료되는 문제를 완화했습니다.
+- 보스 패턴 이벤트 리스너를 씬 종료 시 해제하도록 정리했습니다.
+- QA: `npx tsc --noEmit --pretty false` 및 `npm run build` 통과.
+## v2.19.0 - Storybook Massive Art QA
+- `public/assets/ui/v2_19/`에 신규 PNG 61개 + WebP 61개, 총 122개 스토리북 판타지 에셋을 추가했습니다.
+- `CuteFantasyArtV219.ts`를 추가해 로그인/로비/월드맵/전투 장식 레이어를 v2.19로 확장했습니다.
+- WebP 최적화 로더 대상에 `v2_19` UI 경로를 포함했습니다.
+- 로비 자동 환영 토스트의 클릭 SFX 중복감을 제거하고, 씬 전환 후 지연 토스트 실행을 가드했습니다.
+- 전투 메시지 hide timer가 오브젝트 활성 상태를 확인하도록 정리했습니다.
+- QA: `npx tsc --noEmit --pretty false` 및 `npm run build` 통과.
+## v2.20.0 - Toy Garden Massive Art QA
+- `public/assets/ui/v2_20/`에 신규 PNG 64개 + WebP 64개, 총 128개 토이 가든 판타지 에셋을 추가했습니다.
+- `CuteFantasyArtV220.ts`를 추가해 로그인/로비/월드맵/전투 장식 레이어를 v2.20로 확장했습니다.
+- WebP 최적화 로더 대상에 `v2_20` UI 경로를 포함했습니다.
+- 로그인 비동기 상태 갱신, 로비/월드맵 토스트, 전투 지연 호출/스폰 스트림/메시지 타이머에 씬 생존 가드를 추가했습니다.
+- QA: `npx tsc --noEmit --pretty false` 및 `npm run build` 통과.
+

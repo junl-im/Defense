@@ -1,10 +1,14 @@
 import Phaser from 'phaser';
 import type { User } from 'firebase/auth';
-import { playMusic, playSfx } from '../game/AudioManager';
+import { playMusicWhenReady, playSfx } from '../game/AudioManager';
 import { STAGE_LIST } from '../game/balance';
 import { addCoverImage } from '../game/CodeUiKit';
 import { addHitZoneDebug } from '../game/HitZoneDebug';
 import { addCuteLobbyAccents } from '../game/CuteFantasyPolishV216';
+import { addV217LobbyArt } from '../game/CuteFantasyArtV217';
+import { addV218LobbyArt } from '../game/CuteFantasyArtV218';
+import { addV219LobbyArt } from '../game/CuteFantasyArtV219';
+import { addV220LobbyArt } from '../game/CuteFantasyArtV220';
 import type { PlayerSave } from '../services/firebase';
 
 type HotspotTone = 'gold' | 'blue' | 'white' | 'red' | 'green';
@@ -33,6 +37,7 @@ export class MainMenuScene extends Phaser.Scene {
   private isReady = false;
   private toastText?: Phaser.GameObjects.Text;
   private toastBack?: Phaser.GameObjects.Graphics;
+  private toastHideTimer?: Phaser.Time.TimerEvent;
 
   constructor() {
     super('MainMenuScene');
@@ -54,19 +59,22 @@ export class MainMenuScene extends Phaser.Scene {
       return;
     }
 
-    playMusic(this, 'bgm_world', 0.20);
-    window.addEventListener('kingdom-seed:user-activated', () => playMusic(this, 'bgm_world', 0.20), { once: true });
+    playMusicWhenReady(this, 'bgm_world', 0.20);
 
     this.createIllustrationLedLobby();
     addCuteLobbyAccents(this, this.save.nickname, this.save.stars);
+    addV217LobbyArt(this, this.save.nickname, this.save.stars);
     this.createV210CleanChrome();
+    addV218LobbyArt(this, this.save.nickname, this.save.stars);
+    addV219LobbyArt(this, this.save.nickname, this.save.stars);
+    addV220LobbyArt(this, this.save.nickname, this.save.stars);
     this.createLobbyTextOverlay();
     this.createV26ExpansionShelf();
     this.createPremiumHitZones();
     this.createSmallStatusToast();
 
     this.time.delayedCall(0, () => {
-      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MainMenuScene', version: '2.16', at: Date.now() } }));
+      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MainMenuScene', version: '2.20.0', at: Date.now() } }));
     });
   }
 
@@ -259,11 +267,15 @@ export class MainMenuScene extends Phaser.Scene {
       fixedWidth: 420,
     }).setOrigin(0.5).setDepth(81).setAlpha(0);
 
-    this.time.delayedCall(450, () => this.showToast(`${this.save.nickname} 지휘관님, 왕국 방어 준비 완료`, 1700));
+    this.time.delayedCall(450, () => {
+      if (!this.scene.isActive('MainMenuScene')) return;
+      this.showToast(`${this.save.nickname} 지휘관님, 왕국 방어 준비 완료`, 1700, false);
+    });
   }
 
-  private showToast(message: string, holdMs = 1500): void {
-    playSfx(this, 'sfx_click');
+  private showToast(message: string, holdMs = 1500, withSfx = true): void {
+    if (!this.scene.isActive('MainMenuScene')) return;
+    if (withSfx) playSfx(this, 'sfx_click');
     if (!this.toastBack || !this.toastText) return;
 
     this.toastBack.clear();
@@ -275,18 +287,21 @@ export class MainMenuScene extends Phaser.Scene {
     this.toastBack.strokeRoundedRect(281, 446, 398, 26, 13);
 
     this.toastText.setText(message);
+    this.toastHideTimer?.remove(false);
     this.tweens.killTweensOf([this.toastBack, this.toastText]);
     this.toastBack.setAlpha(0);
     this.toastText.setAlpha(0).setY(463);
     this.tweens.add({ targets: [this.toastBack, this.toastText], alpha: 1, duration: 130, ease: 'Sine.easeOut' });
     this.tweens.add({ targets: this.toastText, y: 459, duration: 180, ease: 'Back.easeOut' });
-    this.time.delayedCall(holdMs, () => {
-      if (!this.toastBack || !this.toastText) return;
+    this.toastHideTimer = this.time.delayedCall(holdMs, () => {
+      if (!this.scene.isActive('MainMenuScene') || !this.toastBack || !this.toastText) return;
       this.tweens.add({ targets: [this.toastBack, this.toastText], alpha: 0, duration: 220, ease: 'Sine.easeIn' });
+      this.toastHideTimer = undefined;
     });
   }
 
   private goScene(sceneKey: string): void {
+    if (!this.scene.isActive('MainMenuScene')) return;
     playSfx(this, 'sfx_click');
     this.scene.start(sceneKey, { user: this.user, save: this.save });
   }
@@ -296,6 +311,7 @@ export class MainMenuScene extends Phaser.Scene {
   }
 
   private quickBattle(): void {
+    if (!this.scene.isActive('MainMenuScene')) return;
     playSfx(this, 'sfx_click');
     const playable = STAGE_LIST.reduce((best, stage) => {
       if (!stage.unlockRequires || this.save.clearedStages[stage.unlockRequires]?.bestStars) return stage;

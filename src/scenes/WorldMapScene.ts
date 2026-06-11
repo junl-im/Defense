@@ -2,10 +2,14 @@ import Phaser from 'phaser';
 import type { User } from 'firebase/auth';
 import { STAGE_LIST, getStageConfig } from '../game/balance';
 import type { StageConfig, StageId } from '../game/types';
-import { playMusic, playSfx } from '../game/AudioManager';
+import { playMusicWhenReady, playSfx } from '../game/AudioManager';
 import { addCoverImage } from '../game/CodeUiKit';
 import { addHitZoneDebug } from '../game/HitZoneDebug';
 import { addCuteWorldMapAccents } from '../game/CuteFantasyPolishV216';
+import { addV217WorldMapArt } from '../game/CuteFantasyArtV217';
+import { addV218WorldMapArt } from '../game/CuteFantasyArtV218';
+import { addV219WorldMapArt } from '../game/CuteFantasyArtV219';
+import { addV220WorldMapArt } from '../game/CuteFantasyArtV220';
 import type { PlayerSave } from '../services/firebase';
 
 type HotspotTone = 'gold' | 'blue' | 'white' | 'red' | 'green';
@@ -63,6 +67,7 @@ export class WorldMapScene extends Phaser.Scene {
   private selectedMarker?: Phaser.GameObjects.Container;
   private toastBack?: Phaser.GameObjects.Graphics;
   private toastText?: Phaser.GameObjects.Text;
+  private toastHideTimer?: Phaser.Time.TimerEvent;
 
   constructor() {
     super('WorldMapScene');
@@ -77,11 +82,14 @@ export class WorldMapScene extends Phaser.Scene {
   }
 
   create(): void {
-    playMusic(this, 'bgm_world', 0.22);
-    window.addEventListener('kingdom-seed:user-activated', () => playMusic(this, 'bgm_world', 0.22), { once: true });
+    playMusicWhenReady(this, 'bgm_world', 0.22);
 
     this.createIllustratedWorldMap();
     addCuteWorldMapAccents(this, STAGE_NODES);
+    addV217WorldMapArt(this, STAGE_NODES);
+    addV218WorldMapArt(this, STAGE_NODES);
+    addV219WorldMapArt(this, STAGE_NODES);
+    addV220WorldMapArt(this, STAGE_NODES);
     this.createStagePreviewLayer();
     this.createStageNodeHotspots();
     this.createNavigationHotspots();
@@ -89,7 +97,7 @@ export class WorldMapScene extends Phaser.Scene {
     this.refreshSelectedStage(false);
 
     this.time.delayedCall(0, () => {
-      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'WorldMapScene', version: '2.16', at: Date.now() } }));
+      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'WorldMapScene', version: '2.20.0', at: Date.now() } }));
     });
   }
 
@@ -380,11 +388,12 @@ export class WorldMapScene extends Phaser.Scene {
       this.showToast(this.lockedMessage(this.selectedStage));
       return;
     }
+    if (!this.scene.isActive('WorldMapScene')) return;
     this.scene.start('GameScene', { user: this.user, save: this.save, stageId: this.selectedStage.id });
   }
 
   private showToast(message: string, holdMs = 1500): void {
-    if (!this.toastBack || !this.toastText) return;
+    if (!this.scene.isActive('WorldMapScene') || !this.toastBack || !this.toastText) return;
 
     this.toastBack.clear();
     this.toastBack.fillStyle(0x071c3e, 0.70);
@@ -395,14 +404,16 @@ export class WorldMapScene extends Phaser.Scene {
     this.toastBack.strokeRoundedRect(225, 443, 510, 30, 15);
 
     this.toastText.setText(message);
+    this.toastHideTimer?.remove(false);
     this.tweens.killTweensOf([this.toastBack, this.toastText]);
     this.toastBack.setAlpha(0);
     this.toastText.setAlpha(0).setY(463);
     this.tweens.add({ targets: [this.toastBack, this.toastText], alpha: 1, duration: 130, ease: 'Sine.easeOut' });
     this.tweens.add({ targets: this.toastText, y: 458, duration: 180, ease: 'Back.easeOut' });
-    this.time.delayedCall(holdMs, () => {
-      if (!this.toastBack || !this.toastText) return;
+    this.toastHideTimer = this.time.delayedCall(holdMs, () => {
+      if (!this.scene.isActive('WorldMapScene') || !this.toastBack || !this.toastText) return;
       this.tweens.add({ targets: [this.toastBack, this.toastText], alpha: 0, duration: 220, ease: 'Sine.easeIn' });
+      this.toastHideTimer = undefined;
     });
   }
 }

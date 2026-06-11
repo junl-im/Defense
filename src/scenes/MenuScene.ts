@@ -4,6 +4,10 @@ import { playSfx } from '../game/AudioManager';
 import { addCoverImage } from '../game/CodeUiKit';
 import { addHitZoneDebug } from '../game/HitZoneDebug';
 import { addCuteLoginAccents } from '../game/CuteFantasyPolishV216';
+import { addV217LoginArt } from '../game/CuteFantasyArtV217';
+import { addV218LoginArt } from '../game/CuteFantasyArtV218';
+import { addV219LoginArt } from '../game/CuteFantasyArtV219';
+import { V220_VERSION_LABEL, addV220LoginArt } from '../game/CuteFantasyArtV220';
 import {
   completePendingRedirectSignIn,
   ensureAnonymousUser,
@@ -32,12 +36,16 @@ export class MenuScene extends Phaser.Scene {
 
     this.createCinematicSplash();
     addCuteLoginAccents(this);
+    addV217LoginArt(this);
+    addV218LoginArt(this);
+    addV219LoginArt(this);
+    addV220LoginArt(this);
     this.createStatusOverlay();
     this.createLoginHitZones();
     this.createUtilityHitZones();
 
     this.time.delayedCall(0, () => {
-      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MenuScene', version: '2.16.0', at: Date.now() } }));
+      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MenuScene', version: '2.20.0', at: Date.now() } }));
     });
 
     void this.bootstrapRedirectOrExistingUser();
@@ -112,11 +120,13 @@ export class MenuScene extends Phaser.Scene {
     }).setOrigin(0.5).setDepth(53);
 
     const chip = this.add.graphics().setDepth(53);
-    chip.fillStyle(0x071c3e, 0.46).fillRoundedRect(16, 14, 150, 24, 14);
-    chip.lineStyle(1, 0xffdc82, 0.45).strokeRoundedRect(16, 14, 150, 24, 14);
-    this.add.text(91, 26, 'v2.16.0 CUTE ART QA', {
+    chip.fillStyle(0x071c3e, 0.46).fillRoundedRect(16, 14, 188, 24, 14);
+    chip.lineStyle(1, 0xffdc82, 0.45).strokeRoundedRect(16, 14, 188, 24, 14);
+    this.add.text(110, 26, V220_VERSION_LABEL, {
       fontSize: '8px',
       color: '#f7fbff',
+      fixedWidth: 178,
+      align: 'center',
       fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',
       fontStyle: 'bold',
       shadow: { offsetX: 0, offsetY: 2, color: '#08315f', blur: 3, fill: true },
@@ -288,16 +298,18 @@ export class MenuScene extends Phaser.Scene {
     try {
       const redirectUser = await completePendingRedirectSignIn();
       const existing = redirectUser ?? await waitForUser();
+      if (!this.scene.isActive('MenuScene') || !this.statusText?.active) return;
       if (!existing) {
         this.statusText.setText('로그인 방식을 선택하세요.');
         return;
       }
       this.currentUser = existing;
       this.currentSave = await loadOrCreateSave(existing);
+      if (!this.scene.isActive('MenuScene') || !this.statusText?.active) return;
       this.statusText.setText(`${this.currentSave.nickname} 로그인됨. 빠른 시작으로 이어서 플레이하세요!`);
     } catch (error) {
       console.error(error);
-      this.statusText.setText('로그인 확인 실패. 설정/도메인 확인');
+      if (this.scene.isActive('MenuScene') && this.statusText?.active) this.statusText.setText('로그인 확인 실패. 설정/도메인 확인');
     }
   }
 
@@ -361,7 +373,7 @@ export class MenuScene extends Phaser.Scene {
     } catch (error) {
       console.error(error);
       const message = error instanceof Error ? error.message : '알 수 없는 오류';
-      this.statusText.setText(`실패: ${message}`);
+      if (this.scene.isActive('MenuScene') && this.statusText?.active) this.statusText.setText(`실패: ${message}`);
     }
   }
 
@@ -369,6 +381,9 @@ export class MenuScene extends Phaser.Scene {
     if (this.isTransitioning) return;
     this.isTransitioning = true;
     this.cameras.main.fadeOut(220, 255, 255, 255);
-    this.time.delayedCall(220, () => this.scene.start('MainMenuScene', { user, save }));
+    this.time.delayedCall(220, () => {
+      if (!this.scene.isActive('MenuScene')) return;
+      this.scene.start('MainMenuScene', { user, save });
+    });
   }
 }
