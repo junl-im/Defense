@@ -8,7 +8,8 @@ import { addV217LoginArt } from '../game/CuteFantasyArtV217';
 import { addV218LoginArt } from '../game/CuteFantasyArtV218';
 import { addV219LoginArt } from '../game/CuteFantasyArtV219';
 import { addV220LoginArt } from '../game/CuteFantasyArtV220';
-import { V221_VERSION_LABEL, addV221LoginArt } from '../game/CuteFantasyArtV221';
+import { addV221LoginArt } from '../game/CuteFantasyArtV221';
+import { V222_VERSION_LABEL, addV222LoginArt } from '../game/CuteFantasyArtV222';
 import { safeDelayedCall } from '../game/SceneSafety';
 import {
   completePendingRedirectSignIn,
@@ -43,12 +44,13 @@ export class MenuScene extends Phaser.Scene {
     addV219LoginArt(this);
     addV220LoginArt(this);
     addV221LoginArt(this);
+    addV222LoginArt(this);
     this.createStatusOverlay();
     this.createLoginHitZones();
     this.createUtilityHitZones();
 
     safeDelayedCall(this, 0, () => {
-      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MenuScene', version: '2.21.0', at: Date.now() } }));
+      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MenuScene', version: '2.22.0', at: Date.now() } }));
     });
 
     void this.bootstrapRedirectOrExistingUser();
@@ -125,7 +127,7 @@ export class MenuScene extends Phaser.Scene {
     const chip = this.add.graphics().setDepth(53);
     chip.fillStyle(0x071c3e, 0.46).fillRoundedRect(16, 14, 188, 24, 14);
     chip.lineStyle(1, 0xffdc82, 0.45).strokeRoundedRect(16, 14, 188, 24, 14);
-    this.add.text(110, 26, V221_VERSION_LABEL, {
+    this.add.text(110, 26, V222_VERSION_LABEL, {
       fontSize: '8px',
       color: '#f7fbff',
       fixedWidth: 178,

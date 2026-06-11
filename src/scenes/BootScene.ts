@@ -32,7 +32,7 @@ const WEBP_ENABLED = !BOOT_QUERY.has('png') && (() => {
 const WEBP_RASTER_PATTERNS = [
   /assets\/backgrounds\/(login_background_clean_v2_15|login_background_clean_v2_6|login_background_clean_v2_4|main_menu_splash_v2_15|main_menu_splash_v2_6|main_menu_splash_v2_4|worldmap_splash_v2_15|worldmap_splash_v2_1)\.png$/,
   /assets\/maps\/(v2_15|v2_14|v2_13|v2_12|v2_6|v2_4)\/[^/]+\.png$/,
-  /assets\/ui\/(v2_2|v2_3|v2_4|v2_6|v2_7|v2_8|v2_9|v2_10|v2_11|v2_12|v2_13|v2_14|v2_15|v2_16|v2_17|v2_18|v2_19|v2_20|v2_21)\/[^/]+\.png$/,
+  /assets\/ui\/(v2_2|v2_3|v2_4|v2_6|v2_7|v2_8|v2_9|v2_10|v2_11|v2_12|v2_13|v2_14|v2_15|v2_16|v2_17|v2_18|v2_19|v2_20|v2_21|v2_22)\/[^/]+\.png$/,
   /assets\/props\/v2_6\/[^/]+\.png$/,
   /assets\/maps\/(stage_card_009|stage_card_010|stage_card_011|stage_card_012|map_stage_009|map_stage_010|map_stage_011|map_stage_012)\.png$/,
   /assets\/units\/(v2_1|v2_4)\/[^/]+\.png$/,
@@ -513,6 +513,99 @@ export class BootScene extends Phaser.Scene {
     this.load.image('v221-world-route-sugar-string', 'assets/ui/v2_21/world_route_sugar_string_v2_21.png');
     this.load.image('v221-world-side-dream-clouds', 'assets/ui/v2_21/world_side_dream_clouds_v2_21.png');
     this.load.image('v221-world-stage-flaglet', 'assets/ui/v2_21/world_stage_flaglet_v2_21.png');
+
+    // v2.22 Moonberry Nursery massive art/QA overlay assets.
+    this.load.image('v222-battle-boss-alert-moon', 'assets/ui/v2_22/battle_boss_alert_moon_v2_22.png');
+    this.load.image('v222-battle-bottom-quilt-dock', 'assets/ui/v2_22/battle_bottom_quilt_dock_v2_22.png');
+    this.load.image('v222-battle-build-leaf-glow', 'assets/ui/v2_22/battle_build_leaf_glow_v2_22.png');
+    this.load.image('v222-battle-combo-berry', 'assets/ui/v2_22/battle_combo_berry_v2_22.png');
+    this.load.image('v222-battle-focus-totem', 'assets/ui/v2_22/battle_focus_totem_v2_22.png');
+    this.load.image('v222-battle-guard-badge', 'assets/ui/v2_22/battle_guard_badge_v2_22.png');
+    this.load.image('v222-battle-hero-badge', 'assets/ui/v2_22/battle_hero_badge_v2_22.png');
+    this.load.image('v222-battle-left-flower-ribbon', 'assets/ui/v2_22/battle_left_flower_ribbon_v2_22.png');
+    this.load.image('v222-battle-mana-pearl-chain', 'assets/ui/v2_22/battle_mana_pearl_chain_v2_22.png');
+    this.load.image('v222-battle-meteor-badge', 'assets/ui/v2_22/battle_meteor_badge_v2_22.png');
+    this.load.image('v222-battle-reward-moon-tray', 'assets/ui/v2_22/battle_reward_moon_tray_v2_22.png');
+    this.load.image('v222-battle-right-flower-ribbon', 'assets/ui/v2_22/battle_right_flower_ribbon_v2_22.png');
+    this.load.image('v222-battle-safe-pillow-corner', 'assets/ui/v2_22/battle_safe_pillow_corner_v2_22.png');
+    this.load.image('v222-battle-spell-card-guard-moon', 'assets/ui/v2_22/battle_spell_card_guard_moon_v2_22.png');
+    this.load.image('v222-battle-spell-card-hero-moon', 'assets/ui/v2_22/battle_spell_card_hero_moon_v2_22.png');
+    this.load.image('v222-battle-spell-card-meteor-moon', 'assets/ui/v2_22/battle_spell_card_meteor_moon_v2_22.png');
+    this.load.image('v222-battle-top-moon-lace', 'assets/ui/v2_22/battle_top_moon_lace_v2_22.png');
+    this.load.image('v222-battle-wave-moon-flag', 'assets/ui/v2_22/battle_wave_moon_flag_v2_22.png');
+    this.load.image('v222-decor-berry-blossom', 'assets/ui/v2_22/decor_berry_blossom_v2_22.png');
+    this.load.image('v222-decor-moon-sprinkle', 'assets/ui/v2_22/decor_moon_sprinkle_v2_22.png');
+    this.load.image('v222-decor-quilt-corner', 'assets/ui/v2_22/decor_quilt_corner_v2_22.png');
+    this.load.image('v222-decor-soft-divider', 'assets/ui/v2_22/decor_soft_divider_v2_22.png');
+    this.load.image('v222-input-guard-star', 'assets/ui/v2_22/input_guard_star_v2_22.png');
+    this.load.image('v222-lobby-bottom-quilt-arc', 'assets/ui/v2_22/lobby_bottom_quilt_arc_v2_22.png');
+    this.load.image('v222-lobby-daily-moon-tag', 'assets/ui/v2_22/lobby_daily_moon_tag_v2_22.png');
+    this.load.image('v222-lobby-event-lantern', 'assets/ui/v2_22/lobby_event_lantern_v2_22.png');
+    this.load.image('v222-lobby-growth-badge', 'assets/ui/v2_22/lobby_growth_badge_v2_22.png');
+    this.load.image('v222-lobby-guild-cushion', 'assets/ui/v2_22/lobby_guild_cushion_v2_22.png');
+    this.load.image('v222-lobby-hero-rosette', 'assets/ui/v2_22/lobby_hero_rosette_v2_22.png');
+    this.load.image('v222-lobby-mail-owl', 'assets/ui/v2_22/lobby_mail_owl_v2_22.png');
+    this.load.image('v222-lobby-moonberry-banner', 'assets/ui/v2_22/lobby_moonberry_banner_v2_22.png');
+    this.load.image('v222-lobby-quest-bookmark', 'assets/ui/v2_22/lobby_quest_bookmark_v2_22.png');
+    this.load.image('v222-lobby-resource-gem-moonjam', 'assets/ui/v2_22/lobby_resource_gem_moonjam_v2_22.png');
+    this.load.image('v222-lobby-resource-gold-moonjam', 'assets/ui/v2_22/lobby_resource_gold_moonjam_v2_22.png');
+    this.load.image('v222-lobby-resource-heart-moonjam', 'assets/ui/v2_22/lobby_resource_heart_moonjam_v2_22.png');
+    this.load.image('v222-lobby-resource-star-moonjam', 'assets/ui/v2_22/lobby_resource_star_moonjam_v2_22.png');
+    this.load.image('v222-lobby-shop-moon-cart', 'assets/ui/v2_22/lobby_shop_moon_cart_v2_22.png');
+    this.load.image('v222-lobby-storage-basket', 'assets/ui/v2_22/lobby_storage_basket_v2_22.png');
+    this.load.image('v222-lobby-tower-rosette', 'assets/ui/v2_22/lobby_tower_rosette_v2_22.png');
+    this.load.image('v222-login-account-stamp', 'assets/ui/v2_22/login_account_stamp_v2_22.png');
+    this.load.image('v222-login-cloud-puffs', 'assets/ui/v2_22/login_cloud_puffs_v2_22.png');
+    this.load.image('v222-login-google-button-gem', 'assets/ui/v2_22/login_google_button_gem_v2_22.png');
+    this.load.image('v222-login-moonberry-title', 'assets/ui/v2_22/login_moonberry_title_v2_22.png');
+    this.load.image('v222-login-pastel-cloud-roof', 'assets/ui/v2_22/login_pastel_cloud_roof_v2_22.png');
+    this.load.image('v222-login-quick-button-gem', 'assets/ui/v2_22/login_quick_button_gem_v2_22.png');
+    this.load.image('v222-login-quilt-window-frame', 'assets/ui/v2_22/login_quilt_window_frame_v2_22.png');
+    this.load.image('v222-login-safe-input-talisman', 'assets/ui/v2_22/login_safe_input_talisman_v2_22.png');
+    this.load.image('v222-login-settings-pinwheel', 'assets/ui/v2_22/login_settings_pinwheel_v2_22.png');
+    this.load.image('v222-mascot-owl-sage', 'assets/ui/v2_22/mascot_owl_sage_v2_22.png');
+    this.load.image('v222-mascot-peach-dragon', 'assets/ui/v2_22/mascot_peach_dragon_v2_22.png');
+    this.load.image('v222-mini-moon-quality-token-01', 'assets/ui/v2_22/mini_moon_quality_token_01_v2_22.png');
+    this.load.image('v222-mini-moon-quality-token-02', 'assets/ui/v2_22/mini_moon_quality_token_02_v2_22.png');
+    this.load.image('v222-mini-moon-quality-token-03', 'assets/ui/v2_22/mini_moon_quality_token_03_v2_22.png');
+    this.load.image('v222-mini-moon-quality-token-04', 'assets/ui/v2_22/mini_moon_quality_token_04_v2_22.png');
+    this.load.image('v222-mini-moon-quality-token-05', 'assets/ui/v2_22/mini_moon_quality_token_05_v2_22.png');
+    this.load.image('v222-mini-moon-quality-token-06', 'assets/ui/v2_22/mini_moon_quality_token_06_v2_22.png');
+    this.load.image('v222-mini-moon-quality-token-07', 'assets/ui/v2_22/mini_moon_quality_token_07_v2_22.png');
+    this.load.image('v222-mini-moon-quality-token-08', 'assets/ui/v2_22/mini_moon_quality_token_08_v2_22.png');
+    this.load.image('v222-mini-moon-quality-token-09', 'assets/ui/v2_22/mini_moon_quality_token_09_v2_22.png');
+    this.load.image('v222-mini-moon-quality-token-10', 'assets/ui/v2_22/mini_moon_quality_token_10_v2_22.png');
+    this.load.image('v222-mini-moon-quality-token-11', 'assets/ui/v2_22/mini_moon_quality_token_11_v2_22.png');
+    this.load.image('v222-mini-moon-quality-token-12', 'assets/ui/v2_22/mini_moon_quality_token_12_v2_22.png');
+    this.load.image('v222-modal-moon-frame', 'assets/ui/v2_22/modal_moon_frame_v2_22.png');
+    this.load.image('v222-npc-button-mouse', 'assets/ui/v2_22/npc_button_mouse_v2_22.png');
+    this.load.image('v222-npc-honeybee-princess', 'assets/ui/v2_22/npc_honeybee_princess_v2_22.png');
+    this.load.image('v222-npc-lilypad-frog', 'assets/ui/v2_22/npc_lilypad_frog_v2_22.png');
+    this.load.image('v222-npc-milk-fox', 'assets/ui/v2_22/npc_milk_fox_v2_22.png');
+    this.load.image('v222-performance-windmill', 'assets/ui/v2_22/performance_windmill_v2_22.png');
+    this.load.image('v222-qa-memory-basket', 'assets/ui/v2_22/qa_memory_basket_v2_22.png');
+    this.load.image('v222-qa-scene-lifebuoy', 'assets/ui/v2_22/qa_scene_lifebuoy_v2_22.png');
+    this.load.image('v222-qa-timer-broom', 'assets/ui/v2_22/qa_timer_broom_v2_22.png');
+    this.load.image('v222-qa-touch-paw', 'assets/ui/v2_22/qa_touch_paw_v2_22.png');
+    this.load.image('v222-qa-webp-feather', 'assets/ui/v2_22/qa_webp_feather_v2_22.png');
+    this.load.image('v222-ribbon-moon-bow', 'assets/ui/v2_22/ribbon_moon_bow_v2_22.png');
+    this.load.image('v222-sparkle-moon-dust', 'assets/ui/v2_22/sparkle_moon_dust_v2_22.png');
+    this.load.image('v222-storybook-moon-plaque', 'assets/ui/v2_22/storybook_moon_plaque_v2_22.png');
+    this.load.image('v222-toast-moon-frame', 'assets/ui/v2_22/toast_moon_frame_v2_22.png');
+    this.load.image('v222-world-boss-castle-gate', 'assets/ui/v2_22/world_boss_castle_gate_v2_22.png');
+    this.load.image('v222-world-caravan-pillow', 'assets/ui/v2_22/world_caravan_pillow_v2_22.png');
+    this.load.image('v222-world-cloud-banner', 'assets/ui/v2_22/world_cloud_banner_v2_22.png');
+    this.load.image('v222-world-compass-mooncookie', 'assets/ui/v2_22/world_compass_mooncookie_v2_22.png');
+    this.load.image('v222-world-current-moon-crown', 'assets/ui/v2_22/world_current_moon_crown_v2_22.png');
+    this.load.image('v222-world-locked-pillow-lock', 'assets/ui/v2_22/world_locked_pillow_lock_v2_22.png');
+    this.load.image('v222-world-minimap-scroll', 'assets/ui/v2_22/world_minimap_scroll_v2_22.png');
+    this.load.image('v222-world-node-moonberry-ring', 'assets/ui/v2_22/world_node_moonberry_ring_v2_22.png');
+    this.load.image('v222-world-preview-moon-frame', 'assets/ui/v2_22/world_preview_moon_frame_v2_22.png');
+    this.load.image('v222-world-reward-berry', 'assets/ui/v2_22/world_reward_berry_v2_22.png');
+    this.load.image('v222-world-route-leaf-ribbon', 'assets/ui/v2_22/world_route_leaf_ribbon_v2_22.png');
+    this.load.image('v222-world-route-pearl-string', 'assets/ui/v2_22/world_route_pearl_string_v2_22.png');
+    this.load.image('v222-world-side-clouds', 'assets/ui/v2_22/world_side_clouds_v2_22.png');
+    this.load.image('v222-world-stage-tag', 'assets/ui/v2_22/world_stage_tag_v2_22.png');
 
     // v2.10 mobile design polish assets: cleaner compact plates, smaller touch UI, and WebP-first frames.
     this.load.image('v2-mobile-chip-v210', 'assets/ui/v2_15/mobile_chip_v2_15.png');

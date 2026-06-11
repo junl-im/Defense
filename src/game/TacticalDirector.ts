@@ -3,6 +3,7 @@ import type { StageConfig } from './types';
 import type { HeroProfile } from './HeroLoadout';
 import { heroSelectionSummary } from './HeroLoadout';
 import { getRewardChestCount } from './MissionBoard';
+import { safeDelayedCall } from './SceneSafety';
 
 export function installBattleDirectorHud(scene: Phaser.Scene, stage: StageConfig, hero: HeroProfile): void {
   const root = scene.add.container(480, 106).setDepth(74).setAlpha(0);
@@ -24,7 +25,10 @@ export function installBattleDirectorHud(scene: Phaser.Scene, stage: StageConfig
   }).setOrigin(0, 0.5);
   root.add([bg, title, info]);
   scene.tweens.add({ targets: root, alpha: 1, y: 118, duration: 420, ease: 'Back.easeOut' });
-  scene.time.delayedCall(4100, () => scene.tweens.add({ targets: root, alpha: 0, y: 92, duration: 420, onComplete: () => root.destroy() }));
+  safeDelayedCall(scene, 4100, () => {
+    if (!root.active) return;
+    scene.tweens.add({ targets: root, alpha: 0, y: 92, duration: 420, onComplete: () => root.destroy() });
+  }, { canRun: () => root.active });
 }
 
 export function showPremiumToast(scene: Phaser.Scene, text: string, y = 418): void {
@@ -39,5 +43,8 @@ export function showPremiumToast(scene: Phaser.Scene, text: string, y = 418): vo
   }).setOrigin(0.5);
   root.add([bg, label]);
   scene.tweens.add({ targets: root, alpha: 1, scale: 1, duration: 180, ease: 'Back.easeOut' });
-  scene.time.delayedCall(1500, () => scene.tweens.add({ targets: root, alpha: 0, y: y - 16, duration: 360, onComplete: () => root.destroy() }));
+  safeDelayedCall(scene, 1500, () => {
+    if (!root.active) return;
+    scene.tweens.add({ targets: root, alpha: 0, y: y - 16, duration: 360, onComplete: () => root.destroy() });
+  }, { canRun: () => root.active });
 }

@@ -10,6 +10,7 @@ import { addV218LobbyArt } from '../game/CuteFantasyArtV218';
 import { addV219LobbyArt } from '../game/CuteFantasyArtV219';
 import { addV220LobbyArt } from '../game/CuteFantasyArtV220';
 import { addV221LobbyArt } from '../game/CuteFantasyArtV221';
+import { addV222LobbyArt } from '../game/CuteFantasyArtV222';
 import { clearTimer, safeDelayedCall } from '../game/SceneSafety';
 import type { PlayerSave } from '../services/firebase';
 
@@ -71,6 +72,7 @@ export class MainMenuScene extends Phaser.Scene {
     addV219LobbyArt(this, this.save.nickname, this.save.stars);
     addV220LobbyArt(this, this.save.nickname, this.save.stars);
     addV221LobbyArt(this, this.save.nickname, this.save.stars);
+    addV222LobbyArt(this, this.save.nickname, this.save.stars);
     this.createLobbyTextOverlay();
     this.createV26ExpansionShelf();
     this.createPremiumHitZones();
@@ -78,7 +80,7 @@ export class MainMenuScene extends Phaser.Scene {
     this.installSceneCleanup();
 
     safeDelayedCall(this, 0, () => {
-      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MainMenuScene', version: '2.21.0', at: Date.now() } }));
+      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MainMenuScene', version: '2.22.0', at: Date.now() } }));
     });
   }
 

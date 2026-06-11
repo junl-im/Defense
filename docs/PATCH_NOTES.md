@@ -68,3 +68,9 @@
 - 로그인 비동기 상태 갱신, 로비/월드맵 토스트, 전투 지연 호출/스폰 스트림/메시지 타이머에 씬 생존 가드를 추가했습니다.
 - QA: `npx tsc --noEmit --pretty false` 및 `npm run build` 통과.
 
+## v2.22.0 - Moonberry Nursery Massive Art QA
+- `public/assets/ui/v2_22/`에 신규 PNG 91개 + WebP 91개, 총 182개 문베리 보육실 판타지 에셋을 추가했습니다.
+- `CuteFantasyArtV222.ts`를 추가해 로그인/로비/월드맵/전투 장식 레이어를 v2.22로 확장했습니다.
+- BootScene WebP 최적화 로더 대상에 `v2_22` UI 경로를 포함하고 중복 로드 1건을 정리했습니다.
+- `SceneSafety.ts` 헬퍼를 보강하고 전투/보상/프리미엄 토스트/전술 HUD 일부 지연 호출을 안전 호출로 교체했습니다.
+- QA: `npx tsc --noEmit --pretty false` 및 `npm run build` 통과.

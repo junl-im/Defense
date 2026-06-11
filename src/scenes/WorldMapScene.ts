@@ -11,6 +11,7 @@ import { addV218WorldMapArt } from '../game/CuteFantasyArtV218';
 import { addV219WorldMapArt } from '../game/CuteFantasyArtV219';
 import { addV220WorldMapArt } from '../game/CuteFantasyArtV220';
 import { addV221WorldMapArt } from '../game/CuteFantasyArtV221';
+import { addV222WorldMapArt } from '../game/CuteFantasyArtV222';
 import { clearTimer, safeDelayedCall } from '../game/SceneSafety';
 import type { PlayerSave } from '../services/firebase';
 
@@ -93,6 +94,7 @@ export class WorldMapScene extends Phaser.Scene {
     addV219WorldMapArt(this, STAGE_NODES);
     addV220WorldMapArt(this, STAGE_NODES);
     addV221WorldMapArt(this, STAGE_NODES);
+    addV222WorldMapArt(this, STAGE_NODES);
     this.createStagePreviewLayer();
     this.createStageNodeHotspots();
     this.createNavigationHotspots();
@@ -101,7 +103,7 @@ export class WorldMapScene extends Phaser.Scene {
     this.installSceneCleanup();
 
     safeDelayedCall(this, 0, () => {
-      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'WorldMapScene', version: '2.21.0', at: Date.now() } }));
+      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'WorldMapScene', version: '2.22.0', at: Date.now() } }));
     });
   }
 

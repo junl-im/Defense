@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import type { StageConfig } from './types';
+import { safeDelayedCall } from './SceneSafety';
 
 export type CombatRewardInput = {
   stage: StageConfig;
@@ -63,10 +64,10 @@ export function showStageObjectiveBanner(scene: Phaser.Scene, stage: StageConfig
   c.add([title, subtitle]);
   c.setAlpha(0).setScale(0.96);
   scene.tweens.add({ targets: c, alpha: 1, scale: 1, duration: 220, ease: 'Cubic.easeOut' });
-  scene.time.delayedCall(3800, () => {
+  safeDelayedCall(scene, 3800, () => {
     if (!c.active) return;
     scene.tweens.add({ targets: c, alpha: 0, y: y - 10, duration: 320, ease: 'Cubic.easeIn', onComplete: () => c.destroy() });
-  });
+  }, { canRun: () => c.active });
 }
 
 function objectiveHintFor(stage: StageConfig): string {

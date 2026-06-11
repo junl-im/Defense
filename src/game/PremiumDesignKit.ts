@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { safeDelayedCall } from './SceneSafety';
 
 export type PremiumButtonOptions = {
   x: number;
@@ -128,7 +129,10 @@ export function makePremiumToast(scene: Phaser.Scene, message: string, y = 108):
   root.add([bg, text]);
   root.setAlpha(0).setScale(0.96);
   scene.tweens.add({ targets: root, alpha: 1, scale: 1, duration: 160, ease: 'Back.easeOut' });
-  scene.time.delayedCall(1600, () => scene.tweens.add({ targets: root, alpha: 0, y: y - 10, duration: 180, onComplete: () => root.destroy() }));
+  safeDelayedCall(scene, 1600, () => {
+    if (!root.active) return;
+    scene.tweens.add({ targets: root, alpha: 0, y: y - 10, duration: 180, onComplete: () => root.destroy() });
+  }, { canRun: () => root.active });
   return root;
 }
 

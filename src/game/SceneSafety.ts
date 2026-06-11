@@ -29,3 +29,11 @@ export function clearTimer(event?: Phaser.Time.TimerEvent): undefined {
   event?.remove(false);
   return undefined;
 }
+
+export function isGameObjectAlive<T extends Phaser.GameObjects.GameObject | undefined>(target: T): target is Exclude<T, undefined> {
+  return Boolean(target?.active && target.scene?.sys?.isActive());
+}
+
+export function clearTimers(events: Array<Phaser.Time.TimerEvent | undefined>): void {
+  events.forEach((event) => event?.remove(false));
+}

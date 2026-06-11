@@ -39,6 +39,7 @@ import { addV218BattleArt } from '../game/CuteFantasyArtV218';
 import { addV219BattleArt } from '../game/CuteFantasyArtV219';
 import { addV220BattleArt } from '../game/CuteFantasyArtV220';
 import { addV221BattleArt } from '../game/CuteFantasyArtV221';
+import { addV222BattleArt } from '../game/CuteFantasyArtV222';
 import { clearTimer, safeDelayedCall } from '../game/SceneSafety';
 
 type CastingSpell = 'meteor' | 'mercenary' | undefined;
@@ -212,6 +213,7 @@ export class GameScene extends Phaser.Scene {
     addV219BattleArt(this, this.stage.theme);
     addV220BattleArt(this, this.stage.theme);
     addV221BattleArt(this, this.stage.theme);
+    addV222BattleArt(this, this.stage.theme);
     addStageV26Decor(this, this.stage);
     installScenePerformanceWatch(this);
     this.createHud();
@@ -635,10 +637,10 @@ export class GameScene extends Phaser.Scene {
   private showRunModifierBanner(): void {
     if (this.runModifiers.length === 0) return;
     const text = this.runModifiers.map((modifier) => modifier.label).join('  /  ');
-    this.time.delayedCall(620, () => {
+    safeDelayedCall(this, 620, () => {
       if (this.ended) return;
       this.showMessage(`작전 변수: ${text}`);
-    });
+    }, { canRun: () => this.isSceneLive() });
   }
 
   private refreshArmySynergy(): void {
@@ -1190,7 +1192,9 @@ export class GameScene extends Phaser.Scene {
 
     const close = this.add.text(0, 53, '빈 곳 터치: 닫기', { fontSize: '7px', color: '#355d96', fontStyle: 'bold' }).setOrigin(0.5);
     menu.add(close);
-    this.time.delayedCall(6500, () => menu.active && menu.destroy());
+    safeDelayedCall(this, 6500, () => {
+      if (menu.active) menu.destroy();
+    }, { canRun: () => this.isSceneLive() && menu.active });
   }
 
   private towerCost(kind: TowerKind, baseCost: number): number {
