@@ -15,6 +15,7 @@ import { addV222WorldMapArt } from "../game/CuteFantasyArtV222";
 import { addV224WorldMapArt } from "../game/PremiumIllustrationArtV224";
 import { addV225WorldMapArt } from "../game/PremiumIllustrationArtV225";
 import { addV226WorldMapArt } from "../game/PremiumIllustrationArtV226";
+import { addV227WorldMapArt } from "../game/PremiumIllustrationArtV227";
 import { loadProgressiveArtBundle, warmProgressiveArtBundle } from "../game/ProgressiveAssetLoader";
 import { clearTimer, safeDelayedCall } from "../game/SceneSafety";
 import { useCumulativeArtLayers } from "../game/PerformanceMode";
@@ -119,7 +120,7 @@ export class WorldMapScene extends Phaser.Scene {
     safeDelayedCall(this, 0, () => {
       window.dispatchEvent(
         new CustomEvent("kingdom-seed:scene-ready", {
-          detail: { scene: "WorldMapScene", version: "2.26.0", at: Date.now() },
+          detail: { scene: "WorldMapScene", version: "2.27.0", at: Date.now() },
         }),
       );
     });
@@ -131,8 +132,9 @@ export class WorldMapScene extends Phaser.Scene {
       if (!this.scene.isActive("WorldMapScene")) return;
       addV225WorldMapArt(this, STAGE_NODES);
       addV226WorldMapArt(this, STAGE_NODES);
-      warmProgressiveArtBundle(this, "battle", { delayMs: 1300 });
-    }, { delayMs: 240 });
+      addV227WorldMapArt(this, STAGE_NODES);
+      warmProgressiveArtBundle(this, "battle", { delayMs: 2300 });
+    }, { delayMs: 620 });
   }
 
   private findFirstPlayableIndex(): number {
@@ -616,7 +618,7 @@ export class WorldMapScene extends Phaser.Scene {
       return;
     }
     if (!this.scene.isActive("WorldMapScene")) return;
-    warmProgressiveArtBundle(this, "battle", { delayMs: 0 });
+    warmProgressiveArtBundle(this, "battle", { delayMs: 650 });
     this.scene.start("GameScene", {
       user: this.user,
       save: this.save,

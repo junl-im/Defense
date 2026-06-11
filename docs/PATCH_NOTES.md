@@ -75,11 +75,14 @@
 - `SceneSafety.ts` 헬퍼를 보강하고 전투/보상/프리미엄 토스트/전술 HUD 일부 지연 호출을 안전 호출로 교체했습니다.
 - QA: `npx tsc --noEmit --pretty false` 및 `npm run build` 통과.
 
-## v2.26.0 - Atelier Ultra Polish + Performance QA
-- `public/assets/ui/v2_26/`에 PNG 138개 + WebP 138개, 총 276개 원화풍 아틀리에 에셋을 추가했습니다.
-- `PremiumIllustrationArtV226.ts`를 추가해 로그인/로비/월드맵/전투 화면의 고퀄 레이어를 확장했습니다.
-- `ProgressiveAssetLoader.ts`에 로딩 큐와 씬별 코어 에셋 예산을 추가해 첫 탭/첫 전환 중 로더가 몰리지 않도록 정리했습니다.
-- 로그인 화면의 고퀄 아트 스트리밍과 Firebase 확인을 지연시켜 첫 시작 직후 CPU/네트워크 경쟁을 줄였습니다.
-- v2.26 핵심 아트는 기본 모드에서 제한 로드, 대량 갤러리 아트는 `?fullart`/`?galleryart`에서만 로드합니다.
-- QA: `npx tsc --noEmit --pretty false` 통과. `npm run build`는 원본 zip의 기존 `node_modules` 권한/optional binding 문제로 의존성 재설치가 필요합니다.
+## v2.27.0 Atelier Micro-Opt Ultra Polish QA
 
+- 신규 v2_27 원화풍 UI/에셋 194종 추가, PNG/WebP 총 388개 파일.
+- v2.27 아트 레이어와 번들 정의를 `PremiumIllustrationArtV227.ts`에 추가.
+- 점진 에셋 로더를 전역 큐 + idle 로딩 방식으로 보강하여 씬 전환 직후 로딩 충돌을 완화.
+- 첫 7초 동안 progressive art 병렬 다운로드를 1로 제한하여 첫 탭/초기 전환 안정성 개선.
+- 빠른 시작 후 Firebase background sync를 4.6초 지연.
+- 로그인 Firebase 자동 확인을 6.2초 지연.
+- 로비/월드/전투 아트 스트리밍 지연값 조정.
+- BootScene WebP/fast boot skip 패턴에 v2_27 추가.
+- 전투 건설 지점 대형 hit zone 좌표 전달 오류 수정.

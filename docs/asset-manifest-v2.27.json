@@ -1,0 +1,2136 @@
+[
+  {
+    "name": "login_grand_illustration_bg",
+    "kind": "login",
+    "group": "core",
+    "size": [
+      960,
+      540
+    ],
+    "png": "public/assets/ui/v2_27/login_grand_illustration_bg_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_grand_illustration_bg_v2_27.webp"
+  },
+  {
+    "name": "login_silk_card_frame",
+    "kind": "login",
+    "group": "core",
+    "size": [
+      640,
+      360
+    ],
+    "png": "public/assets/ui/v2_27/login_silk_card_frame_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_silk_card_frame_v2_27.webp"
+  },
+  {
+    "name": "login_royal_glass_title",
+    "kind": "login",
+    "group": "core",
+    "size": [
+      520,
+      150
+    ],
+    "png": "public/assets/ui/v2_27/login_royal_glass_title_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_royal_glass_title_v2_27.webp"
+  },
+  {
+    "name": "login_prism_curtain_lights",
+    "kind": "login",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_prism_curtain_lights_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_prism_curtain_lights_v2_27.webp"
+  },
+  {
+    "name": "login_start_button_enamel",
+    "kind": "login",
+    "group": "core",
+    "size": [
+      420,
+      110
+    ],
+    "png": "public/assets/ui/v2_27/login_start_button_enamel_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_start_button_enamel_v2_27.webp"
+  },
+  {
+    "name": "login_cloud_button_opal",
+    "kind": "login",
+    "group": "core",
+    "size": [
+      420,
+      110
+    ],
+    "png": "public/assets/ui/v2_27/login_cloud_button_opal_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_cloud_button_opal_v2_27.webp"
+  },
+  {
+    "name": "login_small_button_ivory",
+    "kind": "login",
+    "group": "core",
+    "size": [
+      420,
+      110
+    ],
+    "png": "public/assets/ui/v2_27/login_small_button_ivory_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_small_button_ivory_v2_27.webp"
+  },
+  {
+    "name": "login_left_flora_filigree",
+    "kind": "login",
+    "group": "core",
+    "size": [
+      300,
+      300
+    ],
+    "png": "public/assets/ui/v2_27/login_left_flora_filigree_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_left_flora_filigree_v2_27.webp"
+  },
+  {
+    "name": "login_right_flora_filigree",
+    "kind": "login",
+    "group": "core",
+    "size": [
+      300,
+      300
+    ],
+    "png": "public/assets/ui/v2_27/login_right_flora_filigree_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_right_flora_filigree_v2_27.webp"
+  },
+  {
+    "name": "login_mascot_fox_prince",
+    "kind": "login",
+    "group": "core",
+    "size": [
+      360,
+      360
+    ],
+    "png": "public/assets/ui/v2_27/login_mascot_fox_prince_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_mascot_fox_prince_v2_27.webp"
+  },
+  {
+    "name": "login_mascot_deer_priestess",
+    "kind": "login",
+    "group": "core",
+    "size": [
+      360,
+      360
+    ],
+    "png": "public/assets/ui/v2_27/login_mascot_deer_priestess_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_mascot_deer_priestess_v2_27.webp"
+  },
+  {
+    "name": "login_mascot_bluebird_messenger",
+    "kind": "login",
+    "group": "core",
+    "size": [
+      360,
+      360
+    ],
+    "png": "public/assets/ui/v2_27/login_mascot_bluebird_messenger_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_mascot_bluebird_messenger_v2_27.webp"
+  },
+  {
+    "name": "login_latency_guard_badge",
+    "kind": "login",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_latency_guard_badge_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_latency_guard_badge_v2_27.webp"
+  },
+  {
+    "name": "login_local_boot_badge",
+    "kind": "login",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_local_boot_badge_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_local_boot_badge_v2_27.webp"
+  },
+  {
+    "name": "login_soft_shadow_vignette",
+    "kind": "login",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_soft_shadow_vignette_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_soft_shadow_vignette_v2_27.webp"
+  },
+  {
+    "name": "login_gold_micro_divider",
+    "kind": "login",
+    "group": "core",
+    "size": [
+      520,
+      150
+    ],
+    "png": "public/assets/ui/v2_27/login_gold_micro_divider_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_gold_micro_divider_v2_27.webp"
+  },
+  {
+    "name": "login_palette_glow",
+    "kind": "login",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_palette_glow_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_palette_glow_v2_27.webp"
+  },
+  {
+    "name": "login_input_focus_ring",
+    "kind": "login",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_input_focus_ring_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_input_focus_ring_v2_27.webp"
+  },
+  {
+    "name": "lobby_grand_hall_bg",
+    "kind": "lobby",
+    "group": "core",
+    "size": [
+      960,
+      540
+    ],
+    "png": "public/assets/ui/v2_27/lobby_grand_hall_bg_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_grand_hall_bg_v2_27.webp"
+  },
+  {
+    "name": "lobby_gilded_header_banner",
+    "kind": "lobby",
+    "group": "core",
+    "size": [
+      520,
+      150
+    ],
+    "png": "public/assets/ui/v2_27/lobby_gilded_header_banner_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_gilded_header_banner_v2_27.webp"
+  },
+  {
+    "name": "lobby_nav_silk_frame",
+    "kind": "lobby",
+    "group": "core",
+    "size": [
+      820,
+      140
+    ],
+    "png": "public/assets/ui/v2_27/lobby_nav_silk_frame_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_nav_silk_frame_v2_27.webp"
+  },
+  {
+    "name": "lobby_profile_glass_card",
+    "kind": "lobby",
+    "group": "core",
+    "size": [
+      640,
+      360
+    ],
+    "png": "public/assets/ui/v2_27/lobby_profile_glass_card_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_profile_glass_card_v2_27.webp"
+  },
+  {
+    "name": "lobby_resource_star_medal",
+    "kind": "lobby",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_resource_star_medal_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_resource_star_medal_v2_27.webp"
+  },
+  {
+    "name": "lobby_resource_coin_medal",
+    "kind": "lobby",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_resource_coin_medal_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_resource_coin_medal_v2_27.webp"
+  },
+  {
+    "name": "lobby_resource_gem_medal",
+    "kind": "lobby",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_resource_gem_medal_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_resource_gem_medal_v2_27.webp"
+  },
+  {
+    "name": "lobby_resource_heart_medal",
+    "kind": "lobby",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_resource_heart_medal_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_resource_heart_medal_v2_27.webp"
+  },
+  {
+    "name": "lobby_shop_pavilion",
+    "kind": "lobby",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_shop_pavilion_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_shop_pavilion_v2_27.webp"
+  },
+  {
+    "name": "lobby_quest_codex",
+    "kind": "lobby",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_quest_codex_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_quest_codex_v2_27.webp"
+  },
+  {
+    "name": "lobby_mail_crystal_swan",
+    "kind": "lobby",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_mail_crystal_swan_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_mail_crystal_swan_v2_27.webp"
+  },
+  {
+    "name": "lobby_event_lantern",
+    "kind": "lobby",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_event_lantern_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_event_lantern_v2_27.webp"
+  },
+  {
+    "name": "lobby_npc_squirrel_painter",
+    "kind": "lobby",
+    "group": "core",
+    "size": [
+      360,
+      360
+    ],
+    "png": "public/assets/ui/v2_27/lobby_npc_squirrel_painter_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_npc_squirrel_painter_v2_27.webp"
+  },
+  {
+    "name": "lobby_npc_bunny_chef",
+    "kind": "lobby",
+    "group": "core",
+    "size": [
+      360,
+      360
+    ],
+    "png": "public/assets/ui/v2_27/lobby_npc_bunny_chef_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_npc_bunny_chef_v2_27.webp"
+  },
+  {
+    "name": "lobby_npc_cat_archmage",
+    "kind": "lobby",
+    "group": "core",
+    "size": [
+      360,
+      360
+    ],
+    "png": "public/assets/ui/v2_27/lobby_npc_cat_archmage_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_npc_cat_archmage_v2_27.webp"
+  },
+  {
+    "name": "lobby_npc_otter_scout",
+    "kind": "lobby",
+    "group": "core",
+    "size": [
+      360,
+      360
+    ],
+    "png": "public/assets/ui/v2_27/lobby_npc_otter_scout_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_npc_otter_scout_v2_27.webp"
+  },
+  {
+    "name": "lobby_perf_budget_medal",
+    "kind": "lobby",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_perf_budget_medal_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_perf_budget_medal_v2_27.webp"
+  },
+  {
+    "name": "lobby_touch_safe_badge",
+    "kind": "lobby",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_touch_safe_badge_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_touch_safe_badge_v2_27.webp"
+  },
+  {
+    "name": "lobby_idle_stream_badge",
+    "kind": "lobby",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_idle_stream_badge_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_idle_stream_badge_v2_27.webp"
+  },
+  {
+    "name": "lobby_corner_floral_spray",
+    "kind": "lobby",
+    "group": "core",
+    "size": [
+      300,
+      300
+    ],
+    "png": "public/assets/ui/v2_27/lobby_corner_floral_spray_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_corner_floral_spray_v2_27.webp"
+  },
+  {
+    "name": "world_story_atlas_bg",
+    "kind": "world",
+    "group": "core",
+    "size": [
+      960,
+      540
+    ],
+    "png": "public/assets/ui/v2_27/world_story_atlas_bg_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_story_atlas_bg_v2_27.webp"
+  },
+  {
+    "name": "world_preview_gallery_frame",
+    "kind": "world",
+    "group": "core",
+    "size": [
+      640,
+      360
+    ],
+    "png": "public/assets/ui/v2_27/world_preview_gallery_frame_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_preview_gallery_frame_v2_27.webp"
+  },
+  {
+    "name": "world_stage_jewel_ring",
+    "kind": "world",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_stage_jewel_ring_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_stage_jewel_ring_v2_27.webp"
+  },
+  {
+    "name": "world_route_silk_prism",
+    "kind": "world",
+    "group": "core",
+    "size": [
+      520,
+      150
+    ],
+    "png": "public/assets/ui/v2_27/world_route_silk_prism_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_route_silk_prism_v2_27.webp"
+  },
+  {
+    "name": "world_boss_castle_gate",
+    "kind": "world",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_boss_castle_gate_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_boss_castle_gate_v2_27.webp"
+  },
+  {
+    "name": "world_lock_royal_seal",
+    "kind": "world",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_lock_royal_seal_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_lock_royal_seal_v2_27.webp"
+  },
+  {
+    "name": "world_reward_gem_bloom",
+    "kind": "world",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_reward_gem_bloom_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_reward_gem_bloom_v2_27.webp"
+  },
+  {
+    "name": "world_selected_crown_glow",
+    "kind": "world",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_selected_crown_glow_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_selected_crown_glow_v2_27.webp"
+  },
+  {
+    "name": "world_cloud_chapter_card",
+    "kind": "world",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_cloud_chapter_card_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_cloud_chapter_card_v2_27.webp"
+  },
+  {
+    "name": "world_compass_porcelain",
+    "kind": "world",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_compass_porcelain_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_compass_porcelain_v2_27.webp"
+  },
+  {
+    "name": "world_mist_watercolor",
+    "kind": "world",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_mist_watercolor_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_mist_watercolor_v2_27.webp"
+  },
+  {
+    "name": "world_island_shadow",
+    "kind": "world",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_island_shadow_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_island_shadow_v2_27.webp"
+  },
+  {
+    "name": "world_node_crown_micro",
+    "kind": "world",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_node_crown_micro_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_node_crown_micro_v2_27.webp"
+  },
+  {
+    "name": "world_route_spark_dot",
+    "kind": "world",
+    "group": "core",
+    "size": [
+      520,
+      150
+    ],
+    "png": "public/assets/ui/v2_27/world_route_spark_dot_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_route_spark_dot_v2_27.webp"
+  },
+  {
+    "name": "world_safe_scroll_badge",
+    "kind": "world",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_safe_scroll_badge_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_safe_scroll_badge_v2_27.webp"
+  },
+  {
+    "name": "world_scroll_edge_left",
+    "kind": "world",
+    "group": "core",
+    "size": [
+      300,
+      300
+    ],
+    "png": "public/assets/ui/v2_27/world_scroll_edge_left_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_scroll_edge_left_v2_27.webp"
+  },
+  {
+    "name": "world_scroll_edge_right",
+    "kind": "world",
+    "group": "core",
+    "size": [
+      300,
+      300
+    ],
+    "png": "public/assets/ui/v2_27/world_scroll_edge_right_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_scroll_edge_right_v2_27.webp"
+  },
+  {
+    "name": "world_stage_focus_halo",
+    "kind": "world",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_stage_focus_halo_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_stage_focus_halo_v2_27.webp"
+  },
+  {
+    "name": "battle_painterly_overlay",
+    "kind": "battle",
+    "group": "core",
+    "size": [
+      960,
+      540
+    ],
+    "png": "public/assets/ui/v2_27/battle_painterly_overlay_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_painterly_overlay_v2_27.webp"
+  },
+  {
+    "name": "battle_top_hud_gilded_frame",
+    "kind": "battle",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_top_hud_gilded_frame_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_top_hud_gilded_frame_v2_27.webp"
+  },
+  {
+    "name": "battle_bottom_skill_silk_dock",
+    "kind": "battle",
+    "group": "core",
+    "size": [
+      820,
+      140
+    ],
+    "png": "public/assets/ui/v2_27/battle_bottom_skill_silk_dock_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_bottom_skill_silk_dock_v2_27.webp"
+  },
+  {
+    "name": "battle_side_vine_left",
+    "kind": "battle",
+    "group": "core",
+    "size": [
+      180,
+      540
+    ],
+    "png": "public/assets/ui/v2_27/battle_side_vine_left_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_side_vine_left_v2_27.webp"
+  },
+  {
+    "name": "battle_side_vine_right",
+    "kind": "battle",
+    "group": "core",
+    "size": [
+      180,
+      540
+    ],
+    "png": "public/assets/ui/v2_27/battle_side_vine_right_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_side_vine_right_v2_27.webp"
+  },
+  {
+    "name": "battle_skill_meteor_enamel",
+    "kind": "battle",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_skill_meteor_enamel_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_skill_meteor_enamel_v2_27.webp"
+  },
+  {
+    "name": "battle_skill_guard_enamel",
+    "kind": "battle",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_skill_guard_enamel_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_skill_guard_enamel_v2_27.webp"
+  },
+  {
+    "name": "battle_skill_hero_enamel",
+    "kind": "battle",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_skill_hero_enamel_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_skill_hero_enamel_v2_27.webp"
+  },
+  {
+    "name": "battle_combo_prism_badge",
+    "kind": "battle",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_combo_prism_badge_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_combo_prism_badge_v2_27.webp"
+  },
+  {
+    "name": "battle_boss_warning_emblem",
+    "kind": "battle",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_boss_warning_emblem_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_boss_warning_emblem_v2_27.webp"
+  },
+  {
+    "name": "battle_mana_crystal_drop",
+    "kind": "battle",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_mana_crystal_drop_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_mana_crystal_drop_v2_27.webp"
+  },
+  {
+    "name": "battle_safe_corner_left",
+    "kind": "battle",
+    "group": "core",
+    "size": [
+      300,
+      300
+    ],
+    "png": "public/assets/ui/v2_27/battle_safe_corner_left_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_safe_corner_left_v2_27.webp"
+  },
+  {
+    "name": "battle_safe_corner_right",
+    "kind": "battle",
+    "group": "core",
+    "size": [
+      300,
+      300
+    ],
+    "png": "public/assets/ui/v2_27/battle_safe_corner_right_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_safe_corner_right_v2_27.webp"
+  },
+  {
+    "name": "battle_frame_budget_badge",
+    "kind": "battle",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_frame_budget_badge_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_frame_budget_badge_v2_27.webp"
+  },
+  {
+    "name": "battle_target_focus_ring",
+    "kind": "battle",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_target_focus_ring_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_target_focus_ring_v2_27.webp"
+  },
+  {
+    "name": "battle_wave_banner_silk",
+    "kind": "battle",
+    "group": "core",
+    "size": [
+      520,
+      150
+    ],
+    "png": "public/assets/ui/v2_27/battle_wave_banner_silk_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_wave_banner_silk_v2_27.webp"
+  },
+  {
+    "name": "battle_reward_petal",
+    "kind": "battle",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_reward_petal_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_reward_petal_v2_27.webp"
+  },
+  {
+    "name": "battle_touch_safe_mark",
+    "kind": "battle",
+    "group": "core",
+    "size": [
+      256,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_touch_safe_mark_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_touch_safe_mark_v2_27.webp"
+  },
+  {
+    "name": "login_gallery_masterpiece_01",
+    "kind": "login",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_gallery_masterpiece_01_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_gallery_masterpiece_01_v2_27.webp"
+  },
+  {
+    "name": "login_gallery_masterpiece_02",
+    "kind": "login",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_gallery_masterpiece_02_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_gallery_masterpiece_02_v2_27.webp"
+  },
+  {
+    "name": "login_gallery_masterpiece_03",
+    "kind": "login",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_gallery_masterpiece_03_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_gallery_masterpiece_03_v2_27.webp"
+  },
+  {
+    "name": "login_gallery_masterpiece_04",
+    "kind": "login",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_gallery_masterpiece_04_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_gallery_masterpiece_04_v2_27.webp"
+  },
+  {
+    "name": "login_gallery_masterpiece_05",
+    "kind": "login",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_gallery_masterpiece_05_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_gallery_masterpiece_05_v2_27.webp"
+  },
+  {
+    "name": "login_gallery_masterpiece_06",
+    "kind": "login",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_gallery_masterpiece_06_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_gallery_masterpiece_06_v2_27.webp"
+  },
+  {
+    "name": "login_gallery_masterpiece_07",
+    "kind": "login",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_gallery_masterpiece_07_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_gallery_masterpiece_07_v2_27.webp"
+  },
+  {
+    "name": "login_gallery_masterpiece_08",
+    "kind": "login",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_gallery_masterpiece_08_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_gallery_masterpiece_08_v2_27.webp"
+  },
+  {
+    "name": "login_gallery_masterpiece_09",
+    "kind": "login",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_gallery_masterpiece_09_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_gallery_masterpiece_09_v2_27.webp"
+  },
+  {
+    "name": "login_gallery_masterpiece_10",
+    "kind": "login",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_gallery_masterpiece_10_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_gallery_masterpiece_10_v2_27.webp"
+  },
+  {
+    "name": "login_gallery_masterpiece_11",
+    "kind": "login",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_gallery_masterpiece_11_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_gallery_masterpiece_11_v2_27.webp"
+  },
+  {
+    "name": "login_gallery_masterpiece_12",
+    "kind": "login",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_gallery_masterpiece_12_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_gallery_masterpiece_12_v2_27.webp"
+  },
+  {
+    "name": "login_gallery_masterpiece_13",
+    "kind": "login",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_gallery_masterpiece_13_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_gallery_masterpiece_13_v2_27.webp"
+  },
+  {
+    "name": "login_gallery_masterpiece_14",
+    "kind": "login",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_gallery_masterpiece_14_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_gallery_masterpiece_14_v2_27.webp"
+  },
+  {
+    "name": "login_gallery_masterpiece_15",
+    "kind": "login",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_gallery_masterpiece_15_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_gallery_masterpiece_15_v2_27.webp"
+  },
+  {
+    "name": "login_gallery_masterpiece_16",
+    "kind": "login",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_gallery_masterpiece_16_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_gallery_masterpiece_16_v2_27.webp"
+  },
+  {
+    "name": "login_gallery_masterpiece_17",
+    "kind": "login",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_gallery_masterpiece_17_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_gallery_masterpiece_17_v2_27.webp"
+  },
+  {
+    "name": "login_gallery_masterpiece_18",
+    "kind": "login",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_gallery_masterpiece_18_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_gallery_masterpiece_18_v2_27.webp"
+  },
+  {
+    "name": "login_gallery_masterpiece_19",
+    "kind": "login",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_gallery_masterpiece_19_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_gallery_masterpiece_19_v2_27.webp"
+  },
+  {
+    "name": "login_gallery_masterpiece_20",
+    "kind": "login",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_gallery_masterpiece_20_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_gallery_masterpiece_20_v2_27.webp"
+  },
+  {
+    "name": "login_gallery_masterpiece_21",
+    "kind": "login",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_gallery_masterpiece_21_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_gallery_masterpiece_21_v2_27.webp"
+  },
+  {
+    "name": "login_gallery_masterpiece_22",
+    "kind": "login",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_gallery_masterpiece_22_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_gallery_masterpiece_22_v2_27.webp"
+  },
+  {
+    "name": "login_gallery_masterpiece_23",
+    "kind": "login",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_gallery_masterpiece_23_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_gallery_masterpiece_23_v2_27.webp"
+  },
+  {
+    "name": "login_gallery_masterpiece_24",
+    "kind": "login",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/login_gallery_masterpiece_24_v2_27.png",
+    "webp": "public/assets/ui/v2_27/login_gallery_masterpiece_24_v2_27.webp"
+  },
+  {
+    "name": "lobby_gallery_masterpiece_01",
+    "kind": "lobby",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_gallery_masterpiece_01_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_gallery_masterpiece_01_v2_27.webp"
+  },
+  {
+    "name": "lobby_gallery_masterpiece_02",
+    "kind": "lobby",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_gallery_masterpiece_02_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_gallery_masterpiece_02_v2_27.webp"
+  },
+  {
+    "name": "lobby_gallery_masterpiece_03",
+    "kind": "lobby",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_gallery_masterpiece_03_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_gallery_masterpiece_03_v2_27.webp"
+  },
+  {
+    "name": "lobby_gallery_masterpiece_04",
+    "kind": "lobby",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_gallery_masterpiece_04_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_gallery_masterpiece_04_v2_27.webp"
+  },
+  {
+    "name": "lobby_gallery_masterpiece_05",
+    "kind": "lobby",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_gallery_masterpiece_05_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_gallery_masterpiece_05_v2_27.webp"
+  },
+  {
+    "name": "lobby_gallery_masterpiece_06",
+    "kind": "lobby",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_gallery_masterpiece_06_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_gallery_masterpiece_06_v2_27.webp"
+  },
+  {
+    "name": "lobby_gallery_masterpiece_07",
+    "kind": "lobby",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_gallery_masterpiece_07_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_gallery_masterpiece_07_v2_27.webp"
+  },
+  {
+    "name": "lobby_gallery_masterpiece_08",
+    "kind": "lobby",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_gallery_masterpiece_08_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_gallery_masterpiece_08_v2_27.webp"
+  },
+  {
+    "name": "lobby_gallery_masterpiece_09",
+    "kind": "lobby",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_gallery_masterpiece_09_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_gallery_masterpiece_09_v2_27.webp"
+  },
+  {
+    "name": "lobby_gallery_masterpiece_10",
+    "kind": "lobby",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_gallery_masterpiece_10_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_gallery_masterpiece_10_v2_27.webp"
+  },
+  {
+    "name": "lobby_gallery_masterpiece_11",
+    "kind": "lobby",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_gallery_masterpiece_11_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_gallery_masterpiece_11_v2_27.webp"
+  },
+  {
+    "name": "lobby_gallery_masterpiece_12",
+    "kind": "lobby",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_gallery_masterpiece_12_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_gallery_masterpiece_12_v2_27.webp"
+  },
+  {
+    "name": "lobby_gallery_masterpiece_13",
+    "kind": "lobby",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_gallery_masterpiece_13_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_gallery_masterpiece_13_v2_27.webp"
+  },
+  {
+    "name": "lobby_gallery_masterpiece_14",
+    "kind": "lobby",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_gallery_masterpiece_14_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_gallery_masterpiece_14_v2_27.webp"
+  },
+  {
+    "name": "lobby_gallery_masterpiece_15",
+    "kind": "lobby",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_gallery_masterpiece_15_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_gallery_masterpiece_15_v2_27.webp"
+  },
+  {
+    "name": "lobby_gallery_masterpiece_16",
+    "kind": "lobby",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_gallery_masterpiece_16_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_gallery_masterpiece_16_v2_27.webp"
+  },
+  {
+    "name": "lobby_gallery_masterpiece_17",
+    "kind": "lobby",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_gallery_masterpiece_17_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_gallery_masterpiece_17_v2_27.webp"
+  },
+  {
+    "name": "lobby_gallery_masterpiece_18",
+    "kind": "lobby",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_gallery_masterpiece_18_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_gallery_masterpiece_18_v2_27.webp"
+  },
+  {
+    "name": "lobby_gallery_masterpiece_19",
+    "kind": "lobby",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_gallery_masterpiece_19_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_gallery_masterpiece_19_v2_27.webp"
+  },
+  {
+    "name": "lobby_gallery_masterpiece_20",
+    "kind": "lobby",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_gallery_masterpiece_20_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_gallery_masterpiece_20_v2_27.webp"
+  },
+  {
+    "name": "lobby_gallery_masterpiece_21",
+    "kind": "lobby",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_gallery_masterpiece_21_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_gallery_masterpiece_21_v2_27.webp"
+  },
+  {
+    "name": "lobby_gallery_masterpiece_22",
+    "kind": "lobby",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_gallery_masterpiece_22_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_gallery_masterpiece_22_v2_27.webp"
+  },
+  {
+    "name": "lobby_gallery_masterpiece_23",
+    "kind": "lobby",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_gallery_masterpiece_23_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_gallery_masterpiece_23_v2_27.webp"
+  },
+  {
+    "name": "lobby_gallery_masterpiece_24",
+    "kind": "lobby",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/lobby_gallery_masterpiece_24_v2_27.png",
+    "webp": "public/assets/ui/v2_27/lobby_gallery_masterpiece_24_v2_27.webp"
+  },
+  {
+    "name": "world_gallery_masterpiece_01",
+    "kind": "world",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_gallery_masterpiece_01_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_gallery_masterpiece_01_v2_27.webp"
+  },
+  {
+    "name": "world_gallery_masterpiece_02",
+    "kind": "world",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_gallery_masterpiece_02_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_gallery_masterpiece_02_v2_27.webp"
+  },
+  {
+    "name": "world_gallery_masterpiece_03",
+    "kind": "world",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_gallery_masterpiece_03_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_gallery_masterpiece_03_v2_27.webp"
+  },
+  {
+    "name": "world_gallery_masterpiece_04",
+    "kind": "world",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_gallery_masterpiece_04_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_gallery_masterpiece_04_v2_27.webp"
+  },
+  {
+    "name": "world_gallery_masterpiece_05",
+    "kind": "world",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_gallery_masterpiece_05_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_gallery_masterpiece_05_v2_27.webp"
+  },
+  {
+    "name": "world_gallery_masterpiece_06",
+    "kind": "world",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_gallery_masterpiece_06_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_gallery_masterpiece_06_v2_27.webp"
+  },
+  {
+    "name": "world_gallery_masterpiece_07",
+    "kind": "world",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_gallery_masterpiece_07_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_gallery_masterpiece_07_v2_27.webp"
+  },
+  {
+    "name": "world_gallery_masterpiece_08",
+    "kind": "world",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_gallery_masterpiece_08_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_gallery_masterpiece_08_v2_27.webp"
+  },
+  {
+    "name": "world_gallery_masterpiece_09",
+    "kind": "world",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_gallery_masterpiece_09_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_gallery_masterpiece_09_v2_27.webp"
+  },
+  {
+    "name": "world_gallery_masterpiece_10",
+    "kind": "world",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_gallery_masterpiece_10_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_gallery_masterpiece_10_v2_27.webp"
+  },
+  {
+    "name": "world_gallery_masterpiece_11",
+    "kind": "world",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_gallery_masterpiece_11_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_gallery_masterpiece_11_v2_27.webp"
+  },
+  {
+    "name": "world_gallery_masterpiece_12",
+    "kind": "world",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_gallery_masterpiece_12_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_gallery_masterpiece_12_v2_27.webp"
+  },
+  {
+    "name": "world_gallery_masterpiece_13",
+    "kind": "world",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_gallery_masterpiece_13_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_gallery_masterpiece_13_v2_27.webp"
+  },
+  {
+    "name": "world_gallery_masterpiece_14",
+    "kind": "world",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_gallery_masterpiece_14_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_gallery_masterpiece_14_v2_27.webp"
+  },
+  {
+    "name": "world_gallery_masterpiece_15",
+    "kind": "world",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_gallery_masterpiece_15_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_gallery_masterpiece_15_v2_27.webp"
+  },
+  {
+    "name": "world_gallery_masterpiece_16",
+    "kind": "world",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_gallery_masterpiece_16_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_gallery_masterpiece_16_v2_27.webp"
+  },
+  {
+    "name": "world_gallery_masterpiece_17",
+    "kind": "world",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_gallery_masterpiece_17_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_gallery_masterpiece_17_v2_27.webp"
+  },
+  {
+    "name": "world_gallery_masterpiece_18",
+    "kind": "world",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_gallery_masterpiece_18_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_gallery_masterpiece_18_v2_27.webp"
+  },
+  {
+    "name": "world_gallery_masterpiece_19",
+    "kind": "world",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_gallery_masterpiece_19_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_gallery_masterpiece_19_v2_27.webp"
+  },
+  {
+    "name": "world_gallery_masterpiece_20",
+    "kind": "world",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_gallery_masterpiece_20_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_gallery_masterpiece_20_v2_27.webp"
+  },
+  {
+    "name": "world_gallery_masterpiece_21",
+    "kind": "world",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_gallery_masterpiece_21_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_gallery_masterpiece_21_v2_27.webp"
+  },
+  {
+    "name": "world_gallery_masterpiece_22",
+    "kind": "world",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_gallery_masterpiece_22_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_gallery_masterpiece_22_v2_27.webp"
+  },
+  {
+    "name": "world_gallery_masterpiece_23",
+    "kind": "world",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_gallery_masterpiece_23_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_gallery_masterpiece_23_v2_27.webp"
+  },
+  {
+    "name": "world_gallery_masterpiece_24",
+    "kind": "world",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/world_gallery_masterpiece_24_v2_27.png",
+    "webp": "public/assets/ui/v2_27/world_gallery_masterpiece_24_v2_27.webp"
+  },
+  {
+    "name": "battle_gallery_masterpiece_01",
+    "kind": "battle",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_gallery_masterpiece_01_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_gallery_masterpiece_01_v2_27.webp"
+  },
+  {
+    "name": "battle_gallery_masterpiece_02",
+    "kind": "battle",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_gallery_masterpiece_02_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_gallery_masterpiece_02_v2_27.webp"
+  },
+  {
+    "name": "battle_gallery_masterpiece_03",
+    "kind": "battle",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_gallery_masterpiece_03_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_gallery_masterpiece_03_v2_27.webp"
+  },
+  {
+    "name": "battle_gallery_masterpiece_04",
+    "kind": "battle",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_gallery_masterpiece_04_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_gallery_masterpiece_04_v2_27.webp"
+  },
+  {
+    "name": "battle_gallery_masterpiece_05",
+    "kind": "battle",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_gallery_masterpiece_05_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_gallery_masterpiece_05_v2_27.webp"
+  },
+  {
+    "name": "battle_gallery_masterpiece_06",
+    "kind": "battle",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_gallery_masterpiece_06_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_gallery_masterpiece_06_v2_27.webp"
+  },
+  {
+    "name": "battle_gallery_masterpiece_07",
+    "kind": "battle",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_gallery_masterpiece_07_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_gallery_masterpiece_07_v2_27.webp"
+  },
+  {
+    "name": "battle_gallery_masterpiece_08",
+    "kind": "battle",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_gallery_masterpiece_08_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_gallery_masterpiece_08_v2_27.webp"
+  },
+  {
+    "name": "battle_gallery_masterpiece_09",
+    "kind": "battle",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_gallery_masterpiece_09_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_gallery_masterpiece_09_v2_27.webp"
+  },
+  {
+    "name": "battle_gallery_masterpiece_10",
+    "kind": "battle",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_gallery_masterpiece_10_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_gallery_masterpiece_10_v2_27.webp"
+  },
+  {
+    "name": "battle_gallery_masterpiece_11",
+    "kind": "battle",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_gallery_masterpiece_11_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_gallery_masterpiece_11_v2_27.webp"
+  },
+  {
+    "name": "battle_gallery_masterpiece_12",
+    "kind": "battle",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_gallery_masterpiece_12_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_gallery_masterpiece_12_v2_27.webp"
+  },
+  {
+    "name": "battle_gallery_masterpiece_13",
+    "kind": "battle",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_gallery_masterpiece_13_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_gallery_masterpiece_13_v2_27.webp"
+  },
+  {
+    "name": "battle_gallery_masterpiece_14",
+    "kind": "battle",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_gallery_masterpiece_14_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_gallery_masterpiece_14_v2_27.webp"
+  },
+  {
+    "name": "battle_gallery_masterpiece_15",
+    "kind": "battle",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_gallery_masterpiece_15_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_gallery_masterpiece_15_v2_27.webp"
+  },
+  {
+    "name": "battle_gallery_masterpiece_16",
+    "kind": "battle",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_gallery_masterpiece_16_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_gallery_masterpiece_16_v2_27.webp"
+  },
+  {
+    "name": "battle_gallery_masterpiece_17",
+    "kind": "battle",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_gallery_masterpiece_17_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_gallery_masterpiece_17_v2_27.webp"
+  },
+  {
+    "name": "battle_gallery_masterpiece_18",
+    "kind": "battle",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_gallery_masterpiece_18_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_gallery_masterpiece_18_v2_27.webp"
+  },
+  {
+    "name": "battle_gallery_masterpiece_19",
+    "kind": "battle",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_gallery_masterpiece_19_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_gallery_masterpiece_19_v2_27.webp"
+  },
+  {
+    "name": "battle_gallery_masterpiece_20",
+    "kind": "battle",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_gallery_masterpiece_20_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_gallery_masterpiece_20_v2_27.webp"
+  },
+  {
+    "name": "battle_gallery_masterpiece_21",
+    "kind": "battle",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_gallery_masterpiece_21_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_gallery_masterpiece_21_v2_27.webp"
+  },
+  {
+    "name": "battle_gallery_masterpiece_22",
+    "kind": "battle",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_gallery_masterpiece_22_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_gallery_masterpiece_22_v2_27.webp"
+  },
+  {
+    "name": "battle_gallery_masterpiece_23",
+    "kind": "battle",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_gallery_masterpiece_23_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_gallery_masterpiece_23_v2_27.webp"
+  },
+  {
+    "name": "battle_gallery_masterpiece_24",
+    "kind": "battle",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/battle_gallery_masterpiece_24_v2_27.png",
+    "webp": "public/assets/ui/v2_27/battle_gallery_masterpiece_24_v2_27.webp"
+  },
+  {
+    "name": "shared_micro_detail_01",
+    "kind": "shared",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/shared_micro_detail_01_v2_27.png",
+    "webp": "public/assets/ui/v2_27/shared_micro_detail_01_v2_27.webp"
+  },
+  {
+    "name": "shared_micro_detail_02",
+    "kind": "shared",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/shared_micro_detail_02_v2_27.png",
+    "webp": "public/assets/ui/v2_27/shared_micro_detail_02_v2_27.webp"
+  },
+  {
+    "name": "shared_micro_detail_03",
+    "kind": "shared",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/shared_micro_detail_03_v2_27.png",
+    "webp": "public/assets/ui/v2_27/shared_micro_detail_03_v2_27.webp"
+  },
+  {
+    "name": "shared_micro_detail_04",
+    "kind": "shared",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/shared_micro_detail_04_v2_27.png",
+    "webp": "public/assets/ui/v2_27/shared_micro_detail_04_v2_27.webp"
+  },
+  {
+    "name": "shared_micro_detail_05",
+    "kind": "shared",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/shared_micro_detail_05_v2_27.png",
+    "webp": "public/assets/ui/v2_27/shared_micro_detail_05_v2_27.webp"
+  },
+  {
+    "name": "shared_micro_detail_06",
+    "kind": "shared",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/shared_micro_detail_06_v2_27.png",
+    "webp": "public/assets/ui/v2_27/shared_micro_detail_06_v2_27.webp"
+  },
+  {
+    "name": "shared_micro_detail_07",
+    "kind": "shared",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/shared_micro_detail_07_v2_27.png",
+    "webp": "public/assets/ui/v2_27/shared_micro_detail_07_v2_27.webp"
+  },
+  {
+    "name": "shared_micro_detail_08",
+    "kind": "shared",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/shared_micro_detail_08_v2_27.png",
+    "webp": "public/assets/ui/v2_27/shared_micro_detail_08_v2_27.webp"
+  },
+  {
+    "name": "shared_micro_detail_09",
+    "kind": "shared",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/shared_micro_detail_09_v2_27.png",
+    "webp": "public/assets/ui/v2_27/shared_micro_detail_09_v2_27.webp"
+  },
+  {
+    "name": "shared_micro_detail_10",
+    "kind": "shared",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/shared_micro_detail_10_v2_27.png",
+    "webp": "public/assets/ui/v2_27/shared_micro_detail_10_v2_27.webp"
+  },
+  {
+    "name": "shared_micro_detail_11",
+    "kind": "shared",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/shared_micro_detail_11_v2_27.png",
+    "webp": "public/assets/ui/v2_27/shared_micro_detail_11_v2_27.webp"
+  },
+  {
+    "name": "shared_micro_detail_12",
+    "kind": "shared",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/shared_micro_detail_12_v2_27.png",
+    "webp": "public/assets/ui/v2_27/shared_micro_detail_12_v2_27.webp"
+  },
+  {
+    "name": "shared_micro_detail_13",
+    "kind": "shared",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/shared_micro_detail_13_v2_27.png",
+    "webp": "public/assets/ui/v2_27/shared_micro_detail_13_v2_27.webp"
+  },
+  {
+    "name": "shared_micro_detail_14",
+    "kind": "shared",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/shared_micro_detail_14_v2_27.png",
+    "webp": "public/assets/ui/v2_27/shared_micro_detail_14_v2_27.webp"
+  },
+  {
+    "name": "shared_micro_detail_15",
+    "kind": "shared",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/shared_micro_detail_15_v2_27.png",
+    "webp": "public/assets/ui/v2_27/shared_micro_detail_15_v2_27.webp"
+  },
+  {
+    "name": "shared_micro_detail_16",
+    "kind": "shared",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/shared_micro_detail_16_v2_27.png",
+    "webp": "public/assets/ui/v2_27/shared_micro_detail_16_v2_27.webp"
+  },
+  {
+    "name": "shared_micro_detail_17",
+    "kind": "shared",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/shared_micro_detail_17_v2_27.png",
+    "webp": "public/assets/ui/v2_27/shared_micro_detail_17_v2_27.webp"
+  },
+  {
+    "name": "shared_micro_detail_18",
+    "kind": "shared",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/shared_micro_detail_18_v2_27.png",
+    "webp": "public/assets/ui/v2_27/shared_micro_detail_18_v2_27.webp"
+  },
+  {
+    "name": "shared_micro_detail_19",
+    "kind": "shared",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/shared_micro_detail_19_v2_27.png",
+    "webp": "public/assets/ui/v2_27/shared_micro_detail_19_v2_27.webp"
+  },
+  {
+    "name": "shared_micro_detail_20",
+    "kind": "shared",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/shared_micro_detail_20_v2_27.png",
+    "webp": "public/assets/ui/v2_27/shared_micro_detail_20_v2_27.webp"
+  },
+  {
+    "name": "shared_micro_detail_21",
+    "kind": "shared",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/shared_micro_detail_21_v2_27.png",
+    "webp": "public/assets/ui/v2_27/shared_micro_detail_21_v2_27.webp"
+  },
+  {
+    "name": "shared_micro_detail_22",
+    "kind": "shared",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/shared_micro_detail_22_v2_27.png",
+    "webp": "public/assets/ui/v2_27/shared_micro_detail_22_v2_27.webp"
+  },
+  {
+    "name": "shared_micro_detail_23",
+    "kind": "shared",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/shared_micro_detail_23_v2_27.png",
+    "webp": "public/assets/ui/v2_27/shared_micro_detail_23_v2_27.webp"
+  },
+  {
+    "name": "shared_micro_detail_24",
+    "kind": "shared",
+    "group": "gallery",
+    "size": [
+      384,
+      256
+    ],
+    "png": "public/assets/ui/v2_27/shared_micro_detail_24_v2_27.png",
+    "webp": "public/assets/ui/v2_27/shared_micro_detail_24_v2_27.webp"
+  }
+]

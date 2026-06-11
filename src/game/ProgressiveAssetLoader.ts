@@ -1,6 +1,10 @@
 import Phaser from "phaser";
 import { safeDelayedCall } from "./SceneSafety";
 import { isLowDeviceProfile } from "./PerformanceMode";
+import {
+  V227_CORE_ASSET_BUNDLES,
+  V227_GALLERY_ASSET_BUNDLES,
+} from "./PremiumIllustrationArtV227";
 
 export type ProgressiveArtBundle = "login" | "lobby" | "world" | "battle";
 type AssetDef = { key: string; path: string };
@@ -325,6 +329,8 @@ const query = new URLSearchParams(
 );
 
 let cachedWebpSupport: boolean | undefined;
+let globalProgressiveQueue: Promise<void> = Promise.resolve();
+const progressiveModuleStartedAt = Date.now();
 
 function supportsWebp(): boolean {
   if (cachedWebpSupport !== undefined) return cachedWebpSupport;
@@ -360,10 +366,15 @@ function getProgressiveBundleDefinitions(
   bundle: ProgressiveArtBundle,
   includeGallery: boolean,
 ): AssetDef[] {
-  const core = [...V226_CORE_BUNDLES[bundle], ...CORE_BUNDLES[bundle]];
+  const core = [
+    ...V227_CORE_ASSET_BUNDLES[bundle],
+    ...V226_CORE_BUNDLES[bundle],
+    ...CORE_BUNDLES[bundle],
+  ];
   if (includeGallery) {
     return [
       ...core,
+      ...V227_GALLERY_ASSET_BUNDLES[bundle],
       ...V226_GALLERY_BUNDLES[bundle],
       ...GALLERY_BUNDLES[bundle],
     ];
@@ -374,14 +385,35 @@ function getProgressiveBundleDefinitions(
   return core.slice(0, isLowDeviceProfile() ? lowCap : cap);
 }
 
+function scheduleIdleTask(task: () => void, timeout = 1800): void {
+  if (typeof window === "undefined") {
+    task();
+    return;
+  }
+  const idleWindow = window as Window & {
+    requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
+  };
+  if (idleWindow.requestIdleCallback) {
+    idleWindow.requestIdleCallback(task, { timeout });
+    return;
+  }
+  window.setTimeout(task, Math.min(timeout, 700));
+}
+
 function enqueueProgressiveLoad(
   scene: Phaser.Scene,
   task: () => Promise<void>,
 ): void {
   const scoped = scene as SceneWithProgressiveQueue;
-  scoped.__kingdomSeedProgressiveQueue = (scoped.__kingdomSeedProgressiveQueue ?? Promise.resolve())
-    .then(task)
-    .catch((error) => console.warn("Progressive art load skipped:", error));
+  const runScoped = (): Promise<void> => {
+    scoped.__kingdomSeedProgressiveQueue = (scoped.__kingdomSeedProgressiveQueue ?? Promise.resolve())
+      .then(task)
+      .catch((error) => console.warn("Progressive art load skipped:", error));
+    return scoped.__kingdomSeedProgressiveQueue;
+  };
+  globalProgressiveQueue = globalProgressiveQueue
+    .then(runScoped)
+    .catch((error) => console.warn("Global progressive art queue skipped:", error));
 }
 
 function loadMissingAssets(scene: Phaser.Scene, assets: AssetDef[]): Promise<void> {
@@ -392,7 +424,8 @@ function loadMissingAssets(scene: Phaser.Scene, assets: AssetDef[]): Promise<voi
       maxParallelDownloads?: number;
       isLoading?: () => boolean;
     };
-    loader.maxParallelDownloads = isLowDeviceProfile() ? 1 : 2;
+    const quietBootWindow = Date.now() - progressiveModuleStartedAt < 7000;
+    loader.maxParallelDownloads = isLowDeviceProfile() || quietBootWindow ? 1 : 2;
     const done = (): void => {
       loader.off("complete", done);
       resolve();
@@ -420,11 +453,14 @@ export function loadProgressiveArtBundle(
       return;
     }
 
-    enqueueProgressiveLoad(scene, async () => {
+    scheduleIdleTask(() => {
       if (!sceneIsLive(scene)) return;
-      await loadMissingAssets(scene, missing);
-      if (sceneIsLive(scene)) onComplete();
-    });
+      enqueueProgressiveLoad(scene, async () => {
+        if (!sceneIsLive(scene)) return;
+        await loadMissingAssets(scene, missing);
+        if (sceneIsLive(scene)) onComplete();
+      });
+    }, isLowDeviceProfile() ? 2800 : 1800);
   });
 }
 

@@ -13,9 +13,12 @@ import { addV222LoginArt } from "../game/CuteFantasyArtV222";
 import { addV224LoginArt } from "../game/PremiumIllustrationArtV224";
 import { addV225LoginArt } from "../game/PremiumIllustrationArtV225";
 import {
-  V226_VERSION_LABEL,
   addV226LoginArt,
 } from "../game/PremiumIllustrationArtV226";
+import {
+  V227_VERSION_LABEL,
+  addV227LoginArt,
+} from "../game/PremiumIllustrationArtV227";
 import { loadProgressiveArtBundle } from "../game/ProgressiveAssetLoader";
 import { safeDelayedCall } from "../game/SceneSafety";
 import { useCumulativeArtLayers } from "../game/PerformanceMode";
@@ -60,12 +63,12 @@ export class MenuScene extends Phaser.Scene {
     safeDelayedCall(this, 0, () => {
       window.dispatchEvent(
         new CustomEvent("kingdom-seed:scene-ready", {
-          detail: { scene: "MenuScene", version: "2.26.0", at: Date.now() },
+          detail: { scene: "MenuScene", version: "2.27.0", at: Date.now() },
         }),
       );
     });
 
-    safeDelayedCall(this, 3200, () => void this.bootstrapRedirectOrExistingUser());
+    safeDelayedCall(this, 6200, () => void this.bootstrapRedirectOrExistingUser());
   }
 
   private getFirebaseService(): Promise<typeof import("../services/firebase")> {
@@ -78,7 +81,8 @@ export class MenuScene extends Phaser.Scene {
       if (!this.scene.isActive("MenuScene") || this.isTransitioning) return;
       addV225LoginArt(this);
       addV226LoginArt(this);
-    }, { delayMs: 1700 });
+      addV227LoginArt(this);
+    }, { delayMs: 2600 });
   }
 
   private createCinematicSplash(): void {
@@ -200,7 +204,7 @@ export class MenuScene extends Phaser.Scene {
     chip.fillStyle(0x071c3e, 0.46).fillRoundedRect(16, 14, 188, 24, 14);
     chip.lineStyle(1, 0xffdc82, 0.45).strokeRoundedRect(16, 14, 188, 24, 14);
     this.add
-      .text(110, 26, V226_VERSION_LABEL, {
+      .text(110, 26, V227_VERSION_LABEL, {
         fontSize: "8px",
         color: "#f7fbff",
         fixedWidth: 178,
@@ -526,9 +530,11 @@ export class MenuScene extends Phaser.Scene {
     const session = createInstantLocalSession();
     this.enterMainMenu(session.user, session.save);
 
-    void this.getFirebaseService()
-      .then(({ ensureQuickStartSession }) => ensureQuickStartSession(360))
-      .catch((error) => console.warn("Background quick-start cloud sync skipped:", error));
+    window.setTimeout(() => {
+      void this.getFirebaseService()
+        .then(({ ensureQuickStartSession }) => ensureQuickStartSession(360))
+        .catch((error) => console.warn("Background quick-start cloud sync skipped:", error));
+    }, 4600);
   }
 
   private async startGoogle(): Promise<void> {
