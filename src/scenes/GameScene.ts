@@ -860,7 +860,7 @@ export class GameScene extends Phaser.Scene {
     // This prevents top-edge tower menus from opening outside the screen.
     return {
       x: Phaser.Math.Clamp(x, Math.max(88, BATTLE_SAFE_LEFT + 56), Math.min(872, BATTLE_SAFE_RIGHT - 56)),
-      y: Phaser.Math.Clamp(y, BATTLE_SAFE_TOP + 36, BATTLE_SAFE_BOTTOM - 32),
+      y: Phaser.Math.Clamp(y, BATTLE_SAFE_TOP + 30, BATTLE_SAFE_BOTTOM - 28),
     };
   }
 
@@ -872,7 +872,7 @@ export class GameScene extends Phaser.Scene {
     margin = 12,
     bottomReserve = 98
   ): { x: number; y: number } {
-    const topReserve = BATTLE_SAFE_TOP - 8;
+    const topReserve = BATTLE_SAFE_TOP - 4;
     const minX = width / 2 + margin;
     const maxX = 960 - width / 2 - margin;
     const minY = Math.max(height / 2 + margin, topReserve + height / 2);
@@ -966,15 +966,15 @@ export class GameScene extends Phaser.Scene {
   }
 
   private createBuildSpot(x: number, y: number, autoOpen = false): void {
-    const shadow = this.add.ellipse(x + 3, y + 12, 58, 18, 0x000000, 0.24).setDepth(11);
-    const rim = this.add.ellipse(x, y + 3, 54, 28, 0x3b2818, 0.92).setStrokeStyle(3, 0xffd36b, 0.36).setDepth(12);
-    const stone = this.add.ellipse(x, y, 46, 23, 0x7b6b57, 0.96).setStrokeStyle(2, 0x2b1b12, 0.48).setDepth(13);
-    const light = this.add.ellipse(x - 8, y - 5, 20, 6, 0xffe1a0, 0.22).setDepth(14);
+    const shadow = this.add.ellipse(x + 2, y + 10, 44, 14, 0x000000, 0.24).setDepth(11);
+    const rim = this.add.ellipse(x, y + 2, 42, 24, 0x3b2818, 0.92).setStrokeStyle(3, 0xffd36b, 0.36).setDepth(12);
+    const stone = this.add.ellipse(x, y, 34, 19, 0x7b6b57, 0.96).setStrokeStyle(2, 0x2b1b12, 0.48).setDepth(13);
+    const light = this.add.ellipse(x - 6, y - 4, 14, 5, 0xffe1a0, 0.22).setDepth(14);
     const hammer = this.add.text(x, y - 7, '⚒', { fontSize: '12px', color: '#fff4c2', fontStyle: 'bold' }).setOrigin(0.5).setDepth(15);
-    const tagBg = this.add.rectangle(x, y + 24, 62, 18, 0x130d09, 0.78).setStrokeStyle(1, 0xffd36b, 0.35).setDepth(16);
-    const tag = this.add.text(x, y + 24, '건설', { fontSize: '9px', color: '#ffefb4', fontStyle: 'bold' }).setOrigin(0.5).setDepth(17);
+    const tagBg = this.add.rectangle(x, y + 21, 50, 15, 0x130d09, 0.78).setStrokeStyle(1, 0xffd36b, 0.35).setDepth(16);
+    const tag = this.add.text(x, y + 21, '건설', { fontSize: '8px', color: '#ffefb4', fontStyle: 'bold' }).setOrigin(0.5).setDepth(17);
     const premiumPad = this.textures.exists('v1-build-spot')
-      ? this.add.image(x, y + 1, 'v1-build-spot').setDisplaySize(42, 30).setDepth(13)
+      ? this.add.image(x, y + 1, 'v1-build-spot').setDisplaySize(38, 27).setDepth(13)
       : undefined;
     if (premiumPad) {
       shadow.setVisible(false);
@@ -986,7 +986,7 @@ export class GameScene extends Phaser.Scene {
       tag.setText('건설').setColor('#eaf6ff');
     }
     const premiumPreview = addBuildSpotPreview(this, x, y, 0xffd36b);
-    premiumPreview.setScale(0.78);
+    premiumPreview.setScale(0.68);
     premiumPreview.setVisible(false);
     const largeHitZone = this.add.rectangle(x, y + 1, V210_BUILD_HIT.width, V210_BUILD_HIT.height, 0xffffff, 0.001)
       .setDepth(19)
@@ -1126,7 +1126,7 @@ export class GameScene extends Phaser.Scene {
         tower.applyPermanentUpgrades(this.save.upgrades);
         if (kind === 'barracks') tower.spawnSoldiers();
         const towerClickRing = this.textures.exists('v2-tower-selection-ring')
-          ? this.add.image(x, y + 2, 'v2-tower-selection-ring').setDisplaySize(72, 72).setDepth(21).setAlpha(0).setBlendMode(Phaser.BlendModes.ADD)
+          ? this.add.image(x, y + 2, 'v2-tower-selection-ring').setDisplaySize(60, 38).setDepth(21).setAlpha(0).setBlendMode(Phaser.BlendModes.ADD)
           : this.textures.exists('ui-tower-click-ring-v47')
             ? this.add.image(x, y + 2, 'ui-tower-click-ring-v47').setDisplaySize(148, 128).setDepth(21).setAlpha(0)
             : undefined;
@@ -1182,11 +1182,11 @@ export class GameScene extends Phaser.Scene {
 
   private createTowerPanel(tower: Tower): void {
     const hasMasteryChoices = tower.level >= 3 && tower.canChooseMastery();
-    const panelHeight = hasMasteryChoices ? 272 : tower.config.kind === 'barracks' ? 232 : 214;
+    const panelHeight = hasMasteryChoices ? 250 : tower.config.kind === 'barracks' ? 212 : 198;
     const panelWidth = V210_TOWER_PANEL.width;
     const preferredX = tower.x < 500 ? tower.x + V210_TOWER_PANEL.compactOffset : tower.x - V210_TOWER_PANEL.compactOffset;
     const preferredY = tower.y + 12;
-    const panelPos = this.clampOverlayPosition(preferredX, preferredY - 8, panelWidth, panelHeight + 26, 10, 92);
+    const panelPos = this.clampOverlayPosition(preferredX, preferredY - 6, panelWidth, panelHeight + 22, 8, 84);
     const panel = this.add.container(panelPos.x, panelPos.y).setDepth(82);
     if (Math.abs(panelPos.x - preferredX) > 8 || Math.abs(panelPos.y - preferredY) > 8) {
       const clampedBadge = this.add.text(0, -panelHeight / 2 - 12, '화면 안쪽으로 자동 정렬', {
@@ -1201,35 +1201,35 @@ export class GameScene extends Phaser.Scene {
       addPremiumPanelGlints(this, panel, panelWidth, panelHeight);
     }
 
-    const icon = this.add.circle(-126, -panelHeight / 2 + 26, 13, tower.config.color, 0.9)
+    const icon = this.add.circle(-116, -panelHeight / 2 + 24, 13, tower.config.color, 0.9)
       .setStrokeStyle(2, 0xfff1c2, 0.55);
-    const symbol = this.add.text(-126, -panelHeight / 2 + 25, this.towerSymbol(tower.config.kind), {
+    const symbol = this.add.text(-116, -panelHeight / 2 + 23, this.towerSymbol(tower.config.kind), {
       fontSize: '11px', color: '#101820', fontStyle: 'bold'
     }).setOrigin(0.5);
-    const title = this.add.text(-106, -panelHeight / 2 + 12, `${tower.config.label}  Lv.${tower.level}`, {
-      fontSize: '10px', color: '#fff1bf', fontStyle: 'bold',
+    const title = this.add.text(-96, -panelHeight / 2 + 10, `${tower.config.label}  Lv.${tower.level}`, {
+      fontSize: '9px', color: '#fff1bf', fontStyle: 'bold',
       fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif',
       shadow: { offsetX: 0, offsetY: 3, color: '#000000', blur: 3, fill: true }
     });
-    const role = this.add.text(-106, -panelHeight / 2 + 33, this.towerRole(tower.config.kind), {
-      fontSize: '9px', color: '#d8c39a', fontStyle: 'bold'
+    const role = this.add.text(-96, -panelHeight / 2 + 29, this.towerRole(tower.config.kind), {
+      fontSize: '8px', color: '#d8c39a', fontStyle: 'bold'
     });
 
     const masteryLabel = tower.level >= 3 ? `전문화: ${tower.masteryLabel}` : `Lv.3 특수: ${tower.config.maxSkill}`;
-    const masteryLine = this.add.text(-132, -panelHeight / 2 + 58, masteryLabel, {
-      fontSize: '8px', color: tower.level >= 3 ? '#0d8f57' : '#295f9e', fontStyle: 'bold', fixedWidth: 254,
+    const masteryLine = this.add.text(-120, -panelHeight / 2 + 52, masteryLabel, {
+      fontSize: '8px', color: tower.level >= 3 ? '#0d8f57' : '#295f9e', fontStyle: 'bold', fixedWidth: 232,
       fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif'
     });
     const modeLabel = tower.config.kind === 'barracks' ? '전선 유지 / 집결지 운용' : `타겟 정책: ${tower.targetModeLabel()}`;
-    const mode = this.add.text(-132, -panelHeight / 2 + 75, modeLabel, { fontSize: '8px', color: '#295f9e', fontStyle: 'bold', fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif' });
-    const statBox = this.add.rectangle(0, -panelHeight / 2 + 100, 256, 30, 0x050914, 0.58)
+    const mode = this.add.text(-120, -panelHeight / 2 + 68, modeLabel, { fontSize: '8px', color: '#295f9e', fontStyle: 'bold', fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif' });
+    const statBox = this.add.rectangle(0, -panelHeight / 2 + 91, 232, 28, 0x050914, 0.58)
       .setStrokeStyle(1, 0xffe9a0, 0.17);
-    const stat = this.add.text(-121, -panelHeight / 2 + 92, this.towerStatLine(tower), {
-      fontSize: '8px', color: this.textures.exists('v1-tower-command-panel') ? '#eaf6ff' : '#3f5578', fixedWidth: 242, wordWrap: { width: 242 }, fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif'
+    const stat = this.add.text(-110, -panelHeight / 2 + 84, this.towerStatLine(tower), {
+      fontSize: '8px', color: this.textures.exists('v1-tower-command-panel') ? '#eaf6ff' : '#3f5578', fixedWidth: 220, wordWrap: { width: 220 }, fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif'
     });
     panel.add([icon, symbol, title, role, masteryLine, mode, statBox, stat]);
 
-    let actionY = -panelHeight / 2 + 124;
+    let actionY = -panelHeight / 2 + 112;
     if (hasMasteryChoices) {
       const header = this.add.text(-136, actionY - 13, '최종 진화 선택', { fontSize: '9px', color: '#f7d36b', fontStyle: 'bold' });
       panel.add(header);
@@ -1238,10 +1238,10 @@ export class GameScene extends Phaser.Scene {
         const x = index === 0 ? -78 : 78;
         const y = actionY + 18;
         const canBuy = this.gold >= tower.masteryCost;
-        const btn = this.makePanelButton(panel, x, y, 116, 26, canBuy ? choice.color : 0x333333, `${choice.shortLabel} $${tower.masteryCost}`);
+        const btn = this.makePanelButton(panel, x, y, 106, 24, canBuy ? choice.color : 0x333333, `${choice.shortLabel} $${tower.masteryCost}`);
         btn.on('pointerdown', () => this.chooseTowerMastery(choice.id));
         const desc = this.add.text(x, y + 31, choice.description, {
-          fontSize: '8px', color: canBuy ? '#d8c39a' : '#888888', align: 'center', fixedWidth: 112, wordWrap: { width: 112 }
+          fontSize: '8px', color: canBuy ? '#d8c39a' : '#888888', align: 'center', fixedWidth: 104, wordWrap: { width: 104 }
         }).setOrigin(0.5, 0);
         panel.add(desc);
       });
@@ -1249,40 +1249,40 @@ export class GameScene extends Phaser.Scene {
     }
 
     const cost = tower.upgradeCost;
-    const up = this.makePanelButton(panel, -64, actionY, 112, 26, cost ? 0x24486b : 0x333333, cost ? `업그레이드 $${cost}` : '최고 레벨');
+    const up = this.makePanelButton(panel, -58, actionY, 104, 24, cost ? 0x24486b : 0x333333, cost ? `업그레이드 $${cost}` : '최고 레벨');
     up.on('pointerdown', () => this.upgradeSelectedTower());
 
     const overdriveCost = this.towerOverdriveCost(tower);
     const overLabel = tower.isOverdriven ? `강화중 ${tower.overdriveRemainingSec}s` : `긴급 강화 $${overdriveCost}`;
-    const over = this.makePanelButton(panel, 64, actionY, 112, 26, tower.isOverdriven ? 0x3a3a3a : 0x6a4a1f, overLabel);
+    const over = this.makePanelButton(panel, 58, actionY, 104, 24, tower.isOverdriven ? 0x3a3a3a : 0x6a4a1f, overLabel);
     over.on('pointerdown', () => this.overdriveSelectedTower());
 
     if (tower.config.kind !== 'barracks') {
-      const target = this.makePanelButton(panel, -64, actionY + 31, 112, 26, 0x3c355e, '타겟 변경');
+      const target = this.makePanelButton(panel, -58, actionY + 29, 104, 24, 0x3c355e, '타겟 변경');
       target.on('pointerdown', () => this.cycleSelectedTowerTarget());
       const guide = this.add.text(72, actionY + 33, '상황에 맞춰 선두/강적/공중 우선순위를 바꾸세요.', {
-        fontSize: '8px', color: '#9eb6d8', fixedWidth: 112, wordWrap: { width: 112 }, align: 'center'
+        fontSize: '8px', color: '#9eb6d8', fixedWidth: 104, wordWrap: { width: 104 }, align: 'center'
       }).setOrigin(0.5);
       panel.add(guide);
     } else {
-      const rally = this.makePanelButton(panel, -64, actionY + 31, 112, 26, 0x3f5f2f, '집결지');
+      const rally = this.makePanelButton(panel, -58, actionY + 29, 104, 24, 0x3f5f2f, '집결지');
       rally.on('pointerdown', () => {
         this.settingRallyFor = tower;
         this.rallyReadyAt = this.time.now + 120;
         this.showMessage('집결지를 놓을 길 위를 터치하세요');
       });
       const reinforceCost = this.towerReinforceCost(tower);
-      const reinforce = this.makePanelButton(panel, 64, actionY + 31, 112, 26, 0x2f5f58, `병력 보충 $${reinforceCost}`);
+      const reinforce = this.makePanelButton(panel, 58, actionY + 29, 104, 24, 0x2f5f58, `병력 보충 $${reinforceCost}`);
       reinforce.on('pointerdown', () => this.reinforceSelectedBarracks());
     }
 
-    const sell = this.makePanelButton(panel, -64, actionY + 62, 112, 26, 0x693434, `철거 +$${tower.sellValue}`);
+    const sell = this.makePanelButton(panel, -58, actionY + 58, 104, 24, 0x693434, `철거 +$${tower.sellValue}`);
     sell.on('pointerdown', () => this.sellSelectedTower(false));
 
-    const replace = this.makePanelButton(panel, 64, actionY + 62, 112, 26, 0x754928, '교체 건설');
+    const replace = this.makePanelButton(panel, 58, actionY + 58, 104, 24, 0x754928, '교체 건설');
     replace.on('pointerdown', () => this.sellSelectedTower(true));
 
-    const close = this.makePanelButton(panel, 0, panelHeight / 2 - 16, 96, 23, 0x2f3440, '닫기');
+    const close = this.makePanelButton(panel, 0, panelHeight / 2 - 14, 86, 22, 0x2f3440, '닫기');
     close.on('pointerdown', () => {
       tower.rangeCircle.setVisible(false);
       this.destroySelectedPanel();

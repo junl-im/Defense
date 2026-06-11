@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
 
-export const V210_BUILD_HIT = { width: 30, height: 22, radius: 9 } as const;
-export const V210_TOWER_HIT = { width: 26, height: 34, offsetY: -15, radius: 11 } as const;
-export const V210_BUILD_MENU = { width: 236, height: 136, cardWidth: 94, cardHeight: 32 } as const;
-export const V210_TOWER_PANEL = { width: 270, compactOffset: 146 } as const;
+export const V210_BUILD_HIT = { width: 28, height: 20, radius: 8 } as const;
+export const V210_TOWER_HIT = { width: 24, height: 32, offsetY: -16, radius: 10 } as const;
+export const V210_BUILD_MENU = { width: 228, height: 126, cardWidth: 88, cardHeight: 30 } as const;
+export const V210_TOWER_PANEL = { width: 254, compactOffset: 136 } as const;
 
 export function mobileTextV210(size: number, color = '#f7fbff', fixedWidth?: number): Phaser.Types.GameObjects.Text.TextStyle {
   return {
@@ -19,8 +19,8 @@ export function mobileTextV210(size: number, color = '#f7fbff', fixedWidth?: num
 export function installV210BattlePolish(scene: Phaser.Scene): void {
   const lite = new URLSearchParams(window.location.search).has('lite') || new URLSearchParams(window.location.search).has('battery');
   const depth = 71;
-  const topLine = scene.add.rectangle(480, 53, 820, 1, 0x9fe8ff, 0.20).setDepth(depth).setBlendMode(Phaser.BlendModes.ADD);
-  const bottomLine = scene.add.rectangle(480, 462, 800, 1, 0xffdf8a, 0.12).setDepth(depth).setBlendMode(Phaser.BlendModes.ADD);
+  const topLine = scene.add.rectangle(480, 50, 760, 1, 0x9fe8ff, 0.20).setDepth(depth).setBlendMode(Phaser.BlendModes.ADD);
+  const bottomLine = scene.add.rectangle(480, 465, 720, 1, 0xffdf8a, 0.12).setDepth(depth).setBlendMode(Phaser.BlendModes.ADD);
   const leftRail = scene.add.rectangle(9, 270, 2, 344, 0x7bdcff, 0.10).setDepth(6).setBlendMode(Phaser.BlendModes.ADD);
   const rightRail = scene.add.rectangle(951, 270, 2, 344, 0xffd46b, 0.08).setDepth(6).setBlendMode(Phaser.BlendModes.ADD);
   if (!lite) {
@@ -29,7 +29,7 @@ export function installV210BattlePolish(scene: Phaser.Scene): void {
   }
 }
 
-export function addV210ToastPlate(scene: Phaser.Scene, x: number, y: number, width = 430, height = 40): Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle {
+export function addV210ToastPlate(scene: Phaser.Scene, x: number, y: number, width = 360, height = 32): Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle {
   if (scene.textures.exists('v2-toast-plaque-v210')) {
     return scene.add.image(x, y, 'v2-toast-plaque-v210').setDisplaySize(width, height).setDepth(89).setAlpha(0.96);
   }

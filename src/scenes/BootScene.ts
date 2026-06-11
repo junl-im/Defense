@@ -31,8 +31,8 @@ const WEBP_ENABLED = !BOOT_QUERY.has('png') && (() => {
 
 const WEBP_RASTER_PATTERNS = [
   /assets\/backgrounds\/(login_background_clean_v2_6|login_background_clean_v2_4|main_menu_splash_v2_6|main_menu_splash_v2_4|worldmap_splash_v2_1)\.png$/,
-  /assets\/maps\/(v2_12|v2_6|v2_4)\/[^/]+\.png$/,
-  /assets\/ui\/(v2_2|v2_3|v2_4|v2_6|v2_7|v2_8|v2_9|v2_10|v2_11|v2_12)\/[^/]+\.png$/,
+  /assets\/maps\/(v2_13|v2_12|v2_6|v2_4)\/[^/]+\.png$/,
+  /assets\/ui\/(v2_2|v2_3|v2_4|v2_6|v2_7|v2_8|v2_9|v2_10|v2_11|v2_12|v2_13)\/[^/]+\.png$/,
   /assets\/props\/v2_6\/[^/]+\.png$/,
   /assets\/maps\/(stage_card_009|stage_card_010|stage_card_011|stage_card_012|map_stage_009|map_stage_010|map_stage_011|map_stage_012)\.png$/,
   /assets\/units\/(v2_1|v2_4)\/[^/]+\.png$/,
@@ -89,11 +89,11 @@ export class BootScene extends Phaser.Scene {
     // v1.8: clean separated illustration layers. Background/logo/panels/buttons are image assets; text and hit-zones are code-owned.
     this.load.image('v1-login-clean-bg', 'assets/backgrounds/login_background_clean_v2_6.png');
     this.load.image('v1-title-logo-clean', 'assets/ui/title_logo_v1_9.png');
-    this.load.image('v1-login-panel-v18', 'assets/ui/v2_12/login_panel_v2_12.png');
-    this.load.image('v1-login-button-gold-v18', 'assets/ui/v2_12/login_button_gold_v2_12.png');
-    this.load.image('v1-login-button-white-v18', 'assets/ui/v2_12/login_button_white_v2_12.png');
-    this.load.image('v1-login-button-small-v18', 'assets/ui/v2_12/login_button_small_v2_12.png');
-    this.load.image('v1-login-utility-button-v18', 'assets/ui/v2_12/login_utility_button_v2_12.png');
+    this.load.image('v1-login-panel-v18', 'assets/ui/v2_13/login_panel_v2_13.png');
+    this.load.image('v1-login-button-gold-v18', 'assets/ui/v2_13/login_button_gold_v2_13.png');
+    this.load.image('v1-login-button-white-v18', 'assets/ui/v2_13/login_button_white_v2_13.png');
+    this.load.image('v1-login-button-small-v18', 'assets/ui/v2_13/login_button_small_v2_13.png');
+    this.load.image('v1-login-utility-button-v18', 'assets/ui/v2_13/login_utility_button_v2_13.png');
     this.load.image('v1-main-menu-splash-v18', 'assets/backgrounds/main_menu_splash_v2_6.png');
     this.load.image('v1-worldmap-splash-v18', 'assets/backgrounds/worldmap_splash_v2_1.png');
 
@@ -192,23 +192,23 @@ export class BootScene extends Phaser.Scene {
     this.load.image('ui-medal-gold-v35', 'assets/ui/medal_gold_v35.png');
     this.load.image('ui-medal-legend-v35', 'assets/ui/medal_legend_v35.png');
 
-    this.load.image('v1-combat-top-hud', 'assets/ui/v2_12/combat_top_hud_v2_12.png');
-    this.load.image('v1-combat-bottom-dock', 'assets/ui/v2_12/combat_bottom_dock_v2_12.png');
-    this.load.image('v1-tower-build-menu', 'assets/ui/v2_12/tower_build_menu_v2_12.png');
-    this.load.image('v1-tower-build-card', 'assets/ui/v2_12/tower_build_card_v2_12.png');
-    this.load.image('v1-tower-command-panel', 'assets/ui/v2_12/tower_command_panel_v2_12.png');
-    this.load.image('v1-build-spot', 'assets/ui/v2_12/build_spot_v2_12.png');
+    this.load.image('v1-combat-top-hud', 'assets/ui/v2_13/combat_top_hud_v2_13.png');
+    this.load.image('v1-combat-bottom-dock', 'assets/ui/v2_13/combat_bottom_dock_v2_13.png');
+    this.load.image('v1-tower-build-menu', 'assets/ui/v2_13/tower_build_menu_v2_13.png');
+    this.load.image('v1-tower-build-card', 'assets/ui/v2_13/tower_build_card_v2_13.png');
+    this.load.image('v1-tower-command-panel', 'assets/ui/v2_13/tower_command_panel_v2_13.png');
+    this.load.image('v1-build-spot', 'assets/ui/v2_13/build_spot_v2_13.png');
     this.load.image('v1-target-reticle', 'assets/ui/v2_3/target_reticle_v2_3.png');
-    this.load.image('v1-button-blue', 'assets/ui/v2_12/button_blue_v2_12.png');
-    this.load.image('v1-button-gold', 'assets/ui/v2_12/button_gold_v2_12.png');
-    this.load.image('v1-button-red', 'assets/ui/v2_12/button_red_v2_12.png');
-    this.load.image('v1-button-dark', 'assets/ui/v2_12/button_dark_v2_12.png');
-    this.load.image('v1-button-green', 'assets/ui/v2_12/button_green_v2_12.png');
+    this.load.image('v1-button-blue', 'assets/ui/v2_13/button_blue_v2_13.png');
+    this.load.image('v1-button-gold', 'assets/ui/v2_13/button_gold_v2_13.png');
+    this.load.image('v1-button-red', 'assets/ui/v2_13/button_red_v2_13.png');
+    this.load.image('v1-button-dark', 'assets/ui/v2_13/button_dark_v2_13.png');
+    this.load.image('v1-button-green', 'assets/ui/v2_13/button_green_v2_13.png');
 
     // v2.2: visual sync / QA overlays. These are clean art layers with no baked text.
     this.load.image('v2-combat-focus-overlay', 'assets/ui/v2_2/combat_focus_overlay_v2_2.png');
     this.load.image('v2-path-waypoint', 'assets/ui/v2_2/path_waypoint_v2_2.png');
-    this.load.image('v2-tower-selection-ring', 'assets/ui/v2_12/tower_selection_ring_v2_12.png');
+    this.load.image('v2-tower-selection-ring', 'assets/ui/v2_13/tower_selection_ring_v2_13.png');
     this.load.image('v2-season-chip', 'assets/ui/v2_6/season_chip_v2_6.png');
     this.load.image('v2-strategy-card', 'assets/ui/v2_6/strategy_card_v2_6.png');
     this.load.image('v2-event-panel', 'assets/ui/v2_6/event_panel_v2_6.png');
@@ -221,17 +221,17 @@ export class BootScene extends Phaser.Scene {
     this.load.image('v2-advisor-panel-v29', 'assets/ui/v2_9/advisor_panel_v2_9.png');
 
     // v2.10 mobile design polish assets: cleaner compact plates, smaller touch UI, and WebP-first frames.
-    this.load.image('v2-mobile-chip-v210', 'assets/ui/v2_12/mobile_chip_v2_12.png');
-    this.load.image('v2-toast-plaque-v210', 'assets/ui/v2_12/toast_plaque_v2_12.png');
-    this.load.image('v2-mini-badge-gold-v211', 'assets/ui/v2_12/mini_badge_gold_v2_12.png');
-    this.load.image('v2-mini-badge-green-v211', 'assets/ui/v2_12/mini_badge_green_v2_12.png');
-    this.load.image('v2-lobby-strategy-card-v210', 'assets/ui/v2_12/lobby_strategy_card_v2_12.png');
-    this.load.image('v2-lobby-side-button-v210', 'assets/ui/v2_12/lobby_side_button_v2_12.png');
-    this.load.image('v2-resource-pill-v210', 'assets/ui/v2_12/resource_pill_v2_12.png');
-    this.load.image('v1-combat-button-blue-v18', 'assets/ui/v2_12/button_blue_v2_12.png');
-    this.load.image('v1-combat-button-gold-v18', 'assets/ui/v2_12/button_gold_v2_12.png');
-    this.load.image('v1-combat-button-green-v18', 'assets/ui/v2_12/button_green_v2_12.png');
-    this.load.image('v1-combat-button-red-v18', 'assets/ui/v2_12/button_red_v2_12.png');
+    this.load.image('v2-mobile-chip-v210', 'assets/ui/v2_13/mobile_chip_v2_13.png');
+    this.load.image('v2-toast-plaque-v210', 'assets/ui/v2_13/toast_plaque_v2_13.png');
+    this.load.image('v2-mini-badge-gold-v211', 'assets/ui/v2_13/mini_badge_gold_v2_13.png');
+    this.load.image('v2-mini-badge-green-v211', 'assets/ui/v2_13/mini_badge_green_v2_13.png');
+    this.load.image('v2-lobby-strategy-card-v210', 'assets/ui/v2_13/lobby_strategy_card_v2_13.png');
+    this.load.image('v2-lobby-side-button-v210', 'assets/ui/v2_13/lobby_side_button_v2_13.png');
+    this.load.image('v2-resource-pill-v210', 'assets/ui/v2_13/resource_pill_v2_13.png');
+    this.load.image('v1-combat-button-blue-v18', 'assets/ui/v2_13/button_blue_v2_13.png');
+    this.load.image('v1-combat-button-gold-v18', 'assets/ui/v2_13/button_gold_v2_13.png');
+    this.load.image('v1-combat-button-green-v18', 'assets/ui/v2_13/button_green_v2_13.png');
+    this.load.image('v1-combat-button-red-v18', 'assets/ui/v2_13/button_red_v2_13.png');
 
     // v2.7: tactical order draft UI. All heavy raster assets prefer WebP through the optimized loader.
     this.load.image('v2-order-panel-v27', 'assets/ui/v2_7/order_panel_v2_7.png');
@@ -323,18 +323,18 @@ export class BootScene extends Phaser.Scene {
     this.load.image('map-card-stage-010', 'assets/maps/stage_card_010.png');
     this.load.image('map-card-stage-011', 'assets/maps/stage_card_011.png');
     this.load.image('map-card-stage-012', 'assets/maps/stage_card_012.png');
-    this.load.image('battle-bg-stage_001', 'assets/maps/v2_12/battle_stage_001_v2_12.png');
-    this.load.image('battle-bg-stage_002', 'assets/maps/v2_12/battle_stage_002_v2_12.png');
-    this.load.image('battle-bg-stage_003', 'assets/maps/v2_12/battle_stage_003_v2_12.png');
-    this.load.image('battle-bg-stage_004', 'assets/maps/v2_12/battle_stage_004_v2_12.png');
-    this.load.image('battle-bg-stage_005', 'assets/maps/v2_12/battle_stage_005_v2_12.png');
-    this.load.image('battle-bg-stage_006', 'assets/maps/v2_12/battle_stage_006_v2_12.png');
-    this.load.image('battle-bg-stage_007', 'assets/maps/v2_12/battle_stage_007_v2_12.png');
-    this.load.image('battle-bg-stage_008', 'assets/maps/v2_12/battle_stage_008_v2_12.png');
-    this.load.image('battle-bg-stage_009', 'assets/maps/v2_12/battle_stage_009_v2_12.png');
-    this.load.image('battle-bg-stage_010', 'assets/maps/v2_12/battle_stage_010_v2_12.png');
-    this.load.image('battle-bg-stage_011', 'assets/maps/v2_12/battle_stage_011_v2_12.png');
-    this.load.image('battle-bg-stage_012', 'assets/maps/v2_12/battle_stage_012_v2_12.png');
+    this.load.image('battle-bg-stage_001', 'assets/maps/v2_13/battle_stage_001_v2_13.png');
+    this.load.image('battle-bg-stage_002', 'assets/maps/v2_13/battle_stage_002_v2_13.png');
+    this.load.image('battle-bg-stage_003', 'assets/maps/v2_13/battle_stage_003_v2_13.png');
+    this.load.image('battle-bg-stage_004', 'assets/maps/v2_13/battle_stage_004_v2_13.png');
+    this.load.image('battle-bg-stage_005', 'assets/maps/v2_13/battle_stage_005_v2_13.png');
+    this.load.image('battle-bg-stage_006', 'assets/maps/v2_13/battle_stage_006_v2_13.png');
+    this.load.image('battle-bg-stage_007', 'assets/maps/v2_13/battle_stage_007_v2_13.png');
+    this.load.image('battle-bg-stage_008', 'assets/maps/v2_13/battle_stage_008_v2_13.png');
+    this.load.image('battle-bg-stage_009', 'assets/maps/v2_13/battle_stage_009_v2_13.png');
+    this.load.image('battle-bg-stage_010', 'assets/maps/v2_13/battle_stage_010_v2_13.png');
+    this.load.image('battle-bg-stage_011', 'assets/maps/v2_13/battle_stage_011_v2_13.png');
+    this.load.image('battle-bg-stage_012', 'assets/maps/v2_13/battle_stage_012_v2_13.png');
     this.load.image('v2-wave-event-frame-v26', 'assets/ui/v2_6/wave_event_frame_v2_6.png');
     this.load.image('v2-wave-icon-supply-v26', 'assets/ui/v2_6/wave_icon_supply_v2_6.png');
     this.load.image('v2-wave-icon-elite-v26', 'assets/ui/v2_6/wave_icon_elite_v2_6.png');

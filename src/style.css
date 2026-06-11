@@ -783,3 +783,23 @@ html.ks-hit-debug .ks-dom-click-ripple { display: none !important; }
 }
 html.ks-quality-low .shell-overlay,
 html.ks-quality-medium .shell-overlay { backdrop-filter: none !important; }
+
+
+/* v2.13 polish: compact mobile shell, no expensive blur on phones, tighter text cadence. */
+:root { --ks-mobile-ui-scale: .94; }
+.shell-start-card,
+.shell-panel {
+  width: min(232px, 64vw) !important;
+  padding: 7px 8px !important;
+  border-radius: 13px !important;
+}
+.shell-title-mark { font-size: 14px !important; }
+.shell-start-card h1, .shell-panel h2 { font-size: 12px !important; }
+.shell-tap-rune { width: 31px !important; height: 31px !important; font-size: 8px !important; }
+@media (hover: none) and (pointer: coarse) {
+  #game-container canvas { image-rendering: auto; }
+  .shell-overlay { backdrop-filter: none !important; }
+}
+@media (hover: none) and (pointer: coarse) and (max-height: 390px) {
+  .shell-start-card, .shell-panel { transform: scale(.56) !important; }
+}

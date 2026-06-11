@@ -68,7 +68,7 @@ export class Tower extends Phaser.GameObjects.Container {
     this.top = scene.add.circle(0, -8, 18, config.color, 1).setStrokeStyle(3, 0xffffff, 0.2);
     this.roof = this.makeRoof(scene, config);
     const label = scene.add.text(0, -8, this.symbolFor(config.kind), { fontSize: '18px', color: '#101820', fontStyle: 'bold' }).setOrigin(0.5);
-    this.levelText = scene.add.text(0, 23, 'Ⅰ', { fontSize: '14px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
+    this.levelText = scene.add.text(0, 23, 'Ⅰ', { fontSize: '12px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
     const spriteKey = this.resolveTowerTextureKey();
     if (scene.textures.exists(spriteKey)) {
       this.sprite = scene.add.image(0, 0, spriteKey);
@@ -89,8 +89,10 @@ export class Tower extends Phaser.GameObjects.Container {
     this.setDepth(22);
     // v2.5: tighter mobile hit area. Selection should match the visible tower base,
     // not the whole attack range/ornament silhouette. External GameScene halos use the same footprint.
-    this.setSize(58, 82);
-    this.setInteractive(new Phaser.Geom.Ellipse(0, -14, 56, 78), Phaser.Geom.Ellipse.Contains);
+    this.setSize(38, 54);
+    // v2.13: selection footprint follows the visible base more closely.
+    // The attack range, glow and mastery aura must not become touch area.
+    this.setInteractive(new Phaser.Geom.Ellipse(0, -14, 30, 48), Phaser.Geom.Ellipse.Contains);
   }
 
   applyPermanentUpgrades(upgrades: Partial<TowerUpgradeSnapshot> | undefined): void {
