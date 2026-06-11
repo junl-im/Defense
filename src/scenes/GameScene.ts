@@ -38,6 +38,8 @@ import { addV217BattleArt } from '../game/CuteFantasyArtV217';
 import { addV218BattleArt } from '../game/CuteFantasyArtV218';
 import { addV219BattleArt } from '../game/CuteFantasyArtV219';
 import { addV220BattleArt } from '../game/CuteFantasyArtV220';
+import { addV221BattleArt } from '../game/CuteFantasyArtV221';
+import { clearTimer, safeDelayedCall } from '../game/SceneSafety';
 
 type CastingSpell = 'meteor' | 'mercenary' | undefined;
 
@@ -164,6 +166,7 @@ export class GameScene extends Phaser.Scene {
     this.waveAutoTimer = undefined;
     this.nextWaveCountdownMs = 0;
     this.pendingWaveSpawns = 0;
+    this.spawnEvents.forEach((event) => event.remove(false));
     this.spawnEvents = [];
     this.waveClearedAt = 0;
     this.killStreak = 0;
@@ -208,6 +211,7 @@ export class GameScene extends Phaser.Scene {
     addV218BattleArt(this, this.stage.theme);
     addV219BattleArt(this, this.stage.theme);
     addV220BattleArt(this, this.stage.theme);
+    addV221BattleArt(this, this.stage.theme);
     addStageV26Decor(this, this.stage);
     installScenePerformanceWatch(this);
     this.createHud();
@@ -219,8 +223,8 @@ export class GameScene extends Phaser.Scene {
     this.installSceneCleanup();
     showBattleStartLoading(this, this.stage.title, '전술 배치 · 공세 분석 · 지휘 HUD 전개');
     this.showRunModifierBanner();
-    this.time.delayedCall(760, () => { if (this.isSceneLive()) this.showTacticalOrderDraft('opening'); });
-    this.time.delayedCall(920, () => { if (this.isSceneLive()) this.refreshV29AdvisorForNextWave(); });
+    safeDelayedCall(this, 760, () => this.showTacticalOrderDraft('opening'), { canRun: () => this.isSceneLive() });
+    safeDelayedCall(this, 920, () => this.refreshV29AdvisorForNextWave(), { canRun: () => this.isSceneLive() });
     this.createTowerSpots();
     const selectedHero = getSelectedHero();
     installBattleDirectorHud(this, this.stage, selectedHero);
@@ -236,7 +240,7 @@ export class GameScene extends Phaser.Scene {
     showStageObjectiveBanner(this, this.stage);
     this.showTacticalHint('지휘 목표: 생명력 보존 · 빠른 클리어 · 고연속 처치');
     if (this.dailyChallenge) {
-      this.time.delayedCall(520, () => { if (this.isSceneLive()) this.showMessage(`일일 도전: ${this.dailyChallenge!.modifiers.map(modifierLabel).join(' / ')}`); });
+      safeDelayedCall(this, 520, () => this.showMessage(`일일 도전: ${this.dailyChallenge!.modifiers.map(modifierLabel).join(' / ')}`), { canRun: () => this.isSceneLive() });
     }
     // v2.2: 첫 웨이브는 자동 카운트하지 않는다. 플레이어가 전투 시작 버튼을 눌러 개시한다.
     this.nextWaveCountdownMs = 0;
@@ -306,7 +310,7 @@ export class GameScene extends Phaser.Scene {
         playMusic(this, 'bgm_battle', 0.18);
         this.showMessage('방어 성공! 10초 후 다음 공격이 시작됩니다.');
         this.scheduleNextWave(10000, false);
-        this.time.delayedCall(260, () => { if (this.isSceneLive()) this.showTacticalOrderDraft('wave'); });
+        safeDelayedCall(this, 260, () => this.showTacticalOrderDraft('wave'), { canRun: () => this.isSceneLive() });
       }
     }
 
@@ -784,9 +788,9 @@ export class GameScene extends Phaser.Scene {
     const completed = recordBattleContractEvent(this.battleContractState, event);
     completed.forEach((contract, index) => {
       this.gold += contract.rewardGold;
-      this.time.delayedCall(index * 180, () => {
+      safeDelayedCall(this, index * 180, () => {
         if (!this.ended) this.showMessage(`전장 계약 완료: ${contract.shortTitle} +$${contract.rewardGold}`);
-      });
+      }, { canRun: () => this.isSceneLive() });
     });
     if (completed.length > 0) {
       playSfx(this, 'sfx_reward');
@@ -907,14 +911,14 @@ export class GameScene extends Phaser.Scene {
 
   private installSceneCleanup(): void {
     const cleanup = (): void => {
-      this.waveAutoTimer?.remove(false);
+      this.waveAutoTimer = clearTimer(this.waveAutoTimer);
       this.waveAutoTimer = undefined;
       this.spawnEvents.forEach((event) => event.remove(false));
       this.spawnEvents = [];
       this.clearSpellTargetPreview();
-      this.messageHideTimer?.remove(false);
+      this.messageHideTimer = clearTimer(this.messageHideTimer);
       this.messageHideTimer = undefined;
-      this.comboHideTimer?.remove(false);
+      this.comboHideTimer = clearTimer(this.comboHideTimer);
       this.comboHideTimer = undefined;
       this.tacticalOrderDraft?.destroy();
       this.tacticalOrderDraft = undefined;
@@ -1041,9 +1045,9 @@ export class GameScene extends Phaser.Scene {
     this.tweens.add({ targets: [rim, light], alpha: '+=0.14', duration: 900, yoyo: true, repeat: -1 });
 
     if (autoOpen) {
-      this.time.delayedCall(80, () => {
+      safeDelayedCall(this, 80, () => {
         if (stone.active) this.openBuildMenu(x, y, stone, rim, hammer, extras);
-      });
+      }, { canRun: () => this.isSceneLive() });
     }
   }
 
@@ -1711,20 +1715,19 @@ export class GameScene extends Phaser.Scene {
     if (this.ended || this.paused) return;
     if (this.waveRunning) return;
     if (this.waveIndex >= this.stage.waves.length - 1) return;
-    this.waveAutoTimer?.remove(false);
+    this.waveAutoTimer = clearTimer(this.waveAutoTimer);
     this.nextWaveCountdownMs = delayMs;
     this.updateWaveButton();
     if (initial) this.showMessage('방어 성공! 다음 공격까지 10초. 준비됐다면 [진행]을 누르세요.');
-    this.waveAutoTimer = this.time.delayedCall(delayMs, () => {
-      if (this.isSceneLive()) this.startNextWave(false);
-    });
+    this.waveAutoTimer = safeDelayedCall(this, delayMs, () => this.startNextWave(false), { canRun: () => this.isSceneLive() });
   }
 
   private clearAutoWave(): void {
-    this.waveAutoTimer?.remove(false);
+    this.waveAutoTimer = clearTimer(this.waveAutoTimer);
     this.waveAutoTimer = undefined;
     this.nextWaveCountdownMs = 0;
     this.pendingWaveSpawns = 0;
+    this.spawnEvents.forEach((event) => event.remove(false));
     this.spawnEvents = [];
     this.waveClearedAt = 0;
     this.killStreak = 0;
@@ -1806,7 +1809,7 @@ export class GameScene extends Phaser.Scene {
     } else {
       playMusic(this, 'bgm_battle', 0.18);
     }
-    if (this.activeEnemyAffix.id !== 'none') this.time.delayedCall(380, () => this.showMessage(enemyAffixFullLineV29(this.activeEnemyAffix)));
+    if (this.activeEnemyAffix.id !== 'none') safeDelayedCall(this, 380, () => this.showMessage(enemyAffixFullLineV29(this.activeEnemyAffix)), { canRun: () => this.isSceneLive() });
     this.showWaveTacticalHint(waveGroups);
     this.spawnWave(waveGroups);
   }
@@ -1852,7 +1855,7 @@ export class GameScene extends Phaser.Scene {
         if (cfg.threat === 'boss' || cfg.magicResist > 0.3) showArcaneSurge(this, enemy.x, enemy.y, enemy.config.accentColor ?? 0x8fdcff);
       };
 
-      const opener = this.time.delayedCall(delay, () => {
+      const opener = safeDelayedCall(this, delay, () => {
         if (!this.isSceneLive()) return;
         spawnOne();
         if (count > 1) {
@@ -1910,15 +1913,14 @@ export class GameScene extends Phaser.Scene {
 
   private showComboToast(streak: number, goldBonus: number): void {
     if (!this.comboText) return;
-    this.comboHideTimer?.remove(false);
+    this.comboHideTimer = clearTimer(this.comboHideTimer);
     this.comboText.setText(`x${streak} 연속 처치${goldBonus > 0 ? `  +$${goldBonus}` : ''}`).setVisible(true).setAlpha(1).setScale(1);
     this.tweens.killTweensOf(this.comboText);
     this.tweens.add({ targets: this.comboText, y: 422, scale: 1.08, duration: 120, yoyo: true });
-    this.comboHideTimer = this.time.delayedCall(980, () => {
-      if (!this.isSceneLive()) return;
+    this.comboHideTimer = safeDelayedCall(this, 980, () => {
       this.comboText?.setVisible(false);
       this.comboHideTimer = undefined;
-    });
+    }, { canRun: () => this.isSceneLive() });
   }
 
   private refreshObjectivePanel(): void {
@@ -1950,10 +1952,10 @@ export class GameScene extends Phaser.Scene {
     this.tacticalHintCooldownMs = 4200;
     this.directorText.setText(text).setVisible(true).setAlpha(0).setScale(0.96);
     this.tweens.add({ targets: this.directorText, alpha: 1, scale: 1, duration: 180, ease: 'Sine.easeOut' });
-    this.time.delayedCall(2600, () => {
-      if (!this.isSceneLive() || !this.directorText?.active) return;
+    safeDelayedCall(this, 2600, () => {
+      if (!this.directorText?.active) return;
       this.tweens.add({ targets: this.directorText, alpha: 0, duration: 240, onComplete: () => this.directorText?.setVisible(false) });
-    });
+    }, { canRun: () => this.isSceneLive() });
   }
 
   private showWaveTacticalHint(groups: WaveSpawn[]): void {
@@ -1971,13 +1973,12 @@ export class GameScene extends Phaser.Scene {
   }
 
   private showMessage(text: string): void {
-    this.messageHideTimer?.remove(false);
+    this.messageHideTimer = clearTimer(this.messageHideTimer);
     this.messageText.setText(text).setVisible(true);
-    this.messageHideTimer = this.time.delayedCall(1900, () => {
-      if (!this.isSceneLive()) return;
+    this.messageHideTimer = safeDelayedCall(this, 1900, () => {
       if (this.messageText?.active) this.messageText.setVisible(false);
       this.messageHideTimer = undefined;
-    });
+    }, { canRun: () => this.isSceneLive() });
   }
 
   private showGameOver(): void {
@@ -2078,7 +2079,7 @@ export class GameScene extends Phaser.Scene {
       openChest.setAlpha(0.45).disableInteractive();
       showPremiumChestCharge(this, 480, 214);
       const loot = grantBattleRewardInventory(this.user.uid, this.stage.id, reward);
-      this.time.delayedCall(260, () => showChestOpeningCinematic(this, reward, loot));
+      safeDelayedCall(this, 260, () => showChestOpeningCinematic(this, reward, loot), { canRun: () => this.scene.isActive('GameScene') });
     });
 
     const forge = this.makeUiButton(452, 464, 172, 48, 0x6b3f91, '유물 제작소', 20, 94);

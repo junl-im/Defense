@@ -9,6 +9,8 @@ import { addV217LobbyArt } from '../game/CuteFantasyArtV217';
 import { addV218LobbyArt } from '../game/CuteFantasyArtV218';
 import { addV219LobbyArt } from '../game/CuteFantasyArtV219';
 import { addV220LobbyArt } from '../game/CuteFantasyArtV220';
+import { addV221LobbyArt } from '../game/CuteFantasyArtV221';
+import { clearTimer, safeDelayedCall } from '../game/SceneSafety';
 import type { PlayerSave } from '../services/firebase';
 
 type HotspotTone = 'gold' | 'blue' | 'white' | 'red' | 'green';
@@ -68,13 +70,15 @@ export class MainMenuScene extends Phaser.Scene {
     addV218LobbyArt(this, this.save.nickname, this.save.stars);
     addV219LobbyArt(this, this.save.nickname, this.save.stars);
     addV220LobbyArt(this, this.save.nickname, this.save.stars);
+    addV221LobbyArt(this, this.save.nickname, this.save.stars);
     this.createLobbyTextOverlay();
     this.createV26ExpansionShelf();
     this.createPremiumHitZones();
     this.createSmallStatusToast();
+    this.installSceneCleanup();
 
-    this.time.delayedCall(0, () => {
-      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MainMenuScene', version: '2.20.0', at: Date.now() } }));
+    safeDelayedCall(this, 0, () => {
+      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MainMenuScene', version: '2.21.0', at: Date.now() } }));
     });
   }
 
@@ -267,8 +271,7 @@ export class MainMenuScene extends Phaser.Scene {
       fixedWidth: 420,
     }).setOrigin(0.5).setDepth(81).setAlpha(0);
 
-    this.time.delayedCall(450, () => {
-      if (!this.scene.isActive('MainMenuScene')) return;
+    safeDelayedCall(this, 450, () => {
       this.showToast(`${this.save.nickname} 지휘관님, 왕국 방어 준비 완료`, 1700, false);
     });
   }
@@ -287,17 +290,26 @@ export class MainMenuScene extends Phaser.Scene {
     this.toastBack.strokeRoundedRect(281, 446, 398, 26, 13);
 
     this.toastText.setText(message);
-    this.toastHideTimer?.remove(false);
+    this.toastHideTimer = clearTimer(this.toastHideTimer);
     this.tweens.killTweensOf([this.toastBack, this.toastText]);
     this.toastBack.setAlpha(0);
     this.toastText.setAlpha(0).setY(463);
     this.tweens.add({ targets: [this.toastBack, this.toastText], alpha: 1, duration: 130, ease: 'Sine.easeOut' });
     this.tweens.add({ targets: this.toastText, y: 459, duration: 180, ease: 'Back.easeOut' });
-    this.toastHideTimer = this.time.delayedCall(holdMs, () => {
-      if (!this.scene.isActive('MainMenuScene') || !this.toastBack || !this.toastText) return;
+    this.toastHideTimer = safeDelayedCall(this, holdMs, () => {
+      if (!this.toastBack || !this.toastText) return;
       this.tweens.add({ targets: [this.toastBack, this.toastText], alpha: 0, duration: 220, ease: 'Sine.easeIn' });
       this.toastHideTimer = undefined;
     });
+  }
+
+  private installSceneCleanup(): void {
+    const cleanup = (): void => {
+      this.toastHideTimer = clearTimer(this.toastHideTimer);
+      this.tweens.killTweensOf([this.toastBack, this.toastText]);
+    };
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, cleanup);
+    this.events.once(Phaser.Scenes.Events.DESTROY, cleanup);
   }
 
   private goScene(sceneKey: string): void {

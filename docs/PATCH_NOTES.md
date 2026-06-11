@@ -53,6 +53,14 @@
 - 로비 자동 환영 토스트의 클릭 SFX 중복감을 제거하고, 씬 전환 후 지연 토스트 실행을 가드했습니다.
 - 전투 메시지 hide timer가 오브젝트 활성 상태를 확인하도록 정리했습니다.
 - QA: `npx tsc --noEmit --pretty false` 및 `npm run build` 통과.
+## v2.21.0 - Candy Kingdom Massive Art QA
+- `public/assets/ui/v2_21/`에 신규 PNG 71개 + WebP 71개, 총 142개 캔디 왕국 판타지 에셋을 추가했습니다.
+- `CuteFantasyArtV221.ts`를 추가해 로그인/로비/월드맵/전투 장식 레이어를 v2.21로 확장했습니다.
+- `SceneSafety.ts`를 추가해 씬 종료 후 지연 콜백/토스트 타이머가 실행되는 경로를 더 안전하게 정리했습니다.
+- WebP 최적화 로더 대상에 `v2_21` UI 경로를 포함했습니다.
+- 전투 자동 웨이브 정리 시 spawn timer 제거를 보강하고, 메시지/콤보/전술 힌트/보상 연출 지연 호출을 안전 호출로 교체했습니다.
+- QA: `npx tsc --noEmit --pretty false` 및 `npm run build` 통과.
+
 ## v2.20.0 - Toy Garden Massive Art QA
 - `public/assets/ui/v2_20/`에 신규 PNG 64개 + WebP 64개, 총 128개 토이 가든 판타지 에셋을 추가했습니다.
 - `CuteFantasyArtV220.ts`를 추가해 로그인/로비/월드맵/전투 장식 레이어를 v2.20로 확장했습니다.

@@ -7,7 +7,9 @@ import { addCuteLoginAccents } from '../game/CuteFantasyPolishV216';
 import { addV217LoginArt } from '../game/CuteFantasyArtV217';
 import { addV218LoginArt } from '../game/CuteFantasyArtV218';
 import { addV219LoginArt } from '../game/CuteFantasyArtV219';
-import { V220_VERSION_LABEL, addV220LoginArt } from '../game/CuteFantasyArtV220';
+import { addV220LoginArt } from '../game/CuteFantasyArtV220';
+import { V221_VERSION_LABEL, addV221LoginArt } from '../game/CuteFantasyArtV221';
+import { safeDelayedCall } from '../game/SceneSafety';
 import {
   completePendingRedirectSignIn,
   ensureAnonymousUser,
@@ -40,12 +42,13 @@ export class MenuScene extends Phaser.Scene {
     addV218LoginArt(this);
     addV219LoginArt(this);
     addV220LoginArt(this);
+    addV221LoginArt(this);
     this.createStatusOverlay();
     this.createLoginHitZones();
     this.createUtilityHitZones();
 
-    this.time.delayedCall(0, () => {
-      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MenuScene', version: '2.20.0', at: Date.now() } }));
+    safeDelayedCall(this, 0, () => {
+      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MenuScene', version: '2.21.0', at: Date.now() } }));
     });
 
     void this.bootstrapRedirectOrExistingUser();
@@ -122,7 +125,7 @@ export class MenuScene extends Phaser.Scene {
     const chip = this.add.graphics().setDepth(53);
     chip.fillStyle(0x071c3e, 0.46).fillRoundedRect(16, 14, 188, 24, 14);
     chip.lineStyle(1, 0xffdc82, 0.45).strokeRoundedRect(16, 14, 188, 24, 14);
-    this.add.text(110, 26, V220_VERSION_LABEL, {
+    this.add.text(110, 26, V221_VERSION_LABEL, {
       fontSize: '8px',
       color: '#f7fbff',
       fixedWidth: 178,
@@ -381,8 +384,7 @@ export class MenuScene extends Phaser.Scene {
     if (this.isTransitioning) return;
     this.isTransitioning = true;
     this.cameras.main.fadeOut(220, 255, 255, 255);
-    this.time.delayedCall(220, () => {
-      if (!this.scene.isActive('MenuScene')) return;
+    safeDelayedCall(this, 220, () => {
       this.scene.start('MainMenuScene', { user, save });
     });
   }

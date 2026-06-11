@@ -10,6 +10,8 @@ import { addV217WorldMapArt } from '../game/CuteFantasyArtV217';
 import { addV218WorldMapArt } from '../game/CuteFantasyArtV218';
 import { addV219WorldMapArt } from '../game/CuteFantasyArtV219';
 import { addV220WorldMapArt } from '../game/CuteFantasyArtV220';
+import { addV221WorldMapArt } from '../game/CuteFantasyArtV221';
+import { clearTimer, safeDelayedCall } from '../game/SceneSafety';
 import type { PlayerSave } from '../services/firebase';
 
 type HotspotTone = 'gold' | 'blue' | 'white' | 'red' | 'green';
@@ -90,14 +92,16 @@ export class WorldMapScene extends Phaser.Scene {
     addV218WorldMapArt(this, STAGE_NODES);
     addV219WorldMapArt(this, STAGE_NODES);
     addV220WorldMapArt(this, STAGE_NODES);
+    addV221WorldMapArt(this, STAGE_NODES);
     this.createStagePreviewLayer();
     this.createStageNodeHotspots();
     this.createNavigationHotspots();
     this.createToastLayer();
     this.refreshSelectedStage(false);
+    this.installSceneCleanup();
 
-    this.time.delayedCall(0, () => {
-      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'WorldMapScene', version: '2.20.0', at: Date.now() } }));
+    safeDelayedCall(this, 0, () => {
+      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'WorldMapScene', version: '2.21.0', at: Date.now() } }));
     });
   }
 
@@ -392,6 +396,15 @@ export class WorldMapScene extends Phaser.Scene {
     this.scene.start('GameScene', { user: this.user, save: this.save, stageId: this.selectedStage.id });
   }
 
+  private installSceneCleanup(): void {
+    const cleanup = (): void => {
+      this.toastHideTimer = clearTimer(this.toastHideTimer);
+      this.tweens.killTweensOf([this.toastBack, this.toastText]);
+    };
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, cleanup);
+    this.events.once(Phaser.Scenes.Events.DESTROY, cleanup);
+  }
+
   private showToast(message: string, holdMs = 1500): void {
     if (!this.scene.isActive('WorldMapScene') || !this.toastBack || !this.toastText) return;
 
@@ -404,14 +417,14 @@ export class WorldMapScene extends Phaser.Scene {
     this.toastBack.strokeRoundedRect(225, 443, 510, 30, 15);
 
     this.toastText.setText(message);
-    this.toastHideTimer?.remove(false);
+    this.toastHideTimer = clearTimer(this.toastHideTimer);
     this.tweens.killTweensOf([this.toastBack, this.toastText]);
     this.toastBack.setAlpha(0);
     this.toastText.setAlpha(0).setY(463);
     this.tweens.add({ targets: [this.toastBack, this.toastText], alpha: 1, duration: 130, ease: 'Sine.easeOut' });
     this.tweens.add({ targets: this.toastText, y: 458, duration: 180, ease: 'Back.easeOut' });
-    this.toastHideTimer = this.time.delayedCall(holdMs, () => {
-      if (!this.scene.isActive('WorldMapScene') || !this.toastBack || !this.toastText) return;
+    this.toastHideTimer = safeDelayedCall(this, holdMs, () => {
+      if (!this.toastBack || !this.toastText) return;
       this.tweens.add({ targets: [this.toastBack, this.toastText], alpha: 0, duration: 220, ease: 'Sine.easeIn' });
       this.toastHideTimer = undefined;
     });

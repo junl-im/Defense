@@ -32,7 +32,7 @@ const WEBP_ENABLED = !BOOT_QUERY.has('png') && (() => {
 const WEBP_RASTER_PATTERNS = [
   /assets\/backgrounds\/(login_background_clean_v2_15|login_background_clean_v2_6|login_background_clean_v2_4|main_menu_splash_v2_15|main_menu_splash_v2_6|main_menu_splash_v2_4|worldmap_splash_v2_15|worldmap_splash_v2_1)\.png$/,
   /assets\/maps\/(v2_15|v2_14|v2_13|v2_12|v2_6|v2_4)\/[^/]+\.png$/,
-  /assets\/ui\/(v2_2|v2_3|v2_4|v2_6|v2_7|v2_8|v2_9|v2_10|v2_11|v2_12|v2_13|v2_14|v2_15|v2_16|v2_17|v2_18|v2_19|v2_20)\/[^/]+\.png$/,
+  /assets\/ui\/(v2_2|v2_3|v2_4|v2_6|v2_7|v2_8|v2_9|v2_10|v2_11|v2_12|v2_13|v2_14|v2_15|v2_16|v2_17|v2_18|v2_19|v2_20|v2_21)\/[^/]+\.png$/,
   /assets\/props\/v2_6\/[^/]+\.png$/,
   /assets\/maps\/(stage_card_009|stage_card_010|stage_card_011|stage_card_012|map_stage_009|map_stage_010|map_stage_011|map_stage_012)\.png$/,
   /assets\/units\/(v2_1|v2_4)\/[^/]+\.png$/,
@@ -440,6 +440,79 @@ export class BootScene extends Phaser.Scene {
     this.load.image('v220-world-side-cloud-curtain', 'assets/ui/v2_20/world_side_cloud_curtain_v2_20.png');
     this.load.image('v220-world-stage-ticket', 'assets/ui/v2_20/world_stage_ticket_v2_20.png');
     this.load.image('v220-world-treasure-cart', 'assets/ui/v2_20/world_treasure_cart_v2_20.png');
+
+    // v2.21 Candy Kingdom massive art/QA overlay assets.
+    this.load.image('v221-battle-boss-alert-cookie', 'assets/ui/v2_21/battle_boss_alert_cookie_v2_21.png');
+    this.load.image('v221-battle-bottom-cushion-dock', 'assets/ui/v2_21/battle_bottom_cushion_dock_v2_21.png');
+    this.load.image('v221-battle-build-flower-glow', 'assets/ui/v2_21/battle_build_flower_glow_v2_21.png');
+    this.load.image('v221-battle-combo-macaron', 'assets/ui/v2_21/battle_combo_macaron_v2_21.png');
+    this.load.image('v221-battle-guard-macaron', 'assets/ui/v2_21/battle_guard_macaron_v2_21.png');
+    this.load.image('v221-battle-hero-star-medal', 'assets/ui/v2_21/battle_hero_star_medal_v2_21.png');
+    this.load.image('v221-battle-left-vine-ribbon', 'assets/ui/v2_21/battle_left_vine_ribbon_v2_21.png');
+    this.load.image('v221-battle-mana-dew-chain', 'assets/ui/v2_21/battle_mana_dew_chain_v2_21.png');
+    this.load.image('v221-battle-meteor-lollipop', 'assets/ui/v2_21/battle_meteor_lollipop_v2_21.png');
+    this.load.image('v221-battle-reward-candy-tray', 'assets/ui/v2_21/battle_reward_candy_tray_v2_21.png');
+    this.load.image('v221-battle-right-vine-ribbon', 'assets/ui/v2_21/battle_right_vine_ribbon_v2_21.png');
+    this.load.image('v221-battle-safe-marshmallow-corner', 'assets/ui/v2_21/battle_safe_marshmallow_corner_v2_21.png');
+    this.load.image('v221-battle-spell-card-guard-candy', 'assets/ui/v2_21/battle_spell_card_guard_candy_v2_21.png');
+    this.load.image('v221-battle-spell-card-hero-candy', 'assets/ui/v2_21/battle_spell_card_hero_candy_v2_21.png');
+    this.load.image('v221-battle-spell-card-meteor-candy', 'assets/ui/v2_21/battle_spell_card_meteor_candy_v2_21.png');
+    this.load.image('v221-battle-top-candy-lace', 'assets/ui/v2_21/battle_top_candy_lace_v2_21.png');
+    this.load.image('v221-battle-wave-cupcake-flag', 'assets/ui/v2_21/battle_wave_cupcake_flag_v2_21.png');
+    this.load.image('v221-input-guard-badge', 'assets/ui/v2_21/input_guard_badge_v2_21.png');
+    this.load.image('v221-lobby-bottom-cushion-arc', 'assets/ui/v2_21/lobby_bottom_cushion_arc_v2_21.png');
+    this.load.image('v221-lobby-daily-bow-tag', 'assets/ui/v2_21/lobby_daily_bow_tag_v2_21.png');
+    this.load.image('v221-lobby-event-firefly-jar', 'assets/ui/v2_21/lobby_event_firefly_jar_v2_21.png');
+    this.load.image('v221-lobby-hero-pendant', 'assets/ui/v2_21/lobby_hero_pendant_v2_21.png');
+    this.load.image('v221-lobby-mail-pigeon', 'assets/ui/v2_21/lobby_mail_pigeon_v2_21.png');
+    this.load.image('v221-lobby-quest-scroll-bow', 'assets/ui/v2_21/lobby_quest_scroll_bow_v2_21.png');
+    this.load.image('v221-lobby-resource-gem-jam', 'assets/ui/v2_21/lobby_resource_gem_jam_v2_21.png');
+    this.load.image('v221-lobby-resource-gold-jam', 'assets/ui/v2_21/lobby_resource_gold_jam_v2_21.png');
+    this.load.image('v221-lobby-resource-heart-jam', 'assets/ui/v2_21/lobby_resource_heart_jam_v2_21.png');
+    this.load.image('v221-lobby-resource-star-jam', 'assets/ui/v2_21/lobby_resource_star_jam_v2_21.png');
+    this.load.image('v221-lobby-royal-candy-banner', 'assets/ui/v2_21/lobby_royal_candy_banner_v2_21.png');
+    this.load.image('v221-lobby-shop-cupcake-booth', 'assets/ui/v2_21/lobby_shop_cupcake_booth_v2_21.png');
+    this.load.image('v221-lobby-tower-pendant', 'assets/ui/v2_21/lobby_tower_pendant_v2_21.png');
+    this.load.image('v221-login-account-keyring', 'assets/ui/v2_21/login_account_keyring_v2_21.png');
+    this.load.image('v221-login-candy-crown-title', 'assets/ui/v2_21/login_candy_crown_title_v2_21.png');
+    this.load.image('v221-login-cozy-cloud-puffs', 'assets/ui/v2_21/login_cozy_cloud_puffs_v2_21.png');
+    this.load.image('v221-login-google-button-charm', 'assets/ui/v2_21/login_google_button_charm_v2_21.png');
+    this.load.image('v221-login-quick-button-charm', 'assets/ui/v2_21/login_quick_button_charm_v2_21.png');
+    this.load.image('v221-login-settings-candygear', 'assets/ui/v2_21/login_settings_candygear_v2_21.png');
+    this.load.image('v221-login-starlight-window-frame', 'assets/ui/v2_21/login_starlight_window_frame_v2_21.png');
+    this.load.image('v221-mascot-blossom-deer', 'assets/ui/v2_21/mascot_blossom_deer_v2_21.png');
+    this.load.image('v221-mascot-panda-guard', 'assets/ui/v2_21/mascot_panda_guard_v2_21.png');
+    this.load.image('v221-memory-clean-badge', 'assets/ui/v2_21/memory_clean_badge_v2_21.png');
+    this.load.image('v221-mini-quality-token-01', 'assets/ui/v2_21/mini_quality_token_01_v2_21.png');
+    this.load.image('v221-mini-quality-token-02', 'assets/ui/v2_21/mini_quality_token_02_v2_21.png');
+    this.load.image('v221-mini-quality-token-03', 'assets/ui/v2_21/mini_quality_token_03_v2_21.png');
+    this.load.image('v221-mini-quality-token-04', 'assets/ui/v2_21/mini_quality_token_04_v2_21.png');
+    this.load.image('v221-mini-quality-token-05', 'assets/ui/v2_21/mini_quality_token_05_v2_21.png');
+    this.load.image('v221-mini-quality-token-06', 'assets/ui/v2_21/mini_quality_token_06_v2_21.png');
+    this.load.image('v221-mini-quality-token-07', 'assets/ui/v2_21/mini_quality_token_07_v2_21.png');
+    this.load.image('v221-mini-quality-token-08', 'assets/ui/v2_21/mini_quality_token_08_v2_21.png');
+    this.load.image('v221-modal-candy-frame', 'assets/ui/v2_21/modal_candy_frame_v2_21.png');
+    this.load.image('v221-npc-cloud-shepherd', 'assets/ui/v2_21/npc_cloud_shepherd_v2_21.png');
+    this.load.image('v221-npc-jam-penguin', 'assets/ui/v2_21/npc_jam_penguin_v2_21.png');
+    this.load.image('v221-npc-maple-hedgehog', 'assets/ui/v2_21/npc_maple_hedgehog_v2_21.png');
+    this.load.image('v221-qa-mobile-badge', 'assets/ui/v2_21/qa_mobile_badge_v2_21.png');
+    this.load.image('v221-ribbon-tiny-bow', 'assets/ui/v2_21/ribbon_tiny_bow_v2_21.png');
+    this.load.image('v221-sparkle-sugar-dust', 'assets/ui/v2_21/sparkle_sugar_dust_v2_21.png');
+    this.load.image('v221-storybook-patch-plaque', 'assets/ui/v2_21/storybook_patch_plaque_v2_21.png');
+    this.load.image('v221-toast-candy-frame', 'assets/ui/v2_21/toast_candy_frame_v2_21.png');
+    this.load.image('v221-world-boss-cookie-gate', 'assets/ui/v2_21/world_boss_cookie_gate_v2_21.png');
+    this.load.image('v221-world-caravan-cart', 'assets/ui/v2_21/world_caravan_cart_v2_21.png');
+    this.load.image('v221-world-cloud-banner', 'assets/ui/v2_21/world_cloud_banner_v2_21.png');
+    this.load.image('v221-world-compass-cookie', 'assets/ui/v2_21/world_compass_cookie_v2_21.png');
+    this.load.image('v221-world-current-ribbon-crown', 'assets/ui/v2_21/world_current_ribbon_crown_v2_21.png');
+    this.load.image('v221-world-locked-mitten', 'assets/ui/v2_21/world_locked_mitten_v2_21.png');
+    this.load.image('v221-world-node-lollipop-ring', 'assets/ui/v2_21/world_node_lollipop_ring_v2_21.png');
+    this.load.image('v221-world-preview-candy-frame', 'assets/ui/v2_21/world_preview_candy_frame_v2_21.png');
+    this.load.image('v221-world-reward-flower', 'assets/ui/v2_21/world_reward_flower_v2_21.png');
+    this.load.image('v221-world-route-leaf-stitches', 'assets/ui/v2_21/world_route_leaf_stitches_v2_21.png');
+    this.load.image('v221-world-route-sugar-string', 'assets/ui/v2_21/world_route_sugar_string_v2_21.png');
+    this.load.image('v221-world-side-dream-clouds', 'assets/ui/v2_21/world_side_dream_clouds_v2_21.png');
+    this.load.image('v221-world-stage-flaglet', 'assets/ui/v2_21/world_stage_flaglet_v2_21.png');
 
     // v2.10 mobile design polish assets: cleaner compact plates, smaller touch UI, and WebP-first frames.
     this.load.image('v2-mobile-chip-v210', 'assets/ui/v2_15/mobile_chip_v2_15.png');
