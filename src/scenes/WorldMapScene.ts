@@ -5,6 +5,7 @@ import type { StageConfig, StageId } from '../game/types';
 import { playMusic, playSfx } from '../game/AudioManager';
 import { addCoverImage } from '../game/CodeUiKit';
 import { addHitZoneDebug } from '../game/HitZoneDebug';
+import { addCuteWorldMapAccents } from '../game/CuteFantasyPolishV216';
 import type { PlayerSave } from '../services/firebase';
 
 type HotspotTone = 'gold' | 'blue' | 'white' | 'red' | 'green';
@@ -80,6 +81,7 @@ export class WorldMapScene extends Phaser.Scene {
     window.addEventListener('kingdom-seed:user-activated', () => playMusic(this, 'bgm_world', 0.22), { once: true });
 
     this.createIllustratedWorldMap();
+    addCuteWorldMapAccents(this, STAGE_NODES);
     this.createStagePreviewLayer();
     this.createStageNodeHotspots();
     this.createNavigationHotspots();
@@ -87,7 +89,7 @@ export class WorldMapScene extends Phaser.Scene {
     this.refreshSelectedStage(false);
 
     this.time.delayedCall(0, () => {
-      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'WorldMapScene', version: '2.8', at: Date.now() } }));
+      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'WorldMapScene', version: '2.16', at: Date.now() } }));
     });
   }
 

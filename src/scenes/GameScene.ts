@@ -33,6 +33,7 @@ import { battleContractDetailLines, battleContractHudLine, battleContractResultL
 import { applyEnemyAffixV29, enemyAffixFullLineV29, enemyAffixHudLineV29, NO_ENEMY_AFFIX_V29, pickEnemyAffixV29, type EnemyAffixRuntimeV29 } from '../game/EnemyAffixesV29';
 import { capCombatDeltaV29, isLiteModeV29, mobileShortNumberV29, recommendTowerForWaveV29, towerRoleLineV29 } from '../game/MobileBattleAdvisorV29';
 import { V210_BUILD_HIT, V210_BUILD_MENU, V210_TOWER_HIT, V210_TOWER_PANEL, addV210ToastPlate, installV210BattlePolish, shortMetricV210 } from '../game/MobilePolishV210';
+import { addCuteBattleAccents } from '../game/CuteFantasyPolishV216';
 
 type CastingSpell = 'meteor' | 'mercenary' | undefined;
 
@@ -190,6 +191,7 @@ export class GameScene extends Phaser.Scene {
     drawBattlePolish(this, this.stage.theme);
     drawCinematicCombatFrame(this, this.stage.theme);
     installV210BattlePolish(this);
+    addCuteBattleAccents(this, this.stage.theme);
     addStageV26Decor(this, this.stage);
     installScenePerformanceWatch(this);
     this.createHud();

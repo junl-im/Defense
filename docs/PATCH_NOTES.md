@@ -30,3 +30,11 @@
 - 방향 전환과 전체화면 이후 Phaser ScaleManager 재계산 이벤트 추가.
 - 로그인/메인/월드맵/전투 배경, HUD, 타워, 유닛을 v1.9 에셋으로 동기화.
 - 타워 건설 메뉴 중첩 방지와 클릭존 점검 모드(`?hit=1`) 추가.
+
+
+## v2.16.0 - Cute Fantasy Art Foundation + Mobile QA
+- `public/assets/ui/v2_16/`에 말랑한 패널, 리본, 별, 하트, 구름, 보석, 스테이지 핀, 타워/몬스터 배지 에셋을 추가했습니다.
+- `CuteFantasyPolishV216.ts`를 추가해 로그인/로비/월드맵/전투 장식 레이어를 공통화했습니다.
+- WebP 로더 대상에 v2.16 UI 경로를 포함해 모바일 로딩 부담을 줄였습니다.
+- 로비 시작 토스트 중복 호출을 1회로 정리했습니다.
+- QA: `npx tsc --noEmit` 및 `npm run build` 통과.

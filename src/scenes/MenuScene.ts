@@ -3,6 +3,7 @@ import type { User } from 'firebase/auth';
 import { playSfx } from '../game/AudioManager';
 import { addCoverImage } from '../game/CodeUiKit';
 import { addHitZoneDebug } from '../game/HitZoneDebug';
+import { addCuteLoginAccents } from '../game/CuteFantasyPolishV216';
 import {
   completePendingRedirectSignIn,
   ensureAnonymousUser,
@@ -30,12 +31,13 @@ export class MenuScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor('#8fd5ff');
 
     this.createCinematicSplash();
+    addCuteLoginAccents(this);
     this.createStatusOverlay();
     this.createLoginHitZones();
     this.createUtilityHitZones();
 
     this.time.delayedCall(0, () => {
-      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MenuScene', version: '2.15.0', at: Date.now() } }));
+      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MenuScene', version: '2.16.0', at: Date.now() } }));
     });
 
     void this.bootstrapRedirectOrExistingUser();
@@ -112,7 +114,7 @@ export class MenuScene extends Phaser.Scene {
     const chip = this.add.graphics().setDepth(53);
     chip.fillStyle(0x071c3e, 0.46).fillRoundedRect(16, 14, 150, 24, 14);
     chip.lineStyle(1, 0xffdc82, 0.45).strokeRoundedRect(16, 14, 150, 24, 14);
-    this.add.text(91, 26, 'v2.15.0 DESIGN QA', {
+    this.add.text(91, 26, 'v2.16.0 CUTE ART QA', {
       fontSize: '8px',
       color: '#f7fbff',
       fontFamily: 'Pretendard, Noto Sans KR, Arial, sans-serif',

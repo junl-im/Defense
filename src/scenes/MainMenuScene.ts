@@ -4,6 +4,7 @@ import { playMusic, playSfx } from '../game/AudioManager';
 import { STAGE_LIST } from '../game/balance';
 import { addCoverImage } from '../game/CodeUiKit';
 import { addHitZoneDebug } from '../game/HitZoneDebug';
+import { addCuteLobbyAccents } from '../game/CuteFantasyPolishV216';
 import type { PlayerSave } from '../services/firebase';
 
 type HotspotTone = 'gold' | 'blue' | 'white' | 'red' | 'green';
@@ -57,6 +58,7 @@ export class MainMenuScene extends Phaser.Scene {
     window.addEventListener('kingdom-seed:user-activated', () => playMusic(this, 'bgm_world', 0.20), { once: true });
 
     this.createIllustrationLedLobby();
+    addCuteLobbyAccents(this, this.save.nickname, this.save.stars);
     this.createV210CleanChrome();
     this.createLobbyTextOverlay();
     this.createV26ExpansionShelf();
@@ -64,7 +66,7 @@ export class MainMenuScene extends Phaser.Scene {
     this.createSmallStatusToast();
 
     this.time.delayedCall(0, () => {
-      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MainMenuScene', version: '2.15', at: Date.now() } }));
+      window.dispatchEvent(new CustomEvent('kingdom-seed:scene-ready', { detail: { scene: 'MainMenuScene', version: '2.16', at: Date.now() } }));
     });
   }
 

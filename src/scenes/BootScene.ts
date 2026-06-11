@@ -32,7 +32,7 @@ const WEBP_ENABLED = !BOOT_QUERY.has('png') && (() => {
 const WEBP_RASTER_PATTERNS = [
   /assets\/backgrounds\/(login_background_clean_v2_15|login_background_clean_v2_6|login_background_clean_v2_4|main_menu_splash_v2_15|main_menu_splash_v2_6|main_menu_splash_v2_4|worldmap_splash_v2_15|worldmap_splash_v2_1)\.png$/,
   /assets\/maps\/(v2_15|v2_14|v2_13|v2_12|v2_6|v2_4)\/[^/]+\.png$/,
-  /assets\/ui\/(v2_2|v2_3|v2_4|v2_6|v2_7|v2_8|v2_9|v2_10|v2_11|v2_12|v2_13|v2_14|v2_15)\/[^/]+\.png$/,
+  /assets\/ui\/(v2_2|v2_3|v2_4|v2_6|v2_7|v2_8|v2_9|v2_10|v2_11|v2_12|v2_13|v2_14|v2_15|v2_16)\/[^/]+\.png$/,
   /assets\/props\/v2_6\/[^/]+\.png$/,
   /assets\/maps\/(stage_card_009|stage_card_010|stage_card_011|stage_card_012|map_stage_009|map_stage_010|map_stage_011|map_stage_012)\.png$/,
   /assets\/units\/(v2_1|v2_4)\/[^/]+\.png$/,
@@ -219,6 +219,18 @@ export class BootScene extends Phaser.Scene {
     // v2.9: mobile advisor / wave affix micro UI.
     this.load.image('v2-affix-chip-v29', 'assets/ui/v2_9/affix_chip_v2_9.png');
     this.load.image('v2-advisor-panel-v29', 'assets/ui/v2_9/advisor_panel_v2_9.png');
+
+    // v2.16: cute fantasy art foundation assets. Code keeps text/hit-zones separate for mobile QA.
+    this.load.image('v2-cute-panel-v216', 'assets/ui/v2_16/cute_panel_v2_16.png');
+    this.load.image('v2-cute-ribbon-v216', 'assets/ui/v2_16/cute_ribbon_v2_16.png');
+    this.load.image('v2-cute-star-v216', 'assets/ui/v2_16/cute_star_v2_16.png');
+    this.load.image('v2-cute-heart-v216', 'assets/ui/v2_16/cute_heart_v2_16.png');
+    this.load.image('v2-cute-cloud-v216', 'assets/ui/v2_16/cute_cloud_v2_16.png');
+    this.load.image('v2-cute-gem-v216', 'assets/ui/v2_16/cute_gem_v2_16.png');
+    this.load.image('v2-cute-stage-pin-v216', 'assets/ui/v2_16/cute_stage_pin_v2_16.png');
+    this.load.image('v2-cute-tower-badge-v216', 'assets/ui/v2_16/cute_tower_badge_v2_16.png');
+    this.load.image('v2-cute-monster-badge-v216', 'assets/ui/v2_16/cute_monster_badge_v2_16.png');
+    this.load.image('v2-cute-leaf-v216', 'assets/ui/v2_16/cute_leaf_v2_16.png');
 
     // v2.10 mobile design polish assets: cleaner compact plates, smaller touch UI, and WebP-first frames.
     this.load.image('v2-mobile-chip-v210', 'assets/ui/v2_15/mobile_chip_v2_15.png');
