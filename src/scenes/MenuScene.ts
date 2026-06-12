@@ -4,7 +4,12 @@ import { playSfx } from "../game/AudioManager";
 import { addCoverImage } from "../game/CodeUiKit";
 import { addHitZoneDebug } from "../game/HitZoneDebug";
 import { safeDelayedCall } from "../game/SceneSafety";
-import { markSceneTransition } from "../game/RuntimeLoadGovernor";
+import {
+  markSceneTransition,
+  noteOptionalWorkBlocked,
+  optionalRuntimeWorkAllowed,
+  pauseOptionalWork,
+} from "../game/RuntimeLoadGovernor";
 import { startRegisteredScene, warmMenuFlowScenes } from "./SceneRegistry";
 import {
   createInstantLocalSession,
@@ -31,7 +36,9 @@ export class MenuScene extends Phaser.Scene {
     this.createStatusOverlay();
     this.createLoginHitZones();
     this.createUtilityHitZones();
-    warmMenuFlowScenes(this, 700);
+    // v2.35.6: 첫 로그인 화면 직후에는 무거운 씬 프리워밍을 바로 시작하지 않는다.
+    // RuntimeLoadGovernor가 허용할 때만 MainMenu/WorldMap 코드를 조용히 예열한다.
+    warmMenuFlowScenes(this, 2600);
 
     safeDelayedCall(this, 0, () => {
       window.dispatchEvent(
@@ -41,7 +48,7 @@ export class MenuScene extends Phaser.Scene {
       );
     });
 
-    safeDelayedCall(this, 6200, () => void this.bootstrapRedirectOrExistingUser());
+    safeDelayedCall(this, 7800, () => void this.bootstrapRedirectOrExistingUser());
   }
 
   private getFirebaseService(): Promise<typeof import("../services/firebase")> {
@@ -162,7 +169,7 @@ export class MenuScene extends Phaser.Scene {
     chip.fillStyle(0x071c3e, 0.46).fillRoundedRect(16, 14, 164, 24, 14);
     chip.lineStyle(1, 0xffdc82, 0.45).strokeRoundedRect(16, 14, 164, 24, 14);
     this.add
-      .text(98, 26, "v2.35.4 FAST START", {
+      .text(98, 26, "v2.35.6 QUIET START", {
         fontSize: "8px",
         color: "#f7fbff",
         fixedWidth: 154,
@@ -444,8 +451,19 @@ export class MenuScene extends Phaser.Scene {
     }
   }
 
-  private async bootstrapRedirectOrExistingUser(): Promise<void> {
+  private async bootstrapRedirectOrExistingUser(retry = 0): Promise<void> {
     if (this.isTransitioning) return;
+    if (!optionalRuntimeWorkAllowed("firebase", { scene: this, allowDuringBoot: false })) {
+      noteOptionalWorkBlocked("firebase", "login-bootstrap");
+      if (retry < 3) {
+        const delay = 5200 + retry * 3600;
+        safeDelayedCall(this, delay, () => void this.bootstrapRedirectOrExistingUser(retry + 1));
+      } else if (this.statusText?.active) {
+        this.statusText.setText("빠른 시작 가능 · 계정 확인은 로그인 버튼을 누를 때 진행합니다.");
+      }
+      return;
+    }
+
     try {
       const {
         completePendingRedirectSignIn,
@@ -489,10 +507,15 @@ export class MenuScene extends Phaser.Scene {
     this.enterMainMenu(session.user, session.save);
 
     window.setTimeout(() => {
+      if (!optionalRuntimeWorkAllowed("firebase", { allowDuringBoot: false })) {
+        noteOptionalWorkBlocked("firebase", "quick-start-background-sync");
+        pauseOptionalWork("quick-start-local-first", 3600);
+        return;
+      }
       void this.getFirebaseService()
         .then(({ ensureQuickStartSession }) => ensureQuickStartSession(360))
         .catch((error) => console.warn("Background quick-start cloud sync skipped:", error));
-    }, 4600);
+    }, 9200);
   }
 
   private async startGoogle(): Promise<void> {

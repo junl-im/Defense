@@ -35,8 +35,9 @@ export function installDeferredPwaRuntime(): void {
   if (installed || !canRegisterServiceWorker()) return;
   installed = true;
   const base = (import.meta.env.BASE_URL || "/").replace(/\/$/, "/");
-  let sceneReady = false;
-  let userActivated = false;
+  const root = document.documentElement;
+  let sceneReady = root.classList.contains("ks-scene-ready");
+  let userActivated = root.classList.contains("ks-user-activated");
   const queueRetry = (delayMs: number): void => {
     if (retryTimer || registerDone) return;
     retryTimer = window.setTimeout(() => {
@@ -77,6 +78,11 @@ export function installDeferredPwaRuntime(): void {
   }, { once: true });
   window.addEventListener("kingdom-seed:scene-ready", () => {
     sceneReady = true;
+    root.classList.add("ks-scene-ready");
     tryRegister();
   }, { once: true });
+
+  // v2.35.6: PWA 런타임 자체가 유휴 시간에 동적 로드될 수 있으므로,
+  // 이미 지나간 scene-ready/user-activated 상태를 클래스에서 복구해 한 번 더 시도한다.
+  tryRegister();
 }

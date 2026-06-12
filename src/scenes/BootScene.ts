@@ -1,9 +1,8 @@
 import Phaser from "phaser";
 import type { EnemyKind, TowerKind } from "../game/types";
-import { unlockAudio } from "../game/AudioManager";
 import { preferFastStartMode } from "../game/PerformanceMode";
 import { getMobileRuntimeCaps } from "../game/MobileRuntimeEngine";
-import { ensureSceneRegistered, warmMenuFlowScenes } from "./SceneRegistry";
+import { ensureSceneRegistered } from "./SceneRegistry";
 
 const ENEMY_KEYS: EnemyKind[] = [
   "goblin",
@@ -165,6 +164,15 @@ function shouldFastBootSkip(key: string, path: string): boolean {
   }
 
   return FAST_BOOT_SKIP_PATTERNS.some((pattern) => pattern.test(path));
+}
+
+
+function unlockBootAudio(scene: Phaser.Scene): void {
+  // v2.35.6: BootScene 초기 청크에서 오디오 매니저를 정적으로 끌어오지 않는다.
+  // 모바일 첫 탭에서는 렌더러/로그인 화면이 우선이며, 오디오 해제는 이벤트 후 비동기로 처리한다.
+  void import("../game/AudioManager")
+    .then(({ unlockAudio }) => unlockAudio(scene))
+    .catch((error) => console.warn("Boot audio unlock skipped:", error));
 }
 
 type AnimSpec = {
@@ -2936,10 +2944,10 @@ export class BootScene extends Phaser.Scene {
     this.createAnimations();
     window.addEventListener(
       "kingdom-seed:user-activated",
-      () => unlockAudio(this),
+      () => unlockBootAudio(this),
       { once: true },
     );
-    this.input.once("pointerdown", () => unlockAudio(this));
+    this.input.once("pointerdown", () => unlockBootAudio(this));
     void this.openMenuScene();
   }
 
@@ -2948,8 +2956,8 @@ export class BootScene extends Phaser.Scene {
       await ensureSceneRegistered(this, "MenuScene");
       if (!this.scene.isActive("BootScene")) return;
       this.scene.start("MenuScene");
-      // 로그인 화면이 먼저 뜬 뒤, 다음 이동에 필요한 씬 코드를 유휴 시간에 준비한다.
-      warmMenuFlowScenes(this, 900);
+      // v2.35.6: 로그인 화면이 뜬 직후의 씬 프리워밍은 MenuScene 한 곳에서만 관리한다.
+      // BootScene과 MenuScene이 동시에 dynamic import를 시작하면 저사양 기기에서 첫 탭 후 버벅임이 생길 수 있다.
     } catch (error) {
       console.error("Menu scene registration failed:", error);
       window.dispatchEvent(

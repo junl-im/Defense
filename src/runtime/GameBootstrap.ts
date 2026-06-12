@@ -1,22 +1,64 @@
-import Phaser from 'phaser';
-import { BootScene } from '../scenes/BootScene';
-import { installGlobalAudioUnlock } from '../game/AudioManager';
-import { installGlobalPremiumDomFeedback } from '../game/PremiumMicroInteractions';
-import { getRenderProfile, makeGameFpsConfig } from '../game/QualityManager';
-import { installDeferredPwaRuntime } from '../platform/PwaRuntime';
-import { installMobileRuntimeEngine } from '../game/MobileRuntimeEngine';
-import { installRuntimeFrameGovernor } from '../game/RuntimeFrameGovernor';
-import { installRuntimeLoadGovernor, markUserCriticalInput } from '../game/RuntimeLoadGovernor';
+import Phaser from "phaser";
+import { BootScene } from "../scenes/BootScene";
+import { getRenderProfile, makeGameFpsConfig } from "../game/QualityManager";
+import { installMobileRuntimeEngine } from "../game/MobileRuntimeEngine";
+import { installRuntimeFrameGovernor } from "../game/RuntimeFrameGovernor";
+import { installRuntimeLoadGovernor, markUserCriticalInput } from "../game/RuntimeLoadGovernor";
 
 let gameInstance: Phaser.Game | undefined;
 let installedWindowHooks = false;
 
 function dispatchEngineStatus(stage: string, detail: Record<string, unknown> = {}): void {
   window.dispatchEvent(
-    new CustomEvent('kingdom-seed:engine-status', {
+    new CustomEvent("kingdom-seed:engine-status", {
       detail: { stage, at: Date.now(), ...detail },
     }),
   );
+}
+
+function scheduleIdle(task: () => void, delayMs: number): void {
+  window.setTimeout(() => {
+    const idle = (
+      window as Window & {
+        requestIdleCallback?: (callback: () => void, options?: { timeout?: number }) => number;
+      }
+    ).requestIdleCallback;
+    if (idle) idle(task, { timeout: 2400 });
+    else window.setTimeout(task, 1);
+  }, Math.max(0, delayMs));
+}
+
+function installDeferredRuntimeComplements(game: Phaser.Game): void {
+  // v2.35.6: Phaser 생성 직전/직후의 critical path에서 오디오, PWA, DOM 장식 코드를 분리한다.
+  // 기능은 유지하되 로그인 첫 화면을 여는 동안 불필요한 모듈 평가를 뒤로 미룬다.
+  scheduleIdle(() => {
+    void import("../game/PremiumMicroInteractions")
+      .then(({ installGlobalPremiumDomFeedback }) => installGlobalPremiumDomFeedback())
+      .catch((error) => console.warn("Premium DOM feedback install skipped:", error));
+  }, 520);
+
+  scheduleIdle(() => {
+    void import("../game/AudioManager")
+      .then(({ installGlobalAudioUnlock, unlockAudio }) => {
+        installGlobalAudioUnlock(game);
+        if (document.documentElement.classList.contains("ks-user-activated")) {
+          const scene = game.scene.getScenes(true)[0];
+          if (scene) unlockAudio(scene);
+        }
+      })
+      .catch((error) => console.warn("Global audio unlock install skipped:", error));
+  }, 260);
+
+  const installPwaWhenSettled = (): void => {
+    scheduleIdle(() => {
+      void import("../platform/PwaRuntime")
+        .then(({ installDeferredPwaRuntime }) => installDeferredPwaRuntime())
+        .catch((error) => console.warn("Deferred PWA runtime install skipped:", error));
+    }, 1600);
+  };
+
+  if (document.documentElement.classList.contains("ks-scene-ready")) installPwaWhenSettled();
+  else window.addEventListener("kingdom-seed:scene-ready", installPwaWhenSettled, { once: true });
 }
 
 function installWindowScaleHooks(game: Phaser.Game): void {
@@ -33,80 +75,78 @@ function installWindowScaleHooks(game: Phaser.Game): void {
       try {
         game.scale.refresh();
       } catch (error) {
-        console.warn('Scale refresh skipped:', error);
+        console.warn("Scale refresh skipped:", error);
       }
     }, 80);
   };
 
-  window.addEventListener('kingdom-seed:viewport-changed', refreshScale);
-  window.addEventListener('orientationchange', () =>
+  window.addEventListener("kingdom-seed:viewport-changed", refreshScale);
+  window.addEventListener("orientationchange", () =>
     [0, 180, 420].forEach((delay) => window.setTimeout(refreshScale, delay)),
   );
-  window.addEventListener('resize', refreshScale);
+  window.addEventListener("resize", refreshScale);
 
-  window.addEventListener('kingdom-seed:quality-changed', () => {
+  window.addEventListener("kingdom-seed:quality-changed", () => {
     // Phaser 해상도는 부팅 시점에 고정된다. 렌더 티어 변경은 깨끗한 재시작이 가장 안전하다.
     const url = new URL(window.location.href);
-    url.searchParams.set('q', String(Date.now()));
+    url.searchParams.set("q", String(Date.now()));
     window.location.replace(url.toString());
   });
 }
 
-export function bootstrapKingdomSeedGame(reason = 'deferred-entry'): Phaser.Game {
+export function bootstrapKingdomSeedGame(reason = "deferred-entry"): Phaser.Game {
   if (gameInstance) return gameInstance;
 
-  dispatchEngineStatus('phaser-configuring', { reason });
+  dispatchEngineStatus("phaser-configuring", { reason });
 
   installRuntimeLoadGovernor();
-  installDeferredPwaRuntime();
-  installGlobalPremiumDomFeedback();
 
   // v2.35.5: 유저 탭으로 엔진 로드가 시작된 경우 RuntimeLoadGovernor가
   // 이미 지나간 user-activated 이벤트를 놓칠 수 있으므로, 초기 몇 초는 선택 작업을 멈춰 둔다.
-  if (document.documentElement.classList.contains('ks-user-activated')) {
-    markUserCriticalInput('deferred-engine-after-activation', 3600);
+  if (document.documentElement.classList.contains("ks-user-activated")) {
+    markUserCriticalInput("deferred-engine-after-activation", 3600);
   }
 
   const profile = getRenderProfile();
 
   const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,
-    parent: 'game',
-    backgroundColor: '#101820',
+    parent: "game",
+    backgroundColor: "#101820",
     fps: makeGameFpsConfig(),
     scale: {
       mode: Phaser.Scale.FIT,
       autoCenter: Phaser.Scale.CENTER_BOTH,
       width: 960,
       height: 540,
-      fullscreenTarget: 'game',
+      fullscreenTarget: "game",
     },
     input: {
-      activePointers: profile.tier === 'low' ? 2 : 3,
+      activePointers: profile.tier === "low" ? 2 : 3,
     },
     audio: {
       disableWebAudio: false,
     },
     render: {
       pixelArt: false,
-      antialias: profile.tier !== 'low',
-      roundPixels: profile.tier === 'low',
-      powerPreference: profile.tier === 'low' ? 'low-power' : 'high-performance',
-      antialiasGL: profile.tier !== 'low',
-      desynchronized: profile.tier === 'low',
-      batchSize: profile.tier === 'low' ? 1024 : 4096,
-      maxTextures: profile.tier === 'low' ? 8 : 16,
+      antialias: profile.tier !== "low",
+      roundPixels: profile.tier === "low",
+      powerPreference: profile.tier === "low" ? "low-power" : "high-performance",
+      antialiasGL: profile.tier !== "low",
+      desynchronized: profile.tier === "low",
+      batchSize: profile.tier === "low" ? 1024 : 4096,
+      maxTextures: profile.tier === "low" ? 8 : 16,
       mipmapRegeneration: false,
     },
     scene: [BootScene],
   };
 
-  dispatchEngineStatus('phaser-creating', { tier: profile.tier });
+  dispatchEngineStatus("phaser-creating", { tier: profile.tier });
   gameInstance = new Phaser.Game(config);
   installMobileRuntimeEngine(gameInstance);
   installRuntimeFrameGovernor(gameInstance);
-  installGlobalAudioUnlock(gameInstance);
   installWindowScaleHooks(gameInstance);
-  dispatchEngineStatus('phaser-created', { tier: profile.tier });
+  installDeferredRuntimeComplements(gameInstance);
+  dispatchEngineStatus("phaser-created", { tier: profile.tier });
   return gameInstance;
 }

@@ -227,6 +227,7 @@ function updateOrientationClass(): void {
 
 function markSceneReady(): void {
   sceneReady = true;
+  document.documentElement.classList.add("ks-scene-ready");
   if (bootWatchdogTimer !== undefined) {
     window.clearTimeout(bootWatchdogTimer);
     bootWatchdogTimer = undefined;

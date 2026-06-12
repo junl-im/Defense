@@ -1,0 +1,26 @@
+KingdomSeed v2.35.6 Quiet Start Governor Patch
+
+적용 방법
+1. 이 zip의 내용을 기존 KingdomSeed 프로젝트 루트에 그대로 덮어씁니다.
+2. GitHub Desktop에서 변경 파일을 확인합니다.
+3. npm install이 이미 되어 있으면 npm run build로 검증합니다.
+
+패치 목표
+- v2.35.5의 엔진 청크 분리 이후, 로그인 화면 직후 뒤에서 실행되던 선택 작업을 더 조용하게 만듭니다.
+- 첫 시작/첫 탭 이후 저사양 모바일에서 Firebase, PWA, 씬 프리워밍, 오디오/DOM 보조 모듈이 한꺼번에 몰리지 않도록 정리합니다.
+
+주요 변경
+- SceneRegistry: 기본 씬 프리워밍을 RuntimeLoadGovernor 허용 시점으로 제한합니다.
+- SceneRegistry: GameScene/ArtifactForge/Lab 같은 무거운 씬은 기본 프리워밍에서 제외합니다.
+- MenuScene: 자동 Firebase 세션 확인을 RuntimeLoadGovernor가 허용할 때만 수행합니다.
+- MenuScene: 빠른 시작 후 백그라운드 클라우드 동기화를 더 늦추고, 네트워크/부팅 안정 구간에서는 생략합니다.
+- BootScene: BootScene과 MenuScene의 중복 씬 프리워밍을 제거합니다.
+- BootScene/GameBootstrap: 오디오/PWA/DOM 보조 모듈을 초기 critical path에서 분리해 유휴 시간으로 지연합니다.
+- PwaRuntime/WebShell: PWA 런타임이 늦게 로드되어도 이미 지나간 scene-ready/user-activated 상태를 복구할 수 있게 했습니다.
+
+검수 옵션
+- 기본 테스트: 일반 주소 또는 ?quality=low
+- 완전 콜드 부팅: ?tapboot 또는 ?coldboot
+- 프리워밍 완전 차단: ?noprewarm
+- 전투 씬까지 프리워밍 확인: ?prewarm=full 또는 ?warmgame
+- 기존 전체 에셋 부팅 비교: ?fullpreload
