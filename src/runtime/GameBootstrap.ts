@@ -5,6 +5,13 @@ import { installMobileRuntimeEngine } from "../game/MobileRuntimeEngine";
 import { installRuntimeFrameGovernor } from "../game/RuntimeFrameGovernor";
 import { installRuntimeLoadGovernor, markUserCriticalInput } from "../game/RuntimeLoadGovernor";
 
+declare global {
+  interface Window {
+    __KINGDOM_SEED_GAME__?: Phaser.Game;
+    __KINGDOM_SEED_BOOT_ERROR__?: unknown;
+  }
+}
+
 let gameInstance: Phaser.Game | undefined;
 let installedWindowHooks = false;
 
@@ -108,6 +115,12 @@ export function bootstrapKingdomSeedGame(reason = "deferred-entry"): Phaser.Game
   }
 
   const profile = getRenderProfile();
+  let parent = document.getElementById("game");
+  if (!parent) {
+    parent = document.createElement("div");
+    parent.id = "game";
+    document.body.appendChild(parent);
+  }
 
   const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,
@@ -142,7 +155,19 @@ export function bootstrapKingdomSeedGame(reason = "deferred-entry"): Phaser.Game
   };
 
   dispatchEngineStatus("phaser-creating", { tier: profile.tier });
-  gameInstance = new Phaser.Game(config);
+  try {
+    gameInstance = new Phaser.Game(config);
+    window.__KINGDOM_SEED_GAME__ = gameInstance;
+  } catch (error) {
+    window.__KINGDOM_SEED_BOOT_ERROR__ = error;
+    window.dispatchEvent(
+      new ErrorEvent("error", {
+        message: "Kingdom Seed Phaser game creation failed",
+        error,
+      }),
+    );
+    throw error;
+  }
   installMobileRuntimeEngine(gameInstance);
   installRuntimeFrameGovernor(gameInstance);
   installWindowScaleHooks(gameInstance);

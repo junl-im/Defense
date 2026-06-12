@@ -233,7 +233,18 @@ function markSceneReady(): void {
     bootWatchdogTimer = undefined;
   }
   lastSceneReadyAt = Date.now();
-  if (activated) fadeRemove(startGate);
+  if (startGate) {
+    const note = startGate.querySelector<HTMLElement>(".shell-loading-text");
+    if (note) note.textContent = activated ? "로그인 화면 진입 중..." : "준비 완료: 탭하면 바로 입장합니다";
+  }
+  if (activated) {
+    fadeRemove(startGate);
+  } else {
+    // v2.35.7: 엔진은 이미 준비됐지만 모바일 탭이 아직 없는 상태일 수 있다.
+    // 사용자가 같은 시작 게이트를 다시 누르면 즉시 제거되도록 한 번 더 안전 리스너를 건다.
+    startGate?.addEventListener("pointerdown", () => fadeRemove(startGate), { once: true });
+    startGate?.addEventListener("click", () => fadeRemove(startGate), { once: true });
+  }
   suppressExitGuardUntil = Date.now() + 2800;
 }
 
@@ -288,11 +299,11 @@ function createStartGate(): void {
         <h1>탭해서 시작</h1>
         <p>사운드와 화면을 준비하고 바로 진입합니다.</p>
         <div class="shell-tap-rune">TAP</div>
-        <div class="shell-loading-text">v2.35.5 초경량 셸 시작 모드</div>
+        <div class="shell-loading-text">v2.35.7 실행 복구 모드</div>
       </div>`;
   } else {
     const note = startGate.querySelector<HTMLElement>(".shell-loading-text");
-    if (note) note.textContent = "v2.35.5 초경량 셸 시작 모드";
+    if (note) note.textContent = "v2.35.7 실행 복구 모드";
   }
   if (!existingGate) document.body.appendChild(startGate);
   const start = (): void => void activateGameShell();
