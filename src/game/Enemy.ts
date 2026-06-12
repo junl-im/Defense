@@ -313,6 +313,16 @@ export class Enemy extends Phaser.GameObjects.Container {
     }
   }
 
+  destroy(fromScene?: boolean): void {
+    // 독/슬로우/피격 플래시 타이머가 사망 후 남아 다음 씬까지 접근하지 않도록 정리한다.
+    this.poisonTimer?.remove(false);
+    this.poisonTimer = undefined;
+    this.scene?.tweens?.killTweensOf(this);
+    this.scene?.tweens?.killTweensOf(this.bodyCircle);
+    if (this.sprite) this.scene?.tweens?.killTweensOf(this.sprite);
+    super.destroy(fromScene);
+  }
+
   private resolveV18EnemyArtKey(kind: string): string | undefined {
     const family: Record<string, string> = {
       goblin: "goblin",
@@ -450,6 +460,11 @@ export class Enemy extends Phaser.GameObjects.Container {
   private startDeathAnimation(): void {
     if (this.deathStarted) return;
     this.deathStarted = true;
+    this.poisonTimer?.remove(false);
+    this.poisonTimer = undefined;
+    this.scene.tweens.killTweensOf(this);
+    this.scene.tweens.killTweensOf(this.bodyCircle);
+    if (this.sprite) this.scene.tweens.killTweensOf(this.sprite);
     this.spawnDeathPop();
     this.hpBack.setVisible(false);
     this.hpBar.setVisible(false);
@@ -461,7 +476,7 @@ export class Enemy extends Phaser.GameObjects.Container {
       targets: this,
       y: this.y + 18,
       alpha: 0,
-      scale: Math.max(0.45, this.scaleX * 0.62),
+      scale: Math.max(0.45, Math.abs(this.scaleX) * 0.62),
       duration: 360,
       ease: "Cubic.easeIn",
       onComplete: () => {

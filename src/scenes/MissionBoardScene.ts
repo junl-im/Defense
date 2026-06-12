@@ -3,6 +3,7 @@ import type { User } from 'firebase/auth';
 import type { PlayerSave } from '../services/localSave';
 import { claimMissionReward, consumeRewardChest, getMissionStates, getRewardChestCount, type MissionId } from '../game/MissionBoard';
 import { playMusic, playSfx } from '../game/AudioManager';
+import { startRegisteredScene } from "./SceneRegistry";
 
 export class MissionBoardScene extends Phaser.Scene {
   private user!: User;
@@ -94,8 +95,8 @@ export class MissionBoardScene extends Phaser.Scene {
   }
 
   private drawFooter(): void {
-    this.makeButton(126, 504, '월드맵', () => this.scene.start('WorldMapScene', { user: this.user, save: this.save }), 164);
-    this.makeButton(308, 504, '영웅 전당', () => this.scene.start('HeroHallScene', { user: this.user, save: this.save }), 172);
+    this.makeButton(126, 504, '월드맵', () => void startRegisteredScene(this, 'WorldMapScene', { user: this.user, save: this.save }), 164);
+    this.makeButton(308, 504, '영웅 전당', () => void startRegisteredScene(this, 'HeroHallScene', { user: this.user, save: this.save }), 172);
   }
 
   private makeButton(x: number, y: number, label: string, cb: () => void, width = 180): Phaser.GameObjects.Container {

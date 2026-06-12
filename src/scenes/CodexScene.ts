@@ -3,6 +3,7 @@ import type { User } from 'firebase/auth';
 import { ENEMIES, TOWERS } from '../game/balance';
 import type { EnemyConfig, TowerConfig } from '../game/types';
 import type { PlayerSave } from '../services/localSave';
+import { startRegisteredScene } from "./SceneRegistry";
 
 export class CodexScene extends Phaser.Scene {
   private user!: User;
@@ -34,7 +35,7 @@ export class CodexScene extends Phaser.Scene {
 
     this.makeButton(190, 123, 170, 38, '타워 도감', () => { this.mode = 'tower'; this.renderContent(); }, 0x284f39);
     this.makeButton(390, 123, 170, 38, '적 도감', () => { this.mode = 'enemy'; this.renderContent(); }, 0x5a3f6b);
-    this.makeButton(740, 123, 210, 38, '월드맵으로', () => this.scene.start('WorldMapScene', { user: this.user, save: this.save }), 0x24486b);
+    this.makeButton(740, 123, 210, 38, '월드맵으로', () => void startRegisteredScene(this, 'WorldMapScene', { user: this.user, save: this.save }), 0x24486b);
     this.makeButton(624, 486, 110, 36, '이전', () => this.turnEnemyPage(-1), 0x3d3a57);
     this.makeButton(756, 486, 110, 36, '다음', () => this.turnEnemyPage(1), 0x3d3a57);
     this.pageText = this.add.text(480, 486, '', { fontSize: '17px', color: '#ffe38c', fontStyle: 'bold' }).setOrigin(0.5);

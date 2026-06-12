@@ -10,6 +10,7 @@ import { loadProgressiveArtBundle, warmProgressiveArtBundle } from "../game/Prog
 import { clearTimer, safeDelayedCall } from "../game/SceneSafety";
 import { markSceneTransition } from "../game/RuntimeLoadGovernor";
 import { allowArtPrewarm, allowPremiumStaticArt, preferReducedMotion, useCumulativeArtLayers } from "../game/PerformanceMode";
+import { startRegisteredScene, warmRegisteredScenes, type RegisteredSceneKey } from "./SceneRegistry";
 import type { PlayerSave } from "../services/localSave";
 
 type HotspotTone = "gold" | "blue" | "white" | "red" | "green";
@@ -98,11 +99,16 @@ export class WorldMapScene extends Phaser.Scene {
     this.createToastLayer();
     this.refreshSelectedStage(false);
     this.installSceneCleanup();
+    warmRegisteredScenes(
+      this,
+      ["MainMenuScene", "GameScene", "HeroHallScene", "MissionBoardScene", "ArtifactForgeScene", "CodexScene", "LabScene"],
+      1000,
+    );
 
     safeDelayedCall(this, 0, () => {
       window.dispatchEvent(
         new CustomEvent("kingdom-seed:scene-ready", {
-          detail: { scene: "WorldMapScene", version: "2.35.0", at: Date.now() },
+          detail: { scene: "WorldMapScene", version: "2.35.4", at: Date.now() },
         }),
       );
     });
@@ -371,7 +377,7 @@ export class WorldMapScene extends Phaser.Scene {
       tone: "blue",
       onClick: () => {
         markSceneTransition("world-to-lobby");
-        this.scene.start("MainMenuScene", { user: this.user, save: this.save });
+        void startRegisteredScene(this, "MainMenuScene", { user: this.user, save: this.save });
       },
     });
     this.addHotspot({
@@ -405,7 +411,7 @@ export class WorldMapScene extends Phaser.Scene {
         onClick: () => {
           if (item.scene.length > 0) {
             markSceneTransition(`world-to-${item.scene}`);
-            this.scene.start(item.scene, { user: this.user, save: this.save });
+            void startRegisteredScene(this, item.scene as RegisteredSceneKey, { user: this.user, save: this.save });
           } else {
             this.showToast(item.message);
           }
@@ -649,7 +655,7 @@ export class WorldMapScene extends Phaser.Scene {
     if (!this.scene.isActive("WorldMapScene")) return;
     if (allowArtPrewarm()) warmProgressiveArtBundle(this, "battle", { delayMs: 4200 });
     markSceneTransition("world-to-battle");
-    this.scene.start("GameScene", {
+    void startRegisteredScene(this, "GameScene", {
       user: this.user,
       save: this.save,
       stageId: this.selectedStage.id,

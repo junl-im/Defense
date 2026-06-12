@@ -1,92 +1,125 @@
-import Phaser from 'phaser';
-import { BootScene } from './scenes/BootScene';
-import { MenuScene } from './scenes/MenuScene';
-import { MainMenuScene } from './scenes/MainMenuScene';
-import { WorldMapScene } from './scenes/WorldMapScene';
-import { LabScene } from './scenes/LabScene';
-import { GameScene } from './scenes/GameScene';
-import { CodexScene } from './scenes/CodexScene';
-import { MetaScene } from './scenes/MetaScene';
-import { HeroHallScene } from './scenes/HeroHallScene';
-import { MissionBoardScene } from './scenes/MissionBoardScene';
-import { ArtifactForgeScene } from './scenes/ArtifactForgeScene';
-import { installGlobalAudioUnlock } from './game/AudioManager';
-import { installGlobalPremiumDomFeedback } from './game/PremiumMicroInteractions';
-import { getRenderProfile, makeGameFpsConfig } from './game/QualityManager';
-import { installWebShell } from './platform/WebShell';
-import { installDeferredPwaRuntime } from './platform/PwaRuntime';
-import { installMobileRuntimeEngine } from './game/MobileRuntimeEngine';
-import { installRuntimeFrameGovernor } from './game/RuntimeFrameGovernor';
-import { installRuntimeLoadGovernor } from './game/RuntimeLoadGovernor';
 import './style.css';
+import { installWebShell } from './platform/WebShell';
+
+const query = new URLSearchParams(window.location.search);
+const root = document.documentElement;
+let enginePromise: Promise<typeof import('./runtime/GameBootstrap')> | undefined;
+let engineStarted = false;
+let lastStatus = '';
+
+function setGateText(text: string): void {
+  if (lastStatus === text) return;
+  lastStatus = text;
+  const note = document.querySelector<HTMLElement>('#start-gate .shell-loading-text');
+  if (note) note.textContent = text;
+}
+
+function dispatchBootstrapError(reason: string, error: unknown): void {
+  window.dispatchEvent(
+    new ErrorEvent('error', {
+      message: `Kingdom Seed bootstrap failed: ${reason}`,
+      error,
+    }),
+  );
+}
+
+function loadEngineChunk(reason: string): Promise<typeof import('./runtime/GameBootstrap')> {
+  if (!enginePromise) {
+    root.classList.add('ks-engine-chunk-loading');
+    setGateText(reason === 'user-activated' ? '엔진 코드 불러오는 중...' : '엔진을 조용히 준비하는 중...');
+    enginePromise = import('./runtime/GameBootstrap')
+      .then((module) => {
+        root.classList.add('ks-engine-chunk-ready');
+        root.classList.remove('ks-engine-chunk-loading');
+        setGateText('엔진 준비 완료, 화면 여는 중...');
+        return module;
+      })
+      .catch((error) => {
+        root.classList.remove('ks-engine-chunk-loading');
+        dispatchBootstrapError('dynamic-import', error);
+        throw error;
+      });
+  }
+  return enginePromise;
+}
+
+function startEngine(reason: string): void {
+  if (engineStarted) return;
+  engineStarted = true;
+  root.classList.add('ks-engine-start-requested');
+  void loadEngineChunk(reason)
+    .then((module) => {
+      setGateText('게임 화면 준비 중...');
+      module.bootstrapKingdomSeedGame(reason);
+    })
+    .catch((error) => {
+      engineStarted = false;
+      setGateText('시작 실패: 화면을 다시 탭하세요');
+      dispatchBootstrapError('start-engine', error);
+    });
+}
+
+function scheduleAfterFirstPaint(task: () => void, delayMs: number): void {
+  window.requestAnimationFrame(() => {
+    window.requestAnimationFrame(() => window.setTimeout(task, delayMs));
+  });
+}
+
+function scheduleIdle(task: () => void, delayMs: number): void {
+  window.setTimeout(() => {
+    const idle = (
+      window as Window & {
+        requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
+      }
+    ).requestIdleCallback;
+    if (idle) idle(task, { timeout: 1400 });
+    else window.setTimeout(task, 1);
+  }, Math.max(0, delayMs));
+}
+
+function shouldWaitForTap(): boolean {
+  const nav = navigator as Navigator & {
+    connection?: { saveData?: boolean; effectiveType?: string };
+  };
+  const connection = nav.connection;
+  return (
+    query.has('tapboot') ||
+    query.has('coldboot') ||
+    connection?.saveData === true ||
+    connection?.effectiveType === 'slow-2g' ||
+    connection?.effectiveType === '2g'
+  );
+}
 
 installWebShell();
-installDeferredPwaRuntime();
-installRuntimeLoadGovernor();
-installGlobalPremiumDomFeedback();
+root.classList.add('ks-html-shell-ready');
+setGateText('초기 화면 준비 완료');
 
-const profile = getRenderProfile();
-
-const config: Phaser.Types.Core.GameConfig = {
-  type: Phaser.AUTO,
-  parent: 'game',
-  backgroundColor: '#101820',
-  fps: makeGameFpsConfig(),
-  scale: {
-    mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_BOTH,
-    width: 960,
-    height: 540,
-    fullscreenTarget: 'game',
-  },
-  input: {
-    activePointers: profile.tier === 'low' ? 2 : 3,
-  },
-  audio: {
-    disableWebAudio: false,
-  },
-  render: {
-    pixelArt: false,
-    antialias: profile.tier !== 'low',
-    roundPixels: profile.tier === 'low',
-    powerPreference: profile.tier === 'low' ? 'low-power' : 'high-performance',
-    antialiasGL: profile.tier !== 'low',
-    desynchronized: profile.tier === 'low',
-    batchSize: profile.tier === 'low' ? 1024 : 4096,
-    maxTextures: profile.tier === 'low' ? 8 : 16,
-    mipmapRegeneration: false,
-  },
-  scene: [BootScene, MenuScene, MainMenuScene, WorldMapScene, LabScene, CodexScene, MetaScene, HeroHallScene, MissionBoardScene, ArtifactForgeScene, GameScene],
-};
-
-const game = new Phaser.Game(config);
-installMobileRuntimeEngine(game);
-installRuntimeFrameGovernor(game);
-installGlobalAudioUnlock(game);
-
-let pendingScaleRefresh = 0;
-const refreshScale = (): void => {
-  // Mobile browsers often fire resize/orientation bursts while the URL bar moves.
-  // Coalescing refreshes prevents the ScaleManager from doing repeated layout work in one frame.
-  if (pendingScaleRefresh) return;
-  pendingScaleRefresh = window.setTimeout(() => {
-    pendingScaleRefresh = 0;
-    try {
-      game.scale.refresh();
-    } catch (error) {
-      console.warn('Scale refresh skipped:', error);
-    }
-  }, 80);
-};
-
-window.addEventListener('kingdom-seed:viewport-changed', refreshScale);
-window.addEventListener('orientationchange', () => [0, 180, 420].forEach((delay) => window.setTimeout(refreshScale, delay)));
-window.addEventListener('resize', refreshScale);
-
-window.addEventListener('kingdom-seed:quality-changed', () => {
-  // Phaser resolution is fixed at boot. Reloading is the cleanest way to apply
-  // the selected render tier without leaving stale WebGL state in mobile webviews.
-  const url = new URL(window.location.href);
-  url.searchParams.set('q', String(Date.now()));
-  window.location.replace(url.toString());
+window.addEventListener('kingdom-seed:user-activated', () => {
+  root.classList.add('ks-user-activated');
+  setGateText('탭 확인, 게임 화면 여는 중...');
+  startEngine('user-activated');
 });
+
+window.addEventListener('kingdom-seed:engine-status', (event) => {
+  const detail = (event as CustomEvent<{ stage?: string; tier?: string }>).detail;
+  if (detail?.stage === 'phaser-configuring') setGateText('렌더러 설정 중...');
+  if (detail?.stage === 'phaser-creating') setGateText(`렌더러 시작 중${detail.tier ? ` · ${detail.tier}` : ''}...`);
+  if (detail?.stage === 'phaser-created') setGateText('로그인 화면 불러오는 중...');
+});
+
+// v2.35.5: 첫 페인트를 막지 않기 위해 Phaser는 정적 import하지 않는다.
+// 기본은 정적 HTML 게이트를 먼저 그린 뒤 유휴 시간에 엔진 청크를 조용히 가져와
+// 사용자가 탭했을 때 이미 로그인 씬이 준비되어 있도록 한다.
+if (shouldWaitForTap()) {
+  setGateText('데이터 절약 모드: 탭하면 엔진을 불러옵니다');
+} else {
+  scheduleAfterFirstPaint(() => {
+    void loadEngineChunk('idle-preload');
+    scheduleIdle(() => startEngine('idle-preboot'), 180);
+  }, 120);
+}
+
+if (query.has('autostart')) {
+  scheduleAfterFirstPaint(() => startEngine('autostart'), 20);
+}

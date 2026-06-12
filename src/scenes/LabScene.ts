@@ -6,6 +6,7 @@ import {
   type PlayerSave,
   type UpgradeKey
 } from '../services/localSave';
+import { startRegisteredScene } from "./SceneRegistry";
 
 const UPGRADE_KEYS: UpgradeKey[] = ['archerDamage', 'mageDamage', 'barracksHp', 'artillerySplash'];
 
@@ -45,7 +46,7 @@ export class LabScene extends Phaser.Scene {
       align: 'center'
     }).setOrigin(0.5);
 
-    this.makeButton(110, 498, '월드맵', () => this.scene.start('WorldMapScene', { user: this.user, save: this.save }), 160, 42, 0x24486b);
+    this.makeButton(110, 498, '월드맵', () => void startRegisteredScene(this, 'WorldMapScene', { user: this.user, save: this.save }), 160, 42, 0x24486b);
     this.renderRows();
   }
 

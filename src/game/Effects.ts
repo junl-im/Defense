@@ -1,11 +1,13 @@
 import Phaser from "phaser";
 import {
+  getRenderProfile,
   lowPowerMode,
   scaledDuration,
   scaledFxCount,
   scaledShake,
   shouldSpawnFx,
 } from "./QualityManager";
+import { tryAcquireCombatFx } from "./CombatFxBudget";
 
 export type ProjectileStyle = "arrow" | "magic" | "shell" | "slash" | "spark";
 
@@ -17,8 +19,13 @@ export function spawnFloatingText(
   color = "#ffffff",
   fontSize = 16,
 ): void {
-  // 모바일 전투 중 텍스트는 프레임을 많이 잡아먹지 않도록 QualityManager의 FX 예산을 먼저 통과시킨다.
-  if (!shouldSpawnFx(scene, 0.45)) return;
+  // 모바일 전투 중 텍스트는 프레임을 많이 잡아먹지 않도록 QualityManager의 FX 예산과
+  // 동시 활성 개수 캡을 모두 통과시킨다. 많은 적에게 광역기가 들어가는 순간 텍스트가 폭주하는 것을 막는다.
+  const release = tryAcquireCombatFx(scene, "floatingText");
+  if (!release || !shouldSpawnFx(scene, 0.45)) {
+    release?.();
+    return;
+  }
 
   const label = scene.add
     .text(x, y, text, {
@@ -49,7 +56,10 @@ export function spawnFloatingText(
         scale: 0.96,
         duration: scaledDuration(560),
         ease: "Sine.easeOut",
-        onComplete: () => label.destroy(),
+        onComplete: () => {
+          label.destroy();
+          release();
+        },
       });
     },
   });
@@ -135,7 +145,9 @@ export function spawnProjectile(
   duration: number,
   onImpact: () => void,
 ): void {
-  if (!shouldSpawnFx(scene, style === "shell" ? 1.2 : 0.85)) {
+  const release = tryAcquireCombatFx(scene, "projectile");
+  if (!release || !shouldSpawnFx(scene, style === "shell" ? 1.2 : 0.85)) {
+    release?.();
     scene.time.delayedCall(Math.max(40, duration), onImpact);
     return;
   }
@@ -198,45 +210,55 @@ export function spawnProjectile(
     (projectile as Phaser.GameObjects.Sprite).setTint(color);
   }
 
-  const glow = scene.add
-    .circle(fromX, fromY, style === "shell" ? 13 : 10, color, 0.16)
-    .setDepth(60)
-    .setBlendMode(Phaser.BlendModes.ADD);
-  const trail = scene.add
-    .ellipse(
-      fromX - Math.cos(angle) * (style === "shell" ? 8 : 14),
-      fromY - Math.sin(angle) * (style === "shell" ? 8 : 14),
-      style === "shell" ? 22 : 34,
-      style === "shell" ? 10 : 8,
-      color,
-      style === "magic" ? 0.2 : 0.14,
-    )
-    .setRotation(angle)
-    .setDepth(59)
-    .setBlendMode(Phaser.BlendModes.ADD);
-  const pin = scene.add
-    .circle(
-      fromX,
-      fromY,
-      style === "magic" ? 4 : 3,
-      0xffffff,
-      style === "shell" ? 0.18 : 0.34,
-    )
-    .setDepth(62)
-    .setBlendMode(Phaser.BlendModes.ADD);
+  const profile = getRenderProfile();
+  const extraProjectileFx = profile.tier !== "low";
+  const glow = extraProjectileFx
+    ? scene.add
+        .circle(fromX, fromY, style === "shell" ? 13 : 10, color, 0.16)
+        .setDepth(60)
+        .setBlendMode(Phaser.BlendModes.ADD)
+    : undefined;
+  const trail = extraProjectileFx
+    ? scene.add
+        .ellipse(
+          fromX - Math.cos(angle) * (style === "shell" ? 8 : 14),
+          fromY - Math.sin(angle) * (style === "shell" ? 8 : 14),
+          style === "shell" ? 22 : 34,
+          style === "shell" ? 10 : 8,
+          color,
+          style === "magic" ? 0.2 : 0.14,
+        )
+        .setRotation(angle)
+        .setDepth(59)
+        .setBlendMode(Phaser.BlendModes.ADD)
+    : undefined;
+  const pin = extraProjectileFx
+    ? scene.add
+        .circle(
+          fromX,
+          fromY,
+          style === "magic" ? 4 : 3,
+          0xffffff,
+          style === "shell" ? 0.18 : 0.34,
+        )
+        .setDepth(62)
+        .setBlendMode(Phaser.BlendModes.ADD)
+    : undefined;
 
   let previousX = fromX;
   let previousY = fromY;
   const driver = { t: 0 };
 
-  scene.tweens.add({
-    targets: trail,
-    alpha: 0.03,
-    scaleX: 0.55,
-    scaleY: 0.7,
-    duration: Math.max(80, travelMs * 0.92),
-    ease: "Quad.easeOut",
-  });
+  if (trail) {
+    scene.tweens.add({
+      targets: trail,
+      alpha: 0.03,
+      scaleX: 0.55,
+      scaleY: 0.7,
+      duration: Math.max(80, travelMs * 0.92),
+      ease: "Quad.easeOut",
+    });
+  }
 
   scene.tweens.add({
     targets: driver,
@@ -254,21 +276,22 @@ export function spawnProjectile(
         Math.abs(vx) + Math.abs(vy) > 0.001 ? Math.atan2(vy, vx) : angle;
       projectile.setPosition(x, y);
       projectile.setRotation(rot);
-      glow.setPosition(x, y);
-      pin.setPosition(x, y);
-      trail.setPosition(
+      glow?.setPosition(x, y);
+      pin?.setPosition(x, y);
+      trail?.setPosition(
         x - Math.cos(rot) * (style === "shell" ? 8 : 14),
         y - Math.sin(rot) * (style === "shell" ? 8 : 14),
       );
-      trail.setRotation(rot);
+      trail?.setRotation(rot);
       previousX = x;
       previousY = y;
     },
     onComplete: () => {
       projectile.destroy();
-      glow.destroy();
-      pin.destroy();
-      trail.destroy();
+      glow?.destroy();
+      pin?.destroy();
+      trail?.destroy();
+      release();
       onImpact();
     },
   });
@@ -499,6 +522,9 @@ export function spawnDeathPoof(
   scale = 1,
 ): void {
   // 기본 사망 연출은 스프라이트 시트 기반으로 처리하여 전투 중 draw call과 CPU 코스트를 낮춘다.
+  const release = tryAcquireCombatFx(scene, "particleBurst");
+  if (!release) return;
+  scene.time.delayedCall(scaledDuration(520), release);
   spawnSheetFx(
     scene,
     "fx-death-poof",

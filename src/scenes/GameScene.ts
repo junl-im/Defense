@@ -154,6 +154,7 @@ import {
   purgeOptionalArtTextures,
 } from "../game/AssetMemoryManager";
 import { clearTimer, safeDelayedCall } from "../game/SceneSafety";
+import { resetCombatFxBudget } from "../game/CombatFxBudget";
 import {
   markSceneTransition,
   pauseOptionalWork,
@@ -164,6 +165,7 @@ import {
   mobileUiScale,
   useCumulativeArtLayers,
 } from "../game/PerformanceMode";
+import { startRegisteredScene } from "./SceneRegistry";
 
 type CastingSpell = "meteor" | "mercenary" | undefined;
 
@@ -660,7 +662,9 @@ export class GameScene extends Phaser.Scene {
       }
     }
     if (needsEnemyCompact)
-      this.enemies = this.enemies.filter((e) => e.active && !e.reachedGoal);
+      this.enemies = this.enemies.filter(
+        (e) => e.active && !e.reachedGoal && !e.dead,
+      );
 
     if (this.lives <= 0) {
       this.showGameOver();
@@ -1789,6 +1793,7 @@ export class GameScene extends Phaser.Scene {
       this.tacticalOrderDraft = undefined;
       this.destroyBuildMenu();
       this.destroySelectedPanel();
+      resetCombatFxBudget(this);
       this.input.off("pointermove");
       this.input.off("pointerdown");
       this.time.timeScale = 1;
@@ -3199,7 +3204,7 @@ export class GameScene extends Phaser.Scene {
     world.on("pointerdown", () => {
       this.time.timeScale = 1;
       markSceneTransition("battle-to-world");
-      this.scene.start("WorldMapScene", { user: this.user, save: this.save });
+      void startRegisteredScene(this, "WorldMapScene", { user: this.user, save: this.save });
     });
     panel.add([bg, title, desc, quality, resume, resumeText, world, worldText]);
     this.pauseOverlay = panel;
@@ -3687,7 +3692,7 @@ export class GameScene extends Phaser.Scene {
     world.on("pointerdown", () => {
       this.time.timeScale = 1;
       markSceneTransition("battle-to-world");
-      this.scene.start("WorldMapScene", { user: this.user, save: this.save });
+      void startRegisteredScene(this, "WorldMapScene", { user: this.user, save: this.save });
     });
 
     const retry = this.makeUiButton(
@@ -3937,7 +3942,7 @@ export class GameScene extends Phaser.Scene {
     forge.on("pointerdown", () => {
       this.time.timeScale = 1;
       markSceneTransition("battle-to-forge");
-      this.scene.start("ArtifactForgeScene", {
+      void startRegisteredScene(this, "ArtifactForgeScene", {
         user: this.user,
         save: this.save,
       });
@@ -3956,7 +3961,7 @@ export class GameScene extends Phaser.Scene {
     world.on("pointerdown", () => {
       this.time.timeScale = 1;
       markSceneTransition("battle-to-world");
-      this.scene.start("WorldMapScene", { user: this.user, save: this.save });
+      void startRegisteredScene(this, "WorldMapScene", { user: this.user, save: this.save });
     });
 
     const retry = this.makeUiButton(

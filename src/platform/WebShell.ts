@@ -240,9 +240,10 @@ async function activateGameShell(): Promise<void> {
   if (activated) return;
   activated = true;
   suppressExitGuardUntil = Date.now() + 4200;
+  document.documentElement.classList.add("ks-user-activated");
   if (startGate) {
     const note = startGate.querySelector<HTMLElement>(".shell-loading-text");
-    if (note) note.textContent = "엔진 안전 모드로 바로 여는 중...";
+    if (note) note.textContent = "탭 확인, 엔진 상태 확인 중...";
   }
   window.dispatchEvent(new CustomEvent("kingdom-seed:user-activated"));
   // v2.5: do not block the first scene behind fullscreen/orientation promises.
@@ -253,7 +254,14 @@ async function activateGameShell(): Promise<void> {
   window.setTimeout(() => {
     if (sceneReady) fadeRemove(startGate);
   }, 80);
-  window.setTimeout(() => fadeRemove(startGate), 900);
+  window.setTimeout(() => {
+    if (!sceneReady) {
+      const note = startGate?.querySelector<HTMLElement>(".shell-loading-text");
+      if (note) note.textContent = "엔진 준비 중... 잠시 후 자동으로 열립니다";
+      return;
+    }
+    fadeRemove(startGate);
+  }, 900);
 }
 
 function createStartGate(): void {
@@ -267,19 +275,25 @@ function createStartGate(): void {
     );
     return;
   }
-  startGate = document.createElement("div");
+  const existingGate = document.getElementById("start-gate") as HTMLDivElement | null;
+  startGate = existingGate ?? document.createElement("div");
   startGate.id = "start-gate";
   startGate.className = "shell-overlay shell-start-gate";
-  startGate.innerHTML = `
-    <div class="shell-start-card" role="button" aria-label="게임 시작">
-      <div class="shell-title-mark">KINGDOM SEED</div>
-      <div class="shell-title-sword"></div>
-      <h1>탭해서 시작</h1>
-      <p>사운드와 화면을 준비하고 바로 진입합니다.</p>
-      <div class="shell-tap-rune">TAP</div>
-      <div class="shell-loading-text">v2.35 모바일 엔진 안전 모드</div>
-    </div>`;
-  document.body.appendChild(startGate);
+  if (!startGate.innerHTML.trim()) {
+    startGate.innerHTML = `
+      <div class="shell-start-card" role="button" aria-label="게임 시작">
+        <div class="shell-title-mark">KINGDOM SEED</div>
+        <div class="shell-title-sword"></div>
+        <h1>탭해서 시작</h1>
+        <p>사운드와 화면을 준비하고 바로 진입합니다.</p>
+        <div class="shell-tap-rune">TAP</div>
+        <div class="shell-loading-text">v2.35.5 초경량 셸 시작 모드</div>
+      </div>`;
+  } else {
+    const note = startGate.querySelector<HTMLElement>(".shell-loading-text");
+    if (note) note.textContent = "v2.35.5 초경량 셸 시작 모드";
+  }
+  if (!existingGate) document.body.appendChild(startGate);
   const start = (): void => void activateGameShell();
   startGate.addEventListener("pointerdown", start, { once: true });
   startGate.addEventListener("touchstart", start, {

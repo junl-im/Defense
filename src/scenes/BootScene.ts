@@ -3,6 +3,7 @@ import type { EnemyKind, TowerKind } from "../game/types";
 import { unlockAudio } from "../game/AudioManager";
 import { preferFastStartMode } from "../game/PerformanceMode";
 import { getMobileRuntimeCaps } from "../game/MobileRuntimeEngine";
+import { ensureSceneRegistered, warmMenuFlowScenes } from "./SceneRegistry";
 
 const ENEMY_KEYS: EnemyKind[] = [
   "goblin",
@@ -56,6 +57,10 @@ const BOOT_QUERY = new URLSearchParams(
 );
 const FAST_BOOT = !BOOT_QUERY.has("fullpreload");
 const FAST_START_MODE = FAST_BOOT && preferFastStartMode();
+// v2.35.4: 기본 부팅은 로그인 화면에 당장 필요한 에셋만 읽는다.
+// 월드맵/전투/유물/FX는 각 씬의 폴백 UI와 지연 로딩 정책에 맡겨 첫 탭 체감 시간을 줄인다.
+const ULTRA_FAST_BOOT =
+  FAST_BOOT && !BOOT_QUERY.has("legacyboot") && !BOOT_QUERY.has("fullpreload");
 const WEBP_ENABLED =
   !BOOT_QUERY.has("png") &&
   (() => {
@@ -77,6 +82,24 @@ const WEBP_RASTER_PATTERNS = [
   /assets\/towers\/v2_1\/[^/]+\.png$/,
   /assets\/ui\/title_logo_v1_9\.png$/,
 ] as const;
+
+const MINIMAL_BOOT_ALLOWED_PATTERNS = [
+  /assets\/backgrounds\/login_background_clean_v2_15\.png$/,
+  /assets\/ui\/title_logo_v1_9\.png$/,
+  /assets\/ui\/v2_15\/login_panel_v2_15\.png$/,
+  /assets\/ui\/v2_15\/login_button_(gold|white|small)_v2_15\.png$/,
+  /assets\/ui\/v2_15\/login_utility_button_v2_15\.png$/,
+] as const;
+
+const MINIMAL_BOOT_ALLOWED_KEYS = new Set([
+  "v1-login-clean-bg",
+  "v1-title-logo-clean",
+  "v1-login-panel-v18",
+  "v1-login-button-gold-v18",
+  "v1-login-button-white-v18",
+  "v1-login-button-small-v18",
+  "v1-login-utility-button-v18",
+]);
 
 const FAST_BOOT_SKIP_PATTERNS = [
   /assets\/backgrounds\/(login_screen_v1_6|login_screen_v1_7|login_splash_v1_3|login_background_v1_2|main_menu_splash_v1_4|main_menu_background_v1_2|worldmap_splash_v1_5|worldmap_background_v1_2)\.png$/,
@@ -103,6 +126,13 @@ function rasterPath(path: string): string {
 function shouldFastBootSkip(key: string, path: string): boolean {
   if (!FAST_BOOT) return false;
   if (key.startsWith("bgm_")) return true;
+
+  if (ULTRA_FAST_BOOT) {
+    const explicitlyAllowed =
+      MINIMAL_BOOT_ALLOWED_KEYS.has(key) ||
+      MINIMAL_BOOT_ALLOWED_PATTERNS.some((pattern) => pattern.test(path));
+    if (!explicitlyAllowed) return true;
+  }
 
   const caps = getMobileRuntimeCaps();
   const safeBoot = caps.label === "SAFE_MOBILE_ENGINE" || caps.label === "LOCKDOWN_MOBILE_ENGINE" || caps.runtimeLockdown;
@@ -2858,9 +2888,9 @@ export class BootScene extends Phaser.Scene {
     ) => {
       if (
         typeof key === "string" &&
-        key.startsWith("bgm_") &&
         FAST_BOOT &&
-        !BOOT_QUERY.has("preloadMusic")
+        !BOOT_QUERY.has("preloadAudio") &&
+        (ULTRA_FAST_BOOT || key.startsWith("bgm_"))
       )
         return loader;
       return originalAudio(
@@ -2910,7 +2940,25 @@ export class BootScene extends Phaser.Scene {
       { once: true },
     );
     this.input.once("pointerdown", () => unlockAudio(this));
-    this.scene.start("MenuScene");
+    void this.openMenuScene();
+  }
+
+  private async openMenuScene(): Promise<void> {
+    try {
+      await ensureSceneRegistered(this, "MenuScene");
+      if (!this.scene.isActive("BootScene")) return;
+      this.scene.start("MenuScene");
+      // 로그인 화면이 먼저 뜬 뒤, 다음 이동에 필요한 씬 코드를 유휴 시간에 준비한다.
+      warmMenuFlowScenes(this, 900);
+    } catch (error) {
+      console.error("Menu scene registration failed:", error);
+      window.dispatchEvent(
+        new ErrorEvent("error", {
+          message: "Menu scene registration failed",
+          error,
+        }),
+      );
+    }
   }
 
   private createAnimations(): void {

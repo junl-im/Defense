@@ -3,6 +3,7 @@ import type { User } from 'firebase/auth';
 import type { PlayerSave } from '../services/localSave';
 import { getHeroProfiles, getSelectedHero, setSelectedHero, type HeroId, type HeroProfile } from '../game/HeroLoadout';
 import { playMusic, playSfx } from '../game/AudioManager';
+import { startRegisteredScene } from "./SceneRegistry";
 
 export class HeroHallScene extends Phaser.Scene {
   private user!: User;
@@ -81,9 +82,9 @@ export class HeroHallScene extends Phaser.Scene {
   }
 
   private drawFooter(): void {
-    this.makeButton(132, 504, '월드맵', () => this.scene.start('WorldMapScene', { user: this.user, save: this.save }), 164);
+    this.makeButton(132, 504, '월드맵', () => void startRegisteredScene(this, 'WorldMapScene', { user: this.user, save: this.save }), 164);
     this.makeButton(480, 504, '전투에는 선택 영웅 보너스가 적용됩니다', () => undefined, 360, false);
-    this.makeButton(830, 504, '임무 게시판', () => this.scene.start('MissionBoardScene', { user: this.user, save: this.save }), 188);
+    this.makeButton(830, 504, '임무 게시판', () => void startRegisteredScene(this, 'MissionBoardScene', { user: this.user, save: this.save }), 188);
   }
 
   private makeButton(x: number, y: number, label: string, cb: () => void, width = 180, active = true): Phaser.GameObjects.Container {

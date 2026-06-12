@@ -17,6 +17,7 @@ import {
 } from "../game/ArtifactForge";
 import { createArtifactIcon } from "../game/PremiumRewardForgeUi";
 import { playMusic, playSfx } from "../game/AudioManager";
+import { startRegisteredScene } from "./SceneRegistry";
 
 const SLOT_X = [698, 786, 874];
 
@@ -115,7 +116,7 @@ export class ArtifactForgeScene extends Phaser.Scene {
       "월드맵",
       0x284f39,
       () =>
-        this.scene.start("WorldMapScene", { user: this.user, save: this.save }),
+        void startRegisteredScene(this, "WorldMapScene", { user: this.user, save: this.save }),
       10,
     );
   }

@@ -5,6 +5,7 @@ import { addCoverImage } from "../game/CodeUiKit";
 import { addHitZoneDebug } from "../game/HitZoneDebug";
 import { safeDelayedCall } from "../game/SceneSafety";
 import { markSceneTransition } from "../game/RuntimeLoadGovernor";
+import { startRegisteredScene, warmMenuFlowScenes } from "./SceneRegistry";
 import {
   createInstantLocalSession,
   type PlayerSave,
@@ -30,11 +31,12 @@ export class MenuScene extends Phaser.Scene {
     this.createStatusOverlay();
     this.createLoginHitZones();
     this.createUtilityHitZones();
+    warmMenuFlowScenes(this, 700);
 
     safeDelayedCall(this, 0, () => {
       window.dispatchEvent(
         new CustomEvent("kingdom-seed:scene-ready", {
-          detail: { scene: "MenuScene", version: "2.35.0", at: Date.now() },
+          detail: { scene: "MenuScene", version: "2.35.4", at: Date.now() },
         }),
       );
     });
@@ -160,7 +162,7 @@ export class MenuScene extends Phaser.Scene {
     chip.fillStyle(0x071c3e, 0.46).fillRoundedRect(16, 14, 164, 24, 14);
     chip.lineStyle(1, 0xffdc82, 0.45).strokeRoundedRect(16, 14, 164, 24, 14);
     this.add
-      .text(98, 26, "v2.35.0 ENGINE SAFE", {
+      .text(98, 26, "v2.35.4 FAST START", {
         fontSize: "8px",
         color: "#f7fbff",
         fixedWidth: 154,
@@ -554,10 +556,18 @@ export class MenuScene extends Phaser.Scene {
   private enterMainMenu(user: User, save: PlayerSave): void {
     if (this.isTransitioning) return;
     this.isTransitioning = true;
+    if (this.statusText?.active) this.statusText.setText("로비 코드를 여는 중...");
     this.cameras.main.fadeOut(120, 255, 255, 255);
     safeDelayedCall(this, 120, () => {
       markSceneTransition("menu-to-lobby");
-      this.scene.start("MainMenuScene", { user, save });
+      void startRegisteredScene(this, "MainMenuScene", { user, save }).catch(
+        (error) => {
+          console.error("Main menu scene registration failed:", error);
+          this.isTransitioning = false;
+          if (this.scene.isActive("MenuScene") && this.statusText?.active)
+            this.statusText.setText("로비 로딩에 실패했습니다. 다시 시도해주세요.");
+        },
+      );
     });
   }
 }

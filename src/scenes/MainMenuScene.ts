@@ -9,6 +9,7 @@ import { loadProgressiveArtBundle, warmProgressiveArtBundle } from "../game/Prog
 import { clearTimer, safeDelayedCall } from "../game/SceneSafety";
 import { markSceneTransition } from "../game/RuntimeLoadGovernor";
 import { allowArtPrewarm, allowPremiumStaticArt, mobileUiScale, preferReducedMotion, useCumulativeArtLayers } from "../game/PerformanceMode";
+import { startRegisteredScene, warmRegisteredScenes, type RegisteredSceneKey } from "./SceneRegistry";
 import type { PlayerSave } from "../services/localSave";
 
 type HotspotTone = "gold" | "blue" | "white" | "red" | "green";
@@ -72,11 +73,16 @@ export class MainMenuScene extends Phaser.Scene {
     this.createPremiumHitZones();
     this.createSmallStatusToast();
     this.installSceneCleanup();
+    warmRegisteredScenes(
+      this,
+      ["WorldMapScene", "GameScene", "HeroHallScene", "MissionBoardScene", "ArtifactForgeScene", "CodexScene", "LabScene"],
+      1000,
+    );
 
     safeDelayedCall(this, 0, () => {
       window.dispatchEvent(
         new CustomEvent("kingdom-seed:scene-ready", {
-          detail: { scene: "MainMenuScene", version: "2.35.0", at: Date.now() },
+          detail: { scene: "MainMenuScene", version: "2.35.4", at: Date.now() },
         }),
       );
     });
@@ -765,11 +771,12 @@ export class MainMenuScene extends Phaser.Scene {
     this.events.once(Phaser.Scenes.Events.DESTROY, cleanup);
   }
 
-  private goScene(sceneKey: string): void {
+  private goScene(sceneKey: RegisteredSceneKey): void {
     if (!this.scene.isActive("MainMenuScene")) return;
     playSfx(this, "sfx_click");
+    this.showToast("화면을 여는 중...", 700);
     markSceneTransition(`lobby-to-${sceneKey}`);
-    this.scene.start(sceneKey, { user: this.user, save: this.save });
+    void startRegisteredScene(this, sceneKey, { user: this.user, save: this.save });
   }
 
   private goWorldMap(): void {
@@ -787,8 +794,9 @@ export class MainMenuScene extends Phaser.Scene {
         return stage;
       return best;
     }, STAGE_LIST[0]);
+    this.showToast("전투 코드를 여는 중...", 700);
     markSceneTransition("lobby-to-battle");
-    this.scene.start("GameScene", {
+    void startRegisteredScene(this, "GameScene", {
       user: this.user,
       save: this.save,
       stageId: playable.id,

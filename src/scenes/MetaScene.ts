@@ -22,6 +22,7 @@ import {
   type RelicId,
 } from '../game/MegaSystems';
 import { playSfx } from '../game/AudioManager';
+import { startRegisteredScene } from "./SceneRegistry";
 
 type MetaTab = 'relics' | 'daily' | 'achievements';
 
@@ -90,7 +91,7 @@ export class MetaScene extends Phaser.Scene {
 
     this.makeButton(820, 55, 155, 42, '월드맵', 0x24486b, () => {
       playSfx(this, 'sfx_click');
-      this.scene.start('WorldMapScene', { user: this.user, save: this.save });
+      void startRegisteredScene(this, 'WorldMapScene', { user: this.user, save: this.save });
     });
   }
 
@@ -200,7 +201,7 @@ export class MetaScene extends Phaser.Scene {
 
     const start = this.makeButton(352, 432, 210, 48, '도전 시작', 0x8f3422, () => {
       playSfx(this, 'sfx_wave');
-      this.scene.start('GameScene', { user: this.user, save: this.save, stageId: challenge.stageId, dailyChallenge: challenge });
+      void startRegisteredScene(this, 'GameScene', { user: this.user, save: this.save, stageId: challenge.stageId, dailyChallenge: challenge });
     });
     const claim = this.makeButton(608, 432, 210, 48, claimed ? '보상 수령 완료' : '오늘 보상 수령', claimed ? 0x333333 : 0x2f6938, () => {
       if (claimed) return;

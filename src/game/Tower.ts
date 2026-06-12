@@ -759,6 +759,7 @@ export class Tower extends Phaser.GameObjects.Container {
           const second = enemies.find(
             (enemy) =>
               enemy !== target &&
+              enemy.active &&
               !enemy.dead &&
               !enemy.reachedGoal &&
               Phaser.Math.Distance.Between(
@@ -851,6 +852,7 @@ export class Tower extends Phaser.GameObjects.Container {
         playSfx(this.scene, "sfx_explosion");
         enemies.forEach((enemy) => {
           if (
+            enemy.active &&
             !enemy.dead &&
             !enemy.config.flying &&
             Phaser.Math.Distance.Between(impactX, impactY, enemy.x, enemy.y) <=
