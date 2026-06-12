@@ -22,6 +22,7 @@ import {
   isCasualArtTextureKey,
   makeStickerBackplate,
 } from "./CasualArtDirector";
+import { towerDisplayHeight } from "./BattleArtMode";
 
 export type TargetMode = "first" | "strong" | "air" | "near";
 
@@ -149,11 +150,11 @@ export class Tower extends Phaser.GameObjects.Container {
     this.setDepth(22);
     // v2.5: tighter mobile hit area. Selection should match the visible tower base,
     // not the whole attack range/ornament silhouette. External GameScene halos use the same footprint.
-    this.setSize(34, 48);
+    this.setSize(42, 62);
     // v2.14: selection footprint follows the visible tower body only.
     // The attack range, glow, shadow and mastery aura must not become touch area.
     this.setInteractive(
-      new Phaser.Geom.Ellipse(0, -13, 26, 42),
+      new Phaser.Geom.Ellipse(0, -16, 34, 56),
       Phaser.Geom.Ellipse.Contains,
     );
     this.playPlacementBounce();
@@ -1055,25 +1056,20 @@ export class Tower extends Phaser.GameObjects.Container {
 
   private applyTowerArtSize(): void {
     if (!this.sprite) return;
-    const baseHeight =
-      this.config.kind === "artillery"
-        ? 84
-        : this.config.kind === "barracks"
-          ? 92
-          : 96;
-    const levelBoost = this.level >= 3 ? 1.09 : this.level === 2 ? 1.045 : 1;
-    const targetHeight = baseHeight * levelBoost;
+    // v2.36.0: 모바일 본 게임에서는 타워가 너무 작은 아이콘처럼 보이지 않도록
+    // 전투 발자국 기준으로 약 10~18% 키운다. 실제 텍스처 해상도와 무관하게 표시 높이로 맞춘다.
+    const targetHeight = towerDisplayHeight(this.config.kind, this.level);
     const textureKey = this.sprite.texture.key;
     if (isCasualArtTextureKey(textureKey)) {
       fitIsolatedIcon(this.sprite, {
-        maxWidth: this.config.kind === "barracks" ? 72 : 78,
+        maxWidth: this.config.kind === "barracks" ? 92 : 96,
         maxHeight: targetHeight,
         y: this.config.kind === "artillery" ? -5 : -12,
         minScale: 0.02,
         maxScale: 1.2,
       });
       this.artBackplate?.setPosition(0, this.config.kind === "artillery" ? -8 : -13);
-      this.artBackplate?.setSize(74, Math.min(88, targetHeight + 8));
+      this.artBackplate?.setSize(88, Math.min(110, targetHeight + 10));
       return;
     }
     const sourceHeight = Math.max(1, this.sprite.height);

@@ -4,6 +4,7 @@ import { shakeCamera, spawnHitSpark, spawnImpactRing, spawnMuzzleFlash } from '.
 import { playSfx } from './AudioManager';
 import { CASUAL_ART_KEYS, resolveHeroTextureKey } from './AssetMap';
 import { fitIsolatedIcon, isCasualArtTextureKey, makeStickerBackplate } from './CasualArtDirector';
+import { heroDisplayHeight } from './BattleArtMode';
 
 export class Hero extends Phaser.GameObjects.Container {
   hp = 220;
@@ -24,7 +25,7 @@ export class Hero extends Phaser.GameObjects.Container {
     const shadow = scene.add.ellipse(0, 13, 24, 8, 0x000000, 0.24);
     const heroTextureKey = resolveHeroTextureKey(scene);
     if (heroTextureKey === 'hero-knight') {
-      this.sprite = scene.add.sprite(0, -4, 'hero-knight', 0).setScale(1.22);
+      this.sprite = scene.add.sprite(0, -6, 'hero-knight', 0).setScale(heroDisplayHeight() / 32);
       this.animatedSprite = true;
       this.playMotion('idle');
     } else if (heroTextureKey) {
@@ -43,10 +44,10 @@ export class Hero extends Phaser.GameObjects.Container {
         heroTextureKey,
       );
       // v2.35.9: DALL-E 결과물이 1024px이어도 게임 내 영웅 발자국은 항상 같은 크기로 보정한다.
-      const targetHeight = heroTextureKey === CASUAL_ART_KEYS.heroSeedKnight ? 55 : 47;
+      const targetHeight = heroTextureKey === CASUAL_ART_KEYS.heroSeedKnight ? heroDisplayHeight() : heroDisplayHeight();
       if (casual) {
         fitIsolatedIcon(this.sprite, {
-          maxWidth: 45,
+          maxWidth: 58,
           maxHeight: targetHeight,
           y: heroTextureKey === CASUAL_ART_KEYS.heroSeedKnight ? -9 : -7,
           minScale: 0.02,
@@ -65,8 +66,8 @@ export class Hero extends Phaser.GameObjects.Container {
     this.add(visuals);
     scene.add.existing(this);
     this.setDepth(26);
-    this.setSize(28, 34);
-    this.setInteractive(new Phaser.Geom.Circle(0, -2, 14), Phaser.Geom.Circle.Contains);
+    this.setSize(36, 48);
+    this.setInteractive(new Phaser.Geom.Circle(0, -4, 20), Phaser.Geom.Circle.Contains);
   }
 
   update(deltaMs: number, enemies: Enemy[]): void {

@@ -166,6 +166,7 @@ import {
 } from "../game/RuntimeLoadGovernor";
 import { lowPowerMode, setRuntimeQualityTier } from "../game/QualityManager";
 import { installArtMapDebugBadge } from "../game/CasualArtDirector";
+import { allowPreviewBattlefieldArt, useIconMockBattleArt } from "../game/BattleArtMode";
 import {
   allowPremiumStaticArt,
   mobileUiScale,
@@ -797,7 +798,11 @@ export class GameScene extends Phaser.Scene {
   private installCasualArtRefreshHook(): void {
     const refreshActors = () => {
       if (!this.isSceneLive()) return;
-      this.towers.forEach((tower) => tower.refreshArt());
+      // v2.36.0: 본 게임 기본값에서는 isolated icon 목업으로 타워를 갈아끼우지 않는다.
+      // 조잡한 스티커 화면을 막고, `?casualart`/`?iconmock` 검수 모드에서만 반영한다.
+      if (useIconMockBattleArt()) {
+        this.towers.forEach((tower) => tower.refreshArt());
+      }
       installArtMapDebugBadge(this);
     };
 
@@ -812,6 +817,7 @@ export class GameScene extends Phaser.Scene {
     // 준비되면 낮은 depth로 부드럽게 얹는다. 경로: assets/art/v30_ocean_masterpiece.png
     const applyLayer = () => {
       if (!this.scene.isActive("GameScene")) return;
+      if (!allowPreviewBattlefieldArt()) return;
       if (!this.textures.exists(CASUAL_ART_KEYS.battlefieldOcean)) return;
       const backdrop = this.add
         .image(480, 270, CASUAL_ART_KEYS.battlefieldOcean)
@@ -1977,14 +1983,14 @@ export class GameScene extends Phaser.Scene {
 
   private createBuildSpot(x: number, y: number, autoOpen = false): void {
     const shadow = this.add
-      .ellipse(x + 2, y + 9, 38, 12, 0x000000, 0.24)
+      .ellipse(x + 2, y + 10, 48, 15, 0x000000, 0.24)
       .setDepth(11);
     const rim = this.add
-      .ellipse(x, y + 1, 38, 22, 0x3b2818, 0.92)
+      .ellipse(x, y + 1, 48, 28, 0x3b2818, 0.92)
       .setStrokeStyle(3, 0xffd36b, 0.36)
       .setDepth(12);
     const stone = this.add
-      .ellipse(x, y, 30, 17, 0x7b6b57, 0.96)
+      .ellipse(x, y, 38, 22, 0x7b6b57, 0.96)
       .setStrokeStyle(2, 0x2b1b12, 0.48)
       .setDepth(13);
     const light = this.add
@@ -2013,7 +2019,7 @@ export class GameScene extends Phaser.Scene {
     const premiumPad = this.textures.exists("v1-build-spot")
       ? this.add
           .image(x, y + 1, "v1-build-spot")
-          .setDisplaySize(31, 23)
+          .setDisplaySize(43, 32)
           .setDepth(13)
       : undefined;
     if (premiumPad) {
@@ -2029,7 +2035,7 @@ export class GameScene extends Phaser.Scene {
       tag.setText("건설").setColor("#eaf6ff");
     }
     const premiumPreview = addBuildSpotPreview(this, x, y, 0xffd36b);
-    premiumPreview.setScale(0.52);
+    premiumPreview.setScale(0.68);
     premiumPreview.setVisible(false);
     const largeHitZone = this.add
       .rectangle(

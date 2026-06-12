@@ -8,6 +8,7 @@ import {
   isCasualArtTextureKey,
   makeStickerBackplate,
 } from "./CasualArtDirector";
+import { enemyDisplayHeight, enemySpriteScale } from "./BattleArtMode";
 import { bossPatternCooldown, bossPatternLabel } from "./MegaSystems";
 
 type EnemyMotion = "walk" | "attack" | "death";
@@ -54,6 +55,11 @@ export class Enemy extends Phaser.GameObjects.Container {
     this.maxHp = config.hp;
 
     const scale = config.scale ?? 1;
+    // v2.36.0: 전투 화면이 너무 작고 장난감처럼 보이는 문제를 줄이기 위해
+    // 실제 몬스터의 표시 높이를 중앙 스케일 정책으로 관리한다.
+    const displayHeight = enemyDisplayHeight(config);
+    const hpBarY = -Math.max(24 * scale, displayHeight * 0.48 + 12);
+    const hpBarWidth = Math.max(34 * scale, Math.min(62 * scale, displayHeight * 0.74));
     const shadow = scene.add.ellipse(
       0,
       config.flying ? 20 : 16,
@@ -76,21 +82,14 @@ export class Enemy extends Phaser.GameObjects.Container {
         );
       }
       this.sprite = scene.add.image(0, config.flying ? -8 : -10, artKey);
-      const targetHeight =
-        (config.threat === "boss"
-          ? 84
-          : config.threat === "tank"
-            ? 64
-            : config.flying
-              ? 56
-              : 58) * scale;
+      const targetHeight = displayHeight;
       if (casual) {
         fitIsolatedIcon(this.sprite, {
-          maxWidth: (config.threat === "boss" ? 72 : 54) * scale,
+          maxWidth: (config.threat === "boss" ? 92 : 72) * scale,
           maxHeight: targetHeight,
           y: config.flying ? -8 : -10,
           minScale: 0.02,
-          maxScale: 1.1,
+          maxScale: 1.25,
         });
       } else {
         this.sprite.setDisplaySize(
@@ -103,7 +102,7 @@ export class Enemy extends Phaser.GameObjects.Container {
       if (scene.textures.exists(spriteKey)) {
         this.sprite = scene.add
           .sprite(0, 0, spriteKey, 0)
-          .setScale(scale * 1.08);
+          .setScale(enemySpriteScale(config));
         this.animatedSprite = true;
         this.playMotion("walk", "down", true);
       }
@@ -112,7 +111,7 @@ export class Enemy extends Phaser.GameObjects.Container {
       .circle(
         0,
         0,
-        (config.flying ? 10 : 12) * scale,
+        (config.flying ? 13 : 15) * scale * Math.min(1.15, displayHeight / 60),
         config.color,
         this.sprite ? 0.0 : 1,
       )
@@ -122,10 +121,10 @@ export class Enemy extends Phaser.GameObjects.Container {
         this.sprite ? 0.0 : 0.65,
       );
     this.hpBack = scene.add
-      .rectangle(0, -20 * scale, 28 * scale, 5, 0x2c1010, 1)
+      .rectangle(0, hpBarY, hpBarWidth, 6, 0x2c1010, 1)
       .setOrigin(0.5);
     this.hpBar = scene.add
-      .rectangle(0, -20 * scale, 28 * scale, 5, 0x1ee65b, 1)
+      .rectangle(0, hpBarY, hpBarWidth, 6, 0x1ee65b, 1)
       .setOrigin(0.5);
 
     const face = scene.add.circle(
@@ -498,13 +497,13 @@ export class Enemy extends Phaser.GameObjects.Container {
     if (Math.abs(this.displayedHpRatio - this.targetHpRatio) < 0.004)
       this.displayedHpRatio = this.targetHpRatio;
 
-    const barWidth = 28 * (this.config.scale ?? 1);
+    const scale = this.config.scale ?? 1;
+    const displayHeight = enemyDisplayHeight(this.config);
+    const barY = -Math.max(24 * scale, displayHeight * 0.48 + 12);
+    const barWidth = Math.max(34 * scale, Math.min(62 * scale, displayHeight * 0.74));
     const nextWidth = Math.max(1, barWidth * this.displayedHpRatio);
-    this.hpBack.setPosition(0, -20 * (this.config.scale ?? 1));
-    this.hpBar.setPosition(
-      -(barWidth - nextWidth) * 0.5,
-      -20 * (this.config.scale ?? 1),
-    );
+    this.hpBack.setPosition(0, barY);
+    this.hpBar.setPosition(-(barWidth - nextWidth) * 0.5, barY);
     this.hpBack.width = barWidth;
     this.hpBar.width = nextWidth;
 

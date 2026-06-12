@@ -10,6 +10,7 @@ import {
 import { tryAcquireCombatFx } from "./CombatFxBudget";
 import { resolveProjectileTextureKey } from "./AssetMap";
 import { fitIsolatedIcon, isCasualArtTextureKey } from "./CasualArtDirector";
+import { projectileIconFootprint, projectileSpriteScale } from "./BattleArtMode";
 
 export type ProjectileStyle = "arrow" | "magic" | "shell" | "slash" | "spark";
 
@@ -175,19 +176,20 @@ export function spawnProjectile(
   if (mappedProjectileKey) {
     projectile = scene.add.image(fromX, fromY, mappedProjectileKey);
     if (isCasualArtTextureKey(mappedProjectileKey)) {
+      const footprint = projectileIconFootprint(style);
       fitIsolatedIcon(projectile, {
-        maxWidth: style === "shell" ? 30 : 26,
-        maxHeight: style === "shell" ? 30 : 24,
+        maxWidth: footprint.maxWidth,
+        maxHeight: footprint.maxHeight,
         minScale: 0.01,
-        maxScale: 0.5,
+        maxScale: 0.65,
       });
     } else {
-      projectile.setScale(style === "shell" ? 0.16 : 0.12);
+      projectile.setScale(projectileSpriteScale(style));
     }
   } else if (scene.textures.exists("projectiles")) {
     projectile = scene.add
       .sprite(fromX, fromY, "projectiles", frameByStyle[style])
-      .setScale(style === "shell" ? 1.08 : 0.95);
+      .setScale(projectileSpriteScale(style));
   } else if (style === "arrow") {
     projectile = scene.add
       .rectangle(fromX, fromY, 22, 4, color, 1)

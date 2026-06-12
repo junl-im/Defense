@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import type { EnemyKind, TowerKind } from "./types";
+import { allowPreviewBattlefieldArt, useIconMockBattleArt } from "./BattleArtMode";
 
 /**
  * v2.35.8 Casual Art Asset Map
@@ -142,25 +143,31 @@ function firstExistingTexture(
 }
 
 export function preferCasualArt(): boolean {
-  const qs = query();
-  // 기본값은 안정적인 기존 에셋 우선이다. 검수/디자인 모드에서만 새 캐주얼 맵을 전면에 세운다.
-  return (
-    qs.has("casualart") ||
-    qs.has("galleryart") ||
-    qs.has("fullart") ||
-    qs.has("ultraart")
-  );
+  // v2.36.0: isolated icon 목업은 기본 전투에서 쓰지 않는다.
+  // `?casualart`, `?iconmock`, `?stickerart`는 DALL-E 아이콘 검수용이다.
+  return useIconMockBattleArt();
 }
 
 export function queueCasualBattleArt(scene: Phaser.Scene): boolean {
+  // v2.36.0: 기본 전투에서는 목업 아이콘을 아예 로드하지 않는다.
+  // 전장 배경 미리보기는 `?fullart`, `?ultraart`, `?galleryart`에서만 허용한다.
+  const shouldLoadIconMocks = useIconMockBattleArt();
+  const shouldLoadBattlefieldPreview = allowPreviewBattlefieldArt();
+  if (!shouldLoadIconMocks && !shouldLoadBattlefieldPreview) return false;
+
+  const assetsToLoad = CASUAL_BATTLE_ART_ASSETS.filter((asset) => {
+    if (shouldLoadIconMocks) return true;
+    return asset.key === CASUAL_ART_KEYS.battlefieldOcean;
+  });
+
   const loader = scene.load as Phaser.Loader.LoaderPlugin & {
     isLoading?: () => boolean;
   };
 
   const emitReady = () => {
     scene.events.emit("kingdom-seed:casual-art-ready", {
-      loaded: CASUAL_BATTLE_ART_ASSETS.filter((asset) => textureExists(scene, asset.key)).length,
-      total: CASUAL_BATTLE_ART_ASSETS.length,
+      loaded: assetsToLoad.filter((asset) => textureExists(scene, asset.key)).length,
+      total: assetsToLoad.length,
     });
   };
 
@@ -173,7 +180,7 @@ export function queueCasualBattleArt(scene: Phaser.Scene): boolean {
   }
 
   let queued = false;
-  for (const asset of CASUAL_BATTLE_ART_ASSETS) {
+  for (const asset of assetsToLoad) {
     if (textureExists(scene, asset.key)) continue;
     if (asset.kind === "spritesheet") {
       scene.load.spritesheet(asset.key, asset.path, {
@@ -205,10 +212,10 @@ export function resolveBattlefieldBackgroundKey(
   stageId: string,
 ): string | undefined {
   const stageKey = `battle-bg-${stageId}`;
-  if (preferCasualArt()) {
+  if (preferCasualArt() || allowPreviewBattlefieldArt()) {
     return firstExistingTexture(scene, [CASUAL_ART_KEYS.battlefieldOcean, stageKey]);
   }
-  return firstExistingTexture(scene, [stageKey, CASUAL_ART_KEYS.battlefieldOcean]);
+  return firstExistingTexture(scene, [stageKey]);
 }
 
 export function resolveTowerTextureKey(
@@ -220,12 +227,11 @@ export function resolveTowerTextureKey(
   const masteryKey = mastery ? `tower-${kind}-${mastery}` : undefined;
   const levelKey = `tower-${kind}-lv${level}`;
   const baseKey = `tower-${kind}`;
-  return firstExistingTexture(scene, [
-    masteryKey,
-    levelKey,
-    baseKey,
-    ...TOWER_FALLBACK_BY_KIND[kind],
-  ]);
+  const premiumKey = firstExistingTexture(scene, [masteryKey, levelKey, baseKey]);
+  if (premiumKey) return premiumKey;
+  return useIconMockBattleArt()
+    ? firstExistingTexture(scene, TOWER_FALLBACK_BY_KIND[kind])
+    : undefined;
 }
 
 export function resolveEnemyTextureKey(
@@ -236,23 +242,31 @@ export function resolveEnemyTextureKey(
   const familyArtKey = family ? `v1-enemy-art-${family}` : undefined;
   // 주의: enemy-${kind}는 대부분 spritesheet이므로 여기서 반환하지 않는다.
   // Enemy.ts의 기존 애니메이션 fallback이 spritesheet를 처리한다.
-  return firstExistingTexture(scene, [familyArtKey, CASUAL_ART_KEYS.fishSlime]);
+  const premiumKey = firstExistingTexture(scene, [familyArtKey]);
+  if (premiumKey) return premiumKey;
+  return useIconMockBattleArt()
+    ? firstExistingTexture(scene, [CASUAL_ART_KEYS.fishSlime])
+    : undefined;
 }
 
 export function resolveHeroTextureKey(scene: Phaser.Scene): string | undefined {
-  return firstExistingTexture(scene, [
+  const premiumKey = firstExistingTexture(scene, [
     "v1-hero-art-knight",
     "hero-knight",
-    CASUAL_ART_KEYS.heroSeedKnight,
   ]);
+  if (premiumKey) return premiumKey;
+  return useIconMockBattleArt()
+    ? firstExistingTexture(scene, [CASUAL_ART_KEYS.heroSeedKnight])
+    : undefined;
 }
 
 export function resolveProjectileTextureKey(
   scene: Phaser.Scene,
   style: string,
 ): string | undefined {
-  return firstExistingTexture(scene, [
-    `projectile-${style}`,
-    CASUAL_ART_KEYS.projectileSeed,
-  ]);
+  const premiumKey = firstExistingTexture(scene, [`projectile-${style}`]);
+  if (premiumKey) return premiumKey;
+  return useIconMockBattleArt()
+    ? firstExistingTexture(scene, [CASUAL_ART_KEYS.projectileSeed])
+    : undefined;
 }
