@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { getMobileRuntimeCaps } from './MobileRuntimeEngine';
 
 const SFX_VOLUME: Record<string, number> = {
   sfx_click: 0.35,
@@ -25,6 +26,7 @@ const MUSIC_KEYS = ['bgm_world', 'bgm_battle', 'bgm_boss', 'bgm_battle_old'];
 let unlocked = false;
 let muted = false;
 let currentMusicKey: string | undefined;
+const lastSfxAt: Record<string, number> = {};
 
 const AUDIO_FILE_BY_KEY: Record<string, string> = {
   sfx_click: 'click.wav',
@@ -100,6 +102,13 @@ export function isMuted(): boolean {
 
 export function playSfx(scene: Phaser.Scene, key: string, volume?: number): void {
   if (muted || !unlocked) return;
+  const caps = getMobileRuntimeCaps();
+  if (caps.label === 'SAFE_MOBILE_ENGINE' || caps.label === 'LOCKDOWN_MOBILE_ENGINE') {
+    const now = Date.now();
+    const minGap = caps.label === 'LOCKDOWN_MOBILE_ENGINE' ? (key === 'sfx_shoot' || key === 'sfx_hit' ? 180 : 80) : key === 'sfx_shoot' || key === 'sfx_hit' ? 95 : 34;
+    if (now - (lastSfxAt[key] ?? 0) < minGap) return;
+    lastSfxAt[key] = now;
+  }
   if (!keyExists(scene, key) && !ensureAudio(scene, key, () => playSfx(scene, key, volume))) return;
   try {
     scene.sound.play(key, { volume: volume ?? SFX_VOLUME[key] ?? 0.35 });
@@ -118,6 +127,9 @@ export function stopAllMusic(scene: Phaser.Scene): void {
 
 export function playMusic(scene: Phaser.Scene, key: string, volume = MUSIC_VOLUME[key] ?? 0.18): void {
   if (muted || !unlocked) return;
+  const caps = getMobileRuntimeCaps();
+  if (caps.label === 'LOCKDOWN_MOBILE_ENGINE') volume = Math.min(volume, 0.10);
+  else if (caps.networkClass === 'slow' || caps.networkClass === 'metered') volume = Math.min(volume, 0.14);
   if (!keyExists(scene, key) && !ensureAudio(scene, key, () => playMusic(scene, key, volume))) return;
 
   const existing = scene.sound.get(key);

@@ -213,7 +213,8 @@ function updateOrientationClass(): void {
   // v2.2: several mobile browsers report viewport dimensions in stages while
   // address bars collapse/expand. Send a short burst of resize notifications so
   // Phaser recalculates after the CSS-rotated container has reached its final size.
-  [0, 60, 180, 360].forEach((delay) => {
+  const resizeBursts = document.documentElement.classList.contains("ks-engine-safe") ? [0, 220] : [0, 60, 180, 360];
+  resizeBursts.forEach((delay) => {
     window.setTimeout(() => {
       window.dispatchEvent(new Event("resize"));
       window.dispatchEvent(
@@ -242,13 +243,13 @@ async function activateGameShell(): Promise<void> {
   suppressExitGuardUntil = Date.now() + 4200;
   if (startGate) {
     const note = startGate.querySelector<HTMLElement>(".shell-loading-text");
-    if (note) note.textContent = "가벼운 모드로 바로 여는 중...";
+    if (note) note.textContent = "엔진 안전 모드로 바로 여는 중...";
   }
   window.dispatchEvent(new CustomEvent("kingdom-seed:user-activated"));
   // v2.5: do not block the first scene behind fullscreen/orientation promises.
   // Some mobile webviews hold these calls for hundreds of ms; start loading immediately
   // and let the shell settle in the background.
-  void requestFullscreenAndLandscape();
+  window.setTimeout(() => void requestFullscreenAndLandscape(), 640);
   window.setTimeout(() => armBackGuard(true), 520);
   window.setTimeout(() => {
     if (sceneReady) fadeRemove(startGate);
@@ -277,7 +278,7 @@ function createStartGate(): void {
       <h1>탭해서 시작</h1>
       <p>사운드와 화면을 준비하고 바로 진입합니다.</p>
       <div class="shell-tap-rune">TAP</div>
-      <div class="shell-loading-text">v2.23 빠른 시작 최적화</div>
+      <div class="shell-loading-text">v2.31 모바일 엔진 안전 모드</div>
     </div>`;
   document.body.appendChild(startGate);
   const start = (): void => void activateGameShell();
@@ -315,7 +316,7 @@ function createExitModal(): void {
       safeHide(exitModal!);
       suppressExitGuardUntil = Date.now() + 1200;
       window.setTimeout(() => armBackGuard(true), 80);
-      void requestFullscreenAndLandscape();
+      window.setTimeout(() => void requestFullscreenAndLandscape(), 640);
     });
   exitModal
     .querySelector<HTMLButtonElement>("#exit-confirm-btn")
@@ -425,7 +426,7 @@ function installBackGuard(): void {
 function installImmersiveMode(): void {
   const tryRestore = (): void => {
     if (!activated || !flags().isMobile) return;
-    void requestFullscreenAndLandscape();
+    window.setTimeout(() => void requestFullscreenAndLandscape(), 640);
   };
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden) window.setTimeout(tryRestore, 220);

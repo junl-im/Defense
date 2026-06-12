@@ -896,3 +896,108 @@ html body .shell-loading-text { font-size: 9px !important; margin-top: 8px !impo
   html body .shell-start-card, html body .shell-panel { transform: scale(.78) !important; }
 }
 html.ks-hit-debug .shell-start-card { outline: 1px dashed rgba(255, 226, 120, .58); }
+
+/* v2.31 mobile engine safe mode: favor stable frame time over ornamental GPU work. */
+html.ks-engine-safe canvas,
+html.ks-network-slow canvas {
+  filter: none !important;
+}
+html.ks-engine-safe .shell-tap-rune,
+html.ks-network-slow .shell-tap-rune {
+  animation: none !important;
+  transform: none !important;
+}
+html.ks-engine-safe .shell-start-card,
+html.ks-engine-safe .shell-panel {
+  width: min(520px, 94vw) !important;
+  padding: 24px 22px !important;
+  transform: scale(var(--ks-runtime-ui-scale, 1.18)) !important;
+  transform-origin: center center !important;
+}
+html.ks-engine-safe .shell-title-mark { font-size: 30px !important; }
+html.ks-engine-safe .shell-start-card h1,
+html.ks-engine-safe .shell-panel h2 { font-size: 27px !important; }
+html.ks-engine-safe .shell-start-card p,
+html.ks-engine-safe .shell-panel p { font-size: 15px !important; }
+html.ks-engine-safe .shell-tap-rune {
+  width: 84px !important;
+  height: 84px !important;
+  font-size: 18px !important;
+}
+html.ks-engine-safe .ks-dom-click-ripple,
+html.ks-engine-safe .premium-art-pass-label {
+  display: none !important;
+}
+@media (hover: none) and (pointer: coarse) {
+  html.ks-engine-safe body::before,
+  html.ks-engine-safe body::after {
+    display: none !important;
+  }
+}
+
+/* v2.31 runtime lockdown and phone readability pass. */
+html.ks-runtime-lockdown,
+html.ks-engine-lockdown {
+  --ks-runtime-ui-scale: 1.36;
+}
+html.ks-runtime-watch canvas,
+html.ks-runtime-lockdown canvas,
+html.ks-engine-lockdown canvas {
+  filter: none !important;
+  image-rendering: auto;
+}
+html.ks-runtime-lockdown .ks-dom-click-ripple,
+html.ks-runtime-lockdown .premium-art-pass-label,
+html.ks-engine-lockdown .ks-dom-click-ripple,
+html.ks-engine-lockdown .premium-art-pass-label {
+  display: none !important;
+}
+html.ks-runtime-lockdown .shell-start-card,
+html.ks-engine-lockdown .shell-start-card,
+html.ks-runtime-lockdown .shell-panel,
+html.ks-engine-lockdown .shell-panel {
+  width: min(560px, 95vw) !important;
+  padding: 28px 24px !important;
+  transform: scale(var(--ks-runtime-ui-scale, 1.32)) !important;
+}
+html.ks-runtime-lockdown .shell-title-mark,
+html.ks-engine-lockdown .shell-title-mark {
+  font-size: 32px !important;
+  letter-spacing: .06em !important;
+}
+html.ks-runtime-lockdown .shell-start-card h1,
+html.ks-engine-lockdown .shell-start-card h1,
+html.ks-runtime-lockdown .shell-panel h2,
+html.ks-engine-lockdown .shell-panel h2 {
+  font-size: 30px !important;
+}
+html.ks-runtime-lockdown .shell-start-card p,
+html.ks-engine-lockdown .shell-start-card p,
+html.ks-runtime-lockdown .shell-panel p,
+html.ks-engine-lockdown .shell-panel p {
+  font-size: 16px !important;
+  line-height: 1.45 !important;
+}
+html.ks-runtime-lockdown .shell-tap-rune,
+html.ks-engine-lockdown .shell-tap-rune {
+  width: 92px !important;
+  height: 92px !important;
+  font-size: 19px !important;
+  animation: none !important;
+}
+html.ks-runtime-lockdown .shell-loading-text,
+html.ks-engine-lockdown .shell-loading-text {
+  font-size: 13px !important;
+}
+@media (hover: none) and (pointer: coarse) {
+  html.ks-runtime-watch *,
+  html.ks-runtime-lockdown * {
+    scroll-behavior: auto !important;
+  }
+  html.ks-runtime-lockdown body::before,
+  html.ks-runtime-lockdown body::after,
+  html.ks-engine-lockdown body::before,
+  html.ks-engine-lockdown body::after {
+    display: none !important;
+  }
+}

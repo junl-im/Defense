@@ -155,8 +155,9 @@ import { addV225BattleArt } from "../game/PremiumIllustrationArtV225";
 import { addV226BattleArt } from "../game/PremiumIllustrationArtV226";
 import { addV227BattleArt } from "../game/PremiumIllustrationArtV227";
 import { loadProgressiveArtBundle } from "../game/ProgressiveAssetLoader";
+import { installSceneTexturePressureHandler, purgeOptionalArtTextures } from "../game/AssetMemoryManager";
 import { clearTimer, safeDelayedCall } from "../game/SceneSafety";
-import { useCumulativeArtLayers } from "../game/PerformanceMode";
+import { allowArtPrewarm, allowPremiumStaticArt, useCumulativeArtLayers } from "../game/PerformanceMode";
 
 type CastingSpell = "meteor" | "mercenary" | undefined;
 
@@ -341,6 +342,8 @@ export class GameScene extends Phaser.Scene {
   }
 
   create(): void {
+    purgeOptionalArtTextures(this, "battle-entry", { limit: 220 });
+    installSceneTexturePressureHandler(this);
     this.time.timeScale = 1;
     this.input.setTopOnly(true);
     this.startTime = Date.now();
@@ -360,9 +363,11 @@ export class GameScene extends Phaser.Scene {
       addV221BattleArt(this, this.stage.theme);
       addV222BattleArt(this, this.stage.theme);
     }
-    addV224BattleArt(this, this.stage.theme);
-    this.installProgressiveBattleArt();
-    addStageV26Decor(this, this.stage);
+    if (allowPremiumStaticArt("battle")) {
+      addV224BattleArt(this, this.stage.theme);
+      this.installProgressiveBattleArt();
+      addStageV26Decor(this, this.stage);
+    }
     installScenePerformanceWatch(this);
     this.createHud();
     this.createRunModifierHud();
@@ -788,7 +793,7 @@ export class GameScene extends Phaser.Scene {
 
   private createHud(): void {
     const statStyle: Phaser.Types.GameObjects.Text.TextStyle = {
-      fontSize: "10px",
+      fontSize: "12px",
       color: "#fff7d6",
       fontStyle: "bold",
       shadow: { offsetX: 0, offsetY: 2, color: "#000000", blur: 1, fill: true },
@@ -805,7 +810,7 @@ export class GameScene extends Phaser.Scene {
       if (!usingV1Hud) addPremiumPlaque(this, x, 31, w, 42, accent, 74);
       this.add
         .text(x - w / 2 + 10, 10, label, {
-          fontSize: "7px",
+          fontSize: "11px",
           color: usingV1Hud ? "#dbe7ff" : "#c8b184",
           fontStyle: "bold",
           shadow: {
@@ -819,7 +824,7 @@ export class GameScene extends Phaser.Scene {
         .setDepth(79);
       this.add
         .text(x - w / 2 + 11, 28, icon, {
-          fontSize: "11px",
+          fontSize: "13px",
           color: "#ffffff",
           fontStyle: "bold",
           shadow: {
@@ -845,7 +850,7 @@ export class GameScene extends Phaser.Scene {
     if (!usingV1Hud) addPremiumPlaque(this, 470, 28, 210, 36, 0x9dd08b, 74);
     this.add
       .text(370, 9, "BATTLEFIELD", {
-        fontSize: "9px",
+        fontSize: "11px",
         color: "#c8b184",
         fontStyle: "bold",
         shadow: {
@@ -860,7 +865,7 @@ export class GameScene extends Phaser.Scene {
     const stageLabel = `S${this.stage.number}  ${this.stage.title}`;
     this.stageText = this.add
       .text(470, 28, stageLabel, {
-        fontSize: "10px",
+        fontSize: "14px",
         color: "#dbe7ff",
         fontStyle: "bold",
         fixedWidth: 200,
@@ -878,7 +883,7 @@ export class GameScene extends Phaser.Scene {
 
     this.messageText = this.add
       .text(480, 72, "", {
-        fontSize: "9px",
+        fontSize: "12px",
         color: "#fff7d6",
         backgroundColor: "#19100bcc",
         padding: { x: 10, y: 6 },
@@ -898,7 +903,7 @@ export class GameScene extends Phaser.Scene {
       addPremiumPlaque(this, 482, 462, 292, 42, 0x7b58ff, 74);
     this.objectiveText = this.add
       .text(482, 462, "", {
-        fontSize: "8px",
+        fontSize: "12px",
         color: "#fff4c2",
         fontStyle: "bold",
         align: "center",
@@ -915,7 +920,7 @@ export class GameScene extends Phaser.Scene {
       .setDepth(83);
     this.comboText = this.add
       .text(342, 432, "", {
-        fontSize: "15px",
+        fontSize: "18px",
         color: "#ffef9a",
         fontStyle: "bold",
         shadow: {
@@ -952,8 +957,8 @@ export class GameScene extends Phaser.Scene {
     const soundButton = this.makeUiButton(
       626,
       27,
-      38,
-      28,
+      48,
+      36,
       0x263c52,
       "",
       18,
@@ -961,7 +966,7 @@ export class GameScene extends Phaser.Scene {
     );
     this.soundText = this.add
       .text(626, 27, isMuted() ? "OFF" : "ON", {
-        fontSize: "10px",
+        fontSize: "12px",
         color: "#ffffff",
         fontStyle: "bold",
       })
@@ -977,8 +982,8 @@ export class GameScene extends Phaser.Scene {
     const waveButton = this.makeUiButton(
       724,
       27,
-      116,
-      28,
+      142,
+      38,
       0xa94732,
       "",
       16,
@@ -986,7 +991,7 @@ export class GameScene extends Phaser.Scene {
     );
     this.waveButtonText = this.add
       .text(724, 27, "전투 시작", {
-        fontSize: "10px",
+        fontSize: "12px",
         color: "#fff8cf",
         fontStyle: "bold",
         shadow: {
@@ -1007,8 +1012,8 @@ export class GameScene extends Phaser.Scene {
     const speedButton = this.makeUiButton(
       830,
       27,
-      42,
-      28,
+      54,
+      36,
       0x24486b,
       "",
       16,
@@ -1016,7 +1021,7 @@ export class GameScene extends Phaser.Scene {
     );
     this.speedText = this.add
       .text(830, 27, "1x", {
-        fontSize: "10px",
+        fontSize: "12px",
         color: "#ffffff",
         fontStyle: "bold",
       })
@@ -1030,8 +1035,8 @@ export class GameScene extends Phaser.Scene {
     const pauseButton = this.makeUiButton(
       888,
       27,
+      48,
       36,
-      28,
       0x2f3440,
       "Ⅱ",
       14,
@@ -1066,7 +1071,7 @@ export class GameScene extends Phaser.Scene {
       }
       this.add
         .text(x - 64, 68, modifier.shortLabel, {
-          fontSize: "9px",
+          fontSize: "11px",
           color: "#fff7d6",
           fontStyle: "bold",
           fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
@@ -1077,7 +1082,7 @@ export class GameScene extends Phaser.Scene {
         .setDepth(82);
       this.add
         .text(x - 4, 68, modifier.label, {
-          fontSize: "9px",
+          fontSize: "11px",
           color: "#dff4ff",
           fontStyle: "bold",
           fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
@@ -1088,7 +1093,7 @@ export class GameScene extends Phaser.Scene {
     });
     this.runModifierText = this.add
       .text(480, 91, "", {
-        fontSize: "9px",
+        fontSize: "11px",
         color: "#eaffff",
         fontStyle: "bold",
         align: "center",
@@ -1132,7 +1137,7 @@ export class GameScene extends Phaser.Scene {
     }
     this.synergyText = this.add
       .text(182, 68, "시너지: 타워 조합 대기", {
-        fontSize: "9px",
+        fontSize: "11px",
         color: "#eafff2",
         fontStyle: "bold",
         align: "center",
@@ -1224,7 +1229,7 @@ export class GameScene extends Phaser.Scene {
 
     this.enemyAffixText = this.add
       .text(472, 99, enemyAffixHudLineV29(this.activeEnemyAffix), {
-        fontSize: "9px",
+        fontSize: "11px",
         color: "#eaf6ff",
         fontStyle: "bold",
         align: "center",
@@ -1238,7 +1243,7 @@ export class GameScene extends Phaser.Scene {
 
     this.combatAdvisorText = this.add
       .text(472, 112, "다음 공세 분석 대기", {
-        fontSize: "8px",
+        fontSize: "12px",
         color: "#fff4c2",
         fontStyle: "bold",
         align: "center",
@@ -1284,7 +1289,8 @@ export class GameScene extends Phaser.Scene {
     if (this.lagSpikeCount >= 4 && this.time.now > this.lagNoticeAt) {
       this.lagNoticeAt = this.time.now + 12000;
       this.lagSpikeCount = 0;
-      this.showMessage("프레임 스파이크 감지 · 시뮬레이션 점프 방지 적용 중");
+      window.dispatchEvent(new CustomEvent("kingdom-seed:memory-pressure", { detail: { reason: "combat-frame-spike", deltaMs, at: Date.now() } }));
+      this.showMessage("프레임 스파이크 감지 · 절전 엔진으로 안정화 중");
     }
   }
 
@@ -1305,7 +1311,7 @@ export class GameScene extends Phaser.Scene {
     this.tacticalOrderHudText = this.add
       .text(778, 68, tacticalOrderSummary(this.tacticalOrderState), {
         fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
-        fontSize: "9px",
+        fontSize: "11px",
         fontStyle: "bold",
         color: "#fff4c2",
         align: "center",
@@ -1340,7 +1346,7 @@ export class GameScene extends Phaser.Scene {
     this.battleContractHudText = this.add
       .text(182, 103, battleContractHudLine(this.battleContractState), {
         fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
-        fontSize: "9px",
+        fontSize: "11px",
         fontStyle: "bold",
         color: "#eaf8ff",
         align: "center",
@@ -1357,7 +1363,7 @@ export class GameScene extends Phaser.Scene {
         battleContractDetailLines(this.battleContractState).join("   "),
         {
           fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
-          fontSize: "8px",
+          fontSize: "12px",
           fontStyle: "bold",
           color: "#fff4c2",
           align: "center",
@@ -1473,7 +1479,7 @@ export class GameScene extends Phaser.Scene {
         "모바일 전투 흐름에 맞춰 한 장을 골라 이번 전투를 강화하세요.",
         {
           fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
-          fontSize: "10px",
+          fontSize: "12px",
           fontStyle: "bold",
           color: "#dbe7ff",
         },
@@ -1495,7 +1501,7 @@ export class GameScene extends Phaser.Scene {
     const skip = this.add
       .text(0, 129, reason === "manual" ? "닫기" : "이번에는 건너뛰기", {
         fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
-        fontSize: "10px",
+        fontSize: "12px",
         fontStyle: "bold",
         color: "#fff4c2",
         backgroundColor: "#07101ecc",
@@ -1753,7 +1759,7 @@ export class GameScene extends Phaser.Scene {
       .setDepth(14);
     const hammer = this.add
       .text(x, y - 6, "⚒", {
-        fontSize: "10px",
+        fontSize: "12px",
         color: "#fff4c2",
         fontStyle: "bold",
       })
@@ -1765,7 +1771,7 @@ export class GameScene extends Phaser.Scene {
       .setDepth(16);
     const tag = this.add
       .text(x, y + 18, "건설", {
-        fontSize: "7px",
+        fontSize: "11px",
         color: "#ffefb4",
         fontStyle: "bold",
       })
@@ -1922,8 +1928,8 @@ export class GameScene extends Phaser.Scene {
             )
             .setStrokeStyle(3, 0xffd36b, 0.58);
     const header = this.add
-      .text(0, -56, "방어 시설 선택", {
-        fontSize: "8px",
+      .text(0, -70, "방어 시설 선택", {
+        fontSize: "11px",
         color: "#fff8d2",
         fontStyle: "bold",
         fontFamily: "Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif",
@@ -1944,10 +1950,10 @@ export class GameScene extends Phaser.Scene {
     const hint = this.add
       .text(
         0,
-        -39,
+        -50,
         `${buildAdvisor.title} · ${towerRoleLineV29(buildAdvisor.recommendedTower)}`,
         {
-          fontSize: "7px",
+          fontSize: "11px",
           color: "#355d96",
           fontStyle: "bold",
           fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
@@ -1957,10 +1963,10 @@ export class GameScene extends Phaser.Scene {
     menu.add([bg, header, hint]);
 
     const positions = [
-      { kind: "archer" as TowerKind, x: -49, y: -4 },
-      { kind: "mage" as TowerKind, x: 49, y: -4 },
-      { kind: "barracks" as TowerKind, x: -49, y: 29 },
-      { kind: "artillery" as TowerKind, x: 49, y: 29 },
+      { kind: "archer" as TowerKind, x: -64, y: -10 },
+      { kind: "mage" as TowerKind, x: 64, y: -10 },
+      { kind: "barracks" as TowerKind, x: -64, y: 34 },
+      { kind: "artillery" as TowerKind, x: 64, y: 34 },
     ];
 
     positions.forEach(({ kind, x: bx, y: by }) => {
@@ -2014,7 +2020,7 @@ export class GameScene extends Phaser.Scene {
             .setOrigin(0.5);
       const name = this.add
         .text(bx - 14, by - 12, cfg.label, {
-          fontSize: "8px",
+          fontSize: "12px",
           color: canBuy ? "#fff4c2" : "#aaa",
           fontStyle: "bold",
           fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
@@ -2029,7 +2035,7 @@ export class GameScene extends Phaser.Scene {
         .setOrigin(0, 0.5);
       const role = this.add
         .text(bx - 14, by - 1, this.towerRole(kind), {
-          fontSize: "7px",
+          fontSize: "11px",
           color: canBuy ? "#dbe7ff" : "#888",
           fontStyle: "bold",
           fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
@@ -2037,7 +2043,7 @@ export class GameScene extends Phaser.Scene {
         .setOrigin(0, 0.5);
       const price = this.add
         .text(bx - 14, by + 10, `$${cost}`, {
-          fontSize: "8px",
+          fontSize: "12px",
           color: canBuy ? "#f7d36b" : "#999",
           fontStyle: "bold",
           fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
@@ -2141,7 +2147,7 @@ export class GameScene extends Phaser.Scene {
 
     const close = this.add
       .text(0, 53, "빈 곳 터치: 닫기", {
-        fontSize: "7px",
+        fontSize: "11px",
         color: "#355d96",
         fontStyle: "bold",
       })
@@ -2206,7 +2212,7 @@ export class GameScene extends Phaser.Scene {
     ) {
       const clampedBadge = this.add
         .text(0, -panelHeight / 2 - 12, "화면 안쪽으로 자동 정렬", {
-          fontSize: "8px",
+          fontSize: "12px",
           color: "#fff4c2",
           fontStyle: "bold",
           backgroundColor: "#07101ecc",
@@ -2247,7 +2253,7 @@ export class GameScene extends Phaser.Scene {
       -panelHeight / 2 + 10,
       `${tower.config.label}  Lv.${tower.level}`,
       {
-        fontSize: "9px",
+        fontSize: "11px",
         color: "#fff1bf",
         fontStyle: "bold",
         fontFamily: "Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif",
@@ -2265,7 +2271,7 @@ export class GameScene extends Phaser.Scene {
       -panelHeight / 2 + 29,
       this.towerRole(tower.config.kind),
       {
-        fontSize: "8px",
+        fontSize: "12px",
         color: "#d8c39a",
         fontStyle: "bold",
       },
@@ -2280,7 +2286,7 @@ export class GameScene extends Phaser.Scene {
       -panelHeight / 2 + 52,
       masteryLabel,
       {
-        fontSize: "7px",
+        fontSize: "11px",
         color: tower.level >= 3 ? "#0d8f57" : "#295f9e",
         fontStyle: "bold",
         fixedWidth: 218,
@@ -2292,7 +2298,7 @@ export class GameScene extends Phaser.Scene {
         ? "전선 유지 / 집결지 운용"
         : `타겟 정책: ${tower.targetModeLabel()}`;
     const mode = this.add.text(-114, -panelHeight / 2 + 68, modeLabel, {
-      fontSize: "7px",
+      fontSize: "11px",
       color: "#295f9e",
       fontStyle: "bold",
       fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
@@ -2305,7 +2311,7 @@ export class GameScene extends Phaser.Scene {
       -panelHeight / 2 + 82,
       this.towerStatLine(tower),
       {
-        fontSize: "7px",
+        fontSize: "11px",
         color: this.textures.exists("v1-tower-command-panel")
           ? "#eaf6ff"
           : "#3f5578",
@@ -2319,7 +2325,7 @@ export class GameScene extends Phaser.Scene {
     let actionY = -panelHeight / 2 + 104;
     if (hasMasteryChoices) {
       const header = this.add.text(-112, actionY - 12, "최종 진화 선택", {
-        fontSize: "9px",
+        fontSize: "11px",
         color: "#f7d36b",
         fontStyle: "bold",
       });
@@ -2341,7 +2347,7 @@ export class GameScene extends Phaser.Scene {
         btn.on("pointerdown", () => this.chooseTowerMastery(choice.id));
         const desc = this.add
           .text(x, y + 27, choice.description, {
-            fontSize: "7px",
+            fontSize: "11px",
             color: canBuy ? "#d8c39a" : "#888888",
             align: "center",
             fixedWidth: 94,
@@ -2397,7 +2403,7 @@ export class GameScene extends Phaser.Scene {
           actionY + 33,
           "상황에 맞춰 선두/강적/공중 우선순위를 바꾸세요.",
           {
-            fontSize: "7px",
+            fontSize: "11px",
             color: "#9eb6d8",
             fixedWidth: 100,
             wordWrap: { width: 94 },
@@ -2653,15 +2659,15 @@ export class GameScene extends Phaser.Scene {
       return this.makeUiButton(x, y, w, h, fallbackColor, "", 18, 80);
     };
 
-    const meteor = makeSpellHit(88, 504, 130, 38, 0x4f1f1f);
+    const meteor = makeSpellHit(90, 504, 148, 48, 0x4f1f1f);
     if (!useV1Dock && this.textures.exists("ui-spell-meteor-card-v32"))
       this.add
         .image(88, 500, "ui-spell-meteor-card-v32")
-        .setDisplaySize(150, 50)
+        .setDisplaySize(166, 58)
         .setDepth(81);
     this.meteorText = this.add
-      .text(88, 504, "☄ 메테오", {
-        fontSize: "10px",
+      .text(90, 504, "☄ 메테오", {
+        fontSize: "12px",
         color: "#fff",
         fontStyle: "bold",
         fontFamily: "Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif",
@@ -2683,15 +2689,15 @@ export class GameScene extends Phaser.Scene {
       this.beginSpellTargeting("meteor", "메테오 착탄 지점 선택", 82, 0xffd36b);
     });
 
-    const mercenary = makeSpellHit(232, 504, 132, 38, 0x2f4f35);
+    const mercenary = makeSpellHit(244, 504, 148, 48, 0x2f4f35);
     if (!useV1Dock && this.textures.exists("ui-spell-mercenary-card-v32"))
       this.add
         .image(238, 500, "ui-spell-mercenary-card-v32")
-        .setDisplaySize(160, 50)
+        .setDisplaySize(176, 58)
         .setDepth(81);
     this.mercenaryText = this.add
-      .text(232, 504, "🛡️ 용병", {
-        fontSize: "10px",
+      .text(244, 504, "🛡️ 용병", {
+        fontSize: "12px",
         color: "#fff",
         fontStyle: "bold",
         fontFamily: "Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif",
@@ -2718,15 +2724,15 @@ export class GameScene extends Phaser.Scene {
       );
     });
 
-    const heroSkill = makeSpellHit(376, 504, 132, 38, 0x4f3d1f);
+    const heroSkill = makeSpellHit(398, 504, 148, 48, 0x4f3d1f);
     if (!useV1Dock && this.textures.exists("ui-spell-hero-card-v32"))
       this.add
         .image(392, 500, "ui-spell-hero-card-v32")
-        .setDisplaySize(170, 50)
+        .setDisplaySize(184, 58)
         .setDepth(81);
     this.heroSkillText = this.add
-      .text(376, 504, "🦁 강타", {
-        fontSize: "10px",
+      .text(398, 504, "🦁 강타", {
+        fontSize: "12px",
         color: "#fff",
         fontStyle: "bold",
         fontFamily: "Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif",
@@ -2751,10 +2757,10 @@ export class GameScene extends Phaser.Scene {
       this.showMessage(ok ? "대지강타!" : "영웅 스킬 쿨타임 중");
     });
 
-    if (!useV1Dock) addPremiumPlaque(this, 746, 504, 356, 38, 0xf7d36b, 74);
+    if (!useV1Dock) addPremiumPlaque(this, 752, 504, 330, 48, 0xf7d36b, 74);
     this.add
       .text(584, 486, "공세 정보", {
-        fontSize: "9px",
+        fontSize: "11px",
         color: useV1Dock ? "#dbe7ff" : "#c8b184",
         fontStyle: "bold",
         fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
@@ -2769,7 +2775,7 @@ export class GameScene extends Phaser.Scene {
       .setDepth(86);
     this.wavePreviewText = this.add
       .text(916, 487, "", {
-        fontSize: "9px",
+        fontSize: "11px",
         color: "#f7d36b",
         fontStyle: "bold",
         fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
@@ -3925,7 +3931,7 @@ export class GameScene extends Phaser.Scene {
     );
     const text = this.add
       .text(x, y, label, {
-        fontSize: "8px",
+        fontSize: "12px",
         color: "#ffffff",
         fontStyle: "bold",
         fontFamily: "Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif",

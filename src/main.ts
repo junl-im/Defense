@@ -14,9 +14,13 @@ import { installGlobalAudioUnlock } from './game/AudioManager';
 import { installGlobalPremiumDomFeedback } from './game/PremiumMicroInteractions';
 import { getRenderProfile, makeGameFpsConfig } from './game/QualityManager';
 import { installWebShell } from './platform/WebShell';
+import { installDeferredPwaRuntime } from './platform/PwaRuntime';
+import { installMobileRuntimeEngine } from './game/MobileRuntimeEngine';
+import { installRuntimeFrameGovernor } from './game/RuntimeFrameGovernor';
 import './style.css';
 
 installWebShell();
+installDeferredPwaRuntime();
 installGlobalPremiumDomFeedback();
 
 const profile = getRenderProfile();
@@ -41,14 +45,16 @@ const config: Phaser.Types.Core.GameConfig = {
   },
   render: {
     pixelArt: false,
-    antialias: true,
-    roundPixels: false,
+    antialias: profile.tier !== 'low',
+    roundPixels: profile.tier === 'low',
     powerPreference: profile.tier === 'low' ? 'low-power' : 'high-performance',
   },
   scene: [BootScene, MenuScene, MainMenuScene, WorldMapScene, LabScene, CodexScene, MetaScene, HeroHallScene, MissionBoardScene, ArtifactForgeScene, GameScene],
 };
 
 const game = new Phaser.Game(config);
+installMobileRuntimeEngine(game);
+installRuntimeFrameGovernor(game);
 installGlobalAudioUnlock(game);
 
 const refreshScale = (): void => {

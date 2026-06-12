@@ -3,25 +3,7 @@ import type { User } from "firebase/auth";
 import { playSfx } from "../game/AudioManager";
 import { addCoverImage } from "../game/CodeUiKit";
 import { addHitZoneDebug } from "../game/HitZoneDebug";
-import { addCuteLoginAccents } from "../game/CuteFantasyPolishV216";
-import { addV217LoginArt } from "../game/CuteFantasyArtV217";
-import { addV218LoginArt } from "../game/CuteFantasyArtV218";
-import { addV219LoginArt } from "../game/CuteFantasyArtV219";
-import { addV220LoginArt } from "../game/CuteFantasyArtV220";
-import { addV221LoginArt } from "../game/CuteFantasyArtV221";
-import { addV222LoginArt } from "../game/CuteFantasyArtV222";
-import { addV224LoginArt } from "../game/PremiumIllustrationArtV224";
-import { addV225LoginArt } from "../game/PremiumIllustrationArtV225";
-import {
-  addV226LoginArt,
-} from "../game/PremiumIllustrationArtV226";
-import {
-  V227_VERSION_LABEL,
-  addV227LoginArt,
-} from "../game/PremiumIllustrationArtV227";
-import { loadProgressiveArtBundle } from "../game/ProgressiveAssetLoader";
 import { safeDelayedCall } from "../game/SceneSafety";
-import { useCumulativeArtLayers } from "../game/PerformanceMode";
 import {
   createInstantLocalSession,
   type PlayerSave,
@@ -44,18 +26,6 @@ export class MenuScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor("#8fd5ff");
 
     this.createCinematicSplash();
-    const cumulativeArt = useCumulativeArtLayers();
-    if (cumulativeArt) {
-      addCuteLoginAccents(this);
-      addV217LoginArt(this);
-      addV218LoginArt(this);
-      addV219LoginArt(this);
-      addV220LoginArt(this);
-      addV221LoginArt(this);
-      addV222LoginArt(this);
-    }
-    addV224LoginArt(this);
-    this.installProgressiveLoginArt();
     this.createStatusOverlay();
     this.createLoginHitZones();
     this.createUtilityHitZones();
@@ -63,7 +33,7 @@ export class MenuScene extends Phaser.Scene {
     safeDelayedCall(this, 0, () => {
       window.dispatchEvent(
         new CustomEvent("kingdom-seed:scene-ready", {
-          detail: { scene: "MenuScene", version: "2.27.0", at: Date.now() },
+          detail: { scene: "MenuScene", version: "2.31.0", at: Date.now() },
         }),
       );
     });
@@ -74,15 +44,6 @@ export class MenuScene extends Phaser.Scene {
   private getFirebaseService(): Promise<typeof import("../services/firebase")> {
     this.firebaseServicePromise ??= import("../services/firebase");
     return this.firebaseServicePromise;
-  }
-
-  private installProgressiveLoginArt(): void {
-    loadProgressiveArtBundle(this, "login", () => {
-      if (!this.scene.isActive("MenuScene") || this.isTransitioning) return;
-      addV225LoginArt(this);
-      addV226LoginArt(this);
-      addV227LoginArt(this);
-    }, { delayMs: 2600 });
   }
 
   private createCinematicSplash(): void {
@@ -165,28 +126,22 @@ export class MenuScene extends Phaser.Scene {
       .ellipse(480, 526, 520, 42, 0x8cdcff, 0.08)
       .setDepth(3)
       .setBlendMode(Phaser.BlendModes.ADD);
-    this.tweens.add({
-      targets: bottomGlow,
-      alpha: 0.14,
-      scaleX: 1.025,
-      duration: 1800,
-      yoyo: true,
-      repeat: -1,
-      ease: "Sine.easeInOut",
-    });
+    // v2.29: keep the first connection screen visually stable and lightweight.
+    // The original soft glow is static here to avoid startup tween overhead on weak phones.
+    bottomGlow.setAlpha(0.12);
   }
 
   private createStatusOverlay(): void {
     const statusBack = this.add.graphics().setDepth(52);
     statusBack.fillStyle(0xf7fbff, 0.9);
     statusBack.fillRoundedRect(342, 298, 276, 23, 12);
-    statusBack.lineStyle(1, 0xb9d4ef, 0.82);
+    statusBack.lineStyle(2, 0xb9d4ef, 0.82);
     statusBack.strokeRoundedRect(342, 298, 276, 23, 12);
     statusBack.lineStyle(1, 0xffffff, 0.58);
     statusBack.strokeRoundedRect(349, 304, 262, 9, 5);
 
     this.statusText = this.add
-      .text(480, 309, "탭하면 즉시 입장 · 고급 아트는 뒤에서 로딩", {
+      .text(480, 309, "로그인 확인 중...", {
         fontSize: "10px",
         color: "#2f5f9e",
         align: "center",
@@ -201,13 +156,13 @@ export class MenuScene extends Phaser.Scene {
       .setDepth(53);
 
     const chip = this.add.graphics().setDepth(53);
-    chip.fillStyle(0x071c3e, 0.46).fillRoundedRect(16, 14, 188, 24, 14);
-    chip.lineStyle(1, 0xffdc82, 0.45).strokeRoundedRect(16, 14, 188, 24, 14);
+    chip.fillStyle(0x071c3e, 0.46).fillRoundedRect(16, 14, 164, 24, 14);
+    chip.lineStyle(1, 0xffdc82, 0.45).strokeRoundedRect(16, 14, 164, 24, 14);
     this.add
-      .text(110, 26, V227_VERSION_LABEL, {
+      .text(98, 26, "v2.31.0 ENGINE SAFE", {
         fontSize: "8px",
         color: "#f7fbff",
-        fixedWidth: 178,
+        fixedWidth: 154,
         align: "center",
         fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
         fontStyle: "bold",
@@ -229,8 +184,8 @@ export class MenuScene extends Phaser.Scene {
     this.addLoginButton({
       x: 480,
       y: 346,
-      width: 264,
-      height: 42,
+      width: 310,
+      height: 58,
       imageKey: "v1-login-button-gold-v18",
       label: "빠른 시작",
       icon: "⚔",
@@ -241,8 +196,8 @@ export class MenuScene extends Phaser.Scene {
     this.addLoginButton({
       x: 480,
       y: 394,
-      width: 264,
-      height: 42,
+      width: 310,
+      height: 58,
       imageKey: "v1-login-button-white-v18",
       label: "Google 로그인",
       icon: "G",
@@ -253,8 +208,8 @@ export class MenuScene extends Phaser.Scene {
     this.addLoginButton({
       x: 413,
       y: 439,
-      width: 126,
-      height: 32,
+      width: 148,
+      height: 44,
       imageKey: "v1-login-button-small-v18",
       label: "이메일 로그인",
       icon: "✉",
@@ -266,8 +221,8 @@ export class MenuScene extends Phaser.Scene {
     this.addLoginButton({
       x: 547,
       y: 439,
-      width: 126,
-      height: 32,
+      width: 148,
+      height: 44,
       imageKey: "v1-login-button-small-v18",
       label: "회원가입",
       icon: "♥",
@@ -336,7 +291,7 @@ export class MenuScene extends Phaser.Scene {
       .setStrokeStyle(1, 0xd2aa66, 0.7);
     const icon = this.add
       .text(iconBubble.x, 0, options.icon, {
-        fontSize: options.small ? "12px" : "16px",
+        fontSize: options.small ? "15px" : "20px",
         color: options.icon === "♥" ? "#dd506a" : "#2f6cb3",
         fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
         fontStyle: "bold",
@@ -344,7 +299,7 @@ export class MenuScene extends Phaser.Scene {
       .setOrigin(0.5);
     const label = this.add
       .text(options.small ? 10 : 8, 0, options.label, {
-        fontSize: options.small ? "11px" : "16px",
+        fontSize: options.small ? "13px" : "19px",
         color: options.color,
         align: "center",
         fontFamily:
@@ -352,7 +307,7 @@ export class MenuScene extends Phaser.Scene {
         fontStyle: "bold",
         stroke: "#ffffff",
         strokeThickness: 2,
-        fixedWidth: options.small ? 98 : 196,
+        fixedWidth: options.small ? 116 : 220,
       })
       .setOrigin(0.5);
     const hover = this.add.graphics();

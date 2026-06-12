@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { safeDelayedCall } from "./SceneSafety";
-import { isLowDeviceProfile } from "./PerformanceMode";
+import { allowProgressiveArtBundle, isLowDeviceProfile } from "./PerformanceMode";
+import { getMobileRuntimeCaps } from "./MobileRuntimeEngine";
 import {
   V227_CORE_ASSET_BUNDLES,
   V227_GALLERY_ASSET_BUNDLES,
@@ -8,6 +9,26 @@ import {
 
 export type ProgressiveArtBundle = "login" | "lobby" | "world" | "battle";
 type AssetDef = { key: string; path: string };
+
+function runtimeLockdownActive(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.localStorage.getItem("ksRuntimeLockdown") === "1" || document.documentElement.classList.contains("ks-runtime-lockdown");
+  } catch {
+    return document.documentElement.classList.contains("ks-runtime-lockdown");
+  }
+}
+
+function unsafeArtOverrideEnabled(): boolean {
+  if (typeof window === "undefined") return false;
+  const query = new URLSearchParams(window.location.search);
+  try {
+    return query.has("ultraart") || window.localStorage.getItem("ksUnsafeArt") === "1";
+  } catch {
+    return query.has("ultraart");
+  }
+}
+
 
 const CORE_BUNDLES: Record<ProgressiveArtBundle, AssetDef[]> = {
   login: [
@@ -314,10 +335,10 @@ const V226_GALLERY_BUNDLES: Record<ProgressiveArtBundle, AssetDef[]> = {
 };
 
 const DEFAULT_PROGRESSIVE_CORE_CAP: Record<ProgressiveArtBundle, number> = {
-  login: 14,
-  lobby: 18,
-  world: 16,
-  battle: 16,
+  login: 2,
+  lobby: 2,
+  world: 1,
+  battle: 0,
 };
 
 type SceneWithProgressiveQueue = Phaser.Scene & {
@@ -366,6 +387,7 @@ function getProgressiveBundleDefinitions(
   bundle: ProgressiveArtBundle,
   includeGallery: boolean,
 ): AssetDef[] {
+  if (runtimeLockdownActive() && !unsafeArtOverrideEnabled()) return [];
   const core = [
     ...V227_CORE_ASSET_BUNDLES[bundle],
     ...V226_CORE_BUNDLES[bundle],
@@ -380,8 +402,9 @@ function getProgressiveBundleDefinitions(
     ];
   }
 
-  const cap = DEFAULT_PROGRESSIVE_CORE_CAP[bundle];
-  const lowCap = Math.max(8, Math.ceil(cap * 0.65));
+  const cap = Math.min(DEFAULT_PROGRESSIVE_CORE_CAP[bundle], getMobileRuntimeCaps().maxProgressiveAssets);
+  if (cap <= 0) return [];
+  const lowCap = Math.max(0, Math.ceil(cap * 0.5));
   return core.slice(0, isLowDeviceProfile() ? lowCap : cap);
 }
 
@@ -417,6 +440,7 @@ function enqueueProgressiveLoad(
 }
 
 function loadMissingAssets(scene: Phaser.Scene, assets: AssetDef[]): Promise<void> {
+  if (runtimeLockdownActive() && !unsafeArtOverrideEnabled()) return Promise.resolve();
   const toLoad = assets.filter((asset) => !scene.textures.exists(asset.key));
   if (toLoad.length === 0) return Promise.resolve();
   return new Promise((resolve) => {
@@ -424,13 +448,28 @@ function loadMissingAssets(scene: Phaser.Scene, assets: AssetDef[]): Promise<voi
       maxParallelDownloads?: number;
       isLoading?: () => boolean;
     };
-    const quietBootWindow = Date.now() - progressiveModuleStartedAt < 7000;
-    loader.maxParallelDownloads = isLowDeviceProfile() || quietBootWindow ? 1 : 2;
-    const done = (): void => {
+    const caps = getMobileRuntimeCaps();
+    const quietBootWindow = Date.now() - progressiveModuleStartedAt < caps.bootQuietMs;
+    loader.maxParallelDownloads = quietBootWindow ? 1 : caps.artParallelDownloads;
+    let resolved = false;
+    const cleanup = (): void => {
       loader.off("complete", done);
+      loader.off("loaderror", failSoft);
+    };
+    const finish = (): void => {
+      if (resolved) return;
+      resolved = true;
+      cleanup();
       resolve();
     };
+    const done = (): void => finish();
+    const failSoft = (): void => {
+      window.dispatchEvent(new CustomEvent("kingdom-seed:progressive-art-error", { detail: { at: Date.now(), count: toLoad.length } }));
+      finish();
+    };
     loader.once("complete", done);
+    loader.once("loaderror", failSoft);
+    window.setTimeout(failSoft, quietBootWindow ? 5200 : 9000);
     toLoad.forEach((asset) => loader.image(asset.key, assetUrl(asset.path)));
     if (!loader.isLoading?.()) loader.start();
   });
@@ -442,11 +481,15 @@ export function loadProgressiveArtBundle(
   onComplete: () => void,
   options: { delayMs?: number; includeGallery?: boolean } = {},
 ): void {
-  const delayMs = options.delayMs ?? 0;
+  if (runtimeLockdownActive() && !unsafeArtOverrideEnabled()) return;
+  if (!allowProgressiveArtBundle(bundle)) return;
+  const caps = getMobileRuntimeCaps();
+  const delayMs = Math.max(options.delayMs ?? 0, isLowDeviceProfile() ? caps.bootQuietMs : 1800);
   safeDelayedCall(scene, delayMs, () => {
     if (!sceneIsLive(scene)) return;
-    const includeGallery = options.includeGallery ?? (fullArtEnabled() && !isLowDeviceProfile());
+    const includeGallery = options.includeGallery ?? (fullArtEnabled() && getMobileRuntimeCaps().label === "PREMIUM_ART_ENGINE");
     const defs = getProgressiveBundleDefinitions(bundle, includeGallery);
+    if (defs.length === 0) return;
     const missing = defs.filter((asset) => !scene.textures.exists(asset.key));
     if (missing.length === 0) {
       safeDelayedCall(scene, 0, onComplete);

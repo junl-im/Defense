@@ -1,0 +1,12 @@
+Kingdom Seed v2.28.0 Lag Fix & Mobile UI QA Patch
+
+적용 방법:
+1. zip 압축을 풉니다.
+2. 기존 프로젝트 루트에 그대로 덮어씌웁니다.
+3. GitHub Desktop에서 변경 파일을 확인합니다.
+4. 실행이 이상하면 터미널에서 npm install 후 npm run dev를 실행합니다.
+
+권장 테스트:
+- 모바일 기본 주소로 접속: 초경량 안정화 모드
+- 전체 아트 확인: 주소 뒤에 ?fullart
+- 강제 저품질 확인: 주소 뒤에 ?quality=low

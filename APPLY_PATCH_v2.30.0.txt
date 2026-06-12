@@ -1,0 +1,12 @@
+Kingdom Seed v2.30.0 Mobile Engine Optimization QA
+
+적용 방법:
+1. 이 zip 압축을 푼다.
+2. 기존 프로젝트 루트에 그대로 덮어씌운다.
+3. GitHub Desktop에서 변경 파일을 확인한다.
+4. 휴대폰 테스트는 기본 주소 또는 ?quality=low 로 먼저 확인한다.
+5. ?fullart / ?ultraart / ?fullpreload 는 감상/비교용이며 모바일 기본 테스트에서는 사용하지 않는다.
+
+빌드가 node_modules 문제로 막히면:
+npm install
+npm run build

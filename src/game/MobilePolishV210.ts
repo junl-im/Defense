@@ -1,9 +1,10 @@
 import Phaser from 'phaser';
+import { lowPowerMode } from './QualityManager';
 
-export const V210_BUILD_HIT = { width: 24, height: 18, radius: 7 } as const;
-export const V210_TOWER_HIT = { width: 21, height: 28, offsetY: -14, radius: 8 } as const;
-export const V210_BUILD_MENU = { width: 212, height: 112, cardWidth: 79, cardHeight: 26 } as const;
-export const V210_TOWER_PANEL = { width: 236, compactOffset: 124 } as const;
+export const V210_BUILD_HIT = { width: 58, height: 48, radius: 20 } as const;
+export const V210_TOWER_HIT = { width: 58, height: 66, offsetY: -16, radius: 21 } as const;
+export const V210_BUILD_MENU = { width: 342, height: 188, cardWidth: 142, cardHeight: 48 } as const;
+export const V210_TOWER_PANEL = { width: 338, compactOffset: 174 } as const;
 
 export function mobileTextV210(size: number, color = '#f7fbff', fixedWidth?: number): Phaser.Types.GameObjects.Text.TextStyle {
   return {
@@ -17,7 +18,7 @@ export function mobileTextV210(size: number, color = '#f7fbff', fixedWidth?: num
 }
 
 export function installV210BattlePolish(scene: Phaser.Scene): void {
-  const lite = new URLSearchParams(window.location.search).has('lite') || new URLSearchParams(window.location.search).has('battery');
+  const lite = lowPowerMode() || new URLSearchParams(window.location.search).has('lite') || new URLSearchParams(window.location.search).has('battery');
   const depth = 71;
   const topLine = scene.add.rectangle(480, 46, 700, 1, 0x9fe8ff, 0.15).setDepth(depth).setBlendMode(Phaser.BlendModes.ADD);
   const bottomLine = scene.add.rectangle(480, 471, 660, 1, 0xffdf8a, 0.10).setDepth(depth).setBlendMode(Phaser.BlendModes.ADD);

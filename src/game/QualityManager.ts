@@ -48,14 +48,42 @@ function normalizeTier(value: string | null | undefined): QualityTier | undefine
   return undefined;
 }
 
+function queryTierOverride(): QualityTier | undefined {
+  if (typeof window === 'undefined') return undefined;
+  const query = new URLSearchParams(window.location.search);
+  return normalizeTier(query.get('quality') ?? query.get('tier'));
+}
+
+function runtimeLockdownActive(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    return window.localStorage.getItem('ksRuntimeLockdown') === '1' || document.documentElement.classList.contains('ks-runtime-lockdown');
+  } catch {
+    return document.documentElement.classList.contains('ks-runtime-lockdown');
+  }
+}
+
+function richArtOverride(): boolean {
+  if (typeof window === 'undefined') return false;
+  const query = new URLSearchParams(window.location.search);
+  return query.has('fullart') || query.has('galleryart') || query.has('richart');
+}
+
 export function getQualityTier(): QualityTier {
   if (cachedProfile) return cachedProfile.tier;
+  if (runtimeLockdownActive()) return 'low';
+  const forced = queryTierOverride();
+  if (forced) return forced;
   let saved: QualityTier | undefined;
   try {
     saved = normalizeTier(localStorage.getItem(STORAGE_KEY));
   } catch {
     saved = undefined;
   }
+
+  // v2.28: phones reported severe freezes after the heavy art passes.
+  // Default mobile/coarse-pointer runtime is now battery-safe unless explicitly overridden.
+  if (isMobileLike() && !richArtOverride()) return 'low';
   return saved ?? hardwareTier();
 }
 
@@ -90,12 +118,12 @@ function makeProfile(tier: QualityTier): RenderProfile {
     return {
       tier,
       resolution: 1,
-      targetFps: 45,
-      ambientMotes: 4,
-      maxFxCostPerSecond: 9,
-      particleMultiplier: 0.42,
-      cameraShakeMultiplier: 0.55,
-      tweenMultiplier: 0.72,
+      targetFps: 30,
+      ambientMotes: 1,
+      maxFxCostPerSecond: runtimeLockdownActive() ? 2 : 4,
+      particleMultiplier: runtimeLockdownActive() ? 0.12 : 0.24,
+      cameraShakeMultiplier: runtimeLockdownActive() ? 0.12 : 0.25,
+      tweenMultiplier: runtimeLockdownActive() ? 0.28 : 0.42,
       label: '절전',
     };
   }

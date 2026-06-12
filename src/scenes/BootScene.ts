@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import type { EnemyKind, TowerKind } from "../game/types";
 import { unlockAudio } from "../game/AudioManager";
 import { preferFastStartMode } from "../game/PerformanceMode";
+import { getMobileRuntimeCaps } from "../game/MobileRuntimeEngine";
 
 const ENEMY_KEYS: EnemyKind[] = [
   "goblin",
@@ -84,6 +85,8 @@ const FAST_BOOT_SKIP_PATTERNS = [
   /assets\/effects\/(compact_shimmer_v48|boutique_shimmer_v49)\.png$/,
   /assets\/ui\/(panel_login_ornate|status_plaque|button_primary|button_blue|button_gold|button_red|world_map_painted|world_map_premium_v27|world_map_premium_v28|panel_detail_large|banner_worldmap|stage_card_locked)\.png$/,
   /assets\/maps\/worldmap_premium_v43\.png$/,
+  /assets\/ui\/(panel_premium_v43|modal_frame_v43|button_(gold|blue)_v43|stage_card_frame_v43|reward_panel_v35|reward_chest_v35|objective_ribbon_v35|medal_(bronze|silver|gold|legend)_v35|hero_hall_bg|mission_board_bg|ui-(glass-panel|hero-card|mission-card|reward-chest)-v28|world_map_premium_v2[789]|wave_intel_frame_v31|boss_cutin_frame_v31|boss_warning_sigil_v31|tower_card_premium|mastery_badge)\.png$/,
+  /assets\/effects\/fx_(spell_burst|reward_glimmer|tower_upgrade)_v43\.png$/,
 ] as const;
 
 function canUseWebp(path: string): boolean {
@@ -100,6 +103,14 @@ function rasterPath(path: string): string {
 function shouldFastBootSkip(key: string, path: string): boolean {
   if (!FAST_BOOT) return false;
   if (key.startsWith("bgm_")) return true;
+
+  const caps = getMobileRuntimeCaps();
+  const safeBoot = caps.label === "SAFE_MOBILE_ENGINE" || caps.label === "LOCKDOWN_MOBILE_ENGINE" || caps.runtimeLockdown;
+  if (safeBoot && !BOOT_QUERY.has("combatSprites")) {
+    if (/assets\/sprites\/enemy_/.test(path)) return true;
+    if (/assets\/effects\/(fx_(meteor_impact|arcane_surge|holy_gate|earth_stomp|boss_arena|projectile_trail|tower_impact)|compact_shimmer|boutique_shimmer)/.test(path)) return true;
+    if (/assets\/ui\/(particles_magic|wave_intel_frame|boss_cutin_frame|boss_warning_sigil)/.test(path)) return true;
+  }
 
   if (FAST_START_MODE) {
     // v2.23: keep the first tap fast. Cumulative cute-art passes stay in the project,
@@ -2792,7 +2803,8 @@ export class BootScene extends Phaser.Scene {
     const loader = this.load as Phaser.Loader.LoaderPlugin & {
       maxParallelDownloads?: number;
     };
-    loader.maxParallelDownloads = FAST_BOOT ? 4 : 6;
+    const caps = getMobileRuntimeCaps();
+    loader.maxParallelDownloads = FAST_BOOT ? 1 : 4;
 
     const originalImage = loader.image.bind(loader);
     loader.image = ((

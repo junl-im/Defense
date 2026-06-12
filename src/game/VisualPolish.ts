@@ -109,6 +109,7 @@ export function installScenePerformanceWatch(scene: Phaser.Scene): void {
       sample.badWindows = 0;
       sample.label?.setText(`${getRenderProfile().label} auto`);
       scene.events.emit('kingdom-seed:runtime-quality-fallback', getRenderProfile());
+      window.dispatchEvent(new CustomEvent('kingdom-seed:memory-pressure', { detail: { reason: 'auto-quality-fallback', fps, at: Date.now() } }));
     }
 
     sample.elapsed = 0;

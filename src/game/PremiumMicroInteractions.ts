@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { lowPowerMode } from "./QualityManager";
 
 export type PremiumButtonState = "idle" | "hover" | "pressed" | "disabled";
 
@@ -64,7 +65,13 @@ function isInteractiveElement(target: EventTarget | null): boolean {
   return Boolean(target.closest('button, a, [role="button"], canvas, .clickable, .shell-start-card'));
 }
 
+function shouldSuppressDomFeedback(): boolean {
+  if (lowPowerMode()) return true;
+  return Boolean(window.matchMedia?.('(pointer: coarse)').matches);
+}
+
 function spawnDomRipple(x: number, y: number): void {
+  if (shouldSuppressDomFeedback()) return;
   const ring = document.createElement('div');
   ring.className = 'ks-dom-click-ripple';
   ring.style.left = `${x}px`;
@@ -74,6 +81,7 @@ function spawnDomRipple(x: number, y: number): void {
 }
 
 function pulseCanvas(): void {
+  if (shouldSuppressDomFeedback()) return;
   const game = document.getElementById('game');
   if (!game) return;
   game.classList.add('ks-game-tap-pulse');

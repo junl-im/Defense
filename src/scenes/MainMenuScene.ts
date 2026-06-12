@@ -17,7 +17,7 @@ import { addV226LobbyArt } from "../game/PremiumIllustrationArtV226";
 import { addV227LobbyArt } from "../game/PremiumIllustrationArtV227";
 import { loadProgressiveArtBundle, warmProgressiveArtBundle } from "../game/ProgressiveAssetLoader";
 import { clearTimer, safeDelayedCall } from "../game/SceneSafety";
-import { useCumulativeArtLayers } from "../game/PerformanceMode";
+import { allowArtPrewarm, allowPremiumStaticArt, mobileUiScale, preferReducedMotion, useCumulativeArtLayers } from "../game/PerformanceMode";
 import type { PlayerSave } from "../services/localSave";
 
 type HotspotTone = "gold" | "blue" | "white" | "red" | "green";
@@ -82,7 +82,7 @@ export class MainMenuScene extends Phaser.Scene {
       addV222LobbyArt(this, this.save.nickname, this.save.stars);
     }
     this.createV210CleanChrome();
-    addV224LobbyArt(this, this.save.nickname, this.save.stars);
+    if (allowPremiumStaticArt("lobby")) addV224LobbyArt(this, this.save.nickname, this.save.stars);
     this.installProgressiveLobbyArt();
     this.createLobbyTextOverlay();
     this.createV26ExpansionShelf();
@@ -93,7 +93,7 @@ export class MainMenuScene extends Phaser.Scene {
     safeDelayedCall(this, 0, () => {
       window.dispatchEvent(
         new CustomEvent("kingdom-seed:scene-ready", {
-          detail: { scene: "MainMenuScene", version: "2.27.0", at: Date.now() },
+          detail: { scene: "MainMenuScene", version: "2.31.0", at: Date.now() },
         }),
       );
     });
@@ -106,7 +106,7 @@ export class MainMenuScene extends Phaser.Scene {
       addV225LobbyArt(this, this.save.nickname, this.save.stars);
       addV226LobbyArt(this, this.save.nickname, this.save.stars);
       addV227LobbyArt(this, this.save.nickname, this.save.stars);
-      warmProgressiveArtBundle(this, "world", { delayMs: 2200 });
+      if (allowArtPrewarm()) warmProgressiveArtBundle(this, "world", { delayMs: 5200 });
     }, { delayMs: 760 });
   }
 
@@ -195,26 +195,30 @@ export class MainMenuScene extends Phaser.Scene {
       .setDepth(2)
       .setBlendMode(Phaser.BlendModes.ADD);
 
-    this.tweens.add({
-      targets: topGlow,
-      alpha: 0.3,
-      duration: 1800,
-      yoyo: true,
-      repeat: -1,
-      ease: "Sine.easeInOut",
-    });
-    this.tweens.add({
-      targets: bottomGlow,
-      alpha: 0.22,
-      scaleX: 1.02,
-      duration: 2200,
-      yoyo: true,
-      repeat: -1,
-      ease: "Sine.easeInOut",
-    });
+    if (!preferReducedMotion()) {
+      this.tweens.add({
+        targets: topGlow,
+        alpha: 0.3,
+        duration: 1800,
+        yoyo: true,
+        repeat: -1,
+        ease: "Sine.easeInOut",
+      });
+      this.tweens.add({
+        targets: bottomGlow,
+        alpha: 0.22,
+        scaleX: 1.02,
+        duration: 2200,
+        yoyo: true,
+        repeat: -1,
+        ease: "Sine.easeInOut",
+      });
+    }
   }
 
   private createLobbyTextOverlay(): void {
+    const uiScale = mobileUiScale();
+    const fs = (size: number): string => `${Math.round(size * uiScale)}px`;
     const labelStyle: Phaser.Types.GameObjects.Text.TextStyle = {
       fontFamily: "Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif",
       color: "#f7fbff",
@@ -234,16 +238,16 @@ export class MainMenuScene extends Phaser.Scene {
       this.add
         .text(x, y, text, {
           ...labelStyle,
-          fontSize: `${Math.max(8, size - 1)}px`,
+          fontSize: fs(Math.max(13, size + 2)),
           fixedWidth: width,
         })
         .setOrigin(0.5)
         .setDepth(9);
     };
 
-    addLabel(208, 501, "월드맵", 12, 162);
-    addLabel(480, 500, "전투", 14, 184);
-    addLabel(752, 501, "모험", 12, 162);
+    addLabel(208, 501, "월드맵", 14, 172);
+    addLabel(480, 500, "전투", 17, 204);
+    addLabel(752, 501, "모험", 14, 172);
 
     [
       ["상점", 86, 270],
@@ -257,38 +261,38 @@ export class MainMenuScene extends Phaser.Scene {
       ["랭킹", 858, 313],
       ["설정", 858, 373],
     ].forEach(([text, x, y]) =>
-      addLabel(Number(x), Number(y), String(text), 10, 112),
+      addLabel(Number(x), Number(y), String(text), 12, 122),
     );
 
     this.add
       .text(500, 35, `⭐ ${this.save.stars}`, {
         ...labelStyle,
-        fontSize: "10px",
-        fixedWidth: 120,
+        fontSize: fs(13),
+        fixedWidth: 136,
       })
       .setOrigin(0.5)
       .setDepth(9);
     this.add
       .text(638, 35, "재화", {
         ...labelStyle,
-        fontSize: "10px",
-        fixedWidth: 120,
+        fontSize: fs(13),
+        fixedWidth: 136,
       })
       .setOrigin(0.5)
       .setDepth(9);
     this.add
       .text(770, 35, "보석", {
         ...labelStyle,
-        fontSize: "10px",
-        fixedWidth: 120,
+        fontSize: fs(13),
+        fixedWidth: 136,
       })
       .setOrigin(0.5)
       .setDepth(9);
     this.add
       .text(105, 189, `${this.save.nickname}`, {
         ...labelStyle,
-        fontSize: "10px",
-        fixedWidth: 144,
+        fontSize: fs(13),
+        fixedWidth: 164,
       })
       .setOrigin(0.5)
       .setDepth(9);
@@ -324,11 +328,11 @@ export class MainMenuScene extends Phaser.Scene {
       const bg = this.textures.exists("v2-lobby-strategy-card-v210")
         ? this.add
             .image(0, 0, "v2-lobby-strategy-card-v210")
-            .setDisplaySize(148, 54)
+            .setDisplaySize(168, 64)
         : this.textures.exists("v2-strategy-card")
-          ? this.add.image(0, 0, "v2-strategy-card").setDisplaySize(148, 54)
+          ? this.add.image(0, 0, "v2-strategy-card").setDisplaySize(168, 64)
           : this.add
-              .rectangle(0, 0, 148, 54, 0x071c3e, 0.62)
+              .rectangle(0, 0, 168, 64, 0x071c3e, 0.62)
               .setStrokeStyle(1, card.tone, 0.55);
       const sparkle = this.add
         .circle(-52, -8, 9, card.tone, 0.35)
@@ -336,7 +340,7 @@ export class MainMenuScene extends Phaser.Scene {
         .setBlendMode(Phaser.BlendModes.ADD);
       const title = this.add
         .text(-34, -11, card.title, {
-          fontSize: "10px",
+          fontSize: "14px",
           color: "#fff7d6",
           fontStyle: "bold",
           fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
@@ -346,7 +350,7 @@ export class MainMenuScene extends Phaser.Scene {
         .setOrigin(0, 0.5);
       const sub = this.add
         .text(-34, 10, card.sub, {
-          fontSize: "8px",
+          fontSize: "12px",
           color: "#dbe7ff",
           fontStyle: "bold",
           fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
@@ -354,7 +358,7 @@ export class MainMenuScene extends Phaser.Scene {
         })
         .setOrigin(0, 0.5);
       const hit = this.add
-        .zone(0, 0, 148, 54)
+        .zone(0, 0, 168, 64)
         .setInteractive({ useHandCursor: true });
       hit.on("pointerdown", card.onClick);
       hit.on("pointerover", () =>
@@ -374,7 +378,7 @@ export class MainMenuScene extends Phaser.Scene {
         }),
       );
       c.add([bg, sparkle, title, sub, hit]);
-      addHitZoneDebug(this, c, 148, 54, card.title, card.tone, 14);
+      addHitZoneDebug(this, c, 168, 64, card.title, card.tone, 18);
     });
   }
 
@@ -383,27 +387,27 @@ export class MainMenuScene extends Phaser.Scene {
     this.addHotspot({
       x: 208,
       y: 502,
-      width: 158,
-      height: 38,
-      radius: 25,
+      width: 188,
+      height: 54,
+      radius: 28,
       tone: "blue",
       onClick: () => this.goWorldMap(),
     });
     this.addHotspot({
       x: 480,
       y: 501,
-      width: 184,
-      height: 44,
-      radius: 30,
+      width: 220,
+      height: 60,
+      radius: 32,
       tone: "gold",
       onClick: () => this.quickBattle(),
     });
     this.addHotspot({
       x: 752,
       y: 502,
-      width: 158,
-      height: 38,
-      radius: 25,
+      width: 188,
+      height: 54,
+      radius: 28,
       tone: "blue",
       onClick: () => this.goScene("MissionBoardScene"),
     });
@@ -412,45 +416,45 @@ export class MainMenuScene extends Phaser.Scene {
     this.addHotspot({
       x: 86,
       y: 271,
-      width: 112,
-      height: 34,
-      radius: 17,
+      width: 132,
+      height: 48,
+      radius: 24,
       tone: "white",
       onClick: () => this.showToast("상점은 원화급 상점 패스에서 연결합니다."),
     });
     this.addHotspot({
       x: 86,
       y: 323,
-      width: 112,
-      height: 34,
-      radius: 17,
+      width: 132,
+      height: 48,
+      radius: 24,
       tone: "blue",
       onClick: () => this.goScene("HeroHallScene"),
     });
     this.addHotspot({
       x: 86,
       y: 375,
-      width: 112,
-      height: 34,
-      radius: 17,
+      width: 132,
+      height: 48,
+      radius: 24,
       tone: "gold",
       onClick: () => this.goScene("CodexScene"),
     });
     this.addHotspot({
       x: 86,
       y: 428,
-      width: 112,
-      height: 34,
-      radius: 17,
+      width: 132,
+      height: 48,
+      radius: 24,
       tone: "white",
       onClick: () => this.showToast("우편함은 보상/출석 패스에서 연결합니다."),
     });
     this.addHotspot({
       x: 86,
       y: 480,
-      width: 112,
-      height: 34,
-      radius: 17,
+      width: 132,
+      height: 48,
+      radius: 24,
       tone: "red",
       onClick: () => this.goScene("MissionBoardScene"),
     });
@@ -459,18 +463,18 @@ export class MainMenuScene extends Phaser.Scene {
     this.addHotspot({
       x: 858,
       y: 135,
-      width: 114,
-      height: 36,
-      radius: 19,
+      width: 136,
+      height: 50,
+      radius: 25,
       tone: "white",
       onClick: () => this.goScene("MissionBoardScene"),
     });
     this.addHotspot({
       x: 858,
       y: 194,
-      width: 114,
-      height: 36,
-      radius: 19,
+      width: 136,
+      height: 50,
+      radius: 25,
       tone: "gold",
       onClick: () =>
         this.showToast("패스 화면은 다음 원화급 UI 패스에서 제작합니다."),
@@ -478,18 +482,18 @@ export class MainMenuScene extends Phaser.Scene {
     this.addHotspot({
       x: 858,
       y: 253,
-      width: 114,
-      height: 36,
-      radius: 19,
+      width: 136,
+      height: 50,
+      radius: 25,
       tone: "blue",
       onClick: () => this.showToast("길드 화면은 추후 연결합니다."),
     });
     this.addHotspot({
       x: 858,
       y: 313,
-      width: 114,
-      height: 36,
-      radius: 19,
+      width: 136,
+      height: 50,
+      radius: 25,
       tone: "white",
       onClick: () =>
         this.showToast("랭킹은 월드맵 명예의 전당에서 먼저 확인하세요."),
@@ -497,9 +501,9 @@ export class MainMenuScene extends Phaser.Scene {
     this.addHotspot({
       x: 858,
       y: 373,
-      width: 114,
-      height: 36,
-      radius: 19,
+      width: 136,
+      height: 50,
+      radius: 25,
       tone: "blue",
       onClick: () =>
         this.showToast("설정 메뉴는 별도 팝업으로 분리 예정입니다."),
@@ -509,18 +513,18 @@ export class MainMenuScene extends Phaser.Scene {
     this.addHotspot({
       x: 440,
       y: 35,
-      width: 108,
-      height: 28,
-      radius: 16,
+      width: 126,
+      height: 40,
+      radius: 20,
       tone: "gold",
       onClick: () => this.showToast(`보유 별 ${this.save.stars}개`),
     });
     this.addHotspot({
       x: 570,
       y: 35,
-      width: 108,
-      height: 28,
-      radius: 16,
+      width: 126,
+      height: 40,
+      radius: 20,
       tone: "gold",
       onClick: () =>
         this.showToast("골드/재화 상세 패널은 상점 패스에서 연결합니다."),
@@ -528,9 +532,9 @@ export class MainMenuScene extends Phaser.Scene {
     this.addHotspot({
       x: 704,
       y: 35,
-      width: 108,
-      height: 28,
-      radius: 16,
+      width: 126,
+      height: 40,
+      radius: 20,
       tone: "blue",
       onClick: () => this.showToast("보석 재화는 상점 패스에서 연결합니다."),
     });
@@ -548,9 +552,9 @@ export class MainMenuScene extends Phaser.Scene {
     this.addHotspot({
       x: 105,
       y: 189,
-      width: 138,
-      height: 48,
-      radius: 16,
+      width: 158,
+      height: 58,
+      radius: 20,
       tone: "blue",
       onClick: () => this.goScene("HeroHallScene"),
     });

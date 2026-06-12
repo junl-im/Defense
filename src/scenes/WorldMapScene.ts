@@ -18,7 +18,7 @@ import { addV226WorldMapArt } from "../game/PremiumIllustrationArtV226";
 import { addV227WorldMapArt } from "../game/PremiumIllustrationArtV227";
 import { loadProgressiveArtBundle, warmProgressiveArtBundle } from "../game/ProgressiveAssetLoader";
 import { clearTimer, safeDelayedCall } from "../game/SceneSafety";
-import { useCumulativeArtLayers } from "../game/PerformanceMode";
+import { allowArtPrewarm, allowPremiumStaticArt, preferReducedMotion, useCumulativeArtLayers } from "../game/PerformanceMode";
 import type { PlayerSave } from "../services/localSave";
 
 type HotspotTone = "gold" | "blue" | "white" | "red" | "green";
@@ -108,7 +108,7 @@ export class WorldMapScene extends Phaser.Scene {
       addV221WorldMapArt(this, STAGE_NODES);
       addV222WorldMapArt(this, STAGE_NODES);
     }
-    addV224WorldMapArt(this, STAGE_NODES);
+    if (allowPremiumStaticArt("world")) addV224WorldMapArt(this, STAGE_NODES);
     this.installProgressiveWorldArt();
     this.createStagePreviewLayer();
     this.createStageNodeHotspots();
@@ -120,7 +120,7 @@ export class WorldMapScene extends Phaser.Scene {
     safeDelayedCall(this, 0, () => {
       window.dispatchEvent(
         new CustomEvent("kingdom-seed:scene-ready", {
-          detail: { scene: "WorldMapScene", version: "2.27.0", at: Date.now() },
+          detail: { scene: "WorldMapScene", version: "2.31.0", at: Date.now() },
         }),
       );
     });
@@ -133,7 +133,7 @@ export class WorldMapScene extends Phaser.Scene {
       addV225WorldMapArt(this, STAGE_NODES);
       addV226WorldMapArt(this, STAGE_NODES);
       addV227WorldMapArt(this, STAGE_NODES);
-      warmProgressiveArtBundle(this, "battle", { delayMs: 2300 });
+      if (allowArtPrewarm()) warmProgressiveArtBundle(this, "battle", { delayMs: 6200 });
     }, { delayMs: 620 });
   }
 
@@ -154,7 +154,8 @@ export class WorldMapScene extends Phaser.Scene {
     addCoverImage(this, key, 960, 540, 0);
 
     const dust = this.add.container(0, 0).setDepth(5);
-    for (let i = 0; i < 18; i += 1) {
+    const sparkleCount = preferReducedMotion() ? 5 : 18;
+    for (let i = 0; i < sparkleCount; i += 1) {
       const sparkle = this.add
         .star(
           Phaser.Math.Between(270, 910),
@@ -167,15 +168,17 @@ export class WorldMapScene extends Phaser.Scene {
         )
         .setBlendMode(Phaser.BlendModes.ADD);
       dust.add(sparkle);
-      this.tweens.add({
-        targets: sparkle,
-        alpha: Phaser.Math.FloatBetween(0.05, 0.22),
-        scale: Phaser.Math.FloatBetween(0.75, 1.38),
-        duration: Phaser.Math.Between(1200, 2500),
-        yoyo: true,
-        repeat: -1,
-        ease: "Sine.easeInOut",
-      });
+      if (!preferReducedMotion()) {
+        this.tweens.add({
+          targets: sparkle,
+          alpha: Phaser.Math.FloatBetween(0.05, 0.22),
+          scale: Phaser.Math.FloatBetween(0.75, 1.38),
+          duration: Phaser.Math.Between(1200, 2500),
+          yoyo: true,
+          repeat: -1,
+          ease: "Sine.easeInOut",
+        });
+      }
     }
   }
 
@@ -618,7 +621,7 @@ export class WorldMapScene extends Phaser.Scene {
       return;
     }
     if (!this.scene.isActive("WorldMapScene")) return;
-    warmProgressiveArtBundle(this, "battle", { delayMs: 650 });
+    if (allowArtPrewarm()) warmProgressiveArtBundle(this, "battle", { delayMs: 4200 });
     this.scene.start("GameScene", {
       user: this.user,
       save: this.save,
