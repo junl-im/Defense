@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { lowPowerMode } from './QualityManager';
 import type { StageConfig } from './types';
 
 function seeded(seed: number): () => number {
@@ -94,7 +95,8 @@ export function addPremiumBattleObjects(scene: Phaser.Scene, stage: StageConfig)
   const leaf = theme === 'swamp' ? 0x315b43 : theme === 'canyon' ? 0x8b5032 : theme === 'fortress' ? 0x3b3040 : 0x2f6d3a;
   const rock = theme === 'canyon' ? 0x9c6040 : theme === 'swamp' ? 0x4b5b51 : theme === 'fortress' ? 0x48414a : 0x6c6d61;
 
-  for (let i = 0; i < 44; i += 1) {
+  const decorCount = lowPowerMode() ? 12 : 44;
+  for (let i = 0; i < decorCount; i += 1) {
     const x = 40 + rand() * 880;
     const y = 84 + rand() * 360;
     if (!placeable(x, y, stage)) continue;
@@ -107,6 +109,7 @@ export function addPremiumBattleObjects(scene: Phaser.Scene, stage: StageConfig)
   }
 
   // 길 주변 하이라이트와 2.5D 깊이감.
+  if (lowPowerMode()) return;
   for (let i = 0; i < stage.path.length; i += 1) {
     const p = stage.path[i];
     if (i % 2 === 0) {

@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { lowPowerMode } from './QualityManager';
 type StageTheme = string;
 
 const THEME_ACCENT: Record<string, number> = {
@@ -49,8 +50,9 @@ export function drawCinematicCombatFrame(scene: Phaser.Scene, theme: StageTheme 
     c.strokePath();
   });
 
-  // Premium mobile-game style ambient motes. Low count and tween-only for performance.
-  for (let i = 0; i < 16; i++) {
+  // Premium mobile-game style ambient motes. Disabled in safe mode to protect low-end phones.
+  if (lowPowerMode()) return;
+  for (let i = 0; i < 8; i++) {
     const x = 50 + ((i * 73) % 860);
     const y = 95 + ((i * 41) % 330);
     const dot = scene.add.circle(x, y, 1.2 + (i % 3), accent, 0.14).setDepth(5);
@@ -94,6 +96,6 @@ export function addBuildSpotPreview(scene: Phaser.Scene, x: number, y: number, a
     shadow: { offsetX: 0, offsetY: 1, color: '#000000', blur: 1, fill: true }
   }).setOrigin(0.5);
   c.add([ring, pulse, label]);
-  scene.tweens.add({ targets: pulse, scale: 1.18, alpha: 0.02, duration: 1050, yoyo: true, repeat: -1 });
+  if (!lowPowerMode()) scene.tweens.add({ targets: pulse, scale: 1.18, alpha: 0.02, duration: 1050, yoyo: true, repeat: -1 });
   return c;
 }

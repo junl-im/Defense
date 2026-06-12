@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { getMobileRuntimeCaps } from './MobileRuntimeEngine';
+import { noteOptionalWorkBlocked, optionalRuntimeWorkAllowed } from './RuntimeLoadGovernor';
 
 const SFX_VOLUME: Record<string, number> = {
   sfx_click: 0.35,
@@ -51,6 +52,10 @@ function ensureAudio(scene: Phaser.Scene, key: string, onReady?: () => void): bo
   if (keyExists(scene, key)) return true;
   const file = AUDIO_FILE_BY_KEY[key];
   if (!file || pendingAudioLoads.has(key)) return false;
+  if (!optionalRuntimeWorkAllowed('audio', { scene, allowDuringBoot: key === 'sfx_click' })) {
+    noteOptionalWorkBlocked('audio', key);
+    return false;
+  }
   pendingAudioLoads.add(key);
   scene.load.audio(key, [`assets/audio/${file}`]);
   scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
@@ -109,7 +114,11 @@ export function playSfx(scene: Phaser.Scene, key: string, volume?: number): void
     if (now - (lastSfxAt[key] ?? 0) < minGap) return;
     lastSfxAt[key] = now;
   }
-  if (!keyExists(scene, key) && !ensureAudio(scene, key, () => playSfx(scene, key, volume))) return;
+  const highRate = key === 'sfx_shoot' || key === 'sfx_hit';
+  if (!keyExists(scene, key)) {
+    if (highRate && (caps.label === 'SAFE_MOBILE_ENGINE' || caps.label === 'LOCKDOWN_MOBILE_ENGINE')) return;
+    if (!ensureAudio(scene, key, () => playSfx(scene, key, volume))) return;
+  }
   try {
     scene.sound.play(key, { volume: volume ?? SFX_VOLUME[key] ?? 0.35 });
   } catch (error) {

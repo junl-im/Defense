@@ -18,6 +18,7 @@ import { addV226WorldMapArt } from "../game/PremiumIllustrationArtV226";
 import { addV227WorldMapArt } from "../game/PremiumIllustrationArtV227";
 import { loadProgressiveArtBundle, warmProgressiveArtBundle } from "../game/ProgressiveAssetLoader";
 import { clearTimer, safeDelayedCall } from "../game/SceneSafety";
+import { markSceneTransition } from "../game/RuntimeLoadGovernor";
 import { allowArtPrewarm, allowPremiumStaticArt, preferReducedMotion, useCumulativeArtLayers } from "../game/PerformanceMode";
 import type { PlayerSave } from "../services/localSave";
 
@@ -120,7 +121,7 @@ export class WorldMapScene extends Phaser.Scene {
     safeDelayedCall(this, 0, () => {
       window.dispatchEvent(
         new CustomEvent("kingdom-seed:scene-ready", {
-          detail: { scene: "WorldMapScene", version: "2.31.0", at: Date.now() },
+          detail: { scene: "WorldMapScene", version: "2.32.0", at: Date.now() },
         }),
       );
     });
@@ -346,8 +347,10 @@ export class WorldMapScene extends Phaser.Scene {
       height: 38,
       radius: 19,
       tone: "blue",
-      onClick: () =>
-        this.scene.start("MainMenuScene", { user: this.user, save: this.save }),
+      onClick: () => {
+        markSceneTransition("world-to-lobby");
+        this.scene.start("MainMenuScene", { user: this.user, save: this.save });
+      },
     });
     this.addHotspot({
       x: 818,
@@ -379,6 +382,7 @@ export class WorldMapScene extends Phaser.Scene {
         tone: "white",
         onClick: () => {
           if (item.scene.length > 0) {
+            markSceneTransition(`world-to-${item.scene}`);
             this.scene.start(item.scene, { user: this.user, save: this.save });
           } else {
             this.showToast(item.message);
@@ -622,6 +626,7 @@ export class WorldMapScene extends Phaser.Scene {
     }
     if (!this.scene.isActive("WorldMapScene")) return;
     if (allowArtPrewarm()) warmProgressiveArtBundle(this, "battle", { delayMs: 4200 });
+    markSceneTransition("world-to-battle");
     this.scene.start("GameScene", {
       user: this.user,
       save: this.save,

@@ -4,6 +4,7 @@ import { playSfx } from "../game/AudioManager";
 import { addCoverImage } from "../game/CodeUiKit";
 import { addHitZoneDebug } from "../game/HitZoneDebug";
 import { safeDelayedCall } from "../game/SceneSafety";
+import { markSceneTransition } from "../game/RuntimeLoadGovernor";
 import {
   createInstantLocalSession,
   type PlayerSave,
@@ -33,7 +34,7 @@ export class MenuScene extends Phaser.Scene {
     safeDelayedCall(this, 0, () => {
       window.dispatchEvent(
         new CustomEvent("kingdom-seed:scene-ready", {
-          detail: { scene: "MenuScene", version: "2.31.0", at: Date.now() },
+          detail: { scene: "MenuScene", version: "2.32.0", at: Date.now() },
         }),
       );
     });
@@ -159,7 +160,7 @@ export class MenuScene extends Phaser.Scene {
     chip.fillStyle(0x071c3e, 0.46).fillRoundedRect(16, 14, 164, 24, 14);
     chip.lineStyle(1, 0xffdc82, 0.45).strokeRoundedRect(16, 14, 164, 24, 14);
     this.add
-      .text(98, 26, "v2.31.0 ENGINE SAFE", {
+      .text(98, 26, "v2.32.0 ENGINE SAFE", {
         fontSize: "8px",
         color: "#f7fbff",
         fixedWidth: 154,
@@ -555,6 +556,7 @@ export class MenuScene extends Phaser.Scene {
     this.isTransitioning = true;
     this.cameras.main.fadeOut(120, 255, 255, 255);
     safeDelayedCall(this, 120, () => {
+      markSceneTransition("menu-to-lobby");
       this.scene.start("MainMenuScene", { user, save });
     });
   }

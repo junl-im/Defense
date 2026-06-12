@@ -3,6 +3,12 @@ import { safeDelayedCall } from "./SceneSafety";
 import { allowProgressiveArtBundle, isLowDeviceProfile } from "./PerformanceMode";
 import { getMobileRuntimeCaps } from "./MobileRuntimeEngine";
 import {
+  noteOptionalWorkBlocked,
+  optionalRuntimeWorkAllowed,
+  progressiveAssetBudgetFor,
+  reserveProgressiveAssets,
+} from "./RuntimeLoadGovernor";
+import {
   V227_CORE_ASSET_BUNDLES,
   V227_GALLERY_ASSET_BUNDLES,
 } from "./PremiumIllustrationArtV227";
@@ -402,10 +408,11 @@ function getProgressiveBundleDefinitions(
     ];
   }
 
-  const cap = Math.min(DEFAULT_PROGRESSIVE_CORE_CAP[bundle], getMobileRuntimeCaps().maxProgressiveAssets);
-  if (cap <= 0) return [];
-  const lowCap = Math.max(0, Math.ceil(cap * 0.5));
-  return core.slice(0, isLowDeviceProfile() ? lowCap : cap);
+  const requestedCap = DEFAULT_PROGRESSIVE_CORE_CAP[bundle];
+  const budgetCap = progressiveAssetBudgetFor(bundle, requestedCap);
+  if (budgetCap <= 0) return [];
+  const lowCap = Math.max(0, Math.ceil(budgetCap * 0.5));
+  return core.slice(0, isLowDeviceProfile() ? lowCap : budgetCap);
 }
 
 function scheduleIdleTask(task: () => void, timeout = 1800): void {
@@ -439,9 +446,16 @@ function enqueueProgressiveLoad(
     .catch((error) => console.warn("Global progressive art queue skipped:", error));
 }
 
-function loadMissingAssets(scene: Phaser.Scene, assets: AssetDef[]): Promise<void> {
+function loadMissingAssets(scene: Phaser.Scene, assets: AssetDef[], bundle: ProgressiveArtBundle): Promise<void> {
   if (runtimeLockdownActive() && !unsafeArtOverrideEnabled()) return Promise.resolve();
-  const toLoad = assets.filter((asset) => !scene.textures.exists(asset.key));
+  const allowedWorkKind = bundle === "battle" ? "battle-art" : "art";
+  if (!optionalRuntimeWorkAllowed(allowedWorkKind, { scene })) {
+    noteOptionalWorkBlocked(allowedWorkKind, "load-missing-assets");
+    return Promise.resolve();
+  }
+  const missingAssets = assets.filter((asset) => !scene.textures.exists(asset.key));
+  const reservedKeys = reserveProgressiveAssets(missingAssets.map((asset) => asset.key));
+  const toLoad = missingAssets.filter((asset) => reservedKeys.includes(asset.key));
   if (toLoad.length === 0) return Promise.resolve();
   return new Promise((resolve) => {
     const loader = scene.load as Phaser.Loader.LoaderPlugin & {
@@ -452,9 +466,11 @@ function loadMissingAssets(scene: Phaser.Scene, assets: AssetDef[]): Promise<voi
     const quietBootWindow = Date.now() - progressiveModuleStartedAt < caps.bootQuietMs;
     loader.maxParallelDownloads = quietBootWindow ? 1 : caps.artParallelDownloads;
     let resolved = false;
+    let timeoutId = 0;
     const cleanup = (): void => {
       loader.off("complete", done);
       loader.off("loaderror", failSoft);
+      if (timeoutId) window.clearTimeout(timeoutId);
     };
     const finish = (): void => {
       if (resolved) return;
@@ -469,7 +485,7 @@ function loadMissingAssets(scene: Phaser.Scene, assets: AssetDef[]): Promise<voi
     };
     loader.once("complete", done);
     loader.once("loaderror", failSoft);
-    window.setTimeout(failSoft, quietBootWindow ? 5200 : 9000);
+    timeoutId = window.setTimeout(failSoft, quietBootWindow ? 4200 : 7200);
     toLoad.forEach((asset) => loader.image(asset.key, assetUrl(asset.path)));
     if (!loader.isLoading?.()) loader.start();
   });
@@ -482,6 +498,11 @@ export function loadProgressiveArtBundle(
   options: { delayMs?: number; includeGallery?: boolean } = {},
 ): void {
   if (runtimeLockdownActive() && !unsafeArtOverrideEnabled()) return;
+  const workKind = bundle === "battle" ? "battle-art" : "art";
+  if (!optionalRuntimeWorkAllowed(workKind, { scene })) {
+    noteOptionalWorkBlocked(workKind, "bundle-start");
+    return;
+  }
   if (!allowProgressiveArtBundle(bundle)) return;
   const caps = getMobileRuntimeCaps();
   const delayMs = Math.max(options.delayMs ?? 0, isLowDeviceProfile() ? caps.bootQuietMs : 1800);
@@ -500,7 +521,11 @@ export function loadProgressiveArtBundle(
       if (!sceneIsLive(scene)) return;
       enqueueProgressiveLoad(scene, async () => {
         if (!sceneIsLive(scene)) return;
-        await loadMissingAssets(scene, missing);
+        if (!optionalRuntimeWorkAllowed(workKind, { scene })) {
+          noteOptionalWorkBlocked(workKind, "idle-run");
+          return;
+        }
+        await loadMissingAssets(scene, missing, bundle);
         if (sceneIsLive(scene)) onComplete();
       });
     }, isLowDeviceProfile() ? 2800 : 1800);

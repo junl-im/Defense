@@ -17,6 +17,7 @@ import { addV226LobbyArt } from "../game/PremiumIllustrationArtV226";
 import { addV227LobbyArt } from "../game/PremiumIllustrationArtV227";
 import { loadProgressiveArtBundle, warmProgressiveArtBundle } from "../game/ProgressiveAssetLoader";
 import { clearTimer, safeDelayedCall } from "../game/SceneSafety";
+import { markSceneTransition } from "../game/RuntimeLoadGovernor";
 import { allowArtPrewarm, allowPremiumStaticArt, mobileUiScale, preferReducedMotion, useCumulativeArtLayers } from "../game/PerformanceMode";
 import type { PlayerSave } from "../services/localSave";
 
@@ -64,6 +65,7 @@ export class MainMenuScene extends Phaser.Scene {
 
   create(): void {
     if (!this.isReady) {
+      markSceneTransition("fallback-to-login");
       this.scene.start("MenuScene");
       return;
     }
@@ -93,7 +95,7 @@ export class MainMenuScene extends Phaser.Scene {
     safeDelayedCall(this, 0, () => {
       window.dispatchEvent(
         new CustomEvent("kingdom-seed:scene-ready", {
-          detail: { scene: "MainMenuScene", version: "2.31.0", at: Date.now() },
+          detail: { scene: "MainMenuScene", version: "2.32.0", at: Date.now() },
         }),
       );
     });
@@ -744,6 +746,7 @@ export class MainMenuScene extends Phaser.Scene {
   private goScene(sceneKey: string): void {
     if (!this.scene.isActive("MainMenuScene")) return;
     playSfx(this, "sfx_click");
+    markSceneTransition(`lobby-to-${sceneKey}`);
     this.scene.start(sceneKey, { user: this.user, save: this.save });
   }
 
@@ -762,6 +765,7 @@ export class MainMenuScene extends Phaser.Scene {
         return stage;
       return best;
     }, STAGE_LIST[0]);
+    markSceneTransition("lobby-to-battle");
     this.scene.start("GameScene", {
       user: this.user,
       save: this.save,

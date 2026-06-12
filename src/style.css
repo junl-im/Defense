@@ -1001,3 +1001,29 @@ html.ks-engine-lockdown .shell-loading-text {
     display: none !important;
   }
 }
+
+/* v2.32 runtime load governor: keep first contact responsive and readable on phones. */
+html.ks-load-governor-ready.ks-engine-safe .shell-start-card,
+html.ks-load-governor-ready.ks-engine-safe .shell-panel {
+  max-width: 94vw !important;
+}
+html.ks-runtime-watch .shell-loading-text,
+html.ks-network-slow .shell-loading-text {
+  color: #ffe4a8 !important;
+  letter-spacing: .02em !important;
+}
+@media (hover: none) and (pointer: coarse) {
+  html.ks-engine-safe canvas,
+  html.ks-runtime-watch canvas,
+  html.ks-runtime-lockdown canvas {
+    touch-action: none;
+  }
+  html.ks-engine-safe .shell-start-card,
+  html.ks-engine-safe .shell-panel {
+    min-height: 190px !important;
+  }
+  html.ks-engine-safe .shell-tap-rune {
+    min-width: 88px !important;
+    min-height: 88px !important;
+  }
+}

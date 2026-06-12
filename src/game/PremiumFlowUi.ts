@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { lowPowerMode } from './QualityManager';
 
 function hasTexture(scene: Phaser.Scene, key: string): boolean {
   return scene.textures.exists(key);
@@ -26,7 +27,7 @@ export function showBattleStartLoading(scene: Phaser.Scene, stageTitle: string, 
   const barBack = scene.add.rectangle(0, 84, 420, 12, 0x060912, 0.92).setStrokeStyle(1, 0xfff0bd, 0.24);
   const bar = scene.add.rectangle(-208, 84, 0, 8, 0xf7d36b, 0.9).setOrigin(0, 0.5);
   overlay.add([blocker, vignette, frame, crest, title, sub, barBack, bar]);
-  scene.tweens.add({ targets: crest, angle: 360, duration: 1400, repeat: -1, ease: 'Linear' });
+  if (!lowPowerMode()) scene.tweens.add({ targets: crest, angle: 360, duration: 1400, repeat: -1, ease: 'Linear' });
   scene.tweens.add({ targets: bar, displayWidth: 416, duration: 720, ease: 'Cubic.easeOut' });
   scene.tweens.add({ targets: overlay, alpha: 0, delay: 860, duration: 260, onComplete: () => overlay.destroy() });
 }
@@ -54,14 +55,14 @@ export function addPremiumPanelGlints(scene: Phaser.Scene, panel: Phaser.GameObj
   const glint = scene.add.rectangle(-width / 2 + 18, -height / 2 + 12, 92, 3, 0xffffff, 0.18).setOrigin(0, 0.5);
   const glint2 = scene.add.rectangle(width / 2 - 120, height / 2 - 15, 82, 2, 0xf7d36b, 0.14).setOrigin(0, 0.5);
   panel.add([glint, glint2]);
-  scene.tweens.add({ targets: glint, alpha: { from: 0.12, to: 0.34 }, duration: 950, yoyo: true, repeat: -1 });
+  if (!lowPowerMode()) scene.tweens.add({ targets: glint, alpha: { from: 0.12, to: 0.34 }, duration: 950, yoyo: true, repeat: -1 });
 }
 
 export function installPremiumButtonFx(scene: Phaser.Scene, target: Phaser.GameObjects.GameObject & { x: number; y: number; on: Function; setAlpha?: (value: number) => unknown }): void {
   const anyTarget = target;
   target.on('pointerdown', () => {
-    scene.tweens.add({ targets: target, scaleX: 0.96, scaleY: 0.96, duration: 52, yoyo: true, ease: 'Quad.easeOut' });
-    spawnClickBurst(scene, anyTarget.x, anyTarget.y);
+    if (!lowPowerMode()) scene.tweens.add({ targets: target, scaleX: 0.96, scaleY: 0.96, duration: 52, yoyo: true, ease: 'Quad.easeOut' });
+    if (!lowPowerMode()) spawnClickBurst(scene, anyTarget.x, anyTarget.y);
   });
   target.on('pointerover', () => {
     if (anyTarget.setAlpha) anyTarget.setAlpha(0.92);
@@ -88,8 +89,10 @@ export function addPremiumChestSpotlight(scene: Phaser.Scene, x: number, y: numb
     : scene.add.ellipse(0, 0, 250, 132, 0xf7d36b, 0.12);
   const rays = scene.add.star(0, -6, 12, 54, 118, 0xffe69c, 0.13);
   group.add([rays, glow]);
-  scene.tweens.add({ targets: rays, angle: 360, duration: 9200, repeat: -1, ease: 'Linear' });
-  scene.tweens.add({ targets: glow, alpha: { from: 0.38, to: 0.8 }, scaleX: 1.04, scaleY: 1.04, duration: 900, yoyo: true, repeat: -1 });
+  if (!lowPowerMode()) {
+    scene.tweens.add({ targets: rays, angle: 360, duration: 9200, repeat: -1, ease: 'Linear' });
+    scene.tweens.add({ targets: glow, alpha: { from: 0.38, to: 0.8 }, scaleX: 1.04, scaleY: 1.04, duration: 900, yoyo: true, repeat: -1 });
+  }
   return group;
 }
 

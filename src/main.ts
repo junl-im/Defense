@@ -17,10 +17,12 @@ import { installWebShell } from './platform/WebShell';
 import { installDeferredPwaRuntime } from './platform/PwaRuntime';
 import { installMobileRuntimeEngine } from './game/MobileRuntimeEngine';
 import { installRuntimeFrameGovernor } from './game/RuntimeFrameGovernor';
+import { installRuntimeLoadGovernor } from './game/RuntimeLoadGovernor';
 import './style.css';
 
 installWebShell();
 installDeferredPwaRuntime();
+installRuntimeLoadGovernor();
 installGlobalPremiumDomFeedback();
 
 const profile = getRenderProfile();
@@ -57,20 +59,24 @@ installMobileRuntimeEngine(game);
 installRuntimeFrameGovernor(game);
 installGlobalAudioUnlock(game);
 
+let pendingScaleRefresh = 0;
 const refreshScale = (): void => {
-  // Mobile browsers often change the visual viewport after fullscreen/orientation requests.
-  // Refreshing the ScaleManager keeps the 960x540 game coordinate system aligned with the
-  // CSS-filled canvas and prevents tiny portrait letterboxing after returning from background.
-  try {
-    game.scale.refresh();
-  } catch (error) {
-    console.warn('Scale refresh skipped:', error);
-  }
+  // Mobile browsers often fire resize/orientation bursts while the URL bar moves.
+  // Coalescing refreshes prevents the ScaleManager from doing repeated layout work in one frame.
+  if (pendingScaleRefresh) return;
+  pendingScaleRefresh = window.setTimeout(() => {
+    pendingScaleRefresh = 0;
+    try {
+      game.scale.refresh();
+    } catch (error) {
+      console.warn('Scale refresh skipped:', error);
+    }
+  }, 80);
 };
 
 window.addEventListener('kingdom-seed:viewport-changed', refreshScale);
-window.addEventListener('orientationchange', () => [0, 120, 320].forEach((delay) => window.setTimeout(refreshScale, delay)));
-window.addEventListener('resize', () => window.setTimeout(refreshScale, 40));
+window.addEventListener('orientationchange', () => [0, 180, 420].forEach((delay) => window.setTimeout(refreshScale, delay)));
+window.addEventListener('resize', refreshScale);
 
 window.addEventListener('kingdom-seed:quality-changed', () => {
   // Phaser resolution is fixed at boot. Reloading is the cleanest way to apply

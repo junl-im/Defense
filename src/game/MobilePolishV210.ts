@@ -1,15 +1,15 @@
 import Phaser from 'phaser';
 import { lowPowerMode } from './QualityManager';
 
-export const V210_BUILD_HIT = { width: 58, height: 48, radius: 20 } as const;
-export const V210_TOWER_HIT = { width: 58, height: 66, offsetY: -16, radius: 21 } as const;
-export const V210_BUILD_MENU = { width: 342, height: 188, cardWidth: 142, cardHeight: 48 } as const;
-export const V210_TOWER_PANEL = { width: 338, compactOffset: 174 } as const;
+export const V210_BUILD_HIT = { width: 76, height: 62, radius: 26 } as const;
+export const V210_TOWER_HIT = { width: 76, height: 82, offsetY: -16, radius: 27 } as const;
+export const V210_BUILD_MENU = { width: 392, height: 216, cardWidth: 166, cardHeight: 58 } as const;
+export const V210_TOWER_PANEL = { width: 382, compactOffset: 198 } as const;
 
 export function mobileTextV210(size: number, color = '#f7fbff', fixedWidth?: number): Phaser.Types.GameObjects.Text.TextStyle {
   return {
     fontFamily: 'Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif',
-    fontSize: `${size}px`,
+    fontSize: `${Math.max(size, 12)}px`,
     color,
     fontStyle: 'bold',
     fixedWidth,

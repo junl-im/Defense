@@ -1,3 +1,4 @@
+import { optionalRuntimeWorkAllowed, pauseOptionalWork } from "../game/RuntimeLoadGovernor";
 const QUERY = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
 let installed = false;
 
@@ -36,6 +37,11 @@ export function installDeferredPwaRuntime(): void {
   const tryRegister = (): void => {
     if (!sceneReady || !userActivated) return;
     scheduleIdle(() => {
+      if (!optionalRuntimeWorkAllowed("pwa", { allowDuringBoot: false })) {
+        pauseOptionalWork("pwa-deferred", 4200);
+        window.setTimeout(tryRegister, 5200);
+        return;
+      }
       navigator.serviceWorker
         .register(`${base}sw.js`, { scope: base })
         .then((registration) => {

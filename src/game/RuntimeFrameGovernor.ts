@@ -61,7 +61,7 @@ function resetRequested(): boolean {
 export function isRuntimeLockdownActive(): boolean {
   if (typeof window === "undefined") return false;
   if (resetRequested()) return false;
-  return storageGet(LOCKDOWN_KEY) === "1" || document.documentElement.classList.contains("ks-runtime-lockdown");
+  return storageGet(LOCKDOWN_KEY) === "1" || document.documentElement.classList.contains("ks-runtime-lockdown") || document.documentElement.classList.contains("ks-engine-lockdown");
 }
 
 export function clearRuntimeLockdown(): void {
@@ -153,12 +153,15 @@ export function installRuntimeFrameGovernor(_game: Phaser.Game): void {
     const earlyBoot = now - bootStartedAt < Math.max(3600, caps.bootQuietMs);
     const stallMs = earlyBoot ? 780 : 420;
     if (delta > stallMs) stalls += 1;
+    if (delta > 1600 && !isRuntimeLockdownActive()) {
+      enterLockdown("long-frame-stall", Math.round(1000 / Math.max(1, delta)), Math.round(delta), stalls + 1);
+    }
 
     if (now - windowStart >= 3200) {
       const elapsed = now - windowStart;
       const averageFps = Math.round((frames * 1000) / Math.max(1, elapsed));
-      const shouldWatch = averageFps < 25 || worst > 520 || stalls >= 2;
-      const shouldLockdown = savedLockdown || averageFps < 18 || worst > 1100 || stalls >= 4;
+      const shouldWatch = averageFps < 28 || worst > 440 || stalls >= 2;
+      const shouldLockdown = savedLockdown || averageFps < 20 || worst > 900 || stalls >= 3;
       if (shouldLockdown && !isRuntimeLockdownActive()) {
         enterLockdown("frame-stall-governor", averageFps, Math.round(worst), stalls);
       } else {
