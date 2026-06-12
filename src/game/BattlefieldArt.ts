@@ -95,12 +95,12 @@ export function addPremiumBattleObjects(scene: Phaser.Scene, stage: StageConfig)
   const leaf = theme === 'swamp' ? 0x315b43 : theme === 'canyon' ? 0x8b5032 : theme === 'fortress' ? 0x3b3040 : 0x2f6d3a;
   const rock = theme === 'canyon' ? 0x9c6040 : theme === 'swamp' ? 0x4b5b51 : theme === 'fortress' ? 0x48414a : 0x6c6d61;
 
-  const decorCount = lowPowerMode() ? 12 : 44;
+  const decorCount = lowPowerMode() ? 8 : 26;
   for (let i = 0; i < decorCount; i += 1) {
     const x = 40 + rand() * 880;
     const y = 84 + rand() * 360;
     if (!placeable(x, y, stage)) continue;
-    const scale = 0.65 + rand() * 0.55;
+    const scale = 0.9 + rand() * 0.72;
     const pick = rand();
     if (theme === 'fortress' && pick > 0.46) drawInfernalObelisk(scene, x, y, scale * 0.9);
     else if (pick < 0.38 && theme !== 'canyon') drawIsoTree(scene, x, y, scale, leaf);

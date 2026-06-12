@@ -31,21 +31,23 @@ export function allowPreviewBattlefieldArt(): boolean {
 
 export function premiumActorScale(): number {
   const qs = query();
-  if (qs.has("compactactors")) return 0.96;
-  if (qs.has("largeactors")) return 1.18;
-  if (qs.has("cinematicactors")) return 1.24;
-  return 1.1;
+  if (qs.has("compactactors")) return 1.0;
+  if (qs.has("largeactors")) return 1.28;
+  if (qs.has("cinematicactors")) return 1.36;
+  // v2.36.1: 모바일 기본 화면이 작고 장난감처럼 보였던 문제를 줄이기 위해
+  // 성능 비용이 거의 없는 표시 스케일만 기본 상향한다.
+  return 1.18;
 }
 
 export function towerDisplayHeight(kind: TowerKind, level: number): number {
   const base =
     kind === "artillery"
-      ? 100
+      ? 108
       : kind === "barracks"
-        ? 108
+        ? 118
         : kind === "mage"
-          ? 112
-          : 110;
+          ? 120
+          : 118;
   const levelBoost = level >= 3 ? 1.1 : level === 2 ? 1.05 : 1;
   return base * levelBoost * premiumActorScale();
 }
@@ -71,19 +73,19 @@ export function enemyDisplayHeight(config: EnemyConfig): number {
   const threat = config.threat;
   const base =
     threat === "boss"
-      ? 104
+      ? 116
       : threat === "tank"
-        ? 78
+        ? 90
         : config.flying || threat === "flying"
-          ? 68
+          ? 76
           : threat === "swarm"
-            ? 56
-            : 66;
+            ? 62
+            : 76;
   return base * scale * premiumActorScale();
 }
 
 export function heroDisplayHeight(): number {
-  return 64 * premiumActorScale();
+  return 74 * premiumActorScale();
 }
 
 export function projectileSpriteScale(style: string): number {
@@ -93,7 +95,7 @@ export function projectileSpriteScale(style: string): number {
 
 export function projectileIconFootprint(style: string): { maxWidth: number; maxHeight: number } {
   const scale = Math.min(1.18, premiumActorScale());
-  if (style === "shell") return { maxWidth: 42 * scale, maxHeight: 42 * scale };
-  if (style === "magic") return { maxWidth: 34 * scale, maxHeight: 34 * scale };
-  return { maxWidth: 34 * scale, maxHeight: 30 * scale };
+  if (style === "shell") return { maxWidth: 48 * scale, maxHeight: 48 * scale };
+  if (style === "magic") return { maxWidth: 40 * scale, maxHeight: 40 * scale };
+  return { maxWidth: 40 * scale, maxHeight: 36 * scale };
 }

@@ -150,11 +150,11 @@ export class Tower extends Phaser.GameObjects.Container {
     this.setDepth(22);
     // v2.5: tighter mobile hit area. Selection should match the visible tower base,
     // not the whole attack range/ornament silhouette. External GameScene halos use the same footprint.
-    this.setSize(42, 62);
+    this.setSize(54, 78);
     // v2.14: selection footprint follows the visible tower body only.
     // The attack range, glow, shadow and mastery aura must not become touch area.
     this.setInteractive(
-      new Phaser.Geom.Ellipse(0, -16, 34, 56),
+      new Phaser.Geom.Ellipse(0, -18, 50, 72),
       Phaser.Geom.Ellipse.Contains,
     );
     this.playPlacementBounce();
@@ -1062,14 +1062,14 @@ export class Tower extends Phaser.GameObjects.Container {
     const textureKey = this.sprite.texture.key;
     if (isCasualArtTextureKey(textureKey)) {
       fitIsolatedIcon(this.sprite, {
-        maxWidth: this.config.kind === "barracks" ? 92 : 96,
+        maxWidth: this.config.kind === "barracks" ? 104 : 108,
         maxHeight: targetHeight,
         y: this.config.kind === "artillery" ? -5 : -12,
         minScale: 0.02,
         maxScale: 1.2,
       });
       this.artBackplate?.setPosition(0, this.config.kind === "artillery" ? -8 : -13);
-      this.artBackplate?.setSize(88, Math.min(110, targetHeight + 10));
+      this.artBackplate?.setSize(98, Math.min(124, targetHeight + 12));
       return;
     }
     const sourceHeight = Math.max(1, this.sprite.height);

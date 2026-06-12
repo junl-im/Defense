@@ -1060,3 +1060,46 @@ html.ks-network-offline .shell-panel {
     line-height: 1.16 !important;
   }
 }
+
+/* v2.36.1 premium battle viewport recovery
+   v2.1 계열의 contain 계산이 일부 모바일 portrait WebView에서 회전된 게임을
+   작은 16:9 스트립처럼 보이게 만들 수 있었다. WebShell이 계산한 실제 visualViewport
+   값을 최종 우선순위로 다시 적용해, 게임 본 화면은 항상 휴대폰 화면을 꽉 채운다. */
+@media (hover: none) and (pointer: coarse) and (orientation: portrait) {
+  html.ks-portrait-fill #game,
+  html.needs-portrait-rotation #game {
+    left: 50% !important;
+    top: 50% !important;
+    width: var(--ks-vh-px) !important;
+    height: var(--ks-vw-px) !important;
+    min-width: var(--ks-vh-px) !important;
+    min-height: var(--ks-vw-px) !important;
+    max-width: none !important;
+    max-height: none !important;
+    transform-origin: center center !important;
+    transform: translate(-50%, -50%) rotate(90deg) scale(var(--ks-game-scale, 1)) !important;
+  }
+
+  html.ks-portrait-fill #game canvas,
+  html.needs-portrait-rotation #game canvas {
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 100% !important;
+    min-height: 100% !important;
+    object-fit: fill !important;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) and (orientation: landscape) {
+  html.is-landscape #game {
+    left: 50% !important;
+    top: 50% !important;
+    width: var(--ks-vw-px) !important;
+    height: var(--ks-vh-px) !important;
+    min-width: var(--ks-vw-px) !important;
+    min-height: var(--ks-vh-px) !important;
+    max-width: none !important;
+    max-height: none !important;
+    transform: translate(-50%, -50%) scale(var(--ks-game-scale, 1)) !important;
+  }
+}
