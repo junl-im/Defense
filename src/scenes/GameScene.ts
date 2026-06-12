@@ -42,6 +42,11 @@ import {
 import { addPremiumBattleObjects } from "../game/BattlefieldArt";
 import { installPremiumBattleComposition, premiumBuildSpotScale, showCompactBuildSpotLabels } from "../game/PremiumBattleComposition";
 import {
+  installPremiumBattlePresentation,
+  premiumBuildSpotMetrics,
+  usePremiumBuildSpotRune,
+} from "../game/PremiumBattlePresentation";
+import {
   addBuildSpotPreview,
   addPremiumPlaque,
   drawCinematicCombatFrame,
@@ -522,6 +527,7 @@ export class GameScene extends Phaser.Scene {
     this.input.setTopOnly(true);
     this.startTime = Date.now();
     this.drawMap();
+    installPremiumBattlePresentation(this, this.stage);
     installPremiumBattleComposition(this, this.stage);
     if (queuedCasualArtLoad) this.installDeferredCasualBattlefieldLayer();
     installCombatVisualDirector(this, this.stage);
@@ -1984,35 +1990,37 @@ export class GameScene extends Phaser.Scene {
   }
 
   private createBuildSpot(x: number, y: number, autoOpen = false): void {
+    const spotMetrics = premiumBuildSpotMetrics();
+    const premiumRune = usePremiumBuildSpotRune();
     const shadow = this.add
-      .ellipse(x + 2, y + 11, 58, 18, 0x000000, 0.26)
+      .ellipse(x + 2, y + 14, spotMetrics.shadowWidth, spotMetrics.shadowHeight, 0x000000, 0.30)
       .setDepth(11);
     const rim = this.add
-      .ellipse(x, y + 1, 58, 34, 0x3b2818, 0.9)
-      .setStrokeStyle(3, 0xffd36b, 0.36)
+      .ellipse(x, y + 2, spotMetrics.rimWidth, spotMetrics.rimHeight, 0x2b2117, 0.92)
+      .setStrokeStyle(3, 0xffd36b, 0.42)
       .setDepth(12);
     const stone = this.add
-      .ellipse(x, y, 48, 28, 0x7b6b57, 0.96)
-      .setStrokeStyle(2, 0x2b1b12, 0.48)
+      .ellipse(x, y, spotMetrics.coreWidth, spotMetrics.coreHeight, 0x827360, 0.98)
+      .setStrokeStyle(2, 0x1c120b, 0.52)
       .setDepth(13);
     const light = this.add
-      .ellipse(x - 6, y - 4, 16, 5, 0xffe1a0, 0.24)
+      .ellipse(x - 8, y - 5, 22, 7, 0xffe8ad, 0.26)
       .setDepth(14);
     const hammer = this.add
-      .text(x, y - 6, "⚒", {
-        fontSize: "15px",
-        color: "#fff4c2",
+      .text(x, y - 6, premiumRune ? "✦" : "⚒", {
+        fontSize: premiumRune ? spotMetrics.runeSize : "15px",
+        color: premiumRune ? "#fff1b8" : "#fff4c2",
         fontStyle: "bold",
       })
       .setOrigin(0.5)
       .setDepth(15);
     const tagBg = this.add
-      .rectangle(x, y + 22, 52, 15, 0x130d09, showCompactBuildSpotLabels() ? 0.72 : 0.0)
+      .rectangle(x, y + 27, spotMetrics.tagWidth, spotMetrics.tagHeight, 0x130d09, showCompactBuildSpotLabels() ? 0.72 : 0.0)
       .setStrokeStyle(1, 0xffd36b, 0.35)
       .setDepth(16);
     const tag = this.add
-      .text(x, y + 22, "건설", {
-        fontSize: "13px",
+      .text(x, y + 27, premiumRune ? "거점" : "건설", {
+        fontSize: premiumRune ? "12px" : "13px",
         color: "#ffefb4",
         fontStyle: "bold",
       })
@@ -2022,7 +2030,7 @@ export class GameScene extends Phaser.Scene {
     const premiumPad = this.textures.exists("v1-build-spot")
       ? this.add
           .image(x, y + 1, "v1-build-spot")
-          .setDisplaySize(54, 40)
+          .setDisplaySize(spotMetrics.premiumPadWidth, spotMetrics.premiumPadHeight)
           .setDepth(13)
       : undefined;
     if (premiumPad) {
@@ -2035,17 +2043,17 @@ export class GameScene extends Phaser.Scene {
         .setAlpha(showCompactBuildSpotLabels() ? 0.58 : 0)
         .setFillStyle(0x07101e, showCompactBuildSpotLabels() ? 0.58 : 0)
         .setStrokeStyle(1, 0x8fdcff, showCompactBuildSpotLabels() ? 0.42 : 0);
-      tag.setText("건설").setColor("#eaf6ff").setAlpha(showCompactBuildSpotLabels() ? 1 : 0);
+      tag.setText(premiumRune ? "거점" : "건설").setColor("#eaf6ff").setAlpha(showCompactBuildSpotLabels() ? 1 : 0);
     }
     const premiumPreview = addBuildSpotPreview(this, x, y, 0xffd36b);
-    premiumPreview.setScale(0.82 * premiumBuildSpotScale());
+    premiumPreview.setScale(0.96 * premiumBuildSpotScale());
     premiumPreview.setVisible(false);
     const largeHitZone = this.add
       .rectangle(
         x,
         y + 1,
-        Math.max(V210_BUILD_HIT.width, 74),
-        Math.max(V210_BUILD_HIT.height, 62),
+        Math.max(V210_BUILD_HIT.width, spotMetrics.hitWidth),
+        Math.max(V210_BUILD_HIT.height, spotMetrics.hitHeight),
         0xffffff,
         0.001,
       )
@@ -2055,8 +2063,8 @@ export class GameScene extends Phaser.Scene {
     addHitZoneDebug(
       this,
       spotDebug,
-      Math.max(V210_BUILD_HIT.width, 74),
-      Math.max(V210_BUILD_HIT.height, 62),
+      Math.max(V210_BUILD_HIT.width, spotMetrics.hitWidth),
+      Math.max(V210_BUILD_HIT.height, spotMetrics.hitHeight),
       "build spot",
       0xffd56c,
       V210_BUILD_HIT.radius,
@@ -2078,15 +2086,17 @@ export class GameScene extends Phaser.Scene {
       tagBg.setAlpha(0.78).setFillStyle(0x07101e, 0.72).setStrokeStyle(1, 0xfff0a3, 0.55);
       tag.setText("타워 선택").setAlpha(1);
       premiumPreview.setVisible(true);
+      if (premiumRune) hammer.setScale(1.08);
     };
     const handleOut = (): void => {
       rim.setStrokeStyle(3, 0xffd36b, 0.36);
-      tag.setText(premiumPad ? "건설" : "건설 가능");
+      tag.setText(premiumRune ? "거점" : premiumPad ? "건설" : "건설 가능");
       if (!showCompactBuildSpotLabels()) {
         tagBg.setAlpha(0).setFillStyle(0x07101e, 0).setStrokeStyle(1, 0xffd36b, 0);
         tag.setAlpha(0);
       }
       premiumPreview.setVisible(false);
+      if (premiumRune) hammer.setScale(1);
     };
     const handleOpen = (): void =>
       this.openBuildMenu(x, y, stone, rim, hammer, extras);

@@ -34,20 +34,20 @@ export function premiumActorScale(): number {
   if (qs.has("compactactors")) return 1.0;
   if (qs.has("largeactors")) return 1.28;
   if (qs.has("cinematicactors")) return 1.36;
-  // v2.36.1: 모바일 기본 화면이 작고 장난감처럼 보였던 문제를 줄이기 위해
-  // 성능 비용이 거의 없는 표시 스케일만 기본 상향한다.
-  return 1.18;
+  // v2.36.2: 조잡한 아이콘 목업을 본 게임에서 걷어낸 뒤,
+  // 실제 전투 실루엣이 모바일 화면에서 더 크게 읽히도록 표시 체급을 한 번 더 보정한다.
+  return 1.22;
 }
 
 export function towerDisplayHeight(kind: TowerKind, level: number): number {
   const base =
     kind === "artillery"
-      ? 108
+      ? 112
       : kind === "barracks"
-        ? 118
+        ? 124
         : kind === "mage"
-          ? 120
-          : 118;
+          ? 126
+          : 122;
   const levelBoost = level >= 3 ? 1.1 : level === 2 ? 1.05 : 1;
   return base * levelBoost * premiumActorScale();
 }
@@ -73,19 +73,19 @@ export function enemyDisplayHeight(config: EnemyConfig): number {
   const threat = config.threat;
   const base =
     threat === "boss"
-      ? 116
+      ? 124
       : threat === "tank"
-        ? 90
+        ? 96
         : config.flying || threat === "flying"
-          ? 76
+          ? 82
           : threat === "swarm"
-            ? 62
-            : 76;
+            ? 66
+            : 82;
   return base * scale * premiumActorScale();
 }
 
 export function heroDisplayHeight(): number {
-  return 74 * premiumActorScale();
+  return 82 * premiumActorScale();
 }
 
 export function projectileSpriteScale(style: string): number {

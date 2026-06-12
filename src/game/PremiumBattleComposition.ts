@@ -91,8 +91,8 @@ export function installPremiumBattleComposition(scene: Phaser.Scene, stage: Stag
   // 경로 시작/도착 지점을 단순 원형 오브젝트가 아니라 전술 포털처럼 크게 읽히게 한다.
   const start = stage.path[0];
   const goal = stage.path[stage.path.length - 1];
-  addStaticGate(scene, start.x + 18, start.y, 0x72e8ff, "ENTRY", low);
-  addStaticGate(scene, goal.x - 18, goal.y, 0xffd36b, "CORE", low);
+  addStaticGate(scene, start.x + 18, start.y, 0x72e8ff, "진입", low);
+  addStaticGate(scene, goal.x - 18, goal.y, 0xffd36b, "수호핵", low);
 
   // 건설 지점 아래에 큰 바닥 앵커를 먼저 깔아 전장 오브젝트의 체급을 올린다.
   for (const spot of stage.spots) {
@@ -123,7 +123,7 @@ function addStaticGate(
     .setBlendMode(Phaser.BlendModes.ADD);
   scene.add
     .text(x, y + 31, label, {
-      fontSize: low ? "9px" : "10px",
+      fontSize: low ? "10px" : "11px",
       color: "#fff3c2",
       fontStyle: "bold",
       fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
