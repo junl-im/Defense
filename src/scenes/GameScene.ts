@@ -156,6 +156,11 @@ import {
 import { clearTimer, safeDelayedCall } from "../game/SceneSafety";
 import { resetCombatFxBudget } from "../game/CombatFxBudget";
 import {
+  CASUAL_ART_KEYS,
+  queueCasualBattleArt,
+  resolveBattlefieldBackgroundKey,
+} from "../game/AssetMap";
+import {
   markSceneTransition,
   pauseOptionalWork,
 } from "../game/RuntimeLoadGovernor";
@@ -503,12 +508,16 @@ export class GameScene extends Phaser.Scene {
   }
 
   create(): void {
+    // v2.35.8: 전투 씬 진입 후 아주 작은 캐주얼 교체용 이미지만 비동기로 로드한다.
+    // BootScene/첫 탭에는 얹지 않아서 v2.35.7의 실행 복구와 fast shell 구조를 유지한다.
+    const queuedCasualArtLoad = queueCasualBattleArt(this);
     purgeOptionalArtTextures(this, "battle-entry", { limit: 220 });
     installSceneTexturePressureHandler(this);
     this.time.timeScale = 1;
     this.input.setTopOnly(true);
     this.startTime = Date.now();
     this.drawMap();
+    if (queuedCasualArtLoad) this.installDeferredCasualBattlefieldLayer();
     installCombatVisualDirector(this, this.stage);
     drawBattlePolish(this, this.stage.theme);
     if (!lowPowerMode()) {
@@ -714,8 +723,10 @@ export class GameScene extends Phaser.Scene {
             ? 0x79816a
             : 0x7c6b5e;
 
-    if (this.textures.exists(bgKey)) {
-      this.add.image(480, 270, bgKey).setDisplaySize(960, 540).setDepth(0);
+    const mappedBgKey = resolveBattlefieldBackgroundKey(this, this.stage.id) ?? bgKey;
+
+    if (this.textures.exists(mappedBgKey)) {
+      this.add.image(480, 270, mappedBgKey).setDisplaySize(960, 540).setDepth(0);
       if (this.textures.exists("ui-safe-area-overlay-v47")) {
         this.add
           .image(480, 270, "ui-safe-area-overlay-v47")
@@ -778,6 +789,34 @@ export class GameScene extends Phaser.Scene {
     this.drawPath(pathMain, 30);
     this.drawPath(0xe8bd70, 4, 0.28);
     this.drawHudChrome();
+  }
+
+  private installDeferredCasualBattlefieldLayer(): void {
+    // 전투 배경은 게임 진행을 막지 않는다. 로드가 늦으면 기존 코드맵으로 즉시 플레이하고,
+    // 준비되면 낮은 depth로 부드럽게 얹는다. 경로: assets/art/v30_ocean_masterpiece.png
+    const applyLayer = () => {
+      if (!this.scene.isActive("GameScene")) return;
+      if (!this.textures.exists(CASUAL_ART_KEYS.battlefieldOcean)) return;
+      const backdrop = this.add
+        .image(480, 270, CASUAL_ART_KEYS.battlefieldOcean)
+        .setDisplaySize(960, 540)
+        .setDepth(0.15)
+        .setAlpha(0);
+      this.tweens.add({
+        targets: backdrop,
+        alpha: 0.78,
+        duration: 420,
+        ease: "Sine.easeOut",
+      });
+    };
+
+    if (this.textures.exists(CASUAL_ART_KEYS.battlefieldOcean)) {
+      applyLayer();
+      return;
+    }
+
+    this.load.once(Phaser.Loader.Events.COMPLETE, applyLayer);
+    this.time.delayedCall(260, applyLayer);
   }
 
   private drawHudChrome(): void {

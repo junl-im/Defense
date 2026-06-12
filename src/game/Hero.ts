@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { Enemy } from './Enemy';
 import { shakeCamera, spawnHitSpark, spawnImpactRing, spawnMuzzleFlash } from './Effects';
 import { playSfx } from './AudioManager';
+import { CASUAL_ART_KEYS, resolveHeroTextureKey } from './AssetMap';
 
 export class Hero extends Phaser.GameObjects.Container {
   hp = 220;
@@ -19,15 +20,20 @@ export class Hero extends Phaser.GameObjects.Container {
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
     const shadow = scene.add.ellipse(0, 13, 24, 8, 0x000000, 0.24);
-    if (scene.textures.exists('v1-hero-art-knight')) {
-      this.sprite = scene.add.image(0, -7, 'v1-hero-art-knight');
-      // v2.5: smaller, cleaner mobile battlefield hero footprint.
-      const targetHeight = 47;
-      this.sprite.setDisplaySize(this.sprite.width * (targetHeight / Math.max(1, this.sprite.height)), targetHeight);
-    } else if (scene.textures.exists('hero-knight')) {
+    const heroTextureKey = resolveHeroTextureKey(scene);
+    if (heroTextureKey === 'hero-knight') {
       this.sprite = scene.add.sprite(0, -4, 'hero-knight', 0).setScale(1.22);
       this.animatedSprite = true;
       this.playMotion('idle');
+    } else if (heroTextureKey) {
+      this.sprite = scene.add.image(
+        0,
+        heroTextureKey === CASUAL_ART_KEYS.heroSeedKnight ? -9 : -7,
+        heroTextureKey,
+      );
+      // v2.35.8: 기존 기사 일러스트와 DALL-E 교체용 캐주얼 영웅 아이콘을 같은 발자국으로 맞춘다.
+      const targetHeight = heroTextureKey === CASUAL_ART_KEYS.heroSeedKnight ? 55 : 47;
+      this.sprite.setDisplaySize(this.sprite.width * (targetHeight / Math.max(1, this.sprite.height)), targetHeight);
     }
     this.bodyCircle = scene.add.circle(0, 0, 12, 0xf7d36b, this.sprite ? 0 : 1).setStrokeStyle(3, 0xffffff, this.sprite ? 0 : 0.35);
     const helm = scene.add.triangle(0, -7, -8, 0, 8, 0, 0, -14, 0xd2d8e8, this.sprite ? 0 : 1);

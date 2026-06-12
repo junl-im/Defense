@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import type { EnemyConfig, PathPoint } from "./types";
 import { spawnDeathPoof, spawnFloatingText, spawnHitSpark, spawnImpactRing } from "./Effects";
 import { playSfx } from "./AudioManager";
+import { resolveEnemyTextureKey } from "./AssetMap";
 import { bossPatternCooldown, bossPatternLabel } from "./MegaSystems";
 
 type EnemyMotion = "walk" | "attack" | "death";
@@ -55,7 +56,7 @@ export class Enemy extends Phaser.GameObjects.Container {
       0x000000,
       config.flying ? 0.14 : 0.28,
     );
-    const artKey = this.resolveV18EnemyArtKey(config.kind);
+    const artKey = this.resolveEnemyArtKey(config.kind);
     if (artKey && scene.textures.exists(artKey)) {
       this.sprite = scene.add.image(0, config.flying ? -8 : -10, artKey);
       const targetHeight =
@@ -323,44 +324,11 @@ export class Enemy extends Phaser.GameObjects.Container {
     super.destroy(fromScene);
   }
 
-  private resolveV18EnemyArtKey(kind: string): string | undefined {
-    const family: Record<string, string> = {
-      goblin: "goblin",
-      raider: "goblin",
-      spider: "goblin",
-      brute: "orc",
-      orc: "orc",
-      shield: "orc",
-      shaman: "orc",
-      ogre: "orc",
-      troll: "orc",
-      golem: "boar",
-      abomination: "boar",
-      titan: "boar",
-      wolf: "wolf",
-      hellhound: "wolf",
-      nightmare: "wolf",
-      bat: "bat",
-      wasp: "bat",
-      gargoyle: "bat",
-      wyvern: "dragon",
-      phoenix: "dragon",
-      dragon: "dragon",
-      skeleton: "skeleton",
-      zombie: "skeleton",
-      specter: "skeleton",
-      cultist: "rogue",
-      assassin: "rogue",
-      warlock: "rogue",
-      necromancer: "rogue",
-      voidling: "rogue",
-      voidPriest: "rogue",
-      demonlord: "dragon",
-      fireImp: "dragon",
-      obsidianKnight: "skeleton",
-    };
-    const resolved = family[kind];
-    return resolved ? `v1-enemy-art-${resolved}` : undefined;
+  private resolveEnemyArtKey(kind: string): string | undefined {
+    // v2.35.8: 몬스터 에셋 매핑은 AssetMap에서 중앙 관리한다.
+    // assets/art/v30_fish_silhouette_sheet.png / v30_fish_slime_icon.png은
+    // 기존 몬스터 스프라이트가 아직 로드되지 않은 초경량 전투 진입에서 안전한 캐주얼 폴백이다.
+    return resolveEnemyTextureKey(this.scene, kind);
   }
 
   private playHitReaction(damageType: "physical" | "magic" | "true"): void {

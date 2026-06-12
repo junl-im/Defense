@@ -16,6 +16,7 @@ import {
 import { playSfx } from "./AudioManager";
 import { getRelicBattleBonuses } from "./MegaSystems";
 import { getTowerMastery, type TowerMasteryId } from "./TowerMastery";
+import { resolveTowerTextureKey } from "./AssetMap";
 
 export type TargetMode = "first" | "strong" | "air" | "near";
 
@@ -995,13 +996,16 @@ export class Tower extends Phaser.GameObjects.Container {
   }
 
   private resolveTowerTextureKey(): string {
-    if (this.mastery) {
-      const masteryKey = `tower-${this.config.kind}-${this.mastery}`;
-      if (this.scene.textures.exists(masteryKey)) return masteryKey;
-    }
-    const levelKey = `tower-${this.config.kind}-lv${this.level}`;
-    if (this.scene.textures.exists(levelKey)) return levelKey;
-    return `tower-${this.config.kind}`;
+    // v2.35.8: 타워 에셋 매핑은 AssetMap에서 중앙 관리한다.
+    // 우선순위: 전문화 이미지 -> 레벨별 이미지 -> 기존 기본 이미지 -> DALL-E 교체용 캐주얼 아이콘.
+    return (
+      resolveTowerTextureKey(
+        this.scene,
+        this.config.kind,
+        this.level,
+        this.mastery,
+      ) ?? `tower-${this.config.kind}`
+    );
   }
 
   private updateSpriteForLevel(): void {

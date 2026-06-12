@@ -1,0 +1,12 @@
+KingdomSeed v2.35.8 Casual Art Asset Map Patch
+
+적용 방법:
+1. 프로젝트 루트에 이 zip을 덮어씌웁니다.
+2. node_modules, dist, .git은 포함되어 있지 않습니다.
+3. npm run build로 TypeScript/Vite 빌드를 확인합니다.
+
+핵심:
+- v2.35.7 실행 복구/fast shell 구조는 유지합니다.
+- BootScene 첫 로딩에는 새 아트를 싣지 않습니다.
+- GameScene 진입 뒤 작은 캐주얼 에셋만 비동기 로드합니다.
+- DALL-E 교체용 경로를 실제 파일과 코드 매핑으로 고정했습니다.

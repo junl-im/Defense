@@ -8,6 +8,7 @@ import {
   shouldSpawnFx,
 } from "./QualityManager";
 import { tryAcquireCombatFx } from "./CombatFxBudget";
+import { resolveProjectileTextureKey } from "./AssetMap";
 
 export type ProjectileStyle = "arrow" | "magic" | "shell" | "slash" | "spark";
 
@@ -169,8 +170,11 @@ export function spawnProjectile(
     | Phaser.GameObjects.Rectangle
     | Phaser.GameObjects.Star
     | Phaser.GameObjects.Ellipse;
-  if (scene.textures.exists(`projectile-${style}`)) {
-    projectile = scene.add.image(fromX, fromY, `projectile-${style}`);
+  const mappedProjectileKey = resolveProjectileTextureKey(scene, style);
+  if (mappedProjectileKey) {
+    projectile = scene.add
+      .image(fromX, fromY, mappedProjectileKey)
+      .setScale(style === "shell" ? 0.16 : 0.12);
   } else if (scene.textures.exists("projectiles")) {
     projectile = scene.add
       .sprite(fromX, fromY, "projectiles", frameByStyle[style])
