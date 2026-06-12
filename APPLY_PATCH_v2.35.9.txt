@@ -1,0 +1,44 @@
+KingdomSeed v2.35.9 Casual Art Director Patch
+
+목표
+- v2.35.8의 아기자기 캐주얼 2D 에셋 매핑을 실제 런타임 디자인 레이어로 안정화.
+- DALL-E 결과물의 원본 해상도와 여백이 달라도 타워/몬스터/영웅/발사체가 게임 내 일정한 크기로 보이도록 정규화.
+- 기본 실행/첫 부팅 성능은 유지. 새 아트는 전투 씬 진입 후 비동기로 로드.
+
+변경 파일
+- src/game/CasualArtDirector.ts 신규
+- src/game/AssetMap.ts
+- src/game/Tower.ts
+- src/game/Enemy.ts
+- src/game/Hero.ts
+- src/game/Effects.ts
+- src/scenes/GameScene.ts
+- public/assets/ui-kit/icons/README_DALLE_PROMPTS.md 신규
+- package.json / package-lock.json 버전 2.35.9
+
+핵심 개선
+1. CasualArtDirector 추가
+   - DALL-E 프롬프트/목표 경로/런타임 발자국을 중앙 문서화.
+   - fitIsolatedIcon()으로 원본 이미지 크기와 무관하게 화면 표시 크기 정규화.
+   - makeStickerBackplate()로 흰 배경 isolated 아이콘도 전장 위에서 또렷하게 보이도록 스티커 백플레이트 제공.
+
+2. 타워/몬스터/영웅 시각 안정화
+   - 캐주얼 교체용 이미지에는 크림색/흰색 스티커 백플레이트를 자동 부여.
+   - 기존 스프라이트가 있으면 기존 구조 유지.
+   - 새 교체용 이미지가 늦게 로드되어도 전투는 도형/기존 스프라이트 폴백으로 계속 진행.
+
+3. 발사체 크기 버그 예방
+   - 1024px DALL-E 발사체를 넣어도 더 이상 setScale(0.12)로 과대 표시되지 않음.
+   - style별 최대 24~30px 발자국으로 정규화.
+
+4. 아트 로드 디버그
+   - ?artmapdebug 쿼리로 캐주얼 아트 로드 상태를 짧게 표시.
+
+검증
+- npm run build 통과.
+- TypeScript 컴파일 통과.
+- 기존 Vite/Phaser 대형 청크 경고만 남음.
+
+적용 방법
+- 프로젝트 루트에 이 zip을 그대로 덮어쓰기.
+- node_modules, dist, .git은 포함하지 않음.

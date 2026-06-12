@@ -3,6 +3,7 @@ import { Enemy } from './Enemy';
 import { shakeCamera, spawnHitSpark, spawnImpactRing, spawnMuzzleFlash } from './Effects';
 import { playSfx } from './AudioManager';
 import { CASUAL_ART_KEYS, resolveHeroTextureKey } from './AssetMap';
+import { fitIsolatedIcon, isCasualArtTextureKey, makeStickerBackplate } from './CasualArtDirector';
 
 export class Hero extends Phaser.GameObjects.Container {
   hp = 220;
@@ -14,6 +15,7 @@ export class Hero extends Phaser.GameObjects.Container {
   private bodyCircle: Phaser.GameObjects.Arc;
   private skillRing: Phaser.GameObjects.Arc;
   private sprite?: Phaser.GameObjects.Sprite | Phaser.GameObjects.Image;
+  private artBackplate?: Phaser.GameObjects.Ellipse;
   private animatedSprite = false;
   private currentMotion: 'idle' | 'move' | 'attack' = 'idle';
 
@@ -26,19 +28,39 @@ export class Hero extends Phaser.GameObjects.Container {
       this.animatedSprite = true;
       this.playMotion('idle');
     } else if (heroTextureKey) {
+      const casual = isCasualArtTextureKey(heroTextureKey);
+      if (casual) {
+        this.artBackplate = makeStickerBackplate(scene, 0, -8, 48, 58, {
+          fill: 0xfff8e8,
+          stroke: 0x5f4630,
+          alpha: 0.82,
+          strokeAlpha: 0.24,
+        });
+      }
       this.sprite = scene.add.image(
         0,
         heroTextureKey === CASUAL_ART_KEYS.heroSeedKnight ? -9 : -7,
         heroTextureKey,
       );
-      // v2.35.8: 기존 기사 일러스트와 DALL-E 교체용 캐주얼 영웅 아이콘을 같은 발자국으로 맞춘다.
+      // v2.35.9: DALL-E 결과물이 1024px이어도 게임 내 영웅 발자국은 항상 같은 크기로 보정한다.
       const targetHeight = heroTextureKey === CASUAL_ART_KEYS.heroSeedKnight ? 55 : 47;
-      this.sprite.setDisplaySize(this.sprite.width * (targetHeight / Math.max(1, this.sprite.height)), targetHeight);
+      if (casual) {
+        fitIsolatedIcon(this.sprite, {
+          maxWidth: 45,
+          maxHeight: targetHeight,
+          y: heroTextureKey === CASUAL_ART_KEYS.heroSeedKnight ? -9 : -7,
+          minScale: 0.02,
+          maxScale: 1.1,
+        });
+      } else {
+        this.sprite.setDisplaySize(this.sprite.width * (targetHeight / Math.max(1, this.sprite.height)), targetHeight);
+      }
     }
     this.bodyCircle = scene.add.circle(0, 0, 12, 0xf7d36b, this.sprite ? 0 : 1).setStrokeStyle(3, 0xffffff, this.sprite ? 0 : 0.35);
     const helm = scene.add.triangle(0, -7, -8, 0, 8, 0, 0, -14, 0xd2d8e8, this.sprite ? 0 : 1);
     this.skillRing = scene.add.circle(0, 0, 38, 0xfff0a3, 0.07).setStrokeStyle(1, 0xfff0a3, 0.25).setVisible(false);
     const visuals: Phaser.GameObjects.GameObject[] = [this.skillRing, shadow, this.bodyCircle, helm];
+    if (this.artBackplate) visuals.push(this.artBackplate);
     if (this.sprite) visuals.push(this.sprite);
     this.add(visuals);
     scene.add.existing(this);

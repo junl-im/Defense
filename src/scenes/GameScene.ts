@@ -165,6 +165,7 @@ import {
   pauseOptionalWork,
 } from "../game/RuntimeLoadGovernor";
 import { lowPowerMode, setRuntimeQualityTier } from "../game/QualityManager";
+import { installArtMapDebugBadge } from "../game/CasualArtDirector";
 import {
   allowPremiumStaticArt,
   mobileUiScale,
@@ -511,6 +512,8 @@ export class GameScene extends Phaser.Scene {
     // v2.35.8: 전투 씬 진입 후 아주 작은 캐주얼 교체용 이미지만 비동기로 로드한다.
     // BootScene/첫 탭에는 얹지 않아서 v2.35.7의 실행 복구와 fast shell 구조를 유지한다.
     const queuedCasualArtLoad = queueCasualBattleArt(this);
+    this.installCasualArtRefreshHook();
+    installArtMapDebugBadge(this);
     purgeOptionalArtTextures(this, "battle-entry", { limit: 220 });
     installSceneTexturePressureHandler(this);
     this.time.timeScale = 1;
@@ -789,6 +792,19 @@ export class GameScene extends Phaser.Scene {
     this.drawPath(pathMain, 30);
     this.drawPath(0xe8bd70, 4, 0.28);
     this.drawHudChrome();
+  }
+
+  private installCasualArtRefreshHook(): void {
+    const refreshActors = () => {
+      if (!this.isSceneLive()) return;
+      this.towers.forEach((tower) => tower.refreshArt());
+      installArtMapDebugBadge(this);
+    };
+
+    this.events.on("kingdom-seed:casual-art-ready", refreshActors);
+    const cleanup = () => this.events.off("kingdom-seed:casual-art-ready", refreshActors);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, cleanup);
+    this.events.once(Phaser.Scenes.Events.DESTROY, cleanup);
   }
 
   private installDeferredCasualBattlefieldLayer(): void {

@@ -3,6 +3,11 @@ import type { EnemyConfig, PathPoint } from "./types";
 import { spawnDeathPoof, spawnFloatingText, spawnHitSpark, spawnImpactRing } from "./Effects";
 import { playSfx } from "./AudioManager";
 import { resolveEnemyTextureKey } from "./AssetMap";
+import {
+  fitIsolatedIcon,
+  isCasualArtTextureKey,
+  makeStickerBackplate,
+} from "./CasualArtDirector";
 import { bossPatternCooldown, bossPatternLabel } from "./MegaSystems";
 
 type EnemyMotion = "walk" | "attack" | "death";
@@ -18,6 +23,7 @@ export class Enemy extends Phaser.GameObjects.Container {
 
   private bodyCircle: Phaser.GameObjects.Arc;
   private sprite?: Phaser.GameObjects.Sprite | Phaser.GameObjects.Image;
+  private artBackplate?: Phaser.GameObjects.Ellipse;
   private animatedSprite = false;
   private hpBar: Phaser.GameObjects.Rectangle;
   private hpBack: Phaser.GameObjects.Rectangle;
@@ -58,6 +64,17 @@ export class Enemy extends Phaser.GameObjects.Container {
     );
     const artKey = this.resolveEnemyArtKey(config.kind);
     if (artKey && scene.textures.exists(artKey)) {
+      const casual = isCasualArtTextureKey(artKey);
+      if (casual) {
+        this.artBackplate = makeStickerBackplate(
+          scene,
+          0,
+          config.flying ? -9 : -10,
+          (config.threat === "boss" ? 76 : 58) * scale,
+          (config.threat === "boss" ? 82 : 62) * scale,
+          { fill: 0xffffff, stroke: config.accentColor ?? 0x1d2230, alpha: 0.84, strokeAlpha: 0.24 },
+        );
+      }
       this.sprite = scene.add.image(0, config.flying ? -8 : -10, artKey);
       const targetHeight =
         (config.threat === "boss"
@@ -67,10 +84,20 @@ export class Enemy extends Phaser.GameObjects.Container {
             : config.flying
               ? 56
               : 58) * scale;
-      this.sprite.setDisplaySize(
-        this.sprite.width * (targetHeight / Math.max(1, this.sprite.height)),
-        targetHeight,
-      );
+      if (casual) {
+        fitIsolatedIcon(this.sprite, {
+          maxWidth: (config.threat === "boss" ? 72 : 54) * scale,
+          maxHeight: targetHeight,
+          y: config.flying ? -8 : -10,
+          minScale: 0.02,
+          maxScale: 1.1,
+        });
+      } else {
+        this.sprite.setDisplaySize(
+          this.sprite.width * (targetHeight / Math.max(1, this.sprite.height)),
+          targetHeight,
+        );
+      }
     } else {
       const spriteKey = `enemy-${config.kind}`;
       if (scene.textures.exists(spriteKey)) {
@@ -134,6 +161,7 @@ export class Enemy extends Phaser.GameObjects.Container {
     if (this.sprite)
       this.add([
         shadow,
+        ...(this.artBackplate ? [this.artBackplate] : []),
         this.sprite,
         this.bodyCircle,
         healthGem,
@@ -321,6 +349,7 @@ export class Enemy extends Phaser.GameObjects.Container {
     this.scene?.tweens?.killTweensOf(this);
     this.scene?.tweens?.killTweensOf(this.bodyCircle);
     if (this.sprite) this.scene?.tweens?.killTweensOf(this.sprite);
+    if (this.artBackplate) this.scene?.tweens?.killTweensOf(this.artBackplate);
     super.destroy(fromScene);
   }
 

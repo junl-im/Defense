@@ -9,6 +9,7 @@ import {
 } from "./QualityManager";
 import { tryAcquireCombatFx } from "./CombatFxBudget";
 import { resolveProjectileTextureKey } from "./AssetMap";
+import { fitIsolatedIcon, isCasualArtTextureKey } from "./CasualArtDirector";
 
 export type ProjectileStyle = "arrow" | "magic" | "shell" | "slash" | "spark";
 
@@ -172,9 +173,17 @@ export function spawnProjectile(
     | Phaser.GameObjects.Ellipse;
   const mappedProjectileKey = resolveProjectileTextureKey(scene, style);
   if (mappedProjectileKey) {
-    projectile = scene.add
-      .image(fromX, fromY, mappedProjectileKey)
-      .setScale(style === "shell" ? 0.16 : 0.12);
+    projectile = scene.add.image(fromX, fromY, mappedProjectileKey);
+    if (isCasualArtTextureKey(mappedProjectileKey)) {
+      fitIsolatedIcon(projectile, {
+        maxWidth: style === "shell" ? 30 : 26,
+        maxHeight: style === "shell" ? 30 : 24,
+        minScale: 0.01,
+        maxScale: 0.5,
+      });
+    } else {
+      projectile.setScale(style === "shell" ? 0.16 : 0.12);
+    }
   } else if (scene.textures.exists("projectiles")) {
     projectile = scene.add
       .sprite(fromX, fromY, "projectiles", frameByStyle[style])

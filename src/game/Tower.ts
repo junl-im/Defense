@@ -17,6 +17,11 @@ import { playSfx } from "./AudioManager";
 import { getRelicBattleBonuses } from "./MegaSystems";
 import { getTowerMastery, type TowerMasteryId } from "./TowerMastery";
 import { resolveTowerTextureKey } from "./AssetMap";
+import {
+  fitIsolatedIcon,
+  isCasualArtTextureKey,
+  makeStickerBackplate,
+} from "./CasualArtDirector";
 
 export type TargetMode = "first" | "strong" | "air" | "near";
 
@@ -53,6 +58,7 @@ export class Tower extends Phaser.GameObjects.Container {
   private top: Phaser.GameObjects.Arc;
   private roof: Phaser.GameObjects.Shape;
   private sprite?: Phaser.GameObjects.Image;
+  private artBackplate?: Phaser.GameObjects.Ellipse;
   private permanentUpgrades: TowerUpgradeSnapshot = { ...DEFAULT_UPGRADES };
   private skillCutInCooldownMs = 0;
   private relicBonuses = getRelicBattleBonuses();
@@ -105,6 +111,14 @@ export class Tower extends Phaser.GameObjects.Container {
       .setOrigin(0.5);
     const spriteKey = this.resolveTowerTextureKey();
     if (scene.textures.exists(spriteKey)) {
+      if (isCasualArtTextureKey(spriteKey)) {
+        this.artBackplate = makeStickerBackplate(scene, 0, -12, 68, 82, {
+          fill: 0xfff8e8,
+          stroke: 0x5a3b22,
+          alpha: 0.78,
+          strokeAlpha: 0.22,
+        });
+      }
       this.sprite = scene.add.image(0, 0, spriteKey);
       this.applyTowerArtSize();
       base.setAlpha(0);
@@ -126,6 +140,7 @@ export class Tower extends Phaser.GameObjects.Container {
       this.top,
       label,
     ];
+    if (this.artBackplate) visuals.push(this.artBackplate);
     if (this.sprite) visuals.push(this.sprite);
     visuals.push(this.levelText);
     this.add(visuals);
@@ -1008,13 +1023,34 @@ export class Tower extends Phaser.GameObjects.Container {
     );
   }
 
-  private updateSpriteForLevel(): void {
-    if (!this.sprite) return;
+  refreshArt(): void {
     const nextKey = this.resolveTowerTextureKey();
-    if (this.scene.textures.exists(nextKey)) {
+    if (!this.scene.textures.exists(nextKey)) return;
+
+    if (!this.sprite) {
+      this.sprite = this.scene.add.image(0, 0, nextKey);
+      const index = this.artBackplate ? this.getIndex(this.artBackplate) + 1 : this.length;
+      this.addAt(this.sprite, Math.max(0, index));
+    } else {
       this.sprite.setTexture(nextKey);
-      this.applyTowerArtSize();
     }
+
+    const casual = isCasualArtTextureKey(nextKey);
+    if (casual && !this.artBackplate) {
+      this.artBackplate = makeStickerBackplate(this.scene, 0, -12, 68, 82, {
+        fill: 0xfff8e8,
+        stroke: 0x5a3b22,
+        alpha: 0.78,
+        strokeAlpha: 0.22,
+      });
+      this.addAt(this.artBackplate, Math.max(0, this.length - 1));
+    }
+    this.artBackplate?.setVisible(casual);
+    this.applyTowerArtSize();
+  }
+
+  private updateSpriteForLevel(): void {
+    this.refreshArt();
   }
 
   private applyTowerArtSize(): void {
@@ -1027,6 +1063,19 @@ export class Tower extends Phaser.GameObjects.Container {
           : 96;
     const levelBoost = this.level >= 3 ? 1.09 : this.level === 2 ? 1.045 : 1;
     const targetHeight = baseHeight * levelBoost;
+    const textureKey = this.sprite.texture.key;
+    if (isCasualArtTextureKey(textureKey)) {
+      fitIsolatedIcon(this.sprite, {
+        maxWidth: this.config.kind === "barracks" ? 72 : 78,
+        maxHeight: targetHeight,
+        y: this.config.kind === "artillery" ? -5 : -12,
+        minScale: 0.02,
+        maxScale: 1.2,
+      });
+      this.artBackplate?.setPosition(0, this.config.kind === "artillery" ? -8 : -13);
+      this.artBackplate?.setSize(74, Math.min(88, targetHeight + 8));
+      return;
+    }
     const sourceHeight = Math.max(1, this.sprite.height);
     const sourceWidth = Math.max(1, this.sprite.width);
     this.sprite.setDisplaySize(
@@ -1034,6 +1083,7 @@ export class Tower extends Phaser.GameObjects.Container {
       targetHeight,
     );
     this.sprite.setPosition(0, this.config.kind === "artillery" ? -6 : -12);
+    this.artBackplate?.setVisible(false);
   }
 
   private symbolFor(kind: TowerConfig["kind"]): string {

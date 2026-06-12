@@ -157,8 +157,18 @@ export function queueCasualBattleArt(scene: Phaser.Scene): boolean {
     isLoading?: () => boolean;
   };
 
+  const emitReady = () => {
+    scene.events.emit("kingdom-seed:casual-art-ready", {
+      loaded: CASUAL_BATTLE_ART_ASSETS.filter((asset) => textureExists(scene, asset.key)).length,
+      total: CASUAL_BATTLE_ART_ASSETS.length,
+    });
+  };
+
   if (typeof loader.isLoading === "function" && loader.isLoading()) {
-    scene.load.once(Phaser.Loader.Events.COMPLETE, () => queueCasualBattleArt(scene));
+    scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
+      queueCasualBattleArt(scene);
+      emitReady();
+    });
     return false;
   }
 
@@ -176,7 +186,17 @@ export function queueCasualBattleArt(scene: Phaser.Scene): boolean {
     queued = true;
   }
 
-  if (queued) scene.load.start();
+  if (queued) {
+    scene.load.once(Phaser.Loader.Events.COMPLETE, emitReady);
+    scene.load.once(Phaser.Loader.Events.FILE_LOAD_ERROR, (_file: unknown) => {
+      // 에셋 교체 중 파일이 비어 있거나 경로가 잘못되어도 전투 진입은 막지 않는다.
+      // 기존 스프라이트/도형 폴백이 계속 동작하고, ?artmapdebug로 로드 개수를 확인할 수 있다.
+      emitReady();
+    });
+    scene.load.start();
+  } else {
+    emitReady();
+  }
   return queued;
 }
 
