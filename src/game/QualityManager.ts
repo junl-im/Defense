@@ -117,8 +117,8 @@ function makeProfile(tier: QualityTier): RenderProfile {
   if (tier === 'low') {
     return {
       tier,
-      resolution: 1,
-      targetFps: 30,
+      resolution: runtimeLockdownActive() ? 0.75 : 0.85,
+      targetFps: runtimeLockdownActive() ? 26 : 30,
       ambientMotes: 1,
       maxFxCostPerSecond: runtimeLockdownActive() ? 2 : 4,
       particleMultiplier: runtimeLockdownActive() ? 0.12 : 0.24,
@@ -210,8 +210,8 @@ export function makeGameFpsConfig(): Phaser.Types.Core.FPSConfig {
   const profile = getRenderProfile();
   return {
     target: profile.targetFps,
-    min: 24,
-    panicMax: 120,
+    min: profile.tier === 'low' ? 18 : 24,
+    panicMax: profile.tier === 'low' ? 60 : 120,
     smoothStep: true,
   };
 }

@@ -102,7 +102,7 @@ export class WorldMapScene extends Phaser.Scene {
     safeDelayedCall(this, 0, () => {
       window.dispatchEvent(
         new CustomEvent("kingdom-seed:scene-ready", {
-          detail: { scene: "WorldMapScene", version: "2.34.0", at: Date.now() },
+          detail: { scene: "WorldMapScene", version: "2.35.0", at: Date.now() },
         }),
       );
     });

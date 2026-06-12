@@ -34,7 +34,7 @@ export class MenuScene extends Phaser.Scene {
     safeDelayedCall(this, 0, () => {
       window.dispatchEvent(
         new CustomEvent("kingdom-seed:scene-ready", {
-          detail: { scene: "MenuScene", version: "2.34.0", at: Date.now() },
+          detail: { scene: "MenuScene", version: "2.35.0", at: Date.now() },
         }),
       );
     });
@@ -160,7 +160,7 @@ export class MenuScene extends Phaser.Scene {
     chip.fillStyle(0x071c3e, 0.46).fillRoundedRect(16, 14, 164, 24, 14);
     chip.lineStyle(1, 0xffdc82, 0.45).strokeRoundedRect(16, 14, 164, 24, 14);
     this.add
-      .text(98, 26, "v2.34.0 ENGINE SAFE", {
+      .text(98, 26, "v2.35.0 ENGINE SAFE", {
         fontSize: "8px",
         color: "#f7fbff",
         fixedWidth: 154,

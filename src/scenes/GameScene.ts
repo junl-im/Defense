@@ -18,6 +18,7 @@ import {
   shakeCamera,
   spawnBuildDust,
   spawnExplosionBurst,
+  spawnFloatingText,
   spawnImpactRing,
   spawnWaveBanner,
 } from "../game/Effects";
@@ -63,7 +64,10 @@ import {
   showRewardChestOverlay,
   showStageObjectiveBanner,
 } from "../game/CombatRewards";
-import { grantBattleRewardInventory } from "../game/ArtifactForge";
+import {
+  grantBattleRewardInventory,
+  playArtifactChestBounce,
+} from "../game/ArtifactForge";
 import { showChestOpeningCinematic } from "../game/PremiumRewardForgeUi";
 import {
   addPremiumChestSpotlight,
@@ -145,13 +149,38 @@ import {
 } from "../game/MobilePolishV210";
 import { addCuteBattleAccents } from "../game/CuteFantasyPolishV216";
 import { loadProgressiveArtBundle } from "../game/ProgressiveAssetLoader";
-import { installSceneTexturePressureHandler, purgeOptionalArtTextures } from "../game/AssetMemoryManager";
+import {
+  installSceneTexturePressureHandler,
+  purgeOptionalArtTextures,
+} from "../game/AssetMemoryManager";
 import { clearTimer, safeDelayedCall } from "../game/SceneSafety";
-import { markSceneTransition } from "../game/RuntimeLoadGovernor";
-import { lowPowerMode } from "../game/QualityManager";
-import { allowPremiumStaticArt, mobileUiScale, useCumulativeArtLayers } from "../game/PerformanceMode";
+import {
+  markSceneTransition,
+  pauseOptionalWork,
+} from "../game/RuntimeLoadGovernor";
+import { lowPowerMode, setRuntimeQualityTier } from "../game/QualityManager";
+import {
+  allowPremiumStaticArt,
+  mobileUiScale,
+  useCumulativeArtLayers,
+} from "../game/PerformanceMode";
 
 type CastingSpell = "meteor" | "mercenary" | undefined;
+
+type CombatTextPayload = {
+  x: number;
+  y: number;
+  amount: number;
+  damageType: "physical" | "magic" | "true";
+  critical?: boolean;
+};
+
+type CriticalHitPayload = {
+  x: number;
+  y: number;
+  amount: number;
+  damageType: "physical" | "magic" | "true";
+};
 
 export class GameScene extends Phaser.Scene {
   user!: User;
@@ -234,11 +263,13 @@ export class GameScene extends Phaser.Scene {
   private lagSpikeCount = 0;
   private lagNoticeAt = 0;
   private messageHideTimer?: Phaser.Time.TimerEvent;
+  private combatTextBudget = 0;
+  private combatTextBudgetResetAt = 0;
+  private lastCriticalShakeAt = 0;
 
   constructor() {
     super("GameScene");
   }
-
 
   private installCumulativeBattleArt(): void {
     addCuteBattleAccents(this, this.stage.theme);
@@ -251,15 +282,19 @@ export class GameScene extends Phaser.Scene {
         import("../game/CuteFantasyArtV220"),
         import("../game/CuteFantasyArtV221"),
         import("../game/CuteFantasyArtV222"),
-      ]).then(([v217, v218, v219, v220, v221, v222]) => {
-        if (!this.isSceneLive()) return;
-        v217.addV217BattleArt(this, this.stage.theme);
-        v218.addV218BattleArt(this, this.stage.theme);
-        v219.addV219BattleArt(this, this.stage.theme);
-        v220.addV220BattleArt(this, this.stage.theme);
-        v221.addV221BattleArt(this, this.stage.theme);
-        v222.addV222BattleArt(this, this.stage.theme);
-      }).catch((error) => console.warn("Cumulative battle art skipped:", error));
+      ])
+        .then(([v217, v218, v219, v220, v221, v222]) => {
+          if (!this.isSceneLive()) return;
+          v217.addV217BattleArt(this, this.stage.theme);
+          v218.addV218BattleArt(this, this.stage.theme);
+          v219.addV219BattleArt(this, this.stage.theme);
+          v220.addV220BattleArt(this, this.stage.theme);
+          v221.addV221BattleArt(this, this.stage.theme);
+          v222.addV222BattleArt(this, this.stage.theme);
+        })
+        .catch((error) =>
+          console.warn("Cumulative battle art skipped:", error),
+        );
     });
   }
 
@@ -275,23 +310,111 @@ export class GameScene extends Phaser.Scene {
   }
 
   private installProgressiveBattleArt(): void {
-    loadProgressiveArtBundle(this, "battle", () => {
-      if (!this.scene.isActive("GameScene") || this.ended) return;
-      void Promise.all([
-        import("../game/PremiumIllustrationArtV225"),
-        import("../game/PremiumIllustrationArtV226"),
-        import("../game/PremiumIllustrationArtV227"),
-      ]).then(([v225, v226, v227]) => {
+    loadProgressiveArtBundle(
+      this,
+      "battle",
+      () => {
         if (!this.scene.isActive("GameScene") || this.ended) return;
-        v225.addV225BattleArt(this, this.stage.theme);
-        v226.addV226BattleArt(this, this.stage.theme);
-        v227.addV227BattleArt(this, this.stage.theme);
-      }).catch((error) => console.warn("Progressive battle art skipped:", error));
-    }, { delayMs: 420 });
+        void Promise.all([
+          import("../game/PremiumIllustrationArtV225"),
+          import("../game/PremiumIllustrationArtV226"),
+          import("../game/PremiumIllustrationArtV227"),
+        ])
+          .then(([v225, v226, v227]) => {
+            if (!this.scene.isActive("GameScene") || this.ended) return;
+            v225.addV225BattleArt(this, this.stage.theme);
+            v226.addV226BattleArt(this, this.stage.theme);
+            v227.addV227BattleArt(this, this.stage.theme);
+          })
+          .catch((error) =>
+            console.warn("Progressive battle art skipped:", error),
+          );
+      },
+      { delayMs: 420 },
+    );
   }
 
   private isSceneLive(): boolean {
     return this.scene.isActive("GameScene") && !this.ended;
+  }
+
+  private installCombatTextSystem(): void {
+    const combatTextHandler = (payload: CombatTextPayload): void => {
+      this.showFloatingCombatText(payload);
+    };
+    const criticalHitHandler = (payload: CriticalHitPayload): void => {
+      this.triggerCriticalHitJuice(payload);
+    };
+
+    this.events.on("kingdom-seed:combat-text", combatTextHandler);
+    this.events.on("kingdom-seed:critical-hit", criticalHitHandler);
+
+    const cleanup = (): void => {
+      this.events.off("kingdom-seed:combat-text", combatTextHandler);
+      this.events.off("kingdom-seed:critical-hit", criticalHitHandler);
+    };
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, cleanup);
+    this.events.once(Phaser.Scenes.Events.DESTROY, cleanup);
+  }
+
+  private showFloatingCombatText(payload: CombatTextPayload): void {
+    if (!this.isSceneLive()) return;
+
+    const now = this.time.now;
+    if (now >= this.combatTextBudgetResetAt) {
+      this.combatTextBudgetResetAt = now + 1000;
+      this.combatTextBudget = lowPowerMode() ? 8 : 18;
+    }
+    if (this.combatTextBudget <= 0) return;
+    this.combatTextBudget -= 1;
+
+    const color = payload.critical
+      ? "#fff1a6"
+      : payload.damageType === "magic"
+        ? "#cda8ff"
+        : payload.damageType === "true"
+          ? "#fff1a6"
+          : "#ffffff";
+    const text = payload.critical
+      ? `CRIT ${payload.amount}`
+      : `${payload.amount}`;
+    const size = payload.critical
+      ? 21
+      : payload.damageType === "true"
+        ? 18
+        : 15;
+    spawnFloatingText(
+      this,
+      payload.x + Phaser.Math.Between(-5, 5),
+      payload.y,
+      text,
+      color,
+      size,
+    );
+  }
+
+  private triggerCriticalHitJuice(payload: CriticalHitPayload): void {
+    if (!this.isSceneLive()) return;
+    const now = this.time.now;
+    const cooldown = lowPowerMode() ? 420 : 180;
+    if (now < this.lastCriticalShakeAt + cooldown) return;
+    this.lastCriticalShakeAt = now;
+
+    shakeCamera(
+      this,
+      payload.damageType === "true" ? 0.0046 : 0.0034,
+      payload.damageType === "true" ? 135 : 105,
+    );
+    if (!lowPowerMode()) this.cameras.main.flash(72, 255, 242, 176, false);
+  }
+
+  private rewardChestFxColor(
+    tier: "WOOD" | "IRON" | "ROYAL" | "MYTHIC",
+  ): number {
+    if (tier === "MYTHIC") return 0xb86bff;
+    if (tier === "ROYAL") return 0xffd86b;
+    if (tier === "IRON") return 0x8fdcff;
+    return 0xd6a15f;
   }
 
   init(data: {
@@ -372,6 +495,9 @@ export class GameScene extends Phaser.Scene {
     this.lagNoticeAt = 0;
     this.messageHideTimer = undefined;
     this.comboHideTimer = undefined;
+    this.combatTextBudget = 0;
+    this.combatTextBudgetResetAt = 0;
+    this.lastCriticalShakeAt = 0;
   }
 
   create(): void {
@@ -401,6 +527,7 @@ export class GameScene extends Phaser.Scene {
     this.createBattleContractHud();
     this.createV29CombatAdvisorHud();
     this.createUiInputGuards();
+    this.installCombatTextSystem();
     this.installSceneCleanup();
     showBattleStartLoading(
       this,
@@ -1307,16 +1434,36 @@ export class GameScene extends Phaser.Scene {
   }
 
   private trackV29FrameSpike(deltaMs: number): void {
-    if (deltaMs < 95) {
+    const spikeThreshold = isLiteModeV29() ? 74 : 95;
+    if (deltaMs < spikeThreshold) {
       this.lagSpikeCount = Math.max(0, this.lagSpikeCount - 1);
       return;
     }
     this.lagSpikeCount += 1;
-    if (this.lagSpikeCount >= 4 && this.time.now > this.lagNoticeAt) {
-      this.lagNoticeAt = this.time.now + 12000;
+    if (this.lagSpikeCount >= 2) {
+      pauseOptionalWork("combat-frame-spike", 14000);
+      purgeOptionalArtTextures(this, "combat-frame-spike", { limit: 120 });
+    }
+    if (this.lagSpikeCount >= 3 && this.time.now > this.lagNoticeAt) {
+      this.lagNoticeAt = this.time.now + 16000;
       this.lagSpikeCount = 0;
-      window.dispatchEvent(new CustomEvent("kingdom-seed:memory-pressure", { detail: { reason: "combat-frame-spike", deltaMs, at: Date.now() } }));
-      this.showMessage("프레임 스파이크 감지 · 절전 엔진으로 안정화 중");
+      setRuntimeQualityTier("low");
+      window.dispatchEvent(
+        new CustomEvent("kingdom-seed:memory-pressure", {
+          detail: { reason: "combat-frame-spike", deltaMs, at: Date.now() },
+        }),
+      );
+      window.dispatchEvent(
+        new CustomEvent("kingdom-seed:runtime-health", {
+          detail: {
+            tier: "watch",
+            reason: "combat-frame-spike",
+            deltaMs,
+            at: Date.now(),
+          },
+        }),
+      );
+      this.showMessage("프레임 스파이크 감지 · 전투 절전 엔진으로 안정화 중");
     }
   }
 
@@ -3260,15 +3407,21 @@ export class GameScene extends Phaser.Scene {
         cfg = applyEnemyAffixV29(cfg, this.activeEnemyAffix, globalSpawnIndex);
         const enemy = new Enemy(this, cfg, this.stage.path);
         this.enemies.push(enemy);
-        spawnImpactRing(
-          this,
-          enemy.x,
-          enemy.y,
-          cfg.label.startsWith("정예") ? 24 : 18,
-          enemy.config.accentColor ?? 0xffffff,
-          cfg.label.startsWith("정예") ? 0.22 : 0.12,
-          260,
-        );
+        if (
+          !isLiteModeV29() ||
+          globalSpawnIndex % 3 === 1 ||
+          cfg.threat === "boss"
+        ) {
+          spawnImpactRing(
+            this,
+            enemy.x,
+            enemy.y,
+            cfg.label.startsWith("정예") ? 24 : 18,
+            enemy.config.accentColor ?? 0xffffff,
+            cfg.label.startsWith("정예") ? 0.22 : 0.12,
+            260,
+          );
+        }
         if (
           cfg.label.startsWith("정예") &&
           this.textures.exists("v2-elite-badge")
@@ -3659,6 +3812,13 @@ export class GameScene extends Phaser.Scene {
     addPremiumChestSpotlight(this, 480, 214);
     const rewardBox = showRewardChestOverlay(this, 480, 214, reward);
     rewardBox.setDepth(94);
+    playArtifactChestBounce(
+      this,
+      480,
+      214,
+      rewardBox,
+      this.rewardChestFxColor(reward.chestTier),
+    );
 
     const objectivePanel = this.add
       .rectangle(252, 333, 314, 126, 0x111927, 0.92)
@@ -3744,6 +3904,13 @@ export class GameScene extends Phaser.Scene {
       chestOpened = true;
       openChest.setAlpha(0.45).disableInteractive();
       showPremiumChestCharge(this, 480, 214);
+      playArtifactChestBounce(
+        this,
+        480,
+        214,
+        rewardBox,
+        this.rewardChestFxColor(reward.chestTier),
+      );
       const loot = grantBattleRewardInventory(
         this.user.uid,
         this.stage.id,
@@ -3862,8 +4029,15 @@ export class GameScene extends Phaser.Scene {
   ): Phaser.GameObjects.Rectangle {
     const uiScale = Math.max(1, Math.min(1.18, mobileUiScale()));
     const hitWidth = Math.max(width, Math.round(width * uiScale));
-    const hitHeight = Math.max(height, Math.round(height * Math.min(1.24, uiScale)), 42);
-    const textSize = Math.max(12, Math.round(fontSize * Math.min(1.12, uiScale)) - 1);
+    const hitHeight = Math.max(
+      height,
+      Math.round(height * Math.min(1.24, uiScale)),
+      42,
+    );
+    const textSize = Math.max(
+      12,
+      Math.round(fontSize * Math.min(1.12, uiScale)) - 1,
+    );
     const assetKey = this.buttonAssetForColor(color);
     const shadow = this.add
       .rectangle(x + 3, y + 5, width, height, 0x000000, 0.22)
@@ -3941,7 +4115,11 @@ export class GameScene extends Phaser.Scene {
   ): Phaser.GameObjects.Rectangle {
     const uiScale = Math.max(1, Math.min(1.16, mobileUiScale()));
     const hitWidth = Math.max(width, Math.round(width * uiScale));
-    const hitHeight = Math.max(height, Math.round(height * Math.min(1.22, uiScale)), 44);
+    const hitHeight = Math.max(
+      height,
+      Math.round(height * Math.min(1.22, uiScale)),
+      44,
+    );
     const assetKey = this.buttonAssetForColor(color);
     const shadow = this.add.rectangle(
       x + 2,

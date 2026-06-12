@@ -1,3 +1,4 @@
+import { getMobileRuntimeCaps } from './MobileRuntimeEngine';
 import type { EnemyConfig, TowerKind, WaveSpawn } from './types';
 
 export type WaveAdvisorV29 = {
@@ -7,16 +8,52 @@ export type WaveAdvisorV29 = {
   color: number;
 };
 
+function query(): URLSearchParams {
+  return new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+}
+
+function queryHas(key: string): boolean {
+  return query().has(key);
+}
+
+function qualityLowParam(): boolean {
+  const params = query();
+  return params.get('quality') === 'low' || params.get('tier') === 'low';
+}
+
+function runtimeLockdownHint(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    return window.localStorage.getItem('ksRuntimeLockdown') === '1' ||
+      document.documentElement.classList.contains('ks-runtime-lockdown') ||
+      document.documentElement.classList.contains('ks-engine-lockdown');
+  } catch {
+    return document.documentElement.classList.contains('ks-runtime-lockdown');
+  }
+}
+
 export function isLiteModeV29(): boolean {
   if (typeof window === 'undefined') return false;
-  const query = new URLSearchParams(window.location.search);
-  return query.has('lite') || query.has('battery');
+  const caps = getMobileRuntimeCaps();
+  return queryHas('lite') ||
+    queryHas('battery') ||
+    qualityLowParam() ||
+    runtimeLockdownHint() ||
+    caps.label === 'SAFE_MOBILE_ENGINE' ||
+    caps.label === 'LOCKDOWN_MOBILE_ENGINE' ||
+    caps.isMobile ||
+    caps.networkClass === 'slow' ||
+    caps.networkClass === 'metered' ||
+    caps.saveData;
 }
 
 export function capCombatDeltaV29(deltaMs: number): number {
   // Large mobile frame spikes make enemies jump and make input feel broken.
-  // Clamp simulation delta while the visual frame recovers.
-  return Math.min(deltaMs, isLiteModeV29() ? 42 : 50);
+  // v2.35: safe/mobile engines clamp harder so a stalled frame does not cause
+  // enemies/projectiles to teleport after the browser recovers.
+  const caps = getMobileRuntimeCaps();
+  if (runtimeLockdownHint() || caps.label === 'LOCKDOWN_MOBILE_ENGINE') return Math.min(deltaMs, 34);
+  return Math.min(deltaMs, isLiteModeV29() ? 38 : 50);
 }
 
 export function towerRoleLineV29(kind: TowerKind): string {

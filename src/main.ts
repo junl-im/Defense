@@ -40,7 +40,7 @@ const config: Phaser.Types.Core.GameConfig = {
     fullscreenTarget: 'game',
   },
   input: {
-    activePointers: 3,
+    activePointers: profile.tier === 'low' ? 2 : 3,
   },
   audio: {
     disableWebAudio: false,
@@ -50,6 +50,11 @@ const config: Phaser.Types.Core.GameConfig = {
     antialias: profile.tier !== 'low',
     roundPixels: profile.tier === 'low',
     powerPreference: profile.tier === 'low' ? 'low-power' : 'high-performance',
+    antialiasGL: profile.tier !== 'low',
+    desynchronized: profile.tier === 'low',
+    batchSize: profile.tier === 'low' ? 1024 : 4096,
+    maxTextures: profile.tier === 'low' ? 8 : 16,
+    mipmapRegeneration: false,
   },
   scene: [BootScene, MenuScene, MainMenuScene, WorldMapScene, LabScene, CodexScene, MetaScene, HeroHallScene, MissionBoardScene, ArtifactForgeScene, GameScene],
 };

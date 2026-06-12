@@ -210,16 +210,15 @@ function updateOrientationClass(): void {
       localStorage.getItem("ksHitDebug") === "1",
   );
 
-  // v2.2: several mobile browsers report viewport dimensions in stages while
-  // address bars collapse/expand. Send a short burst of resize notifications so
-  // Phaser recalculates after the CSS-rotated container has reached its final size.
-  const resizeBursts = document.documentElement.classList.contains("ks-engine-safe") ? [0, 220] : [0, 60, 180, 360];
+  // v2.35: do not dispatch a native resize from inside the resize handler.
+  // Some mobile browsers can echo it back and create a resize storm.  Send only
+  // our custom viewport event, coalesced more aggressively in safe mode.
+  const resizeBursts = document.documentElement.classList.contains("ks-engine-safe") ? [0, 260] : [0, 120, 360];
   resizeBursts.forEach((delay) => {
     window.setTimeout(() => {
-      window.dispatchEvent(new Event("resize"));
       window.dispatchEvent(
         new CustomEvent("kingdom-seed:viewport-changed", {
-          detail: { landscape, mobile: info.isMobile, at: Date.now() },
+          detail: { landscape, mobile: info.isMobile, at: Date.now(), source: "web-shell" },
         }),
       );
     }, delay);
@@ -278,7 +277,7 @@ function createStartGate(): void {
       <h1>탭해서 시작</h1>
       <p>사운드와 화면을 준비하고 바로 진입합니다.</p>
       <div class="shell-tap-rune">TAP</div>
-      <div class="shell-loading-text">v2.31 모바일 엔진 안전 모드</div>
+      <div class="shell-loading-text">v2.35 모바일 엔진 안전 모드</div>
     </div>`;
   document.body.appendChild(startGate);
   const start = (): void => void activateGameShell();

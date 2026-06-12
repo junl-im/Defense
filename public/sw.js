@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'kingdom-seed-v2.34-shell';
+const CACHE_VERSION = 'kingdom-seed-v2.35-shell';
 const CACHE_LIMIT = 80;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
