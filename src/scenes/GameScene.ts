@@ -144,22 +144,12 @@ import {
   shortMetricV210,
 } from "../game/MobilePolishV210";
 import { addCuteBattleAccents } from "../game/CuteFantasyPolishV216";
-import { addV217BattleArt } from "../game/CuteFantasyArtV217";
-import { addV218BattleArt } from "../game/CuteFantasyArtV218";
-import { addV219BattleArt } from "../game/CuteFantasyArtV219";
-import { addV220BattleArt } from "../game/CuteFantasyArtV220";
-import { addV221BattleArt } from "../game/CuteFantasyArtV221";
-import { addV222BattleArt } from "../game/CuteFantasyArtV222";
-import { addV224BattleArt } from "../game/PremiumIllustrationArtV224";
-import { addV225BattleArt } from "../game/PremiumIllustrationArtV225";
-import { addV226BattleArt } from "../game/PremiumIllustrationArtV226";
-import { addV227BattleArt } from "../game/PremiumIllustrationArtV227";
 import { loadProgressiveArtBundle } from "../game/ProgressiveAssetLoader";
 import { installSceneTexturePressureHandler, purgeOptionalArtTextures } from "../game/AssetMemoryManager";
 import { clearTimer, safeDelayedCall } from "../game/SceneSafety";
 import { markSceneTransition } from "../game/RuntimeLoadGovernor";
 import { lowPowerMode } from "../game/QualityManager";
-import { allowArtPrewarm, allowPremiumStaticArt, mobileUiScale, useCumulativeArtLayers } from "../game/PerformanceMode";
+import { allowPremiumStaticArt, mobileUiScale, useCumulativeArtLayers } from "../game/PerformanceMode";
 
 type CastingSpell = "meteor" | "mercenary" | undefined;
 
@@ -250,12 +240,53 @@ export class GameScene extends Phaser.Scene {
   }
 
 
+  private installCumulativeBattleArt(): void {
+    addCuteBattleAccents(this, this.stage.theme);
+    safeDelayedCall(this, 900, () => {
+      if (!this.isSceneLive()) return;
+      void Promise.all([
+        import("../game/CuteFantasyArtV217"),
+        import("../game/CuteFantasyArtV218"),
+        import("../game/CuteFantasyArtV219"),
+        import("../game/CuteFantasyArtV220"),
+        import("../game/CuteFantasyArtV221"),
+        import("../game/CuteFantasyArtV222"),
+      ]).then(([v217, v218, v219, v220, v221, v222]) => {
+        if (!this.isSceneLive()) return;
+        v217.addV217BattleArt(this, this.stage.theme);
+        v218.addV218BattleArt(this, this.stage.theme);
+        v219.addV219BattleArt(this, this.stage.theme);
+        v220.addV220BattleArt(this, this.stage.theme);
+        v221.addV221BattleArt(this, this.stage.theme);
+        v222.addV222BattleArt(this, this.stage.theme);
+      }).catch((error) => console.warn("Cumulative battle art skipped:", error));
+    });
+  }
+
+  private installPremiumStaticBattleArt(): void {
+    safeDelayedCall(this, 1200, () => {
+      if (!this.isSceneLive()) return;
+      void import("../game/PremiumIllustrationArtV224")
+        .then(({ addV224BattleArt }) => {
+          if (this.isSceneLive()) addV224BattleArt(this, this.stage.theme);
+        })
+        .catch((error) => console.warn("Premium battle art skipped:", error));
+    });
+  }
+
   private installProgressiveBattleArt(): void {
     loadProgressiveArtBundle(this, "battle", () => {
       if (!this.scene.isActive("GameScene") || this.ended) return;
-      addV225BattleArt(this, this.stage.theme);
-      addV226BattleArt(this, this.stage.theme);
-      addV227BattleArt(this, this.stage.theme);
+      void Promise.all([
+        import("../game/PremiumIllustrationArtV225"),
+        import("../game/PremiumIllustrationArtV226"),
+        import("../game/PremiumIllustrationArtV227"),
+      ]).then(([v225, v226, v227]) => {
+        if (!this.scene.isActive("GameScene") || this.ended) return;
+        v225.addV225BattleArt(this, this.stage.theme);
+        v226.addV226BattleArt(this, this.stage.theme);
+        v227.addV227BattleArt(this, this.stage.theme);
+      }).catch((error) => console.warn("Progressive battle art skipped:", error));
     }, { delayMs: 420 });
   }
 
@@ -357,18 +388,9 @@ export class GameScene extends Phaser.Scene {
       drawCinematicCombatFrame(this, this.stage.theme);
     }
     installV210BattlePolish(this);
-    const cumulativeArt = useCumulativeArtLayers();
-    if (cumulativeArt) {
-      addCuteBattleAccents(this, this.stage.theme);
-      addV217BattleArt(this, this.stage.theme);
-      addV218BattleArt(this, this.stage.theme);
-      addV219BattleArt(this, this.stage.theme);
-      addV220BattleArt(this, this.stage.theme);
-      addV221BattleArt(this, this.stage.theme);
-      addV222BattleArt(this, this.stage.theme);
-    }
+    if (useCumulativeArtLayers()) this.installCumulativeBattleArt();
     if (allowPremiumStaticArt("battle")) {
-      addV224BattleArt(this, this.stage.theme);
+      this.installPremiumStaticBattleArt();
       this.installProgressiveBattleArt();
       addStageV26Decor(this, this.stage);
     }

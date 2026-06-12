@@ -6,16 +6,6 @@ import { playMusicWhenReady, playSfx } from "../game/AudioManager";
 import { addCoverImage } from "../game/CodeUiKit";
 import { addHitZoneDebug } from "../game/HitZoneDebug";
 import { addCuteWorldMapAccents } from "../game/CuteFantasyPolishV216";
-import { addV217WorldMapArt } from "../game/CuteFantasyArtV217";
-import { addV218WorldMapArt } from "../game/CuteFantasyArtV218";
-import { addV219WorldMapArt } from "../game/CuteFantasyArtV219";
-import { addV220WorldMapArt } from "../game/CuteFantasyArtV220";
-import { addV221WorldMapArt } from "../game/CuteFantasyArtV221";
-import { addV222WorldMapArt } from "../game/CuteFantasyArtV222";
-import { addV224WorldMapArt } from "../game/PremiumIllustrationArtV224";
-import { addV225WorldMapArt } from "../game/PremiumIllustrationArtV225";
-import { addV226WorldMapArt } from "../game/PremiumIllustrationArtV226";
-import { addV227WorldMapArt } from "../game/PremiumIllustrationArtV227";
 import { loadProgressiveArtBundle, warmProgressiveArtBundle } from "../game/ProgressiveAssetLoader";
 import { clearTimer, safeDelayedCall } from "../game/SceneSafety";
 import { markSceneTransition } from "../game/RuntimeLoadGovernor";
@@ -99,17 +89,8 @@ export class WorldMapScene extends Phaser.Scene {
     playMusicWhenReady(this, "bgm_world", 0.22);
 
     this.createIllustratedWorldMap();
-    const cumulativeArt = useCumulativeArtLayers();
-    if (cumulativeArt) {
-      addCuteWorldMapAccents(this, STAGE_NODES);
-      addV217WorldMapArt(this, STAGE_NODES);
-      addV218WorldMapArt(this, STAGE_NODES);
-      addV219WorldMapArt(this, STAGE_NODES);
-      addV220WorldMapArt(this, STAGE_NODES);
-      addV221WorldMapArt(this, STAGE_NODES);
-      addV222WorldMapArt(this, STAGE_NODES);
-    }
-    if (allowPremiumStaticArt("world")) addV224WorldMapArt(this, STAGE_NODES);
+    if (useCumulativeArtLayers()) this.installCumulativeWorldArt();
+    if (allowPremiumStaticArt("world")) this.installPremiumStaticWorldArt();
     this.installProgressiveWorldArt();
     this.createStagePreviewLayer();
     this.createStageNodeHotspots();
@@ -121,20 +102,61 @@ export class WorldMapScene extends Phaser.Scene {
     safeDelayedCall(this, 0, () => {
       window.dispatchEvent(
         new CustomEvent("kingdom-seed:scene-ready", {
-          detail: { scene: "WorldMapScene", version: "2.32.0", at: Date.now() },
+          detail: { scene: "WorldMapScene", version: "2.33.0", at: Date.now() },
         }),
       );
     });
   }
 
 
+  private installCumulativeWorldArt(): void {
+    addCuteWorldMapAccents(this, STAGE_NODES);
+    safeDelayedCall(this, 900, () => {
+      if (!this.scene.isActive("WorldMapScene")) return;
+      void Promise.all([
+        import("../game/CuteFantasyArtV217"),
+        import("../game/CuteFantasyArtV218"),
+        import("../game/CuteFantasyArtV219"),
+        import("../game/CuteFantasyArtV220"),
+        import("../game/CuteFantasyArtV221"),
+        import("../game/CuteFantasyArtV222"),
+      ]).then(([v217, v218, v219, v220, v221, v222]) => {
+        if (!this.scene.isActive("WorldMapScene")) return;
+        v217.addV217WorldMapArt(this, STAGE_NODES);
+        v218.addV218WorldMapArt(this, STAGE_NODES);
+        v219.addV219WorldMapArt(this, STAGE_NODES);
+        v220.addV220WorldMapArt(this, STAGE_NODES);
+        v221.addV221WorldMapArt(this, STAGE_NODES);
+        v222.addV222WorldMapArt(this, STAGE_NODES);
+      }).catch((error) => console.warn("Cumulative world art skipped:", error));
+    });
+  }
+
+  private installPremiumStaticWorldArt(): void {
+    safeDelayedCall(this, 1200, () => {
+      if (!this.scene.isActive("WorldMapScene")) return;
+      void import("../game/PremiumIllustrationArtV224")
+        .then(({ addV224WorldMapArt }) => {
+          if (this.scene.isActive("WorldMapScene")) addV224WorldMapArt(this, STAGE_NODES);
+        })
+        .catch((error) => console.warn("Premium world art skipped:", error));
+    });
+  }
+
   private installProgressiveWorldArt(): void {
     loadProgressiveArtBundle(this, "world", () => {
       if (!this.scene.isActive("WorldMapScene")) return;
-      addV225WorldMapArt(this, STAGE_NODES);
-      addV226WorldMapArt(this, STAGE_NODES);
-      addV227WorldMapArt(this, STAGE_NODES);
-      if (allowArtPrewarm()) warmProgressiveArtBundle(this, "battle", { delayMs: 6200 });
+      void Promise.all([
+        import("../game/PremiumIllustrationArtV225"),
+        import("../game/PremiumIllustrationArtV226"),
+        import("../game/PremiumIllustrationArtV227"),
+      ]).then(([v225, v226, v227]) => {
+        if (!this.scene.isActive("WorldMapScene")) return;
+        v225.addV225WorldMapArt(this, STAGE_NODES);
+        v226.addV226WorldMapArt(this, STAGE_NODES);
+        v227.addV227WorldMapArt(this, STAGE_NODES);
+        if (allowArtPrewarm()) warmProgressiveArtBundle(this, "battle", { delayMs: 6200 });
+      }).catch((error) => console.warn("Progressive world art skipped:", error));
     }, { delayMs: 620 });
   }
 

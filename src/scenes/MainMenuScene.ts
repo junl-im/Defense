@@ -5,16 +5,6 @@ import { STAGE_LIST } from "../game/balance";
 import { addCoverImage } from "../game/CodeUiKit";
 import { addHitZoneDebug } from "../game/HitZoneDebug";
 import { addCuteLobbyAccents } from "../game/CuteFantasyPolishV216";
-import { addV217LobbyArt } from "../game/CuteFantasyArtV217";
-import { addV218LobbyArt } from "../game/CuteFantasyArtV218";
-import { addV219LobbyArt } from "../game/CuteFantasyArtV219";
-import { addV220LobbyArt } from "../game/CuteFantasyArtV220";
-import { addV221LobbyArt } from "../game/CuteFantasyArtV221";
-import { addV222LobbyArt } from "../game/CuteFantasyArtV222";
-import { addV224LobbyArt } from "../game/PremiumIllustrationArtV224";
-import { addV225LobbyArt } from "../game/PremiumIllustrationArtV225";
-import { addV226LobbyArt } from "../game/PremiumIllustrationArtV226";
-import { addV227LobbyArt } from "../game/PremiumIllustrationArtV227";
 import { loadProgressiveArtBundle, warmProgressiveArtBundle } from "../game/ProgressiveAssetLoader";
 import { clearTimer, safeDelayedCall } from "../game/SceneSafety";
 import { markSceneTransition } from "../game/RuntimeLoadGovernor";
@@ -73,18 +63,9 @@ export class MainMenuScene extends Phaser.Scene {
     playMusicWhenReady(this, "bgm_world", 0.2);
 
     this.createIllustrationLedLobby();
-    const cumulativeArt = useCumulativeArtLayers();
-    if (cumulativeArt) {
-      addCuteLobbyAccents(this, this.save.nickname, this.save.stars);
-      addV217LobbyArt(this, this.save.nickname, this.save.stars);
-      addV218LobbyArt(this, this.save.nickname, this.save.stars);
-      addV219LobbyArt(this, this.save.nickname, this.save.stars);
-      addV220LobbyArt(this, this.save.nickname, this.save.stars);
-      addV221LobbyArt(this, this.save.nickname, this.save.stars);
-      addV222LobbyArt(this, this.save.nickname, this.save.stars);
-    }
+    if (useCumulativeArtLayers()) this.installCumulativeLobbyArt();
     this.createV210CleanChrome();
-    if (allowPremiumStaticArt("lobby")) addV224LobbyArt(this, this.save.nickname, this.save.stars);
+    if (allowPremiumStaticArt("lobby")) this.installPremiumStaticLobbyArt();
     this.installProgressiveLobbyArt();
     this.createLobbyTextOverlay();
     this.createV26ExpansionShelf();
@@ -95,20 +76,61 @@ export class MainMenuScene extends Phaser.Scene {
     safeDelayedCall(this, 0, () => {
       window.dispatchEvent(
         new CustomEvent("kingdom-seed:scene-ready", {
-          detail: { scene: "MainMenuScene", version: "2.32.0", at: Date.now() },
+          detail: { scene: "MainMenuScene", version: "2.33.0", at: Date.now() },
         }),
       );
     });
   }
 
 
+  private installCumulativeLobbyArt(): void {
+    addCuteLobbyAccents(this, this.save.nickname, this.save.stars);
+    safeDelayedCall(this, 900, () => {
+      if (!this.scene.isActive("MainMenuScene")) return;
+      void Promise.all([
+        import("../game/CuteFantasyArtV217"),
+        import("../game/CuteFantasyArtV218"),
+        import("../game/CuteFantasyArtV219"),
+        import("../game/CuteFantasyArtV220"),
+        import("../game/CuteFantasyArtV221"),
+        import("../game/CuteFantasyArtV222"),
+      ]).then(([v217, v218, v219, v220, v221, v222]) => {
+        if (!this.scene.isActive("MainMenuScene")) return;
+        v217.addV217LobbyArt(this, this.save.nickname, this.save.stars);
+        v218.addV218LobbyArt(this, this.save.nickname, this.save.stars);
+        v219.addV219LobbyArt(this, this.save.nickname, this.save.stars);
+        v220.addV220LobbyArt(this, this.save.nickname, this.save.stars);
+        v221.addV221LobbyArt(this, this.save.nickname, this.save.stars);
+        v222.addV222LobbyArt(this, this.save.nickname, this.save.stars);
+      }).catch((error) => console.warn("Cumulative lobby art skipped:", error));
+    });
+  }
+
+  private installPremiumStaticLobbyArt(): void {
+    safeDelayedCall(this, 1200, () => {
+      if (!this.scene.isActive("MainMenuScene")) return;
+      void import("../game/PremiumIllustrationArtV224")
+        .then(({ addV224LobbyArt }) => {
+          if (this.scene.isActive("MainMenuScene")) addV224LobbyArt(this, this.save.nickname, this.save.stars);
+        })
+        .catch((error) => console.warn("Premium lobby art skipped:", error));
+    });
+  }
+
   private installProgressiveLobbyArt(): void {
     loadProgressiveArtBundle(this, "lobby", () => {
       if (!this.scene.isActive("MainMenuScene")) return;
-      addV225LobbyArt(this, this.save.nickname, this.save.stars);
-      addV226LobbyArt(this, this.save.nickname, this.save.stars);
-      addV227LobbyArt(this, this.save.nickname, this.save.stars);
-      if (allowArtPrewarm()) warmProgressiveArtBundle(this, "world", { delayMs: 5200 });
+      void Promise.all([
+        import("../game/PremiumIllustrationArtV225"),
+        import("../game/PremiumIllustrationArtV226"),
+        import("../game/PremiumIllustrationArtV227"),
+      ]).then(([v225, v226, v227]) => {
+        if (!this.scene.isActive("MainMenuScene")) return;
+        v225.addV225LobbyArt(this, this.save.nickname, this.save.stars);
+        v226.addV226LobbyArt(this, this.save.nickname, this.save.stars);
+        v227.addV227LobbyArt(this, this.save.nickname, this.save.stars);
+        if (allowArtPrewarm()) warmProgressiveArtBundle(this, "world", { delayMs: 5200 });
+      }).catch((error) => console.warn("Progressive lobby art skipped:", error));
     }, { delayMs: 760 });
   }
 
