@@ -151,6 +151,8 @@ function applyRuntimeClasses(): void {
   root.classList.toggle("ks-engine-premium", caps.label === "PREMIUM_ART_ENGINE");
   root.classList.toggle("ks-engine-balanced", caps.label === "BALANCED_ENGINE");
   root.classList.toggle("ks-network-slow", caps.networkClass === "slow" || caps.networkClass === "metered" || caps.networkClass === "offline");
+  root.classList.toggle("ks-network-offline", caps.networkClass === "offline");
+  root.classList.toggle("ks-network-metered", caps.networkClass === "metered" || caps.saveData);
   root.style.setProperty("--ks-runtime-ui-scale", String(caps.uiScale));
 }
 
@@ -199,7 +201,11 @@ export function installMobileRuntimeEngine(game: Phaser.Game): void {
 
   window.addEventListener("pagehide", () => requestMemoryPressure("pagehide"));
   window.addEventListener("blur", () => requestMemoryPressure("window-blur"));
-  window.addEventListener("online", dispatchRuntimeCaps);
+  window.addEventListener("online", () => {
+    cachedCaps = undefined;
+    applyRuntimeClasses();
+    dispatchRuntimeCaps();
+  });
   window.addEventListener("kingdom-seed:runtime-lockdown", () => {
     cachedCaps = undefined;
     applyRuntimeClasses();
@@ -209,6 +215,13 @@ export function installMobileRuntimeEngine(game: Phaser.Game): void {
     cachedCaps = undefined;
     applyRuntimeClasses();
     dispatchRuntimeCaps();
+  });
+  const net = connectionInfo() as (ConnectionLike & EventTarget) | undefined;
+  net?.addEventListener?.("change", () => {
+    cachedCaps = undefined;
+    applyRuntimeClasses();
+    dispatchRuntimeCaps();
+    window.dispatchEvent(new CustomEvent("kingdom-seed:network-profile-changed", { detail: getMobileRuntimeCaps() }));
   });
 
   window.setTimeout(() => {

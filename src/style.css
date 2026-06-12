@@ -1027,3 +1027,36 @@ html.ks-network-slow .shell-loading-text {
     min-height: 88px !important;
   }
 }
+
+
+/* v2.34 runtime stability polish: protect first tap/transition frames and improve weak-network readability. */
+html.ks-input-settle .ks-dom-click-ripple,
+html.ks-input-settle .premium-art-pass-label {
+  display: none !important;
+}
+html.ks-input-settle canvas {
+  filter: none !important;
+}
+html.ks-network-metered .shell-loading-text,
+html.ks-network-offline .shell-loading-text {
+  color: #ffe9b9 !important;
+  font-size: 13px !important;
+}
+html.ks-network-metered .shell-start-card,
+html.ks-network-offline .shell-start-card,
+html.ks-network-metered .shell-panel,
+html.ks-network-offline .shell-panel {
+  box-shadow: 0 12px 28px rgba(0,0,0,.34) !important;
+}
+@media (hover: none) and (pointer: coarse) {
+  html.ks-input-settle *,
+  html.ks-network-metered *,
+  html.ks-network-offline * {
+    transition-duration: 0s !important;
+    animation-duration: 0s !important;
+  }
+  html.ks-engine-safe .shell-start-card h1,
+  html.ks-engine-safe .shell-panel h2 {
+    line-height: 1.16 !important;
+  }
+}

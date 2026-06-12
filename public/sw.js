@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'kingdom-seed-v2.32-shell';
+const CACHE_VERSION = 'kingdom-seed-v2.34-shell';
 const CACHE_LIMIT = 80;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
@@ -12,8 +12,9 @@ function shouldCache(request, response) {
   if (request.method !== 'GET' || !response || response.status !== 200) return false;
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return false;
-  if (/\/assets\/ui\/v2_(16|17|18|19|20|21|22|24|25|26|27)\//.test(url.pathname)) return false;
+  if (/\/assets\/ui\/v2_(16|17|18|19|20|21|22|24|25|26|27|28|29|30|31|32|33|34)\//.test(url.pathname)) return false;
   if (/\/assets\/effects\/fx_(meteor_impact|arcane_surge|holy_gate|earth_stomp|boss_arena|projectile_trail|tower_impact)/.test(url.pathname)) return false;
+  if (/\/assets\/(audio|sprites)\//.test(url.pathname)) return false;
   return /\.(js|css|webp|png|json|webmanifest|woff2?)$/i.test(url.pathname);
 }
 

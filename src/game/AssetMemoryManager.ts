@@ -17,6 +17,9 @@ const OPTIONAL_TEXTURE_PREFIXES = [
   "v229-",
   "v230-",
   "v231-",
+  "v232-",
+  "v233-",
+  "v234-",
 ] as const;
 
 const OPTIONAL_TEXTURE_PATTERNS = [
@@ -50,7 +53,7 @@ export function purgeOptionalArtTextures(
   const keys = manager.getTextureKeys()
     .filter((key) => shouldPurgeKey(key) && manager.exists(key))
     .sort((a, b) => a.localeCompare(b))
-    .slice(0, options.limit ?? 160);
+    .slice(0, options.limit ?? 220);
 
   let removed = 0;
   keys.forEach((key) => {

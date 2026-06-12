@@ -1,6 +1,9 @@
 import { optionalRuntimeWorkAllowed, pauseOptionalWork } from "../game/RuntimeLoadGovernor";
 const QUERY = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
 let installed = false;
+let retryTimer = 0;
+let registerStarted = false;
+let registerDone = false;
 
 function canRegisterServiceWorker(): boolean {
   if (typeof navigator === "undefined" || !("serviceWorker" in navigator)) return false;
@@ -34,25 +37,39 @@ export function installDeferredPwaRuntime(): void {
   const base = (import.meta.env.BASE_URL || "/").replace(/\/$/, "/");
   let sceneReady = false;
   let userActivated = false;
+  const queueRetry = (delayMs: number): void => {
+    if (retryTimer || registerDone) return;
+    retryTimer = window.setTimeout(() => {
+      retryTimer = 0;
+      tryRegister();
+    }, delayMs);
+  };
   const tryRegister = (): void => {
-    if (!sceneReady || !userActivated) return;
+    if (!sceneReady || !userActivated || registerStarted || registerDone) return;
     scheduleIdle(() => {
+      if (registerDone) return;
       if (!optionalRuntimeWorkAllowed("pwa", { allowDuringBoot: false })) {
-        pauseOptionalWork("pwa-deferred", 4200);
-        window.setTimeout(tryRegister, 5200);
+        pauseOptionalWork("pwa-deferred", 5200);
+        queueRetry(runtimeLockdownActive() ? 16000 : 7200);
         return;
       }
+      registerStarted = true;
       navigator.serviceWorker
         .register(`${base}sw.js`, { scope: base })
         .then((registration) => {
+          registerDone = true;
           window.dispatchEvent(
             new CustomEvent("kingdom-seed:pwa-ready", {
               detail: { scope: registration.scope, at: Date.now() },
             }),
           );
         })
-        .catch((error) => console.warn("Deferred PWA registration skipped:", error));
-    }, runtimeLockdownActive() ? 18000 : 9200);
+        .catch((error) => {
+          registerStarted = false;
+          console.warn("Deferred PWA registration skipped:", error);
+          queueRetry(18000);
+        });
+    }, runtimeLockdownActive() ? 22000 : 12000);
   };
   window.addEventListener("kingdom-seed:user-activated", () => {
     userActivated = true;

@@ -120,19 +120,29 @@ function compactDefinitions(bundle: ProgressiveArtBundle, includeGallery: boolea
   return COMPACT_CORE_BUNDLES[bundle].slice(0, isLowDeviceProfile() ? lowCap : budgetCap);
 }
 
-function scheduleIdleTask(task: () => void, timeout = 1800): void {
+type IdleDeadlineLike = { didTimeout?: boolean; timeRemaining?: () => number };
+
+function scheduleIdleTask(task: () => void, timeout = 1800, attempts = 0): void {
   if (typeof window === "undefined") {
     task();
     return;
   }
   const idleWindow = window as Window & {
-    requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
+    requestIdleCallback?: (callback: (deadline?: IdleDeadlineLike) => void, options?: { timeout: number }) => number;
+  };
+  const run = (deadline?: IdleDeadlineLike): void => {
+    const littleTimeLeft = typeof deadline?.timeRemaining === "function" && deadline.timeRemaining() < 6 && !deadline.didTimeout;
+    if (littleTimeLeft && attempts < 2) {
+      window.setTimeout(() => scheduleIdleTask(task, timeout, attempts + 1), 420);
+      return;
+    }
+    task();
   };
   if (idleWindow.requestIdleCallback) {
-    idleWindow.requestIdleCallback(task, { timeout });
+    idleWindow.requestIdleCallback(run, { timeout });
     return;
   }
-  window.setTimeout(task, Math.min(timeout, 700));
+  window.setTimeout(() => run({ didTimeout: true }), Math.min(timeout, 700));
 }
 
 function enqueueProgressiveLoad(scene: Phaser.Scene, task: () => Promise<void>): void {
@@ -177,7 +187,12 @@ function loadMissingAssets(scene: Phaser.Scene, assets: AssetDef[], bundle: Prog
     };
     const caps = getMobileRuntimeCaps();
     const quietBootWindow = Date.now() - progressiveModuleStartedAt < caps.bootQuietMs;
-    loader.maxParallelDownloads = 1;
+    if (loader.isLoading?.()) {
+      markBackoff("loader-busy", quietBootWindow ? 5200 : 3400);
+      resolve();
+      return;
+    }
+    loader.maxParallelDownloads = Math.max(1, Math.min(1, caps.artParallelDownloads));
     let resolved = false;
     let timeoutId = 0;
     const cleanup = (): void => {
@@ -193,7 +208,7 @@ function loadMissingAssets(scene: Phaser.Scene, assets: AssetDef[], bundle: Prog
     };
     const done = (): void => finish();
     const failSoft = (): void => {
-      markBackoff("load-error", quietBootWindow ? 14000 : 9000);
+      markBackoff("load-error", quietBootWindow ? 16000 : 11000);
       finish();
     };
     loader.once("complete", done);

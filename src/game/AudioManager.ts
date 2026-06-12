@@ -47,9 +47,25 @@ const AUDIO_FILE_BY_KEY: Record<string, string> = {
 };
 
 const pendingAudioLoads = new Set<string>();
+const AUDIO_QUERY = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+
+function fullAudioEnabled(): boolean {
+  return AUDIO_QUERY.has('audiofull') || AUDIO_QUERY.has('fullaudio');
+}
+
+function shouldSkipLazyAudio(key: string): boolean {
+  const caps = getMobileRuntimeCaps();
+  if (fullAudioEnabled()) return false;
+  if (key === 'sfx_click') return false;
+  const constrained = caps.label === 'SAFE_MOBILE_ENGINE' || caps.label === 'LOCKDOWN_MOBILE_ENGINE' || caps.networkClass === 'slow' || caps.networkClass === 'metered' || caps.saveData;
+  if (!constrained) return false;
+  if (key.startsWith('bgm_')) return true;
+  return key === 'sfx_shoot' || key === 'sfx_hit' || key === 'sfx_magic' || key === 'sfx_explosion' || key === 'sfx_wave';
+}
 
 function ensureAudio(scene: Phaser.Scene, key: string, onReady?: () => void): boolean {
   if (keyExists(scene, key)) return true;
+  if (shouldSkipLazyAudio(key)) return false;
   const file = AUDIO_FILE_BY_KEY[key];
   if (!file || pendingAudioLoads.has(key)) return false;
   if (!optionalRuntimeWorkAllowed('audio', { scene, allowDuringBoot: key === 'sfx_click' })) {
