@@ -48,6 +48,16 @@ import { addPremiumBattleObjects } from "../game/BattlefieldArt";
 import { installBattleDepthArtBridge } from "../game/BattleDepthArtBridge";
 import { installBattlePrestigeLook } from "../game/BattlePrestigePolish";
 import {
+  PRESTIGE_HUD_FONT,
+  addPrestigeCommandFrame,
+  addPrestigeHudChrome,
+  createPrestigeSpellCard,
+  createPrestigeStageBanner,
+  createPrestigeStatReadout,
+  prestigeActionTextStyle,
+  usePrestigeCombatHud,
+} from "../game/BattleHudPrestige";
+import {
   installPremiumBattleComposition,
   premiumBuildSpotScale,
   showCompactBuildSpotLabels,
@@ -1078,6 +1088,8 @@ export class GameScene extends Phaser.Scene {
     };
 
     const usingV1Hud = this.textures.exists("v1-combat-top-hud");
+    const prestigeHud = usePrestigeCombatHud() && !usingV1Hud;
+    if (prestigeHud) addPrestigeHudChrome(this);
     const makeStat = (
       x: number,
       w: number,
@@ -1085,6 +1097,9 @@ export class GameScene extends Phaser.Scene {
       icon: string,
       accent: number,
     ): Phaser.GameObjects.Text => {
+      if (prestigeHud) {
+        return createPrestigeStatReadout(this, x, w, label, icon, accent);
+      }
       if (!usingV1Hud) addPremiumPlaque(this, x, 31, w, 42, accent, 74);
       this.add
         .text(x - w / 2 + 10, 10, label, {
@@ -1121,50 +1136,56 @@ export class GameScene extends Phaser.Scene {
         .setDepth(80);
     };
 
-    this.livesText = makeStat(50, 78, "LIFE", "♥", 0xff7070);
-    this.goldText = makeStat(140, 88, "GOLD", "$", 0xf7d36b);
-    this.waveText = makeStat(242, 96, "WAVE", "◆", 0x9ad7ff);
+    this.livesText = makeStat(50, 84, prestigeHud ? "VITAL" : "LIFE", prestigeHud ? "HP" : "♥", 0xff7070);
+    this.goldText = makeStat(144, 96, prestigeHud ? "TREASURY" : "GOLD", prestigeHud ? "G" : "$", 0xf7d36b);
+    this.waveText = makeStat(256, 104, prestigeHud ? "ASSAULT" : "WAVE", prestigeHud ? "W" : "◆", 0x9ad7ff);
 
-    if (!usingV1Hud) addPremiumPlaque(this, 470, 28, 210, 36, 0x9dd08b, 74);
-    this.add
-      .text(370, 9, "BATTLEFIELD", {
-        fontSize: "13px",
-        color: "#c8b184",
-        fontStyle: "bold",
-        shadow: {
-          offsetX: 0,
-          offsetY: 1,
-          color: "#000000",
-          blur: 1,
-          fill: true,
-        },
-      })
-      .setDepth(79);
     const stageLabel = `S${this.stage.number}  ${this.stage.title}`;
-    this.stageText = this.add
-      .text(470, 28, stageLabel, {
-        fontSize: "14px",
-        color: "#dbe7ff",
-        fontStyle: "bold",
-        fixedWidth: 200,
-        align: "center",
-        shadow: {
-          offsetX: 0,
-          offsetY: 2,
-          color: "#000000",
-          blur: 1,
-          fill: true,
-        },
-      })
-      .setOrigin(0.5)
-      .setDepth(80);
+    if (prestigeHud) {
+      this.stageText = createPrestigeStageBanner(this, stageLabel);
+    } else {
+      if (!usingV1Hud) addPremiumPlaque(this, 470, 28, 210, 36, 0x9dd08b, 74);
+      this.add
+        .text(370, 9, "BATTLEFIELD", {
+          fontSize: "13px",
+          color: "#c8b184",
+          fontStyle: "bold",
+          shadow: {
+            offsetX: 0,
+            offsetY: 1,
+            color: "#000000",
+            blur: 1,
+            fill: true,
+          },
+        })
+        .setDepth(79);
+      this.stageText = this.add
+        .text(470, 28, stageLabel, {
+          fontSize: "14px",
+          color: "#dbe7ff",
+          fontStyle: "bold",
+          fixedWidth: 200,
+          align: "center",
+          shadow: {
+            offsetX: 0,
+            offsetY: 2,
+            color: "#000000",
+            blur: 1,
+            fill: true,
+          },
+        })
+        .setOrigin(0.5)
+        .setDepth(80);
+    }
 
     this.messageText = this.add
       .text(480, 72, "", {
-        fontSize: "13px",
-        color: "#fff7d6",
-        backgroundColor: "#19100bcc",
-        padding: { x: 10, y: 6 },
+        fontSize: prestigeHud ? "15px" : "13px",
+        color: prestigeHud ? "#fff3cf" : "#fff7d6",
+        backgroundColor: prestigeHud ? "#08101ee6" : "#19100bcc",
+        fontFamily: PRESTIGE_HUD_FONT,
+        fontStyle: "bold",
+        padding: { x: prestigeHud ? 14 : 10, y: prestigeHud ? 8 : 6 },
         shadow: {
           offsetX: 0,
           offsetY: 2,
@@ -1177,8 +1198,10 @@ export class GameScene extends Phaser.Scene {
       .setVisible(false)
       .setDepth(90);
 
-    if (!this.textures.exists("v1-combat-bottom-dock"))
-      addPremiumPlaque(this, 482, 462, 292, 42, 0x7b58ff, 74);
+    if (!this.textures.exists("v1-combat-bottom-dock")) {
+      if (prestigeHud) addPrestigeCommandFrame(this, 482, 462, 292, 42, 0x7b58ff, 74);
+      else addPremiumPlaque(this, 482, 462, 292, 42, 0x7b58ff, 74);
+    }
     this.objectiveText = this.add
       .text(482, 462, "", {
         fontSize: "15px",
@@ -1232,6 +1255,7 @@ export class GameScene extends Phaser.Scene {
       .setDepth(91)
       .setVisible(false);
 
+    if (prestigeHud) addPrestigeCommandFrame(this, 626, 27, 52, 36, 0x6f8bff, 79);
     const soundButton = this.makeUiButton(
       626,
       27,
@@ -1244,9 +1268,10 @@ export class GameScene extends Phaser.Scene {
     );
     this.soundText = this.add
       .text(626, 27, isMuted() ? "OFF" : "ON", {
-        fontSize: "13px",
+        fontSize: prestigeHud ? "14px" : "13px",
         color: "#ffffff",
         fontStyle: "bold",
+        fontFamily: PRESTIGE_HUD_FONT,
       })
       .setOrigin(0.5)
       .setDepth(82);
@@ -1257,6 +1282,7 @@ export class GameScene extends Phaser.Scene {
       if (!next) playSfx(this, "sfx_click");
     });
 
+    if (prestigeHud) addPrestigeCommandFrame(this, 724, 27, 150, 38, 0xff7b4f, 79);
     const waveButton = this.makeUiButton(
       724,
       27,
@@ -1268,10 +1294,11 @@ export class GameScene extends Phaser.Scene {
       80,
     );
     this.waveButtonText = this.add
-      .text(724, 27, "전투 시작", {
-        fontSize: "13px",
-        color: "#fff8cf",
+      .text(724, 27, prestigeHud ? "공세 개시" : "전투 시작", {
+        fontSize: prestigeHud ? "15px" : "13px",
+        color: prestigeHud ? "#fff3cf" : "#fff8cf",
         fontStyle: "bold",
+        fontFamily: PRESTIGE_HUD_FONT,
         shadow: {
           offsetX: 0,
           offsetY: 2,
@@ -1287,6 +1314,7 @@ export class GameScene extends Phaser.Scene {
       this.startNextWave(true);
     });
 
+    if (prestigeHud) addPrestigeCommandFrame(this, 830, 27, 58, 36, 0x7cc7ff, 79);
     const speedButton = this.makeUiButton(
       830,
       27,
@@ -1299,9 +1327,10 @@ export class GameScene extends Phaser.Scene {
     );
     this.speedText = this.add
       .text(830, 27, "1x", {
-        fontSize: "13px",
+        fontSize: prestigeHud ? "14px" : "13px",
         color: "#ffffff",
         fontStyle: "bold",
+        fontFamily: PRESTIGE_HUD_FONT,
       })
       .setOrigin(0.5)
       .setDepth(82);
@@ -1310,6 +1339,7 @@ export class GameScene extends Phaser.Scene {
       this.toggleSpeed();
     });
 
+    if (prestigeHud) addPrestigeCommandFrame(this, 888, 27, 52, 36, 0x9aa0ad, 79);
     const pauseButton = this.makeUiButton(
       888,
       27,
@@ -2994,6 +3024,7 @@ export class GameScene extends Phaser.Scene {
 
   private createSpells(): void {
     const useV1Dock = this.textures.exists("v1-combat-bottom-dock");
+    const prestigeHud = usePrestigeCombatHud() && !useV1Dock;
     const makeSpellHit = (
       x: number,
       y: number,
@@ -3011,13 +3042,14 @@ export class GameScene extends Phaser.Scene {
     };
 
     const meteor = makeSpellHit(90, 504, 148, 48, 0x4f1f1f);
+    if (prestigeHud) createPrestigeSpellCard(this, 90, 504, 148, 48, 0xff7a4d, "TACTICAL");
     if (!useV1Dock && this.textures.exists("ui-spell-meteor-card-v32"))
       this.add
         .image(88, 500, "ui-spell-meteor-card-v32")
         .setDisplaySize(166, 58)
         .setDepth(81);
     this.meteorText = this.add
-      .text(90, 504, "☄ 메테오", {
+      .text(90, 508, prestigeHud ? "메테오" : "☄ 메테오", prestigeHud ? prestigeActionTextStyle(15) : {
         fontSize: "13px",
         color: "#fff",
         fontStyle: "bold",
@@ -3041,13 +3073,14 @@ export class GameScene extends Phaser.Scene {
     });
 
     const mercenary = makeSpellHit(244, 504, 148, 48, 0x2f4f35);
+    if (prestigeHud) createPrestigeSpellCard(this, 244, 504, 148, 48, 0x86d982, "FRONTLINE");
     if (!useV1Dock && this.textures.exists("ui-spell-mercenary-card-v32"))
       this.add
         .image(238, 500, "ui-spell-mercenary-card-v32")
         .setDisplaySize(176, 58)
         .setDepth(81);
     this.mercenaryText = this.add
-      .text(244, 504, "🛡️ 용병", {
+      .text(244, 508, prestigeHud ? "용병 소집" : "🛡️ 용병", prestigeHud ? prestigeActionTextStyle(15) : {
         fontSize: "13px",
         color: "#fff",
         fontStyle: "bold",
@@ -3076,13 +3109,14 @@ export class GameScene extends Phaser.Scene {
     });
 
     const heroSkill = makeSpellHit(398, 504, 148, 48, 0x4f3d1f);
+    if (prestigeHud) createPrestigeSpellCard(this, 398, 504, 148, 48, 0xffcf6e, "HERO ART");
     if (!useV1Dock && this.textures.exists("ui-spell-hero-card-v32"))
       this.add
         .image(392, 500, "ui-spell-hero-card-v32")
         .setDisplaySize(184, 58)
         .setDepth(81);
     this.heroSkillText = this.add
-      .text(398, 504, "🦁 강타", {
+      .text(398, 508, prestigeHud ? "영웅 강타" : "🦁 강타", prestigeHud ? prestigeActionTextStyle(15) : {
         fontSize: "13px",
         color: "#fff",
         fontStyle: "bold",
@@ -3108,13 +3142,14 @@ export class GameScene extends Phaser.Scene {
       this.showMessage(ok ? "대지강타!" : "영웅 스킬 쿨타임 중");
     });
 
-    if (!useV1Dock) addPremiumPlaque(this, 752, 504, 330, 48, 0xf7d36b, 74);
+    if (prestigeHud) addPrestigeCommandFrame(this, 752, 504, 330, 48, 0xf7d36b, 80.2);
+    else if (!useV1Dock) addPremiumPlaque(this, 752, 504, 330, 48, 0xf7d36b, 74);
     this.add
-      .text(584, 486, "공세 정보", {
-        fontSize: "13px",
+      .text(584, 486, prestigeHud ? "ENEMY INTEL" : "공세 정보", {
+        fontSize: prestigeHud ? "10px" : "13px",
         color: useV1Dock ? "#dbe7ff" : "#c8b184",
         fontStyle: "bold",
-        fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
+        fontFamily: PRESTIGE_HUD_FONT,
         shadow: {
           offsetX: 0,
           offsetY: 1,
@@ -3126,10 +3161,10 @@ export class GameScene extends Phaser.Scene {
       .setDepth(86);
     this.wavePreviewText = this.add
       .text(916, 487, "", {
-        fontSize: "13px",
+        fontSize: prestigeHud ? "12px" : "13px",
         color: "#f7d36b",
         fontStyle: "bold",
-        fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
+        fontFamily: PRESTIGE_HUD_FONT,
         shadow: {
           offsetX: 0,
           offsetY: 1,
@@ -4266,6 +4301,7 @@ export class GameScene extends Phaser.Scene {
       Math.round(fontSize * Math.min(1.12, uiScale)) - 1,
     );
     const assetKey = this.buttonAssetForColor(color);
+    const prestigeButtonSurface = depth >= 70 && usePrestigeCombatHud();
     const shadow = this.add
       .rectangle(x + 3, y + 5, width, height, 0x000000, 0.22)
       .setDepth(depth - 1);
@@ -4277,8 +4313,19 @@ export class GameScene extends Phaser.Scene {
             .setDepth(depth)
         : undefined;
     const rect = this.add
-      .rectangle(x, y, hitWidth, hitHeight, color, image ? 0.001 : 1)
-      .setStrokeStyle(image ? 0 : 2, 0xfff1c2, image ? 0 : 0.42)
+      .rectangle(
+        x,
+        y,
+        hitWidth,
+        hitHeight,
+        color,
+        image ? 0.001 : prestigeButtonSurface ? 0.055 : 1,
+      )
+      .setStrokeStyle(
+        image || prestigeButtonSurface ? 0 : 2,
+        0xfff1c2,
+        image || prestigeButtonSurface ? 0 : 0.42,
+      )
       .setInteractive({ useHandCursor: true })
       .setDepth(depth + 1);
     const shine = this.add
@@ -4288,7 +4335,7 @@ export class GameScene extends Phaser.Scene {
         Math.max(8, width - 12),
         4,
         0xffffff,
-        image ? 0 : 0.11,
+        image ? 0 : prestigeButtonSurface ? 0.05 : 0.11,
       )
       .setDepth(depth + 2);
     const text = label
@@ -4315,12 +4362,12 @@ export class GameScene extends Phaser.Scene {
     rect.on("pointerover", () => {
       rect.setAlpha(0.9);
       image?.setScale(1.03);
-      shine.setAlpha(image ? 0.16 : 0.2);
+      shine.setAlpha(image ? 0.16 : prestigeButtonSurface ? 0.09 : 0.2);
     });
     rect.on("pointerout", () => {
       rect.setAlpha(1);
       image?.setScale(1);
-      shine.setAlpha(image ? 0 : 0.11);
+      shine.setAlpha(image ? 0 : prestigeButtonSurface ? 0.05 : 0.11);
     });
     rect.once("destroy", () => {
       shadow.destroy();
