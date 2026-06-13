@@ -20,6 +20,13 @@ type DeferredArtAsset = {
   path: string;
 };
 
+type BattleSceneRuntime = Phaser.Scene & {
+  waveRunning?: boolean;
+  ended?: boolean;
+  pendingWaveSpawns?: number;
+  enemies?: unknown[];
+};
+
 const QUERY = new URLSearchParams(
   typeof window !== "undefined" ? window.location.search : "",
 );
@@ -101,14 +108,40 @@ function shouldUseDepthArt(): boolean {
   return prefersRestored25DBattle();
 }
 
+function explicitActorArtOverride(): boolean {
+  return QUERY.has("combatart") || QUERY.has("restore25d") || QUERY.has("fullart") || QUERY.has("ultraart");
+}
+
 function shouldLoadActorArt(): boolean {
   if (QUERY.has("maponly25d")) return false;
-  if (QUERY.has("combatart") || QUERY.has("restore25d") || QUERY.has("fullart") || QUERY.has("ultraart")) return true;
   const caps = getMobileRuntimeCaps();
   // 런타임 락다운에서는 맵 1장+오버레이까지만 복구한다.
   if (caps.runtimeLockdown || caps.label === "LOCKDOWN_MOBILE_ENGINE") return false;
-  // 기본 모바일에서도 2.5D 실루엣이 사라지지 않도록 작은 전투 핵심 에셋은 허용한다.
-  return !caps.saveData && caps.networkClass !== "offline" && caps.networkClass !== "metered";
+  // 명시적 검수/복구 플래그는 유지하되, 실제 로드는 아래의 전투 유휴 게이트를 통과해야 한다.
+  if (explicitActorArtOverride()) return caps.networkClass === "normal" && !caps.saveData;
+  // 기본 모바일/저전력/느린 네트워크에서는 배경 2.5D만 살리고 actor 묶음 스트리밍은 생략한다.
+  if (caps.label === "SAFE_MOBILE_ENGINE" || caps.isMobile || caps.isLowMemory || caps.isLowCore) return false;
+  return caps.networkClass === "normal" && !caps.saveData;
+}
+
+function battleActionQuiet(scene: Phaser.Scene): boolean {
+  const runtime = scene as BattleSceneRuntime;
+  const activeEnemies = Array.isArray(runtime.enemies) ? runtime.enemies.length : 0;
+  return (
+    scene.scene.isActive(scene.scene.key) &&
+    runtime.ended !== true &&
+    runtime.waveRunning !== true &&
+    (runtime.pendingWaveSpawns ?? 0) <= 0 &&
+    activeEnemies === 0
+  );
+}
+
+function emitActorStreamState(scene: Phaser.Scene, state: string, detail: Record<string, unknown> = {}): void {
+  scene.events.emit("kingdom-seed:actor-art-stream-state", {
+    state,
+    at: Date.now(),
+    ...detail,
+  });
 }
 
 function textureExists(scene: Phaser.Scene, key: string): boolean {
@@ -230,11 +263,40 @@ export function installBattleDepthArtBridge(scene: Phaser.Scene, stage: StageCon
     ...towerCoreAssets(),
   ];
 
-  // 타워/몬스터/영웅 아트는 첫 전장 표시보다 한 박자 뒤에 올린다.
-  // 사용자가 곧바로 웨이브를 눌러도 게임 진행은 폴백으로 계속된다.
-  safeDelayedCall(scene, QUERY.has("instant25d") ? 260 : 1150, () => {
-    queueImages(scene, actorAssets, () => applyActorArtReady(scene));
-  }, { canRun: () => scene.scene.isActive(scene.scene.key) });
+  let actorLoadStarted = false;
+  let idleRetryArmed = false;
+  const startActorLoadWhenSafe = (attempt = 0): void => {
+    if (actorLoadStarted || !scene.scene.isActive(scene.scene.key)) return;
+    if (!battleActionQuiet(scene)) {
+      emitActorStreamState(scene, "deferred-during-wave", { attempt });
+      if (attempt <= 10) {
+        if (!idleRetryArmed) {
+          idleRetryArmed = true;
+          scene.events.once("kingdom-seed:battle-idle-safe", () => {
+            idleRetryArmed = false;
+            startActorLoadWhenSafe(attempt + 1);
+          });
+        }
+        safeDelayedCall(scene, QUERY.has("instant25d") ? 520 : 1200, () => startActorLoadWhenSafe(attempt + 1), {
+          canRun: () => scene.scene.isActive(scene.scene.key),
+        });
+      }
+      return;
+    }
+
+    actorLoadStarted = true;
+    emitActorStreamState(scene, "loading", { total: actorAssets.length });
+    queueImages(scene, actorAssets, (failedKeys) => {
+      emitActorStreamState(scene, "ready", { failedKeys });
+      applyActorArtReady(scene);
+    });
+  };
+
+  // 타워/몬스터/영웅 아트는 웨이브가 돌지 않는 안전 구간에서만 올린다.
+  // 사용자가 곧바로 전투 시작을 눌렀다면 다음 휴식 구간까지 미뤄 프레임 드롭과 네트워크 경합을 막는다.
+  safeDelayedCall(scene, QUERY.has("instant25d") ? 260 : 1150, () => startActorLoadWhenSafe(), {
+    canRun: () => scene.scene.isActive(scene.scene.key),
+  });
 }
 
 export function battleDepthArtDebugSummary(scene: Phaser.Scene, stage: StageConfig): string {

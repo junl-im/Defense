@@ -705,6 +705,11 @@ export class GameScene extends Phaser.Scene {
     ) {
       this.waveRunning = false;
       this.waveClearedAt = this.time.now;
+      this.events.emit("kingdom-seed:battle-idle-safe", {
+        stageId: this.stage.id,
+        waveIndex: this.waveIndex,
+        at: Date.now(),
+      });
       if (this.waveIndex >= this.stage.waves.length - 1)
         void this.finishStage();
       else {
@@ -3414,6 +3419,13 @@ export class GameScene extends Phaser.Scene {
     }
     this.waveIndex += 1;
     this.waveRunning = true;
+    pauseOptionalWork("battle-wave-active", 3600);
+    this.events.emit("kingdom-seed:battle-wave-active", {
+      stageId: this.stage.id,
+      waveIndex: this.waveIndex,
+      early,
+      at: Date.now(),
+    });
     this.refreshHud();
     const waveNumber = this.waveIndex + 1;
     const waveGroups = this.stage.waves[this.waveIndex];
