@@ -29,6 +29,7 @@ import {
   type VisibleGameObject,
 } from "./BattlePrestigePolish";
 import { createReferenceActorPedestal, isReferenceTextureKey } from "./ReferenceVariantSystem";
+import { createReferenceActorProgressionHalo, towerProgressionTier } from "./ReferenceProgressionFusion";
 
 export type TargetMode = "first" | "strong" | "air" | "near";
 
@@ -83,6 +84,7 @@ export class Tower extends Phaser.GameObjects.Container {
   private commandAuraLabel?: Phaser.GameObjects.Text;
   private prestigeFallbackObjects: VisibleGameObject[] = [];
   private referencePedestal?: Phaser.GameObjects.Ellipse;
+  private referenceProgressionHalo?: Phaser.GameObjects.Container;
 
   constructor(
     scene: Phaser.Scene,
@@ -1084,6 +1086,7 @@ export class Tower extends Phaser.GameObjects.Container {
   private syncReferencePedestal(textureKey: string | undefined): void {
     if (!this.sprite || !isReferenceTextureKey(textureKey)) {
       this.referencePedestal?.setVisible(false);
+      this.referenceProgressionHalo?.setVisible(false);
       return;
     }
     if (!this.referencePedestal) {
@@ -1091,6 +1094,18 @@ export class Tower extends Phaser.GameObjects.Container {
       this.addAt(this.referencePedestal, Math.max(0, this.getIndex(this.sprite)));
     }
     this.referencePedestal.setVisible(true);
+
+    this.referenceProgressionHalo?.destroy();
+    this.referenceProgressionHalo = createReferenceActorProgressionHalo(this.scene, "tower", {
+      width: this.config.kind === "barracks" ? 82 : 76,
+      height: 70,
+      accent: this.config.color,
+      tier: towerProgressionTier(this.level, this.mastery),
+      pips: this.level + (this.mastery ? 2 : 0),
+      y: -8,
+      noMotion: true,
+    });
+    this.addAt(this.referenceProgressionHalo, Math.max(0, this.getIndex(this.sprite)));
   }
 
   private updateSpriteForLevel(): void {

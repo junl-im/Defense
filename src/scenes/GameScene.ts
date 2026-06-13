@@ -233,6 +233,7 @@ import {
   resolveReferenceEvolutionTowerThumb,
 } from "../game/ReferenceAssetEvolution";
 import { createReferenceArtSlot } from "../game/ReferenceVariantSystem";
+import { towerResearchLevelForKind } from "../game/ReferenceProgressionFusion";
 
 type CastingSpell = "meteor" | "mercenary" | undefined;
 
@@ -2471,6 +2472,7 @@ export class GameScene extends Phaser.Scene {
             .setInteractive({ useHandCursor: true });
       card.setAlpha(canBuy ? 1 : 0.55);
       const referenceThumbKey = resolveReferenceEvolutionTowerThumb(this, kind);
+      const researchLevel = towerResearchLevelForKind(this.save?.upgrades, kind);
       if (referenceThumbKey) {
         createReferenceArtSlot(this, {
           x: bx - 35,
@@ -2482,7 +2484,8 @@ export class GameScene extends Phaser.Scene {
           state: canBuy ? "upgrade" : "locked",
           locked: !canBuy,
           accent: cfg.color,
-          pips: canBuy ? 2 : 0,
+          pips: canBuy ? Math.max(2, 2 + researchLevel) : 0,
+          selected: researchLevel >= 3,
           noMotion: true,
         }).setAlpha(canBuy ? 1 : 0.62);
       }

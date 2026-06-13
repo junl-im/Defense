@@ -59,7 +59,7 @@ export class HeroHallScene extends Phaser.Scene {
     this.heroCardRoots.forEach((root) => root.destroy());
     this.heroCardRoots = [];
     const heroes = getHeroProfiles();
-    heroes.forEach((hero, index) => this.drawHeroCard(hero, 220 + index * 260, 292));
+    heroes.forEach((hero, index) => this.drawHeroCard(hero, 220 + index * 260, 292, index));
   }
 
   private refreshReferenceHeroCards(): void {
@@ -68,7 +68,7 @@ export class HeroHallScene extends Phaser.Scene {
     installSceneReadabilityPass(this, { min: 15, strokeThickness: 3 });
   }
 
-  private drawHeroCard(hero: HeroProfile, x: number, y: number): void {
+  private drawHeroCard(hero: HeroProfile, x: number, y: number, index = 0): void {
     const selected = this.selectedHero.id === hero.id;
     const root = this.add.container(x, y).setDepth(10);
     this.heroCardRoots.push(root);
@@ -88,7 +88,7 @@ export class HeroHallScene extends Phaser.Scene {
           state: selected ? "selected" : "normal",
           selected,
           accent: hero.color,
-          pips: selected ? 4 : 3,
+          pips: selected ? 5 : index === 0 ? 3 : 2,
         })
       : this.textures.exists(portraitKey)
         ? this.add.image(0, -72, portraitKey).setDisplaySize(150, 188)

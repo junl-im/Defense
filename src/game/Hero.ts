@@ -20,6 +20,7 @@ import {
   type VisibleGameObject,
 } from "./BattlePrestigePolish";
 import { createReferenceActorPedestal, isReferenceTextureKey } from "./ReferenceVariantSystem";
+import { createReferenceActorProgressionHalo, heroProgressionTier } from "./ReferenceProgressionFusion";
 
 export class Hero extends Phaser.GameObjects.Container {
   hp = 220;
@@ -36,6 +37,7 @@ export class Hero extends Phaser.GameObjects.Container {
   private currentMotion: "idle" | "move" | "attack" = "idle";
   private prestigeFallbackObjects: VisibleGameObject[] = [];
   private referencePedestal?: Phaser.GameObjects.Ellipse;
+  private referenceProgressionHalo?: Phaser.GameObjects.Container;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
@@ -285,6 +287,7 @@ export class Hero extends Phaser.GameObjects.Container {
   private syncReferencePedestal(textureKey: string | undefined): void {
     if (!this.sprite || !isReferenceTextureKey(textureKey)) {
       this.referencePedestal?.setVisible(false);
+      this.referenceProgressionHalo?.setVisible(false);
       return;
     }
     if (!this.referencePedestal) {
@@ -292,6 +295,18 @@ export class Hero extends Phaser.GameObjects.Container {
       this.addAt(this.referencePedestal, Math.max(0, this.getIndex(this.sprite)));
     }
     this.referencePedestal.setVisible(true);
+
+    this.referenceProgressionHalo?.destroy();
+    this.referenceProgressionHalo = createReferenceActorProgressionHalo(this.scene, "hero", {
+      width: 68,
+      height: 62,
+      accent: 0x7cc7ff,
+      tier: heroProgressionTier(true),
+      pips: 4,
+      y: -6,
+      noMotion: true,
+    });
+    this.addAt(this.referenceProgressionHalo, Math.max(0, this.getIndex(this.sprite)));
   }
 
   refreshArt(): void {

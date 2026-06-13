@@ -8,6 +8,7 @@ import { installSceneReadabilityPass, improveReadableTextTree, readableFontSize,
 import { installSceneGraphicFallback } from "../game/PrestigeGraphicFallback";
 import { installReferenceEvolutionPack, resolveReferenceEvolutionEnemyThumb, resolveReferenceEvolutionTowerThumb } from "../game/ReferenceAssetEvolution";
 import { createReferenceArtSlot, referenceStateForEnemyThreat } from "../game/ReferenceVariantSystem";
+import { towerResearchLevelForKind } from "../game/ReferenceProgressionFusion";
 
 export class CodexScene extends Phaser.Scene {
   private user!: User;
@@ -96,6 +97,7 @@ export class CodexScene extends Phaser.Scene {
     const card = this.add.container(x, y);
     const bg = this.add.rectangle(0, 0, 195, 238, 0x0b1220, 0.94).setOrigin(0, 0).setStrokeStyle(2, tower.color, 0.7);
     const thumbKey = resolveReferenceEvolutionTowerThumb(this, tower.kind);
+    const researchLevel = towerResearchLevelForKind(this.save?.upgrades, tower.kind);
     const icon = thumbKey
       ? createReferenceArtSlot(this, {
           x: 38,
@@ -106,7 +108,8 @@ export class CodexScene extends Phaser.Scene {
           category: "tower",
           state: "upgrade",
           accent: tower.color,
-          pips: tower.kind === "barracks" ? 3 : 2,
+          pips: Math.max(2, 2 + researchLevel),
+          selected: researchLevel >= 3,
           noMotion: true,
         })
       : this.add.circle(36, 38, 28, tower.color, 1).setStrokeStyle(3, 0xffffff, 0.3);

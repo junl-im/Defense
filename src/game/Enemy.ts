@@ -21,6 +21,7 @@ import {
 } from "./BattlePrestigePolish";
 import { bossPatternCooldown, bossPatternLabel } from "./MegaSystems";
 import { createReferenceActorPedestal, isReferenceTextureKey } from "./ReferenceVariantSystem";
+import { createReferenceActorProgressionHalo, enemyProgressionTier } from "./ReferenceProgressionFusion";
 
 type EnemyMotion = "walk" | "attack" | "death";
 type EnemyDirection = "down" | "side" | "up";
@@ -55,6 +56,7 @@ export class Enemy extends Phaser.GameObjects.Container {
   private bossSpeedUntil = 0;
   private bossSpeedMultiplier = 1;
   private referencePedestal?: Phaser.GameObjects.Ellipse;
+  private referenceProgressionHalo?: Phaser.GameObjects.Container;
   private prestigeFallbackObjects: VisibleGameObject[] = [];
 
   constructor(
@@ -387,24 +389,38 @@ export class Enemy extends Phaser.GameObjects.Container {
   private syncReferencePedestal(textureKey: string | undefined): void {
     if (!this.sprite || !isReferenceTextureKey(textureKey)) {
       this.referencePedestal?.setVisible(false);
+      this.referenceProgressionHalo?.setVisible(false);
       return;
     }
     const scale = this.config.scale ?? 1;
     const width = (this.config.threat === "boss" ? 92 : 64) * scale;
     const height = (this.config.flying ? 46 : 54) * scale;
+    const accent = this.config.accentColor ?? this.config.color;
     if (!this.referencePedestal) {
       this.referencePedestal = createReferenceActorPedestal(
         this.scene,
         "enemy",
         width,
         height,
-        this.config.accentColor ?? this.config.color,
+        accent,
       );
       this.addAt(this.referencePedestal, Math.max(0, this.getIndex(this.sprite)));
     } else {
       this.referencePedestal.setSize(width, Math.max(10, height * 0.18));
     }
     this.referencePedestal.setVisible(true);
+
+    this.referenceProgressionHalo?.destroy();
+    this.referenceProgressionHalo = createReferenceActorProgressionHalo(this.scene, "enemy", {
+      width: Math.max(58, width * 0.92),
+      height: Math.max(54, height * 1.1),
+      accent,
+      tier: enemyProgressionTier(this.config),
+      pips: this.config.threat === "boss" ? 5 : this.config.threat === "tank" || this.config.flying ? 3 : 1,
+      y: this.config.flying ? -8 : -5,
+      noMotion: true,
+    });
+    this.addAt(this.referenceProgressionHalo, Math.max(0, this.getIndex(this.sprite)));
   }
 
   private resolveEnemyArtKey(kind: string): string | undefined {

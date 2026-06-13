@@ -1,0 +1,21 @@
+KingdomSeed v2.36.22 Reference Progression Fusion
+
+Apply this patch by copying the archive contents over an existing v2.36.21+ project root.
+
+Included:
+- src/game/ReferenceProgressionFusion.ts
+- ReferenceVariantSystem integration
+- Tower/Enemy/Hero reference actor progression halos
+- Codex/GameScene/HeroHall reference progression pips
+- version/package/index/docs updates
+
+Excluded:
+- .git
+- node_modules
+- dist
+- temporary files
+
+After applying:
+1. npm ci
+2. npm run build
+3. Test /?referenceart&refevolution and /?referenceart&refevolution&essentialprogression

@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { getMobileRuntimeCaps } from "./MobileRuntimeEngine";
+import { addReferenceProgressionOrnament, progressionTierFromVariantState } from "./ReferenceProgressionFusion";
 
 /**
  * v2.36.21 Reference Variant System
@@ -247,6 +248,18 @@ export function createReferenceArtSlot(
   }
 
   addNoTextPips(scene, root, options.width, options.height, options.pips ?? 0, accent);
+  addReferenceProgressionOrnament(scene, root, {
+    width: options.width,
+    height: options.height,
+    category: options.category,
+    tier: progressionTierFromVariantState(options.state, options.pips ?? 0, options.selected, locked),
+    accent,
+    pips: options.pips ?? 0,
+    locked,
+    selected: options.selected || options.state === "selected",
+    essential,
+    noMotion: options.noMotion,
+  });
 
   if (!essential && !options.noMotion && (options.selected || options.state === "selected" || options.state === "boss")) {
     scene.tweens.add({
