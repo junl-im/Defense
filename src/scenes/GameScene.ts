@@ -233,6 +233,7 @@ import {
   resolveReferenceEvolutionTowerThumb,
 } from "../game/ReferenceAssetEvolution";
 import { createReferenceArtSlot } from "../game/ReferenceVariantSystem";
+import { chestRewardKind, createReferenceRewardBadge, installReferenceRewardPipeline } from "../game/ReferenceRewardPipeline";
 import { towerResearchLevelForKind } from "../game/ReferenceProgressionFusion";
 
 type CastingSpell = "meteor" | "mercenary" | undefined;
@@ -4218,6 +4219,7 @@ export class GameScene extends Phaser.Scene {
       totalLeaks: this.totalLeaks,
     });
 
+    installReferenceRewardPipeline(this, { phase: "battle-result", delayMs: 90 });
     const prestigeResult = usePrestigeResultUi();
     if (prestigeResult) {
       addPrestigeResultBackdrop(this, 0xf7d36b);
@@ -4306,6 +4308,11 @@ export class GameScene extends Phaser.Scene {
       rewardBox,
       this.rewardChestFxColor(reward.chestTier),
     );
+    createReferenceRewardBadge(this, 588, 214, chestRewardKind(reward.chestTier), 56, {
+      pips: reward.chestTier === "MYTHIC" ? 5 : reward.chestTier === "ROYAL" ? 4 : reward.chestTier === "IRON" ? 3 : 2,
+      selected: true,
+      depth: 95,
+    });
 
     const objectivePanel = prestigeResult
       ? addPrestigeResultPanel(this, 252, 343, 326, 136, 0x8fdcff, 93)

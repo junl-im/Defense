@@ -6,6 +6,7 @@ import { playMusic, playSfx } from '../game/AudioManager';
 import { startRegisteredScene } from "./SceneRegistry";
 import { installSceneReadabilityPass, improveReadableTextTree, readableFontSize, readableHitSize } from "../game/MobileReadableUi";
 import { installSceneGraphicFallback } from "../game/PrestigeGraphicFallback";
+import { createReferenceRewardBadge, installReferenceRewardPipeline } from "../game/ReferenceRewardPipeline";
 
 export class MissionBoardScene extends Phaser.Scene {
   private user!: User;
@@ -23,6 +24,7 @@ export class MissionBoardScene extends Phaser.Scene {
     playMusic(this, 'bgm_world', 0.2);
     this.drawBackground();
     installSceneGraphicFallback(this, "mission", 1.2);
+    installReferenceRewardPipeline(this, { phase: "mission", delayMs: 160 });
     this.drawHeader();
     this.drawMissions();
     this.drawChestPanel();
@@ -60,13 +62,14 @@ export class MissionBoardScene extends Phaser.Scene {
     const bg = this.textures.exists('ui-mission-card-v28')
       ? this.add.image(0, 0, 'ui-mission-card-v28').setDisplaySize(312, 86)
       : this.add.rectangle(0, 0, 312, 86, 0xbe9051, 0.92).setStrokeStyle(3, 0x5f2f16, 0.45);
-    const title = this.add.text(-136, -27, mission.title, { fontSize: readableFontSize(18, 18, 26), color: '#2b160a', fontStyle: 'bold' }).setOrigin(0, 0.5);
-    const sub = this.add.text(-136, -5, mission.subtitle, { fontSize: readableFontSize(13, 15, 21), color: '#4a2915', fontStyle: 'bold', wordWrap: { width: 210 } }).setOrigin(0, 0.5);
-    const progress = this.add.text(-136, 24, `${mission.progress}/${mission.target}  ·  ${mission.reward}`, { fontSize: readableFontSize(13, 15, 21), color: '#fff7d8', fontStyle: 'bold', stroke: '#1e0c04', strokeThickness: 3 }).setOrigin(0, 0.5);
+    const badge = createReferenceRewardBadge(this, -126, 0, mission.category === 'weekly' ? 'contract' : 'mission', 50, { pips: mission.completed ? 4 : 2, selected: mission.completed && !mission.claimed, locked: !mission.completed });
+    const title = this.add.text(-94, -27, mission.title, { fontSize: readableFontSize(18, 18, 26), color: '#2b160a', fontStyle: 'bold' }).setOrigin(0, 0.5);
+    const sub = this.add.text(-94, -5, mission.subtitle, { fontSize: readableFontSize(13, 15, 21), color: '#4a2915', fontStyle: 'bold', wordWrap: { width: 168 } }).setOrigin(0, 0.5);
+    const progress = this.add.text(-94, 24, `${mission.progress}/${mission.target}  ·  ${mission.reward}`, { fontSize: readableFontSize(13, 15, 21), color: '#fff7d8', fontStyle: 'bold', stroke: '#1e0c04', strokeThickness: 3, wordWrap: { width: 178 } }).setOrigin(0, 0.5);
     const buttonColor = mission.claimed ? 0x353535 : mission.completed ? 0x2f8f55 : 0x6b4b2a;
     const btn = this.add.rectangle(112, 18, 82, 32, buttonColor, 0.95).setStrokeStyle(2, 0xffe29a, 0.5);
     const btnText = this.add.text(112, 18, mission.claimed ? '완료' : mission.completed ? '수령' : '진행중', { fontSize: readableFontSize(13, 15, 21), color: '#fff7d8', fontStyle: 'bold', stroke: '#1b0703', strokeThickness: 3 }).setOrigin(0.5);
-    root.add([bg, title, sub, progress, btn, btnText]);
+    root.add([bg, badge, title, sub, progress, btn, btnText]);
     improveReadableTextTree(root, { min: 15, strokeThickness: 3 });
     if (mission.completed && !mission.claimed) {
       const hit = this.add.rectangle(112, 18, 90, 42, 0xffffff, 0.001).setInteractive({ useHandCursor: true });
@@ -84,7 +87,7 @@ export class MissionBoardScene extends Phaser.Scene {
     const bg = this.textures.exists('ui-glass-panel-v28')
       ? this.add.image(0, 0, 'ui-glass-panel-v28').setDisplaySize(220, 206)
       : this.add.rectangle(0, 0, 220, 206, 0x3a2518, 0.94).setStrokeStyle(3, 0xffd67a, 0.5);
-    const chest = this.textures.exists('icon-reward-chest') ? this.add.image(0, -42, 'icon-reward-chest').setDisplaySize(86, 86) : this.add.circle(0, -42, 42, 0xe0a13e, 1);
+    const chest = createReferenceRewardBadge(this, 0, -42, getRewardChestCount() >= 3 ? 'chestRoyal' : 'chestWood', 92, { pips: Math.min(5, Math.max(1, getRewardChestCount())), selected: getRewardChestCount() > 0 });
     this.chestText = this.add.text(0, 22, `보급 상자 x${getRewardChestCount()}`, { fontSize: readableFontSize(19, 19, 27), color: '#fff1bf', fontStyle: 'bold', stroke: '#2b1208', strokeThickness: 5 }).setOrigin(0.5);
     const btn = this.add.rectangle(0, 75, 144, 38, 0x8d3a25, 0.95).setStrokeStyle(2, 0xffe29a, 0.6);
     const text = this.add.text(0, 75, '상자 열기', { fontSize: readableFontSize(17, 17, 25), color: '#fff7d8', fontStyle: 'bold', stroke: '#1b0703', strokeThickness: 3 }).setOrigin(0.5);

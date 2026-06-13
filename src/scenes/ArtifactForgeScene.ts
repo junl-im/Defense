@@ -20,6 +20,7 @@ import { playMusic, playSfx } from "../game/AudioManager";
 import { startRegisteredScene } from "./SceneRegistry";
 import { installSceneReadabilityPass, readableFontSize, readableHitSize } from "../game/MobileReadableUi";
 import { installSceneGraphicFallback } from "../game/PrestigeGraphicFallback";
+import { createReferenceRewardBadge, installReferenceRewardPipeline } from "../game/ReferenceRewardPipeline";
 
 const SLOT_X = [698, 786, 874];
 
@@ -46,6 +47,7 @@ export class ArtifactForgeScene extends Phaser.Scene {
     playMusic(this, "bgm_world");
     this.drawBackground();
     installSceneGraphicFallback(this, "forge", 1.2);
+    installReferenceRewardPipeline(this, { phase: "forge", delayMs: 120 });
     this.drawHeader();
     this.drawResourceBar();
     this.drawEquipSlots();
@@ -134,24 +136,27 @@ export class ArtifactForgeScene extends Phaser.Scene {
           .rectangle(492, 91, 842, 50, 0x172131, 0.92)
           .setStrokeStyle(2, 0xffef9a, 0.25);
     panel.setDepth(8);
+    createReferenceRewardBadge(this, 82, 91, "dust", 34, { pips: 2 }).setDepth(13);
     this.add
-      .text(102, 91, `유물 가루  ${this.inventory.relicDust}`, {
+      .text(106, 91, `유물 가루  ${this.inventory.relicDust}`, {
         fontSize: readableFontSize(18, 18, 25),
         color: "#fff4c2",
         fontStyle: "bold",
       })
       .setOrigin(0, 0.5)
       .setDepth(12);
+    createReferenceRewardBadge(this, 306, 91, "token", 34, { pips: 3 }).setDepth(13);
     this.add
-      .text(326, 91, `왕실 토큰  ${this.inventory.royalTokens}`, {
+      .text(330, 91, `왕실 토큰  ${this.inventory.royalTokens}`, {
         fontSize: readableFontSize(18, 18, 25),
         color: "#dbe7ff",
         fontStyle: "bold",
       })
       .setOrigin(0, 0.5)
       .setDepth(12);
+    createReferenceRewardBadge(this, 540, 91, this.inventory.openedChests >= 6 ? "chestMythic" : this.inventory.openedChests >= 3 ? "chestRoyal" : "chestWood", 34, { pips: Math.min(5, Math.max(1, this.inventory.openedChests)) }).setDepth(13);
     this.add
-      .text(560, 91, `개봉한 보급 상자  ${this.inventory.openedChests}`, {
+      .text(564, 91, `개봉한 보급 상자  ${this.inventory.openedChests}`, {
         fontSize: readableFontSize(18, 18, 25),
         color: "#ffef9a",
         fontStyle: "bold",
@@ -177,9 +182,10 @@ export class ArtifactForgeScene extends Phaser.Scene {
       const equipped = Object.values(this.inventory.artifacts).find(
         (item) => item?.equippedSlot === slot,
       );
-      if (equipped)
+      if (equipped) {
         createArtifactIcon(this, x, 179, equipped.id, 54).setDepth(14);
-      else
+        createReferenceRewardBadge(this, x + 24, 203, "equip", 22, { pips: equipped.level, selected: true }).setDepth(15);
+      } else {
         this.add
           .text(x, 179, `${slot + 1}`, {
             fontSize: "24px",
@@ -188,6 +194,7 @@ export class ArtifactForgeScene extends Phaser.Scene {
           })
           .setOrigin(0.5)
           .setDepth(14);
+      }
       bg.setInteractive({ useHandCursor: true }).on("pointerdown", () =>
         this.tryEquip(slot),
       );
@@ -247,7 +254,8 @@ export class ArtifactForgeScene extends Phaser.Scene {
           },
         )
         .setOrigin(0.5);
-      this.listRoot.add([card, icon, name, meta]);
+      const shardBadge = createReferenceRewardBadge(this, x + 45, y + 19, owned ? "equip" : "shard", 22, { pips: owned?.level ?? Math.min(5, Math.ceil(shards / Math.max(1, artifact.craftCost / 5))), selected: Boolean(owned) });
+      this.listRoot.add([card, icon, name, meta, shardBadge]);
     });
   }
 
@@ -267,6 +275,7 @@ export class ArtifactForgeScene extends Phaser.Scene {
           .setStrokeStyle(3, rarityColor, 0.55);
     this.detailRoot.add(panel);
     this.detailRoot.add(createArtifactIcon(this, 520, 277, def.id, 76));
+    this.detailRoot.add(createReferenceRewardBadge(this, 548, 310, owned ? "equip" : "shard", 30, { pips: owned?.level ?? Math.min(5, Math.ceil(shards / Math.max(1, def.craftCost / 5))), selected: Boolean(owned) }));
     this.detailRoot.add(
       this.add
         .text(574, 255, def.name, {

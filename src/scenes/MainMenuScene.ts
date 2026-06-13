@@ -21,6 +21,7 @@ import { installSceneReadabilityPass, readableFontSize, readableHitSize } from "
 import { installSceneGraphicFallback } from "../game/PrestigeGraphicFallback";
 import { installReferenceAssetPack } from "../game/ReferenceAssetPack";
 import { installReferenceEvolutionPack } from "../game/ReferenceAssetEvolution";
+import { installReferenceRewardPipeline } from "../game/ReferenceRewardPipeline";
 
 type HotspotTone = "gold" | "blue" | "white" | "red" | "green";
 
@@ -83,6 +84,7 @@ export class MainMenuScene extends Phaser.Scene {
     this.installProgressiveLobbyArt();
     this.createLobbyTextOverlay();
     installReferenceEvolutionPack(this, { phase: "lobby", delayMs: 620, categories: ["tower", "hero", "skill"] });
+    installReferenceRewardPipeline(this, { phase: "lobby", delayMs: 860 });
     installReferenceAssetPack(this, { phase: "lobby", delayMs: 1350 });
     this.createV26ExpansionShelf();
     this.createPremiumHitZones();
