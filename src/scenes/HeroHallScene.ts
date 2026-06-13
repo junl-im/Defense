@@ -5,6 +5,7 @@ import { getHeroProfiles, getSelectedHero, setSelectedHero, type HeroId, type He
 import { playMusic, playSfx } from '../game/AudioManager';
 import { startRegisteredScene } from "./SceneRegistry";
 import { installSceneReadabilityPass, improveReadableTextTree, readableFontSize, readableHitSize } from "../game/MobileReadableUi";
+import { installSceneGraphicFallback } from "../game/PrestigeGraphicFallback";
 
 export class HeroHallScene extends Phaser.Scene {
   private user!: User;
@@ -23,6 +24,7 @@ export class HeroHallScene extends Phaser.Scene {
   create(): void {
     playMusic(this, 'bgm_world', 0.2);
     this.drawBackground();
+    installSceneGraphicFallback(this, "hero", 1.2);
     this.drawHeader();
     this.drawHeroCards();
     this.drawFooter();

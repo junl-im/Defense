@@ -106,6 +106,28 @@ export function createPrestigeTowerFallback(
   const light = tintMix(accent, 0xffe0a0, 0.36);
 
   g.fillStyle(0x000000, 0.28).fillEllipse(0, 22, 68 * scale, 22 * scale);
+  // v2.36.15: add a subtle backplate/crest so code fallback towers read like illustrated miniatures, not primitive icons.
+  g.fillStyle(tintMix(deep, 0x0b1020, 0.34), 0.42).fillRoundedRect(
+    -34 * scale,
+    -44 * scale,
+    68 * scale,
+    58 * scale,
+    13 * scale,
+  );
+  g.lineStyle(1, light, 0.16).strokeRoundedRect(
+    -31 * scale,
+    -41 * scale,
+    62 * scale,
+    52 * scale,
+    11 * scale,
+  );
+  g.fillStyle(0xffffff, 0.055).fillRoundedRect(
+    -24 * scale,
+    -38 * scale,
+    48 * scale,
+    8 * scale,
+    4 * scale,
+  );
   g.fillStyle(0x1a1410, 0.96).fillRoundedRect(
     -28 * scale,
     -2 * scale,
@@ -299,6 +321,8 @@ export function createPrestigeEnemyFallback(
   }
 
   if (boss) {
+    g.fillStyle(0x000000, 0.28).fillRoundedRect(-36 * scale, -50 * scale, 72 * scale, 80 * scale, 20 * scale);
+    g.lineStyle(2, rim, 0.18).strokeRoundedRect(-33 * scale, -47 * scale, 66 * scale, 74 * scale, 18 * scale);
     g.fillStyle(0x10090c, 1).fillEllipse(0, -6 * scale, 50 * scale, 66 * scale);
     g.fillStyle(deep, 1).fillEllipse(0, -11 * scale, 42 * scale, 58 * scale);
     g.fillStyle(mid, 0.92).fillRoundedRect(
@@ -325,6 +349,8 @@ export function createPrestigeEnemyFallback(
       -34 * scale,
     );
   } else if (tank) {
+    g.fillStyle(0x000000, 0.22).fillRoundedRect(-30 * scale, -40 * scale, 60 * scale, 70 * scale, 17 * scale);
+    g.lineStyle(1, rim, 0.16).strokeRoundedRect(-27 * scale, -37 * scale, 54 * scale, 64 * scale, 15 * scale);
     g.fillStyle(0x100c0a, 1).fillRoundedRect(
       -25 * scale,
       -33 * scale,
@@ -347,6 +373,8 @@ export function createPrestigeEnemyFallback(
       5 * scale,
     );
   } else {
+    g.fillStyle(0x000000, 0.18).fillRoundedRect(-24 * scale, -36 * scale, 48 * scale, 58 * scale, 14 * scale);
+    g.fillStyle(rim, 0.07).fillRoundedRect(-20 * scale, -33 * scale, 40 * scale, 50 * scale, 12 * scale);
     g.fillStyle(0x100c0b, 0.98).fillEllipse(
       0,
       -7 * scale,
@@ -389,6 +417,11 @@ export function createPrestigeHeroFallback(
   const g = scene.add.graphics() as VisibleGameObject &
     Phaser.GameObjects.Graphics;
   g.fillStyle(0x000000, 0.26).fillEllipse(0, 18, 42, 13);
+  // v2.36.15: heroic silhouette kit: cape, sword, shield and stronger contact shadow.
+  g.fillStyle(0x111927, 0.74).fillTriangle(-21, -26, -34, 15, -8, 10);
+  g.fillStyle(0x0d1420, 0.7).fillTriangle(21, -26, 34, 15, 8, 10);
+  g.fillStyle(0xd9e8ff, 0.84).fillRoundedRect(18, -35, 5, 48, 3);
+  g.fillStyle(0xffd66d, 0.65).fillTriangle(16, -35, 25, -35, 21, -48);
   g.fillStyle(0x1c2432, 1).fillRoundedRect(-15, -29, 30, 48, 10);
   g.fillStyle(0x33405a, 0.96).fillRoundedRect(-11, -25, 22, 36, 8);
   g.fillStyle(0xd7dde8, 0.96).fillTriangle(-14, -22, 0, -43, 14, -22);
@@ -396,5 +429,7 @@ export function createPrestigeHeroFallback(
   g.fillStyle(0xffd66d, 0.9).fillCircle(0, -16, 4.5);
   g.lineStyle(2, 0xffd66d, 0.24).strokeEllipse(0, -8, 35, 48);
   g.fillStyle(0xffffff, 0.09).fillRoundedRect(-7, -25, 10, 31, 5);
+  g.fillStyle(0x26344d, 0.96).fillRoundedRect(-31, -17, 16, 28, 7);
+  g.lineStyle(2, 0xffd66d, 0.26).strokeRoundedRect(-31, -17, 16, 28, 7);
   return [g];
 }

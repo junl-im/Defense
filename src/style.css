@@ -1165,3 +1165,27 @@ html.ks-runtime-lockdown.ks-readable-ui-contrast #game canvas {
     transform: scale(.92) !important;
   }
 }
+
+/* v2.36.15 massive graphic fallback shell helpers */
+html.ks-graphic-fallback body {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255, 216, 132, calc(.12 * var(--ks-graphic-fallback-alpha, 1))), transparent 34%),
+    radial-gradient(circle at 14% 82%, rgba(87, 192, 255, calc(.16 * var(--ks-graphic-fallback-alpha, 1))), transparent 32%),
+    linear-gradient(180deg, #07101d 0%, #03060d 100%);
+}
+html.ks-graphic-fallback #game canvas {
+  filter: saturate(1.07) contrast(1.05) brightness(.99);
+}
+html.ks-graphic-fallback-safe #game canvas,
+html.ks-runtime-lockdown #game canvas,
+html.ks-engine-lockdown #game canvas {
+  filter: none !important;
+}
+html.ks-graphic-fallback-contrast #game::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9997;
+  box-shadow: inset 0 0 0 2px rgba(255, 224, 141, .14), inset 0 0 80px rgba(0,0,0,.28);
+}

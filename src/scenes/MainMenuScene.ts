@@ -18,6 +18,7 @@ import {
 import { startRegisteredScene, warmRegisteredScenes, type RegisteredSceneKey } from "./SceneRegistry";
 import type { PlayerSave } from "../services/localSave";
 import { installSceneReadabilityPass, readableFontSize, readableHitSize } from "../game/MobileReadableUi";
+import { installSceneGraphicFallback } from "../game/PrestigeGraphicFallback";
 
 type HotspotTone = "gold" | "blue" | "white" | "red" | "green";
 
@@ -71,6 +72,7 @@ export class MainMenuScene extends Phaser.Scene {
     playMusicWhenReady(this, "bgm_world", 0.2);
 
     this.createIllustrationLedLobby();
+    installSceneGraphicFallback(this, "lobby", 3.4);
     addPrestigeSceneVignette(this, "lobby", 4.5);
     if (useCumulativeArtLayers()) this.installCumulativeLobbyArt();
     this.createV210CleanChrome();

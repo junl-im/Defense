@@ -47,6 +47,7 @@ import {
 import { addPremiumBattleObjects } from "../game/BattlefieldArt";
 import { installBattleDepthArtBridge } from "../game/BattleDepthArtBridge";
 import { installBattlePrestigeLook } from "../game/BattlePrestigePolish";
+import { installBattleGraphicFallback } from "../game/PrestigeGraphicFallback";
 import {
   PRESTIGE_HUD_FONT,
   addPrestigeCommandFrame,
@@ -572,6 +573,7 @@ export class GameScene extends Phaser.Scene {
     this.drawMap();
     // v2.36.5: 빠른 부팅에서 빠졌던 기존 2.5D 전투 배경/깊이 오버레이를
     // 전투 씬 진입 후 지연 복구한다. 첫 시작에는 영향을 주지 않는다.
+    installBattleGraphicFallback(this, this.stage);
     installBattleDepthArtBridge(this, this.stage);
     this.installCoreCombatArtRefreshHook();
     installPremiumBattlePresentation(this, this.stage);

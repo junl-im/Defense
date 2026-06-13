@@ -10,6 +10,7 @@ import {
 } from '../services/localSave';
 import { startRegisteredScene } from "./SceneRegistry";
 import { installSceneReadabilityPass, improveReadableTextTree, readableFontSize, readableHitSize } from "../game/MobileReadableUi";
+import { installSceneGraphicFallback } from "../game/PrestigeGraphicFallback";
 
 const UPGRADE_KEYS: UpgradeKey[] = ['archerDamage', 'mageDamage', 'barracksHp', 'artillerySplash'];
 
@@ -31,6 +32,7 @@ export class LabScene extends Phaser.Scene {
 
   create(): void {
     this.drawBackground();
+    installSceneGraphicFallback(this, "lab", 1.2);
     this.add.text(480, 56, '연구소', {
       fontSize: readableFontSize(44, 34, 48),
       color: '#f7d36b',

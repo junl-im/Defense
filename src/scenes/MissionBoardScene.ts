@@ -5,6 +5,7 @@ import { claimMissionReward, consumeRewardChest, getMissionStates, getRewardChes
 import { playMusic, playSfx } from '../game/AudioManager';
 import { startRegisteredScene } from "./SceneRegistry";
 import { installSceneReadabilityPass, improveReadableTextTree, readableFontSize, readableHitSize } from "../game/MobileReadableUi";
+import { installSceneGraphicFallback } from "../game/PrestigeGraphicFallback";
 
 export class MissionBoardScene extends Phaser.Scene {
   private user!: User;
@@ -21,6 +22,7 @@ export class MissionBoardScene extends Phaser.Scene {
   create(): void {
     playMusic(this, 'bgm_world', 0.2);
     this.drawBackground();
+    installSceneGraphicFallback(this, "mission", 1.2);
     this.drawHeader();
     this.drawMissions();
     this.drawChestPanel();

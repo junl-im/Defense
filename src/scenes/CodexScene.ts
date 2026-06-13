@@ -5,6 +5,7 @@ import type { EnemyConfig, TowerConfig } from '../game/types';
 import type { PlayerSave } from '../services/localSave';
 import { startRegisteredScene } from "./SceneRegistry";
 import { installSceneReadabilityPass, improveReadableTextTree, readableFontSize, readableHitSize } from "../game/MobileReadableUi";
+import { installSceneGraphicFallback } from "../game/PrestigeGraphicFallback";
 
 export class CodexScene extends Phaser.Scene {
   private user!: User;
@@ -27,6 +28,7 @@ export class CodexScene extends Phaser.Scene {
 
   create(): void {
     this.drawBackground();
+    installSceneGraphicFallback(this, "codex", 1.2);
     this.add.text(480, 45, '전술 도감', {
       fontSize: '42px', color: '#f7d36b', fontStyle: 'bold', stroke: '#241006', strokeThickness: 5
     }).setOrigin(0.5);

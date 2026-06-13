@@ -24,6 +24,7 @@ import {
 import { playSfx } from '../game/AudioManager';
 import { startRegisteredScene } from "./SceneRegistry";
 import { installSceneReadabilityPass, improveReadableTextTree, readableFontSize, readableHitSize } from "../game/MobileReadableUi";
+import { installSceneGraphicFallback } from "../game/PrestigeGraphicFallback";
 
 type MetaTab = 'relics' | 'daily' | 'achievements';
 
@@ -49,6 +50,7 @@ export class MetaScene extends Phaser.Scene {
 
   create(): void {
     this.drawBackground();
+    installSceneGraphicFallback(this, "meta", 1.2);
     this.createHeader();
     this.createTabs();
     this.render();

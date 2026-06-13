@@ -24,6 +24,7 @@ import {
   type PlayerSave,
 } from "../services/localSave";
 import { installSceneReadabilityPass, improveReadableTextTree, readableFontSize, readableHitSize } from "../game/MobileReadableUi";
+import { installSceneGraphicFallback } from "../game/PrestigeGraphicFallback";
 
 export class MenuScene extends Phaser.Scene {
   private statusText!: Phaser.GameObjects.Text;
@@ -42,6 +43,7 @@ export class MenuScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor("#8fd5ff");
 
     this.createCinematicSplash();
+    installSceneGraphicFallback(this, "login", 3.2);
     addPrestigeSceneVignette(this, "login", 4);
     addLoginPrestigePlate(this);
     addStaticSignalSweep(this, 480, 282, 320, 32);

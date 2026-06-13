@@ -20,6 +20,7 @@ import {
 import { startRegisteredScene, warmRegisteredScenes, type RegisteredSceneKey } from "./SceneRegistry";
 import { installSceneReadabilityPass, readableFontSize, readableHitSize } from "../game/MobileReadableUi";
 import type { PlayerSave } from "../services/localSave";
+import { installSceneGraphicFallback } from "../game/PrestigeGraphicFallback";
 
 type HotspotTone = "gold" | "blue" | "white" | "red" | "green";
 
@@ -98,6 +99,7 @@ export class WorldMapScene extends Phaser.Scene {
     playMusicWhenReady(this, "bgm_world", 0.22);
 
     this.createIllustratedWorldMap();
+    installSceneGraphicFallback(this, "world", 3.4);
     addPrestigeSceneVignette(this, "world", 4.5);
     if (useCumulativeArtLayers()) this.installCumulativeWorldArt();
     if (allowPremiumStaticArt("world")) this.installPremiumStaticWorldArt();

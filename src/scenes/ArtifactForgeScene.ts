@@ -19,6 +19,7 @@ import { createArtifactIcon } from "../game/PremiumRewardForgeUi";
 import { playMusic, playSfx } from "../game/AudioManager";
 import { startRegisteredScene } from "./SceneRegistry";
 import { installSceneReadabilityPass, readableFontSize, readableHitSize } from "../game/MobileReadableUi";
+import { installSceneGraphicFallback } from "../game/PrestigeGraphicFallback";
 
 const SLOT_X = [698, 786, 874];
 
@@ -44,6 +45,7 @@ export class ArtifactForgeScene extends Phaser.Scene {
   create(): void {
     playMusic(this, "bgm_world");
     this.drawBackground();
+    installSceneGraphicFallback(this, "forge", 1.2);
     this.drawHeader();
     this.drawResourceBar();
     this.drawEquipSlots();
