@@ -416,6 +416,7 @@ export class GameScene extends Phaser.Scene {
       this.enemies.forEach((enemy) => enemy.refreshArt());
       this.hero?.refreshArt();
       this.applyReferenceSpellIcons();
+      this.refreshWavePreview();
     };
 
     this.events.on("kingdom-seed:reference-asset-pack-ready", refresh);
@@ -644,7 +645,7 @@ export class GameScene extends Phaser.Scene {
       phase: "battle",
       delayMs: 420,
       battleIdleOnly: true,
-      categories: ["tower", "skill"],
+      categories: ["tower", "enemy", "skill"],
     });
     this.installCoreCombatArtRefreshHook();
     this.installReferenceAssetRefreshHook();

@@ -3,6 +3,7 @@ import { ENEMIES } from './balance';
 import type { EnemyKind, WaveSpawn } from './types';
 import { getBossProfile, getMonsterTraits, MONSTER_TRAITS, type MonsterTrait } from './MonsterIntel';
 import { PRESTIGE_HUD_FONT, usePrestigeCombatHud } from './BattleHudPrestige';
+import { createReferenceBossCutinPortrait, createReferenceEncounterPortrait } from './ReferenceEncounterDirector';
 
 export function renderWaveIntelPanel(
   scene: Phaser.Scene,
@@ -47,16 +48,29 @@ export function renderWaveIntelPanel(
       : scene.add.circle(x - 34, 0, 16, cfg.accentColor ?? 0x9ad7ff, 0.22).setStrokeStyle(1, 0xffffff, 0.16);
     panel.add([card, portraitBg]);
 
-    const textureKey = `enemy-${group.kind}`;
-    if (scene.textures.exists(textureKey)) {
-      const sprite = scene.add.sprite(x - 35, 1, textureKey, 0).setScale(cfg.threat === 'boss' ? 1.14 : 1.02);
-      sprite.setTint(0xffffff);
-      scene.time.delayedCall(70, () => sprite.clearTint());
-      panel.add(sprite);
-    } else if (prestigeHud) {
-      panel.add(createThreatCrest(scene, x - 35, 0, cfg.color ?? 0xffffff, threatColor, cfg.threat === 'boss'));
+    const referencePortrait = createReferenceEncounterPortrait(scene, group.kind, {
+      x: x - 35,
+      y: 0,
+      width: prestigeHud ? 32 : 30,
+      height: prestigeHud ? 32 : 30,
+      count: group.count,
+      inCombat: options.inCombat,
+      noMotion: true,
+    });
+    if (referencePortrait) {
+      panel.add(referencePortrait);
     } else {
-      panel.add(scene.add.circle(x - 34, 0, 10, cfg.color ?? 0xffffff, 1));
+      const textureKey = `enemy-${group.kind}`;
+      if (scene.textures.exists(textureKey)) {
+        const sprite = scene.add.sprite(x - 35, 1, textureKey, 0).setScale(cfg.threat === 'boss' ? 1.14 : 1.02);
+        sprite.setTint(0xffffff);
+        scene.time.delayedCall(70, () => sprite.clearTint());
+        panel.add(sprite);
+      } else if (prestigeHud) {
+        panel.add(createThreatCrest(scene, x - 35, 0, cfg.color ?? 0xffffff, threatColor, cfg.threat === 'boss'));
+      } else {
+        panel.add(scene.add.circle(x - 34, 0, 10, cfg.color ?? 0xffffff, 1));
+      }
     }
 
     const name = compactName(cfg.label);
@@ -110,13 +124,18 @@ export function showBossCutin(scene: Phaser.Scene, kind: EnemyKind, waveSummary:
   const bottomLine = scene.add.rectangle(0, 94, 650, 4, 0xfff0a3, 0.38);
   overlay.add([dim, slash, panel, topLine, bottomLine]);
 
-  const textureKey = `enemy-${kind}`;
-  if (scene.textures.exists(textureKey)) {
-    const sprite = scene.add.sprite(-255, 14, textureKey, 0).setScale(cfg.threat === 'boss' ? 4.4 : 3.6);
-    sprite.setTint(0xffffff);
-    const aura = scene.add.circle(-255, 16, 86, profile.accent, 0.16).setStrokeStyle(3, profile.accent, 0.44);
-    overlay.add([aura, sprite]);
-    scene.tweens.add({ targets: aura, scale: 1.15, alpha: 0.06, duration: 520, yoyo: true, repeat: 2 });
+  const referenceBossPortrait = createReferenceBossCutinPortrait(scene, kind, -255, 14);
+  if (referenceBossPortrait) {
+    overlay.add(referenceBossPortrait);
+  } else {
+    const textureKey = `enemy-${kind}`;
+    if (scene.textures.exists(textureKey)) {
+      const sprite = scene.add.sprite(-255, 14, textureKey, 0).setScale(cfg.threat === 'boss' ? 4.4 : 3.6);
+      sprite.setTint(0xffffff);
+      const aura = scene.add.circle(-255, 16, 86, profile.accent, 0.16).setStrokeStyle(3, profile.accent, 0.44);
+      overlay.add([aura, sprite]);
+      scene.tweens.add({ targets: aura, scale: 1.15, alpha: 0.06, duration: 520, yoyo: true, repeat: 2 });
+    }
   }
 
   const warning = scene.add.text(-10, -68, 'BOSS WAVE', {
