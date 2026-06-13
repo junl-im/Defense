@@ -1,0 +1,19 @@
+KingdomSeed v2.36.14 Massive Clarity Fallback Patch
+
+적용 방법:
+1. 기존 KingdomSeed 프로젝트 루트에 이 zip의 내용을 그대로 덮어씌웁니다.
+2. node_modules가 없다면 npm ci를 실행합니다.
+3. npm run build로 TypeScript/Vite 빌드를 확인합니다.
+
+주의:
+- 이 패치 zip에는 .git, node_modules, dist, 임시 파일이 포함되지 않습니다.
+- v2.36.13 Mobile Readability Pass 이후에 적용하는 것을 기준으로 합니다.
+
+검수 추천:
+- 기본 주소: 자동 모바일 가독성 모드 확인
+- ?largeui: 큰 UI 강제
+- ?hugeui: 초대형 UI 강제
+- ?contrastui: 고대비 확인
+- ?fallbackui: 약한 시야/약한 화면/낮은 밝기 대안 모드 확인
+- ?noscaffold: 가독성 매트 비교
+- ?tinyui 또는 ?legacyreadability: 이전 UI 비교

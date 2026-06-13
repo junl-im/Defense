@@ -217,6 +217,8 @@ import {
   installSceneReadabilityPass,
   readableFontSize,
   readableHitSize,
+  toggleHighContrastUi,
+  toggleReadableFallbackMode,
   useMobileReadableUi,
 } from "../game/MobileReadableUi";
 import { startRegisteredScene } from "./SceneRegistry";
@@ -3380,10 +3382,10 @@ export class GameScene extends Phaser.Scene {
     this.time.timeScale = 0;
     const panel = this.add.container(480, 270).setDepth(120);
     const bg = this.add
-      .rectangle(0, 0, 430, 254, 0x0b1220, 0.95)
-      .setStrokeStyle(2, 0xf7d36b, 0.5);
+      .rectangle(0, 0, 468, 318, 0x0b1220, 0.96)
+      .setStrokeStyle(2, 0xf7d36b, 0.58);
     const title = this.add
-      .text(0, -102, "PAUSED", {
+      .text(0, -132, "PAUSED", {
         fontSize: "30px",
         color: "#f7d36b",
         fontStyle: "bold",
@@ -3392,7 +3394,7 @@ export class GameScene extends Phaser.Scene {
     const desc = this.add
       .text(
         0,
-        -40,
+        -76,
         `${this.stage.title}
 속도 ${this.gameSpeed}x / Wave ${Math.max(0, this.waveIndex + 1)}/${this.stage.waves.length}`,
         {
@@ -3403,25 +3405,25 @@ export class GameScene extends Phaser.Scene {
         },
       )
       .setOrigin(0.5);
-    const quality = createQualityToggleButton(this, 0, 28);
+    const quality = createQualityToggleButton(this, 0, 6);
     const resume = this.add
-      .rectangle(-100, 74, 150, 40, 0x284f39, 1)
+      .rectangle(-100, 80, 160, 46, 0x284f39, 1)
       .setStrokeStyle(2, 0xffffff, 0.25)
       .setInteractive({ useHandCursor: true });
     const resumeText = this.add
-      .text(-115, 80, "계속하기", {
-        fontSize: "16px",
+      .text(-100, 80, "계속하기", {
+        fontSize: "18px",
         color: "#ffffff",
         fontStyle: "bold",
       })
       .setOrigin(0.5);
     const world = this.add
-      .rectangle(100, 74, 150, 40, 0x24486b, 1)
+      .rectangle(100, 80, 160, 46, 0x24486b, 1)
       .setStrokeStyle(2, 0xffffff, 0.25)
       .setInteractive({ useHandCursor: true });
     const worldText = this.add
-      .text(115, 80, "월드맵", {
-        fontSize: "16px",
+      .text(100, 80, "월드맵", {
+        fontSize: "18px",
         color: "#ffffff",
         fontStyle: "bold",
       })
@@ -3435,7 +3437,42 @@ export class GameScene extends Phaser.Scene {
         save: this.save,
       });
     });
-    panel.add([bg, title, desc, quality, resume, resumeText, world, worldText]);
+
+    const readable = this.add
+      .rectangle(-100, 132, 160, 42, 0x6b4a1f, 1)
+      .setStrokeStyle(2, 0xffffff, 0.25)
+      .setInteractive({ useHandCursor: true });
+    const readableText = this.add
+      .text(-100, 132, "큰 UI", {
+        fontSize: "17px",
+        color: "#ffffff",
+        fontStyle: "bold",
+      })
+      .setOrigin(0.5);
+    const contrast = this.add
+      .rectangle(100, 132, 160, 42, 0x3b4054, 1)
+      .setStrokeStyle(2, 0xffffff, 0.25)
+      .setInteractive({ useHandCursor: true });
+    const contrastText = this.add
+      .text(100, 132, "고대비", {
+        fontSize: "17px",
+        color: "#ffffff",
+        fontStyle: "bold",
+      })
+      .setOrigin(0.5);
+    readable.on("pointerdown", () => {
+      const mode = toggleReadableFallbackMode();
+      installSceneReadabilityPass(this, { min: 17, strokeThickness: 4 });
+      this.showMessage(mode === "normal" ? "큰 UI 모드 해제" : `큰 UI 모드: ${mode}`);
+    });
+    contrast.on("pointerdown", () => {
+      const enabled = toggleHighContrastUi();
+      installSceneReadabilityPass(this, { min: 17, strokeThickness: 4 });
+      this.showMessage(enabled ? "고대비 UI 적용" : "고대비 UI 해제");
+    });
+
+    panel.add([bg, title, desc, quality, resume, resumeText, world, worldText, readable, readableText, contrast, contrastText]);
+    improveReadableTextTree(panel, { min: 17, strokeThickness: 4 });
     this.pauseOverlay = panel;
   }
 

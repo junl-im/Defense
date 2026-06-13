@@ -152,6 +152,24 @@ function syncViewportCssVars(): void {
   root.classList.toggle("ks-compact-shell", compactShell);
 }
 
+function syncReadabilityShellClasses(info: BrowserFlags): void {
+  const query = new URLSearchParams(window.location.search);
+  const disabled = query.has("tinyui") || query.has("compactui") || query.has("legacyreadability") || query.has("toydebug");
+  const savedReadable = safeReadStorage("ksReadableUi");
+  const savedContrast = safeReadStorage("ksContrastUi");
+  const viewport = window.visualViewport;
+  const shortSide = Math.min(viewport?.width ?? window.innerWidth, viewport?.height ?? window.innerHeight);
+  const forcedLarge = query.has("largeui") || query.has("hugeui") || query.has("clarityui") || savedReadable === "large" || savedReadable === "huge";
+  const highContrast = query.has("contrastui") || query.has("highcontrast") || query.has("fallbackui") || savedContrast === "1";
+  const root = document.documentElement;
+  const shellReadable = !disabled && (info.isMobile || forcedLarge || shortSide <= 430);
+  root.classList.toggle("ks-shell-readable", shellReadable);
+  root.classList.toggle("ks-shell-large-ui", shellReadable && (forcedLarge || shortSide <= 390));
+  root.classList.toggle("ks-shell-huge-ui", !disabled && (query.has("hugeui") || savedReadable === "huge"));
+  root.classList.toggle("ks-shell-contrast-ui", !disabled && highContrast);
+  root.style.setProperty("--ks-shell-readable-scale", shellReadable ? (query.has("hugeui") || savedReadable === "huge" ? "1.28" : forcedLarge ? "1.18" : "1.10") : "1");
+}
+
 function safeShow(el: HTMLElement): void {
   el.classList.remove("hidden");
   el.classList.remove("fading");
@@ -253,6 +271,8 @@ function updateOrientationClass(): void {
   root.classList.toggle("is-mobile-webview", info.isMobile);
   root.classList.toggle("is-desktop", info.isDesktop);
   root.classList.toggle("needs-portrait-rotation", info.isMobile && !landscape);
+  syncReadabilityShellClasses(info);
+
   root.classList.toggle(
     "ks-hit-debug",
     new URLSearchParams(window.location.search).has("hit") ||
