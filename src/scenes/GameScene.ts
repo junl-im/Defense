@@ -223,6 +223,10 @@ import {
   useMobileReadableUi,
 } from "../game/MobileReadableUi";
 import { startRegisteredScene } from "./SceneRegistry";
+import {
+  installReferenceAssetPack,
+  REFERENCE_ASSET_KEYS,
+} from "../game/ReferenceAssetPack";
 
 type CastingSpell = "meteor" | "mercenary" | undefined;
 
@@ -395,6 +399,47 @@ export class GameScene extends Phaser.Scene {
 
   private isSceneLive(): boolean {
     return this.scene.isActive("GameScene") && !this.ended;
+  }
+
+
+  private installReferenceAssetRefreshHook(): void {
+    const refresh = (): void => {
+      if (!this.isSceneLive()) return;
+      this.towers.forEach((tower) => tower.refreshArt());
+      this.enemies.forEach((enemy) => enemy.refreshArt());
+      this.hero?.refreshArt();
+      this.applyReferenceSpellIcons();
+    };
+
+    this.events.on("kingdom-seed:reference-asset-pack-ready", refresh);
+    const cleanup = (): void => {
+      this.events.off("kingdom-seed:reference-asset-pack-ready", refresh);
+    };
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, cleanup);
+    this.events.once(Phaser.Scenes.Events.DESTROY, cleanup);
+  }
+
+  private applyReferenceSpellIcons(): void {
+    const entries: Array<[string, number, number]> = [
+      [REFERENCE_ASSET_KEYS.skill.fireball, 37, 503],
+      [REFERENCE_ASSET_KEYS.skill.heal, 190, 503],
+      [REFERENCE_ASSET_KEYS.skill.slash, 344, 503],
+    ];
+    entries.forEach(([key, x, y]) => {
+      if (!this.textures.exists(key)) return;
+      const name = `ks-ref-spell-${key}`;
+      const existing = this.children.getByName(name) as Phaser.GameObjects.Image | null;
+      if (existing?.active) {
+        existing.setTexture(key).setDisplaySize(34, 34).setPosition(x, y).setDepth(86.4);
+        return;
+      }
+      this.add
+        .image(x, y, key)
+        .setName(name)
+        .setDisplaySize(34, 34)
+        .setDepth(86.4)
+        .setAlpha(0.92);
+    });
   }
 
   private installCombatTextSystem(): void {
@@ -575,7 +620,13 @@ export class GameScene extends Phaser.Scene {
     // 전투 씬 진입 후 지연 복구한다. 첫 시작에는 영향을 주지 않는다.
     installBattleGraphicFallback(this, this.stage);
     installBattleDepthArtBridge(this, this.stage);
+    installReferenceAssetPack(this, {
+      phase: "battle",
+      delayMs: 680,
+      battleIdleOnly: true,
+    });
     this.installCoreCombatArtRefreshHook();
+    this.installReferenceAssetRefreshHook();
     installPremiumBattlePresentation(this, this.stage);
     installPremiumBattleComposition(this, this.stage);
     if (queuedCasualArtLoad) this.installDeferredCasualBattlefieldLayer();
@@ -3200,6 +3251,7 @@ export class GameScene extends Phaser.Scene {
       .setDepth(86);
     this.waveIntelPanel = this.add.container(746, 514).setDepth(86);
     this.refreshWavePreview();
+    this.applyReferenceSpellIcons();
     installSceneReadabilityPass(this, { min: 15, strokeThickness: 3 });
   }
 

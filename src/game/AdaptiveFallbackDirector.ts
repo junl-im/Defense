@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { setRuntimeQualityTier } from "./QualityManager";
+import { toggleSupremeDesignGrade } from "./SupremeDesignSystem";
 
 export type AdaptiveFallbackProfile = {
   enabled: boolean;
@@ -309,8 +310,8 @@ function installAdaptivePanel(scene: Phaser.Scene, profile: AdaptiveFallbackProf
 
   const panel = scene.add.container(-160, 46).setVisible(false).setName("ks-adaptive-fallback-menu");
   const bg = scene.add.graphics();
-  bg.fillStyle(0x020611, 0.94).fillRoundedRect(0, 0, 220, 228, 18);
-  bg.lineStyle(2, 0xffdf8a, 0.72).strokeRoundedRect(0, 0, 220, 228, 18);
+  bg.fillStyle(0x020611, 0.94).fillRoundedRect(0, 0, 220, 266, 18);
+  bg.lineStyle(2, 0xffdf8a, 0.72).strokeRoundedRect(0, 0, 220, 266, 18);
   bg.fillStyle(0x0c213a, 0.82).fillRoundedRect(10, 10, 200, 34, 12);
   const title = scene.add
     .text(110, 27, "화면 대안", {
@@ -323,7 +324,7 @@ function installAdaptivePanel(scene: Phaser.Scene, profile: AdaptiveFallbackProf
     })
     .setOrigin(0.5);
   const status = scene.add
-    .text(110, 210, statusText(profile), {
+    .text(110, 248, statusText(profile), {
       fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
       fontSize: "12px",
       fontStyle: "800",
@@ -347,11 +348,15 @@ function installAdaptivePanel(scene: Phaser.Scene, profile: AdaptiveFallbackProf
     toggleSafeGraphicsFallback();
     refreshPanel(scene);
   });
-  addPanelButton(scene, panel, 22, 182, 82, 30, "비상", () => {
+  addPanelButton(scene, panel, 22, 182, 176, 32, "디자인", () => {
+    toggleSupremeDesignGrade();
+    refreshPanel(scene);
+  });
+  addPanelButton(scene, panel, 22, 220, 82, 30, "비상", () => {
     enableEmergencyFallback("panel");
     refreshPanel(scene);
   }, true);
-  addPanelButton(scene, panel, 116, 182, 82, 30, "기본", () => {
+  addPanelButton(scene, panel, 116, 220, 82, 30, "기본", () => {
     clearAdaptiveFallbackOverrides();
     refreshPanel(scene);
   });

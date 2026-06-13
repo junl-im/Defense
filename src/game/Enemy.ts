@@ -387,6 +387,75 @@ export class Enemy extends Phaser.GameObjects.Container {
     return resolveEnemyTextureKey(this.scene, kind);
   }
 
+  refreshArt(): void {
+    const artKey = this.resolveEnemyArtKey(this.config.kind);
+    if (!artKey || !this.scene.textures.exists(artKey)) return;
+
+    const scale = this.config.scale ?? 1;
+    const displayHeight = enemyDisplayHeight(this.config);
+    const y = this.config.flying ? -8 : -10;
+    const previousKey = this.sprite?.texture.key;
+
+    if (!this.sprite || this.animatedSprite) {
+      this.sprite?.destroy();
+      this.sprite = this.scene.add.image(0, y, artKey);
+      this.animatedSprite = false;
+      const insertAt = Math.max(0, this.getIndex(this.hpBack));
+      this.addAt(this.sprite, insertAt);
+    } else {
+      this.sprite.setTexture(artKey).setPosition(0, y);
+    }
+
+    const casual = isCasualArtTextureKey(artKey);
+    if (casual) {
+      if (!this.artBackplate) {
+        this.artBackplate = makeStickerBackplate(
+          this.scene,
+          0,
+          this.config.flying ? -9 : -10,
+          (this.config.threat === "boss" ? 76 : 58) * scale,
+          (this.config.threat === "boss" ? 82 : 62) * scale,
+          {
+            fill: 0xffffff,
+            stroke: this.config.accentColor ?? 0x1d2230,
+            alpha: 0.84,
+            strokeAlpha: 0.24,
+          },
+        );
+        this.addAt(this.artBackplate, Math.max(0, this.getIndex(this.sprite)));
+      }
+      this.artBackplate.setVisible(true);
+      fitIsolatedIcon(this.sprite, {
+        maxWidth: (this.config.threat === "boss" ? 92 : 72) * scale,
+        maxHeight: displayHeight,
+        y,
+        minScale: 0.02,
+        maxScale: 1.25,
+      });
+    } else {
+      this.artBackplate?.setVisible(false);
+      this.sprite.setDisplaySize(
+        this.sprite.width * (displayHeight / Math.max(1, this.sprite.height)),
+        displayHeight,
+      );
+      this.sprite.setPosition(0, y);
+    }
+
+    this.bodyCircle.setAlpha(0);
+    this.prestigeFallbackObjects.forEach((object) => object.setVisible(false));
+    if (previousKey !== artKey) {
+      this.sprite.setAlpha(0);
+      this.scene.tweens.add({
+        targets: this.sprite,
+        alpha: 1,
+        duration: 260,
+        ease: "Sine.easeOut",
+      });
+    } else {
+      this.sprite.setAlpha(1);
+    }
+  }
+
   private playHitReaction(damageType: "physical" | "magic" | "true"): void {
     const hitTint =
       damageType === "magic"

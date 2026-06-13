@@ -19,6 +19,7 @@ import { startRegisteredScene, warmRegisteredScenes, type RegisteredSceneKey } f
 import type { PlayerSave } from "../services/localSave";
 import { installSceneReadabilityPass, readableFontSize, readableHitSize } from "../game/MobileReadableUi";
 import { installSceneGraphicFallback } from "../game/PrestigeGraphicFallback";
+import { installReferenceAssetPack } from "../game/ReferenceAssetPack";
 
 type HotspotTone = "gold" | "blue" | "white" | "red" | "green";
 
@@ -80,6 +81,7 @@ export class MainMenuScene extends Phaser.Scene {
     if (allowPremiumStaticArt("lobby")) this.installPremiumStaticLobbyArt();
     this.installProgressiveLobbyArt();
     this.createLobbyTextOverlay();
+    installReferenceAssetPack(this, { phase: "lobby", delayMs: 1350 });
     this.createV26ExpansionShelf();
     this.createPremiumHitZones();
     this.createSmallStatusToast();

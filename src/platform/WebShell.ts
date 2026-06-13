@@ -132,6 +132,27 @@ function syncAdaptiveFallbackShellClasses(info: BrowserFlags): void {
   root.style.setProperty("--ks-adaptive-fallback-alpha", contrast || emergency ? ".94" : ".78");
 }
 
+
+function syncSupremeDesignShellClasses(info: BrowserFlags): void {
+  const query = new URLSearchParams(window.location.search);
+  const disabled = query.has("nodesignsystem") || query.has("nosupremedesign") || query.has("legacydesign") || query.has("plainui") || query.has("toydebug");
+  const savedDesign = safeReadStorage("ksSupremeDesign");
+  const savedEmergency = safeReadStorage("ksEmergencyFallback") === "1";
+  const safeDesign = !disabled && (savedEmergency || query.has("safedesign") || query.has("essentialdesign") || safeReadStorage("ksSafeGfx") === "1");
+  const accessibleDesign = !disabled && (query.has("accessibledesign") || query.has("readabledesign") || query.has("contrastdesign") || safeReadStorage("ksContrastUi") === "1" || savedDesign === "accessible");
+  const supremeDesign = !disabled && (query.has("supremedesign") || query.has("prestigedesign") || query.has("premiumdesign") || savedDesign === "supreme" || (!safeDesign && !accessibleDesign));
+  const root = document.documentElement;
+  root.classList.toggle("ks-supreme-design", !disabled);
+  root.classList.toggle("ks-supreme-design-rich", supremeDesign);
+  root.classList.toggle("ks-supreme-design-essential", safeDesign || savedDesign === "essential");
+  root.classList.toggle("ks-supreme-design-accessible", accessibleDesign);
+  root.classList.toggle("ks-supreme-design-safe", safeDesign);
+  root.classList.toggle("ks-supreme-design-contrast", accessibleDesign || query.has("highcontrast") || query.has("contrastui"));
+  root.style.setProperty("--ks-supreme-design-alpha", accessibleDesign ? "1.12" : safeDesign ? ".82" : "1");
+  root.style.setProperty("--ks-supreme-design-density", safeDesign ? ".68" : accessibleDesign ? ".90" : "1");
+  root.classList.toggle("ks-supreme-design-mobile", info.isMobile);
+}
+
 function syncViewportCssVars(): void {
   const viewport = window.visualViewport;
   const width = Math.max(1, Math.round(viewport?.width ?? window.innerWidth));
@@ -300,6 +321,7 @@ function updateOrientationClass(): void {
   root.classList.toggle("needs-portrait-rotation", info.isMobile && !landscape);
   syncReadabilityShellClasses(info);
   syncAdaptiveFallbackShellClasses(info);
+  syncSupremeDesignShellClasses(info);
 
   root.classList.toggle(
     "ks-hit-debug",

@@ -21,6 +21,7 @@ import { startRegisteredScene, warmRegisteredScenes, type RegisteredSceneKey } f
 import { installSceneReadabilityPass, readableFontSize, readableHitSize } from "../game/MobileReadableUi";
 import type { PlayerSave } from "../services/localSave";
 import { installSceneGraphicFallback } from "../game/PrestigeGraphicFallback";
+import { installReferenceAssetPack } from "../game/ReferenceAssetPack";
 
 type HotspotTone = "gold" | "blue" | "white" | "red" | "green";
 
@@ -105,6 +106,7 @@ export class WorldMapScene extends Phaser.Scene {
     if (allowPremiumStaticArt("world")) this.installPremiumStaticWorldArt();
     this.installProgressiveWorldArt();
     addWorldIntelPlate(this);
+    installReferenceAssetPack(this, { phase: "world", delayMs: 1150 });
     addStaticSignalSweep(this, 818, 299, 190, 24.4);
     this.createStagePreviewLayer();
     this.createStageNodeHotspots();

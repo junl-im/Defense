@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import { isMobileRuntime, mobileUiScale } from "./PerformanceMode";
 import { applyAdaptiveFallbackRootClasses, installAdaptiveFallbackDirector } from "./AdaptiveFallbackDirector";
 import { installAdaptiveRescueOrchestrator } from "./AdaptiveRescueOrchestrator";
+import { installSupremeDesignSystemScene } from "./SupremeDesignSystem";
 
 export const MOBILE_READABLE_FONT =
   "Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif";
@@ -257,6 +258,7 @@ export function installSceneReadabilityPass(
   options: { min?: number; max?: number; stroke?: string; strokeThickness?: number; shadowBlur?: number; delayMs?: number } = {},
 ): void {
   applyAdaptiveFallbackRootClasses();
+  installSupremeDesignSystemScene(scene);
   installAdaptiveFallbackDirector(scene);
   installAdaptiveRescueOrchestrator(scene);
   const profile = getMobileReadabilityProfile();

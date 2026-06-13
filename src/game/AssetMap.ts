@@ -1,6 +1,12 @@
 import Phaser from "phaser";
 import type { EnemyKind, TowerKind } from "./types";
 import { allowPreviewBattlefieldArt, useIconMockBattleArt } from "./BattleArtMode";
+import {
+  resolveReferenceEnemyTextureKey,
+  resolveReferenceHeroTextureKey,
+  resolveReferenceTowerTextureKey,
+} from "./ReferenceAssetPack";
+import { getSelectedHero } from "./HeroLoadout";
 
 /**
  * v2.35.8 Casual Art Asset Map
@@ -227,6 +233,8 @@ export function resolveTowerTextureKey(
   const masteryKey = mastery ? `tower-${kind}-${mastery}` : undefined;
   const levelKey = `tower-${kind}-lv${level}`;
   const baseKey = `tower-${kind}`;
+  const referenceKey = resolveReferenceTowerTextureKey(scene, kind, mastery);
+  if (referenceKey) return referenceKey;
   const premiumKey = firstExistingTexture(scene, [masteryKey, levelKey, baseKey]);
   if (premiumKey) return premiumKey;
   return useIconMockBattleArt()
@@ -242,6 +250,8 @@ export function resolveEnemyTextureKey(
   const familyArtKey = family ? `v1-enemy-art-${family}` : undefined;
   // 주의: enemy-${kind}는 대부분 spritesheet이므로 여기서 반환하지 않는다.
   // Enemy.ts의 기존 애니메이션 fallback이 spritesheet를 처리한다.
+  const referenceKey = resolveReferenceEnemyTextureKey(scene, kind);
+  if (referenceKey) return referenceKey;
   const premiumKey = firstExistingTexture(scene, [familyArtKey]);
   if (premiumKey) return premiumKey;
   return useIconMockBattleArt()
@@ -250,6 +260,8 @@ export function resolveEnemyTextureKey(
 }
 
 export function resolveHeroTextureKey(scene: Phaser.Scene): string | undefined {
+  const referenceKey = resolveReferenceHeroTextureKey(scene, getSelectedHero().id);
+  if (referenceKey) return referenceKey;
   const premiumKey = firstExistingTexture(scene, [
     "v1-hero-art-knight",
     "hero-knight",

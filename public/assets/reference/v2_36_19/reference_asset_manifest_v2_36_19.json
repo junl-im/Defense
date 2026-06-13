@@ -1,0 +1,441 @@
+{
+  "version": "2.36.19",
+  "pack": "user_reference_no_text",
+  "sourceImageSha256": "f13c3b1863c65cc9072aab37cede93174c786139abcaa9efbe54dc946362df60",
+  "sourceImageSize": [
+    1536,
+    1024
+  ],
+  "notes": [
+    "Crops are manually selected from the supplied UI concept sheet.",
+    "Text-bearing labels/buttons were excluded from runtime assets.",
+    "Runtime should load this pack only after first scene/battle is already playable."
+  ],
+  "assets": [
+    {
+      "key": "ks23619-tower-tower_archer",
+      "category": "tower",
+      "path": "assets/reference/v2_36_19/no_text/tower_archer_no_text.png",
+      "webp": "assets/reference/v2_36_19/no_text/tower_archer_no_text.webp",
+      "sourceCrop": [
+        830,
+        458,
+        930,
+        542
+      ],
+      "textPolicy": "manual no-text crop; labels and Korean/English UI strings excluded",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "key": "ks23619-tower-tower_mage",
+      "category": "tower",
+      "path": "assets/reference/v2_36_19/no_text/tower_mage_no_text.png",
+      "webp": "assets/reference/v2_36_19/no_text/tower_mage_no_text.webp",
+      "sourceCrop": [
+        942,
+        458,
+        1043,
+        542
+      ],
+      "textPolicy": "manual no-text crop; labels and Korean/English UI strings excluded",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "key": "ks23619-tower-tower_artillery",
+      "category": "tower",
+      "path": "assets/reference/v2_36_19/no_text/tower_artillery_no_text.png",
+      "webp": "assets/reference/v2_36_19/no_text/tower_artillery_no_text.webp",
+      "sourceCrop": [
+        1048,
+        449,
+        1155,
+        542
+      ],
+      "textPolicy": "manual no-text crop; labels and Korean/English UI strings excluded",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "key": "ks23619-tower-tower_frost",
+      "category": "tower",
+      "path": "assets/reference/v2_36_19/no_text/tower_frost_no_text.png",
+      "webp": "assets/reference/v2_36_19/no_text/tower_frost_no_text.webp",
+      "sourceCrop": [
+        1158,
+        458,
+        1260,
+        542
+      ],
+      "textPolicy": "manual no-text crop; labels and Korean/English UI strings excluded",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "key": "ks23619-tower-tower_holy",
+      "category": "tower",
+      "path": "assets/reference/v2_36_19/no_text/tower_holy_no_text.png",
+      "webp": "assets/reference/v2_36_19/no_text/tower_holy_no_text.webp",
+      "sourceCrop": [
+        1266,
+        452,
+        1376,
+        542
+      ],
+      "textPolicy": "manual no-text crop; labels and Korean/English UI strings excluded",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "key": "ks23619-tower-tower_poison",
+      "category": "tower",
+      "path": "assets/reference/v2_36_19/no_text/tower_poison_no_text.png",
+      "webp": "assets/reference/v2_36_19/no_text/tower_poison_no_text.webp",
+      "sourceCrop": [
+        1382,
+        456,
+        1482,
+        542
+      ],
+      "textPolicy": "manual no-text crop; labels and Korean/English UI strings excluded",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "key": "ks23619-enemy-enemy_goblin",
+      "category": "enemy",
+      "path": "assets/reference/v2_36_19/no_text/enemy_goblin_no_text.png",
+      "webp": "assets/reference/v2_36_19/no_text/enemy_goblin_no_text.webp",
+      "sourceCrop": [
+        836,
+        604,
+        905,
+        670
+      ],
+      "textPolicy": "manual no-text crop; labels and Korean/English UI strings excluded",
+      "size": [
+        112,
+        112
+      ]
+    },
+    {
+      "key": "ks23619-enemy-enemy_orc",
+      "category": "enemy",
+      "path": "assets/reference/v2_36_19/no_text/enemy_orc_no_text.png",
+      "webp": "assets/reference/v2_36_19/no_text/enemy_orc_no_text.webp",
+      "sourceCrop": [
+        922,
+        592,
+        1002,
+        670
+      ],
+      "textPolicy": "manual no-text crop; labels and Korean/English UI strings excluded",
+      "size": [
+        112,
+        112
+      ]
+    },
+    {
+      "key": "ks23619-enemy-enemy_wolf",
+      "category": "enemy",
+      "path": "assets/reference/v2_36_19/no_text/enemy_wolf_no_text.png",
+      "webp": "assets/reference/v2_36_19/no_text/enemy_wolf_no_text.webp",
+      "sourceCrop": [
+        1022,
+        600,
+        1090,
+        671
+      ],
+      "textPolicy": "manual no-text crop; labels and Korean/English UI strings excluded",
+      "size": [
+        112,
+        112
+      ]
+    },
+    {
+      "key": "ks23619-enemy-enemy_goblin_bomber",
+      "category": "enemy",
+      "path": "assets/reference/v2_36_19/no_text/enemy_goblin_bomber_no_text.png",
+      "webp": "assets/reference/v2_36_19/no_text/enemy_goblin_bomber_no_text.webp",
+      "sourceCrop": [
+        1104,
+        600,
+        1162,
+        671
+      ],
+      "textPolicy": "manual no-text crop; labels and Korean/English UI strings excluded",
+      "size": [
+        112,
+        112
+      ]
+    },
+    {
+      "key": "ks23619-enemy-enemy_skeleton",
+      "category": "enemy",
+      "path": "assets/reference/v2_36_19/no_text/enemy_skeleton_no_text.png",
+      "webp": "assets/reference/v2_36_19/no_text/enemy_skeleton_no_text.webp",
+      "sourceCrop": [
+        1188,
+        599,
+        1238,
+        672
+      ],
+      "textPolicy": "manual no-text crop; labels and Korean/English UI strings excluded",
+      "size": [
+        112,
+        112
+      ]
+    },
+    {
+      "key": "ks23619-enemy-enemy_mage",
+      "category": "enemy",
+      "path": "assets/reference/v2_36_19/no_text/enemy_mage_no_text.png",
+      "webp": "assets/reference/v2_36_19/no_text/enemy_mage_no_text.webp",
+      "sourceCrop": [
+        1254,
+        598,
+        1308,
+        672
+      ],
+      "textPolicy": "manual no-text crop; labels and Korean/English UI strings excluded",
+      "size": [
+        112,
+        112
+      ]
+    },
+    {
+      "key": "ks23619-enemy-enemy_demon",
+      "category": "enemy",
+      "path": "assets/reference/v2_36_19/no_text/enemy_demon_no_text.png",
+      "webp": "assets/reference/v2_36_19/no_text/enemy_demon_no_text.webp",
+      "sourceCrop": [
+        1332,
+        592,
+        1398,
+        672
+      ],
+      "textPolicy": "manual no-text crop; labels and Korean/English UI strings excluded",
+      "size": [
+        112,
+        112
+      ]
+    },
+    {
+      "key": "ks23619-enemy-enemy_dragon",
+      "category": "enemy",
+      "path": "assets/reference/v2_36_19/no_text/enemy_dragon_no_text.png",
+      "webp": "assets/reference/v2_36_19/no_text/enemy_dragon_no_text.webp",
+      "sourceCrop": [
+        1420,
+        580,
+        1528,
+        674
+      ],
+      "textPolicy": "manual no-text crop; labels and Korean/English UI strings excluded",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "key": "ks23619-hero-hero_warrior",
+      "category": "hero",
+      "path": "assets/reference/v2_36_19/no_text/hero_warrior_no_text.png",
+      "webp": "assets/reference/v2_36_19/no_text/hero_warrior_no_text.webp",
+      "sourceCrop": [
+        12,
+        710,
+        96,
+        836
+      ],
+      "textPolicy": "manual no-text crop; labels and Korean/English UI strings excluded",
+      "size": [
+        160,
+        160
+      ]
+    },
+    {
+      "key": "ks23619-hero-hero_princess_archer",
+      "category": "hero",
+      "path": "assets/reference/v2_36_19/no_text/hero_princess_archer_no_text.png",
+      "webp": "assets/reference/v2_36_19/no_text/hero_princess_archer_no_text.webp",
+      "sourceCrop": [
+        96,
+        710,
+        180,
+        836
+      ],
+      "textPolicy": "manual no-text crop; labels and Korean/English UI strings excluded",
+      "size": [
+        160,
+        160
+      ]
+    },
+    {
+      "key": "ks23619-hero-hero_ice_mage",
+      "category": "hero",
+      "path": "assets/reference/v2_36_19/no_text/hero_ice_mage_no_text.png",
+      "webp": "assets/reference/v2_36_19/no_text/hero_ice_mage_no_text.webp",
+      "sourceCrop": [
+        178,
+        710,
+        256,
+        836
+      ],
+      "textPolicy": "manual no-text crop; labels and Korean/English UI strings excluded",
+      "size": [
+        160,
+        160
+      ]
+    },
+    {
+      "key": "ks23619-hero-hero_paladin",
+      "category": "hero",
+      "path": "assets/reference/v2_36_19/no_text/hero_paladin_no_text.png",
+      "webp": "assets/reference/v2_36_19/no_text/hero_paladin_no_text.webp",
+      "sourceCrop": [
+        250,
+        704,
+        342,
+        836
+      ],
+      "textPolicy": "manual no-text crop; labels and Korean/English UI strings excluded",
+      "size": [
+        160,
+        160
+      ]
+    },
+    {
+      "key": "ks23619-hero-hero_druid",
+      "category": "hero",
+      "path": "assets/reference/v2_36_19/no_text/hero_druid_no_text.png",
+      "webp": "assets/reference/v2_36_19/no_text/hero_druid_no_text.webp",
+      "sourceCrop": [
+        340,
+        712,
+        420,
+        836
+      ],
+      "textPolicy": "manual no-text crop; labels and Korean/English UI strings excluded",
+      "size": [
+        160,
+        160
+      ]
+    },
+    {
+      "key": "ks23619-skill-skill_fireball",
+      "category": "skill",
+      "path": "assets/reference/v2_36_19/no_text/skill_fireball_no_text.png",
+      "webp": "assets/reference/v2_36_19/no_text/skill_fireball_no_text.webp",
+      "sourceCrop": [
+        427,
+        720,
+        497,
+        790
+      ],
+      "textPolicy": "manual no-text crop; labels and Korean/English UI strings excluded",
+      "size": [
+        96,
+        96
+      ]
+    },
+    {
+      "key": "ks23619-skill-skill_icebolt",
+      "category": "skill",
+      "path": "assets/reference/v2_36_19/no_text/skill_icebolt_no_text.png",
+      "webp": "assets/reference/v2_36_19/no_text/skill_icebolt_no_text.webp",
+      "sourceCrop": [
+        505,
+        720,
+        575,
+        790
+      ],
+      "textPolicy": "manual no-text crop; labels and Korean/English UI strings excluded",
+      "size": [
+        96,
+        96
+      ]
+    },
+    {
+      "key": "ks23619-skill-skill_lightning",
+      "category": "skill",
+      "path": "assets/reference/v2_36_19/no_text/skill_lightning_no_text.png",
+      "webp": "assets/reference/v2_36_19/no_text/skill_lightning_no_text.webp",
+      "sourceCrop": [
+        563,
+        720,
+        633,
+        790
+      ],
+      "textPolicy": "manual no-text crop; labels and Korean/English UI strings excluded",
+      "size": [
+        96,
+        96
+      ]
+    },
+    {
+      "key": "ks23619-skill-skill_heal",
+      "category": "skill",
+      "path": "assets/reference/v2_36_19/no_text/skill_heal_no_text.png",
+      "webp": "assets/reference/v2_36_19/no_text/skill_heal_no_text.webp",
+      "sourceCrop": [
+        638,
+        720,
+        708,
+        790
+      ],
+      "textPolicy": "manual no-text crop; labels and Korean/English UI strings excluded",
+      "size": [
+        96,
+        96
+      ]
+    },
+    {
+      "key": "ks23619-skill-skill_slash",
+      "category": "skill",
+      "path": "assets/reference/v2_36_19/no_text/skill_slash_no_text.png",
+      "webp": "assets/reference/v2_36_19/no_text/skill_slash_no_text.webp",
+      "sourceCrop": [
+        700,
+        720,
+        770,
+        790
+      ],
+      "textPolicy": "manual no-text crop; labels and Korean/English UI strings excluded",
+      "size": [
+        96,
+        96
+      ]
+    },
+    {
+      "key": "ks23619-skill-skill_time_stop",
+      "category": "skill",
+      "path": "assets/reference/v2_36_19/no_text/skill_time_stop_no_text.png",
+      "webp": "assets/reference/v2_36_19/no_text/skill_time_stop_no_text.webp",
+      "sourceCrop": [
+        765,
+        720,
+        835,
+        790
+      ],
+      "textPolicy": "manual no-text crop; labels and Korean/English UI strings excluded",
+      "size": [
+        96,
+        96
+      ]
+    }
+  ]
+}

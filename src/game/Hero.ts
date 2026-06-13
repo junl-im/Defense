@@ -277,6 +277,67 @@ export class Hero extends Phaser.GameObjects.Container {
     );
   }
 
+
+  refreshArt(): void {
+    const heroTextureKey = resolveHeroTextureKey(this.scene);
+    if (!heroTextureKey || !this.scene.textures.exists(heroTextureKey)) return;
+    const previousKey = this.sprite?.texture.key;
+
+    if (!this.sprite || this.animatedSprite || heroTextureKey !== "hero-knight") {
+      if (!this.sprite || this.animatedSprite) {
+        this.sprite?.destroy();
+        this.sprite = this.scene.add.image(0, -7, heroTextureKey);
+        this.animatedSprite = false;
+        this.add(this.sprite);
+      } else {
+        this.sprite.setTexture(heroTextureKey).setPosition(0, -7);
+      }
+    }
+
+    if (!this.sprite) return;
+    const casual = isCasualArtTextureKey(heroTextureKey);
+    if (casual) {
+      if (!this.artBackplate) {
+        this.artBackplate = makeStickerBackplate(this.scene, 0, -8, 48, 58, {
+          fill: 0xfff8e8,
+          stroke: 0x5f4630,
+          alpha: 0.82,
+          strokeAlpha: 0.24,
+        });
+        this.addAt(this.artBackplate, Math.max(0, this.getIndex(this.sprite)));
+      }
+      this.artBackplate.setVisible(true);
+      fitIsolatedIcon(this.sprite, {
+        maxWidth: 58,
+        maxHeight: heroDisplayHeight(),
+        y: heroTextureKey === CASUAL_ART_KEYS.heroSeedKnight ? -9 : -7,
+        minScale: 0.02,
+        maxScale: 1.1,
+      });
+    } else {
+      this.artBackplate?.setVisible(false);
+      this.sprite.setDisplaySize(
+        this.sprite.width * (heroDisplayHeight() / Math.max(1, this.sprite.height)),
+        heroDisplayHeight(),
+      );
+      this.sprite.setPosition(0, -7);
+    }
+
+    this.bodyCircle.setAlpha(0);
+    this.prestigeFallbackObjects.forEach((object) => object.setVisible(false));
+    if (previousKey !== heroTextureKey) {
+      this.sprite.setAlpha(0);
+      this.scene.tweens.add({
+        targets: this.sprite,
+        alpha: 1,
+        duration: 260,
+        ease: "Sine.easeOut",
+      });
+    } else {
+      this.sprite.setAlpha(1);
+    }
+  }
+
   private playMotion(motion: "idle" | "move"): void {
     if (!this.sprite || this.currentMotion === "attack") return;
     if (this.currentMotion === motion) return;
