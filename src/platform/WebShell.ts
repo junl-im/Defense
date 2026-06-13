@@ -153,6 +153,24 @@ function syncSupremeDesignShellClasses(info: BrowserFlags): void {
   root.classList.toggle("ks-supreme-design-mobile", info.isMobile);
 }
 
+function syncDefenseUiFocusShellClasses(info: BrowserFlags): void {
+  const query = new URLSearchParams(window.location.search);
+  const disabled = query.has("nouifocus") || query.has("nodeclutter") || query.has("legacyclutter") || query.has("toydebug");
+  const saved = safeReadStorage("ksDefenseUiFocus");
+  const forcedClean = query.has("cleanui") || query.has("defenseui") || query.has("uireset") || query.has("declutterui");
+  const forcedFocus = query.has("focusui") || query.has("battlefocus") || query.has("onehandui");
+  const forcedEssential = query.has("essentialui") || query.has("simpleui") || query.has("minimalui") || query.has("lowclutter");
+  const legacy = disabled || query.has("maximalui") || query.has("fullhud") || saved === "legacy";
+  const root = document.documentElement;
+  const enabled = !legacy && (info.isMobile || forcedClean || forcedFocus || forcedEssential || saved === "focus" || saved === "essential" || saved === "clean");
+  root.classList.toggle("ks-defense-ui-focus", enabled);
+  root.classList.toggle("ks-defense-ui-clean", enabled && !forcedFocus && !forcedEssential && saved !== "focus" && saved !== "essential");
+  root.classList.toggle("ks-defense-ui-focus-mode", enabled && (forcedFocus || saved === "focus"));
+  root.classList.toggle("ks-defense-ui-essential", enabled && (forcedEssential || saved === "essential"));
+  root.classList.toggle("ks-defense-ui-legacy", !enabled);
+  root.style.setProperty("--ks-defense-ui-decor-alpha", forcedEssential || saved === "essential" ? ".42" : forcedFocus || saved === "focus" ? ".58" : ".70");
+}
+
 function syncViewportCssVars(): void {
   const viewport = window.visualViewport;
   const width = Math.max(1, Math.round(viewport?.width ?? window.innerWidth));
@@ -322,6 +340,7 @@ function updateOrientationClass(): void {
   syncReadabilityShellClasses(info);
   syncAdaptiveFallbackShellClasses(info);
   syncSupremeDesignShellClasses(info);
+  syncDefenseUiFocusShellClasses(info);
 
   root.classList.toggle(
     "ks-hit-debug",

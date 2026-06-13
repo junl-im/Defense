@@ -1374,3 +1374,39 @@ html.ks-supreme-design-mobile .shell-start-card,
 html.ks-supreme-design-mobile .shell-panel {
   width: min(450px, 94vw) !important;
 }
+
+/* v2.36.25 defense UI hierarchy reset */
+html.ks-defense-ui-focus canvas {
+  filter: saturate(1.02) contrast(1.03);
+}
+html.ks-defense-ui-clean .shell-start-card,
+html.ks-defense-ui-focus-mode .shell-start-card,
+html.ks-defense-ui-essential .shell-start-card {
+  max-width: min(520px, 90vw);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(12, 24, 43, .96), rgba(4, 8, 16, .98));
+  color: #fff1c4;
+  border-color: rgba(255, 218, 123, .68);
+  box-shadow: 0 24px 72px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.11);
+}
+html.ks-defense-ui-clean .shell-start-card h1,
+html.ks-defense-ui-focus-mode .shell-start-card h1,
+html.ks-defense-ui-essential .shell-start-card h1 {
+  color: #fff2c8;
+  text-shadow: 0 2px 0 #000, 0 0 18px rgba(255, 218, 123, .26);
+}
+html.ks-defense-ui-clean .shell-start-card p,
+html.ks-defense-ui-focus-mode .shell-start-card p,
+html.ks-defense-ui-essential .shell-start-card p {
+  color: #d3dfef;
+}
+html.ks-defense-ui-essential canvas {
+  filter: none !important;
+}
+html.ks-defense-ui-essential *,
+html.ks-defense-ui-essential *::before,
+html.ks-defense-ui-essential *::after {
+  transition-duration: 0ms !important;
+  animation-duration: 0ms !important;
+}

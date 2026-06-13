@@ -222,6 +222,7 @@ import {
   toggleReadableFallbackMode,
   useMobileReadableUi,
 } from "../game/MobileReadableUi";
+import { installBattleSecondaryUiFocus, markSecondaryUi } from "../game/DefenseUiFocusSystem";
 import { startRegisteredScene } from "./SceneRegistry";
 import {
   installReferenceAssetPack,
@@ -289,6 +290,7 @@ export class GameScene extends Phaser.Scene {
   private runModifierText?: Phaser.GameObjects.Text;
   private synergyText?: Phaser.GameObjects.Text;
   private commandAuraLabel = "기본";
+  private battleSecondaryUi: Phaser.GameObjects.GameObject[] = [];
 
   goldText!: Phaser.GameObjects.Text;
   livesText!: Phaser.GameObjects.Text;
@@ -673,6 +675,7 @@ export class GameScene extends Phaser.Scene {
     this.createTacticalOrderHud();
     this.createBattleContractHud();
     this.createV29CombatAdvisorHud();
+    this.installBattleUiFocus();
     this.createUiInputGuards();
     this.installCombatTextSystem();
     this.installSceneCleanup();
@@ -1454,6 +1457,31 @@ export class GameScene extends Phaser.Scene {
     this.refreshHud();
   }
 
+  private rememberBattleSecondaryUi<T extends Phaser.GameObjects.GameObject>(item: T): T {
+    return markSecondaryUi(item, this.battleSecondaryUi);
+  }
+
+  private installBattleUiFocus(): void {
+    installBattleSecondaryUiFocus(this, this.battleSecondaryUi, {
+      x: 612,
+      y: 74,
+      label: "정보",
+      summary: () => {
+        const contract = this.battleContractState.contracts
+          .map((c) => `${c.completed ? "완료" : c.failed ? "실패" : "진행"} ${c.progress}/${c.goal}`)
+          .join(" · ");
+        const order = tacticalOrderSummary(this.tacticalOrderState);
+        const affix = enemyAffixHudLineV29(this.activeEnemyAffix);
+        return [order, affix, contract].filter(Boolean).join(" / ");
+      },
+    });
+    const summaryHandler = (text: string): void => this.showMessage(text);
+    this.events.on("kingdom-seed:ui-focus-summary", summaryHandler);
+    const cleanup = (): void => { this.events.off("kingdom-seed:ui-focus-summary", summaryHandler); };
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, cleanup);
+    this.events.once(Phaser.Scenes.Events.DESTROY, cleanup);
+  }
+
   private createRunModifierHud(): void {
     if (this.runModifiers.length === 0) return;
     const width = 160;
@@ -1461,18 +1489,18 @@ export class GameScene extends Phaser.Scene {
     this.runModifiers.slice(0, 2).forEach((modifier, index) => {
       const x = startX + index * 168;
       if (this.textures.exists("v2-season-chip")) {
-        this.add
+        this.rememberBattleSecondaryUi(this.add
           .image(x, 68, "v2-season-chip")
           .setDisplaySize(width, 36)
           .setDepth(81)
-          .setAlpha(0.92);
+          .setAlpha(0.92));
       } else {
-        this.add
+        this.rememberBattleSecondaryUi(this.add
           .rectangle(x, 68, width, 34, 0x071c3e, 0.68)
           .setDepth(81)
-          .setStrokeStyle(1, runModifierColor(modifier.tone), 0.55);
+          .setStrokeStyle(1, runModifierColor(modifier.tone), 0.55));
       }
-      this.add
+      this.rememberBattleSecondaryUi(this.add
         .text(x - 64, 68, modifier.shortLabel, {
           fontSize: "13px",
           color: "#fff7d6",
@@ -1482,8 +1510,8 @@ export class GameScene extends Phaser.Scene {
           strokeThickness: 2,
         })
         .setOrigin(0, 0.5)
-        .setDepth(82);
-      this.add
+        .setDepth(82));
+      this.rememberBattleSecondaryUi(this.add
         .text(x - 4, 68, modifier.label, {
           fontSize: "13px",
           color: "#dff4ff",
@@ -1492,9 +1520,9 @@ export class GameScene extends Phaser.Scene {
           fixedWidth: 94,
         })
         .setOrigin(0, 0.5)
-        .setDepth(82);
+        .setDepth(82));
     });
-    this.runModifierText = this.add
+    this.runModifierText = this.rememberBattleSecondaryUi(this.add
       .text(480, 91, "", {
         fontSize: "13px",
         color: "#eaffff",
@@ -1514,7 +1542,7 @@ export class GameScene extends Phaser.Scene {
       })
       .setOrigin(0.5)
       .setDepth(82)
-      .setAlpha(0.0);
+      .setAlpha(0.0));
     this.runModifierText.setText(runModifierSummary(this.runModifiers));
     this.tweens.add({
       targets: this.runModifierText,
@@ -1527,18 +1555,18 @@ export class GameScene extends Phaser.Scene {
     });
 
     if (this.textures.exists("v2-synergy-panel")) {
-      this.add
+      this.rememberBattleSecondaryUi(this.add
         .image(182, 68, "v2-synergy-panel")
         .setDisplaySize(250, 42)
         .setDepth(81)
-        .setAlpha(0.86);
+        .setAlpha(0.86));
     } else {
-      this.add
+      this.rememberBattleSecondaryUi(this.add
         .rectangle(182, 68, 250, 40, 0x082a36, 0.68)
         .setDepth(81)
-        .setStrokeStyle(1, 0x8be878, 0.44);
+        .setStrokeStyle(1, 0x8be878, 0.44));
     }
-    this.synergyText = this.add
+    this.synergyText = this.rememberBattleSecondaryUi(this.add
       .text(182, 68, "시너지: 타워 조합 대기", {
         fontSize: "13px",
         color: "#eafff2",
@@ -1550,7 +1578,7 @@ export class GameScene extends Phaser.Scene {
         strokeThickness: 2,
       })
       .setOrigin(0.5)
-      .setDepth(82);
+      .setDepth(82));
     this.refreshArmySynergy();
   }
 
@@ -1619,18 +1647,18 @@ export class GameScene extends Phaser.Scene {
       ? "v2-affix-chip-v29"
       : undefined;
     if (bgKey)
-      this.add
+      this.rememberBattleSecondaryUi(this.add
         .image(472, 104, bgKey)
         .setDisplaySize(330, 34)
         .setDepth(81)
-        .setAlpha(0.82);
+        .setAlpha(0.82));
     else
-      this.add
+      this.rememberBattleSecondaryUi(this.add
         .rectangle(472, 104, 330, 32, 0x07101e, 0.62)
         .setDepth(81)
-        .setStrokeStyle(1, 0x8fdcff, 0.38);
+        .setStrokeStyle(1, 0x8fdcff, 0.38));
 
-    this.enemyAffixText = this.add
+    this.enemyAffixText = this.rememberBattleSecondaryUi(this.add
       .text(472, 99, enemyAffixHudLineV29(this.activeEnemyAffix), {
         fontSize: "13px",
         color: "#eaf6ff",
@@ -1642,9 +1670,9 @@ export class GameScene extends Phaser.Scene {
         strokeThickness: 2,
       })
       .setOrigin(0.5)
-      .setDepth(82);
+      .setDepth(82));
 
-    this.combatAdvisorText = this.add
+    this.combatAdvisorText = this.rememberBattleSecondaryUi(this.add
       .text(472, 112, "다음 공세 분석 대기", {
         fontSize: "15px",
         color: "#fff4c2",
@@ -1656,7 +1684,7 @@ export class GameScene extends Phaser.Scene {
         strokeThickness: 2,
       })
       .setOrigin(0.5)
-      .setDepth(82);
+      .setDepth(82));
     this.refreshV29AdvisorForNextWave();
   }
 
@@ -1719,19 +1747,19 @@ export class GameScene extends Phaser.Scene {
 
   private createTacticalOrderHud(): void {
     const bg = this.textures.exists("v2-command-scroll-v27")
-      ? this.add
+      ? this.rememberBattleSecondaryUi(this.add
           .image(778, 68, "v2-command-scroll-v27")
           .setDisplaySize(254, 42)
           .setDepth(81)
-          .setAlpha(0.9)
-      : this.add
+          .setAlpha(0.9))
+      : this.rememberBattleSecondaryUi(this.add
           .rectangle(778, 68, 254, 38, 0x07101e, 0.7)
           .setStrokeStyle(1, 0xffd56c, 0.42)
-          .setDepth(81);
+          .setDepth(81));
     bg.setInteractive({ useHandCursor: true }).on("pointerdown", () =>
       this.showTacticalOrderDraft("manual"),
     );
-    this.tacticalOrderHudText = this.add
+    this.tacticalOrderHudText = this.rememberBattleSecondaryUi(this.add
       .text(778, 68, tacticalOrderSummary(this.tacticalOrderState), {
         fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
         fontSize: "13px",
@@ -1743,7 +1771,7 @@ export class GameScene extends Phaser.Scene {
         strokeThickness: 2,
       })
       .setOrigin(0.5)
-      .setDepth(82);
+      .setDepth(82));
   }
 
   private refreshTacticalOrderHud(): void {
@@ -1754,19 +1782,19 @@ export class GameScene extends Phaser.Scene {
 
   private createBattleContractHud(): void {
     const bg = this.textures.exists("v2-contract-chip")
-      ? this.add
+      ? this.rememberBattleSecondaryUi(this.add
           .image(182, 108, "v2-contract-chip")
           .setDisplaySize(254, 44)
           .setDepth(81)
-          .setAlpha(0.92)
-      : this.add
+          .setAlpha(0.92))
+      : this.rememberBattleSecondaryUi(this.add
           .rectangle(182, 108, 254, 42, 0x07101e, 0.74)
           .setStrokeStyle(1, 0x7ce8ff, 0.42)
-          .setDepth(81);
+          .setDepth(81));
     bg.setInteractive({ useHandCursor: true }).on("pointerdown", () =>
       this.showBattleContractSummary(),
     );
-    this.battleContractHudText = this.add
+    this.battleContractHudText = this.rememberBattleSecondaryUi(this.add
       .text(182, 103, battleContractHudLine(this.battleContractState), {
         fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
         fontSize: "13px",
@@ -1778,8 +1806,8 @@ export class GameScene extends Phaser.Scene {
         strokeThickness: 2,
       })
       .setOrigin(0.5)
-      .setDepth(82);
-    this.battleContractDetailText = this.add
+      .setDepth(82));
+    this.battleContractDetailText = this.rememberBattleSecondaryUi(this.add
       .text(
         182,
         120,
@@ -1796,7 +1824,7 @@ export class GameScene extends Phaser.Scene {
         },
       )
       .setOrigin(0.5)
-      .setDepth(82);
+      .setDepth(82));
   }
 
   private refreshBattleContractHud(): void {
