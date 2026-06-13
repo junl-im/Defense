@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { auditMobileSceneUi, type MobileUiAuditReport } from "./MobileUiAudit";
 import { getDefenseUiFocusProfile } from "./DefenseUiFocusSystem";
+import { getSupremeDesignProfile } from "./SupremeDesignSystem";
 
 export type QualityCheckGrade = "pass" | "watch" | "risk";
 
@@ -11,17 +12,21 @@ export type QualityCheckItem = {
 };
 
 export type QualityCheckCategory = {
-  name: "design" | "system" | "feature";
+  name: "ux" | "design" | "system" | "feature";
   grade: QualityCheckGrade;
+  score: number;
   items: QualityCheckItem[];
 };
 
 export type QualityCheckReport = {
   scene: string;
   grade: QualityCheckGrade;
+  score: number;
+  ux: QualityCheckCategory;
   design: QualityCheckCategory;
   system: QualityCheckCategory;
   feature: QualityCheckCategory;
+  recommendations: string[];
   summary: string;
   at: number;
 };
@@ -49,7 +54,7 @@ const WIRED_SCENES = new WeakSet<Phaser.Scene>();
 const PANELS = new WeakMap<Phaser.Scene, Phaser.GameObjects.Container>();
 const LAST_REPORT = new WeakMap<Phaser.Scene, QualityCheckReport>();
 const PANEL_WIDTH = 284;
-const PANEL_HEIGHT = 210;
+const PANEL_HEIGHT = 272;
 
 function query(): URLSearchParams {
   return new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
@@ -64,12 +69,15 @@ function panelRequested(): boolean {
   const qs = query();
   return (
     qs.has("qualitycheck") ||
+    qs.has("uxcheck") ||
+    qs.has("uicheck") ||
     qs.has("designcheck") ||
     qs.has("systemcheck") ||
     qs.has("featurecheck") ||
     qs.has("checkpanel") ||
     qs.has("qapanel") ||
     qs.has("qahealth") ||
+    qs.has("qacheck") ||
     qs.has("navqa")
   );
 }
@@ -104,6 +112,19 @@ function worstGrade(items: QualityCheckItem[]): QualityCheckGrade {
   return max >= 2 ? "risk" : max === 1 ? "watch" : "pass";
 }
 
+function itemScore(status: QualityCheckGrade): number {
+  return status === "pass" ? 100 : status === "watch" ? 68 : 32;
+}
+
+function categoryScore(items: QualityCheckItem[]): number {
+  if (items.length === 0) return 100;
+  return Math.round(items.reduce((sum, entry) => sum + itemScore(entry.status), 0) / items.length);
+}
+
+function makeCategory(name: QualityCheckCategory["name"], items: QualityCheckItem[]): QualityCheckCategory {
+  return { name, grade: worstGrade(items), score: categoryScore(items), items };
+}
+
 function overallGrade(categories: QualityCheckCategory[]): QualityCheckGrade {
   const max = categories.reduce((rank, category) => Math.max(rank, gradeRank(category.grade)), 0);
   return max >= 2 ? "risk" : max === 1 ? "watch" : "pass";
@@ -127,12 +148,54 @@ function viewportSummary(): { status: QualityCheckGrade; detail: string } {
   return { status: "pass", detail: `${width}x${height}` };
 }
 
+function objectLoadSummary(scene: Phaser.Scene): { text: number; inputs: number; status: QualityCheckGrade; detail: string } {
+  const objects = scene.children?.list?.length ?? 0;
+  const interactive = scene.children?.list?.filter((child) => Boolean((child as Phaser.GameObjects.GameObject & { input?: unknown }).input)).length ?? 0;
+  if (objects > 420) return { text: objects, inputs: interactive, status: "risk", detail: `${objects} objects / ${interactive} inputs` };
+  if (objects > 260) return { text: objects, inputs: interactive, status: "watch", detail: `${objects} objects / ${interactive} inputs` };
+  return { text: objects, inputs: interactive, status: "pass", detail: `${objects} objects / ${interactive} inputs` };
+}
+
+function storedToggleSummary(): string {
+  const keys = [
+    ["ui", readStorage("ksDefenseUiFocus")],
+    ["read", readStorage("ksReadableUi")],
+    ["contrast", readStorage("ksContrastUi")],
+    ["design", readStorage("ksSupremeDesign")],
+    ["safe", readStorage("ksSafeGfx")],
+  ].filter(([, value]) => Boolean(value));
+  return keys.length ? keys.map(([key, value]) => `${key}=${value}`).join(" ") : "default";
+}
+
 function textureAny(scene: Phaser.Scene, keys: string[]): boolean {
   return keys.some((key) => scene.textures.exists(key));
 }
 
+function evaluateUx(scene: Phaser.Scene, ui: MobileUiAuditReport): QualityCheckCategory {
+  const focus = getDefenseUiFocusProfile();
+  const load = objectLoadSummary(scene);
+  const backStatus = typeof window !== "undefined" ? window.__KINGDOM_SEED_BACK_GUARD_STATUS__?.() : undefined;
+  const isBattle = scene.scene.key === "GameScene";
+  const isHome = scene.scene.key === "MainMenuScene" || scene.scene.key === "MenuScene";
+  const actionFlowAllowed = !query().has("noactionflow") && !query().has("legacyactionflow");
+  const densityGood = focus.mode === "focus" || focus.mode === "clean" || focus.mode === "essential";
+  const tooManyText = ui.textCount > (isBattle ? 74 : 92);
+  const tooManyInputs = ui.inputCount > (isBattle ? 22 : 32);
+  const items: QualityCheckItem[] = [
+    item("primary action", actionFlowAllowed ? "pass" : "watch", isBattle ? "battle action flow" : "scene action path"),
+    item("navigation intent", backStatus?.guardArmed || !backStatus?.mobile ? "pass" : "watch", isHome ? "home/exit confirm" : "back routes home"),
+    item("clutter budget", densityGood && !tooManyText ? "pass" : tooManyText ? "risk" : "watch", `${focus.mode} · ${ui.textCount} text`),
+    item("touch comfort", ui.smallHitCount === 0 ? "pass" : ui.smallHitCount <= 2 ? "watch" : "risk", `${ui.smallHitCount}/${ui.inputCount} small`),
+    item("one screen load", load.status, load.detail),
+    item("saved preferences", storedToggleSummary() === "default" ? "watch" : "pass", storedToggleSummary()),
+    item("input overload", tooManyInputs ? "watch" : "pass", `${ui.inputCount} inputs`),
+  ];
+  return makeCategory("ux", items);
+}
+
 function evaluateDesign(scene: Phaser.Scene, ui: MobileUiAuditReport): QualityCheckCategory {
   const focus = getDefenseUiFocusProfile();
+  const design = getSupremeDesignProfile();
   const densityOk = focus.mode === "focus" || focus.mode === "clean" || focus.mode === "essential";
   const rootReadable = hasClass("ks-readable-ui") || hasClass("ks-shell-readable");
   const rootContrast = hasClass("ks-readable-ui-contrast") || hasClass("ks-shell-contrast-ui");
@@ -155,8 +218,10 @@ function evaluateDesign(scene: Phaser.Scene, ui: MobileUiAuditReport): QualityCh
     item("ui density", densityOk ? "pass" : "watch", `${focus.mode} mode`),
     item("readability root", rootReadable ? "pass" : "watch", rootReadable ? "active" : "not marked"),
     item("contrast fallback", rootContrast ? "pass" : "watch", rootContrast ? "ready" : "optional"),
+    item("design system", design.enabled ? "pass" : "watch", design.label),
+    item("visual density", focus.mode === "legacy" ? "watch" : "pass", `${focus.mode} / ${design.grade}`),
   ];
-  return { name: "design", grade: worstGrade(items), items };
+  return makeCategory("design", items);
 }
 
 function evaluateSystem(scene: Phaser.Scene): QualityCheckCategory {
@@ -179,7 +244,7 @@ function evaluateSystem(scene: Phaser.Scene): QualityCheckCategory {
     item("device tier", weakDevice ? "watch" : "pass", `mem=${memory ?? "?"} cores=${cores ?? "?"}`),
     item("safe fallback", hasClass("ks-adaptive-emergency") || hasClass("ks-engine-lockdown") ? "watch" : "pass", hasClass("ks-adaptive-emergency") ? "emergency" : "normal"),
   ];
-  return { name: "system", grade: worstGrade(items), items };
+  return makeCategory("system", items);
 }
 
 function evaluateFeature(scene: Phaser.Scene): QualityCheckCategory {
@@ -206,24 +271,41 @@ function evaluateFeature(scene: Phaser.Scene): QualityCheckCategory {
     item("reference actors", hasReferenceFull ? "pass" : "watch", hasReferenceFull ? "loaded" : "deferred/fallback"),
     item("reward art", hasReward ? "pass" : "watch", hasReward ? "loaded" : "deferred/fallback"),
     item("action flow", actionFlowAllowed ? "pass" : "watch", actionFlowAllowed ? "enabled" : "legacy"),
-    item("quality toggles", readStorage("ksDefenseUiFocus") || readStorage("ksReadableUi") || readStorage("ksSupremeDesignMode") ? "pass" : "watch", "defaults or saved"),
+    item("quality toggles", readStorage("ksDefenseUiFocus") || readStorage("ksReadableUi") || readStorage("ksSupremeDesign") ? "pass" : "watch", "defaults or saved"),
   ];
-  return { name: "feature", grade: worstGrade(items), items };
+  return makeCategory("feature", items);
+}
+
+function makeRecommendations(categories: QualityCheckCategory[]): string[] {
+  const lines = categories
+    .flatMap((category) => category.items
+      .filter((entry) => entry.status !== "pass")
+      .map((entry) => `${category.name.toUpperCase()} · ${entry.label}: ${entry.detail}`))
+    .slice(0, 5);
+  if (lines.length === 0) return ["All clear. Keep current clean UI density and fallback policy."];
+  return lines;
 }
 
 function makeReport(scene: Phaser.Scene): QualityCheckReport {
   const ui = auditMobileSceneUi(scene);
+  const ux = evaluateUx(scene, ui);
   const design = evaluateDesign(scene, ui);
   const system = evaluateSystem(scene);
   const feature = evaluateFeature(scene);
-  const grade = overallGrade([design, system, feature]);
+  const categories = [ux, design, system, feature];
+  const grade = overallGrade(categories);
+  const score = Math.round(categories.reduce((sum, category) => sum + category.score, 0) / categories.length);
+  const recommendations = makeRecommendations(categories);
   const report: QualityCheckReport = {
     scene: scene.scene.key,
     grade,
+    score,
+    ux,
     design,
     system,
     feature,
-    summary: `${scene.scene.key} ${grade.toUpperCase()} · D:${design.grade} S:${system.grade} F:${feature.grade}`,
+    recommendations,
+    summary: `${scene.scene.key} ${grade.toUpperCase()} ${score}/100 · UX:${ux.grade} D:${design.grade} S:${system.grade} F:${feature.grade}`,
     at: Date.now(),
   };
   LAST_REPORT.set(scene, report);
@@ -264,7 +346,7 @@ function renderPanel(scene: Phaser.Scene, report: QualityCheckReport): void {
   bg.lineStyle(2, gradeColor(report.grade), 0.94).strokeRoundedRect(-PANEL_WIDTH / 2, -102, PANEL_WIDTH, PANEL_HEIGHT, 18);
   bg.lineStyle(1, 0xffffff, 0.14).strokeRoundedRect(-PANEL_WIDTH / 2 + 6, -96, PANEL_WIDTH - 12, PANEL_HEIGHT - 12, 14);
   const title = scene.add
-    .text(-PANEL_WIDTH / 2 + 14, -88, `QA CHECK · ${gradeText(report.grade)}`, {
+    .text(-PANEL_WIDTH / 2 + 14, -88, `QA CHECK · ${gradeText(report.grade)} · ${report.score}`, {
       fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
       fontSize: "14px",
       fontStyle: "900",
@@ -284,8 +366,8 @@ function renderPanel(scene: Phaser.Scene, report: QualityCheckReport): void {
     })
     .setOrigin(1, 0.5);
   const rows: Phaser.GameObjects.GameObject[] = [];
-  [report.design, report.system, report.feature].forEach((category, index) => {
-    const yy = -55 + index * 50;
+  [report.ux, report.design, report.system, report.feature].forEach((category, index) => {
+    const yy = -54 + index * 44;
     const chip = scene.add.graphics().setName(`ks-quality-${category.name}-chip`);
     chip.fillStyle(gradeColor(category.grade), 0.18).fillRoundedRect(-PANEL_WIDTH / 2 + 14, yy - 16, 78, 30, 12);
     chip.lineStyle(1, gradeColor(category.grade), 0.62).strokeRoundedRect(-PANEL_WIDTH / 2 + 14, yy - 16, 78, 30, 12);
@@ -323,13 +405,15 @@ function renderPanel(scene: Phaser.Scene, report: QualityCheckReport): void {
     rows.push(chip, label, grade, detail);
   });
   const hint = scene.add
-    .text(0, 94, "design / system / feature · tap to refresh", {
+    .text(0, 124, report.recommendations[0] ?? "tap to refresh", {
       fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
-      fontSize: "10px",
+      fontSize: "9px",
       fontStyle: "900",
       color: "#93abc7",
       stroke: "#020611",
       strokeThickness: 3,
+      wordWrap: { width: PANEL_WIDTH - 28 },
+      align: "center",
     })
     .setOrigin(0.5);
   root.add([bg, title, sceneLabel, ...rows, hint]);
@@ -362,6 +446,8 @@ export function installQualityCheckDirector(scene: Phaser.Scene): void {
   const windowEvents = [
     "kingdom-seed:readability-refresh",
     "kingdom-seed:ui-focus-refresh",
+    "kingdom-seed:design-refresh",
+    "kingdom-seed:quality-check-refresh",
     "kingdom-seed:viewport-changed",
     "kingdom-seed:back-home-complete",
   ];
