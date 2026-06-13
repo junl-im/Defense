@@ -1,5 +1,11 @@
 import Phaser from "phaser";
 import { lowPowerMode } from "./QualityManager";
+import {
+  battleDepthPolishProfile,
+  scaleBattleAlpha,
+  shouldShowBattleCrest,
+  type BattleDepthPolishProfile,
+} from "./BattleDepthPolish";
 import type { StageConfig } from "./types";
 
 const THEME_PALETTE: Record<
@@ -111,11 +117,12 @@ export function installPremiumBattlePresentation(scene: Phaser.Scene, stage: Sta
 
   const low = lowPowerMode();
   const palette = THEME_PALETTE[stage.theme];
+  const polish = battleDepthPolishProfile();
 
-  drawTerrainDepth(scene, palette, low);
-  drawPremiumPathUnderlay(scene, stage, palette, low);
-  drawBattlefieldFocus(scene, stage, palette, low);
-  drawSafeAreaCurtains(scene, palette, low);
+  drawTerrainDepth(scene, palette, low, polish);
+  drawPremiumPathUnderlay(scene, stage, palette, low, polish);
+  drawBattlefieldFocus(scene, stage, palette, low, polish);
+  drawSafeAreaCurtains(scene, palette, low, polish);
   drawStageCrest(scene, stage, palette, low);
 }
 
@@ -123,23 +130,24 @@ function drawTerrainDepth(
   scene: Phaser.Scene,
   palette: (typeof THEME_PALETTE)[StageConfig["theme"]],
   low: boolean,
+  polish: BattleDepthPolishProfile,
 ): void {
   const g = scene.add.graphics().setDepth(1.18);
 
   // 상하단을 살짝 눌러 중앙 전투 영역이 넓고 묵직하게 읽히도록 만든다.
-  g.fillStyle(palette.deep, low ? 0.12 : 0.18);
+  g.fillStyle(palette.deep, scaleBattleAlpha(low ? 0.12 : 0.18, polish.terrainAlphaScale));
   g.fillRect(0, 64, 960, 58);
   g.fillRect(0, 418, 960, 62);
 
-  g.fillStyle(palette.terrain, low ? 0.08 : 0.12);
+  g.fillStyle(palette.terrain, scaleBattleAlpha(low ? 0.08 : 0.12, polish.terrainAlphaScale));
   g.fillEllipse(210, 166, 430, 146);
   g.fillEllipse(752, 382, 510, 150);
-  g.fillStyle(palette.terrain2, low ? 0.055 : 0.085);
+  g.fillStyle(palette.terrain2, scaleBattleAlpha(low ? 0.055 : 0.085, polish.terrainAlphaScale));
   g.fillEllipse(692, 154, 390, 116);
   g.fillEllipse(280, 392, 420, 122);
 
   // 화면 가장자리 잔물결을 큰 면으로 처리해, 작은 소품이 난립하는 느낌을 줄인다.
-  g.lineStyle(1, 0xffffff, low ? 0.035 : 0.055);
+  g.lineStyle(1, 0xffffff, scaleBattleAlpha(low ? 0.035 : 0.055, polish.terrainAlphaScale));
   for (let i = 0; i < 5; i += 1) {
     const y = 110 + i * 72;
     g.beginPath();
@@ -160,29 +168,30 @@ function drawPremiumPathUnderlay(
   stage: StageConfig,
   palette: (typeof THEME_PALETTE)[StageConfig["theme"]],
   low: boolean,
+  polish: BattleDepthPolishProfile,
 ): void {
   if (stage.path.length < 2) return;
 
   const path = stage.path;
   const shadow = scene.add.graphics().setDepth(3.35);
-  shadow.lineStyle(low ? 74 : 82, 0x000000, low ? 0.16 : 0.22);
+  shadow.lineStyle(low ? 74 : 82, 0x000000, scaleBattleAlpha(low ? 0.16 : 0.22, polish.pathShadowAlphaScale));
   drawPathLine(shadow, path);
 
   const aura = scene.add.graphics().setDepth(3.48);
-  aura.lineStyle(low ? 58 : 66, palette.accent, low ? 0.035 : 0.06);
+  aura.lineStyle(low ? 58 : 66, palette.accent, scaleBattleAlpha(low ? 0.035 : 0.06, polish.pathGlowAlphaScale));
   drawPathLine(aura, path);
 
   const edge = scene.add.graphics().setDepth(4.15);
-  edge.lineStyle(low ? 42 : 48, 0x1b120a, low ? 0.30 : 0.38);
+  edge.lineStyle(low ? 42 : 48, 0x1b120a, scaleBattleAlpha(low ? 0.30 : 0.38, polish.pathShadowAlphaScale));
   drawPathLine(edge, path);
-  edge.lineStyle(2, palette.pathGlow, low ? 0.18 : 0.26);
+  edge.lineStyle(2, palette.pathGlow, scaleBattleAlpha(low ? 0.18 : 0.26, polish.pathGlowAlphaScale));
   drawPathLine(edge, path);
 
   // 주요 굴곡점에 큰 바닥 그림자만 배치해 길의 체급을 올린다.
   path.forEach((point, index) => {
     if (index === 0 || index === path.length - 1 || index % 2 === 1) {
       scene.add
-        .ellipse(point.x, point.y + 18, low ? 82 : 96, low ? 18 : 22, 0x000000, low ? 0.12 : 0.17)
+        .ellipse(point.x, point.y + 18, low ? 82 : 96, low ? 18 : 22, 0x000000, scaleBattleAlpha(low ? 0.12 : 0.17, polish.pathShadowAlphaScale))
         .setDepth(3.62);
     }
   });
@@ -200,17 +209,18 @@ function drawBattlefieldFocus(
   stage: StageConfig,
   palette: (typeof THEME_PALETTE)[StageConfig["theme"]],
   low: boolean,
+  polish: BattleDepthPolishProfile,
 ): void {
   // 타워/몬스터가 작아 보이지 않도록 중앙 액션 영역에 큰 ADD 글로우를 깔아준다.
   scene.add
-    .ellipse(480, 272, low ? 720 : 790, low ? 272 : 306, palette.glow, low ? 0.018 : 0.032)
+    .ellipse(480, 272, low ? 720 : 790, low ? 272 : 306, palette.glow, scaleBattleAlpha(low ? 0.018 : 0.032, polish.pathGlowAlphaScale))
     .setDepth(3.72)
     .setBlendMode(Phaser.BlendModes.ADD);
 
   for (const spot of stage.spots) {
     if (spot.y < 70 || spot.y > 466) continue;
     scene.add
-      .ellipse(spot.x, spot.y + 18, 92, 24, 0x000000, low ? 0.11 : 0.16)
+      .ellipse(spot.x, spot.y + 18, 92, 24, 0x000000, scaleBattleAlpha(low ? 0.11 : 0.16, polish.buildPadAlphaScale))
       .setDepth(9.05);
   }
 }
@@ -219,12 +229,13 @@ function drawSafeAreaCurtains(
   scene: Phaser.Scene,
   palette: (typeof THEME_PALETTE)[StageConfig["theme"]],
   low: boolean,
+  polish: BattleDepthPolishProfile,
 ): void {
   const g = scene.add.graphics().setDepth(68.5);
-  g.fillStyle(0x02050c, low ? 0.20 : 0.26);
+  g.fillStyle(0x02050c, scaleBattleAlpha(low ? 0.20 : 0.26, polish.curtainAlphaScale));
   g.fillRect(0, 0, 960, 64);
   g.fillRect(0, 480, 960, 60);
-  g.lineStyle(2, palette.accent, low ? 0.14 : 0.22);
+  g.lineStyle(2, palette.accent, scaleBattleAlpha(low ? 0.14 : 0.22, polish.curtainAlphaScale));
   g.beginPath();
   g.moveTo(36, 70);
   g.lineTo(924, 70);
@@ -241,14 +252,14 @@ function drawStageCrest(
   palette: (typeof THEME_PALETTE)[StageConfig["theme"]],
   low: boolean,
 ): void {
-  if (query().has("minimalhud")) return;
+  if (!shouldShowBattleCrest()) return;
 
   const title = scene.add.container(480, 82).setDepth(69.2);
   const bg = scene.add
     .rectangle(0, 0, 270, low ? 28 : 32, 0x07101e, low ? 0.58 : 0.66)
     .setStrokeStyle(1, palette.accent, low ? 0.18 : 0.28);
   const label = scene.add
-    .text(0, 0, `STAGE ${stage.number} · ${stage.title}`, {
+    .text(0, 0, `제${stage.number}장 · ${stage.title}`, {
       fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
       fontSize: low ? "11px" : "12px",
       fontStyle: "bold",

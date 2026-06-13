@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import type { User } from "firebase/auth";
 import { ENEMIES, getStageConfig, TOWERS } from "../game/balance";
+import { ensurePlayableStageConfig } from "../game/RuntimeIntegrity";
 import type {
   EnemyKind,
   PathPoint,
@@ -40,6 +41,7 @@ import {
   installScenePerformanceWatch,
 } from "../game/VisualPolish";
 import { addPremiumBattleObjects } from "../game/BattlefieldArt";
+import { installBattleDepthArtBridge } from "../game/BattleDepthArtBridge";
 import { installPremiumBattleComposition, premiumBuildSpotScale, showCompactBuildSpotLabels } from "../game/PremiumBattleComposition";
 import {
   installPremiumBattlePresentation,
@@ -440,7 +442,7 @@ export class GameScene extends Phaser.Scene {
   }): void {
     this.user = data.user;
     this.save = data.save;
-    this.stage = getStageConfig(data.stageId);
+    this.stage = ensurePlayableStageConfig(this, getStageConfig(data.stageId));
     this.dailyChallenge = data.dailyChallenge;
     this.relicBonuses = getRelicBattleBonuses();
     this.runModifiers = getStageRunModifiers(
@@ -527,6 +529,10 @@ export class GameScene extends Phaser.Scene {
     this.input.setTopOnly(true);
     this.startTime = Date.now();
     this.drawMap();
+    // v2.36.5: 빠른 부팅에서 빠졌던 기존 2.5D 전투 배경/깊이 오버레이를
+    // 전투 씬 진입 후 지연 복구한다. 첫 시작에는 영향을 주지 않는다.
+    installBattleDepthArtBridge(this, this.stage);
+    this.installCoreCombatArtRefreshHook();
     installPremiumBattlePresentation(this, this.stage);
     installPremiumBattleComposition(this, this.stage);
     if (queuedCasualArtLoad) this.installDeferredCasualBattlefieldLayer();
@@ -801,6 +807,24 @@ export class GameScene extends Phaser.Scene {
     this.drawPath(pathMain, 30);
     this.drawPath(0xe8bd70, 4, 0.28);
     this.drawHudChrome();
+  }
+
+  private installCoreCombatArtRefreshHook(): void {
+    const refreshActors = () => {
+      if (!this.isSceneLive()) return;
+      this.towers.forEach((tower) => tower.refreshArt());
+      // 이미 소환된 적은 다음 피격/이동부터 기존 애니메이션이 유지된다.
+      // 새로 소환되는 적과 이후 건설 타워는 복구된 2.5D/원화풍 텍스처를 바로 사용한다.
+    };
+
+    this.events.on("kingdom-seed:core-combat-art-ready", refreshActors);
+    this.events.on("kingdom-seed:core-combat-actor-art-ready", refreshActors);
+    const cleanup = () => {
+      this.events.off("kingdom-seed:core-combat-art-ready", refreshActors);
+      this.events.off("kingdom-seed:core-combat-actor-art-ready", refreshActors);
+    };
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, cleanup);
+    this.events.once(Phaser.Scenes.Events.DESTROY, cleanup);
   }
 
   private installCasualArtRefreshHook(): void {

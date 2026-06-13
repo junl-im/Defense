@@ -3,7 +3,9 @@ import { BootScene } from "../scenes/BootScene";
 import { getRenderProfile, makeGameFpsConfig } from "../game/QualityManager";
 import { installMobileRuntimeEngine } from "../game/MobileRuntimeEngine";
 import { installRuntimeFrameGovernor } from "../game/RuntimeFrameGovernor";
+import { installCompatibilityGuard } from "./CompatibilityGuard";
 import { installRuntimeLoadGovernor, markUserCriticalInput } from "../game/RuntimeLoadGovernor";
+import { markLaunchMilestone } from "./LaunchDiagnostics";
 
 declare global {
   interface Window {
@@ -16,6 +18,7 @@ let gameInstance: Phaser.Game | undefined;
 let installedWindowHooks = false;
 
 function dispatchEngineStatus(stage: string, detail: Record<string, unknown> = {}): void {
+  markLaunchMilestone(`engine-status:${stage}`, detail);
   window.dispatchEvent(
     new CustomEvent("kingdom-seed:engine-status", {
       detail: { stage, at: Date.now(), ...detail },
@@ -102,11 +105,15 @@ function installWindowScaleHooks(game: Phaser.Game): void {
 }
 
 export function bootstrapKingdomSeedGame(reason = "deferred-entry"): Phaser.Game {
-  if (gameInstance) return gameInstance;
+  if (gameInstance) {
+    markLaunchMilestone("phaser-reused", { reason });
+    return gameInstance;
+  }
 
   dispatchEngineStatus("phaser-configuring", { reason });
 
   installRuntimeLoadGovernor();
+  const compatibility = installCompatibilityGuard();
 
   // v2.35.5: 유저 탭으로 엔진 로드가 시작된 경우 RuntimeLoadGovernor가
   // 이미 지나간 user-activated 이벤트를 놓칠 수 있으므로, 초기 몇 초는 선택 작업을 멈춰 둔다.
@@ -123,7 +130,7 @@ export function bootstrapKingdomSeedGame(reason = "deferred-entry"): Phaser.Game
   }
 
   const config: Phaser.Types.Core.GameConfig = {
-    type: Phaser.AUTO,
+    type: compatibility.forceCanvas ? Phaser.CANVAS : Phaser.AUTO,
     parent: "game",
     backgroundColor: "#101820",
     fps: makeGameFpsConfig(),
@@ -138,14 +145,14 @@ export function bootstrapKingdomSeedGame(reason = "deferred-entry"): Phaser.Game
       activePointers: profile.tier === "low" ? 2 : 3,
     },
     audio: {
-      disableWebAudio: false,
+      disableWebAudio: !compatibility.webAudioAvailable,
     },
     render: {
       pixelArt: false,
       antialias: profile.tier !== "low",
       roundPixels: profile.tier === "low",
       powerPreference: profile.tier === "low" ? "low-power" : "high-performance",
-      antialiasGL: profile.tier !== "low",
+      antialiasGL: profile.tier !== "low" && compatibility.webglAvailable,
       desynchronized: profile.tier === "low",
       batchSize: profile.tier === "low" ? 1024 : 4096,
       maxTextures: profile.tier === "low" ? 8 : 16,
@@ -154,11 +161,17 @@ export function bootstrapKingdomSeedGame(reason = "deferred-entry"): Phaser.Game
     scene: [BootScene],
   };
 
-  dispatchEngineStatus("phaser-creating", { tier: profile.tier });
+  dispatchEngineStatus("phaser-creating", {
+    tier: profile.tier,
+    renderer: compatibility.forceCanvas ? "canvas" : "auto",
+    warnings: compatibility.warnings,
+  });
   try {
+    markLaunchMilestone("phaser-new-game", { reason, renderer: compatibility.forceCanvas ? "canvas" : "auto", tier: profile.tier });
     gameInstance = new Phaser.Game(config);
     window.__KINGDOM_SEED_GAME__ = gameInstance;
   } catch (error) {
+    markLaunchMilestone("phaser-create-failed", { reason, error });
     window.__KINGDOM_SEED_BOOT_ERROR__ = error;
     window.dispatchEvent(
       new ErrorEvent("error", {
@@ -172,6 +185,7 @@ export function bootstrapKingdomSeedGame(reason = "deferred-entry"): Phaser.Game
   installRuntimeFrameGovernor(gameInstance);
   installWindowScaleHooks(gameInstance);
   installDeferredRuntimeComplements(gameInstance);
+  markLaunchMilestone("runtime-complements-scheduled", { reason });
   dispatchEngineStatus("phaser-created", { tier: profile.tier });
   return gameInstance;
 }

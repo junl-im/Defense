@@ -88,6 +88,8 @@ const MINIMAL_BOOT_ALLOWED_PATTERNS = [
   /assets\/ui\/v2_15\/login_panel_v2_15\.png$/,
   /assets\/ui\/v2_15\/login_button_(gold|white|small)_v2_15\.png$/,
   /assets\/ui\/v2_15\/login_utility_button_v2_15\.png$/,
+  /assets\/ui\/v2_15\/(combat_top_hud|combat_bottom_dock|build_spot|tower_build_menu|tower_build_card|tower_command_panel|button_(blue|gold|red))_v2_15\.png$/,
+  /assets\/ui\/v2_3\/target_reticle_v2_3\.png$/,
 ] as const;
 
 const MINIMAL_BOOT_ALLOWED_KEYS = new Set([
@@ -98,6 +100,19 @@ const MINIMAL_BOOT_ALLOWED_KEYS = new Set([
   "v1-login-button-white-v18",
   "v1-login-button-small-v18",
   "v1-login-utility-button-v18",
+  // v2.36.5: 전투 UI의 기본 2.5D 체급을 잃지 않기 위한 초소형 핵심 에셋.
+  // 합계가 매우 작아 첫 화면 속도를 거의 해치지 않지만, 전투 HUD/거점이
+  // 코드 사각형처럼 보이는 문제를 줄인다.
+  "v1-combat-top-hud",
+  "v1-combat-bottom-dock",
+  "v1-build-spot",
+  "v1-tower-build-menu",
+  "v1-tower-build-card",
+  "v1-tower-command-panel",
+  "v1-target-reticle",
+  "v1-button-blue",
+  "v1-button-gold",
+  "v1-button-red",
 ]);
 
 const FAST_BOOT_SKIP_PATTERNS = [

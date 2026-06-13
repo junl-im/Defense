@@ -1,3 +1,5 @@
+import { KINGDOM_SEED_BUILD_NAME } from "../runtime/Version";
+import { markLaunchMilestone } from "../runtime/LaunchDiagnostics";
 type BrowserFlags = {
   isKakaoTalk: boolean;
   isAndroid: boolean;
@@ -15,6 +17,7 @@ let bootWatchdogTimer: number | undefined;
 let activated = false;
 let sceneReady = false;
 let guardArmed = false;
+let shellInstalled = false;
 let suppressExitGuardUntil = 0;
 let lastGuardAt = 0;
 let lastPointerAt = 0;
@@ -42,6 +45,37 @@ function flags(): BrowserFlags {
   };
 }
 
+
+function safeReadStorage(key: string): string | null {
+  try {
+    return window.localStorage.getItem(key);
+  } catch (error) {
+    markLaunchMilestone("storage-read-blocked", { key, error });
+    document.documentElement.classList.add("ks-storage-read-blocked");
+    return null;
+  }
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function buildSafeModeUrl(): string {
+  const url = new URL(window.location.href);
+  url.searchParams.set("quality", "low");
+  url.searchParams.set("compat", "1");
+  url.searchParams.set("tapboot", "1");
+  url.searchParams.set("noprewarm", "1");
+  url.searchParams.set("safe", "1");
+  url.searchParams.set("q", String(Date.now()));
+  return url.toString();
+}
+
 function ensureShellStyles(): void {
   if (document.getElementById("kingdom-shell-v211-style")) return;
   const style = document.createElement("style");
@@ -61,6 +95,7 @@ function ensureShellStyles(): void {
     .shell-loading-text { margin-top: 10px; color: #fff0b8; font-weight: 1000; font-size: 10px; }
     .shell-boot-error { position: fixed; left: 50%; bottom: max(12px, env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 10020; width: min(520px, 92vw); padding: 12px 14px; border-radius: 16px; border: 1px solid rgba(255,130,105,.82); background: linear-gradient(180deg, rgba(43,17,20,.96), rgba(13,7,11,.98)); color: #ffe8dc; font-weight: 900; font-size: 12px; line-height: 1.35; box-shadow: 0 16px 42px rgba(0,0,0,.44); }
     .shell-boot-error button { margin-top: 8px; width: 100%; border: 0; border-radius: 12px; padding: 9px 12px; color: #261008; background: linear-gradient(180deg, #ffe09a, #f4a83b); font-weight: 1000; }
+    .shell-boot-error .shell-safe-retry { background: linear-gradient(180deg, #b9f7d0, #40b56f); color: #071f11; }
     .shell-row { display: flex; gap: 12px; justify-content: center; margin-top: 14px; }
     .shell-row button { appearance: none; border: 0; border-radius: 16px; padding: 13px 24px; color: #fff; font-weight: 1000; font-size: 16px; }
     .shell-secondary { background: linear-gradient(180deg, #5d94e6, #2658b5); }
@@ -84,7 +119,7 @@ function syncViewportCssVars(): void {
   const surfaceAspect = surfaceWidth / Math.max(1, surfaceHeight);
   const viewportFit =
     new URLSearchParams(window.location.search).get("fit") ??
-    localStorage.getItem("ksViewportFit") ??
+    safeReadStorage("ksViewportFit") ??
     "auto";
   const compactShell =
     new URLSearchParams(window.location.search).get("shell") !== "large";
@@ -127,6 +162,7 @@ function safeHide(el: HTMLElement): void {
 
 function fadeRemove(el: HTMLElement | undefined): void {
   if (!el || !el.isConnected) return;
+  markLaunchMilestone("shell-overlay-fade-remove", { id: el.id || el.className });
   el.classList.add("fading");
   window.setTimeout(() => el.remove(), 190);
 }
@@ -149,20 +185,33 @@ function formatBootError(error: unknown): string {
   }
 }
 
+
+function updateGateNote(text: string): void {
+  const note = startGate?.querySelector<HTMLElement>(".shell-loading-text");
+  if (note) note.textContent = text;
+}
+
 function showBootError(reason: string, error: unknown): void {
   const message = formatBootError(error);
+  markLaunchMilestone("boot-error-visible", { reason, message });
   console.error("[Kingdom Seed boot error]", reason, error);
   if (!bootErrorOverlay) {
     bootErrorOverlay = document.createElement("div");
     bootErrorOverlay.className = "shell-boot-error";
     document.body.appendChild(bootErrorOverlay);
   }
+  const safeReason = escapeHtml(reason);
+  const safeMessage = escapeHtml(message.slice(0, 220));
   bootErrorOverlay.innerHTML = `
     <div>시작 화면 초기화 중 문제가 감지됐어요.</div>
-    <div style="margin-top:4px;opacity:.82;font-size:10px;word-break:break-word;">${reason}: ${message.slice(0, 180)}</div>
-    <button type="button">다시 불러오기</button>`;
+    <div style="margin-top:4px;opacity:.82;font-size:10px;word-break:break-word;">${safeReason}: ${safeMessage}</div>
+    <button type="button" class="shell-safe-retry">안전 모드로 다시 시도</button>
+    <button type="button" class="shell-plain-retry">그냥 새로고침</button>`;
   bootErrorOverlay
-    .querySelector("button")
+    .querySelector(".shell-safe-retry")
+    ?.addEventListener("click", () => window.location.replace(buildSafeModeUrl()), { once: true });
+  bootErrorOverlay
+    .querySelector(".shell-plain-retry")
     ?.addEventListener("click", () => window.location.reload(), { once: true });
 }
 
@@ -207,7 +256,7 @@ function updateOrientationClass(): void {
   root.classList.toggle(
     "ks-hit-debug",
     new URLSearchParams(window.location.search).has("hit") ||
-      localStorage.getItem("ksHitDebug") === "1",
+      safeReadStorage("ksHitDebug") === "1",
   );
 
   // v2.35: do not dispatch a native resize from inside the resize handler.
@@ -226,6 +275,7 @@ function updateOrientationClass(): void {
 }
 
 function markSceneReady(): void {
+  markLaunchMilestone("web-shell-scene-ready", { activated });
   sceneReady = true;
   document.documentElement.classList.add("ks-scene-ready");
   if (bootWatchdogTimer !== undefined) {
@@ -250,6 +300,7 @@ function markSceneReady(): void {
 
 async function activateGameShell(): Promise<void> {
   if (activated) return;
+  markLaunchMilestone("web-shell-activated");
   activated = true;
   suppressExitGuardUntil = Date.now() + 4200;
   document.documentElement.classList.add("ks-user-activated");
@@ -278,6 +329,7 @@ async function activateGameShell(): Promise<void> {
 
 function createStartGate(): void {
   const info = flags();
+  markLaunchMilestone("start-gate-create", { mobile: info.isMobile, desktop: info.isDesktop });
   if (info.isDesktop) {
     activated = true;
     window.setTimeout(
@@ -299,11 +351,11 @@ function createStartGate(): void {
         <h1>탭해서 시작</h1>
         <p>사운드와 화면을 준비하고 바로 진입합니다.</p>
         <div class="shell-tap-rune">TAP</div>
-        <div class="shell-loading-text">v2.35.7 실행 복구 모드</div>
+        <div class="shell-loading-text">${KINGDOM_SEED_BUILD_NAME} 실행 안정화</div>
       </div>`;
   } else {
     const note = startGate.querySelector<HTMLElement>(".shell-loading-text");
-    if (note) note.textContent = "v2.35.7 실행 복구 모드";
+    if (note) note.textContent = `${KINGDOM_SEED_BUILD_NAME} 실행 안정화`;
   }
   if (!existingGate) document.body.appendChild(startGate);
   const start = (): void => void activateGameShell();
@@ -316,8 +368,14 @@ function createStartGate(): void {
   bootWatchdogTimer = window.setTimeout(() => {
     if (sceneReady) return;
     const note = startGate?.querySelector<HTMLElement>(".shell-loading-text");
-    if (note) note.textContent = "로딩이 멈춘 경우 화면을 한 번 더 탭하세요";
+    if (note) note.textContent = "로딩이 느립니다. 화면을 한 번 더 탭하거나 안전 모드로 재시도할 수 있어요";
+    markLaunchMilestone("start-gate-watchdog-soft-timeout", { activated, sceneReady });
   }, 4200);
+  window.setTimeout(() => {
+    if (sceneReady) return;
+    markLaunchMilestone("start-gate-watchdog-hard-timeout", { activated, sceneReady });
+    if (activated) showBootError("scene-ready-timeout", "로그인 씬 준비 신호가 늦어지고 있습니다.");
+  }, 12000);
 }
 
 function createExitModal(): void {
@@ -465,6 +523,12 @@ function installImmersiveMode(): void {
 }
 
 export function installWebShell(): void {
+  if (shellInstalled) {
+    markLaunchMilestone("web-shell-install-skipped");
+    return;
+  }
+  shellInstalled = true;
+  markLaunchMilestone("web-shell-installing");
   ensureShellStyles();
   updateOrientationClass();
   window.addEventListener("resize", updateOrientationClass);
@@ -481,13 +545,24 @@ export function installWebShell(): void {
   window.addEventListener("unhandledrejection", (event) =>
     showBootError("promise", event.reason),
   );
+  window.addEventListener("kingdom-seed:navigation-error", (event) => {
+    const detail = (event as CustomEvent<{ key?: string; message?: string }>).detail;
+    showBootError(`scene:${detail?.key ?? "unknown"}`, detail?.message ?? "scene transition failed");
+  });
+  window.addEventListener("kingdom-seed:compat-report", (event) => {
+    const detail = (event as CustomEvent<{ forceCanvas?: boolean; warnings?: string[] }>).detail;
+    if (detail?.forceCanvas) updateGateNote(`${KINGDOM_SEED_BUILD_NAME} · 캔버스 호환 모드`);
+    else if ((detail?.warnings?.length ?? 0) > 0) updateGateNote(`${KINGDOM_SEED_BUILD_NAME} · 호환성 점검 완료`);
+  });
   createStartGate();
   createExitModal();
   installBackGuard();
   installImmersiveMode();
+  markLaunchMilestone("web-shell-installed-complete");
 }
 
 export function requestGameFullscreen(): Promise<void> {
+  markLaunchMilestone("fullscreen-requested");
   activated = true;
   suppressExitGuardUntil = Date.now() + 4200;
   window.setTimeout(() => armBackGuard(true), 900);

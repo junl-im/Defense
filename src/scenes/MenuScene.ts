@@ -11,6 +11,7 @@ import {
   pauseOptionalWork,
 } from "../game/RuntimeLoadGovernor";
 import { startRegisteredScene, warmMenuFlowScenes } from "./SceneRegistry";
+import { KINGDOM_SEED_BUILD_NAME } from "../runtime/Version";
 import {
   createInstantLocalSession,
   type PlayerSave,
@@ -166,13 +167,13 @@ export class MenuScene extends Phaser.Scene {
       .setDepth(53);
 
     const chip = this.add.graphics().setDepth(53);
-    chip.fillStyle(0x071c3e, 0.46).fillRoundedRect(16, 14, 164, 24, 14);
-    chip.lineStyle(1, 0xffdc82, 0.45).strokeRoundedRect(16, 14, 164, 24, 14);
+    chip.fillStyle(0x071c3e, 0.46).fillRoundedRect(16, 14, 214, 24, 14);
+    chip.lineStyle(1, 0xffdc82, 0.45).strokeRoundedRect(16, 14, 214, 24, 14);
     this.add
-      .text(98, 26, "v2.35.6 QUIET START", {
+      .text(123, 26, KINGDOM_SEED_BUILD_NAME, {
         fontSize: "8px",
         color: "#f7fbff",
-        fixedWidth: 154,
+        fixedWidth: 204,
         align: "center",
         fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
         fontStyle: "bold",

@@ -96,6 +96,25 @@ function hasScene(scene: Phaser.Scene, key: string): boolean {
   }
 }
 
+function navigationErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message || error.name;
+  if (typeof error === "string") return error;
+  try {
+    return JSON.stringify(error);
+  } catch {
+    return String(error);
+  }
+}
+
+function dispatchNavigationError(key: RegisteredSceneKey, error: unknown): void {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(
+    new CustomEvent("kingdom-seed:navigation-error", {
+      detail: { key, message: navigationErrorMessage(error), at: Date.now() },
+    }),
+  );
+}
+
 export async function ensureSceneRegistered(
   scene: Phaser.Scene,
   key: RegisteredSceneKey,
@@ -114,6 +133,9 @@ export async function ensureSceneRegistered(
   pendingInstalls.set(key, install);
   try {
     await install;
+  } catch (error) {
+    dispatchNavigationError(key, error);
+    throw error;
   } finally {
     pendingInstalls.delete(key);
   }
@@ -124,9 +146,15 @@ export async function startRegisteredScene(
   key: RegisteredSceneKey,
   data?: object,
 ): Promise<void> {
-  await ensureSceneRegistered(scene, key);
-  if (!scene.scene.isActive(scene.scene.key)) return;
-  scene.scene.start(key, data);
+  try {
+    await ensureSceneRegistered(scene, key);
+    if (!scene.scene.isActive(scene.scene.key)) return;
+    scene.scene.start(key, data);
+  } catch (error) {
+    dispatchNavigationError(key, error);
+    // 씬 청크가 네트워크/캐시 문제로 실패해도 앱 전체가 멈추지 않게
+    // 현재 씬을 유지한다. 사용자는 WebShell의 오류 안내에서 새로고침을 선택할 수 있다.
+  }
 }
 
 function scheduleIdle(task: () => void, delayMs: number): void {

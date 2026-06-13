@@ -1,5 +1,7 @@
 import './style.css';
 import { installWebShell } from './platform/WebShell';
+import { KINGDOM_SEED_BUILD_NAME } from './runtime/Version';
+import { installLaunchDiagnostics, markLaunchMilestone } from './runtime/LaunchDiagnostics';
 
 const query = new URLSearchParams(window.location.search);
 const root = document.documentElement;
@@ -25,16 +27,19 @@ function dispatchBootstrapError(reason: string, error: unknown): void {
 
 function loadEngineChunk(reason: string): Promise<typeof import('./runtime/GameBootstrap')> {
   if (!enginePromise) {
+    markLaunchMilestone('engine-chunk-requested', { reason });
     root.classList.add('ks-engine-chunk-loading');
     setGateText(reason === 'user-activated' ? '엔진 코드 불러오는 중...' : '엔진을 조용히 준비하는 중...');
     enginePromise = import('./runtime/GameBootstrap')
       .then((module) => {
+        markLaunchMilestone('engine-chunk-ready', { reason });
         root.classList.add('ks-engine-chunk-ready');
         root.classList.remove('ks-engine-chunk-loading');
         setGateText('엔진 준비 완료, 화면 여는 중...');
         return module;
       })
       .catch((error) => {
+        markLaunchMilestone('engine-chunk-failed', { reason, error });
         root.classList.remove('ks-engine-chunk-loading');
         dispatchBootstrapError('dynamic-import', error);
         throw error;
@@ -45,14 +50,17 @@ function loadEngineChunk(reason: string): Promise<typeof import('./runtime/GameB
 
 function startEngine(reason: string): void {
   if (engineStarted) return;
+  markLaunchMilestone('engine-start-requested', { reason });
   engineStarted = true;
   root.classList.add('ks-engine-start-requested');
   void loadEngineChunk(reason)
     .then((module) => {
       setGateText('게임 화면 준비 중...');
+      markLaunchMilestone('engine-bootstrap-call', { reason });
       module.bootstrapKingdomSeedGame(reason);
     })
     .catch((error) => {
+      markLaunchMilestone('engine-start-failed', { reason, error });
       engineStarted = false;
       setGateText('시작 실패: 화면을 다시 탭하세요');
       dispatchBootstrapError('start-engine', error);
@@ -91,9 +99,12 @@ function shouldWaitForTap(): boolean {
   );
 }
 
+installLaunchDiagnostics();
+markLaunchMilestone('main-evaluated', { mode: import.meta.env.MODE });
 installWebShell();
+markLaunchMilestone('web-shell-installed');
 root.classList.add('ks-html-shell-ready');
-setGateText('초기 화면 준비 완료');
+setGateText(`${KINGDOM_SEED_BUILD_NAME} · 초기 화면 준비 완료`);
 
 window.addEventListener('kingdom-seed:user-activated', () => {
   root.classList.add('ks-user-activated');
@@ -104,7 +115,10 @@ window.addEventListener('kingdom-seed:user-activated', () => {
 window.addEventListener('kingdom-seed:engine-status', (event) => {
   const detail = (event as CustomEvent<{ stage?: string; tier?: string }>).detail;
   if (detail?.stage === 'phaser-configuring') setGateText('렌더러 설정 중...');
-  if (detail?.stage === 'phaser-creating') setGateText(`렌더러 시작 중${detail.tier ? ` · ${detail.tier}` : ''}...`);
+  if (detail?.stage === 'phaser-creating') {
+    const renderer = typeof (detail as { renderer?: unknown }).renderer === 'string' ? ` · ${(detail as { renderer: string }).renderer}` : '';
+    setGateText(`렌더러 시작 중${detail.tier ? ` · ${detail.tier}` : ''}${renderer}...`);
+  }
   if (detail?.stage === 'phaser-created') setGateText('로그인 화면 불러오는 중...');
 });
 
@@ -112,14 +126,17 @@ window.addEventListener('kingdom-seed:engine-status', (event) => {
 // 기본은 정적 HTML 게이트를 먼저 그린 뒤 유휴 시간에 엔진 청크를 조용히 가져와
 // 사용자가 탭했을 때 이미 로그인 씬이 준비되어 있도록 한다.
 if (shouldWaitForTap()) {
+  markLaunchMilestone('tapboot-waiting');
   setGateText('데이터 절약 모드: 탭하면 엔진을 불러옵니다');
 } else {
   scheduleAfterFirstPaint(() => {
+    markLaunchMilestone('first-paint-idle-preload');
     void loadEngineChunk('idle-preload');
     scheduleIdle(() => startEngine('idle-preboot'), 180);
   }, 120);
 }
 
 if (query.has('autostart')) {
+  markLaunchMilestone('autostart-requested');
   scheduleAfterFirstPaint(() => startEngine('autostart'), 20);
 }

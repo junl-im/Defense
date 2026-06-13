@@ -107,13 +107,59 @@ function writeJson(key: string, value: unknown): void {
 
 function getOrCreateLocalGuestUid(): string {
   if (canUseLocalStorage()) {
-    const existing = window.localStorage.getItem(LOCAL_GUEST_UID_KEY);
-    if (existing) return existing;
+    try {
+      const existing = window.localStorage.getItem(LOCAL_GUEST_UID_KEY);
+      if (existing) return existing;
+    } catch {
+      // private mode / embedded browser storage denial: fall through to memory-only uid
+    }
   }
   const random = Math.random().toString(36).slice(2, 10);
   const uid = `local_guest_${Date.now().toString(36)}_${random}`;
-  if (canUseLocalStorage()) window.localStorage.setItem(LOCAL_GUEST_UID_KEY, uid);
+  if (canUseLocalStorage()) {
+    try {
+      window.localStorage.setItem(LOCAL_GUEST_UID_KEY, uid);
+    } catch {
+      // Storage compatibility mode: the guest can still play this session.
+    }
+  }
   return uid;
+}
+
+
+function clampInt(value: unknown, fallback: number, min: number, max: number): number {
+  const numeric = typeof value === "number" && Number.isFinite(value) ? value : fallback;
+  return Math.max(min, Math.min(max, Math.round(numeric)));
+}
+
+function normalizeClearedStage(value: unknown): ClearedStage {
+  const raw = value && typeof value === "object" ? (value as Partial<ClearedStage>) : {};
+  return {
+    bestStars: clampInt(raw.bestStars, 0, 0, 3),
+    bestScore: clampInt(raw.bestScore, 0, 0, 9999999),
+    bestLives: clampInt(raw.bestLives, 0, 0, 99),
+    clearCount: clampInt(raw.clearCount, 0, 0, 9999),
+    updatedAt: raw.updatedAt,
+  };
+}
+
+function normalizeClearedStages(value: unknown): Record<string, ClearedStage> {
+  if (!value || typeof value !== "object") return {};
+  return Object.fromEntries(
+    Object.entries(value as Record<string, unknown>)
+      .filter(([stageId]) => /^stage_\d{3}$/.test(stageId))
+      .map(([stageId, stage]) => [stageId, normalizeClearedStage(stage)]),
+  );
+}
+
+function normalizeUpgradeLevels(value: unknown): PlayerSave["upgrades"] {
+  const raw = value && typeof value === "object" ? (value as Partial<PlayerSave["upgrades"]>) : {};
+  return {
+    archerDamage: clampInt(raw.archerDamage, defaultUpgrades.archerDamage, 0, UPGRADE_META.archerDamage.maxLevel),
+    mageDamage: clampInt(raw.mageDamage, defaultUpgrades.mageDamage, 0, UPGRADE_META.mageDamage.maxLevel),
+    barracksHp: clampInt(raw.barracksHp, defaultUpgrades.barracksHp, 0, UPGRADE_META.barracksHp.maxLevel),
+    artillerySplash: clampInt(raw.artillerySplash, defaultUpgrades.artillerySplash, 0, UPGRADE_META.artillerySplash.maxLevel),
+  };
 }
 
 function makeGuestName(user: Pick<User, "uid" | "displayName">): string {
@@ -141,19 +187,11 @@ export function normalizeSave(user: User, data?: SaveLike): PlayerSave {
     uid: user.uid,
     nickname:
       typeof data?.nickname === "string" && data.nickname.trim().length > 0
-        ? data.nickname
+        ? data.nickname.trim().slice(0, 24)
         : makeGuestName(user),
-    stars: typeof data?.stars === "number" ? data.stars : 0,
-    clearedStages:
-      data?.clearedStages && typeof data.clearedStages === "object"
-        ? (data.clearedStages as Record<string, ClearedStage>)
-        : {},
-    upgrades: {
-      ...defaultUpgrades,
-      ...(data?.upgrades && typeof data.upgrades === "object"
-        ? (data.upgrades as Partial<PlayerSave["upgrades"]>)
-        : {}),
-    },
+    stars: clampInt(data?.stars, 0, 0, 99999),
+    clearedStages: normalizeClearedStages(data?.clearedStages),
+    upgrades: normalizeUpgradeLevels(data?.upgrades),
     createdAt: data?.createdAt,
     updatedAt: data?.updatedAt,
   };
@@ -165,14 +203,22 @@ export function loadLocalSave(user: User): PlayerSave {
 }
 
 export function persistLocalSave(save: PlayerSave): void {
-  writeJson(localSaveKey(save.uid), {
-    uid: save.uid,
-    nickname: save.nickname,
-    stars: save.stars,
-    clearedStages: save.clearedStages,
-    upgrades: save.upgrades,
-    createdAt: save.createdAt ?? Date.now(),
+  const safeSave: PlayerSave = {
+    ...save,
+    nickname: String(save.nickname || "Commander").trim().slice(0, 24),
+    stars: clampInt(save.stars, 0, 0, 99999),
+    clearedStages: normalizeClearedStages(save.clearedStages),
+    upgrades: normalizeUpgradeLevels(save.upgrades),
+  };
+  writeJson(localSaveKey(safeSave.uid), {
+    uid: safeSave.uid,
+    nickname: safeSave.nickname,
+    stars: safeSave.stars,
+    clearedStages: safeSave.clearedStages,
+    upgrades: safeSave.upgrades,
+    createdAt: safeSave.createdAt ?? Date.now(),
     updatedAt: Date.now(),
+    schemaVersion: 2,
   });
 }
 
