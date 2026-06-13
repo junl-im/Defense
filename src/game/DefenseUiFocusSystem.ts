@@ -109,7 +109,7 @@ export function getDefenseUiFocusProfile(): DefenseUiFocusProfile {
   const disabled = disabledByQuery() || forced === "legacy" || saved === "legacy";
   const mode: DefenseUiFocusMode = disabled
     ? "legacy"
-    : forced ?? saved ?? (safe ? "essential" : tinyViewport() || isMobileRuntime() ? "clean" : "clean");
+    : forced ?? saved ?? (safe ? "essential" : tinyViewport() || isMobileRuntime() ? "focus" : "clean");
   const enabled = mode !== "legacy";
   const profile: DefenseUiFocusProfile = {
     enabled,

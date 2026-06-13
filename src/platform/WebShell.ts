@@ -9,6 +9,18 @@ type BrowserFlags = {
   isPortrait: boolean;
 };
 
+type KingdomSeedBackNavigator = {
+  currentSceneKey?: () => string | undefined;
+  isHome?: () => boolean;
+  goHome?: (reason: string) => boolean | Promise<boolean>;
+};
+
+declare global {
+  interface Window {
+    __KINGDOM_SEED_BACK_NAVIGATOR__?: KingdomSeedBackNavigator;
+  }
+}
+
 let allowExit = false;
 let exitModal: HTMLDivElement | undefined;
 let startGate: HTMLDivElement | undefined;
@@ -22,6 +34,9 @@ let suppressExitGuardUntil = 0;
 let lastGuardAt = 0;
 let lastPointerAt = 0;
 let lastSceneReadyAt = 0;
+let currentShellSceneKey = "Shell";
+let backHomeToast: HTMLDivElement | undefined;
+const HOME_SCENE_KEYS = new Set(["MenuScene", "MainMenuScene"]);
 const GUARD_STATE_KEY = "kingdomSeedBackGuard";
 const GUARD_SESSION = Math.random().toString(36).slice(2);
 
@@ -106,6 +121,8 @@ function ensureShellStyles(): void {
     .shell-row button { appearance: none; border: 0; border-radius: 16px; padding: 13px 24px; color: #fff; font-weight: 1000; font-size: 16px; }
     .shell-secondary { background: linear-gradient(180deg, #5d94e6, #2658b5); }
     .shell-danger { background: linear-gradient(180deg, #ff8d86, #b43142); }
+    .shell-back-toast { position: fixed; left: 50%; top: max(12px, env(safe-area-inset-top)); transform: translateX(-50%); z-index: 10070; min-width: 190px; max-width: min(420px, 86vw); padding: 11px 16px; border-radius: 999px; border: 1px solid rgba(255,218,123,.74); background: linear-gradient(180deg, rgba(16,35,64,.96), rgba(5,10,20,.96)); color: #fff0b8; text-align: center; font-weight: 1000; font-size: 14px; letter-spacing: .01em; box-shadow: 0 16px 42px rgba(0,0,0,.46), inset 0 1px 0 rgba(255,255,255,.16); pointer-events: none; }
+    .shell-back-toast.hidden { display: none !important; }
     @keyframes ksTapPulseV48 { 0%,100% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.07); filter: brightness(1.12); } }
   `;
   document.head.appendChild(style);
@@ -163,9 +180,10 @@ function syncDefenseUiFocusShellClasses(info: BrowserFlags): void {
   const legacy = disabled || query.has("maximalui") || query.has("fullhud") || saved === "legacy";
   const root = document.documentElement;
   const enabled = !legacy && (info.isMobile || forcedClean || forcedFocus || forcedEssential || saved === "focus" || saved === "essential" || saved === "clean");
+  const autoMobileFocus = enabled && info.isMobile && !forcedClean && !forcedFocus && !forcedEssential && !saved;
   root.classList.toggle("ks-defense-ui-focus", enabled);
-  root.classList.toggle("ks-defense-ui-clean", enabled && !forcedFocus && !forcedEssential && saved !== "focus" && saved !== "essential");
-  root.classList.toggle("ks-defense-ui-focus-mode", enabled && (forcedFocus || saved === "focus"));
+  root.classList.toggle("ks-defense-ui-clean", enabled && !autoMobileFocus && !forcedFocus && !forcedEssential && saved !== "focus" && saved !== "essential");
+  root.classList.toggle("ks-defense-ui-focus-mode", enabled && (autoMobileFocus || forcedFocus || saved === "focus"));
   root.classList.toggle("ks-defense-ui-essential", enabled && (forcedEssential || saved === "essential"));
   root.classList.toggle("ks-defense-ui-legacy", !enabled);
   root.style.setProperty("--ks-defense-ui-decor-alpha", forcedEssential || saved === "essential" ? ".42" : forcedFocus || saved === "focus" ? ".58" : ".70");
@@ -257,6 +275,101 @@ function emitEmergencySave(reason: string): void {
       detail: { reason, at: Date.now() },
     }),
   );
+}
+
+function isExitModalVisible(): boolean {
+  return Boolean(exitModal?.isConnected && !exitModal.classList.contains("hidden"));
+}
+
+function backNavigator(): KingdomSeedBackNavigator | undefined {
+  return window.__KINGDOM_SEED_BACK_NAVIGATOR__;
+}
+
+function currentGameSceneKey(): string {
+  try {
+    return backNavigator()?.currentSceneKey?.() ?? currentShellSceneKey;
+  } catch {
+    return currentShellSceneKey;
+  }
+}
+
+function isGameHomeScene(): boolean {
+  try {
+    const navigatorHome = backNavigator()?.isHome?.();
+    if (typeof navigatorHome === "boolean") return navigatorHome;
+  } catch {
+    // Fall back to the last shell scene-ready signal.
+  }
+  return HOME_SCENE_KEYS.has(currentShellSceneKey) || currentShellSceneKey === "Shell";
+}
+
+function showBackHomeToast(message = "첫 화면으로 돌아갑니다"): void {
+  if (!backHomeToast) {
+    backHomeToast = document.createElement("div");
+    backHomeToast.id = "back-home-toast";
+    backHomeToast.className = "shell-back-toast hidden";
+    document.body.appendChild(backHomeToast);
+  }
+  backHomeToast.textContent = message;
+  safeShow(backHomeToast);
+  window.setTimeout(() => safeHide(backHomeToast!), 1500);
+}
+
+function performBrowserExit(reason: string): void {
+  allowExit = true;
+  safeHide(exitModal!);
+  emitEmergencySave(reason);
+  try {
+    history.back();
+  } catch {
+    // Browser history may be unavailable in a locked webview.
+  }
+  window.setTimeout(() => {
+    try {
+      window.close();
+    } catch {
+      // ignore
+    }
+    if (!document.hidden) window.location.href = "about:blank";
+  }, 160);
+}
+
+function requestGameHome(reason: string): boolean {
+  if (!activated) return false;
+  if (isGameHomeScene()) return false;
+  emitEmergencySave(reason);
+  markLaunchMilestone("mobile-back-home-requested", { reason, scene: currentGameSceneKey() });
+  document.documentElement.classList.add("ks-back-home-requested");
+  safeHide(exitModal!);
+  suppressExitGuardUntil = Date.now() + 1200;
+  window.setTimeout(() => armBackGuard(true), 80);
+  showBackHomeToast("첫 화면으로 이동");
+  const nav = backNavigator();
+  try {
+    const handled = nav?.goHome?.(reason);
+    if (handled instanceof Promise) {
+      void handled.catch((error) => {
+        console.warn("Back-to-home navigation failed:", error);
+        window.dispatchEvent(new CustomEvent("kingdom-seed:back-home-request", { detail: { reason, at: Date.now() } }));
+      });
+      return true;
+    }
+    if (handled) return true;
+  } catch (error) {
+    console.warn("Back-to-home navigator failed:", error);
+  }
+  window.dispatchEvent(new CustomEvent("kingdom-seed:back-home-request", { detail: { reason, at: Date.now() } }));
+  return true;
+}
+
+function handleMobileBackCommand(reason: string): void {
+  if (allowExit || !flags().isMobile) return;
+  if (isExitModalVisible()) {
+    performBrowserExit(`${reason}:second-back`);
+    return;
+  }
+  if (requestGameHome(reason)) return;
+  showExitGuard(reason);
 }
 
 function formatBootError(error: unknown): string {
@@ -363,8 +476,10 @@ function updateOrientationClass(): void {
   });
 }
 
-function markSceneReady(): void {
-  markLaunchMilestone("web-shell-scene-ready", { activated });
+function markSceneReady(event?: Event): void {
+  const detail = (event as CustomEvent<{ scene?: string }> | undefined)?.detail;
+  if (detail?.scene) currentShellSceneKey = detail.scene;
+  markLaunchMilestone("web-shell-scene-ready", { activated, scene: currentShellSceneKey });
   sceneReady = true;
   document.documentElement.classList.add("ks-scene-ready");
   if (bootWatchdogTimer !== undefined) {
@@ -473,9 +588,9 @@ function createExitModal(): void {
   exitModal.className = "shell-overlay hidden";
   exitModal.innerHTML = `
     <div class="shell-panel shell-exit-panel">
-      <div class="shell-kicker">EXIT</div>
+      <div class="shell-kicker">EXIT GUARD</div>
       <h2>게임을 종료할까요?</h2>
-      <p>진행 중인 전투는 보호 저장을 시도합니다.</p>
+      <p>첫 화면에서 뒤로가기를 한 번 더 누르면 종료됩니다.</p>
       <div class="shell-row">
         <button id="exit-stay-btn" class="shell-secondary">계속하기</button>
         <button id="exit-confirm-btn" class="shell-danger">종료</button>
@@ -492,20 +607,7 @@ function createExitModal(): void {
     });
   exitModal
     .querySelector<HTMLButtonElement>("#exit-confirm-btn")
-    ?.addEventListener("click", () => {
-      allowExit = true;
-      safeHide(exitModal!);
-      emitEmergencySave("exit-confirm");
-      try {
-        history.back();
-      } catch {
-        /* ignore */
-      }
-      setTimeout(() => {
-        window.close();
-        if (!document.hidden) window.location.href = "about:blank";
-      }, 120);
-    });
+    ?.addEventListener("click", () => performBrowserExit("exit-confirm"));
 }
 
 function armBackGuard(force = false): void {
@@ -537,11 +639,13 @@ function showExitGuard(reason: string): void {
   if (allowExit || !exitModal || !flags().isMobile || !activated) return;
   if (document.visibilityState !== "visible") return;
   if (exitModal.isConnected && !exitModal.classList.contains("hidden")) return;
+  const immediateBack = reason.includes("popstate") || reason.includes("back");
   if (
-    now < suppressExitGuardUntil ||
-    now - lastPointerAt < 900 ||
-    now - lastSceneReadyAt < 2600 ||
-    now - lastGuardAt < 1300
+    !immediateBack &&
+    (now < suppressExitGuardUntil ||
+      now - lastPointerAt < 900 ||
+      now - lastSceneReadyAt < 2600 ||
+      now - lastGuardAt < 1300)
   ) {
     window.setTimeout(() => armBackGuard(true), 60);
     return;
@@ -568,19 +672,14 @@ function installBackGuard(): void {
 
   window.addEventListener("popstate", (event) => {
     if (allowExit || !flags().isMobile) return;
-    const now = Date.now();
     const state = event.state as Record<string, unknown> | null;
     if (state?.[GUARD_STATE_KEY]) return;
-    if (
-      !activated ||
-      now < suppressExitGuardUntil ||
-      now - lastPointerAt < 900 ||
-      now - lastSceneReadyAt < 2600
-    ) {
+    if (!activated) {
       window.setTimeout(() => armBackGuard(true), 80);
       return;
     }
-    showExitGuard("popstate");
+    window.setTimeout(() => armBackGuard(true), 80);
+    handleMobileBackCommand("popstate");
   });
 
   window.addEventListener("pagehide", () => {

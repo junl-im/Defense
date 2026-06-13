@@ -11,6 +11,11 @@ declare global {
   interface Window {
     __KINGDOM_SEED_GAME__?: Phaser.Game;
     __KINGDOM_SEED_BOOT_ERROR__?: unknown;
+    __KINGDOM_SEED_BACK_NAVIGATOR__?: {
+      currentSceneKey?: () => string | undefined;
+      isHome?: () => boolean;
+      goHome?: (reason: string) => boolean | Promise<boolean>;
+    };
   }
 }
 
@@ -69,6 +74,60 @@ function installDeferredRuntimeComplements(game: Phaser.Game): void {
 
   if (document.documentElement.classList.contains("ks-scene-ready")) installPwaWhenSettled();
   else window.addEventListener("kingdom-seed:scene-ready", installPwaWhenSettled, { once: true });
+}
+
+
+function activeScene(game: Phaser.Game): Phaser.Scene | undefined {
+  try {
+    const activeScenes = game.scene.getScenes(true).filter((scene) => scene.scene.key !== "BootScene");
+    return activeScenes[activeScenes.length - 1] ?? game.scene.getScenes(true)[0];
+  } catch {
+    return undefined;
+  }
+}
+
+function activeSceneKey(game: Phaser.Game): string | undefined {
+  return activeScene(game)?.scene.key;
+}
+
+function installGameBackNavigationBridge(game: Phaser.Game): void {
+  const homeKeys = new Set(["MenuScene", "MainMenuScene"]);
+  const goHome = async (reason: string): Promise<boolean> => {
+    const scene = activeScene(game);
+    const key = scene?.scene.key;
+    if (!scene || !scene.scene.isActive(key ?? "")) return false;
+    if (key && homeKeys.has(key)) return false;
+    try {
+      const { startRegisteredScene } = await import("../scenes/SceneRegistry");
+      await startRegisteredScene(scene, "MainMenuScene", { source: "mobile-back", reason, at: Date.now() });
+      window.dispatchEvent(new CustomEvent("kingdom-seed:back-home-complete", { detail: { reason, target: "MainMenuScene", at: Date.now() } }));
+      return true;
+    } catch (error) {
+      console.warn("Back navigation to MainMenuScene failed, falling back to MenuScene:", error);
+      try {
+        const { startRegisteredScene } = await import("../scenes/SceneRegistry");
+        await startRegisteredScene(scene, "MenuScene", { source: "mobile-back", reason, at: Date.now() });
+        window.dispatchEvent(new CustomEvent("kingdom-seed:back-home-complete", { detail: { reason, target: "MenuScene", at: Date.now() } }));
+        return true;
+      } catch (fallbackError) {
+        window.dispatchEvent(new CustomEvent("kingdom-seed:navigation-error", { detail: { key: "MainMenuScene", message: String(fallbackError), at: Date.now() } }));
+        return false;
+      }
+    }
+  };
+
+  window.__KINGDOM_SEED_BACK_NAVIGATOR__ = {
+    currentSceneKey: () => activeSceneKey(game),
+    isHome: () => {
+      const key = activeSceneKey(game);
+      return !key || key === "BootScene" || homeKeys.has(key);
+    },
+    goHome,
+  };
+
+  window.addEventListener("kingdom-seed:back-home-request", () => {
+    void goHome("fallback-event");
+  });
 }
 
 function installWindowScaleHooks(game: Phaser.Game): void {
@@ -184,6 +243,7 @@ export function bootstrapKingdomSeedGame(reason = "deferred-entry"): Phaser.Game
   installMobileRuntimeEngine(gameInstance);
   installRuntimeFrameGovernor(gameInstance);
   installWindowScaleHooks(gameInstance);
+  installGameBackNavigationBridge(gameInstance);
   installDeferredRuntimeComplements(gameInstance);
   markLaunchMilestone("runtime-complements-scheduled", { reason });
   dispatchEngineStatus("phaser-created", { tier: profile.tier });
