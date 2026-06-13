@@ -1,0 +1,14 @@
+KingdomSeed v2.36.28 BACK NAV QA AND UI AUDIT
+
+적용 방법:
+1. 기존 KingdomSeed 프로젝트 루트에 이 zip 내용을 그대로 덮어씌운다.
+2. node_modules, dist, .git은 포함되어 있지 않다.
+3. 의존성 검증이 필요하면 npm ci를 실행한다.
+4. 빌드 검증은 npm run build로 수행한다.
+
+주요 변경:
+- 모바일 뒤로가기 guard를 시작 게이트 단계까지 조기 arm.
+- guard state 중복 push 방지.
+- 첫 탭 전 뒤로가기에도 종료 확인 팝업 대응.
+- MobileUiAudit.ts 추가.
+- ?uiaudit / ?navqa로 모바일 글자/터치/겹침 QA badge 표시.

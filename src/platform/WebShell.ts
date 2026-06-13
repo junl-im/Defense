@@ -317,7 +317,7 @@ function showBackHomeToast(message = "첫 화면으로 돌아갑니다"): void {
 
 function performBrowserExit(reason: string): void {
   allowExit = true;
-  safeHide(exitModal!);
+  if (exitModal) safeHide(exitModal);
   emitEmergencySave(reason);
   try {
     history.back();
@@ -345,8 +345,9 @@ function requestGameHome(reason: string): boolean {
   window.setTimeout(() => armBackGuard(true), 80);
   showBackHomeToast("첫 화면으로 이동");
   const nav = backNavigator();
+  if (!nav?.goHome) return false;
   try {
-    const handled = nav?.goHome?.(reason);
+    const handled = nav.goHome(reason);
     if (handled instanceof Promise) {
       void handled.catch((error) => {
         console.warn("Back-to-home navigation failed:", error);
@@ -359,13 +360,17 @@ function requestGameHome(reason: string): boolean {
     console.warn("Back-to-home navigator failed:", error);
   }
   window.dispatchEvent(new CustomEvent("kingdom-seed:back-home-request", { detail: { reason, at: Date.now() } }));
-  return true;
+  return false;
 }
 
 function handleMobileBackCommand(reason: string): void {
   if (allowExit || !flags().isMobile) return;
   if (isExitModalVisible()) {
     performBrowserExit(`${reason}:second-back`);
+    return;
+  }
+  if (!activated) {
+    showExitGuard(reason);
     return;
   }
   if (requestGameHome(reason)) return;
@@ -590,7 +595,7 @@ function createExitModal(): void {
     <div class="shell-panel shell-exit-panel">
       <div class="shell-kicker">EXIT GUARD</div>
       <h2>게임을 종료할까요?</h2>
-      <p>첫 화면에서 뒤로가기를 한 번 더 누르면 종료됩니다.</p>
+      <p>뒤로가기는 게임 안에서 첫 화면으로 이동합니다. 첫 화면에서 한 번 더 누르면 종료됩니다.</p>
       <div class="shell-row">
         <button id="exit-stay-btn" class="shell-secondary">계속하기</button>
         <button id="exit-confirm-btn" class="shell-danger">종료</button>
@@ -614,6 +619,8 @@ function armBackGuard(force = false): void {
   const info = flags();
   if (!info.isMobile || allowExit) return;
   const now = Date.now();
+  const currentState = history.state as Record<string, unknown> | null;
+  if (currentState?.[GUARD_STATE_KEY] && currentState.guardSession === GUARD_SESSION) return;
   if (!force && guardArmed && now - lastGuardAt < 1800) return;
   guardArmed = true;
   lastGuardAt = now;
@@ -636,10 +643,11 @@ function armBackGuard(force = false): void {
 
 function showExitGuard(reason: string): void {
   const now = Date.now();
-  if (allowExit || !exitModal || !flags().isMobile || !activated) return;
+  if (allowExit || !exitModal || !flags().isMobile) return;
   if (document.visibilityState !== "visible") return;
   if (exitModal.isConnected && !exitModal.classList.contains("hidden")) return;
   const immediateBack = reason.includes("popstate") || reason.includes("back");
+  if (!activated && !immediateBack) return;
   if (
     !immediateBack &&
     (now < suppressExitGuardUntil ||
@@ -674,10 +682,6 @@ function installBackGuard(): void {
     if (allowExit || !flags().isMobile) return;
     const state = event.state as Record<string, unknown> | null;
     if (state?.[GUARD_STATE_KEY]) return;
-    if (!activated) {
-      window.setTimeout(() => armBackGuard(true), 80);
-      return;
-    }
     window.setTimeout(() => armBackGuard(true), 80);
     handleMobileBackCommand("popstate");
   });
@@ -745,6 +749,7 @@ export function installWebShell(): void {
   createStartGate();
   createExitModal();
   installBackGuard();
+  if (flags().isMobile) window.setTimeout(() => armBackGuard(true), 160);
   installImmersiveMode();
   markLaunchMilestone("web-shell-installed-complete");
 }
