@@ -7,6 +7,7 @@ import { startRegisteredScene } from "./SceneRegistry";
 import { installSceneReadabilityPass, improveReadableTextTree, readableFontSize, readableHitSize } from "../game/MobileReadableUi";
 import { installSceneGraphicFallback } from "../game/PrestigeGraphicFallback";
 import { installReferenceEvolutionPack, resolveReferenceEvolutionEnemyThumb, resolveReferenceEvolutionTowerThumb } from "../game/ReferenceAssetEvolution";
+import { createReferenceArtSlot, referenceStateForEnemyThreat } from "../game/ReferenceVariantSystem";
 
 export class CodexScene extends Phaser.Scene {
   private user!: User;
@@ -96,7 +97,18 @@ export class CodexScene extends Phaser.Scene {
     const bg = this.add.rectangle(0, 0, 195, 238, 0x0b1220, 0.94).setOrigin(0, 0).setStrokeStyle(2, tower.color, 0.7);
     const thumbKey = resolveReferenceEvolutionTowerThumb(this, tower.kind);
     const icon = thumbKey
-      ? this.add.image(38, 42, thumbKey).setDisplaySize(70, 70)
+      ? createReferenceArtSlot(this, {
+          x: 38,
+          y: 42,
+          width: 84,
+          height: 84,
+          textureKey: thumbKey,
+          category: "tower",
+          state: "upgrade",
+          accent: tower.color,
+          pips: tower.kind === "barracks" ? 3 : 2,
+          noMotion: true,
+        })
       : this.add.circle(36, 38, 28, tower.color, 1).setStrokeStyle(3, 0xffffff, 0.3);
     const symbol = thumbKey
       ? undefined
@@ -135,7 +147,18 @@ export class CodexScene extends Phaser.Scene {
     const bg = this.add.rectangle(0, 0, 205, 68, 0x0b1220, 0.91).setOrigin(0, 0).setStrokeStyle(1, enemy.accentColor ?? 0xffffff, 0.45);
     const thumbKey = resolveReferenceEvolutionEnemyThumb(this, enemy.kind);
     const body = thumbKey
-      ? this.add.image(27, 35, thumbKey).setDisplaySize(52, 52)
+      ? createReferenceArtSlot(this, {
+          x: 27,
+          y: 35,
+          width: 62,
+          height: 62,
+          textureKey: thumbKey,
+          category: "enemy",
+          state: referenceStateForEnemyThreat(enemy.threat),
+          accent: enemy.accentColor ?? enemy.color,
+          pips: enemy.threat === "boss" ? 5 : enemy.threat === "tank" ? 3 : 1,
+          noMotion: true,
+        })
       : this.add.circle(24, 34, 13 * (enemy.scale ?? 1), enemy.color, 1).setStrokeStyle(2, enemy.accentColor ?? 0xffffff, 0.65);
     const name = this.add.text(50, 8, enemy.label, { fontSize: readableFontSize(15, 16, 23), color: '#ffffff', fontStyle: 'bold' });
     const stat = this.add.text(50, 30, `HP ${enemy.hp} / 속도 ${enemy.speed}\n약점: ${this.enemyWeakness(enemy)}`, {

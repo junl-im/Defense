@@ -7,6 +7,7 @@ import { startRegisteredScene } from "./SceneRegistry";
 import { installSceneReadabilityPass, improveReadableTextTree, readableFontSize, readableHitSize } from "../game/MobileReadableUi";
 import { installSceneGraphicFallback } from "../game/PrestigeGraphicFallback";
 import { installReferenceEvolutionPack, resolveReferenceEvolutionHeroThumb } from "../game/ReferenceAssetEvolution";
+import { createReferenceArtSlot } from "../game/ReferenceVariantSystem";
 
 export class HeroHallScene extends Phaser.Scene {
   private user!: User;
@@ -77,13 +78,22 @@ export class HeroHallScene extends Phaser.Scene {
     const referencePortrait = resolveReferenceEvolutionHeroThumb(this, hero.id);
     const portraitKey = hero.id === 'leon' ? 'portrait-knight' : hero.id === 'aria' ? 'portrait-ranger' : 'portrait-mage';
     const portrait = referencePortrait
-      ? this.add.image(0, -76, referencePortrait).setDisplaySize(142, 142)
+      ? createReferenceArtSlot(this, {
+          x: 0,
+          y: -76,
+          width: 168,
+          height: 168,
+          textureKey: referencePortrait,
+          category: "hero",
+          state: selected ? "selected" : "normal",
+          selected,
+          accent: hero.color,
+          pips: selected ? 4 : 3,
+        })
       : this.textures.exists(portraitKey)
         ? this.add.image(0, -72, portraitKey).setDisplaySize(150, 188)
         : this.add.circle(0, -72, 62, hero.color, 1);
-    const portraitFrame = referencePortrait
-      ? this.add.rectangle(0, -76, 154, 154, 0xffffff, 0).setStrokeStyle(2, 0xfff1aa, 0.42)
-      : undefined;
+    const portraitFrame = undefined;
     const name = this.add.text(0, 48, `${hero.name}`, { fontSize: '27px', color: '#fff1bf', fontStyle: 'bold', stroke: '#210b04', strokeThickness: 5 }).setOrigin(0.5);
     const title = this.add.text(0, 77, hero.title, { fontSize: readableFontSize(15, 16, 23), color: '#cfefff', fontStyle: 'bold', stroke: '#061219', strokeThickness: 3 }).setOrigin(0.5);
     const perks = this.add.text(-88, 105, hero.perks.map((perk) => `• ${perk}`).join('\n'), {

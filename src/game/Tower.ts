@@ -28,6 +28,7 @@ import {
   usePrestigeFallbackUnits,
   type VisibleGameObject,
 } from "./BattlePrestigePolish";
+import { createReferenceActorPedestal, isReferenceTextureKey } from "./ReferenceVariantSystem";
 
 export type TargetMode = "first" | "strong" | "air" | "near";
 
@@ -81,6 +82,7 @@ export class Tower extends Phaser.GameObjects.Container {
   private commandAura?: Phaser.GameObjects.Image | Phaser.GameObjects.Arc;
   private commandAuraLabel?: Phaser.GameObjects.Text;
   private prestigeFallbackObjects: VisibleGameObject[] = [];
+  private referencePedestal?: Phaser.GameObjects.Ellipse;
 
   constructor(
     scene: Phaser.Scene,
@@ -169,6 +171,7 @@ export class Tower extends Phaser.GameObjects.Container {
     if (this.sprite) visuals.push(this.sprite);
     visuals.push(this.levelText);
     this.add(visuals);
+    this.syncReferencePedestal(spriteKey);
     scene.add.existing(this);
 
     this.setDepth(22);
@@ -1075,6 +1078,19 @@ export class Tower extends Phaser.GameObjects.Container {
     this.artBackplate?.setVisible(casual);
     this.prestigeFallbackObjects.forEach((object) => object.setVisible(false));
     this.applyTowerArtSize();
+    this.syncReferencePedestal(nextKey);
+  }
+
+  private syncReferencePedestal(textureKey: string | undefined): void {
+    if (!this.sprite || !isReferenceTextureKey(textureKey)) {
+      this.referencePedestal?.setVisible(false);
+      return;
+    }
+    if (!this.referencePedestal) {
+      this.referencePedestal = createReferenceActorPedestal(this.scene, "tower", 72, 52, this.config.color);
+      this.addAt(this.referencePedestal, Math.max(0, this.getIndex(this.sprite)));
+    }
+    this.referencePedestal.setVisible(true);
   }
 
   private updateSpriteForLevel(): void {

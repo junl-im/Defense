@@ -232,6 +232,7 @@ import {
   resolveReferenceEvolutionSkillThumb,
   resolveReferenceEvolutionTowerThumb,
 } from "../game/ReferenceAssetEvolution";
+import { createReferenceArtSlot } from "../game/ReferenceVariantSystem";
 
 type CastingSpell = "meteor" | "mercenary" | undefined;
 
@@ -435,17 +436,23 @@ export class GameScene extends Phaser.Scene {
     entries.forEach(([key, x, y]) => {
       if (!key || !this.textures.exists(key)) return;
       const name = `ks-ref-spell-${key}`;
-      const existing = this.children.getByName(name) as Phaser.GameObjects.Image | null;
-      if (existing?.active) {
-        existing.setTexture(key).setDisplaySize(34, 34).setPosition(x, y).setDepth(86.4);
-        return;
-      }
-      this.add
-        .image(x, y, key)
-        .setName(name)
-        .setDisplaySize(34, 34)
-        .setDepth(86.4)
-        .setAlpha(0.92);
+      const existing = this.children.getByName(name) as Phaser.GameObjects.Container | null;
+      existing?.destroy();
+      createReferenceArtSlot(this, {
+        x,
+        y,
+        width: 46,
+        height: 46,
+        textureKey: key,
+        category: "skill",
+        state: "spell",
+        accent: 0x7cc7ff,
+        pips: 1,
+        depth: 86.4,
+        name,
+        alpha: 0.96,
+        noMotion: true,
+      });
     });
   }
 
@@ -2464,24 +2471,34 @@ export class GameScene extends Phaser.Scene {
             .setInteractive({ useHandCursor: true });
       card.setAlpha(canBuy ? 1 : 0.55);
       const referenceThumbKey = resolveReferenceEvolutionTowerThumb(this, kind);
+      if (referenceThumbKey) {
+        createReferenceArtSlot(this, {
+          x: bx - 35,
+          y: by - 3,
+          width: 44,
+          height: 44,
+          textureKey: referenceThumbKey,
+          category: "tower",
+          state: canBuy ? "upgrade" : "locked",
+          locked: !canBuy,
+          accent: cfg.color,
+          pips: canBuy ? 2 : 0,
+          noMotion: true,
+        }).setAlpha(canBuy ? 1 : 0.62);
+      }
       const roleIconKey = `ui-tower-role-${kind}-v45`;
-      const roleIcon = referenceThumbKey
-        ? this.add
-            .image(bx - 35, by - 3, referenceThumbKey)
-            .setDisplaySize(34, 34)
-            .setAlpha(canBuy ? 1 : 0.48)
-        : this.textures.exists(roleIconKey)
+      const roleIcon = !referenceThumbKey && this.textures.exists(roleIconKey)
           ? this.add
               .image(bx - 35, by - 3, roleIconKey)
               .setDisplaySize(25, 25)
               .setAlpha(canBuy ? 1 : 0.45)
           : undefined;
-      const iconBack = roleIcon
+      const iconBack = roleIcon || referenceThumbKey
         ? undefined
         : this.add
             .circle(bx - 35, by - 3, 12, cfg.color, canBuy ? 0.95 : 0.38)
             .setStrokeStyle(2, 0xffffff, 0.18);
-      const icon = roleIcon
+      const icon = roleIcon || referenceThumbKey
         ? undefined
         : this.add
             .text(bx - 35, by - 5, this.towerSymbol(kind), {

@@ -19,6 +19,7 @@ import {
   usePrestigeFallbackUnits,
   type VisibleGameObject,
 } from "./BattlePrestigePolish";
+import { createReferenceActorPedestal, isReferenceTextureKey } from "./ReferenceVariantSystem";
 
 export class Hero extends Phaser.GameObjects.Container {
   hp = 220;
@@ -34,6 +35,7 @@ export class Hero extends Phaser.GameObjects.Container {
   private animatedSprite = false;
   private currentMotion: "idle" | "move" | "attack" = "idle";
   private prestigeFallbackObjects: VisibleGameObject[] = [];
+  private referencePedestal?: Phaser.GameObjects.Ellipse;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
@@ -116,6 +118,7 @@ export class Hero extends Phaser.GameObjects.Container {
     if (this.artBackplate) visuals.push(this.artBackplate);
     if (this.sprite) visuals.push(this.sprite);
     this.add(visuals);
+    this.syncReferencePedestal(heroTextureKey);
     scene.add.existing(this);
     this.setDepth(26);
     this.setSize(36, 48);
@@ -278,6 +281,19 @@ export class Hero extends Phaser.GameObjects.Container {
   }
 
 
+
+  private syncReferencePedestal(textureKey: string | undefined): void {
+    if (!this.sprite || !isReferenceTextureKey(textureKey)) {
+      this.referencePedestal?.setVisible(false);
+      return;
+    }
+    if (!this.referencePedestal) {
+      this.referencePedestal = createReferenceActorPedestal(this.scene, "hero", 56, 50, 0x7cc7ff);
+      this.addAt(this.referencePedestal, Math.max(0, this.getIndex(this.sprite)));
+    }
+    this.referencePedestal.setVisible(true);
+  }
+
   refreshArt(): void {
     const heroTextureKey = resolveHeroTextureKey(this.scene);
     if (!heroTextureKey || !this.scene.textures.exists(heroTextureKey)) return;
@@ -325,6 +341,7 @@ export class Hero extends Phaser.GameObjects.Container {
 
     this.bodyCircle.setAlpha(0);
     this.prestigeFallbackObjects.forEach((object) => object.setVisible(false));
+    this.syncReferencePedestal(heroTextureKey);
     if (previousKey !== heroTextureKey) {
       this.sprite.setAlpha(0);
       this.scene.tweens.add({

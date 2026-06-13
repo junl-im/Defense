@@ -1,0 +1,17 @@
+{
+  "version": "2.36.21",
+  "name": "REFERENCE VARIANT MATRIX",
+  "source": "v2.36.19 no-text reference pack + v2.36.20 thumbnails",
+  "textPolicy": "No UI text, labels, buttons or written glyphs are baked into variant frames.",
+  "runtimePolicy": {
+    "boot": "not loaded in BootScene",
+    "battle": "visual variants are drawn with Phaser primitives; heavy reference actors remain idle-only",
+    "fallback": "essential mode removes shimmer and keeps only high-contrast static frames"
+  },
+  "states": ["normal", "selected", "locked", "elite", "boss", "upgrade", "spell"],
+  "categories": ["tower", "enemy", "hero", "skill"],
+  "queryFlags": {
+    "forceEssential": ["essentialrefart", "saferefart", "fallbackrefart"],
+    "disable": ["norefvariants", "novariantart", "legacyrefvariants"]
+  }
+}

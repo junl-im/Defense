@@ -20,6 +20,7 @@ import {
   type VisibleGameObject,
 } from "./BattlePrestigePolish";
 import { bossPatternCooldown, bossPatternLabel } from "./MegaSystems";
+import { createReferenceActorPedestal, isReferenceTextureKey } from "./ReferenceVariantSystem";
 
 type EnemyMotion = "walk" | "attack" | "death";
 type EnemyDirection = "down" | "side" | "up";
@@ -53,6 +54,7 @@ export class Enemy extends Phaser.GameObjects.Container {
   private bossShieldUntil = 0;
   private bossSpeedUntil = 0;
   private bossSpeedMultiplier = 1;
+  private referencePedestal?: Phaser.GameObjects.Ellipse;
   private prestigeFallbackObjects: VisibleGameObject[] = [];
 
   constructor(
@@ -206,6 +208,7 @@ export class Enemy extends Phaser.GameObjects.Container {
         this.hpBack,
         this.hpBar,
       ]);
+    this.syncReferencePedestal(this.sprite?.texture.key);
     scene.add.existing(this);
     this.setDepth(config.flying ? 18 : 12);
   }
@@ -380,6 +383,30 @@ export class Enemy extends Phaser.GameObjects.Container {
     super.destroy(fromScene);
   }
 
+
+  private syncReferencePedestal(textureKey: string | undefined): void {
+    if (!this.sprite || !isReferenceTextureKey(textureKey)) {
+      this.referencePedestal?.setVisible(false);
+      return;
+    }
+    const scale = this.config.scale ?? 1;
+    const width = (this.config.threat === "boss" ? 92 : 64) * scale;
+    const height = (this.config.flying ? 46 : 54) * scale;
+    if (!this.referencePedestal) {
+      this.referencePedestal = createReferenceActorPedestal(
+        this.scene,
+        "enemy",
+        width,
+        height,
+        this.config.accentColor ?? this.config.color,
+      );
+      this.addAt(this.referencePedestal, Math.max(0, this.getIndex(this.sprite)));
+    } else {
+      this.referencePedestal.setSize(width, Math.max(10, height * 0.18));
+    }
+    this.referencePedestal.setVisible(true);
+  }
+
   private resolveEnemyArtKey(kind: string): string | undefined {
     // v2.35.8: 몬스터 에셋 매핑은 AssetMap에서 중앙 관리한다.
     // assets/art/v30_fish_silhouette_sheet.png / v30_fish_slime_icon.png은
@@ -443,6 +470,7 @@ export class Enemy extends Phaser.GameObjects.Container {
 
     this.bodyCircle.setAlpha(0);
     this.prestigeFallbackObjects.forEach((object) => object.setVisible(false));
+    this.syncReferencePedestal(artKey);
     if (previousKey !== artKey) {
       this.sprite.setAlpha(0);
       this.scene.tweens.add({
