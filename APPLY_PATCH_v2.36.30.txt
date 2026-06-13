@@ -1,0 +1,19 @@
+KingdomSeed v2.36.30 QUALITY CHECK CONTROL PANEL
+
+적용 방법:
+1. 기존 KingdomSeed 프로젝트 루트에 이 패치 zip을 그대로 덮어씌운다.
+2. node_modules/dist/.git은 포함되어 있지 않다.
+3. npm ci
+4. npm run build
+
+검수 추천:
+- 기본 주소
+- /?qualitycheck
+- /?designcheck&systemcheck&featurecheck
+- /?qualitycheck&navqa
+- /?qualitycheck&referenceart&refevolution&rewardpipeline
+
+핵심:
+- 디자인 체크 / 시스템 체크 / 기능 체크 통합 QA 패널 추가
+- WebShell back guard 상태 노출
+- 기본 모드에서는 조용히 이벤트와 window.__KINGDOM_SEED_LAST_QUALITY_CHECK__만 갱신

@@ -15,9 +15,23 @@ type KingdomSeedBackNavigator = {
   goHome?: (reason: string) => boolean | Promise<boolean>;
 };
 
+type KingdomSeedBackGuardStatus = {
+  mobile: boolean;
+  activated: boolean;
+  sceneReady: boolean;
+  guardArmed: boolean;
+  allowExit: boolean;
+  currentScene: string;
+  isHome: boolean;
+  exitModalVisible: boolean;
+  lastGuardAt: number;
+  lastBackCommandAt: number;
+};
+
 declare global {
   interface Window {
     __KINGDOM_SEED_BACK_NAVIGATOR__?: KingdomSeedBackNavigator;
+    __KINGDOM_SEED_BACK_GUARD_STATUS__?: () => KingdomSeedBackGuardStatus;
   }
 }
 
@@ -689,6 +703,22 @@ function showExitGuard(reason: string): void {
   }
 }
 
+
+function getBackGuardStatus(): KingdomSeedBackGuardStatus {
+  return {
+    mobile: flags().isMobile,
+    activated,
+    sceneReady,
+    guardArmed,
+    allowExit,
+    currentScene: currentGameSceneKey(),
+    isHome: isGameHomeScene(),
+    exitModalVisible: isExitModalVisible(),
+    lastGuardAt,
+    lastBackCommandAt,
+  };
+}
+
 function installBackGuard(): void {
   const markPointer = (): void => {
     lastPointerAt = Date.now();
@@ -767,6 +797,7 @@ export function installWebShell(): void {
   });
   createStartGate();
   createExitModal();
+  window.__KINGDOM_SEED_BACK_GUARD_STATUS__ = getBackGuardStatus;
   installBackGuard();
   if (flags().isMobile) window.setTimeout(() => armBackGuard(true), 160);
   installImmersiveMode();

@@ -5,6 +5,7 @@ import { installAdaptiveRescueOrchestrator } from "./AdaptiveRescueOrchestrator"
 import { installSupremeDesignSystemScene } from "./SupremeDesignSystem";
 import { installDefenseUiFocusScene } from "./DefenseUiFocusSystem";
 import { installMobileUiAudit } from "./MobileUiAudit";
+import { installQualityCheckDirector } from "./QualityCheckDirector";
 
 export const MOBILE_READABLE_FONT =
   "Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif";
@@ -265,6 +266,7 @@ export function installSceneReadabilityPass(
   installAdaptiveFallbackDirector(scene);
   installAdaptiveRescueOrchestrator(scene);
   installMobileUiAudit(scene);
+  installQualityCheckDirector(scene);
   const profile = getMobileReadabilityProfile();
   if (!profile.enabled) return;
   installSceneLegibilityScaffold(scene);
