@@ -72,6 +72,12 @@ function buildSafeModeUrl(): string {
   url.searchParams.set("tapboot", "1");
   url.searchParams.set("noprewarm", "1");
   url.searchParams.set("safe", "1");
+  url.searchParams.set("fallbacksuite", "1");
+  url.searchParams.set("autorescue", "1");
+  url.searchParams.set("safegfx", "1");
+  url.searchParams.set("largeui", "1");
+  url.searchParams.set("contrastui", "1");
+  url.searchParams.set("reducemotion", "1");
   url.searchParams.set("q", String(Date.now()));
   return url.toString();
 }
@@ -103,6 +109,27 @@ function ensureShellStyles(): void {
     @keyframes ksTapPulseV48 { 0%,100% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.07); filter: brightness(1.12); } }
   `;
   document.head.appendChild(style);
+}
+
+
+function syncAdaptiveFallbackShellClasses(info: BrowserFlags): void {
+  const query = new URLSearchParams(window.location.search);
+  const disabled = query.has("nofallbacksuite") || query.has("legacyfallback") || query.has("toydebug");
+  const autoRescue = !disabled && (query.has("autorescue") || query.has("rescueui") || safeReadStorage("ksAdaptiveAutoRescue") === "1");
+  const emergency = !disabled && (query.has("emergencyui") || query.has("fallbacksuite") || safeReadStorage("ksEmergencyFallback") === "1");
+  const safeGfx = !disabled && (autoRescue || emergency || query.has("safegfx") || query.has("fallbackgfx") || safeReadStorage("ksSafeGfx") === "1");
+  const readable = !disabled && (autoRescue || emergency || query.has("largeui") || query.has("hugeui") || query.has("fallbackui") || safeReadStorage("ksReadableUi") !== null || info.isMobile);
+  const contrast = !disabled && (emergency || query.has("contrastui") || query.has("highcontrast") || safeReadStorage("ksContrastUi") === "1");
+  const reduceMotion = !disabled && (autoRescue || emergency || query.has("reducemotion") || query.has("battery") || safeReadStorage("ksReduceMotion") === "1");
+  const root = document.documentElement;
+  root.classList.toggle("ks-adaptive-fallback", readable || contrast || safeGfx || reduceMotion || emergency || autoRescue);
+  root.classList.toggle("ks-auto-rescue", autoRescue);
+  root.classList.toggle("ks-adaptive-emergency", emergency);
+  root.classList.toggle("ks-adaptive-readable", readable);
+  root.classList.toggle("ks-adaptive-contrast", contrast);
+  root.classList.toggle("ks-adaptive-safe-gfx", safeGfx);
+  root.classList.toggle("ks-adaptive-reduce-motion", reduceMotion);
+  root.style.setProperty("--ks-adaptive-fallback-alpha", contrast || emergency ? ".94" : ".78");
 }
 
 function syncViewportCssVars(): void {
@@ -272,6 +299,7 @@ function updateOrientationClass(): void {
   root.classList.toggle("is-desktop", info.isDesktop);
   root.classList.toggle("needs-portrait-rotation", info.isMobile && !landscape);
   syncReadabilityShellClasses(info);
+  syncAdaptiveFallbackShellClasses(info);
 
   root.classList.toggle(
     "ks-hit-debug",

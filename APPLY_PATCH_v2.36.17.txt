@@ -1,0 +1,25 @@
+KingdomSeed v2.36.17 Auto Rescue Fallback Mesh
+
+Apply this patch by copying the contents of this zip over the existing project root.
+This patch is intended to be applied on top of v2.36.16.
+
+Included changes:
+- Automatic rescue fallback orchestrator
+- Frame/viewport/offline/memory-pressure fallback triggers
+- Safe retry URL now opens with fallback suite flags
+- First shell and in-game scenes reflect saved auto rescue state
+- New QA flags for autorescue/rescue panel/debug comparisons
+
+After applying:
+1. npm ci
+2. npm run build
+3. Test default URL
+4. Test ?autorescue
+5. Test ?rescuepanel
+6. Test ?noautorescue
+
+Excluded from the patch zip:
+- .git
+- node_modules
+- dist
+- temporary files

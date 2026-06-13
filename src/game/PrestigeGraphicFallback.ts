@@ -29,6 +29,24 @@ function query(): URLSearchParams {
   );
 }
 
+
+function readStorage(key: string): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return window.localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function savedSafeGraphics(): boolean {
+  return readStorage("ksSafeGfx") === "1" || readStorage("ksEmergencyFallback") === "1";
+}
+
+function savedHighContrast(): boolean {
+  return readStorage("ksContrastUi") === "1" || readStorage("ksEmergencyFallback") === "1";
+}
+
 function hasDocumentClass(name: string): boolean {
   if (typeof document === "undefined") return false;
   return document.documentElement.classList.contains(name);
@@ -81,14 +99,18 @@ export function getGraphicFallbackProfile(): GraphicFallbackProfile {
     lowPowerMode() ||
     networkSaveData() ||
     weakNetwork() ||
+    savedSafeGraphics() ||
     hasDocumentClass("ks-runtime-lockdown") ||
     hasDocumentClass("ks-engine-lockdown") ||
+    hasDocumentClass("ks-adaptive-safe-gfx") ||
     qs.has("safegfx") ||
     qs.has("fallbackgfx");
   const highContrast =
     qs.has("contrastgfx") ||
     qs.has("highcontrast") ||
     qs.has("fallbackui") ||
+    savedHighContrast() ||
+    hasDocumentClass("ks-adaptive-contrast") ||
     hasDocumentClass("ks-readable-ui-contrast");
   const mobile = isMobileRuntime();
   const baseDensity = safe ? 0.72 : mobile ? 0.9 : 1;

@@ -1189,3 +1189,118 @@ html.ks-graphic-fallback-contrast #game::after {
   z-index: 9997;
   box-shadow: inset 0 0 0 2px rgba(255, 224, 141, .14), inset 0 0 80px rgba(0,0,0,.28);
 }
+
+/* v2.36.16 adaptive fallback suite: visible emergency alternatives without loading new art. */
+html.ks-adaptive-fallback body {
+  background-color: #020611;
+}
+html.ks-adaptive-readable .shell-start-card,
+html.ks-adaptive-readable .shell-panel {
+  min-height: 196px !important;
+}
+html.ks-adaptive-readable .shell-start-card h1,
+html.ks-adaptive-readable .shell-panel h2 {
+  font-size: max(22px, calc(21px * var(--ks-shell-readable-scale, 1.08))) !important;
+}
+html.ks-adaptive-readable .shell-start-card p,
+html.ks-adaptive-readable .shell-panel p,
+html.ks-adaptive-readable .shell-loading-text {
+  font-size: max(14px, calc(13px * var(--ks-shell-readable-scale, 1.08))) !important;
+}
+html.ks-adaptive-contrast .shell-start-card,
+html.ks-adaptive-contrast .shell-panel,
+html.ks-adaptive-emergency .shell-start-card,
+html.ks-adaptive-emergency .shell-panel {
+  border-color: rgba(255, 231, 156, .98) !important;
+  background: linear-gradient(180deg, rgba(6, 14, 30, .995), rgba(1, 5, 12, .998)) !important;
+  text-shadow: 0 2px 3px rgba(0,0,0,.94) !important;
+}
+html.ks-adaptive-safe-gfx #game canvas,
+html.ks-adaptive-emergency #game canvas,
+html.ks-adaptive-reduce-motion #game canvas {
+  filter: none !important;
+}
+html.ks-adaptive-emergency *,
+html.ks-adaptive-reduce-motion * {
+  animation-duration: 0s !important;
+  transition-duration: 0s !important;
+  scroll-behavior: auto !important;
+}
+html.ks-adaptive-emergency #game::before,
+html.ks-adaptive-contrast #game::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9996;
+  box-shadow: inset 0 0 0 2px rgba(255, 226, 143, .16), inset 0 0 92px rgba(0,0,0, calc(.34 * var(--ks-adaptive-fallback-alpha, .8)));
+}
+html.ks-adaptive-offline .shell-loading-text::after,
+html.ks-adaptive-weak-network .shell-loading-text::after {
+  content: " · 네트워크 보호";
+  color: #ffe4a8;
+}
+@media (hover: none) and (pointer: coarse) {
+  html.ks-adaptive-tiny .shell-start-card,
+  html.ks-adaptive-tiny .shell-panel {
+    width: min(440px, 94vw) !important;
+    padding: 20px 18px !important;
+  }
+  html.ks-adaptive-tiny .shell-tap-rune,
+  html.ks-adaptive-emergency .shell-tap-rune {
+    width: 86px !important;
+    height: 86px !important;
+    font-size: 16px !important;
+  }
+}
+
+/* v2.36.17 auto rescue fallback mesh: automatic safety classes before the user finds settings. */
+html.ks-auto-rescue body {
+  background-color: #020611;
+}
+html.ks-auto-rescue .shell-loading-text::after {
+  content: " · 자동 보호";
+  color: #ffe6a8;
+}
+html.ks-auto-rescue .shell-start-card,
+html.ks-auto-rescue .shell-panel {
+  border-color: rgba(255, 226, 143, .96) !important;
+  box-shadow: 0 24px 72px rgba(0,0,0,.62), inset 0 1px 0 rgba(255,255,255,.18) !important;
+}
+html.ks-auto-rescue-safe #game canvas,
+html.ks-auto-rescue-emergency #game canvas {
+  filter: none !important;
+}
+html.ks-auto-rescue-emergency *,
+html.ks-auto-rescue-safe.ks-adaptive-reduce-motion * {
+  animation-duration: 0s !important;
+  transition-duration: 0s !important;
+}
+html.ks-auto-rescue-safe #game::after,
+html.ks-auto-rescue-emergency #game::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9995;
+  box-shadow: inset 0 0 0 2px rgba(255, 225, 143, .13), inset 0 0 104px rgba(0,0,0, calc(.28 * var(--ks-auto-rescue-alpha, .8)));
+}
+html.ks-auto-rescue-tiny .shell-start-card,
+html.ks-auto-rescue-tiny .shell-panel,
+html.ks-auto-rescue-offline .shell-start-card,
+html.ks-auto-rescue-offline .shell-panel {
+  width: min(450px, 95vw) !important;
+  min-height: 206px !important;
+}
+html.ks-auto-rescue-tiny .shell-start-card h1,
+html.ks-auto-rescue-offline .shell-start-card h1,
+html.ks-auto-rescue-tiny .shell-panel h2,
+html.ks-auto-rescue-offline .shell-panel h2 {
+  font-size: max(23px, calc(22px * var(--ks-shell-readable-scale, 1.08))) !important;
+}
+html.ks-auto-rescue-tiny .shell-start-card p,
+html.ks-auto-rescue-offline .shell-start-card p,
+html.ks-auto-rescue-tiny .shell-loading-text,
+html.ks-auto-rescue-offline .shell-loading-text {
+  font-size: max(14px, calc(13px * var(--ks-shell-readable-scale, 1.08))) !important;
+}
