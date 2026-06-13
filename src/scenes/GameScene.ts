@@ -227,6 +227,11 @@ import {
   installReferenceAssetPack,
   REFERENCE_ASSET_KEYS,
 } from "../game/ReferenceAssetPack";
+import {
+  installReferenceEvolutionPack,
+  resolveReferenceEvolutionSkillThumb,
+  resolveReferenceEvolutionTowerThumb,
+} from "../game/ReferenceAssetEvolution";
 
 type CastingSpell = "meteor" | "mercenary" | undefined;
 
@@ -412,21 +417,23 @@ export class GameScene extends Phaser.Scene {
     };
 
     this.events.on("kingdom-seed:reference-asset-pack-ready", refresh);
+    this.events.on("kingdom-seed:reference-evolution-ready", refresh);
     const cleanup = (): void => {
       this.events.off("kingdom-seed:reference-asset-pack-ready", refresh);
+      this.events.off("kingdom-seed:reference-evolution-ready", refresh);
     };
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, cleanup);
     this.events.once(Phaser.Scenes.Events.DESTROY, cleanup);
   }
 
   private applyReferenceSpellIcons(): void {
-    const entries: Array<[string, number, number]> = [
-      [REFERENCE_ASSET_KEYS.skill.fireball, 37, 503],
-      [REFERENCE_ASSET_KEYS.skill.heal, 190, 503],
-      [REFERENCE_ASSET_KEYS.skill.slash, 344, 503],
+    const entries: Array<[string | undefined, number, number]> = [
+      [resolveReferenceEvolutionSkillThumb(this, "meteor") ?? REFERENCE_ASSET_KEYS.skill.fireball, 37, 503],
+      [resolveReferenceEvolutionSkillThumb(this, "mercenary") ?? REFERENCE_ASSET_KEYS.skill.heal, 190, 503],
+      [resolveReferenceEvolutionSkillThumb(this, "hero") ?? REFERENCE_ASSET_KEYS.skill.slash, 344, 503],
     ];
     entries.forEach(([key, x, y]) => {
-      if (!this.textures.exists(key)) return;
+      if (!key || !this.textures.exists(key)) return;
       const name = `ks-ref-spell-${key}`;
       const existing = this.children.getByName(name) as Phaser.GameObjects.Image | null;
       if (existing?.active) {
@@ -624,6 +631,12 @@ export class GameScene extends Phaser.Scene {
       phase: "battle",
       delayMs: 680,
       battleIdleOnly: true,
+    });
+    installReferenceEvolutionPack(this, {
+      phase: "battle",
+      delayMs: 420,
+      battleIdleOnly: true,
+      categories: ["tower", "skill"],
     });
     this.installCoreCombatArtRefreshHook();
     this.installReferenceAssetRefreshHook();
@@ -2450,13 +2463,19 @@ export class GameScene extends Phaser.Scene {
             )
             .setInteractive({ useHandCursor: true });
       card.setAlpha(canBuy ? 1 : 0.55);
+      const referenceThumbKey = resolveReferenceEvolutionTowerThumb(this, kind);
       const roleIconKey = `ui-tower-role-${kind}-v45`;
-      const roleIcon = this.textures.exists(roleIconKey)
+      const roleIcon = referenceThumbKey
         ? this.add
-            .image(bx - 35, by - 3, roleIconKey)
-            .setDisplaySize(25, 25)
-            .setAlpha(canBuy ? 1 : 0.45)
-        : undefined;
+            .image(bx - 35, by - 3, referenceThumbKey)
+            .setDisplaySize(34, 34)
+            .setAlpha(canBuy ? 1 : 0.48)
+        : this.textures.exists(roleIconKey)
+          ? this.add
+              .image(bx - 35, by - 3, roleIconKey)
+              .setDisplaySize(25, 25)
+              .setAlpha(canBuy ? 1 : 0.45)
+          : undefined;
       const iconBack = roleIcon
         ? undefined
         : this.add

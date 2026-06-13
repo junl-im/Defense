@@ -6,6 +6,7 @@ import type { PlayerSave } from '../services/localSave';
 import { startRegisteredScene } from "./SceneRegistry";
 import { installSceneReadabilityPass, improveReadableTextTree, readableFontSize, readableHitSize } from "../game/MobileReadableUi";
 import { installSceneGraphicFallback } from "../game/PrestigeGraphicFallback";
+import { installReferenceEvolutionPack, resolveReferenceEvolutionEnemyThumb, resolveReferenceEvolutionTowerThumb } from "../game/ReferenceAssetEvolution";
 
 export class CodexScene extends Phaser.Scene {
   private user!: User;
@@ -44,6 +45,11 @@ export class CodexScene extends Phaser.Scene {
     this.pageText = this.add.text(480, 486, '', { fontSize: readableFontSize(17, 17, 25), color: '#ffe38c', fontStyle: 'bold' }).setOrigin(0.5);
 
     this.renderContent();
+    installReferenceEvolutionPack(this, { phase: "codex", delayMs: 240, categories: ["tower", "enemy"] });
+    this.events.on("kingdom-seed:reference-evolution-ready", this.refreshReferenceCodex, this);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.events.off("kingdom-seed:reference-evolution-ready", this.refreshReferenceCodex, this);
+    });
     installSceneReadabilityPass(this, { min: 15, strokeThickness: 3 });
   }
 
@@ -67,6 +73,12 @@ export class CodexScene extends Phaser.Scene {
     if (this.content) improveReadableTextTree(this.content, { min: 15, strokeThickness: 3 });
   }
 
+  private refreshReferenceCodex(): void {
+    if (!this.scene.isActive("CodexScene")) return;
+    this.renderContent();
+    installSceneReadabilityPass(this, { min: 15, strokeThickness: 3 });
+  }
+
   private renderTowerCodex(): void {
     this.pageText?.setText('타워 4종');
     Object.values(TOWERS).forEach((tower, index) => {
@@ -82,14 +94,19 @@ export class CodexScene extends Phaser.Scene {
   private drawTowerCard(x: number, y: number, tower: TowerConfig): void {
     const card = this.add.container(x, y);
     const bg = this.add.rectangle(0, 0, 195, 238, 0x0b1220, 0.94).setOrigin(0, 0).setStrokeStyle(2, tower.color, 0.7);
-    const icon = this.add.circle(36, 38, 28, tower.color, 1).setStrokeStyle(3, 0xffffff, 0.3);
-    const symbol = this.add.text(36, 36, this.towerSymbol(tower.kind), { fontSize: '25px', color: '#101820', fontStyle: 'bold' }).setOrigin(0.5);
+    const thumbKey = resolveReferenceEvolutionTowerThumb(this, tower.kind);
+    const icon = thumbKey
+      ? this.add.image(38, 42, thumbKey).setDisplaySize(70, 70)
+      : this.add.circle(36, 38, 28, tower.color, 1).setStrokeStyle(3, 0xffffff, 0.3);
+    const symbol = thumbKey
+      ? undefined
+      : this.add.text(36, 36, this.towerSymbol(tower.kind), { fontSize: '25px', color: '#101820', fontStyle: 'bold' }).setOrigin(0.5);
     const title = this.add.text(76, 18, tower.label, { fontSize: readableFontSize(22, 21, 30), color: '#ffffff', fontStyle: 'bold' });
     const desc = this.add.text(17, 78,
       `가격 $${tower.cost}\n사거리 ${tower.range}\n피해 ${tower.damage}\n공중공격 ${tower.canHitFlying ? '가능' : '불가'}\nLv.3: ${tower.maxSkill}\n\n${this.towerTip(tower.kind)}`,
       { fontSize: readableFontSize(14, 15, 22), color: '#dbe7ff', lineSpacing: 5, wordWrap: { width: 160 } }
     );
-    card.add([bg, icon, symbol, title, desc]);
+    card.add([bg, icon, ...(symbol ? [symbol] : []), title, desc]);
     this.content?.add(card);
   }
 
@@ -116,7 +133,10 @@ export class CodexScene extends Phaser.Scene {
   private drawEnemyRow(x: number, y: number, enemy: EnemyConfig): void {
     const card = this.add.container(x, y);
     const bg = this.add.rectangle(0, 0, 205, 68, 0x0b1220, 0.91).setOrigin(0, 0).setStrokeStyle(1, enemy.accentColor ?? 0xffffff, 0.45);
-    const body = this.add.circle(24, 34, 13 * (enemy.scale ?? 1), enemy.color, 1).setStrokeStyle(2, enemy.accentColor ?? 0xffffff, 0.65);
+    const thumbKey = resolveReferenceEvolutionEnemyThumb(this, enemy.kind);
+    const body = thumbKey
+      ? this.add.image(27, 35, thumbKey).setDisplaySize(52, 52)
+      : this.add.circle(24, 34, 13 * (enemy.scale ?? 1), enemy.color, 1).setStrokeStyle(2, enemy.accentColor ?? 0xffffff, 0.65);
     const name = this.add.text(50, 8, enemy.label, { fontSize: readableFontSize(15, 16, 23), color: '#ffffff', fontStyle: 'bold' });
     const stat = this.add.text(50, 30, `HP ${enemy.hp} / 속도 ${enemy.speed}\n약점: ${this.enemyWeakness(enemy)}`, {
       fontSize: readableFontSize(11, 14, 19), color: '#dbe7ff', lineSpacing: 3

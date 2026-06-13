@@ -1,0 +1,337 @@
+{
+  "version": "2.36.20",
+  "pack": "reference_evolution_thumbnails",
+  "sourcePack": "assets/reference/v2_36_19/reference_asset_manifest_v2_36_19.json",
+  "notes": [
+    "Small runtime thumbnails derived only from no-text user reference crops.",
+    "No UI labels, Korean strings, English strings, or button text were baked into these assets.",
+    "Use for codex/hero/build/spell preview UI; full actor crops remain idle-loaded only."
+  ],
+  "assets": [
+    {
+      "id": "demon",
+      "category": "enemy",
+      "path": "assets/reference/v2_36_20/thumbs/enemy_demon_thumb.png",
+      "webp": "assets/reference/v2_36_20/thumbs/enemy_demon_thumb.webp",
+      "size": [
+        112,
+        112
+      ],
+      "source": "assets/reference/v2_36_19/no_text/enemy_demon_no_text.png",
+      "sha256_16": "03d1146c83d993ec",
+      "textPolicy": "derived from no-text v2.36.19 crop; generated frame contains no letters or labels"
+    },
+    {
+      "id": "dragon",
+      "category": "enemy",
+      "path": "assets/reference/v2_36_20/thumbs/enemy_dragon_thumb.png",
+      "webp": "assets/reference/v2_36_20/thumbs/enemy_dragon_thumb.webp",
+      "size": [
+        112,
+        112
+      ],
+      "source": "assets/reference/v2_36_19/no_text/enemy_dragon_no_text.png",
+      "sha256_16": "e05dc71f28cc3150",
+      "textPolicy": "derived from no-text v2.36.19 crop; generated frame contains no letters or labels"
+    },
+    {
+      "id": "goblin_bomber",
+      "category": "enemy",
+      "path": "assets/reference/v2_36_20/thumbs/enemy_goblin_bomber_thumb.png",
+      "webp": "assets/reference/v2_36_20/thumbs/enemy_goblin_bomber_thumb.webp",
+      "size": [
+        112,
+        112
+      ],
+      "source": "assets/reference/v2_36_19/no_text/enemy_goblin_bomber_no_text.png",
+      "sha256_16": "721d06cf05a54b9f",
+      "textPolicy": "derived from no-text v2.36.19 crop; generated frame contains no letters or labels"
+    },
+    {
+      "id": "goblin",
+      "category": "enemy",
+      "path": "assets/reference/v2_36_20/thumbs/enemy_goblin_thumb.png",
+      "webp": "assets/reference/v2_36_20/thumbs/enemy_goblin_thumb.webp",
+      "size": [
+        112,
+        112
+      ],
+      "source": "assets/reference/v2_36_19/no_text/enemy_goblin_no_text.png",
+      "sha256_16": "0f89d9dff6fb545a",
+      "textPolicy": "derived from no-text v2.36.19 crop; generated frame contains no letters or labels"
+    },
+    {
+      "id": "mage",
+      "category": "enemy",
+      "path": "assets/reference/v2_36_20/thumbs/enemy_mage_thumb.png",
+      "webp": "assets/reference/v2_36_20/thumbs/enemy_mage_thumb.webp",
+      "size": [
+        112,
+        112
+      ],
+      "source": "assets/reference/v2_36_19/no_text/enemy_mage_no_text.png",
+      "sha256_16": "a6f39e3039b73cae",
+      "textPolicy": "derived from no-text v2.36.19 crop; generated frame contains no letters or labels"
+    },
+    {
+      "id": "orc",
+      "category": "enemy",
+      "path": "assets/reference/v2_36_20/thumbs/enemy_orc_thumb.png",
+      "webp": "assets/reference/v2_36_20/thumbs/enemy_orc_thumb.webp",
+      "size": [
+        112,
+        112
+      ],
+      "source": "assets/reference/v2_36_19/no_text/enemy_orc_no_text.png",
+      "sha256_16": "1a86380901d3bef9",
+      "textPolicy": "derived from no-text v2.36.19 crop; generated frame contains no letters or labels"
+    },
+    {
+      "id": "skeleton",
+      "category": "enemy",
+      "path": "assets/reference/v2_36_20/thumbs/enemy_skeleton_thumb.png",
+      "webp": "assets/reference/v2_36_20/thumbs/enemy_skeleton_thumb.webp",
+      "size": [
+        112,
+        112
+      ],
+      "source": "assets/reference/v2_36_19/no_text/enemy_skeleton_no_text.png",
+      "sha256_16": "a0a3f8f512d8580b",
+      "textPolicy": "derived from no-text v2.36.19 crop; generated frame contains no letters or labels"
+    },
+    {
+      "id": "wolf",
+      "category": "enemy",
+      "path": "assets/reference/v2_36_20/thumbs/enemy_wolf_thumb.png",
+      "webp": "assets/reference/v2_36_20/thumbs/enemy_wolf_thumb.webp",
+      "size": [
+        112,
+        112
+      ],
+      "source": "assets/reference/v2_36_19/no_text/enemy_wolf_no_text.png",
+      "sha256_16": "8cd681e43849e1f2",
+      "textPolicy": "derived from no-text v2.36.19 crop; generated frame contains no letters or labels"
+    },
+    {
+      "id": "druid",
+      "category": "hero",
+      "path": "assets/reference/v2_36_20/thumbs/hero_druid_thumb.png",
+      "webp": "assets/reference/v2_36_20/thumbs/hero_druid_thumb.webp",
+      "size": [
+        112,
+        112
+      ],
+      "source": "assets/reference/v2_36_19/no_text/hero_druid_no_text.png",
+      "sha256_16": "7ebcdb29309f79ea",
+      "textPolicy": "derived from no-text v2.36.19 crop; generated frame contains no letters or labels"
+    },
+    {
+      "id": "ice_mage",
+      "category": "hero",
+      "path": "assets/reference/v2_36_20/thumbs/hero_ice_mage_thumb.png",
+      "webp": "assets/reference/v2_36_20/thumbs/hero_ice_mage_thumb.webp",
+      "size": [
+        112,
+        112
+      ],
+      "source": "assets/reference/v2_36_19/no_text/hero_ice_mage_no_text.png",
+      "sha256_16": "df11c948615df3e6",
+      "textPolicy": "derived from no-text v2.36.19 crop; generated frame contains no letters or labels"
+    },
+    {
+      "id": "paladin",
+      "category": "hero",
+      "path": "assets/reference/v2_36_20/thumbs/hero_paladin_thumb.png",
+      "webp": "assets/reference/v2_36_20/thumbs/hero_paladin_thumb.webp",
+      "size": [
+        112,
+        112
+      ],
+      "source": "assets/reference/v2_36_19/no_text/hero_paladin_no_text.png",
+      "sha256_16": "da31d4c12cf93a27",
+      "textPolicy": "derived from no-text v2.36.19 crop; generated frame contains no letters or labels"
+    },
+    {
+      "id": "princess_archer",
+      "category": "hero",
+      "path": "assets/reference/v2_36_20/thumbs/hero_princess_archer_thumb.png",
+      "webp": "assets/reference/v2_36_20/thumbs/hero_princess_archer_thumb.webp",
+      "size": [
+        112,
+        112
+      ],
+      "source": "assets/reference/v2_36_19/no_text/hero_princess_archer_no_text.png",
+      "sha256_16": "712a8578251edfca",
+      "textPolicy": "derived from no-text v2.36.19 crop; generated frame contains no letters or labels"
+    },
+    {
+      "id": "warrior",
+      "category": "hero",
+      "path": "assets/reference/v2_36_20/thumbs/hero_warrior_thumb.png",
+      "webp": "assets/reference/v2_36_20/thumbs/hero_warrior_thumb.webp",
+      "size": [
+        112,
+        112
+      ],
+      "source": "assets/reference/v2_36_19/no_text/hero_warrior_no_text.png",
+      "sha256_16": "fe6298af2d39cff1",
+      "textPolicy": "derived from no-text v2.36.19 crop; generated frame contains no letters or labels"
+    },
+    {
+      "id": "fireball",
+      "category": "skill",
+      "path": "assets/reference/v2_36_20/thumbs/skill_fireball_thumb.png",
+      "webp": "assets/reference/v2_36_20/thumbs/skill_fireball_thumb.webp",
+      "size": [
+        112,
+        112
+      ],
+      "source": "assets/reference/v2_36_19/no_text/skill_fireball_no_text.png",
+      "sha256_16": "3a2f0b2998d86a38",
+      "textPolicy": "derived from no-text v2.36.19 crop; generated frame contains no letters or labels"
+    },
+    {
+      "id": "heal",
+      "category": "skill",
+      "path": "assets/reference/v2_36_20/thumbs/skill_heal_thumb.png",
+      "webp": "assets/reference/v2_36_20/thumbs/skill_heal_thumb.webp",
+      "size": [
+        112,
+        112
+      ],
+      "source": "assets/reference/v2_36_19/no_text/skill_heal_no_text.png",
+      "sha256_16": "3ee482b1cb661122",
+      "textPolicy": "derived from no-text v2.36.19 crop; generated frame contains no letters or labels"
+    },
+    {
+      "id": "icebolt",
+      "category": "skill",
+      "path": "assets/reference/v2_36_20/thumbs/skill_icebolt_thumb.png",
+      "webp": "assets/reference/v2_36_20/thumbs/skill_icebolt_thumb.webp",
+      "size": [
+        112,
+        112
+      ],
+      "source": "assets/reference/v2_36_19/no_text/skill_icebolt_no_text.png",
+      "sha256_16": "9ec5d0b99de8aa7a",
+      "textPolicy": "derived from no-text v2.36.19 crop; generated frame contains no letters or labels"
+    },
+    {
+      "id": "lightning",
+      "category": "skill",
+      "path": "assets/reference/v2_36_20/thumbs/skill_lightning_thumb.png",
+      "webp": "assets/reference/v2_36_20/thumbs/skill_lightning_thumb.webp",
+      "size": [
+        112,
+        112
+      ],
+      "source": "assets/reference/v2_36_19/no_text/skill_lightning_no_text.png",
+      "sha256_16": "9ddc1f6ed451bfd1",
+      "textPolicy": "derived from no-text v2.36.19 crop; generated frame contains no letters or labels"
+    },
+    {
+      "id": "slash",
+      "category": "skill",
+      "path": "assets/reference/v2_36_20/thumbs/skill_slash_thumb.png",
+      "webp": "assets/reference/v2_36_20/thumbs/skill_slash_thumb.webp",
+      "size": [
+        112,
+        112
+      ],
+      "source": "assets/reference/v2_36_19/no_text/skill_slash_no_text.png",
+      "sha256_16": "bc1099c815d5ded2",
+      "textPolicy": "derived from no-text v2.36.19 crop; generated frame contains no letters or labels"
+    },
+    {
+      "id": "time_stop",
+      "category": "skill",
+      "path": "assets/reference/v2_36_20/thumbs/skill_time_stop_thumb.png",
+      "webp": "assets/reference/v2_36_20/thumbs/skill_time_stop_thumb.webp",
+      "size": [
+        112,
+        112
+      ],
+      "source": "assets/reference/v2_36_19/no_text/skill_time_stop_no_text.png",
+      "sha256_16": "8fbbeeb92492123c",
+      "textPolicy": "derived from no-text v2.36.19 crop; generated frame contains no letters or labels"
+    },
+    {
+      "id": "archer",
+      "category": "tower",
+      "path": "assets/reference/v2_36_20/thumbs/tower_archer_thumb.png",
+      "webp": "assets/reference/v2_36_20/thumbs/tower_archer_thumb.webp",
+      "size": [
+        112,
+        112
+      ],
+      "source": "assets/reference/v2_36_19/no_text/tower_archer_no_text.png",
+      "sha256_16": "9b0d1e7e851e24f3",
+      "textPolicy": "derived from no-text v2.36.19 crop; generated frame contains no letters or labels"
+    },
+    {
+      "id": "artillery",
+      "category": "tower",
+      "path": "assets/reference/v2_36_20/thumbs/tower_artillery_thumb.png",
+      "webp": "assets/reference/v2_36_20/thumbs/tower_artillery_thumb.webp",
+      "size": [
+        112,
+        112
+      ],
+      "source": "assets/reference/v2_36_19/no_text/tower_artillery_no_text.png",
+      "sha256_16": "996326b53a2ab9df",
+      "textPolicy": "derived from no-text v2.36.19 crop; generated frame contains no letters or labels"
+    },
+    {
+      "id": "frost",
+      "category": "tower",
+      "path": "assets/reference/v2_36_20/thumbs/tower_frost_thumb.png",
+      "webp": "assets/reference/v2_36_20/thumbs/tower_frost_thumb.webp",
+      "size": [
+        112,
+        112
+      ],
+      "source": "assets/reference/v2_36_19/no_text/tower_frost_no_text.png",
+      "sha256_16": "9237d8832b392075",
+      "textPolicy": "derived from no-text v2.36.19 crop; generated frame contains no letters or labels"
+    },
+    {
+      "id": "holy",
+      "category": "tower",
+      "path": "assets/reference/v2_36_20/thumbs/tower_holy_thumb.png",
+      "webp": "assets/reference/v2_36_20/thumbs/tower_holy_thumb.webp",
+      "size": [
+        112,
+        112
+      ],
+      "source": "assets/reference/v2_36_19/no_text/tower_holy_no_text.png",
+      "sha256_16": "923fa2e4aed2c22c",
+      "textPolicy": "derived from no-text v2.36.19 crop; generated frame contains no letters or labels"
+    },
+    {
+      "id": "mage",
+      "category": "tower",
+      "path": "assets/reference/v2_36_20/thumbs/tower_mage_thumb.png",
+      "webp": "assets/reference/v2_36_20/thumbs/tower_mage_thumb.webp",
+      "size": [
+        112,
+        112
+      ],
+      "source": "assets/reference/v2_36_19/no_text/tower_mage_no_text.png",
+      "sha256_16": "ceffa9acc579e597",
+      "textPolicy": "derived from no-text v2.36.19 crop; generated frame contains no letters or labels"
+    },
+    {
+      "id": "poison",
+      "category": "tower",
+      "path": "assets/reference/v2_36_20/thumbs/tower_poison_thumb.png",
+      "webp": "assets/reference/v2_36_20/thumbs/tower_poison_thumb.webp",
+      "size": [
+        112,
+        112
+      ],
+      "source": "assets/reference/v2_36_19/no_text/tower_poison_no_text.png",
+      "sha256_16": "9182d9bfdc9f0a41",
+      "textPolicy": "derived from no-text v2.36.19 crop; generated frame contains no letters or labels"
+    }
+  ]
+}

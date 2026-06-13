@@ -1,0 +1,18 @@
+KingdomSeed v2.36.20 REFERENCE EVOLUTION PIPELINE 적용 안내
+
+1. 이 패치 zip을 기존 KingdomSeed 프로젝트 루트에 그대로 덮어씁니다.
+2. 포함된 파일은 소스/문서/소형 reference thumbnail 자산입니다.
+3. .git, node_modules, dist, 임시 파일은 포함하지 않았습니다.
+4. 적용 후 확인 명령:
+   npm ci
+   npm run build
+5. 런타임 QA 권장 URL:
+   /
+   /?refevolution
+   /?norefthumbs
+   /?referenceart&refevolution
+
+주의:
+- v2.36.20 thumbnail은 v2.36.19 no-text crop에서만 파생했습니다.
+- 글씨가 들어간 원본 UI 영역은 런타임 자산으로 쓰지 않습니다.
+- BootScene/첫 탭에는 싣지 않고, 씬 진입 후 지연 로드합니다.

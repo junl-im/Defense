@@ -6,12 +6,14 @@ import { playMusic, playSfx } from '../game/AudioManager';
 import { startRegisteredScene } from "./SceneRegistry";
 import { installSceneReadabilityPass, improveReadableTextTree, readableFontSize, readableHitSize } from "../game/MobileReadableUi";
 import { installSceneGraphicFallback } from "../game/PrestigeGraphicFallback";
+import { installReferenceEvolutionPack, resolveReferenceEvolutionHeroThumb } from "../game/ReferenceAssetEvolution";
 
 export class HeroHallScene extends Phaser.Scene {
   private user!: User;
   private save!: PlayerSave;
   private selectedHero = getSelectedHero();
   private statusText?: Phaser.GameObjects.Text;
+  private heroCardRoots: Phaser.GameObjects.Container[] = [];
 
   constructor() { super('HeroHallScene'); }
 
@@ -27,6 +29,11 @@ export class HeroHallScene extends Phaser.Scene {
     installSceneGraphicFallback(this, "hero", 1.2);
     this.drawHeader();
     this.drawHeroCards();
+    installReferenceEvolutionPack(this, { phase: "gallery", delayMs: 260, categories: ["hero"] });
+    this.events.on("kingdom-seed:reference-evolution-ready", this.refreshReferenceHeroCards, this);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.events.off("kingdom-seed:reference-evolution-ready", this.refreshReferenceHeroCards, this);
+    });
     this.drawFooter();
     installSceneReadabilityPass(this, { min: 15, strokeThickness: 3 });
   }
@@ -48,20 +55,35 @@ export class HeroHallScene extends Phaser.Scene {
   }
 
   private drawHeroCards(): void {
+    this.heroCardRoots.forEach((root) => root.destroy());
+    this.heroCardRoots = [];
     const heroes = getHeroProfiles();
     heroes.forEach((hero, index) => this.drawHeroCard(hero, 220 + index * 260, 292));
+  }
+
+  private refreshReferenceHeroCards(): void {
+    if (!this.scene.isActive("HeroHallScene")) return;
+    this.drawHeroCards();
+    installSceneReadabilityPass(this, { min: 15, strokeThickness: 3 });
   }
 
   private drawHeroCard(hero: HeroProfile, x: number, y: number): void {
     const selected = this.selectedHero.id === hero.id;
     const root = this.add.container(x, y).setDepth(10);
+    this.heroCardRoots.push(root);
     const bg = this.textures.exists('ui-hero-card-v28')
       ? this.add.image(0, 0, 'ui-hero-card-v28').setDisplaySize(232, 316)
       : this.add.rectangle(0, 0, 232, 316, 0x4e2f1b, 0.94).setStrokeStyle(4, 0xffd679, 0.65);
+    const referencePortrait = resolveReferenceEvolutionHeroThumb(this, hero.id);
     const portraitKey = hero.id === 'leon' ? 'portrait-knight' : hero.id === 'aria' ? 'portrait-ranger' : 'portrait-mage';
-    const portrait = this.textures.exists(portraitKey)
-      ? this.add.image(0, -72, portraitKey).setDisplaySize(150, 188)
-      : this.add.circle(0, -72, 62, hero.color, 1);
+    const portrait = referencePortrait
+      ? this.add.image(0, -76, referencePortrait).setDisplaySize(142, 142)
+      : this.textures.exists(portraitKey)
+        ? this.add.image(0, -72, portraitKey).setDisplaySize(150, 188)
+        : this.add.circle(0, -72, 62, hero.color, 1);
+    const portraitFrame = referencePortrait
+      ? this.add.rectangle(0, -76, 154, 154, 0xffffff, 0).setStrokeStyle(2, 0xfff1aa, 0.42)
+      : undefined;
     const name = this.add.text(0, 48, `${hero.name}`, { fontSize: '27px', color: '#fff1bf', fontStyle: 'bold', stroke: '#210b04', strokeThickness: 5 }).setOrigin(0.5);
     const title = this.add.text(0, 77, hero.title, { fontSize: readableFontSize(15, 16, 23), color: '#cfefff', fontStyle: 'bold', stroke: '#061219', strokeThickness: 3 }).setOrigin(0.5);
     const perks = this.add.text(-88, 105, hero.perks.map((perk) => `• ${perk}`).join('\n'), {
@@ -70,7 +92,7 @@ export class HeroHallScene extends Phaser.Scene {
     const selectBg = this.add.rectangle(0, 157, 150, 36, selected ? 0x2f8f55 : 0x7d3b22, 0.92).setStrokeStyle(2, 0xffe29a, 0.58);
     const selectText = this.add.text(0, 157, selected ? '장착 중' : '선택', { fontSize: readableFontSize(17, 17, 25), color: '#fff7d8', fontStyle: 'bold', stroke: '#190804', strokeThickness: 3 }).setOrigin(0.5);
     const hit = this.add.rectangle(0, 0, 232, 316, 0xffffff, 0.001).setInteractive({ useHandCursor: true });
-    root.add([bg, portrait, name, title, perks, selectBg, selectText, hit]);
+    root.add([bg, ...(portraitFrame ? [portraitFrame] : []), portrait, name, title, perks, selectBg, selectText, hit]);
     improveReadableTextTree(root, { min: 15, strokeThickness: 3 });
     if (selected) {
       root.add(this.add.rectangle(0, 0, 242, 326, 0xffffff, 0).setStrokeStyle(4, 0xfff1aa, 0.72));

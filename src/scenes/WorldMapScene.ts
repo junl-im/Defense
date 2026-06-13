@@ -22,6 +22,7 @@ import { installSceneReadabilityPass, readableFontSize, readableHitSize } from "
 import type { PlayerSave } from "../services/localSave";
 import { installSceneGraphicFallback } from "../game/PrestigeGraphicFallback";
 import { installReferenceAssetPack } from "../game/ReferenceAssetPack";
+import { installReferenceEvolutionPack } from "../game/ReferenceAssetEvolution";
 
 type HotspotTone = "gold" | "blue" | "white" | "red" | "green";
 
@@ -106,6 +107,7 @@ export class WorldMapScene extends Phaser.Scene {
     if (allowPremiumStaticArt("world")) this.installPremiumStaticWorldArt();
     this.installProgressiveWorldArt();
     addWorldIntelPlate(this);
+    installReferenceEvolutionPack(this, { phase: "world", delayMs: 560, categories: ["tower", "enemy", "skill"] });
     installReferenceAssetPack(this, { phase: "world", delayMs: 1150 });
     addStaticSignalSweep(this, 818, 299, 190, 24.4);
     this.createStagePreviewLayer();
