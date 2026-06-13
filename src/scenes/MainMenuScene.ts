@@ -9,6 +9,12 @@ import { loadProgressiveArtBundle, warmProgressiveArtBundle } from "../game/Prog
 import { clearTimer, safeDelayedCall } from "../game/SceneSafety";
 import { markSceneTransition } from "../game/RuntimeLoadGovernor";
 import { allowArtPrewarm, allowPremiumStaticArt, mobileUiScale, preferReducedMotion, useCumulativeArtLayers } from "../game/PerformanceMode";
+import {
+  addLobbyCommandPlate,
+  addPrestigeSceneVignette,
+  PRESTIGE_SCENE_FONT,
+  usePrestigeSceneFrame,
+} from "../game/PrestigeSceneFrame";
 import { startRegisteredScene, warmRegisteredScenes, type RegisteredSceneKey } from "./SceneRegistry";
 import type { PlayerSave } from "../services/localSave";
 
@@ -64,8 +70,10 @@ export class MainMenuScene extends Phaser.Scene {
     playMusicWhenReady(this, "bgm_world", 0.2);
 
     this.createIllustrationLedLobby();
+    addPrestigeSceneVignette(this, "lobby", 4.5);
     if (useCumulativeArtLayers()) this.installCumulativeLobbyArt();
     this.createV210CleanChrome();
+    addLobbyCommandPlate(this);
     if (allowPremiumStaticArt("lobby")) this.installPremiumStaticLobbyArt();
     this.installProgressiveLobbyArt();
     this.createLobbyTextOverlay();
@@ -250,10 +258,10 @@ export class MainMenuScene extends Phaser.Scene {
     const uiScale = mobileUiScale();
     const fs = (size: number): string => `${Math.round(size * uiScale)}px`;
     const labelStyle: Phaser.Types.GameObjects.Text.TextStyle = {
-      fontFamily: "Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif",
-      color: "#f7fbff",
+      fontFamily: PRESTIGE_SCENE_FONT,
+      color: usePrestigeSceneFrame() ? "#fff2c8" : "#f7fbff",
       fontStyle: "bold",
-      stroke: "#12366d",
+      stroke: usePrestigeSceneFrame() ? "#050b16" : "#12366d",
       strokeThickness: 2,
       align: "center",
     };
@@ -275,27 +283,27 @@ export class MainMenuScene extends Phaser.Scene {
         .setDepth(9);
     };
 
-    addLabel(208, 501, "월드맵", 14, 172);
-    addLabel(480, 500, "전투", 17, 204);
-    addLabel(752, 501, "모험", 14, 172);
+    addLabel(208, 501, usePrestigeSceneFrame() ? "월드맵  MAP" : "월드맵", 14, 172);
+    addLabel(480, 500, usePrestigeSceneFrame() ? "전투 배치  BATTLE" : "전투", 17, 204);
+    addLabel(752, 501, usePrestigeSceneFrame() ? "원정  OPS" : "모험", 14, 172);
 
     [
-      ["상점", 86, 270],
-      ["영웅", 86, 322],
-      ["도감", 86, 374],
-      ["우편함", 86, 426],
-      ["이벤트", 86, 478],
-      ["퀘스트", 858, 135],
-      ["패스", 858, 194],
-      ["길드", 858, 253],
-      ["랭킹", 858, 313],
-      ["설정", 858, 373],
+      [usePrestigeSceneFrame() ? "상점" : "상점", 86, 270],
+      [usePrestigeSceneFrame() ? "영웅" : "영웅", 86, 322],
+      [usePrestigeSceneFrame() ? "도감" : "도감", 86, 374],
+      [usePrestigeSceneFrame() ? "우편함" : "우편함", 86, 426],
+      [usePrestigeSceneFrame() ? "이벤트" : "이벤트", 86, 478],
+      [usePrestigeSceneFrame() ? "임무" : "퀘스트", 858, 135],
+      [usePrestigeSceneFrame() ? "패스" : "패스", 858, 194],
+      [usePrestigeSceneFrame() ? "연합" : "길드", 858, 253],
+      [usePrestigeSceneFrame() ? "전적" : "랭킹", 858, 313],
+      [usePrestigeSceneFrame() ? "설정" : "설정", 858, 373],
     ].forEach(([text, x, y]) =>
       addLabel(Number(x), Number(y), String(text), 12, 122),
     );
 
     this.add
-      .text(500, 35, `⭐ ${this.save.stars}`, {
+      .text(500, 35, usePrestigeSceneFrame() ? `STARS ${this.save.stars}` : `⭐ ${this.save.stars}`, {
         ...labelStyle,
         fontSize: fs(13),
         fixedWidth: 136,
@@ -303,7 +311,7 @@ export class MainMenuScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(9);
     this.add
-      .text(638, 35, "재화", {
+      .text(638, 35, usePrestigeSceneFrame() ? "COIN" : "재화", {
         ...labelStyle,
         fontSize: fs(13),
         fixedWidth: 136,
@@ -311,7 +319,7 @@ export class MainMenuScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(9);
     this.add
-      .text(770, 35, "보석", {
+      .text(770, 35, usePrestigeSceneFrame() ? "GEM" : "보석", {
         ...labelStyle,
         fontSize: fs(13),
         fixedWidth: 136,
@@ -332,14 +340,14 @@ export class MainMenuScene extends Phaser.Scene {
     const cards = [
       {
         x: 320,
-        title: "원정 9-12",
-        sub: "신규 지역 개방",
+        title: usePrestigeSceneFrame() ? "작전 9-12" : "원정 9-12",
+        sub: usePrestigeSceneFrame() ? "전선 확장" : "신규 지역 개방",
         tone: 0x8fdcff,
         onClick: () => this.goWorldMap(),
       },
       {
         x: 480,
-        title: "웨이브 변수",
+        title: usePrestigeSceneFrame() ? "공세 변수" : "웨이브 변수",
         sub: "보급 · 정예 · 폭풍",
         tone: 0xffd56c,
         onClick: () =>
@@ -347,8 +355,8 @@ export class MainMenuScene extends Phaser.Scene {
       },
       {
         x: 640,
-        title: "연합 시너지",
-        sub: "타워 조합 보너스",
+        title: usePrestigeSceneFrame() ? "전술 시너지" : "연합 시너지",
+        sub: usePrestigeSceneFrame() ? "타워 조합 강화" : "타워 조합 보너스",
         tone: 0x8be878,
         onClick: () => this.quickBattle(),
       },
@@ -373,8 +381,8 @@ export class MainMenuScene extends Phaser.Scene {
           fontSize: "14px",
           color: "#fff7d6",
           fontStyle: "bold",
-          fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
-          stroke: "#12366d",
+          fontFamily: PRESTIGE_SCENE_FONT,
+          stroke: usePrestigeSceneFrame() ? "#050b16" : "#12366d",
           strokeThickness: 2,
         })
         .setOrigin(0, 0.5);
@@ -383,7 +391,7 @@ export class MainMenuScene extends Phaser.Scene {
           fontSize: "12px",
           color: "#dbe7ff",
           fontStyle: "bold",
-          fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
+          fontFamily: PRESTIGE_SCENE_FONT,
           fixedWidth: 98,
         })
         .setOrigin(0, 0.5);

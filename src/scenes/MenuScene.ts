@@ -13,6 +13,13 @@ import {
 import { startRegisteredScene, warmMenuFlowScenes } from "./SceneRegistry";
 import { KINGDOM_SEED_BUILD_NAME } from "../runtime/Version";
 import {
+  addLoginPrestigePlate,
+  addPrestigeSceneVignette,
+  addStaticSignalSweep,
+  PRESTIGE_SCENE_FONT,
+  usePrestigeSceneFrame,
+} from "../game/PrestigeSceneFrame";
+import {
   createInstantLocalSession,
   type PlayerSave,
 } from "../services/localSave";
@@ -34,6 +41,9 @@ export class MenuScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor("#8fd5ff");
 
     this.createCinematicSplash();
+    addPrestigeSceneVignette(this, "login", 4);
+    addLoginPrestigePlate(this);
+    addStaticSignalSweep(this, 480, 282, 320, 32);
     this.createStatusOverlay();
     this.createLoginHitZones();
     this.createUtilityHitZones();
@@ -98,12 +108,12 @@ export class MenuScene extends Phaser.Scene {
 
     this.add
       .text(480, 251, "DEFENSE COMMAND", {
-        fontSize: "16px",
-        color: "#f8fbff",
+        fontSize: usePrestigeSceneFrame() ? "17px" : "16px",
+        color: usePrestigeSceneFrame() ? "#fff2c8" : "#f8fbff",
         align: "center",
         fixedWidth: 320,
         fontFamily:
-          "Pretendard, Noto Sans KR, NanumGothic, Malgun Gothic, Arial, sans-serif",
+          PRESTIGE_SCENE_FONT,
         fontStyle: "bold",
         stroke: "#17366c",
         strokeThickness: 4,
@@ -119,16 +129,16 @@ export class MenuScene extends Phaser.Scene {
       .setDepth(31);
 
     this.add
-      .text(480, 273, "전장을 수호할 지휘관으로 입장하세요!", {
-        fontSize: "9px",
-        color: "#8298b8",
+      .text(480, 273, "전술 정원 방어 작전 · 빠른 시작 우선", {
+        fontSize: usePrestigeSceneFrame() ? "10px" : "9px",
+        color: usePrestigeSceneFrame() ? "#c7d5ee" : "#8298b8",
         align: "center",
         fixedWidth: 320,
         fontFamily:
-          "Pretendard, Noto Sans KR, NanumGothic, Malgun Gothic, Arial, sans-serif",
+          PRESTIGE_SCENE_FONT,
         fontStyle: "bold",
-        stroke: "#ffffff",
-        strokeThickness: 2,
+        stroke: usePrestigeSceneFrame() ? "#050b16" : "#ffffff",
+        strokeThickness: usePrestigeSceneFrame() ? 3 : 2,
       })
       .setOrigin(0.5)
       .setDepth(31);
@@ -144,21 +154,32 @@ export class MenuScene extends Phaser.Scene {
 
   private createStatusOverlay(): void {
     const statusBack = this.add.graphics().setDepth(52);
-    statusBack.fillStyle(0xf7fbff, 0.9);
-    statusBack.fillRoundedRect(342, 298, 276, 23, 12);
-    statusBack.lineStyle(2, 0xb9d4ef, 0.82);
-    statusBack.strokeRoundedRect(342, 298, 276, 23, 12);
-    statusBack.lineStyle(1, 0xffffff, 0.58);
-    statusBack.strokeRoundedRect(349, 304, 262, 9, 5);
+    if (usePrestigeSceneFrame()) {
+      statusBack.fillStyle(0x050b16, 0.78);
+      statusBack.fillRoundedRect(338, 296, 284, 27, 13);
+      statusBack.fillStyle(0xffd98a, 0.08);
+      statusBack.fillRoundedRect(348, 302, 264, 6, 4);
+      statusBack.lineStyle(1, 0xffdf9a, 0.35);
+      statusBack.strokeRoundedRect(342, 298, 276, 23, 12);
+      statusBack.lineStyle(1, 0x9bd7ff, 0.16);
+      statusBack.strokeRoundedRect(349, 304, 262, 9, 5);
+    } else {
+      statusBack.fillStyle(0xf7fbff, 0.9);
+      statusBack.fillRoundedRect(342, 298, 276, 23, 12);
+      statusBack.lineStyle(2, 0xb9d4ef, 0.82);
+      statusBack.strokeRoundedRect(342, 298, 276, 23, 12);
+      statusBack.lineStyle(1, 0xffffff, 0.58);
+      statusBack.strokeRoundedRect(349, 304, 262, 9, 5);
+    }
 
     this.statusText = this.add
       .text(480, 309, "로그인 확인 중...", {
         fontSize: "10px",
-        color: "#2f5f9e",
+        color: usePrestigeSceneFrame() ? "#fff2c8" : "#2f5f9e",
         align: "center",
         fixedWidth: 260,
         fontFamily:
-          "Pretendard, Noto Sans KR, NanumGothic, Malgun Gothic, Arial, sans-serif",
+          PRESTIGE_SCENE_FONT,
         fontStyle: "bold",
         stroke: "#ffffff",
         strokeThickness: 2,
@@ -175,7 +196,7 @@ export class MenuScene extends Phaser.Scene {
         color: "#f7fbff",
         fixedWidth: 204,
         align: "center",
-        fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
+        fontFamily: PRESTIGE_SCENE_FONT,
         fontStyle: "bold",
         shadow: {
           offsetX: 0,
@@ -199,7 +220,7 @@ export class MenuScene extends Phaser.Scene {
       height: 58,
       imageKey: "v1-login-button-gold-v18",
       label: "빠른 시작",
-      icon: "⚔",
+      icon: usePrestigeSceneFrame() ? "START" : "⚔",
       color: "#174080",
       onClick: () => void this.startQuick(),
     });
@@ -223,7 +244,7 @@ export class MenuScene extends Phaser.Scene {
       height: 44,
       imageKey: "v1-login-button-small-v18",
       label: "이메일 로그인",
-      icon: "✉",
+      icon: usePrestigeSceneFrame() ? "@" : "✉",
       color: "#315f9c",
       small: true,
       onClick: () => void this.startEmailLogin(),
@@ -236,7 +257,7 @@ export class MenuScene extends Phaser.Scene {
       height: 44,
       imageKey: "v1-login-button-small-v18",
       label: "회원가입",
-      icon: "♥",
+      icon: usePrestigeSceneFrame() ? "+" : "♥",
       color: "#315f9c",
       small: true,
       onClick: () => void this.startEmailRegister(),
@@ -248,19 +269,19 @@ export class MenuScene extends Phaser.Scene {
       {
         x: 818,
         label: "공지사항",
-        icon: "📣",
+        icon: usePrestigeSceneFrame() ? "!" : "📣",
         message: "공지사항은 준비 중입니다.",
       },
       {
         x: 872,
         label: "고객센터",
-        icon: "🎧",
+        icon: usePrestigeSceneFrame() ? "?" : "🎧",
         message: "고객센터는 준비 중입니다.",
       },
       {
         x: 926,
         label: "설정",
-        icon: "⚙",
+        icon: usePrestigeSceneFrame() ? "SYS" : "⚙",
         message: "설정 메뉴는 다음 패치에서 연결합니다.",
       },
     ];
@@ -296,25 +317,25 @@ export class MenuScene extends Phaser.Scene {
         -options.width / 2 + (options.small ? 24 : 32),
         0,
         options.small ? 15 : 18,
-        0xffffff,
-        0.68,
+        usePrestigeSceneFrame() ? 0x111827 : 0xffffff,
+        usePrestigeSceneFrame() ? 0.88 : 0.68,
       )
-      .setStrokeStyle(1, 0xd2aa66, 0.7);
+      .setStrokeStyle(1, usePrestigeSceneFrame() ? 0xffd98a : 0xd2aa66, usePrestigeSceneFrame() ? 0.82 : 0.7);
     const icon = this.add
       .text(iconBubble.x, 0, options.icon, {
-        fontSize: options.small ? "15px" : "20px",
-        color: options.icon === "♥" ? "#dd506a" : "#2f6cb3",
-        fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
+        fontSize: usePrestigeSceneFrame() ? (options.small ? "12px" : "11px") : (options.small ? "15px" : "20px"),
+        color: usePrestigeSceneFrame() ? "#ffe3a3" : (options.icon === "♥" ? "#dd506a" : "#2f6cb3"),
+        fontFamily: PRESTIGE_SCENE_FONT,
         fontStyle: "bold",
       })
       .setOrigin(0.5);
     const label = this.add
       .text(options.small ? 10 : 8, 0, options.label, {
-        fontSize: options.small ? "13px" : "19px",
-        color: options.color,
+        fontSize: usePrestigeSceneFrame() ? (options.small ? "14px" : "20px") : (options.small ? "13px" : "19px"),
+        color: usePrestigeSceneFrame() ? "#fff1c4" : options.color,
         align: "center",
         fontFamily:
-          "Pretendard, Noto Sans KR, NanumGothic, Malgun Gothic, Arial, sans-serif",
+          PRESTIGE_SCENE_FONT,
         fontStyle: "bold",
         stroke: "#ffffff",
         strokeThickness: 2,
@@ -365,8 +386,8 @@ export class MenuScene extends Phaser.Scene {
           .setStrokeStyle(2, 0xffdc82, 0.8);
     const icon = this.add
       .text(0, -2, iconText, {
-        fontSize: "18px",
-        color: "#ffffff",
+        fontSize: usePrestigeSceneFrame() ? "11px" : "18px",
+        color: usePrestigeSceneFrame() ? "#ffe3a3" : "#ffffff",
         fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
         fontStyle: "bold",
         stroke: "#17366c",

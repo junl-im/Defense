@@ -10,6 +10,13 @@ import { loadProgressiveArtBundle, warmProgressiveArtBundle } from "../game/Prog
 import { clearTimer, safeDelayedCall } from "../game/SceneSafety";
 import { markSceneTransition } from "../game/RuntimeLoadGovernor";
 import { allowArtPrewarm, allowPremiumStaticArt, preferReducedMotion, useCumulativeArtLayers } from "../game/PerformanceMode";
+import {
+  addPrestigeSceneVignette,
+  addStaticSignalSweep,
+  addWorldIntelPlate,
+  PRESTIGE_SCENE_FONT,
+  usePrestigeSceneFrame,
+} from "../game/PrestigeSceneFrame";
 import { startRegisteredScene, warmRegisteredScenes, type RegisteredSceneKey } from "./SceneRegistry";
 import type { PlayerSave } from "../services/localSave";
 
@@ -90,9 +97,12 @@ export class WorldMapScene extends Phaser.Scene {
     playMusicWhenReady(this, "bgm_world", 0.22);
 
     this.createIllustratedWorldMap();
+    addPrestigeSceneVignette(this, "world", 4.5);
     if (useCumulativeArtLayers()) this.installCumulativeWorldArt();
     if (allowPremiumStaticArt("world")) this.installPremiumStaticWorldArt();
     this.installProgressiveWorldArt();
+    addWorldIntelPlate(this);
+    addStaticSignalSweep(this, 818, 299, 190, 24.4);
     this.createStagePreviewLayer();
     this.createStageNodeHotspots();
     this.createNavigationHotspots();
@@ -220,13 +230,12 @@ export class WorldMapScene extends Phaser.Scene {
 
     this.stageTitleText = this.add
       .text(715, 318, "", {
-        fontFamily:
-          "NanumSquareRound, Pretendard, Noto Sans KR, Arial, sans-serif",
-        fontSize: "20px",
+        fontFamily: PRESTIGE_SCENE_FONT,
+        fontSize: usePrestigeSceneFrame() ? "19px" : "20px",
         fontStyle: "bold",
-        color: "#214f94",
-        stroke: "#ffffff",
-        strokeThickness: 4,
+        color: usePrestigeSceneFrame() ? "#fff2c8" : "#214f94",
+        stroke: usePrestigeSceneFrame() ? "#050b16" : "#ffffff",
+        strokeThickness: usePrestigeSceneFrame() ? 3 : 4,
         fixedWidth: 205,
         align: "left",
       })
@@ -234,13 +243,12 @@ export class WorldMapScene extends Phaser.Scene {
 
     this.stageSubText = this.add
       .text(715, 346, "", {
-        fontFamily:
-          "NanumSquareRound, Pretendard, Noto Sans KR, Arial, sans-serif",
-        fontSize: "12px",
+        fontFamily: PRESTIGE_SCENE_FONT,
+        fontSize: usePrestigeSceneFrame() ? "12px" : "12px",
         fontStyle: "bold",
-        color: "#53719e",
-        stroke: "#ffffff",
-        strokeThickness: 3,
+        color: usePrestigeSceneFrame() ? "#c7d5ee" : "#53719e",
+        stroke: usePrestigeSceneFrame() ? "#050b16" : "#ffffff",
+        strokeThickness: usePrestigeSceneFrame() ? 2 : 3,
         fixedWidth: 205,
         align: "left",
       })
@@ -248,13 +256,12 @@ export class WorldMapScene extends Phaser.Scene {
 
     this.stageMetaText = this.add
       .text(715, 386, "", {
-        fontFamily:
-          "NanumSquareRound, Pretendard, Noto Sans KR, Arial, sans-serif",
+        fontFamily: PRESTIGE_SCENE_FONT,
         fontSize: "12px",
         fontStyle: "bold",
-        color: "#365f9c",
-        stroke: "#ffffff",
-        strokeThickness: 3,
+        color: usePrestigeSceneFrame() ? "#e8efff" : "#365f9c",
+        stroke: usePrestigeSceneFrame() ? "#050b16" : "#ffffff",
+        strokeThickness: usePrestigeSceneFrame() ? 2 : 3,
         lineSpacing: 4,
         fixedWidth: 215,
         align: "left",
@@ -263,9 +270,8 @@ export class WorldMapScene extends Phaser.Scene {
 
     this.stageStatusText = this.add
       .text(284, 111, "", {
-        fontFamily:
-          "NanumSquareRound, Pretendard, Noto Sans KR, Arial, sans-serif",
-        fontSize: "13px",
+        fontFamily: PRESTIGE_SCENE_FONT,
+        fontSize: usePrestigeSceneFrame() ? "14px" : "13px",
         fontStyle: "bold",
         color: "#f7fbff",
         stroke: "#113c87",
@@ -277,10 +283,9 @@ export class WorldMapScene extends Phaser.Scene {
       .setDepth(24);
 
     this.add
-      .text(707, 118, "ACT II  원정 루트 개방", {
-        fontFamily:
-          "NanumSquareRound, Pretendard, Noto Sans KR, Arial, sans-serif",
-        fontSize: "12px",
+      .text(707, 118, usePrestigeSceneFrame() ? "CAMPAIGN ROUTE" : "ACT II  원정 루트 개방", {
+        fontFamily: PRESTIGE_SCENE_FONT,
+        fontSize: usePrestigeSceneFrame() ? "11px" : "12px",
         fontStyle: "bold",
         color: "#fff3b8",
         stroke: "#0b356f",
@@ -302,9 +307,8 @@ export class WorldMapScene extends Phaser.Scene {
       .setStrokeStyle(2, 0xffffff, 0.84);
     const label = this.add
       .text(0, -42, "선택", {
-        fontFamily:
-          "NanumSquareRound, Pretendard, Noto Sans KR, Arial, sans-serif",
-        fontSize: "11px",
+        fontFamily: PRESTIGE_SCENE_FONT,
+        fontSize: usePrestigeSceneFrame() ? "10px" : "11px",
         fontStyle: "bold",
         color: "#fff3b8",
         stroke: "#0b356f",
@@ -544,9 +548,8 @@ export class WorldMapScene extends Phaser.Scene {
     this.toastBack = this.add.graphics().setDepth(90).setAlpha(0);
     this.toastText = this.add
       .text(480, 458, "", {
-        fontFamily:
-          "NanumSquareRound, Pretendard, Noto Sans KR, Arial, sans-serif",
-        fontSize: "13px",
+        fontFamily: PRESTIGE_SCENE_FONT,
+        fontSize: usePrestigeSceneFrame() ? "14px" : "13px",
         fontStyle: "bold",
         color: "#f8fbff",
         stroke: "#17366c",
@@ -598,15 +601,19 @@ export class WorldMapScene extends Phaser.Scene {
       });
     }
 
-    this.stageTitleText?.setText(`STAGE ${stage.number}  ${stage.title}`);
+    this.stageTitleText?.setText(usePrestigeSceneFrame() ? `OP-${String(stage.number).padStart(2, "0")}  ${stage.title}` : `STAGE ${stage.number}  ${stage.title}`);
     this.stageSubText?.setText(stage.subtitle);
     this.stageMetaText?.setText(
       [
-        `별 기록  ${"★".repeat(stars)}${"☆".repeat(Math.max(0, 3 - stars))}`,
-        `웨이브  ${stage.waves.length}   생명  ${stage.maxLives}`,
+        usePrestigeSceneFrame()
+          ? `RATING  ${"★".repeat(stars)}${"☆".repeat(Math.max(0, 3 - stars))}`
+          : `별 기록  ${"★".repeat(stars)}${"☆".repeat(Math.max(0, 3 - stars))}`,
+        usePrestigeSceneFrame()
+          ? `WAVES ${stage.waves.length}   LIVES ${stage.maxLives}`
+          : `웨이브  ${stage.waves.length}   생명  ${stage.maxLives}`,
         unlocked
-          ? "입장 가능  방어 준비 완료"
-          : "잠김  이전 스테이지 클리어 필요",
+          ? usePrestigeSceneFrame() ? "READY  방어 준비 완료" : "입장 가능  방어 준비 완료"
+          : usePrestigeSceneFrame() ? "LOCKED  이전 작전 클리어 필요" : "잠김  이전 스테이지 클리어 필요",
       ].join("\n"),
     );
     this.stageStatusText?.setText(

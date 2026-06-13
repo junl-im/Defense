@@ -1,0 +1,26 @@
+KingdomSeed v2.36.12 RESULT PRESTIGE DEBRIEF
+
+적용 방법:
+1. 기존 KingdomSeed 프로젝트 루트에 이 zip의 내용을 덮어씁니다.
+2. node_modules가 없다면 npm ci를 실행합니다.
+3. npm run build로 TypeScript/Vite 빌드를 확인합니다.
+
+포함 변경:
+- src/game/BattleResultPrestige.ts
+- src/scenes/GameScene.ts
+- src/runtime/Version.ts
+- package.json
+- package-lock.json
+- index.html
+- docs/PATCH_2_36_12_RESULT_PRESTIGE_DEBRIEF.md
+
+제외:
+- .git
+- node_modules
+- dist
+- 임시 파일
+
+비교/디버그 옵션:
+- ?plainresult
+- ?legacyresult
+- ?toydebug

@@ -87,7 +87,6 @@ import {
 import { applyBossPatternState } from "../game/BossPatternState";
 import {
   computeBattleRewards,
-  rankMedal,
   showRewardChestOverlay,
   showStageObjectiveBanner,
 } from "../game/CombatRewards";
@@ -204,6 +203,15 @@ import {
   mobileUiScale,
   useCumulativeArtLayers,
 } from "../game/PerformanceMode";
+import {
+  addPrestigeDebriefHeader,
+  addPrestigeMetricCard,
+  addPrestigeResultBackdrop,
+  addPrestigeResultPanel,
+  formatCompactTime,
+  prestigeRankLabel,
+  usePrestigeResultUi,
+} from "../game/BattleResultPrestige";
 import { startRegisteredScene } from "./SceneRegistry";
 
 type CastingSpell = "meteor" | "mercenary" | undefined;
@@ -3874,36 +3882,79 @@ export class GameScene extends Phaser.Scene {
     if (this.ended) return;
     this.ended = true;
     playSfx(this, "sfx_lose");
-    this.add
-      .rectangle(480, 270, 580, 320, 0x0b1220, 0.94)
-      .setDepth(92)
-      .setStrokeStyle(2, 0xff8080, 0.45);
-    this.add
-      .text(480, 180, "DEFENSE FAILED", {
-        fontSize: "40px",
-        color: "#ff8080",
-        fontStyle: "bold",
-      })
-      .setOrigin(0.5)
-      .setDepth(93);
-    this.add
-      .text(
-        480,
-        242,
-        `${this.stage.title} / Wave ${this.waveIndex + 1} / Score ${this.score}`,
-        { fontSize: "21px", color: "#ffffff" },
-      )
-      .setOrigin(0.5)
-      .setDepth(93);
+
+    if (usePrestigeResultUi()) {
+      addPrestigeResultBackdrop(this, 0xff8080);
+      addPrestigeResultPanel(this, 480, 270, 650, 332, 0xff8080, 92);
+      addPrestigeDebriefHeader(
+        this,
+        "OPERATION DEBRIEF",
+        "DEFENSE FAILED",
+        `${this.stage.title} · Wave ${this.waveIndex + 1} / ${this.stage.waves.length}`,
+        0xff8080,
+        93,
+      );
+      addPrestigeMetricCard(this, 304, 190, "FINAL SCORE", `${this.score}`, 0xff8080, 94);
+      addPrestigeMetricCard(this, 480, 190, "LIFE LEFT", `${this.lives}`, 0xffb3a4, 94);
+      addPrestigeMetricCard(
+        this,
+        656,
+        190,
+        "BEST CHAIN",
+        `${this.bestKillStreak}`,
+        0xffd0a4,
+        94,
+      );
+      this.add
+        .text(
+          480,
+          274,
+          "방어선이 돌파되었습니다. 타워 배치, 병영 지연선, 영웅 스킬 타이밍을 재정비하세요.",
+          {
+            fontFamily: PRESTIGE_HUD_FONT,
+            fontSize: "16px",
+            color: "#f3d8d8",
+            fixedWidth: 540,
+            align: "center",
+            lineSpacing: 5,
+            shadow: { offsetX: 0, offsetY: 2, color: "#000000", blur: 2, fill: true },
+          },
+        )
+        .setOrigin(0.5)
+        .setDepth(94);
+    } else {
+      this.add
+        .rectangle(480, 270, 580, 320, 0x0b1220, 0.94)
+        .setDepth(92)
+        .setStrokeStyle(2, 0xff8080, 0.45);
+      this.add
+        .text(480, 180, "DEFENSE FAILED", {
+          fontSize: "40px",
+          color: "#ff8080",
+          fontStyle: "bold",
+        })
+        .setOrigin(0.5)
+        .setDepth(93);
+      this.add
+        .text(
+          480,
+          242,
+          `${this.stage.title} / Wave ${this.waveIndex + 1} / Score ${this.score}`,
+          { fontSize: "21px", color: "#ffffff" },
+        )
+        .setOrigin(0.5)
+        .setDepth(93);
+    }
+
     const world = this.makeUiButton(
       370,
-      330,
-      180,
-      48,
+      350,
+      190,
+      50,
       0x284f39,
-      "월드맵",
-      22,
-      93,
+      usePrestigeResultUi() ? "작전 복귀" : "월드맵",
+      21,
+      94,
     );
     world.on("pointerdown", () => {
       this.time.timeScale = 1;
@@ -3916,13 +3967,13 @@ export class GameScene extends Phaser.Scene {
 
     const retry = this.makeUiButton(
       590,
-      330,
-      180,
-      48,
+      350,
+      190,
+      50,
       0x24486b,
-      "다시 도전",
-      22,
-      93,
+      usePrestigeResultUi() ? "재도전" : "다시 도전",
+      21,
+      94,
     );
     retry.on("pointerdown", () => {
       this.time.timeScale = 1;
@@ -4024,49 +4075,83 @@ export class GameScene extends Phaser.Scene {
       totalLeaks: this.totalLeaks,
     });
 
-    if (this.textures.exists("ui-reward-stage-panel-v42"))
+    const prestigeResult = usePrestigeResultUi();
+    if (prestigeResult) {
+      addPrestigeResultBackdrop(this, 0xf7d36b);
+      addPrestigeResultPanel(this, 480, 270, 760, 482, 0xf7d36b, 92);
+      addPrestigeDebriefHeader(
+        this,
+        "OPERATION DEBRIEF",
+        "MISSION CLEAR",
+        `${this.stage.title} · OP-${String(this.stage.number).padStart(2, "0")}`,
+        0xf7d36b,
+        93,
+      );
+      addPrestigeMetricCard(this, 270, 158, "SCORE", `${score}`, 0xf7d36b, 94);
+      addPrestigeMetricCard(this, 410, 158, "LIFE", `${this.lives}`, 0x8fdcff, 94);
+      addPrestigeMetricCard(
+        this,
+        550,
+        158,
+        "CLEAR TIME",
+        formatCompactTime(clearTimeMs),
+        0xb8ffaf,
+        94,
+      );
+      addPrestigeMetricCard(
+        this,
+        690,
+        158,
+        "BEST CHAIN",
+        `${this.bestKillStreak}`,
+        0xffb86b,
+        94,
+      );
+    } else {
+      if (this.textures.exists("ui-reward-stage-panel-v42"))
+        this.add
+          .image(480, 270, "ui-reward-stage-panel-v42")
+          .setDisplaySize(760, 482)
+          .setDepth(92);
+      else
+        this.add
+          .rectangle(480, 270, 720, 468, 0x070b13, 0.96)
+          .setDepth(92)
+          .setStrokeStyle(3, 0xf7d36b, 0.48);
       this.add
-        .image(480, 270, "ui-reward-stage-panel-v42")
-        .setDisplaySize(760, 482)
-        .setDepth(92);
-    else
-      this.add
-        .rectangle(480, 270, 720, 468, 0x070b13, 0.96)
+        .rectangle(480, 88, 690, 54, 0x2b1a0e, 0.92)
         .setDepth(92)
-        .setStrokeStyle(3, 0xf7d36b, 0.48);
-    this.add
-      .rectangle(480, 88, 690, 54, 0x2b1a0e, 0.92)
-      .setDepth(92)
-      .setStrokeStyle(2, 0xffef9a, 0.26);
-    this.add
-      .text(480, 86, "STAGE CLEAR", {
-        fontSize: "30px",
-        color: "#f7d36b",
-        fontStyle: "bold",
-        shadow: {
-          offsetX: 0,
-          offsetY: 4,
-          color: "#000000",
-          blur: 3,
-          fill: true,
-        },
-      })
-      .setOrigin(0.5)
-      .setDepth(93);
-
-    this.add
-      .text(
-        480,
-        137,
-        `${this.stage.title}   SCORE ${score}   LIFE ${this.lives}`,
-        {
-          fontSize: "15px",
-          color: "#ffffff",
+        .setStrokeStyle(2, 0xffef9a, 0.26);
+      this.add
+        .text(480, 86, "STAGE CLEAR", {
+          fontSize: "30px",
+          color: "#f7d36b",
           fontStyle: "bold",
-        },
-      )
-      .setOrigin(0.5)
-      .setDepth(93);
+          shadow: {
+            offsetX: 0,
+            offsetY: 4,
+            color: "#000000",
+            blur: 3,
+            fill: true,
+          },
+        })
+        .setOrigin(0.5)
+        .setDepth(93);
+
+      this.add
+        .text(
+          480,
+          137,
+          `${this.stage.title}   SCORE ${score}   LIFE ${this.lives}`,
+          {
+            fontSize: "15px",
+            color: "#ffffff",
+            fontStyle: "bold",
+          },
+        )
+        .setOrigin(0.5)
+        .setDepth(93);
+    }
 
     addPremiumChestSpotlight(this, 480, 214);
     const rewardBox = showRewardChestOverlay(this, 480, 214, reward);
@@ -4079,63 +4164,83 @@ export class GameScene extends Phaser.Scene {
       this.rewardChestFxColor(reward.chestTier),
     );
 
-    const objectivePanel = this.add
-      .rectangle(252, 333, 314, 126, 0x111927, 0.92)
-      .setDepth(93)
-      .setStrokeStyle(2, 0x8fdcff, 0.26);
+    const objectivePanel = prestigeResult
+      ? addPrestigeResultPanel(this, 252, 343, 326, 136, 0x8fdcff, 93)
+      : this.add
+          .rectangle(252, 333, 314, 126, 0x111927, 0.92)
+          .setDepth(93)
+          .setStrokeStyle(2, 0x8fdcff, 0.26);
     const objectiveTitle = this.add
-      .text(252, 282, "전술 목표 결과", {
-        fontSize: "13px",
-        color: "#dbe7ff",
+      .text(252, 286, prestigeResult ? "TACTICAL OUTCOME" : "전술 목표 결과", {
+        fontFamily: PRESTIGE_HUD_FONT,
+        fontSize: prestigeResult ? "11px" : "13px",
+        color: prestigeResult ? "#dbc48d" : "#dbe7ff",
         fontStyle: "bold",
+        letterSpacing: prestigeResult ? 1.1 : 0,
       })
       .setOrigin(0.5)
       .setDepth(94);
     const contractLines = battleContractResultLines(this.battleContractState);
+    const prestigeLine = (line: string): string =>
+      line
+        .replace(/^★\s*/, "PASS  ")
+        .replace(/^☆\s*/, "OPEN  ")
+        .replace(/^×\s*/, "FAIL  ");
+    const objectiveLineText = prestigeResult
+      ? [
+          ...reward.lines.slice(0, 3).map(prestigeLine),
+          ...contractLines.slice(0, 2).map(prestigeLine),
+        ].join("\n")
+      : [...reward.lines.slice(0, 3), ...contractLines.slice(0, 3)].join("\n");
     const objectiveLines = this.add
-      .text(
-        252,
-        337,
-        [...reward.lines.slice(0, 3), ...contractLines.slice(0, 3)].join("\n"),
-        {
-          fontSize: "13px",
-          color: "#fff4c2",
-          align: "left",
-          lineSpacing: 6,
-          shadow: {
-            offsetX: 0,
-            offsetY: 1,
-            color: "#000000",
-            blur: 1,
-            fill: true,
-          },
+      .text(252, prestigeResult ? 349 : 337, objectiveLineText, {
+        fontFamily: PRESTIGE_HUD_FONT,
+        fontSize: prestigeResult ? "12px" : "13px",
+        color: prestigeResult ? "#fff1bd" : "#fff4c2",
+        align: "left",
+        lineSpacing: prestigeResult ? 5 : 6,
+        shadow: {
+          offsetX: 0,
+          offsetY: 1,
+          color: "#000000",
+          blur: 1,
+          fill: true,
         },
-      )
+      })
       .setOrigin(0.5)
       .setDepth(94);
 
-    const leaderboardPanel = this.add
-      .rectangle(708, 333, 314, 126, 0x111927, 0.92)
-      .setDepth(93)
-      .setStrokeStyle(2, 0xf7d36b, 0.26);
+    const leaderboardPanel = prestigeResult
+      ? addPrestigeResultPanel(this, 708, 343, 326, 136, 0xf7d36b, 93)
+      : this.add
+          .rectangle(708, 333, 314, 126, 0x111927, 0.92)
+          .setDepth(93)
+          .setStrokeStyle(2, 0xf7d36b, 0.26);
     const leaderboardTitle = this.add
-      .text(708, 282, "오늘의 명예의 전당", {
-        fontSize: "13px",
-        color: "#f7d36b",
+      .text(708, 286, prestigeResult ? "COMMAND RANKING" : "오늘의 명예의 전당", {
+        fontFamily: PRESTIGE_HUD_FONT,
+        fontSize: prestigeResult ? "11px" : "13px",
+        color: prestigeResult ? "#dbc48d" : "#f7d36b",
         fontStyle: "bold",
+        letterSpacing: prestigeResult ? 1.1 : 0,
       })
       .setOrigin(0.5)
       .setDepth(94);
     const lines = top
       .slice(0, 5)
-      .map((s, i) => `${rankMedal(i)} ${s.nickname}  ${s.score}`)
+      .map((entry, index) =>
+        prestigeResult
+          ? `${prestigeRankLabel(index)}  ${entry.nickname}  ${entry.score}`
+          : `#${index + 1} ${entry.nickname}  ${entry.score}`,
+      )
       .join("\n");
     const leaderboardText = this.add
-      .text(708, 337, lines || "아직 기록 없음", {
-        fontSize: "13px",
+      .text(708, prestigeResult ? 349 : 337, lines || "아직 기록 없음", {
+        fontFamily: PRESTIGE_HUD_FONT,
+        fontSize: prestigeResult ? "12px" : "13px",
         color: "#dbe7ff",
         align: "left",
-        lineSpacing: 6,
+        lineSpacing: prestigeResult ? 5 : 6,
         shadow: {
           offsetX: 0,
           offsetY: 1,
@@ -4154,7 +4259,7 @@ export class GameScene extends Phaser.Scene {
       172,
       48,
       0x8a4f1f,
-      "보상 열기",
+      prestigeResult ? "보급 개봉" : "보상 열기",
       21,
       94,
     );
@@ -4189,7 +4294,7 @@ export class GameScene extends Phaser.Scene {
       172,
       48,
       0x6b3f91,
-      "유물 제작소",
+      prestigeResult ? "유물 제작" : "유물 제작소",
       20,
       94,
     );
@@ -4208,7 +4313,7 @@ export class GameScene extends Phaser.Scene {
       150,
       48,
       0x284f39,
-      "월드맵",
+      prestigeResult ? "작전 복귀" : "월드맵",
       21,
       94,
     );
@@ -4227,7 +4332,7 @@ export class GameScene extends Phaser.Scene {
       150,
       48,
       0x24486b,
-      "다시 도전",
+      prestigeResult ? "재도전" : "다시 도전",
       20,
       94,
     );
