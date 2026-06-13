@@ -223,6 +223,11 @@ import {
   useMobileReadableUi,
 } from "../game/MobileReadableUi";
 import { installBattleSecondaryUiFocus, markSecondaryUi } from "../game/DefenseUiFocusSystem";
+import {
+  compactBattleMessageForActionFlow,
+  installBattleActionFlow,
+  type BattleActionFlowHandle,
+} from "../game/DefenseActionFlowSystem";
 import { startRegisteredScene } from "./SceneRegistry";
 import {
   installReferenceAssetPack,
@@ -291,6 +296,7 @@ export class GameScene extends Phaser.Scene {
   private synergyText?: Phaser.GameObjects.Text;
   private commandAuraLabel = "기본";
   private battleSecondaryUi: Phaser.GameObjects.GameObject[] = [];
+  private actionFlow?: BattleActionFlowHandle;
 
   goldText!: Phaser.GameObjects.Text;
   livesText!: Phaser.GameObjects.Text;
@@ -611,6 +617,8 @@ export class GameScene extends Phaser.Scene {
     );
     this.battleContractHudText = undefined;
     this.battleContractDetailText = undefined;
+    this.battleSecondaryUi = [];
+    this.actionFlow = undefined;
     this.activeEnemyAffix = NO_ENEMY_AFFIX_V29;
     this.enemyAffixText = undefined;
     this.combatAdvisorText = undefined;
@@ -676,6 +684,7 @@ export class GameScene extends Phaser.Scene {
     this.createBattleContractHud();
     this.createV29CombatAdvisorHud();
     this.installBattleUiFocus();
+    this.installBattleActionFlow();
     this.createUiInputGuards();
     this.installCombatTextSystem();
     this.installSceneCleanup();
@@ -781,6 +790,7 @@ export class GameScene extends Phaser.Scene {
         this.nextWaveCountdownMs - safeDelta,
       );
     }
+    this.actionFlow?.update();
 
     this.enemies.forEach((enemy) => enemy.update(safeDelta));
     this.towers.forEach((tower) => tower.update(safeDelta, this.enemies));
@@ -1459,6 +1469,28 @@ export class GameScene extends Phaser.Scene {
 
   private rememberBattleSecondaryUi<T extends Phaser.GameObjects.GameObject>(item: T): T {
     return markSecondaryUi(item, this.battleSecondaryUi);
+  }
+
+  private installBattleActionFlow(): void {
+    this.actionFlow = installBattleActionFlow(this, {
+      getSnapshot: () => ({
+        waveRunning: this.waveRunning,
+        waveIndex: this.waveIndex,
+        totalWaves: this.stage.waves.length,
+        nextWaveCountdownMs: this.nextWaveCountdownMs,
+        enemiesAlive: this.enemies.filter((enemy) => enemy.active && !enemy.dead && !enemy.reachedGoal).length,
+        towersBuilt: this.towers.filter((tower) => tower.active).length,
+        gold: this.gold,
+        lives: this.lives,
+        selectedTower: Boolean(this.selectedTower?.active),
+        buildMenuOpen: Boolean(this.activeBuildMenu?.active),
+        ended: this.ended,
+        meteorReady: this.meteorCooldownMs <= 0,
+        mercenaryReady: this.mercenaryCooldownMs <= 0,
+        heroSkillReady: this.hero ? this.hero.skillCooldownMs <= 0 : false,
+      }),
+      onPrimaryAction: () => this.startNextWave(true),
+    });
   }
 
   private installBattleUiFocus(): void {
@@ -3885,6 +3917,7 @@ export class GameScene extends Phaser.Scene {
     this.refreshObjectivePanel();
     this.refreshTacticalOrderHud();
     this.refreshBattleContractHud();
+    this.actionFlow?.update();
   }
 
   private registerKill(enemy: Enemy): void {
@@ -4037,6 +4070,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   private showMessage(text: string): void {
+    const flowMessage = compactBattleMessageForActionFlow(text);
+    if (flowMessage) this.actionFlow?.cue(flowMessage.text, flowMessage.tone);
+    if (flowMessage?.suppressCenter) return;
     this.messageHideTimer = clearTimer(this.messageHideTimer);
     this.messageText.setText(text).setVisible(true);
     this.messageHideTimer = safeDelayedCall(
