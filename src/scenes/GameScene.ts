@@ -212,6 +212,13 @@ import {
   prestigeRankLabel,
   usePrestigeResultUi,
 } from "../game/BattleResultPrestige";
+import {
+  improveReadableTextTree,
+  installSceneReadabilityPass,
+  readableFontSize,
+  readableHitSize,
+  useMobileReadableUi,
+} from "../game/MobileReadableUi";
 import { startRegisteredScene } from "./SceneRegistry";
 
 type CastingSpell = "meteor" | "mercenary" | undefined;
@@ -628,6 +635,8 @@ export class GameScene extends Phaser.Scene {
     this.refreshObjectivePanel();
     showStageObjectiveBanner(this, this.stage);
     this.showTacticalHint("지휘 목표: 생명력 보존 · 빠른 클리어 · 고연속 처치");
+    installSceneReadabilityPass(this, { min: 15, strokeThickness: 3 });
+    installSceneReadabilityPass(this, { min: 15, strokeThickness: 3, delayMs: 180 });
     if (this.dailyChallenge) {
       safeDelayedCall(
         this,
@@ -2542,6 +2551,7 @@ export class GameScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
     menu.add(close);
+    improveReadableTextTree(menu, { min: 14, strokeThickness: 3 });
     safeDelayedCall(
       this,
       6500,
@@ -2874,6 +2884,7 @@ export class GameScene extends Phaser.Scene {
       duration: 180,
       ease: "Back.easeOut",
     });
+    improveReadableTextTree(panel, { min: 14, strokeThickness: 3 });
     this.selectedPanel = panel;
   }
 
@@ -3185,6 +3196,7 @@ export class GameScene extends Phaser.Scene {
       .setDepth(86);
     this.waveIntelPanel = this.add.container(746, 514).setDepth(86);
     this.refreshWavePreview();
+    installSceneReadabilityPass(this, { min: 15, strokeThickness: 3 });
   }
 
   private createInputHandlers(): void {
@@ -4359,6 +4371,7 @@ export class GameScene extends Phaser.Scene {
       duration: 280,
       delay: 180,
     });
+    installSceneReadabilityPass(this, { min: 15, strokeThickness: 3 });
   }
 
   private buttonAssetForColor(color: number): string | undefined {
@@ -4395,15 +4408,17 @@ export class GameScene extends Phaser.Scene {
     depth = 10,
   ): Phaser.GameObjects.Rectangle {
     const uiScale = Math.max(1, Math.min(1.18, mobileUiScale()));
-    const hitWidth = Math.max(width, Math.round(width * uiScale));
+    const readableHit = readableHitSize(width, height);
+    const hitWidth = Math.max(width, Math.round(width * uiScale), readableHit.width);
     const hitHeight = Math.max(
       height,
       Math.round(height * Math.min(1.24, uiScale)),
-      42,
+      readableHit.height,
+      48,
     );
     const textSize = Math.max(
-      12,
-      Math.round(fontSize * Math.min(1.12, uiScale)) - 1,
+      useMobileReadableUi() ? 15 : 12,
+      Math.round(fontSize * Math.min(1.18, uiScale)),
     );
     const assetKey = this.buttonAssetForColor(color);
     const prestigeButtonSurface = depth >= 70 && usePrestigeCombatHud();
@@ -4493,11 +4508,13 @@ export class GameScene extends Phaser.Scene {
     label: string,
   ): Phaser.GameObjects.Rectangle {
     const uiScale = Math.max(1, Math.min(1.16, mobileUiScale()));
-    const hitWidth = Math.max(width, Math.round(width * uiScale));
+    const readableHit = readableHitSize(width, height);
+    const hitWidth = Math.max(width, Math.round(width * uiScale), readableHit.width);
     const hitHeight = Math.max(
       height,
       Math.round(height * Math.min(1.22, uiScale)),
-      44,
+      readableHit.height,
+      48,
     );
     const assetKey = this.buttonAssetForColor(color);
     const shadow = this.add.rectangle(
@@ -4527,7 +4544,7 @@ export class GameScene extends Phaser.Scene {
     );
     const text = this.add
       .text(x, y, label, {
-        fontSize: `${Math.max(13, Math.round(12 * uiScale))}px`,
+        fontSize: readableFontSize(13, 14, 18),
         color: "#ffffff",
         fontStyle: "bold",
         fontFamily: "Pretendard, Noto Sans KR, NanumGothic, Arial, sans-serif",

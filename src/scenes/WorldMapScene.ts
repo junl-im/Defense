@@ -18,6 +18,7 @@ import {
   usePrestigeSceneFrame,
 } from "../game/PrestigeSceneFrame";
 import { startRegisteredScene, warmRegisteredScenes, type RegisteredSceneKey } from "./SceneRegistry";
+import { installSceneReadabilityPass, readableFontSize, readableHitSize } from "../game/MobileReadableUi";
 import type { PlayerSave } from "../services/localSave";
 
 type HotspotTone = "gold" | "blue" | "white" | "red" | "green";
@@ -108,6 +109,7 @@ export class WorldMapScene extends Phaser.Scene {
     this.createNavigationHotspots();
     this.createToastLayer();
     this.refreshSelectedStage(false);
+    installSceneReadabilityPass(this, { min: 15, strokeThickness: 3 });
     this.installSceneCleanup();
     warmRegisteredScenes(
       this,
@@ -231,7 +233,7 @@ export class WorldMapScene extends Phaser.Scene {
     this.stageTitleText = this.add
       .text(715, 318, "", {
         fontFamily: PRESTIGE_SCENE_FONT,
-        fontSize: usePrestigeSceneFrame() ? "19px" : "20px",
+        fontSize: usePrestigeSceneFrame() ? readableFontSize(20, 19, 28) : readableFontSize(20, 19, 28),
         fontStyle: "bold",
         color: usePrestigeSceneFrame() ? "#fff2c8" : "#214f94",
         stroke: usePrestigeSceneFrame() ? "#050b16" : "#ffffff",
@@ -244,7 +246,7 @@ export class WorldMapScene extends Phaser.Scene {
     this.stageSubText = this.add
       .text(715, 346, "", {
         fontFamily: PRESTIGE_SCENE_FONT,
-        fontSize: usePrestigeSceneFrame() ? "12px" : "12px",
+        fontSize: readableFontSize(13, 15, 22),
         fontStyle: "bold",
         color: usePrestigeSceneFrame() ? "#c7d5ee" : "#53719e",
         stroke: usePrestigeSceneFrame() ? "#050b16" : "#ffffff",
@@ -257,7 +259,7 @@ export class WorldMapScene extends Phaser.Scene {
     this.stageMetaText = this.add
       .text(715, 386, "", {
         fontFamily: PRESTIGE_SCENE_FONT,
-        fontSize: "12px",
+        fontSize: readableFontSize(13, 15, 22),
         fontStyle: "bold",
         color: usePrestigeSceneFrame() ? "#e8efff" : "#365f9c",
         stroke: usePrestigeSceneFrame() ? "#050b16" : "#ffffff",
@@ -271,7 +273,7 @@ export class WorldMapScene extends Phaser.Scene {
     this.stageStatusText = this.add
       .text(284, 111, "", {
         fontFamily: PRESTIGE_SCENE_FONT,
-        fontSize: usePrestigeSceneFrame() ? "14px" : "13px",
+        fontSize: readableFontSize(14, 15, 22),
         fontStyle: "bold",
         color: "#f7fbff",
         stroke: "#113c87",
@@ -285,7 +287,7 @@ export class WorldMapScene extends Phaser.Scene {
     this.add
       .text(707, 118, usePrestigeSceneFrame() ? "CAMPAIGN ROUTE" : "ACT II  원정 루트 개방", {
         fontFamily: PRESTIGE_SCENE_FONT,
-        fontSize: usePrestigeSceneFrame() ? "11px" : "12px",
+        fontSize: readableFontSize(12, 14, 20),
         fontStyle: "bold",
         color: "#fff3b8",
         stroke: "#0b356f",
@@ -308,7 +310,7 @@ export class WorldMapScene extends Phaser.Scene {
     const label = this.add
       .text(0, -42, "선택", {
         fontFamily: PRESTIGE_SCENE_FONT,
-        fontSize: usePrestigeSceneFrame() ? "10px" : "11px",
+        fontSize: readableFontSize(11, 14, 20),
         fontStyle: "bold",
         color: "#fff3b8",
         stroke: "#0b356f",
@@ -479,8 +481,9 @@ export class WorldMapScene extends Phaser.Scene {
       .setRotation(-0.15)
       .setAlpha(0)
       .setBlendMode(Phaser.BlendModes.ADD);
+    const hitSize = readableHitSize(options.width, options.height);
     const hit = this.add
-      .zone(0, 0, options.width, options.height)
+      .zone(0, 0, hitSize.width, hitSize.height)
       .setInteractive({ useHandCursor: true });
     container.add([hover, shine, hit]);
     addHitZoneDebug(
@@ -549,7 +552,7 @@ export class WorldMapScene extends Phaser.Scene {
     this.toastText = this.add
       .text(480, 458, "", {
         fontFamily: PRESTIGE_SCENE_FONT,
-        fontSize: usePrestigeSceneFrame() ? "14px" : "13px",
+        fontSize: readableFontSize(14, 15, 22),
         fontStyle: "bold",
         color: "#f8fbff",
         stroke: "#17366c",

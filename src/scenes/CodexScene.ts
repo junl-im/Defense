@@ -4,6 +4,7 @@ import { ENEMIES, TOWERS } from '../game/balance';
 import type { EnemyConfig, TowerConfig } from '../game/types';
 import type { PlayerSave } from '../services/localSave';
 import { startRegisteredScene } from "./SceneRegistry";
+import { installSceneReadabilityPass, improveReadableTextTree, readableFontSize, readableHitSize } from "../game/MobileReadableUi";
 
 export class CodexScene extends Phaser.Scene {
   private user!: User;
@@ -30,7 +31,7 @@ export class CodexScene extends Phaser.Scene {
       fontSize: '42px', color: '#f7d36b', fontStyle: 'bold', stroke: '#241006', strokeThickness: 5
     }).setOrigin(0.5);
     this.add.text(480, 84, '타워 역할, 특수 스킬, 적 약점을 확인하고 스테이지에 들어가세요.', {
-      fontSize: '17px', color: '#fff1bf', align: 'center', stroke: '#110806', strokeThickness: 3
+      fontSize: readableFontSize(17, 17, 25), color: '#fff1bf', align: 'center', stroke: '#110806', strokeThickness: 3
     }).setOrigin(0.5);
 
     this.makeButton(190, 123, 170, 38, '타워 도감', () => { this.mode = 'tower'; this.renderContent(); }, 0x284f39);
@@ -38,9 +39,10 @@ export class CodexScene extends Phaser.Scene {
     this.makeButton(740, 123, 210, 38, '월드맵으로', () => void startRegisteredScene(this, 'WorldMapScene', { user: this.user, save: this.save }), 0x24486b);
     this.makeButton(624, 486, 110, 36, '이전', () => this.turnEnemyPage(-1), 0x3d3a57);
     this.makeButton(756, 486, 110, 36, '다음', () => this.turnEnemyPage(1), 0x3d3a57);
-    this.pageText = this.add.text(480, 486, '', { fontSize: '17px', color: '#ffe38c', fontStyle: 'bold' }).setOrigin(0.5);
+    this.pageText = this.add.text(480, 486, '', { fontSize: readableFontSize(17, 17, 25), color: '#ffe38c', fontStyle: 'bold' }).setOrigin(0.5);
 
     this.renderContent();
+    installSceneReadabilityPass(this, { min: 15, strokeThickness: 3 });
   }
 
   private drawBackground(): void {
@@ -60,6 +62,7 @@ export class CodexScene extends Phaser.Scene {
     this.content = this.add.container(0, 0);
     if (this.mode === 'tower') this.renderTowerCodex();
     else this.renderEnemyCodex();
+    if (this.content) improveReadableTextTree(this.content, { min: 15, strokeThickness: 3 });
   }
 
   private renderTowerCodex(): void {
@@ -70,7 +73,7 @@ export class CodexScene extends Phaser.Scene {
     });
     this.content?.add(this.add.text(480, 435,
       '기본 콤보: 병영으로 적을 묶고 포탑으로 광역 피해를 넣습니다. 방패병/골렘/흑요석 기사는 마법, 공중 적은 궁수와 마법으로 대응하세요.',
-      { fontSize: '17px', color: '#f7d36b', align: 'center', wordWrap: { width: 780 }, stroke: '#100807', strokeThickness: 3 }
+      { fontSize: readableFontSize(17, 17, 25), color: '#f7d36b', align: 'center', wordWrap: { width: 780 }, stroke: '#100807', strokeThickness: 3 }
     ).setOrigin(0.5));
   }
 
@@ -79,10 +82,10 @@ export class CodexScene extends Phaser.Scene {
     const bg = this.add.rectangle(0, 0, 195, 238, 0x0b1220, 0.94).setOrigin(0, 0).setStrokeStyle(2, tower.color, 0.7);
     const icon = this.add.circle(36, 38, 28, tower.color, 1).setStrokeStyle(3, 0xffffff, 0.3);
     const symbol = this.add.text(36, 36, this.towerSymbol(tower.kind), { fontSize: '25px', color: '#101820', fontStyle: 'bold' }).setOrigin(0.5);
-    const title = this.add.text(76, 18, tower.label, { fontSize: '22px', color: '#ffffff', fontStyle: 'bold' });
+    const title = this.add.text(76, 18, tower.label, { fontSize: readableFontSize(22, 21, 30), color: '#ffffff', fontStyle: 'bold' });
     const desc = this.add.text(17, 78,
       `가격 $${tower.cost}\n사거리 ${tower.range}\n피해 ${tower.damage}\n공중공격 ${tower.canHitFlying ? '가능' : '불가'}\nLv.3: ${tower.maxSkill}\n\n${this.towerTip(tower.kind)}`,
-      { fontSize: '14px', color: '#dbe7ff', lineSpacing: 5, wordWrap: { width: 160 } }
+      { fontSize: readableFontSize(14, 15, 22), color: '#dbe7ff', lineSpacing: 5, wordWrap: { width: 160 } }
     );
     card.add([bg, icon, symbol, title, desc]);
     this.content?.add(card);
@@ -112,9 +115,9 @@ export class CodexScene extends Phaser.Scene {
     const card = this.add.container(x, y);
     const bg = this.add.rectangle(0, 0, 205, 68, 0x0b1220, 0.91).setOrigin(0, 0).setStrokeStyle(1, enemy.accentColor ?? 0xffffff, 0.45);
     const body = this.add.circle(24, 34, 13 * (enemy.scale ?? 1), enemy.color, 1).setStrokeStyle(2, enemy.accentColor ?? 0xffffff, 0.65);
-    const name = this.add.text(50, 8, enemy.label, { fontSize: '15px', color: '#ffffff', fontStyle: 'bold' });
+    const name = this.add.text(50, 8, enemy.label, { fontSize: readableFontSize(15, 16, 23), color: '#ffffff', fontStyle: 'bold' });
     const stat = this.add.text(50, 30, `HP ${enemy.hp} / 속도 ${enemy.speed}\n약점: ${this.enemyWeakness(enemy)}`, {
-      fontSize: '11px', color: '#dbe7ff', lineSpacing: 3
+      fontSize: readableFontSize(11, 14, 19), color: '#dbe7ff', lineSpacing: 3
     });
     card.add([bg, body, name, stat]);
     this.content?.add(card);
@@ -122,7 +125,7 @@ export class CodexScene extends Phaser.Scene {
 
   private makeButton(x: number, y: number, width: number, height: number, label: string, onClick: () => void, color: number): Phaser.GameObjects.Rectangle {
     const rect = this.add.rectangle(x, y, width, height, color, 1).setStrokeStyle(2, 0xffffff, 0.28).setInteractive({ useHandCursor: true });
-    this.add.text(x, y, label, { fontSize: '17px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
+    this.add.text(x, y, label, { fontSize: readableFontSize(17, 17, 25), color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
     rect.on('pointerdown', onClick);
     rect.on('pointerover', () => rect.setAlpha(0.86));
     rect.on('pointerout', () => rect.setAlpha(1));

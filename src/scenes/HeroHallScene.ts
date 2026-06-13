@@ -4,6 +4,7 @@ import type { PlayerSave } from '../services/localSave';
 import { getHeroProfiles, getSelectedHero, setSelectedHero, type HeroId, type HeroProfile } from '../game/HeroLoadout';
 import { playMusic, playSfx } from '../game/AudioManager';
 import { startRegisteredScene } from "./SceneRegistry";
+import { installSceneReadabilityPass, improveReadableTextTree, readableFontSize, readableHitSize } from "../game/MobileReadableUi";
 
 export class HeroHallScene extends Phaser.Scene {
   private user!: User;
@@ -25,6 +26,7 @@ export class HeroHallScene extends Phaser.Scene {
     this.drawHeader();
     this.drawHeroCards();
     this.drawFooter();
+    installSceneReadabilityPass(this, { min: 15, strokeThickness: 3 });
   }
 
   private drawBackground(): void {
@@ -39,7 +41,7 @@ export class HeroHallScene extends Phaser.Scene {
       shadow: { offsetX: 0, offsetY: 4, color: '#000000', blur: 6, fill: true },
     }).setOrigin(0.5).setDepth(5);
     this.statusText = this.add.text(480, 86, `선택 중: ${this.selectedHero.name} · ${this.selectedHero.role}`, {
-      fontSize: '18px', color: '#d9f2ff', fontStyle: 'bold', stroke: '#07131a', strokeThickness: 4,
+      fontSize: readableFontSize(18, 18, 26), color: '#d9f2ff', fontStyle: 'bold', stroke: '#07131a', strokeThickness: 4,
     }).setOrigin(0.5).setDepth(5);
   }
 
@@ -59,14 +61,15 @@ export class HeroHallScene extends Phaser.Scene {
       ? this.add.image(0, -72, portraitKey).setDisplaySize(150, 188)
       : this.add.circle(0, -72, 62, hero.color, 1);
     const name = this.add.text(0, 48, `${hero.name}`, { fontSize: '27px', color: '#fff1bf', fontStyle: 'bold', stroke: '#210b04', strokeThickness: 5 }).setOrigin(0.5);
-    const title = this.add.text(0, 77, hero.title, { fontSize: '15px', color: '#cfefff', fontStyle: 'bold', stroke: '#061219', strokeThickness: 3 }).setOrigin(0.5);
+    const title = this.add.text(0, 77, hero.title, { fontSize: readableFontSize(15, 16, 23), color: '#cfefff', fontStyle: 'bold', stroke: '#061219', strokeThickness: 3 }).setOrigin(0.5);
     const perks = this.add.text(-88, 105, hero.perks.map((perk) => `• ${perk}`).join('\n'), {
-      fontSize: '13px', color: '#fff2c7', lineSpacing: 3, wordWrap: { width: 176 }, fontStyle: 'bold', stroke: '#140704', strokeThickness: 3,
+      fontSize: readableFontSize(13, 15, 21), color: '#fff2c7', lineSpacing: 3, wordWrap: { width: 176 }, fontStyle: 'bold', stroke: '#140704', strokeThickness: 3,
     }).setOrigin(0, 0);
     const selectBg = this.add.rectangle(0, 157, 150, 36, selected ? 0x2f8f55 : 0x7d3b22, 0.92).setStrokeStyle(2, 0xffe29a, 0.58);
-    const selectText = this.add.text(0, 157, selected ? '장착 중' : '선택', { fontSize: '17px', color: '#fff7d8', fontStyle: 'bold', stroke: '#190804', strokeThickness: 3 }).setOrigin(0.5);
+    const selectText = this.add.text(0, 157, selected ? '장착 중' : '선택', { fontSize: readableFontSize(17, 17, 25), color: '#fff7d8', fontStyle: 'bold', stroke: '#190804', strokeThickness: 3 }).setOrigin(0.5);
     const hit = this.add.rectangle(0, 0, 232, 316, 0xffffff, 0.001).setInteractive({ useHandCursor: true });
     root.add([bg, portrait, name, title, perks, selectBg, selectText, hit]);
+    improveReadableTextTree(root, { min: 15, strokeThickness: 3 });
     if (selected) {
       root.add(this.add.rectangle(0, 0, 242, 326, 0xffffff, 0).setStrokeStyle(4, 0xfff1aa, 0.72));
     }
@@ -95,7 +98,7 @@ export class HeroHallScene extends Phaser.Scene {
     const text = this.add.text(0, 0, label, { fontSize: active ? '18px' : '15px', color: '#fff7d8', fontStyle: 'bold', stroke: '#2a1208', strokeThickness: 4 }).setOrigin(0.5);
     root.add([bg, text]);
     if (active) {
-      const hit = this.add.rectangle(0, 0, width, 44, 0xffffff, 0.001).setInteractive({ useHandCursor: true });
+      const hit = this.add.rectangle(0, 0, readableHitSize(width, 44).width, readableHitSize(width, 44).height, 0xffffff, 0.001).setInteractive({ useHandCursor: true });
       root.add(hit);
       hit.on('pointerdown', () => { playSfx(this, 'sfx_click'); cb(); });
       hit.on('pointerover', () => this.tweens.add({ targets: root, scale: 1.04, duration: 90 }));

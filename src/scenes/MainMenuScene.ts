@@ -17,6 +17,7 @@ import {
 } from "../game/PrestigeSceneFrame";
 import { startRegisteredScene, warmRegisteredScenes, type RegisteredSceneKey } from "./SceneRegistry";
 import type { PlayerSave } from "../services/localSave";
+import { installSceneReadabilityPass, readableFontSize, readableHitSize } from "../game/MobileReadableUi";
 
 type HotspotTone = "gold" | "blue" | "white" | "red" | "green";
 
@@ -80,6 +81,7 @@ export class MainMenuScene extends Phaser.Scene {
     this.createV26ExpansionShelf();
     this.createPremiumHitZones();
     this.createSmallStatusToast();
+    installSceneReadabilityPass(this, { min: 15, strokeThickness: 3 });
     this.installSceneCleanup();
     warmRegisteredScenes(
       this,
@@ -256,7 +258,7 @@ export class MainMenuScene extends Phaser.Scene {
 
   private createLobbyTextOverlay(): void {
     const uiScale = mobileUiScale();
-    const fs = (size: number): string => `${Math.round(size * uiScale)}px`;
+    const fs = (size: number): string => readableFontSize(Math.round(size * uiScale), 15, 28);
     const labelStyle: Phaser.Types.GameObjects.Text.TextStyle = {
       fontFamily: PRESTIGE_SCENE_FONT,
       color: usePrestigeSceneFrame() ? "#fff2c8" : "#f7fbff",
@@ -276,7 +278,7 @@ export class MainMenuScene extends Phaser.Scene {
       this.add
         .text(x, y, text, {
           ...labelStyle,
-          fontSize: fs(Math.max(13, size + 2)),
+          fontSize: fs(Math.max(15, size + 4)),
           fixedWidth: width,
         })
         .setOrigin(0.5)
@@ -378,7 +380,7 @@ export class MainMenuScene extends Phaser.Scene {
         .setBlendMode(Phaser.BlendModes.ADD);
       const title = this.add
         .text(-34, -11, card.title, {
-          fontSize: "14px",
+          fontSize: readableFontSize(14, 15, 22),
           color: "#fff7d6",
           fontStyle: "bold",
           fontFamily: PRESTIGE_SCENE_FONT,
@@ -388,7 +390,7 @@ export class MainMenuScene extends Phaser.Scene {
         .setOrigin(0, 0.5);
       const sub = this.add
         .text(-34, 10, card.sub, {
-          fontSize: "12px",
+          fontSize: readableFontSize(12, 14, 20),
           color: "#dbe7ff",
           fontStyle: "bold",
           fontFamily: PRESTIGE_SCENE_FONT,
@@ -635,8 +637,9 @@ export class MainMenuScene extends Phaser.Scene {
       .setRotation(-0.09)
       .setAlpha(0);
 
+    const hitSize = readableHitSize(options.width, options.height);
     const hit = this.add
-      .zone(0, 0, options.width, options.height)
+      .zone(0, 0, hitSize.width, hitSize.height)
       .setInteractive({ useHandCursor: true });
     c.add([hover, glint, hit]);
     addHitZoneDebug(
@@ -706,7 +709,7 @@ export class MainMenuScene extends Phaser.Scene {
     this.toastBack.setAlpha(0);
     this.toastText = this.add
       .text(480, 459, `${this.save.nickname} 지휘관님, 왕국 방어 준비 완료`, {
-        fontSize: "11px",
+        fontSize: readableFontSize(12, 15, 22),
         color: "#f8fbff",
         fontFamily: "Inter, Pretendard, Noto Sans KR, Arial, sans-serif",
         fontStyle: "bold",

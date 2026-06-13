@@ -18,6 +18,7 @@ import {
 import { createArtifactIcon } from "../game/PremiumRewardForgeUi";
 import { playMusic, playSfx } from "../game/AudioManager";
 import { startRegisteredScene } from "./SceneRegistry";
+import { installSceneReadabilityPass, readableFontSize, readableHitSize } from "../game/MobileReadableUi";
 
 const SLOT_X = [698, 786, 874];
 
@@ -50,9 +51,10 @@ export class ArtifactForgeScene extends Phaser.Scene {
     this.detailRoot = this.add.container(0, 0).setDepth(22);
     this.renderArtifactList();
     this.renderDetail();
+    installSceneReadabilityPass(this, { min: 15, strokeThickness: 3 });
     this.toastText = this.add
       .text(480, 506, "", {
-        fontSize: "16px",
+        fontSize: readableFontSize(16, 16, 23),
         color: "#fff4c2",
         fontStyle: "bold",
         shadow: {
@@ -101,7 +103,7 @@ export class ArtifactForgeScene extends Phaser.Scene {
         54,
         "보급 상자를 열고, 유물을 제작·강화·장착해 전투력을 올리세요.",
         {
-          fontSize: "13px",
+          fontSize: readableFontSize(13, 15, 20),
           color: "#dbe7ff",
           fontStyle: "bold",
         },
@@ -132,7 +134,7 @@ export class ArtifactForgeScene extends Phaser.Scene {
     panel.setDepth(8);
     this.add
       .text(102, 91, `유물 가루  ${this.inventory.relicDust}`, {
-        fontSize: "18px",
+        fontSize: readableFontSize(18, 18, 25),
         color: "#fff4c2",
         fontStyle: "bold",
       })
@@ -140,7 +142,7 @@ export class ArtifactForgeScene extends Phaser.Scene {
       .setDepth(12);
     this.add
       .text(326, 91, `왕실 토큰  ${this.inventory.royalTokens}`, {
-        fontSize: "18px",
+        fontSize: readableFontSize(18, 18, 25),
         color: "#dbe7ff",
         fontStyle: "bold",
       })
@@ -148,7 +150,7 @@ export class ArtifactForgeScene extends Phaser.Scene {
       .setDepth(12);
     this.add
       .text(560, 91, `개봉한 보급 상자  ${this.inventory.openedChests}`, {
-        fontSize: "18px",
+        fontSize: readableFontSize(18, 18, 25),
         color: "#ffef9a",
         fontStyle: "bold",
       })
@@ -225,7 +227,7 @@ export class ArtifactForgeScene extends Phaser.Scene {
       const icon = createArtifactIcon(this, x - 34, y - 4, artifact.id, 42);
       const name = this.add
         .text(x + 8, y - 17, artifact.name, {
-          fontSize: "12px",
+          fontSize: readableFontSize(12, 14, 19),
           color: "#fff4c2",
           fontStyle: "bold",
           wordWrap: { width: 58 },
@@ -237,7 +239,7 @@ export class ArtifactForgeScene extends Phaser.Scene {
           y + 16,
           owned ? `Lv.${owned.level}` : `${shards}/${artifact.craftCost}`,
           {
-            fontSize: "12px",
+            fontSize: readableFontSize(12, 14, 19),
             color: owned ? "#9ee37d" : "#dbe7ff",
             fontStyle: "bold",
           },
@@ -285,14 +287,14 @@ export class ArtifactForgeScene extends Phaser.Scene {
           576,
           286,
           `${def.rarity.toUpperCase()} · ${artifactPowerLabel(owned, def)}`,
-          { fontSize: "14px", color: "#dbe7ff", fontStyle: "bold" },
+          { fontSize: readableFontSize(14, 15, 21), color: "#dbe7ff", fontStyle: "bold" },
         )
         .setOrigin(0, 0.5),
     );
     this.detailRoot.add(
       this.add
         .text(520, 329, def.description, {
-          fontSize: "15px",
+          fontSize: readableFontSize(15, 16, 22),
           color: "#ffffff",
           wordWrap: { width: 365 },
           lineSpacing: 6,
@@ -302,7 +304,7 @@ export class ArtifactForgeScene extends Phaser.Scene {
     this.detailRoot.add(
       this.add
         .text(520, 397, `보유 파편: ${shards}`, {
-          fontSize: "17px",
+          fontSize: readableFontSize(17, 17, 24),
           color: "#ffe28a",
           fontStyle: "bold",
         })
@@ -337,7 +339,7 @@ export class ArtifactForgeScene extends Phaser.Scene {
       this.detailRoot.add(
         this.add
           .text(606, 477, enhanceCost, {
-            fontSize: "12px",
+            fontSize: readableFontSize(12, 14, 19),
             color: "#dbe7ff",
             fontStyle: "bold",
           })
@@ -425,8 +427,9 @@ export class ArtifactForgeScene extends Phaser.Scene {
     depth = 20,
     parent?: Phaser.GameObjects.Container,
   ): Phaser.GameObjects.Rectangle {
+    const hitSize = readableHitSize(width, height);
     const rect = this.add
-      .rectangle(x, y, width, height, color, 1)
+      .rectangle(x, y, hitSize.width, hitSize.height, color, 1)
       .setStrokeStyle(2, 0xffef9a, 0.5)
       .setInteractive({ useHandCursor: true })
       .setDepth(depth);
@@ -435,7 +438,7 @@ export class ArtifactForgeScene extends Phaser.Scene {
       .setDepth(depth + 1);
     const text = this.add
       .text(x, y, label, {
-        fontSize: "16px",
+        fontSize: readableFontSize(16, 16, 23),
         color: "#ffffff",
         fontStyle: "bold",
         shadow: {

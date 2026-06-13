@@ -23,6 +23,7 @@ import {
 } from '../game/MegaSystems';
 import { playSfx } from '../game/AudioManager';
 import { startRegisteredScene } from "./SceneRegistry";
+import { installSceneReadabilityPass, improveReadableTextTree, readableFontSize, readableHitSize } from "../game/MobileReadableUi";
 
 type MetaTab = 'relics' | 'daily' | 'achievements';
 
@@ -51,6 +52,7 @@ export class MetaScene extends Phaser.Scene {
     this.createHeader();
     this.createTabs();
     this.render();
+    installSceneReadabilityPass(this, { min: 15, strokeThickness: 3 });
   }
 
   private drawBackground(): void {
@@ -82,7 +84,7 @@ export class MetaScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     this.headerText = this.add.text(480, 88, '', {
-      fontSize: '16px',
+      fontSize: readableFontSize(16, 16, 24),
       color: '#fff1bf',
       fontStyle: 'bold',
       stroke: '#170c05',
@@ -118,11 +120,12 @@ export class MetaScene extends Phaser.Scene {
     if (this.tab === 'relics') this.renderRelics();
     else if (this.tab === 'daily') this.renderDaily();
     else this.renderAchievements();
+    if (this.content) improveReadableTextTree(this.content, { min: 15, strokeThickness: 3 });
   }
 
   private renderRelics(): void {
     this.slotText = this.add.text(480, 164, this.equippedLabel(), {
-      fontSize: '18px',
+      fontSize: readableFontSize(18, 18, 26),
       color: '#ffe38c',
       fontStyle: 'bold',
       stroke: '#1d1009',
@@ -152,15 +155,15 @@ export class MetaScene extends Phaser.Scene {
       .setStrokeStyle(equipped ? 4 : 2, gradeColor, owned ? 0.95 : 0.22)
       .setInteractive({ useHandCursor: owned });
     const gem = this.add.circle(24, 28, 17, gradeColor, owned ? 0.95 : 0.25).setStrokeStyle(2, 0xffffff, owned ? 0.28 : 0.05);
-    const title = this.add.text(48, 10, relic.title, { fontSize: '15px', color: owned ? '#ffffff' : '#858585', fontStyle: 'bold' });
+    const title = this.add.text(48, 10, relic.title, { fontSize: readableFontSize(15, 16, 23), color: owned ? '#ffffff' : '#858585', fontStyle: 'bold' });
     const desc = this.add.text(48, 31, owned ? relic.description : '업적/일일 보상으로 해금', {
-      fontSize: '11px',
+      fontSize: readableFontSize(11, 14, 19),
       color: owned ? '#dbe7ff' : '#777777',
       wordWrap: { width: 132 },
       lineSpacing: 2,
     });
     const tag = this.add.text(14, 56, equipped ? 'EQUIP' : relic.grade.toUpperCase(), {
-      fontSize: '10px',
+      fontSize: readableFontSize(10, 13, 18),
       color: equipped ? '#fff1bf' : '#101820',
       fontStyle: 'bold',
       backgroundColor: equipped ? '#7f311c' : '#f7d36b',
@@ -196,7 +199,7 @@ export class MetaScene extends Phaser.Scene {
     const panel = this.add.rectangle(480, 302, 720, 246, 0x0b1220, 0.92).setStrokeStyle(3, 0xf7d36b, 0.38);
     const detail = this.add.text(170, 205,
       `전장: Stage ${stage.number} - ${stage.title}\n난이도: ${stage.difficulty}\n시드: ${challenge.seed}\n보상: ${reward ? reward.title : '명예'} ${claimed ? '(수령 완료)' : ''}\n\n${challenge.modifiers.map((id) => '• ' + modifierLabel(id)).join('\n')}`,
-      { fontSize: '18px', color: '#dbe7ff', lineSpacing: 8, wordWrap: { width: 620 } }
+      { fontSize: readableFontSize(18, 18, 26), color: '#dbe7ff', lineSpacing: 8, wordWrap: { width: 620 } }
     );
 
     const start = this.makeButton(352, 432, 210, 48, '도전 시작', 0x8f3422, () => {
@@ -234,17 +237,17 @@ export class MetaScene extends Phaser.Scene {
       .setInteractive({ useHandCursor: done && !claimed });
 
     const mark = this.add.text(14, 12, claimed ? '✓' : done ? '!' : '·', {
-      fontSize: '22px',
+      fontSize: readableFontSize(22, 21, 30),
       color: claimed ? '#71ff70' : done ? '#ffe38c' : '#8793a6',
       fontStyle: 'bold',
     });
-    const title = this.add.text(44, 7, achievement.title, { fontSize: '16px', color: '#ffffff', fontStyle: 'bold' });
+    const title = this.add.text(44, 7, achievement.title, { fontSize: readableFontSize(16, 16, 24), color: '#ffffff', fontStyle: 'bold' });
     const desc = this.add.text(44, 27, `${achievement.description} / 보상: ${reward ? reward.title : '명예 +' + achievement.rewardHonor}`, {
-      fontSize: '11px',
+      fontSize: readableFontSize(11, 14, 19),
       color: '#c7d4e8',
     });
     const state = this.add.text(304, 15, claimed ? '수령완료' : done ? '수령' : '진행중', {
-      fontSize: '13px',
+      fontSize: readableFontSize(13, 15, 21),
       color: claimed ? '#71ff70' : done ? '#fff1bf' : '#9aa6b8',
       fontStyle: 'bold',
     });
@@ -269,7 +272,7 @@ export class MetaScene extends Phaser.Scene {
       : this.add.rectangle(0, 0, width, height, color, 1).setStrokeStyle(2, 0xffe39a, 0.35);
     const hit = this.add.rectangle(0, 0, width, height, 0xffffff, 0.001).setInteractive({ useHandCursor: true });
     const text = this.add.text(0, 0, label, {
-      fontSize: '18px',
+      fontSize: readableFontSize(18, 18, 26),
       color: '#fff4c2',
       fontStyle: 'bold',
       stroke: '#170c05',

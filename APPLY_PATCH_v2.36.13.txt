@@ -1,0 +1,13 @@
+KingdomSeed v2.36.13 Mobile Readability Pass
+
+적용 방법:
+1. 기존 프로젝트 루트에 이 zip의 내용을 그대로 덮어씌운다.
+2. node_modules, dist, .git은 포함되어 있지 않다.
+3. 적용 후 다음 명령을 실행한다.
+   npm ci
+   npm run build
+
+검수 포인트:
+- 모바일에서 로그인/로비/월드맵/전투/결과/연구소/도감/임무/유물 화면의 글자가 충분히 보이는지 확인한다.
+- 전투 HUD, 스킬 버튼, 타워 패널 버튼이 손가락으로 안정적으로 눌리는지 확인한다.
+- 비교가 필요하면 ?tinyui, ?compactui, ?legacyreadability 플래그를 사용한다.

@@ -80,8 +80,8 @@ export function createPrestigeStatReadout(
   const deep = mix(accent, 0x000000, 0.72);
   const mid = mix(accent, 0xffffff, 0.12);
   const uiScale = Math.max(1, Math.min(1.14, mobileUiScale()));
-  const labelSize = Math.round(10 * uiScale);
-  const valueSize = Math.round(14 * uiScale);
+  const labelSize = Math.round(12 * uiScale);
+  const valueSize = Math.round(16 * uiScale);
 
   g.fillStyle(0x000000, 0.3).fillRoundedRect(left + 2, y - 17, width, 38, 12);
   g.fillStyle(0x0b1019, 0.96).fillRoundedRect(left, y - 20, width, 40, 12);
@@ -137,7 +137,7 @@ export function createPrestigeStageBanner(
 
   scene.add
     .text(470, 17, "ACTIVE THEATER", {
-      fontSize: "9px",
+      fontSize: "11px",
       color: "#b7c8a0",
       fontStyle: "bold",
       fontFamily: PRESTIGE_HUD_FONT,
@@ -148,7 +148,7 @@ export function createPrestigeStageBanner(
 
   return scene.add
     .text(470, 33, label, {
-      fontSize: "14px",
+      fontSize: "16px",
       color: "#e9f4ff",
       fontStyle: "bold",
       fixedWidth: 208,
@@ -203,7 +203,7 @@ export function createPrestigeSpellCard(
   addPrestigeCommandFrame(scene, x, y, width, height, accent, 80.2);
   scene.add
     .text(x - width / 2 + 14, y - height / 2 + 8, caption, {
-      fontSize: "9px",
+      fontSize: "11px",
       color: "#ceb98d",
       fontStyle: "bold",
       fontFamily: PRESTIGE_HUD_FONT,
@@ -212,7 +212,7 @@ export function createPrestigeSpellCard(
     .setDepth(84.2);
 }
 
-export function prestigeActionTextStyle(fontSize = 15): Phaser.Types.GameObjects.Text.TextStyle {
+export function prestigeActionTextStyle(fontSize = 17): Phaser.Types.GameObjects.Text.TextStyle {
   return {
     fontSize: `${fontSize}px`,
     color: "#fff7d8",

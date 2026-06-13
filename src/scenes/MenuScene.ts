@@ -23,6 +23,7 @@ import {
   createInstantLocalSession,
   type PlayerSave,
 } from "../services/localSave";
+import { installSceneReadabilityPass, improveReadableTextTree, readableFontSize, readableHitSize } from "../game/MobileReadableUi";
 
 export class MenuScene extends Phaser.Scene {
   private statusText!: Phaser.GameObjects.Text;
@@ -47,6 +48,7 @@ export class MenuScene extends Phaser.Scene {
     this.createStatusOverlay();
     this.createLoginHitZones();
     this.createUtilityHitZones();
+    installSceneReadabilityPass(this, { min: 15, strokeThickness: 3 });
     // v2.35.6: 첫 로그인 화면 직후에는 무거운 씬 프리워밍을 바로 시작하지 않는다.
     // RuntimeLoadGovernor가 허용할 때만 MainMenu/WorldMap 코드를 조용히 예열한다.
     warmMenuFlowScenes(this, 2600);
@@ -174,7 +176,7 @@ export class MenuScene extends Phaser.Scene {
 
     this.statusText = this.add
       .text(480, 309, "로그인 확인 중...", {
-        fontSize: "10px",
+        fontSize: readableFontSize(10, 14, 18),
         color: usePrestigeSceneFrame() ? "#fff2c8" : "#2f5f9e",
         align: "center",
         fixedWidth: 260,
@@ -192,7 +194,7 @@ export class MenuScene extends Phaser.Scene {
     chip.lineStyle(1, 0xffdc82, 0.45).strokeRoundedRect(16, 14, 214, 24, 14);
     this.add
       .text(123, 26, KINGDOM_SEED_BUILD_NAME, {
-        fontSize: "8px",
+        fontSize: readableFontSize(8, 12, 16),
         color: "#f7fbff",
         fixedWidth: 204,
         align: "center",
@@ -353,10 +355,12 @@ export class MenuScene extends Phaser.Scene {
         options.height * 0.18,
       );
     hover.setAlpha(0);
+    const hitSize = readableHitSize(options.width + 26, Math.max(options.height + 14, 56));
     const hit = this.add
-      .zone(0, 0, options.width + 26, Math.max(options.height + 14, 56))
+      .zone(0, 0, hitSize.width, hitSize.height)
       .setInteractive({ useHandCursor: true });
     c.add([image, iconBubble, icon, label, hover, hit]);
+    improveReadableTextTree(c, { min: options.small ? 15 : 16, strokeThickness: 3 });
     addHitZoneDebug(
       this,
       c,
@@ -396,7 +400,7 @@ export class MenuScene extends Phaser.Scene {
       .setOrigin(0.5);
     const label = this.add
       .text(0, 30, labelText, {
-        fontSize: "9px",
+        fontSize: readableFontSize(9, 13, 17),
         color: "#f8fbff",
         fontFamily: "Pretendard, Noto Sans KR, Arial, sans-serif",
         fontStyle: "bold",
@@ -408,10 +412,12 @@ export class MenuScene extends Phaser.Scene {
       .circle(0, 0, 26, 0xffffff, 0.16)
       .setAlpha(0)
       .setBlendMode(Phaser.BlendModes.ADD);
+    const utilityHit = readableHitSize(40, 48);
     const hit = this.add
-      .zone(0, 0, 40, 48)
+      .zone(0, 0, utilityHit.width, utilityHit.height)
       .setInteractive({ useHandCursor: true });
     c.add([image, hover, icon, label, hit]);
+    improveReadableTextTree(c, { min: 14, strokeThickness: 3 });
     addHitZoneDebug(this, c, 40, 48, labelText, 0x7cc7ff, 18);
     this.wireButtonHit(c, hover, hit, onClick);
   }
