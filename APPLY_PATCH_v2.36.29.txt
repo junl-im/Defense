@@ -1,0 +1,13 @@
+KingdomSeed v2.36.29 Back Nav Stress Hardening
+
+적용 방법:
+1. 기존 KingdomSeed 프로젝트 루트에 이 패치 zip의 내용을 덮어씁니다.
+2. node_modules, dist, .git은 포함되어 있지 않습니다.
+3. 필요 시 npm ci 후 npm run build를 실행합니다.
+
+주요 내용:
+- 모바일 뒤로가기 guard 중복 popstate 보호.
+- 종료 팝업 직후 back echo가 즉시 종료로 계산되지 않도록 debounce.
+- popstate 시 history guard 즉시 재무장.
+- UI audit의 숨김/투명 부모 컨테이너 오판 감소.
+- 작은 화면에서 audit badge 위치 보정.

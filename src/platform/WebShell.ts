@@ -36,6 +36,8 @@ let lastPointerAt = 0;
 let lastSceneReadyAt = 0;
 let currentShellSceneKey = "Shell";
 let backHomeToast: HTMLDivElement | undefined;
+let exitModalShownAt = 0;
+let lastBackCommandAt = 0;
 const HOME_SCENE_KEYS = new Set(["MenuScene", "MainMenuScene"]);
 const GUARD_STATE_KEY = "kingdomSeedBackGuard";
 const GUARD_SESSION = Math.random().toString(36).slice(2);
@@ -318,6 +320,7 @@ function showBackHomeToast(message = "첫 화면으로 돌아갑니다"): void {
 function performBrowserExit(reason: string): void {
   allowExit = true;
   if (exitModal) safeHide(exitModal);
+  exitModalShownAt = 0;
   emitEmergencySave(reason);
   try {
     history.back();
@@ -340,7 +343,8 @@ function requestGameHome(reason: string): boolean {
   emitEmergencySave(reason);
   markLaunchMilestone("mobile-back-home-requested", { reason, scene: currentGameSceneKey() });
   document.documentElement.classList.add("ks-back-home-requested");
-  safeHide(exitModal!);
+  if (exitModal) safeHide(exitModal);
+  exitModalShownAt = 0;
   suppressExitGuardUntil = Date.now() + 1200;
   window.setTimeout(() => armBackGuard(true), 80);
   showBackHomeToast("첫 화면으로 이동");
@@ -365,7 +369,19 @@ function requestGameHome(reason: string): boolean {
 
 function handleMobileBackCommand(reason: string): void {
   if (allowExit || !flags().isMobile) return;
+  const now = Date.now();
+  if (now - lastBackCommandAt < 240) {
+    // Some Android WebViews emit duplicate popstate events for one gesture.
+    // Never let an echo count as the second exit-confirm back press.
+    window.setTimeout(() => armBackGuard(true), 40);
+    return;
+  }
+  lastBackCommandAt = now;
   if (isExitModalVisible()) {
+    if (now - exitModalShownAt < 420) {
+      window.setTimeout(() => armBackGuard(true), 40);
+      return;
+    }
     performBrowserExit(`${reason}:second-back`);
     return;
   }
@@ -606,6 +622,7 @@ function createExitModal(): void {
     .querySelector<HTMLButtonElement>("#exit-stay-btn")
     ?.addEventListener("click", () => {
       safeHide(exitModal!);
+      exitModalShownAt = 0;
       suppressExitGuardUntil = Date.now() + 1200;
       window.setTimeout(() => armBackGuard(true), 80);
       window.setTimeout(() => void requestFullscreenAndLandscape(), 640);
@@ -659,6 +676,7 @@ function showExitGuard(reason: string): void {
     return;
   }
   emitEmergencySave(reason);
+  exitModalShownAt = now;
   safeShow(exitModal);
   suppressExitGuardUntil = now + 1400;
   window.setTimeout(() => armBackGuard(true), 80);
@@ -682,6 +700,7 @@ function installBackGuard(): void {
     if (allowExit || !flags().isMobile) return;
     const state = event.state as Record<string, unknown> | null;
     if (state?.[GUARD_STATE_KEY]) return;
+    armBackGuard(true);
     window.setTimeout(() => armBackGuard(true), 80);
     handleMobileBackCommand("popstate");
   });

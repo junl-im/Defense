@@ -64,6 +64,23 @@ function rectFor(item: Phaser.GameObjects.GameObject): Phaser.Geom.Rectangle | u
   return new Phaser.Geom.Rectangle(x, y, width, height);
 }
 
+
+function isEffectivelyVisible(item: Phaser.GameObjects.GameObject): boolean {
+  const candidate = item as Phaser.GameObjects.GameObject & {
+    visible?: boolean;
+    alpha?: number;
+    parentContainer?: Phaser.GameObjects.Container | null;
+  };
+  if (!candidate.active) return false;
+  let current: (Phaser.GameObjects.GameObject & { visible?: boolean; alpha?: number; parentContainer?: Phaser.GameObjects.Container | null }) | null | undefined = candidate;
+  for (let guard = 0; current && guard < 10; guard += 1) {
+    if (current.visible === false) return false;
+    if (typeof current.alpha === "number" && current.alpha <= 0.05) return false;
+    current = current.parentContainer as typeof current;
+  }
+  return true;
+}
+
 function collect(root: Phaser.Scene | Phaser.GameObjects.Container): Phaser.GameObjects.GameObject[] {
   const list = "children" in root ? root.children.list : root.list;
   const out: Phaser.GameObjects.GameObject[] = [];
@@ -79,7 +96,7 @@ function collect(root: Phaser.Scene | Phaser.GameObjects.Container): Phaser.Game
 
 function countOverlappedText(texts: Phaser.GameObjects.Text[]): number {
   const rects = texts
-    .filter((text) => text.visible && text.alpha > 0.05 && !text.name.includes("ks-ui-audit"))
+    .filter((text) => isEffectivelyVisible(text) && !text.name.includes("ks-ui-audit"))
     .map((text) => rectFor(text))
     .filter((rect): rect is Phaser.Geom.Rectangle => Boolean(rect));
   let overlaps = 0;
@@ -121,10 +138,11 @@ export function auditMobileSceneUi(scene: Phaser.Scene): MobileUiAuditReport {
   const contrast = Boolean(root?.classList.contains("ks-readable-ui-contrast") || root?.classList.contains("ks-shell-contrast-ui"));
   const essential = Boolean(root?.classList.contains("ks-defense-ui-essential") || root?.classList.contains("ks-adaptive-emergency"));
   const objects = collect(scene);
-  const texts = objects.filter((item): item is Phaser.GameObjects.Text => item instanceof Phaser.GameObjects.Text);
+  const visibleObjects = objects.filter(isEffectivelyVisible);
+  const texts = visibleObjects.filter((item): item is Phaser.GameObjects.Text => item instanceof Phaser.GameObjects.Text);
   const textFloor = huge ? 17 : large || contrast ? 16 : essential ? 14 : 15;
-  const smallTextCount = texts.filter((text) => parseFontSize(text) < textFloor && text.visible && text.alpha > 0.05).length;
-  const inputSizes = objects.map(getInputSize).filter((item): item is { width: number; height: number } => Boolean(item));
+  const smallTextCount = texts.filter((text) => parseFontSize(text) < textFloor).length;
+  const inputSizes = visibleObjects.map(getInputSize).filter((item): item is { width: number; height: number } => Boolean(item));
   const hitFloorW = huge ? 62 : large || contrast ? 56 : essential ? 48 : 52;
   const hitFloorH = huge ? 56 : large || contrast ? 50 : essential ? 44 : 46;
   const smallHitCount = inputSizes.filter((size) => size.width < hitFloorW || size.height < hitFloorH).length;
@@ -153,7 +171,8 @@ function renderAuditBadge(scene: Phaser.Scene, report: MobileUiAuditReport): voi
   const old = AUDIT_BADGES.get(scene);
   old?.destroy(true);
   const color = report.grade === "good" ? 0x1d7f52 : report.grade === "watch" ? 0x9a6a13 : 0x8e2234;
-  const root = scene.add.container(840, 20).setName("ks-ui-audit-badge").setDepth(999.8).setScrollFactor(0);
+  const canvasWidth = scene.scale?.width ?? 960;
+  const root = scene.add.container(Math.min(canvasWidth - 110, 840), 20).setName("ks-ui-audit-badge").setDepth(999.8).setScrollFactor(0);
   const bg = scene.add.graphics().setName("ks-ui-audit-bg");
   bg.fillStyle(0x020611, 0.9).fillRoundedRect(-92, -12, 184, 36, 14);
   bg.lineStyle(2, color, 0.92).strokeRoundedRect(-92, -12, 184, 36, 14);
