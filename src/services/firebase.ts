@@ -28,6 +28,7 @@ import {
 import { getAnalytics, isSupported } from "firebase/analytics";
 
 import {
+  calcStageClearStars,
   getUpgradeCost,
   isLocalGuestUser,
   loadLocalSave,
@@ -307,12 +308,6 @@ export async function loadOrCreateSave(
   }
 }
 
-function calcStars(lives: number): number {
-  if (lives >= 18) return 3;
-  if (lives >= 10) return 2;
-  return 1;
-}
-
 export async function saveStageClear(
   user: User,
   saveOrStageId: PlayerSave | string,
@@ -351,7 +346,7 @@ export async function saveStageClear(
         : 0;
 
   const previous = currentSave.clearedStages[stageId];
-  const earnedStars = calcStars(lives);
+  const earnedStars = calcStageClearStars(lives);
   const previousBestStars = previous?.bestStars ?? 0;
   const additionalStars = Math.max(0, earnedStars - previousBestStars);
 

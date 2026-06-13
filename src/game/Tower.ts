@@ -23,6 +23,11 @@ import {
   makeStickerBackplate,
 } from "./CasualArtDirector";
 import { towerDisplayHeight } from "./BattleArtMode";
+import {
+  createPrestigeTowerFallback,
+  usePrestigeFallbackUnits,
+  type VisibleGameObject,
+} from "./BattlePrestigePolish";
 
 export type TargetMode = "first" | "strong" | "air" | "near";
 
@@ -75,6 +80,7 @@ export class Tower extends Phaser.GameObjects.Container {
   private commandAuraFireRateMultiplier = 1;
   private commandAura?: Phaser.GameObjects.Image | Phaser.GameObjects.Arc;
   private commandAuraLabel?: Phaser.GameObjects.Text;
+  private prestigeFallbackObjects: VisibleGameObject[] = [];
 
   constructor(
     scene: Phaser.Scene,
@@ -103,6 +109,24 @@ export class Tower extends Phaser.GameObjects.Container {
         fontStyle: "bold",
       })
       .setOrigin(0.5);
+    const spriteKey = this.resolveTowerTextureKey();
+    const hasSpriteArt = scene.textures.exists(spriteKey);
+    this.prestigeFallbackObjects = !hasSpriteArt
+      ? createPrestigeTowerFallback(
+          scene,
+          config.kind,
+          config.color,
+          this.level,
+        )
+      : [];
+    if (this.prestigeFallbackObjects.length > 0 && usePrestigeFallbackUnits()) {
+      pad.setAlpha(0.12);
+      base.setAlpha(0.0);
+      stone.setAlpha(0.0);
+      this.top.setAlpha(0.0);
+      this.roof.setAlpha(0.0);
+      label.setAlpha(0.0);
+    }
     this.levelText = scene.add
       .text(0, 23, "Ⅰ", {
         fontSize: "12px",
@@ -110,8 +134,7 @@ export class Tower extends Phaser.GameObjects.Container {
         fontStyle: "bold",
       })
       .setOrigin(0.5);
-    const spriteKey = this.resolveTowerTextureKey();
-    if (scene.textures.exists(spriteKey)) {
+    if (hasSpriteArt) {
       if (isCasualArtTextureKey(spriteKey)) {
         this.artBackplate = makeStickerBackplate(scene, 0, -12, 68, 82, {
           fill: 0xfff8e8,
@@ -134,6 +157,7 @@ export class Tower extends Phaser.GameObjects.Container {
       .setVisible(false);
     const visuals: Phaser.GameObjects.GameObject[] = [
       this.rangeCircle,
+      ...this.prestigeFallbackObjects,
       pad,
       stone,
       base,
@@ -1030,7 +1054,9 @@ export class Tower extends Phaser.GameObjects.Container {
 
     if (!this.sprite) {
       this.sprite = this.scene.add.image(0, 0, nextKey);
-      const index = this.artBackplate ? this.getIndex(this.artBackplate) + 1 : this.length;
+      const index = this.artBackplate
+        ? this.getIndex(this.artBackplate) + 1
+        : this.length;
       this.addAt(this.sprite, Math.max(0, index));
     } else {
       this.sprite.setTexture(nextKey);
@@ -1047,6 +1073,7 @@ export class Tower extends Phaser.GameObjects.Container {
       this.addAt(this.artBackplate, Math.max(0, this.length - 1));
     }
     this.artBackplate?.setVisible(casual);
+    this.prestigeFallbackObjects.forEach((object) => object.setVisible(false));
     this.applyTowerArtSize();
   }
 
@@ -1068,7 +1095,10 @@ export class Tower extends Phaser.GameObjects.Container {
         minScale: 0.02,
         maxScale: 1.2,
       });
-      this.artBackplate?.setPosition(0, this.config.kind === "artillery" ? -8 : -13);
+      this.artBackplate?.setPosition(
+        0,
+        this.config.kind === "artillery" ? -8 : -13,
+      );
       this.artBackplate?.setSize(98, Math.min(124, targetHeight + 12));
       return;
     }

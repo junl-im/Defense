@@ -13,7 +13,11 @@ import { Enemy } from "../game/Enemy";
 import { Hero } from "../game/Hero";
 import { Soldier } from "../game/Soldier";
 import { Tower } from "../game/Tower";
-import type { PlayerSave } from "../services/localSave";
+import {
+  completeLocalStageClear,
+  isLocalGuestUser,
+  type PlayerSave,
+} from "../services/localSave";
 import {
   pulseButton,
   shakeCamera,
@@ -42,7 +46,12 @@ import {
 } from "../game/VisualPolish";
 import { addPremiumBattleObjects } from "../game/BattlefieldArt";
 import { installBattleDepthArtBridge } from "../game/BattleDepthArtBridge";
-import { installPremiumBattleComposition, premiumBuildSpotScale, showCompactBuildSpotLabels } from "../game/PremiumBattleComposition";
+import { installBattlePrestigeLook } from "../game/BattlePrestigePolish";
+import {
+  installPremiumBattleComposition,
+  premiumBuildSpotScale,
+  showCompactBuildSpotLabels,
+} from "../game/PremiumBattleComposition";
 import {
   installPremiumBattlePresentation,
   premiumBuildSpotMetrics,
@@ -170,11 +179,16 @@ import {
 } from "../game/AssetMap";
 import {
   markSceneTransition,
+  noteOptionalWorkBlocked,
+  optionalRuntimeWorkAllowed,
   pauseOptionalWork,
 } from "../game/RuntimeLoadGovernor";
 import { lowPowerMode, setRuntimeQualityTier } from "../game/QualityManager";
 import { installArtMapDebugBadge } from "../game/CasualArtDirector";
-import { allowPreviewBattlefieldArt, useIconMockBattleArt } from "../game/BattleArtMode";
+import {
+  allowPreviewBattlefieldArt,
+  useIconMockBattleArt,
+} from "../game/BattleArtMode";
 import {
   allowPremiumStaticArt,
   mobileUiScale,
@@ -537,6 +551,7 @@ export class GameScene extends Phaser.Scene {
     installPremiumBattleComposition(this, this.stage);
     if (queuedCasualArtLoad) this.installDeferredCasualBattlefieldLayer();
     installCombatVisualDirector(this, this.stage);
+    installBattlePrestigeLook(this, this.stage);
     drawBattlePolish(this, this.stage.theme);
     if (!lowPowerMode()) {
       addPremiumBattleObjects(this, this.stage);
@@ -746,10 +761,14 @@ export class GameScene extends Phaser.Scene {
             ? 0x79816a
             : 0x7c6b5e;
 
-    const mappedBgKey = resolveBattlefieldBackgroundKey(this, this.stage.id) ?? bgKey;
+    const mappedBgKey =
+      resolveBattlefieldBackgroundKey(this, this.stage.id) ?? bgKey;
 
     if (this.textures.exists(mappedBgKey)) {
-      this.add.image(480, 270, mappedBgKey).setDisplaySize(960, 540).setDepth(0);
+      this.add
+        .image(480, 270, mappedBgKey)
+        .setDisplaySize(960, 540)
+        .setDepth(0);
       if (this.textures.exists("ui-safe-area-overlay-v47")) {
         this.add
           .image(480, 270, "ui-safe-area-overlay-v47")
@@ -826,7 +845,10 @@ export class GameScene extends Phaser.Scene {
     this.events.on("kingdom-seed:core-combat-actor-art-ready", refreshActors);
     const cleanup = () => {
       this.events.off("kingdom-seed:core-combat-art-ready", refreshActors);
-      this.events.off("kingdom-seed:core-combat-actor-art-ready", refreshActors);
+      this.events.off(
+        "kingdom-seed:core-combat-actor-art-ready",
+        refreshActors,
+      );
     };
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, cleanup);
     this.events.once(Phaser.Scenes.Events.DESTROY, cleanup);
@@ -844,7 +866,8 @@ export class GameScene extends Phaser.Scene {
     };
 
     this.events.on("kingdom-seed:casual-art-ready", refreshActors);
-    const cleanup = () => this.events.off("kingdom-seed:casual-art-ready", refreshActors);
+    const cleanup = () =>
+      this.events.off("kingdom-seed:casual-art-ready", refreshActors);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, cleanup);
     this.events.once(Phaser.Scenes.Events.DESTROY, cleanup);
   }
@@ -2022,14 +2045,35 @@ export class GameScene extends Phaser.Scene {
     const spotMetrics = premiumBuildSpotMetrics();
     const premiumRune = usePremiumBuildSpotRune();
     const shadow = this.add
-      .ellipse(x + 2, y + 14, spotMetrics.shadowWidth, spotMetrics.shadowHeight, 0x000000, 0.30)
+      .ellipse(
+        x + 2,
+        y + 14,
+        spotMetrics.shadowWidth,
+        spotMetrics.shadowHeight,
+        0x000000,
+        0.3,
+      )
       .setDepth(11);
     const rim = this.add
-      .ellipse(x, y + 2, spotMetrics.rimWidth, spotMetrics.rimHeight, 0x2b2117, 0.92)
+      .ellipse(
+        x,
+        y + 2,
+        spotMetrics.rimWidth,
+        spotMetrics.rimHeight,
+        0x2b2117,
+        0.92,
+      )
       .setStrokeStyle(3, 0xffd36b, 0.42)
       .setDepth(12);
     const stone = this.add
-      .ellipse(x, y, spotMetrics.coreWidth, spotMetrics.coreHeight, 0x827360, 0.98)
+      .ellipse(
+        x,
+        y,
+        spotMetrics.coreWidth,
+        spotMetrics.coreHeight,
+        0x827360,
+        0.98,
+      )
       .setStrokeStyle(2, 0x1c120b, 0.52)
       .setDepth(13);
     const light = this.add
@@ -2044,7 +2088,14 @@ export class GameScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(15);
     const tagBg = this.add
-      .rectangle(x, y + 27, spotMetrics.tagWidth, spotMetrics.tagHeight, 0x130d09, showCompactBuildSpotLabels() ? 0.72 : 0.0)
+      .rectangle(
+        x,
+        y + 27,
+        spotMetrics.tagWidth,
+        spotMetrics.tagHeight,
+        0x130d09,
+        showCompactBuildSpotLabels() ? 0.72 : 0.0,
+      )
       .setStrokeStyle(1, 0xffd36b, 0.35)
       .setDepth(16);
     const tag = this.add
@@ -2059,7 +2110,10 @@ export class GameScene extends Phaser.Scene {
     const premiumPad = this.textures.exists("v1-build-spot")
       ? this.add
           .image(x, y + 1, "v1-build-spot")
-          .setDisplaySize(spotMetrics.premiumPadWidth, spotMetrics.premiumPadHeight)
+          .setDisplaySize(
+            spotMetrics.premiumPadWidth,
+            spotMetrics.premiumPadHeight,
+          )
           .setDepth(13)
       : undefined;
     if (premiumPad) {
@@ -2072,7 +2126,10 @@ export class GameScene extends Phaser.Scene {
         .setAlpha(showCompactBuildSpotLabels() ? 0.58 : 0)
         .setFillStyle(0x07101e, showCompactBuildSpotLabels() ? 0.58 : 0)
         .setStrokeStyle(1, 0x8fdcff, showCompactBuildSpotLabels() ? 0.42 : 0);
-      tag.setText(premiumRune ? "거점" : "건설").setColor("#eaf6ff").setAlpha(showCompactBuildSpotLabels() ? 1 : 0);
+      tag
+        .setText(premiumRune ? "거점" : "건설")
+        .setColor("#eaf6ff")
+        .setAlpha(showCompactBuildSpotLabels() ? 1 : 0);
     }
     const premiumPreview = addBuildSpotPreview(this, x, y, 0xffd36b);
     premiumPreview.setScale(0.96 * premiumBuildSpotScale());
@@ -2112,7 +2169,10 @@ export class GameScene extends Phaser.Scene {
     stone.setInteractive({ useHandCursor: true });
     const handleOver = (): void => {
       rim.setStrokeStyle(4, 0xfff0a3, 0.78);
-      tagBg.setAlpha(0.78).setFillStyle(0x07101e, 0.72).setStrokeStyle(1, 0xfff0a3, 0.55);
+      tagBg
+        .setAlpha(0.78)
+        .setFillStyle(0x07101e, 0.72)
+        .setStrokeStyle(1, 0xfff0a3, 0.55);
       tag.setText("타워 선택").setAlpha(1);
       premiumPreview.setVisible(true);
       if (premiumRune) hammer.setScale(1.08);
@@ -2121,7 +2181,10 @@ export class GameScene extends Phaser.Scene {
       rim.setStrokeStyle(3, 0xffd36b, 0.36);
       tag.setText(premiumRune ? "거점" : premiumPad ? "건설" : "건설 가능");
       if (!showCompactBuildSpotLabels()) {
-        tagBg.setAlpha(0).setFillStyle(0x07101e, 0).setStrokeStyle(1, 0xffd36b, 0);
+        tagBg
+          .setAlpha(0)
+          .setFillStyle(0x07101e, 0)
+          .setStrokeStyle(1, 0xffd36b, 0);
         tag.setAlpha(0);
       }
       premiumPreview.setVisible(false);
@@ -3312,7 +3375,10 @@ export class GameScene extends Phaser.Scene {
     world.on("pointerdown", () => {
       this.time.timeScale = 1;
       markSceneTransition("battle-to-world");
-      void startRegisteredScene(this, "WorldMapScene", { user: this.user, save: this.save });
+      void startRegisteredScene(this, "WorldMapScene", {
+        user: this.user,
+        save: this.save,
+      });
     });
     panel.add([bg, title, desc, quality, resume, resumeText, world, worldText]);
     this.pauseOverlay = panel;
@@ -3807,7 +3873,10 @@ export class GameScene extends Phaser.Scene {
     world.on("pointerdown", () => {
       this.time.timeScale = 1;
       markSceneTransition("battle-to-world");
-      void startRegisteredScene(this, "WorldMapScene", { user: this.user, save: this.save });
+      void startRegisteredScene(this, "WorldMapScene", {
+        user: this.user,
+        save: this.save,
+      });
     });
 
     const retry = this.makeUiButton(
@@ -3843,6 +3912,41 @@ export class GameScene extends Phaser.Scene {
       this.stage.number * 1000;
     const roundedScore = Math.floor(finalScore);
 
+    // v2.36.8: 클리어 결과 화면은 Firebase 청크/네트워크보다 먼저 열어야 한다.
+    // 빠른 시작의 local_guest 또는 런타임 가버너가 Firebase를 막은 환경에서는
+    // 로컬 저장을 즉시 확정하고 리더보드는 임시 로컬 줄로 대체한다.
+    const showLocalResult = (reason: string): void => {
+      this.save = completeLocalStageClear(
+        this.user,
+        this.save,
+        this.stage.id,
+        roundedScore,
+        this.lives,
+      );
+      noteOptionalWorkBlocked("firebase", reason);
+      playSfx(this, "sfx_win");
+      this.showResult(
+        roundedScore,
+        [{ nickname: `${this.save.nickname} · 로컬`, score: roundedScore }],
+        clearTimeMs,
+      );
+    };
+
+    if (isLocalGuestUser(this.user)) {
+      showLocalResult("local-guest-stage-clear");
+      return;
+    }
+
+    if (
+      !optionalRuntimeWorkAllowed("firebase", {
+        scene: this,
+        allowDuringBoot: false,
+      })
+    ) {
+      showLocalResult("stage-clear-local-first");
+      return;
+    }
+
     try {
       const { fetchLeaderboard, saveStageClear, submitLeaderboard } =
         await import("../services/firebase");
@@ -3866,8 +3970,8 @@ export class GameScene extends Phaser.Scene {
       const top = await fetchLeaderboard(this.stage.id);
       this.showResult(roundedScore, top, clearTimeMs);
     } catch (error) {
-      console.error(error);
-      this.showMessage("저장 실패: Firebase 설정/규칙을 확인하세요");
+      console.warn("Cloud stage clear skipped; showing local result:", error);
+      showLocalResult("stage-clear-cloud-fallback");
     }
   }
 
@@ -4076,7 +4180,10 @@ export class GameScene extends Phaser.Scene {
     world.on("pointerdown", () => {
       this.time.timeScale = 1;
       markSceneTransition("battle-to-world");
-      void startRegisteredScene(this, "WorldMapScene", { user: this.user, save: this.save });
+      void startRegisteredScene(this, "WorldMapScene", {
+        user: this.user,
+        save: this.save,
+      });
     });
 
     const retry = this.makeUiButton(

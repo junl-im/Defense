@@ -229,6 +229,69 @@ export function createInstantLocalSession(): InstantLocalSession {
   return { user, save, source: "instant-local" };
 }
 
+
+export function calcStageClearStars(lives: number): number {
+  if (lives >= 18) return 3;
+  if (lives >= 10) return 2;
+  return 1;
+}
+
+export function completeLocalStageClear(
+  user: User,
+  currentSave: PlayerSave,
+  stageId: string,
+  score: number,
+  lives: number,
+): PlayerSave {
+  const safeStageId = /^stage_\d{3}$/.test(stageId) ? stageId : "stage_001";
+  const previous = currentSave.clearedStages[safeStageId];
+  const earnedStars = calcStageClearStars(lives);
+  const previousBestStars = previous?.bestStars ?? 0;
+  const additionalStars = Math.max(0, earnedStars - previousBestStars);
+  const nextSave: PlayerSave = {
+    ...currentSave,
+    uid: currentSave.uid || user.uid,
+    nickname: currentSave.nickname || makeGuestName(user),
+    stars: clampInt(currentSave.stars + additionalStars, currentSave.stars, 0, 99999),
+    clearedStages: {
+      ...currentSave.clearedStages,
+      [safeStageId]: {
+        bestStars: Math.max(previousBestStars, earnedStars),
+        bestScore: Math.max(previous?.bestScore ?? 0, clampInt(score, 0, 0, 9999999)),
+        bestLives: Math.max(previous?.bestLives ?? 0, clampInt(lives, 0, 0, 99)),
+        clearCount: clampInt((previous?.clearCount ?? 0) + 1, 1, 1, 9999),
+        updatedAt: Date.now(),
+      },
+    },
+    updatedAt: Date.now(),
+  };
+  persistLocalSave(nextSave);
+  return loadLocalSave(user);
+}
+
+export function purchaseLocalPermanentUpgrade(
+  user: User,
+  save: PlayerSave,
+  key: UpgradeKey,
+): PlayerSave {
+  const currentLevel = Number(save.upgrades[key] ?? 0);
+  const cost = getUpgradeCost(key, currentLevel);
+  if (cost === null) throw new Error("이미 최대 연구 레벨입니다.");
+  if (save.stars < cost) throw new Error(`별이 부족합니다. 필요 별: ${cost}`);
+  const nextSave: PlayerSave = {
+    ...save,
+    uid: save.uid || user.uid,
+    stars: clampInt(save.stars - cost, save.stars, 0, 99999),
+    upgrades: {
+      ...save.upgrades,
+      [key]: currentLevel + 1,
+    },
+    updatedAt: Date.now(),
+  };
+  persistLocalSave(nextSave);
+  return loadLocalSave(user);
+}
+
 export function getUpgradeCost(
   key: UpgradeKey,
   currentLevel: number,

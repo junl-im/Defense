@@ -1,6 +1,11 @@
 import Phaser from "phaser";
 import type { EnemyConfig, PathPoint } from "./types";
-import { spawnDeathPoof, spawnFloatingText, spawnHitSpark, spawnImpactRing } from "./Effects";
+import {
+  spawnDeathPoof,
+  spawnFloatingText,
+  spawnHitSpark,
+  spawnImpactRing,
+} from "./Effects";
 import { playSfx } from "./AudioManager";
 import { resolveEnemyTextureKey } from "./AssetMap";
 import {
@@ -9,6 +14,11 @@ import {
   makeStickerBackplate,
 } from "./CasualArtDirector";
 import { enemyDisplayHeight, enemySpriteScale } from "./BattleArtMode";
+import {
+  createPrestigeEnemyFallback,
+  usePrestigeFallbackUnits,
+  type VisibleGameObject,
+} from "./BattlePrestigePolish";
 import { bossPatternCooldown, bossPatternLabel } from "./MegaSystems";
 
 type EnemyMotion = "walk" | "attack" | "death";
@@ -43,6 +53,7 @@ export class Enemy extends Phaser.GameObjects.Container {
   private bossShieldUntil = 0;
   private bossSpeedUntil = 0;
   private bossSpeedMultiplier = 1;
+  private prestigeFallbackObjects: VisibleGameObject[] = [];
 
   constructor(
     scene: Phaser.Scene,
@@ -59,7 +70,10 @@ export class Enemy extends Phaser.GameObjects.Container {
     // 실제 몬스터의 표시 높이를 중앙 스케일 정책으로 관리한다.
     const displayHeight = enemyDisplayHeight(config);
     const hpBarY = -Math.max(24 * scale, displayHeight * 0.48 + 12);
-    const hpBarWidth = Math.max(34 * scale, Math.min(62 * scale, displayHeight * 0.74));
+    const hpBarWidth = Math.max(
+      34 * scale,
+      Math.min(62 * scale, displayHeight * 0.74),
+    );
     const shadow = scene.add.ellipse(
       0,
       config.flying ? 20 : 16,
@@ -78,7 +92,12 @@ export class Enemy extends Phaser.GameObjects.Container {
           config.flying ? -9 : -10,
           (config.threat === "boss" ? 76 : 58) * scale,
           (config.threat === "boss" ? 82 : 62) * scale,
-          { fill: 0xffffff, stroke: config.accentColor ?? 0x1d2230, alpha: 0.84, strokeAlpha: 0.24 },
+          {
+            fill: 0xffffff,
+            stroke: config.accentColor ?? 0x1d2230,
+            alpha: 0.84,
+            strokeAlpha: 0.24,
+          },
         );
       }
       this.sprite = scene.add.image(0, config.flying ? -8 : -10, artKey);
@@ -141,6 +160,14 @@ export class Enemy extends Phaser.GameObjects.Container {
       0x101010,
       1,
     );
+    this.prestigeFallbackObjects = !this.sprite
+      ? createPrestigeEnemyFallback(scene, config, displayHeight)
+      : [];
+    if (this.prestigeFallbackObjects.length > 0 && usePrestigeFallbackUnits()) {
+      this.bodyCircle.setAlpha(0);
+      face.setAlpha(0);
+      face2.setAlpha(0);
+    }
     const healthGem = scene.add.circle(
       0,
       -13 * scale,
@@ -170,6 +197,7 @@ export class Enemy extends Phaser.GameObjects.Container {
     else
       this.add([
         shadow,
+        ...this.prestigeFallbackObjects,
         this.bodyCircle,
         face,
         face2,
@@ -500,7 +528,10 @@ export class Enemy extends Phaser.GameObjects.Container {
     const scale = this.config.scale ?? 1;
     const displayHeight = enemyDisplayHeight(this.config);
     const barY = -Math.max(24 * scale, displayHeight * 0.48 + 12);
-    const barWidth = Math.max(34 * scale, Math.min(62 * scale, displayHeight * 0.74));
+    const barWidth = Math.max(
+      34 * scale,
+      Math.min(62 * scale, displayHeight * 0.74),
+    );
     const nextWidth = Math.max(1, barWidth * this.displayedHpRatio);
     this.hpBack.setPosition(0, barY);
     this.hpBar.setPosition(-(barWidth - nextWidth) * 0.5, barY);

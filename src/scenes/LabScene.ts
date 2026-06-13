@@ -2,9 +2,11 @@ import Phaser from 'phaser';
 import type { User } from 'firebase/auth';
 import {
   getUpgradeCost,
+  isLocalGuestUser,
+  purchaseLocalPermanentUpgrade,
   UPGRADE_META,
   type PlayerSave,
-  type UpgradeKey
+  type UpgradeKey,
 } from '../services/localSave';
 import { startRegisteredScene } from "./SceneRegistry";
 
@@ -107,6 +109,12 @@ export class LabScene extends Phaser.Scene {
   private async buyUpgrade(key: UpgradeKey): Promise<void> {
     try {
       this.messageText.setText('연구 저장 중...');
+      if (isLocalGuestUser(this.user)) {
+        this.save = purchaseLocalPermanentUpgrade(this.user, this.save, key);
+        this.messageText.setText(`${UPGRADE_META[key].label} 로컬 저장 완료!`);
+        this.renderRows();
+        return;
+      }
       const { purchasePermanentUpgrade } = await import('../services/firebase');
       this.save = await purchasePermanentUpgrade(this.user, this.save, key);
       this.messageText.setText(`${UPGRADE_META[key].label} 완료!`);
