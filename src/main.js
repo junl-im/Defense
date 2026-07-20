@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import './style.css';
 import { isFirebaseEnabled, loadOnlineScores, submitOnlineScore } from './firebase.js';
 import SoundEngine from './sound-engine.js';
-import { RANKS, UNIT_TYPES, UNIT_KEYS, ENEMY_TYPES, SYNERGIES, BLESSINGS } from './game-data.js';
+import { RANKS, UNIT_TYPES, UNIT_KEYS, ENEMY_TYPES, SYNERGIES, BLESSINGS, CONTRACTS } from './game-data.js';
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -19,6 +19,7 @@ const ui = {
   how: $('#how-btn'), collection: $('#collection-btn'), howModal: $('#how-modal'), collectionModal: $('#collection-modal'),
   blessingModal: $('#blessing-modal'), blessingOptions: $('#blessing-options'), collectionGrid: $('#collection-grid'),
   choiceSummonModal: $('#choice-summon-modal'), choiceSummonOptions: $('#choice-summon-options'), summonTicket: $('#summon-ticket'),
+  contractModal: $('#contract-modal'), contractOptions: $('#contract-options'), contractSkip: $('#contract-skip-btn'),
   hud: $('#hud'), hp: $('#hp-value'), gold: $('#gold-value'), waveLabel: $('#wave-label'), waveProgress: $('#wave-progress'),
   enemyCount: $('#enemy-count'), menu: $('#menu-btn'), sound: $('#sound-btn'), synergyPanel: $('#synergy-panel'),
   synergyToggle: $('#synergy-toggle'), synergyCount: $('#synergy-count'), synergyList: $('#synergy-list'),
@@ -30,6 +31,7 @@ const ui = {
   mission: $('#mission-banner'), missionKicker: $('#mission-kicker'), missionTitle: $('#mission-title'), missionCopy: $('#mission-copy'),
   evolution: $('#evolution-banner'), evolutionSymbol: $('#evolution-symbol'), evolutionName: $('#evolution-name'), evolutionUltimate: $('#evolution-ultimate'),
   bossHealth: $('#boss-health'), bossHealthName: $('#boss-health-name'), bossHealthValue: $('#boss-health-value'), bossHealthProgress: $('#boss-health-progress'),
+  bossIntent: $('#boss-intent'), bossPhase: $('#boss-phase'), bossIntentLabel: $('#boss-intent-label'), bossIntentTime: $('#boss-intent-time'),
   killChain: $('#kill-chain'), killChainValue: $('#kill-chain-value'), killChainBonus: $('#kill-chain-bonus'),
   firstMissionPanel: $('#first-mission-panel'), firstMissionStep: $('#first-mission-step'), firstMissionTitle: $('#first-mission-title'),
   firstMissionProgress: $('#first-mission-progress'), firstMissionCopy: $('#first-mission-copy'),
@@ -40,7 +42,7 @@ const ui = {
   playerName: $('#player-name'), saveScore: $('#save-score-btn'), resultRetry: $('#result-retry-btn'), leaderboard: $('#leaderboard')
 };
 
-const GAME_VERSION = '1.3.0';
+const GAME_VERSION = '1.4.0';
 
 const FIRST_MISSIONS = [
   { id: 'summons', title: '수호대 3회 강림', goal: 3, reward: 35, copy: '무료 강림도 포함됩니다.' },
@@ -86,7 +88,11 @@ class DokkaebiLuckDefense {
     this.gates = [];
     this.hazards = [];
     this.warningFlags = new Set();
+    this.pendingContract = null;
+    this.activeContract = null;
+    this.bossSpecialSerial = 0;
 
+    this.assertRequiredUI();
     this.initThree();
     this.bindUI();
     this.populateCollection();
@@ -100,6 +106,11 @@ class DokkaebiLuckDefense {
       ui.loading.classList.remove('visible');
       ui.title.classList.add('visible');
     }, 850);
+  }
+
+  assertRequiredUI() {
+    const missing = Object.entries(ui).filter(([, element]) => !element).map(([name]) => name);
+    if (missing.length) throw new Error(`UI 연결 누락: ${missing.join(', ')}`);
   }
 
   initThree() {
@@ -167,6 +178,7 @@ class DokkaebiLuckDefense {
     ui.dash.addEventListener('click', () => this.useDash());
     ui.skill.addEventListener('click', () => this.useHeroSkill());
     ui.synergyToggle.addEventListener('click', () => ui.synergyPanel.classList.toggle('collapsed'));
+    ui.contractSkip.addEventListener('click', () => this.skipContract());
 
     this.setupJoystick();
     this.setupLookControls();
@@ -654,6 +666,8 @@ class DokkaebiLuckDefense {
     this.blessingHistory = [];
     this.choiceTickets = 0;
     this.pendingSummon = null;
+    this.pendingContract = null;
+    this.activeContract = null;
     this.cinematic = null;
     clearTimeout(this.evolutionTimer);
     ui.evolution.classList.remove('show');
@@ -726,6 +740,11 @@ class DokkaebiLuckDefense {
 
   summonUnit(options = {}) {
     if (this.state !== 'playing') return;
+    if (!options.free && this.waveActive && this.activeContract?.id === 'summonSeal') {
+      this.showToast('강림 봉인 계약 중에는 전투 소환을 사용할 수 없습니다.');
+      this.haptic(12);
+      return;
+    }
     const cost = options.free ? 0 : this.getSummonCost();
     if (this.gold < cost) { this.showToast(`엽전이 ${cost - this.gold}개 부족합니다.`); return; }
 
@@ -952,6 +971,7 @@ class DokkaebiLuckDefense {
     this.currentWave += 1;
     this.waveActive = true;
     this.waveStartHp = this.coreHp;
+    this.activatePendingContract();
     const bossWave = this.currentWave === 5 || this.currentWave === 10;
     this.spawnRemaining = bossWave ? (this.currentWave === 5 ? 15 : 22) : 7 + this.currentWave * 3;
     this.spawnTotal = this.spawnRemaining;
@@ -1005,12 +1025,14 @@ class DokkaebiLuckDefense {
     const group = this.createEnemyModel(type, config);
     group.position.copy(position);
     this.dynamicRoot.add(group);
-    const hp = config.hp * waveScale;
+    const contractHp = this.activeContract?.id === 'bloodMoon' ? 1.45 : 1;
+    const contractSpeed = this.activeContract?.id === 'bloodMoon' ? 1.12 : 1;
+    const hp = config.hp * waveScale * contractHp;
     return {
-      type, group, hp, maxHp: hp, speed: config.speed * (1 + Math.min(.22, this.currentWave * .012)),
+      type, group, hp, maxHp: hp, speed: config.speed * (1 + Math.min(.22, this.currentWave * .012)) * contractSpeed,
       damage: config.damage * (1 + (this.currentWave - 1) * .1), reward: config.reward,
       slowTimer: 0, slowFactor: 1, attackTimer: 0, phase: rand(0, Math.PI*2), dead: false,
-      boss: !!config.boss, specialTimer: config.boss ? 4.5 : 0, flash: 0, shieldFlash: 0,
+      boss: !!config.boss, bossPhase: 1, specialIndex: 0, specialTimer: config.boss ? 4.5 : 0, flash: 0, shieldFlash: 0,
       abilityTimer: type === 'runner' ? rand(2.2, 3.6) : type === 'shaman' ? rand(2.8, 4.2) : 0,
       abilityState: 'move', abilityTime: 0, telegraphMesh: null, chargeDirection: new THREE.Vector3(), chargeHitPlayer: false
     };
@@ -1069,7 +1091,8 @@ class DokkaebiLuckDefense {
 
   completeWave() {
     this.waveActive = false;
-    const perfectBonus = this.coreHp >= this.waveStartHp - .01 ? 10 + this.currentWave * 2 : 0;
+    const perfect = this.coreHp >= this.waveStartHp - .01;
+    const perfectBonus = perfect ? 10 + this.currentWave * 2 : 0;
     const reward = 24 + this.currentWave * 7 + perfectBonus;
     this.gold += reward;
     this.score += this.currentWave * 250 + Math.round(this.coreHp * 8);
@@ -1078,11 +1101,14 @@ class DokkaebiLuckDefense {
       this.score += perfectBonus * 25;
       this.haptic([18, 24, 42]);
     }
+    this.resolveActiveContract(perfect);
     if (this.currentWave >= this.maxWaves) {
       window.setTimeout(() => this.finishRun(true), 900);
       return;
     }
-    if (this.currentWave % 3 === 0) {
+    if (this.currentWave === 4 || this.currentWave === 8) {
+      window.setTimeout(() => this.offerContract(), 720);
+    } else if (this.currentWave % 3 === 0) {
       window.setTimeout(() => this.offerBlessing(), 700);
     } else {
       ui.wave.disabled = false;
@@ -1090,6 +1116,90 @@ class DokkaebiLuckDefense {
       this.showToast('전열을 정비하고 다음 습격을 시작하세요.');
     }
     this.updateHUD();
+  }
+
+  offerContract() {
+    if (this.state !== 'playing') return;
+    this.previousState = this.state;
+    this.state = 'contract';
+    const options = [...CONTRACTS].sort(() => Math.random() - .5);
+    ui.contractOptions.innerHTML = options.map((contract) => `
+      <button class="contract-option" data-contract="${contract.id}">
+        <span>${contract.icon}</span><b>${contract.name}</b><p>${contract.desc}</p><small>${contract.tag}</small>
+      </button>
+    `).join('');
+    ui.contractOptions.querySelectorAll('[data-contract]').forEach((button) => {
+      button.addEventListener('click', () => this.selectContract(button.dataset.contract), { once: true });
+    });
+    this.showModal(ui.contractModal);
+  }
+
+  selectContract(id) {
+    const contract = CONTRACTS.find((item) => item.id === id);
+    if (!contract) return;
+    this.pendingContract = { ...contract };
+    this.hideModal(ui.contractModal);
+    this.state = 'playing';
+    ui.wave.disabled = false;
+    ui.waveText.textContent = `${this.currentWave + 1}`;
+    this.showCombo(`${contract.icon} ${contract.name} 체결`, 1600);
+    this.showToast('다음 한 웨이브에 계약이 적용됩니다.');
+    this.haptic([18, 20, 38]);
+    this.updateHUD();
+  }
+
+  skipContract() {
+    if (this.state !== 'contract') return;
+    this.pendingContract = null;
+    this.hideModal(ui.contractModal);
+    this.state = 'playing';
+    ui.wave.disabled = false;
+    ui.waveText.textContent = `${this.currentWave + 1}`;
+    this.showToast('이번에는 안전하게 전열을 정비합니다.');
+  }
+
+  activatePendingContract() {
+    this.activeContract = this.pendingContract;
+    this.pendingContract = null;
+    if (!this.activeContract) return;
+    this.showMission(this.activeContract.name, this.activeContract.desc, 'RISK CONTRACT ACTIVE', 1750);
+  }
+
+  resolveActiveContract(perfect) {
+    const contract = this.activeContract;
+    if (!contract) return;
+    if (contract.id === 'bloodMoon') {
+      this.choiceTickets += 1;
+      this.score += 1200;
+      this.showCombo('혈월 계약 완수 · 선택권 +1', 1600);
+    } else if (contract.id === 'treeOath') {
+      if (perfect) {
+        this.gold += 120;
+        this.score += 3200;
+        this.showCombo('신목의 맹세 완수 · +120 엽전', 1800);
+        this.haptic([28, 30, 70]);
+      } else {
+        this.gold += 20;
+        this.showToast('맹세는 깨졌지만 위로금 20 엽전을 얻었습니다.');
+      }
+    } else if (contract.id === 'summonSeal') {
+      this.choiceTickets += 1;
+      this.showCombo('강림 봉인 해제 · 3성 강림!', 1700);
+      const runId = this.runId;
+      window.setTimeout(() => {
+        if (this.runId === runId && this.state === 'playing') this.summonUnit({ free: true, guaranteedRank: 3 });
+      }, 420);
+    }
+    this.activeContract = null;
+    this.updateHUD();
+  }
+
+  getContractRewardMultiplier() {
+    return this.activeContract?.id === 'bloodMoon' ? 1.65 : 1;
+  }
+
+  getContractCoreDamageMultiplier() {
+    return this.activeContract?.id === 'treeOath' ? 1.8 : 1;
   }
 
   offerBlessing() {
@@ -1491,10 +1601,7 @@ class DokkaebiLuckDefense {
       enemy.group.rotation.z=Math.sin(this.elapsed*5+enemy.phase)*.035;
       if (enemy.boss) {
         enemy.specialTimer-=dt;
-        if (enemy.specialTimer<=0) {
-          enemy.specialTimer=rand(4.8,6.4);
-          this.bossRoar(enemy);
-        }
+        if (enemy.specialTimer<=0) this.triggerBossSpecial(enemy);
       }
     }
   }
@@ -1652,18 +1759,169 @@ class DokkaebiLuckDefense {
     }
   }
 
-  bossRoar(enemy) {
-    const pos=enemy.group.position.clone();
-    const color=ENEMY_TYPES[enemy.type].color;
+  getBossSpecialDelay(enemy) {
+    if (enemy.type === 'tiger') return enemy.bossPhase >= 2 ? rand(3.35, 4.25) : rand(4.8, 5.8);
+    if (enemy.bossPhase >= 3) return rand(2.9, 3.7);
+    if (enemy.bossPhase >= 2) return rand(3.6, 4.6);
+    return rand(5.1, 6.2);
+  }
+
+  getBossIntentName(enemy) {
+    const index = enemy.specialIndex || 0;
+    if (enemy.type === 'tiger') {
+      if (enemy.bossPhase >= 2) return index % 2 === 0 ? '혈월 도약' : '광폭 충격파';
+      return '사자후 충격파';
+    }
+    if (enemy.bossPhase >= 3) return ['백귀 야행진', '처형 도약', '왕의 충격파'][index % 3];
+    if (enemy.bossPhase >= 2) return index % 2 === 0 ? '백귀 소환' : '왕의 충격파';
+    return '왕의 충격파';
+  }
+
+  triggerBossSpecial(enemy) {
+    if (!enemy || enemy.dead) return;
+    const index = enemy.specialIndex || 0;
+    if (enemy.type === 'tiger') {
+      if (enemy.bossPhase >= 2 && index % 2 === 0) this.bossPounce(enemy, { radius: 3.3, warning: .92, color: 0xff5b47 });
+      else this.bossRoar(enemy, enemy.bossPhase >= 2 ? { radius: 6.6, warning: .88 } : undefined);
+    } else if (enemy.bossPhase >= 3) {
+      const mode = index % 3;
+      if (mode === 0) this.kingNightMarch(enemy);
+      else if (mode === 1) this.bossPounce(enemy, { radius: 3.7, warning: .82, color: 0x9b5cff });
+      else this.bossRoar(enemy, { radius: 7.1, warning: .9 });
+    } else if (enemy.bossPhase >= 2) {
+      if (index % 2 === 0) this.spawnBossAdds(enemy, 4);
+      else this.bossRoar(enemy, { radius: 6.3, warning: .98 });
+    } else {
+      this.bossRoar(enemy);
+    }
+    enemy.specialIndex = index + 1;
+    enemy.specialTimer = this.getBossSpecialDelay(enemy);
+  }
+
+  checkBossPhase(enemy) {
+    if (!enemy?.boss || enemy.dead) return;
+    const ratio = enemy.hp / enemy.maxHp;
+    if (enemy.type === 'tiger' && enemy.bossPhase === 1 && ratio <= .5) {
+      this.enterBossPhase(enemy, 2, '저승 호랑이 광폭', '도약과 더 넓은 충격파를 번갈아 사용합니다.', 0xff5a45);
+      enemy.speed *= 1.28;
+      enemy.damage *= 1.24;
+    } else if (enemy.type === 'king' && enemy.bossPhase === 1 && ratio <= .68) {
+      this.enterBossPhase(enemy, 2, '백귀 장막 개방', '야행왕이 부하를 불러 전장을 압박합니다.', 0xa864ff);
+      enemy.speed *= 1.12;
+      enemy.damage *= 1.15;
+      this.spawnBossAdds(enemy, 3);
+    } else if (enemy.type === 'king' && enemy.bossPhase === 2 && ratio <= .32) {
+      this.enterBossPhase(enemy, 3, '백귀 야행 최종막', '연속 장판과 처형 도약이 시작됩니다.', 0xff4fd8);
+      enemy.speed *= 1.22;
+      enemy.damage *= 1.25;
+      this.spawnBossAdds(enemy, 5);
+    }
+  }
+
+  enterBossPhase(enemy, phase, title, copy, color) {
+    enemy.bossPhase = phase;
+    enemy.specialIndex = 0;
+    enemy.specialTimer = .9;
+    enemy.group.scale.multiplyScalar(1.055);
+    enemy.group.userData.body.material.emissive.set(color);
+    enemy.group.userData.body.material.emissiveIntensity = .75;
+    if (enemy.group.userData.phaseAura) {
+      enemy.group.remove(enemy.group.userData.phaseAura);
+      enemy.group.userData.phaseAura.geometry.dispose();
+      enemy.group.userData.phaseAura.material.dispose();
+    }
+    const aura = this.mesh(
+      new THREE.TorusGeometry(1.45 * enemy.group.userData.scale, .07 * enemy.group.userData.scale, 7, 28),
+      new THREE.MeshBasicMaterial({ color, transparent: true, opacity: .72, depthWrite: false }),
+      0, .18, 0, false, false
+    );
+    aura.rotation.x = Math.PI / 2;
+    enemy.group.add(aura);
+    enemy.group.userData.phaseAura = aura;
+    this.showMission(title, copy, `BOSS PHASE ${phase}`, 1900);
+    this.showCombo(`PHASE ${phase} · ${title}`, 1750);
+    this.spawnParticles(enemy.group.position.clone().add(new THREE.Vector3(0, 1.8, 0)), color, 34, 6.2);
+    this.spawnRing(enemy.group.position, color, 5.5 + phase);
+    this.sound.boss();
+    this.haptic([55, 35, 85, 40, 110]);
+    this.shake = Math.max(this.shake, .72);
+  }
+
+  spawnBossAdds(enemy, count) {
+    if (!enemy || enemy.dead) return;
+    const choices = enemy.type === 'king' ? ['runner', 'shaman', 'brute'] : ['runner', 'imp'];
+    for (let index = 0; index < count; index += 1) {
+      const angle = index / count * Math.PI * 2 + rand(-.2, .2);
+      const position = enemy.group.position.clone().add(new THREE.Vector3(Math.cos(angle) * 2.6, 0, Math.sin(angle) * 2.6));
+      const add = this.createEnemy(pick(choices), position, .7);
+      add.hp *= .78;
+      add.maxHp = add.hp;
+      this.enemies.push(add);
+    }
+    this.showCombo(`백귀 소환 · 요괴 ${count}마리`, 1150);
+    this.spawnParticles(enemy.group.position.clone().add(new THREE.Vector3(0, 1, 0)), 0xa864ff, 22, 4.5);
+  }
+
+  bossPounce(enemy, options = {}) {
+    const target = this.player.group.position.clone();
+    const radius = options.radius || 3.2;
+    const color = options.color || ENEMY_TYPES[enemy.type].color;
     this.createHazard({
-      type:'bossShock', position:pos, radius:5.5, color, warning:1.08, duration:.12,
+      type: 'bossPounce', position: target, radius, color, warning: options.warning || .95, duration: .14,
       onTrigger: (hazard) => {
-        this.spawnRing(hazard.position,color,5.5);
+        if (!enemy || enemy.dead || !enemy.group.parent) return;
+        enemy.group.position.set(hazard.position.x, 0, hazard.position.z);
+        this.spawnRing(hazard.position, color, radius + 1.2);
+        this.spawnParticles(hazard.position.clone().add(new THREE.Vector3(0, 1.2, 0)), color, 28, 6.5);
+        this.shake = Math.max(this.shake, .58);
+        if (hazard.position.distanceTo(this.player.group.position) < radius) {
+          this.player.stunTimer = Math.max(this.player.stunTimer, 1.15);
+          this.player.skillCooldown += 2;
+          this.showCombo('보스 도약 피격 · 혼절!', 1050);
+          this.haptic([40, 25, 65]);
+        } else {
+          this.score += 180;
+          this.showCombo('도약 회피! +180', 850);
+        }
+      }
+    });
+    this.showMission('착지 원 밖으로 이동!', '보스가 현재 위치를 향해 도약합니다.', 'BOSS INTENT · POUNCE', 1200);
+  }
+
+  kingNightMarch(enemy) {
+    const origin = this.player.group.position.clone();
+    const forward = origin.clone().sub(enemy.group.position).setY(0).normalize();
+    const side = new THREE.Vector3(-forward.z, 0, forward.x);
+    const positions = [origin, origin.clone().addScaledVector(side, 3.6), origin.clone().addScaledVector(side, -3.6)];
+    positions.forEach((position, index) => {
+      this.createHazard({
+        type: 'nightMarch', position, radius: 2.75, color: 0xd84dff, warning: .72 + index * .22, duration: .14,
+        onTrigger: (hazard) => {
+          this.spawnParticles(hazard.position.clone().add(new THREE.Vector3(0, .6, 0)), 0xd84dff, 18, 4.8);
+          if (hazard.position.distanceTo(this.player.group.position) < hazard.radius) {
+            this.player.stunTimer = Math.max(this.player.stunTimer, .7);
+            this.player.skillCooldown += 1;
+            this.haptic([24, 18, 35]);
+          } else this.score += 70;
+        }
+      });
+    });
+    this.showMission('백귀 야행진', '세 개의 장판 사이 안전 공간을 찾으세요.', 'FINAL PHASE · NIGHT MARCH', 1350);
+  }
+
+  bossRoar(enemy, options = {}) {
+    const pos=enemy.group.position.clone();
+    const color=options.color || ENEMY_TYPES[enemy.type].color;
+    const radius=options.radius || 5.5;
+    this.createHazard({
+      type:'bossShock', position:pos, radius, color, warning:options.warning || 1.08, duration:.12,
+      onTrigger: (hazard) => {
+        this.spawnRing(hazard.position,color,radius);
         this.spawnParticles(hazard.position.clone().add(new THREE.Vector3(0,1.8,0)),color,22,5.2);
         this.shake=Math.max(this.shake,.45);
         this.sound.boss();
         const playerDistance=hazard.position.distanceTo(this.player.group.position);
-        if (playerDistance<5.5) {
+        if (playerDistance<radius) {
           const push=this.player.group.position.clone().sub(hazard.position).setY(0);
           if (push.lengthSq()<.01) push.set(1,0,0);
           this.player.group.position.add(push.normalize().multiplyScalar(2.5));
@@ -1696,6 +1954,7 @@ class DokkaebiLuckDefense {
     const crit = source !== 'skill' && !ultimate && Math.random() < critChance;
     if (crit) amount *= 1.75;
     enemy.hp-=amount;
+    if (enemy.boss && enemy.hp > 0) this.checkBossPhase(enemy);
     enemy.flash=.09;
     enemy.group.userData.body.material.emissive.set(0xffffff);
     enemy.group.userData.body.material.emissiveIntensity=1.6;
@@ -1714,7 +1973,7 @@ class DokkaebiLuckDefense {
     this.dynamicRoot.remove(enemy.group);
     const color=ENEMY_TYPES[enemy.type].color;
     this.spawnParticles(enemy.group.position.clone().add(new THREE.Vector3(0,.8,0)),color,enemy.boss?35:12,enemy.boss?6:3.4);
-    const reward=Math.max(2,Math.round(enemy.reward*this.mods.goldMultiplier*this.getSpiritGoldMultiplier()));
+    const reward=Math.max(2,Math.round(enemy.reward*this.mods.goldMultiplier*this.getSpiritGoldMultiplier()*this.getContractRewardMultiplier()));
     this.dropCoins(enemy.group.position,reward,enemy.boss?9:Math.min(4,1+Math.floor(reward/7)));
     this.kills+=1;
     this.killChain = this.killChainTimer > 0 ? this.killChain + 1 : 1;
@@ -1743,7 +2002,7 @@ class DokkaebiLuckDefense {
   }
 
   damageCore(amount) {
-    const reduced=amount*this.mods.coreDamage*this.getMountainDamageMultiplier();
+    const reduced=amount*this.mods.coreDamage*this.getMountainDamageMultiplier()*this.getContractCoreDamageMultiplier();
     this.coreHp=Math.max(0,this.coreHp-reduced);
     this.showCombatText(new THREE.Vector3(0, 5.8, 0), reduced, { label: `-${Math.ceil(reduced)}` });
     this.core.userData.hitPulse=.35;
@@ -1980,6 +2239,9 @@ class DokkaebiLuckDefense {
     ui.bossHealthName.textContent = ENEMY_TYPES[boss.type].name;
     ui.bossHealthValue.textContent = `${Math.ceil(percent * 100)}%`;
     ui.bossHealthProgress.style.width = `${percent * 100}%`;
+    ui.bossPhase.textContent = `PHASE ${boss.bossPhase || 1}`;
+    ui.bossIntentLabel.textContent = `다음 공격 · ${this.getBossIntentName(boss)}`;
+    ui.bossIntentTime.textContent = `${Math.max(0, boss.specialTimer).toFixed(1)}s`;
     ui.bossHealth.classList.remove('hidden');
   }
 
@@ -1997,7 +2259,9 @@ class DokkaebiLuckDefense {
     ui.summonCost.textContent=this.getSummonCost();
     ui.summonTicket.textContent=`선택권 ×${this.choiceTickets||0}`;
     ui.summonTicket.classList.toggle('hidden',!(this.choiceTickets>0));
-    ui.summon.disabled=this.gold<this.getSummonCost();
+    const summonLocked = this.waveActive && this.activeContract?.id === 'summonSeal';
+    ui.summon.disabled=this.gold<this.getSummonCost() || summonLocked;
+    ui.summon.title = summonLocked ? '강림 봉인 계약 중' : '';
     ui.dashCooldown.textContent=this.player?.dashCooldown>0?`${this.player.dashCooldown.toFixed(1)}s`:'준비';
     ui.skillCooldown.textContent=this.player?.skillCooldown>0?`${this.player.skillCooldown.toFixed(1)}s`:'준비';
     ui.dash.classList.toggle('cooling',this.player?.dashCooldown>0);
@@ -2130,8 +2394,12 @@ class DokkaebiLuckDefense {
   }
 }
 
-new DokkaebiLuckDefense();
-
-if ('serviceWorker' in navigator && import.meta.env.PROD) {
-  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+try {
+  window.__DOKKAEBI_GAME__ = new DokkaebiLuckDefense();
+  window.__DOKKAEBI_BOOT_OK__ = true;
+  window.dispatchEvent(new Event('dokkaebi:boot-ready'));
+} catch (error) {
+  console.error('[DokkaebiLuckDefense3D] boot failed', error);
+  const reason = error instanceof Error ? error.message : String(error);
+  window.__DOKKAEBI_SHOW_BOOT_ERROR__?.(`초기화 오류: ${reason}`);
 }

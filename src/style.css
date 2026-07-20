@@ -366,3 +366,39 @@ button { color: inherit; cursor: pointer; }
   .evolution-banner { top: 18%; }
 }
 .collection-item p strong { display: inline-block; margin-top: 5px; color: #ffd778; font-size: 9px; }
+
+/* v1.4 boot recovery, boss intent, and risk contracts */
+.boot-error { z-index: 140; display: none; place-items: center; padding: 24px; background: radial-gradient(circle at 50% 28%, rgba(91,50,130,.42), rgba(10,5,18,.98) 62%); }
+.boot-error.visible { display: grid; }
+.boot-error-card { width: min(92vw, 430px); padding: 30px 24px 24px; text-align: center; border-radius: 28px; background: rgba(23,12,38,.96); border: 1px solid rgba(255,213,151,.18); box-shadow: 0 24px 80px rgba(0,0,0,.62); }
+.boot-error-card h2 { margin: 10px 0 12px; font-size: 25px; }
+.boot-error-card p:not(.kicker) { margin: 0 0 20px; color: var(--muted); line-height: 1.6; }
+.boot-error-card small { display: block; margin-top: 14px; color: rgba(235,226,244,.62); line-height: 1.5; }
+.moon-logo.small { width: 64px; height: 64px; margin: 0 auto 12px; }
+
+.boss-intent { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 7px; margin-top: 7px; padding-top: 7px; border-top: 1px solid rgba(255,255,255,.08); font-size: 9px; }
+.boss-intent span { padding: 3px 6px; border-radius: 99px; color: #ffd7a6; background: rgba(255,165,87,.13); border: 1px solid rgba(255,186,117,.18); font-weight: 900; letter-spacing: .08em; }
+.boss-intent b { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #fff1e2; text-align: left; }
+.boss-intent em { color: #ffb28f; font-style: normal; font-weight: 900; font-variant-numeric: tabular-nums; }
+
+.contract-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0 14px; }
+.contract-option { min-height: 196px; padding: 18px 14px; border-radius: 22px; border: 1px solid rgba(255,219,165,.15); background: linear-gradient(155deg, rgba(94,45,91,.28), rgba(20,12,34,.88)); color: inherit; text-align: left; cursor: pointer; transition: transform .16s ease, border-color .16s ease, filter .16s ease; }
+.contract-option:active { transform: scale(.98); }
+.contract-option > span { display: grid; place-items: center; width: 48px; height: 48px; margin-bottom: 13px; border-radius: 16px; background: rgba(255,255,255,.07); font-size: 24px; }
+.contract-option b { display: block; margin-bottom: 5px; font-size: 16px; }
+.contract-option p { margin: 0 0 12px; color: var(--muted); font-size: 11px; line-height: 1.55; }
+.contract-option small { color: #ffc77f; font-weight: 900; }
+.contract-active { position: fixed; z-index: 23; left: 50%; top: calc(174px + var(--safe-top)); transform: translateX(-50%); max-width: min(82vw, 430px); padding: 6px 11px; border-radius: 999px; background: rgba(64,22,54,.82); border: 1px solid rgba(255,174,117,.2); color: #ffe2be; font-size: 10px; font-weight: 900; pointer-events: none; backdrop-filter: blur(8px); }
+
+@media (hover:hover) and (pointer:fine) {
+  .contract-option:hover { filter: brightness(1.12); border-color: rgba(255,210,144,.34); transform: translateY(-2px); }
+}
+
+@media (max-width: 540px) {
+  .contract-options { grid-template-columns: 1fr; }
+  .contract-option { min-height: auto; display: grid; grid-template-columns: 52px 1fr; column-gap: 12px; padding: 13px; }
+  .contract-option > span { grid-row: 1 / 4; margin: 0; }
+  .contract-option b, .contract-option p, .contract-option small { grid-column: 2; }
+  .boss-intent { grid-template-columns: auto 1fr; }
+  .boss-intent em { grid-column: 2; justify-self: end; margin-top: -2px; }
+}

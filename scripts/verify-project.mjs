@@ -9,6 +9,10 @@ const fail = (message) => { failures.push(message); console.error(`FAIL ${messag
 
 const html = read('index.html');
 const main = read('src/main.js');
+const data = read('src/game-data.js');
+const style = read('src/style.css');
+const sw = read('public/sw.js');
+const vite = read('vite.config.js');
 const pkg = JSON.parse(read('package.json'));
 const manifest = JSON.parse(read('public/manifest.webmanifest'));
 
@@ -18,7 +22,7 @@ const missingIds = [...new Set(queriedIds.filter((id) => !htmlIds.has(id)))];
 if (missingIds.length) fail(`index.html에 없는 DOM ID: ${missingIds.join(', ')}`);
 else pass(`${queriedIds.length}개 DOM ID 연결`);
 
-if (pkg.version === '1.3.0') pass('package version 1.3.0');
+if (pkg.version === '1.4.0') pass('package version 1.4.0');
 else fail(`package version 불일치: ${pkg.version}`);
 
 for (const path of ['.env.production', '.firebaserc', '.github/workflows/deploy.yml', 'README.md', 'PROJECT_HANDOFF.md']) {
@@ -34,13 +38,39 @@ else fail(`루트 Markdown 정리 필요: ${rootMarkdown.join(', ')}`);
 if (manifest.start_url === './') pass('PWA 상대 경로 start_url');
 else fail(`PWA start_url 확인 필요: ${manifest.start_url}`);
 
-if (main.includes("const GAME_VERSION = '1.3.0'")) pass('런타임 version 1.3.0');
+if (main.includes("const GAME_VERSION = '1.4.0'")) pass('런타임 version 1.4.0');
 else fail('런타임 version 불일치');
 
-for (const feature of ['triggerUnitUltimate', 'playMythicEvolution', 'recordFirstMission', 'merge-status']) {
-  const source = feature === 'merge-status' ? read('src/style.css') : main;
-  if (source.includes(feature)) pass(`v1.3 기능 ${feature}`);
-  else fail(`v1.3 기능 누락: ${feature}`);
+for (const feature of ['offerContract', 'resolveActiveContract', 'checkBossPhase', 'kingNightMarch', 'bossPounce']) {
+  if (main.includes(feature)) pass(`v1.4 기능 ${feature}`);
+  else fail(`v1.4 기능 누락: ${feature}`);
+}
+
+if (data.includes('const CONTRACTS =')) pass('위험 계약 데이터');
+else fail('위험 계약 데이터 누락');
+
+if (style.includes('.boss-intent') && style.includes('.contract-options') && style.includes('.boot-error')) pass('v1.4 HUD 스타일');
+else fail('v1.4 HUD 스타일 누락');
+
+if (html.includes('__DOKKAEBI_SHOW_BOOT_ERROR__') && html.includes('boot-error')) pass('로딩 실패 복구 UI');
+else fail('로딩 실패 복구 UI 누락');
+
+if (!main.includes('serviceWorker.register')) pass('게임 번들에서 구형 서비스워커 등록 제거');
+else fail('구형 서비스워커 등록 코드가 남아 있음');
+
+if (sw.includes('registration.unregister') && sw.includes('caches.delete')) pass('서비스워커 캐시 해제 스크립트');
+else fail('서비스워커 캐시 해제 스크립트 누락');
+
+if (vite.includes("entryFileNames: 'assets/game.js'") && vite.includes("assets/game.css")) pass('안정적인 게임 번들 파일명');
+else fail('안정적인 번들 파일명 설정 누락');
+
+for (const legacy of [
+  'public/assets/index-B0uLkGTa.js', 'public/assets/index-C2b85yCi.css',
+  'public/assets/index-C4HEqwCr.js', 'public/assets/index-yN890ryg.css',
+  'public/assets/index-DCYMisxj.js', 'public/assets/index-BpfmRvmR.css'
+]) {
+  if (existsSync(resolve(root, legacy))) pass(`구버전 캐시 구조 호환 ${legacy}`);
+  else fail(`구버전 호환 파일 누락: ${legacy}`);
 }
 
 for (const path of ['src/game-data.js', 'src/sound-engine.js']) {

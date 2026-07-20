@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
     <meta name="theme-color" content="#120b24" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="description" content="직접 뛰어다니며 엽전을 줍고 랜덤 도깨비를 소환·합성하는 모바일 3D 운빨 디펜스" />
@@ -28,6 +29,18 @@
         </div>
       </section>
 
+
+      <section id="boot-error" class="screen boot-error" aria-live="assertive">
+        <div class="boot-error-card">
+          <div class="moon-logo small"><span>鬼</span></div>
+          <p class="kicker">BOOT RECOVERY</p>
+          <h2>달빛 장터를 깨우지 못했습니다</h2>
+          <p id="boot-error-message">이전 버전 캐시 또는 WebGL 초기화 문제를 감지했습니다.</p>
+          <button id="boot-retry-btn" class="btn primary">캐시 정리 후 다시 시작</button>
+          <small>계속 반복되면 브라우저의 하드웨어 가속과 WebGL 지원을 확인해 주세요.</small>
+        </div>
+      </section>
+
       <section id="title-screen" class="screen">
         <div class="title-panel">
           <p class="kicker">한 판 8분 · 랜덤 소환 · 자동 합성</p>
@@ -38,7 +51,7 @@
             <button id="how-btn" class="btn ghost">조작법</button>
             <button id="collection-btn" class="btn ghost">도깨비 도감</button>
           </div>
-          <small>v1.3 · 5성 궁극 진화와 초행 임무가 추가되었습니다.</small>
+          <small>v1.4 · 보스 다단계 전투와 위험 계약이 추가되었습니다.</small>
         </div>
       </section>
 
@@ -73,6 +86,11 @@
       <div id="boss-health" class="boss-health hidden" aria-live="polite">
         <div class="boss-health-head"><span id="boss-health-name">저승 호랑이</span><b id="boss-health-value">100%</b></div>
         <div class="boss-health-track"><span id="boss-health-progress"></span></div>
+        <div id="boss-intent" class="boss-intent">
+          <span id="boss-phase">PHASE 1</span>
+          <b id="boss-intent-label">다음 공격 · 충격파</b>
+          <em id="boss-intent-time">4.5s</em>
+        </div>
       </div>
 
       <div id="kill-chain" class="kill-chain hidden">
@@ -161,6 +179,17 @@
         </div>
       </section>
 
+
+      <section id="contract-modal" class="modal" aria-hidden="true">
+        <div class="modal-card wide contract-card">
+          <p class="kicker">MOON RISK CONTRACT</p>
+          <h2>위험을 걸고 더 큰 보상을 노리세요</h2>
+          <p>선택한 계약은 다음 한 웨이브에만 적용됩니다.</p>
+          <div id="contract-options" class="contract-options"></div>
+          <button id="contract-skip-btn" class="btn ghost">안전하게 넘어가기</button>
+        </div>
+      </section>
+
       <section id="pause-modal" class="modal" aria-hidden="true">
         <div class="modal-card compact">
           <p class="kicker">PAUSED</p>
@@ -188,6 +217,55 @@
         </div>
       </section>
     </div>
+    <script>
+      (() => {
+        const VERSION = '1.4.0';
+        const errorScreen = document.getElementById('boot-error');
+        const errorMessage = document.getElementById('boot-error-message');
+        const retryButton = document.getElementById('boot-retry-btn');
+        let bootTimer = 0;
+
+        const clearLegacyCaches = async () => {
+          try {
+            if ('serviceWorker' in navigator) {
+              const registrations = await navigator.serviceWorker.getRegistrations();
+              await Promise.all(registrations.map((registration) => registration.unregister()));
+            }
+            if ('caches' in window) {
+              const keys = await caches.keys();
+              await Promise.all(keys.map((key) => caches.delete(key)));
+            }
+          } catch (error) {
+            console.warn('[boot] cache cleanup skipped', error);
+          }
+        };
+
+        window.__DOKKAEBI_SHOW_BOOT_ERROR__ = (message) => {
+          window.clearTimeout(bootTimer);
+          document.getElementById('loading')?.classList.remove('visible');
+          if (errorMessage && message) errorMessage.textContent = message;
+          errorScreen?.classList.add('visible');
+        };
+
+        retryButton?.addEventListener('click', async () => {
+          retryButton.disabled = true;
+          retryButton.textContent = '캐시를 정리하는 중...';
+          await clearLegacyCaches();
+          const url = new URL(window.location.href);
+          url.searchParams.set('fresh', VERSION);
+          window.location.replace(url.toString());
+        });
+
+        window.addEventListener('dokkaebi:boot-ready', () => window.clearTimeout(bootTimer), { once: true });
+        bootTimer = window.setTimeout(() => {
+          if (!window.__DOKKAEBI_BOOT_OK__) {
+            window.__DOKKAEBI_SHOW_BOOT_ERROR__('게임 모듈이 시작되지 않았습니다. 이전 캐시를 정리한 뒤 다시 시도해 주세요.');
+          }
+        }, 8000);
+
+        if ('serviceWorker' in navigator || 'caches' in window) clearLegacyCaches();
+      })();
+    </script>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

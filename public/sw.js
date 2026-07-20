@@ -1,12 +1,21 @@
-const CACHE = 'dokkaebi-luck-defense-v1.3.0';
-const CORE = ['./', './index.html', './manifest.webmanifest', './icon.svg', './cover.svg'];
-self.addEventListener('install', (event) => event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(CORE)).then(() => self.skipWaiting())));
-self.addEventListener('activate', (event) => event.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((key) => key !== CACHE).map((key) => caches.delete(key)))).then(() => self.clients.claim())));
-self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET') return;
-  event.respondWith(caches.match(event.request).then((cached) => cached || fetch(event.request).then((response) => {
-    const copy = response.clone();
-    caches.open(CACHE).then((cache) => cache.put(event.request, copy));
-    return response;
-  }).catch(() => caches.match('./index.html'))));
+const RESET_VERSION = '1.4.0';
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(self.skipWaiting());
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.map((key) => caches.delete(key)));
+    await self.clients.claim();
+    const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    await Promise.all(clients.map((client) => {
+      const url = new URL(client.url);
+      if (url.searchParams.get('fresh') === RESET_VERSION) return undefined;
+      url.searchParams.set('fresh', RESET_VERSION);
+      return client.navigate(url.toString());
+    }));
+    await self.registration.unregister();
+  })());
 });

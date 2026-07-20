@@ -71,4 +71,19 @@ const BLESSINGS = [
   { id: 'choice', icon: '三', name: '삼지선다 부적', desc: '앞으로 2번의 소환에서 서로 다른 도깨비 3개 중 하나를 선택합니다.', tag: '선택', apply: (g) => { g.choiceTickets += 2; } }
 ];
 
-export { RANKS, UNIT_TYPES, UNIT_KEYS, ENEMY_TYPES, SYNERGIES, BLESSINGS };
+const CONTRACTS = [
+  {
+    id: 'bloodMoon', icon: '🌕', name: '혈월의 사냥', tag: '고위험 · 고수익',
+    desc: '다음 웨이브 요괴 체력 +45%, 이동 속도 +12%. 처치 엽전 +65%, 클리어 시 선택권 +1.'
+  },
+  {
+    id: 'treeOath', icon: '🌳', name: '신목의 맹세', tag: '무피해 도전',
+    desc: '다음 웨이브 신목 피해 +80%. 무피해로 막으면 엽전 +120과 대량 점수를 얻습니다.'
+  },
+  {
+    id: 'summonSeal', icon: '🔒', name: '강림 봉인', tag: '진형 시험',
+    desc: '다음 웨이브 전투 중 소환 불가. 클리어하면 무료 3성 도깨비와 선택권 +1.'
+  }
+];
+
+export { RANKS, UNIT_TYPES, UNIT_KEYS, ENEMY_TYPES, SYNERGIES, BLESSINGS, CONTRACTS };

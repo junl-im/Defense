@@ -5,6 +5,13 @@ export default defineConfig({
   build: {
     target: 'es2020',
     sourcemap: false,
-    chunkSizeWarningLimit: 900
+    chunkSizeWarningLimit: 900,
+    rollupOptions: {
+      output: {
+        entryFileNames: 'assets/game.js',
+        chunkFileNames: 'assets/chunks/[name]-[hash].js',
+        assetFileNames: (assetInfo) => assetInfo.name?.endsWith('.css') ? 'assets/game.css' : 'assets/[name][extname]'
+      }
+    }
   }
 });
