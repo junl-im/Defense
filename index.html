@@ -47,11 +47,12 @@
           <h1>도깨비<br /><em>운빨 수호대</em></h1>
           <p class="title-copy">직접 전장을 누비며 엽전을 줍고,<br />운명처럼 소환되는 도깨비 군단을 완성하세요.</p>
           <button id="start-btn" class="btn primary huge">달빛 장터 수호하기</button>
-          <div class="title-actions">
+          <div class="title-actions three">
             <button id="how-btn" class="btn ghost">조작법</button>
             <button id="collection-btn" class="btn ghost">도깨비 도감</button>
+            <button id="meta-btn" class="btn ghost meta-entry"><span>혼불 <b id="title-shards">0</b></span>수호자 성장</button>
           </div>
-          <small>v1.4 · 보스 다단계 전투와 위험 계약이 추가되었습니다.</small>
+          <small>v1.5 · 회피 안내와 다음 판에 이어지는 수호자 성장이 추가되었습니다.</small>
         </div>
       </section>
 
@@ -97,6 +98,11 @@
         <small>MOON CHAIN</small>
         <b id="kill-chain-value">x2</b>
         <span id="kill-chain-bonus">연속 처치</span>
+      </div>
+
+      <div id="danger-hint" class="danger-hint hidden" aria-live="assertive">
+        <span id="danger-arrow" class="danger-arrow">↑</span>
+        <div><small id="danger-level">긴급 회피</small><b id="danger-label">장판 밖으로 이동</b><em id="danger-time">0.8s</em></div>
       </div>
 
       <aside id="synergy-panel" class="synergy-panel hidden">
@@ -190,6 +196,18 @@
         </div>
       </section>
 
+
+      <section id="meta-modal" class="modal" aria-hidden="true">
+        <div class="modal-card wide meta-card">
+          <button class="modal-x" data-close="meta-modal">×</button>
+          <p class="kicker">GUARDIAN GROWTH</p>
+          <h2>다음 달밤을 위한 영구 성장</h2>
+          <div class="meta-balance"><span>보유 혼불 조각</span><b id="meta-shards">0</b></div>
+          <p>한 판이 끝날 때 얻은 혼불은 이 기기에 저장됩니다. 세 특성은 각각 5단계까지만 성장합니다.</p>
+          <div id="meta-trait-list" class="meta-trait-list"></div>
+        </div>
+      </section>
+
       <section id="pause-modal" class="modal" aria-hidden="true">
         <div class="modal-card compact">
           <p class="kicker">PAUSED</p>
@@ -210,6 +228,11 @@
             <div><span>최고 별</span><b id="result-rank">1★</b></div>
           </div>
           <div id="result-units" class="result-units"></div>
+          <div class="result-shards">
+            <div><span>이번 판 혼불</span><b id="result-shards">+0</b></div>
+            <small>보유 <strong id="result-shards-total">0</strong> · 다음 판 영구 성장에 사용</small>
+          </div>
+          <button id="result-growth-btn" class="btn ghost">혼불로 수호자 성장</button>
           <label class="name-field">랭킹 이름<input id="player-name" maxlength="12" placeholder="달빛 수호자" /></label>
           <button id="save-score-btn" class="btn primary">기록 저장</button>
           <button id="result-retry-btn" class="btn ghost">한 판 더</button>
@@ -219,7 +242,7 @@
     </div>
     <script>
       (() => {
-        const VERSION = '1.4.0';
+        const VERSION = '1.5.0';
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
         const retryButton = document.getElementById('boot-retry-btn');

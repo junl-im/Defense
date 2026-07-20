@@ -16,10 +16,10 @@ const tempColor = new THREE.Color();
 
 const ui = {
   canvas: $('#game-canvas'), loading: $('#loading'), title: $('#title-screen'), start: $('#start-btn'),
-  how: $('#how-btn'), collection: $('#collection-btn'), howModal: $('#how-modal'), collectionModal: $('#collection-modal'),
+  how: $('#how-btn'), collection: $('#collection-btn'), meta: $('#meta-btn'), titleShards: $('#title-shards'), howModal: $('#how-modal'), collectionModal: $('#collection-modal'),
   blessingModal: $('#blessing-modal'), blessingOptions: $('#blessing-options'), collectionGrid: $('#collection-grid'),
   choiceSummonModal: $('#choice-summon-modal'), choiceSummonOptions: $('#choice-summon-options'), summonTicket: $('#summon-ticket'),
-  contractModal: $('#contract-modal'), contractOptions: $('#contract-options'), contractSkip: $('#contract-skip-btn'),
+  contractModal: $('#contract-modal'), contractOptions: $('#contract-options'), contractSkip: $('#contract-skip-btn'), metaModal: $('#meta-modal'), metaShards: $('#meta-shards'), metaTraitList: $('#meta-trait-list'),
   hud: $('#hud'), hp: $('#hp-value'), gold: $('#gold-value'), waveLabel: $('#wave-label'), waveProgress: $('#wave-progress'),
   enemyCount: $('#enemy-count'), menu: $('#menu-btn'), sound: $('#sound-btn'), synergyPanel: $('#synergy-panel'),
   synergyToggle: $('#synergy-toggle'), synergyCount: $('#synergy-count'), synergyList: $('#synergy-list'),
@@ -32,23 +32,30 @@ const ui = {
   evolution: $('#evolution-banner'), evolutionSymbol: $('#evolution-symbol'), evolutionName: $('#evolution-name'), evolutionUltimate: $('#evolution-ultimate'),
   bossHealth: $('#boss-health'), bossHealthName: $('#boss-health-name'), bossHealthValue: $('#boss-health-value'), bossHealthProgress: $('#boss-health-progress'),
   bossIntent: $('#boss-intent'), bossPhase: $('#boss-phase'), bossIntentLabel: $('#boss-intent-label'), bossIntentTime: $('#boss-intent-time'),
-  killChain: $('#kill-chain'), killChainValue: $('#kill-chain-value'), killChainBonus: $('#kill-chain-bonus'),
+  killChain: $('#kill-chain'), killChainValue: $('#kill-chain-value'), killChainBonus: $('#kill-chain-bonus'), dangerHint: $('#danger-hint'), dangerArrow: $('#danger-arrow'), dangerLevel: $('#danger-level'), dangerLabel: $('#danger-label'), dangerTime: $('#danger-time'),
   firstMissionPanel: $('#first-mission-panel'), firstMissionStep: $('#first-mission-step'), firstMissionTitle: $('#first-mission-title'),
   firstMissionProgress: $('#first-mission-progress'), firstMissionCopy: $('#first-mission-copy'),
   combatTextRoot: $('#combat-text-root'), qualityBadge: $('#quality-badge'),
   damageFlash: $('#damage-flash'), pauseModal: $('#pause-modal'), resume: $('#resume-btn'), restart: $('#restart-btn'),
   titleBtn: $('#title-btn'), resultModal: $('#result-modal'), resultKicker: $('#result-kicker'), resultTitle: $('#result-title'),
-  resultScore: $('#result-score'), resultKills: $('#result-kills'), resultRank: $('#result-rank'), resultUnits: $('#result-units'),
+  resultScore: $('#result-score'), resultKills: $('#result-kills'), resultRank: $('#result-rank'), resultUnits: $('#result-units'), resultShards: $('#result-shards'), resultShardsTotal: $('#result-shards-total'), resultGrowth: $('#result-growth-btn'),
   playerName: $('#player-name'), saveScore: $('#save-score-btn'), resultRetry: $('#result-retry-btn'), leaderboard: $('#leaderboard')
 };
 
-const GAME_VERSION = '1.4.0';
+const GAME_VERSION = '1.5.0';
 
 const FIRST_MISSIONS = [
   { id: 'summons', title: '수호대 3회 강림', goal: 3, reward: 35, copy: '무료 강림도 포함됩니다.' },
   { id: 'merges', title: '첫 자동 합성 성공', goal: 1, reward: 45, copy: '같은 도깨비·같은 별 3개를 모으세요.' },
   { id: 'bosses', title: '저승 호랑이 격파', goal: 1, reward: 80, copy: '완료 보상으로 삼지선다 소환권도 획득합니다.', ticket: 1 }
 ];
+
+const META_STORAGE_KEY = 'dokkaebi-guardian-growth-v1';
+const META_TRAITS = {
+  pouch: { icon: '◉', name: '달빛 주머니', copy: '매 판 시작 엽전을 12개씩 늘립니다.', effect: (level) => `시작 엽전 +${level * 12}`, costs: [15, 25, 40, 60, 85] },
+  ward: { icon: '◆', name: '신목 결계', copy: '신목 최대 체력을 단계마다 6 늘립니다.', effect: (level) => `신목 체력 +${level * 6}`, costs: [15, 25, 40, 60, 85] },
+  bond: { icon: '鬼', name: '깨비 맹약', copy: '모든 도깨비의 공격력을 단계마다 4% 높입니다.', effect: (level) => `도깨비 피해 +${level * 4}%`, costs: [20, 30, 45, 65, 90] }
+};
 
 class DokkaebiLuckDefense {
   constructor() {
@@ -91,11 +98,18 @@ class DokkaebiLuckDefense {
     this.pendingContract = null;
     this.activeContract = null;
     this.bossSpecialSerial = 0;
+    this.metaProgress = this.loadMetaProgress();
+    this.mods = this.createDefaultMods();
+    this.runRewarded = false;
+    this.lastShardReward = 0;
+    this.lastDangerKey = '';
+    this.dangerHapticCooldown = 0;
 
     this.assertRequiredUI();
     this.initThree();
     this.bindUI();
     this.populateCollection();
+    this.renderMetaProgress();
     this.createWorld(true);
     this.state = 'title';
     this.animate();
@@ -161,6 +175,8 @@ class DokkaebiLuckDefense {
     ui.start.addEventListener('click', () => { this.sound.unlock(); this.sound.ui(); this.startRun(); });
     ui.how.addEventListener('click', () => this.showModal(ui.howModal));
     ui.collection.addEventListener('click', () => this.showModal(ui.collectionModal));
+    ui.meta.addEventListener('click', () => this.openMetaModal());
+    ui.resultGrowth.addEventListener('click', () => this.openMetaModal());
     $$('[data-close]').forEach((button) => button.addEventListener('click', () => this.hideModal($(`#${button.dataset.close}`))));
     ui.sound.addEventListener('click', () => {
       this.sound.enabled = !this.sound.enabled;
@@ -266,6 +282,83 @@ class DokkaebiLuckDefense {
 
   haptic(pattern = 18) {
     if ('vibrate' in navigator) navigator.vibrate(pattern);
+  }
+
+  loadMetaProgress() {
+    const fallback = { shards: 0, traits: { pouch: 0, ward: 0, bond: 0 } };
+    try {
+      const stored = JSON.parse(localStorage.getItem(META_STORAGE_KEY) || 'null');
+      if (!stored || typeof stored !== 'object') return fallback;
+      const traits = {};
+      Object.keys(META_TRAITS).forEach((id) => { traits[id] = clamp(Number(stored.traits?.[id]) || 0, 0, 5); });
+      return { shards: Math.max(0, Math.floor(Number(stored.shards) || 0)), traits };
+    } catch {
+      return fallback;
+    }
+  }
+
+  saveMetaProgress() {
+    try { localStorage.setItem(META_STORAGE_KEY, JSON.stringify(this.metaProgress)); } catch {}
+  }
+
+  renderMetaProgress() {
+    if (!this.metaProgress) return;
+    const shards = Math.max(0, Math.floor(this.metaProgress.shards || 0));
+    ui.titleShards.textContent = shards.toLocaleString();
+    ui.metaShards.textContent = shards.toLocaleString();
+    ui.resultShardsTotal.textContent = shards.toLocaleString();
+    ui.metaTraitList.innerHTML = Object.entries(META_TRAITS).map(([id, trait]) => {
+      const level = clamp(this.metaProgress.traits[id] || 0, 0, 5);
+      const cost = level < 5 ? trait.costs[level] : 0;
+      const affordable = level < 5 && shards >= cost;
+      const pips = Array.from({ length: 5 }, (_, index) => `<i class="${index < level ? 'on' : ''}"></i>`).join('');
+      return `<article class="meta-trait">
+        <span>${trait.icon}</span><h3>${trait.name}</h3><p>${trait.copy}</p>
+        <div class="meta-level"><span>LEVEL ${level} / 5</span><b>${trait.effect(level)}</b></div>
+        <div class="meta-pips">${pips}</div>
+        <button class="meta-upgrade" data-meta-upgrade="${id}" ${level >= 5 || !affordable ? 'disabled' : ''}>${level >= 5 ? '최대 성장' : `혼불 ${cost} · 강화`}</button>
+      </article>`;
+    }).join('');
+    ui.metaTraitList.querySelectorAll('[data-meta-upgrade]').forEach((button) => {
+      button.addEventListener('click', () => this.upgradeMetaTrait(button.dataset.metaUpgrade));
+    });
+  }
+
+  openMetaModal() {
+    this.renderMetaProgress();
+    this.showModal(ui.metaModal);
+  }
+
+  upgradeMetaTrait(id) {
+    const trait = META_TRAITS[id];
+    if (!trait) return;
+    const level = clamp(this.metaProgress.traits[id] || 0, 0, 5);
+    if (level >= 5) return;
+    const cost = trait.costs[level];
+    if (this.metaProgress.shards < cost) { this.showToast(`혼불 조각이 ${cost - this.metaProgress.shards}개 부족합니다.`); return; }
+    this.metaProgress.shards -= cost;
+    this.metaProgress.traits[id] = level + 1;
+    this.saveMetaProgress();
+    this.renderMetaProgress();
+    this.sound.merge(Math.min(5, level + 2));
+    this.haptic([18, 18, 42]);
+    this.showToast(`${trait.name} LEVEL ${level + 1} 달성`);
+  }
+
+  calculateShardReward(won) {
+    const progress = Math.max(1, this.currentWave || 1);
+    const reward = 7 + progress * 3 + Math.floor(this.kills / 14) + this.maxRank * 3 + (won ? 24 : 0);
+    return clamp(Math.round(reward), 8, 90);
+  }
+
+  awardRunShards(won) {
+    if (this.runRewarded) return this.lastShardReward;
+    this.runRewarded = true;
+    this.lastShardReward = this.calculateShardReward(won);
+    this.metaProgress.shards += this.lastShardReward;
+    this.saveMetaProgress();
+    this.renderMetaProgress();
+    return this.lastShardReward;
   }
 
   showMission(title, copy, kicker = 'MOON MARKET ALERT', duration = 1600) {
@@ -636,6 +729,21 @@ class DokkaebiLuckDefense {
     this.wisps.push({ mesh, angle, radius, speed: rand(.08,.22), phase: rand(0, Math.PI*2), baseY: mesh.position.y });
   }
 
+  createDefaultMods(metaTraits = {}) {
+    return {
+      goldMultiplier: 1,
+      pickupRadius: 1.65,
+      moveSpeed: 1,
+      unitDamage: 1 + (metaTraits.bond || 0) * .04,
+      unitCooldown: 1,
+      heroDamage: 1,
+      skillCooldown: 1,
+      luckGain: 1,
+      coreDamage: 1,
+      summonDiscount: 0
+    };
+  }
+
   startRun() {
     this.runId = (this.runId || 0) + 1;
     const activeRunId = this.runId;
@@ -651,9 +759,10 @@ class DokkaebiLuckDefense {
     this.spawnRemaining = 0;
     this.spawnTotal = 0;
     this.spawnTimer = 0;
-    this.coreMaxHp = 100;
-    this.coreHp = 100;
-    this.gold = 70;
+    const metaTraits = this.metaProgress.traits;
+    this.coreMaxHp = 100 + (metaTraits.ward || 0) * 6;
+    this.coreHp = this.coreMaxHp;
+    this.gold = 70 + (metaTraits.pouch || 0) * 12;
     this.score = 0;
     this.kills = 0;
     this.summonCount = 0;
@@ -669,6 +778,9 @@ class DokkaebiLuckDefense {
     this.pendingContract = null;
     this.activeContract = null;
     this.cinematic = null;
+    this.runRewarded = false;
+    this.lastShardReward = 0;
+    ui.resultShards.textContent = '+0';
     clearTimeout(this.evolutionTimer);
     ui.evolution.classList.remove('show');
     ui.evolution.classList.add('hidden');
@@ -677,18 +789,7 @@ class DokkaebiLuckDefense {
     catch { this.firstMissionActive = true; }
     this.firstMissionIndex = 0;
     this.firstMissionStats = { summons: 0, merges: 0, bosses: 0 };
-    this.mods = {
-      goldMultiplier: 1,
-      pickupRadius: 1.65,
-      moveSpeed: 1,
-      unitDamage: 1,
-      unitCooldown: 1,
-      heroDamage: 1,
-      skillCooldown: 1,
-      luckGain: 1,
-      coreDamage: 1,
-      summonDiscount: 0
-    };
+    this.mods = this.createDefaultMods(metaTraits);
     this.player.group.position.set(0, 0, 6.2);
     this.player.attackCooldown = 0;
     this.player.dashCooldown = 0;
@@ -726,12 +827,14 @@ class DokkaebiLuckDefense {
     ui.bossHealth.classList.add('hidden');
     ui.killChain.classList.add('hidden');
     this.createWorld(true);
+    this.renderMetaProgress();
     ui.title.classList.add('visible');
   }
 
   showGameUI(show) {
     [ui.hud, ui.synergyPanel, ui.luckMeter, ui.unitStrip, ui.joystick, ui.actionDock].forEach((element) => element.classList.toggle('hidden', !show));
     ui.firstMissionPanel.classList.toggle('hidden', !show || !this.firstMissionActive);
+    if (!show) { ui.dangerHint.classList.remove('visible', 'urgent'); ui.dangerHint.classList.add('hidden'); }
   }
 
   getSummonCost() {
@@ -1314,7 +1417,7 @@ class DokkaebiLuckDefense {
   }
 
   updateUnits(dt) {
-    const cooldownMult = this.mods.unitCooldown * this.getWindCooldownMultiplier();
+    const cooldownMult = (this.mods?.unitCooldown ?? 1) * this.getWindCooldownMultiplier();
     this.units.forEach((unit) => {
       const config = UNIT_TYPES[unit.type];
       unit.cooldown -= dt;
@@ -1756,6 +1859,91 @@ class DokkaebiLuckDefense {
         hazard.group.traverse((object)=>{object.geometry?.dispose();if(object.material)object.material.dispose();});
         this.hazards.splice(i,1);
       }
+    }
+  }
+
+  distanceToSegmentXZ(point, start, end) {
+    const abx = end.x - start.x;
+    const abz = end.z - start.z;
+    const lengthSq = abx * abx + abz * abz || 1;
+    const t = clamp(((point.x - start.x) * abx + (point.z - start.z) * abz) / lengthSq, 0, 1);
+    const dx = point.x - (start.x + abx * t);
+    const dz = point.z - (start.z + abz * t);
+    return Math.hypot(dx, dz);
+  }
+
+  getDangerCandidate() {
+    if (!this.player || this.state !== 'playing') return null;
+    const playerPosition = this.player.group.position;
+    const candidates = [];
+    const dangerNames = {
+      curse: ['저주를 진형 밖으로 유도', '저주 장판 밖으로 이동'],
+      bossPounce: ['착지 원 밖으로 회피', '착지 충격에서 이탈'],
+      nightMarch: ['야행진 장판 밖으로', '야행진 장판 이탈'],
+      bossShock: ['충격파 범위 밖으로', '충격파 범위 이탈']
+    };
+    const severity = { curse: 2.8, nightMarch: 4.1, bossPounce: 4.7, bossShock: 5 };
+
+    this.hazards.forEach((hazard, index) => {
+      const distance = playerPosition.distanceTo(hazard.position);
+      const margin = hazard.type === 'curse' ? 1.4 : .8;
+      const inside = distance <= hazard.radius + margin;
+      if (!inside || (hazard.phase !== 'warning' && hazard.type !== 'curse')) return;
+      const direction = playerPosition.clone().sub(hazard.position).setY(0);
+      if (direction.lengthSq() < .08) {
+        direction.copy(playerPosition).setY(0);
+        if (direction.lengthSq() < .08) direction.set(this.player.facing.z, 0, -this.player.facing.x);
+      }
+      const warning = hazard.phase === 'warning' ? Math.max(0, hazard.warning) : 0;
+      const score = (severity[hazard.type] || 3) * 100 - warning * 28 - distance;
+      candidates.push({
+        key: `hazard-${hazard.type}-${index}`, direction: direction.normalize(), color: hazard.color, score,
+        label: dangerNames[hazard.type]?.[hazard.phase === 'warning' ? 0 : 1] || '위험 범위 밖으로 이동',
+        time: hazard.phase === 'warning' ? warning : 0, active: hazard.phase !== 'warning'
+      });
+    });
+
+    this.enemies.forEach((enemy, index) => {
+      if (enemy.dead || enemy.type !== 'runner' || enemy.abilityState !== 'windup') return;
+      const start = enemy.group.position;
+      const end = enemy.group.position.clone().addScaledVector(enemy.chargeDirection, Math.max(3, enemy.group.position.length() - 1.4));
+      const distance = this.distanceToSegmentXZ(playerPosition, start, end);
+      if (distance > 1.65) return;
+      const perpendicular = new THREE.Vector3(-enemy.chargeDirection.z, 0, enemy.chargeDirection.x);
+      if (playerPosition.clone().sub(start).dot(perpendicular) < 0) perpendicular.multiplyScalar(-1);
+      candidates.push({
+        key: `runner-${index}`, direction: perpendicular.normalize(), color: 0xff554b,
+        score: 430 - enemy.abilityTime * 24 - distance, label: '돌진선 옆으로 회피', time: Math.max(0, enemy.abilityTime), active: false
+      });
+    });
+
+    return candidates.sort((a, b) => b.score - a.score)[0] || null;
+  }
+
+  updateDangerHint(dt) {
+    this.dangerHapticCooldown = Math.max(0, this.dangerHapticCooldown - dt);
+    const danger = this.getDangerCandidate();
+    if (!danger || this.cinematic) {
+      ui.dangerHint.classList.remove('visible', 'urgent');
+      ui.dangerHint.classList.add('hidden');
+      this.lastDangerKey = '';
+      return;
+    }
+    const forward = tempV.set(-Math.sin(this.cameraYaw), 0, -Math.cos(this.cameraYaw));
+    const right = tempV2.set(forward.z, 0, -forward.x);
+    const angle = Math.atan2(danger.direction.dot(right), danger.direction.dot(forward)) * 180 / Math.PI;
+    ui.dangerArrow.style.transform = `rotate(${angle}deg)`;
+    ui.dangerHint.style.setProperty('--danger-color', `#${danger.color.toString(16).padStart(6, '0')}`);
+    ui.dangerLevel.textContent = danger.active ? '위험 지역' : danger.time <= .42 ? '즉시 회피' : '공격 예고';
+    ui.dangerLabel.textContent = danger.label;
+    ui.dangerTime.textContent = danger.active ? '지금 이동하세요' : `${danger.time.toFixed(1)}초 후 발동`;
+    ui.dangerHint.classList.remove('hidden');
+    ui.dangerHint.classList.add('visible');
+    ui.dangerHint.classList.toggle('urgent', danger.active || danger.time <= .42);
+    if (danger.key !== this.lastDangerKey && this.dangerHapticCooldown <= 0) {
+      this.lastDangerKey = danger.key;
+      this.dangerHapticCooldown = .75;
+      this.haptic(danger.time <= .42 ? [18, 15, 28] : 12);
     }
   }
 
@@ -2313,6 +2501,9 @@ class DokkaebiLuckDefense {
     const summary={};
     this.units.filter((unit)=>!unit.showcase).forEach((unit)=>{summary[unit.type]=Math.max(summary[unit.type]||0,unit.rank);});
     ui.resultUnits.innerHTML=Object.entries(summary).map(([type,rank])=>`<span class="result-unit">${UNIT_TYPES[type].symbol} ${UNIT_TYPES[type].name} ${'★'.repeat(rank)}</span>`).join('')||'<span class="result-unit">소환 기록 없음</span>';
+    const shardReward = this.awardRunShards(won);
+    ui.resultShards.textContent = `+${shardReward}`;
+    ui.resultShardsTotal.textContent = this.metaProgress.shards.toLocaleString();
     this.renderLeaderboard(this.getLocalScores());
     window.setTimeout(()=>this.showModal(ui.resultModal),700);
   }
@@ -2382,7 +2573,7 @@ class DokkaebiLuckDefense {
     this.elapsed+=dt;
     this.updateWorldEffects(dt);
     if(this.state==='playing') {
-      this.updatePlayer(gameDt);this.updateWave(gameDt);this.updateEnemies(gameDt);this.updateHazards(gameDt);this.updateUnits(gameDt);this.updateProjectiles(gameDt);this.updateCoins(gameDt);this.updateParticles(gameDt);this.updateKillChain(gameDt);this.updateAdaptiveQuality(dt);this.updateHUD();
+      this.updatePlayer(gameDt);this.updateWave(gameDt);this.updateEnemies(gameDt);this.updateHazards(gameDt);this.updateDangerHint(gameDt);this.updateUnits(gameDt);this.updateProjectiles(gameDt);this.updateCoins(gameDt);this.updateParticles(gameDt);this.updateKillChain(gameDt);this.updateAdaptiveQuality(dt);this.updateHUD();
     } else if(this.state==='title') {
       this.updateUnits(dt);this.updateParticles(dt);
       if(this.player){this.player.group.rotation.y+=dt*.18;this.player.group.position.y=Math.sin(this.elapsed*2.3)*.05;}
