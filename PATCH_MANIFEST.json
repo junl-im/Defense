@@ -1,0 +1,41 @@
+{
+  "project": "Dokkaebi Luck Defense 3D",
+  "baseVersion": "1.1.0",
+  "targetVersion": "1.2.0",
+  "generatedAt": "2026-07-20",
+  "patchLayout": "Copy PATCH_FILES contents into the project root after deleting DELETE_FILES.txt entries.",
+  "changedFiles": [
+    "PROJECT_HANDOFF.md",
+    "README.md",
+    "dist/assets/index-C4HEqwCr.js",
+    "dist/assets/index-yN890ryg.css",
+    "dist/index.html",
+    "dist/sw.js",
+    "index.html",
+    "package-lock.json",
+    "package.json",
+    "public/sw.js",
+    "scripts/verify-project.mjs",
+    "src/main.js",
+    "src/style.css"
+  ],
+  "deletedFiles": [
+    "APPLY_PATCH_v1.1.0.md",
+    "DELETE_FILES_v1.1.0.txt",
+    "DEPLOYMENT_TARGETS.md",
+    "GAME_DESIGN.md",
+    "PATCH_HISTORY.md",
+    "PATCH_MANIFEST_v1.1.0.json",
+    "PATCH_NOTES_v1.1.0.md",
+    "QA_CHECKLIST.md",
+    "dist/assets/index-B0uLkGTa.js",
+    "dist/assets/index-C2b85yCi.css"
+  ],
+  "verification": [
+    "npm ci",
+    "npm run verify",
+    "npm run build",
+    "GitHub Pages /Defense/ base build",
+    "patch application byte-for-byte comparison"
+  ]
+}
