@@ -1,8 +1,0 @@
-KingdomSeed v2.21.0 Candy Kingdom Massive Art QA Patch
-
-1. 이 zip의 내용을 기존 프로젝트 루트에 그대로 덮어씁니다.
-2. GitHub Desktop에서 변경 파일을 확인합니다.
-3. 필요하면 터미널에서 npm install을 한 번 실행합니다.
-4. npm run dev 또는 npm run build로 확인합니다.
-
-이 패치 zip에는 .git, node_modules, dist가 포함되지 않습니다.

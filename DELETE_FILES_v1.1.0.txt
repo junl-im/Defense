@@ -1,0 +1,5 @@
+# v1.0.0에서 v1.1.0으로 패치할 때 제거해도 되는 구버전 빌드 파일
+# 남아 있어도 게임 실행에는 영향이 없지만 정리 권장
+
+dist/assets/index-BONxBKc2.js
+dist/assets/index-BkxWqqn4.css

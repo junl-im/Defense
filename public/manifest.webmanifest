@@ -1,12 +1,13 @@
 {
-  "name": "Kingdom Seed Defense",
-  "short_name": "Kingdom Seed",
-  "description": "가로모드 웹 타워 디펜스 게임",
-  "start_url": "/Defense/",
-  "scope": "/Defense/",
-  "display": "fullscreen",
-  "orientation": "landscape",
-  "background_color": "#101820",
-  "theme_color": "#101820",
-  "icons": []
+  "name": "도깨비 운빨 수호대 3D",
+  "short_name": "깨비수호대",
+  "description": "직접 뛰어다니며 엽전을 줍고 랜덤 도깨비를 소환·합성하는 모바일 3D 운빨 디펜스",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0b0716",
+  "theme_color": "#120b24",
+  "orientation": "landscape-primary",
+  "icons": [
+    { "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
 }

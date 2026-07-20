@@ -1,1412 +1,284 @@
 :root {
-  --ks-bg: #06070b;
-  --ks-panel: rgba(20, 16, 14, 0.92);
-  --ks-gold: #f1c46a;
-  --ks-gold-soft: rgba(241, 196, 106, 0.45);
-  --ks-blue: #63d7ff;
-  --ks-danger: #ff6a58;
-  --ks-safe-top: env(safe-area-inset-top, 0px);
-  --ks-safe-bottom: env(safe-area-inset-bottom, 0px);
-  --ks-safe-left: env(safe-area-inset-left, 0px);
-  --ks-safe-right: env(safe-area-inset-right, 0px);
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color-scheme: dark;
-}
-
-html, body, #app, #game, #game-root, canvas {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-}
-
-html, body {
-  overflow: hidden;
-  overscroll-behavior: none;
-  background:
-    radial-gradient(circle at 50% 18%, rgba(80, 66, 48, 0.32), transparent 36%),
-    radial-gradient(circle at 12% 80%, rgba(34, 73, 90, 0.25), transparent 34%),
-    linear-gradient(180deg, #090b12 0%, #050507 100%);
-  -webkit-touch-callout: none;
-  user-select: none;
-  touch-action: none;
-}
-
-canvas {
-  display: block;
-  image-rendering: auto;
-  filter: saturate(1.06) contrast(1.04);
-}
-
-/* PC: never rotate, never force fullscreen layout. Keep a premium letterbox shell. */
-@media (hover: hover) and (pointer: fine) {
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    background:
-      linear-gradient(90deg, rgba(0,0,0,.36), transparent 18%, transparent 82%, rgba(0,0,0,.36)),
-      linear-gradient(180deg, rgba(255,230,160,.05), transparent 20%, transparent 78%, rgba(0,0,0,.25));
-    z-index: 999998;
-  }
-}
-
-/* Mobile safe area and landscape shell helpers. */
-@media (hover: none) and (pointer: coarse) {
-  body {
-    padding-top: var(--ks-safe-top);
-    padding-bottom: var(--ks-safe-bottom);
-    padding-left: var(--ks-safe-left);
-    padding-right: var(--ks-safe-right);
-  }
-}
-
-.kingdom-toast,
-.kingdom-modal,
-.kingdom-dock,
-.kingdom-floating-panel {
-  backdrop-filter: blur(8px) saturate(1.2);
-  -webkit-backdrop-filter: blur(8px) saturate(1.2);
-  border: 1px solid var(--ks-gold-soft);
-  box-shadow:
-    0 18px 50px rgba(0, 0, 0, 0.55),
-    inset 0 1px 0 rgba(255, 232, 170, 0.22),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.45);
-}
-
-.kingdom-button {
-  position: relative;
-  border-radius: 14px;
-  background: linear-gradient(180deg, #7d5228 0%, #3a2112 100%);
-  border: 1px solid rgba(255, 222, 142, 0.6);
-  color: #ffe8ac;
-  text-shadow: 0 2px 2px #000;
-  box-shadow: 0 8px 0 #1d1009, 0 14px 28px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.25);
-}
-
-.kingdom-button:active {
-  transform: translateY(3px) scale(.985);
-  box-shadow: 0 4px 0 #1d1009, 0 8px 18px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.18);
-}
-
-.kingdom-button[disabled], .kingdom-disabled {
-  filter: grayscale(.6) brightness(.65);
-  opacity: .72;
-}
-
-.kingdom-readable-number {
-  font-variant-numeric: tabular-nums;
-  letter-spacing: .02em;
-}
-
-/* v4.2 premium interaction layer */
-html.is-desktop #game {
-  transform: none !important;
-  width: 100vw !important;
-  height: 100dvh !important;
-  left: 0 !important;
-  top: 0 !important;
-}
-
-html.is-desktop .shell-start-gate {
-  display: none !important;
-}
-
-.ks-dom-click-ripple {
-  position: fixed;
-  width: 14px;
-  height: 14px;
-  margin-left: -7px;
-  margin-top: -7px;
-  border-radius: 999px;
-  pointer-events: none;
-  z-index: 10050;
-  border: 2px solid rgba(255, 238, 177, 0.88);
-  background: radial-gradient(circle, rgba(255, 224, 128, 0.34), rgba(255, 224, 128, 0.02) 64%);
-  box-shadow: 0 0 16px rgba(255, 216, 128, 0.46);
-  animation: ksRippleV42 420ms cubic-bezier(.2,.85,.2,1) forwards;
-}
-
-@keyframes ksRippleV42 {
-  0% { transform: scale(0.42); opacity: 1; }
-  100% { transform: scale(4.2); opacity: 0; }
-}
-
-.ks-game-tap-pulse canvas {
-  filter: brightness(1.06) saturate(1.04);
-}
-
-.ks-emergency-save-flash::after {
-  content: '자동 보호 저장';
-  position: fixed;
-  right: max(16px, env(safe-area-inset-right));
-  top: max(14px, env(safe-area-inset-top));
-  z-index: 10060;
-  padding: 9px 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 238, 177, 0.52);
-  background: linear-gradient(180deg, rgba(33, 46, 64, .94), rgba(8, 13, 23, .96));
-  color: #fff4c2;
-  font-size: 13px;
-  font-weight: 900;
-  letter-spacing: .03em;
-  box-shadow: 0 10px 26px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.14);
-  animation: ksSaveFlashV42 220ms ease-out forwards;
-}
-
-@keyframes ksSaveFlashV42 {
-  0% { transform: translateY(-8px); opacity: 0; }
-  100% { transform: translateY(0); opacity: 1; }
-}
-
-.shell-exit-panel {
-  border-color: rgba(255, 210, 116, 0.72);
-  background:
-    radial-gradient(circle at 50% 0%, rgba(255, 199, 101, .13), transparent 44%),
-    linear-gradient(180deg, rgba(27, 35, 51, .98), rgba(8, 12, 19, .98));
-}
-
-
-/* v4.6 first-load and browser-guard hardening */
-#game {
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100dvh;
-  min-height: 100dvh;
-  overflow: hidden;
-}
-
-.shell-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 10000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
-  box-sizing: border-box;
-  color: #fff;
-  background: radial-gradient(circle at 50% 24%, rgba(101,165,255,.28), rgba(6,14,31,.86) 58%, rgba(3,7,16,.94));
-}
-
-.shell-overlay.hidden { display: none !important; }
-.shell-start-gate { cursor: pointer; }
-.shell-start-card,
-.shell-panel {
-  width: min(520px, 92vw);
-  border: 2px solid rgba(255,218,123,.88);
-  border-radius: 28px;
-  padding: 26px 24px;
-  text-align: center;
-  background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(220,235,255,.92));
-  color: #244a86;
-  box-shadow: 0 30px 90px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.9);
-}
-.shell-title-mark { font-size: 34px; line-height: 1; font-weight: 1000; letter-spacing: .04em; color: #2d5bab; text-shadow: 0 2px 0 #fff, 0 5px 16px rgba(37,82,168,.28); }
-.shell-title-sword { width: 72%; height: 3px; margin: 14px auto 0; background: linear-gradient(90deg, transparent, #e7b94e, transparent); }
-.shell-start-card h1, .shell-panel h2 { margin: 14px 0 7px; font-size: 28px; color: #193e7d; }
-.shell-start-card p, .shell-panel p { margin: 0; font-weight: 800; color: #5e789f; }
-.shell-tap-rune { display: inline-flex; margin-top: 20px; width: 82px; height: 82px; align-items: center; justify-content: center; border-radius: 999px; color: #fff; font-weight: 1000; background: linear-gradient(180deg, #5fa1ff, #255ab5); border: 3px solid #ffd979; box-shadow: 0 12px 34px rgba(27,82,180,.34), inset 0 1px 0 rgba(255,255,255,.46); animation: ksTapPulseV46 1.25s ease-in-out infinite; }
-.shell-row { display: flex; gap: 12px; justify-content: center; margin-top: 20px; }
-.shell-row button { appearance: none; border: 0; border-radius: 16px; padding: 13px 24px; color: #fff; font-weight: 1000; font-size: 16px; }
-.shell-secondary { background: linear-gradient(180deg, #5d94e6, #2658b5); }
-.shell-danger { background: linear-gradient(180deg, #ff8d86, #b43142); }
-.start-gate-out { opacity: 0; transform: scale(1.03); transition: opacity 160ms ease, transform 160ms ease; }
-@keyframes ksTapPulseV46 { 0%,100% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.07); filter: brightness(1.12); } }
-
-
-/* v4.7 stability and safe-area polish */
-html, body, #game {
-  overscroll-behavior: none;
-  touch-action: manipulation;
-  background: #081832;
-}
-canvas {
-  image-rendering: auto;
-  -webkit-tap-highlight-color: transparent;
-}
-.is-mobile-webview #game {
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
-  box-sizing: border-box;
-}
-.shell-overlay.fading {
-  opacity: 0;
-  transform: scale(1.02);
-  pointer-events: none;
-}
-
-
-/* v4.8 compact login polish */
-:root {
-  --ks-v48-ui-scale: 0.96;
-}
-#game canvas {
-  image-rendering: auto;
-  filter: saturate(1.04) contrast(1.015);
-}
-html.is-desktop #game canvas {
-  filter: saturate(1.02) contrast(1.01);
-}
-html.is-mobile-webview .shell-start-card,
-html.is-mobile-webview .shell-panel {
-  transform: scale(.94);
-  transform-origin: center center;
-}
-
-
-/* Premium visual trim: compact lobby and cleaner safe shell */
-.shell-start-card,
-.shell-panel {
-  width: min(430px, 88vw);
-  border-radius: 22px;
-  padding: 20px 18px;
-}
-.shell-title-mark { font-size: 26px; }
-.shell-start-card h1, .shell-panel h2 { font-size: 22px; margin: 10px 0 6px; }
-.shell-start-card p, .shell-panel p { font-size: 13px; }
-.shell-tap-rune { width: 64px; height: 64px; margin-top: 14px; }
-.shell-row button { border-radius: 13px; padding: 10px 18px; font-size: 14px; }
-canvas { filter: saturate(1.05) contrast(1.035) brightness(1.01); }
-@media (hover: hover) and (pointer: fine) {
-  body::after {
-    content: "";
-    position: fixed;
-    inset: 10px;
-    border-radius: 18px;
-    pointer-events: none;
-    box-shadow: inset 0 0 0 1px rgba(255, 224, 138, .08), inset 0 0 80px rgba(20, 52, 110, .10);
-    z-index: 999997;
-  }
-}
-
-
-/* v5.1 clean visual stack: prevent duplicate-looking overlays from old UI screenshots. */
-#game canvas { display: block; background: #8ecbff; }
-html.is-desktop #game, html.is-desktop body { background: #07162f; }
-.kingdom-seed-debug-version, .premium-art-pass-label { display: none !important; }
-
-/* v1.8 mobile viewport fix: never show the 16:9 game as a tiny strip in portrait.
-   The game canvas is rotated into a landscape-fit surface on phones, while Phaser
-   still uses the same 960x540 coordinate system for art/hit-zone alignment. */
-@media (hover: none) and (pointer: coarse) and (orientation: portrait) {
-  html, body {
-    width: 100dvw;
-    height: 100dvh;
-    overflow: hidden;
-    background: #061833;
-  }
-
-  #game {
-    position: fixed !important;
-    top: 0 !important;
-    left: 100dvw !important;
-    width: 100dvh !important;
-    height: 100dvw !important;
-    min-width: 100dvh !important;
-    min-height: 100dvw !important;
-    padding: 0 !important;
-    transform: rotate(90deg) !important;
-    transform-origin: top left !important;
-    overflow: hidden !important;
-  }
-
-  #game canvas {
-    width: 100% !important;
-    height: 100% !important;
-    max-width: none !important;
-    max-height: none !important;
-    object-fit: contain;
-  }
-
-  .shell-overlay:not(.hidden) {
-    writing-mode: horizontal-tb;
-  }
-}
-
-@media (hover: none) and (pointer: coarse) and (orientation: landscape) {
-  #game {
-    position: fixed !important;
-    inset: 0 !important;
-    width: 100dvw !important;
-    height: 100dvh !important;
-    min-height: 100dvh !important;
-    padding: 0 !important;
-    transform: none !important;
-  }
-}
-
-/* v1.9 mobile viewport hardening
-   Keep Phaser's 960x540 coordinate system, but make the canvas visually fill the phone viewport.
-   This replaces the v1.8 left:100dvw rotation that could leave the game looking tiny on some mobile browsers. */
-@media (hover: none) and (pointer: coarse) and (orientation: portrait) {
-  html, body {
-    position: fixed;
-    inset: 0;
-    width: 100dvw !important;
-    height: 100dvh !important;
-    min-height: 100dvh !important;
-    overflow: hidden !important;
-    background: #061833 !important;
-  }
-
-  #game {
-    position: fixed !important;
-    left: 50% !important;
-    top: 50% !important;
-    width: 100dvh !important;
-    height: 100dvw !important;
-    min-width: 100dvh !important;
-    min-height: 100dvw !important;
-    padding: 0 !important;
-    transform-origin: center center !important;
-    transform: translate(-50%, -50%) rotate(90deg) !important;
-    overflow: hidden !important;
-    background: #061833 !important;
-  }
-
-  #game canvas {
-    width: 100% !important;
-    height: 100% !important;
-    min-width: 100% !important;
-    min-height: 100% !important;
-    max-width: none !important;
-    max-height: none !important;
-    object-fit: fill !important;
-  }
-}
-
-@media (hover: none) and (pointer: coarse) and (orientation: landscape) {
-  html, body {
-    position: fixed;
-    inset: 0;
-    width: 100dvw !important;
-    height: 100dvh !important;
-    overflow: hidden !important;
-  }
-
-  #game {
-    position: fixed !important;
-    inset: 0 !important;
-    width: 100dvw !important;
-    height: 100dvh !important;
-    min-width: 100dvw !important;
-    min-height: 100dvh !important;
-    padding: 0 !important;
-    transform: none !important;
-    overflow: hidden !important;
-  }
-
-  #game canvas {
-    width: 100% !important;
-    height: 100% !important;
-    max-width: none !important;
-    max-height: none !important;
-    object-fit: fill !important;
-  }
-}
-
-html.ks-hit-debug canvas {
-  outline: 2px solid rgba(255, 226, 120, .72);
-  outline-offset: -2px;
-}
-
-/* v2.0 viewport QA: final mobile canvas sizing override.
-   Uses visualViewport CSS variables injected by WebShell so Android/iOS address-bar
-   changes do not shrink the 16:9 game into a tiny strip. */
-:root {
-  --ks-vw-px: 100vw;
-  --ks-vh-px: 100dvh;
-  --ks-game-scale: 1;
-}
-
-#game canvas {
-  position: absolute !important;
-  inset: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  min-width: 100% !important;
-  min-height: 100% !important;
-  max-width: none !important;
-  max-height: none !important;
-}
-
-@media (hover: none) and (pointer: coarse) and (orientation: portrait) {
-  html, body {
-    width: var(--ks-vw-px) !important;
-    height: var(--ks-vh-px) !important;
-    min-width: var(--ks-vw-px) !important;
-    min-height: var(--ks-vh-px) !important;
-  }
-
-  #game {
-    left: 50% !important;
-    top: 50% !important;
-    width: var(--ks-vh-px) !important;
-    height: var(--ks-vw-px) !important;
-    min-width: var(--ks-vh-px) !important;
-    min-height: var(--ks-vw-px) !important;
-    max-width: none !important;
-    max-height: none !important;
-    transform-origin: center center !important;
-    transform: translate(-50%, -50%) rotate(90deg) scale(var(--ks-game-scale)) !important;
-    background: #061833 !important;
-  }
-
-  #game canvas {
-    object-fit: fill !important;
-    transform: translateZ(0);
-  }
-}
-
-@media (hover: none) and (pointer: coarse) and (orientation: landscape) {
-  html, body {
-    width: var(--ks-vw-px) !important;
-    height: var(--ks-vh-px) !important;
-    min-width: var(--ks-vw-px) !important;
-    min-height: var(--ks-vh-px) !important;
-  }
-
-  #game {
-    inset: 0 !important;
-    width: var(--ks-vw-px) !important;
-    height: var(--ks-vh-px) !important;
-    min-width: var(--ks-vw-px) !important;
-    min-height: var(--ks-vh-px) !important;
-    max-width: none !important;
-    max-height: none !important;
-    transform: none !important;
-  }
-
-  #game canvas { object-fit: fill !important; }
-}
-
-/* v2.1 viewport and hit-zone QA
-   Use a true 16:9 game surface computed from visualViewport. This prevents the
-   rotated mobile canvas from becoming a tiny strip while avoiding stretched UI. */
-:root {
-  --ks-game-w-px: min(100vw, calc(100dvh * 16 / 9));
-  --ks-game-h-px: min(100dvh, calc(100vw * 9 / 16));
-}
-
-@media (hover: none) and (pointer: coarse) and (orientation: portrait) {
-  #game {
-    left: 50% !important;
-    top: 50% !important;
-    width: var(--ks-game-w-px) !important;
-    height: var(--ks-game-h-px) !important;
-    min-width: var(--ks-game-w-px) !important;
-    min-height: var(--ks-game-h-px) !important;
-    transform: translate(-50%, -50%) rotate(90deg) scale(var(--ks-game-scale)) !important;
-    transform-origin: center center !important;
-    border-radius: 0 !important;
-  }
-
-  #game canvas {
-    object-fit: fill !important;
-    width: 100% !important;
-    height: 100% !important;
-  }
-}
-
-@media (hover: none) and (pointer: coarse) and (orientation: landscape) {
-  #game {
-    left: 50% !important;
-    top: 50% !important;
-    inset: auto !important;
-    width: var(--ks-game-w-px) !important;
-    height: var(--ks-game-h-px) !important;
-    min-width: var(--ks-game-w-px) !important;
-    min-height: var(--ks-game-h-px) !important;
-    transform: translate(-50%, -50%) !important;
-    transform-origin: center center !important;
-  }
-
-  #game canvas {
-    object-fit: fill !important;
-    width: 100% !important;
-    height: 100% !important;
-  }
-}
-
-html.ks-hit-debug #game::after {
-  content: 'HIT ZONE QA';
-  position: fixed;
-  left: max(12px, env(safe-area-inset-left));
-  bottom: max(12px, env(safe-area-inset-bottom));
-  z-index: 10040;
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 225, 128, .72);
-  background: rgba(6, 16, 34, .78);
-  color: #fff4c2;
-  font-size: 11px;
-  font-weight: 1000;
-  pointer-events: none;
-}
-
-/* v2.2 mobile viewport QA
-   Portrait phones default to full rotated-viewport fill so the game no longer appears as a small strip
-   when fullscreen/orientation lock is blocked by the browser. Add ?fit=contain to compare the old safe 16:9 fit. */
-html.ks-portrait-fill #game {
-  background: #061833 !important;
-}
-@media (hover: none) and (pointer: coarse) and (orientation: portrait) {
-  html.ks-portrait-fill #game {
-    left: 50% !important;
-    top: 50% !important;
-    width: var(--ks-game-w-px) !important;
-    height: var(--ks-game-h-px) !important;
-    min-width: var(--ks-game-w-px) !important;
-    min-height: var(--ks-game-h-px) !important;
-    transform: translate(-50%, -50%) rotate(90deg) scale(var(--ks-game-scale)) !important;
-    transform-origin: center center !important;
-  }
-  html.ks-portrait-fill #game canvas {
-    object-fit: fill !important;
-    image-rendering: auto !important;
-  }
-}
-html.ks-hit-debug.ks-portrait-fill #game::before {
-  content: 'PORTRAIT FILL · ?fit=contain';
-  position: fixed;
-  right: max(12px, env(safe-area-inset-right));
-  bottom: max(12px, env(safe-area-inset-bottom));
-  z-index: 10041;
-  padding: 6px 10px;
-  border-radius: 999px;
-  background: rgba(8, 20, 44, .78);
-  border: 1px solid rgba(124, 232, 255, .62);
-  color: #eaf8ff;
-  font-size: 10px;
-  font-weight: 1000;
-  pointer-events: none;
-}
-
-/* v2.3 mobile-first readability pass: compact start gate and prevent oversized dev overlays. */
-.shell-start-card,
-.shell-panel {
-  width: min(340px, 84vw) !important;
-  border-radius: 22px !important;
-  padding: 15px 14px !important;
-}
-.shell-title-mark { font-size: 21px !important; }
-.shell-start-card h1, .shell-panel h2 { font-size: 18px !important; margin: 10px 0 5px !important; }
-.shell-start-card p, .shell-panel p { font-size: 12px !important; line-height: 1.35 !important; }
-.shell-tap-rune { width: 54px !important; height: 54px !important; margin-top: 11px !important; font-size: 13px !important; }
-.shell-loading-text { margin-top: 10px !important; font-size: 11px !important; }
-html.ks-hit-debug #game::after,
-html.ks-hit-debug.ks-portrait-fill #game::before {
-  font-size: 9px !important;
-  padding: 4px 8px !important;
-}
-
-/* v2.4 final mobile shell/layout override: compact start gate, consistent rotated surface, small debug labels. */
-:root {
-  --ks-shell-card-scale: 0.86;
-}
-html.ks-compact-shell .shell-overlay {
-  padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left)) !important;
-}
-html.ks-compact-shell .shell-start-card,
-html.ks-compact-shell .shell-panel {
-  width: min(300px, 78vw) !important;
-  max-height: calc(100svh - 24px) !important;
-  border-radius: 18px !important;
-  padding: 12px 12px !important;
-  transform: scale(var(--ks-shell-card-scale)) !important;
-  transform-origin: center center !important;
-}
-html.ks-compact-shell .shell-title-mark { font-size: 18px !important; letter-spacing: .03em !important; }
-html.ks-compact-shell .shell-title-sword { margin-top: 7px !important; height: 2px !important; }
-html.ks-compact-shell .shell-start-card h1,
-html.ks-compact-shell .shell-panel h2 { font-size: 16px !important; margin: 7px 0 4px !important; }
-html.ks-compact-shell .shell-start-card p,
-html.ks-compact-shell .shell-panel p { font-size: 11px !important; line-height: 1.25 !important; }
-html.ks-compact-shell .shell-tap-rune { width: 48px !important; height: 48px !important; margin-top: 9px !important; font-size: 12px !important; border-width: 2px !important; }
-html.ks-compact-shell .shell-loading-text { margin-top: 8px !important; font-size: 10px !important; }
-@media (hover: none) and (pointer: coarse) and (orientation: portrait) {
-  html.ks-portrait-fill #game {
-    left: 50% !important;
-    top: 50% !important;
-    width: var(--ks-game-w-px) !important;
-    height: var(--ks-game-h-px) !important;
-    min-width: var(--ks-game-w-px) !important;
-    min-height: var(--ks-game-h-px) !important;
-    max-width: none !important;
-    max-height: none !important;
-    transform: translate(-50%, -50%) rotate(90deg) scale(var(--ks-game-scale)) !important;
-    transform-origin: center center !important;
-  }
-}
-html.ks-hit-debug #game::after,
-html.ks-hit-debug.ks-portrait-fill #game::before {
-  font-size: 8px !important;
-  padding: 3px 7px !important;
-  opacity: .82 !important;
-}
-
-/* v2.7 runtime performance fallback: when the battle auto-drops quality, avoid extra CSS post-processing cost. */
-html.ks-quality-low #game canvas {
-  filter: none !important;
-}
-html.ks-quality-medium #game canvas {
-  filter: saturate(1.02) contrast(1.01) !important;
-}
-@media (hover: none) and (pointer: coarse) and (max-height: 430px) {
-  html.ks-compact-shell .shell-start-card,
-  html.ks-compact-shell .shell-panel {
-    transform: scale(.78) !important;
-  }
-}
-
-/* v2.8 mobile runtime polish: keep launch overlay light and avoid expensive filters on low-end devices. */
-html.ks-quality-low .shell-overlay,
-html.ks-quality-medium .shell-overlay {
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-html.ks-quality-low .ks-dom-click-ripple {
-  display: none !important;
-}
-@media (hover: none) and (pointer: coarse) {
-  .shell-overlay {
-    background: radial-gradient(circle at 50% 20%, rgba(78, 145, 255, .20), rgba(6, 14, 31, .82) 58%, rgba(3, 7, 16, .94)) !important;
-  }
-  html.ks-compact-shell .shell-start-card,
-  html.ks-compact-shell .shell-panel {
-    width: min(286px, 76vw) !important;
-    padding: 10px 11px !important;
-  }
-}
-
-/* v2.10 mobile design polish: lighter launch shell, tighter readable text, no oversized white card. */
-.shell-overlay {
-  background:
-    radial-gradient(circle at 50% 18%, rgba(94, 170, 255, .22), transparent 36%),
-    radial-gradient(circle at 50% 72%, rgba(255, 214, 126, .10), transparent 42%),
-    linear-gradient(180deg, rgba(5, 13, 29, .92), rgba(3, 6, 14, .96)) !important;
-}
-.shell-start-card,
-.shell-panel {
-  width: min(282px, 74vw) !important;
-  border-radius: 18px !important;
-  padding: 12px 11px !important;
-  border: 1px solid rgba(255, 220, 126, .74) !important;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(116, 210, 255, .16), transparent 42%),
-    linear-gradient(180deg, rgba(31, 50, 79, .94), rgba(7, 15, 33, .96)) !important;
-  color: #f7fbff !important;
-  box-shadow:
-    0 18px 54px rgba(0,0,0,.48),
-    inset 0 1px 0 rgba(255,255,255,.16),
-    inset 0 -1px 0 rgba(0,0,0,.35) !important;
-}
-.shell-title-mark {
-  font-size: 18px !important;
-  color: #fff0b8 !important;
-  text-shadow: 0 2px 0 rgba(0,0,0,.45), 0 0 18px rgba(255, 220, 126, .20) !important;
-}
-.shell-title-sword { width: 58% !important; margin-top: 7px !important; opacity: .86 !important; }
-.shell-start-card h1,
-.shell-panel h2 { font-size: 15px !important; color: #eaf6ff !important; margin: 8px 0 4px !important; }
-.shell-start-card p,
-.shell-panel p { font-size: 10px !important; line-height: 1.25 !important; color: #bcd7ff !important; }
-.shell-tap-rune {
-  width: 44px !important;
-  height: 44px !important;
-  margin-top: 9px !important;
-  font-size: 11px !important;
-  border-width: 2px !important;
-  background: linear-gradient(180deg, #5aa6ff, #214f9e) !important;
-  box-shadow: 0 10px 28px rgba(29, 93, 190, .34), inset 0 1px 0 rgba(255,255,255,.28) !important;
-}
-.shell-loading-text { margin-top: 7px !important; font-size: 9px !important; color: #fff0b8 !important; }
-@media (hover: none) and (pointer: coarse) and (max-height: 430px) {
-  .shell-start-card,
-  .shell-panel { transform: scale(.74) !important; }
-}
-html.ks-quality-low #game canvas,
-html.ks-quality-medium #game canvas { filter: none !important; }
-
-
-/* v2.11 mobile design QA: smaller launch shell, tighter canvas fit, cheaper post-processing. */
-.shell-start-card,
-.shell-panel {
-  width: min(268px, 72vw) !important;
-  border-radius: 16px !important;
-  padding: 10px 10px !important;
-}
-.shell-title-mark { font-size: 17px !important; }
-.shell-start-card h1,
-.shell-panel h2 { font-size: 14px !important; margin: 7px 0 3px !important; }
-.shell-start-card p,
-.shell-panel p { font-size: 9px !important; line-height: 1.22 !important; }
-.shell-tap-rune {
-  width: 40px !important;
-  height: 40px !important;
-  margin-top: 8px !important;
-  font-size: 10px !important;
-}
-.shell-loading-text { margin-top: 6px !important; font-size: 8px !important; }
-@media (hover: none) and (pointer: coarse) and (max-height: 430px) {
-  .shell-start-card,
-  .shell-panel { transform: scale(.68) !important; }
-}
-@media (hover: none) and (pointer: coarse) {
-  #game canvas {
-    filter: none !important;
-  }
-}
-html.ks-hit-debug .ks-dom-click-ripple { display: none !important; }
-
-
-/* v2.12 mobile-first polish: smaller shell, sharper touch affordances, less GPU overdraw. */
-.shell-start-card,
-.shell-panel {
-  width: min(246px, 68vw) !important;
-  padding: 8px 9px !important;
-  border-radius: 14px !important;
-  backdrop-filter: none !important;
-}
-.shell-title-mark { font-size: 15px !important; letter-spacing: .08em !important; }
-.shell-start-card h1,
-.shell-panel h2 { font-size: 13px !important; margin: 6px 0 2px !important; }
-.shell-start-card p,
-.shell-panel p { font-size: 8px !important; line-height: 1.16 !important; }
-.shell-tap-rune { width: 34px !important; height: 34px !important; margin-top: 6px !important; font-size: 9px !important; }
-.shell-loading-text { font-size: 7px !important; opacity: .78 !important; }
-@media (hover: none) and (pointer: coarse) and (max-height: 430px) {
-  .shell-start-card, .shell-panel { transform: scale(.62) !important; }
-}
-html.ks-quality-low .shell-overlay,
-html.ks-quality-medium .shell-overlay { backdrop-filter: none !important; }
-
-
-/* v2.13 polish: compact mobile shell, no expensive blur on phones, tighter text cadence. */
-:root { --ks-mobile-ui-scale: .94; }
-.shell-start-card,
-.shell-panel {
-  width: min(232px, 64vw) !important;
-  padding: 7px 8px !important;
-  border-radius: 13px !important;
-}
-.shell-title-mark { font-size: 14px !important; }
-.shell-start-card h1, .shell-panel h2 { font-size: 12px !important; }
-.shell-tap-rune { width: 31px !important; height: 31px !important; font-size: 8px !important; }
-@media (hover: none) and (pointer: coarse) {
-  #game-container canvas { image-rendering: auto; }
-  .shell-overlay { backdrop-filter: none !important; }
-}
-@media (hover: none) and (pointer: coarse) and (max-height: 390px) {
-  .shell-start-card, .shell-panel { transform: scale(.56) !important; }
-}
-
-/* v2.14 design QA: keep the mobile launch card compact, centered, and cheap to render. */
-:root { --ks-mobile-ui-scale: .92; }
-.shell-start-card,
-.shell-panel {
-  width: min(224px, 62vw) !important;
-  padding: 7px 8px !important;
-  border-radius: 12px !important;
-  background: linear-gradient(180deg, rgba(7, 24, 52, .92), rgba(5, 13, 31, .94)) !important;
-  box-shadow: 0 12px 34px rgba(0, 9, 26, .38), inset 0 1px 0 rgba(255,255,255,.18) !important;
-}
-.shell-title-mark { font-size: 13px !important; letter-spacing: .07em !important; }
-.shell-start-card h1, .shell-panel h2 { font-size: 11px !important; margin: 4px 0 2px !important; }
-.shell-start-card p, .shell-panel p { font-size: 7.5px !important; line-height: 1.12 !important; }
-.shell-tap-rune { width: 29px !important; height: 29px !important; margin-top: 5px !important; font-size: 7.5px !important; }
-.shell-loading-text { margin-top: 5px !important; font-size: 7px !important; color: #f8ddb1 !important; }
-@media (hover: none) and (pointer: coarse) and (max-height: 390px) {
-  .shell-start-card, .shell-panel { transform: scale(.54) !important; }
-}
-@media (hover: none) and (pointer: coarse) and (max-width: 430px) {
-  .shell-overlay { padding: 6px !important; }
-}
-html.ks-quality-low .shell-start-card,
-html.ks-quality-medium .shell-start-card { backdrop-filter: none !important; }
-
-
-/* v2.14.1 boot hotfix: v2.14 made the mobile launch card too dark/tiny, which looked like a black screen on phones. */
-html body .shell-overlay {
-  background: radial-gradient(circle at 50% 22%, rgba(92, 177, 255, .36), rgba(7, 18, 44, .88) 58%, rgba(2, 5, 13, .96)) !important;
-}
-html body .shell-start-card,
-html body .shell-panel {
-  width: min(356px, 86vw) !important;
-  min-width: min(300px, 82vw) !important;
-  padding: 18px 16px !important;
-  border-radius: 22px !important;
-  border-color: rgba(255, 219, 132, .94) !important;
-  background: radial-gradient(circle at 50% 0%, rgba(125, 214, 255, .22), transparent 46%), linear-gradient(180deg, rgba(32, 51, 84, .98), rgba(7, 16, 39, .985)) !important;
-  box-shadow: 0 24px 70px rgba(0, 0, 0, .48), 0 0 0 1px rgba(255,255,255,.08), inset 0 1px 0 rgba(255,255,255,.2) !important;
-}
-html body .shell-title-mark { font-size: 20px !important; }
-html body .shell-start-card h1,
-html body .shell-panel h2 { font-size: 18px !important; margin: 11px 0 5px !important; }
-html body .shell-start-card p,
-html body .shell-panel p { font-size: 12px !important; line-height: 1.28 !important; color: #c9ddff !important; }
-html body .shell-tap-rune { width: 58px !important; height: 58px !important; margin-top: 12px !important; font-size: 12px !important; }
-html body .shell-loading-text { font-size: 10px !important; margin-top: 10px !important; color: #fff0b8 !important; }
-@media (hover: none) and (pointer: coarse) and (max-height: 390px) {
-  html body .shell-start-card, html body .shell-panel { transform: scale(.82) !important; }
-}
-.shell-boot-error {
-  position: fixed;
-  left: 50%;
-  bottom: max(12px, env(safe-area-inset-bottom));
-  transform: translateX(-50%);
-  z-index: 10020;
-  width: min(520px, 92vw);
-  padding: 12px 14px;
-  border-radius: 16px;
-  border: 1px solid rgba(255,130,105,.82);
-  background: linear-gradient(180deg, rgba(43,17,20,.96), rgba(13,7,11,.98));
-  color: #ffe8dc;
-  font-weight: 900;
-  font-size: 12px;
-  line-height: 1.35;
-  box-shadow: 0 16px 42px rgba(0,0,0,.44);
-}
-.shell-boot-error button {
-  margin-top: 8px; width: 100%; border: 0; border-radius: 12px; padding: 9px 12px;
-  color: #261008; background: linear-gradient(180deg, #ffe09a, #f4a83b); font-weight: 1000;
-}
-
-
-/* v2.15 design QA: keep the launch card visible after the v2.14.1 rescue, but trim mobile clutter. */
-html body .shell-start-card,
-html body .shell-panel {
-  width: min(334px, 84vw) !important;
-  min-width: min(286px, 80vw) !important;
-  padding: 15px 14px !important;
-  border-radius: 20px !important;
-  background: radial-gradient(circle at 50% 0%, rgba(126, 214, 255, .20), transparent 42%), linear-gradient(180deg, rgba(27, 48, 84, .98), rgba(6, 15, 36, .985)) !important;
-}
-html body .shell-title-mark { font-size: 19px !important; }
-html body .shell-start-card h1,
-html body .shell-panel h2 { font-size: 17px !important; margin: 9px 0 4px !important; }
-html body .shell-start-card p,
-html body .shell-panel p { font-size: 11px !important; line-height: 1.24 !important; }
-html body .shell-tap-rune { width: 54px !important; height: 54px !important; margin-top: 10px !important; font-size: 11px !important; }
-html body .shell-loading-text { font-size: 9px !important; margin-top: 8px !important; }
-@media (hover: none) and (pointer: coarse) and (max-height: 390px) {
-  html body .shell-start-card, html body .shell-panel { transform: scale(.78) !important; }
-}
-html.ks-hit-debug .shell-start-card { outline: 1px dashed rgba(255, 226, 120, .58); }
-
-/* v2.31 mobile engine safe mode: favor stable frame time over ornamental GPU work. */
-html.ks-engine-safe canvas,
-html.ks-network-slow canvas {
-  filter: none !important;
-}
-html.ks-engine-safe .shell-tap-rune,
-html.ks-network-slow .shell-tap-rune {
-  animation: none !important;
-  transform: none !important;
-}
-html.ks-engine-safe .shell-start-card,
-html.ks-engine-safe .shell-panel {
-  width: min(520px, 94vw) !important;
-  padding: 24px 22px !important;
-  transform: scale(var(--ks-runtime-ui-scale, 1.18)) !important;
-  transform-origin: center center !important;
-}
-html.ks-engine-safe .shell-title-mark { font-size: 30px !important; }
-html.ks-engine-safe .shell-start-card h1,
-html.ks-engine-safe .shell-panel h2 { font-size: 27px !important; }
-html.ks-engine-safe .shell-start-card p,
-html.ks-engine-safe .shell-panel p { font-size: 15px !important; }
-html.ks-engine-safe .shell-tap-rune {
-  width: 84px !important;
-  height: 84px !important;
-  font-size: 18px !important;
-}
-html.ks-engine-safe .ks-dom-click-ripple,
-html.ks-engine-safe .premium-art-pass-label {
-  display: none !important;
-}
-@media (hover: none) and (pointer: coarse) {
-  html.ks-engine-safe body::before,
-  html.ks-engine-safe body::after {
-    display: none !important;
-  }
-}
-
-/* v2.31 runtime lockdown and phone readability pass. */
-html.ks-runtime-lockdown,
-html.ks-engine-lockdown {
-  --ks-runtime-ui-scale: 1.36;
-}
-html.ks-runtime-watch canvas,
-html.ks-runtime-lockdown canvas,
-html.ks-engine-lockdown canvas {
-  filter: none !important;
-  image-rendering: auto;
-}
-html.ks-runtime-lockdown .ks-dom-click-ripple,
-html.ks-runtime-lockdown .premium-art-pass-label,
-html.ks-engine-lockdown .ks-dom-click-ripple,
-html.ks-engine-lockdown .premium-art-pass-label {
-  display: none !important;
-}
-html.ks-runtime-lockdown .shell-start-card,
-html.ks-engine-lockdown .shell-start-card,
-html.ks-runtime-lockdown .shell-panel,
-html.ks-engine-lockdown .shell-panel {
-  width: min(560px, 95vw) !important;
-  padding: 28px 24px !important;
-  transform: scale(var(--ks-runtime-ui-scale, 1.32)) !important;
-}
-html.ks-runtime-lockdown .shell-title-mark,
-html.ks-engine-lockdown .shell-title-mark {
-  font-size: 32px !important;
-  letter-spacing: .06em !important;
-}
-html.ks-runtime-lockdown .shell-start-card h1,
-html.ks-engine-lockdown .shell-start-card h1,
-html.ks-runtime-lockdown .shell-panel h2,
-html.ks-engine-lockdown .shell-panel h2 {
-  font-size: 30px !important;
-}
-html.ks-runtime-lockdown .shell-start-card p,
-html.ks-engine-lockdown .shell-start-card p,
-html.ks-runtime-lockdown .shell-panel p,
-html.ks-engine-lockdown .shell-panel p {
-  font-size: 16px !important;
-  line-height: 1.45 !important;
-}
-html.ks-runtime-lockdown .shell-tap-rune,
-html.ks-engine-lockdown .shell-tap-rune {
-  width: 92px !important;
-  height: 92px !important;
-  font-size: 19px !important;
-  animation: none !important;
-}
-html.ks-runtime-lockdown .shell-loading-text,
-html.ks-engine-lockdown .shell-loading-text {
-  font-size: 13px !important;
-}
-@media (hover: none) and (pointer: coarse) {
-  html.ks-runtime-watch *,
-  html.ks-runtime-lockdown * {
-    scroll-behavior: auto !important;
-  }
-  html.ks-runtime-lockdown body::before,
-  html.ks-runtime-lockdown body::after,
-  html.ks-engine-lockdown body::before,
-  html.ks-engine-lockdown body::after {
-    display: none !important;
-  }
-}
-
-/* v2.32 runtime load governor: keep first contact responsive and readable on phones. */
-html.ks-load-governor-ready.ks-engine-safe .shell-start-card,
-html.ks-load-governor-ready.ks-engine-safe .shell-panel {
-  max-width: 94vw !important;
-}
-html.ks-runtime-watch .shell-loading-text,
-html.ks-network-slow .shell-loading-text {
-  color: #ffe4a8 !important;
-  letter-spacing: .02em !important;
-}
-@media (hover: none) and (pointer: coarse) {
-  html.ks-engine-safe canvas,
-  html.ks-runtime-watch canvas,
-  html.ks-runtime-lockdown canvas {
-    touch-action: none;
-  }
-  html.ks-engine-safe .shell-start-card,
-  html.ks-engine-safe .shell-panel {
-    min-height: 190px !important;
-  }
-  html.ks-engine-safe .shell-tap-rune {
-    min-width: 88px !important;
-    min-height: 88px !important;
-  }
-}
-
-
-/* v2.34 runtime stability polish: protect first tap/transition frames and improve weak-network readability. */
-html.ks-input-settle .ks-dom-click-ripple,
-html.ks-input-settle .premium-art-pass-label {
-  display: none !important;
-}
-html.ks-input-settle canvas {
-  filter: none !important;
-}
-html.ks-network-metered .shell-loading-text,
-html.ks-network-offline .shell-loading-text {
-  color: #ffe9b9 !important;
-  font-size: 13px !important;
-}
-html.ks-network-metered .shell-start-card,
-html.ks-network-offline .shell-start-card,
-html.ks-network-metered .shell-panel,
-html.ks-network-offline .shell-panel {
-  box-shadow: 0 12px 28px rgba(0,0,0,.34) !important;
-}
-@media (hover: none) and (pointer: coarse) {
-  html.ks-input-settle *,
-  html.ks-network-metered *,
-  html.ks-network-offline * {
-    transition-duration: 0s !important;
-    animation-duration: 0s !important;
-  }
-  html.ks-engine-safe .shell-start-card h1,
-  html.ks-engine-safe .shell-panel h2 {
-    line-height: 1.16 !important;
-  }
-}
-
-/* v2.36.1 premium battle viewport recovery
-   v2.1 계열의 contain 계산이 일부 모바일 portrait WebView에서 회전된 게임을
-   작은 16:9 스트립처럼 보이게 만들 수 있었다. WebShell이 계산한 실제 visualViewport
-   값을 최종 우선순위로 다시 적용해, 게임 본 화면은 항상 휴대폰 화면을 꽉 채운다. */
-@media (hover: none) and (pointer: coarse) and (orientation: portrait) {
-  html.ks-portrait-fill #game,
-  html.needs-portrait-rotation #game {
-    left: 50% !important;
-    top: 50% !important;
-    width: var(--ks-vh-px) !important;
-    height: var(--ks-vw-px) !important;
-    min-width: var(--ks-vh-px) !important;
-    min-height: var(--ks-vw-px) !important;
-    max-width: none !important;
-    max-height: none !important;
-    transform-origin: center center !important;
-    transform: translate(-50%, -50%) rotate(90deg) scale(var(--ks-game-scale, 1)) !important;
-  }
-
-  html.ks-portrait-fill #game canvas,
-  html.needs-portrait-rotation #game canvas {
-    width: 100% !important;
-    height: 100% !important;
-    min-width: 100% !important;
-    min-height: 100% !important;
-    object-fit: fill !important;
-  }
-}
-
-@media (hover: none) and (pointer: coarse) and (orientation: landscape) {
-  html.is-landscape #game {
-    left: 50% !important;
-    top: 50% !important;
-    width: var(--ks-vw-px) !important;
-    height: var(--ks-vh-px) !important;
-    min-width: var(--ks-vw-px) !important;
-    min-height: var(--ks-vh-px) !important;
-    max-width: none !important;
-    max-height: none !important;
-    transform: translate(-50%, -50%) scale(var(--ks-game-scale, 1)) !important;
-  }
-}
-
-/* v2.36.14 mobile clarity fallback: readable shell and emergency high-contrast mode. */
-html.ks-shell-readable .shell-start-card,
-html.ks-shell-readable .shell-panel {
-  width: min(430px, 90vw) !important;
-  min-width: min(320px, 84vw) !important;
-  padding: calc(18px * var(--ks-shell-readable-scale, 1)) calc(16px * var(--ks-shell-readable-scale, 1)) !important;
-  border-radius: 24px !important;
-  border-width: 2px !important;
-}
-html.ks-shell-readable .shell-title-mark {
-  font-size: calc(23px * var(--ks-shell-readable-scale, 1)) !important;
-  line-height: 1.06 !important;
-}
-html.ks-shell-readable .shell-start-card h1,
-html.ks-shell-readable .shell-panel h2 {
-  font-size: calc(20px * var(--ks-shell-readable-scale, 1)) !important;
-  line-height: 1.16 !important;
-}
-html.ks-shell-readable .shell-start-card p,
-html.ks-shell-readable .shell-panel p {
-  font-size: calc(13px * var(--ks-shell-readable-scale, 1)) !important;
-  line-height: 1.38 !important;
-}
-html.ks-shell-readable .shell-tap-rune {
-  width: calc(68px * var(--ks-shell-readable-scale, 1)) !important;
-  height: calc(68px * var(--ks-shell-readable-scale, 1)) !important;
-  min-width: 64px !important;
-  min-height: 64px !important;
-  font-size: calc(13px * var(--ks-shell-readable-scale, 1)) !important;
-}
-html.ks-shell-readable .shell-loading-text {
-  font-size: calc(11px * var(--ks-shell-readable-scale, 1)) !important;
-  line-height: 1.35 !important;
-}
-html.ks-shell-contrast-ui .shell-start-card,
-html.ks-shell-contrast-ui .shell-panel {
-  background: linear-gradient(180deg, rgba(8, 16, 32, .99), rgba(2, 6, 14, .995)) !important;
-  color: #fff8d6 !important;
-  border-color: rgba(255, 226, 143, .98) !important;
-  box-shadow: 0 22px 62px rgba(0,0,0,.64), 0 0 0 2px rgba(255,226,143,.14), inset 0 1px 0 rgba(255,255,255,.18) !important;
-}
-html.ks-shell-contrast-ui .shell-start-card p,
-html.ks-shell-contrast-ui .shell-panel p,
-html.ks-shell-contrast-ui .shell-loading-text {
-  color: #fff1bf !important;
-  text-shadow: 0 2px 3px #000 !important;
-}
-html.ks-readable-ui-contrast #game canvas {
-  filter: contrast(1.07) brightness(1.02) saturate(1.02) !important;
-}
-html.ks-quality-low.ks-readable-ui-contrast #game canvas,
-html.ks-engine-safe.ks-readable-ui-contrast #game canvas,
-html.ks-runtime-lockdown.ks-readable-ui-contrast #game canvas {
-  filter: none !important;
-}
-@media (hover: none) and (pointer: coarse) and (max-height: 430px) {
-  html.ks-shell-readable .shell-start-card,
-  html.ks-shell-readable .shell-panel {
-    transform: scale(.92) !important;
-  }
-}
-
-/* v2.36.15 massive graphic fallback shell helpers */
-html.ks-graphic-fallback body {
-  background:
-    radial-gradient(circle at 50% 18%, rgba(255, 216, 132, calc(.12 * var(--ks-graphic-fallback-alpha, 1))), transparent 34%),
-    radial-gradient(circle at 14% 82%, rgba(87, 192, 255, calc(.16 * var(--ks-graphic-fallback-alpha, 1))), transparent 32%),
-    linear-gradient(180deg, #07101d 0%, #03060d 100%);
-}
-html.ks-graphic-fallback #game canvas {
-  filter: saturate(1.07) contrast(1.05) brightness(.99);
-}
-html.ks-graphic-fallback-safe #game canvas,
-html.ks-runtime-lockdown #game canvas,
-html.ks-engine-lockdown #game canvas {
-  filter: none !important;
-}
-html.ks-graphic-fallback-contrast #game::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9997;
-  box-shadow: inset 0 0 0 2px rgba(255, 224, 141, .14), inset 0 0 80px rgba(0,0,0,.28);
-}
-
-/* v2.36.16 adaptive fallback suite: visible emergency alternatives without loading new art. */
-html.ks-adaptive-fallback body {
-  background-color: #020611;
-}
-html.ks-adaptive-readable .shell-start-card,
-html.ks-adaptive-readable .shell-panel {
-  min-height: 196px !important;
-}
-html.ks-adaptive-readable .shell-start-card h1,
-html.ks-adaptive-readable .shell-panel h2 {
-  font-size: max(22px, calc(21px * var(--ks-shell-readable-scale, 1.08))) !important;
-}
-html.ks-adaptive-readable .shell-start-card p,
-html.ks-adaptive-readable .shell-panel p,
-html.ks-adaptive-readable .shell-loading-text {
-  font-size: max(14px, calc(13px * var(--ks-shell-readable-scale, 1.08))) !important;
-}
-html.ks-adaptive-contrast .shell-start-card,
-html.ks-adaptive-contrast .shell-panel,
-html.ks-adaptive-emergency .shell-start-card,
-html.ks-adaptive-emergency .shell-panel {
-  border-color: rgba(255, 231, 156, .98) !important;
-  background: linear-gradient(180deg, rgba(6, 14, 30, .995), rgba(1, 5, 12, .998)) !important;
-  text-shadow: 0 2px 3px rgba(0,0,0,.94) !important;
-}
-html.ks-adaptive-safe-gfx #game canvas,
-html.ks-adaptive-emergency #game canvas,
-html.ks-adaptive-reduce-motion #game canvas {
-  filter: none !important;
-}
-html.ks-adaptive-emergency *,
-html.ks-adaptive-reduce-motion * {
-  animation-duration: 0s !important;
-  transition-duration: 0s !important;
-  scroll-behavior: auto !important;
-}
-html.ks-adaptive-emergency #game::before,
-html.ks-adaptive-contrast #game::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9996;
-  box-shadow: inset 0 0 0 2px rgba(255, 226, 143, .16), inset 0 0 92px rgba(0,0,0, calc(.34 * var(--ks-adaptive-fallback-alpha, .8)));
-}
-html.ks-adaptive-offline .shell-loading-text::after,
-html.ks-adaptive-weak-network .shell-loading-text::after {
-  content: " · 네트워크 보호";
-  color: #ffe4a8;
-}
-@media (hover: none) and (pointer: coarse) {
-  html.ks-adaptive-tiny .shell-start-card,
-  html.ks-adaptive-tiny .shell-panel {
-    width: min(440px, 94vw) !important;
-    padding: 20px 18px !important;
-  }
-  html.ks-adaptive-tiny .shell-tap-rune,
-  html.ks-adaptive-emergency .shell-tap-rune {
-    width: 86px !important;
-    height: 86px !important;
-    font-size: 16px !important;
-  }
-}
-
-/* v2.36.17 auto rescue fallback mesh: automatic safety classes before the user finds settings. */
-html.ks-auto-rescue body {
-  background-color: #020611;
-}
-html.ks-auto-rescue .shell-loading-text::after {
-  content: " · 자동 보호";
-  color: #ffe6a8;
-}
-html.ks-auto-rescue .shell-start-card,
-html.ks-auto-rescue .shell-panel {
-  border-color: rgba(255, 226, 143, .96) !important;
-  box-shadow: 0 24px 72px rgba(0,0,0,.62), inset 0 1px 0 rgba(255,255,255,.18) !important;
-}
-html.ks-auto-rescue-safe #game canvas,
-html.ks-auto-rescue-emergency #game canvas {
-  filter: none !important;
-}
-html.ks-auto-rescue-emergency *,
-html.ks-auto-rescue-safe.ks-adaptive-reduce-motion * {
-  animation-duration: 0s !important;
-  transition-duration: 0s !important;
-}
-html.ks-auto-rescue-safe #game::after,
-html.ks-auto-rescue-emergency #game::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9995;
-  box-shadow: inset 0 0 0 2px rgba(255, 225, 143, .13), inset 0 0 104px rgba(0,0,0, calc(.28 * var(--ks-auto-rescue-alpha, .8)));
-}
-html.ks-auto-rescue-tiny .shell-start-card,
-html.ks-auto-rescue-tiny .shell-panel,
-html.ks-auto-rescue-offline .shell-start-card,
-html.ks-auto-rescue-offline .shell-panel {
-  width: min(450px, 95vw) !important;
-  min-height: 206px !important;
-}
-html.ks-auto-rescue-tiny .shell-start-card h1,
-html.ks-auto-rescue-offline .shell-start-card h1,
-html.ks-auto-rescue-tiny .shell-panel h2,
-html.ks-auto-rescue-offline .shell-panel h2 {
-  font-size: max(23px, calc(22px * var(--ks-shell-readable-scale, 1.08))) !important;
-}
-html.ks-auto-rescue-tiny .shell-start-card p,
-html.ks-auto-rescue-offline .shell-start-card p,
-html.ks-auto-rescue-tiny .shell-loading-text,
-html.ks-auto-rescue-offline .shell-loading-text {
-  font-size: max(14px, calc(13px * var(--ks-shell-readable-scale, 1.08))) !important;
-}
-
-/* v2.36.18 supreme design system: consistent premium shell without new art. */
-html.ks-supreme-design body {
-  background:
-    radial-gradient(circle at 50% 8%, rgba(255, 224, 148, calc(.12 * var(--ks-supreme-design-alpha, 1))), transparent 30%),
-    radial-gradient(circle at 10% 88%, rgba(116, 203, 255, calc(.12 * var(--ks-supreme-design-alpha, 1))), transparent 32%),
-    linear-gradient(180deg, #07101d 0%, #020611 100%);
-}
-html.ks-supreme-design .shell-overlay {
-  background:
-    radial-gradient(circle at 50% 18%, rgba(255, 221, 139, .28), transparent 26%),
-    radial-gradient(circle at 18% 82%, rgba(91, 181, 255, .18), transparent 32%),
-    linear-gradient(180deg, rgba(7, 16, 29, .94), rgba(1, 5, 12, .98)) !important;
-}
-html.ks-supreme-design .shell-start-card,
-html.ks-supreme-design .shell-panel {
-  border-color: rgba(255, 224, 143, .96) !important;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.07), transparent 18%),
-    radial-gradient(circle at 50% 0%, rgba(146,213,255,.18), transparent 42%),
-    linear-gradient(180deg, rgba(12, 24, 43, .99), rgba(3, 8, 18, .995)) !important;
-  box-shadow:
-    0 28px 76px rgba(0,0,0,.58),
-    0 0 0 1px rgba(255,255,255,.10),
-    inset 0 1px 0 rgba(255,255,255,.20) !important;
-}
-html.ks-supreme-design .shell-start-card::before,
-html.ks-supreme-design .shell-panel::before {
-  content: "PRESTIGE MOBILE BUILD";
-  display: block;
-  margin-bottom: 8px;
-  color: #d9c08a;
-  font-weight: 1000;
-  letter-spacing: .14em;
-  font-size: 10px;
-  text-shadow: 0 2px 3px rgba(0,0,0,.75);
-}
-html.ks-supreme-design .shell-tap-rune {
-  background: linear-gradient(180deg, #ffe09a, #c9832e) !important;
-  color: #241205 !important;
-  border-color: #fff1bd !important;
-  box-shadow: 0 16px 40px rgba(255,189,85,.28), inset 0 1px 0 rgba(255,255,255,.55) !important;
-}
-html.ks-supreme-design-rich #game::before,
-html.ks-supreme-design-accessible #game::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9994;
-  box-shadow: inset 0 0 0 1px rgba(255, 225, 143, calc(.11 * var(--ks-supreme-design-alpha, 1))), inset 0 0 72px rgba(0,0,0, calc(.22 * var(--ks-supreme-design-alpha, 1)));
-}
-html.ks-supreme-design-accessible #game canvas,
-html.ks-supreme-design-contrast #game canvas {
-  filter: contrast(1.06) brightness(1.02) saturate(1.02);
-}
-html.ks-supreme-design-safe #game canvas,
-html.ks-quality-low.ks-supreme-design #game canvas,
-html.ks-runtime-lockdown.ks-supreme-design #game canvas,
-html.ks-engine-lockdown.ks-supreme-design #game canvas {
-  filter: none !important;
-}
-html.ks-supreme-design-essential *,
-html.ks-supreme-design-safe * {
-  transition-duration: 0s !important;
-}
-html.ks-supreme-design-mobile .shell-start-card,
-html.ks-supreme-design-mobile .shell-panel {
-  width: min(450px, 94vw) !important;
-}
-
-/* v2.36.25 defense UI hierarchy reset */
-html.ks-defense-ui-focus canvas {
-  filter: saturate(1.02) contrast(1.03);
-}
-html.ks-defense-ui-clean .shell-start-card,
-html.ks-defense-ui-focus-mode .shell-start-card,
-html.ks-defense-ui-essential .shell-start-card {
-  max-width: min(520px, 90vw);
-  border-radius: 22px;
-  background:
-    linear-gradient(180deg, rgba(12, 24, 43, .96), rgba(4, 8, 16, .98));
-  color: #fff1c4;
-  border-color: rgba(255, 218, 123, .68);
-  box-shadow: 0 24px 72px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.11);
-}
-html.ks-defense-ui-clean .shell-start-card h1,
-html.ks-defense-ui-focus-mode .shell-start-card h1,
-html.ks-defense-ui-essential .shell-start-card h1 {
-  color: #fff2c8;
-  text-shadow: 0 2px 0 #000, 0 0 18px rgba(255, 218, 123, .26);
-}
-html.ks-defense-ui-clean .shell-start-card p,
-html.ks-defense-ui-focus-mode .shell-start-card p,
-html.ks-defense-ui-essential .shell-start-card p {
-  color: #d3dfef;
-}
-html.ks-defense-ui-essential canvas {
-  filter: none !important;
-}
-html.ks-defense-ui-essential *,
-html.ks-defense-ui-essential *::before,
-html.ks-defense-ui-essential *::after {
-  transition-duration: 0ms !important;
-  animation-duration: 0ms !important;
+  font-family: Pretendard, Inter, "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --ink: #fff8ea;
+  --muted: #b7adc7;
+  --night: #0b0716;
+  --panel: rgba(20, 12, 36, .82);
+  --panel-strong: rgba(15, 8, 28, .94);
+  --line: rgba(255, 244, 220, .15);
+  --purple: #9a6cff;
+  --purple2: #6e3ccc;
+  --cyan: #6bf0ff;
+  --gold: #ffd36b;
+  --red: #ff6688;
+  --green: #84f0b6;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body, #app { width: 100%; height: 100%; margin: 0; overflow: hidden; background: var(--night); }
+body { touch-action: none; user-select: none; overscroll-behavior: none; color: var(--ink); }
+button, input { font: inherit; }
+button { color: inherit; cursor: pointer; }
+.hidden { display: none !important; }
+#game-canvas { position: fixed; inset: 0; display: block; width: 100%; height: 100%; outline: 0; }
+#vignette { position: fixed; inset: 0; z-index: 3; pointer-events: none; background: radial-gradient(circle at 50% 40%, transparent 40%, rgba(3,0,12,.38) 100%); }
+#damage-flash { position: fixed; inset: 0; z-index: 90; pointer-events: none; opacity: 0; background: radial-gradient(circle, transparent 15%, rgba(255,20,64,.55)); transition: opacity .18s; }
+#damage-flash.show { opacity: 1; }
+#combat-text-root { position: fixed; inset: 0; z-index: 64; pointer-events: none; overflow: hidden; }
+.combat-text { position: absolute; left: 0; top: 0; min-width: 44px; text-align: center; color: #fff7d6; font-size: 15px; font-weight: 950; letter-spacing: -.04em; text-shadow: 0 2px 0 rgba(71,28,49,.9), 0 0 12px rgba(255,216,112,.55); transform: translate(-50%,-50%) scale(.75); opacity: 0; animation: combat-float .72s ease-out forwards; }
+.combat-text.crit { color: #fff093; font-size: 21px; text-shadow: 0 3px 0 rgba(110,35,44,.95), 0 0 18px rgba(255,117,89,.78); }
+.combat-text.heal { color: #9bffd0; text-shadow: 0 2px 0 rgba(18,65,54,.9), 0 0 14px rgba(87,255,190,.55); }
+@keyframes combat-float { 12% { opacity: 1; transform: translate(-50%,-65%) scale(1.08); } 100% { opacity: 0; transform: translate(-50%,-155%) scale(.92); } }
+
+.screen, .modal {
+  position: fixed; inset: 0; z-index: 100; display: none; place-items: center;
+  padding: calc(18px + var(--safe-top)) calc(18px + var(--safe-right)) calc(18px + var(--safe-bottom)) calc(18px + var(--safe-left));
+  background: radial-gradient(circle at 50% 30%, rgba(95,49,157,.22), rgba(4,1,12,.76));
+  backdrop-filter: blur(9px);
+}
+.screen.visible, .modal.visible { display: grid; }
+.screen { background: radial-gradient(circle at 50% 20%, rgba(127,82,196,.15), rgba(4,1,12,.34) 50%, rgba(4,1,12,.72)); }
+
+.loading-wrap { text-align: center; width: min(88vw, 420px); text-shadow: 0 3px 18px rgba(0,0,0,.65); }
+.moon-logo { width: 88px; height: 88px; margin: 0 auto 18px; border-radius: 50%; display: grid; place-items: center; position: relative; background: radial-gradient(circle at 38% 35%, #fff6bd 0 8%, #f5c868 38%, #c97842 75%, #5b2636); box-shadow: 0 0 0 8px rgba(255,218,127,.08), 0 0 55px rgba(255,184,91,.35); }
+.moon-logo::after { content: ""; position: absolute; width: 70%; height: 70%; border-radius: 50%; right: -18%; top: -6%; background: #1b102d; box-shadow: -8px 10px 18px rgba(0,0,0,.22); }
+.moon-logo span { position: relative; z-index: 1; font-size: 32px; font-weight: 900; color: #3c1730; transform: rotate(-8deg); }
+.loading-wrap h1, .title-panel h1 { margin: 7px 0 16px; font-size: clamp(50px, 12vw, 78px); line-height: .88; letter-spacing: -.075em; font-weight: 950; }
+.loading-wrap h1 em, .title-panel h1 em { color: #ffd579; font-style: normal; text-shadow: 0 0 30px rgba(255,194,93,.24); }
+.loading-wrap > p:not(.kicker) { color: var(--muted); font-size: 13px; }
+.kicker { margin: 0; font-weight: 900; letter-spacing: .23em; font-size: 10px; color: #d5b1ff; }
+.loader { height: 7px; width: min(68vw, 260px); margin: 22px auto 0; border: 1px solid rgba(255,255,255,.12); border-radius: 99px; overflow: hidden; background: rgba(0,0,0,.28); }
+.loader span { display: block; width: 38%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #8757e8, #ffe28d, #6deaff); animation: loader 1.15s ease-in-out infinite alternate; }
+@keyframes loader { to { transform: translateX(164%); } }
+
+.title-panel { width: min(92vw, 450px); text-align: center; padding: 34px 26px 25px; border-radius: 30px; background: linear-gradient(155deg, rgba(37,19,62,.9), rgba(12,7,24,.91)); border: 1px solid rgba(255,230,190,.16); box-shadow: 0 28px 90px rgba(0,0,0,.55), inset 0 1px rgba(255,255,255,.08); }
+.title-panel h1 { font-size: clamp(48px, 12vw, 74px); }
+.title-copy { color: #d2c8dc; font-size: 14px; line-height: 1.7; margin: 0 0 23px; }
+.title-panel small { display: block; color: #766b82; font-size: 10px; line-height: 1.5; margin-top: 15px; }
+.title-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 9px; }
+
+.btn { border: 1px solid transparent; min-height: 47px; width: 100%; border-radius: 14px; padding: 0 18px; font-weight: 900; transition: transform .14s, filter .14s, box-shadow .14s; }
+.btn:active, .round-btn:active, .skill-btn:active, .summon-btn:active, .wave-btn:active, .blessing-option:active { transform: scale(.965); }
+.btn.primary { color: #25132e; background: linear-gradient(180deg, #ffeaa5, #f5b85f); box-shadow: 0 9px 28px rgba(244,174,75,.24), inset 0 1px rgba(255,255,255,.75); }
+.btn.primary.huge { min-height: 56px; border-radius: 17px; font-size: 16px; }
+.btn.ghost { color: #e9def2; background: rgba(255,255,255,.065); border-color: rgba(255,255,255,.11); }
+.btn.danger { color: #ffc5d0; background: rgba(255,82,124,.1); border-color: rgba(255,82,124,.25); margin-top: 9px; }
+
+.hud { position: fixed; z-index: 20; top: 0; left: 0; right: 0; display: grid; grid-template-columns: 1fr minmax(155px, 250px) 1fr; align-items: start; gap: 9px; padding: calc(9px + var(--safe-top)) calc(10px + var(--safe-right)) 0 calc(10px + var(--safe-left)); pointer-events: none; }
+.hud-left, .hud-right { display: flex; gap: 7px; align-items: center; pointer-events: auto; }
+.hud-right { justify-content: flex-end; }
+.round-btn, .core-pill, .currency-pill, .wave-hud { border: 1px solid rgba(255,245,223,.13); background: rgba(14,8,26,.68); box-shadow: 0 7px 24px rgba(0,0,0,.22), inset 0 1px rgba(255,255,255,.055); backdrop-filter: blur(9px); }
+.round-btn { min-width: 40px; min-height: 40px; border-radius: 13px; font-size: 17px; }
+.core-pill { min-height: 42px; border-radius: 14px; padding: 4px 11px; display: flex; align-items: center; gap: 8px; }
+.core-pill .heart { color: #ff6f9a; font-size: 18px; filter: drop-shadow(0 0 7px rgba(255,86,137,.55)); }
+.core-pill small, .core-pill b { display: block; line-height: 1.05; }
+.core-pill small { color: #bcaec9; font-size: 9px; }
+.core-pill b { font-size: 15px; margin-top: 3px; }
+.currency-pill { min-height: 40px; display: flex; align-items: center; gap: 7px; border-radius: 13px; padding: 0 12px; }
+.currency-pill span { color: #cdbdd5; font-size: 10px; }
+.currency-pill b { color: var(--gold); font-size: 16px; }
+.wave-hud { text-align: center; border-radius: 14px; padding: 7px 12px 8px; }
+.wave-hud > span { font-size: 12px; font-weight: 950; letter-spacing: .08em; }
+.wave-hud small { display: block; color: #b9adc3; font-size: 9px; margin-top: 4px; }
+.wave-track, .luck-track { width: 100%; height: 5px; border-radius: 99px; overflow: hidden; background: rgba(255,255,255,.09); margin-top: 5px; }
+.wave-track span { display: block; height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, #9b68ff, #6df4ff); transition: width .18s; box-shadow: 0 0 10px rgba(112,225,255,.4); }
+
+.combo-banner { position: fixed; z-index: 52; left: 50%; top: 25%; transform: translate(-50%, -8px) scale(.92); opacity: 0; transition: opacity .22s, transform .22s; pointer-events: none; }
+.combo-banner.show { opacity: 1; transform: translate(-50%, 0) scale(1); }
+.combo-banner span { display: block; white-space: nowrap; font-size: clamp(28px, 8vw, 50px); font-weight: 950; letter-spacing: -.06em; color: #fff0a8; text-shadow: 0 4px 0 #7b3d58, 0 0 28px rgba(255,218,114,.75); }
+.boss-banner { position: fixed; z-index: 55; left: 50%; top: 20%; width: min(92vw, 560px); transform: translate(-50%, -16px); padding: 13px 20px 14px; border-block: 1px solid rgba(255,112,151,.5); background: linear-gradient(90deg, transparent, rgba(59,11,37,.85), transparent); text-align: center; opacity: 0; transition: opacity .35s, transform .35s; pointer-events: none; }
+.boss-banner.show { opacity: 1; transform: translate(-50%, 0); }
+.boss-banner small, .boss-banner b { display: block; }
+.boss-banner small { font-size: 9px; letter-spacing: .35em; color: #ff87a8; }
+.boss-banner b { margin-top: 5px; font-size: 24px; }
+.mission-banner { position: fixed; z-index: 58; left: 50%; top: 35%; width: min(90vw, 520px); transform: translate(-50%, 14px) scale(.96); padding: 17px 22px 19px; text-align: center; opacity: 0; border-block: 1px solid rgba(255,222,139,.42); background: linear-gradient(90deg, transparent, rgba(29,15,50,.91) 18%, rgba(45,24,63,.94) 50%, rgba(29,15,50,.91) 82%, transparent); pointer-events: none; transition: opacity .3s, transform .3s; }
+.mission-banner.show { opacity: 1; transform: translate(-50%, 0) scale(1); }
+.mission-banner small, .mission-banner b, .mission-banner span { display: block; }
+.mission-banner small { color: #d9b6ff; font-size: 9px; font-weight: 900; letter-spacing: .26em; }
+.mission-banner b { margin-top: 5px; color: #fff1b3; font-size: clamp(24px, 6vw, 38px); letter-spacing: -.055em; text-shadow: 0 3px 0 rgba(84,38,58,.9), 0 0 24px rgba(255,209,109,.42); }
+.mission-banner span { margin-top: 7px; color: #d2c5dc; font-size: 11px; }
+.boss-health { position: fixed; z-index: 24; left: 50%; top: calc(111px + var(--safe-top)); transform: translateX(-50%); width: min(76vw, 430px); padding: 7px 10px 9px; border-radius: 14px; background: rgba(31,8,27,.8); border: 1px solid rgba(255,95,137,.28); box-shadow: 0 10px 28px rgba(0,0,0,.28); backdrop-filter: blur(8px); pointer-events: none; }
+.boss-health-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 10px; }
+.boss-health-head span { font-weight: 900; color: #ffd1dc; }
+.boss-health-head b { color: #ff9bb8; }
+.boss-health-track { height: 7px; margin-top: 5px; overflow: hidden; border-radius: 99px; background: rgba(255,255,255,.08); }
+.boss-health-track span { display: block; width: 100%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #ff4779, #ff9e6f); box-shadow: 0 0 13px rgba(255,73,120,.55); transition: width .12s linear; }
+.kill-chain { position: fixed; z-index: 25; right: calc(12px + var(--safe-right)); top: calc(126px + var(--safe-top)); min-width: 88px; padding: 8px 10px 9px; border-radius: 14px; text-align: right; background: rgba(14,8,27,.72); border: 1px solid rgba(255,221,126,.18); backdrop-filter: blur(8px); pointer-events: none; transform-origin: right center; animation: chain-pop .2s ease-out; }
+.kill-chain small, .kill-chain b, .kill-chain span { display: block; }
+.kill-chain small { color: #c9afe6; font-size: 7px; font-weight: 900; letter-spacing: .18em; }
+.kill-chain b { margin-top: 1px; color: #ffe175; font-size: 25px; line-height: 1; text-shadow: 0 0 17px rgba(255,213,89,.5); }
+.kill-chain span { margin-top: 3px; color: #c9bdcf; font-size: 8px; }
+@keyframes chain-pop { from { transform: scale(.78); opacity: .2; } }
+
+.synergy-panel { position: fixed; z-index: 25; top: calc(70px + var(--safe-top)); left: calc(10px + var(--safe-left)); width: 188px; pointer-events: auto; }
+.synergy-toggle { border: 1px solid rgba(255,255,255,.13); border-radius: 12px; min-height: 35px; padding: 0 12px; background: rgba(16,9,29,.74); backdrop-filter: blur(8px); font-size: 11px; font-weight: 900; }
+.synergy-toggle b { color: var(--gold); margin-left: 4px; }
+.synergy-list { margin-top: 6px; display: grid; gap: 5px; transition: opacity .2s; }
+.synergy-panel.collapsed .synergy-list { display: none; }
+.synergy-row { display: flex; align-items: center; gap: 7px; padding: 7px 9px; border-radius: 11px; background: rgba(13,7,24,.7); border: 1px solid rgba(255,255,255,.09); backdrop-filter: blur(8px); }
+.synergy-row.off { opacity: .45; }
+.synergy-row span { width: 23px; height: 23px; border-radius: 8px; display: grid; place-items: center; font-size: 12px; background: rgba(255,255,255,.08); }
+.synergy-row div { min-width: 0; }
+.synergy-row b, .synergy-row small { display: block; }
+.synergy-row b { font-size: 9px; }
+.synergy-row small { font-size: 8px; color: #b6aabf; margin-top: 2px; }
+
+.luck-meter { position: fixed; z-index: 22; left: 50%; top: calc(76px + var(--safe-top)); transform: translateX(-50%); width: min(62vw, 300px); padding: 7px 10px; border-radius: 12px; background: rgba(15,8,28,.63); border: 1px solid rgba(255,227,157,.12); backdrop-filter: blur(8px); pointer-events: none; }
+.luck-head { display: flex; justify-content: space-between; align-items: center; font-size: 9px; color: #cabed2; }
+.luck-head b { color: var(--gold); }
+.luck-track span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #7d4fe0, #ffe275); border-radius: inherit; transition: width .3s; }
+
+.unit-strip { position: fixed; z-index: 23; right: calc(10px + var(--safe-right)); top: calc(67px + var(--safe-top)); display: grid; gap: 5px; width: 118px; pointer-events: none; }
+.unit-chip { display: grid; grid-template-columns: 27px 1fr auto; align-items: center; gap: 6px; min-height: 34px; padding: 4px 7px; border-radius: 11px; background: rgba(13,7,24,.67); border: 1px solid rgba(255,255,255,.09); backdrop-filter: blur(8px); }
+.unit-chip .unit-face { width: 27px; height: 27px; border-radius: 9px; display: grid; place-items: center; font-size: 14px; background: var(--chip); }
+.unit-chip div b, .unit-chip div small { display: block; line-height: 1; }
+.unit-chip div b { font-size: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.unit-chip div small { color: #ffd96e; font-size: 8px; margin-top: 4px; }
+.unit-chip > b { font-size: 11px; }
+
+.joystick-zone { position: fixed; z-index: 18; left: calc(12px + var(--safe-left)); bottom: calc(16px + var(--safe-bottom)); width: 142px; height: 142px; touch-action: none; }
+.joystick-base { position: absolute; inset: 12px; border-radius: 50%; background: radial-gradient(circle, rgba(109,75,154,.21), rgba(8,5,15,.25)); border: 2px solid rgba(255,245,224,.15); box-shadow: inset 0 0 22px rgba(0,0,0,.25); backdrop-filter: blur(4px); }
+.joystick-base::before, .joystick-base::after { content: ""; position: absolute; background: rgba(255,255,255,.08); }
+.joystick-base::before { left: 50%; top: 12%; bottom: 12%; width: 1px; }
+.joystick-base::after { top: 50%; left: 12%; right: 12%; height: 1px; }
+.joystick-knob { position: absolute; left: 50%; top: 50%; width: 54px; height: 54px; transform: translate(-50%,-50%); border-radius: 50%; background: radial-gradient(circle at 35% 30%, #d8c5ff, #8b5ad7 55%, #47266e); border: 2px solid rgba(255,255,255,.36); box-shadow: 0 8px 20px rgba(0,0,0,.35), 0 0 20px rgba(142,91,221,.23); }
+.look-zone { position: fixed; z-index: 5; right: 0; top: 58px; bottom: 96px; width: 55%; touch-action: none; }
+
+.action-dock { position: fixed; z-index: 26; right: calc(10px + var(--safe-right)); bottom: calc(11px + var(--safe-bottom)); display: grid; grid-template-columns: 58px 67px 101px 62px; align-items: end; gap: 7px; }
+.skill-btn, .summon-btn, .wave-btn { position: relative; overflow: hidden; border: 1px solid rgba(255,244,220,.17); background: rgba(15,8,27,.82); box-shadow: 0 9px 28px rgba(0,0,0,.35), inset 0 1px rgba(255,255,255,.08); backdrop-filter: blur(9px); }
+.skill-btn { width: 58px; height: 58px; border-radius: 19px; display: grid; place-items: center; align-content: center; }
+.skill-btn span, .skill-btn b { display: block; }
+.skill-btn span { font-size: 10px; font-weight: 900; }
+.skill-btn b { color: #a99ab7; font-size: 8px; margin-top: 4px; }
+.skill-btn.ultimate { width: 67px; height: 67px; border-radius: 22px; color: #dffcff; background: radial-gradient(circle at 35% 25%, rgba(104,242,255,.23), rgba(63,24,106,.86)); }
+.skill-btn.cooling { filter: grayscale(.45); opacity: .72; }
+.summon-btn { width: 101px; height: 88px; border-radius: 27px; background: radial-gradient(circle at 50% 35%, rgba(255,225,132,.27), rgba(77,31,104,.92)); border-color: rgba(255,219,119,.38); }
+.summon-btn::before { content: "鬼"; position: absolute; inset: 5px 0 auto; font-size: 35px; font-weight: 950; color: rgba(255,239,179,.15); }
+.summon-btn small, .summon-btn b { display: block; position: relative; z-index: 2; }
+.summon-btn small { font-size: 11px; font-weight: 950; margin-top: 18px; }
+.summon-btn b { margin-top: 7px; color: var(--gold); font-size: 14px; }
+.summon-btn i { font-style: normal; font-size: 10px; }
+.summon-glow { position: absolute; width: 85px; height: 85px; border-radius: 50%; left: 8px; top: 2px; background: conic-gradient(from 0deg, transparent, rgba(255,217,111,.5), transparent 45%, rgba(119,226,255,.4), transparent); animation: spin 3.6s linear infinite; opacity: .65; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.wave-btn { width: 62px; height: 62px; border-radius: 20px; background: linear-gradient(180deg, rgba(255,105,135,.2), rgba(84,17,53,.88)); }
+.wave-btn small, .wave-btn b { display: block; }
+.wave-btn small { font-size: 8px; color: #ffc2cf; }
+.wave-btn b { font-size: 11px; margin-top: 4px; }
+.wave-btn:disabled { opacity: .38; filter: grayscale(.65); }
+.summon-btn:disabled { opacity: .55; filter: grayscale(.45); }
+
+.toast { position: fixed; z-index: 160; left: 50%; top: calc(122px + var(--safe-top)); transform: translate(-50%, -9px); max-width: 84vw; padding: 10px 15px; border-radius: 13px; background: rgba(14,7,27,.92); border: 1px solid rgba(255,221,137,.25); color: #fff5d9; box-shadow: 0 10px 35px rgba(0,0,0,.4); font-size: 12px; text-align: center; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; }
+.toast.show { opacity: 1; transform: translate(-50%,0); }
+.quality-badge { position: fixed; z-index: 170; right: calc(10px + var(--safe-right)); bottom: calc(108px + var(--safe-bottom)); padding: 7px 10px; border-radius: 11px; color: #c8f8ff; background: rgba(9,31,42,.9); border: 1px solid rgba(107,240,255,.2); font-size: 9px; pointer-events: none; animation: quality-in 2.4s ease forwards; }
+@keyframes quality-in { 0% { opacity: 0; transform: translateY(5px); } 12%,78% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; } }
+
+.modal { z-index: 130; }
+.modal-card { position: relative; width: min(92vw, 430px); max-height: 90vh; overflow: auto; text-align: center; padding: 28px 24px 24px; border-radius: 28px; background: linear-gradient(155deg, rgba(37,20,61,.97), rgba(10,6,20,.97)); border: 1px solid rgba(255,232,192,.16); box-shadow: 0 28px 90px rgba(0,0,0,.62), inset 0 1px rgba(255,255,255,.08); }
+.modal-card.wide { width: min(94vw, 690px); }
+.modal-card.compact { width: min(88vw, 350px); }
+.modal-card h2 { margin: 8px 0 18px; font-size: 27px; letter-spacing: -.04em; }
+.modal-card > p:not(.kicker) { color: var(--muted); font-size: 12px; margin-top: -10px; }
+.modal-x { position: absolute; right: 13px; top: 13px; width: 35px; height: 35px; border-radius: 12px; border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.06); font-size: 20px; }
+.how-cards { display: grid; gap: 9px; margin: 18px 0; text-align: left; }
+.how-cards article { display: grid; grid-template-columns: 41px 1fr; gap: 10px; align-items: start; padding: 13px; border-radius: 15px; background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.07); }
+.how-cards article > span { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 12px; color: #25122f; background: #f2c66b; font-weight: 950; font-size: 11px; }
+.how-cards b { font-size: 13px; }
+.how-cards p { margin: 5px 0 0; color: #bfb3c8; line-height: 1.55; font-size: 11px; }
+.collection-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.collection-item { text-align: left; padding: 13px; border-radius: 16px; border: 1px solid rgba(255,255,255,.09); background: rgba(255,255,255,.045); }
+.collection-item .portrait { height: 80px; border-radius: 14px; display: grid; place-items: center; font-size: 36px; background: radial-gradient(circle at 50% 30%, var(--unit-soft), rgba(0,0,0,.15)); border: 1px solid var(--unit-line); }
+.collection-item b, .collection-item small, .collection-item p { display: block; }
+.collection-item b { font-size: 13px; margin-top: 9px; }
+.collection-item small { font-size: 9px; color: var(--unit-color); margin-top: 3px; }
+.collection-item p { font-size: 10px; line-height: 1.5; color: #b8acbf; margin: 8px 0 0; }
+
+.blessing-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+.blessing-option { min-height: 190px; border-radius: 20px; border: 1px solid rgba(255,224,144,.2); padding: 18px 14px; background: radial-gradient(circle at 50% 10%, rgba(255,214,111,.11), rgba(255,255,255,.035)); text-align: center; }
+.blessing-option span { width: 58px; height: 58px; margin: 0 auto 13px; display: grid; place-items: center; border-radius: 20px; background: rgba(255,255,255,.08); font-size: 28px; }
+.blessing-option b { display: block; font-size: 15px; }
+.blessing-option p { color: #c1b5c9; font-size: 11px; line-height: 1.55; }
+.blessing-option small { color: var(--gold); font-weight: 900; font-size: 9px; }
+
+.result-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 17px 0; }
+.result-stats > div { padding: 12px 7px; border-radius: 14px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.07); }
+.result-stats span, .result-stats b { display: block; }
+.result-stats span { color: #b7aabd; font-size: 9px; }
+.result-stats b { color: #ffe087; font-size: 20px; margin-top: 4px; }
+.result-units { min-height: 52px; display: flex; justify-content: center; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
+.result-unit { padding: 7px 9px; border-radius: 12px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); font-size: 10px; }
+.name-field { display: block; text-align: left; color: #b8abc1; font-size: 10px; margin: 12px 0; }
+.name-field input { width: 100%; min-height: 44px; margin-top: 6px; padding: 0 13px; color: white; background: rgba(255,255,255,.055); border: 1px solid rgba(255,255,255,.12); border-radius: 13px; outline: none; user-select: text; }
+.result-card .btn + .btn { margin-top: 8px; }
+.leaderboard { text-align: left; margin-top: 15px; }
+.leaderboard h3 { font-size: 10px; letter-spacing: .12em; color: #d8b8ff; }
+.rank-row { display: grid; grid-template-columns: 24px 1fr auto; gap: 7px; padding: 7px 8px; border-radius: 9px; font-size: 10px; }
+.rank-row:nth-child(even) { background: rgba(255,255,255,.04); }
+.rank-row span:last-child { color: var(--gold); }
+
+@media (hover:hover) and (pointer:fine) {
+  .btn:hover, .round-btn:hover, .skill-btn:hover, .summon-btn:hover, .wave-btn:hover, .blessing-option:hover { filter: brightness(1.13); }
+  .joystick-zone { opacity: .48; }
+}
+
+@media (max-width: 720px) {
+  .hud { grid-template-columns: 1fr auto; }
+  .wave-hud { position: fixed; top: calc(57px + var(--safe-top)); left: 50%; transform: translateX(-50%); width: min(58vw, 245px); }
+  .boss-health { top: calc(139px + var(--safe-top)); width: min(78vw, 360px); }
+  .kill-chain { top: calc(158px + var(--safe-top)); }
+  .synergy-panel { top: calc(106px + var(--safe-top)); width: 164px; }
+  .luck-meter { top: calc(104px + var(--safe-top)); width: min(48vw, 230px); }
+  .unit-strip { top: calc(63px + var(--safe-top)); width: 104px; }
+  .unit-chip { grid-template-columns: 25px 1fr auto; gap: 4px; padding: 3px 5px; }
+  .unit-chip .unit-face { width: 25px; height: 25px; }
+}
+
+@media (max-width: 540px) {
+  .title-panel { padding: 29px 20px 21px; }
+  .collection-grid { grid-template-columns: repeat(2, 1fr); }
+  .blessing-options { grid-template-columns: 1fr; }
+  .blessing-option { min-height: auto; display: grid; grid-template-columns: 54px 1fr; gap: 11px; text-align: left; align-items: center; padding: 13px; }
+  .blessing-option span { margin: 0; width: 50px; height: 50px; grid-row: 1 / 4; }
+  .blessing-option p { margin: 4px 0; }
+  .action-dock { grid-template-columns: 51px 59px 90px 56px; gap: 5px; }
+  .skill-btn { width: 51px; height: 51px; border-radius: 17px; }
+  .skill-btn.ultimate { width: 59px; height: 59px; border-radius: 20px; }
+  .summon-btn { width: 90px; height: 79px; border-radius: 24px; }
+  .wave-btn { width: 56px; height: 56px; border-radius: 18px; }
+  .joystick-zone { width: 132px; height: 132px; left: calc(7px + var(--safe-left)); bottom: calc(8px + var(--safe-bottom)); }
+  .synergy-list { max-width: 145px; }
+}
+
+@media (max-width: 410px) {
+  .currency-pill span { display: none; }
+  .core-pill { padding-inline: 8px; }
+  .round-btn { min-width: 36px; }
+  .synergy-panel { width: 142px; }
+  .unit-strip { width: 92px; }
+  .unit-chip div b { display: none; }
+  .unit-chip { grid-template-columns: 25px 1fr; }
+  .unit-chip > b { text-align: right; }
+  .action-dock { right: calc(5px + var(--safe-right)); }
+  .kill-chain { right: calc(6px + var(--safe-right)); min-width: 76px; }
+  .kill-chain b { font-size: 21px; }
+}
+
+@media (max-height: 570px) and (orientation: landscape) {
+  .hud { grid-template-columns: 1fr minmax(160px,240px) 1fr; }
+  .wave-hud { position: static; transform: none; width: auto; }
+  .boss-health { top: calc(60px + var(--safe-top)); width: min(44vw, 360px); }
+  .kill-chain { top: calc(58px + var(--safe-top)); }
+  .synergy-panel { top: calc(54px + var(--safe-top)); }
+  .luck-meter { top: calc(58px + var(--safe-top)); }
+  .unit-strip { top: calc(55px + var(--safe-top)); }
+  .joystick-zone { width: 112px; height: 112px; }
+  .action-dock { grid-template-columns: 50px 58px 88px 55px; }
+  .skill-btn { width: 50px; height: 50px; }
+  .skill-btn.ultimate { width: 58px; height: 58px; }
+  .summon-btn { width: 88px; height: 73px; }
+  .wave-btn { width: 55px; height: 55px; }
 }

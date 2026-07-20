@@ -1,21 +1,24 @@
 {
-  "name": "kingdom-seed",
+  "name": "dokkaebi-luck-defense-3d",
   "private": true,
-  "version": "2.36.31",
+  "version": "1.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "deploy:rules": "firebase deploy --only firestore:rules,firestore:indexes"
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "deploy": "npm run build && firebase deploy --only hosting",
+    "deploy:rules": "firebase deploy --only firestore:rules",
+    "verify": "node scripts/verify-project.mjs && node --check src/main.js && node --check src/firebase.js"
   },
   "dependencies": {
-    "@vitejs/plugin-basic-ssl": "2.3.0",
-    "firebase": "12.14.0",
-    "phaser": "4.1.0"
+    "firebase": "12.16.0",
+    "three": "0.185.1"
   },
   "devDependencies": {
-    "typescript": "6.0.3",
-    "vite": "8.0.16"
+    "vite": "8.1.5"
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
   }
 }

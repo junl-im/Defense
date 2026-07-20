@@ -44,7 +44,7 @@ service cloud.firestore {
       return isOwner(uid);
     }
 
-    function validScore() {
+    function validLegacyScore() {
       return request.resource.data.keys().hasOnly([
           'uid', 'nickname', 'score', 'stageId', 'lives', 'wave', 'clearTimeMs', 'updatedAt'
         ])
@@ -67,6 +67,31 @@ service cloud.firestore {
         && request.resource.data.clearTimeMs <= 3600000;
     }
 
+    function validDokkaebiScore() {
+      return signedIn()
+        && request.resource.data.keys().hasOnly([
+          'name', 'score', 'wave', 'kills', 'maxRank', 'version', 'createdAt'
+        ])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 1
+        && request.resource.data.name.size() <= 12
+        && request.resource.data.score is int
+        && request.resource.data.score >= 0
+        && request.resource.data.score <= 99999999
+        && request.resource.data.wave is int
+        && request.resource.data.wave >= 0
+        && request.resource.data.wave <= 100
+        && request.resource.data.kills is int
+        && request.resource.data.kills >= 0
+        && request.resource.data.kills <= 100000
+        && request.resource.data.maxRank is int
+        && request.resource.data.maxRank >= 1
+        && request.resource.data.maxRank <= 5
+        && request.resource.data.version is string
+        && request.resource.data.version.size() <= 16;
+    }
+
+    // Existing Defense project data. Kept intact so deploying these rules does not break it.
     match /users/{uid} {
       allow get: if isOwner(uid);
       allow list: if false;
@@ -75,22 +100,25 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    // Collection path: /leaderboards/{boardId}/scores/{uid}
-    // boardId example: 20260609_stage_001
     match /leaderboards/{boardId}/scores/{uid} {
       allow get, list: if true;
-      allow create: if validScoreId(uid) && validScore();
+      allow create: if validScoreId(uid) && validLegacyScore();
       allow update: if validScoreId(uid)
-        && validScore()
+        && validLegacyScore()
         && request.resource.data.score >= resource.data.score;
       allow delete: if false;
     }
 
-    // Daily seed/config can be shipped in code or manually written from Firebase Console.
-    // Client can read but cannot create/update it.
     match /dailySeeds/{dateId} {
       allow get, list: if true;
       allow write: if false;
+    }
+
+    // New Dokkaebi Luck Defense leaderboard.
+    match /dokkaebiScores/{scoreId} {
+      allow get, list: if true;
+      allow create: if validDokkaebiScore();
+      allow update, delete: if false;
     }
 
     match /{document=**} {
