@@ -38,7 +38,7 @@
             <button id="how-btn" class="btn ghost">조작법</button>
             <button id="collection-btn" class="btn ghost">도깨비 도감</button>
           </div>
-          <small>v1.1 · 모든 3D 모델·이펙트·효과음은 프로젝트 내부에서 생성됩니다.</small>
+          <small>v1.3 · 5성 궁극 진화와 초행 임무가 추가되었습니다.</small>
         </div>
       </section>
 
@@ -65,6 +65,10 @@
         <b id="mission-title">달빛 장터를 지켜라</b>
         <span id="mission-copy">무료 소환으로 수호대를 깨우세요.</span>
       </div>
+      <div id="evolution-banner" class="evolution-banner hidden" aria-live="assertive">
+        <span id="evolution-symbol">鬼</span>
+        <div><small>MYTHIC AWAKENING · 5★</small><b id="evolution-name">신화 도깨비 각성</b><em id="evolution-ultimate">궁극기 개방</em></div>
+      </div>
 
       <div id="boss-health" class="boss-health hidden" aria-live="polite">
         <div class="boss-health-head"><span id="boss-health-name">저승 호랑이</span><b id="boss-health-value">100%</b></div>
@@ -86,6 +90,12 @@
         <div class="luck-head"><span>대박 기운</span><b id="luck-value">0%</b></div>
         <div class="luck-track"><span id="luck-progress"></span></div>
       </div>
+      <div id="first-mission-panel" class="first-mission-panel hidden" aria-live="polite">
+        <div class="first-mission-head"><span>초행 임무</span><b id="first-mission-step">1 / 3</b></div>
+        <strong id="first-mission-title">수호대 3회 강림</strong>
+        <div class="first-mission-track"><span id="first-mission-progress"></span></div>
+        <small id="first-mission-copy">0 / 3 · 보상 35 엽전</small>
+      </div>
 
       <div id="unit-strip" class="unit-strip hidden" aria-label="보유 도깨비 목록"></div>
 
@@ -99,6 +109,7 @@
         <button id="skill-btn" class="skill-btn ultimate"><span>도깨비불</span><b id="skill-cooldown">준비</b></button>
         <button id="summon-btn" class="summon-btn">
           <span class="summon-glow"></span>
+          <span id="summon-ticket" class="summon-ticket hidden">선택권 ×0</span>
           <small>랜덤 소환</small>
           <b><i>●</i> <span id="summon-cost">30</span></b>
         </button>
@@ -116,7 +127,8 @@
           <div class="how-cards">
             <article><span>01</span><div><b>직접 뛰어 엽전 줍기</b><p>왼쪽 조이스틱으로 이동합니다. 적이 떨어뜨린 엽전은 가까이 가야 획득됩니다.</p></div></article>
             <article><span>02</span><div><b>운빨 소환</b><p>소환할수록 비용이 오르지만, 실패한 운은 대박 기운으로 쌓입니다.</p></div></article>
-            <article><span>03</span><div><b>같은 도깨비 3개 자동 합성</b><p>동일 종류·동일 별 3개가 모이면 더 강한 하나로 자동 합성됩니다.</p></div></article>
+            <article><span>03</span><div><b>같은 도깨비 3개 자동 합성</b><p>동일 종류·동일 별 3개가 모이면 더 강한 하나로 자동 합성됩니다. 5성은 고유 궁극기를 자동으로 사용합니다.</p></div></article>
+            <article><span>04</span><div><b>바닥 경고를 보고 피하기</b><p>붉은 돌진선과 보스 예고 링을 피하고, 보랏빛 저주 장판은 수호대 밖으로 유도하세요.</p></div></article>
           </div>
           <button class="btn primary" data-close="how-modal">알겠어!</button>
         </div>
@@ -137,6 +149,15 @@
           <h2>달의 축복을 하나 고르세요</h2>
           <p>이번 판에만 적용됩니다.</p>
           <div id="blessing-options" class="blessing-options"></div>
+        </div>
+      </section>
+
+      <section id="choice-summon-modal" class="modal" aria-hidden="true">
+        <div class="modal-card wide choice-summon-card">
+          <p class="kicker">THREE PATH SUMMON</p>
+          <h2>운명의 도깨비를 고르세요</h2>
+          <p>삼지선다 소환권을 사용했습니다. 하나를 선택하면 즉시 강림합니다.</p>
+          <div id="choice-summon-options" class="choice-summon-options"></div>
         </div>
       </section>
 

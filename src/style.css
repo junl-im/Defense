@@ -282,3 +282,87 @@ button { color: inherit; cursor: pointer; }
   .summon-btn { width: 88px; height: 73px; }
   .wave-btn { width: 55px; height: 55px; }
 }
+
+/* v1.2 enemy patterns and three-choice summon */
+.summon-ticket {
+  position: absolute; z-index: 4; top: -9px; left: 50%; transform: translateX(-50%);
+  min-width: 72px; padding: 4px 7px; border-radius: 999px; white-space: nowrap;
+  color: #24132d; background: linear-gradient(180deg,#fff2ae,#f3bd62);
+  border: 1px solid rgba(255,255,255,.7); box-shadow: 0 5px 16px rgba(255,187,70,.28);
+  font-size: 9px; font-weight: 950;
+}
+.choice-summon-options { display:grid; grid-template-columns:repeat(3,1fr); gap:11px; margin-top:20px; }
+.choice-summon-option {
+  min-height:220px; padding:18px 13px; border-radius:22px; text-align:center;
+  border:1px solid color-mix(in srgb,var(--choice-color) 54%,transparent);
+  background:radial-gradient(circle at 50% 12%,color-mix(in srgb,var(--choice-color) 24%,transparent),rgba(255,255,255,.035) 60%);
+  transition:transform .14s,filter .14s,border-color .14s;
+}
+.choice-summon-option > span { display:grid; place-items:center; width:66px; height:66px; margin:0 auto 12px; border-radius:22px; font-size:34px; background:rgba(255,255,255,.09); box-shadow:inset 0 0 0 1px rgba(255,255,255,.08); }
+.choice-summon-option small { display:block; color:var(--choice-color); font-size:10px; font-weight:950; }
+.choice-summon-option b { display:block; margin-top:7px; font-size:16px; }
+.choice-summon-option p { margin:9px 0 0; color:#c5b8ce; font-size:10px; line-height:1.55; }
+.choice-summon-option:active { transform:scale(.97); }
+@media (hover:hover) and (pointer:fine) { .choice-summon-option:hover { filter:brightness(1.14); border-color:var(--choice-color); } }
+@media (max-width:540px) {
+  .choice-summon-options { grid-template-columns:1fr; }
+  .choice-summon-option { min-height:auto; display:grid; grid-template-columns:58px 1fr; gap:7px 12px; text-align:left; align-items:center; padding:13px; }
+  .choice-summon-option > span { width:54px; height:54px; margin:0; grid-row:1 / 4; font-size:29px; }
+  .choice-summon-option b,.choice-summon-option small,.choice-summon-option p { margin:0; }
+}
+
+/* v1.3 mythic evolution, merge progress, and first-run missions */
+.evolution-banner {
+  position: fixed; z-index: 82; left: 50%; top: 24%; width: min(92vw, 590px);
+  transform: translate(-50%, 24px) scale(.86); display: grid; grid-template-columns: 82px 1fr;
+  align-items: center; gap: 16px; padding: 18px 24px; opacity: 0; pointer-events: none;
+  border-block: 1px solid rgba(255,214,116,.62);
+  background: linear-gradient(90deg, transparent, rgba(33,12,48,.95) 14%, rgba(77,27,69,.97) 50%, rgba(33,12,48,.95) 86%, transparent);
+  filter: saturate(1.2); transition: opacity .34s, transform .48s cubic-bezier(.2,.85,.2,1);
+}
+.evolution-banner.show { opacity: 1; transform: translate(-50%, 0) scale(1); }
+.evolution-banner > span {
+  width: 76px; height: 76px; display: grid; place-items: center; border-radius: 50%;
+  color: #2b102d; background: radial-gradient(circle at 35% 30%, #fff6cf, #ff8db2 55%, #9a4aff);
+  border: 2px solid rgba(255,255,255,.72); box-shadow: 0 0 28px rgba(255,102,177,.62);
+  font-size: 38px; font-weight: 950;
+}
+.evolution-banner small, .evolution-banner b, .evolution-banner em { display: block; }
+.evolution-banner small { color: #ffd8a0; font-size: 9px; font-weight: 950; letter-spacing: .2em; }
+.evolution-banner b { margin-top: 4px; color: white; font-size: clamp(24px, 6vw, 39px); letter-spacing: -.055em; text-shadow: 0 0 22px rgba(255,112,191,.52); }
+.evolution-banner em { margin-top: 5px; color: #ffdc73; font-size: 12px; font-style: normal; font-weight: 900; }
+
+.first-mission-panel {
+  position: fixed; z-index: 24; left: calc(10px + var(--safe-left)); bottom: calc(154px + var(--safe-bottom));
+  width: 174px; padding: 10px 11px; border-radius: 15px; pointer-events: none;
+  color: #fff9e7; background: rgba(14,8,25,.82); border: 1px solid rgba(255,213,113,.25);
+  box-shadow: inset 0 1px rgba(255,255,255,.06); backdrop-filter: blur(10px);
+}
+.first-mission-head { display: flex; align-items: center; justify-content: space-between; color: #d9b7ff; font-size: 9px; font-weight: 950; letter-spacing: .08em; }
+.first-mission-panel strong { display: block; margin-top: 5px; font-size: 11px; }
+.first-mission-track { height: 6px; margin-top: 7px; overflow: hidden; border-radius: 999px; background: rgba(255,255,255,.09); }
+.first-mission-track span { display: block; width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg,#cf86ff,#ffe071); transition: width .26s ease; }
+.first-mission-panel > small { display: block; margin-top: 5px; color: #c8bccc; font-size: 9px; }
+.first-mission-panel.complete { animation: quest-complete .7s ease both; }
+@keyframes quest-complete { 0% { transform: scale(1); } 45% { transform: scale(1.06); border-color: #ffe071; } 100% { transform: scale(1); } }
+
+.unit-chip { min-height: 39px; }
+.unit-chip .stars { color: #ffd96e; }
+.unit-chip .merge-status { color: #bfa8d3; font-size: 7px; margin-top: 3px; }
+.unit-chip.mythic .merge-status { color: #ff9ec3; font-weight: 900; }
+
+@media (max-width: 540px) {
+  .evolution-banner { top: 25%; grid-template-columns: 62px 1fr; gap: 11px; padding: 14px 16px; }
+  .evolution-banner > span { width: 58px; height: 58px; font-size: 30px; }
+  .evolution-banner b { font-size: 25px; }
+  .first-mission-panel { width: 156px; bottom: calc(145px + var(--safe-bottom)); }
+}
+@media (max-width: 410px) {
+  .first-mission-panel { width: 145px; padding: 8px 9px; }
+  .unit-chip .merge-status { display: none; }
+}
+@media (max-height: 570px) and (orientation: landscape) {
+  .first-mission-panel { left: calc(126px + var(--safe-left)); bottom: calc(10px + var(--safe-bottom)); width: 156px; }
+  .evolution-banner { top: 18%; }
+}
+.collection-item p strong { display: inline-block; margin-top: 5px; color: #ffd778; font-size: 9px; }
