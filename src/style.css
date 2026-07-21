@@ -1214,3 +1214,43 @@ body.ui-ultra-compact.boss-active .kill-chain { top: calc(229px + var(--safe-top
   .title-panel { overflow-y: auto !important; }
   .title-mascot { display: none; }
 }
+
+/* v2.4.0 Codex Hunt: persistent discovery, weakness research, loot and mascot loading states */
+.loading-mascot {
+  width: 118px; height: 118px; margin: 0 auto 6px;
+  background: url('./assets/moon-mascot-expressions-v1.webp') 0 0 / 200% 200% no-repeat;
+  filter: drop-shadow(0 16px 24px rgba(0,0,0,.38));
+  animation: mascot-load-frame 2.8s steps(1,end) infinite, mascot-load-float 1.4s ease-in-out infinite;
+}
+@keyframes mascot-load-frame {
+  0%, 24% { background-position: 0 0; }
+  25%, 44% { background-position: 100% 0; }
+  45%, 69% { background-position: 0 100%; }
+  70%, 100% { background-position: 100% 100%; }
+}
+@keyframes mascot-load-float { 0%,100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-7px) rotate(1deg); } }
+body.reduced-motion .loading-mascot { animation: none; }
+
+.codex-item.locked { filter: saturate(.35); opacity: .72; }
+.codex-item.locked .portrait { color: #87798e; background: rgba(255,255,255,.035); border-style: dashed; }
+.codex-item.locked .codex-detail { opacity: .62; }
+.codex-item.locked::after { border-color: rgba(255,255,255,.04); }
+.codex-research-row {
+  grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 5px;
+  margin-top: 3px; color: #b8a9c1; font-size: 8px;
+}
+.codex-research-row > span { padding: 4px 7px; border-radius: 999px; background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.055); }
+.codex-research-row b { color: var(--unit-color); }
+.codex-mastery-pips { display: inline-flex; gap: 3px; }
+.codex-mastery-pips i { width: 10px; height: 4px; border-radius: 99px; background: rgba(255,255,255,.1); }
+.codex-mastery-pips i.on { background: var(--unit-color); box-shadow: 0 0 7px var(--unit-soft); }
+.codex-research-tip {
+  margin: 0; padding: 10px; border-radius: 13px; color: #e8d9ef;
+  background: rgba(74,185,198,.08); border: 1px solid rgba(115,233,239,.14); font-size: 8px; line-height: 1.55;
+}
+.codex-readouts > div:nth-last-child(-n+3) { background: rgba(114,77,145,.07); }
+@media (max-width: 520px) {
+  .loading-mascot { width: 92px; height: 92px; }
+  .codex-research-row { gap: 4px; }
+  .codex-research-row > span { padding: 3px 6px; }
+}

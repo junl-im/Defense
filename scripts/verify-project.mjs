@@ -30,7 +30,7 @@ const missingIds = [...new Set(queriedIds.filter((id) => !htmlIds.has(id)))];
 if (missingIds.length) fail(`index.html에 없는 DOM ID: ${missingIds.join(', ')}`);
 else pass(`${queriedIds.length}개 DOM ID 연결`);
 
-if (pkg.version === '2.3.0') pass('package version 2.3.0');
+if (pkg.version === '2.4.0') pass('package version 2.4.0');
 else fail(`package version 불일치: ${pkg.version}`);
 
 for (const path of ['.env.production', '.firebaserc', '.github/workflows/deploy.yml', 'README.md', 'PROJECT_HANDOFF.md']) {
@@ -46,7 +46,7 @@ else fail(`루트 Markdown 정리 필요: ${rootMarkdown.join(', ')}`);
 if (manifest.start_url === './') pass('PWA 상대 경로 start_url');
 else fail(`PWA start_url 확인 필요: ${manifest.start_url}`);
 
-if (main.includes("const GAME_VERSION = '2.3.0'")) pass('런타임 version 2.3.0');
+if (main.includes("const GAME_VERSION = '2.4.0'")) pass('런타임 version 2.4.0');
 else fail('런타임 version 불일치');
 
 for (const feature of ['offerContract', 'resolveActiveContract', 'checkBossPhase', 'kingNightMarch', 'bossPounce']) {
@@ -142,7 +142,18 @@ else fail('접근성 설정 누락');
 
 if (htmlIds.has('collection-tabs') && htmlIds.has('collection-summary') && codexData.includes('CODEX_SECTION_META') && main.includes('renderCodex(')) pass('수호대·요괴·보스·전장·효과 통합 도감');
 else fail('v2.1 통합 도감 누락');
-if (html.includes('class="title-version"') && html.includes('>v2.3.0</small>') && !html.includes('3대 월식 보스, 오늘의 원정')) pass('타이틀은 버전만 표시');
+const codexProgression = read('src/codex-progression.js');
+if (codexProgression.includes('ENEMY_RESEARCH') && codexProgression.includes('LOOT_CATALOG') && codexProgression.includes('recordCodexDefeat') && main.includes('handleCodexEnemyDefeat')) pass('v2.4 도감 발견·약점·전리품 저장 루프');
+else fail('v2.4 도감 연구 루프 누락');
+if (main.includes('getWeaknessDamageBonus') && main.includes('weaknessHits') && main.includes('recordGuardianCodexUse')) pass('약점 보너스와 수호대 숙련 실제 전투 연결');
+else fail('약점 또는 수호대 숙련 연결 누락');
+if (htmlIds.has('codex-progress-readout') && htmlIds.has('codex-weakness-readout') && htmlIds.has('codex-loot-readout') && style.includes('.codex-research-row')) pass('도감 연구 상세 UI');
+else fail('도감 연구 상세 UI 누락');
+if (main.includes('createMoonMarketModuleSet()') && main.includes("root.name = 'MoonMarketModuleSetV1'") && main.includes('applyPremiumBossPhase')) pass('야시장 환경 모듈과 보스 페이즈 비주얼');
+else fail('환경 모듈 또는 보스 페이즈 비주얼 누락');
+if (existsSync(resolve(root, 'src/assets/moon-mascot-expressions-v1.webp')) && html.includes('class="loading-mascot"') && style.includes('@keyframes mascot-load-frame')) pass('마스코트 4상태 로딩 에셋');
+else fail('마스코트 로딩 상태 에셋 누락');
+if (html.includes('class="title-version"') && html.includes('>v2.4.0</small>') && !html.includes('3대 월식 보스, 오늘의 원정')) pass('타이틀은 버전만 표시');
 else fail('타이틀 패치 설명 제거 필요');
 if (main.includes('this.modalStack = []') && main.includes('modalParents') && main.includes('modal-obscured') && style.includes('--modal-layer') && style.includes('#controls-modal { z-index: var(--modal-layer, 154); }')) pass('일시정지 위 카메라 설정 모달 스택');
 else fail('중첩 모달 레이어 수정 누락');
@@ -217,7 +228,7 @@ for (const path of [
   if (existsSync(resolve(root, path))) pass(`엔진 모듈 ${path}`);
   else fail(`엔진 모듈 누락: ${path}`);
 }
-if (engineConfig.includes("ENGINE_VERSION = '1.6.0'") && engineConfig.includes('unitTriangles: 1700') && engineConfig.includes('enemyTriangles: 800') && engineConfig.includes('bossTriangles: 3000')) pass('엔진 버전과 폴리곤 예산');
+if (engineConfig.includes("ENGINE_VERSION = '1.7.0'") && engineConfig.includes('unitTriangles: 1700') && engineConfig.includes('enemyTriangles: 800') && engineConfig.includes('bossTriangles: 3000')) pass('엔진 버전과 폴리곤 예산');
 else fail('엔진 버전 또는 폴리곤 예산 누락');
 if (main.includes('new MobileGameEngine()') && main.includes('new BlobShadowSystem') && main.includes('createRockField(28)') && main.includes('createLanternField(16)')) pass('모바일 엔진 실제 연결');
 else fail('모바일 엔진 연결 누락');

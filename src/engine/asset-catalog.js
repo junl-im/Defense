@@ -119,7 +119,7 @@ export const ASSET_PRODUCTION_SUMMARY = Object.freeze({
   effectFamilies: 8,
   farLodDirections: IMPOSTOR_SPEC.directions,
   formats: Object.freeze(['glb', 'ktx2', 'webp', 'png']),
-  integratedPrototypeAssets: 8
+  integratedPrototypeAssets: 9
 });
 
 export function selectAssetVariant(entry, tier = 'high') {

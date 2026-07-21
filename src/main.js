@@ -6,13 +6,14 @@ import { RANKS, UNIT_TYPES, UNIT_KEYS, ENEMY_TYPES, SYNERGIES, BLESSINGS, CONTRA
 import { selectMoonOmen, rollEliteAffix } from './run-director.js';
 import { RUN_MODES, RELICS, RELIC_SET_BONUSES, getRunMode, getRelicById, selectRelicOptions, getRelicSetProgress, activateRelicSetBonuses, rollWaveTrial, getWaveTrialProgress, getWaveTrialReward, formatTrialProgress } from './expedition-director.js';
 import { RUN_SEED_MODES, createSeededRandom, createDailySeed, createRandomSeed, getDailyEdict, formatRunSeed } from './daily-expedition.js';
-import { getBossWave, getBossTypeForWave, getBossSpawnCount, isBossWave } from './boss-director.js';
+import { BOSS_PROFILES, getBossWave, getBossTypeForWave, getBossSpawnCount, isBossWave } from './boss-director.js';
 import { getBattlefieldTheme } from './battlefield-themes.js';
 import { CODEX_SECTION_META, CODEX_SECTION_ORDER, getCodexEntries, getCodexTotals } from './codex-data.js';
 import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, ObjectPool, RenderStatsHUD, AssetPipeline, CORE_ASSET_CATALOG, AnimationStateSystem } from './engine/index.js';
 import CodexViewer from './codex-viewer.js';
-import { createPremiumGuardian, createPremiumEnemy, createPremiumSacredTree } from './premium-assets.js';
+import { createPremiumGuardian, createPremiumEnemy, createPremiumSacredTree, applyPremiumBossPhase } from './premium-assets.js';
 import { DirectionalImpostorSelector } from './engine/directional-impostor.js';
+import { loadCodexProgress, saveCodexProgress, recordCodexEncounter, recordCodexDefeat, recordGuardianUse, getCodexKnowledge, getCodexProgressSummary, getWeaknessDamageBonus, getWeaknessLabel } from './codex-progression.js';
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -64,10 +65,11 @@ const ui = {
   runModeOptions: $('#run-mode-options'), runModeSummary: $('#run-mode-summary'), seedModeOptions: $('#seed-mode-options'), dailyEdictPreview: $('#daily-edict-preview'),
   runSeedChip: $('#run-seed-chip'), runSeedIcon: $('#run-seed-icon'), runSeedMode: $('#run-seed-mode'), runSeedValue: $('#run-seed-value'), runEdictName: $('#run-edict-name'), resultNewRun: $('#result-new-run-btn'),
   codexPreviewModal: $('#codex-preview-modal'), codexPreviewCanvas: $('#codex-preview-canvas'), codexPreviewTitle: $('#codex-preview-title'), codexPreviewSubtitle: $('#codex-preview-subtitle'),
-  codexFrameStatus: $('#codex-frame-status'), codexAssetSet: $('#codex-asset-set'), codexLodReadout: $('#codex-lod-readout'), codexDirectionReadout: $('#codex-direction-readout'), codexImpostorBtn: $('#codex-impostor-btn')
+  codexFrameStatus: $('#codex-frame-status'), codexAssetSet: $('#codex-asset-set'), codexLodReadout: $('#codex-lod-readout'), codexDirectionReadout: $('#codex-direction-readout'), codexImpostorBtn: $('#codex-impostor-btn'),
+  codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '2.3.0';
+const GAME_VERSION = '2.4.0';
 
 const FIRST_MISSIONS = [
   { id: 'summons', title: '수호대 3회 강림', goal: 3, reward: 35, copy: '무료 강림도 포함됩니다.' },
@@ -154,6 +156,7 @@ class DokkaebiLuckDefense {
     this.activeContract = null;
     this.bossSpecialSerial = 0;
     this.metaProgress = this.loadMetaProgress();
+    this.codexProgress = loadCodexProgress();
     this.controlSettings = this.loadControlSettings();
     this.mods = this.createDefaultMods();
     this.runRewarded = false;
@@ -1010,7 +1013,11 @@ class DokkaebiLuckDefense {
       eliteBurstDodges: 0,
       eliteBurstHits: 0,
       relicSetsActivated: 0,
-      bossHazardHits: 0
+      bossHazardHits: 0,
+      codexDiscoveries: 0,
+      weaknessUnlocks: 0,
+      weaknessHits: 0,
+      codexDrops: 0
     };
   }
 
@@ -1222,6 +1229,51 @@ class DokkaebiLuckDefense {
     this.renderCodex(this.currentCodexSection);
   }
 
+  saveCodexState() {
+    saveCodexProgress(this.codexProgress);
+  }
+
+  recordCodexDiscovery(section, id, { announce = true } = {}) {
+    const result = recordCodexEncounter(this.codexProgress, section, id);
+    if (result.newDiscovery) {
+      this.runStats.codexDiscoveries += 1;
+      if (announce) this.showToast(`달빛 도감 발견 · ${getCodexEntries(section).find((entry) => entry.id === id)?.name || id}`);
+    }
+    this.saveCodexState();
+    return result;
+  }
+
+  recordGuardianCodexUse(id) {
+    const result = recordGuardianUse(this.codexProgress, id);
+    if (result.newDiscovery) {
+      this.runStats.codexDiscoveries += 1;
+      this.showToast(`수호대 도감 등록 · ${UNIT_TYPES[id]?.name || id}`);
+    }
+    this.saveCodexState();
+    return result;
+  }
+
+  handleCodexEnemyDefeat(enemy) {
+    const section = enemy.boss ? 'boss' : 'monster';
+    const result = recordCodexDefeat(this.codexProgress, section, enemy.type, () => this.random());
+    if (result.newDiscovery) this.runStats.codexDiscoveries += 1;
+    if (result.newWeakness) {
+      this.runStats.weaknessUnlocks += 1;
+      this.showMission(`${ENEMY_TYPES[enemy.type].name} 약점 해독`, `${getWeaknessLabel(enemy.type)} 공격의 영구 연구 보너스가 활성화됐습니다.`, 'CODEX RESEARCH COMPLETE', 1750);
+    }
+    for (const drop of result.drops) {
+      this.runStats.codexDrops += 1;
+      this.metaProgress.shards += drop.shards;
+      this.showCombo(`${drop.icon} 전리품 · ${drop.name} · 혼불 +${drop.shards}`, drop.rarity === 'boss' ? 1800 : 1250);
+    }
+    if (result.drops.length) {
+      this.saveMetaProgress();
+      this.renderMetaProgress();
+    }
+    this.saveCodexState();
+    return result;
+  }
+
   openCodex(trigger = document.activeElement) {
     this.renderCodex(this.currentCodexSection);
     this.showModal(ui.collectionModal, { trigger });
@@ -1233,25 +1285,35 @@ class DokkaebiLuckDefense {
     const meta = CODEX_SECTION_META[nextSection];
     const entries = getCodexEntries(nextSection);
     const totals = getCodexTotals();
+    const summary = getCodexProgressSummary(this.codexProgress);
     ui.collectionTabs.querySelectorAll('[data-codex-tab]').forEach((button) => {
       const active = button.dataset.codexTab === nextSection;
       button.classList.toggle('active', active);
       button.setAttribute('aria-selected', String(active));
     });
-    ui.collectionSummary.innerHTML = `<span>${meta.icon}</span><div><b>${meta.label} ${entries.length}종</b><small>${meta.copy}</small></div><em>전체 ${Object.values(totals).reduce((sum, value) => sum + value, 0)}종</em>`;
+    const sectionDiscovered = entries.filter((entry) => getCodexKnowledge(this.codexProgress, nextSection, entry.id).discovered).length;
+    ui.collectionSummary.innerHTML = `<span>${meta.icon}</span><div><b>${meta.label} ${sectionDiscovered} / ${entries.length}</b><small>${meta.copy}</small></div><em>발견 ${summary.discovered}/${summary.discoverable} · 약점 ${summary.weaknesses}/${summary.weaknessTotal} · 전리품 ${summary.lootOwned}/${summary.lootTotal}</em>`;
     ui.collectionGrid.dataset.section = nextSection;
     ui.collectionGrid.innerHTML = entries.map((entry) => {
+      const knowledge = getCodexKnowledge(this.codexProgress, nextSection, entry.id);
+      const locked = !knowledge.discovered;
       const color = Number.isFinite(entry.color) ? `#${entry.color.toString(16).padStart(6, '0')}` : '#b995ff';
-      return `<article class="collection-item codex-item" tabindex="0" role="button" data-codex-section="${nextSection}" data-codex-id="${entry.id}" aria-label="${this.escapeHtml(entry.name)} 3D 보기" style="--unit-color:${color};--unit-soft:${color}22;--unit-line:${color}66">
-        <div class="portrait" aria-hidden="true">${entry.symbol || meta.icon}</div>
-        <div class="codex-item-head"><b>${this.escapeHtml(entry.name)}</b><small>${this.escapeHtml(entry.subtitle || '')}</small></div>
-        <p>${this.escapeHtml(entry.description || entry.signature || '')}</p>
+      const masteryPips = Array.from({ length: 4 }, (_, index) => `<i class="${index < knowledge.mastery ? 'on' : ''}"></i>`).join('');
+      const displayName = locked ? (nextSection === 'guardian' ? '미강림 수호대' : nextSection === 'boss' ? '미조우 월식 보스' : '미발견 요괴') : entry.name;
+      const subtitle = locked ? '원정에서 조우하면 기록됩니다.' : entry.subtitle || '';
+      const weakness = knowledge.research ? (knowledge.weaknessUnlocked ? `${getWeaknessLabel(entry.id)} · ×${knowledge.research.multiplier.toFixed(2)}` : `연구 ${knowledge.defeats}/${nextSection === 'boss' ? 1 : 3}`) : '환경 기록';
+      const lootOwned = knowledge.loot.reduce((sum, loot) => sum + (loot.count > 0 ? 1 : 0), 0);
+      return `<article class="collection-item codex-item${locked ? ' locked' : ''}" tabindex="0" role="button" data-codex-section="${nextSection}" data-codex-id="${entry.id}" aria-label="${this.escapeHtml(displayName)} ${locked ? '미발견' : '3D 보기'}" style="--unit-color:${color};--unit-soft:${color}22;--unit-line:${color}66">
+        <div class="portrait" aria-hidden="true">${locked ? '?' : entry.symbol || meta.icon}</div>
+        <div class="codex-item-head"><b>${this.escapeHtml(displayName)}</b><small>${this.escapeHtml(subtitle)}</small></div>
+        <p>${locked ? '실루엣과 약점, 전리품 정보가 아직 달빛 장부에 기록되지 않았습니다.' : this.escapeHtml(entry.description || entry.signature || '')}</p>
+        <div class="codex-research-row"><span>숙련 <b>LV.${knowledge.mastery}</b></span><span class="codex-mastery-pips">${masteryPips}</span><span>${this.escapeHtml(weakness)}</span>${knowledge.loot.length ? `<span>전리품 ${lootOwned}/${knowledge.loot.length}</span>` : ''}</div>
         <dl class="codex-detail">
-          <div><dt>실루엣</dt><dd>${this.escapeHtml(entry.shape || '큰 형태 우선')}</dd></div>
-          <div><dt>민담 모티프</dt><dd>${this.escapeHtml(entry.motif || '달빛 야시장')}</dd></div>
-          <div><dt>대표 연출</dt><dd>${this.escapeHtml(entry.signature || entry.ultimate || '')}</dd></div>
-          <div><dt>전투 판독</dt><dd>${this.escapeHtml(entry.danger || entry.ultimate || '')}</dd></div>
-        </dl><span class="codex-view-label">3D 보기</span>
+          <div><dt>실루엣</dt><dd>${locked ? '???' : this.escapeHtml(entry.shape || '큰 형태 우선')}</dd></div>
+          <div><dt>민담 모티프</dt><dd>${locked ? '???' : this.escapeHtml(entry.motif || '달빛 야시장')}</dd></div>
+          <div><dt>대표 연출</dt><dd>${locked ? '조우 후 공개' : this.escapeHtml(entry.signature || entry.ultimate || '')}</dd></div>
+          <div><dt>연구 기록</dt><dd>${locked ? '원정에서 발견하세요.' : `${nextSection === 'guardian' ? `강림 ${knowledge.uses}회` : `조우 ${knowledge.encounters} · 격파 ${knowledge.defeats}`}`}</dd></div>
+        </dl><span class="codex-view-label">${locked ? '미발견' : '3D · 연구'}</span>
       </article>`;
     }).join('');
   }
@@ -1333,24 +1395,38 @@ class DokkaebiLuckDefense {
   openCodexPreview(section, id, trigger = document.activeElement) {
     const entry = getCodexEntries(section).find((item) => item.id === id);
     if (!entry) return;
+    const knowledge = getCodexKnowledge(this.codexProgress, section, id);
+    if (!knowledge.discovered) {
+      this.showToast(section === 'guardian' ? '해당 수호대를 강림시키면 도감이 열립니다.' : '원정에서 먼저 조우해야 도감이 열립니다.');
+      return;
+    }
     ui.codexPreviewTitle.textContent = entry.name;
     ui.codexPreviewSubtitle.textContent = `${entry.subtitle || CODEX_SECTION_META[section]?.label || ''} · 드래그 회전 / 핀치 확대`;
     const baseKey = section === 'guardian' && id === 'ember' ? 'ember' : section === 'monster' && id === 'imp' ? 'imp' : '';
     const canImpostor = Boolean(baseKey && this.getImpostorTextureSet(baseKey).idle);
     ui.codexImpostorBtn.disabled = !canImpostor;
     ui.codexImpostorBtn.title = canImpostor ? `${entry.name} 대기·이동·공격 11방향 아틀라스` : '현재 11방향 애니메이션 세트는 불씨 깨비와 장난 요괴에 적용되었습니다.';
-    ui.codexAssetSet.textContent = canImpostor ? 'Moon Forge v2 · 3D + 상태별 11방향' : 'Moon Forge v2 · 절차형 3D';
+    ui.codexAssetSet.textContent = canImpostor ? 'Moon Forge v3 · 연구형 3D + 11방향' : section === 'boss' ? 'Moon Forge v3 · 페이즈 모델' : 'Moon Forge v3 · 연구형 3D';
     ui.codexLodReadout.textContent = 'LOD0 · 절차형 3D';
     ui.codexDirectionReadout.textContent = '3D 자유 회전';
+    ui.codexProgressReadout.textContent = `LV.${knowledge.mastery} · ${section === 'guardian' ? `강림 ${knowledge.uses}회` : `격파 ${knowledge.defeats}회`}`;
+    ui.codexWeaknessReadout.textContent = knowledge.research
+      ? knowledge.weaknessUnlocked ? `${getWeaknessLabel(id)} ×${knowledge.research.multiplier.toFixed(2)}` : `미해독 · ${knowledge.defeats}/${section === 'boss' ? 1 : 3}`
+      : '연구 대상 없음';
+    const ownedLoot = knowledge.loot.filter((loot) => loot.count > 0);
+    ui.codexLootReadout.textContent = knowledge.loot.length ? (ownedLoot.length ? ownedLoot.map((loot) => `${loot.icon} ${loot.name} ×${loot.count}`).join(' · ') : `미발견 0/${knowledge.loot.length}`) : '전리품 없음';
+    ui.codexResearchTip.textContent = knowledge.research
+      ? knowledge.weaknessUnlocked ? knowledge.research.tip : `${section === 'boss' ? '1회' : '3회'} 격파하면 약점 연구가 완성됩니다.`
+      : section === 'guardian' ? '강림 횟수가 쌓이면 숙련 단계가 상승합니다.' : '전장과 효과 항목은 원정 기록과 함께 자동 등록됩니다.';
     $$('[data-codex-state]').forEach((button) => button.classList.toggle('active', button.dataset.codexState === 'idle'));
     $$('[data-codex-mode]').forEach((button) => button.classList.toggle('active', button.dataset.codexMode === 'model'));
     const viewer = this.ensureCodexViewer();
     if (viewer) {
       const context = section === 'guardian'
-        ? { config: UNIT_TYPES[id], rankConfig: RANKS[3] }
+        ? { config: UNIT_TYPES[id], rankConfig: RANKS[3], mastery: knowledge.mastery }
         : section === 'monster' || section === 'boss'
-          ? { config: ENEMY_TYPES[id] }
-          : {};
+          ? { config: ENEMY_TYPES[id], bossPhase: section === 'boss' ? Math.max(1, Math.min(BOSS_PROFILES[id]?.phases || 1, knowledge.mastery)) : 1, mastery: knowledge.mastery }
+          : { mastery: knowledge.mastery };
       viewer.setEntry(section, id, entry, context);
       viewer.setActive(true);
     }
@@ -1482,6 +1558,7 @@ class DokkaebiLuckDefense {
           body.material.emissive?.set(group.userData.baseColor || 0x000000);
           body.material.emissiveIntensity = group.userData.isBoss ? .24 : 0;
         }
+        if (group.userData.isBoss) applyPremiumBossPhase(group, type, 1);
         const shield = group.userData.shield;
         if (shield?.material) shield.material.emissiveIntensity = .18;
         const eliteAura = group.userData.eliteAura;
@@ -1633,6 +1710,7 @@ class DokkaebiLuckDefense {
 
     this.createMarketField(8);
     this.createMarketHeritageProps();
+    this.createMoonMarketModuleSet();
 
     for (let i = 0; i < 4; i += 1) {
       const angle = i / 4 * Math.PI * 2;
@@ -1884,6 +1962,64 @@ class DokkaebiLuckDefense {
 
     this.worldRoot.add(root);
     this.heritageProps = root;
+  }
+
+  createMoonMarketModuleSet() {
+    const root = new THREE.Group();
+    root.name = 'MoonMarketModuleSetV1';
+    const wood = this.createMaterial(0x432735, .9);
+    const dark = this.createMaterial(0x211522, .94);
+    const brass = this.createMaterial(0xc79b52, .48, .34, 0x8c5720, .28);
+    const paper = this.createMaterial(0xe6c98d, .82, .02, 0xffbc63, .24);
+    const jade = this.createMaterial(0x64d8ce, .35, .08, 0x2ed9cb, 1.1);
+    const cloths = [0x75354f, 0x355a73, 0x66407f, 0x79613c].map((color) => this.createMaterial(color, .82));
+
+    const createPavilion = (angle, variant) => {
+      const group = new THREE.Group();
+      const radius = 20.4;
+      group.position.set(Math.cos(angle) * radius, 0, Math.sin(angle) * radius);
+      group.rotation.y = -angle + Math.PI / 2;
+      const deck = this.mesh(new THREE.CylinderGeometry(2.05, 2.25, .28, 8), dark, 0, .14, 0);
+      const counter = this.mesh(new THREE.BoxGeometry(3.5, .92, 1.3), wood, 0, .72, 0);
+      const roof = this.mesh(new THREE.ConeGeometry(2.65, 1.05, 4), cloths[variant % cloths.length], 0, 3.2, 0);
+      roof.rotation.y = Math.PI / 4;
+      const finial = this.mesh(new THREE.ConeGeometry(.16, .78, 6), brass, 0, 4.03, 0);
+      group.add(deck, counter, roof, finial);
+      for (const x of [-1.55, 1.55]) {
+        const post = this.mesh(new THREE.CylinderGeometry(.09, .12, 2.35, 6), wood, x, 1.85, .38);
+        const lantern = this.mesh(new THREE.CylinderGeometry(.25, .2, .48, 8), paper, x, 2.36, .42);
+        const tassel = this.mesh(new THREE.ConeGeometry(.07, .35, 5), brass, x, 2.0, .42);
+        group.add(post, lantern, tassel);
+      }
+      for (let index = 0; index < 4; index += 1) {
+        const box = this.mesh(new THREE.BoxGeometry(.48, .32, .5), index % 2 ? dark : wood, -1.1 + index * .72, 1.34, -.12);
+        group.add(box);
+      }
+      const sign = this.mesh(new THREE.BoxGeometry(.9, .54, .08), paper, 0, 2.48, .75);
+      const rune = this.mesh(new THREE.TorusGeometry(.16, .032, 5, 12), jade, 0, 2.48, .81, false, false);
+      group.add(sign, rune);
+      return group;
+    };
+
+    for (let index = 0; index < 4; index += 1) root.add(createPavilion(Math.PI / 4 + index * Math.PI / 2, index));
+
+    for (let index = 0; index < 12; index += 1) {
+      const angle = index / 12 * Math.PI * 2 + Math.PI / 12;
+      const radius = 18.1 + (index % 2) * .55;
+      const bundle = new THREE.Group();
+      bundle.position.set(Math.cos(angle) * radius, 0, Math.sin(angle) * radius);
+      bundle.rotation.y = -angle;
+      const basket = this.mesh(new THREE.CylinderGeometry(.34, .46, .45, 8), this.createMaterial(index % 2 ? 0x8b6342 : 0x68422f, .9), 0, .23, 0);
+      const goods = this.mesh(new THREE.IcosahedronGeometry(.26, 0), index % 3 === 0 ? jade : index % 3 === 1 ? brass : paper, 0, .57, 0);
+      const flag = this.mesh(new THREE.PlaneGeometry(.52, .78), cloths[index % cloths.length], .52, 1.25, 0, false, false);
+      const pole = this.mesh(new THREE.CylinderGeometry(.035, .05, 1.9, 5), wood, .26, .95, 0);
+      flag.rotation.y = Math.PI / 2;
+      bundle.add(basket, goods, pole, flag);
+      root.add(bundle);
+    }
+
+    this.worldRoot.add(root);
+    this.marketModuleSet = root;
   }
 
   createMarketStall(x, z, rotation, variant) {
@@ -2486,6 +2622,7 @@ class DokkaebiLuckDefense {
     }
 
     const unit = this.createUnit(type, rank, pad, false);
+    this.recordGuardianCodexUse(type);
     if (rank >= 4) this.triggerJackpotRush(rank);
     this.recordFirstMission('summons', 1);
     this.sound.summon(rank);
@@ -2715,6 +2852,7 @@ class DokkaebiLuckDefense {
     if (!enemy) return;
     if (enemy.elite) this.waveTrialEliteSpawned += 1;
     this.enemies.push(enemy);
+    this.recordCodexDiscovery(enemy.boss ? 'boss' : 'monster', type);
     if (enemy.boss) {
       this.showMission(ENEMY_TYPES[type].name, '강력한 우두머리가 신목으로 돌진합니다.', 'BOSS HAS ENTERED', 1550);
       this.haptic([70, 45, 100]);
@@ -3412,8 +3550,14 @@ class DokkaebiLuckDefense {
       if (enemy.slowTimer<=0) enemy.slowFactor=lerp(enemy.slowFactor,1,dt*5);
       enemy.flash=Math.max(0,enemy.flash-dt);
       enemy.shieldFlash=Math.max(0,enemy.shieldFlash-dt);
-      if (enemy.flash<=0) enemy.group.userData.body.material.emissiveIntensity=enemy.boss?.24:0;
+      enemy.weaknessTextCooldown=Math.max(0,(enemy.weaknessTextCooldown||0)-dt);
+      if (enemy.flash<=0) enemy.group.userData.body.material.emissiveIntensity = enemy.boss ? (enemy.bossPhase > 1 ? .56 + enemy.bossPhase * .16 : .24) : 0;
       if (enemy.group.userData.shield) enemy.group.userData.shield.material.emissiveIntensity = enemy.shieldFlash > 0 ? 2.4 : .18;
+      if (enemy.group.userData.phaseVisual) {
+        const phaseVisual = enemy.group.userData.phaseVisual;
+        phaseVisual.rotation.y += dt * (enemy.type === 'tiger' ? 1.4 : .85);
+        phaseVisual.scale.setScalar(1 + Math.sin(this.elapsed * 5 + enemy.phase) * .055);
+      }
       if (enemy.group.userData.eliteAura?.visible) {
         enemy.group.userData.eliteAura.rotation.z += dt * (enemy.elite?.id === 'swift' ? 2.8 : 1.35);
         enemy.group.userData.eliteAura.material.opacity = .55 + Math.sin(this.elapsed * 7 + enemy.phase) * .16;
@@ -3801,6 +3945,7 @@ class DokkaebiLuckDefense {
 
   enterBossPhase(enemy, phase, title, copy, color) {
     enemy.bossPhase = phase;
+    applyPremiumBossPhase(enemy.group, enemy.type, phase);
     enemy.specialIndex = 0;
     enemy.specialTimer = .9;
     enemy.group.scale.multiplyScalar(1.055);
@@ -3987,6 +4132,16 @@ class DokkaebiLuckDefense {
 
   damageEnemy(enemy,amount,source='',hitOrigin=null,owner=null) {
     if (!enemy || enemy.dead) return;
+    const attackerType = owner?.type || (source.startsWith('ultimate-') ? source.slice('ultimate-'.length) : UNIT_KEYS.includes(source) ? source : '');
+    const weaknessMultiplier = attackerType ? getWeaknessDamageBonus(this.codexProgress, enemy.type, attackerType) : 1;
+    if (weaknessMultiplier > 1) {
+      amount *= weaknessMultiplier;
+      this.runStats.weaknessHits += 1;
+      if (!enemy.weaknessTextCooldown || enemy.weaknessTextCooldown <= 0) {
+        enemy.weaknessTextCooldown = .55;
+        this.showCombatText(enemy.group.position.clone().add(new THREE.Vector3(0, enemy.boss ? 3.55 : 2.18, 0)), 0, { label: `약점 ×${weaknessMultiplier.toFixed(2)}` });
+      }
+    }
     if (enemy.boss) amount *= this.mods.bossDamage;
     if (enemy.eliteShield > 0) {
       const absorbed = Math.min(enemy.eliteShield, amount);
@@ -4070,6 +4225,7 @@ class DokkaebiLuckDefense {
       this.showCombo(`${this.killChain} 연속 처치 · +${chainGold} 엽전`, 1200);
       this.haptic([18, 22, 35]);
     }
+    this.handleCodexEnemyDefeat(enemy);
     if (enemy.boss) {
       this.runStats.bossKills += 1;
       this.showCombo(`${ENEMY_TYPES[enemy.type].name} 격파!`,1800);
@@ -4683,6 +4839,7 @@ class DokkaebiLuckDefense {
       <div><span>원정 기록</span><b>${this.activeRunMode.icon} ${this.activeRunMode.name}</b><small>도전 ${this.runStats.trialsCompleted}회 · 유물 ${this.runStats.relicsChosen}개 · 세트 ${this.runStats.relicSetsActivated}</small></div>
       <div><span>위험 패턴</span><b>회피 ${this.runStats.dangerDodges}회</b><small>파열 회피 ${this.runStats.eliteBurstDodges} · 피격 ${this.runStats.eliteBurstHits} · 보스 피격 ${this.runStats.bossHazardHits}</small></div>
       <div><span>수호신 폭주</span><b>${this.runStats.guardianBursts}회</b><small>최대 연속 처치 ${this.runStats.maxKillChain} · 질주 ${this.runStats.dashUses}회</small></div>
+      <div><span>도감 연구</span><b>발견 ${this.runStats.codexDiscoveries} · 전리품 ${this.runStats.codexDrops}</b><small>약점 해독 ${this.runStats.weaknessUnlocks} · 약점 공격 ${this.runStats.weaknessHits.toLocaleString()}회</small></div>
       <div><span>원정 시드</span><b>${this.runSeed}</b><small>${this.dailyEdict.icon} ${this.dailyEdict.name} · ${this.selectedSeedModeId === 'daily' ? '오늘의 원정' : '자유 원정'}</small></div>`;
     const shardReward = this.awardRunShards(won);
     ui.resultShards.textContent = `+${shardReward}`;

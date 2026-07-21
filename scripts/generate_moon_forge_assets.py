@@ -206,10 +206,54 @@ def make_cover(mascot):
     return im
 
 
+def make_mascot_expression_atlas(mascot):
+    """Create a reproducible 2x2 loading sheet: idle, blink, surprise, cheer."""
+    cell = 768
+    atlas = Image.new('RGBA', (cell * 2, cell * 2), (0, 0, 0, 0))
+    states = []
+
+    idle = mascot.copy()
+    states.append(idle)
+
+    blink = mascot.copy()
+    d = ImageDraw.Draw(blink, 'RGBA')
+    for cx in (316, 451):
+        ellipse(d, [cx - 31, 346, cx + 31, 419], rgba('#d49177'))
+        d.arc([cx - 28, 365, cx + 28, 406], 190, 350, fill=rgba('#321941'), width=9)
+    states.append(blink)
+
+    surprise = mascot.copy()
+    d = ImageDraw.Draw(surprise, 'RGBA')
+    for cx in (316, 451):
+        ellipse(d, [cx - 30, 345, cx + 30, 419], rgba('#1c122b'))
+        ellipse(d, [cx - 11, 358, cx + 11, 390], rgba('#8ef7ff'))
+        ellipse(d, [cx - 4, 362, cx + 4, 373], rgba('#ffffff'))
+    ellipse(d, [356, 419, 412, 476], rgba('#57213d'), rgba('#fff0d4'), 5)
+    states.append(surprise)
+
+    cheer = mascot.copy()
+    d = ImageDraw.Draw(cheer, 'RGBA')
+    for cx in (316, 451):
+        ellipse(d, [cx - 31, 346, cx + 31, 419], rgba('#d49177'))
+        d.arc([cx - 27, 365, cx + 27, 410], 185, 355, fill=rgba('#321941'), width=9)
+    d.arc([322, 401, 450, 489], 8, 172, fill=rgba('#5b233d'), width=13)
+    for x, y in ((112, 205), (650, 245), (615, 625), (170, 580)):
+        polygon(d, [(x, y-18), (x+6, y-6), (x+18, y), (x+6, y+6), (x, y+18), (x-6, y+6), (x-18, y), (x-6, y-6)], rgba('#ffe69a', 230))
+    states.append(cheer)
+
+    for index, state in enumerate(states):
+        atlas.alpha_composite(state, ((index % 2) * cell, (index // 2) * cell))
+    return atlas
+
+
 def main():
     mascot=mascot_layer(768,True)
     mascot_path=ROOT/'src/assets/moon-mascot-v1.webp'
     mascot.save(mascot_path,'WEBP',quality=92,method=6)
+    make_mascot_expression_atlas(mascot).save(
+        ROOT/'src/assets/moon-mascot-expressions-v1.webp',
+        'WEBP', quality=90, method=6
+    )
     for kind, folder in [('ember','guardian'),('imp','monster')]:
         for state in ('idle','move','attack'):
             out=ROOT/f'public/assets/impostors/{folder}/{kind}-{state}-11.webp'
@@ -223,7 +267,7 @@ def main():
     mask.alpha_composite(inner,(41,41))
     mask.save(ROOT/'public/icon-maskable-512.png','PNG',optimize=True)
     make_cover(mascot).save(ROOT/'public/cover.webp','WEBP',quality=88,method=6)
-    print('generated Moon Forge v2.3 assets')
+    print('generated Moon Forge v2.4 assets')
 
 if __name__=='__main__':
     main()

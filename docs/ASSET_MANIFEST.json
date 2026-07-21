@@ -1,9 +1,9 @@
 {
-  "schemaVersion": 3,
-  "gameVersion": "2.3.0",
-  "engineVersion": "1.6.0",
+  "schemaVersion": 4,
+  "gameVersion": "2.4.0",
+  "engineVersion": "1.7.0",
   "artDirection": "moonlit-joseon-market-folklore",
-  "productionStage": "moonlit-mascot-state-impostor-prototype",
+  "productionStage": "codex-hunt-tiger-phase-market-modules",
   "impostorDirections": 11,
   "characters": {
     "guardians": [
@@ -161,6 +161,20 @@
       ],
       "frames": 11,
       "status": "runtime"
+    },
+    {
+      "id": "moon-mascot-expressions-v1",
+      "path": "src/assets/moon-mascot-expressions-v1.webp",
+      "size": [
+        1536,
+        1536
+      ],
+      "grid": [
+        2,
+        2
+      ],
+      "frames": 4,
+      "status": "loading-and-expression"
     }
   ],
   "proceduralRuntimeModels": {
@@ -170,6 +184,12 @@
     "bosses": 3,
     "landmarks": [
       "sacred-tree"
+    ],
+    "environmentModules": [
+      "moon-market-pavilion",
+      "goods-bundle",
+      "hanging-lantern",
+      "market-banner"
     ]
   },
   "viewer": {
@@ -207,5 +227,12 @@
       512
     ],
     "cover": "public/cover.webp"
+  },
+  "codexProgression": {
+    "storageKey": "dokkaebi-codex-progress-v1",
+    "sections": 5,
+    "weaknessResearch": 7,
+    "lootEntries": 10,
+    "masteryTiers": 4
   }
 }

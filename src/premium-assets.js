@@ -262,6 +262,70 @@ export function createPremiumSacredTree({ lowPower = false } = {}) {
   return group;
 }
 
+
+export function applyPremiumBossPhase(group, type, phase = 1) {
+  if (!group) return group;
+  const previous = group.userData.phaseVisual;
+  if (previous) {
+    group.remove(previous);
+    previous.traverse((node) => {
+      node.geometry?.dispose?.();
+      if (node.material) {
+        const materials = Array.isArray(node.material) ? node.material : [node.material];
+        materials.forEach((material) => material.dispose?.());
+      }
+    });
+  }
+  group.userData.phaseVisual = null;
+  group.userData.bossPhase = phase;
+  const body = group.userData.body;
+  if (body?.material) {
+    body.material.emissiveIntensity = phase > 1 ? .56 + phase * .16 : .24;
+  }
+  if (phase <= 1) return group;
+
+  const visual = new THREE.Group();
+  visual.name = `${type}-phase-${phase}`;
+  const scale = group.userData.scale || 1;
+  if (type === 'tiger') {
+    const blood = basic(phase >= 2 ? 0xff5848 : 0xff976e, .78);
+    const ring = mesh(new THREE.TorusGeometry(.94 * scale, .075 * scale, 7, 26), blood, 0, .24 * scale, 0);
+    ring.rotation.x = Math.PI / 2;
+    visual.add(ring);
+    for (let index = 0; index < 7; index += 1) {
+      const angle = -1.18 + index * .39;
+      const spike = mesh(new THREE.ConeGeometry(.075 * scale, .62 * scale, 5), blood, Math.sin(angle) * .62 * scale, (1.65 + Math.cos(angle) * .36) * scale, -.36 * scale);
+      spike.rotation.z = -angle * .82;
+      visual.add(spike);
+    }
+    const eyeBand = mesh(new THREE.PlaneGeometry(.82 * scale, .13 * scale), basic(0xffd58b, .9), 0, 1.73 * scale, .47 * scale);
+    visual.add(eyeBand);
+  } else if (type === 'serpent') {
+    const moon = basic(0x55f4cf, .7);
+    for (let index = 0; index < 3; index += 1) {
+      const ring = mesh(new THREE.TorusGeometry((.58 + index * .28) * scale, .045 * scale, 6, 22), moon, 0, (1.25 + index * .42) * scale, -.42 * scale);
+      ring.rotation.x = Math.PI / 2;
+      ring.rotation.z = index * .5;
+      visual.add(ring);
+    }
+  } else if (type === 'king') {
+    const color = phase >= 3 ? 0xff54dc : 0xab72ff;
+    const royal = basic(color, .72);
+    for (let index = 0; index < phase + 1; index += 1) {
+      const angle = index / (phase + 1) * Math.PI * 2;
+      const mask = mesh(new THREE.OctahedronGeometry(.19 * scale, 0), royal, Math.cos(angle) * 1.02 * scale, (1.45 + Math.sin(angle * 2) * .26) * scale, Math.sin(angle) * .55 * scale);
+      visual.add(mask);
+    }
+    const crownRing = mesh(new THREE.TorusGeometry(.92 * scale, .06 * scale, 7, 24), royal, 0, 2.45 * scale, 0);
+    crownRing.rotation.x = Math.PI / 2;
+    visual.add(crownRing);
+  }
+  visual.traverse((node) => { if (node.isMesh) { node.castShadow = false; node.receiveShadow = false; } });
+  group.add(visual);
+  group.userData.phaseVisual = visual;
+  return group;
+}
+
 export function createCodexPreviewModel(section, id, data, rank = 4) {
   if (section === 'guardian') {
     const config = data?.config || { color: data?.color || 0xff704d };
@@ -270,7 +334,9 @@ export function createCodexPreviewModel(section, id, data, rank = 4) {
   }
   if (section === 'monster' || section === 'boss') {
     const config = data?.config || { color: data?.color || 0xd75672, scale: section === 'boss' ? 1.7 : .9, boss: section === 'boss' };
-    return createPremiumEnemy(id, config);
+    const model = createPremiumEnemy(id, config);
+    if (section === 'boss') applyPremiumBossPhase(model, id, data?.bossPhase || 1);
+    return model;
   }
   if (section === 'world' && id === 'sacred-tree') return createPremiumSacredTree();
   const group = new THREE.Group();
