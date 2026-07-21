@@ -30,13 +30,15 @@ export class RenderStatsHUD {
     const fps = diagnostics.fps || 0;
     const chunks = diagnostics.chunks || {};
     const pools = diagnostics.pools || {};
+    const assets = diagnostics.assets || {};
     this.element.innerHTML = `
       <b>ENGINE ${diagnostics.engineVersion || ''}</b>
       <span>FPS <strong>${Math.round(fps)}</strong> · SCALE ${Math.round((diagnostics.qualityScale || 1) * 100)}%</span>
       <span>CALLS <strong>${render.calls || 0}</strong> · TRI <strong>${Number(render.triangles || 0).toLocaleString()}</strong></span>
       <span>GEO ${memory.geometries || 0} · TEX ${memory.textures || 0}</span>
       <span>CHUNK ${chunks.active || 0}/${chunks.total || 0} · OBJ ${chunks.visibleObjects || 0}/${chunks.totalObjects || 0}</span>
-      <span>SHOT ${pools.projectiles || 0}/${pools.projectileCapacity || 0} · COIN ${pools.coins || 0}/${pools.coinCapacity || 0}</span>`;
+      <span>SHOT ${pools.projectiles || 0}/${pools.projectileCapacity || 0} · COIN ${pools.coins || 0}/${pools.coinCapacity || 0}</span>
+      <span>ASSET ${(assets.qualityTier || 'n/a').toUpperCase()} · TEX ${assets.textureMemoryMB || 0}/${assets.textureBudgetMB || 0}MB</span>`;
   }
 
   dispose() {

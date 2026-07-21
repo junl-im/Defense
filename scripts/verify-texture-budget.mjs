@@ -1,0 +1,99 @@
+import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { extname, resolve, relative } from 'node:path';
+
+const root = resolve(import.meta.dirname, '..');
+const roots = ['public', 'src/assets'].map((path) => resolve(root, path));
+const files = [];
+const MIP_FACTOR = 4 / 3;
+const BUDGET_MB = 64;
+const MAX_EDGE = 2048;
+
+function walk(directory) {
+  for (const entry of readdirSync(directory, { withFileTypes: true })) {
+    const path = resolve(directory, entry.name);
+    if (entry.isDirectory()) walk(path);
+    else if (['.png', '.webp', '.jpg', '.jpeg', '.ktx2'].includes(extname(entry.name).toLowerCase())) files.push(path);
+  }
+}
+
+function pngSize(buffer) {
+  if (buffer.length < 24 || buffer.toString('ascii', 1, 4) !== 'PNG') return null;
+  return { width: buffer.readUInt32BE(16), height: buffer.readUInt32BE(20), bpp: 4 };
+}
+
+function webpSize(buffer) {
+  if (buffer.length < 30 || buffer.toString('ascii', 0, 4) !== 'RIFF' || buffer.toString('ascii', 8, 12) !== 'WEBP') return null;
+  const chunk = buffer.toString('ascii', 12, 16);
+  if (chunk === 'VP8X') {
+    const width = 1 + buffer.readUIntLE(24, 3);
+    const height = 1 + buffer.readUIntLE(27, 3);
+    return { width, height, bpp: 4 };
+  }
+  if (chunk === 'VP8 ') {
+    const marker = buffer.indexOf(Buffer.from([0x9d, 0x01, 0x2a]), 20);
+    if (marker >= 0 && marker + 7 <= buffer.length) {
+      return { width: buffer.readUInt16LE(marker + 3) & 0x3fff, height: buffer.readUInt16LE(marker + 5) & 0x3fff, bpp: 4 };
+    }
+  }
+  if (chunk === 'VP8L' && buffer.length >= 25) {
+    const bits = buffer.readUInt32LE(21);
+    return { width: (bits & 0x3fff) + 1, height: ((bits >> 14) & 0x3fff) + 1, bpp: 4 };
+  }
+  return null;
+}
+
+function jpegSize(buffer) {
+  if (buffer.length < 4 || buffer[0] !== 0xff || buffer[1] !== 0xd8) return null;
+  let offset = 2;
+  while (offset + 9 < buffer.length) {
+    if (buffer[offset] !== 0xff) { offset += 1; continue; }
+    const marker = buffer[offset + 1];
+    const length = buffer.readUInt16BE(offset + 2);
+    if ([0xc0, 0xc1, 0xc2, 0xc3, 0xc5, 0xc6, 0xc7, 0xc9, 0xca, 0xcb, 0xcd, 0xce, 0xcf].includes(marker)) {
+      return { width: buffer.readUInt16BE(offset + 7), height: buffer.readUInt16BE(offset + 5), bpp: 4 };
+    }
+    if (length < 2) break;
+    offset += 2 + length;
+  }
+  return null;
+}
+
+function ktx2Size(buffer) {
+  const signature = Buffer.from([0xab,0x4b,0x54,0x58,0x20,0x32,0x30,0xbb,0x0d,0x0a,0x1a,0x0a]);
+  if (buffer.length < 32 || !buffer.subarray(0, 12).equals(signature)) return null;
+  return { width: buffer.readUInt32LE(20), height: buffer.readUInt32LE(24), bpp: 1 };
+}
+
+for (const directory of roots) walk(directory);
+let totalBytes = 0;
+let failed = false;
+for (const path of files) {
+  const buffer = readFileSync(path);
+  const extension = extname(path).toLowerCase();
+  const dimensions = extension === '.png' ? pngSize(buffer)
+    : extension === '.webp' ? webpSize(buffer)
+      : extension === '.ktx2' ? ktx2Size(buffer)
+        : jpegSize(buffer);
+  const name = relative(root, path);
+  if (!dimensions) {
+    console.error(`FAIL texture header ${name}`);
+    failed = true;
+    continue;
+  }
+  const bytes = Math.round(dimensions.width * dimensions.height * dimensions.bpp * MIP_FACTOR);
+  totalBytes += bytes;
+  if (Math.max(dimensions.width, dimensions.height) > MAX_EDGE) {
+    console.error(`FAIL texture edge ${name}: ${dimensions.width}x${dimensions.height} > ${MAX_EDGE}`);
+    failed = true;
+  } else {
+    console.log(`PASS texture ${name}: ${dimensions.width}x${dimensions.height} · ${(bytes / 1048576).toFixed(2)}MB`);
+  }
+}
+const totalMB = totalBytes / 1048576;
+if (totalMB > BUDGET_MB) {
+  console.error(`FAIL texture memory budget: ${totalMB.toFixed(2)}MB / ${BUDGET_MB}MB`);
+  failed = true;
+} else {
+  console.log(`PASS texture memory budget: ${totalMB.toFixed(2)}MB / ${BUDGET_MB}MB`);
+}
+if (failed) process.exit(1);

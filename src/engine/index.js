@@ -8,3 +8,7 @@ export { TextureAtlas } from './texture-atlas.js';
 export { WorldChunkManager } from './world-chunk-manager.js';
 
 export { RenderStatsHUD } from './render-stats-hud.js';
+
+export { AssetPipeline, ASSET_POLICY } from './asset-pipeline.js';
+
+export { CORE_ASSET_CATALOG, MODEL_ASSET_SLOTS, ASSET_QUALITY_TIERS, selectAssetVariant } from './asset-catalog.js';

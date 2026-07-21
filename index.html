@@ -25,8 +25,9 @@
           <div class="moon-logo"><span>鬼</span></div>
           <p class="kicker">MOBILE 3D LUCK DEFENSE</p>
           <h1>도깨비<br /><em>운빨 수호대</em></h1>
-          <p>달빛 장터를 깨우는 중...</p>
-          <div class="loader"><span></span></div>
+          <p id="loading-status">달빛 장터를 깨우는 중...</p>
+          <div class="loader" role="progressbar" aria-label="에셋 로딩" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="loading-progress"></span></div>
+          <small id="loading-detail" class="loading-detail">모바일 그래픽 품질을 확인하고 있습니다.</small>
         </div>
       </section>
 
@@ -55,7 +56,7 @@
             <button id="meta-btn" class="btn ghost meta-entry"><span>혼불 <b id="title-shards">0</b></span>수호자 성장</button>
           </div>
           <button id="controls-btn" class="title-settings-btn" type="button">카메라 · 조작 설정</button>
-          <small>v1.7.7 · 감도·줌 범위·좌우 조작 배치와 카메라 충돌 보정 적용.</small>
+          <small>v1.7.8 · GLB/Draco/KTX2 프리로드와 기기별 에셋 품질 자동 선택 적용.</small>
         </div>
       </section>
 
@@ -297,7 +298,7 @@
     </div>
     <script>
       (() => {
-        const VERSION = '1.7.7';
+        const VERSION = '1.7.8';
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
         const retryButton = document.getElementById('boot-retry-btn');
@@ -339,7 +340,7 @@
           if (!window.__DOKKAEBI_BOOT_OK__) {
             window.__DOKKAEBI_SHOW_BOOT_ERROR__('게임 모듈이 시작되지 않았습니다. 이전 캐시를 정리한 뒤 다시 시도해 주세요.');
           }
-        }, 8000);
+        }, 18000);
 
         if ('serviceWorker' in navigator || 'caches' in window) clearLegacyCaches();
       })();

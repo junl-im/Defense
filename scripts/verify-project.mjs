@@ -22,7 +22,7 @@ const missingIds = [...new Set(queriedIds.filter((id) => !htmlIds.has(id)))];
 if (missingIds.length) fail(`index.html에 없는 DOM ID: ${missingIds.join(', ')}`);
 else pass(`${queriedIds.length}개 DOM ID 연결`);
 
-if (pkg.version === '1.7.7') pass('package version 1.7.7');
+if (pkg.version === '1.7.8') pass('package version 1.7.8');
 else fail(`package version 불일치: ${pkg.version}`);
 
 for (const path of ['.env.production', '.firebaserc', '.github/workflows/deploy.yml', 'README.md', 'PROJECT_HANDOFF.md']) {
@@ -38,7 +38,7 @@ else fail(`루트 Markdown 정리 필요: ${rootMarkdown.join(', ')}`);
 if (manifest.start_url === './') pass('PWA 상대 경로 start_url');
 else fail(`PWA start_url 확인 필요: ${manifest.start_url}`);
 
-if (main.includes("const GAME_VERSION = '1.7.7'")) pass('런타임 version 1.7.7');
+if (main.includes("const GAME_VERSION = '1.7.8'")) pass('런타임 version 1.7.8');
 else fail('런타임 version 불일치');
 
 for (const feature of ['offerContract', 'resolveActiveContract', 'checkBossPhase', 'kingNightMarch', 'bossPounce']) {
@@ -134,7 +134,7 @@ for (const path of [
   else fail(`엔진 모듈 누락: ${path}`);
 }
 const engineConfig = read('src/engine/engine-config.js');
-if (engineConfig.includes("ENGINE_VERSION = '1.0.6'") && engineConfig.includes('unitTriangles: 300') && engineConfig.includes('enemyTriangles: 500')) pass('엔진 버전과 폴리곤 예산');
+if (engineConfig.includes("ENGINE_VERSION = '1.0.7'") && engineConfig.includes('unitTriangles: 300') && engineConfig.includes('enemyTriangles: 500')) pass('엔진 버전과 폴리곤 예산');
 else fail('엔진 버전 또는 폴리곤 예산 누락');
 if (main.includes('new MobileGameEngine()') && main.includes('new BlobShadowSystem') && main.includes('createRockField(28)') && main.includes('createLanternField(16)')) pass('모바일 엔진 실제 연결');
 else fail('모바일 엔진 연결 누락');
@@ -201,4 +201,26 @@ if (failures.length) {
   console.error(`\nv1.7.7 추가 검증 실패 ${failures.length}건`);
   process.exit(1);
 }
-console.log('v1.7.7 카메라·조작 추가 검증 완료');
+console.log('v1.7.8 카메라·에셋 추가 검증 완료');
+
+
+const assetCatalog = read('src/engine/asset-catalog.js');
+if (assetPipeline.includes("import('three/addons/loaders/GLTFLoader.js')") && assetPipeline.includes("import('three/addons/loaders/DRACOLoader.js')") && assetPipeline.includes("import('three/addons/loaders/KTX2Loader.js')")) pass('GLB·Draco·KTX2 지연 로더 연결');
+else fail('고품질 압축 에셋 로더 누락');
+if (assetPipeline.includes('preload(entries') && assetPipeline.includes('instantiateModel') && assetPipeline.includes('textureBudgetMB')) pass('에셋 프리로드·대체 모델·텍스처 예산');
+else fail('에셋 프리로드 또는 메모리 예산 누락');
+if (assetCatalog.includes('CORE_ASSET_CATALOG') && assetCatalog.includes('selectAssetVariant') && assetCatalog.includes('MODEL_ASSET_SLOTS')) pass('기기별 에셋 품질 카탈로그');
+else fail('에셋 카탈로그 누락');
+if (assetPipeline.includes("three/addons/loaders/DRACOLoader.js") && assetPipeline.includes("three/addons/loaders/KTX2Loader.js") && assetPipeline.includes('deferred:')) pass('필요 시 로드되는 번들형 오프라인 디코더');
+else fail('번들형 Draco/KTX2 디코더 누락');
+if (htmlIds.has('loading-status') && htmlIds.has('loading-progress') && htmlIds.has('loading-detail') && main.includes('setLoadingProgress') && main.includes('initializeGame')) pass('실제 에셋 로딩 진행률 UI');
+else fail('에셋 로딩 진행률 UI 누락');
+if (main.includes('game.ready.then') && main.includes('async boot failed')) pass('비동기 에셋 부팅 오류 복구');
+else fail('비동기 부팅 오류 복구 누락');
+if (engineConfig.includes('textureBudgetLowMB: 64') && engineConfig.includes('textureBudgetMobileMB: 96') && engineConfig.includes('textureBudgetDesktopMB: 192')) pass('기기별 텍스처 메모리 예산');
+else fail('텍스처 메모리 예산 누락');
+if (failures.length) {
+  console.error(`\nv1.7.8 에셋 파이프라인 검증 실패 ${failures.length}건`);
+  process.exit(1);
+}
+console.log('v1.7.8 에셋 파이프라인 검증 완료');

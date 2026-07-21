@@ -9,8 +9,10 @@ function detectDevice() {
   const mobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
   const cores = navigator.hardwareConcurrency || 4;
   const memory = navigator.deviceMemory || 4;
-  const lowEnd = cores <= 4 || memory <= 4;
-  return { mobile, lowEnd, cores, memory };
+  const saveData = Boolean(navigator.connection?.saveData);
+  const lowEnd = cores <= 4 || memory <= 4 || saveData;
+  const assetTier = lowEnd ? 'low' : mobile ? 'medium' : 'high';
+  return { mobile, lowEnd, cores, memory, saveData, assetTier };
 }
 
 export class MobileGameEngine {
@@ -22,6 +24,12 @@ export class MobileGameEngine {
     this.geometryBudget = new GeometryBudget(config.budgets, { strict: false });
     this.worldChunks = new WorldChunkManager(config.world);
     this.renderer = null;
+    this.assetQualityTier = this.device.assetTier;
+    this.textureBudgetMB = this.device.lowEnd
+      ? config.assets.textureBudgetLowMB
+      : this.device.mobile
+        ? config.assets.textureBudgetMobileMB
+        : config.assets.textureBudgetDesktopMB;
   }
 
   createRenderer(canvas) {
@@ -73,6 +81,8 @@ export class MobileGameEngine {
       qualityScale: this.qualityScale,
       pixelRatio: this.pixelRatio(),
       shadows: Boolean(this.renderer?.shadowMap.enabled),
+      assetQualityTier: this.assetQualityTier,
+      textureBudgetMB: this.textureBudgetMB,
       rendererInfo: this.renderer?.info || null
     };
   }

@@ -3,7 +3,7 @@ import './style.css';
 import { isFirebaseEnabled, loadOnlineScores, submitOnlineScore } from './firebase.js';
 import SoundEngine from './sound-engine.js';
 import { RANKS, UNIT_TYPES, UNIT_KEYS, ENEMY_TYPES, SYNERGIES, BLESSINGS, CONTRACTS } from './game-data.js';
-import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, ObjectPool, RenderStatsHUD, AssetPipeline } from './engine/index.js';
+import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, ObjectPool, RenderStatsHUD, AssetPipeline, CORE_ASSET_CATALOG } from './engine/index.js';
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -16,7 +16,7 @@ const tempV2 = new THREE.Vector3();
 const tempColor = new THREE.Color();
 
 const ui = {
-  canvas: $('#game-canvas'), loading: $('#loading'), title: $('#title-screen'), start: $('#start-btn'),
+  canvas: $('#game-canvas'), loading: $('#loading'), loadingStatus: $('#loading-status'), loadingProgress: $('#loading-progress'), loadingDetail: $('#loading-detail'), title: $('#title-screen'), start: $('#start-btn'),
   how: $('#how-btn'), collection: $('#collection-btn'), meta: $('#meta-btn'), titleShards: $('#title-shards'), runPreview: $('#run-preview'), howModal: $('#how-modal'), collectionModal: $('#collection-modal'),
   blessingModal: $('#blessing-modal'), blessingOptions: $('#blessing-options'), collectionGrid: $('#collection-grid'),
   choiceSummonModal: $('#choice-summon-modal'), choiceSummonOptions: $('#choice-summon-options'), summonTicket: $('#summon-ticket'),
@@ -46,7 +46,7 @@ const ui = {
   playerName: $('#player-name'), saveScore: $('#save-score-btn'), resultRetry: $('#result-retry-btn'), leaderboard: $('#leaderboard')
 };
 
-const GAME_VERSION = '1.7.7';
+const GAME_VERSION = '1.7.8';
 
 const FIRST_MISSIONS = [
   { id: 'summons', title: '수호대 3회 강림', goal: 3, reward: 35, copy: '무료 강림도 포함됩니다.' },
@@ -146,16 +146,10 @@ class DokkaebiLuckDefense {
     this.bindUI();
     this.populateCollection();
     this.renderMetaProgress();
-    this.createWorld(true);
-    this.state = 'title';
     this.animate();
+    this.ready = this.initializeGame();
 
     console.info(`[DokkaebiLuckDefense3D] game v${GAME_VERSION} / engine v${ENGINE_VERSION}`, this.engine.diagnostics);
-
-    window.setTimeout(() => {
-      ui.loading.classList.remove('visible');
-      ui.title.classList.add('visible');
-    }, 850);
   }
 
   assertRequiredUI() {
@@ -163,9 +157,48 @@ class DokkaebiLuckDefense {
     if (missing.length) throw new Error(`UI 연결 누락: ${missing.join(', ')}`);
   }
 
+  setLoadingProgress(percent, status, detail = '') {
+    const value = clamp(Math.round(percent), 0, 100);
+    ui.loadingProgress.style.width = `${value}%`;
+    ui.loadingProgress.parentElement?.setAttribute('aria-valuenow', String(value));
+    if (status) ui.loadingStatus.textContent = status;
+    if (detail) ui.loadingDetail.textContent = detail;
+  }
+
+  async initializeGame() {
+    this.setLoadingProgress(8, '그래픽 엔진을 준비하는 중...', `에셋 품질 ${this.engine.assetQualityTier.toUpperCase()} · 텍스처 예산 ${this.engine.textureBudgetMB}MB`);
+    const decoderState = await this.assetPipeline.warmDecoders(CORE_ASSET_CATALOG);
+    this.setLoadingProgress(24, '에셋 로더 경로 확인 완료', decoderState.deferred ? '압축 GLB/KTX2 로더는 필요한 순간에만 불러옵니다.' : '압축 에셋 디코더를 준비했습니다.');
+
+    const report = await this.assetPipeline.preload(CORE_ASSET_CATALOG, {
+      onProgress: ({ ratio, label, status, detail }) => {
+        const percent = 24 + ratio * 42;
+        const stateLabel = status === 'failed' ? '대체 모델 적용' : status === 'fallback' ? '기본 모델 사용' : '고품질 에셋 확인 중';
+        this.setLoadingProgress(percent, stateLabel, `${label || 'core asset'}${detail ? ` · ${detail}` : ''}`);
+      }
+    });
+    this.assetReport = report;
+
+    this.setLoadingProgress(72, '달빛 장터를 배치하는 중...', `텍스처 ${report.textureMemoryMB.toFixed(1)}MB / ${report.textureBudgetMB}MB`);
+    this.createWorld(true);
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    this.state = 'title';
+    this.setLoadingProgress(100, '준비 완료', `${this.engine.assetQualityTier.toUpperCase()} 에셋 품질 · 절차형 모델 대체 준비 완료`);
+    ui.loading.classList.remove('visible');
+    ui.title.classList.add('visible');
+    ui.qualityBadge.textContent = `에셋 ${this.engine.assetQualityTier.toUpperCase()} · GLB/KTX2 준비`;
+    ui.qualityBadge.classList.remove('hidden');
+    window.setTimeout(() => ui.qualityBadge.classList.add('hidden'), 2200);
+    return this;
+  }
+
   initThree() {
     this.renderer = this.engine.createRenderer(ui.canvas);
-    this.assetPipeline = new AssetPipeline(this.renderer);
+    this.assetPipeline = new AssetPipeline(this.renderer, {
+      qualityTier: this.engine.assetQualityTier,
+      textureBudgetMB: this.engine.textureBudgetMB,
+      lowPower: this.lowPower
+    });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
     this.scene = new THREE.Scene();
@@ -3596,6 +3629,7 @@ class DokkaebiLuckDefense {
       fps: this.engine.monitor.lastFps,
       qualityScale: this.engine.qualityScale,
       chunks: this.engine.worldChunks.diagnostics,
+      assets: this.assetPipeline?.diagnostics,
       pools: {
         projectiles: this.projectiles.length,
         projectileCapacity: this.projectilePoolCapacity,
@@ -3607,9 +3641,16 @@ class DokkaebiLuckDefense {
 }
 
 try {
-  window.__DOKKAEBI_GAME__ = new DokkaebiLuckDefense();
-  window.__DOKKAEBI_BOOT_OK__ = true;
-  window.dispatchEvent(new Event('dokkaebi:boot-ready'));
+  const game = new DokkaebiLuckDefense();
+  window.__DOKKAEBI_GAME__ = game;
+  game.ready.then(() => {
+    window.__DOKKAEBI_BOOT_OK__ = true;
+    window.dispatchEvent(new Event('dokkaebi:boot-ready'));
+  }).catch((error) => {
+    console.error('[DokkaebiLuckDefense3D] async boot failed', error);
+    const reason = error instanceof Error ? error.message : String(error);
+    window.__DOKKAEBI_SHOW_BOOT_ERROR__?.(`에셋 초기화 오류: ${reason}`);
+  });
 } catch (error) {
   console.error('[DokkaebiLuckDefense3D] boot failed', error);
   const reason = error instanceof Error ? error.message : String(error);

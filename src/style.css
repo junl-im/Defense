@@ -53,8 +53,12 @@ button { color: inherit; cursor: pointer; }
 .loading-wrap > p:not(.kicker) { color: var(--muted); font-size: 13px; }
 .kicker { margin: 0; font-weight: 900; letter-spacing: .23em; font-size: 10px; color: #d5b1ff; }
 .loader { height: 7px; width: min(68vw, 260px); margin: 22px auto 0; border: 1px solid rgba(255,255,255,.12); border-radius: 99px; overflow: hidden; background: rgba(0,0,0,.28); }
-.loader span { display: block; width: 38%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #8757e8, #ffe28d, #6deaff); animation: loader 1.15s ease-in-out infinite alternate; }
-@keyframes loader { to { transform: translateX(164%); } }
+.loader span { display: block; width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #8757e8, #ffe28d, #6deaff); box-shadow: 0 0 16px rgba(109,234,255,.45); transition: width .24s ease; }
+.loading-detail { display: block; min-height: 16px; margin-top: 10px; color: #82778e; font-size: 9px; letter-spacing: .02em; }
+
+
+#title-screen::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(7,3,16,.2), rgba(7,3,16,.72)), url('./assets/moon-market-keyart.webp') center/cover no-repeat; opacity: .62; }
+#title-screen .title-panel { position: relative; z-index: 1; }
 
 .title-panel { width: min(92vw, 450px); text-align: center; padding: 34px 26px 25px; border-radius: 30px; background: linear-gradient(155deg, rgba(37,19,62,.9), rgba(12,7,24,.91)); border: 1px solid rgba(255,230,190,.16); box-shadow: 0 28px 90px rgba(0,0,0,.55), inset 0 1px rgba(255,255,255,.08); }
 .title-panel h1 { font-size: clamp(48px, 12vw, 74px); }
