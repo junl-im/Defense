@@ -37,8 +37,12 @@ export class AnimationStateSystem {
     const controller = {
       root, mixer, actions, state: '', previousState: '', stateTime: 0,
       procedural, enabled: true, visibleLastFrame: true, oneShotUntil: 0,
-      baseY: root.position.y, baseScale: root.scale.clone(), phase: Math.random() * Math.PI * 2
+      baseY: root.position.y, baseScale: root.scale.clone(), phase: Math.random() * Math.PI * 2,
+      parts: root.userData?.parts || {}, partBase: {}
     };
+    for (const [key, part] of Object.entries(controller.parts)) {
+      if (part?.rotation) controller.partBase[key] = part.rotation.clone();
+    }
     this.controllers.add(controller);
     this.setState(controller, 'idle', { immediate: true });
     return controller;
@@ -89,12 +93,23 @@ export class AnimationStateSystem {
     if (!controller.procedural || controller.mixer || !inRange) return;
     const t = controller.stateTime;
     const phase = controller.phase;
+    const { weapon, shoulders, signature, rankBeads, halo } = controller.parts;
+    if (rankBeads) rankBeads.rotation.y += dt * .8;
+    if (halo) halo.rotation.z += dt * .48;
+    if (signature) signature.position.y = (signature.userData.baseY ?? signature.position.y) + Math.sin(t * 3 + phase) * .025;
     if (controller.state === 'move') {
       controller.root.rotation.z = Math.sin(t * 11 + phase) * 0.055;
+      controller.root.position.y = controller.baseY + Math.abs(Math.sin(t * 11 + phase)) * .055;
+      if (shoulders) shoulders.rotation.z = Math.sin(t * 11 + phase) * .08;
     } else if (controller.state === 'attack') {
       controller.root.rotation.x = Math.sin(Math.min(1, t / 0.18) * Math.PI) * -0.18;
+      if (weapon) weapon.rotation.y = Math.sin(Math.min(1, t / .2) * Math.PI) * -.55;
     } else if (controller.state === 'hit') {
       controller.root.rotation.z = Math.sin(t * 34) * 0.09;
+      if (signature) signature.scale.setScalar(1 + Math.sin(t * 28) * .08);
+    } else if (controller.state === 'idle') {
+      controller.root.position.y = controller.baseY + Math.sin(t * 2.2 + phase) * .025;
+      controller.root.rotation.z = Math.sin(t * 1.7 + phase) * .012;
     } else if (controller.state === 'death') {
       controller.root.rotation.x = Math.min(Math.PI * 0.48, t * 4.2);
     }

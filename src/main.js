@@ -10,6 +10,9 @@ import { getBossWave, getBossTypeForWave, getBossSpawnCount, isBossWave } from '
 import { getBattlefieldTheme } from './battlefield-themes.js';
 import { CODEX_SECTION_META, CODEX_SECTION_ORDER, getCodexEntries, getCodexTotals } from './codex-data.js';
 import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, ObjectPool, RenderStatsHUD, AssetPipeline, CORE_ASSET_CATALOG, AnimationStateSystem } from './engine/index.js';
+import CodexViewer from './codex-viewer.js';
+import { createPremiumGuardian, createPremiumEnemy, createPremiumSacredTree } from './premium-assets.js';
+import { DirectionalImpostorSelector } from './engine/directional-impostor.js';
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -20,6 +23,7 @@ const pick = (array) => array[Math.floor(Math.random() * array.length)];
 const tempV = new THREE.Vector3();
 const tempV2 = new THREE.Vector3();
 const tempColor = new THREE.Color();
+const tempQ = new THREE.Quaternion();
 
 const ui = {
   canvas: $('#game-canvas'), loading: $('#loading'), loadingStatus: $('#loading-status'), loadingProgress: $('#loading-progress'), loadingDetail: $('#loading-detail'), title: $('#title-screen'), start: $('#start-btn'),
@@ -58,10 +62,12 @@ const ui = {
   resultScore: $('#result-score'), resultKills: $('#result-kills'), resultRank: $('#result-rank'), resultUnits: $('#result-units'), resultAnalysis: $('#result-analysis'), resultShards: $('#result-shards'), resultShardsTotal: $('#result-shards-total'), resultGrowth: $('#result-growth-btn'),
   playerName: $('#player-name'), saveScore: $('#save-score-btn'), resultRetry: $('#result-retry-btn'), leaderboard: $('#leaderboard'),
   runModeOptions: $('#run-mode-options'), runModeSummary: $('#run-mode-summary'), seedModeOptions: $('#seed-mode-options'), dailyEdictPreview: $('#daily-edict-preview'),
-  runSeedChip: $('#run-seed-chip'), runSeedIcon: $('#run-seed-icon'), runSeedMode: $('#run-seed-mode'), runSeedValue: $('#run-seed-value'), runEdictName: $('#run-edict-name'), resultNewRun: $('#result-new-run-btn')
+  runSeedChip: $('#run-seed-chip'), runSeedIcon: $('#run-seed-icon'), runSeedMode: $('#run-seed-mode'), runSeedValue: $('#run-seed-value'), runEdictName: $('#run-edict-name'), resultNewRun: $('#result-new-run-btn'),
+  codexPreviewModal: $('#codex-preview-modal'), codexPreviewCanvas: $('#codex-preview-canvas'), codexPreviewTitle: $('#codex-preview-title'), codexPreviewSubtitle: $('#codex-preview-subtitle'),
+  codexFrameStatus: $('#codex-frame-status'), codexAssetSet: $('#codex-asset-set'), codexLodReadout: $('#codex-lod-readout'), codexDirectionReadout: $('#codex-direction-readout'), codexImpostorBtn: $('#codex-impostor-btn')
 };
 
-const GAME_VERSION = '2.1.0';
+const GAME_VERSION = '2.2.0';
 
 const FIRST_MISSIONS = [
   { id: 'summons', title: '수호대 3회 강림', goal: 3, reward: 35, copy: '무료 강림도 포함됩니다.' },
@@ -191,6 +197,8 @@ class DokkaebiLuckDefense {
     this.waveMaxChain = 0;
     this.waveTrialEliteSpawned = 0;
     this.animations = new AnimationStateSystem({ lowPower: this.lowPower, mobile: this.engine.device.mobile });
+    this.codexViewer = null;
+    this.fxAtlasTexture = null;
 
     this.assertRequiredUI();
     this.initThree();
@@ -232,6 +240,7 @@ class DokkaebiLuckDefense {
       }
     });
     this.assetReport = report;
+    this.applyPrototypeTextures();
 
     this.setLoadingProgress(72, '달빛 장터를 배치하는 중...', `텍스처 ${report.textureMemoryMB.toFixed(1)}MB / ${report.textureBudgetMB}MB`);
     this.createWorld(true);
@@ -321,7 +330,7 @@ class DokkaebiLuckDefense {
       initialSize: Math.min(capacity, this.lowPower ? 8 : 14),
       maxSize: capacity,
       create: () => {
-        const mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0 }));
+        const mesh = new THREE.Mesh(geometry, this.createProjectileMaterial(poolKey));
         mesh.visible = false;
         mesh.frustumCulled = false;
         this.pooledEffectRoot.add(mesh);
@@ -395,6 +404,30 @@ class DokkaebiLuckDefense {
       const button = event.target.closest('[data-codex-tab]');
       if (button) this.renderCodex(button.dataset.codexTab);
     });
+    ui.collectionGrid.addEventListener('click', (event) => {
+      const card = event.target.closest('[data-codex-id]');
+      if (card) this.openCodexPreview(card.dataset.codexSection, card.dataset.codexId, card);
+    });
+    ui.collectionGrid.addEventListener('keydown', (event) => {
+      if (!['Enter', ' '].includes(event.key)) return;
+      const card = event.target.closest('[data-codex-id]');
+      if (!card) return;
+      event.preventDefault();
+      this.openCodexPreview(card.dataset.codexSection, card.dataset.codexId, card);
+    });
+    $$('[data-codex-state]').forEach((button) => button.addEventListener('click', () => {
+      this.codexViewer?.setState(button.dataset.codexState);
+      $$('[data-codex-state]').forEach((item) => item.classList.toggle('active', item === button));
+      ui.codexFrameStatus.textContent = `${button.textContent} 동작 미리보기`;
+    }));
+    $$('[data-codex-mode]').forEach((button) => button.addEventListener('click', () => {
+      if (button.disabled) return;
+      this.codexViewer?.setMode(button.dataset.codexMode);
+      $$('[data-codex-mode]').forEach((item) => item.classList.toggle('active', item === button));
+      const impostor = button.dataset.codexMode === 'impostor';
+      ui.codexLodReadout.textContent = impostor ? 'LOD2 · 11방향 WebP' : 'LOD0 · 절차형 3D';
+      ui.codexDirectionReadout.textContent = impostor ? '프레임 01 / 11' : '3D 자유 회전';
+    }));
     ui.sound.addEventListener('click', () => {
       this.sound.enabled = !this.sound.enabled;
       ui.sound.textContent = this.sound.enabled ? '♪' : '×';
@@ -909,6 +942,7 @@ class DokkaebiLuckDefense {
 
   hideModal(element) {
     if (!element) return;
+    if (element === ui.codexPreviewModal) this.codexViewer?.setActive(false);
     element.classList.remove('visible');
     element.setAttribute('aria-hidden', 'true');
     element.style.removeProperty('--modal-layer');
@@ -1205,7 +1239,7 @@ class DokkaebiLuckDefense {
     ui.collectionGrid.dataset.section = nextSection;
     ui.collectionGrid.innerHTML = entries.map((entry) => {
       const color = Number.isFinite(entry.color) ? `#${entry.color.toString(16).padStart(6, '0')}` : '#b995ff';
-      return `<article class="collection-item codex-item" style="--unit-color:${color};--unit-soft:${color}22;--unit-line:${color}66">
+      return `<article class="collection-item codex-item" tabindex="0" role="button" data-codex-section="${nextSection}" data-codex-id="${entry.id}" aria-label="${this.escapeHtml(entry.name)} 3D 보기" style="--unit-color:${color};--unit-soft:${color}22;--unit-line:${color}66">
         <div class="portrait" aria-hidden="true">${entry.symbol || meta.icon}</div>
         <div class="codex-item-head"><b>${this.escapeHtml(entry.name)}</b><small>${this.escapeHtml(entry.subtitle || '')}</small></div>
         <p>${this.escapeHtml(entry.description || entry.signature || '')}</p>
@@ -1214,9 +1248,140 @@ class DokkaebiLuckDefense {
           <div><dt>민담 모티프</dt><dd>${this.escapeHtml(entry.motif || '달빛 야시장')}</dd></div>
           <div><dt>대표 연출</dt><dd>${this.escapeHtml(entry.signature || entry.ultimate || '')}</dd></div>
           <div><dt>전투 판독</dt><dd>${this.escapeHtml(entry.danger || entry.ultimate || '')}</dd></div>
-        </dl>
+        </dl><span class="codex-view-label">3D 보기</span>
       </article>`;
     }).join('');
+  }
+
+
+  createProjectileMaterial(poolKey = 'orb') {
+    const material = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending });
+    if (this.fxAtlasTexture) {
+      const map = this.fxAtlasTexture.clone();
+      map.wrapS = map.wrapT = THREE.RepeatWrapping;
+      map.repeat.set(.25, .25);
+      const cell = poolKey === 'wind' ? 2 : poolKey === 'stone' ? 3 : 0;
+      map.offset.set((cell % 4) * .25, (3 - Math.floor(cell / 4)) * .25);
+      map.needsUpdate = true;
+      material.map = map;
+      material.alphaTest = .02;
+      material.needsUpdate = true;
+      material.userData.disposeMap = true;
+    }
+    return material;
+  }
+
+  applyPrototypeTextures() {
+    const groundSource = this.assetPipeline.get('moon-market-ground-v1')?.texture || null;
+    if (groundSource) {
+      this.prototypeGroundTexture?.dispose?.();
+      this.prototypeGroundTexture = groundSource.clone();
+      this.prototypeGroundTexture.wrapS = this.prototypeGroundTexture.wrapT = THREE.RepeatWrapping;
+      this.prototypeGroundTexture.colorSpace = THREE.SRGBColorSpace;
+      this.prototypeGroundTexture.needsUpdate = true;
+    }
+    this.fxAtlasTexture = this.assetPipeline.get('moon-fx-atlas-v1')?.texture || null;
+    if (this.fxAtlasTexture) {
+      Object.entries(this.projectilePools || {}).forEach(([key, pool]) => {
+        [...pool.free, ...pool.active].forEach((projectile) => {
+          const old = projectile.mesh.material;
+          projectile.mesh.material = this.createProjectileMaterial(key);
+          if (old?.userData?.disposeMap) old.map?.dispose?.();
+          old?.dispose?.();
+        });
+      });
+    }
+  }
+
+  ensureCodexViewer() {
+    if (this.codexViewer) return this.codexViewer;
+    try {
+      this.codexViewer = new CodexViewer(ui.codexPreviewCanvas, {
+        impostorTexture: this.assetPipeline.get('ember-impostor-idle-v1')?.texture || null,
+        onFrame: (frame) => this.updateCodexFrameReadout(frame)
+      });
+      ui.codexFrameStatus.textContent = '드래그 회전 · 휠 확대';
+    } catch (error) {
+      console.warn('[CodexViewer] WebGL preview unavailable.', error);
+      ui.codexFrameStatus.textContent = '이 환경에서는 3D 미리보기를 열 수 없습니다.';
+      ui.codexPreviewCanvas.classList.add('unavailable');
+    }
+    return this.codexViewer;
+  }
+
+  openCodexPreview(section, id, trigger = document.activeElement) {
+    const entry = getCodexEntries(section).find((item) => item.id === id);
+    if (!entry) return;
+    ui.codexPreviewTitle.textContent = entry.name;
+    ui.codexPreviewSubtitle.textContent = `${entry.subtitle || CODEX_SECTION_META[section]?.label || ''} · 드래그 회전 / 휠 확대`;
+    const canImpostor = section === 'guardian' && id === 'ember' && Boolean(this.assetPipeline.get('ember-impostor-idle-v1')?.texture);
+    ui.codexImpostorBtn.disabled = !canImpostor;
+    ui.codexImpostorBtn.title = canImpostor ? '불씨 깨비 원거리 11방향 아틀라스' : '현재 11방향 아틀라스는 불씨 깨비에 먼저 적용되었습니다.';
+    ui.codexAssetSet.textContent = canImpostor ? 'Moon Forge v1 · 3D + 11방향' : 'Moon Forge v1 · 절차형 3D';
+    ui.codexLodReadout.textContent = 'LOD0 · 절차형 3D';
+    ui.codexDirectionReadout.textContent = '3D 자유 회전';
+    $$('[data-codex-state]').forEach((button) => button.classList.toggle('active', button.dataset.codexState === 'idle'));
+    $$('[data-codex-mode]').forEach((button) => button.classList.toggle('active', button.dataset.codexMode === 'model'));
+    const viewer = this.ensureCodexViewer();
+    if (viewer) {
+      const context = section === 'guardian'
+        ? { config: UNIT_TYPES[id], rankConfig: RANKS[3] }
+        : section === 'monster' || section === 'boss'
+          ? { config: ENEMY_TYPES[id] }
+          : {};
+      viewer.setEntry(section, id, entry, context);
+      viewer.setActive(true);
+    }
+    this.showModal(ui.codexPreviewModal, { parent: ui.collectionModal, trigger });
+  }
+
+  updateCodexFrameReadout(frame) {
+    ui.codexDirectionReadout.textContent = `프레임 ${String(frame + 1).padStart(2, '0')} / 11`;
+  }
+
+  attachUnitImpostor(unit) {
+    if (unit.type !== 'ember') return;
+    const source = this.assetPipeline.get('ember-impostor-idle-v1')?.texture;
+    if (!source) return;
+    const texture = source.clone();
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(.25, 1 / 3);
+    texture.offset.set(0, 2 / 3);
+    texture.needsUpdate = true;
+    const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true, alphaTest: .035, depthWrite: false, side: THREE.DoubleSide });
+    const plane = new THREE.Mesh(new THREE.PlaneGeometry(2.85, 2.85), material);
+    plane.position.set(0, 1.46, 0);
+    plane.visible = false;
+    plane.frustumCulled = false;
+    plane.userData.disposeMap = true;
+    const lod0Children = [...unit.group.children];
+    unit.group.add(plane);
+    unit.impostor = {
+      plane, material, texture, lod0Children,
+      selector: new DirectionalImpostorSelector({ directions: 11, hysteresis: .1 }),
+      active: false
+    };
+  }
+
+  updateUnitImpostor(unit) {
+    const impostor = unit.impostor;
+    if (!impostor || !this.camera) return;
+    const distance = unit.group.getWorldPosition(tempV).distanceTo(this.camera.position);
+    const enterDistance = this.lowPower ? 16 : 22;
+    const exitDistance = enterDistance - 2.5;
+    const nextActive = impostor.active ? distance > exitDistance : distance > enterDistance;
+    if (nextActive !== impostor.active) {
+      impostor.active = nextActive;
+      impostor.lod0Children.forEach((child) => { child.visible = !nextActive; });
+      impostor.plane.visible = nextActive;
+    }
+    if (!impostor.active) return;
+    const frame = impostor.selector.update(unit.group.rotation.y, this.cameraYaw || 0);
+    const column = frame % 4;
+    const row = Math.floor(frame / 4);
+    impostor.texture.offset.set(column * .25, (2 - row) / 3);
+    unit.group.getWorldQuaternion(tempQ);
+    impostor.plane.quaternion.copy(tempQ.invert().multiply(this.camera.quaternion));
   }
 
 
@@ -1339,7 +1504,7 @@ class DokkaebiLuckDefense {
         if (object.geometry) object.geometry.dispose();
         if (object.material) {
           const materials = Array.isArray(object.material) ? object.material : [object.material];
-          materials.forEach((material) => material.dispose());
+          materials.forEach((material) => { if (object.userData.disposeMap) material.map?.dispose?.(); material.dispose(); });
         }
       });
     }
@@ -1352,6 +1517,7 @@ class DokkaebiLuckDefense {
     this.scene.fog.color.set(0x130b26);
 
     const groundMat = this.createMaterial(0x241933, .96);
+    if (this.prototypeGroundTexture) { groundMat.map = this.prototypeGroundTexture; groundMat.map.repeat.set(5.5, 5.5); groundMat.needsUpdate = true; }
     this.groundMaterial = groundMat;
     const ground = this.mesh(new THREE.CylinderGeometry(34, 35, 1.2, 64), groundMat, 0, -.65, 0, false, true);
     ground.userData.navigationGround = true;
@@ -1643,6 +1809,9 @@ class DokkaebiLuckDefense {
   }
 
   createSacredTree() {
+    const premium = createPremiumSacredTree({ lowPower: this.lowPower });
+    this.worldRoot.add(premium);
+    return premium;
     const group = new THREE.Group();
     const bark = this.createMaterial(0x4f2f45, .88);
     const leaf = this.createMaterial(0x8663b1, .75, .05, 0x4e2a7d, .28);
@@ -2201,6 +2370,7 @@ class DokkaebiLuckDefense {
       ultimateCooldown: rank === 5 ? 1.8 + this.random() * 1.3 : Infinity,
       animation: this.animations.createController(model, model.userData.animations || [], { procedural: true })
     };
+    this.attachUnitImpostor(unit);
     this.units.push(unit);
     this.engine.geometryBudget.inspect(`unit:${type}:rank${rank}`, model, 'unitTriangles');
     return unit;
@@ -2209,6 +2379,7 @@ class DokkaebiLuckDefense {
   createDokkaebiModel(type, rank) {
     const config = UNIT_TYPES[type];
     const rankConfig = RANKS[rank - 1];
+    return createPremiumGuardian(type, rank, config, rankConfig, { lowPower: this.lowPower });
     const group = new THREE.Group();
     const scale = 1 + (rank - 1) * .115;
     group.scale.setScalar(scale);
@@ -2311,7 +2482,7 @@ class DokkaebiLuckDefense {
       object.geometry?.dispose();
       if (object.material) {
         const materials = Array.isArray(object.material) ? object.material : [object.material];
-        materials.forEach((material) => material.dispose());
+        materials.forEach((material) => { if (object.userData.disposeMap || material.userData?.disposeMap) material.map?.dispose?.(); material.dispose(); });
       }
     });
     if (recycle) {
@@ -2387,7 +2558,7 @@ class DokkaebiLuckDefense {
     const waveScale = 1 + (this.currentWave - 1) * .19 + progress * .08;
     const group = this.acquireEnemyModel(type);
     if (!group) return null;
-    this.engine.geometryBudget.inspect(`enemy:${type}`, group, 'enemyTriangles');
+    this.engine.geometryBudget.inspect(`enemy:${type}`, group, ENEMY_TYPES[type].boss ? 'bossTriangles' : 'enemyTriangles');
     group.position.copy(position);
     this.dynamicRoot.add(group);
     const contractHp = this.activeContract?.id === 'bloodMoon' ? 1.45 : 1;
@@ -2452,6 +2623,7 @@ class DokkaebiLuckDefense {
   }
 
   createEnemyModel(type, config) {
+    return createPremiumEnemy(type, config, { lowPower: this.lowPower });
     const group = new THREE.Group();
     const bodyMat = this.createMaterial(config.color, .72, .04, config.color, config.boss ? .24 : 0);
     const darkMat = this.createMaterial(tempColor.set(config.color).multiplyScalar(.32).getHex(), .82);
@@ -2791,7 +2963,7 @@ class DokkaebiLuckDefense {
       unit.group.rotation.z = Math.sin(this.elapsed*2.1+phase)*.02;
       const pulseScale = commandActive ? 1.045 + Math.sin(this.elapsed * 11 + phase) * .025 : 1;
       unit.group.scale.setScalar((unit.baseScale || 1) * pulseScale);
-      if (unit.group.userData.aura) {
+      if (unit.group.userData.aura && !unit.impostor?.active) {
         unit.group.userData.aura.rotation.z += dt*(.7+unit.rank*.16)*(commandActive ? 2.2 : 1);
         unit.group.userData.aura.material.opacity = commandActive ? .92 : .5;
       }
@@ -2990,6 +3162,9 @@ class DokkaebiLuckDefense {
       } else {
         direction.normalize();
         projectile.mesh.position.addScaledVector(direction,step);
+        const pulse = 1 + Math.sin(this.elapsed * 18 + i) * .12;
+        projectile.mesh.scale.setScalar(projectile.radius * pulse);
+        projectile.mesh.rotation.z += dt * (projectile.type === 'stone' ? 2.4 : 7.5);
         projectile.mesh.lookAt(targetPos.add(direction));
         if (Math.random()<dt*15) this.spawnTinyParticle(projectile.mesh.position,projectile.color);
       }

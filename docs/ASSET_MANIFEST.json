@@ -1,7 +1,9 @@
 {
-  "schemaVersion": 1,
-  "gameVersion": "2.1.0",
+  "schemaVersion": 2,
+  "gameVersion": "2.2.0",
+  "engineVersion": "1.5.0",
   "artDirection": "moonlit-joseon-market-folklore",
+  "productionStage": "moon-forge-runtime-prototype",
   "impostorDirections": 11,
   "characters": {
     "guardians": ["ember", "frost", "wind", "stone", "bell", "thunder"],
@@ -10,6 +12,13 @@
   },
   "environment": ["sacred-tree", "monster-gate", "market-stall", "lantern-post", "jangseung", "moon-jar", "ground-tile", "market-clutter"],
   "effects": ["ember-orb", "frost-orb", "wind-arrow", "stone-drop", "spirit-chain", "thunder-mark", "enemy-telegraph", "guardian-burst"],
+  "integratedRuntimePrototypes": [
+    {"id":"moon-market-ground-v1","path":"public/assets/textures/moon-market-ground-v1.webp","size":[1024,1024],"status":"runtime"},
+    {"id":"moon-fx-atlas-v1","path":"public/assets/effects/moon-fx-atlas-v1.webp","size":[1024,1024],"grid":[4,4],"status":"runtime"},
+    {"id":"ember-idle-11","path":"public/assets/impostors/guardian/ember-idle-11.webp","size":[2048,1536],"grid":[4,3],"frames":11,"status":"runtime"}
+  ],
+  "proceduralRuntimeModels": {"module":"src/premium-assets.js","guardians":6,"monsters":4,"bosses":3,"landmarks":["sacred-tree"]},
+  "viewer": {"module":"src/codex-viewer.js","states":["idle","move","attack","skill"],"modes":["model","impostor"]},
   "formats": ["glb", "ktx2", "webp", "png"],
-  "coordinateSystem": { "up": "+Y", "forward": "+Z", "unit": "meter" }
+  "coordinateSystem": {"up":"+Y","forward":"+Z","unit":"meter"}
 }

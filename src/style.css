@@ -1057,3 +1057,44 @@ body.modal-open .look-zone { pointer-events: none; }
   .codex-item .portrait { width: 56px; height: 56px; border-radius: 18px; font-size: 26px; }
   .codex-detail { grid-template-columns: 1fr; }
 }
+
+/* v2.2 Moon Forge live codex viewer */
+.codex-item { position: relative; cursor: pointer; outline: none; }
+.codex-item::after { content: ""; position: absolute; inset: 5px; border-radius: 16px; border: 1px solid transparent; pointer-events: none; }
+.codex-item:hover::after, .codex-item:focus-visible::after { border-color: var(--unit-line); box-shadow: inset 0 0 22px var(--unit-soft); }
+.codex-view-label { position: absolute; right: 12px; top: 12px; padding: 4px 7px; border-radius: 999px; color: var(--unit-color); background: rgba(5,3,10,.72); border: 1px solid var(--unit-line); font-size: 7px; font-weight: 950; letter-spacing: .08em; }
+.codex-preview-card { width: min(96vw, 920px) !important; max-height: min(92vh, 760px); overflow: auto; }
+.codex-preview-copy { text-align: left; }
+.codex-preview-copy h2 { margin-bottom: 3px; }
+.codex-preview-copy > p:last-child { margin: 0; color: #b9acc5; font-size: 10px; }
+.codex-preview-layout { display: grid; grid-template-columns: minmax(0,1.75fr) minmax(220px,.75fr); gap: 14px; align-items: stretch; margin-top: 14px; }
+.codex-canvas-shell { position: relative; min-height: 430px; overflow: hidden; border-radius: 20px; background: radial-gradient(circle at 50% 38%,rgba(93,69,135,.34),rgba(8,5,15,.96) 68%); border: 1px solid rgba(173,144,223,.18); }
+#codex-preview-canvas { display: block; width: 100%; height: 430px; touch-action: none; cursor: grab; }
+#codex-preview-canvas:active { cursor: grabbing; }
+#codex-preview-canvas.unavailable { opacity: .12; }
+#codex-frame-status { position: absolute; left: 12px; bottom: 10px; padding: 5px 9px; border-radius: 999px; color: #d8f8ff; background: rgba(5,13,22,.72); border: 1px solid rgba(113,226,255,.2); font-size: 8px; pointer-events: none; }
+.codex-preview-controls { display: flex; flex-direction: column; gap: 13px; text-align: left; }
+.codex-preview-controls > div > small { display: block; margin-bottom: 6px; color: #8fd7e5; font-size: 8px; font-weight: 900; letter-spacing: .1em; }
+.codex-control-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.codex-control-grid button { min-height: 36px; border-radius: 11px; color: #b8acbf; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); font-size: 9px; font-weight: 900; }
+.codex-control-grid button.active { color: #25172d; background: linear-gradient(145deg,#a7f3ff,#ffe398); border-color: transparent; }
+.codex-control-grid button:disabled { opacity: .34; cursor: not-allowed; }
+.codex-readouts { display: grid; gap: 6px; margin: 0; }
+.codex-readouts > div { display: grid; grid-template-columns: 72px minmax(0,1fr); align-items: center; gap: 8px; padding: 8px 9px; border-radius: 11px; background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.06); }
+.codex-readouts dt { color: #9487a0; font-size: 8px; font-weight: 900; }
+.codex-readouts dd { margin: 0; color: #f7eff8; font-size: 9px; text-align: right; }
+.codex-preview-note { margin: auto 0 0; padding: 10px; border-radius: 13px; color: #bdb0c6; background: rgba(116,74,150,.1); border: 1px solid rgba(191,143,235,.12); font-size: 8px; line-height: 1.55; }
+@media (max-width: 720px) {
+  .codex-preview-layout { grid-template-columns: 1fr; }
+  .codex-canvas-shell { min-height: 330px; }
+  #codex-preview-canvas { height: 330px; }
+  .codex-preview-controls { display: grid; grid-template-columns: 1fr 1fr; }
+  .codex-readouts, .codex-preview-note { grid-column: 1 / -1; }
+}
+@media (max-width: 430px) {
+  .codex-preview-card { padding-inline: 11px !important; }
+  .codex-canvas-shell { min-height: 280px; }
+  #codex-preview-canvas { height: 280px; }
+  .codex-preview-controls { grid-template-columns: 1fr; }
+  .codex-readouts, .codex-preview-note { grid-column: auto; }
+}

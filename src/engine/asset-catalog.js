@@ -1,24 +1,33 @@
 import { CHARACTER_ASSET_TARGETS, ENVIRONMENT_ASSET_TARGETS, EFFECT_ASSET_TARGETS, IMPOSTOR_SPEC } from '../asset-specs.js';
 
 const keyartUrl = new URL('../assets/moon-market-keyart.webp', import.meta.url).href;
+const publicAsset = (path) => `${import.meta.env?.BASE_URL || '/'}assets/${path}`;
+const groundTextureUrl = publicAsset('textures/moon-market-ground-v1.webp');
+const moonFxAtlasUrl = publicAsset('effects/moon-fx-atlas-v1.webp');
+const emberImpostorUrl = publicAsset('impostors/guardian/ember-idle-11.webp');
 
 export const ASSET_QUALITY_TIERS = Object.freeze(['low', 'medium', 'high']);
 
 export const CORE_ASSET_CATALOG = Object.freeze([
   {
-    id: 'moon-market-keyart',
-    kind: 'texture',
-    required: true,
-    retain: false,
-    color: true,
-    variants: {
-      low: keyartUrl,
-      medium: keyartUrl,
-      high: keyartUrl
-    },
-    sourceWidth: 1600,
-    sourceHeight: 900,
-    estimatedBytes: 1600 * 900 * 4 * 1.333
+    id: 'moon-market-keyart', kind: 'texture', required: true, retain: false, color: true,
+    variants: { low: keyartUrl, medium: keyartUrl, high: keyartUrl },
+    sourceWidth: 1600, sourceHeight: 900, estimatedBytes: 1600 * 900 * 4 * 1.333
+  },
+  {
+    id: 'moon-market-ground-v1', kind: 'texture', required: true, retain: true, color: true,
+    variants: { low: groundTextureUrl, medium: groundTextureUrl, high: groundTextureUrl },
+    sourceWidth: 1024, sourceHeight: 1024, estimatedBytes: 1024 * 1024 * 4 * 1.333
+  },
+  {
+    id: 'moon-fx-atlas-v1', kind: 'texture', required: true, retain: true, color: true,
+    variants: { low: moonFxAtlasUrl, medium: moonFxAtlasUrl, high: moonFxAtlasUrl },
+    sourceWidth: 1024, sourceHeight: 1024, estimatedBytes: 1024 * 1024 * 4 * 1.333
+  },
+  {
+    id: 'ember-impostor-idle-v1', kind: 'texture', required: false, retain: true, color: true,
+    variants: { low: emberImpostorUrl, medium: emberImpostorUrl, high: emberImpostorUrl },
+    sourceWidth: 2048, sourceHeight: 1536, estimatedBytes: 2048 * 1536 * 4 * 1.333
   }
 ]);
 
@@ -102,7 +111,8 @@ export const ASSET_PRODUCTION_SUMMARY = Object.freeze({
   environmentSets: ENVIRONMENT_ASSET_TARGETS.primarySetCount,
   effectFamilies: 8,
   farLodDirections: IMPOSTOR_SPEC.directions,
-  formats: Object.freeze(['glb', 'ktx2', 'webp', 'png'])
+  formats: Object.freeze(['glb', 'ktx2', 'webp', 'png']),
+  integratedPrototypeAssets: 3
 });
 
 export function selectAssetVariant(entry, tier = 'high') {

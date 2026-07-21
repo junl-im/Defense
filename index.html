@@ -64,7 +64,7 @@
             <button id="meta-btn" class="btn ghost meta-entry"><span>혼불 <b id="title-shards">0</b></span>수호자 성장</button>
           </div>
           <button id="controls-btn" class="title-settings-btn" type="button">카메라 · 조작 설정</button>
-          <small class="title-version" aria-label="게임 버전 2.1.0">v2.1.0</small>
+          <small class="title-version" aria-label="게임 버전 2.2.0">v2.2.0</small>
         </div>
       </section>
 
@@ -224,6 +224,39 @@
         </div>
       </section>
 
+      <section id="codex-preview-modal" class="modal modal-subdialog" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="codex-preview-title">
+        <div class="modal-card wide codex-preview-card">
+          <button class="modal-x" data-close="codex-preview-modal" aria-label="3D 도감 닫기">×</button>
+          <div class="codex-preview-copy">
+            <p class="kicker">MOON FORGE VIEWER</p>
+            <h2 id="codex-preview-title">3D 에셋 감상</h2>
+            <p id="codex-preview-subtitle">드래그하여 회전하고 휠 또는 핀치로 확대합니다.</p>
+          </div>
+          <div class="codex-preview-layout">
+            <div class="codex-canvas-shell">
+              <canvas id="codex-preview-canvas" aria-label="선택한 도감 항목의 3D 모델"></canvas>
+              <span id="codex-frame-status" aria-live="polite">Moon Forge 모델 준비</span>
+            </div>
+            <aside class="codex-preview-controls" aria-label="도감 모델 조작">
+              <div><small>동작</small><div class="codex-control-grid">
+                <button type="button" data-codex-state="idle" class="active">대기</button><button type="button" data-codex-state="move">이동</button>
+                <button type="button" data-codex-state="attack">공격</button><button type="button" data-codex-state="skill">기술</button>
+              </div></div>
+              <div><small>표현 단계</small><div class="codex-control-grid">
+                <button type="button" data-codex-mode="model" class="active">3D 모델</button>
+                <button id="codex-impostor-btn" type="button" data-codex-mode="impostor">11방향</button>
+              </div></div>
+              <dl class="codex-readouts">
+                <div><dt>에셋 세트</dt><dd id="codex-asset-set">Moon Forge v1</dd></div>
+                <div><dt>LOD</dt><dd id="codex-lod-readout">LOD0 · 절차형 3D</dd></div>
+                <div><dt>방향</dt><dd id="codex-direction-readout">3D 자유 회전</dd></div>
+              </dl>
+              <p class="codex-preview-note">현재 모델은 게임에서 즉시 사용 가능한 절차형 아트 프로토타입입니다. 최종 GLB가 들어오면 같은 슬롯과 조작 UI를 그대로 사용합니다.</p>
+            </aside>
+          </div>
+        </div>
+      </section>
+
       <section id="blessing-modal" class="modal" aria-hidden="true">
         <div class="modal-card wide blessing-card">
           <p class="kicker">MOON BLESSING</p>
@@ -373,7 +406,7 @@
     </div>
     <script>
       (() => {
-        const VERSION = '2.1.0';
+        const VERSION = '2.2.0';
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
         const retryButton = document.getElementById('boot-retry-btn');
