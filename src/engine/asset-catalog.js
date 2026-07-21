@@ -4,7 +4,14 @@ const keyartUrl = new URL('../assets/moon-market-keyart.webp', import.meta.url).
 const publicAsset = (path) => `${import.meta.env?.BASE_URL || '/'}assets/${path}`;
 const groundTextureUrl = publicAsset('textures/moon-market-ground-v1.webp');
 const moonFxAtlasUrl = publicAsset('effects/moon-fx-atlas-v1.webp');
-const emberImpostorUrl = publicAsset('impostors/guardian/ember-idle-11.webp');
+const impostorUrls = Object.freeze({
+  'ember-idle': publicAsset('impostors/guardian/ember-idle-11.webp'),
+  'ember-move': publicAsset('impostors/guardian/ember-move-11.webp'),
+  'ember-attack': publicAsset('impostors/guardian/ember-attack-11.webp'),
+  'imp-idle': publicAsset('impostors/monster/imp-idle-11.webp'),
+  'imp-move': publicAsset('impostors/monster/imp-move-11.webp'),
+  'imp-attack': publicAsset('impostors/monster/imp-attack-11.webp')
+});
 
 export const ASSET_QUALITY_TIERS = Object.freeze(['low', 'medium', 'high']);
 
@@ -24,11 +31,11 @@ export const CORE_ASSET_CATALOG = Object.freeze([
     variants: { low: moonFxAtlasUrl, medium: moonFxAtlasUrl, high: moonFxAtlasUrl },
     sourceWidth: 1024, sourceHeight: 1024, estimatedBytes: 1024 * 1024 * 4 * 1.333
   },
-  {
-    id: 'ember-impostor-idle-v1', kind: 'texture', required: false, retain: true, color: true,
-    variants: { low: emberImpostorUrl, medium: emberImpostorUrl, high: emberImpostorUrl },
-    sourceWidth: 2048, sourceHeight: 1536, estimatedBytes: 2048 * 1536 * 4 * 1.333
-  }
+  ...Object.entries(impostorUrls).map(([key, url]) => ({
+    id: `${key}-impostor-v2`, kind: 'texture', required: false, retain: true, color: true,
+    variants: { low: url, medium: url, high: url },
+    sourceWidth: 1024, sourceHeight: 768, estimatedBytes: 1024 * 768 * 4 * 1.333
+  }))
 ]);
 
 const makeCharacterSlot = (id, category) => Object.freeze({
@@ -112,7 +119,7 @@ export const ASSET_PRODUCTION_SUMMARY = Object.freeze({
   effectFamilies: 8,
   farLodDirections: IMPOSTOR_SPEC.directions,
   formats: Object.freeze(['glb', 'ktx2', 'webp', 'png']),
-  integratedPrototypeAssets: 3
+  integratedPrototypeAssets: 8
 });
 
 export function selectAssetVariant(entry, tier = 'high') {

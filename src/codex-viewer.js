@@ -3,9 +3,10 @@ import { createCodexPreviewModel } from './premium-assets.js';
 import { resolveDirectionalFrame } from './engine/directional-impostor.js';
 
 const clamp = THREE.MathUtils.clamp;
+const IMPOSTOR_STATES = Object.freeze(['idle', 'move', 'attack']);
 
 export default class CodexViewer {
-  constructor(canvas, { impostorTexture = null, onFrame = null } = {}) {
+  constructor(canvas, { impostorTextures = {}, onFrame = null } = {}) {
     if (!canvas) throw new Error('Codex preview canvas is missing.');
     this.canvas = canvas;
     this.onFrame = onFrame;
@@ -30,10 +31,12 @@ export default class CodexViewer {
     this.mode = 'model';
     this.rotationY = .4;
     this.zoom = 7.2;
-    this.dragging = false;
-    this.pointerX = 0;
-    this.pointerY = 0;
-    this.impostorTexture = impostorTexture;
+    this.pointers = new Map();
+    this.dragPointer = null;
+    this.pinchState = null;
+    this.impostorTextures = impostorTextures;
+    this.impostorMaps = {};
+    this.impostorBaseKey = '';
     this.impostor = null;
     this.model = null;
     this.baseScale = 1;
@@ -41,23 +44,56 @@ export default class CodexViewer {
     this.resize();
   }
 
+  pointerDistance() {
+    const points = [...this.pointers.values()];
+    return points.length >= 2 ? Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y) : 0;
+  }
+
+  beginPinch() {
+    if (this.pointers.size < 2) return;
+    this.pinchState = { distance: this.pointerDistance(), zoom: this.zoom };
+    this.dragPointer = null;
+  }
+
   bindControls() {
     this.canvas.addEventListener('pointerdown', (event) => {
-      this.dragging = true; this.pointerX = event.clientX; this.pointerY = event.clientY;
+      this.pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
       this.canvas.setPointerCapture?.(event.pointerId);
+      if (this.pointers.size >= 2) {
+        this.beginPinch();
+        return;
+      }
+      this.dragPointer = { id: event.pointerId, x: event.clientX, y: event.clientY };
     });
     this.canvas.addEventListener('pointermove', (event) => {
-      if (!this.dragging) return;
-      const dx = event.clientX - this.pointerX;
-      const dy = event.clientY - this.pointerY;
-      this.pointerX = event.clientX; this.pointerY = event.clientY;
+      if (!this.pointers.has(event.pointerId)) return;
+      this.pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      if (this.pointers.size >= 2 && this.pinchState) {
+        const delta = this.pointerDistance() - this.pinchState.distance;
+        this.zoom = clamp(this.pinchState.zoom - delta * .012, 4.6, 11.5);
+        return;
+      }
+      if (!this.dragPointer || this.dragPointer.id !== event.pointerId) return;
+      const dx = event.clientX - this.dragPointer.x;
+      this.dragPointer.x = event.clientX;
+      this.dragPointer.y = event.clientY;
       this.rotationY += dx * .012;
-      this.zoom = clamp(this.zoom + dy * .012, 4.6, 11.5);
     });
-    const end = (event) => { this.dragging = false; this.canvas.releasePointerCapture?.(event.pointerId); };
+    const end = (event) => {
+      this.pointers.delete(event.pointerId);
+      this.canvas.releasePointerCapture?.(event.pointerId);
+      if (this.pointers.size >= 2) this.beginPinch();
+      else {
+        this.pinchState = null;
+        this.dragPointer = null;
+      }
+    };
     this.canvas.addEventListener('pointerup', end);
     this.canvas.addEventListener('pointercancel', end);
-    this.canvas.addEventListener('wheel', (event) => { event.preventDefault(); this.zoom = clamp(this.zoom + event.deltaY * .006, 4.6, 11.5); }, { passive: false });
+    this.canvas.addEventListener('wheel', (event) => {
+      event.preventDefault();
+      this.zoom = clamp(this.zoom + event.deltaY * .006, 4.6, 11.5);
+    }, { passive: false });
     window.addEventListener('resize', () => this.resize());
   }
 
@@ -72,6 +108,7 @@ export default class CodexViewer {
   setEntry(section, id, entry, context = {}) {
     this.disposeObject(this.model);
     this.disposeObject(this.impostor);
+    this.disposeImpostorMaps();
     this.model = createCodexPreviewModel(section, id, { ...entry, ...context }, 4);
     this.root.add(this.model);
     const box = new THREE.Box3().setFromObject(this.model);
@@ -87,26 +124,50 @@ export default class CodexViewer {
     this.zoom = section === 'boss' ? 8.7 : section === 'world' ? 8 : 6.8;
     this.state = 'idle';
     this.mode = 'model';
-    if (section === 'guardian' && id === 'ember' && this.impostorTexture) this.createImpostor();
+    const baseKey = section === 'guardian' && id === 'ember' ? 'ember' : section === 'monster' && id === 'imp' ? 'imp' : '';
+    if (baseKey && this.impostorTextures[`${baseKey}-idle`]) this.createImpostor(baseKey);
     this.updateVisibility();
     this.resize();
   }
 
-  createImpostor() {
-    const texture = this.impostorTexture.clone();
+  cloneImpostorTexture(source) {
+    const texture = source.clone();
     texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
     texture.repeat.set(.25, 1 / 3);
     texture.offset.set(0, 2 / 3);
+    texture.colorSpace = THREE.SRGBColorSpace;
     texture.needsUpdate = true;
-    const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true, alphaTest: .035, depthWrite: false, side: THREE.DoubleSide });
+    return texture;
+  }
+
+  createImpostor(baseKey) {
+    this.impostorBaseKey = baseKey;
+    for (const state of IMPOSTOR_STATES) {
+      const source = this.impostorTextures[`${baseKey}-${state}`] || this.impostorTextures[`${baseKey}-idle`];
+      if (source) this.impostorMaps[state] = this.cloneImpostorTexture(source);
+    }
+    const material = new THREE.MeshBasicMaterial({ map: this.impostorMaps.idle, transparent: true, alphaTest: .035, depthWrite: false, side: THREE.DoubleSide });
     this.impostor = new THREE.Mesh(new THREE.PlaneGeometry(4.1, 4.1), material);
     this.impostor.position.y = 2.05;
     this.impostor.visible = false;
-    this.impostor.userData.disposeMap = true;
     this.root.add(this.impostor);
   }
 
-  setState(state) { this.state = ['idle', 'move', 'attack', 'skill'].includes(state) ? state : 'idle'; }
+  disposeImpostorMaps() {
+    Object.values(this.impostorMaps).forEach((texture) => texture?.dispose?.());
+    this.impostorMaps = {};
+    this.impostorBaseKey = '';
+  }
+
+  setState(state) {
+    this.state = ['idle', 'move', 'attack', 'skill'].includes(state) ? state : 'idle';
+    if (this.impostor) {
+      const key = this.state === 'skill' ? 'attack' : this.state;
+      this.impostor.material.map = this.impostorMaps[key] || this.impostorMaps.idle;
+      this.impostor.material.needsUpdate = true;
+    }
+  }
+
   setMode(mode) { this.mode = mode === 'impostor' && this.impostor ? 'impostor' : 'model'; this.updateVisibility(); }
   updateVisibility() { if (this.model) this.model.visible = this.mode === 'model'; if (this.impostor) this.impostor.visible = this.mode === 'impostor'; }
   setActive(active) { this.active = Boolean(active); if (this.active) { this.clock.getDelta(); this.animate(); } }
@@ -164,7 +225,7 @@ export default class CodexViewer {
       node.geometry?.dispose();
       if (node.material) {
         const materials = Array.isArray(node.material) ? node.material : [node.material];
-        materials.forEach((material) => { if (node.userData.disposeMap) material.map?.dispose(); material.dispose(); });
+        materials.forEach((material) => material.dispose());
       }
     });
   }

@@ -20,7 +20,7 @@ assert(Object.keys(MODEL_ASSET_SLOTS.monsters).length === 4, '일반 요괴 모�
 assert(Object.keys(MODEL_ASSET_SLOTS.bosses).length === 3, '보스 모델 슬롯 3종');
 assert(Object.keys(MODEL_ASSET_SLOTS.environment).length === 8, '환경 모델 슬롯 8종');
 assert(Object.keys(MODEL_ASSET_SLOTS.effects).length === 8, '효과 슬롯 8종');
-assert(ASSET_PRODUCTION_SUMMARY.characterModels === 14 && ASSET_PRODUCTION_SUMMARY.farLodDirections === 11 && ASSET_PRODUCTION_SUMMARY.integratedPrototypeAssets === 3, '에셋 생산 요약과 통합 프로토타입 3종');
+assert(ASSET_PRODUCTION_SUMMARY.characterModels === 14 && ASSET_PRODUCTION_SUMMARY.farLodDirections === 11 && ASSET_PRODUCTION_SUMMARY.integratedPrototypeAssets === 8, '에셋 생산 요약과 통합 프로토타입 8종');
 
 const frames = Array.from({ length: 11 }, (_, index) => resolveDirectionalFrame(0, index * Math.PI * 2 / 11, 11));
 assert(new Set(frames).size === 11, '카메라 360도에서 11개 프레임 선택');
@@ -33,7 +33,7 @@ assert(bible.includes('11방향') && bible.includes('조선풍 야시장') && bi
 assert(manifest.impostorDirections === 11 && manifest.characters.guardians.length === 6, '에셋 납품 매니페스트');
 
 
-for (const path of ['public/assets/textures/moon-market-ground-v1.webp', 'public/assets/effects/moon-fx-atlas-v1.webp', 'public/assets/impostors/guardian/ember-idle-11.webp']) {
+for (const path of ['public/assets/textures/moon-market-ground-v1.webp', 'public/assets/effects/moon-fx-atlas-v1.webp', 'src/assets/moon-mascot-v1.webp', 'public/assets/impostors/guardian/ember-idle-11.webp', 'public/assets/impostors/guardian/ember-move-11.webp', 'public/assets/impostors/guardian/ember-attack-11.webp', 'public/assets/impostors/monster/imp-idle-11.webp', 'public/assets/impostors/monster/imp-move-11.webp', 'public/assets/impostors/monster/imp-attack-11.webp']) {
   assert(readFileSync(resolve(root, path)).length > 1000, `Moon Forge 실제 에셋 ${path}`);
 }
 

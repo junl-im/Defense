@@ -30,7 +30,7 @@ const missingIds = [...new Set(queriedIds.filter((id) => !htmlIds.has(id)))];
 if (missingIds.length) fail(`index.html에 없는 DOM ID: ${missingIds.join(', ')}`);
 else pass(`${queriedIds.length}개 DOM ID 연결`);
 
-if (pkg.version === '2.2.0') pass('package version 2.2.0');
+if (pkg.version === '2.3.0') pass('package version 2.3.0');
 else fail(`package version 불일치: ${pkg.version}`);
 
 for (const path of ['.env.production', '.firebaserc', '.github/workflows/deploy.yml', 'README.md', 'PROJECT_HANDOFF.md']) {
@@ -46,7 +46,7 @@ else fail(`루트 Markdown 정리 필요: ${rootMarkdown.join(', ')}`);
 if (manifest.start_url === './') pass('PWA 상대 경로 start_url');
 else fail(`PWA start_url 확인 필요: ${manifest.start_url}`);
 
-if (main.includes("const GAME_VERSION = '2.2.0'")) pass('런타임 version 2.2.0');
+if (main.includes("const GAME_VERSION = '2.3.0'")) pass('런타임 version 2.3.0');
 else fail('런타임 version 불일치');
 
 for (const feature of ['offerContract', 'resolveActiveContract', 'checkBossPhase', 'kingNightMarch', 'bossPounce']) {
@@ -142,7 +142,7 @@ else fail('접근성 설정 누락');
 
 if (htmlIds.has('collection-tabs') && htmlIds.has('collection-summary') && codexData.includes('CODEX_SECTION_META') && main.includes('renderCodex(')) pass('수호대·요괴·보스·전장·효과 통합 도감');
 else fail('v2.1 통합 도감 누락');
-if (html.includes('class="title-version"') && html.includes('>v2.2.0</small>') && !html.includes('3대 월식 보스, 오늘의 원정')) pass('타이틀은 버전만 표시');
+if (html.includes('class="title-version"') && html.includes('>v2.3.0</small>') && !html.includes('3대 월식 보스, 오늘의 원정')) pass('타이틀은 버전만 표시');
 else fail('타이틀 패치 설명 제거 필요');
 if (main.includes('this.modalStack = []') && main.includes('modalParents') && main.includes('modal-obscured') && style.includes('--modal-layer') && style.includes('#controls-modal { z-index: var(--modal-layer, 154); }')) pass('일시정지 위 카메라 설정 모달 스택');
 else fail('중첩 모달 레이어 수정 누락');
@@ -161,8 +161,8 @@ for (const path of ['public/assets/textures/moon-market-ground-v1.webp', 'public
 }
 if (main.includes('moon-market-ground-v1') && main.includes('moon-fx-atlas-v1') && main.includes('applyPrototypeTextures')) pass('월문 타일과 전투 FX 아틀라스 런타임 연결');
 else fail('v2.2 텍스처 런타임 연결 누락');
-if (main.includes('attachUnitImpostor(unit)') && main.includes('updateUnitImpostor(unit)') && main.includes('new DirectionalImpostorSelector') && main.includes('ember-impostor-idle-v1')) pass('불씨 깨비 실전 11방향 원거리 LOD 연결');
-else fail('v2.2 실전 임포스터 LOD 연결 누락');
+if (main.includes('attachUnitImpostor(unit)') && main.includes('updateUnitImpostor(unit)') && main.includes('new DirectionalImpostorSelector') && main.includes("attachUnitImpostor(unit)") && main.includes("attachEnemyImpostor(group, type)") && main.includes("setDirectionalImpostorState")) pass('불씨 깨비·장난 요괴 상태별 11방향 원거리 LOD 연결');
+else fail('v2.3 상태별 실전 임포스터 LOD 연결 누락');
 
 if (html.includes('__DOKKAEBI_SHOW_BOOT_ERROR__') && html.includes('boot-error')) pass('로딩 실패 복구 UI');
 else fail('로딩 실패 복구 UI 누락');
@@ -217,7 +217,7 @@ for (const path of [
   if (existsSync(resolve(root, path))) pass(`엔진 모듈 ${path}`);
   else fail(`엔진 모듈 누락: ${path}`);
 }
-if (engineConfig.includes("ENGINE_VERSION = '1.5.0'") && engineConfig.includes('unitTriangles: 1700') && engineConfig.includes('enemyTriangles: 800') && engineConfig.includes('bossTriangles: 3000')) pass('엔진 버전과 폴리곤 예산');
+if (engineConfig.includes("ENGINE_VERSION = '1.6.0'") && engineConfig.includes('unitTriangles: 1700') && engineConfig.includes('enemyTriangles: 800') && engineConfig.includes('bossTriangles: 3000')) pass('엔진 버전과 폴리곤 예산');
 else fail('엔진 버전 또는 폴리곤 예산 누락');
 if (main.includes('new MobileGameEngine()') && main.includes('new BlobShadowSystem') && main.includes('createRockField(28)') && main.includes('createLanternField(16)')) pass('모바일 엔진 실제 연결');
 else fail('모바일 엔진 연결 누락');

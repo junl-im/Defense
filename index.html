@@ -45,6 +45,7 @@
 
       <section id="title-screen" class="screen">
         <div class="title-panel">
+          <img class="title-mascot" src="./src/assets/moon-mascot-v1.webp" alt="달빛 장터 마스코트 도깨비" />
           <p class="kicker">한 판 8분 · 랜덤 소환 · 자동 합성</p>
           <h1>도깨비<br /><em>운빨 수호대</em></h1>
           <p class="title-copy">직접 전장을 누비며 엽전을 줍고,<br />운명처럼 소환되는 도깨비 군단을 완성하세요.</p>
@@ -63,8 +64,8 @@
             <button id="collection-btn" class="btn ghost">달빛 도감</button>
             <button id="meta-btn" class="btn ghost meta-entry"><span>혼불 <b id="title-shards">0</b></span>수호자 성장</button>
           </div>
-          <button id="controls-btn" class="title-settings-btn" type="button">카메라 · 조작 설정</button>
-          <small class="title-version" aria-label="게임 버전 2.2.0">v2.2.0</small>
+          <button id="controls-btn" class="title-settings-btn" type="button" aria-label="카메라와 조작 설정" title="카메라와 조작 설정"><span aria-hidden="true">⚙️</span></button>
+          <small class="title-version" aria-label="게임 버전 2.3.0">v2.3.0</small>
         </div>
       </section>
 
@@ -320,7 +321,7 @@
               <output id="rotate-sensitivity-value">100%</output>
             </label>
             <label class="control-setting">
-              <span><b>핀치 줌 감도</b><small>두 손가락 간격 변화 반응</small></span>
+              <span><b>핀치 줌 감도</b><small>벌리면 줌인 · 오므리면 줌아웃</small></span>
               <input id="pinch-sensitivity" type="range" min="55" max="145" step="5" />
               <output id="pinch-sensitivity-value">100%</output>
             </label>
@@ -406,7 +407,7 @@
     </div>
     <script>
       (() => {
-        const VERSION = '2.2.0';
+        const VERSION = '2.3.0';
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
         const retryButton = document.getElementById('boot-retry-btn');

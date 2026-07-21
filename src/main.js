@@ -67,7 +67,7 @@ const ui = {
   codexFrameStatus: $('#codex-frame-status'), codexAssetSet: $('#codex-asset-set'), codexLodReadout: $('#codex-lod-readout'), codexDirectionReadout: $('#codex-direction-readout'), codexImpostorBtn: $('#codex-impostor-btn')
 };
 
-const GAME_VERSION = '2.2.0';
+const GAME_VERSION = '2.3.0';
 
 const FIRST_MISSIONS = [
   { id: 'summons', title: '수호대 3회 강림', goal: 3, reward: 35, copy: '무료 강림도 포함됩니다.' },
@@ -199,8 +199,10 @@ class DokkaebiLuckDefense {
     this.animations = new AnimationStateSystem({ lowPower: this.lowPower, mobile: this.engine.device.mobile });
     this.codexViewer = null;
     this.fxAtlasTexture = null;
+    this.viewportProfile = '';
 
     this.assertRequiredUI();
+    this.applyViewportUiProfile();
     this.initThree();
     this.bindUI();
     this.populateCollection();
@@ -318,6 +320,7 @@ class DokkaebiLuckDefense {
     this.raycaster = new THREE.Raycaster();
     this.pointer = new THREE.Vector2();
     window.addEventListener('resize', () => this.onResize());
+    window.visualViewport?.addEventListener('resize', () => this.applyViewportUiProfile());
   }
 
   initReusablePools() {
@@ -730,7 +733,7 @@ class DokkaebiLuckDefense {
         const distance = pointerDistance();
         const delta = distance - this.pinchState.distance;
         const { min, max } = this.getCameraZoomBounds();
-        this.cameraDistanceTarget = clamp(this.pinchState.cameraDistance + delta * .018 * this.controlSettings.pinchSensitivity, min, max);
+        this.cameraDistanceTarget = clamp(this.pinchState.cameraDistance - delta * .018 * this.controlSettings.pinchSensitivity, min, max);
         return;
       }
       if (!this.lookPointer || this.lookPointer.id !== event.pointerId) return;
@@ -1293,14 +1296,32 @@ class DokkaebiLuckDefense {
     }
   }
 
+  getImpostorTextureSet(baseKey) {
+    const set = {};
+    for (const state of ['idle', 'move', 'attack']) {
+      const texture = this.assetPipeline.get(`${baseKey}-${state}-impostor-v2`)?.texture || null;
+      if (texture) set[state] = texture;
+    }
+    return set;
+  }
+
+  getAllImpostorTextures() {
+    const textures = {};
+    for (const baseKey of ['ember', 'imp']) {
+      const set = this.getImpostorTextureSet(baseKey);
+      for (const [state, texture] of Object.entries(set)) textures[`${baseKey}-${state}`] = texture;
+    }
+    return textures;
+  }
+
   ensureCodexViewer() {
     if (this.codexViewer) return this.codexViewer;
     try {
       this.codexViewer = new CodexViewer(ui.codexPreviewCanvas, {
-        impostorTexture: this.assetPipeline.get('ember-impostor-idle-v1')?.texture || null,
+        impostorTextures: this.getAllImpostorTextures(),
         onFrame: (frame) => this.updateCodexFrameReadout(frame)
       });
-      ui.codexFrameStatus.textContent = '드래그 회전 · 휠 확대';
+      ui.codexFrameStatus.textContent = '드래그 회전 · 핀치/휠 확대';
     } catch (error) {
       console.warn('[CodexViewer] WebGL preview unavailable.', error);
       ui.codexFrameStatus.textContent = '이 환경에서는 3D 미리보기를 열 수 없습니다.';
@@ -1313,11 +1334,12 @@ class DokkaebiLuckDefense {
     const entry = getCodexEntries(section).find((item) => item.id === id);
     if (!entry) return;
     ui.codexPreviewTitle.textContent = entry.name;
-    ui.codexPreviewSubtitle.textContent = `${entry.subtitle || CODEX_SECTION_META[section]?.label || ''} · 드래그 회전 / 휠 확대`;
-    const canImpostor = section === 'guardian' && id === 'ember' && Boolean(this.assetPipeline.get('ember-impostor-idle-v1')?.texture);
+    ui.codexPreviewSubtitle.textContent = `${entry.subtitle || CODEX_SECTION_META[section]?.label || ''} · 드래그 회전 / 핀치 확대`;
+    const baseKey = section === 'guardian' && id === 'ember' ? 'ember' : section === 'monster' && id === 'imp' ? 'imp' : '';
+    const canImpostor = Boolean(baseKey && this.getImpostorTextureSet(baseKey).idle);
     ui.codexImpostorBtn.disabled = !canImpostor;
-    ui.codexImpostorBtn.title = canImpostor ? '불씨 깨비 원거리 11방향 아틀라스' : '현재 11방향 아틀라스는 불씨 깨비에 먼저 적용되었습니다.';
-    ui.codexAssetSet.textContent = canImpostor ? 'Moon Forge v1 · 3D + 11방향' : 'Moon Forge v1 · 절차형 3D';
+    ui.codexImpostorBtn.title = canImpostor ? `${entry.name} 대기·이동·공격 11방향 아틀라스` : '현재 11방향 애니메이션 세트는 불씨 깨비와 장난 요괴에 적용되었습니다.';
+    ui.codexAssetSet.textContent = canImpostor ? 'Moon Forge v2 · 3D + 상태별 11방향' : 'Moon Forge v2 · 절차형 3D';
     ui.codexLodReadout.textContent = 'LOD0 · 절차형 3D';
     ui.codexDirectionReadout.textContent = '3D 자유 회전';
     $$('[data-codex-state]').forEach((button) => button.classList.toggle('active', button.dataset.codexState === 'idle'));
@@ -1339,35 +1361,75 @@ class DokkaebiLuckDefense {
     ui.codexDirectionReadout.textContent = `프레임 ${String(frame + 1).padStart(2, '0')} / 11`;
   }
 
-  attachUnitImpostor(unit) {
-    if (unit.type !== 'ember') return;
-    const source = this.assetPipeline.get('ember-impostor-idle-v1')?.texture;
-    if (!source) return;
+  cloneDirectionalTexture(source) {
     const texture = source.clone();
     texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
     texture.repeat.set(.25, 1 / 3);
     texture.offset.set(0, 2 / 3);
+    texture.colorSpace = THREE.SRGBColorSpace;
     texture.needsUpdate = true;
-    const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true, alphaTest: .035, depthWrite: false, side: THREE.DoubleSide });
-    const plane = new THREE.Mesh(new THREE.PlaneGeometry(2.85, 2.85), material);
-    plane.position.set(0, 1.46, 0);
+    return texture;
+  }
+
+  createDirectionalImpostor(baseKey, planeSize = 2.85, planeY = 1.46) {
+    const sources = this.getImpostorTextureSet(baseKey);
+    if (!sources.idle) return null;
+    const textures = {};
+    for (const state of ['idle', 'move', 'attack']) textures[state] = this.cloneDirectionalTexture(sources[state] || sources.idle);
+    const material = new THREE.MeshBasicMaterial({ map: textures.idle, transparent: true, alphaTest: .035, depthWrite: false, side: THREE.DoubleSide });
+    const plane = new THREE.Mesh(new THREE.PlaneGeometry(planeSize, planeSize), material);
+    plane.position.set(0, planeY, 0);
     plane.visible = false;
     plane.frustumCulled = false;
-    plane.userData.disposeMap = true;
-    const lod0Children = [...unit.group.children];
-    unit.group.add(plane);
-    unit.impostor = {
-      plane, material, texture, lod0Children,
+    return {
+      plane, material, textures,
       selector: new DirectionalImpostorSelector({ directions: 11, hysteresis: .1 }),
-      active: false
+      active: false, state: 'idle', lod0Children: []
     };
+  }
+
+  setDirectionalImpostorState(impostor, state = 'idle') {
+    if (!impostor) return;
+    const normalized = state === 'attack' ? 'attack' : state === 'move' ? 'move' : 'idle';
+    if (normalized === impostor.state) return;
+    impostor.state = normalized;
+    impostor.material.map = impostor.textures[normalized] || impostor.textures.idle;
+    impostor.material.needsUpdate = true;
+  }
+
+  updateDirectionalImpostorFrame(impostor, worldRotationY = 0, parent = null) {
+    if (!impostor?.active || !this.camera) return;
+    const frame = impostor.selector.update(worldRotationY, this.cameraYaw || 0);
+    const column = frame % 4;
+    const row = Math.floor(frame / 4);
+    impostor.material.map.offset.set(column * .25, (2 - row) / 3);
+    if (parent) {
+      parent.getWorldQuaternion(tempQ);
+      impostor.plane.quaternion.copy(tempQ.invert().multiply(this.camera.quaternion));
+    } else impostor.plane.quaternion.copy(this.camera.quaternion);
+  }
+
+  disposeDirectionalImpostor(impostor) {
+    if (!impostor) return;
+    Object.values(impostor.textures || {}).forEach((texture) => texture?.dispose?.());
+    impostor.plane?.geometry?.dispose?.();
+    impostor.material?.dispose?.();
+  }
+
+  attachUnitImpostor(unit) {
+    if (unit.type !== 'ember') return;
+    const impostor = this.createDirectionalImpostor('ember', 2.85, 1.46);
+    if (!impostor) return;
+    impostor.lod0Children = [...unit.group.children];
+    unit.group.add(impostor.plane);
+    unit.impostor = impostor;
   }
 
   updateUnitImpostor(unit) {
     const impostor = unit.impostor;
     if (!impostor || !this.camera) return;
     const distance = unit.group.getWorldPosition(tempV).distanceTo(this.camera.position);
-    const enterDistance = this.lowPower ? 16 : 22;
+    const enterDistance = this.lowPower ? 15 : 21;
     const exitDistance = enterDistance - 2.5;
     const nextActive = impostor.active ? distance > exitDistance : distance > enterDistance;
     if (nextActive !== impostor.active) {
@@ -1375,13 +1437,20 @@ class DokkaebiLuckDefense {
       impostor.lod0Children.forEach((child) => { child.visible = !nextActive; });
       impostor.plane.visible = nextActive;
     }
+    const state = unit.animation?.state || 'idle';
+    this.setDirectionalImpostorState(impostor, state);
     if (!impostor.active) return;
-    const frame = impostor.selector.update(unit.group.rotation.y, this.cameraYaw || 0);
-    const column = frame % 4;
-    const row = Math.floor(frame / 4);
-    impostor.texture.offset.set(column * .25, (2 - row) / 3);
-    unit.group.getWorldQuaternion(tempQ);
-    impostor.plane.quaternion.copy(tempQ.invert().multiply(this.camera.quaternion));
+    this.updateDirectionalImpostorFrame(impostor, unit.group.rotation.y, unit.group);
+  }
+
+  attachEnemyImpostor(group, type) {
+    if (type !== 'imp') return;
+    const scale = Math.max(.82, group.userData.scale || .9);
+    const impostor = this.createDirectionalImpostor('imp', 2.5 * scale, 1.25 * scale);
+    if (!impostor) return;
+    impostor.lod0Children = [...group.children];
+    group.add(impostor.plane);
+    group.userData.impostor = impostor;
   }
 
 
@@ -1419,6 +1488,13 @@ class DokkaebiLuckDefense {
         if (eliteAura) eliteAura.visible = false;
         group.userData.lodState = 'high';
         (group.userData.lodHigh || []).forEach((object) => { object.visible = true; });
+        const impostor = group.userData.impostor;
+        if (impostor) {
+          impostor.active = false;
+          impostor.plane.visible = false;
+          impostor.lod0Children.forEach((object) => { object.visible = true; });
+          this.setDirectionalImpostorState(impostor, 'idle');
+        }
         this.enemyPoolRoot.add(group);
       }
     });
@@ -1446,8 +1522,24 @@ class DokkaebiLuckDefense {
   }
 
   updateEnemyLOD(enemy, distanceToCamera) {
+    if (enemy.boss) return;
+    const impostor = enemy.group.userData.impostor;
+    if (impostor) {
+      const enterDistance = this.lowPower ? 16 : 22;
+      const exitDistance = enterDistance - 2.5;
+      const nextActive = impostor.active ? distanceToCamera > exitDistance : distanceToCamera > enterDistance;
+      if (nextActive !== impostor.active) {
+        impostor.active = nextActive;
+        enemy.group.userData.lodState = nextActive ? 'impostor' : 'high';
+        impostor.lod0Children.forEach((object) => { object.visible = !nextActive; });
+        impostor.plane.visible = nextActive;
+      }
+      this.setDirectionalImpostorState(impostor, enemy.animation?.state || 'idle');
+      if (impostor.active) this.updateDirectionalImpostorFrame(impostor, enemy.group.rotation.y, enemy.group);
+      return;
+    }
     const high = enemy.group.userData.lodHigh || [];
-    if (!high.length || enemy.boss) return;
+    if (!high.length) return;
     const threshold = this.lowPower ? 19 : 25;
     const next = distanceToCamera > threshold ? 'low' : 'high';
     if (next === enemy.group.userData.lodState) return;
@@ -1522,8 +1614,8 @@ class DokkaebiLuckDefense {
     const ground = this.mesh(new THREE.CylinderGeometry(34, 35, 1.2, 64), groundMat, 0, -.65, 0, false, true);
     ground.userData.navigationGround = true;
     this.worldRoot.add(ground);
-    this.navigationObstacles.push({ x: 0, z: 0, radius: 2.35, type: 'core' });
-    this.cameraObstacles.push({ x: 0, z: 0, radius: 2.8, height: 8.6, type: 'core' });
+    this.navigationObstacles.push({ x: 0, z: 0, radius: 1.82, type: 'core' });
+    this.cameraObstacles.push({ x: 0, z: 0, radius: 2.15, height: 6.7, type: 'core' });
 
     const ringMat = this.createMaterial(0x51405f, .82);
     this.ringMaterial = ringMat;
@@ -1540,6 +1632,7 @@ class DokkaebiLuckDefense {
     this.createLanternField(16);
 
     this.createMarketField(8);
+    this.createMarketHeritageProps();
 
     for (let i = 0; i < 4; i += 1) {
       const angle = i / 4 * Math.PI * 2;
@@ -1726,6 +1819,73 @@ class DokkaebiLuckDefense {
     });
   }
 
+  createMarketHeritageProps() {
+    const root = new THREE.Group();
+    root.name = 'MoonMarketHeritageProps';
+    const wood = this.createMaterial(0x5a3440, .91);
+    const darkWood = this.createMaterial(0x2b1a2d, .94);
+    const ink = this.createMaterial(0x19101f, .8);
+    const paper = this.createMaterial(0xe8d5aa, .84);
+    const jade = this.createMaterial(0x67d9ca, .38, .05, 0x2bc9c1, 1.3);
+    const gold = this.createMaterial(0xd9a755, .5, .25, 0x8c4e1d, .35);
+    const ceramic = this.createMaterial(0xd9d8ca, .25, .04, 0x8196a4, .12);
+    const crimson = this.createMaterial(0x8e3554, .78);
+
+    const createJangseung = (angle, variant = 0) => {
+      const group = new THREE.Group();
+      const radius = 13.7;
+      group.position.set(Math.cos(angle) * radius, 0, Math.sin(angle) * radius);
+      group.rotation.y = -angle + Math.PI / 2;
+      const post = this.mesh(new THREE.CylinderGeometry(.35, .48, 3.15, 7), variant % 2 ? darkWood : wood, 0, 1.58, 0);
+      const face = this.mesh(new THREE.BoxGeometry(.68, .82, .16), paper, 0, 2.18, .36);
+      face.rotation.x = -.04;
+      const brow1 = this.mesh(new THREE.BoxGeometry(.22, .055, .035), ink, -.17, 2.33, .46, false, false); brow1.rotation.z = -.16;
+      const brow2 = brow1.clone(); brow2.position.x = .17; brow2.rotation.z = .16;
+      const eye1 = this.mesh(new THREE.SphereGeometry(.045, 5, 3), jade, -.17, 2.21, .47, false, false);
+      const eye2 = eye1.clone(); eye2.position.x = .17;
+      const mouth = this.mesh(new THREE.TorusGeometry(.13, .025, 5, 10, Math.PI), ink, 0, 2.05, .46, false, false); mouth.rotation.z = Math.PI;
+      const hat = this.mesh(new THREE.ConeGeometry(.62, .52, 6), crimson, 0, 3.22, 0);
+      const brim = this.mesh(new THREE.CylinderGeometry(.7, .7, .09, 8), darkWood, 0, 3.0, 0);
+      const rope = this.mesh(new THREE.TorusGeometry(.43, .045, 5, 18), gold, 0, .85, 0); rope.rotation.x = Math.PI / 2;
+      group.add(post, face, brow1, brow2, eye1, eye2, mouth, hat, brim, rope);
+      return group;
+    };
+
+    for (let i = 0; i < 4; i += 1) root.add(createJangseung(Math.PI / 4 + i * Math.PI / 2, i));
+
+    const jarPositions = [
+      [-8.8, -7.3, .72], [8.7, -7.1, .62], [-9.3, 7.2, .58], [9.1, 7.4, .7],
+      [-12.2, 1.7, .48], [12.1, -1.6, .52]
+    ];
+    jarPositions.forEach(([x, z, scale], index) => {
+      const group = new THREE.Group();
+      group.position.set(x, 0, z);
+      const body = this.mesh(new THREE.SphereGeometry(.62 * scale, 12, 8), ceramic, 0, .58 * scale, 0);
+      body.scale.y = 1.16;
+      const neck = this.mesh(new THREE.CylinderGeometry(.24 * scale, .32 * scale, .34 * scale, 10), ceramic, 0, 1.1 * scale, 0);
+      const rim = this.mesh(new THREE.TorusGeometry(.28 * scale, .045 * scale, 6, 16), index % 2 ? jade : gold, 0, 1.27 * scale, 0); rim.rotation.x = Math.PI / 2;
+      group.add(body, neck, rim);
+      root.add(group);
+    });
+
+    const shrine = new THREE.Group();
+    shrine.position.set(5.4, 0, -5.1);
+    shrine.rotation.y = -.38;
+    const pedestal = this.mesh(new THREE.CylinderGeometry(.72, .9, .42, 8), darkWood, 0, .21, 0);
+    const mascotBody = this.mesh(new THREE.SphereGeometry(.48, 10, 7), crimson, 0, 1.0, 0); mascotBody.scale.set(1, 1.15, .86);
+    const mascotHead = this.mesh(new THREE.SphereGeometry(.39, 10, 7), paper, 0, 1.67, 0);
+    const horn1 = this.mesh(new THREE.ConeGeometry(.12, .46, 5), gold, -.23, 2.08, 0); horn1.rotation.z = -.28;
+    const horn2 = horn1.clone(); horn2.position.x = .23; horn2.rotation.z = .28;
+    const eye1 = this.mesh(new THREE.SphereGeometry(.045, 5, 3), jade, -.13, 1.72, .35, false, false);
+    const eye2 = eye1.clone(); eye2.position.x = .13;
+    const moonRing = this.mesh(new THREE.TorusGeometry(.78, .045, 6, 24), jade, 0, 1.42, -.16); moonRing.rotation.x = Math.PI / 2;
+    shrine.add(pedestal, moonRing, mascotBody, mascotHead, horn1, horn2, eye1, eye2);
+    root.add(shrine);
+
+    this.worldRoot.add(root);
+    this.heritageProps = root;
+  }
+
   createMarketStall(x, z, rotation, variant) {
     const group = new THREE.Group();
     group.position.set(x, 0, z);
@@ -1810,6 +1970,10 @@ class DokkaebiLuckDefense {
 
   createSacredTree() {
     const premium = createPremiumSacredTree({ lowPower: this.lowPower });
+    premium.scale.setScalar(.78);
+    premium.userData.visualScale = .78;
+    premium.userData.damageAnchorY = 4.55;
+    premium.userData.impactY = 3.7;
     this.worldRoot.add(premium);
     return premium;
     const group = new THREE.Group();
@@ -2196,6 +2360,7 @@ class DokkaebiLuckDefense {
     this.player.stunTimer = 0;
     this.showGameUI(true);
     ui.bossHealth.classList.add('hidden');
+    document.body.classList.remove('boss-active');
     ui.killChain.classList.add('hidden');
     ui.saveScore.disabled = false;
     ui.saveScore.textContent = '기록 저장';
@@ -2225,6 +2390,7 @@ class DokkaebiLuckDefense {
     ui.evolution.classList.add('hidden');
     this.showGameUI(false);
     ui.bossHealth.classList.add('hidden');
+    document.body.classList.remove('boss-active');
     ui.killChain.classList.add('hidden');
     this.createWorld(true);
     this.renderMetaProgress();
@@ -2477,6 +2643,11 @@ class DokkaebiLuckDefense {
     if (index >= 0) this.units.splice(index, 1);
     this.setUnitPadVisual(unit.pad, false);
     this.animations.remove(unit.animation);
+    if (unit.impostor) {
+      unit.group.remove(unit.impostor.plane);
+      this.disposeDirectionalImpostor(unit.impostor);
+      unit.impostor = null;
+    }
     this.dynamicRoot.remove(unit.group);
     unit.group.traverse((object) => {
       object.geometry?.dispose();
@@ -2623,7 +2794,9 @@ class DokkaebiLuckDefense {
   }
 
   createEnemyModel(type, config) {
-    return createPremiumEnemy(type, config, { lowPower: this.lowPower });
+    const premium = createPremiumEnemy(type, config, { lowPower: this.lowPower });
+    this.attachEnemyImpostor(premium, type);
+    return premium;
     const group = new THREE.Group();
     const bodyMat = this.createMaterial(config.color, .72, .04, config.color, config.boss ? .24 : 0);
     const darkMat = this.createMaterial(tempColor.set(config.color).multiplyScalar(.32).getHex(), .82);
@@ -2963,6 +3136,7 @@ class DokkaebiLuckDefense {
       unit.group.rotation.z = Math.sin(this.elapsed*2.1+phase)*.02;
       const pulseScale = commandActive ? 1.045 + Math.sin(this.elapsed * 11 + phase) * .025 : 1;
       unit.group.scale.setScalar((unit.baseScale || 1) * pulseScale);
+      this.updateUnitImpostor(unit);
       if (unit.group.userData.aura && !unit.impostor?.active) {
         unit.group.userData.aura.rotation.z += dt*(.7+unit.rank*.16)*(commandActive ? 2.2 : 1);
         unit.group.userData.aura.material.opacity = commandActive ? .92 : .5;
@@ -3247,7 +3421,7 @@ class DokkaebiLuckDefense {
 
       const position=enemy.group.position;
       const distance=position.length();
-      if (this.lodFrame === 0) this.updateEnemyLOD(enemy, position.distanceTo(this.camera.position));
+      if (this.lodFrame === 0 || enemy.group.userData.impostor?.active) this.updateEnemyLOD(enemy, position.distanceTo(this.camera.position));
       let abilityLocked = false;
       if (enemy.type === 'runner') abilityLocked = this.updateRunnerAbility(enemy, dt, distance);
       else if (enemy.type === 'shaman') abilityLocked = this.updateShamanAbility(enemy, dt, distance);
@@ -3951,13 +4125,13 @@ class DokkaebiLuckDefense {
     }
     const reduced=amount*this.mods.coreDamage*this.getMountainDamageMultiplier()*this.getContractCoreDamageMultiplier();
     this.coreHp=Math.max(0,this.coreHp-reduced);
-    this.showCombatText(new THREE.Vector3(0, 5.8, 0), reduced, { label: `-${Math.ceil(reduced)}` });
+    this.showCombatText(new THREE.Vector3(0, this.core?.userData?.damageAnchorY || 4.55, 0), reduced, { label: `-${Math.ceil(reduced)}` });
     this.core.userData.hitPulse=.35;
     ui.damageFlash.classList.add('show');
     window.setTimeout(()=>ui.damageFlash.classList.remove('show'),100);
     this.shake=Math.max(this.shake,.25);
     this.haptic([25, 25, 35]);
-    this.spawnParticles(new THREE.Vector3(0,4.7,1),0xff6688,10,3.5);
+    this.spawnParticles(new THREE.Vector3(0,this.core?.userData?.impactY || 3.7,.78),0xff6688,10,3.5);
     if (this.coreHp<=0) this.finishRun(false);
     this.updateHUD();
   }
@@ -4359,6 +4533,7 @@ class DokkaebiLuckDefense {
     const boss = this.enemies.find((enemy) => enemy.boss && !enemy.dead);
     if (!boss) {
       ui.bossHealth.classList.add('hidden');
+      document.body.classList.remove('boss-active');
       return;
     }
     const percent = clamp(boss.hp / boss.maxHp, 0, 1);
@@ -4369,6 +4544,7 @@ class DokkaebiLuckDefense {
     ui.bossIntentLabel.textContent = `다음 공격 · ${this.getBossIntentName(boss)}`;
     ui.bossIntentTime.textContent = `${Math.max(0, boss.specialTimer).toFixed(1)}s`;
     ui.bossHealth.classList.remove('hidden');
+    document.body.classList.add('boss-active');
   }
 
   updateHUD() {
@@ -4483,6 +4659,7 @@ class DokkaebiLuckDefense {
     this.state='result';this.waveActive=false;this.cinematic=null;this.showGameUI(false);
     ui.evolution.classList.remove('show');ui.evolution.classList.add('hidden');
     ui.bossHealth.classList.add('hidden');
+    document.body.classList.remove('boss-active');
     ui.killChain.classList.add('hidden');
     ui.mission.classList.remove('show');
     ui.mission.classList.add('hidden');
@@ -4569,9 +4746,23 @@ class DokkaebiLuckDefense {
     this.blobShadows.update(entries);
   }
 
+  applyViewportUiProfile() {
+    const width = Math.max(1, window.visualViewport?.width || window.innerWidth || document.documentElement.clientWidth || 1);
+    const height = Math.max(1, window.visualViewport?.height || window.innerHeight || document.documentElement.clientHeight || 1);
+    const compact = width <= 540 || height <= 720;
+    const ultraCompact = height <= 610 || (width <= 390 && height <= 680);
+    const landscapeCompact = width > height && height <= 560;
+    document.body.classList.toggle('ui-compact', compact);
+    document.body.classList.toggle('ui-ultra-compact', ultraCompact);
+    document.body.classList.toggle('ui-landscape-compact', landscapeCompact);
+    document.documentElement.style.setProperty('--viewport-height', `${height}px`);
+    this.viewportProfile = ultraCompact ? 'ultra' : compact ? 'compact' : 'standard';
+  }
+
   onResize() {
     this.camera.aspect=window.innerWidth/window.innerHeight;this.camera.updateProjectionMatrix();
     this.engine.resize(window.innerWidth, window.innerHeight);
+    this.applyViewportUiProfile();
   }
 
   animate() {
