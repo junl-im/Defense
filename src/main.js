@@ -43,7 +43,7 @@ const ui = {
   playerName: $('#player-name'), saveScore: $('#save-score-btn'), resultRetry: $('#result-retry-btn'), leaderboard: $('#leaderboard')
 };
 
-const GAME_VERSION = '1.7.2';
+const GAME_VERSION = '1.7.3';
 
 const FIRST_MISSIONS = [
   { id: 'summons', title: '수호대 3회 강림', goal: 3, reward: 35, copy: '무료 강림도 포함됩니다.' },
@@ -119,6 +119,10 @@ class DokkaebiLuckDefense {
     this.enemySerial = 0;
     this.commandCooldown = 0;
     this.commandActiveKey = '';
+    this.geometryCache = new Map();
+    this.enemyPools = {};
+    this.enemyPoolRoot = null;
+    this.lodFrame = 0;
 
     this.assertRequiredUI();
     this.initThree();
@@ -169,7 +173,10 @@ class DokkaebiLuckDefense {
     this.dynamicRoot = new THREE.Group();
     this.effectRoot = new THREE.Group();
     this.pooledEffectRoot = new THREE.Group();
-    this.scene.add(this.worldRoot, this.dynamicRoot, this.effectRoot, this.pooledEffectRoot);
+    this.enemyPoolRoot = new THREE.Group();
+    this.enemyPoolRoot.name = 'EnemyPoolRoot';
+    this.enemyPoolRoot.visible = false;
+    this.scene.add(this.worldRoot, this.dynamicRoot, this.effectRoot, this.pooledEffectRoot, this.enemyPoolRoot);
     this.blobShadows = new BlobShadowSystem(this.lowPower ? 72 : 128);
     this.scene.add(this.blobShadows.batch.mesh);
     this.particleGeometry = new THREE.TetrahedronGeometry(.1, 0);
@@ -822,6 +829,75 @@ class DokkaebiLuckDefense {
     }).join('');
   }
 
+
+  cachedGeometry(key, factory) {
+    if (!this.geometryCache.has(key)) this.geometryCache.set(key, factory());
+    return this.geometryCache.get(key);
+  }
+
+  getEnemyPool(type) {
+    if (this.enemyPools[type]) return this.enemyPools[type];
+    const initialSize = ENEMY_TYPES[type].boss ? 0 : this.lowPower ? 3 : 5;
+    const maxSize = ENEMY_TYPES[type].boss ? 2 : this.lowPower ? 18 : 30;
+    this.enemyPools[type] = new ObjectPool({
+      initialSize,
+      maxSize,
+      create: () => {
+        const group = this.createEnemyModel(type, ENEMY_TYPES[type]);
+        group.visible = false;
+        this.enemyPoolRoot.add(group);
+        return group;
+      },
+      reset: (group) => {
+        group.visible = false;
+        group.position.set(0, -100, 0);
+        group.rotation.set(0, 0, 0);
+        group.scale.setScalar(1);
+        const body = group.userData.body;
+        if (body?.material) {
+          body.material.emissive?.set(group.userData.baseColor || 0x000000);
+          body.material.emissiveIntensity = group.userData.isBoss ? .24 : 0;
+        }
+        const shield = group.userData.shield;
+        if (shield?.material) shield.material.emissiveIntensity = .18;
+        group.userData.lodState = 'high';
+        (group.userData.lodHigh || []).forEach((object) => { object.visible = true; });
+        this.enemyPoolRoot.add(group);
+      }
+    });
+    return this.enemyPools[type];
+  }
+
+  acquireEnemyModel(type) {
+    const group = this.getEnemyPool(type).acquire();
+    if (!group) return null;
+    group.visible = true;
+    this.dynamicRoot.add(group);
+    return group;
+  }
+
+  releaseEnemyModel(enemy) {
+    if (!enemy?.group) return;
+    this.removeEnemyTelegraph(enemy);
+    this.getEnemyPool(enemy.type).release(enemy.group);
+  }
+
+  releaseAllEnemyModels() {
+    this.enemies.forEach((enemy) => this.releaseEnemyModel(enemy));
+    this.enemies.length = 0;
+    Object.values(this.enemyPools).forEach((pool) => pool.releaseAll());
+  }
+
+  updateEnemyLOD(enemy, distanceToCamera) {
+    const high = enemy.group.userData.lodHigh || [];
+    if (!high.length || enemy.boss) return;
+    const threshold = this.lowPower ? 19 : 25;
+    const next = distanceToCamera > threshold ? 'low' : 'high';
+    if (next === enemy.group.userData.lodState) return;
+    enemy.group.userData.lodState = next;
+    high.forEach((object) => { object.visible = next === 'high'; });
+  }
+
   createMaterial(color, roughness = .75, metalness = .05, emissive = 0x000000, emissiveIntensity = 0) {
     return new THREE.MeshStandardMaterial({ color, roughness, metalness, emissive, emissiveIntensity });
   }
@@ -835,7 +911,7 @@ class DokkaebiLuckDefense {
   }
 
   clearWorld() {
-    this.enemies.length = 0;
+    this.releaseAllEnemyModels();
     this.units.length = 0;
     this.projectilePools && Object.values(this.projectilePools).forEach((pool) => pool.releaseAll());
     this.coinPool?.releaseAll();
@@ -1496,7 +1572,7 @@ class DokkaebiLuckDefense {
       group.add(flame);
     } else if (type === 'frost') {
       const staff = this.mesh(new THREE.CylinderGeometry(.055,.07,1.55,6), darkMat, .6,1.2,.02); staff.rotation.z = -.18;
-      const crystal = this.mesh(new THREE.OctahedronGeometry(.22), rankMat, .74,1.96,.02);
+      const crystal = this.mesh(this.cachedGeometry('enemy:shaman:gem', () => new THREE.OctahedronGeometry(.22)), rankMat, .74,1.96,.02);
       group.add(staff, crystal);
     } else if (type === 'wind') {
       const hat = this.mesh(new THREE.ConeGeometry(.75,.48,8), darkMat, 0,2.15,0); hat.scale.y=.68;
@@ -1624,6 +1700,7 @@ class DokkaebiLuckDefense {
     const perpendicular = new THREE.Vector3(-spawnPos.z, 0, spawnPos.x).normalize().multiplyScalar(rand(-2.2,2.2));
     spawnPos.add(perpendicular).multiplyScalar(.96);
     const enemy = this.createEnemy(type, spawnPos, progress);
+    if (!enemy) return;
     this.enemies.push(enemy);
     if (enemy.boss) {
       this.showMission(ENEMY_TYPES[type].name, '강력한 우두머리가 신목으로 돌진합니다.', 'BOSS HAS ENTERED', 1550);
@@ -1637,7 +1714,8 @@ class DokkaebiLuckDefense {
   createEnemy(type, position, progress = 0) {
     const config = ENEMY_TYPES[type];
     const waveScale = 1 + (this.currentWave - 1) * .19 + progress * .08;
-    const group = this.createEnemyModel(type, config);
+    const group = this.acquireEnemyModel(type);
+    if (!group) return null;
     this.engine.geometryBudget.inspect(`enemy:${type}`, group, 'enemyTriangles');
     group.position.copy(position);
     this.dynamicRoot.add(group);
@@ -1661,34 +1739,34 @@ class DokkaebiLuckDefense {
     const darkMat = this.createMaterial(tempColor.set(config.color).multiplyScalar(.32).getHex(), .82);
     const eyeMat = this.createMaterial(0xffe06f, .2, 0, 0xffa42d, 2.8);
     const scale = config.scale;
-    const body = this.mesh(new THREE.SphereGeometry(.55 * scale, 8, 6), bodyMat, 0, .95 * scale, 0);
+    const body = this.mesh(this.cachedGeometry(`enemy:${type}:body:${scale}`, () => new THREE.SphereGeometry(.55 * scale, 8, 6)), bodyMat, 0, .95 * scale, 0);
     body.scale.set(1, 1.17, .88);
-    const head = this.mesh(new THREE.SphereGeometry(.4 * scale, 7, 5), bodyMat, 0, 1.63 * scale, 0);
-    const eye1 = this.mesh(new THREE.SphereGeometry(.065 * scale, 5, 3), eyeMat, -.15*scale,1.7*scale,.365*scale,false,false);
+    const head = this.mesh(this.cachedGeometry(`enemy:${type}:head:${scale}`, () => new THREE.SphereGeometry(.4 * scale, 7, 5)), bodyMat, 0, 1.63 * scale, 0);
+    const eye1 = this.mesh(this.cachedGeometry(`enemy:${type}:eye:${scale}`, () => new THREE.SphereGeometry(.065 * scale, 5, 3)), eyeMat, -.15*scale,1.7*scale,.365*scale,false,false);
     const eye2 = eye1.clone(); eye2.position.x = .15 * scale;
-    const horn1 = this.mesh(new THREE.ConeGeometry(.13*scale,.48*scale,5), darkMat,-.27*scale,2.03*scale,0);
+    const horn1 = this.mesh(this.cachedGeometry(`enemy:${type}:horn:${scale}`, () => new THREE.ConeGeometry(.13*scale,.48*scale,5)), darkMat,-.27*scale,2.03*scale,0);
     horn1.rotation.z=-.28;
     const horn2=horn1.clone(); horn2.position.x=.27*scale; horn2.rotation.z=.28;
     group.add(body,head,eye1,eye2,horn1,horn2);
     if (type === 'runner') {
-      const leg1=this.mesh(new THREE.CylinderGeometry(.08,.1,.65,5),darkMat,-.22,.34,0); leg1.rotation.z=.15;
+      const leg1=this.mesh(this.cachedGeometry('enemy:runner:leg', () => new THREE.CylinderGeometry(.08,.1,.65,5)),darkMat,-.22,.34,0); leg1.rotation.z=.15;
       const leg2=leg1.clone();leg2.position.x=.22;leg2.rotation.z=-.15; group.add(leg1,leg2);
     }
     if (type === 'brute') {
-      const armor=this.mesh(new THREE.DodecahedronGeometry(.67*scale,0),darkMat,0,1.02*scale,0);armor.scale.set(1.2,.8,.85);
+      const armor=this.mesh(this.cachedGeometry(`enemy:brute:armor:${scale}`, () => new THREE.DodecahedronGeometry(.67*scale,0)),darkMat,0,1.02*scale,0);armor.scale.set(1.2,.8,.85);
       const shieldMat=this.createMaterial(0xb9a5ce,.38,.35,0x8a6db4,.18);
-      const shield=this.mesh(new THREE.BoxGeometry(.95*scale,1.2*scale,.17*scale),shieldMat,0,1.15*scale,.72*scale);shield.rotation.x=-.08;group.add(armor,shield);group.userData.shield=shield;
+      const shield=this.mesh(this.cachedGeometry(`enemy:brute:shield:${scale}`, () => new THREE.BoxGeometry(.95*scale,1.2*scale,.17*scale)),shieldMat,0,1.15*scale,.72*scale);shield.rotation.x=-.08;group.add(armor,shield);group.userData.shield=shield;
     }
     if (type === 'shaman') {
-      const staff=this.mesh(new THREE.CylinderGeometry(.07,.09,1.8,6),darkMat,.63,1.15,0);staff.rotation.z=-.15;
-      const gem=this.mesh(new THREE.OctahedronGeometry(.22),eyeMat,.77,2.03,0);group.add(staff,gem);
+      const staff=this.mesh(this.cachedGeometry('enemy:shaman:staff', () => new THREE.CylinderGeometry(.07,.09,1.8,6)),darkMat,.63,1.15,0);staff.rotation.z=-.15;
+      const gem=this.mesh(this.cachedGeometry('enemy:shaman:gem', () => new THREE.OctahedronGeometry(.22)),eyeMat,.77,2.03,0);group.add(staff,gem);
     }
     if (config.boss) {
-      const mane=this.mesh(new THREE.TorusGeometry(.55*scale,.18*scale,5,12),darkMat,0,1.52*scale,-.08);mane.rotation.x=Math.PI/2;group.add(mane);
-      const crown=this.mesh(new THREE.ConeGeometry(.72*scale,.65*scale,6),eyeMat,0,2.42*scale,0);group.add(crown);
+      const mane=this.mesh(this.cachedGeometry(`enemy:${type}:mane:${scale}`, () => new THREE.TorusGeometry(.55*scale,.18*scale,5,12)),darkMat,0,1.52*scale,-.08);mane.rotation.x=Math.PI/2;group.add(mane);
+      const crown=this.mesh(this.cachedGeometry(`enemy:${type}:crown:${scale}`, () => new THREE.ConeGeometry(.72*scale,.65*scale,6)),eyeMat,0,2.42*scale,0);group.add(crown);
       if (!this.lowPower) { const light=new THREE.PointLight(config.color,1.3,8,2);light.position.y=1.6*scale;group.add(light); }
     }
-    group.userData={...group.userData,body,baseColor:config.color,scale,phase:rand(0,Math.PI*2)};
+    group.userData={...group.userData,body,baseColor:config.color,scale,phase:rand(0,Math.PI*2),isBoss:!!config.boss,lodState:'high',lodHigh:[eye1,eye2,horn1,horn2,...group.children.filter((child)=>child!==body&&child!==head&&child!==eye1&&child!==eye2&&child!==horn1&&child!==horn2)]};
     return group;
   }
 
@@ -2233,6 +2311,7 @@ class DokkaebiLuckDefense {
   }
 
   updateEnemies(dt) {
+    this.lodFrame = (this.lodFrame + 1) % 8;
     for (let i=this.enemies.length-1;i>=0;i-=1) {
       const enemy=this.enemies[i];
       if (enemy.dead) continue;
@@ -2245,6 +2324,7 @@ class DokkaebiLuckDefense {
 
       const position=enemy.group.position;
       const distance=position.length();
+      if (this.lodFrame === 0) this.updateEnemyLOD(enemy, position.distanceTo(this.camera.position));
       let abilityLocked = false;
       if (enemy.type === 'runner') abilityLocked = this.updateRunnerAbility(enemy, dt, distance);
       else if (enemy.type === 'shaman') abilityLocked = this.updateShamanAbility(enemy, dt, distance);
@@ -2765,8 +2845,7 @@ class DokkaebiLuckDefense {
     enemy.dead=true;
     const index=this.enemies.indexOf(enemy);
     if (index>=0) this.enemies.splice(index,1);
-    this.removeEnemyTelegraph(enemy);
-    this.dynamicRoot.remove(enemy.group);
+    this.releaseEnemyModel(enemy);
     const color=ENEMY_TYPES[enemy.type].color;
     this.spawnParticles(enemy.group.position.clone().add(new THREE.Vector3(0,.8,0)),color,enemy.boss?35:12,enemy.boss?6:3.4);
     const reward=Math.max(2,Math.round(enemy.reward*this.mods.goldMultiplier*this.getSpiritGoldMultiplier()*this.getContractRewardMultiplier()));

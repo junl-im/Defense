@@ -22,7 +22,7 @@ const missingIds = [...new Set(queriedIds.filter((id) => !htmlIds.has(id)))];
 if (missingIds.length) fail(`index.html에 없는 DOM ID: ${missingIds.join(', ')}`);
 else pass(`${queriedIds.length}개 DOM ID 연결`);
 
-if (pkg.version === '1.7.2') pass('package version 1.7.2');
+if (pkg.version === '1.7.3') pass('package version 1.7.3');
 else fail(`package version 불일치: ${pkg.version}`);
 
 for (const path of ['.env.production', '.firebaserc', '.github/workflows/deploy.yml', 'README.md', 'PROJECT_HANDOFF.md']) {
@@ -38,7 +38,7 @@ else fail(`루트 Markdown 정리 필요: ${rootMarkdown.join(', ')}`);
 if (manifest.start_url === './') pass('PWA 상대 경로 start_url');
 else fail(`PWA start_url 확인 필요: ${manifest.start_url}`);
 
-if (main.includes("const GAME_VERSION = '1.7.2'")) pass('런타임 version 1.7.2');
+if (main.includes("const GAME_VERSION = '1.7.3'")) pass('런타임 version 1.7.3');
 else fail('런타임 version 불일치');
 
 for (const feature of ['offerContract', 'resolveActiveContract', 'checkBossPhase', 'kingNightMarch', 'bossPounce']) {
@@ -134,7 +134,7 @@ for (const path of [
   else fail(`엔진 모듈 누락: ${path}`);
 }
 const engineConfig = read('src/engine/engine-config.js');
-if (engineConfig.includes("ENGINE_VERSION = '1.0.1'") && engineConfig.includes('unitTriangles: 300') && engineConfig.includes('enemyTriangles: 500')) pass('엔진 버전과 폴리곤 예산');
+if (engineConfig.includes("ENGINE_VERSION = '1.0.2'") && engineConfig.includes('unitTriangles: 300') && engineConfig.includes('enemyTriangles: 500')) pass('엔진 버전과 폴리곤 예산');
 else fail('엔진 버전 또는 폴리곤 예산 누락');
 if (main.includes('new MobileGameEngine()') && main.includes('new BlobShadowSystem') && main.includes('createRockField(28)') && main.includes('createLanternField(16)')) pass('모바일 엔진 실제 연결');
 else fail('모바일 엔진 연결 누락');
@@ -153,6 +153,11 @@ if (main.includes('keyFromPosition(item.position)') && main.includes('StaticRock
 else fail('월드 청크 실제 적용 누락');
 if (main.includes('this.runStats.coinsCollected+=coin.value')) pass('실제 엽전 수집 통계');
 else fail('엽전 수집 통계 누락');
+if (main.includes('getEnemyPool(type)') && main.includes('releaseEnemyModel(enemy)') && main.includes('updateEnemyLOD(enemy') && main.includes('cachedGeometry(key, factory)')) pass('적 모델 풀링·geometry 캐시·거리 LOD');
+else fail('적 모델 풀링 또는 LOD 누락');
+if (main.includes("EnemyPoolRoot") && main.includes('this.releaseAllEnemyModels();')) pass('적 풀 수명과 월드 정리 분리');
+else fail('적 풀 수명 관리 누락');
+
 if (failures.length) {
   console.error(`\n검증 실패 ${failures.length}건`);
   process.exit(1);

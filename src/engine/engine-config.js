@@ -1,4 +1,4 @@
-export const ENGINE_VERSION = '1.0.1';
+export const ENGINE_VERSION = '1.0.2';
 
 export const MOBILE_ENGINE_CONFIG = Object.freeze({
   renderer: {
@@ -31,7 +31,9 @@ export const MOBILE_ENGINE_CONFIG = Object.freeze({
     activeProjectilesMobile: 56,
     activeProjectilesDesktop: 96,
     activeCoinsMobile: 72,
-    activeCoinsDesktop: 120
+    activeCoinsDesktop: 120,
+    activeEnemiesMobile: 72,
+    activeEnemiesDesktop: 120
   },
   world: {
     chunkSize: 24,
