@@ -22,7 +22,7 @@ const missingIds = [...new Set(queriedIds.filter((id) => !htmlIds.has(id)))];
 if (missingIds.length) fail(`index.html에 없는 DOM ID: ${missingIds.join(', ')}`);
 else pass(`${queriedIds.length}개 DOM ID 연결`);
 
-if (pkg.version === '1.7.4') pass('package version 1.7.4');
+if (pkg.version === '1.7.6') pass('package version 1.7.6');
 else fail(`package version 불일치: ${pkg.version}`);
 
 for (const path of ['.env.production', '.firebaserc', '.github/workflows/deploy.yml', 'README.md', 'PROJECT_HANDOFF.md']) {
@@ -38,7 +38,7 @@ else fail(`루트 Markdown 정리 필요: ${rootMarkdown.join(', ')}`);
 if (manifest.start_url === './') pass('PWA 상대 경로 start_url');
 else fail(`PWA start_url 확인 필요: ${manifest.start_url}`);
 
-if (main.includes("const GAME_VERSION = '1.7.4'")) pass('런타임 version 1.7.4');
+if (main.includes("const GAME_VERSION = '1.7.6'")) pass('런타임 version 1.7.6');
 else fail('런타임 version 불일치');
 
 for (const feature of ['offerContract', 'resolveActiveContract', 'checkBossPhase', 'kingNightMarch', 'bossPounce']) {
@@ -117,10 +117,10 @@ if (main.includes("this.camera.getWorldDirection(tempV2).setY(0)") && main.inclu
 else fail('WASD 방향 또는 터치 목적지 취소 처리 누락');
 if (main.includes('intersectPlane(groundPlane, rawPoint)') && main.includes('this.runStats.moveOrders += 1')) pass('화면 좌표의 지형 좌표 변환과 이동 명령 기록');
 else fail('정밀 지형 터치 이동 누락');
-if (htmlIds.has('move-readout') && htmlIds.has('result-analysis')) pass('이동 좌표 확인 및 결과 분석 UI');
-else fail('v1.7 UI 누락');
-if (style.includes('.move-readout') && style.includes('.result-analysis') && style.includes('.look-zone { left: 0;')) pass('전체 지형 입력 영역과 분석 스타일');
-else fail('v1.7 입력 스타일 누락');
+if (!htmlIds.has('move-readout') && htmlIds.has('result-analysis')) pass('터치 이동 문구 제거 및 결과 분석 UI 유지');
+else fail('터치 이동 문구 제거 또는 결과 분석 UI 확인 필요');
+if (!style.includes('.move-readout') && style.includes('.look-zone { left: 0;')) pass('조용한 지형 입력 영역 스타일');
+else fail('v1.7 입력 스타일 또는 이동 문구 CSS 확인 필요');
 
 
 
@@ -128,13 +128,13 @@ for (const path of [
   'src/engine/index.js', 'src/engine/engine-config.js', 'src/engine/mobile-engine.js',
   'src/engine/performance-monitor.js', 'src/engine/object-pool.js', 'src/engine/geometry-budget.js',
   'src/engine/instance-batch.js', 'src/engine/blob-shadow-system.js',
-  'src/engine/texture-atlas.js', 'src/engine/world-chunk-manager.js', 'src/engine/render-stats-hud.js'
+  'src/engine/texture-atlas.js', 'src/engine/world-chunk-manager.js', 'src/engine/render-stats-hud.js', 'src/engine/asset-pipeline.js'
 ]) {
   if (existsSync(resolve(root, path))) pass(`엔진 모듈 ${path}`);
   else fail(`엔진 모듈 누락: ${path}`);
 }
 const engineConfig = read('src/engine/engine-config.js');
-if (engineConfig.includes("ENGINE_VERSION = '1.0.3'") && engineConfig.includes('unitTriangles: 300') && engineConfig.includes('enemyTriangles: 500')) pass('엔진 버전과 폴리곤 예산');
+if (engineConfig.includes("ENGINE_VERSION = '1.0.5'") && engineConfig.includes('unitTriangles: 300') && engineConfig.includes('enemyTriangles: 500')) pass('엔진 버전과 폴리곤 예산');
 else fail('엔진 버전 또는 폴리곤 예산 누락');
 if (main.includes('new MobileGameEngine()') && main.includes('new BlobShadowSystem') && main.includes('createRockField(28)') && main.includes('createLanternField(16)')) pass('모바일 엔진 실제 연결');
 else fail('모바일 엔진 연결 누락');
@@ -157,6 +157,27 @@ if (main.includes('getEnemyPool(type)') && main.includes('releaseEnemyModel(enem
 else fail('적 모델 풀링 또는 LOD 누락');
 if (main.includes("EnemyPoolRoot") && main.includes('this.releaseAllEnemyModels();')) pass('적 풀 수명과 월드 정리 분리');
 else fail('적 풀 수명 관리 누락');
+
+
+const forbiddenSvg = [];
+const walk = (directory) => {
+  for (const entry of readdirSync(directory, { withFileTypes: true })) {
+    if (['node_modules', 'dist', '.git'].includes(entry.name)) continue;
+    const absolute = resolve(directory, entry.name);
+    if (entry.isDirectory()) walk(absolute);
+    else if (entry.name.toLowerCase().endsWith('.svg')) forbiddenSvg.push(absolute.replace(root, '.'));
+  }
+};
+walk(root);
+if (forbiddenSvg.length === 0 && !html.includes('.svg') && !JSON.stringify(manifest).includes('.svg')) pass('SVG 에셋 전면 금지');
+else fail(`SVG 에셋 또는 참조 발견: ${forbiddenSvg.join(', ')}`);
+if (existsSync(resolve(root, 'public/icon-192.png')) && existsSync(resolve(root, 'public/icon-512.png')) && existsSync(resolve(root, 'public/cover.webp'))) pass('고품질 래스터 앱 에셋');
+else fail('PNG/WebP 앱 에셋 누락');
+const assetPipeline = read('src/engine/asset-pipeline.js');
+if (assetPipeline.includes("extension === 'svg'") && assetPipeline.includes("['glb', 'gltf']") && assetPipeline.includes("['png', 'webp', 'ktx2'")) pass('GLB/PNG/WebP/KTX2 에셋 정책');
+else fail('고품질 에셋 파이프라인 정책 누락');
+if (!main.includes('showMoveReadout') && !main.includes('moveReadout')) pass('터치 이동 목적지 메시지 제거');
+else fail('터치 이동 목적지 메시지 코드가 남아 있음');
 
 if (failures.length) {
   console.error(`\n검증 실패 ${failures.length}건`);

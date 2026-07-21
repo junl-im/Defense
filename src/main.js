@@ -3,7 +3,7 @@ import './style.css';
 import { isFirebaseEnabled, loadOnlineScores, submitOnlineScore } from './firebase.js';
 import SoundEngine from './sound-engine.js';
 import { RANKS, UNIT_TYPES, UNIT_KEYS, ENEMY_TYPES, SYNERGIES, BLESSINGS, CONTRACTS } from './game-data.js';
-import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, ObjectPool, RenderStatsHUD } from './engine/index.js';
+import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, ObjectPool, RenderStatsHUD, AssetPipeline } from './engine/index.js';
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -23,7 +23,7 @@ const ui = {
   contractModal: $('#contract-modal'), contractOptions: $('#contract-options'), contractSkip: $('#contract-skip-btn'), metaModal: $('#meta-modal'), metaShards: $('#meta-shards'), metaTraitList: $('#meta-trait-list'),
   hud: $('#hud'), hp: $('#hp-value'), gold: $('#gold-value'), waveLabel: $('#wave-label'), waveProgress: $('#wave-progress'),
   enemyCount: $('#enemy-count'), menu: $('#menu-btn'), sound: $('#sound-btn'), synergyPanel: $('#synergy-panel'),
-  synergyToggle: $('#synergy-toggle'), synergyCount: $('#synergy-count'), synergyList: $('#synergy-list'),
+  leftUiToggle: $('#left-ui-toggle'), synergyToggle: $('#synergy-toggle'), synergyCount: $('#synergy-count'), synergyList: $('#synergy-list'),
   luckMeter: $('#luck-meter'), luckValue: $('#luck-value'), luckProgress: $('#luck-progress'), unitStrip: $('#unit-strip'),
   joystick: $('#joystick-zone'), joystickKnob: $('#joystick-knob'), lookZone: $('#look-zone'), actionDock: $('#action-dock'),
   dash: $('#dash-btn'), dashCooldown: $('#dash-cooldown'), skill: $('#skill-btn'), skillCooldown: $('#skill-cooldown'),
@@ -36,14 +36,14 @@ const ui = {
   killChain: $('#kill-chain'), killChainValue: $('#kill-chain-value'), killChainBonus: $('#kill-chain-bonus'), dangerHint: $('#danger-hint'), dangerArrow: $('#danger-arrow'), dangerLevel: $('#danger-level'), dangerLabel: $('#danger-label'), dangerTime: $('#danger-time'),
   firstMissionPanel: $('#first-mission-panel'), firstMissionStep: $('#first-mission-step'), firstMissionTitle: $('#first-mission-title'),
   firstMissionProgress: $('#first-mission-progress'), firstMissionCopy: $('#first-mission-copy'),
-  combatTextRoot: $('#combat-text-root'), qualityBadge: $('#quality-badge'), moveReadout: $('#move-readout'),
+  combatTextRoot: $('#combat-text-root'), qualityBadge: $('#quality-badge'),
   damageFlash: $('#damage-flash'), pauseModal: $('#pause-modal'), resume: $('#resume-btn'), restart: $('#restart-btn'),
   titleBtn: $('#title-btn'), resultModal: $('#result-modal'), resultKicker: $('#result-kicker'), resultTitle: $('#result-title'),
   resultScore: $('#result-score'), resultKills: $('#result-kills'), resultRank: $('#result-rank'), resultUnits: $('#result-units'), resultAnalysis: $('#result-analysis'), resultShards: $('#result-shards'), resultShardsTotal: $('#result-shards-total'), resultGrowth: $('#result-growth-btn'),
   playerName: $('#player-name'), saveScore: $('#save-score-btn'), resultRetry: $('#result-retry-btn'), leaderboard: $('#leaderboard')
 };
 
-const GAME_VERSION = '1.7.4';
+const GAME_VERSION = '1.7.6';
 
 const FIRST_MISSIONS = [
   { id: 'summons', title: '수호대 3회 강림', goal: 3, reward: 35, copy: '무료 강림도 포함됩니다.' },
@@ -71,8 +71,11 @@ class DokkaebiLuckDefense {
     this.cameraYaw = Math.PI * .25;
     this.cameraPitch = .66;
     this.cameraDistance = 15.5;
+    this.cameraDistanceTarget = 15.5;
     this.pointerDown = null;
     this.lookPointer = null;
+    this.lookPointers = new Map();
+    this.pinchState = null;
     this.toastTimer = null;
     this.bannerTimer = null;
     this.missionTimer = null;
@@ -82,7 +85,6 @@ class DokkaebiLuckDefense {
     this.moveTarget = null;
     this.moveTargetRaw = null;
     this.moveTargetMarker = null;
-    this.moveReadoutTimer = null;
     this.navigationObstacles = [];
     this.keyboardMoveActive = false;
     this.runStats = this.createRunStats();
@@ -148,6 +150,7 @@ class DokkaebiLuckDefense {
 
   initThree() {
     this.renderer = this.engine.createRenderer(ui.canvas);
+    this.assetPipeline = new AssetPipeline(this.renderer);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
     this.scene = new THREE.Scene();
@@ -292,6 +295,8 @@ class DokkaebiLuckDefense {
     ui.dash.addEventListener('click', () => this.useDash());
     ui.skill.addEventListener('click', () => this.useHeroSkill());
     ui.synergyToggle.addEventListener('click', () => ui.synergyPanel.classList.toggle('collapsed'));
+    ui.leftUiToggle.addEventListener('click', () => this.toggleLeftMobileUi());
+    try { this.setLeftMobileUiCollapsed(localStorage.getItem('dokkaebi-left-ui-collapsed') === '1'); } catch { this.setLeftMobileUiCollapsed(false); }
     ui.contractSkip.addEventListener('click', () => this.skipContract());
     ui.unitStrip.addEventListener('click', (event) => {
       const button = event.target.closest('[data-command-key]');
@@ -392,12 +397,42 @@ class DokkaebiLuckDefense {
     ui.joystickKnob.style.transform = 'translate(-50%, -50%)';
   }
 
+  setLeftMobileUiCollapsed(collapsed) {
+    document.body.classList.toggle('left-ui-collapsed', collapsed);
+    ui.leftUiToggle.setAttribute('aria-expanded', String(!collapsed));
+    ui.leftUiToggle.setAttribute('aria-label', collapsed ? '왼쪽 정보 펼치기' : '왼쪽 정보 접기');
+    ui.leftUiToggle.textContent = collapsed ? '›' : '‹';
+  }
+
+  toggleLeftMobileUi() {
+    const collapsed = !document.body.classList.contains('left-ui-collapsed');
+    this.setLeftMobileUiCollapsed(collapsed);
+    try { localStorage.setItem('dokkaebi-left-ui-collapsed', collapsed ? '1' : '0'); } catch {}
+  }
+
   setupLookControls() {
     const dragThreshold = 11;
     const tapDuration = 620;
+    const minZoom = 9.5;
+    const maxZoom = 22;
+    const pointerDistance = () => {
+      const points = [...this.lookPointers.values()];
+      return points.length >= 2 ? Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y) : 0;
+    };
+    const beginPinch = () => {
+      if (this.lookPointers.size < 2) return;
+      this.pinchState = { distance: pointerDistance(), cameraDistance: this.cameraDistanceTarget };
+      this.lookPointer = null;
+    };
     ui.lookZone.addEventListener('pointerdown', (event) => {
       if (this.state !== 'playing') return;
       if (event.pointerType === 'mouse' && event.button !== 0) return;
+      this.lookPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      ui.lookZone.setPointerCapture(event.pointerId);
+      if (this.lookPointers.size >= 2) {
+        beginPinch();
+        return;
+      }
       this.lookPointer = {
         id: event.pointerId,
         x: event.clientX,
@@ -407,9 +442,16 @@ class DokkaebiLuckDefense {
         startedAt: performance.now(),
         dragging: false
       };
-      ui.lookZone.setPointerCapture(event.pointerId);
     });
     ui.lookZone.addEventListener('pointermove', (event) => {
+      if (!this.lookPointers.has(event.pointerId)) return;
+      this.lookPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      if (this.lookPointers.size >= 2 && this.pinchState) {
+        const distance = pointerDistance();
+        const delta = distance - this.pinchState.distance;
+        this.cameraDistanceTarget = clamp(this.pinchState.cameraDistance + delta * .018, minZoom, maxZoom);
+        return;
+      }
       if (!this.lookPointer || this.lookPointer.id !== event.pointerId) return;
       const totalDistance = Math.hypot(event.clientX - this.lookPointer.startX, event.clientY - this.lookPointer.startY);
       if (!this.lookPointer.dragging && totalDistance >= dragThreshold) this.lookPointer.dragging = true;
@@ -422,8 +464,18 @@ class DokkaebiLuckDefense {
       this.lookPointer.y = event.clientY;
     });
     const end = (event) => {
-      if (!this.lookPointer || this.lookPointer.id !== event.pointerId) return;
+      const wasPinching = Boolean(this.pinchState);
       const pointer = this.lookPointer;
+      this.lookPointers.delete(event.pointerId);
+      if (wasPinching) {
+        if (this.lookPointers.size >= 2) beginPinch();
+        else {
+          this.pinchState = null;
+          this.lookPointer = null;
+        }
+        return;
+      }
+      if (!pointer || pointer.id !== event.pointerId) return;
       this.lookPointer = null;
       const duration = performance.now() - pointer.startedAt;
       if (!pointer.dragging && duration <= tapDuration && this.state === 'playing') {
@@ -431,12 +483,13 @@ class DokkaebiLuckDefense {
       }
     };
     ui.lookZone.addEventListener('pointerup', end);
-    ui.lookZone.addEventListener('pointercancel', (event) => {
-      if (this.lookPointer?.id === event.pointerId) this.lookPointer = null;
-    });
+    ui.lookZone.addEventListener('pointercancel', end);
     ui.lookZone.addEventListener('wheel', (event) => {
-      this.cameraDistance = clamp(this.cameraDistance + event.deltaY * .012, 11, 20);
-    }, { passive: true });
+      if (this.state !== 'playing') return;
+      event.preventDefault();
+      const normalized = event.deltaMode === 1 ? event.deltaY * 16 : event.deltaMode === 2 ? event.deltaY * innerHeight : event.deltaY;
+      this.cameraDistanceTarget = clamp(this.cameraDistanceTarget + normalized * .006, minZoom, maxZoom);
+    }, { passive: false });
   }
 
   setMoveTargetFromScreen(clientX, clientY) {
@@ -458,7 +511,6 @@ class DokkaebiLuckDefense {
     this.runStats.moveOrders += 1;
     this.showMoveTargetMarker(rawPoint, resolved);
     const adjusted = rawPoint.distanceTo(resolved) > .12;
-    this.showMoveReadout(resolved, adjusted);
     this.haptic(8);
     return true;
   }
@@ -575,17 +627,6 @@ class DokkaebiLuckDefense {
       if (object.material) (Array.isArray(object.material) ? object.material : [object.material]).forEach((material) => material.dispose());
     });
     this.moveTargetMarker = null;
-  }
-
-  showMoveReadout(point, adjusted = false) {
-    clearTimeout(this.moveReadoutTimer);
-    ui.moveReadout.textContent = `${adjusted ? '보정 목적지' : '이동 목적지'} · X ${point.x >= 0 ? '+' : ''}${point.x.toFixed(1)} · Z ${point.z >= 0 ? '+' : ''}${point.z.toFixed(1)}`;
-    ui.moveReadout.classList.remove('hidden');
-    requestAnimationFrame(() => ui.moveReadout.classList.add('visible'));
-    this.moveReadoutTimer = window.setTimeout(() => {
-      ui.moveReadout.classList.remove('visible');
-      window.setTimeout(() => ui.moveReadout.classList.add('hidden'), 180);
-    }, 1700);
   }
 
   cancelMoveTarget(removeMarker = true) {
@@ -1408,15 +1449,13 @@ class DokkaebiLuckDefense {
   }
 
   showGameUI(show) {
-    [ui.hud, ui.synergyPanel, ui.luckMeter, ui.unitStrip, ui.joystick, ui.actionDock].forEach((element) => element.classList.toggle('hidden', !show));
+    [ui.hud, ui.synergyPanel, ui.luckMeter, ui.unitStrip, ui.joystick, ui.actionDock, ui.leftUiToggle].forEach((element) => element.classList.toggle('hidden', !show));
     ui.firstMissionPanel.classList.toggle('hidden', !show || !this.firstMissionActive);
     if (!show) {
       ui.dangerHint.classList.remove('visible', 'urgent');
       ui.dangerHint.classList.add('hidden');
       this.displayDanger = null;
       this.pendingDangerKey = '';
-      ui.moveReadout.classList.remove('visible');
-      ui.moveReadout.classList.add('hidden');
       this.cancelMoveTarget();
     }
   }
@@ -3060,6 +3099,7 @@ class DokkaebiLuckDefense {
 
   updateCamera(dt) {
     if (!this.player) return;
+    this.cameraDistance = lerp(this.cameraDistance, this.cameraDistanceTarget, 1 - Math.pow(.00008, dt));
     let target;
     let desired;
     if (this.cinematic?.unit?.group?.parent && this.cinematic.time > 0) {

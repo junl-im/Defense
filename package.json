@@ -1,7 +1,7 @@
 {
   "name": "dokkaebi-luck-defense-3d",
   "private": true,
-  "version": "1.7.4",
+  "version": "1.7.6",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
@@ -9,7 +9,7 @@
     "preview": "vite preview --host 0.0.0.0",
     "deploy": "npm run build && firebase deploy --only hosting",
     "deploy:rules": "firebase deploy --only firestore:rules",
-    "verify": "node scripts/verify-project.mjs && node --check src/main.js && node --check src/game-data.js && node --check src/sound-engine.js && node --check src/firebase.js && node --check src/engine/index.js && node --check src/engine/mobile-engine.js && node --check src/engine/render-stats-hud.js && node --check src/engine/world-chunk-manager.js && node scripts/verify-engine-budget.mjs"
+    "verify": "node scripts/verify-project.mjs && node --check src/main.js && node --check src/game-data.js && node --check src/sound-engine.js && node --check src/firebase.js && node --check src/engine/index.js && node --check src/engine/asset-pipeline.js && node --check src/engine/mobile-engine.js && node --check src/engine/render-stats-hud.js && node --check src/engine/world-chunk-manager.js && node scripts/verify-engine-budget.mjs"
   },
   "dependencies": {
     "firebase": "12.16.0",

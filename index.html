@@ -9,7 +9,8 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="description" content="직접 뛰어다니며 엽전을 줍고 랜덤 도깨비를 소환·합성하는 모바일 3D 운빨 디펜스" />
     <link rel="manifest" href="./manifest.webmanifest" />
-    <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./icon-192.png" type="image/png" />
+    <link rel="apple-touch-icon" href="./icon-192.png" />
     <title>도깨비 운빨 수호대 3D</title>
   </head>
   <body>
@@ -53,7 +54,7 @@
             <button id="collection-btn" class="btn ghost">도깨비 도감</button>
             <button id="meta-btn" class="btn ghost meta-entry"><span>혼불 <b id="title-shards">0</b></span>수호자 성장</button>
           </div>
-          <small>v1.6 · 집중 명령, 안정된 위험 안내, 시작 성장 요약이 추가되었습니다.</small>
+          <small>v1.7.6 · 모바일 UI 접기와 섬세한 핀치/휠 카메라 줌 적용.</small>
         </div>
       </section>
 
@@ -106,6 +107,8 @@
         <div><small id="danger-level">긴급 회피</small><b id="danger-label">장판 밖으로 이동</b><em id="danger-time">0.8s</em></div>
       </div>
 
+      <button id="left-ui-toggle" class="left-ui-toggle hidden" type="button" aria-expanded="true" aria-label="왼쪽 정보 접기">‹</button>
+
       <aside id="synergy-panel" class="synergy-panel hidden">
         <button id="synergy-toggle" class="synergy-toggle">인연 <b id="synergy-count">0</b></button>
         <div id="synergy-list" class="synergy-list"></div>
@@ -128,7 +131,6 @@
         <div class="joystick-base"><div id="joystick-knob" class="joystick-knob"></div></div>
       </div>
       <div id="look-zone" class="look-zone" aria-label="지형 터치 이동 및 카메라 회전 영역"></div>
-      <div id="move-readout" class="move-readout hidden" aria-live="polite">이동 목적지</div>
 
       <div id="action-dock" class="action-dock hidden">
         <button id="dash-btn" class="skill-btn"><span>질주</span><b id="dash-cooldown">준비</b></button>
