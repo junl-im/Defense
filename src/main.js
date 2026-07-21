@@ -3,7 +3,7 @@ import './style.css';
 import { isFirebaseEnabled, loadOnlineScores, submitOnlineScore } from './firebase.js';
 import SoundEngine from './sound-engine.js';
 import { RANKS, UNIT_TYPES, UNIT_KEYS, ENEMY_TYPES, SYNERGIES, BLESSINGS, CONTRACTS } from './game-data.js';
-import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, ObjectPool } from './engine/index.js';
+import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, ObjectPool, RenderStatsHUD } from './engine/index.js';
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -43,7 +43,7 @@ const ui = {
   playerName: $('#player-name'), saveScore: $('#save-score-btn'), resultRetry: $('#result-retry-btn'), leaderboard: $('#leaderboard')
 };
 
-const GAME_VERSION = '1.7.1';
+const GAME_VERSION = '1.7.2';
 
 const FIRST_MISSIONS = [
   { id: 'summons', title: '수호대 3회 강림', goal: 3, reward: 35, copy: '무료 강림도 포함됩니다.' },
@@ -191,10 +191,75 @@ class DokkaebiLuckDefense {
         particle.life = 0;
       }
     });
+    this.initReusablePools();
+    this.renderStatsHud = new RenderStatsHUD(this.renderer);
 
     this.raycaster = new THREE.Raycaster();
     this.pointer = new THREE.Vector2();
     window.addEventListener('resize', () => this.onResize());
+  }
+
+  initReusablePools() {
+    const projectileBudget = this.lowPower
+      ? this.engine.config.budgets.activeProjectilesMobile
+      : this.engine.config.budgets.activeProjectilesDesktop;
+    const orbCapacity = Math.max(16, Math.round(projectileBudget * .6));
+    const specialCapacity = Math.max(8, Math.floor((projectileBudget - orbCapacity) / 2));
+    const makeProjectilePool = (poolKey, geometry, capacity) => new ObjectPool({
+      initialSize: Math.min(capacity, this.lowPower ? 8 : 14),
+      maxSize: capacity,
+      create: () => {
+        const mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0 }));
+        mesh.visible = false;
+        mesh.frustumCulled = false;
+        this.pooledEffectRoot.add(mesh);
+        return { mesh, poolKey, hitTargets: new Set(), alive: false, target: null, owner: null, life: 0 };
+      },
+      reset: (projectile) => {
+        projectile.mesh.visible = false;
+        projectile.mesh.material.opacity = 0;
+        projectile.mesh.position.set(0, -100, 0);
+        projectile.mesh.rotation.set(0, 0, 0);
+        projectile.mesh.scale.setScalar(1);
+        projectile.hitTargets.clear();
+        projectile.alive = false;
+        projectile.target = null;
+        projectile.owner = null;
+        projectile.life = 0;
+      }
+    });
+    this.projectilePools = {
+      orb: makeProjectilePool('orb', new THREE.SphereGeometry(1, 8, 6), orbCapacity),
+      stone: makeProjectilePool('stone', new THREE.DodecahedronGeometry(1.55, 0), specialCapacity),
+      wind: makeProjectilePool('wind', new THREE.ConeGeometry(.65, 3.4, 7), specialCapacity)
+    };
+    this.projectilePoolCapacity = orbCapacity + specialCapacity * 2;
+
+    this.coinPoolCapacity = this.lowPower
+      ? this.engine.config.budgets.activeCoinsMobile
+      : this.engine.config.budgets.activeCoinsDesktop;
+    const coinGeometry = new THREE.CylinderGeometry(.18, .18, .07, 12);
+    this.coinPool = new ObjectPool({
+      initialSize: this.lowPower ? 24 : 40,
+      maxSize: this.coinPoolCapacity,
+      create: () => {
+        const mesh = new THREE.Mesh(coinGeometry, new THREE.MeshStandardMaterial({ color: 0xffd25e, emissive: 0xd57c1d, emissiveIntensity: 1.4, metalness: .45, roughness: .3 }));
+        mesh.visible = false;
+        mesh.frustumCulled = false;
+        this.pooledEffectRoot.add(mesh);
+        return { mesh, value: 0, velocity: new THREE.Vector3(), age: 0, grounded: false, phase: 0 };
+      },
+      reset: (coin) => {
+        coin.mesh.visible = false;
+        coin.mesh.position.set(0, -100, 0);
+        coin.mesh.rotation.set(0, 0, 0);
+        coin.value = 0;
+        coin.velocity.set(0, 0, 0);
+        coin.age = 0;
+        coin.grounded = false;
+        coin.phase = 0;
+      }
+    });
   }
 
   bindUI() {
@@ -242,6 +307,12 @@ class DokkaebiLuckDefense {
         this.cancelMoveTarget();
       }
       if (event.repeat) return;
+      if (code === 'F3') {
+        event.preventDefault();
+        const enabled = this.renderStatsHud?.toggle();
+        this.showToast(enabled ? '엔진 통계를 표시합니다.' : '엔진 통계를 숨깁니다.');
+        return;
+      }
       if (['Space', 'KeyQ', 'KeyE', 'KeyR', 'Enter', 'Escape'].includes(code)) event.preventDefault();
       if (code === 'Space') this.useDash();
       if (code === 'KeyQ') this.useHeroSkill();
@@ -766,6 +837,8 @@ class DokkaebiLuckDefense {
   clearWorld() {
     this.enemies.length = 0;
     this.units.length = 0;
+    this.projectilePools && Object.values(this.projectilePools).forEach((pool) => pool.releaseAll());
+    this.coinPool?.releaseAll();
     this.projectiles.length = 0;
     this.coins.length = 0;
     this.particles.forEach((particle) => this.particlePool?.release(particle));
@@ -828,11 +901,14 @@ class DokkaebiLuckDefense {
       this.gates.push(gate);
     }
 
+    this.initUnitPadBatches(15);
     for (let i = 0; i < 15; i += 1) {
       const angle = i / 15 * Math.PI * 2;
       const radius = 10.15;
       this.createUnitPad(Math.cos(angle) * radius, Math.sin(angle) * radius, angle, i);
     }
+    this.unitPadBaseBatch.commit();
+    this.unitPadRuneBatch.commit();
 
     this.core = this.createSacredTree();
     this.player = this.createHero();
@@ -857,25 +933,35 @@ class DokkaebiLuckDefense {
   }
 
   createRockField(count) {
-    const batch = new InstanceBatch(
-      new THREE.DodecahedronGeometry(.7, 0),
-      this.createMaterial(0x45384d, 1),
-      count,
-      { name: 'StaticRocks', receiveShadow: false }
-    );
+    const items = [];
     for (let i = 0; i < count; i += 1) {
       const angle = i / count * Math.PI * 2;
       const radius = rand(13.5, 31.5);
       const scale = rand(.45, 1.1);
-      batch.add({
+      items.push({
         position: new THREE.Vector3(Math.cos(angle) * radius + rand(-1.2, 1.2), .35 * scale, Math.sin(angle) * radius + rand(-1.2, 1.2)),
         rotation: new THREE.Euler(rand(-.3, .3), rand(0, Math.PI), rand(-.2, .2)),
         scale
       });
     }
-    batch.commit();
-    this.worldRoot.add(batch.mesh);
-    this.engine.worldChunks.register('0:0', batch.mesh);
+    const chunks = new Map();
+    items.forEach((item) => {
+      const key = this.engine.worldChunks.keyFromPosition(item.position);
+      if (!chunks.has(key)) chunks.set(key, []);
+      chunks.get(key).push(item);
+    });
+    for (const [key, chunkItems] of chunks) {
+      const batch = new InstanceBatch(
+        new THREE.DodecahedronGeometry(.7, 0),
+        this.createMaterial(0x45384d, 1),
+        chunkItems.length,
+        { name: `StaticRocks:${key}`, receiveShadow: false }
+      );
+      chunkItems.forEach((item) => batch.add(item));
+      batch.commit();
+      this.worldRoot.add(batch.mesh);
+      this.engine.worldChunks.register(key, batch.mesh);
+    }
   }
 
   createLanternField(count) {
@@ -1026,17 +1112,46 @@ class DokkaebiLuckDefense {
     return group;
   }
 
+  initUnitPadBatches(capacity) {
+    this.unitPadBaseBatch = new InstanceBatch(
+      new THREE.CylinderGeometry(1.08, 1.2, .28, 8),
+      this.createMaterial(0x44354d, .78),
+      capacity,
+      { name: 'UnitPadBases' }
+    );
+    this.unitPadRuneBatch = new InstanceBatch(
+      new THREE.RingGeometry(.56, .78, 8),
+      new THREE.MeshBasicMaterial({ color: 0xffffff, vertexColors: true, transparent: true, opacity: .5, side: THREE.DoubleSide, depthWrite: false }),
+      capacity,
+      { name: 'UnitPadRunes', dynamic: true, frustumCulled: false }
+    );
+    this.worldRoot.add(this.unitPadBaseBatch.mesh, this.unitPadRuneBatch.mesh);
+  }
+
   createUnitPad(x, z, angle, index) {
-    const group = new THREE.Group();
-    group.position.set(x, 0, z);
-    const base = this.mesh(new THREE.CylinderGeometry(1.08, 1.2, .28, 8), this.createMaterial(0x44354d, .78), 0, .14, 0);
-    const rune = this.mesh(new THREE.RingGeometry(.56, .78, 8), new THREE.MeshBasicMaterial({ color: 0x9a7bc1, transparent: true, opacity: .2, side: THREE.DoubleSide }), 0, .295, 0, false, false);
-    rune.rotation.x = -Math.PI / 2;
-    rune.rotation.z = angle;
-    group.add(base, rune);
-    group.userData = { index, occupied: false, rune };
-    this.worldRoot.add(group);
-    this.unitPads.push(group);
+    const pad = new THREE.Object3D();
+    pad.position.set(x, 0, z);
+    pad.userData = { index, occupied: false, angle };
+    this.unitPadBaseBatch.add({ position: new THREE.Vector3(x, .14, z) });
+    this.unitPadRuneBatch.add({
+      position: new THREE.Vector3(x, .295, z),
+      rotation: new THREE.Euler(-Math.PI / 2, 0, angle),
+      scale: .86,
+      color: new THREE.Color(0x594968)
+    });
+    this.unitPads.push(pad);
+  }
+
+  setUnitPadVisual(pad, occupied, color = 0x9a7bc1) {
+    if (!pad || !this.unitPadRuneBatch) return;
+    pad.userData.occupied = occupied;
+    this.unitPadRuneBatch.set(pad.userData.index, {
+      position: new THREE.Vector3(pad.position.x, .295, pad.position.z),
+      rotation: new THREE.Euler(-Math.PI / 2, 0, pad.userData.angle),
+      scale: occupied ? 1.04 : .86,
+      color: new THREE.Color(occupied ? color : 0x594968)
+    });
+    this.unitPadRuneBatch.commit();
   }
 
   createSacredTree() {
@@ -1339,9 +1454,7 @@ class DokkaebiLuckDefense {
     model.position.y = .3;
     model.rotation.y = -Math.atan2(pad.position.z, pad.position.x) + Math.PI / 2;
     this.dynamicRoot.add(model);
-    pad.userData.occupied = true;
-    pad.userData.rune.material.opacity = .65;
-    pad.userData.rune.material.color.set(RANKS[rank - 1].color);
+    this.setUnitPadVisual(pad, true, RANKS[rank - 1].color);
     const unit = {
       id: crypto.randomUUID?.() || `${Date.now()}-${Math.random()}`,
       type, rank, pad, group: model, cooldown: rand(0, .5), createdAt: this.elapsed,
@@ -1452,9 +1565,7 @@ class DokkaebiLuckDefense {
   removeUnit(unit, recycle = false) {
     const index = this.units.indexOf(unit);
     if (index >= 0) this.units.splice(index, 1);
-    unit.pad.userData.occupied = false;
-    unit.pad.userData.rune.material.opacity = .2;
-    unit.pad.userData.rune.material.color.set(0x9a7bc1);
+    this.setUnitPadVisual(unit.pad, false);
     this.dynamicRoot.remove(unit.group);
     unit.group.traverse((object) => {
       object.geometry?.dispose();
@@ -2018,12 +2129,22 @@ class DokkaebiLuckDefense {
   }
 
   fireProjectile(data) {
-    const geometry = data.type === 'stone' ? new THREE.DodecahedronGeometry(data.radius*1.55,0) : data.type === 'wind' ? new THREE.ConeGeometry(data.radius*.65,data.radius*3.4,7) : new THREE.SphereGeometry(data.radius,8,6);
-    const material = new THREE.MeshBasicMaterial({ color:data.color, transparent:true, opacity:.95 });
-    const mesh = this.mesh(geometry,material,data.origin.x,data.origin.y,data.origin.z,false,false);
-    if (data.type === 'wind') mesh.rotation.x = Math.PI/2;
-    this.effectRoot.add(mesh);
-    this.projectiles.push({ ...data, mesh, alive:true, hitTargets:new Set(), life:3.2 });
+    const poolKey = data.type === 'stone' ? 'stone' : data.type === 'wind' ? 'wind' : 'orb';
+    const projectile = this.projectilePools[poolKey].acquire();
+    if (!projectile) {
+      this.resolveProjectileHit({ ...data, mesh: { position: data.origin }, hitTargets: new Set() }, data.target);
+      return;
+    }
+    Object.assign(projectile, data, { poolKey, alive: true, life: 3.2 });
+    projectile.hitTargets.clear();
+    projectile.mesh.visible = true;
+    projectile.mesh.position.copy(data.origin);
+    projectile.mesh.scale.setScalar(data.radius);
+    projectile.mesh.material.color.set(data.color);
+    projectile.mesh.material.opacity = .95;
+    if (poolKey === 'wind') projectile.mesh.rotation.set(Math.PI / 2, 0, 0);
+    else projectile.mesh.rotation.set(0, 0, 0);
+    this.projectiles.push(projectile);
   }
 
   updateProjectiles(dt) {
@@ -2088,8 +2209,7 @@ class DokkaebiLuckDefense {
   removeProjectile(projectile,index=this.projectiles.indexOf(projectile)) {
     projectile.alive=false;
     if (index>=0) this.projectiles.splice(index,1);
-    this.effectRoot.remove(projectile.mesh);
-    projectile.mesh.geometry.dispose();projectile.mesh.material.dispose();
+    this.projectilePools?.[projectile.poolKey]?.release(projectile);
   }
 
   findNearestEnemy(position,range,exclude=new Set()) {
@@ -2694,12 +2814,27 @@ class DokkaebiLuckDefense {
   dropCoins(position,total,count) {
     const each=Math.max(1,Math.round(total/count));
     for (let i=0;i<count;i+=1) {
-      const mesh=this.mesh(new THREE.CylinderGeometry(.18,.18,.07,12),new THREE.MeshStandardMaterial({color:0xffd25e,emissive:0xd57c1d,emissiveIntensity:1.4,metalness:.45,roughness:.3}),position.x,position.y+.55,position.z,false,false);
-      mesh.rotation.x=Math.PI/2;
-      const velocity=new THREE.Vector3(rand(-2.3,2.3),rand(2.6,4.8),rand(-2.3,2.3));
-      this.effectRoot.add(mesh);
-      this.coins.push({mesh,value:i===count-1?Math.max(1,total-each*(count-1)):each,velocity,age:0,grounded:false,phase:rand(0,Math.PI*2)});
+      const coin=this.coinPool.acquire();
+      const value=i===count-1?Math.max(1,total-each*(count-1)):each;
+      if (!coin) {
+        const existing=this.coins[this.coins.length-1];
+        if (existing) existing.value+=value;
+        else this.gold+=value;
+        continue;
+      }
+      coin.mesh.visible=true;
+      coin.mesh.position.set(position.x,position.y+.55,position.z);
+      coin.mesh.rotation.set(Math.PI/2,0,0);
+      coin.value=value;
+      coin.velocity.set(rand(-2.3,2.3),rand(2.6,4.8),rand(-2.3,2.3));
+      coin.age=0;coin.grounded=false;coin.phase=rand(0,Math.PI*2);
+      this.coins.push(coin);
     }
+  }
+
+  releaseCoin(coin,index=this.coins.indexOf(coin)) {
+    if(index>=0) this.coins.splice(index,1);
+    this.coinPool.release(coin);
   }
 
   updateCoins(dt) {
@@ -2717,16 +2852,18 @@ class DokkaebiLuckDefense {
       const pickup=this.mods.pickupRadius;
       if (distance<pickup+2.2 && coin.grounded) {
         const attraction=clamp((pickup+2.2-distance)/2.2,0,1);
-        coin.mesh.position.lerp(this.player.group.position.clone().add(new THREE.Vector3(0,1,0)),dt*(5+attraction*12));
+        tempV.copy(this.player.group.position); tempV.y += 1;
+        coin.mesh.position.lerp(tempV,dt*(5+attraction*12));
       }
       if (distance<pickup) {
         this.gold+=coin.value;
         this.score+=coin.value*2;
+        this.runStats.coinsCollected+=coin.value;
         this.sound.coin();
         this.spawnTinyParticle(coin.mesh.position,0xffd36b);
-        this.effectRoot.remove(coin.mesh);coin.mesh.geometry.dispose();coin.mesh.material.dispose();this.coins.splice(i,1);
+        this.releaseCoin(coin,i);
       } else if (coin.age>22) {
-        this.effectRoot.remove(coin.mesh);coin.mesh.geometry.dispose();coin.mesh.material.dispose();this.coins.splice(i,1);
+        this.releaseCoin(coin,i);
       }
     }
   }
@@ -3174,6 +3311,18 @@ class DokkaebiLuckDefense {
     this.updateBlobShadows();
     this.updateCamera(dt);
     this.renderer.render(this.scene,this.camera);
+    this.renderStatsHud?.update(dt, {
+      engineVersion: ENGINE_VERSION,
+      fps: this.engine.monitor.lastFps,
+      qualityScale: this.engine.qualityScale,
+      chunks: this.engine.worldChunks.diagnostics,
+      pools: {
+        projectiles: this.projectiles.length,
+        projectileCapacity: this.projectilePoolCapacity,
+        coins: this.coins.length,
+        coinCapacity: this.coinPoolCapacity
+      }
+    });
   }
 }
 

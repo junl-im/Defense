@@ -1,4 +1,4 @@
-export const ENGINE_VERSION = '1.0.0';
+export const ENGINE_VERSION = '1.0.1';
 
 export const MOBILE_ENGINE_CONFIG = Object.freeze({
   renderer: {
@@ -27,10 +27,14 @@ export const MOBILE_ENGINE_CONFIG = Object.freeze({
     dynamicDrawCalls: 95,
     pointLightsMobile: 4,
     activeParticlesMobile: 90,
-    activeParticlesDesktop: 180
+    activeParticlesDesktop: 180,
+    activeProjectilesMobile: 56,
+    activeProjectilesDesktop: 96,
+    activeCoinsMobile: 72,
+    activeCoinsDesktop: 120
   },
   world: {
     chunkSize: 24,
-    visibleChunkRadius: 2
+    visibleChunkRadius: 1
   }
 });

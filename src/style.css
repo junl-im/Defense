@@ -525,3 +525,19 @@ button { color: inherit; cursor: pointer; }
   .result-analysis span { grid-row: 1 / 3; }
   .result-analysis b, .result-analysis small { margin: 0; }
 }
+
+/* v1.7.2 / engine 1.0.1 render diagnostics */
+.render-stats-hud {
+  position: fixed; z-index: 260; left: calc(8px + var(--safe-left)); top: calc(8px + var(--safe-top));
+  min-width: 172px; padding: 9px 10px; border-radius: 12px; pointer-events: none;
+  color: #dffcff; background: rgba(4, 10, 18, .88); border: 1px solid rgba(112, 239, 255, .24);
+  box-shadow: 0 9px 28px rgba(0, 0, 0, .38); backdrop-filter: blur(8px);
+  font: 800 9px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+.render-stats-hud[hidden] { display: none; }
+.render-stats-hud b, .render-stats-hud span { display: block; }
+.render-stats-hud b { margin-bottom: 3px; color: #ffe582; letter-spacing: .08em; }
+.render-stats-hud strong { color: #8ff6ff; font-weight: 950; }
+@media (max-width: 520px) {
+  .render-stats-hud { min-width: 145px; padding: 7px 8px; font-size: 8px; }
+}

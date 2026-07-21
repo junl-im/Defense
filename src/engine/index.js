@@ -6,3 +6,5 @@ export { GeometryBudget, countObjectTriangles } from './geometry-budget.js';
 export { BlobShadowSystem } from './blob-shadow-system.js';
 export { TextureAtlas } from './texture-atlas.js';
 export { WorldChunkManager } from './world-chunk-manager.js';
+
+export { RenderStatsHUD } from './render-stats-hud.js';
