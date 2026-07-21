@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "gameVersion": "2.1.0",
+  "artDirection": "moonlit-joseon-market-folklore",
+  "impostorDirections": 11,
+  "characters": {
+    "guardians": ["ember", "frost", "wind", "stone", "bell", "thunder"],
+    "monsters": ["imp", "runner", "brute", "shaman"],
+    "bosses": ["tiger", "serpent", "king"]
+  },
+  "environment": ["sacred-tree", "monster-gate", "market-stall", "lantern-post", "jangseung", "moon-jar", "ground-tile", "market-clutter"],
+  "effects": ["ember-orb", "frost-orb", "wind-arrow", "stone-drop", "spirit-chain", "thunder-mark", "enemy-telegraph", "guardian-burst"],
+  "formats": ["glb", "ktx2", "webp", "png"],
+  "coordinateSystem": { "up": "+Y", "forward": "+Z", "unit": "meter" }
+}

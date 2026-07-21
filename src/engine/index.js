@@ -11,6 +11,7 @@ export { RenderStatsHUD } from './render-stats-hud.js';
 
 export { AssetPipeline, ASSET_POLICY } from './asset-pipeline.js';
 
-export { CORE_ASSET_CATALOG, MODEL_ASSET_SLOTS, ASSET_QUALITY_TIERS, selectAssetVariant } from './asset-catalog.js';
+export { CORE_ASSET_CATALOG, MODEL_ASSET_SLOTS, ASSET_QUALITY_TIERS, ASSET_PRODUCTION_SUMMARY, selectAssetVariant } from './asset-catalog.js';
+export { DirectionalImpostorSelector, resolveDirectionalFrame } from './directional-impostor.js';
 
 export { AnimationStateSystem, CHARACTER_ANIMATION_STATES } from './animation-state-system.js';

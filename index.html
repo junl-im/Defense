@@ -60,11 +60,11 @@
           <button id="start-btn" class="btn primary huge">달빛 장터 수호하기</button>
           <div class="title-actions three">
             <button id="how-btn" class="btn ghost">조작법</button>
-            <button id="collection-btn" class="btn ghost">도깨비 도감</button>
+            <button id="collection-btn" class="btn ghost">달빛 도감</button>
             <button id="meta-btn" class="btn ghost meta-entry"><span>혼불 <b id="title-shards">0</b></span>수호자 성장</button>
           </div>
           <button id="controls-btn" class="title-settings-btn" type="button">카메라 · 조작 설정</button>
-          <small>v2.0.0 · 3대 월식 보스, 오늘의 원정, 저주 유물 세트, 전장 테마 적용.</small>
+          <small class="title-version" aria-label="게임 버전 2.1.0">v2.1.0</small>
         </div>
       </section>
 
@@ -206,12 +206,21 @@
         </div>
       </section>
 
-      <section id="collection-modal" class="modal" aria-hidden="true">
-        <div class="modal-card wide">
-          <button class="modal-x" data-close="collection-modal">×</button>
-          <p class="kicker">DOKKAEBI COLLECTION</p>
-          <h2>달빛 장터의 수호자</h2>
-          <div id="collection-grid" class="collection-grid"></div>
+      <section id="collection-modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="collection-title">
+        <div class="modal-card wide collection-card">
+          <button class="modal-x" data-close="collection-modal" aria-label="달빛 도감 닫기">×</button>
+          <p class="kicker">MOONLIGHT CODEX</p>
+          <h2 id="collection-title">달빛 장터 대도감</h2>
+          <p>수호대와 요괴, 보스, 전장 오브젝트의 실루엣과 전투 특징을 확인합니다.</p>
+          <div id="collection-summary" class="collection-summary" aria-live="polite"></div>
+          <div id="collection-tabs" class="collection-tabs" role="tablist" aria-label="도감 분류">
+            <button type="button" role="tab" data-codex-tab="guardian" aria-selected="true">수호대</button>
+            <button type="button" role="tab" data-codex-tab="monster" aria-selected="false">요괴</button>
+            <button type="button" role="tab" data-codex-tab="boss" aria-selected="false">월식 보스</button>
+            <button type="button" role="tab" data-codex-tab="world" aria-selected="false">전장</button>
+            <button type="button" role="tab" data-codex-tab="effect" aria-selected="false">기술 효과</button>
+          </div>
+          <div id="collection-grid" class="collection-grid codex-grid" role="tabpanel"></div>
         </div>
       </section>
 
@@ -265,11 +274,11 @@
         </div>
       </section>
 
-      <section id="controls-modal" class="modal" aria-hidden="true">
+      <section id="controls-modal" class="modal modal-subdialog" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="controls-title">
         <div class="modal-card wide controls-card">
           <button class="modal-x" data-close="controls-modal">×</button>
           <p class="kicker">CAMERA & TOUCH</p>
-          <h2>카메라·조작 설정</h2>
+          <h2 id="controls-title">카메라·조작 설정</h2>
           <p>기기별 손가락 감각과 화면 크기에 맞춰 조정합니다.</p>
           <div class="controls-settings">
             <label class="control-setting">
@@ -326,10 +335,10 @@
         </div>
       </section>
 
-      <section id="pause-modal" class="modal" aria-hidden="true">
+      <section id="pause-modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="pause-title">
         <div class="modal-card compact">
           <p class="kicker">PAUSED</p>
-          <h2>잠시 숨 고르기</h2>
+          <h2 id="pause-title">잠시 숨 고르기</h2>
           <button id="pause-controls-btn" class="btn ghost">카메라 · 조작 설정</button>
           <button id="resume-btn" class="btn primary">계속 수호하기</button>
           <button id="restart-btn" class="btn ghost">같은 시드로 다시</button>
@@ -364,7 +373,7 @@
     </div>
     <script>
       (() => {
-        const VERSION = '2.0.0';
+        const VERSION = '2.1.0';
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
         const retryButton = document.getElementById('boot-retry-btn');

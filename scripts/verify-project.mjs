@@ -15,6 +15,8 @@ const expeditionDirector = read('src/expedition-director.js');
 const dailyExpedition = read('src/daily-expedition.js');
 const bossDirector = read('src/boss-director.js');
 const battlefieldThemes = read('src/battlefield-themes.js');
+const codexData = read('src/codex-data.js');
+const assetSpecs = read('src/asset-specs.js');
 const style = read('src/style.css');
 const engineConfig = read('src/engine/engine-config.js');
 const sw = read('public/sw.js');
@@ -28,7 +30,7 @@ const missingIds = [...new Set(queriedIds.filter((id) => !htmlIds.has(id)))];
 if (missingIds.length) fail(`index.html에 없는 DOM ID: ${missingIds.join(', ')}`);
 else pass(`${queriedIds.length}개 DOM ID 연결`);
 
-if (pkg.version === '2.0.0') pass('package version 2.0.0');
+if (pkg.version === '2.1.0') pass('package version 2.1.0');
 else fail(`package version 불일치: ${pkg.version}`);
 
 for (const path of ['.env.production', '.firebaserc', '.github/workflows/deploy.yml', 'README.md', 'PROJECT_HANDOFF.md']) {
@@ -44,7 +46,7 @@ else fail(`루트 Markdown 정리 필요: ${rootMarkdown.join(', ')}`);
 if (manifest.start_url === './') pass('PWA 상대 경로 start_url');
 else fail(`PWA start_url 확인 필요: ${manifest.start_url}`);
 
-if (main.includes("const GAME_VERSION = '2.0.0'")) pass('런타임 version 2.0.0');
+if (main.includes("const GAME_VERSION = '2.1.0'")) pass('런타임 version 2.1.0');
 else fail('런타임 version 불일치');
 
 for (const feature of ['offerContract', 'resolveActiveContract', 'checkBossPhase', 'kingNightMarch', 'bossPounce']) {
@@ -138,6 +140,15 @@ else fail('v2.0 시드·성능 로그 UI 누락');
 if (htmlIds.has('shake-intensity') && htmlIds.has('flash-intensity') && main.includes('reducedMotion') && style.includes('body.reduced-motion')) pass('접근성 설정과 모션 감소');
 else fail('접근성 설정 누락');
 
+if (htmlIds.has('collection-tabs') && htmlIds.has('collection-summary') && codexData.includes('CODEX_SECTION_META') && main.includes('renderCodex(')) pass('수호대·요괴·보스·전장·효과 통합 도감');
+else fail('v2.1 통합 도감 누락');
+if (html.includes('class="title-version"') && html.includes('>v2.1.0</small>') && !html.includes('3대 월식 보스, 오늘의 원정')) pass('타이틀은 버전만 표시');
+else fail('타이틀 패치 설명 제거 필요');
+if (main.includes('this.modalStack = []') && main.includes('modalParents') && main.includes('modal-obscured') && style.includes('--modal-layer') && style.includes('#controls-modal { z-index: var(--modal-layer, 154); }')) pass('일시정지 위 카메라 설정 모달 스택');
+else fail('중첩 모달 레이어 수정 누락');
+if (assetSpecs.includes('directions: 11') && assetSpecs.includes('ASSET_LOD_POLICY') && existsSync(resolve(root, 'docs/ASSET_BIBLE.md')) && existsSync(resolve(root, 'docs/ASSET_MANIFEST.json'))) pass('11방향 LOD와 에셋 제작 바이블');
+else fail('에셋 제작 규격 또는 문서 누락');
+
 if (html.includes('__DOKKAEBI_SHOW_BOOT_ERROR__') && html.includes('boot-error')) pass('로딩 실패 복구 UI');
 else fail('로딩 실패 복구 UI 누락');
 
@@ -159,7 +170,7 @@ for (const legacy of [
   else fail(`구버전 호환 파일 누락: ${legacy}`);
 }
 
-for (const path of ['src/game-data.js', 'src/run-director.js', 'src/expedition-director.js', 'src/daily-expedition.js', 'src/boss-director.js', 'src/battlefield-themes.js', 'src/sound-engine.js']) {
+for (const path of ['src/game-data.js', 'src/run-director.js', 'src/expedition-director.js', 'src/daily-expedition.js', 'src/boss-director.js', 'src/battlefield-themes.js', 'src/codex-data.js', 'src/asset-specs.js', 'src/sound-engine.js']) {
   if (existsSync(resolve(root, path))) pass(`모듈 분리 ${path}`);
   else fail(`모듈 누락: ${path}`);
 }
@@ -186,12 +197,12 @@ for (const path of [
   'src/engine/index.js', 'src/engine/engine-config.js', 'src/engine/mobile-engine.js',
   'src/engine/performance-monitor.js', 'src/engine/object-pool.js', 'src/engine/geometry-budget.js',
   'src/engine/instance-batch.js', 'src/engine/blob-shadow-system.js',
-  'src/engine/texture-atlas.js', 'src/engine/world-chunk-manager.js', 'src/engine/render-stats-hud.js', 'src/engine/asset-pipeline.js'
+  'src/engine/texture-atlas.js', 'src/engine/world-chunk-manager.js', 'src/engine/render-stats-hud.js', 'src/engine/asset-pipeline.js', 'src/engine/directional-impostor.js'
 ]) {
   if (existsSync(resolve(root, path))) pass(`엔진 모듈 ${path}`);
   else fail(`엔진 모듈 누락: ${path}`);
 }
-if (engineConfig.includes("ENGINE_VERSION = '1.3.0'") && engineConfig.includes('unitTriangles: 300') && engineConfig.includes('enemyTriangles: 500')) pass('엔진 버전과 폴리곤 예산');
+if (engineConfig.includes("ENGINE_VERSION = '1.4.0'") && engineConfig.includes('unitTriangles: 300') && engineConfig.includes('enemyTriangles: 500')) pass('엔진 버전과 폴리곤 예산');
 else fail('엔진 버전 또는 폴리곤 예산 누락');
 if (main.includes('new MobileGameEngine()') && main.includes('new BlobShadowSystem') && main.includes('createRockField(28)') && main.includes('createLanternField(16)')) pass('모바일 엔진 실제 연결');
 else fail('모바일 엔진 연결 누락');
@@ -258,7 +269,7 @@ if (failures.length) {
   console.error(`\nv1.7.7 추가 검증 실패 ${failures.length}건`);
   process.exit(1);
 }
-console.log('v2.0.0 카메라·에셋 추가 검증 완료');
+console.log('v2.1.0 카메라·도감 추가 검증 완료');
 
 
 const assetCatalog = read('src/engine/asset-catalog.js');
@@ -277,7 +288,7 @@ else fail('비동기 부팅 오류 복구 누락');
 if (engineConfig.includes('textureBudgetLowMB: 64') && engineConfig.includes('textureBudgetMobileMB: 96') && engineConfig.includes('textureBudgetDesktopMB: 192')) pass('기기별 텍스처 메모리 예산');
 else fail('텍스처 메모리 예산 누락');
 if (failures.length) {
-  console.error(`\nv2.0.0 에셋 파이프라인 검증 실패 ${failures.length}건`);
+  console.error(`\nv2.1.0 에셋 파이프라인 검증 실패 ${failures.length}건`);
   process.exit(1);
 }
-console.log('v2.0.0 에셋 파이프라인 검증 완료');
+console.log('v2.1.0 에셋 파이프라인 검증 완료');

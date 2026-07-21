@@ -8,6 +8,7 @@ import { RUN_MODES, RELICS, RELIC_SET_BONUSES, getRunMode, getRelicById, selectR
 import { RUN_SEED_MODES, createSeededRandom, createDailySeed, createRandomSeed, getDailyEdict, formatRunSeed } from './daily-expedition.js';
 import { getBossWave, getBossTypeForWave, getBossSpawnCount, isBossWave } from './boss-director.js';
 import { getBattlefieldTheme } from './battlefield-themes.js';
+import { CODEX_SECTION_META, CODEX_SECTION_ORDER, getCodexEntries, getCodexTotals } from './codex-data.js';
 import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, ObjectPool, RenderStatsHUD, AssetPipeline, CORE_ASSET_CATALOG, AnimationStateSystem } from './engine/index.js';
 
 const $ = (selector) => document.querySelector(selector);
@@ -23,7 +24,7 @@ const tempColor = new THREE.Color();
 const ui = {
   canvas: $('#game-canvas'), loading: $('#loading'), loadingStatus: $('#loading-status'), loadingProgress: $('#loading-progress'), loadingDetail: $('#loading-detail'), title: $('#title-screen'), start: $('#start-btn'),
   how: $('#how-btn'), collection: $('#collection-btn'), meta: $('#meta-btn'), titleShards: $('#title-shards'), runPreview: $('#run-preview'), howModal: $('#how-modal'), collectionModal: $('#collection-modal'),
-  blessingModal: $('#blessing-modal'), blessingOptions: $('#blessing-options'), collectionGrid: $('#collection-grid'),
+  blessingModal: $('#blessing-modal'), blessingOptions: $('#blessing-options'), collectionGrid: $('#collection-grid'), collectionTabs: $('#collection-tabs'), collectionSummary: $('#collection-summary'),
   choiceSummonModal: $('#choice-summon-modal'), choiceSummonOptions: $('#choice-summon-options'), summonTicket: $('#summon-ticket'),
   controls: $('#controls-btn'), pauseControls: $('#pause-controls-btn'), controlsModal: $('#controls-modal'), controlsReset: $('#controls-reset-btn'),
   rotateSensitivity: $('#rotate-sensitivity'), rotateSensitivityValue: $('#rotate-sensitivity-value'), pinchSensitivity: $('#pinch-sensitivity'), pinchSensitivityValue: $('#pinch-sensitivity-value'),
@@ -60,7 +61,7 @@ const ui = {
   runSeedChip: $('#run-seed-chip'), runSeedIcon: $('#run-seed-icon'), runSeedMode: $('#run-seed-mode'), runSeedValue: $('#run-seed-value'), runEdictName: $('#run-edict-name'), resultNewRun: $('#result-new-run-btn')
 };
 
-const GAME_VERSION = '2.0.0';
+const GAME_VERSION = '2.1.0';
 
 const FIRST_MISSIONS = [
   { id: 'summons', title: '수호대 3회 강림', goal: 3, reward: 35, copy: '무료 강림도 포함됩니다.' },
@@ -128,6 +129,10 @@ class DokkaebiLuckDefense {
     this.combatTextCount = 0;
     this.qualityScale = this.engine.qualityScale;
     this.qualityAdjusted = false;
+    this.modalStack = [];
+    this.modalOrigins = new WeakMap();
+    this.modalParents = new WeakMap();
+    this.currentCodexSection = 'guardian';
 
     this.enemies = [];
     this.units = [];
@@ -372,10 +377,10 @@ class DokkaebiLuckDefense {
   bindUI() {
     ui.start.addEventListener('click', () => { this.sound.unlock(); this.sound.ui(); this.startRun({ reuseSeed: false }); });
     ui.how.addEventListener('click', () => this.showModal(ui.howModal));
-    ui.collection.addEventListener('click', () => this.showModal(ui.collectionModal));
+    ui.collection.addEventListener('click', () => this.openCodex(ui.collection));
     ui.meta.addEventListener('click', () => this.openMetaModal());
-    ui.controls.addEventListener('click', () => this.openControlSettings());
-    ui.pauseControls.addEventListener('click', () => this.openControlSettings());
+    ui.controls.addEventListener('click', () => this.openControlSettings(null, ui.controls));
+    ui.pauseControls.addEventListener('click', () => this.openControlSettings(ui.pauseModal, ui.pauseControls));
     ui.resultGrowth.addEventListener('click', () => this.openMetaModal());
     ui.runModeOptions.addEventListener('click', (event) => {
       const button = event.target.closest('[data-run-mode]');
@@ -386,6 +391,10 @@ class DokkaebiLuckDefense {
       if (button) this.selectSeedMode(button.dataset.seedMode);
     });
     $$('[data-close]').forEach((button) => button.addEventListener('click', () => this.hideModal($(`#${button.dataset.close}`))));
+    ui.collectionTabs.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-codex-tab]');
+      if (button) this.renderCodex(button.dataset.codexTab);
+    });
     ui.sound.addEventListener('click', () => {
       this.sound.enabled = !this.sound.enabled;
       ui.sound.textContent = this.sound.enabled ? '♪' : '×';
@@ -457,7 +466,12 @@ class DokkaebiLuckDefense {
       if (code === 'KeyR') this.useBestUnitCommand();
       if (code === 'KeyF') this.activateGuardianBurst();
       if (code === 'Enter' && this.state === 'playing' && !this.waveActive) this.startWave();
-      if (code === 'Escape') this.state === 'paused' ? this.resumeGame() : this.pauseGame();
+      if (code === 'Escape') {
+        const topModal = this.modalStack[this.modalStack.length - 1];
+        if (topModal && topModal !== ui.pauseModal) this.hideModal(topModal);
+        else if (topModal === ui.pauseModal || this.state === 'paused') this.resumeGame();
+        else this.pauseGame();
+      }
     }, { passive: false });
     window.addEventListener('keyup', (event) => this.input.keys.delete(this.normalizeInputCode(event)));
     window.addEventListener('blur', () => this.resetMovementInput());
@@ -572,9 +586,9 @@ class DokkaebiLuckDefense {
     this.showToast('카메라와 조작 설정을 기본값으로 복원했습니다.');
   }
 
-  openControlSettings() {
+  openControlSettings(parent = null, trigger = document.activeElement) {
     this.renderControlSettings();
-    this.showModal(ui.controlsModal);
+    this.showModal(ui.controlsModal, { parent, trigger });
   }
 
   setupJoystick() {
@@ -871,15 +885,49 @@ class DokkaebiLuckDefense {
     if (removeMarker) this.removeMoveTargetMarker();
   }
 
-  showModal(element) {
+  showModal(element, { parent = null, trigger = document.activeElement } = {}) {
+    if (!element) return;
     this.sound.ui();
+    const existingIndex = this.modalStack.indexOf(element);
+    if (existingIndex >= 0) this.modalStack.splice(existingIndex, 1);
+    this.modalStack.push(element);
+    this.modalOrigins.set(element, trigger instanceof HTMLElement ? trigger : null);
+    if (parent?.classList.contains('visible')) {
+      this.modalParents.set(element, parent);
+      parent.classList.add('modal-obscured');
+      parent.setAttribute('aria-hidden', 'true');
+    } else this.modalParents.delete(element);
+    element.style.setProperty('--modal-layer', String(130 + this.modalStack.length * 12));
     element.classList.add('visible');
     element.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+    requestAnimationFrame(() => {
+      const focusTarget = element.querySelector('[autofocus], .modal-x, button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled])');
+      focusTarget?.focus?.({ preventScroll: true });
+    });
   }
 
   hideModal(element) {
+    if (!element) return;
     element.classList.remove('visible');
     element.setAttribute('aria-hidden', 'true');
+    element.style.removeProperty('--modal-layer');
+    const stackIndex = this.modalStack.lastIndexOf(element);
+    if (stackIndex >= 0) this.modalStack.splice(stackIndex, 1);
+    const parent = this.modalParents.get(element);
+    if (parent?.classList.contains('visible')) {
+      parent.classList.remove('modal-obscured');
+      parent.setAttribute('aria-hidden', 'false');
+    }
+    this.modalParents.delete(element);
+    const origin = this.modalOrigins.get(element);
+    this.modalOrigins.delete(element);
+    if (!this.modalStack.length) document.body.classList.remove('modal-open');
+    requestAnimationFrame(() => origin?.focus?.({ preventScroll: true }));
+  }
+
+  hideAllModals() {
+    [...this.modalStack].reverse().forEach((element) => this.hideModal(element));
   }
 
   haptic(pattern = 18) {
@@ -1134,11 +1182,39 @@ class DokkaebiLuckDefense {
   }
 
   populateCollection() {
-    ui.collectionGrid.innerHTML = UNIT_KEYS.map((key) => {
-      const unit = UNIT_TYPES[key];
-      const hex = `#${unit.color.toString(16).padStart(6, '0')}`;
-      return `<article class="collection-item" style="--unit-color:${hex};--unit-soft:${unit.soft};--unit-line:${hex}55">
-        <div class="portrait">${unit.symbol}</div><b>${unit.name}</b><small>${unit.element} · ${unit.role}</small><p>${unit.description}<br><strong>5성 궁극 · ${unit.ultimateName}</strong></p>
+    this.renderCodex(this.currentCodexSection);
+  }
+
+  openCodex(trigger = document.activeElement) {
+    this.renderCodex(this.currentCodexSection);
+    this.showModal(ui.collectionModal, { trigger });
+  }
+
+  renderCodex(section = 'guardian') {
+    const nextSection = CODEX_SECTION_ORDER.includes(section) ? section : 'guardian';
+    this.currentCodexSection = nextSection;
+    const meta = CODEX_SECTION_META[nextSection];
+    const entries = getCodexEntries(nextSection);
+    const totals = getCodexTotals();
+    ui.collectionTabs.querySelectorAll('[data-codex-tab]').forEach((button) => {
+      const active = button.dataset.codexTab === nextSection;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-selected', String(active));
+    });
+    ui.collectionSummary.innerHTML = `<span>${meta.icon}</span><div><b>${meta.label} ${entries.length}종</b><small>${meta.copy}</small></div><em>전체 ${Object.values(totals).reduce((sum, value) => sum + value, 0)}종</em>`;
+    ui.collectionGrid.dataset.section = nextSection;
+    ui.collectionGrid.innerHTML = entries.map((entry) => {
+      const color = Number.isFinite(entry.color) ? `#${entry.color.toString(16).padStart(6, '0')}` : '#b995ff';
+      return `<article class="collection-item codex-item" style="--unit-color:${color};--unit-soft:${color}22;--unit-line:${color}66">
+        <div class="portrait" aria-hidden="true">${entry.symbol || meta.icon}</div>
+        <div class="codex-item-head"><b>${this.escapeHtml(entry.name)}</b><small>${this.escapeHtml(entry.subtitle || '')}</small></div>
+        <p>${this.escapeHtml(entry.description || entry.signature || '')}</p>
+        <dl class="codex-detail">
+          <div><dt>실루엣</dt><dd>${this.escapeHtml(entry.shape || '큰 형태 우선')}</dd></div>
+          <div><dt>민담 모티프</dt><dd>${this.escapeHtml(entry.motif || '달빛 야시장')}</dd></div>
+          <div><dt>대표 연출</dt><dd>${this.escapeHtml(entry.signature || entry.ultimate || '')}</dd></div>
+          <div><dt>전투 판독</dt><dd>${this.escapeHtml(entry.danger || entry.ultimate || '')}</dd></div>
+        </dl>
       </article>`;
     }).join('');
   }
