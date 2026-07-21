@@ -6,19 +6,24 @@ const clamp = THREE.MathUtils.clamp;
 const IMPOSTOR_STATES = Object.freeze(['idle', 'move', 'attack']);
 
 export default class CodexViewer {
-  constructor(canvas, { impostorTextures = {}, onFrame = null } = {}) {
+  constructor(canvas, { impostorTextures = {}, onFrame = null, modelFactory = null } = {}) {
     if (!canvas) throw new Error('Codex preview canvas is missing.');
     this.canvas = canvas;
     this.onFrame = onFrame;
+    this.modelFactory = modelFactory;
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'low-power' });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.6));
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 1.12;
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x090612);
     this.camera = new THREE.PerspectiveCamera(42, 1, .1, 60);
     this.camera.position.set(4.5, 3.2, 6.8);
     this.scene.add(new THREE.HemisphereLight(0xa9c9ff, 0x23132f, 2.25));
-    const key = new THREE.DirectionalLight(0xffe3b4, 2.4); key.position.set(5, 8, 5); this.scene.add(key);
+    const key = new THREE.DirectionalLight(0xffe3b4, 2.4); key.position.set(5, 8, 5); key.castShadow = true; key.shadow.mapSize.set(1024, 1024); key.shadow.camera.near = .5; key.shadow.camera.far = 24; key.shadow.bias = -.00035; this.scene.add(key);
     const rim = new THREE.DirectionalLight(0x8edcff, 1.9); rim.position.set(-5, 4, -4); this.scene.add(rim);
     this.root = new THREE.Group(); this.scene.add(this.root);
     const floor = new THREE.Mesh(new THREE.CircleGeometry(3.4, 40), new THREE.MeshStandardMaterial({ color: 0x21172d, roughness: .92, metalness: .02 }));
@@ -109,7 +114,7 @@ export default class CodexViewer {
     this.disposeObject(this.model);
     this.disposeObject(this.impostor);
     this.disposeImpostorMaps();
-    this.model = createCodexPreviewModel(section, id, { ...entry, ...context }, 4);
+    this.model = this.modelFactory?.(section, id, entry, context) || createCodexPreviewModel(section, id, { ...entry, ...context }, 4);
     this.root.add(this.model);
     const box = new THREE.Box3().setFromObject(this.model);
     const size = box.getSize(new THREE.Vector3());

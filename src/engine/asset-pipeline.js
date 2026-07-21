@@ -114,7 +114,7 @@ export class AssetPipeline {
   prepareModel(root) {
     root?.traverse?.((object) => {
       if (!object.isMesh) return;
-      object.castShadow = false;
+      object.castShadow = !this.lowPower;
       object.receiveShadow = false;
       object.frustumCulled = true;
       object.matrixAutoUpdate = true;

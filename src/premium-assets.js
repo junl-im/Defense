@@ -1,7 +1,30 @@
 import * as THREE from 'three';
 
 const darken = (hex, factor = .34) => new THREE.Color(hex).multiplyScalar(factor).getHex();
-const mat = (color, roughness = .72, metalness = .04, emissive = 0x000000, emissiveIntensity = 0) => new THREE.MeshStandardMaterial({ color, roughness, metalness, emissive, emissiveIntensity });
+const mat = (color, roughness = .72, metalness = .04, emissive = 0x000000, emissiveIntensity = 0) => {
+  const material = new THREE.MeshStandardMaterial({
+    color, roughness, metalness, emissive, emissiveIntensity,
+    envMapIntensity: 1.15,
+    flatShading: false
+  });
+  const base = new THREE.Color(color);
+  const rim = base.clone().lerp(new THREE.Color(0xbfd9ff), .46);
+  material.userData.rimColor = rim;
+  material.userData.rimStrength = metalness > .25 ? .2 : .12;
+  material.onBeforeCompile = (shader) => {
+    shader.uniforms.uMoonRimColor = { value: rim };
+    shader.uniforms.uMoonRimStrength = { value: material.userData.rimStrength };
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <common>',
+      '#include <common>\nuniform vec3 uMoonRimColor;\nuniform float uMoonRimStrength;'
+    ).replace(
+      '#include <opaque_fragment>',
+      'float moonRim = pow(1.0 - clamp(dot(normalize(normal), normalize(vViewPosition)), 0.0, 1.0), 2.6);\noutgoingLight += uMoonRimColor * moonRim * uMoonRimStrength;\n#include <opaque_fragment>'
+    );
+  };
+  material.customProgramCacheKey = () => `moon-rim-${rim.getHexString()}-${material.userData.rimStrength}`;
+  return material;
+};
 const basic = (color, opacity = .72) => new THREE.MeshBasicMaterial({ color, transparent: true, opacity, depthWrite: false, side: THREE.DoubleSide });
 const mesh = (geometry, material, x = 0, y = 0, z = 0) => {
   const value = new THREE.Mesh(geometry, material);
@@ -75,11 +98,22 @@ export function createPremiumGuardian(type, rank, config, rankConfig, { lowPower
   body.scale.set(1.02, 1.24, .88);
   group.add(body);
   const shoulders = new THREE.Group(); shoulders.position.y = 1.34; group.add(shoulders);
-  const shoulder = mesh(new THREE.SphereGeometry(.19, 7, 5), darkMaterial, -.58, 0, 0); shoulder.scale.set(1.3, .75, 1);
+  const shoulder = mesh(new THREE.SphereGeometry(.19, 9, 6), darkMaterial, -.58, 0, 0); shoulder.scale.set(1.3, .75, 1);
   const shoulder2 = shoulder.clone(); shoulder2.position.x = .58; shoulders.add(shoulder, shoulder2);
-  addFace(group, faceMaterial, eyeMaterial);
+  const armL = mesh(new THREE.CapsuleGeometry(.12, .58, 5, 9), bodyMaterial, -.57, .98, .02); armL.rotation.z = .16;
+  const armR = armL.clone(); armR.position.x = .57; armR.rotation.z = -.22;
+  const handL = mesh(new THREE.SphereGeometry(.14, 8, 6), faceMaterial, -.63, .63, .08);
+  const handR = handL.clone(); handR.position.x = .65;
+  const legL = mesh(new THREE.CapsuleGeometry(.145, .38, 5, 9), darkMaterial, -.25, .31, .03); legL.rotation.z = .04;
+  const legR = legL.clone(); legR.position.x = .25; legR.rotation.z = -.04;
+  const cloth = mesh(new THREE.BoxGeometry(.78, .68, .075, 2, 3, 1), bodyMaterial, 0, .72, -.34); cloth.rotation.x = -.12;
+  const collar = mesh(new THREE.TorusGeometry(.42, .055, 7, 20, Math.PI * 1.55), rankMaterial, 0, 1.48, .02); collar.rotation.z = .78;
+  const sash = mesh(new THREE.TorusGeometry(.47, .045, 7, 20), darkMaterial, 0, .91, 0); sash.rotation.x = Math.PI / 2;
+  group.add(armL, armR, handL, handR, legL, legR, cloth, collar, sash);
+  const face = addFace(group, faceMaterial, eyeMaterial);
   addHorns(group, rankMaterial, 1, type === 'thunder' ? 1.25 : 1);
   addFeet(group, darkMaterial);
+  const hairCrest = mesh(new THREE.ConeGeometry(.15, .44, 8), darkMaterial, 0, 2.4, -.16); hairCrest.rotation.x = .28; group.add(hairCrest);
 
   let weapon = null;
   let signature = null;
@@ -141,7 +175,10 @@ export function createPremiumGuardian(type, rank, config, rankConfig, { lowPower
   group.traverse((object) => { if (object.isMesh) object.userData.baseY = object.position.y; });
   group.userData = {
     ...group.userData, body, type, rank, baseY: .3, phase: Math.random() * Math.PI * 2,
-    aura, parts: { ...group.userData.parts, weapon, shoulders, signature, rankBeads, halo }
+    aura, assetTier: 'nextgen-procedural', parts: {
+      ...group.userData.parts, weapon, shoulders, signature, rankBeads, halo,
+      head: face.head, armL, armR, legL, legR, cloth, shoulderL: shoulder, shoulderR: shoulder2
+    }
   };
   return group;
 }
@@ -155,7 +192,7 @@ function addEnemyFace(group, config, bodyMaterial, darkMaterial, eyeMaterial, sc
   const horn = mesh(new THREE.ConeGeometry(.14 * scale, .5 * scale, 6), darkMaterial, -.28 * scale, 2.05 * scale, 0); horn.rotation.z = -.28;
   const horn2 = horn.clone(); horn2.position.x = .28 * scale; horn2.rotation.z = .28;
   group.add(body, head, eye1, eye2, horn, horn2);
-  return { body, high: [eye1, eye2, horn, horn2] };
+  return { body, head, high: [eye1, eye2, horn, horn2] };
 }
 
 export function createPremiumEnemy(type, config, { lowPower = false } = {}) {
@@ -165,10 +202,18 @@ export function createPremiumEnemy(type, config, { lowPower = false } = {}) {
   const darkMaterial = mat(darken(config.color, .3), .84, .06);
   const eyeMaterial = mat(0xffe88c, .22, .03, config.boss ? config.color : 0xffa42d, 2.8);
   const boneMaterial = mat(0xd9c49e, .8, .03);
-  const { body, high } = addEnemyFace(group, config, bodyMaterial, darkMaterial, eyeMaterial, scale);
+  const { body, head, high } = addEnemyFace(group, config, bodyMaterial, darkMaterial, eyeMaterial, scale);
   let shield = null;
   let weapon = null;
   let signature = null;
+  const armL = mesh(new THREE.CapsuleGeometry(.11 * scale, .52 * scale, 4, 8), bodyMaterial, -.48 * scale, .98 * scale, .02); armL.rotation.z = .32;
+  const armR = armL.clone(); armR.position.x = .48 * scale; armR.rotation.z = -.38;
+  const legL = mesh(new THREE.CapsuleGeometry(.13 * scale, .42 * scale, 4, 8), darkMaterial, -.22 * scale, .3 * scale, .04); legL.rotation.z = .12;
+  const legR = legL.clone(); legR.position.x = .22 * scale; legR.rotation.z = -.12;
+  const cloth = mesh(new THREE.BoxGeometry(.72 * scale, .48 * scale, .06 * scale, 2, 2, 1), darkMaterial, 0, .58 * scale, -.31 * scale); cloth.rotation.x = -.16;
+  const facePlate = mesh(new THREE.BoxGeometry(.54 * scale, .24 * scale, .055 * scale), boneMaterial, 0, 1.68 * scale, .39 * scale); facePlate.rotation.x = .03;
+  group.add(armL, armR, legL, legR, cloth, facePlate);
+  high.push(armL, armR, legL, legR, cloth, facePlate);
 
   if (type === 'imp') {
     const ear = mesh(new THREE.ConeGeometry(.16 * scale, .58 * scale, 5), darkMaterial, -.48 * scale, 1.72 * scale, 0); ear.rotation.z = -1.1;
@@ -232,7 +277,10 @@ export function createPremiumEnemy(type, config, { lowPower = false } = {}) {
   group.userData = {
     ...group.userData, body, baseColor: config.color, scale, phase: Math.random() * Math.PI * 2,
     isBoss: Boolean(config.boss), eliteAura, shield, lodState: 'high', lodHigh: high,
-    parts: { weapon, signature, shoulders: null, rankBeads: null, halo: signature }
+    assetTier: 'nextgen-procedural', parts: {
+      weapon, signature, shoulders: null, rankBeads: null, halo: signature,
+      head, armL, armR, legL, legR, cloth
+    }
   };
   return group;
 }
@@ -323,6 +371,131 @@ export function applyPremiumBossPhase(group, type, phase = 1) {
   visual.traverse((node) => { if (node.isMesh) { node.castShadow = false; node.receiveShadow = false; } });
   group.add(visual);
   group.userData.phaseVisual = visual;
+  return group;
+}
+
+
+function upgradeImportedMaterial(source) {
+  const material = source?.clone?.() || source;
+  if (!material) return material;
+  if ('envMapIntensity' in material) material.envMapIntensity = 1.25;
+  if ('roughness' in material) material.roughness = Math.max(.12, material.roughness ?? .65);
+  const base = material.color?.clone?.() || new THREE.Color(0x8f7bb4);
+  const rim = base.clone().lerp(new THREE.Color(0xc6dcff), .42);
+  const strength = (material.metalness || 0) > .25 ? .23 : .14;
+  material.onBeforeCompile = (shader) => {
+    shader.uniforms.uMoonRimColor = { value: rim };
+    shader.uniforms.uMoonRimStrength = { value: strength };
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <common>',
+      '#include <common>\nuniform vec3 uMoonRimColor;\nuniform float uMoonRimStrength;'
+    ).replace(
+      '#include <opaque_fragment>',
+      'float moonRim = pow(1.0 - clamp(dot(normalize(normal), normalize(vViewPosition)), 0.0, 1.0), 2.45);\noutgoingLight += uMoonRimColor * moonRim * uMoonRimStrength;\n#include <opaque_fragment>'
+    );
+  };
+  material.customProgramCacheKey = () => `imported-moon-rim-${rim.getHexString()}-${strength}`;
+  material.needsUpdate = true;
+  return material;
+}
+
+function findImportedPart(root, name) {
+  let result = null;
+  root?.traverse?.((node) => { if (!result && node.name === name) result = node; });
+  return result;
+}
+
+function prepareImportedRoot(root) {
+  root.traverse((node) => {
+    if (!node.isMesh) return;
+    node.castShadow = true;
+    node.receiveShadow = true;
+    const materials = Array.isArray(node.material) ? node.material : [node.material];
+    const upgraded = materials.map(upgradeImportedMaterial);
+    node.material = Array.isArray(node.material) ? upgraded : upgraded[0];
+    node.userData.baseY = node.position.y;
+  });
+  return root;
+}
+
+function importedPartMap(root) {
+  const shoulderRig = new THREE.Group();
+  shoulderRig.name = 'shoulderRig';
+  const signature = findImportedPart(root, 'signature');
+  return {
+    weapon: findImportedPart(root, 'weapon'),
+    signature,
+    halo: findImportedPart(root, 'halo') || signature,
+    head: findImportedPart(root, 'head'),
+    armL: findImportedPart(root, 'armL'),
+    armR: findImportedPart(root, 'armR'),
+    legL: findImportedPart(root, 'legL') || findImportedPart(root, 'frontLeg0'),
+    legR: findImportedPart(root, 'legR') || findImportedPart(root, 'frontLeg1'),
+    cloth: findImportedPart(root, 'cloth'),
+    shoulderL: findImportedPart(root, 'shoulderL'),
+    shoulderR: findImportedPart(root, 'shoulderR'),
+    shoulders: shoulderRig,
+    rankBeads: null
+  };
+}
+
+export function prepareImportedGuardian(root, type, rank, config, rankConfig, { lowPower = false } = {}) {
+  prepareImportedRoot(root);
+  const group = new THREE.Group();
+  group.name = `NextGenGuardian:${type}`;
+  group.add(root);
+  root.scale.setScalar(.94);
+  const scale = 1 + (rank - 1) * .105;
+  group.scale.setScalar(scale);
+  const rankMaterial = mat(rankConfig.color, .28, .38, rankConfig.glow, rank >= 3 ? 1.8 : .55);
+  const aura = rank >= 2 ? mesh(new THREE.RingGeometry(.72 + rank * .045, .81 + rank * .045, 28), basic(rankConfig.color, .42), 0, .08, 0) : null;
+  if (aura) { aura.rotation.x = -Math.PI / 2; group.add(aura); }
+  const rankBeads = new THREE.Group();
+  rankBeads.name = 'rankBeads';
+  for (let i = 0; i < Math.min(rank, 5); i += 1) {
+    const angle = Math.PI * .75 + i * .4;
+    rankBeads.add(mesh(new THREE.SphereGeometry(.055, 8, 5), rankMaterial, Math.cos(angle) * .66, .8 + Math.sin(angle) * .18, .4));
+  }
+  group.add(rankBeads);
+  const parts = importedPartMap(root);
+  parts.rankBeads = rankBeads;
+  if (parts.signature) parts.signature.userData.baseY = parts.signature.position.y;
+  if (rank >= 4 && !lowPower) {
+    const light = new THREE.PointLight(rankConfig.color, .75 + rank * .12, 5.5, 2);
+    light.position.y = 1.5;
+    group.add(light);
+  }
+  group.userData = {
+    body: findImportedPart(root, 'body'), type, rank, baseY: .3, phase: Math.random() * Math.PI * 2,
+    aura, parts, assetTier: 'nextgen-glb', assetId: `guardian-${type}-nextgen`
+  };
+  return group;
+}
+
+export function prepareImportedEnemy(root, type, config, { lowPower = false } = {}) {
+  prepareImportedRoot(root);
+  const group = new THREE.Group();
+  group.name = `NextGenEnemy:${type}`;
+  group.add(root);
+  const importedScale = type === 'tiger' ? .9 : .96;
+  root.scale.setScalar(importedScale * (config.scale || 1));
+  const eliteAura = mesh(new THREE.RingGeometry(.78 * (config.scale || 1), .9 * (config.scale || 1), 26), basic(0xffffff, .68), 0, .08, 0);
+  eliteAura.rotation.x = -Math.PI / 2;
+  eliteAura.visible = false;
+  group.add(eliteAura);
+  const parts = importedPartMap(root);
+  if (parts.signature) parts.signature.userData.baseY = parts.signature.position.y;
+  if (config.boss && !lowPower) {
+    const light = new THREE.PointLight(config.color, 1.15, 8.5, 2);
+    light.position.y = 1.8 * (config.scale || 1);
+    group.add(light);
+  }
+  const body = findImportedPart(root, 'body');
+  group.userData = {
+    body, baseColor: config.color, scale: config.scale || 1, phase: Math.random() * Math.PI * 2,
+    isBoss: Boolean(config.boss), eliteAura, shield: null, lodState: 'high', lodHigh: [], parts,
+    assetTier: 'nextgen-glb', assetId: `${config.boss ? 'boss' : 'monster'}-${type}-nextgen`
+  };
   return group;
 }
 

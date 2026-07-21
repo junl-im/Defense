@@ -84,6 +84,7 @@ export class MobileGameEngine {
     this.renderer.toneMappingExposure = 1.14;
     const shadows = this.device.mobile ? this.config.renderer.shadowsMobile : this.config.renderer.shadowsDesktop;
     this.renderer.shadowMap.enabled = Boolean(shadows);
+    if (this.renderer.shadowMap.enabled) this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.setPixelRatio(this.pixelRatio());
     return this.renderer;
   }

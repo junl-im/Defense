@@ -1,4 +1,4 @@
-export const ENGINE_VERSION = '1.7.0';
+export const ENGINE_VERSION = '2.0.0';
 
 export const MOBILE_ENGINE_CONFIG = Object.freeze({
   renderer: {
@@ -8,7 +8,7 @@ export const MOBILE_ENGINE_CONFIG = Object.freeze({
     antialiasMobile: false,
     antialiasDesktop: true,
     shadowsMobile: false,
-    shadowsDesktop: false,
+    shadowsDesktop: true,
     powerPreference: 'high-performance'
   },
   adaptiveQuality: {
@@ -31,9 +31,9 @@ export const MOBILE_ENGINE_CONFIG = Object.freeze({
     preloadTimeoutMs: 12000
   },
   budgets: {
-    unitTriangles: 1700,
-    enemyTriangles: 800,
-    bossTriangles: 3000,
+    unitTriangles: 5600,
+    enemyTriangles: 3200,
+    bossTriangles: 9000,
     staticDrawCalls: 45,
     dynamicDrawCalls: 95,
     pointLightsMobile: 4,

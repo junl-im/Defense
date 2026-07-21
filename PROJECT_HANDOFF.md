@@ -3,9 +3,9 @@
 이 문서는 대화가 끊기거나 다른 작업자가 이어받아도 프로젝트를 계속 개발할 수 있도록 모든 핵심 기록을 누적하는 단일 인수인계 파일입니다.
 
 - 마지막 갱신: 2026-07-22
-- 현재 버전: `2.4.0`
-- 프로젝트 폴더: `DokkaebiLuckDefense3D_FULL_v2.4.0`
-- 현재 패치명: 달빛 도감 사냥·약점 연구·전리품·보스 페이즈·모듈형 야시장
+- 현재 버전: `3.0.0`
+- 프로젝트 폴더: `DokkaebiLuckDefense3D_FULL_v3.0.0`
+- 현재 패치명: NextGen GLB 3종·캐릭터 전면 리워크·스타일라이즈드 PBR·야시장·발사체 교체
 
 ---
 
@@ -2189,3 +2189,151 @@ v2.3.0에서 확보한 모바일 한 화면 UI와 마스코트·11방향 LOD를 
 8. 도감 미발견 카드와 3D 상세 판넬 확인
 9. 다음 버전은 게임 `2.5.0`, 엔진 `1.8.0`
 10. 전체 ZIP과 변경분 패치 ZIP 두 개만 전달
+
+---
+
+## v3.0.0 / Engine 2.0.0 — NextGen 아트 리워크
+
+### 패치 목표
+
+v2.4.0까지의 자산은 시스템과 제작 파이프라인을 검증하는 Moon Forge 프로토타입이었다. 사용자 피드백에 따라 v3.0.0에서는 구체와 원기둥을 조합한 인상을 줄이는 수준이 아니라, 현대 모바일 3D 액션 게임에서 기대하는 큰 실루엣, 다층 의상, 분리된 재질 반응, 월광 림, 환경 건축과 발사체 계층을 하나의 규격으로 다시 설계했다.
+
+다만 이번 GLB는 작가 제작 스켈레탈 리깅 캐릭터라고 과장하지 않는다. 세 대표 모델은 실제 GLB 파일이며 파츠 노드가 분리되어 있지만, 현재 애니메이션은 기존 상태 머신이 파츠 transform을 절차적으로 구동한다. 최종 단계에서는 같은 에셋 슬롯에 본·스킨·애니메이션 클립이 포함된 납품 GLB를 넣는다.
+
+### 실제 GLB 런타임 교체
+
+새 파일:
+
+- `public/assets/models/guardian-ember-nextgen.glb`
+- `public/assets/models/monster-imp-nextgen.glb`
+- `public/assets/models/boss-tiger-nextgen.glb`
+- 생성기: `scripts/generate_nextgen_models.py`
+
+검증 수치:
+
+- 불씨 깨비: 파츠 노드 9개, 4,816 / 5,600 triangles, bounds 2.41×2.85×2.15m
+- 장난 요괴: 파츠 노드 8개, 2,252 / 3,200 triangles, bounds 1.94×2.20×1.76m
+- 저승 호랑이: 파츠 노드 7개, 6,404 / 9,000 triangles, bounds 2.57×2.74×4.10m
+
+`src/engine/asset-catalog.js`의 코어 카탈로그에 등록했고, `src/main.js` 전투 생성과 `src/codex-viewer.js` 미리보기가 같은 GLB 인스턴스를 사용한다. 로딩 실패 시 `src/premium-assets.js`의 절차형 모델로 안전하게 폴백한다.
+
+### 전체 캐릭터 형태와 애니메이션 리워크
+
+`src/premium-assets.js`:
+
+- 수호대 6종에 팔·다리·소매·깃·허리띠·어깨·머리 장식·속성 무기 레이어 추가
+- 일반 요괴 4종에 역할별 팔다리 비율, 의상 조각, 가면·얼굴판, 주술 장식 추가
+- 보스 페이즈 장식은 GLB와 절차형 모델 모두 지원
+- MeshStandardMaterial 기반 roughness·metalness 재질 규칙 통일
+- `onBeforeCompile`을 이용한 스타일라이즈드 월광 림 셰이더 적용
+
+`src/engine/animation-state-system.js`:
+
+- base transform을 파츠별로 기록
+- idle, move, attack, hit, death에서 머리·팔·다리·천·어깨·무기·대표 장식을 분리 구동
+- 기존 전투 판정 시점과 공격 동작을 유지
+- GLB 파츠 이름과 절차형 파츠 이름을 같은 semantic role로 정규화
+
+### 렌더링과 도감 품질
+
+- 엔진 버전 `2.0.0`
+- 데스크톱 그림자 활성화, `PCFSoftShadowMap`
+- ACES Filmic 톤매핑과 노출 보정
+- 저사양·모바일 그림자 비활성 정책 유지
+- GLB는 일반 품질에서 castShadow 적용
+- 도감 뷰어에도 ACES, 1024 그림자 맵, warm key + cool rim 적용
+- `src/engine/engine-config.js` 예산을 수호대 5,600, 일반 요괴 3,200, 보스 9,000 triangles로 상향
+
+### NextGen 야시장 환경
+
+`createNextGenEnvironmentPass()`를 통해 외곽 장터를 다시 구성했다.
+
+- 한국형 겹지붕 누각 4개
+- 처마 곡선과 황동·옥 장식
+- 다층 등롱과 현수막
+- 바닥 월륜과 야시장 중심선
+- 요괴문 지붕, 내부 룬, 귀면 문장
+- 중앙 전투 시야와 이동 경로를 가리지 않는 외곽 배치
+
+새로 생성·교체한 래스터:
+
+- `public/assets/textures/moon-market-ground-v1.webp`
+- `public/assets/effects/moon-fx-atlas-v1.webp`
+- `src/assets/moon-market-keyart.webp`
+- `public/cover.webp`
+- 생성기: `scripts/generate_nextgen_visuals.py`
+
+### 발사체와 VFX
+
+- 발사체에 핵, 궤도 링, 잔상 submesh 추가
+- additive blending과 depthWrite 비활성으로 밝은 에너지 층 분리
+- 비행 중 링 회전, 핵 맥동, 꼬리 길이 변화
+- 속성별 형태와 명도 차 유지
+- 신규 FX 아틀라스는 기존 1024² 예산 안에서 교체
+
+### 검증 자동화
+
+새 스크립트:
+
+- `scripts/verify-nextgen-assets.mjs`
+
+검증 항목:
+
+- GLBLoader로 실제 GLB 파싱
+- 파츠 노드 수와 필수 semantic node
+- bounding box
+- triangle 예산
+- asset catalog 등록
+- 전투·도감 런타임 연결
+- 파츠 애니메이션과 월광 림 셰이더 존재
+- 환경·발사체 NextGen 패스 존재
+
+최종 자동 검증:
+
+- `npm ci` 성공
+- `npm run verify` 전체 통과
+- DOM 연결 178개
+- GLB 3종 검증 통과
+- 절차형 수호대 최대 약 3,038 / 5,600 triangles
+- 절차형 일반 요괴 최대 약 1,158 / 3,200 triangles
+- 절차형 보스 포함 적 모델 최대 약 2,592 / 9,000 triangles
+- 신목 1,888 / 9,000 triangles
+- 텍스처 메모리 63.69MB / 64MB
+- 모바일 320px 이상 레이아웃과 입력 검증 유지
+- `/Defense/` 프로덕션 빌드 성공
+- 의존성 취약점 0건
+
+### 브라우저 시각 검증 제한
+
+Vite preview와 Chromium CDP를 실행했지만 현재 자동화 환경의 조직 정책이 localhost, 127.0.0.1, 컨테이너 IP와 file URL을 모두 차단했다. 따라서 실제 렌더링 스크린샷과 GPU 셰이더 컴파일 결과를 자동 브라우저로 확인했다고 주장하지 않는다. 빌드·정적 검증·GLB 파싱은 통과했으며, 최종 색감·그림자·림 셰이더와 터치 성능은 실제 iOS·Android 또는 일반 데스크톱 브라우저에서 확인해야 한다.
+
+### 알려진 한계
+
+- 세 NextGen GLB는 실제 파일이지만 스켈레탈 리깅과 내장 animation clip이 없는 파츠 기반 모델이다.
+- 나머지 수호대 5종, 일반 요괴 3종, 보스 2종은 형태와 재질이 크게 개선된 절차형 NextGen 폴백이다.
+- Normal·ORM·Emissive 전용 텍스처 세트와 KTX2 압축은 아직 적용하지 않았다.
+- 텍스처 메모리가 63.69MB로 64MB 예산에 근접해 신규 대형 WebP 추가는 금지하고 KTX2 전환을 우선해야 한다.
+- 실제 브라우저 셰이더 컴파일은 자동화 환경 정책으로 확인하지 못했다.
+
+### 다음 패치 방향 — v3.1.0 / Engine 2.1.0
+
+1. 불씨 깨비·장난 요괴·저승 호랑이 스켈레탈 리깅과 GLB animation clip
+2. 나머지 캐릭터 10종 LOD0/LOD1 GLB 순차 교체
+3. Base Color·Normal·ORM·Emissive 텍스처와 KTX2 전환
+4. InstancedMesh 기반 장터 소품과 GPU 드로우콜 최적화
+5. 보스 페이즈 전용 메시 morph 또는 교체 파츠
+6. 전리품 장착 시 캐릭터 외형 장식 연결
+7. 실제 모바일 GPU 스크린샷·프레임타임 회귀 기준 확보
+
+### 다음 작업 순서
+
+1. `npm ci`
+2. `npm run verify`
+3. `VITE_BASE_PATH=/Defense/ npm run build`
+4. 일반 브라우저에서 첫 실행과 WebGL 셰이더 컴파일 확인
+5. 불씨 깨비·장난 요괴·저승 호랑이 전투와 도감 모델 확인
+6. 데스크톱 그림자와 모바일 그림자 비활성 확인
+7. 11방향 LOD 전환과 GLB 폴백 확인
+8. 다음 버전은 게임 `3.1.0`, 엔진 `2.1.0`
+9. 전체 ZIP과 변경분 패치 ZIP 두 개만 전달
+

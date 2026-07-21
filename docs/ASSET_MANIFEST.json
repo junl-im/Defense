@@ -1,9 +1,9 @@
 {
-  "schemaVersion": 4,
-  "gameVersion": "2.4.0",
-  "engineVersion": "1.7.0",
-  "artDirection": "moonlit-joseon-market-folklore",
-  "productionStage": "codex-hunt-tiger-phase-market-modules",
+  "schemaVersion": 5,
+  "gameVersion": "3.0.0",
+  "engineVersion": "2.0.0",
+  "artDirection": "nextgen-stylized-pbr-moonlit-joseon-market",
+  "productionStage": "nextgen-glb-three-character-runtime-art-overhaul",
   "impostorDirections": 11,
   "characters": {
     "guardians": [
@@ -234,5 +234,71 @@
     "weaknessResearch": 7,
     "lootEntries": 10,
     "masteryTiers": 4
-  }
+  },
+  "integratedNextGenModels": [
+    {
+      "id": "guardian-ember-nextgen",
+      "path": "public/assets/models/guardian-ember-nextgen.glb",
+      "triangles": 4816,
+      "budget": 5600,
+      "nodes": 9,
+      "runtime": [
+        "combat",
+        "codex"
+      ],
+      "animation": "procedural-part-transform"
+    },
+    {
+      "id": "monster-imp-nextgen",
+      "path": "public/assets/models/monster-imp-nextgen.glb",
+      "triangles": 2252,
+      "budget": 3200,
+      "nodes": 8,
+      "runtime": [
+        "combat",
+        "codex"
+      ],
+      "animation": "procedural-part-transform"
+    },
+    {
+      "id": "boss-tiger-nextgen",
+      "path": "public/assets/models/boss-tiger-nextgen.glb",
+      "triangles": 6404,
+      "budget": 9000,
+      "nodes": 7,
+      "runtime": [
+        "combat",
+        "codex"
+      ],
+      "animation": "procedural-part-transform"
+    }
+  ],
+  "rendering": {
+    "toneMapping": "ACESFilmicToneMapping",
+    "desktopShadows": "PCFSoftShadowMap",
+    "mobileShadows": false,
+    "materialModel": "MeshStandardMaterial + stylized moon rim shader",
+    "lighting": "warm lantern key + cool moon rim"
+  },
+  "nextGenEnvironment": [
+    "layered-market-pavilion",
+    "curved-eaves",
+    "hanging-lanterns",
+    "market-banners",
+    "brass-jade-ornaments",
+    "gate-roof-rune-mask",
+    "ground-moon-rings"
+  ],
+  "nextGenVfx": [
+    "layered-projectile-core",
+    "orbital-ring",
+    "additive-trail",
+    "scale-pulse",
+    "rotating-energy-layer"
+  ],
+  "assetLimitations": [
+    "three GLBs use named rigid parts, not skeletal skinning",
+    "remaining characters use upgraded procedural fallback",
+    "KTX2 and dedicated Normal/ORM/Emissive textures pending"
+  ]
 }

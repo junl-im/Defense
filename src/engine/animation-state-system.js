@@ -41,7 +41,11 @@ export class AnimationStateSystem {
       parts: root.userData?.parts || {}, partBase: {}
     };
     for (const [key, part] of Object.entries(controller.parts)) {
-      if (part?.rotation) controller.partBase[key] = part.rotation.clone();
+      if (part?.rotation) controller.partBase[key] = {
+        rotation: part.rotation.clone(),
+        position: part.position?.clone?.() || null,
+        scale: part.scale?.clone?.() || null
+      };
     }
     this.controllers.add(controller);
     this.setState(controller, 'idle', { immediate: true });
@@ -93,25 +97,62 @@ export class AnimationStateSystem {
     if (!controller.procedural || controller.mixer || !inRange) return;
     const t = controller.stateTime;
     const phase = controller.phase;
-    const { weapon, shoulders, signature, rankBeads, halo } = controller.parts;
+    const { weapon, shoulders, signature, rankBeads, halo, head, armL, armR, legL, legR, cloth, shoulderL, shoulderR } = controller.parts;
+    for (const [key, part] of Object.entries(controller.parts)) {
+      const base = controller.partBase[key];
+      if (!part || !base) continue;
+      if (base.rotation) part.rotation.copy(base.rotation);
+      if (base.scale) part.scale.copy(base.scale);
+    }
+    const addRot = (part, key, x = 0, y = 0, z = 0) => {
+      if (!part || !controller.partBase[key]?.rotation) return;
+      part.rotation.x += x; part.rotation.y += y; part.rotation.z += z;
+    };
     if (rankBeads) rankBeads.rotation.y += dt * .8;
     if (halo) halo.rotation.z += dt * .48;
     if (signature) signature.position.y = (signature.userData.baseY ?? signature.position.y) + Math.sin(t * 3 + phase) * .025;
     if (controller.state === 'move') {
-      controller.root.rotation.z = Math.sin(t * 11 + phase) * 0.055;
-      controller.root.position.y = controller.baseY + Math.abs(Math.sin(t * 11 + phase)) * .055;
-      if (shoulders) shoulders.rotation.z = Math.sin(t * 11 + phase) * .08;
+      const stride = Math.sin(t * 10.5 + phase);
+      controller.root.rotation.z = stride * 0.045;
+      controller.root.position.y = controller.baseY + Math.abs(stride) * .065;
+      if (shoulders) shoulders.rotation.z = stride * .08;
+      addRot(armL, 'armL', stride * .46, 0, .08);
+      addRot(armR, 'armR', -stride * .46, 0, -.08);
+      addRot(legL, 'legL', -stride * .5, 0, 0);
+      addRot(legR, 'legR', stride * .5, 0, 0);
+      addRot(cloth, 'cloth', -.08 - Math.abs(stride) * .08, 0, stride * .03);
+      addRot(head, 'head', 0, -stride * .035, -stride * .018);
     } else if (controller.state === 'attack') {
-      controller.root.rotation.x = Math.sin(Math.min(1, t / 0.18) * Math.PI) * -0.18;
-      if (weapon) weapon.rotation.y = Math.sin(Math.min(1, t / .2) * Math.PI) * -.55;
+      const strike = Math.sin(Math.min(1, t / 0.22) * Math.PI);
+      controller.root.rotation.x = strike * -0.16;
+      controller.root.rotation.z = strike * -.035;
+      addRot(armR, 'armR', -strike * .82, strike * -.18, strike * -.42);
+      addRot(armL, 'armL', strike * .24, 0, strike * .12);
+      addRot(weapon, 'weapon', -strike * .3, strike * -.62, strike * -.24);
+      addRot(head, 'head', strike * -.08, strike * .08, 0);
+      if (signature) signature.scale.multiplyScalar(1 + strike * .14);
     } else if (controller.state === 'hit') {
-      controller.root.rotation.z = Math.sin(t * 34) * 0.09;
-      if (signature) signature.scale.setScalar(1 + Math.sin(t * 28) * .08);
+      const hit = Math.sin(t * 34);
+      controller.root.rotation.z = hit * 0.09;
+      addRot(head, 'head', .08, 0, hit * .04);
+      addRot(armL, 'armL', -.12, 0, -.1);
+      addRot(armR, 'armR', -.12, 0, .1);
+      if (signature) signature.scale.multiplyScalar(1 + Math.sin(t * 28) * .08);
     } else if (controller.state === 'idle') {
-      controller.root.position.y = controller.baseY + Math.sin(t * 2.2 + phase) * .025;
+      const breath = Math.sin(t * 2.2 + phase);
+      controller.root.position.y = controller.baseY + breath * .026;
       controller.root.rotation.z = Math.sin(t * 1.7 + phase) * .012;
+      addRot(armL, 'armL', breath * .025, 0, breath * .02);
+      addRot(armR, 'armR', -breath * .025, 0, -breath * .02);
+      addRot(head, 'head', 0, Math.sin(t * .8 + phase) * .025, breath * .008);
+      addRot(cloth, 'cloth', breath * .025, 0, 0);
+      addRot(shoulderL, 'shoulderL', 0, 0, breath * .018);
+      addRot(shoulderR, 'shoulderR', 0, 0, -breath * .018);
     } else if (controller.state === 'death') {
-      controller.root.rotation.x = Math.min(Math.PI * 0.48, t * 4.2);
+      const fall = Math.min(1, t * 2.6);
+      controller.root.rotation.x = fall * Math.PI * 0.48;
+      addRot(armL, 'armL', fall * .6, 0, fall * -.25);
+      addRot(armR, 'armR', fall * .6, 0, fall * .25);
     }
   }
 

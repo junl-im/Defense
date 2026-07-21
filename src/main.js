@@ -11,7 +11,7 @@ import { getBattlefieldTheme } from './battlefield-themes.js';
 import { CODEX_SECTION_META, CODEX_SECTION_ORDER, getCodexEntries, getCodexTotals } from './codex-data.js';
 import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, ObjectPool, RenderStatsHUD, AssetPipeline, CORE_ASSET_CATALOG, AnimationStateSystem } from './engine/index.js';
 import CodexViewer from './codex-viewer.js';
-import { createPremiumGuardian, createPremiumEnemy, createPremiumSacredTree, applyPremiumBossPhase } from './premium-assets.js';
+import { createPremiumGuardian, createPremiumEnemy, createPremiumSacredTree, applyPremiumBossPhase, prepareImportedGuardian, prepareImportedEnemy } from './premium-assets.js';
 import { DirectionalImpostorSelector } from './engine/directional-impostor.js';
 import { loadCodexProgress, saveCodexProgress, recordCodexEncounter, recordCodexDefeat, recordGuardianUse, getCodexKnowledge, getCodexProgressSummary, getWeaknessDamageBonus, getWeaknessLabel } from './codex-progression.js';
 
@@ -69,7 +69,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '2.4.0';
+const GAME_VERSION = '3.0.0';
 
 const FIRST_MISSIONS = [
   { id: 'summons', title: '수호대 3회 강림', goal: 3, reward: 35, copy: '무료 강림도 포함됩니다.' },
@@ -339,6 +339,28 @@ class DokkaebiLuckDefense {
         const mesh = new THREE.Mesh(geometry, this.createProjectileMaterial(poolKey));
         mesh.visible = false;
         mesh.frustumCulled = false;
+        if (!this.lowPower) {
+          const core = new THREE.Mesh(
+            new THREE.SphereGeometry(.52, 8, 6),
+            new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .82, blending: THREE.AdditiveBlending, depthWrite: false })
+          );
+          const ring = new THREE.Mesh(
+            new THREE.TorusGeometry(.82, .07, 6, 16),
+            new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .42, blending: THREE.AdditiveBlending, depthWrite: false })
+          );
+          ring.rotation.x = Math.PI / 2;
+          const trail = new THREE.Mesh(
+            new THREE.ConeGeometry(.38, 1.5, 8),
+            new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .22, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide })
+          );
+          trail.rotation.x = Math.PI / 2;
+          trail.position.z = -.82;
+          trail.scale.set(1, 1, 1.25);
+          mesh.add(core, ring, trail);
+          mesh.userData.fxCore = core;
+          mesh.userData.fxRing = ring;
+          mesh.userData.fxTrail = trail;
+        }
         this.pooledEffectRoot.add(mesh);
         return { mesh, poolKey, hitTargets: new Set(), alive: false, target: null, owner: null, life: 0 };
       },
@@ -1376,12 +1398,33 @@ class DokkaebiLuckDefense {
     return textures;
   }
 
+  createNextGenCodexModel(section, id, entry, context = {}) {
+    if (section === 'guardian' && id === 'ember') {
+      const root = this.assetPipeline.instantiateModel('guardian-ember-nextgen');
+      if (root) return prepareImportedGuardian(root, id, 4, context.config || UNIT_TYPES[id], context.rankConfig || RANKS[3], { lowPower: this.lowPower });
+    }
+    if (section === 'monster' && id === 'imp') {
+      const root = this.assetPipeline.instantiateModel('monster-imp-nextgen');
+      if (root) return prepareImportedEnemy(root, id, context.config || ENEMY_TYPES[id], { lowPower: this.lowPower });
+    }
+    if (section === 'boss' && id === 'tiger') {
+      const root = this.assetPipeline.instantiateModel('boss-tiger-nextgen');
+      if (root) {
+        const model = prepareImportedEnemy(root, id, context.config || ENEMY_TYPES[id], { lowPower: this.lowPower });
+        applyPremiumBossPhase(model, id, context.bossPhase || 1);
+        return model;
+      }
+    }
+    return null;
+  }
+
   ensureCodexViewer() {
     if (this.codexViewer) return this.codexViewer;
     try {
       this.codexViewer = new CodexViewer(ui.codexPreviewCanvas, {
         impostorTextures: this.getAllImpostorTextures(),
-        onFrame: (frame) => this.updateCodexFrameReadout(frame)
+        onFrame: (frame) => this.updateCodexFrameReadout(frame),
+        modelFactory: (section, id, entry, context) => this.createNextGenCodexModel(section, id, entry, context)
       });
       ui.codexFrameStatus.textContent = '드래그 회전 · 핀치/휠 확대';
     } catch (error) {
@@ -1406,8 +1449,8 @@ class DokkaebiLuckDefense {
     const canImpostor = Boolean(baseKey && this.getImpostorTextureSet(baseKey).idle);
     ui.codexImpostorBtn.disabled = !canImpostor;
     ui.codexImpostorBtn.title = canImpostor ? `${entry.name} 대기·이동·공격 11방향 아틀라스` : '현재 11방향 애니메이션 세트는 불씨 깨비와 장난 요괴에 적용되었습니다.';
-    ui.codexAssetSet.textContent = canImpostor ? 'Moon Forge v3 · 연구형 3D + 11방향' : section === 'boss' ? 'Moon Forge v3 · 페이즈 모델' : 'Moon Forge v3 · 연구형 3D';
-    ui.codexLodReadout.textContent = 'LOD0 · 절차형 3D';
+    ui.codexAssetSet.textContent = canImpostor ? 'NextGen GLB · 3D + 11방향' : section === 'boss' ? 'NextGen PBR · 페이즈 모델' : 'NextGen PBR · 실시간 3D';
+    ui.codexLodReadout.textContent = (id === 'ember' || id === 'imp' || id === 'tiger') ? 'LOD0 · NextGen GLB' : 'LOD0 · NextGen 절차형';
     ui.codexDirectionReadout.textContent = '3D 자유 회전';
     ui.codexProgressReadout.textContent = `LV.${knowledge.mastery} · ${section === 'guardian' ? `강림 ${knowledge.uses}회` : `격파 ${knowledge.defeats}회`}`;
     ui.codexWeaknessReadout.textContent = knowledge.research
@@ -1711,6 +1754,7 @@ class DokkaebiLuckDefense {
     this.createMarketField(8);
     this.createMarketHeritageProps();
     this.createMoonMarketModuleSet();
+    this.createNextGenEnvironmentPass();
 
     for (let i = 0; i < 4; i += 1) {
       const angle = i / 4 * Math.PI * 2;
@@ -2022,6 +2066,69 @@ class DokkaebiLuckDefense {
     this.marketModuleSet = root;
   }
 
+  createNextGenEnvironmentPass() {
+    const root = new THREE.Group();
+    root.name = 'MoonMarketNextGenEnvironment';
+    const lacquer = this.createMaterial(0x201322, .38, .22, 0x0d0711, .06);
+    const redLacquer = this.createMaterial(0x6f263d, .46, .18, 0x2d0b1c, .12);
+    const brass = this.createMaterial(0xd3a253, .3, .7, 0xffbb55, .24);
+    const jade = this.createMaterial(0x52d6c6, .26, .12, 0x22d7c9, 1.25);
+    const paper = this.createMaterial(0xf1d89b, .86, .01, 0xffa949, .42);
+    const stone = this.createMaterial(0x42384d, .92, .03);
+    const clothPalette = [0x722a49, 0x314e6d, 0x584078, 0x745132].map((color) => this.createMaterial(color, .78, .02));
+
+    for (let index = 0; index < 4; index += 1) {
+      const angle = Math.PI / 4 + index * Math.PI / 2;
+      const pavilion = new THREE.Group();
+      pavilion.position.set(Math.cos(angle) * 23.6, 0, Math.sin(angle) * 23.6);
+      pavilion.rotation.y = -angle + Math.PI / 2;
+      const base = this.mesh(new THREE.CylinderGeometry(2.2, 2.42, .34, 8), stone, 0, .17, 0);
+      const deck = this.mesh(new THREE.BoxGeometry(3.65, .28, 2.05), lacquer, 0, .48, 0);
+      pavilion.add(base, deck);
+      for (const x of [-1.42, 1.42]) {
+        const post = this.mesh(new THREE.CylinderGeometry(.13, .17, 2.7, 8), index % 2 ? redLacquer : lacquer, x, 1.83, .46);
+        const collar = this.mesh(new THREE.TorusGeometry(.2, .035, 6, 16), brass, x, 2.86, .46); collar.rotation.x = Math.PI / 2;
+        const lamp = this.mesh(new THREE.CylinderGeometry(.29, .23, .62, 10), paper, x, 2.5, .55);
+        const cap = this.mesh(new THREE.ConeGeometry(.35, .22, 8), brass, x, 2.86, .55);
+        pavilion.add(post, collar, lamp, cap);
+      }
+      const roofLower = this.mesh(new THREE.BoxGeometry(4.25, .16, 2.5), clothPalette[index], 0, 3.25, 0); roofLower.rotation.z = index % 2 ? -.035 : .035;
+      const roofUpper = this.mesh(new THREE.BoxGeometry(3.55, .16, 2.05), clothPalette[(index + 1) % clothPalette.length], 0, 3.53, -.04);
+      const ridge = this.mesh(new THREE.CylinderGeometry(.095, .095, 3.75, 8), brass, 0, 3.72, 0); ridge.rotation.z = Math.PI / 2;
+      const finial = this.mesh(new THREE.OctahedronGeometry(.18, 1), jade, 0, 3.93, 0);
+      pavilion.add(roofLower, roofUpper, ridge, finial);
+      for (const side of [-1, 1]) {
+        const eave = this.mesh(new THREE.ConeGeometry(.16, .55, 7), brass, side * 2.08, 3.18, 0); eave.rotation.z = side * -.9;
+        pavilion.add(eave);
+      }
+      const sign = this.mesh(new THREE.BoxGeometry(1.12, .62, .09), paper, 0, 2.44, .78);
+      const seal = this.mesh(new THREE.TorusGeometry(.19, .038, 6, 18), jade, 0, 2.44, .84); seal.rotation.x = Math.PI / 2;
+      pavilion.add(sign, seal);
+      root.add(pavilion);
+    }
+
+    for (let index = 0; index < 12; index += 1) {
+      const angle = index / 12 * Math.PI * 2;
+      const radius = 14.8 + (index % 2) * 1.2;
+      const charmRoot = new THREE.Group();
+      charmRoot.position.set(Math.cos(angle) * radius, 0, Math.sin(angle) * radius);
+      charmRoot.rotation.y = -angle;
+      const pole = this.mesh(new THREE.CylinderGeometry(.035, .05, 2.15, 6), lacquer, 0, 1.08, 0);
+      const banner = this.mesh(new THREE.PlaneGeometry(.58, 1.18, 1, 3), clothPalette[index % clothPalette.length], .32, 1.42, 0, false, false); banner.rotation.y = Math.PI / 2;
+      const seal = this.mesh(new THREE.TorusGeometry(.14, .03, 6, 14), index % 3 === 0 ? jade : brass, .33, 1.55, .025, false, false); seal.rotation.y = Math.PI / 2;
+      charmRoot.add(pole, banner, seal);
+      root.add(charmRoot);
+    }
+
+    const runeOuter = this.mesh(new THREE.RingGeometry(12.82, 12.94, 96), new THREE.MeshBasicMaterial({ color: 0x8de8ff, transparent: true, opacity: .1, side: THREE.DoubleSide, depthWrite: false }), 0, .035, 0, false, false);
+    runeOuter.rotation.x = -Math.PI / 2;
+    const runeInner = this.mesh(new THREE.RingGeometry(7.92, 8.02, 96), new THREE.MeshBasicMaterial({ color: 0xffc36a, transparent: true, opacity: .08, side: THREE.DoubleSide, depthWrite: false }), 0, .04, 0, false, false);
+    runeInner.rotation.x = -Math.PI / 2;
+    root.add(runeOuter, runeInner);
+    this.worldRoot.add(root);
+    this.nextGenEnvironment = root;
+  }
+
   createMarketStall(x, z, rotation, variant) {
     const group = new THREE.Group();
     group.position.set(x, 0, z);
@@ -2056,7 +2163,14 @@ class DokkaebiLuckDefense {
     const horn2 = horn1.clone(); horn2.position.x = 2.15; horn2.rotation.z = .28;
     const portal = this.mesh(new THREE.PlaneGeometry(3.35, 4.05), new THREE.MeshBasicMaterial({ color: glowColor, transparent: true, opacity: .2, side: THREE.DoubleSide, depthWrite: false }), 0, 2.45, .05, false, false);
     const rune = this.mesh(new THREE.TorusGeometry(1.45, .08, 8, 32), glow, 0, 2.48, .14, false, false);
-    group.add(left, right, top, horn1, horn2, portal, rune);
+    const innerRune = this.mesh(new THREE.TorusGeometry(1.1, .035, 7, 30), new THREE.MeshBasicMaterial({ color: glowColor, transparent: true, opacity: .55, blending: THREE.AdditiveBlending, depthWrite: false }), 0, 2.48, .18, false, false);
+    const roofA = this.mesh(new THREE.BoxGeometry(6.5, .18, 1.82), this.createMaterial(index % 2 ? 0x5d2946 : 0x283f59, .62, .14), 0, 5.52, 0); roofA.rotation.z = index % 2 ? -.035 : .035;
+    const roofB = this.mesh(new THREE.BoxGeometry(5.4, .16, 1.58), this.createMaterial(0x1d1424, .5, .18), 0, 5.78, -.03);
+    const crest = this.mesh(new THREE.OctahedronGeometry(.28, 1), glow, 0, 6.12, 0);
+    const mask = this.mesh(new THREE.CylinderGeometry(.48, .54, .12, 8), this.createMaterial(0xd9bd83, .58, .08), 0, 5.02, .84); mask.rotation.x = Math.PI / 2;
+    const eyeL = this.mesh(new THREE.SphereGeometry(.055, 7, 5), glow, -.17, 5.05, .91, false, false);
+    const eyeR = eyeL.clone(); eyeR.position.x = .17;
+    group.add(left, right, top, horn1, horn2, portal, rune, innerRune, roofA, roofB, crest, mask, eyeL, eyeR);
     group.userData = { portal, rune, index, baseColor: glowColor };
     this.worldRoot.add(group);
     return group;
@@ -2682,6 +2796,10 @@ class DokkaebiLuckDefense {
   createDokkaebiModel(type, rank) {
     const config = UNIT_TYPES[type];
     const rankConfig = RANKS[rank - 1];
+    if (type === 'ember') {
+      const root = this.assetPipeline.instantiateModel('guardian-ember-nextgen');
+      if (root) return prepareImportedGuardian(root, type, rank, config, rankConfig, { lowPower: this.lowPower });
+    }
     return createPremiumGuardian(type, rank, config, rankConfig, { lowPower: this.lowPower });
     const group = new THREE.Group();
     const scale = 1 + (rank - 1) * .115;
@@ -2932,7 +3050,11 @@ class DokkaebiLuckDefense {
   }
 
   createEnemyModel(type, config) {
-    const premium = createPremiumEnemy(type, config, { lowPower: this.lowPower });
+    const assetId = type === 'imp' ? 'monster-imp-nextgen' : type === 'tiger' ? 'boss-tiger-nextgen' : '';
+    const root = assetId ? this.assetPipeline.instantiateModel(assetId) : null;
+    const premium = root
+      ? prepareImportedEnemy(root, type, config, { lowPower: this.lowPower })
+      : createPremiumEnemy(type, config, { lowPower: this.lowPower });
     this.attachEnemyImpostor(premium, type);
     return premium;
     const group = new THREE.Group();
@@ -3448,6 +3570,12 @@ class DokkaebiLuckDefense {
     projectile.mesh.scale.setScalar(data.radius);
     projectile.mesh.material.color.set(data.color);
     projectile.mesh.material.opacity = .95;
+    for (const child of [projectile.mesh.userData.fxCore, projectile.mesh.userData.fxRing, projectile.mesh.userData.fxTrail]) {
+      if (child?.material?.color) child.material.color.set(data.color);
+    }
+    if (projectile.mesh.userData.fxCore) projectile.mesh.userData.fxCore.material.opacity = .88;
+    if (projectile.mesh.userData.fxRing) projectile.mesh.userData.fxRing.material.opacity = .48;
+    if (projectile.mesh.userData.fxTrail) projectile.mesh.userData.fxTrail.material.opacity = poolKey === 'wind' ? .35 : .22;
     if (poolKey === 'wind') projectile.mesh.rotation.set(Math.PI / 2, 0, 0);
     else projectile.mesh.rotation.set(0, 0, 0);
     this.projectiles.push(projectile);
@@ -3477,8 +3605,13 @@ class DokkaebiLuckDefense {
         const pulse = 1 + Math.sin(this.elapsed * 18 + i) * .12;
         projectile.mesh.scale.setScalar(projectile.radius * pulse);
         projectile.mesh.rotation.z += dt * (projectile.type === 'stone' ? 2.4 : 7.5);
+        if (projectile.mesh.userData.fxRing) {
+          projectile.mesh.userData.fxRing.rotation.z += dt * 5.5;
+          projectile.mesh.userData.fxRing.scale.setScalar(1 + Math.sin(this.elapsed * 14 + i) * .12);
+        }
+        if (projectile.mesh.userData.fxCore) projectile.mesh.userData.fxCore.scale.setScalar(.82 + pulse * .16);
         projectile.mesh.lookAt(targetPos.add(direction));
-        if (Math.random()<dt*15) this.spawnTinyParticle(projectile.mesh.position,projectile.color);
+        if (Math.random()<dt*(this.lowPower ? 8 : 18)) this.spawnTinyParticle(projectile.mesh.position,projectile.color);
       }
     }
   }

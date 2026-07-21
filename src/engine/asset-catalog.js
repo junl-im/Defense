@@ -4,6 +4,11 @@ const keyartUrl = new URL('../assets/moon-market-keyart.webp', import.meta.url).
 const publicAsset = (path) => `${import.meta.env?.BASE_URL || '/'}assets/${path}`;
 const groundTextureUrl = publicAsset('textures/moon-market-ground-v1.webp');
 const moonFxAtlasUrl = publicAsset('effects/moon-fx-atlas-v1.webp');
+const nextGenModelUrls = Object.freeze({
+  'guardian-ember-nextgen': publicAsset('models/guardian-ember-nextgen.glb'),
+  'monster-imp-nextgen': publicAsset('models/monster-imp-nextgen.glb'),
+  'boss-tiger-nextgen': publicAsset('models/boss-tiger-nextgen.glb')
+});
 const impostorUrls = Object.freeze({
   'ember-idle': publicAsset('impostors/guardian/ember-idle-11.webp'),
   'ember-move': publicAsset('impostors/guardian/ember-move-11.webp'),
@@ -35,6 +40,11 @@ export const CORE_ASSET_CATALOG = Object.freeze([
     id: `${key}-impostor-v2`, kind: 'texture', required: false, retain: true, color: true,
     variants: { low: url, medium: url, high: url },
     sourceWidth: 1024, sourceHeight: 768, estimatedBytes: 1024 * 768 * 4 * 1.333
+  })),
+  ...Object.entries(nextGenModelUrls).map(([id, url]) => ({
+    id, kind: 'model', required: false, retain: true,
+    variants: { low: url, medium: url, high: url },
+    fallback: `procedural-${id}`
   }))
 ]);
 
@@ -119,7 +129,7 @@ export const ASSET_PRODUCTION_SUMMARY = Object.freeze({
   effectFamilies: 8,
   farLodDirections: IMPOSTOR_SPEC.directions,
   formats: Object.freeze(['glb', 'ktx2', 'webp', 'png']),
-  integratedPrototypeAssets: 9
+  integratedPrototypeAssets: 12
 });
 
 export function selectAssetVariant(entry, tier = 'high') {

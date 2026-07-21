@@ -1,6 +1,7 @@
 export const ART_DIRECTION = Object.freeze({
-  title: '달빛 야시장 민담 판타지',
+  title: 'NextGen 달빛 야시장 스타일라이즈드 PBR',
   pillars: Object.freeze([
+    '현대 모바일 3D 액션 게임처럼 큰 실루엣, 계층화된 의상, 분리된 재질 반응, 월광 림을 하나의 캐릭터 언어로 묶는다.',
     '둥글고 친근한 도깨비와 날카롭고 비대칭인 요괴를 실루엣만으로 구분한다.',
     '조선 야시장·무속·달빛 신앙의 소재를 현대 모바일 액션 가독성으로 단순화한다.',
     '따뜻한 한지 등불과 차가운 월광의 이중 조명을 모든 캐릭터와 환경에 반복한다.',
@@ -10,6 +11,7 @@ export const ART_DIRECTION = Object.freeze({
     night: '#120b24', moon: '#d8ddff', lantern: '#ffc86b', spirit: '#63f1dc', curse: '#b36dff', danger: '#ff5f72'
   }),
   materialRules: Object.freeze([
+    'LOD0는 Base Color·Normal·ORM·Emissive를 기준으로 하고, 현재 절차형 파츠와 정적 GLB는 동일한 PBR 응답을 사용한다.',
     '베이스는 손으로 빚은 목재·한지·도자기·무광 금속처럼 거칠기 차이를 크게 둔다.',
     '순수 흰색과 순수 검정은 피하고 월광색 또는 자주색을 섞어 게임 배경에 묶는다.',
     '발광부는 전체 면적의 12% 이내로 제한하고 얼굴·무기·공격 시작점에 집중한다.',
