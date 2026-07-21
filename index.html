@@ -46,13 +46,14 @@
           <p class="kicker">한 판 8분 · 랜덤 소환 · 자동 합성</p>
           <h1>도깨비<br /><em>운빨 수호대</em></h1>
           <p class="title-copy">직접 전장을 누비며 엽전을 줍고,<br />운명처럼 소환되는 도깨비 군단을 완성하세요.</p>
+          <div id="run-preview" class="run-preview" aria-label="이번 판 영구 성장 적용 효과"></div>
           <button id="start-btn" class="btn primary huge">달빛 장터 수호하기</button>
           <div class="title-actions three">
             <button id="how-btn" class="btn ghost">조작법</button>
             <button id="collection-btn" class="btn ghost">도깨비 도감</button>
             <button id="meta-btn" class="btn ghost meta-entry"><span>혼불 <b id="title-shards">0</b></span>수호자 성장</button>
           </div>
-          <small>v1.5 · 회피 안내와 다음 판에 이어지는 수호자 성장이 추가되었습니다.</small>
+          <small>v1.6 · 집중 명령, 안정된 위험 안내, 시작 성장 요약이 추가되었습니다.</small>
         </div>
       </section>
 
@@ -153,6 +154,7 @@
             <article><span>02</span><div><b>운빨 소환</b><p>소환할수록 비용이 오르지만, 실패한 운은 대박 기운으로 쌓입니다.</p></div></article>
             <article><span>03</span><div><b>같은 도깨비 3개 자동 합성</b><p>동일 종류·동일 별 3개가 모이면 더 강한 하나로 자동 합성됩니다. 5성은 고유 궁극기를 자동으로 사용합니다.</p></div></article>
             <article><span>04</span><div><b>바닥 경고를 보고 피하기</b><p>붉은 돌진선과 보스 예고 링을 피하고, 보랏빛 저주 장판은 수호대 밖으로 유도하세요.</p></div></article>
+            <article><span>05</span><div><b>도깨비 목록을 눌러 집중 명령</b><p>오른쪽 도깨비 칩을 누르면 같은 종류·같은 별 수호대가 7초 동안 폭발적으로 강화됩니다.</p></div></article>
           </div>
           <button class="btn primary" data-close="how-modal">알겠어!</button>
         </div>
@@ -242,7 +244,7 @@
     </div>
     <script>
       (() => {
-        const VERSION = '1.5.0';
+        const VERSION = '1.6.0';
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
         const retryButton = document.getElementById('boot-retry-btn');

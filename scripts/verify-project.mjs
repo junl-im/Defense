@@ -22,7 +22,7 @@ const missingIds = [...new Set(queriedIds.filter((id) => !htmlIds.has(id)))];
 if (missingIds.length) fail(`index.html에 없는 DOM ID: ${missingIds.join(', ')}`);
 else pass(`${queriedIds.length}개 DOM ID 연결`);
 
-if (pkg.version === '1.5.0') pass('package version 1.5.0');
+if (pkg.version === '1.6.0') pass('package version 1.6.0');
 else fail(`package version 불일치: ${pkg.version}`);
 
 for (const path of ['.env.production', '.firebaserc', '.github/workflows/deploy.yml', 'README.md', 'PROJECT_HANDOFF.md']) {
@@ -38,7 +38,7 @@ else fail(`루트 Markdown 정리 필요: ${rootMarkdown.join(', ')}`);
 if (manifest.start_url === './') pass('PWA 상대 경로 start_url');
 else fail(`PWA start_url 확인 필요: ${manifest.start_url}`);
 
-if (main.includes("const GAME_VERSION = '1.5.0'")) pass('런타임 version 1.5.0');
+if (main.includes("const GAME_VERSION = '1.6.0'")) pass('런타임 version 1.6.0');
 else fail('런타임 version 불일치');
 
 for (const feature of ['offerContract', 'resolveActiveContract', 'checkBossPhase', 'kingNightMarch', 'bossPounce']) {
@@ -54,9 +54,9 @@ else fail('제목 화면 생성 전에 this.mods 초기화 필요');
 if (main.includes('createDefaultMods(metaTraits = {})') && main.includes('(this.mods?.unitCooldown ?? 1)')) pass('unitCooldown 부팅 오류 방어');
 else fail('unitCooldown 부팅 오류 방어 코드 누락');
 
-for (const feature of ['loadMetaProgress', 'upgradeMetaTrait', 'awardRunShards', 'getDangerCandidate', 'updateDangerHint']) {
-  if (main.includes(feature)) pass(`v1.5 기능 ${feature}`);
-  else fail(`v1.5 기능 누락: ${feature}`);
+for (const feature of ['loadMetaProgress', 'upgradeMetaTrait', 'awardRunShards', 'getDangerCandidate', 'updateDangerHint', 'useUnitCommand', 'updateCommandChipStates', 'renderRunPreview']) {
+  if (main.includes(feature)) pass(`v1.6 기능 ${feature}`);
+  else fail(`v1.6 기능 누락: ${feature}`);
 }
 
 if (data.includes('const CONTRACTS =')) pass('위험 계약 데이터');
@@ -65,13 +65,20 @@ else fail('위험 계약 데이터 누락');
 if (style.includes('.boss-intent') && style.includes('.contract-options') && style.includes('.boot-error')) pass('기존 HUD 스타일');
 else fail('기존 HUD 스타일 누락');
 
-if (style.includes('.danger-hint') && style.includes('.meta-trait-list') && style.includes('.result-shards')) pass('v1.5 가독성·성장 스타일');
-else fail('v1.5 가독성·성장 스타일 누락');
+if (style.includes('.danger-hint') && style.includes('.meta-trait-list') && style.includes('.result-shards') && style.includes('.command-active') && style.includes('.run-preview')) pass('v1.6 가독성·명령·성장 스타일');
+else fail('v1.6 가독성·명령·성장 스타일 누락');
 
-for (const id of ['danger-hint', 'meta-modal', 'meta-trait-list', 'result-shards', 'result-growth-btn']) {
-  if (htmlIds.has(id)) pass(`v1.5 UI ${id}`);
-  else fail(`v1.5 UI 누락: ${id}`);
+for (const id of ['danger-hint', 'meta-modal', 'meta-trait-list', 'result-shards', 'result-growth-btn', 'run-preview', 'unit-strip']) {
+  if (htmlIds.has(id)) pass(`v1.6 UI ${id}`);
+  else fail(`v1.6 UI 누락: ${id}`);
 }
+
+
+if (main.includes('id: ++this.enemySerial') && main.includes('id:++this.hazardSerial') && main.includes('pendingDangerTimer = .14')) pass('안정적인 위험 대상 ID와 전환 지연');
+else fail('위험 안내 안정화 코드 누락');
+
+if (main.includes('unit.commandTimer = 7') && main.includes('commandCooldown = 18') && main.includes('commandDamage = unit.commandTimer > 0 ? 1.55 : 1')) pass('집중 명령 7초/18초 밸런스');
+else fail('집중 명령 밸런스 코드 누락');
 
 if (html.includes('__DOKKAEBI_SHOW_BOOT_ERROR__') && html.includes('boot-error')) pass('로딩 실패 복구 UI');
 else fail('로딩 실패 복구 UI 누락');

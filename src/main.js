@@ -16,7 +16,7 @@ const tempColor = new THREE.Color();
 
 const ui = {
   canvas: $('#game-canvas'), loading: $('#loading'), title: $('#title-screen'), start: $('#start-btn'),
-  how: $('#how-btn'), collection: $('#collection-btn'), meta: $('#meta-btn'), titleShards: $('#title-shards'), howModal: $('#how-modal'), collectionModal: $('#collection-modal'),
+  how: $('#how-btn'), collection: $('#collection-btn'), meta: $('#meta-btn'), titleShards: $('#title-shards'), runPreview: $('#run-preview'), howModal: $('#how-modal'), collectionModal: $('#collection-modal'),
   blessingModal: $('#blessing-modal'), blessingOptions: $('#blessing-options'), collectionGrid: $('#collection-grid'),
   choiceSummonModal: $('#choice-summon-modal'), choiceSummonOptions: $('#choice-summon-options'), summonTicket: $('#summon-ticket'),
   contractModal: $('#contract-modal'), contractOptions: $('#contract-options'), contractSkip: $('#contract-skip-btn'), metaModal: $('#meta-modal'), metaShards: $('#meta-shards'), metaTraitList: $('#meta-trait-list'),
@@ -42,7 +42,7 @@ const ui = {
   playerName: $('#player-name'), saveScore: $('#save-score-btn'), resultRetry: $('#result-retry-btn'), leaderboard: $('#leaderboard')
 };
 
-const GAME_VERSION = '1.5.0';
+const GAME_VERSION = '1.6.0';
 
 const FIRST_MISSIONS = [
   { id: 'summons', title: '수호대 3회 강림', goal: 3, reward: 35, copy: '무료 강림도 포함됩니다.' },
@@ -52,9 +52,9 @@ const FIRST_MISSIONS = [
 
 const META_STORAGE_KEY = 'dokkaebi-guardian-growth-v1';
 const META_TRAITS = {
-  pouch: { icon: '◉', name: '달빛 주머니', copy: '매 판 시작 엽전을 12개씩 늘립니다.', effect: (level) => `시작 엽전 +${level * 12}`, costs: [15, 25, 40, 60, 85] },
-  ward: { icon: '◆', name: '신목 결계', copy: '신목 최대 체력을 단계마다 6 늘립니다.', effect: (level) => `신목 체력 +${level * 6}`, costs: [15, 25, 40, 60, 85] },
-  bond: { icon: '鬼', name: '깨비 맹약', copy: '모든 도깨비의 공격력을 단계마다 4% 높입니다.', effect: (level) => `도깨비 피해 +${level * 4}%`, costs: [20, 30, 45, 65, 90] }
+  pouch: { icon: '◉', name: '달빛 주머니', copy: '매 판 시작 엽전을 10개씩 늘립니다.', effect: (level) => `시작 엽전 +${level * 10}`, costs: [12, 22, 34, 50, 70] },
+  ward: { icon: '◆', name: '신목 결계', copy: '신목 최대 체력을 단계마다 7 늘립니다.', effect: (level) => `신목 체력 +${level * 7}`, costs: [12, 22, 34, 50, 70] },
+  bond: { icon: '鬼', name: '깨비 맹약', copy: '모든 도깨비의 공격력을 단계마다 3.5% 높입니다.', effect: (level) => `도깨비 피해 +${(level * 3.5).toFixed(level % 2 ? 1 : 0)}%`, costs: [15, 25, 38, 56, 78] }
 };
 
 class DokkaebiLuckDefense {
@@ -104,6 +104,14 @@ class DokkaebiLuckDefense {
     this.lastShardReward = 0;
     this.lastDangerKey = '';
     this.dangerHapticCooldown = 0;
+    this.displayDanger = null;
+    this.pendingDangerKey = '';
+    this.pendingDangerTimer = 0;
+    this.dangerLostGrace = 0;
+    this.hazardSerial = 0;
+    this.enemySerial = 0;
+    this.commandCooldown = 0;
+    this.commandActiveKey = '';
 
     this.assertRequiredUI();
     this.initThree();
@@ -195,6 +203,13 @@ class DokkaebiLuckDefense {
     ui.skill.addEventListener('click', () => this.useHeroSkill());
     ui.synergyToggle.addEventListener('click', () => ui.synergyPanel.classList.toggle('collapsed'));
     ui.contractSkip.addEventListener('click', () => this.skipContract());
+    ui.unitStrip.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-command-key]');
+      if (!button) return;
+      event.preventDefault();
+      event.stopPropagation();
+      this.useUnitCommand(button.dataset.commandKey);
+    });
 
     this.setupJoystick();
     this.setupLookControls();
@@ -205,6 +220,7 @@ class DokkaebiLuckDefense {
       if (event.code === 'Space') this.useDash();
       if (event.code === 'KeyQ') this.useHeroSkill();
       if (event.code === 'KeyE') this.summonUnit();
+      if (event.code === 'KeyR') this.useBestUnitCommand();
       if (event.code === 'Enter' && this.state === 'playing' && !this.waveActive) this.startWave();
       if (event.code === 'Escape') this.state === 'paused' ? this.resumeGame() : this.pauseGame();
     });
@@ -307,6 +323,7 @@ class DokkaebiLuckDefense {
     ui.titleShards.textContent = shards.toLocaleString();
     ui.metaShards.textContent = shards.toLocaleString();
     ui.resultShardsTotal.textContent = shards.toLocaleString();
+    this.renderRunPreview();
     ui.metaTraitList.innerHTML = Object.entries(META_TRAITS).map(([id, trait]) => {
       const level = clamp(this.metaProgress.traits[id] || 0, 0, 5);
       const cost = level < 5 ? trait.costs[level] : 0;
@@ -322,6 +339,18 @@ class DokkaebiLuckDefense {
     ui.metaTraitList.querySelectorAll('[data-meta-upgrade]').forEach((button) => {
       button.addEventListener('click', () => this.upgradeMetaTrait(button.dataset.metaUpgrade));
     });
+  }
+
+  renderRunPreview() {
+    if (!ui.runPreview || !this.metaProgress) return;
+    const traits = this.metaProgress.traits || {};
+    const gold = 70 + (traits.pouch || 0) * 10;
+    const hp = 100 + (traits.ward || 0) * 7;
+    const damage = (traits.bond || 0) * 3.5;
+    ui.runPreview.innerHTML = `
+      <span><small>시작 엽전</small><b>${gold}</b></span>
+      <span><small>신목 체력</small><b>${hp}</b></span>
+      <span><small>깨비 피해</small><b>+${damage.toFixed(damage % 1 ? 1 : 0)}%</b></span>`;
   }
 
   openMetaModal() {
@@ -347,8 +376,8 @@ class DokkaebiLuckDefense {
 
   calculateShardReward(won) {
     const progress = Math.max(1, this.currentWave || 1);
-    const reward = 7 + progress * 3 + Math.floor(this.kills / 14) + this.maxRank * 3 + (won ? 24 : 0);
-    return clamp(Math.round(reward), 8, 90);
+    const reward = 8 + progress * 2.4 + Math.floor(this.kills / 18) + this.maxRank * 2 + (won ? 20 : 0);
+    return clamp(Math.round(reward), 8, 70);
   }
 
   awardRunShards(won) {
@@ -734,7 +763,7 @@ class DokkaebiLuckDefense {
       goldMultiplier: 1,
       pickupRadius: 1.65,
       moveSpeed: 1,
-      unitDamage: 1 + (metaTraits.bond || 0) * .04,
+      unitDamage: 1 + (metaTraits.bond || 0) * .035,
       unitCooldown: 1,
       heroDamage: 1,
       skillCooldown: 1,
@@ -760,9 +789,9 @@ class DokkaebiLuckDefense {
     this.spawnTotal = 0;
     this.spawnTimer = 0;
     const metaTraits = this.metaProgress.traits;
-    this.coreMaxHp = 100 + (metaTraits.ward || 0) * 6;
+    this.coreMaxHp = 100 + (metaTraits.ward || 0) * 7;
     this.coreHp = this.coreMaxHp;
-    this.gold = 70 + (metaTraits.pouch || 0) * 12;
+    this.gold = 70 + (metaTraits.pouch || 0) * 10;
     this.score = 0;
     this.kills = 0;
     this.summonCount = 0;
@@ -780,6 +809,12 @@ class DokkaebiLuckDefense {
     this.cinematic = null;
     this.runRewarded = false;
     this.lastShardReward = 0;
+    this.commandCooldown = 0;
+    this.commandActiveKey = '';
+    this.displayDanger = null;
+    this.pendingDangerKey = '';
+    this.pendingDangerTimer = 0;
+    this.dangerLostGrace = 0;
     ui.resultShards.textContent = '+0';
     clearTimeout(this.evolutionTimer);
     ui.evolution.classList.remove('show');
@@ -834,7 +869,12 @@ class DokkaebiLuckDefense {
   showGameUI(show) {
     [ui.hud, ui.synergyPanel, ui.luckMeter, ui.unitStrip, ui.joystick, ui.actionDock].forEach((element) => element.classList.toggle('hidden', !show));
     ui.firstMissionPanel.classList.toggle('hidden', !show || !this.firstMissionActive);
-    if (!show) { ui.dangerHint.classList.remove('visible', 'urgent'); ui.dangerHint.classList.add('hidden'); }
+    if (!show) {
+      ui.dangerHint.classList.remove('visible', 'urgent');
+      ui.dangerHint.classList.add('hidden');
+      this.displayDanger = null;
+      this.pendingDangerKey = '';
+    }
   }
 
   getSummonCost() {
@@ -953,6 +993,7 @@ class DokkaebiLuckDefense {
       id: crypto.randomUUID?.() || `${Date.now()}-${Math.random()}`,
       type, rank, pad, group: model, cooldown: rand(0, .5), createdAt: this.elapsed,
       showcase, shotCount: 0, streakTarget: null, streak: 0,
+      commandTimer: 0, baseScale: model.scale.x,
       ultimateCooldown: rank === 5 ? rand(1.8, 3.1) : Infinity
     };
     this.units.push(unit);
@@ -1030,8 +1071,13 @@ class DokkaebiLuckDefense {
     const chosen = matching.slice(0, 3);
     const targetPad = chosen[0].pad;
     const center = targetPad.position.clone();
+    const inheritedCommand = Math.max(...chosen.map((unit) => unit.commandTimer || 0));
     chosen.forEach((unit) => this.removeUnit(unit, false));
     const merged = this.createUnit(type, rank + 1, targetPad, false);
+    if (inheritedCommand > 0) {
+      merged.commandTimer = inheritedCommand;
+      this.commandActiveKey = `${type}-${rank + 1}`;
+    }
     this.maxRank = Math.max(this.maxRank, rank + 1);
     this.score += (rank + 1) * 170;
     this.sound.merge(rank + 1);
@@ -1132,6 +1178,7 @@ class DokkaebiLuckDefense {
     const contractSpeed = this.activeContract?.id === 'bloodMoon' ? 1.12 : 1;
     const hp = config.hp * waveScale * contractHp;
     return {
+      id: ++this.enemySerial,
       type, group, hp, maxHp: hp, speed: config.speed * (1 + Math.min(.22, this.currentWave * .012)) * contractSpeed,
       damage: config.damage * (1 + (this.currentWave - 1) * .1), reward: config.reward,
       slowTimer: 0, slowFactor: 1, attackTimer: 0, phase: rand(0, Math.PI*2), dead: false,
@@ -1417,17 +1464,27 @@ class DokkaebiLuckDefense {
   }
 
   updateUnits(dt) {
+    if (this.state === 'playing') this.commandCooldown = Math.max(0, (this.commandCooldown || 0) - dt);
     const cooldownMult = (this.mods?.unitCooldown ?? 1) * this.getWindCooldownMultiplier();
+    let activeCommandFound = false;
     this.units.forEach((unit) => {
       const config = UNIT_TYPES[unit.type];
       unit.cooldown -= dt;
+      unit.commandTimer = Math.max(0, (unit.commandTimer || 0) - dt);
+      const commandActive = unit.commandTimer > 0 && !unit.showcase;
+      if (commandActive) activeCommandFound = true;
       const phase = unit.group.userData.phase;
       unit.group.position.y = .3 + Math.sin(this.elapsed*3.5+phase)*.06;
       unit.group.rotation.z = Math.sin(this.elapsed*2.1+phase)*.02;
-      if (unit.group.userData.aura) unit.group.userData.aura.rotation.z += dt*(.7+unit.rank*.16);
+      const pulseScale = commandActive ? 1.045 + Math.sin(this.elapsed * 11 + phase) * .025 : 1;
+      unit.group.scale.setScalar((unit.baseScale || 1) * pulseScale);
+      if (unit.group.userData.aura) {
+        unit.group.userData.aura.rotation.z += dt*(.7+unit.rank*.16)*(commandActive ? 2.2 : 1);
+        unit.group.userData.aura.material.opacity = commandActive ? .92 : .5;
+      }
       if (unit.showcase || this.state !== 'playing') return;
       if (unit.rank === 5) {
-        unit.ultimateCooldown -= dt;
+        unit.ultimateCooldown -= dt * (commandActive ? 1.7 : 1);
         if (unit.ultimateCooldown <= 0 && this.triggerUnitUltimate(unit)) {
           unit.ultimateCooldown = config.ultimateCooldown;
           return;
@@ -1440,26 +1497,28 @@ class DokkaebiLuckDefense {
         if (!target) return;
         const stats = this.getUnitStats(unit);
         const cursed = this.hazards.some((hazard) => hazard.type === 'curse' && hazard.phase === 'active' && hazard.life > 0 && hazard.position.distanceTo(unit.group.position) <= hazard.radius);
-        unit.cooldown = stats.cooldown * cooldownMult * (cursed ? 1.85 : 1);
+        unit.cooldown = stats.cooldown * cooldownMult * (commandActive ? .62 : 1) * (cursed ? 1.85 : 1);
         const direction = target.group.position.clone().sub(unit.group.position);
         const targetRot = Math.atan2(direction.x,direction.z);
         unit.group.rotation.y = this.lerpAngle(unit.group.rotation.y,targetRot,.65);
         const origin = unit.group.position.clone().add(new THREE.Vector3(0,1.55,0));
         this.fireProjectile({
           kind:'unit', type:unit.type, origin, target, damage:stats.damage, speed:config.projectileSpeed,
-          color:config.color, radius:.11+unit.rank*.025, splash:config.splash ? config.splash*(1+unit.rank*.04):0,
+          color:config.color, radius:(.11+unit.rank*.025)*(commandActive ? 1.22 : 1), splash:config.splash ? config.splash*(1+unit.rank*.04):0,
           slow:config.slow ? config.slow+unit.rank*.12:0, chain:config.chain ? config.chain+Math.floor(unit.rank/3):0,
           pierce:config.pierce ? config.pierce+Math.floor(unit.rank/3):0, execute:config.execute || 0, owner:unit
         });
         this.sound.shoot(unit.type);
       }
     });
+    if (!activeCommandFound) this.commandActiveKey = '';
   }
 
   getUnitStats(unit) {
     const config = UNIT_TYPES[unit.type];
     const rank = RANKS[unit.rank-1];
-    return { damage:config.damage*rank.mult*this.mods.unitDamage*this.getFireDamageMultiplier(), cooldown:config.cooldown };
+    const commandDamage = unit.commandTimer > 0 ? 1.55 : 1;
+    return { damage:config.damage*rank.mult*this.mods.unitDamage*this.getFireDamageMultiplier()*commandDamage, cooldown:config.cooldown };
   }
 
   triggerUnitUltimate(unit) {
@@ -1829,7 +1888,7 @@ class DokkaebiLuckDefense {
     ring.rotation.x=-Math.PI/2;
     group.add(fill,ring);
     this.effectRoot.add(group);
-    this.hazards.push({type,position:position.clone(),radius,color,warning,life:duration,phase:'warning',group,fill,ring,onTrigger});
+    this.hazards.push({id:++this.hazardSerial,type,position:position.clone(),radius,color,warning,life:duration,phase:'warning',group,fill,ring,onTrigger});
   }
 
   updateHazards(dt) {
@@ -1884,7 +1943,7 @@ class DokkaebiLuckDefense {
     };
     const severity = { curse: 2.8, nightMarch: 4.1, bossPounce: 4.7, bossShock: 5 };
 
-    this.hazards.forEach((hazard, index) => {
+    this.hazards.forEach((hazard) => {
       const distance = playerPosition.distanceTo(hazard.position);
       const margin = hazard.type === 'curse' ? 1.4 : .8;
       const inside = distance <= hazard.radius + margin;
@@ -1897,13 +1956,13 @@ class DokkaebiLuckDefense {
       const warning = hazard.phase === 'warning' ? Math.max(0, hazard.warning) : 0;
       const score = (severity[hazard.type] || 3) * 100 - warning * 28 - distance;
       candidates.push({
-        key: `hazard-${hazard.type}-${index}`, direction: direction.normalize(), color: hazard.color, score,
+        key: `hazard-${hazard.id}`, direction: direction.normalize(), color: hazard.color, score,
         label: dangerNames[hazard.type]?.[hazard.phase === 'warning' ? 0 : 1] || '위험 범위 밖으로 이동',
         time: hazard.phase === 'warning' ? warning : 0, active: hazard.phase !== 'warning'
       });
     });
 
-    this.enemies.forEach((enemy, index) => {
+    this.enemies.forEach((enemy) => {
       if (enemy.dead || enemy.type !== 'runner' || enemy.abilityState !== 'windup') return;
       const start = enemy.group.position;
       const end = enemy.group.position.clone().addScaledVector(enemy.chargeDirection, Math.max(3, enemy.group.position.length() - 1.4));
@@ -1912,7 +1971,7 @@ class DokkaebiLuckDefense {
       const perpendicular = new THREE.Vector3(-enemy.chargeDirection.z, 0, enemy.chargeDirection.x);
       if (playerPosition.clone().sub(start).dot(perpendicular) < 0) perpendicular.multiplyScalar(-1);
       candidates.push({
-        key: `runner-${index}`, direction: perpendicular.normalize(), color: 0xff554b,
+        key: `runner-${enemy.id}`, direction: perpendicular.normalize(), color: 0xff554b,
         score: 430 - enemy.abilityTime * 24 - distance, label: '돌진선 옆으로 회피', time: Math.max(0, enemy.abilityTime), active: false
       });
     });
@@ -1922,8 +1981,43 @@ class DokkaebiLuckDefense {
 
   updateDangerHint(dt) {
     this.dangerHapticCooldown = Math.max(0, this.dangerHapticCooldown - dt);
-    const danger = this.getDangerCandidate();
-    if (!danger || this.cinematic) {
+    const candidate = this.cinematic ? null : this.getDangerCandidate();
+
+    if (candidate) {
+      this.dangerLostGrace = .2;
+      if (!this.displayDanger || candidate.key === this.displayDanger.key) {
+        this.displayDanger = candidate;
+        this.pendingDangerKey = '';
+        this.pendingDangerTimer = 0;
+      } else {
+        const urgentSwitch = candidate.active || candidate.time <= .34 || candidate.score > (this.displayDanger.score || 0) + 72;
+        if (urgentSwitch) {
+          this.displayDanger = candidate;
+          this.pendingDangerKey = '';
+          this.pendingDangerTimer = 0;
+        } else {
+          if (this.pendingDangerKey !== candidate.key) {
+            this.pendingDangerKey = candidate.key;
+            this.pendingDangerTimer = .14;
+          } else {
+            this.pendingDangerTimer -= dt;
+            if (this.pendingDangerTimer <= 0) {
+              this.displayDanger = candidate;
+              this.pendingDangerKey = '';
+            }
+          }
+        }
+      }
+    } else if (this.displayDanger && this.dangerLostGrace > 0) {
+      this.dangerLostGrace -= dt;
+      if (!this.displayDanger.active) this.displayDanger.time = Math.max(0, this.displayDanger.time - dt);
+    } else {
+      this.displayDanger = null;
+      this.pendingDangerKey = '';
+    }
+
+    const danger = this.displayDanger;
+    if (!danger) {
       ui.dangerHint.classList.remove('visible', 'urgent');
       ui.dangerHint.classList.add('hidden');
       this.lastDangerKey = '';
@@ -2397,6 +2491,56 @@ class DokkaebiLuckDefense {
   getSpiritGoldMultiplier(){return [1,1.18,1.38][this.getSynergyTier('혼령')];}
   getThunderHeroMultiplier(){return [1,1.25,1.6][this.getSynergyTier('천둥')];}
 
+  useBestUnitCommand() {
+    if (this.state !== 'playing') return;
+    const candidates = this.units.filter((unit) => !unit.showcase);
+    if (!candidates.length) return;
+    const best = candidates.sort((a, b) => b.rank - a.rank || UNIT_TYPES[b.type].damage - UNIT_TYPES[a.type].damage)[0];
+    this.useUnitCommand(`${best.type}-${best.rank}`);
+  }
+
+  useUnitCommand(key) {
+    if (this.state !== 'playing') return;
+    if (this.commandCooldown > 0) {
+      this.showToast(`집중 명령 재충전 ${Math.ceil(this.commandCooldown)}초`);
+      this.haptic(10);
+      return;
+    }
+    const [type, rankString] = String(key).split('-');
+    const rank = Number(rankString);
+    const targets = this.units.filter((unit) => !unit.showcase && unit.type === type && unit.rank === rank);
+    if (!targets.length || !UNIT_TYPES[type]) return;
+    this.commandCooldown = 18;
+    this.commandActiveKey = key;
+    targets.forEach((unit) => {
+      unit.commandTimer = 7;
+      unit.cooldown = Math.min(unit.cooldown, .08);
+      if (unit.rank === 5) unit.ultimateCooldown = Math.max(.35, unit.ultimateCooldown - 4);
+      this.spawnRing(unit.group.position, UNIT_TYPES[type].color, 1.6 + unit.rank * .18);
+      this.spawnParticles(unit.group.position.clone().add(new THREE.Vector3(0, 1.15, 0)), UNIT_TYPES[type].color, 12, 3.2);
+    });
+    this.score += 35 * targets.length;
+    this.sound.skill();
+    this.haptic([20, 18, 42]);
+    this.showCombo(`${UNIT_TYPES[type].symbol} 집중 명령 · ${UNIT_TYPES[type].name} ${rank}★`, 1200);
+    this.showToast(`${targets.length}기의 공격력·공격속도가 7초간 강화됩니다.`);
+    this.updateCommandChipStates();
+  }
+
+  updateCommandChipStates() {
+    const cooldown = Math.max(0, this.commandCooldown || 0);
+    ui.unitStrip.querySelectorAll('[data-command-key]').forEach((button) => {
+      const key = button.dataset.commandKey;
+      const activeUnits = this.units.filter((unit) => !unit.showcase && `${unit.type}-${unit.rank}` === key && unit.commandTimer > 0);
+      const status = button.querySelector('[data-command-status]');
+      const activeTime = activeUnits.length ? Math.max(...activeUnits.map((unit) => unit.commandTimer)) : 0;
+      button.classList.toggle('command-active', activeTime > 0);
+      button.classList.toggle('command-cooling', cooldown > 0 && activeTime <= 0);
+      button.classList.toggle('command-ready', cooldown <= 0 && activeTime <= 0);
+      if (status) status.textContent = activeTime > 0 ? `집중 ${activeTime.toFixed(1)}초` : cooldown > 0 ? `재충전 ${Math.ceil(cooldown)}초` : '눌러 집중 명령';
+    });
+  }
+
   updateUnitStrip() {
     const groups={};
     this.units.filter((unit)=>!unit.showcase).forEach((unit)=>{const key=`${unit.type}-${unit.rank}`;groups[key]=(groups[key]||0)+1;});
@@ -2404,8 +2548,9 @@ class DokkaebiLuckDefense {
     ui.unitStrip.innerHTML=entries.map(([key,count])=>{
       const [type,rankString]=key.split('-');const rank=Number(rankString);const config=UNIT_TYPES[type];const color=`#${config.color.toString(16).padStart(6,'0')}`;
       const mergeStatus=rank===5?`궁극 · ${config.ultimateName}`:`합성 ${Math.min(count,2)}/3`;
-      return `<div class="unit-chip ${rank===5?'mythic':''}" style="--chip:${color}33"><span class="unit-face">${config.symbol}</span><div><b>${config.name}</b><small class="stars">${'★'.repeat(rank)}</small><small class="merge-status">${mergeStatus}</small></div><b>×${count}</b></div>`;
+      return `<button type="button" class="unit-chip ${rank===5?'mythic':''}" data-command-key="${key}" style="--chip:${color}33;--unit-color:${color}"><span class="unit-face">${config.symbol}</span><div><b>${config.name}</b><small class="stars">${'★'.repeat(rank)}</small><small class="merge-status">${mergeStatus}</small><small class="command-status" data-command-status>눌러 집중 명령</small></div><b>×${count}</b></button>`;
     }).join('');
+    this.updateCommandChipStates();
   }
 
   updateKillChain(dt) {
@@ -2456,6 +2601,7 @@ class DokkaebiLuckDefense {
     ui.skill.classList.toggle('cooling',this.player?.skillCooldown>0);
     ui.wave.disabled=this.waveActive||this.currentWave>=this.maxWaves;
     ui.waveText.textContent=this.waveActive?'전투중':this.currentWave===0?'시작':`${this.currentWave+1}`;
+    this.updateCommandChipStates();
     this.updateBossHUD();
   }
 
