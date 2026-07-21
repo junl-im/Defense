@@ -22,7 +22,7 @@ const missingIds = [...new Set(queriedIds.filter((id) => !htmlIds.has(id)))];
 if (missingIds.length) fail(`index.html에 없는 DOM ID: ${missingIds.join(', ')}`);
 else pass(`${queriedIds.length}개 DOM ID 연결`);
 
-if (pkg.version === '1.7.8') pass('package version 1.7.8');
+if (pkg.version === '1.7.9') pass('package version 1.7.9');
 else fail(`package version 불일치: ${pkg.version}`);
 
 for (const path of ['.env.production', '.firebaserc', '.github/workflows/deploy.yml', 'README.md', 'PROJECT_HANDOFF.md']) {
@@ -38,7 +38,7 @@ else fail(`루트 Markdown 정리 필요: ${rootMarkdown.join(', ')}`);
 if (manifest.start_url === './') pass('PWA 상대 경로 start_url');
 else fail(`PWA start_url 확인 필요: ${manifest.start_url}`);
 
-if (main.includes("const GAME_VERSION = '1.7.8'")) pass('런타임 version 1.7.8');
+if (main.includes("const GAME_VERSION = '1.7.9'")) pass('런타임 version 1.7.9');
 else fail('런타임 version 불일치');
 
 for (const feature of ['offerContract', 'resolveActiveContract', 'checkBossPhase', 'kingNightMarch', 'bossPounce']) {
@@ -134,7 +134,7 @@ for (const path of [
   else fail(`엔진 모듈 누락: ${path}`);
 }
 const engineConfig = read('src/engine/engine-config.js');
-if (engineConfig.includes("ENGINE_VERSION = '1.0.7'") && engineConfig.includes('unitTriangles: 300') && engineConfig.includes('enemyTriangles: 500')) pass('엔진 버전과 폴리곤 예산');
+if (engineConfig.includes("ENGINE_VERSION = '1.0.8'") && engineConfig.includes('unitTriangles: 300') && engineConfig.includes('enemyTriangles: 500')) pass('엔진 버전과 폴리곤 예산');
 else fail('엔진 버전 또는 폴리곤 예산 누락');
 if (main.includes('new MobileGameEngine()') && main.includes('new BlobShadowSystem') && main.includes('createRockField(28)') && main.includes('createLanternField(16)')) pass('모바일 엔진 실제 연결');
 else fail('모바일 엔진 연결 누락');
@@ -201,7 +201,7 @@ if (failures.length) {
   console.error(`\nv1.7.7 추가 검증 실패 ${failures.length}건`);
   process.exit(1);
 }
-console.log('v1.7.8 카메라·에셋 추가 검증 완료');
+console.log('v1.7.9 카메라·에셋 추가 검증 완료');
 
 
 const assetCatalog = read('src/engine/asset-catalog.js');
@@ -220,7 +220,7 @@ else fail('비동기 부팅 오류 복구 누락');
 if (engineConfig.includes('textureBudgetLowMB: 64') && engineConfig.includes('textureBudgetMobileMB: 96') && engineConfig.includes('textureBudgetDesktopMB: 192')) pass('기기별 텍스처 메모리 예산');
 else fail('텍스처 메모리 예산 누락');
 if (failures.length) {
-  console.error(`\nv1.7.8 에셋 파이프라인 검증 실패 ${failures.length}건`);
+  console.error(`\nv1.7.9 에셋 파이프라인 검증 실패 ${failures.length}건`);
   process.exit(1);
 }
-console.log('v1.7.8 에셋 파이프라인 검증 완료');
+console.log('v1.7.9 에셋 파이프라인 검증 완료');

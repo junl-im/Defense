@@ -3,7 +3,7 @@ import './style.css';
 import { isFirebaseEnabled, loadOnlineScores, submitOnlineScore } from './firebase.js';
 import SoundEngine from './sound-engine.js';
 import { RANKS, UNIT_TYPES, UNIT_KEYS, ENEMY_TYPES, SYNERGIES, BLESSINGS, CONTRACTS } from './game-data.js';
-import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, ObjectPool, RenderStatsHUD, AssetPipeline, CORE_ASSET_CATALOG } from './engine/index.js';
+import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, ObjectPool, RenderStatsHUD, AssetPipeline, CORE_ASSET_CATALOG, AnimationStateSystem } from './engine/index.js';
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -46,7 +46,7 @@ const ui = {
   playerName: $('#player-name'), saveScore: $('#save-score-btn'), resultRetry: $('#result-retry-btn'), leaderboard: $('#leaderboard')
 };
 
-const GAME_VERSION = '1.7.8';
+const GAME_VERSION = '1.7.9';
 
 const FIRST_MISSIONS = [
   { id: 'summons', title: '수호대 3회 강림', goal: 3, reward: 35, copy: '무료 강림도 포함됩니다.' },
@@ -140,6 +140,7 @@ class DokkaebiLuckDefense {
     this.enemyPools = {};
     this.enemyPoolRoot = null;
     this.lodFrame = 0;
+    this.animations = new AnimationStateSystem({ lowPower: this.lowPower, mobile: this.engine.device.mobile });
 
     this.assertRequiredUI();
     this.initThree();
@@ -1734,7 +1735,8 @@ class DokkaebiLuckDefense {
       type, rank, pad, group: model, cooldown: rand(0, .5), createdAt: this.elapsed,
       showcase, shotCount: 0, streakTarget: null, streak: 0,
       commandTimer: 0, baseScale: model.scale.x,
-      ultimateCooldown: rank === 5 ? rand(1.8, 3.1) : Infinity
+      ultimateCooldown: rank === 5 ? rand(1.8, 3.1) : Infinity,
+      animation: this.animations.createController(model, model.userData.animations || [], { procedural: true })
     };
     this.units.push(unit);
     this.engine.geometryBudget.inspect(`unit:${type}:rank${rank}`, model, 'unitTriangles');
@@ -1840,6 +1842,7 @@ class DokkaebiLuckDefense {
     const index = this.units.indexOf(unit);
     if (index >= 0) this.units.splice(index, 1);
     this.setUnitPadVisual(unit.pad, false);
+    this.animations.remove(unit.animation);
     this.dynamicRoot.remove(unit.group);
     unit.group.traverse((object) => {
       object.geometry?.dispose();
@@ -1927,7 +1930,8 @@ class DokkaebiLuckDefense {
       slowTimer: 0, slowFactor: 1, attackTimer: 0, phase: rand(0, Math.PI*2), dead: false,
       boss: !!config.boss, bossPhase: 1, specialIndex: 0, specialTimer: config.boss ? 4.5 : 0, flash: 0, shieldFlash: 0,
       abilityTimer: type === 'runner' ? rand(2.2, 3.6) : type === 'shaman' ? rand(2.8, 4.2) : 0,
-      abilityState: 'move', abilityTime: 0, telegraphMesh: null, chargeDirection: new THREE.Vector3(), chargeHitPlayer: false
+      abilityState: 'move', abilityTime: 0, telegraphMesh: null, chargeDirection: new THREE.Vector3(), chargeHitPlayer: false,
+      animation: this.animations.createController(group, group.userData.animations || [], { procedural: true })
     };
   }
 
@@ -2199,6 +2203,7 @@ class DokkaebiLuckDefense {
         this.player.attackCooldown = .54;
         const origin = this.player.group.position.clone().add(new THREE.Vector3(.55, 1.35, 0));
         const damage = (13 + this.currentWave * 1.2) * this.mods.heroDamage * this.getThunderHeroMultiplier();
+        this.animations.trigger(unit.animation, 'attack', .24);
         this.fireProjectile({ kind: 'hero', type: 'hero', origin, target, damage, speed: 20, color: 0x69edff, radius: .16 });
         this.sound.shoot('hero');
       }
@@ -2254,7 +2259,7 @@ class DokkaebiLuckDefense {
         unit.group.userData.aura.rotation.z += dt*(.7+unit.rank*.16)*(commandActive ? 2.2 : 1);
         unit.group.userData.aura.material.opacity = commandActive ? .92 : .5;
       }
-      if (unit.showcase || this.state !== 'playing') return;
+      if (unit.showcase || this.state !== 'playing') { this.animations.setState(unit.animation, 'idle'); return; }
       if (unit.rank === 5) {
         unit.ultimateCooldown -= dt * (commandActive ? 1.7 : 1);
         if (unit.ultimateCooldown <= 0 && this.triggerUnitUltimate(unit)) {
@@ -2274,6 +2279,7 @@ class DokkaebiLuckDefense {
         const targetRot = Math.atan2(direction.x,direction.z);
         unit.group.rotation.y = this.lerpAngle(unit.group.rotation.y,targetRot,.65);
         const origin = unit.group.position.clone().add(new THREE.Vector3(0,1.55,0));
+        this.animations.trigger(unit.animation, 'attack', .24);
         this.fireProjectile({
           kind:'unit', type:unit.type, origin, target, damage:stats.damage, speed:config.projectileSpeed,
           color:config.color, radius:(.11+unit.rank*.025)*(commandActive ? 1.22 : 1), splash:config.splash ? config.splash*(1+unit.rank*.04) + (commandActive ? unit.commandSplashBonus || 0 : 0):0,
@@ -2531,6 +2537,7 @@ class DokkaebiLuckDefense {
 
       if (!abilityLocked) {
         if (distance>2.2) {
+          this.animations.setState(enemy.animation, 'move');
           const direction=tempV.set(-position.x,0,-position.z).normalize();
           let speed=enemy.speed*enemy.slowFactor;
           if (enemy.boss && enemy.specialTimer<.7) speed*=1.7;
@@ -2538,8 +2545,9 @@ class DokkaebiLuckDefense {
           enemy.group.rotation.y=this.lerpAngle(enemy.group.rotation.y,Math.atan2(direction.x,direction.z),1-Math.pow(.002,dt));
           enemy.group.position.y=Math.sin(this.elapsed*(enemy.boss?4:7)+enemy.phase)*(.04*enemy.group.userData.scale);
         } else {
+          this.animations.setState(enemy.animation, 'idle');
           enemy.attackTimer-=dt;
-          if (enemy.attackTimer<=0) { enemy.attackTimer=enemy.boss?1.45:1;this.damageCore(enemy.damage); }
+          if (enemy.attackTimer<=0) { enemy.attackTimer=enemy.boss?1.45:1;this.animations.trigger(enemy.animation, 'attack', .32);this.damageCore(enemy.damage); }
         }
       }
 
@@ -3032,6 +3040,7 @@ class DokkaebiLuckDefense {
     enemy.hp-=amount;
     if (enemy.boss && enemy.hp > 0) this.checkBossPhase(enemy);
     enemy.flash=.09;
+    this.animations.trigger(enemy.animation, 'hit', .16);
     enemy.group.userData.body.material.emissive.set(0xffffff);
     enemy.group.userData.body.material.emissiveIntensity=1.6;
     this.showCombatText(enemy.group.position.clone().add(new THREE.Vector3(0, enemy.boss ? 3.1 : 1.8, 0)), amount, { crit, label: shielded ? '방패!' : undefined });
@@ -3045,6 +3054,8 @@ class DokkaebiLuckDefense {
     enemy.dead=true;
     const index=this.enemies.indexOf(enemy);
     if (index>=0) this.enemies.splice(index,1);
+    this.animations.trigger(enemy.animation, 'death', .28);
+    this.animations.remove(enemy.animation);
     this.releaseEnemyModel(enemy);
     const color=ENEMY_TYPES[enemy.type].color;
     this.spawnParticles(enemy.group.position.clone().add(new THREE.Vector3(0,.8,0)),color,enemy.boss?35:12,enemy.boss?6:3.4);
@@ -3073,7 +3084,6 @@ class DokkaebiLuckDefense {
       ui.bossHealth.classList.add('hidden');
       if (enemy.type === 'tiger') this.recordFirstMission('bosses', 1);
     }
-    enemy.group.traverse((object)=>{object.geometry?.dispose();if(object.material){const mats=Array.isArray(object.material)?object.material:[object.material];mats.forEach((m)=>m.dispose());}});
   }
 
   damageCore(amount) {
@@ -3613,9 +3623,9 @@ class DokkaebiLuckDefense {
     this.elapsed+=dt;
     this.updateWorldEffects(dt);
     if(this.state==='playing') {
-      this.updatePlayer(gameDt);this.updateWave(gameDt);this.updateEnemies(gameDt);this.updateHazards(gameDt);this.updateDangerHint(gameDt);this.updateUnits(gameDt);this.updateProjectiles(gameDt);this.updateCoins(gameDt);this.updateParticles(gameDt);this.updateMoveTargetMarker(gameDt);this.updateKillChain(gameDt);this.updateAdaptiveQuality(dt);this.updateHUD();
+      this.updatePlayer(gameDt);this.updateWave(gameDt);this.updateEnemies(gameDt);this.updateHazards(gameDt);this.updateDangerHint(gameDt);this.updateUnits(gameDt);this.updateProjectiles(gameDt);this.updateCoins(gameDt);this.updateParticles(gameDt);this.updateMoveTargetMarker(gameDt);this.updateKillChain(gameDt);this.updateAdaptiveQuality(dt);this.animations.update(gameDt,this.camera);this.updateHUD();
     } else if(this.state==='title') {
-      this.updateUnits(dt);this.updateParticles(dt);
+      this.updateUnits(dt);this.animations.update(dt,this.camera);this.updateParticles(dt);
       if(this.player){this.player.group.rotation.y+=dt*.18;this.player.group.position.y=Math.sin(this.elapsed*2.3)*.05;}
     } else {
       this.updateParticles(dt);
@@ -3630,6 +3640,7 @@ class DokkaebiLuckDefense {
       qualityScale: this.engine.qualityScale,
       chunks: this.engine.worldChunks.diagnostics,
       assets: this.assetPipeline?.diagnostics,
+      animations: this.animations?.diagnostics,
       pools: {
         projectiles: this.projectiles.length,
         projectileCapacity: this.projectilePoolCapacity,

@@ -2,8 +2,8 @@
 
 모바일 웹용 Three.js 3D 액션 운빨 디펜스입니다.
 
-- 게임 버전: **1.7.8**
-- 엔진 버전: **1.0.7**
+- 게임 버전: **1.7.9**
+- 엔진 버전: **1.0.8**
 - 배포 주소: `https://junl-im.github.io/Defense/`
 - Firebase 프로젝트: `web-game2`
 
@@ -33,7 +33,7 @@ VITE_BASE_PATH=/Defense/ npm run build
 - R: 집중 명령
 - F3: 엔진 통계 HUD
 
-## v1.7.8 / 엔진 1.0.7
+## v1.7.9 / 엔진 1.0.8
 
 - GLB/GLTF 모델 로더와 Draco 압축 지원
 - KTX2 GPU 압축 텍스처 지원

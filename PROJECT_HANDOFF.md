@@ -3,8 +3,8 @@
 이 문서는 대화가 끊기거나 다른 작업자가 이어받아도 프로젝트를 계속 개발할 수 있도록 모든 핵심 기록을 누적하는 단일 인수인계 파일입니다.
 
 - 마지막 갱신: 2026-07-21
-- 현재 버전: `1.7.8`
-- 프로젝트 폴더: `DokkaebiLuckDefense3D_FULL_v1.7.8`
+- 현재 버전: `1.7.9`
+- 프로젝트 폴더: `DokkaebiLuckDefense3D_FULL_v1.7.9`
 - 현재 패치명: 고품질 에셋 프리로드·압축 로더·텍스처 메모리 예산
 
 ---
@@ -975,3 +975,14 @@ VITE_BASE_PATH=/Defense/ npm run build
 7. 네트워크 탭에서 GLB/KTX2가 없을 때 Draco/Basis 디코더가 요청되지 않는지 확인
 8. 다음 버전은 게임 `1.7.9`, 엔진 `1.0.8`
 9. 사용자에게는 전체 ZIP과 패치 ZIP 두 개만 전달
+
+
+## v1.7.9 / Engine 1.0.8 — 캐릭터 애니메이션 상태 시스템
+
+- `src/engine/animation-state-system.js` 추가
+- GLB 클립 이름을 idle/move/attack/hit/death 상태에 자동 매칭
+- 실제 `THREE.AnimationMixer`와 절차형 fallback을 동일 컨트롤러에서 처리
+- 도깨비 공격, 적 이동·공격·피격·사망 상태 연결
+- 모바일/저사양은 카메라 거리 밖 애니메이션 업데이트 중지 및 2프레임 간격 처리
+- 적 모델 풀 반환 후 geometry/material을 dispose하던 수명 오류 수정
+- 다음 예상: v1.7.10 / Engine 1.0.9 — 실제 GLB 에셋 슬롯 매니페스트와 애니메이션 이벤트(타격 프레임/발사 프레임)
