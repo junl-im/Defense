@@ -16,7 +16,7 @@ const requiredCss = [
 ];
 for (const token of requiredCss) if (!css.includes(token)) failures.push(`missing CSS guard: ${token}`);
 
-for (const id of ['joystick-zone','action-dock','dash-btn','skill-btn','burst-btn','summon-btn','wave-btn','hud','unit-strip','wave-trial','relic-panel','controls-modal','rotate-sensitivity','pinch-sensitivity']) {
+for (const id of ['joystick-zone','action-dock','dash-btn','skill-btn','burst-btn','summon-btn','wave-btn','hud','unit-strip','wave-trial','relic-panel','controls-modal','rotate-sensitivity','pinch-sensitivity','seed-mode-options','run-seed-chip','shake-intensity','flash-intensity']) {
   if (!html.includes(`id="${id}"`)) failures.push(`missing mobile UI node: ${id}`);
 }
 
@@ -42,6 +42,10 @@ if (landscape.dockLeft - landscape.joyRight < 8) failures.push('568px landscape 
 else console.log(`PASS 568px landscape joystick/action gap ${landscape.dockLeft - landscape.joyRight}px`);
 
 if (!css.includes('body.controls-left-handed .joystick-zone') || !css.includes('body.controls-left-handed .action-dock')) failures.push('left-handed mobile layout missing');
+
+if (!css.includes('.run-seed-chip') || !css.includes('.seed-mode-selector') || !css.includes('.accessibility-settings')) failures.push('v2.0 seed/accessibility responsive UI missing');
+if (!css.includes('.moon-omen { left: calc(154px + var(--safe-left))')) failures.push('narrow portrait seed/omen collision guard missing');
+
 
 const touchTargets = { dash: 40, ultimate: 44, spirit: 40, summonWidth: 64, waveHeight: 34, menu: 40 };
 for (const [name,size] of Object.entries(touchTargets)) {

@@ -46,8 +46,9 @@ const ENEMY_TYPES = {
   runner: { name: '두억 질주꾼', hp: 30, speed: 4.25, damage: 4, reward: 7, color: 0xff8c5a, scale: .66 },
   brute: { name: '돌갑옷 귀수', hp: 118, speed: 1.65, damage: 11, reward: 13, color: 0x78628f, scale: 1.23 },
   shaman: { name: '저주 무당', hp: 72, speed: 2.15, damage: 7, reward: 11, color: 0x4f9eb2, scale: .95 },
-  tiger: { name: '저승 호랑이', hp: 950, speed: 1.55, damage: 22, reward: 95, color: 0xff5578, scale: 2.05, boss: true },
-  king: { name: '백귀 야행왕', hp: 2250, speed: 1.35, damage: 34, reward: 220, color: 0x7b3eff, scale: 2.55, boss: true }
+  tiger: { name: '저승 호랑이', hp: 920, speed: 1.58, damage: 21, reward: 90, color: 0xff5578, scale: 2.02, boss: true },
+  serpent: { name: '청월 이무기', hp: 1540, speed: 1.42, damage: 28, reward: 150, color: 0x45d8b4, scale: 2.3, boss: true },
+  king: { name: '백귀 야행왕', hp: 2380, speed: 1.35, damage: 35, reward: 230, color: 0x7b3eff, scale: 2.58, boss: true }
 };
 
 const SYNERGIES = [

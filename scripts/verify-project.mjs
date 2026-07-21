@@ -12,6 +12,9 @@ const main = read('src/main.js');
 const data = read('src/game-data.js');
 const runDirector = read('src/run-director.js');
 const expeditionDirector = read('src/expedition-director.js');
+const dailyExpedition = read('src/daily-expedition.js');
+const bossDirector = read('src/boss-director.js');
+const battlefieldThemes = read('src/battlefield-themes.js');
 const style = read('src/style.css');
 const engineConfig = read('src/engine/engine-config.js');
 const sw = read('public/sw.js');
@@ -25,7 +28,7 @@ const missingIds = [...new Set(queriedIds.filter((id) => !htmlIds.has(id)))];
 if (missingIds.length) fail(`index.html에 없는 DOM ID: ${missingIds.join(', ')}`);
 else pass(`${queriedIds.length}개 DOM ID 연결`);
 
-if (pkg.version === '1.9.0') pass('package version 1.9.0');
+if (pkg.version === '2.0.0') pass('package version 2.0.0');
 else fail(`package version 불일치: ${pkg.version}`);
 
 for (const path of ['.env.production', '.firebaserc', '.github/workflows/deploy.yml', 'README.md', 'PROJECT_HANDOFF.md']) {
@@ -41,7 +44,7 @@ else fail(`루트 Markdown 정리 필요: ${rootMarkdown.join(', ')}`);
 if (manifest.start_url === './') pass('PWA 상대 경로 start_url');
 else fail(`PWA start_url 확인 필요: ${manifest.start_url}`);
 
-if (main.includes("const GAME_VERSION = '1.9.0'")) pass('런타임 version 1.9.0');
+if (main.includes("const GAME_VERSION = '2.0.0'")) pass('런타임 version 2.0.0');
 else fail('런타임 version 불일치');
 
 for (const feature of ['offerContract', 'resolveActiveContract', 'checkBossPhase', 'kingNightMarch', 'bossPounce']) {
@@ -100,6 +103,8 @@ if (htmlIds.has('moon-omen') && style.includes('.moon-omen') && style.includes('
 else fail('v1.8 전투 상태 HUD 누락');
 if (read('src/engine/mobile-engine.js').includes("label: 'compatibility'") && read('src/engine/mobile-engine.js').includes("label: 'low-power'")) pass('WebGL 렌더러 3단 폴백');
 else fail('WebGL 렌더러 폴백 누락');
+if (read('src/engine/mobile-engine.js').includes('__DOKKAEBI_RENDERER_FACTORY__') && read('src/engine/mobile-engine.js').includes("rendererFallback = 'injected-test'")) pass('브라우저 로직 스모크용 렌더러 주입점');
+else fail('테스트 렌더러 주입점 누락');
 
 
 if (expeditionDirector.includes('RUN_MODES') && expeditionDirector.includes('RELICS') && main.includes('selectRunMode') && main.includes('offerRelic')) pass('원정 난이도와 런 유물 시스템');
@@ -117,6 +122,21 @@ if (main.includes('stride: {') && main.includes('fortune: {') && main.includes('
 else fail('영구 성장 특성 확장 누락');
 if (read('src/engine/mobile-engine.js').includes('effectBudgetScale') && engineConfig.includes('lowEffectScale') && main.includes('this.engine.effectBudgetScale')) pass('FPS 연동 이펙트 예산 조절');
 else fail('적응형 이펙트 예산 누락');
+
+if (dailyExpedition.includes('RUN_SEED_MODES') && dailyExpedition.includes('DAILY_EDICTS') && main.includes('prepareRunSeed') && main.includes('createSeededRandom')) pass('오늘의 원정과 동일 시드 재도전');
+else fail('오늘의 원정 시드 시스템 누락');
+if (bossDirector.includes("4:") && bossDirector.includes("7:") && bossDirector.includes("10:") && data.includes("serpent:") && main.includes('serpentPoisonRings')) pass('3대 월식 보스와 청월 이무기 패턴');
+else fail('3대 보스 시스템 누락');
+if (battlefieldThemes.includes('BATTLEFIELD_THEMES') && main.includes('setBattlefieldTheme') && main.includes('updateBattlefieldTheme')) pass('징조별 전장 테마 전환');
+else fail('전장 테마 시스템 누락');
+if (expeditionDirector.includes('RELIC_SET_BONUSES') && expeditionDirector.includes("cursed: true") && main.includes('activateRelicSetBonuses')) pass('저주 전설 유물과 세트 각성');
+else fail('저주 유물 세트 시스템 누락');
+if (main.includes('createEliteDeathBurst') && main.includes('eliteBurstDodges') && main.includes('eliteBurstHits')) pass('정예 파열 실제 회피·피격 판정');
+else fail('정예 파열 판정 누락');
+if (htmlIds.has('seed-mode-options') && htmlIds.has('run-seed-chip') && htmlIds.has('performance-export-btn') && htmlIds.has('result-new-run-btn')) pass('v2.0 시드·성능 로그 UI');
+else fail('v2.0 시드·성능 로그 UI 누락');
+if (htmlIds.has('shake-intensity') && htmlIds.has('flash-intensity') && main.includes('reducedMotion') && style.includes('body.reduced-motion')) pass('접근성 설정과 모션 감소');
+else fail('접근성 설정 누락');
 
 if (html.includes('__DOKKAEBI_SHOW_BOOT_ERROR__') && html.includes('boot-error')) pass('로딩 실패 복구 UI');
 else fail('로딩 실패 복구 UI 누락');
@@ -139,7 +159,7 @@ for (const legacy of [
   else fail(`구버전 호환 파일 누락: ${legacy}`);
 }
 
-for (const path of ['src/game-data.js', 'src/run-director.js', 'src/expedition-director.js', 'src/sound-engine.js']) {
+for (const path of ['src/game-data.js', 'src/run-director.js', 'src/expedition-director.js', 'src/daily-expedition.js', 'src/boss-director.js', 'src/battlefield-themes.js', 'src/sound-engine.js']) {
   if (existsSync(resolve(root, path))) pass(`모듈 분리 ${path}`);
   else fail(`모듈 누락: ${path}`);
 }
@@ -171,7 +191,7 @@ for (const path of [
   if (existsSync(resolve(root, path))) pass(`엔진 모듈 ${path}`);
   else fail(`엔진 모듈 누락: ${path}`);
 }
-if (engineConfig.includes("ENGINE_VERSION = '1.2.0'") && engineConfig.includes('unitTriangles: 300') && engineConfig.includes('enemyTriangles: 500')) pass('엔진 버전과 폴리곤 예산');
+if (engineConfig.includes("ENGINE_VERSION = '1.3.0'") && engineConfig.includes('unitTriangles: 300') && engineConfig.includes('enemyTriangles: 500')) pass('엔진 버전과 폴리곤 예산');
 else fail('엔진 버전 또는 폴리곤 예산 누락');
 if (main.includes('new MobileGameEngine()') && main.includes('new BlobShadowSystem') && main.includes('createRockField(28)') && main.includes('createLanternField(16)')) pass('모바일 엔진 실제 연결');
 else fail('모바일 엔진 연결 누락');
@@ -238,7 +258,7 @@ if (failures.length) {
   console.error(`\nv1.7.7 추가 검증 실패 ${failures.length}건`);
   process.exit(1);
 }
-console.log('v1.9.0 카메라·에셋 추가 검증 완료');
+console.log('v2.0.0 카메라·에셋 추가 검증 완료');
 
 
 const assetCatalog = read('src/engine/asset-catalog.js');
@@ -257,7 +277,7 @@ else fail('비동기 부팅 오류 복구 누락');
 if (engineConfig.includes('textureBudgetLowMB: 64') && engineConfig.includes('textureBudgetMobileMB: 96') && engineConfig.includes('textureBudgetDesktopMB: 192')) pass('기기별 텍스처 메모리 예산');
 else fail('텍스처 메모리 예산 누락');
 if (failures.length) {
-  console.error(`\nv1.9.0 에셋 파이프라인 검증 실패 ${failures.length}건`);
+  console.error(`\nv2.0.0 에셋 파이프라인 검증 실패 ${failures.length}건`);
   process.exit(1);
 }
-console.log('v1.9.0 에셋 파이프라인 검증 완료');
+console.log('v2.0.0 에셋 파이프라인 검증 완료');

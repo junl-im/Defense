@@ -38,6 +38,17 @@ export class MobileGameEngine {
   }
 
   createRenderer(canvas) {
+    const injectedFactory = globalThis.__DOKKAEBI_RENDERER_FACTORY__;
+    if (typeof injectedFactory === 'function') {
+      this.renderer = injectedFactory({ canvas, engine: this });
+      if (!this.renderer) throw new Error('주입된 테스트 렌더러가 유효하지 않습니다.');
+      this.rendererFallback = 'injected-test';
+      this.renderer.shadowMap ||= { enabled: false };
+      this.renderer.capabilities ||= { getMaxAnisotropy: () => 1 };
+      this.renderer.info ||= { memory: {}, render: {} };
+      this.renderer.setPixelRatio?.(this.pixelRatio());
+      return this.renderer;
+    }
     const useAntialias = this.device.mobile ? this.config.renderer.antialiasMobile : this.config.renderer.antialiasDesktop;
     const attempts = [
       { antialias: useAntialias && !this.device.lowEnd, powerPreference: this.config.renderer.powerPreference, label: 'preferred' },

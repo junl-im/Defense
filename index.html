@@ -52,6 +52,10 @@
             <div id="run-mode-options" class="run-mode-options"></div>
             <div id="run-mode-summary" class="run-mode-summary"></div>
           </div>
+          <div class="seed-mode-selector" aria-label="원정 시드 방식 선택">
+            <div id="seed-mode-options" class="seed-mode-options"></div>
+            <div id="daily-edict-preview" class="daily-edict-preview"></div>
+          </div>
           <div id="run-preview" class="run-preview" aria-label="이번 판 영구 성장 적용 효과"></div>
           <button id="start-btn" class="btn primary huge">달빛 장터 수호하기</button>
           <div class="title-actions three">
@@ -60,7 +64,7 @@
             <button id="meta-btn" class="btn ghost meta-entry"><span>혼불 <b id="title-shards">0</b></span>수호자 성장</button>
           </div>
           <button id="controls-btn" class="title-settings-btn" type="button">카메라 · 조작 설정</button>
-          <small>v1.9.0 · 월식 원정, 웨이브 도전, 원정 유물, 수호신 폭주 적용.</small>
+          <small>v2.0.0 · 3대 월식 보스, 오늘의 원정, 저주 유물 세트, 전장 테마 적용.</small>
         </div>
       </section>
 
@@ -107,6 +111,10 @@
         <b id="kill-chain-value">x2</b>
         <span id="kill-chain-bonus">연속 처치</span>
       </div>
+
+      <aside id="run-seed-chip" class="run-seed-chip hidden" aria-live="polite">
+        <span id="run-seed-icon">日</span><div><small id="run-seed-mode">TODAY'S EXPEDITION</small><b id="run-seed-value">MOON-00000000</b><em id="run-edict-name">오늘의 칙령</em></div>
+      </aside>
 
       <aside id="moon-omen" class="moon-omen hidden" aria-live="polite">
         <span id="moon-omen-icon">☾</span>
@@ -290,6 +298,20 @@
               <output id="maximum-zoom-value">22.0</output>
             </label>
           </div>
+          <div class="accessibility-settings">
+            <label class="control-setting compact-setting">
+              <span><b>화면 흔들림</b><small>보스·피격 카메라 진동 강도</small></span>
+              <input id="shake-intensity" type="range" min="0" max="100" step="10" />
+              <output id="shake-intensity-value">100%</output>
+            </label>
+            <label class="control-setting compact-setting">
+              <span><b>피격 섬광</b><small>붉은 화면 섬광 강도</small></span>
+              <input id="flash-intensity" type="range" min="0" max="100" step="10" />
+              <output id="flash-intensity-value">100%</output>
+            </label>
+            <div class="toggle-setting"><div><b>진동 피드백</b><small>지원 기기의 햅틱 사용</small></div><button type="button" data-control-toggle="vibration" aria-pressed="true">ON</button></div>
+            <div class="toggle-setting"><div><b>모션 감소</b><small>파티클·시네마틱 움직임 축소</small></div><button type="button" data-control-toggle="reducedMotion" aria-pressed="false">OFF</button></div>
+          </div>
           <div class="handed-setting">
             <div><b>모바일 조작 배치</b><small>이동 손을 기준으로 선택</small></div>
             <div class="handed-options" role="group" aria-label="모바일 조작 배치">
@@ -310,7 +332,8 @@
           <h2>잠시 숨 고르기</h2>
           <button id="pause-controls-btn" class="btn ghost">카메라 · 조작 설정</button>
           <button id="resume-btn" class="btn primary">계속 수호하기</button>
-          <button id="restart-btn" class="btn ghost">처음부터 다시</button>
+          <button id="restart-btn" class="btn ghost">같은 시드로 다시</button>
+          <button id="performance-export-btn" class="btn ghost">성능 로그 JSON 저장</button>
           <button id="title-btn" class="btn danger">메인 화면으로</button>
         </div>
       </section>
@@ -333,14 +356,15 @@
           <button id="result-growth-btn" class="btn ghost">혼불로 수호자 성장</button>
           <label class="name-field">랭킹 이름<input id="player-name" maxlength="12" placeholder="달빛 수호자" /></label>
           <button id="save-score-btn" class="btn primary">기록 저장</button>
-          <button id="result-retry-btn" class="btn ghost">한 판 더</button>
+          <button id="result-retry-btn" class="btn ghost">같은 시드 재도전</button>
+          <button id="result-new-run-btn" class="btn ghost">새 시드 원정</button>
           <div id="leaderboard" class="leaderboard"></div>
         </div>
       </section>
     </div>
     <script>
       (() => {
-        const VERSION = '1.9.0';
+        const VERSION = '2.0.0';
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
         const retryButton = document.getElementById('boot-retry-btn');

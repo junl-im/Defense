@@ -4,7 +4,10 @@ import { isFirebaseEnabled, loadOnlineScores, submitOnlineScore } from './fireba
 import SoundEngine from './sound-engine.js';
 import { RANKS, UNIT_TYPES, UNIT_KEYS, ENEMY_TYPES, SYNERGIES, BLESSINGS, CONTRACTS } from './game-data.js';
 import { selectMoonOmen, rollEliteAffix } from './run-director.js';
-import { RUN_MODES, RELICS, getRunMode, selectRelicOptions, rollWaveTrial, getWaveTrialProgress, getWaveTrialReward, formatTrialProgress } from './expedition-director.js';
+import { RUN_MODES, RELICS, RELIC_SET_BONUSES, getRunMode, getRelicById, selectRelicOptions, getRelicSetProgress, activateRelicSetBonuses, rollWaveTrial, getWaveTrialProgress, getWaveTrialReward, formatTrialProgress } from './expedition-director.js';
+import { RUN_SEED_MODES, createSeededRandom, createDailySeed, createRandomSeed, getDailyEdict, formatRunSeed } from './daily-expedition.js';
+import { getBossWave, getBossTypeForWave, getBossSpawnCount, isBossWave } from './boss-director.js';
+import { getBattlefieldTheme } from './battlefield-themes.js';
 import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, ObjectPool, RenderStatsHUD, AssetPipeline, CORE_ASSET_CATALOG, AnimationStateSystem } from './engine/index.js';
 
 const $ = (selector) => document.querySelector(selector);
@@ -25,6 +28,7 @@ const ui = {
   controls: $('#controls-btn'), pauseControls: $('#pause-controls-btn'), controlsModal: $('#controls-modal'), controlsReset: $('#controls-reset-btn'),
   rotateSensitivity: $('#rotate-sensitivity'), rotateSensitivityValue: $('#rotate-sensitivity-value'), pinchSensitivity: $('#pinch-sensitivity'), pinchSensitivityValue: $('#pinch-sensitivity-value'),
   wheelSensitivity: $('#wheel-sensitivity'), wheelSensitivityValue: $('#wheel-sensitivity-value'), minimumZoom: $('#minimum-zoom'), minimumZoomValue: $('#minimum-zoom-value'), maximumZoom: $('#maximum-zoom'), maximumZoomValue: $('#maximum-zoom-value'),
+  shakeIntensity: $('#shake-intensity'), shakeIntensityValue: $('#shake-intensity-value'), flashIntensity: $('#flash-intensity'), flashIntensityValue: $('#flash-intensity-value'), performanceExport: $('#performance-export-btn'),
   contractModal: $('#contract-modal'), contractOptions: $('#contract-options'), contractSkip: $('#contract-skip-btn'), metaModal: $('#meta-modal'), metaShards: $('#meta-shards'), metaTraitList: $('#meta-trait-list'),
   hud: $('#hud'), hp: $('#hp-value'), gold: $('#gold-value'), waveLabel: $('#wave-label'), waveProgress: $('#wave-progress'),
   enemyCount: $('#enemy-count'), menu: $('#menu-btn'), sound: $('#sound-btn'), synergyPanel: $('#synergy-panel'),
@@ -52,10 +56,11 @@ const ui = {
   titleBtn: $('#title-btn'), resultModal: $('#result-modal'), resultKicker: $('#result-kicker'), resultTitle: $('#result-title'),
   resultScore: $('#result-score'), resultKills: $('#result-kills'), resultRank: $('#result-rank'), resultUnits: $('#result-units'), resultAnalysis: $('#result-analysis'), resultShards: $('#result-shards'), resultShardsTotal: $('#result-shards-total'), resultGrowth: $('#result-growth-btn'),
   playerName: $('#player-name'), saveScore: $('#save-score-btn'), resultRetry: $('#result-retry-btn'), leaderboard: $('#leaderboard'),
-  runModeOptions: $('#run-mode-options'), runModeSummary: $('#run-mode-summary')
+  runModeOptions: $('#run-mode-options'), runModeSummary: $('#run-mode-summary'), seedModeOptions: $('#seed-mode-options'), dailyEdictPreview: $('#daily-edict-preview'),
+  runSeedChip: $('#run-seed-chip'), runSeedIcon: $('#run-seed-icon'), runSeedMode: $('#run-seed-mode'), runSeedValue: $('#run-seed-value'), runEdictName: $('#run-edict-name'), resultNewRun: $('#result-new-run-btn')
 };
 
-const GAME_VERSION = '1.9.0';
+const GAME_VERSION = '2.0.0';
 
 const FIRST_MISSIONS = [
   { id: 'summons', title: '수호대 3회 강림', goal: 3, reward: 35, copy: '무료 강림도 포함됩니다.' },
@@ -71,7 +76,11 @@ const DEFAULT_CONTROL_SETTINGS = Object.freeze({
   wheelSensitivity: 1,
   minZoom: 9.5,
   maxZoom: 22,
-  handedness: 'right'
+  handedness: 'right',
+  vibration: true,
+  shakeIntensity: 1,
+  flashIntensity: 1,
+  reducedMotion: false
 });
 const META_TRAITS = {
   pouch: { icon: '◉', name: '달빛 주머니', copy: '매 판 시작 엽전을 10개씩 늘립니다.', effect: (level) => `시작 엽전 +${level * 10}`, costs: [12, 22, 34, 50, 70] },
@@ -160,7 +169,15 @@ class DokkaebiLuckDefense {
     this.eliteKills = 0;
     this.selectedRunModeId = this.loadRunMode();
     this.activeRunMode = getRunMode(this.selectedRunModeId);
+    this.selectedSeedModeId = this.loadSeedMode();
+    this.runSeed = '';
+    this.runRandom = Math.random;
+    this.dailyEdict = getDailyEdict(createDailySeed());
     this.relicHistory = [];
+    this.activeRelicSets = [];
+    this.lastRelicOfferBossWave = false;
+    this.battlefieldTheme = getBattlefieldTheme('default');
+    this.themeTarget = getBattlefieldTheme('default');
     this.currentTrial = null;
     this.lastTrialId = '';
     this.postWaveQueue = [];
@@ -176,6 +193,7 @@ class DokkaebiLuckDefense {
     this.populateCollection();
     this.renderMetaProgress();
     this.renderRunModeSelector();
+    this.renderSeedModeSelector();
     this.renderRelicStrip();
     this.animate();
     this.ready = this.initializeGame();
@@ -352,7 +370,7 @@ class DokkaebiLuckDefense {
   }
 
   bindUI() {
-    ui.start.addEventListener('click', () => { this.sound.unlock(); this.sound.ui(); this.startRun(); });
+    ui.start.addEventListener('click', () => { this.sound.unlock(); this.sound.ui(); this.startRun({ reuseSeed: false }); });
     ui.how.addEventListener('click', () => this.showModal(ui.howModal));
     ui.collection.addEventListener('click', () => this.showModal(ui.collectionModal));
     ui.meta.addEventListener('click', () => this.openMetaModal());
@@ -363,6 +381,10 @@ class DokkaebiLuckDefense {
       const button = event.target.closest('[data-run-mode]');
       if (button) this.selectRunMode(button.dataset.runMode);
     });
+    ui.seedModeOptions.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-seed-mode]');
+      if (button) this.selectSeedMode(button.dataset.seedMode);
+    });
     $$('[data-close]').forEach((button) => button.addEventListener('click', () => this.hideModal($(`#${button.dataset.close}`))));
     ui.sound.addEventListener('click', () => {
       this.sound.enabled = !this.sound.enabled;
@@ -371,9 +393,11 @@ class DokkaebiLuckDefense {
     });
     ui.menu.addEventListener('click', () => this.pauseGame());
     ui.resume.addEventListener('click', () => this.resumeGame());
-    ui.restart.addEventListener('click', () => { this.hideModal(ui.pauseModal); this.startRun(); });
+    ui.restart.addEventListener('click', () => { this.hideModal(ui.pauseModal); this.startRun({ reuseSeed: true }); });
     ui.titleBtn.addEventListener('click', () => { this.hideModal(ui.pauseModal); this.returnToTitle(); });
-    ui.resultRetry.addEventListener('click', () => { this.hideModal(ui.resultModal); this.startRun(); });
+    ui.resultRetry.addEventListener('click', () => { this.hideModal(ui.resultModal); this.startRun({ reuseSeed: true }); });
+    ui.resultNewRun.addEventListener('click', () => { this.hideModal(ui.resultModal); this.startRun({ reuseSeed: false }); });
+    ui.performanceExport.addEventListener('click', () => this.exportPerformanceLog());
     ui.saveScore.addEventListener('click', () => this.saveScore());
     ui.summon.addEventListener('click', () => this.summonUnit());
     ui.wave.addEventListener('click', () => this.startWave());
@@ -392,6 +416,9 @@ class DokkaebiLuckDefense {
     bindControlRange(ui.wheelSensitivity, 'wheelSensitivity', (value) => value / 100);
     bindControlRange(ui.minimumZoom, 'minZoom', (value) => value / 10);
     bindControlRange(ui.maximumZoom, 'maxZoom', (value) => value / 10);
+    bindControlRange(ui.shakeIntensity, 'shakeIntensity', (value) => value / 100);
+    bindControlRange(ui.flashIntensity, 'flashIntensity', (value) => value / 100);
+    $$('[data-control-toggle]').forEach((button) => button.addEventListener('click', () => this.updateControlSetting(button.dataset.controlToggle, button.getAttribute('aria-pressed') !== 'true')));
     $$('[data-handedness]').forEach((button) => button.addEventListener('click', () => this.updateControlSetting('handedness', button.dataset.handedness)));
     ui.controlsReset.addEventListener('click', () => this.resetControlSettings());
     this.applyControlSettings();
@@ -453,7 +480,11 @@ class DokkaebiLuckDefense {
         wheelSensitivity: clamp(Number(stored.wheelSensitivity ?? stored.pinch) || fallback.wheelSensitivity, .6, 1.6),
         minZoom: clamp(Number(stored.minZoom) || fallback.minZoom, 8.5, 12.5),
         maxZoom: clamp(Number(stored.maxZoom) || fallback.maxZoom, 18, 26),
-        handedness: stored.handedness === 'left' ? 'left' : 'right'
+        handedness: stored.handedness === 'left' ? 'left' : 'right',
+        vibration: stored.vibration !== false,
+        shakeIntensity: clamp(Number(stored.shakeIntensity ?? fallback.shakeIntensity), 0, 1),
+        flashIntensity: clamp(Number(stored.flashIntensity ?? fallback.flashIntensity), 0, 1),
+        reducedMotion: stored.reducedMotion === true
       };
       if (settings.maxZoom < settings.minZoom + 4) settings.maxZoom = Math.min(26, settings.minZoom + 4);
       return settings;
@@ -474,6 +505,8 @@ class DokkaebiLuckDefense {
 
   applyControlSettings() {
     document.body.classList.toggle('controls-left-handed', this.controlSettings.handedness === 'left');
+    document.body.classList.toggle('reduced-motion', Boolean(this.controlSettings.reducedMotion));
+    document.documentElement.style.setProperty('--flash-strength', String(this.controlSettings.flashIntensity));
     const { min, max } = this.getCameraZoomBounds();
     this.cameraDistanceTarget = clamp(this.cameraDistanceTarget, min, max);
     this.cameraDistance = clamp(this.cameraDistance, min, max);
@@ -487,11 +520,22 @@ class DokkaebiLuckDefense {
     ui.wheelSensitivity.value = String(Math.round(settings.wheelSensitivity * 100));
     ui.minimumZoom.value = String(Math.round(settings.minZoom * 10));
     ui.maximumZoom.value = String(Math.round(settings.maxZoom * 10));
+    ui.shakeIntensity.value = String(Math.round(settings.shakeIntensity * 100));
+    ui.flashIntensity.value = String(Math.round(settings.flashIntensity * 100));
     ui.rotateSensitivityValue.textContent = `${Math.round(settings.rotateSensitivity * 100)}%`;
     ui.pinchSensitivityValue.textContent = `${Math.round(settings.pinchSensitivity * 100)}%`;
     ui.wheelSensitivityValue.textContent = `${Math.round(settings.wheelSensitivity * 100)}%`;
     ui.minimumZoomValue.textContent = settings.minZoom.toFixed(1);
     ui.maximumZoomValue.textContent = settings.maxZoom.toFixed(1);
+    ui.shakeIntensityValue.textContent = `${Math.round(settings.shakeIntensity * 100)}%`;
+    ui.flashIntensityValue.textContent = `${Math.round(settings.flashIntensity * 100)}%`;
+    $$('[data-control-toggle]').forEach((button) => {
+      const key = button.dataset.controlToggle;
+      const active = Boolean(settings[key]);
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-pressed', String(active));
+      button.textContent = active ? 'ON' : 'OFF';
+    });
     $$('[data-handedness]').forEach((button) => {
       const active = button.dataset.handedness === settings.handedness;
       button.classList.toggle('active', active);
@@ -504,6 +548,9 @@ class DokkaebiLuckDefense {
     else if (key === 'rotateSensitivity') this.controlSettings.rotateSensitivity = clamp(value, .6, 1.6);
     else if (key === 'pinchSensitivity') this.controlSettings.pinchSensitivity = clamp(value, .55, 1.45);
     else if (key === 'wheelSensitivity') this.controlSettings.wheelSensitivity = clamp(value, .6, 1.6);
+    else if (key === 'shakeIntensity') this.controlSettings.shakeIntensity = clamp(value, 0, 1);
+    else if (key === 'flashIntensity') this.controlSettings.flashIntensity = clamp(value, 0, 1);
+    else if (key === 'vibration' || key === 'reducedMotion') this.controlSettings[key] = Boolean(value);
     else if (key === 'minZoom') {
       this.controlSettings.minZoom = clamp(value, 8.5, 12.5);
       this.controlSettings.maxZoom = Math.max(this.controlSettings.maxZoom, this.controlSettings.minZoom + 4);
@@ -836,7 +883,24 @@ class DokkaebiLuckDefense {
   }
 
   haptic(pattern = 18) {
-    if ('vibrate' in navigator) navigator.vibrate(pattern);
+    if (this.controlSettings?.vibration !== false && 'vibrate' in navigator) navigator.vibrate(pattern);
+  }
+
+  random() {
+    return Math.min(.999999, Math.max(0, Number(this.runRandom?.()) || 0));
+  }
+
+  randomPick(array) {
+    return array[Math.min(array.length - 1, Math.floor(this.random() * array.length))];
+  }
+
+  shuffled(array) {
+    const result = [...array];
+    for (let index = result.length - 1; index > 0; index -= 1) {
+      const swapIndex = Math.floor(this.random() * (index + 1));
+      [result[index], result[swapIndex]] = [result[swapIndex], result[index]];
+    }
+    return result;
   }
 
   createRunStats() {
@@ -856,7 +920,12 @@ class DokkaebiLuckDefense {
       guardianBursts: 0,
       trialsCompleted: 0,
       relicsChosen: 0,
-      maxKillChain: 0
+      maxKillChain: 0,
+      bossKills: 0,
+      eliteBurstDodges: 0,
+      eliteBurstHits: 0,
+      relicSetsActivated: 0,
+      bossHazardHits: 0
     };
   }
 
@@ -911,6 +980,7 @@ class DokkaebiLuckDefense {
     const mode = getRunMode(this.selectedRunModeId);
     ui.runPreview.innerHTML = `
       <span><small>원정 모드</small><b>${mode.name}</b></span>
+      <span><small>시드 방식</small><b>${RUN_SEED_MODES[this.selectedSeedModeId]?.name || RUN_SEED_MODES.daily.name}</b></span>
       <span><small>시작 엽전</small><b>${gold + mode.startGold}</b></span>
       <span><small>신목 체력</small><b>${hp}</b></span>
       <span><small>깨비 피해</small><b>+${damage.toFixed(damage % 1 ? 1 : 0)}%</b></span>
@@ -1206,6 +1276,7 @@ class DokkaebiLuckDefense {
     this.scene.fog.color.set(0x130b26);
 
     const groundMat = this.createMaterial(0x241933, .96);
+    this.groundMaterial = groundMat;
     const ground = this.mesh(new THREE.CylinderGeometry(34, 35, 1.2, 64), groundMat, 0, -.65, 0, false, true);
     ground.userData.navigationGround = true;
     this.worldRoot.add(ground);
@@ -1213,11 +1284,13 @@ class DokkaebiLuckDefense {
     this.cameraObstacles.push({ x: 0, z: 0, radius: 2.8, height: 8.6, type: 'core' });
 
     const ringMat = this.createMaterial(0x51405f, .82);
+    this.ringMaterial = ringMat;
     const ring = this.mesh(new THREE.RingGeometry(8.2, 12.5, 64), ringMat, 0, .015, 0, false, true);
     ring.rotation.x = -Math.PI / 2;
     this.worldRoot.add(ring);
 
-    const inner = this.mesh(new THREE.CircleGeometry(7.8, 64), this.createMaterial(0x34233d, .9), 0, .025, 0, false, true);
+    this.innerMaterial = this.createMaterial(0x34233d, .9);
+    const inner = this.mesh(new THREE.CircleGeometry(7.8, 64), this.innerMaterial, 0, .025, 0, false, true);
     inner.rotation.x = -Math.PI / 2;
     this.worldRoot.add(inner);
 
@@ -1257,6 +1330,7 @@ class DokkaebiLuckDefense {
       ];
       showcase.forEach(([type, rank, padIndex]) => this.createUnit(type, rank, this.unitPads[padIndex], true));
     }
+    this.setBattlefieldTheme('default', true);
     this.worldReady = true;
   }
 
@@ -1265,6 +1339,8 @@ class DokkaebiLuckDefense {
     this.worldRoot.add(moon);
     const halo = this.mesh(new THREE.SphereGeometry(5.4, 24, 16), new THREE.MeshBasicMaterial({ color: 0xd9c5ff, transparent: true, opacity: .08, side: THREE.BackSide }), -28, 30, -48, false, false);
     this.worldRoot.add(halo);
+    this.moonMesh = moon;
+    this.moonHalo = halo;
   }
 
   createRockField(count) {
@@ -1578,10 +1654,55 @@ class DokkaebiLuckDefense {
       burstPower: 1,
       objectiveReward: 1,
       coreDamage: 1,
-      summonDiscount: 0
+      summonDiscount: 0,
+      eliteReward: 1,
+      dodgeReward: 1,
+      bossDamage: 1
     };
   }
 
+
+  loadSeedMode() {
+    try { return localStorage.getItem('dokkaebi-seed-mode-v1') === 'random' ? 'random' : 'daily'; }
+    catch { return 'daily'; }
+  }
+
+  selectSeedMode(id) {
+    this.selectedSeedModeId = id === 'random' ? 'random' : 'daily';
+    try { localStorage.setItem('dokkaebi-seed-mode-v1', this.selectedSeedModeId); } catch {}
+    this.dailyEdict = getDailyEdict(createDailySeed());
+    this.renderSeedModeSelector();
+    this.renderRunPreview();
+    this.sound.ui();
+  }
+
+  renderSeedModeSelector() {
+    const selected = RUN_SEED_MODES[this.selectedSeedModeId] || RUN_SEED_MODES.daily;
+    const dailySeed = createDailySeed();
+    const edict = getDailyEdict(dailySeed);
+    ui.seedModeOptions.innerHTML = Object.values(RUN_SEED_MODES).map((mode) => `
+      <button type="button" class="seed-mode-option ${mode.id === selected.id ? 'active' : ''}" data-seed-mode="${mode.id}" aria-pressed="${mode.id === selected.id}">
+        <span>${mode.icon}</span><b>${mode.name}</b><small>${mode.tag}</small>
+      </button>`).join('');
+    ui.dailyEdictPreview.innerHTML = `<span>${edict.icon}</span><div><small>오늘의 칙령 · ${dailySeed}</small><b>${edict.name}</b><em>${edict.desc}</em></div>`;
+  }
+
+  prepareRunSeed(reuseSeed = false) {
+    if (!reuseSeed || !this.runSeed) {
+      this.runSeed = this.selectedSeedModeId === 'daily' ? createDailySeed() : createRandomSeed();
+    }
+    this.runRandom = createSeededRandom(this.runSeed);
+    this.dailyEdict = getDailyEdict(this.runSeed);
+  }
+
+  renderRunSeedChip() {
+    const mode = RUN_SEED_MODES[this.selectedSeedModeId] || RUN_SEED_MODES.daily;
+    ui.runSeedIcon.textContent = mode.icon;
+    ui.runSeedMode.textContent = mode.id === 'daily' ? "TODAY'S EXPEDITION" : 'SEEDED EXPEDITION';
+    ui.runSeedValue.textContent = this.runSeed;
+    ui.runEdictName.textContent = `${this.dailyEdict.icon} ${this.dailyEdict.name}`;
+    ui.runSeedChip.classList.remove('hidden');
+  }
 
   loadRunMode() {
     try { return getRunMode(localStorage.getItem('dokkaebi-run-mode-v1')).id; }
@@ -1607,17 +1728,18 @@ class DokkaebiLuckDefense {
   }
 
   renderRelicStrip() {
-    const relics = this.relicHistory.map((id) => RELICS.find((item) => item.id === id)).filter(Boolean);
-    ui.relicCount.textContent = `${relics.length}/4`;
+    const relics = this.relicHistory.map((id) => getRelicById(id)).filter(Boolean);
+    const setProgress = getRelicSetProgress(this.relicHistory);
+    ui.relicCount.textContent = `${relics.length}/5`;
     ui.relicStrip.innerHTML = relics.length
-      ? relics.map((relic) => `<span class="relic-chip" title="${relic.name} · ${relic.desc}">${relic.icon}<small>${relic.name}</small></span>`).join('')
+      ? relics.map((relic) => `<span class="relic-chip ${relic.cursed ? 'cursed' : ''} ${setProgress[relic.set]?.active ? 'set-active' : ''}" title="${relic.name} · ${relic.desc}">${relic.icon}<small>${relic.name}</small></span>`).join('')
       : '<span class="relic-empty">원정 유물 없음</span>';
   }
 
   offerRelic() {
     if (this.state !== 'playing') return;
     this.state = 'relic';
-    const options = selectRelicOptions(this.relicHistory);
+    const options = selectRelicOptions(this.relicHistory, () => this.random(), 3, { guaranteeCursed: this.lastRelicOfferBossWave || this.currentWave >= 8 });
     ui.relicOptions.innerHTML = options.map((relic) => `
       <button class="relic-option" data-relic="${relic.id}">
         <span>${relic.icon}</span><b>${relic.name}</b><p>${relic.desc}</p><small>${relic.grade} · ${relic.tag}</small>
@@ -1633,19 +1755,24 @@ class DokkaebiLuckDefense {
     if (!relic || this.relicHistory.includes(id)) return;
     relic.apply(this);
     this.relicHistory.push(id);
+    const activatedSets = activateRelicSetBonuses(this);
     this.runStats.relicsChosen += 1;
     this.hideModal(ui.relicModal);
     this.state = 'playing';
     this.renderRelicStrip();
     this.sound.merge(Math.min(5, 2 + this.relicHistory.length));
     this.haptic([20, 24, 50]);
-    this.showCombo(`${relic.icon} 원정 유물 · ${relic.name}`, 1700);
+    this.showCombo(`${relic.icon} ${relic.cursed ? '저주 전설' : '원정 유물'} · ${relic.name}`, 1700);
+    if (activatedSets.length) {
+      this.runStats.relicSetsActivated += activatedSets.length;
+      window.setTimeout(() => this.showMission(`${activatedSets[0].icon} ${activatedSets[0].name}`, activatedSets[0].desc, 'RELIC SET AWAKENED', 1450), 420);
+    }
     this.advancePostWaveRewards();
     this.updateHUD();
   }
 
   assignWaveTrial() {
-    this.currentTrial = rollWaveTrial(this.currentWave, this.activeRunMode.id, this.lastTrialId);
+    this.currentTrial = rollWaveTrial(this.currentWave, this.activeRunMode.id, this.lastTrialId, () => this.random());
     this.lastTrialId = this.currentTrial.id;
     this.currentTrial.start = {
       eliteKills: this.runStats.eliteKills,
@@ -1657,7 +1784,7 @@ class DokkaebiLuckDefense {
     this.waveTrialEliteSpawned = 0;
     ui.waveTrialIcon.textContent = this.currentTrial.icon;
     ui.waveTrialName.textContent = this.currentTrial.name;
-    const reward = getWaveTrialReward(this.currentWave, this.activeRunMode.id, this.mods.objectiveReward);
+    const reward = getWaveTrialReward(this.currentWave, this.activeRunMode.id, this.mods.objectiveReward * (this.dailyEdict?.reward || 1));
     ui.waveTrialReward.textContent = `보상 ${reward.gold} 엽전 · 혼불 ${reward.soul}%`;
     ui.waveTrial.classList.remove('hidden', 'complete', 'failed');
     this.updateWaveTrial(true);
@@ -1681,7 +1808,7 @@ class DokkaebiLuckDefense {
     if (!this.currentTrial) return;
     this.updateWaveTrial(true);
     if (this.currentTrial.id === 'perfect') this.currentTrial.completed = perfect;
-    const reward = getWaveTrialReward(this.currentWave, this.activeRunMode.id, this.mods.objectiveReward);
+    const reward = getWaveTrialReward(this.currentWave, this.activeRunMode.id, this.mods.objectiveReward * (this.dailyEdict?.reward || 1));
     if (this.currentTrial.completed) {
       this.gold += reward.gold;
       this.score += reward.score;
@@ -1700,8 +1827,9 @@ class DokkaebiLuckDefense {
     if (!Number.isFinite(amount) || amount <= 0 || this.guardianBurstTimer > 0) return;
     const omenGain = this.activeOmen?.soulGain || 1;
     const modeGain = this.activeRunMode?.soulGain || 1;
+    const edictGain = this.dailyEdict?.soulGain || 1;
     const before = this.soulGauge;
-    this.soulGauge = clamp(this.soulGauge + amount * this.mods.soulGain * omenGain * modeGain, 0, 100);
+    this.soulGauge = clamp(this.soulGauge + amount * this.mods.soulGain * omenGain * modeGain * edictGain, 0, 100);
     if (before < 100 && this.soulGauge >= 100) {
       this.showCombo('수호신 혼불 충전 완료 · 폭주 가능!', 1350);
       this.haptic([18, 20, 45]);
@@ -1722,8 +1850,9 @@ class DokkaebiLuckDefense {
 
   buildPostWaveQueue() {
     const queue = [];
-    if ([2, 5, 7, 9].includes(this.currentWave)) queue.push('relic');
-    if (this.currentWave === 4 || this.currentWave === 8) queue.push('contract');
+    this.lastRelicOfferBossWave = isBossWave(this.currentWave);
+    if ([2, 4, 5, 7, 9].includes(this.currentWave)) queue.push('relic');
+    if (this.currentWave === 5 || this.currentWave === 8) queue.push('contract');
     if (this.currentWave % 3 === 0) queue.push('blessing');
     this.postWaveQueue = queue;
   }
@@ -1739,7 +1868,8 @@ class DokkaebiLuckDefense {
     this.showToast('전열을 정비하고 다음 습격을 시작하세요.');
   }
 
-  startRun() {
+  startRun({ reuseSeed = false } = {}) {
+    this.prepareRunSeed(reuseSeed);
     this.runId = (this.runId || 0) + 1;
     const activeRunId = this.runId;
     ui.title.classList.remove('visible');
@@ -1781,11 +1911,12 @@ class DokkaebiLuckDefense {
     this.commandActiveKey = '';
     this.activeOmen = null;
     this.lastOmenId = '';
-    this.moonWard = this.activeRunMode.startWard || 0;
+    this.moonWard = Math.min(3, (this.activeRunMode.startWard || 0) + (this.dailyEdict?.startWard || 0));
     this.jackpotTimer = 0;
     this.guardianBurstTimer = 0;
     this.soulGauge = clamp((metaTraits.spirit || 0) * 8, 0, 100);
     this.relicHistory = [];
+    this.activeRelicSets = [];
     this.currentTrial = null;
     this.lastTrialId = '';
     this.postWaveQueue = [];
@@ -1808,7 +1939,10 @@ class DokkaebiLuckDefense {
     this.firstMissionIndex = 0;
     this.firstMissionStats = { summons: 0, merges: 0, bosses: 0 };
     this.mods = this.createDefaultMods(metaTraits);
+    this.mods.heroDamage *= this.dailyEdict?.heroDamage || 1;
+    this.mods.luckGain *= this.dailyEdict?.luckGain || 1;
     this.renderRelicStrip();
+    this.renderRunSeedChip();
     ui.waveTrial.classList.add('hidden');
     this.player.group.position.set(0, 0, 6.2);
     this.player.attackCooldown = 0;
@@ -1824,7 +1958,7 @@ class DokkaebiLuckDefense {
     this.updateUnitStrip();
     this.updateFirstMissionPanel();
     this.updateHUD();
-    this.showMission(`${this.activeRunMode.icon} ${this.activeRunMode.name}`, '첫 도깨비가 무료로 강림합니다.', 'EXPEDITION START · FIRST SUMMON', 1450);
+    this.showMission(`${this.activeRunMode.icon} ${this.activeRunMode.name}`, `${this.dailyEdict.icon} ${this.dailyEdict.name} · 첫 도깨비가 무료로 강림합니다.`, `${this.selectedSeedModeId === 'daily' ? 'TODAY' : 'SEEDED'} EXPEDITION · ${this.runSeed}`, 1700);
     window.setTimeout(() => {
       if (this.runId === activeRunId && this.state === 'playing' && this.units.length === 0) {
         this.summonUnit({ free: true, guaranteedRank: 2, starter: true });
@@ -1856,6 +1990,7 @@ class DokkaebiLuckDefense {
     [ui.hud, ui.synergyPanel, ui.luckMeter, ui.unitStrip, ui.joystick, ui.actionDock, ui.leftUiToggle].forEach((element) => element.classList.toggle('hidden', !show));
     ui.firstMissionPanel.classList.toggle('hidden', !show || !this.firstMissionActive);
     ui.moonOmen.classList.toggle('hidden', !show || !this.activeOmen);
+    ui.runSeedChip.classList.toggle('hidden', !show || !this.runSeed);
     ui.moonWard.classList.toggle('hidden', !show);
     ui.jackpot.classList.toggle('hidden', !show || this.jackpotTimer <= 0);
     ui.waveTrial.classList.toggle('hidden', !show || !this.currentTrial);
@@ -1890,14 +2025,14 @@ class DokkaebiLuckDefense {
 
     if (!options.free && this.choiceTickets > 0 && !options.skipChoice) {
       this.choiceTickets -= 1;
-      const types = [...UNIT_KEYS].sort(() => Math.random() - .5).slice(0, 3);
+      const types = this.shuffled(UNIT_KEYS).slice(0, 3);
       this.pendingSummon = { rank, types, options };
       this.openChoiceSummon();
       this.updateHUD();
       return;
     }
 
-    return this.completeSummon(options.type || pick(UNIT_KEYS), rank, options);
+    return this.completeSummon(options.type || this.randomPick(UNIT_KEYS), rank, options);
   }
 
   openChoiceSummon() {
@@ -1960,9 +2095,9 @@ class DokkaebiLuckDefense {
   rollSummonRank() {
     if (this.luck >= 100) {
       this.luck = 0;
-      return Math.random() < .12 ? 4 : 3;
+      return this.random() < .12 ? 4 : 3;
     }
-    const roll = Math.random();
+    const roll = this.random();
     let rank = 1;
     if (roll < .018) rank = 4;
     else if (roll < .105) rank = 3;
@@ -1983,11 +2118,11 @@ class DokkaebiLuckDefense {
     this.dynamicRoot.add(model);
     this.setUnitPadVisual(pad, true, RANKS[rank - 1].color);
     const unit = {
-      id: crypto.randomUUID?.() || `${Date.now()}-${Math.random()}`,
-      type, rank, pad, group: model, cooldown: rand(0, .5), createdAt: this.elapsed,
+      id: crypto.randomUUID?.() || `${Date.now()}-${this.random()}`,
+      type, rank, pad, group: model, cooldown: this.random() * .5, createdAt: this.elapsed,
       showcase, shotCount: 0, streakTarget: null, streak: 0,
       commandTimer: 0, baseScale: model.scale.x,
-      ultimateCooldown: rank === 5 ? rand(1.8, 3.1) : Infinity,
+      ultimateCooldown: rank === 5 ? 1.8 + this.random() * 1.3 : Infinity,
       animation: this.animations.createController(model, model.userData.animations || [], { procedural: true })
     };
     this.units.push(unit);
@@ -2115,19 +2250,19 @@ class DokkaebiLuckDefense {
     this.currentWave += 1;
     this.waveActive = true;
     this.waveStartHp = this.coreHp;
-    this.activeOmen = selectMoonOmen(this.lastOmenId);
+    this.activeOmen = selectMoonOmen(this.lastOmenId, () => this.random());
     this.lastOmenId = this.activeOmen.id;
     this.showMoonOmen();
     this.assignWaveTrial();
     this.activatePendingContract();
-    const bossWave = this.currentWave === 5 || this.currentWave === 10;
-    this.spawnRemaining = bossWave ? (this.currentWave === 5 ? 15 : 22) : 7 + this.currentWave * 3;
+    const bossWave = isBossWave(this.currentWave);
+    this.spawnRemaining = bossWave ? getBossSpawnCount(this.currentWave) : 7 + this.currentWave * 3;
     this.spawnTotal = this.spawnRemaining;
     this.spawnTimer = .2;
     this.waveSpawned = 0;
     ui.wave.disabled = true;
     if (bossWave) {
-      const bossType = this.currentWave === 5 ? 'tiger' : 'king';
+      const bossType = getBossTypeForWave(this.currentWave);
       ui.bossName.textContent = ENEMY_TYPES[bossType].name;
       ui.boss.classList.remove('hidden');
       requestAnimationFrame(() => ui.boss.classList.add('show'));
@@ -2144,20 +2279,20 @@ class DokkaebiLuckDefense {
     let type = 'imp';
     const wave = this.currentWave;
     const progress = this.waveSpawned / Math.max(1, this.spawnTotal);
-    if (wave === 5 && this.spawnRemaining === 1) type = 'tiger';
-    else if (wave === 10 && this.spawnRemaining === 1) type = 'king';
+    const bossType = getBossTypeForWave(wave);
+    if (bossType && this.spawnRemaining === 1) type = bossType;
     else {
-      const roll = Math.random();
+      const roll = this.random();
       if (wave >= 7 && roll < .22) type = 'shaman';
       else if (wave >= 4 && roll < .43) type = 'brute';
       else if (wave >= 2 && roll < .68) type = 'runner';
     }
-    const gate = this.gates[(this.waveSpawned + Math.floor(Math.random() * 2)) % this.gates.length];
+    const gate = this.gates[(this.waveSpawned + Math.floor(this.random() * 2)) % this.gates.length];
     const spawnPos = gate.position.clone();
-    const perpendicular = new THREE.Vector3(-spawnPos.z, 0, spawnPos.x).normalize().multiplyScalar(rand(-2.2,2.2));
+    const perpendicular = new THREE.Vector3(-spawnPos.z, 0, spawnPos.x).normalize().multiplyScalar(-2.2 + this.random() * 4.4);
     spawnPos.add(perpendicular).multiplyScalar(.96);
     const trialNeedsElite = this.currentTrial?.id === 'hunt' && this.waveTrialEliteSpawned < this.currentTrial.target;
-    const forceElite = trialNeedsElite && !ENEMY_TYPES[type].boss && this.waveSpawned >= 1 && (this.spawnRemaining <= Math.max(3, this.currentTrial.target * 3) || Math.random() < .28);
+    const forceElite = trialNeedsElite && !ENEMY_TYPES[type].boss && this.waveSpawned >= 1 && (this.spawnRemaining <= Math.max(3, this.currentTrial.target * 3) || this.random() < .28);
     const enemy = this.createEnemy(type, spawnPos, progress, { forceElite });
     if (!enemy) return;
     if (enemy.elite) this.waveTrialEliteSpawned += 1;
@@ -2184,10 +2319,10 @@ class DokkaebiLuckDefense {
     const omen = this.activeOmen || {};
     const mode = this.activeRunMode || RUN_MODES.guardian;
     const trialEliteChance = this.currentTrial?.id === 'hunt' ? .12 : 0;
-    const elite = config.boss ? null : rollEliteAffix(this.currentWave, omen, Math.random, mode.eliteChance + trialEliteChance, options.forceElite);
-    const hp = config.hp * waveScale * contractHp * (omen.enemyHp || 1) * mode.enemyHp * (elite?.hp || 1);
-    const speed = config.speed * (1 + Math.min(.22, this.currentWave * .012)) * contractSpeed * (omen.enemySpeed || 1) * mode.enemySpeed * (elite?.speed || 1);
-    const damage = config.damage * (1 + (this.currentWave - 1) * .1) * (omen.enemyDamage || 1) * mode.enemyDamage * (elite?.damage || 1);
+    const elite = config.boss ? null : rollEliteAffix(this.currentWave, omen, () => this.random(), mode.eliteChance + trialEliteChance + (this.dailyEdict?.eliteChance || 0), options.forceElite);
+    const hp = config.hp * waveScale * contractHp * (omen.enemyHp || 1) * mode.enemyHp * (this.dailyEdict?.enemyHp || 1) * (elite?.hp || 1);
+    const speed = config.speed * (1 + Math.min(.22, this.currentWave * .012)) * contractSpeed * (omen.enemySpeed || 1) * mode.enemySpeed * (this.dailyEdict?.enemySpeed || 1) * (elite?.speed || 1);
+    const damage = config.damage * (1 + (this.currentWave - 1) * .1) * (omen.enemyDamage || 1) * mode.enemyDamage * (this.dailyEdict?.enemyDamage || 1) * (elite?.damage || 1);
     this.applyEliteVisual(group, elite);
     if (elite) this.showCombatText(group.position.clone().add(new THREE.Vector3(0, 2.15, 0)), elite.name, { label: `${elite.icon} 정예` });
     return {
@@ -2208,6 +2343,7 @@ class DokkaebiLuckDefense {
     ui.moonOmenName.textContent = this.activeOmen.name;
     ui.moonOmenEffect.textContent = this.activeOmen.description;
     ui.moonOmen.classList.remove('hidden');
+    this.setBattlefieldTheme(this.activeOmen.id);
     this.showMission(this.activeOmen.name, this.activeOmen.description, `WAVE ${String(this.currentWave).padStart(2, '0')} · MOON OMEN`, 1350);
   }
 
@@ -2276,8 +2412,20 @@ class DokkaebiLuckDefense {
     eliteAura.visible = false;
     group.add(eliteAura);
     if (config.boss) {
-      const mane=this.mesh(this.cachedGeometry(`enemy:${type}:mane:${scale}`, () => new THREE.TorusGeometry(.55*scale,.18*scale,5,12)),darkMat,0,1.52*scale,-.08);mane.rotation.x=Math.PI/2;group.add(mane);
-      const crown=this.mesh(this.cachedGeometry(`enemy:${type}:crown:${scale}`, () => new THREE.ConeGeometry(.72*scale,.65*scale,6)),eyeMat,0,2.42*scale,0);group.add(crown);
+      if (type === 'serpent') {
+        for (let segment = 0; segment < 4; segment += 1) {
+          const coil = this.mesh(this.cachedGeometry(`enemy:serpent:coil:${segment}:${scale}`, () => new THREE.TorusGeometry((.5 + segment * .14) * scale, .11 * scale, 5, 14)), segment % 2 ? darkMat : bodyMat, 0, (.82 - segment * .13) * scale, -.12 * segment * scale);
+          coil.rotation.x = Math.PI / 2;
+          coil.rotation.z = segment * .35;
+          group.add(coil);
+        }
+        const crest = this.mesh(this.cachedGeometry(`enemy:serpent:crest:${scale}`, () => new THREE.ConeGeometry(.52 * scale, .82 * scale, 5)), eyeMat, 0, 2.48 * scale, -.08 * scale);
+        crest.rotation.z = Math.PI;
+        group.add(crest);
+      } else {
+        const mane=this.mesh(this.cachedGeometry(`enemy:${type}:mane:${scale}`, () => new THREE.TorusGeometry(.55*scale,.18*scale,5,12)),darkMat,0,1.52*scale,-.08);mane.rotation.x=Math.PI/2;group.add(mane);
+        const crown=this.mesh(this.cachedGeometry(`enemy:${type}:crown:${scale}`, () => new THREE.ConeGeometry(.72*scale,.65*scale,6)),eyeMat,0,2.42*scale,0);group.add(crown);
+      }
       if (!this.lowPower) { const light=new THREE.PointLight(config.color,1.3,8,2);light.position.y=1.6*scale;group.add(light); }
     }
     group.userData={...group.userData,body,baseColor:config.color,scale,phase:rand(0,Math.PI*2),isBoss:!!config.boss,eliteAura,lodState:'high',lodHigh:[eye1,eye2,horn1,horn2,...group.children.filter((child)=>child!==body&&child!==head&&child!==eye1&&child!==eye2&&child!==horn1&&child!==horn2&&child!==eliteAura)]};
@@ -2292,7 +2440,7 @@ class DokkaebiLuckDefense {
       if (this.spawnTimer <= 0) {
         this.spawnEnemy();
         const base = this.currentWave >= 8 ? .42 : .62;
-        this.spawnTimer = (base + Math.random() * .26) * (this.activeOmen?.spawnInterval || 1);
+        this.spawnTimer = (base + this.random() * .26) * (this.activeOmen?.spawnInterval || 1) * (this.dailyEdict?.spawnInterval || 1);
       }
     } else if (this.enemies.length === 0) {
       this.completeWave();
@@ -2303,9 +2451,9 @@ class DokkaebiLuckDefense {
     this.waveActive = false;
     const perfect = this.coreHp >= this.waveStartHp - .01;
     const perfectBonus = perfect ? 10 + this.currentWave * 2 : 0;
-    const reward = Math.round((24 + this.currentWave * 7 + perfectBonus) * this.activeRunMode.reward);
+    const reward = Math.round((24 + this.currentWave * 7 + perfectBonus) * this.activeRunMode.reward * (this.dailyEdict?.reward || 1));
     this.gold += reward;
-    this.score += Math.round((this.currentWave * 250 + this.coreHp * 8) * this.activeRunMode.score);
+    this.score += Math.round((this.currentWave * 250 + this.coreHp * 8) * this.activeRunMode.score * (this.dailyEdict?.score || 1));
     this.showCombo(`웨이브 ${this.currentWave} 격파 · +${reward} 엽전${perfectBonus ? ' · 무결점!' : ''}`, 1600);
     if (perfectBonus) {
       this.score += Math.round(perfectBonus * 25 * this.activeRunMode.score);
@@ -2329,7 +2477,7 @@ class DokkaebiLuckDefense {
     if (this.state !== 'playing') return;
     this.previousState = this.state;
     this.state = 'contract';
-    const options = [...CONTRACTS].sort(() => Math.random() - .5);
+    const options = this.shuffled(CONTRACTS);
     ui.contractOptions.innerHTML = options.map((contract) => `
       <button class="contract-option" data-contract="${contract.id}">
         <span>${contract.icon}</span><b>${contract.name}</b><p>${contract.desc}</p><small>${contract.tag}</small>
@@ -2413,10 +2561,10 @@ class DokkaebiLuckDefense {
     this.state = 'blessing';
     const available = BLESSINGS.filter((item) => !this.blessingHistory.includes(item.id));
     const pool = available.length >= 3 ? available : BLESSINGS;
-    let options = [...pool].sort(() => Math.random() - .5).slice(0, 3);
+    let options = this.shuffled(pool).slice(0, 3);
     if (this.currentWave === 3 && !this.blessingHistory.includes('choice')) {
       const choice = BLESSINGS.find((item) => item.id === 'choice');
-      options = [choice, ...pool.filter((item) => item.id !== 'choice').sort(() => Math.random() - .5).slice(0, 2)];
+      options = [choice, ...this.shuffled(pool.filter((item) => item.id !== 'choice')).slice(0, 2)];
     }
     ui.blessingOptions.innerHTML = options.map((blessing) => `
       <button class="blessing-option" data-blessing="${blessing.id}"><span>${blessing.icon}</span><b>${blessing.name}</b><p>${blessing.desc}</p><small>${blessing.tag}</small></button>
@@ -3048,9 +3196,12 @@ class DokkaebiLuckDefense {
       curse: ['저주를 진형 밖으로 유도', '저주 장판 밖으로 이동'],
       bossPounce: ['착지 원 밖으로 회피', '착지 충격에서 이탈'],
       nightMarch: ['야행진 장판 밖으로', '야행진 장판 이탈'],
-      bossShock: ['충격파 범위 밖으로', '충격파 범위 이탈']
+      bossShock: ['충격파 범위 밖으로', '충격파 범위 이탈'],
+      'elite-burst': ['파열 정예 폭발에서 이탈', '파열 폭발 범위 이탈'],
+      serpentRing: ['독월 고리를 피하세요', '독월 고리 이탈'],
+      serpentSnare: ['혼령 덫 밖으로 질주', '혼령 덫 이탈']
     };
-    const severity = { curse: 2.8, nightMarch: 4.1, bossPounce: 4.7, bossShock: 5 };
+    const severity = { curse: 2.8, nightMarch: 4.1, bossPounce: 4.7, bossShock: 5, 'elite-burst': 4.4, serpentRing: 4.2, serpentSnare: 4.8 };
 
     this.hazards.forEach((hazard) => {
       const distance = playerPosition.distanceTo(hazard.position);
@@ -3151,10 +3302,11 @@ class DokkaebiLuckDefense {
   }
 
   getBossSpecialDelay(enemy) {
-    if (enemy.type === 'tiger') return enemy.bossPhase >= 2 ? rand(3.35, 4.25) : rand(4.8, 5.8);
-    if (enemy.bossPhase >= 3) return rand(2.9, 3.7);
-    if (enemy.bossPhase >= 2) return rand(3.6, 4.6);
-    return rand(5.1, 6.2);
+    if (enemy.type === 'tiger') return enemy.bossPhase >= 2 ? 3.35 + this.random() * .9 : 4.8 + this.random();
+    if (enemy.type === 'serpent') return enemy.bossPhase >= 2 ? 3.1 + this.random() * .8 : 4.35 + this.random() * .8;
+    if (enemy.bossPhase >= 3) return 2.9 + this.random() * .8;
+    if (enemy.bossPhase >= 2) return 3.6 + this.random();
+    return 5.1 + this.random() * 1.1;
   }
 
   getBossIntentName(enemy) {
@@ -3162,6 +3314,10 @@ class DokkaebiLuckDefense {
     if (enemy.type === 'tiger') {
       if (enemy.bossPhase >= 2) return index % 2 === 0 ? '혈월 도약' : '광폭 충격파';
       return '사자후 충격파';
+    }
+    if (enemy.type === 'serpent') {
+      if (enemy.bossPhase >= 2) return index % 3 === 0 ? '청월 윤무' : index % 3 === 1 ? '혼령 덫' : '이무기 포효';
+      return index % 2 === 0 ? '독월 고리' : '혼령 덫';
     }
     if (enemy.bossPhase >= 3) return ['백귀 야행진', '처형 도약', '왕의 충격파'][index % 3];
     if (enemy.bossPhase >= 2) return index % 2 === 0 ? '백귀 소환' : '왕의 충격파';
@@ -3174,6 +3330,10 @@ class DokkaebiLuckDefense {
     if (enemy.type === 'tiger') {
       if (enemy.bossPhase >= 2 && index % 2 === 0) this.bossPounce(enemy, { radius: 3.3, warning: .92, color: 0xff5b47 });
       else this.bossRoar(enemy, enemy.bossPhase >= 2 ? { radius: 6.6, warning: .88 } : undefined);
+    } else if (enemy.type === 'serpent') {
+      if (enemy.bossPhase >= 2 && index % 3 === 0) this.serpentMoonDance(enemy);
+      else if (index % 2 === 0) this.serpentPoisonRings(enemy);
+      else this.serpentSpiritSnare(enemy);
     } else if (enemy.bossPhase >= 3) {
       const mode = index % 3;
       if (mode === 0) this.kingNightMarch(enemy);
@@ -3196,6 +3356,11 @@ class DokkaebiLuckDefense {
       this.enterBossPhase(enemy, 2, '저승 호랑이 광폭', '도약과 더 넓은 충격파를 번갈아 사용합니다.', 0xff5a45);
       enemy.speed *= 1.28;
       enemy.damage *= 1.24;
+    } else if (enemy.type === 'serpent' && enemy.bossPhase === 1 && ratio <= .56) {
+      this.enterBossPhase(enemy, 2, '청월 비늘 개방', '고리 장판이 연속으로 번지고 혼령 덫이 혼불을 삼킵니다.', 0x43f0c1);
+      enemy.speed *= 1.2;
+      enemy.damage *= 1.2;
+      this.spawnBossAdds(enemy, 4);
     } else if (enemy.type === 'king' && enemy.bossPhase === 1 && ratio <= .68) {
       this.enterBossPhase(enemy, 2, '백귀 장막 개방', '야행왕이 부하를 불러 전장을 압박합니다.', 0xa864ff);
       enemy.speed *= 1.12;
@@ -3240,7 +3405,7 @@ class DokkaebiLuckDefense {
 
   spawnBossAdds(enemy, count) {
     if (!enemy || enemy.dead) return;
-    const choices = enemy.type === 'king' ? ['runner', 'shaman', 'brute'] : ['runner', 'imp'];
+    const choices = enemy.type === 'king' ? ['runner', 'shaman', 'brute'] : enemy.type === 'serpent' ? ['shaman', 'runner', 'imp'] : ['runner', 'imp'];
     for (let index = 0; index < count; index += 1) {
       const angle = index / count * Math.PI * 2 + rand(-.2, .2);
       const position = enemy.group.position.clone().add(new THREE.Vector3(Math.cos(angle) * 2.6, 0, Math.sin(angle) * 2.6));
@@ -3278,6 +3443,67 @@ class DokkaebiLuckDefense {
       }
     });
     this.showMission('착지 원 밖으로 이동!', '보스가 현재 위치를 향해 도약합니다.', 'BOSS INTENT · POUNCE', 1200);
+  }
+
+  serpentPoisonRings(enemy) {
+    const center = this.player.group.position.clone();
+    const count = enemy.bossPhase >= 2 ? 6 : 4;
+    for (let index = 0; index < count; index += 1) {
+      const angle = index / count * Math.PI * 2 + (enemy.specialIndex || 0) * .42;
+      const distance = index % 2 === 0 ? 3.2 : 5.5;
+      const position = center.clone().add(new THREE.Vector3(Math.cos(angle) * distance, 0, Math.sin(angle) * distance));
+      this.createHazard({
+        type: 'serpentRing', position, radius: 1.45, color: 0x55efc3, warning: .62 + index * .08, duration: .18,
+        onTrigger: (hazard) => {
+          const hit = hazard.position.distanceTo(this.player.group.position) < hazard.radius;
+          this.spawnParticles(hazard.position.clone().add(new THREE.Vector3(0, .45, 0)), 0x55efc3, 16, 4.5);
+          if (hit) {
+            this.player.stunTimer = Math.max(this.player.stunTimer, .5);
+            this.soulGauge = Math.max(0, this.soulGauge - 10);
+            this.player.skillCooldown += 1.2;
+            this.runStats.bossHazardHits += 1;
+            this.haptic([22, 18, 34]);
+          } else {
+            this.score += Math.round(45 * this.mods.dodgeReward);
+          }
+        }
+      });
+    }
+    this.showMission('독월 고리 확산', '고리 사이의 빈 공간을 따라 이동하세요.', 'BOSS INTENT · MOON RINGS', 1350);
+  }
+
+  serpentSpiritSnare(enemy) {
+    const target = this.player.group.position.clone();
+    this.createHazard({
+      type: 'serpentSnare', position: target, radius: 2.65, color: 0x4be6c5, warning: 1.05, duration: .2,
+      onTrigger: (hazard) => {
+        const hit = hazard.position.distanceTo(this.player.group.position) < hazard.radius;
+        this.spawnRing(hazard.position, 0x4be6c5, 3.4);
+        if (hit) {
+          this.soulGauge = Math.max(0, this.soulGauge - 24);
+          this.player.stunTimer = Math.max(this.player.stunTimer, .85);
+          this.player.skillCooldown += 2;
+          this.showCombo('혼령 덫 피격 · 혼불 -24%', 1000);
+          this.haptic([30, 22, 50]);
+        } else {
+          const reward = Math.round(140 * this.mods.dodgeReward);
+          this.score += reward;
+          this.gainSoul(5, 'serpent-dodge');
+          this.runStats.dangerDodges += 1;
+          this.showCombo(`혼령 덫 회피! +${reward}`, 850);
+        }
+      }
+    });
+    this.showMission('혼령 덫에서 이탈!', '초록 결계가 닫히기 전에 원 밖으로 달리세요.', 'BOSS INTENT · SPIRIT SNARE', 1300);
+  }
+
+  serpentMoonDance(enemy) {
+    this.serpentPoisonRings(enemy);
+    const runId = this.runId;
+    window.setTimeout(() => {
+      if (this.runId === runId && enemy && !enemy.dead) this.serpentSpiritSnare(enemy);
+    }, 720);
+    this.showCombo('청월 윤무 · 연속 장판!', 1100);
   }
 
   kingNightMarch(enemy) {
@@ -3336,6 +3562,7 @@ class DokkaebiLuckDefense {
 
   damageEnemy(enemy,amount,source='',hitOrigin=null,owner=null) {
     if (!enemy || enemy.dead) return;
+    if (enemy.boss) amount *= this.mods.bossDamage;
     if (enemy.eliteShield > 0) {
       const absorbed = Math.min(enemy.eliteShield, amount);
       enemy.eliteShield -= absorbed;
@@ -3356,7 +3583,7 @@ class DokkaebiLuckDefense {
       if (forward.dot(incoming) > .18) { amount *= .35; shielded = true; enemy.shieldFlash = .14; }
     }
     const critChance = shielded ? 0 : source === 'hero' ? .12 : source === 'thunder' ? .18 : source === 'wind' ? .08 : .035;
-    const crit = source !== 'skill' && !ultimate && Math.random() < critChance;
+    const crit = source !== 'skill' && !ultimate && this.random() < critChance;
     if (crit) amount *= 1.75;
     const appliedDamage = Math.max(0, Math.min(enemy.hp, amount));
     if (owner?.type && owner.commandTimer > 0) this.runStats.commandDamage += appliedDamage;
@@ -3391,7 +3618,7 @@ class DokkaebiLuckDefense {
     const color=ENEMY_TYPES[enemy.type].color;
     this.spawnParticles(deathPosition.clone().add(new THREE.Vector3(0,.8,0)),color,enemy.boss?35:12,enemy.boss?6:3.4);
     const eliteOmenReward = enemy.elite ? (this.activeOmen?.eliteReward || 1) : 1;
-    const reward=Math.max(2,Math.round(enemy.reward*this.mods.goldMultiplier*this.getSpiritGoldMultiplier()*this.getContractRewardMultiplier()*(this.activeOmen?.reward || 1)*this.activeRunMode.reward*(enemy.elite?.reward || 1)*eliteOmenReward));
+    const reward=Math.max(2,Math.round(enemy.reward*this.mods.goldMultiplier*this.getSpiritGoldMultiplier()*this.getContractRewardMultiplier()*(this.activeOmen?.reward || 1)*this.activeRunMode.reward*(enemy.elite?.reward || 1)*eliteOmenReward*(this.dailyEdict?.reward || 1)*(enemy.elite ? this.mods.eliteReward : 1)));
     this.dropCoins(deathPosition,reward,enemy.boss?9:Math.min(4,1+Math.floor(reward/7)));
     this.kills+=1;
     this.gainSoul(enemy.boss ? 24 : enemy.elite ? 8 : 2, 'kill');
@@ -3406,7 +3633,7 @@ class DokkaebiLuckDefense {
     this.waveMaxChain = Math.max(this.waveMaxChain, this.killChain);
     this.runStats.maxKillChain = Math.max(this.runStats.maxKillChain, this.killChain);
     const chainMultiplier = 1 + Math.min(.6, Math.max(0, this.killChain - 1) * .018);
-    this.score+=Math.round(enemy.maxHp*(enemy.boss?3:1)*chainMultiplier*(this.activeOmen?.score || 1)*this.activeRunMode.score*(enemy.elite?.score || 1));
+    this.score+=Math.round(enemy.maxHp*(enemy.boss?3:1)*chainMultiplier*(this.activeOmen?.score || 1)*this.activeRunMode.score*(enemy.elite?.score || 1)*(this.dailyEdict?.score || 1));
     if (this.killChain >= 2) {
       ui.killChain.classList.remove('hidden');
       ui.killChainValue.textContent = `x${this.killChain}`;
@@ -3419,6 +3646,7 @@ class DokkaebiLuckDefense {
       this.haptic([18, 22, 35]);
     }
     if (enemy.boss) {
+      this.runStats.bossKills += 1;
       this.showCombo(`${ENEMY_TYPES[enemy.type].name} 격파!`,1800);
       this.shake=.85;
       this.haptic([65, 35, 85, 40, 120]);
@@ -3434,10 +3662,26 @@ class DokkaebiLuckDefense {
       onTrigger: (hazard) => {
         const distance = this.player.group.position.distanceTo(hazard.position);
         if (distance <= hazard.radius) {
-          this.player.stunTimer = Math.max(this.player.stunTimer, .35);
-          this.shake = Math.max(this.shake, .32);
-          this.showCombatText(this.player.group.position.clone().add(new THREE.Vector3(0, 2.2, 0)), Math.ceil(damage * .45), { label: '파열 충격' });
+          const soulLoss = Math.min(18, 10 + Math.round(damage * .12));
+          const goldLoss = Math.min(this.gold, Math.max(3, Math.round(damage * .18)));
+          this.player.stunTimer = Math.max(this.player.stunTimer, .55);
+          this.player.skillCooldown += 1.4;
+          this.soulGauge = Math.max(0, this.soulGauge - soulLoss);
+          this.gold = Math.max(0, this.gold - goldLoss);
+          this.runStats.eliteBurstHits += 1;
+          this.shake = Math.max(this.shake, .36);
+          this.showCombatText(this.player.group.position.clone().add(new THREE.Vector3(0, 2.2, 0)), soulLoss, { label: `파열 · 혼불 -${soulLoss}%` });
+          this.showToast(`파열 충격으로 엽전 ${goldLoss}개를 잃었습니다.`);
+          this.haptic([28, 18, 46]);
+        } else {
+          const reward = Math.round(160 * this.mods.dodgeReward);
+          this.score += reward;
+          this.gainSoul(6, 'elite-burst-dodge');
+          this.runStats.eliteBurstDodges += 1;
+          this.runStats.dangerDodges += 1;
+          this.showCombo(`파열 회피! +${reward} · 혼불 +6%`, 900);
         }
+        if (hazard.position.length() <= 4.4) this.damageCore(damage * .32);
         this.spawnParticles(hazard.position.clone().add(new THREE.Vector3(0, .45, 0)), 0xff765d, 22, 5);
         this.sound.tone(120, .24, 'sawtooth', .028, 80);
       }
@@ -3525,7 +3769,39 @@ class DokkaebiLuckDefense {
     }
   }
 
+  setBattlefieldTheme(omenId = 'default', immediate = false) {
+    const theme = getBattlefieldTheme(omenId);
+    this.battlefieldTheme = theme;
+    this.themeTarget = theme;
+    this.themeColors = {
+      background: new THREE.Color(theme.background), fog: new THREE.Color(theme.fog), hemiSky: new THREE.Color(theme.hemiSky),
+      hemiGround: new THREE.Color(theme.hemiGround), moonLight: new THREE.Color(theme.moonLight), moon: new THREE.Color(theme.moon),
+      halo: new THREE.Color(theme.halo), portal: new THREE.Color(theme.portal), ground: new THREE.Color(theme.ground),
+      ring: new THREE.Color(theme.ring), inner: new THREE.Color(theme.inner), wisp: new THREE.Color(theme.wisp)
+    };
+    if (immediate) this.updateBattlefieldTheme(10);
+  }
+
+  updateBattlefieldTheme(dt) {
+    if (!this.themeTarget || !this.themeColors) return;
+    const factor = clamp(1 - Math.pow(.035, Math.max(.001, dt)), 0, 1);
+    this.scene.background.lerp(this.themeColors.background, factor);
+    this.scene.fog.color.lerp(this.themeColors.fog, factor);
+    this.scene.fog.density = lerp(this.scene.fog.density, this.themeTarget.fogDensity, factor);
+    this.hemiLight.color.lerp(this.themeColors.hemiSky, factor);
+    this.hemiLight.groundColor.lerp(this.themeColors.hemiGround, factor);
+    this.moonLight.color.lerp(this.themeColors.moonLight, factor);
+    this.moonMesh?.material?.color?.lerp(this.themeColors.moon, factor);
+    this.moonHalo?.material?.color?.lerp(this.themeColors.halo, factor);
+    this.groundMaterial?.color?.lerp(this.themeColors.ground, factor);
+    this.ringMaterial?.color?.lerp(this.themeColors.ring, factor);
+    this.innerMaterial?.color?.lerp(this.themeColors.inner, factor);
+    this.gates.forEach((gate) => gate.userData.portal?.material?.color?.lerp(this.themeColors.portal, factor));
+    this.wisps.forEach((wisp) => wisp.mesh?.material?.color?.lerp(this.themeColors.wisp, factor * .32));
+  }
+
   updateWorldEffects(dt) {
+    this.updateBattlefieldTheme(dt);
     this.wisps.forEach((wisp)=>{
       wisp.angle+=dt*wisp.speed;
       wisp.mesh.position.x=Math.cos(wisp.angle)*wisp.radius;
@@ -3544,7 +3820,8 @@ class DokkaebiLuckDefense {
   }
 
   spawnParticles(position,color,count=8,speed=3) {
-    const actual = Math.max(1, Math.ceil(count * (this.engine.effectBudgetScale || (this.lowPower ? .58 : 1))));
+    const motionScale = this.controlSettings?.reducedMotion ? .45 : 1;
+    const actual = Math.max(1, Math.ceil(count * (this.engine.effectBudgetScale || (this.lowPower ? .58 : 1)) * motionScale));
     for (let i=0;i<actual;i+=1) {
       const particle = this.particlePool.acquire();
       if (!particle) break;
@@ -3695,7 +3972,8 @@ class DokkaebiLuckDefense {
       );
     }
     this.camera.position.lerp(desired,1-Math.pow(.0007,dt));
-    const shakeAmount=this.shake*this.shake;
+    const shakePreference = this.controlSettings?.reducedMotion ? Math.min(.2, this.controlSettings.shakeIntensity) : this.controlSettings?.shakeIntensity ?? 1;
+    const shakeAmount=this.shake*this.shake*shakePreference;
     if(shakeAmount>.001)this.camera.position.add(new THREE.Vector3(rand(-shakeAmount,shakeAmount),rand(-shakeAmount,shakeAmount),rand(-shakeAmount,shakeAmount)));
     this.shake=Math.max(0,this.shake-dt*1.9);
     this.camera.lookAt(target);
@@ -3896,6 +4174,50 @@ class DokkaebiLuckDefense {
     this.bannerTimer=setTimeout(()=>{ui.combo.classList.remove('show');setTimeout(()=>ui.combo.classList.add('hidden'),250);},duration);
   }
 
+  exportPerformanceLog() {
+    const payload = {
+      exportedAt: new Date().toISOString(),
+      gameVersion: GAME_VERSION,
+      engineVersion: ENGINE_VERSION,
+      run: {
+        seed: this.runSeed || '',
+        seedMode: this.selectedSeedModeId,
+        edict: this.dailyEdict?.id || '',
+        mode: this.activeRunMode?.id || this.selectedRunModeId,
+        wave: this.currentWave || 0,
+        active: Boolean(this.waveActive),
+        score: Math.round(this.score || 0),
+        stats: this.runStats
+      },
+      renderer: {
+        qualityScale: this.engine.qualityScale,
+        effectBudgetScale: this.engine.effectBudgetScale,
+        fps: this.engine.monitor.lastFps,
+        assetQualityTier: this.engine.assetQualityTier,
+        lowPower: this.lowPower
+      },
+      diagnostics: {
+        engine: this.engine.diagnostics,
+        assets: this.assetPipeline?.diagnostics || null,
+        chunks: this.engine.worldChunks.diagnostics,
+        animations: this.animations?.diagnostics || null
+      },
+      settings: this.controlSettings,
+      viewport: { width: window.innerWidth, height: window.innerHeight, pixelRatio: window.devicePixelRatio || 1 },
+      userAgent: navigator.userAgent
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = `dokkaebi-performance-${this.runSeed || 'title'}-${Date.now()}.json`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    this.showToast('성능 로그 JSON을 저장했습니다.');
+  }
+
   pauseGame() {
     if (this.state!=='playing') return;
     this.previousState=this.state;this.state='paused';this.showModal(ui.pauseModal);
@@ -3929,9 +4251,11 @@ class DokkaebiLuckDefense {
       <div><span>최고 피해</span><b>${topType && topDamage > 0 ? `${UNIT_TYPES[topType].symbol} ${UNIT_TYPES[topType].name}` : '대장 깨비'}</b><small>${Math.round(topDamage || this.runStats.heroDamage).toLocaleString()} 피해</small></div>
       <div><span>집중 명령</span><b>${this.runStats.commandsUsed}회</b><small>${Math.round(this.runStats.commandDamage).toLocaleString()} 강화 피해</small></div>
       <div><span>이동·수집</span><b>${this.runStats.moveOrders}회 지정</b><small>엽전 ${Math.round(this.runStats.coinsCollected).toLocaleString()} · 회피 ${this.runStats.dangerDodges}</small></div>
-      <div><span>월식 전과</span><b>정예 ${this.runStats.eliteKills}체</b><small>결계 방어 ${this.runStats.wardBlocks}회 · 대박 폭주 ${this.runStats.jackpotTriggers}회</small></div>
-      <div><span>원정 기록</span><b>${this.activeRunMode.icon} ${this.activeRunMode.name}</b><small>도전 ${this.runStats.trialsCompleted}회 · 유물 ${this.runStats.relicsChosen}개</small></div>
-      <div><span>수호신 폭주</span><b>${this.runStats.guardianBursts}회</b><small>최대 연속 처치 ${this.runStats.maxKillChain} · 질주 ${this.runStats.dashUses}회</small></div>`;
+      <div><span>월식 전과</span><b>보스 ${this.runStats.bossKills} · 정예 ${this.runStats.eliteKills}</b><small>결계 방어 ${this.runStats.wardBlocks}회 · 대박 폭주 ${this.runStats.jackpotTriggers}회</small></div>
+      <div><span>원정 기록</span><b>${this.activeRunMode.icon} ${this.activeRunMode.name}</b><small>도전 ${this.runStats.trialsCompleted}회 · 유물 ${this.runStats.relicsChosen}개 · 세트 ${this.runStats.relicSetsActivated}</small></div>
+      <div><span>위험 패턴</span><b>회피 ${this.runStats.dangerDodges}회</b><small>파열 회피 ${this.runStats.eliteBurstDodges} · 피격 ${this.runStats.eliteBurstHits} · 보스 피격 ${this.runStats.bossHazardHits}</small></div>
+      <div><span>수호신 폭주</span><b>${this.runStats.guardianBursts}회</b><small>최대 연속 처치 ${this.runStats.maxKillChain} · 질주 ${this.runStats.dashUses}회</small></div>
+      <div><span>원정 시드</span><b>${this.runSeed}</b><small>${this.dailyEdict.icon} ${this.dailyEdict.name} · ${this.selectedSeedModeId === 'daily' ? '오늘의 원정' : '자유 원정'}</small></div>`;
     const shardReward = this.awardRunShards(won);
     ui.resultShards.textContent = `+${shardReward}`;
     ui.resultShardsTotal.textContent = this.metaProgress.shards.toLocaleString();
@@ -3945,7 +4269,7 @@ class DokkaebiLuckDefense {
 
   async saveScore() {
     const name=(ui.playerName.value.trim()||'달빛 수호자').slice(0,12);
-    const entry={name,score:Math.round(this.score),wave:this.currentWave,kills:this.kills,maxRank:this.maxRank,mode:this.activeRunMode.id,date:Date.now()};
+    const entry={name,score:Math.round(this.score),wave:this.currentWave,kills:this.kills,maxRank:this.maxRank,mode:this.activeRunMode.id,seed:this.runSeed,edict:this.dailyEdict?.id||'',bossKills:this.runStats.bossKills,date:Date.now()};
     const local=[...this.getLocalScores(),entry].sort((a,b)=>b.score-a.score).slice(0,10);
     localStorage.setItem('dokkaebi-luck-scores',JSON.stringify(local));
     ui.saveScore.disabled=true;ui.saveScore.textContent='저장 완료';

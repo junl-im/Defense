@@ -19,19 +19,32 @@ export const RUN_MODES = Object.freeze({
   })
 });
 
+export const RELIC_SET_BONUSES = Object.freeze({
+  fortune: Object.freeze({ id: 'fortune', icon: '◉', name: '야시장 재보', threshold: 2, desc: '엽전 +12% · 도전 보상 +15%', apply: (g) => { g.mods.goldMultiplier *= 1.12; g.mods.objectiveReward *= 1.15; } }),
+  war: Object.freeze({ id: 'war', icon: '⚔', name: '백귀 무장', threshold: 2, desc: '수호대 피해 +12% · 공격 주기 -6%', apply: (g) => { g.mods.unitDamage *= 1.12; g.mods.unitCooldown *= .94; } }),
+  guardian: Object.freeze({ id: 'guardian', icon: '◆', name: '신목 수호구', threshold: 2, desc: '신목 피해 -12% · 달빛 방패 +1', apply: (g) => { g.mods.coreDamage *= .88; g.moonWard = Math.min(3, g.moonWard + 1); } }),
+  spirit: Object.freeze({ id: 'spirit', icon: '✦', name: '혼불 성물', threshold: 2, desc: '혼불 +18% · 폭주 위력 +12%', apply: (g) => { g.mods.soulGain *= 1.18; g.mods.burstPower *= 1.12; } })
+});
+
 export const RELICS = Object.freeze([
-  Object.freeze({ id: 'moonPouch', icon: '◉', name: '만월 복주머니', grade: '희귀', tag: '경제', desc: '엽전 획득량 +22%, 획득 범위 +1.', apply: (g) => { g.mods.goldMultiplier *= 1.22; g.mods.pickupRadius += 1; } }),
-  Object.freeze({ id: 'warDrum', icon: '♬', name: '도깨비 전고', grade: '영웅', tag: '공속', desc: '수호대 공격 주기 -12%, 집중 명령 재사용 -15%.', apply: (g) => { g.mods.unitCooldown *= .88; g.mods.commandCooldown *= .85; } }),
-  Object.freeze({ id: 'spiritBlade', icon: '†', name: '혼불 대도', grade: '영웅', tag: '화력', desc: '수호대 피해 +20%. 대신 신목이 받는 피해 +8%.', apply: (g) => { g.mods.unitDamage *= 1.2; g.mods.coreDamage *= 1.08; } }),
-  Object.freeze({ id: 'foxShoes', icon: '➶', name: '여우비 신발', grade: '희귀', tag: '기동', desc: '이동 속도 +16%, 질주 재사용 -24%.', apply: (g) => { g.mods.moveSpeed *= 1.16; g.mods.dashCooldown *= .76; } }),
-  Object.freeze({ id: 'blueFlame', icon: '☄', name: '청염 화로', grade: '전설', tag: '스킬', desc: '도깨비불 난무 피해 +35%, 재사용 -25%.', apply: (g) => { g.mods.skillDamage *= 1.35; g.mods.skillCooldown *= .75; } }),
-  Object.freeze({ id: 'fortuneSeal', icon: '三', name: '삼재 대박부', grade: '영웅', tag: '운빨', desc: '대박 기운 +38%, 모든 소환 비용 -4.', apply: (g) => { g.mods.luckGain *= 1.38; g.mods.summonDiscount += 4; } }),
-  Object.freeze({ id: 'guardianKnot', icon: '◆', name: '신목 매듭', grade: '전설', tag: '방어', desc: '신목 최대 체력 +15, 즉시 회복하고 달빛 방패 +1.', apply: (g) => { g.coreMaxHp += 15; g.coreHp = Math.min(g.coreMaxHp, g.coreHp + 15); g.moonWard = Math.min(3, g.moonWard + 1); } }),
-  Object.freeze({ id: 'thunderCrown', icon: 'ϟ', name: '뇌신의 관', grade: '전설', tag: '대장', desc: '대장 깨비 피해 +40%, 혼불 게이지 획득 +20%.', apply: (g) => { g.mods.heroDamage *= 1.4; g.mods.soulGain *= 1.2; } }),
-  Object.freeze({ id: 'echoBell', icon: '✦', name: '메아리 방울', grade: '전설', tag: '폭주', desc: '수호신 폭주 지속 +4초, 폭주 피해 보정 +18%.', apply: (g) => { g.mods.burstDuration += 4; g.mods.burstPower *= 1.18; } }),
-  Object.freeze({ id: 'harvestLedger', icon: '▤', name: '야시장 장부', grade: '희귀', tag: '도전', desc: '웨이브 도전 보상 +50%, 엽전 획득 +8%.', apply: (g) => { g.mods.objectiveReward *= 1.5; g.mods.goldMultiplier *= 1.08; } }),
-  Object.freeze({ id: 'starMap', icon: '☆', name: '육성 성도', grade: '영웅', tag: '성장', desc: '수호대 피해 +8%, 삼지선다 소환권 +1.', apply: (g) => { g.mods.unitDamage *= 1.08; g.choiceTickets += 1; } }),
-  Object.freeze({ id: 'nightMarket', icon: '🏮', name: '심야 흥정패', grade: '영웅', tag: '소환', desc: '모든 소환 비용 -8. 대신 수호대 공격 주기 +6%.', apply: (g) => { g.mods.summonDiscount += 8; g.mods.unitCooldown *= 1.06; } })
+  Object.freeze({ id: 'moonPouch', icon: '◉', name: '만월 복주머니', grade: '희귀', tag: '경제', set: 'fortune', desc: '엽전 획득량 +22%, 획득 범위 +1.', apply: (g) => { g.mods.goldMultiplier *= 1.22; g.mods.pickupRadius += 1; } }),
+  Object.freeze({ id: 'warDrum', icon: '♬', name: '도깨비 전고', grade: '영웅', tag: '공속', set: 'war', desc: '수호대 공격 주기 -12%, 집중 명령 재사용 -15%.', apply: (g) => { g.mods.unitCooldown *= .88; g.mods.commandCooldown *= .85; } }),
+  Object.freeze({ id: 'spiritBlade', icon: '†', name: '혼불 대도', grade: '영웅', tag: '화력', set: 'war', desc: '수호대 피해 +20%. 대신 신목이 받는 피해 +8%.', apply: (g) => { g.mods.unitDamage *= 1.2; g.mods.coreDamage *= 1.08; } }),
+  Object.freeze({ id: 'foxShoes', icon: '➶', name: '여우비 신발', grade: '희귀', tag: '기동', set: 'guardian', desc: '이동 속도 +16%, 질주 재사용 -24%.', apply: (g) => { g.mods.moveSpeed *= 1.16; g.mods.dashCooldown *= .76; } }),
+  Object.freeze({ id: 'blueFlame', icon: '☄', name: '청염 화로', grade: '전설', tag: '스킬', set: 'war', desc: '도깨비불 난무 피해 +35%, 재사용 -25%.', apply: (g) => { g.mods.skillDamage *= 1.35; g.mods.skillCooldown *= .75; } }),
+  Object.freeze({ id: 'fortuneSeal', icon: '三', name: '삼재 대박부', grade: '영웅', tag: '운빨', set: 'fortune', desc: '대박 기운 +38%, 모든 소환 비용 -4.', apply: (g) => { g.mods.luckGain *= 1.38; g.mods.summonDiscount += 4; } }),
+  Object.freeze({ id: 'guardianKnot', icon: '◆', name: '신목 매듭', grade: '전설', tag: '방어', set: 'guardian', desc: '신목 최대 체력 +15, 즉시 회복하고 달빛 방패 +1.', apply: (g) => { g.coreMaxHp += 15; g.coreHp = Math.min(g.coreMaxHp, g.coreHp + 15); g.moonWard = Math.min(3, g.moonWard + 1); } }),
+  Object.freeze({ id: 'thunderCrown', icon: 'ϟ', name: '뇌신의 관', grade: '전설', tag: '대장', set: 'war', desc: '대장 깨비 피해 +40%, 혼불 게이지 획득 +20%.', apply: (g) => { g.mods.heroDamage *= 1.4; g.mods.soulGain *= 1.2; } }),
+  Object.freeze({ id: 'echoBell', icon: '✦', name: '메아리 방울', grade: '전설', tag: '폭주', set: 'spirit', desc: '수호신 폭주 지속 +4초, 폭주 피해 보정 +18%.', apply: (g) => { g.mods.burstDuration += 4; g.mods.burstPower *= 1.18; } }),
+  Object.freeze({ id: 'harvestLedger', icon: '▤', name: '야시장 장부', grade: '희귀', tag: '도전', set: 'fortune', desc: '웨이브 도전 보상 +50%, 엽전 획득 +8%.', apply: (g) => { g.mods.objectiveReward *= 1.5; g.mods.goldMultiplier *= 1.08; } }),
+  Object.freeze({ id: 'starMap', icon: '☆', name: '육성 성도', grade: '영웅', tag: '성장', set: 'spirit', desc: '수호대 피해 +8%, 삼지선다 소환권 +1.', apply: (g) => { g.mods.unitDamage *= 1.08; g.choiceTickets += 1; } }),
+  Object.freeze({ id: 'nightMarket', icon: '🏮', name: '심야 흥정패', grade: '영웅', tag: '소환', set: 'fortune', desc: '모든 소환 비용 -8. 대신 수호대 공격 주기 +6%.', apply: (g) => { g.mods.summonDiscount += 8; g.mods.unitCooldown *= 1.06; } }),
+  Object.freeze({ id: 'moonCompass', icon: '⌖', name: '월영 나침반', grade: '영웅', tag: '회피', set: 'guardian', desc: '위험 회피 보상 +60%, 정예 보상 +12%.', apply: (g) => { g.mods.dodgeReward *= 1.6; g.mods.eliteReward *= 1.12; } }),
+  Object.freeze({ id: 'spiritJar', icon: '◇', name: '청혼 항아리', grade: '전설', tag: '혼불', set: 'spirit', desc: '혼불 획득 +24%, 시작 혼불 +20%.', apply: (g) => { g.mods.soulGain *= 1.24; g.soulGauge = Math.min(100, g.soulGauge + 20); } }),
+  Object.freeze({ id: 'bloodMirror', icon: '鏡', name: '피 묻은 월경', grade: '저주 전설', tag: '저주·화력', set: 'war', cursed: true, desc: '수호대 피해 +42%. 신목이 받는 피해 +18%.', apply: (g) => { g.mods.unitDamage *= 1.42; g.mods.coreDamage *= 1.18; } }),
+  Object.freeze({ id: 'eclipseMask', icon: '面', name: '월식 가면', grade: '저주 전설', tag: '저주·대장', set: 'spirit', cursed: true, desc: '대장 피해 +75%. 이동 속도 -12%.', apply: (g) => { g.mods.heroDamage *= 1.75; g.mods.moveSpeed *= .88; } }),
+  Object.freeze({ id: 'ghostLedger', icon: '冊', name: '망자의 장부', grade: '저주 전설', tag: '저주·경제', set: 'fortune', cursed: true, desc: '엽전 +60%. 신목 최대 체력 -18.', apply: (g) => { g.mods.goldMultiplier *= 1.6; g.coreMaxHp = Math.max(40, g.coreMaxHp - 18); g.coreHp = Math.min(g.coreHp, g.coreMaxHp); } }),
+  Object.freeze({ id: 'brokenBell', icon: '裂', name: '금 간 신령방울', grade: '저주 전설', tag: '저주·폭주', set: 'spirit', cursed: true, desc: '폭주 위력 +50%, 혼불 +30%. 폭주 지속 -2초·신목 피해 +10%.', apply: (g) => { g.mods.burstPower *= 1.5; g.mods.soulGain *= 1.3; g.mods.burstDuration -= 2; g.mods.coreDamage *= 1.1; } })
 ]);
 
 const TRIAL_BLUEPRINTS = Object.freeze([
@@ -47,16 +60,52 @@ export function getRunMode(id) {
   return RUN_MODES[id] || RUN_MODES.guardian;
 }
 
-export function selectRelicOptions(history = [], random = Math.random, count = 3) {
-  const unseen = RELICS.filter((relic) => !history.includes(relic.id));
-  const pool = unseen.length >= count ? unseen : RELICS;
-  const shuffled = [...pool];
-  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+export function getRelicById(id) {
+  return RELICS.find((relic) => relic.id === id) || null;
+}
+
+function shuffle(items, random) {
+  const result = [...items];
+  for (let index = result.length - 1; index > 0; index -= 1) {
     const roll = Math.min(.999999, Math.max(0, Number(random()) || 0));
     const swapIndex = Math.floor(roll * (index + 1));
-    [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+    [result[index], result[swapIndex]] = [result[swapIndex], result[index]];
   }
-  return shuffled.slice(0, count);
+  return result;
+}
+
+export function selectRelicOptions(history = [], random = Math.random, count = 3, options = {}) {
+  const unseen = RELICS.filter((relic) => !history.includes(relic.id));
+  const pool = unseen.length >= count ? unseen : RELICS.filter((relic) => !history.includes(relic.id) || unseen.length === 0);
+  let selected = shuffle(pool, random).slice(0, count);
+  if (options.guaranteeCursed && !selected.some((relic) => relic.cursed)) {
+    const cursedPool = shuffle(pool.filter((relic) => relic.cursed), random);
+    if (cursedPool.length) selected[selected.length - 1] = cursedPool[0];
+  }
+  return selected;
+}
+
+export function getRelicSetProgress(history = []) {
+  const counts = {};
+  history.forEach((id) => {
+    const relic = getRelicById(id);
+    if (relic?.set) counts[relic.set] = (counts[relic.set] || 0) + 1;
+  });
+  return Object.fromEntries(Object.entries(RELIC_SET_BONUSES).map(([id, set]) => [id, { ...set, count: counts[id] || 0, active: (counts[id] || 0) >= set.threshold }]));
+}
+
+export function activateRelicSetBonuses(game) {
+  if (!game) return [];
+  game.activeRelicSets ||= [];
+  const progress = getRelicSetProgress(game.relicHistory || []);
+  const activated = [];
+  Object.values(progress).forEach((set) => {
+    if (!set.active || game.activeRelicSets.includes(set.id)) return;
+    RELIC_SET_BONUSES[set.id].apply(game);
+    game.activeRelicSets.push(set.id);
+    activated.push(RELIC_SET_BONUSES[set.id]);
+  });
+  return activated;
 }
 
 export function rollWaveTrial(wave, modeId = 'guardian', previousId = '', random = Math.random) {
