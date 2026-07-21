@@ -43,7 +43,7 @@ const ui = {
   playerName: $('#player-name'), saveScore: $('#save-score-btn'), resultRetry: $('#result-retry-btn'), leaderboard: $('#leaderboard')
 };
 
-const GAME_VERSION = '1.7.3';
+const GAME_VERSION = '1.7.4';
 
 const FIRST_MISSIONS = [
   { id: 'summons', title: '수호대 3회 강림', goal: 3, reward: 35, copy: '무료 강림도 포함됩니다.' },
@@ -1956,7 +1956,9 @@ class DokkaebiLuckDefense {
       const forward = this.camera.getWorldDirection(tempV2).setY(0);
       if (forward.lengthSq() < .0001) forward.set(0, 0, -1);
       forward.normalize();
-      const cameraRight = new THREE.Vector3().crossVectors(forward, this.camera.up).normalize();
+      const cameraRight = new THREE.Vector3().setFromMatrixColumn(this.camera.matrixWorld, 0).setY(0);
+      if (cameraRight.lengthSq() < .0001) cameraRight.crossVectors(forward, this.camera.up);
+      cameraRight.normalize();
       move.addScaledVector(cameraRight, x).addScaledVector(forward, -y);
       movementStrength = Math.min(1, manualLength);
     } else if (this.moveTarget) {
