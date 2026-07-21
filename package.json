@@ -1,7 +1,7 @@
 {
   "name": "dokkaebi-luck-defense-3d",
   "private": true,
-  "version": "3.0.0",
+  "version": "3.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
@@ -9,7 +9,8 @@
     "preview": "vite preview --host 0.0.0.0",
     "deploy": "npm run build && firebase deploy --only hosting",
     "deploy:rules": "firebase deploy --only firestore:rules",
-    "verify": "node scripts/verify-project.mjs && node --check src/main.js && node --check src/game-data.js && node --check src/run-director.js && node --check src/expedition-director.js && node --check src/daily-expedition.js && node --check src/boss-director.js && node --check src/battlefield-themes.js && node --check src/codex-data.js && node --check src/codex-progression.js && node --check src/codex-viewer.js && node --check src/premium-assets.js && node --check src/asset-specs.js && node --check src/sound-engine.js && node --check src/firebase.js && node --check src/engine/index.js && node --check src/engine/asset-catalog.js && node --check src/engine/asset-pipeline.js && node --check src/engine/mobile-engine.js && node --check src/engine/render-stats-hud.js && node --check src/engine/world-chunk-manager.js && node scripts/verify-engine-budget.mjs && node scripts/verify-texture-budget.mjs && node scripts/verify-camera-controls.mjs && node scripts/verify-input-basis.mjs && node scripts/verify-mobile-layout.mjs && node --check src/engine/animation-state-system.js && node --check src/engine/directional-impostor.js && node scripts/verify-animation-system.mjs && node scripts/verify-run-director.mjs && node scripts/verify-expedition-system.mjs && node scripts/verify-daily-expedition.mjs && node scripts/verify-boss-themes.mjs && node scripts/verify-asset-readiness.mjs && node scripts/verify-ui-v230.mjs && node scripts/verify-codex-v240.mjs && node scripts/verify-nextgen-assets.mjs"
+    "verify": "node scripts/verify-project.mjs && node --check src/main.js && node --check src/game-data.js && node --check src/run-director.js && node --check src/expedition-director.js && node --check src/daily-expedition.js && node --check src/boss-director.js && node --check src/battlefield-themes.js && node --check src/codex-data.js && node --check src/codex-progression.js && node --check src/codex-viewer.js && node --check src/premium-assets.js && node --check src/asset-specs.js && node --check src/art-style-tokens.js && node --check src/sound-engine.js && node --check src/firebase.js && node --check src/engine/index.js && node --check src/engine/asset-catalog.js && node --check src/engine/asset-pipeline.js && node --check src/engine/mobile-engine.js && node --check src/engine/render-stats-hud.js && node --check src/engine/world-chunk-manager.js && node scripts/verify-engine-budget.mjs && node scripts/verify-texture-budget.mjs && node scripts/verify-camera-controls.mjs && node scripts/verify-input-basis.mjs && node scripts/verify-mobile-layout.mjs && node --check src/engine/animation-state-system.js && node --check src/engine/directional-impostor.js && node scripts/verify-animation-system.mjs && node scripts/verify-run-director.mjs && node scripts/verify-expedition-system.mjs && node scripts/verify-daily-expedition.mjs && node scripts/verify-boss-themes.mjs && node scripts/verify-asset-readiness.mjs && node scripts/verify-ui-v230.mjs && node scripts/verify-codex-v240.mjs && node scripts/verify-nextgen-assets.mjs && node scripts/verify-art-bible.mjs",
+    "generate:sd-assets": "python scripts/generate_sd_toon_models.py"
   },
   "dependencies": {
     "firebase": "12.16.0",

@@ -14,8 +14,8 @@ export default class CodexViewer {
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'low-power' });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.6));
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
-    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.12;
+    this.renderer.toneMapping = THREE.NeutralToneMapping;
+    this.renderer.toneMappingExposure = 1.03;
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.scene = new THREE.Scene();
@@ -26,7 +26,7 @@ export default class CodexViewer {
     const key = new THREE.DirectionalLight(0xffe3b4, 2.4); key.position.set(5, 8, 5); key.castShadow = true; key.shadow.mapSize.set(1024, 1024); key.shadow.camera.near = .5; key.shadow.camera.far = 24; key.shadow.bias = -.00035; this.scene.add(key);
     const rim = new THREE.DirectionalLight(0x8edcff, 1.9); rim.position.set(-5, 4, -4); this.scene.add(rim);
     this.root = new THREE.Group(); this.scene.add(this.root);
-    const floor = new THREE.Mesh(new THREE.CircleGeometry(3.4, 40), new THREE.MeshStandardMaterial({ color: 0x21172d, roughness: .92, metalness: .02 }));
+    const floor = new THREE.Mesh(new THREE.CircleGeometry(3.4, 40), new THREE.MeshToonMaterial({ color: 0x32203d }));
     floor.rotation.x = -Math.PI / 2; floor.position.y = -.02; floor.receiveShadow = true; this.scene.add(floor);
     const ring = new THREE.Mesh(new THREE.RingGeometry(2.2, 2.32, 48), new THREE.MeshBasicMaterial({ color: 0x8cecff, transparent: true, opacity: .26, side: THREE.DoubleSide }));
     ring.rotation.x = -Math.PI / 2; ring.position.y = .012; this.scene.add(ring);

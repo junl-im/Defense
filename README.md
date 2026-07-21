@@ -1,88 +1,51 @@
 # 도깨비 운빨 수호대 3D
 
-모바일 웹용 Three.js 3D 액션 운빨 디펜스입니다.
+달빛 조선 야시장을 배경으로 한 모바일 3D 운빨 디펜스 게임입니다.
 
-- 게임 버전: **3.0.0**
-- 엔진 버전: **2.0.0**
-- 배포 주소: `https://junl-im.github.io/Defense/`
-- Firebase 프로젝트: `web-game2`
+- 게임 버전: **3.1.0**
+- 엔진 버전: **2.1.0**
+- 아트 바이블: **SD 모바일 카툰 v2.0 — Locked**
+- 런타임: Three.js + Vite
 
-## 실행
+## 이번 버전의 핵심
+
+v3.1.0은 에셋 수를 늘리는 패치가 아니라, 이후 수백 개의 캐릭터·몬스터·무기·UI·VFX가 같은 게임처럼 보이도록 제작 기준을 다시 잠그는 패치입니다.
+
+- 2~2.5등신, 목표 2.25등신
+- 큰 머리·작은 몸통·큰 손발
+- 4단 모바일 Toon Shading
+- 청록 월광 Rim Light
+- 부드러운 접지 그림자
+- 높은 채도와 큰 실루엣
+- 5방향 원본 + 좌우 미러링 → 11방향 런타임
+- 주인공 1종 → 적 3종 → 맵 → UI → VFX → 대량 제작 순서
+
+상세 기준은 [`docs/ASSET_BIBLE.md`](docs/ASSET_BIBLE.md)에 있습니다.
+
+## 대표 SD Toon GLB
+
+- `public/assets/models/guardian-ember-sd-toon.glb` — 불씨 깨비
+- `public/assets/models/monster-imp-sd-toon.glb` — 장난 요괴
+- `public/assets/models/boss-tiger-sd-toon.glb` — 저승 호랑이
+
+세 모델은 새 비율과 팔레트를 검증하기 위한 골든 샘플입니다. 아직 스켈레탈 리깅·내장 애니메이션 클립 단계는 아니며, 파츠 기반 런타임 애니메이션과 실패 시 절차형 폴백을 사용합니다.
+
+## 제작 문서
+
+- `docs/ASSET_BIBLE.md` — 캐릭터, 몬스터, 맵, UI, VFX 전체 기준
+- `docs/AI_ASSET_PROMPTS.md` — 컨셉 시트용 AI 프롬프트
+- `docs/BLENDER_EXPORT_GUIDE.md` — Blender → Three.js/Unity 공용 납품 규칙
+- `docs/PRODUCTION_ROADMAP.md` — 골든 샘플 승인 순서
+- `docs/ASSET_MANIFEST.json` — 기계 판독용 에셋 매니페스트
+
+## 개발 실행
 
 ```bash
 npm ci
-npm run verify
 npm run dev
 ```
 
-GitHub Pages 배포 빌드:
-
-```bash
-VITE_BASE_PATH=/Defense/ npm run build
-```
-
-## 조작
-
-- PC 이동: W/A/S/D 또는 방향키
-- PC 카메라: 마우스 드래그 회전, 휠 줌
-- 모바일 이동: 가상 조이스틱 또는 지형 짧은 터치
-- 모바일 카메라: 한 손가락 드래그 회전
-- 모바일 줌: 두 손가락을 벌리면 줌인, 오므리면 줌아웃
-- Space: 질주
-- Q: 도깨비불 난무
-- E: 소환
-- R: 집중 명령
-- F: 혼불 100%일 때 수호신 폭주
-- F3: 엔진 통계 HUD
-
-## v3.0.0 / Engine 2.0.0 — NextGen 아트 리워크
-
-이번 버전은 기존 Moon Forge 프로토타입을 덧칠하지 않고, 캐릭터 비율·실루엣·재질·조명·전장 건축·발사체를 하나의 현대 스타일라이즈드 PBR 규격으로 다시 구성했습니다.
-
-### 실제 GLB 교체 3종
-
-다음 모델은 전투와 3D 도감에서 동일한 GLB를 사용합니다.
-
-- 불씨 깨비: `guardian-ember-nextgen.glb` — 4,816 triangles
-- 장난 요괴: `monster-imp-nextgen.glb` — 2,252 triangles
-- 저승 호랑이: `boss-tiger-nextgen.glb` — 6,404 triangles
-
-모델은 머리·몸·팔·다리·무기·대표 장식이 이름 있는 파츠 노드로 분리되어 현재 절차형 상태 머신으로 움직입니다. 아직 작가 제작 스켈레탈 리깅과 모션 캡처 클립은 아니며, 다음 GLB 납품 단계에서 같은 런타임 슬롯에 교체할 수 있습니다.
-
-### 전체 캐릭터 아트 재구성
-
-- 수호대 6종: 다층 의상, 팔·다리, 허리띠, 어깨 장식, 머리 장식과 속성 무기
-- 일반 요괴 4종: 역할별 체형, 팔다리, 탈·얼굴판, 천 조각과 주술 장식
-- 보스 3종: 페이즈 장식과 월광 림을 유지한 대형 실루엣
-- idle·move·attack·hit·death 상태에서 머리, 팔다리, 천, 무기, 대표 장식이 분리 동작
-- 절차형 모델은 GLB 로딩 실패 시 폴백으로 유지
-
-### PBR 조명과 재질
-
-- ACES Filmic 톤매핑
-- 데스크톱 PCF 소프트 섀도
-- 따뜻한 등불 key와 차가운 월광 rim의 이중 조명
-- MeshStandardMaterial 기반 roughness·metalness 분리
-- 캐릭터 외곽을 읽기 쉽게 하는 월광 림 셰이더
-- 도감 뷰어에도 같은 톤매핑·그림자 기준 적용
-
-### 야시장과 전투 효과
-
-- 한국형 누각 지붕, 가판대, 등롱, 현수막, 황동·옥 장식의 NextGen 환경 패스
-- 요괴문에 지붕, 내부 룬, 귀면 문장 추가
-- 신규 월문 판석 바닥과 타이틀 키아트·커버 교체
-- 발사체를 핵·궤도 링·잔상 3층 구조로 변경
-- additive blending, 회전, 크기 맥동과 속성별 명도 차 적용
-
-### 기존 시스템 유지
-
-- 오늘의 원정과 동일 시드 재도전
-- 3대 보스와 페이즈 전투
-- 유물·저주 유물·세트 보너스
-- 도감 발견·약점 연구·전리품
-- 11방향 idle/move/attack 원거리 LOD
-- 모바일 한 화면 UI, 우측 상단 설정, 올바른 핀치 방향
-- 축소된 중앙 신목과 HUD 겹침 방지
+기본 개발 서버는 Vite가 표시하는 로컬 주소에서 열립니다.
 
 ## 검증
 
@@ -90,26 +53,40 @@ VITE_BASE_PATH=/Defense/ npm run build
 npm run verify
 ```
 
-현재 자동 검증에는 다음이 포함됩니다.
+검증 항목에는 다음이 포함됩니다.
 
-- 178개 DOM 연결
-- GLB 파일 구조, 파츠 노드, bounds와 triangle 예산
-- 불씨 깨비 4,816 / 5,600 triangles
-- 장난 요괴 2,252 / 3,200 triangles
-- 저승 호랑이 6,404 / 9,000 triangles
-- 절차형 수호대·요괴·보스·신목 예산
-- 63.69MB / 64MB 텍스처 메모리 예산
-- GLB 전투·도감 카탈로그 연결
-- 애니메이션 상태, 카메라, 핀치, 모바일 UI와 11방향 LOD
-- 도감 29종, 약점 연구 7종, 전리품 10종
-- `/Defense/` 프로덕션 빌드
+- DOM 및 기존 게임 시스템 연결
+- 모바일 레이아웃과 카메라 조작
+- 폴리곤·텍스처·파티클 예산
+- SD 비율과 대표 GLB 노드·bounds
+- 4단 Toon 재질과 Neutral Tone Mapping
+- 5방향 원본·미러링 계산
+- 아트 바이블 필수 문서와 제작 게이트
 
-## 에셋 성격과 다음 제작 단계
+## SD 대표 모델 재생성
 
-v3.0.0은 세 대표 캐릭터를 실제 GLB로 교체하고 나머지 자산의 형태·재질·조명 규격을 통일한 **런타임 NextGen 아트 패스**입니다. 세 GLB는 파츠 기반 정적 모델을 절차적으로 애니메이션하는 단계이며, 최종 작가급 결과를 위해서는 스켈레탈 리깅, 전용 애니메이션 클립, Normal/ORM 텍스처, KTX2 압축이 이어져야 합니다.
+```bash
+npm run generate:sd-assets
+```
 
-세부 규격은 `docs/ASSET_BIBLE.md`와 `docs/ASSET_MANIFEST.json`을 참고합니다.
+Python 환경에 `numpy`와 `trimesh`가 필요합니다.
 
-## 배포
+## 프로덕션 빌드
 
-패치 ZIP을 저장소 루트에 그대로 덮어쓰고 commit·push합니다. 전체 ZIP에는 `/Defense/` 기준 최신 `dist/`가 포함되며, 패치 ZIP에는 v2.4.0 대비 변경 파일만 포함됩니다.
+```bash
+npm run build
+```
+
+GitHub Pages 배포 기준 base path는 `/Defense/`입니다. 최신 `dist/`는 전체 배포 ZIP에만 포함합니다.
+
+## 에셋 제작 원칙
+
+대량 캐릭터 제작은 불씨 깨비 골든 샘플의 다음 항목이 실기기에서 승인된 뒤 시작합니다.
+
+1. 공용 얼굴·손·발 규격
+2. LOD0/LOD1
+3. Idle/Walk/Run/Attack/Skill/Hit/Death
+4. 전투와 도감의 동일 외형
+5. 5방향 원본 캡처와 미러링
+
+현재 프로젝트는 Three.js 기반입니다. 문서의 Unity Prefab·Animator 규칙은 향후 이관을 위한 호환 부록이며 현재 런타임에 직접 사용되지는 않습니다.

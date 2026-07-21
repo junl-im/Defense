@@ -1,0 +1,4 @@
+# v3.1.0 적용 전후에 아래 구형 모델을 삭제하세요.
+public/assets/models/boss-tiger-nextgen.glb
+public/assets/models/guardian-ember-nextgen.glb
+public/assets/models/monster-imp-nextgen.glb

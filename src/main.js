@@ -69,7 +69,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '3.0.0';
+const GAME_VERSION = '3.1.0';
 
 const FIRST_MISSIONS = [
   { id: 'summons', title: '수호대 3회 강림', goal: 3, reward: 35, copy: '무료 강림도 포함됩니다.' },
@@ -276,9 +276,9 @@ class DokkaebiLuckDefense {
     this.camera = new THREE.PerspectiveCamera(49, window.innerWidth / window.innerHeight, .1, 130);
     this.camera.position.set(11, 12, 14);
 
-    this.hemiLight = new THREE.HemisphereLight(0x858dff, 0x23142e, 1.65);
+    this.hemiLight = new THREE.HemisphereLight(0xb8d6ff, 0x32203d, 1.45);
     this.scene.add(this.hemiLight);
-    this.moonLight = new THREE.DirectionalLight(0xa9bdff, 2.8);
+    this.moonLight = new THREE.DirectionalLight(0xd7ebff, 2.35);
     this.moonLight.position.set(-16, 26, 13);
     this.moonLight.castShadow = this.renderer.shadowMap.enabled;
     this.moonLight.shadow.mapSize.set(this.lowPower ? 512 : 1024, this.lowPower ? 512 : 1024);
@@ -1400,15 +1400,15 @@ class DokkaebiLuckDefense {
 
   createNextGenCodexModel(section, id, entry, context = {}) {
     if (section === 'guardian' && id === 'ember') {
-      const root = this.assetPipeline.instantiateModel('guardian-ember-nextgen');
+      const root = this.assetPipeline.instantiateModel('guardian-ember-sd-toon');
       if (root) return prepareImportedGuardian(root, id, 4, context.config || UNIT_TYPES[id], context.rankConfig || RANKS[3], { lowPower: this.lowPower });
     }
     if (section === 'monster' && id === 'imp') {
-      const root = this.assetPipeline.instantiateModel('monster-imp-nextgen');
+      const root = this.assetPipeline.instantiateModel('monster-imp-sd-toon');
       if (root) return prepareImportedEnemy(root, id, context.config || ENEMY_TYPES[id], { lowPower: this.lowPower });
     }
     if (section === 'boss' && id === 'tiger') {
-      const root = this.assetPipeline.instantiateModel('boss-tiger-nextgen');
+      const root = this.assetPipeline.instantiateModel('boss-tiger-sd-toon');
       if (root) {
         const model = prepareImportedEnemy(root, id, context.config || ENEMY_TYPES[id], { lowPower: this.lowPower });
         applyPremiumBossPhase(model, id, context.bossPhase || 1);
@@ -2797,7 +2797,7 @@ class DokkaebiLuckDefense {
     const config = UNIT_TYPES[type];
     const rankConfig = RANKS[rank - 1];
     if (type === 'ember') {
-      const root = this.assetPipeline.instantiateModel('guardian-ember-nextgen');
+      const root = this.assetPipeline.instantiateModel('guardian-ember-sd-toon');
       if (root) return prepareImportedGuardian(root, type, rank, config, rankConfig, { lowPower: this.lowPower });
     }
     return createPremiumGuardian(type, rank, config, rankConfig, { lowPower: this.lowPower });
@@ -3050,7 +3050,7 @@ class DokkaebiLuckDefense {
   }
 
   createEnemyModel(type, config) {
-    const assetId = type === 'imp' ? 'monster-imp-nextgen' : type === 'tiger' ? 'boss-tiger-nextgen' : '';
+    const assetId = type === 'imp' ? 'monster-imp-sd-toon' : type === 'tiger' ? 'boss-tiger-sd-toon' : '';
     const root = assetId ? this.assetPipeline.instantiateModel(assetId) : null;
     const premium = root
       ? prepareImportedEnemy(root, type, config, { lowPower: this.lowPower })

@@ -3,9 +3,9 @@
 이 문서는 대화가 끊기거나 다른 작업자가 이어받아도 프로젝트를 계속 개발할 수 있도록 모든 핵심 기록을 누적하는 단일 인수인계 파일입니다.
 
 - 마지막 갱신: 2026-07-22
-- 현재 버전: `3.0.0`
-- 프로젝트 폴더: `DokkaebiLuckDefense3D_FULL_v3.0.0`
-- 현재 패치명: NextGen GLB 3종·캐릭터 전면 리워크·스타일라이즈드 PBR·야시장·발사체 교체
+- 현재 버전: `3.1.0`
+- 프로젝트 폴더: `DokkaebiLuckDefense3D_FULL_v3.1.0`
+- 현재 패치명: SD 모바일 카툰 아트 바이블 잠금·5방향 미러링·대표 GLB 재비율
 
 ---
 
@@ -2336,4 +2336,65 @@ Vite preview와 Chromium CDP를 실행했지만 현재 자동화 환경의 조�
 7. 11방향 LOD 전환과 GLB 폴백 확인
 8. 다음 버전은 게임 `3.1.0`, 엔진 `2.1.0`
 9. 전체 ZIP과 변경분 패치 ZIP 두 개만 전달
+
+## v3.1.0 / Engine 2.1.0 — SD 모바일 카툰 아트 바이블 잠금
+
+### 변경 이유
+
+v3.0.0의 스타일라이즈드 PBR 방향은 개별 자산의 품질을 높이는 데에는 유효했지만, 목표 게임의 캐주얼 운빨 디펜스 감성보다 비율과 재질이 무거웠다. 사용자 제공 참고안을 기준으로 대량 제작 전에 아트 방향을 다시 잠갔다.
+
+### 고정된 방향
+
+- 2.0~2.5등신, 목표 2.25등신
+- 머리 44%, 몸통 34%, 다리 22%
+- 큰 손·발과 둥근 모서리
+- 4단 Toon Shading
+- 청록 월광 Rim Light
+- 모바일 Blob Shadow, 고품질 PCF Soft Shadow
+- 대표색 1개, 보조색 1개, 발광색 1개
+- 사실적 PBR·장신 비율·미세 장식 중심 디자인 금지
+
+### 제작 순서
+
+1. 불씨 깨비 골든 샘플과 7개 필수 모션
+2. 장난 요괴·저주 무당·저승 호랑이
+3. 바닥·신목·돌·장터 건물
+4. 공용 UI 키트
+5. 공용 VFX 키트
+6. 승인된 템플릿 기반 대량 제작
+
+### 5방향+미러링
+
+신규 원거리 캡처는 0°, 45°, 90°, 135°, 180°의 5개 원본만 제작한다. 런타임은 상대각을 0~180°로 접고 좌측을 미러링해 기존 11방향 선택기와 호환한다. 기존 11프레임 WebP는 삭제하지 않고 호환 자산으로 유지한다.
+
+### 코드·문서
+
+- `src/art-style-tokens.js`
+- `src/asset-specs.js`
+- `src/engine/directional-impostor.js`
+- `docs/ASSET_BIBLE.md`
+- `docs/AI_ASSET_PROMPTS.md`
+- `docs/BLENDER_EXPORT_GUIDE.md`
+- `docs/PRODUCTION_ROADMAP.md`
+- `scripts/verify-art-bible.mjs`
+
+### 대표 GLB 교체
+
+- `guardian-ember-sd-toon.glb`
+- `monster-imp-sd-toon.glb`
+- `boss-tiger-sd-toon.glb`
+
+파일은 새 SD 비율로 재생성했으며 전투와 도감이 같은 슬롯을 사용한다. 아직 스켈레탈 리깅 자산은 아니고 파츠 기반 골든 샘플이다.
+
+### 렌더링
+
+- `MeshToonMaterial` + 4단 DataTexture Gradient
+- `NeutralToneMapping`
+- 월광 Rim Shader 유지
+- 모바일 실시간 그림자 비활성, Blob Shadow 유지
+- 데스크톱 PCF Soft Shadow 유지
+
+### 다음 제작 작업
+
+불씨 깨비를 Blender에서 실제 리깅하고 `idle`, `walk`, `run`, `attack`, `skill`, `hit`, `death` 클립을 납품한다. 해당 골든 샘플이 실기기에서 승인되기 전에는 나머지 캐릭터를 대량 생산하지 않는다.
 

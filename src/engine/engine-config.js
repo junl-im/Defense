@@ -1,4 +1,4 @@
-export const ENGINE_VERSION = '2.0.0';
+export const ENGINE_VERSION = '2.1.0';
 
 export const MOBILE_ENGINE_CONFIG = Object.freeze({
   renderer: {
@@ -37,8 +37,8 @@ export const MOBILE_ENGINE_CONFIG = Object.freeze({
     staticDrawCalls: 45,
     dynamicDrawCalls: 95,
     pointLightsMobile: 4,
-    activeParticlesMobile: 90,
-    activeParticlesDesktop: 180,
+    activeParticlesMobile: 80,
+    activeParticlesDesktop: 150,
     activeProjectilesMobile: 56,
     activeProjectilesDesktop: 96,
     activeCoinsMobile: 72,

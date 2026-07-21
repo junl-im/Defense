@@ -4,10 +4,10 @@ const keyartUrl = new URL('../assets/moon-market-keyart.webp', import.meta.url).
 const publicAsset = (path) => `${import.meta.env?.BASE_URL || '/'}assets/${path}`;
 const groundTextureUrl = publicAsset('textures/moon-market-ground-v1.webp');
 const moonFxAtlasUrl = publicAsset('effects/moon-fx-atlas-v1.webp');
-const nextGenModelUrls = Object.freeze({
-  'guardian-ember-nextgen': publicAsset('models/guardian-ember-nextgen.glb'),
-  'monster-imp-nextgen': publicAsset('models/monster-imp-nextgen.glb'),
-  'boss-tiger-nextgen': publicAsset('models/boss-tiger-nextgen.glb')
+const sdToonModelUrls = Object.freeze({
+  'guardian-ember-sd-toon': publicAsset('models/guardian-ember-sd-toon.glb'),
+  'monster-imp-sd-toon': publicAsset('models/monster-imp-sd-toon.glb'),
+  'boss-tiger-sd-toon': publicAsset('models/boss-tiger-sd-toon.glb')
 });
 const impostorUrls = Object.freeze({
   'ember-idle': publicAsset('impostors/guardian/ember-idle-11.webp'),
@@ -41,7 +41,7 @@ export const CORE_ASSET_CATALOG = Object.freeze([
     variants: { low: url, medium: url, high: url },
     sourceWidth: 1024, sourceHeight: 768, estimatedBytes: 1024 * 768 * 4 * 1.333
   })),
-  ...Object.entries(nextGenModelUrls).map(([id, url]) => ({
+  ...Object.entries(sdToonModelUrls).map(([id, url]) => ({
     id, kind: 'model', required: false, retain: true,
     variants: { low: url, medium: url, high: url },
     fallback: `procedural-${id}`

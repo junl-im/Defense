@@ -17,6 +17,7 @@ const bossDirector = read('src/boss-director.js');
 const battlefieldThemes = read('src/battlefield-themes.js');
 const codexData = read('src/codex-data.js');
 const assetSpecs = read('src/asset-specs.js');
+const artTokens = read('src/art-style-tokens.js');
 const style = read('src/style.css');
 const engineConfig = read('src/engine/engine-config.js');
 const sw = read('public/sw.js');
@@ -30,7 +31,7 @@ const missingIds = [...new Set(queriedIds.filter((id) => !htmlIds.has(id)))];
 if (missingIds.length) fail(`index.html에 없는 DOM ID: ${missingIds.join(', ')}`);
 else pass(`${queriedIds.length}개 DOM ID 연결`);
 
-if (pkg.version === '3.0.0') pass('package version 3.0.0');
+if (pkg.version === '3.1.0') pass('package version 3.1.0');
 else fail(`package version 불일치: ${pkg.version}`);
 
 for (const path of ['.env.production', '.firebaserc', '.github/workflows/deploy.yml', 'README.md', 'PROJECT_HANDOFF.md']) {
@@ -46,7 +47,7 @@ else fail(`루트 Markdown 정리 필요: ${rootMarkdown.join(', ')}`);
 if (manifest.start_url === './') pass('PWA 상대 경로 start_url');
 else fail(`PWA start_url 확인 필요: ${manifest.start_url}`);
 
-if (main.includes("const GAME_VERSION = '3.0.0'")) pass('런타임 version 3.0.0');
+if (main.includes("const GAME_VERSION = '3.1.0'")) pass('런타임 version 3.1.0');
 else fail('런타임 version 불일치');
 
 for (const feature of ['offerContract', 'resolveActiveContract', 'checkBossPhase', 'kingNightMarch', 'bossPounce']) {
@@ -153,12 +154,12 @@ if (main.includes('createMoonMarketModuleSet()') && main.includes("root.name = '
 else fail('환경 모듈 또는 보스 페이즈 비주얼 누락');
 if (existsSync(resolve(root, 'src/assets/moon-mascot-expressions-v1.webp')) && html.includes('class="loading-mascot"') && style.includes('@keyframes mascot-load-frame')) pass('마스코트 4상태 로딩 에셋');
 else fail('마스코트 로딩 상태 에셋 누락');
-if (html.includes('class="title-version"') && html.includes('>v3.0.0</small>') && !html.includes('3대 월식 보스, 오늘의 원정')) pass('타이틀은 버전만 표시');
+if (html.includes('class="title-version"') && html.includes('>v3.1.0</small>') && !html.includes('3대 월식 보스, 오늘의 원정')) pass('타이틀은 버전만 표시');
 else fail('타이틀 패치 설명 제거 필요');
 if (main.includes('this.modalStack = []') && main.includes('modalParents') && main.includes('modal-obscured') && style.includes('--modal-layer') && style.includes('#controls-modal { z-index: var(--modal-layer, 154); }')) pass('일시정지 위 카메라 설정 모달 스택');
 else fail('중첩 모달 레이어 수정 누락');
-if (assetSpecs.includes('directions: 11') && assetSpecs.includes('ASSET_LOD_POLICY') && existsSync(resolve(root, 'docs/ASSET_BIBLE.md')) && existsSync(resolve(root, 'docs/ASSET_MANIFEST.json'))) pass('11방향 LOD와 에셋 제작 바이블');
-else fail('에셋 제작 규격 또는 문서 누락');
+if (assetSpecs.includes('directions: AUTHORED_VIEW_STANDARD.runtimeDirections') && assetSpecs.includes('authoredDirections: AUTHORED_VIEW_STANDARD.authoredDirections') && artTokens.includes('targetHeadsTall: 2.25') && existsSync(resolve(root, 'docs/ASSET_BIBLE.md')) && existsSync(resolve(root, 'docs/AI_ASSET_PROMPTS.md')) && existsSync(resolve(root, 'docs/BLENDER_EXPORT_GUIDE.md'))) pass('SD 아트 바이블과 5방향+미러링 제작 규격');
+else fail('SD 아트 바이블 또는 방향 제작 규격 누락');
 
 
 const premiumAssets = read('src/premium-assets.js');
@@ -175,12 +176,12 @@ else fail('v2.2 텍스처 런타임 연결 누락');
 if (main.includes('attachUnitImpostor(unit)') && main.includes('updateUnitImpostor(unit)') && main.includes('new DirectionalImpostorSelector') && main.includes("attachUnitImpostor(unit)") && main.includes("attachEnemyImpostor(group, type)") && main.includes("setDirectionalImpostorState")) pass('불씨 깨비·장난 요괴 상태별 11방향 원거리 LOD 연결');
 else fail('v2.3 상태별 실전 임포스터 LOD 연결 누락');
 
-if (main.includes('guardian-ember-nextgen') && main.includes('monster-imp-nextgen') && main.includes('boss-tiger-nextgen') && read('src/premium-assets.js').includes('prepareImportedGuardian')) pass('NextGen GLB 3종 실제 전투·도감 연결');
-else fail('NextGen GLB 연결 누락');
+if (main.includes('guardian-ember-sd-toon') && main.includes('monster-imp-sd-toon') && main.includes('boss-tiger-sd-toon') && read('src/premium-assets.js').includes('prepareImportedGuardian')) pass('SD Toon GLB 3종 실제 전투·도감 연결');
+else fail('SD Toon GLB 연결 누락');
 if (main.includes('createNextGenEnvironmentPass') && main.includes('fxRing') && main.includes('fxTrail')) pass('NextGen 야시장 환경과 다층 발사체 VFX');
 else fail('NextGen 환경 또는 VFX 누락');
-if (read('src/premium-assets.js').includes('uMoonRimColor') && read('src/engine/mobile-engine.js').includes('PCFSoftShadowMap')) pass('스타일라이즈드 PBR 림광과 데스크톱 소프트 섀도');
-else fail('NextGen 렌더링 패스 누락');
+if (read('src/premium-assets.js').includes('MeshToonMaterial') && read('src/premium-assets.js').includes('TOON_GRADIENT') && read('src/engine/mobile-engine.js').includes('NeutralToneMapping') && read('src/engine/mobile-engine.js').includes('PCFSoftShadowMap')) pass('4단 SD 카툰 명암·월광 림·소프트 섀도');
+else fail('SD 카툰 렌더링 패스 누락');
 
 if (html.includes('__DOKKAEBI_SHOW_BOOT_ERROR__') && html.includes('boot-error')) pass('로딩 실패 복구 UI');
 else fail('로딩 실패 복구 UI 누락');
@@ -203,7 +204,7 @@ for (const legacy of [
   else fail(`구버전 호환 파일 누락: ${legacy}`);
 }
 
-for (const path of ['src/game-data.js', 'src/run-director.js', 'src/expedition-director.js', 'src/daily-expedition.js', 'src/boss-director.js', 'src/battlefield-themes.js', 'src/codex-data.js', 'src/codex-viewer.js', 'src/premium-assets.js', 'src/asset-specs.js', 'src/sound-engine.js']) {
+for (const path of ['src/game-data.js', 'src/run-director.js', 'src/expedition-director.js', 'src/daily-expedition.js', 'src/boss-director.js', 'src/battlefield-themes.js', 'src/codex-data.js', 'src/codex-viewer.js', 'src/premium-assets.js', 'src/asset-specs.js', 'src/art-style-tokens.js', 'src/sound-engine.js']) {
   if (existsSync(resolve(root, path))) pass(`모듈 분리 ${path}`);
   else fail(`모듈 누락: ${path}`);
 }
@@ -235,7 +236,7 @@ for (const path of [
   if (existsSync(resolve(root, path))) pass(`엔진 모듈 ${path}`);
   else fail(`엔진 모듈 누락: ${path}`);
 }
-if (engineConfig.includes("ENGINE_VERSION = '2.0.0'") && engineConfig.includes('unitTriangles: 5600') && engineConfig.includes('enemyTriangles: 3200') && engineConfig.includes('bossTriangles: 9000')) pass('엔진 버전과 NextGen 폴리곤 예산');
+if (engineConfig.includes("ENGINE_VERSION = '2.1.0'") && engineConfig.includes('unitTriangles: 5600') && engineConfig.includes('enemyTriangles: 3200') && engineConfig.includes('bossTriangles: 9000')) pass('엔진 버전과 SD Toon 폴리곤 예산');
 else fail('엔진 버전 또는 폴리곤 예산 누락');
 if (main.includes('new MobileGameEngine()') && main.includes('new BlobShadowSystem') && main.includes('createRockField(28)') && main.includes('createLanternField(16)')) pass('모바일 엔진 실제 연결');
 else fail('모바일 엔진 연결 누락');

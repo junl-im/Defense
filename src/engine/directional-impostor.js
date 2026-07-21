@@ -11,6 +11,28 @@ export function resolveDirectionalFrame(objectYaw = 0, cameraYaw = 0, directions
   return Math.floor((relative + step * .5) / step) % count;
 }
 
+export function resolveMirroredAuthoredView(objectYaw = 0, cameraYaw = 0, authoredAnglesDegrees = [0, 45, 90, 135, 180]) {
+  const relativeDegrees = normalizeAngle(cameraYaw - objectYaw) * 180 / Math.PI;
+  const mirrored = relativeDegrees > 180;
+  const folded = mirrored ? 360 - relativeDegrees : relativeDegrees;
+  let authoredIndex = 0;
+  let bestDistance = Infinity;
+  authoredAnglesDegrees.forEach((angle, index) => {
+    const distance = Math.abs(folded - angle);
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      authoredIndex = index;
+    }
+  });
+  return {
+    authoredIndex,
+    authoredAngle: authoredAnglesDegrees[authoredIndex],
+    mirrored: mirrored && authoredAnglesDegrees[authoredIndex] !== 0 && authoredAnglesDegrees[authoredIndex] !== 180,
+    relativeDegrees,
+    foldedDegrees: folded
+  };
+}
+
 export class DirectionalImpostorSelector {
   constructor({ directions = 11, hysteresis = .08 } = {}) {
     this.directions = Math.max(1, Math.floor(directions));

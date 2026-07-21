@@ -1,9 +1,9 @@
 {
-  "schemaVersion": 5,
-  "gameVersion": "3.0.0",
-  "engineVersion": "2.0.0",
-  "artDirection": "nextgen-stylized-pbr-moonlit-joseon-market",
-  "productionStage": "nextgen-glb-three-character-runtime-art-overhaul",
+  "schemaVersion": 6,
+  "gameVersion": "3.1.0",
+  "engineVersion": "2.1.0",
+  "artDirection": "sd-mobile-toon-moonlit-korean-folklore",
+  "productionStage": "art-bible-locked-golden-sample-preproduction",
   "impostorDirections": 11,
   "characters": {
     "guardians": [
@@ -235,50 +235,13 @@
     "lootEntries": 10,
     "masteryTiers": 4
   },
-  "integratedNextGenModels": [
-    {
-      "id": "guardian-ember-nextgen",
-      "path": "public/assets/models/guardian-ember-nextgen.glb",
-      "triangles": 4816,
-      "budget": 5600,
-      "nodes": 9,
-      "runtime": [
-        "combat",
-        "codex"
-      ],
-      "animation": "procedural-part-transform"
-    },
-    {
-      "id": "monster-imp-nextgen",
-      "path": "public/assets/models/monster-imp-nextgen.glb",
-      "triangles": 2252,
-      "budget": 3200,
-      "nodes": 8,
-      "runtime": [
-        "combat",
-        "codex"
-      ],
-      "animation": "procedural-part-transform"
-    },
-    {
-      "id": "boss-tiger-nextgen",
-      "path": "public/assets/models/boss-tiger-nextgen.glb",
-      "triangles": 6404,
-      "budget": 9000,
-      "nodes": 7,
-      "runtime": [
-        "combat",
-        "codex"
-      ],
-      "animation": "procedural-part-transform"
-    }
-  ],
   "rendering": {
-    "toneMapping": "ACESFilmicToneMapping",
-    "desktopShadows": "PCFSoftShadowMap",
-    "mobileShadows": false,
-    "materialModel": "MeshStandardMaterial + stylized moon rim shader",
-    "lighting": "warm lantern key + cool moon rim"
+    "toneMapping": "NeutralToneMapping",
+    "shading": "MeshToonMaterial-4-band",
+    "rimLight": "moon-cyan-selective",
+    "outline": "selective-hero-boss-policy",
+    "shadow": "blob-mobile-pcf-soft-high",
+    "pbrPolicy": "optional-for-boss-and-hero-environment-only"
   },
   "nextGenEnvironment": [
     "layered-market-pavilion",
@@ -297,8 +260,81 @@
     "rotating-energy-layer"
   ],
   "assetLimitations": [
-    "three GLBs use named rigid parts, not skeletal skinning",
-    "remaining characters use upgraded procedural fallback",
-    "KTX2 and dedicated Normal/ORM/Emissive textures pending"
+    "대표 GLB 3종은 파츠 기반 정적 모델이며 스켈레탈 리깅은 골든 샘플 승인 이후 진행한다.",
+    "기존 11프레임 WebP는 호환 유지하며 신규 제작은 5방향 원본과 미러링 파이프라인을 사용한다.",
+    "최종 캐릭터 대량 제작은 불씨 깨비 7개 모션 실기기 승인 전 시작하지 않는다."
+  ],
+  "authoredImpostorDirections": 5,
+  "authoredAnglesDegrees": [
+    0,
+    45,
+    90,
+    135,
+    180
+  ],
+  "mirroredImpostors": true,
+  "artBible": {
+    "version": "2.0.0",
+    "status": "locked",
+    "document": "docs/ASSET_BIBLE.md",
+    "targetHeadsTall": 2.25,
+    "allowedHeadsTall": [
+      2.0,
+      2.5
+    ],
+    "renderStyle": "four-band-mobile-toon",
+    "palette": "moon-market-core-12",
+    "productionOrder": [
+      "hero",
+      "enemy-trio",
+      "environment",
+      "ui",
+      "vfx",
+      "scale-out"
+    ]
+  },
+  "integratedSdToonModels": [
+    {
+      "id": "guardian-ember-sd-toon",
+      "path": "public/assets/models/guardian-ember-sd-toon.glb",
+      "triangles": 4816,
+      "budget": 5600,
+      "nodes": 9,
+      "runtime": [
+        "combat",
+        "codex"
+      ],
+      "animation": "procedural-part-transform",
+      "renderStyle": "sd-mobile-toon",
+      "proportionStandard": "2.0-2.5-heads"
+    },
+    {
+      "id": "monster-imp-sd-toon",
+      "path": "public/assets/models/monster-imp-sd-toon.glb",
+      "triangles": 2252,
+      "budget": 3200,
+      "nodes": 8,
+      "runtime": [
+        "combat",
+        "codex"
+      ],
+      "animation": "procedural-part-transform",
+      "renderStyle": "sd-mobile-toon",
+      "proportionStandard": "2.0-2.5-heads"
+    },
+    {
+      "id": "boss-tiger-sd-toon",
+      "path": "public/assets/models/boss-tiger-sd-toon.glb",
+      "triangles": 6404,
+      "budget": 9000,
+      "nodes": 7,
+      "runtime": [
+        "combat",
+        "codex"
+      ],
+      "animation": "procedural-part-transform",
+      "renderStyle": "sd-mobile-toon",
+      "proportionStandard": "2.0-2.5-heads"
+    }
   ]
 }

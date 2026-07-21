@@ -1,29 +1,48 @@
 import * as THREE from 'three';
 
+const TOON_GRADIENT = (() => {
+  const data = new Uint8Array([48, 116, 188, 255]);
+  const texture = new THREE.DataTexture(data, data.length, 1, THREE.RedFormat);
+  texture.minFilter = THREE.NearestFilter;
+  texture.magFilter = THREE.NearestFilter;
+  texture.generateMipmaps = false;
+  texture.needsUpdate = true;
+  return texture;
+})();
+
 const darken = (hex, factor = .34) => new THREE.Color(hex).multiplyScalar(factor).getHex();
-const mat = (color, roughness = .72, metalness = .04, emissive = 0x000000, emissiveIntensity = 0) => {
-  const material = new THREE.MeshStandardMaterial({
-    color, roughness, metalness, emissive, emissiveIntensity,
-    envMapIntensity: 1.15,
-    flatShading: false
-  });
+
+function applyMoonToonRim(material, color, strength = .22) {
   const base = new THREE.Color(color);
-  const rim = base.clone().lerp(new THREE.Color(0xbfd9ff), .46);
+  const rim = base.clone().lerp(new THREE.Color(0xb8e8ff), .62);
   material.userData.rimColor = rim;
-  material.userData.rimStrength = metalness > .25 ? .2 : .12;
+  material.userData.rimStrength = strength;
+  material.userData.renderStyle = 'sd-mobile-toon';
   material.onBeforeCompile = (shader) => {
     shader.uniforms.uMoonRimColor = { value: rim };
-    shader.uniforms.uMoonRimStrength = { value: material.userData.rimStrength };
+    shader.uniforms.uMoonRimStrength = { value: strength };
     shader.fragmentShader = shader.fragmentShader.replace(
       '#include <common>',
       '#include <common>\nuniform vec3 uMoonRimColor;\nuniform float uMoonRimStrength;'
     ).replace(
       '#include <opaque_fragment>',
-      'float moonRim = pow(1.0 - clamp(dot(normalize(normal), normalize(vViewPosition)), 0.0, 1.0), 2.6);\noutgoingLight += uMoonRimColor * moonRim * uMoonRimStrength;\n#include <opaque_fragment>'
+      'float moonRim = pow(1.0 - clamp(dot(normalize(normal), normalize(vViewPosition)), 0.0, 1.0), 2.15);\noutgoingLight += uMoonRimColor * smoothstep(0.28, 0.86, moonRim) * uMoonRimStrength;\n#include <opaque_fragment>'
     );
   };
-  material.customProgramCacheKey = () => `moon-rim-${rim.getHexString()}-${material.userData.rimStrength}`;
+  material.customProgramCacheKey = () => `sd-toon-rim-${rim.getHexString()}-${strength}`;
   return material;
+}
+
+const mat = (color, roughness = .72, metalness = .04, emissive = 0x000000, emissiveIntensity = 0) => {
+  const material = new THREE.MeshToonMaterial({
+    color,
+    gradientMap: TOON_GRADIENT,
+    emissive,
+    emissiveIntensity
+  });
+  const materialBias = Math.max(0, Math.min(1, Number(metalness) || 0));
+  material.userData.surfaceClass = materialBias > .25 ? 'weapon-or-lacquer' : roughness > .82 ? 'paper-or-cloth' : 'skin-or-painted';
+  return applyMoonToonRim(material, color, materialBias > .25 ? .3 : .2);
 };
 const basic = (color, opacity = .72) => new THREE.MeshBasicMaterial({ color, transparent: true, opacity, depthWrite: false, side: THREE.DoubleSide });
 const mesh = (geometry, material, x = 0, y = 0, z = 0) => {
@@ -175,7 +194,7 @@ export function createPremiumGuardian(type, rank, config, rankConfig, { lowPower
   group.traverse((object) => { if (object.isMesh) object.userData.baseY = object.position.y; });
   group.userData = {
     ...group.userData, body, type, rank, baseY: .3, phase: Math.random() * Math.PI * 2,
-    aura, assetTier: 'nextgen-procedural', parts: {
+    aura, assetTier: 'sd-toon-procedural', parts: {
       ...group.userData.parts, weapon, shoulders, signature, rankBeads, halo,
       head: face.head, armL, armR, legL, legR, cloth, shoulderL: shoulder, shoulderR: shoulder2
     }
@@ -277,7 +296,7 @@ export function createPremiumEnemy(type, config, { lowPower = false } = {}) {
   group.userData = {
     ...group.userData, body, baseColor: config.color, scale, phase: Math.random() * Math.PI * 2,
     isBoss: Boolean(config.boss), eliteAura, shield, lodState: 'high', lodHigh: high,
-    assetTier: 'nextgen-procedural', parts: {
+    assetTier: 'sd-toon-procedural', parts: {
       weapon, signature, shoulders: null, rankBeads: null, halo: signature,
       head, armL, armR, legL, legR, cloth
     }
@@ -376,27 +395,29 @@ export function applyPremiumBossPhase(group, type, phase = 1) {
 
 
 function upgradeImportedMaterial(source) {
-  const material = source?.clone?.() || source;
-  if (!material) return material;
-  if ('envMapIntensity' in material) material.envMapIntensity = 1.25;
-  if ('roughness' in material) material.roughness = Math.max(.12, material.roughness ?? .65);
-  const base = material.color?.clone?.() || new THREE.Color(0x8f7bb4);
-  const rim = base.clone().lerp(new THREE.Color(0xc6dcff), .42);
-  const strength = (material.metalness || 0) > .25 ? .23 : .14;
-  material.onBeforeCompile = (shader) => {
-    shader.uniforms.uMoonRimColor = { value: rim };
-    shader.uniforms.uMoonRimStrength = { value: strength };
-    shader.fragmentShader = shader.fragmentShader.replace(
-      '#include <common>',
-      '#include <common>\nuniform vec3 uMoonRimColor;\nuniform float uMoonRimStrength;'
-    ).replace(
-      '#include <opaque_fragment>',
-      'float moonRim = pow(1.0 - clamp(dot(normalize(normal), normalize(vViewPosition)), 0.0, 1.0), 2.45);\noutgoingLight += uMoonRimColor * moonRim * uMoonRimStrength;\n#include <opaque_fragment>'
-    );
-  };
-  material.customProgramCacheKey = () => `imported-moon-rim-${rim.getHexString()}-${strength}`;
-  material.needsUpdate = true;
-  return material;
+  if (!source) return source;
+  const base = source.color?.clone?.() || new THREE.Color(0x8f7bb4);
+  const emissive = source.emissive?.clone?.() || new THREE.Color(0x000000);
+  const toon = new THREE.MeshToonMaterial({
+    name: source.name || 'SDToonMaterial',
+    color: base,
+    map: source.map || null,
+    alphaMap: source.alphaMap || null,
+    emissive,
+    emissiveMap: source.emissiveMap || null,
+    emissiveIntensity: Math.min(2.2, source.emissiveIntensity ?? .8),
+    transparent: Boolean(source.transparent),
+    opacity: source.opacity ?? 1,
+    alphaTest: source.alphaTest ?? 0,
+    side: source.side ?? THREE.FrontSide,
+    vertexColors: Boolean(source.vertexColors),
+    gradientMap: TOON_GRADIENT
+  });
+  const previousMetalness = source.metalness || 0;
+  applyMoonToonRim(toon, base, previousMetalness > .25 ? .32 : .22);
+  toon.userData.sourceMaterial = source.name || 'unnamed';
+  toon.needsUpdate = true;
+  return toon;
 }
 
 function findImportedPart(root, name) {
@@ -442,7 +463,7 @@ function importedPartMap(root) {
 export function prepareImportedGuardian(root, type, rank, config, rankConfig, { lowPower = false } = {}) {
   prepareImportedRoot(root);
   const group = new THREE.Group();
-  group.name = `NextGenGuardian:${type}`;
+  group.name = `SDToonGuardian:${type}`;
   group.add(root);
   root.scale.setScalar(.94);
   const scale = 1 + (rank - 1) * .105;
@@ -467,7 +488,7 @@ export function prepareImportedGuardian(root, type, rank, config, rankConfig, { 
   }
   group.userData = {
     body: findImportedPart(root, 'body'), type, rank, baseY: .3, phase: Math.random() * Math.PI * 2,
-    aura, parts, assetTier: 'nextgen-glb', assetId: `guardian-${type}-nextgen`
+    aura, parts, assetTier: 'sd-toon-glb', assetId: `guardian-${type}-sd-toon`
   };
   return group;
 }
@@ -475,7 +496,7 @@ export function prepareImportedGuardian(root, type, rank, config, rankConfig, { 
 export function prepareImportedEnemy(root, type, config, { lowPower = false } = {}) {
   prepareImportedRoot(root);
   const group = new THREE.Group();
-  group.name = `NextGenEnemy:${type}`;
+  group.name = `SDToonEnemy:${type}`;
   group.add(root);
   const importedScale = type === 'tiger' ? .9 : .96;
   root.scale.setScalar(importedScale * (config.scale || 1));
@@ -494,7 +515,7 @@ export function prepareImportedEnemy(root, type, config, { lowPower = false } = 
   group.userData = {
     body, baseColor: config.color, scale: config.scale || 1, phase: Math.random() * Math.PI * 2,
     isBoss: Boolean(config.boss), eliteAura, shield: null, lodState: 'high', lodHigh: [], parts,
-    assetTier: 'nextgen-glb', assetId: `${config.boss ? 'boss' : 'monster'}-${type}-nextgen`
+    assetTier: 'sd-toon-glb', assetId: `${config.boss ? 'boss' : 'monster'}-${type}-sd-toon`
   };
   return group;
 }
