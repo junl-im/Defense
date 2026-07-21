@@ -19,7 +19,7 @@ export class AssetPipeline {
   constructor(renderer, {
     qualityTier = 'high',
     textureBudgetMB = 192,
-    baseUrl = import.meta.env.BASE_URL || './',
+    baseUrl = import.meta.env?.BASE_URL || './',
     lowPower = false
   } = {}) {
     this.renderer = renderer;

@@ -27,6 +27,7 @@ export class AnimationStateSystem {
   }
 
   createController(root, clips = [], { aliases = DEFAULT_ALIASES, procedural = true } = {}) {
+    if (!root?.position || !root?.scale) throw new Error('Animation controller root is missing or invalid.');
     const mixer = clips.length ? new THREE.AnimationMixer(root) : null;
     const actions = {};
     for (const [state, names] of Object.entries(aliases)) {
@@ -46,7 +47,12 @@ export class AnimationStateSystem {
   remove(controller) {
     if (!controller) return;
     controller.mixer?.stopAllAction();
+    controller.enabled = false;
     this.controllers.delete(controller);
+  }
+
+  clear() {
+    for (const controller of [...this.controllers]) this.remove(controller);
   }
 
   setState(controller, state, { immediate = false, oneShot = false, duration = 0.25 } = {}) {

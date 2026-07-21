@@ -34,14 +34,35 @@ export class MobileGameEngine {
 
   createRenderer(canvas) {
     const useAntialias = this.device.mobile ? this.config.renderer.antialiasMobile : this.config.renderer.antialiasDesktop;
-    this.renderer = new THREE.WebGLRenderer({
-      canvas,
-      antialias: useAntialias && !this.device.lowEnd,
-      powerPreference: this.config.renderer.powerPreference,
-      alpha: false,
-      stencil: false,
-      depth: true
-    });
+    const attempts = [
+      { antialias: useAntialias && !this.device.lowEnd, powerPreference: this.config.renderer.powerPreference, label: 'preferred' },
+      { antialias: false, powerPreference: 'default', label: 'compatibility' },
+      { antialias: false, powerPreference: 'low-power', label: 'low-power' }
+    ];
+    let lastError = null;
+    this.rendererFallback = 'preferred';
+    for (const attempt of attempts) {
+      try {
+        this.renderer = new THREE.WebGLRenderer({
+          canvas,
+          antialias: attempt.antialias,
+          powerPreference: attempt.powerPreference,
+          alpha: false,
+          stencil: false,
+          depth: true,
+          failIfMajorPerformanceCaveat: false
+        });
+        this.rendererFallback = attempt.label;
+        break;
+      } catch (error) {
+        lastError = error;
+        console.warn(`[MobileGameEngine] renderer attempt failed: ${attempt.label}`, error);
+      }
+    }
+    if (!this.renderer) {
+      const reason = lastError instanceof Error ? lastError.message : String(lastError || 'unknown WebGL error');
+      throw new Error(`WebGL 렌더러 초기화 실패: ${reason}`);
+    }
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.14;
@@ -83,6 +104,7 @@ export class MobileGameEngine {
       shadows: Boolean(this.renderer?.shadowMap.enabled),
       assetQualityTier: this.assetQualityTier,
       textureBudgetMB: this.textureBudgetMB,
+      rendererFallback: this.rendererFallback || 'none',
       rendererInfo: this.renderer?.info || null
     };
   }

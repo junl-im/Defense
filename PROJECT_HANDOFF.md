@@ -3,9 +3,9 @@
 이 문서는 대화가 끊기거나 다른 작업자가 이어받아도 프로젝트를 계속 개발할 수 있도록 모든 핵심 기록을 누적하는 단일 인수인계 파일입니다.
 
 - 마지막 갱신: 2026-07-21
-- 현재 버전: `1.7.9`
-- 프로젝트 폴더: `DokkaebiLuckDefense3D_FULL_v1.7.9`
-- 현재 패치명: 고품질 에셋 프리로드·압축 로더·텍스처 메모리 예산
+- 현재 버전: `1.8.0`
+- 프로젝트 폴더: `DokkaebiLuckDefense3D_FULL_v1.8.0`
+- 현재 패치명: BOOT RECOVERY 수정·달의 징조·정예 요괴·달빛 방패·왕대박 폭주
 
 ---
 
@@ -986,3 +986,176 @@ VITE_BASE_PATH=/Defense/ npm run build
 - 모바일/저사양은 카메라 거리 밖 애니메이션 업데이트 중지 및 2프레임 간격 처리
 - 적 모델 풀 반환 후 geometry/material을 dispose하던 수명 오류 수정
 - 다음 예상: v1.7.10 / Engine 1.0.9 — 실제 GLB 에셋 슬롯 매니페스트와 애니메이션 이벤트(타격 프레임/발사 프레임)
+
+---
+
+## v1.8.0 / Engine 1.1.0 — BOOT RECOVERY 복구와 대규모 런 변주 업데이트
+
+### 사용자가 보고한 첫 실행 오류
+
+표시 문구:
+
+```text
+BOOT RECOVERY
+달빛 장터를 깨우지 못했습니다
+초기화 오류: Cannot read properties of undefined (reading 'group')
+```
+
+실제 원인은 `updateBlobShadows()`의 다음 조건이었다.
+
+```js
+this.player?.group?.visible !== false
+```
+
+플레이어가 아직 생성되지 않은 첫 프레임에는 위 표현식이 `undefined !== false`, 즉 `true`가 된다. 그 결과 바로 뒤에서 `this.player.group.position`을 읽으며 `group` 오류가 발생했다.
+
+수정 원칙:
+
+1. blob shadow 갱신은 `worldReady`가 참일 때만 실행한다.
+2. 플레이어·도깨비·적마다 실제 `group` 존재 여부를 먼저 확인한다.
+3. 월드 생성 전과 `clearWorld()` 시작 시 `worldReady = false`로 둔다.
+4. 플레이어, 도깨비, 적, 월드 청크가 모두 준비된 뒤에만 `worldReady = true`로 전환한다.
+
+이 오류는 happy-dom 기반 실제 부팅 하네스에서 기존 코드로 재현한 뒤 수정본에서 `BOOT_OK true`를 확인했다. 이어서 `startRun()`, `startWave()`, 적 생성과 전투 update 루프까지 스모크 테스트했다.
+
+### 함께 수정한 잠복 오류
+
+1. 플레이어 자동 공격에서 존재하지 않는 `unit.animation`을 참조하던 코드를 `this.player.animation`으로 수정했다.
+2. 적을 ObjectPool로 반환하면 좌표가 즉시 `-100`으로 초기화되므로, 반환 전에 `deathPosition`을 복제해 파티클과 엽전 생성에 사용한다.
+3. 타이틀 복귀와 새 런 시작 때 플레이어·도깨비·적 애니메이션 컨트롤러를 제거해 오래된 mixer가 남지 않도록 했다.
+4. `AssetPipeline` 기본 기준 경로를 `import.meta.env?.BASE_URL || './'`로 변경해 비 Vite 검증 환경에서도 안전하게 동작시켰다.
+
+### WebGL 부팅 내구성 강화
+
+`MobileEngine` 렌더러 생성은 다음 순서로 최대 세 번 시도한다.
+
+1. 기기 분석 결과에 맞는 기본 설정
+2. antialias를 끈 호환 설정
+3. low-power 저사양 설정
+
+모든 시도가 실패할 때만 WebGL 지원 또는 하드웨어 가속을 확인하라는 명확한 오류를 던진다. 성공한 폴백 단계는 엔진 진단 정보의 `rendererFallback`에서 확인할 수 있다.
+
+### 달의 징조 5종
+
+새 모듈 `src/run-director.js`가 직전 징조와 겹치지 않도록 다음 웨이브 규칙을 선택한다.
+
+- 풍요의 달: 보상과 행운 증가
+- 붉은 달: 적 공격력과 처치 점수 증가
+- 서리 달: 적 이동 속도 감소, 도깨비 재사용 대기시간 보정
+- 천둥 달: 빠른 생성과 영웅 공격 강화
+- 검은 월식: 적 체력·정예 확률·보상이 함께 증가
+
+징조는 체력, 속도, 공격력, 보상, 점수, 생성 간격, 도깨비 쿨다운, 영웅 피해, 행운, 정예 확률 배율을 조합한다. 현재 징조와 핵심 효과는 전투 HUD에 표시한다.
+
+### 정예 요괴 4종
+
+3웨이브부터 일정 확률로 일반 적이 정예 속성을 얻는다.
+
+- 질풍: 이동 속도 강화
+- 철벽: 체력 강화
+- 폭주: 공격력 강화
+- 황금: 보상과 점수 강화
+
+정예 요괴는 재사용 가능한 링 오라로 구분하며, 처치 수는 결과 분석에 기록한다. 별도 고폴리곤 모델을 만들지 않아 기존 적 500 triangle 예산을 유지한다.
+
+### 무결점 웨이브와 달빛 방패
+
+웨이브 동안 신목이 피해를 받지 않으면 달빛 방패를 1개 얻고 최대 3개까지 보관한다. 다음 피해 한 번을 완전히 막으며, 방패 방어 횟수는 런 통계에 남는다.
+
+### 왕대박 폭주
+
+- 4성 도깨비 소환: 8초
+- 5성 도깨비 소환: 12초
+
+폭주 중에는 플레이어와 도깨비의 공격 성능이 상승한다. 남은 시간은 별도 HUD로 표시하고 발동 횟수는 결과 분석에 추가한다.
+
+### UI와 결과 분석
+
+추가 DOM:
+
+- `moon-omen`
+- `moon-omen-icon`
+- `moon-omen-name`
+- `moon-omen-effect`
+- `moon-ward`
+- `moon-ward-value`
+- `jackpot-rush`
+- `jackpot-time`
+
+추가 결과 통계:
+
+- 정예 요괴 처치
+- 달빛 방패 방어
+- 왕대박 폭주 발동
+
+### 변경 파일
+
+- `package.json`
+- `package-lock.json`
+- `index.html`
+- `README.md`
+- `PROJECT_HANDOFF.md`
+- `src/main.js`
+- `src/style.css`
+- `src/run-director.js`
+- `src/engine/mobile-engine.js`
+- `src/engine/asset-pipeline.js`
+- `src/engine/animation-state-system.js`
+- `src/engine/engine-config.js`
+- `scripts/verify-project.mjs`
+- `scripts/verify-run-director.mjs`
+
+### 자동 검증 결과
+
+```bash
+npm ci
+npm run verify
+VITE_BASE_PATH=/Defense/ npm run build
+```
+
+확인 항목:
+
+- DOM ID 133개 연결
+- 게임 `1.8.0`, 엔진 `1.1.0`
+- 첫 프레임 `player.group` 안전성
+- 플레이어 공격 애니메이션 참조
+- 적 풀 반환 전 사망 좌표 보존
+- 달의 징조 5종과 정예 속성 4종
+- 달빛 방패와 왕대박 폭주
+- WebGL 렌더러 3단 폴백
+- 애니메이션 컨트롤러 수명 정리
+- 도깨비 300 / 적 500 triangle 예산
+- 텍스처 메모리 14.02MB / 저사양 예산 64MB
+- 카메라, 입력 방향, 320px 모바일 레이아웃
+- 실제 부팅 및 첫 웨이브 스모크 테스트
+
+### 실기기 확인 순서
+
+1. 기존 사이트 캐시를 한 번 정리하고 `?fresh=1.8.0`으로 접속한다.
+2. BOOT RECOVERY 화면 없이 타이틀이 열리는지 확인한다.
+3. 첫 웨이브 시작 시 달의 징조 HUD가 표시되는지 확인한다.
+4. 3웨이브 이후 오라가 있는 정예 요괴가 등장하는지 확인한다.
+5. 신목 무피해 클리어 후 달빛 방패가 쌓이고 다음 피해를 막는지 확인한다.
+6. 4성 또는 5성 소환 때 왕대박 폭주 타이머가 표시되는지 확인한다.
+7. F3에서 `rendererFallback`, draw call, triangles, 풀 사용량을 확인한다.
+8. 하드웨어 가속을 끈 환경에서는 호환 렌더러 재시도 또는 명확한 WebGL 오류가 표시되는지 확인한다.
+
+### 다음 패치 예상 — v1.8.1 / Engine 1.1.1
+
+1. 달의 징조별 전장 조명·안개·파티클 테마
+2. 정예 속성별 실제 공격 패턴과 사망 보상 연출
+3. 보스 전용 월식 페이즈와 웨이브 중간 선택 이벤트
+4. 실제 고품질 환경 GLB 첫 슬롯과 HIGH/MEDIUM/LOW LOD
+5. 모바일 실기기 성능 로그 내보내기와 자동 품질 강등 기록
+6. 런 시드 저장과 동일 조건 재도전
+
+### 다음 작업자가 시작할 순서
+
+1. `npm ci`
+2. `npm run verify`
+3. `VITE_BASE_PATH=/Defense/ npm run build`
+4. `?stats=1&fresh=1.8.0`으로 접속
+5. 부팅, 첫 웨이브, 징조 HUD, 정예 오라, 방패, 폭주를 순서대로 확인
+6. 다음 버전은 게임 `1.8.1`, 엔진 `1.1.1`
+7. 사용자에게 전체 ZIP과 패치 ZIP 두 개만 전달
+

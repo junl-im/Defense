@@ -56,7 +56,7 @@
             <button id="meta-btn" class="btn ghost meta-entry"><span>혼불 <b id="title-shards">0</b></span>수호자 성장</button>
           </div>
           <button id="controls-btn" class="title-settings-btn" type="button">카메라 · 조작 설정</button>
-          <small>v1.7.9 · GLB 캐릭터 슬롯과 거리 제한 애니메이션 상태 시스템 적용.</small>
+          <small>v1.8.0 · 달의 징조, 정예 요괴, 달빛 방패, 왕대박 폭주 적용.</small>
         </div>
       </section>
 
@@ -102,6 +102,19 @@
         <small>MOON CHAIN</small>
         <b id="kill-chain-value">x2</b>
         <span id="kill-chain-bonus">연속 처치</span>
+      </div>
+
+      <aside id="moon-omen" class="moon-omen hidden" aria-live="polite">
+        <span id="moon-omen-icon">☾</span>
+        <div><small>MOON OMEN</small><b id="moon-omen-name">달의 징조</b><em id="moon-omen-effect">웨이브 변칙 효과</em></div>
+      </aside>
+
+      <div id="moon-ward" class="moon-ward hidden" aria-label="달빛 방패 충전량">
+        <span>◇</span><div><small>달빛 방패</small><b id="moon-ward-value">0/3</b></div>
+      </div>
+
+      <div id="jackpot-rush" class="jackpot-rush hidden" aria-live="assertive">
+        <span>大</span><div><small>JACKPOT RUSH</small><b>왕대박 폭주</b></div><em id="jackpot-rush-time">0.0s</em>
       </div>
 
       <div id="danger-hint" class="danger-hint hidden" aria-live="assertive">
@@ -298,7 +311,7 @@
     </div>
     <script>
       (() => {
-        const VERSION = '1.7.9';
+        const VERSION = '1.8.0';
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
         const retryButton = document.getElementById('boot-retry-btn');

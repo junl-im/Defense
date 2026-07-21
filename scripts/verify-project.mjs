@@ -10,6 +10,7 @@ const fail = (message) => { failures.push(message); console.error(`FAIL ${messag
 const html = read('index.html');
 const main = read('src/main.js');
 const data = read('src/game-data.js');
+const runDirector = read('src/run-director.js');
 const style = read('src/style.css');
 const sw = read('public/sw.js');
 const vite = read('vite.config.js');
@@ -22,7 +23,7 @@ const missingIds = [...new Set(queriedIds.filter((id) => !htmlIds.has(id)))];
 if (missingIds.length) fail(`index.html에 없는 DOM ID: ${missingIds.join(', ')}`);
 else pass(`${queriedIds.length}개 DOM ID 연결`);
 
-if (pkg.version === '1.7.9') pass('package version 1.7.9');
+if (pkg.version === '1.8.0') pass('package version 1.8.0');
 else fail(`package version 불일치: ${pkg.version}`);
 
 for (const path of ['.env.production', '.firebaserc', '.github/workflows/deploy.yml', 'README.md', 'PROJECT_HANDOFF.md']) {
@@ -38,7 +39,7 @@ else fail(`루트 Markdown 정리 필요: ${rootMarkdown.join(', ')}`);
 if (manifest.start_url === './') pass('PWA 상대 경로 start_url');
 else fail(`PWA start_url 확인 필요: ${manifest.start_url}`);
 
-if (main.includes("const GAME_VERSION = '1.7.9'")) pass('런타임 version 1.7.9');
+if (main.includes("const GAME_VERSION = '1.8.0'")) pass('런타임 version 1.8.0');
 else fail('런타임 version 불일치');
 
 for (const feature of ['offerContract', 'resolveActiveContract', 'checkBossPhase', 'kingNightMarch', 'bossPounce']) {
@@ -80,6 +81,24 @@ else fail('위험 안내 안정화 코드 누락');
 if (main.includes('unit.commandTimer = 7') && main.includes('commandCooldown = 18') && main.includes('commandDamage = unit.commandTimer > 0 ? 1.55 : 1')) pass('집중 명령 7초/18초 밸런스');
 else fail('집중 명령 밸런스 코드 누락');
 
+
+if (main.includes("if (this.player?.group && this.player.group.visible !== false)") && main.includes('if (!this.blobShadows || !this.worldReady) return;')) pass('첫 프레임 player.group 부팅 오류 수정');
+else fail('첫 프레임 player.group 부팅 오류 방어 누락');
+if (main.includes("this.animations.trigger(this.player.animation, 'attack', .24)")) pass('플레이어 공격 애니메이션 참조 수정');
+else fail('플레이어 공격 애니메이션 오참조가 남아 있음');
+if (main.includes('const deathPosition = enemy.group.position.clone()') && main.includes('this.dropCoins(deathPosition')) pass('적 풀 반환 전 사망 좌표 보존');
+else fail('적 사망 좌표 풀링 수명 오류 수정 누락');
+if (runDirector.includes('MOON_OMENS') && runDirector.includes('ELITE_AFFIXES') && main.includes('selectMoonOmen') && main.includes('rollEliteAffix')) pass('달의 징조와 정예 요괴 런 디렉터');
+else fail('런 디렉터 시스템 누락');
+if (main.includes('this.moonWard = Math.min(3') && main.includes('this.runStats.wardBlocks') && htmlIds.has('moon-ward')) pass('무결점 달빛 방패 시스템');
+else fail('달빛 방패 시스템 누락');
+if (main.includes('triggerJackpotRush') && main.includes('this.jackpotTimer > 0 ? 1.22 : 1') && htmlIds.has('jackpot-rush')) pass('왕대박 폭주 시스템');
+else fail('왕대박 폭주 시스템 누락');
+if (htmlIds.has('moon-omen') && style.includes('.moon-omen') && style.includes('.jackpot-rush')) pass('v1.8 전투 상태 HUD');
+else fail('v1.8 전투 상태 HUD 누락');
+if (read('src/engine/mobile-engine.js').includes("label: 'compatibility'") && read('src/engine/mobile-engine.js').includes("label: 'low-power'")) pass('WebGL 렌더러 3단 폴백');
+else fail('WebGL 렌더러 폴백 누락');
+
 if (html.includes('__DOKKAEBI_SHOW_BOOT_ERROR__') && html.includes('boot-error')) pass('로딩 실패 복구 UI');
 else fail('로딩 실패 복구 UI 누락');
 
@@ -101,7 +120,7 @@ for (const legacy of [
   else fail(`구버전 호환 파일 누락: ${legacy}`);
 }
 
-for (const path of ['src/game-data.js', 'src/sound-engine.js']) {
+for (const path of ['src/game-data.js', 'src/run-director.js', 'src/sound-engine.js']) {
   if (existsSync(resolve(root, path))) pass(`모듈 분리 ${path}`);
   else fail(`모듈 누락: ${path}`);
 }
@@ -134,7 +153,7 @@ for (const path of [
   else fail(`엔진 모듈 누락: ${path}`);
 }
 const engineConfig = read('src/engine/engine-config.js');
-if (engineConfig.includes("ENGINE_VERSION = '1.0.8'") && engineConfig.includes('unitTriangles: 300') && engineConfig.includes('enemyTriangles: 500')) pass('엔진 버전과 폴리곤 예산');
+if (engineConfig.includes("ENGINE_VERSION = '1.1.0'") && engineConfig.includes('unitTriangles: 300') && engineConfig.includes('enemyTriangles: 500')) pass('엔진 버전과 폴리곤 예산');
 else fail('엔진 버전 또는 폴리곤 예산 누락');
 if (main.includes('new MobileGameEngine()') && main.includes('new BlobShadowSystem') && main.includes('createRockField(28)') && main.includes('createLanternField(16)')) pass('모바일 엔진 실제 연결');
 else fail('모바일 엔진 연결 누락');
@@ -201,7 +220,7 @@ if (failures.length) {
   console.error(`\nv1.7.7 추가 검증 실패 ${failures.length}건`);
   process.exit(1);
 }
-console.log('v1.7.9 카메라·에셋 추가 검증 완료');
+console.log('v1.8.0 카메라·에셋 추가 검증 완료');
 
 
 const assetCatalog = read('src/engine/asset-catalog.js');
@@ -220,7 +239,7 @@ else fail('비동기 부팅 오류 복구 누락');
 if (engineConfig.includes('textureBudgetLowMB: 64') && engineConfig.includes('textureBudgetMobileMB: 96') && engineConfig.includes('textureBudgetDesktopMB: 192')) pass('기기별 텍스처 메모리 예산');
 else fail('텍스처 메모리 예산 누락');
 if (failures.length) {
-  console.error(`\nv1.7.9 에셋 파이프라인 검증 실패 ${failures.length}건`);
+  console.error(`\nv1.8.0 에셋 파이프라인 검증 실패 ${failures.length}건`);
   process.exit(1);
 }
-console.log('v1.7.9 에셋 파이프라인 검증 완료');
+console.log('v1.8.0 에셋 파이프라인 검증 완료');

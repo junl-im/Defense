@@ -3,6 +3,7 @@ import './style.css';
 import { isFirebaseEnabled, loadOnlineScores, submitOnlineScore } from './firebase.js';
 import SoundEngine from './sound-engine.js';
 import { RANKS, UNIT_TYPES, UNIT_KEYS, ENEMY_TYPES, SYNERGIES, BLESSINGS, CONTRACTS } from './game-data.js';
+import { selectMoonOmen, rollEliteAffix } from './run-director.js';
 import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, ObjectPool, RenderStatsHUD, AssetPipeline, CORE_ASSET_CATALOG, AnimationStateSystem } from './engine/index.js';
 
 const $ = (selector) => document.querySelector(selector);
@@ -36,7 +37,10 @@ const ui = {
   evolution: $('#evolution-banner'), evolutionSymbol: $('#evolution-symbol'), evolutionName: $('#evolution-name'), evolutionUltimate: $('#evolution-ultimate'),
   bossHealth: $('#boss-health'), bossHealthName: $('#boss-health-name'), bossHealthValue: $('#boss-health-value'), bossHealthProgress: $('#boss-health-progress'),
   bossIntent: $('#boss-intent'), bossPhase: $('#boss-phase'), bossIntentLabel: $('#boss-intent-label'), bossIntentTime: $('#boss-intent-time'),
-  killChain: $('#kill-chain'), killChainValue: $('#kill-chain-value'), killChainBonus: $('#kill-chain-bonus'), dangerHint: $('#danger-hint'), dangerArrow: $('#danger-arrow'), dangerLevel: $('#danger-level'), dangerLabel: $('#danger-label'), dangerTime: $('#danger-time'),
+  killChain: $('#kill-chain'), killChainValue: $('#kill-chain-value'), killChainBonus: $('#kill-chain-bonus'),
+  moonOmen: $('#moon-omen'), moonOmenIcon: $('#moon-omen-icon'), moonOmenName: $('#moon-omen-name'), moonOmenEffect: $('#moon-omen-effect'),
+  moonWard: $('#moon-ward'), moonWardValue: $('#moon-ward-value'), jackpot: $('#jackpot-rush'), jackpotTime: $('#jackpot-rush-time'),
+  dangerHint: $('#danger-hint'), dangerArrow: $('#danger-arrow'), dangerLevel: $('#danger-level'), dangerLabel: $('#danger-label'), dangerTime: $('#danger-time'),
   firstMissionPanel: $('#first-mission-panel'), firstMissionStep: $('#first-mission-step'), firstMissionTitle: $('#first-mission-title'),
   firstMissionProgress: $('#first-mission-progress'), firstMissionCopy: $('#first-mission-copy'),
   combatTextRoot: $('#combat-text-root'), qualityBadge: $('#quality-badge'),
@@ -46,7 +50,7 @@ const ui = {
   playerName: $('#player-name'), saveScore: $('#save-score-btn'), resultRetry: $('#result-retry-btn'), leaderboard: $('#leaderboard')
 };
 
-const GAME_VERSION = '1.7.9';
+const GAME_VERSION = '1.8.0';
 
 const FIRST_MISSIONS = [
   { id: 'summons', title: '수호대 3회 강림', goal: 3, reward: 35, copy: '무료 강림도 포함됩니다.' },
@@ -140,6 +144,12 @@ class DokkaebiLuckDefense {
     this.enemyPools = {};
     this.enemyPoolRoot = null;
     this.lodFrame = 0;
+    this.worldReady = false;
+    this.activeOmen = null;
+    this.lastOmenId = '';
+    this.moonWard = 0;
+    this.jackpotTimer = 0;
+    this.eliteKills = 0;
     this.animations = new AnimationStateSystem({ lowPower: this.lowPower, mobile: this.engine.device.mobile });
 
     this.assertRequiredUI();
@@ -812,7 +822,10 @@ class DokkaebiLuckDefense {
       commandsUsed: 0,
       coinsCollected: 0,
       moveOrders: 0,
-      dangerDodges: 0
+      dangerDodges: 0,
+      eliteKills: 0,
+      wardBlocks: 0,
+      jackpotTriggers: 0
     };
   }
 
@@ -1054,6 +1067,8 @@ class DokkaebiLuckDefense {
         }
         const shield = group.userData.shield;
         if (shield?.material) shield.material.emissiveIntensity = .18;
+        const eliteAura = group.userData.eliteAura;
+        if (eliteAura) eliteAura.visible = false;
         group.userData.lodState = 'high';
         (group.userData.lodHigh || []).forEach((object) => { object.visible = true; });
         this.enemyPoolRoot.add(group);
@@ -1105,6 +1120,10 @@ class DokkaebiLuckDefense {
   }
 
   clearWorld() {
+    this.worldReady = false;
+    this.units.forEach((unit) => this.animations.remove(unit?.animation));
+    this.enemies.forEach((enemy) => this.animations.remove(enemy?.animation));
+    this.animations.remove(this.player?.animation);
     this.releaseAllEnemyModels();
     this.units.length = 0;
     this.projectilePools && Object.values(this.projectilePools).forEach((pool) => pool.releaseAll());
@@ -1126,6 +1145,8 @@ class DokkaebiLuckDefense {
     this.disposeGroup(this.worldRoot);
     this.disposeGroup(this.dynamicRoot);
     this.disposeGroup(this.effectRoot);
+    this.player = null;
+    this.core = null;
   }
 
   disposeGroup(root) {
@@ -1143,6 +1164,7 @@ class DokkaebiLuckDefense {
 
   createWorld(titleMode = false) {
     this.clearWorld();
+    this.worldReady = false;
     this.scene.background.set(0x10091f);
     this.scene.fog.color.set(0x130b26);
 
@@ -1198,6 +1220,7 @@ class DokkaebiLuckDefense {
       ];
       showcase.forEach(([type, rank, padIndex]) => this.createUnit(type, rank, this.unitPads[padIndex], true));
     }
+    this.worldReady = true;
   }
 
   createMoon() {
@@ -1483,7 +1506,11 @@ class DokkaebiLuckDefense {
     group.traverse((object) => { if (object.isMesh) object.userData.baseY = object.position.y; });
     this.dynamicRoot.add(group);
     this.engine.geometryBudget.inspect('hero', group, 'unitTriangles');
-    return { group, flame, attackCooldown: 0, dashCooldown: 0, skillCooldown: 0, dashTimer: 0, stunTimer: 0, facing: new THREE.Vector3(0,0,-1) };
+    return {
+      group, flame, attackCooldown: 0, dashCooldown: 0, skillCooldown: 0, dashTimer: 0, stunTimer: 0,
+      facing: new THREE.Vector3(0,0,-1),
+      animation: this.animations.createController(group, [], { procedural: true })
+    };
   }
 
   createWisp() {
@@ -1550,6 +1577,11 @@ class DokkaebiLuckDefense {
     this.lastShardReward = 0;
     this.commandCooldown = 0;
     this.commandActiveKey = '';
+    this.activeOmen = null;
+    this.lastOmenId = '';
+    this.moonWard = 0;
+    this.jackpotTimer = 0;
+    this.eliteKills = 0;
     this.runStats = this.createRunStats();
     this.cancelMoveTarget();
     this.displayDanger = null;
@@ -1611,6 +1643,9 @@ class DokkaebiLuckDefense {
   showGameUI(show) {
     [ui.hud, ui.synergyPanel, ui.luckMeter, ui.unitStrip, ui.joystick, ui.actionDock, ui.leftUiToggle].forEach((element) => element.classList.toggle('hidden', !show));
     ui.firstMissionPanel.classList.toggle('hidden', !show || !this.firstMissionActive);
+    ui.moonOmen.classList.toggle('hidden', !show || !this.activeOmen);
+    ui.moonWard.classList.toggle('hidden', !show);
+    ui.jackpot.classList.toggle('hidden', !show || this.jackpotTimer <= 0);
     if (!show) {
       ui.dangerHint.classList.remove('visible', 'urgent');
       ui.dangerHint.classList.add('hidden');
@@ -1690,6 +1725,7 @@ class DokkaebiLuckDefense {
     }
 
     const unit = this.createUnit(type, rank, pad, false);
+    if (rank >= 4) this.triggerJackpotRush(rank);
     this.recordFirstMission('summons', 1);
     this.sound.summon(rank);
     this.haptic(rank >= 3 ? [24, 35, 45] : 22);
@@ -1717,8 +1753,9 @@ class DokkaebiLuckDefense {
     else if (roll < .105) rank = 3;
     else if (roll < .29) rank = 2;
 
-    if (rank === 1) this.luck = Math.min(100, this.luck + 11 * this.mods.luckGain * this.getSynergyLuckMultiplier());
-    else if (rank === 2) this.luck = Math.min(100, this.luck + 5 * this.mods.luckGain * this.getSynergyLuckMultiplier());
+    const omenLuck = this.activeOmen?.luckGain || 1;
+    if (rank === 1) this.luck = Math.min(100, this.luck + 11 * this.mods.luckGain * this.getSynergyLuckMultiplier() * omenLuck);
+    else if (rank === 2) this.luck = Math.min(100, this.luck + 5 * this.mods.luckGain * this.getSynergyLuckMultiplier() * omenLuck);
     else this.luck = Math.max(0, this.luck - 16);
     return rank;
   }
@@ -1863,6 +1900,9 @@ class DokkaebiLuckDefense {
     this.currentWave += 1;
     this.waveActive = true;
     this.waveStartHp = this.coreHp;
+    this.activeOmen = selectMoonOmen(this.lastOmenId);
+    this.lastOmenId = this.activeOmen.id;
+    this.showMoonOmen();
     this.activatePendingContract();
     const bossWave = this.currentWave === 5 || this.currentWave === 10;
     this.spawnRemaining = bossWave ? (this.currentWave === 5 ? 15 : 22) : 7 + this.currentWave * 3;
@@ -1922,17 +1962,59 @@ class DokkaebiLuckDefense {
     this.dynamicRoot.add(group);
     const contractHp = this.activeContract?.id === 'bloodMoon' ? 1.45 : 1;
     const contractSpeed = this.activeContract?.id === 'bloodMoon' ? 1.12 : 1;
-    const hp = config.hp * waveScale * contractHp;
+    const omen = this.activeOmen || {};
+    const elite = config.boss ? null : rollEliteAffix(this.currentWave, omen);
+    const hp = config.hp * waveScale * contractHp * (omen.enemyHp || 1) * (elite?.hp || 1);
+    const speed = config.speed * (1 + Math.min(.22, this.currentWave * .012)) * contractSpeed * (omen.enemySpeed || 1) * (elite?.speed || 1);
+    const damage = config.damage * (1 + (this.currentWave - 1) * .1) * (omen.enemyDamage || 1) * (elite?.damage || 1);
+    this.applyEliteVisual(group, elite);
+    if (elite) this.showCombatText(group.position.clone().add(new THREE.Vector3(0, 2.15, 0)), elite.name, { label: `${elite.icon} 정예` });
     return {
       id: ++this.enemySerial,
-      type, group, hp, maxHp: hp, speed: config.speed * (1 + Math.min(.22, this.currentWave * .012)) * contractSpeed,
-      damage: config.damage * (1 + (this.currentWave - 1) * .1), reward: config.reward,
+      type, group, hp, maxHp: hp, speed,
+      damage, reward: config.reward, elite,
       slowTimer: 0, slowFactor: 1, attackTimer: 0, phase: rand(0, Math.PI*2), dead: false,
       boss: !!config.boss, bossPhase: 1, specialIndex: 0, specialTimer: config.boss ? 4.5 : 0, flash: 0, shieldFlash: 0,
       abilityTimer: type === 'runner' ? rand(2.2, 3.6) : type === 'shaman' ? rand(2.8, 4.2) : 0,
       abilityState: 'move', abilityTime: 0, telegraphMesh: null, chargeDirection: new THREE.Vector3(), chargeHitPlayer: false,
       animation: this.animations.createController(group, group.userData.animations || [], { procedural: true })
     };
+  }
+
+  showMoonOmen() {
+    if (!this.activeOmen) return;
+    ui.moonOmenIcon.textContent = this.activeOmen.icon;
+    ui.moonOmenName.textContent = this.activeOmen.name;
+    ui.moonOmenEffect.textContent = this.activeOmen.description;
+    ui.moonOmen.classList.remove('hidden');
+    this.showMission(this.activeOmen.name, this.activeOmen.description, `WAVE ${String(this.currentWave).padStart(2, '0')} · MOON OMEN`, 1350);
+  }
+
+  applyEliteVisual(group, elite) {
+    const aura = group?.userData?.eliteAura;
+    if (!aura) return;
+    aura.visible = Boolean(elite);
+    if (elite) {
+      aura.material.color.setHex(elite.color);
+      aura.material.opacity = .72;
+    }
+  }
+
+  triggerJackpotRush(rank) {
+    const duration = rank >= 5 ? 12 : 8;
+    this.jackpotTimer = Math.max(this.jackpotTimer, duration);
+    this.runStats.jackpotTriggers += 1;
+    this.showCombo(`왕대박 폭주! 수호대 공격 강화 · ${duration}초`, 1500);
+    this.haptic(rank >= 5 ? [28, 24, 48, 30, 72] : [20, 20, 42]);
+  }
+
+  updateRunMomentum(dt) {
+    if (this.jackpotTimer > 0) this.jackpotTimer = Math.max(0, this.jackpotTimer - dt);
+    const auraSpeed = this.jackpotTimer > 0 ? 1.9 : 1;
+    for (const unit of this.units) {
+      const aura = unit?.group?.userData?.aura;
+      if (aura && this.jackpotTimer > 0) aura.rotation.z += dt * auraSpeed;
+    }
   }
 
   createEnemyModel(type, config) {
@@ -1963,12 +2045,20 @@ class DokkaebiLuckDefense {
       const staff=this.mesh(this.cachedGeometry('enemy:shaman:staff', () => new THREE.CylinderGeometry(.07,.09,1.8,6)),darkMat,.63,1.15,0);staff.rotation.z=-.15;
       const gem=this.mesh(this.cachedGeometry('enemy:shaman:gem', () => new THREE.OctahedronGeometry(.22)),eyeMat,.77,2.03,0);group.add(staff,gem);
     }
+    const eliteAura = this.mesh(
+      this.cachedGeometry(`enemy:elite-aura:${scale}`, () => new THREE.RingGeometry(.74 * scale, .86 * scale, 18)),
+      new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .7, side: THREE.DoubleSide, depthWrite: false }),
+      0, .08, 0, false, false
+    );
+    eliteAura.rotation.x = -Math.PI / 2;
+    eliteAura.visible = false;
+    group.add(eliteAura);
     if (config.boss) {
       const mane=this.mesh(this.cachedGeometry(`enemy:${type}:mane:${scale}`, () => new THREE.TorusGeometry(.55*scale,.18*scale,5,12)),darkMat,0,1.52*scale,-.08);mane.rotation.x=Math.PI/2;group.add(mane);
       const crown=this.mesh(this.cachedGeometry(`enemy:${type}:crown:${scale}`, () => new THREE.ConeGeometry(.72*scale,.65*scale,6)),eyeMat,0,2.42*scale,0);group.add(crown);
       if (!this.lowPower) { const light=new THREE.PointLight(config.color,1.3,8,2);light.position.y=1.6*scale;group.add(light); }
     }
-    group.userData={...group.userData,body,baseColor:config.color,scale,phase:rand(0,Math.PI*2),isBoss:!!config.boss,lodState:'high',lodHigh:[eye1,eye2,horn1,horn2,...group.children.filter((child)=>child!==body&&child!==head&&child!==eye1&&child!==eye2&&child!==horn1&&child!==horn2)]};
+    group.userData={...group.userData,body,baseColor:config.color,scale,phase:rand(0,Math.PI*2),isBoss:!!config.boss,eliteAura,lodState:'high',lodHigh:[eye1,eye2,horn1,horn2,...group.children.filter((child)=>child!==body&&child!==head&&child!==eye1&&child!==eye2&&child!==horn1&&child!==horn2&&child!==eliteAura)]};
     return group;
   }
 
@@ -1979,7 +2069,7 @@ class DokkaebiLuckDefense {
       if (this.spawnTimer <= 0) {
         this.spawnEnemy();
         const base = this.currentWave >= 8 ? .42 : .62;
-        this.spawnTimer = base + Math.random() * .26;
+        this.spawnTimer = (base + Math.random() * .26) * (this.activeOmen?.spawnInterval || 1);
       }
     } else if (this.enemies.length === 0) {
       this.completeWave();
@@ -1996,6 +2086,8 @@ class DokkaebiLuckDefense {
     this.showCombo(`웨이브 ${this.currentWave} 격파 · +${reward} 엽전${perfectBonus ? ' · 무결점!' : ''}`, 1600);
     if (perfectBonus) {
       this.score += perfectBonus * 25;
+      this.moonWard = Math.min(3, this.moonWard + 1);
+      this.showToast(`무결점 결계 충전 · 달빛 방패 ${this.moonWard}/3`);
       this.haptic([18, 24, 42]);
     }
     this.resolveActiveContract(perfect);
@@ -2202,8 +2294,8 @@ class DokkaebiLuckDefense {
       if (target) {
         this.player.attackCooldown = .54;
         const origin = this.player.group.position.clone().add(new THREE.Vector3(.55, 1.35, 0));
-        const damage = (13 + this.currentWave * 1.2) * this.mods.heroDamage * this.getThunderHeroMultiplier();
-        this.animations.trigger(unit.animation, 'attack', .24);
+        const damage = (13 + this.currentWave * 1.2) * this.mods.heroDamage * this.getThunderHeroMultiplier() * (this.activeOmen?.heroDamage || 1) * (this.jackpotTimer > 0 ? 1.15 : 1);
+        this.animations.trigger(this.player.animation, 'attack', .24);
         this.fireProjectile({ kind: 'hero', type: 'hero', origin, target, damage, speed: 20, color: 0x69edff, radius: .16 });
         this.sound.shoot('hero');
       }
@@ -2230,7 +2322,7 @@ class DokkaebiLuckDefense {
     this.sound.skill();
     this.haptic([25, 25, 65]);
     const center = this.player.group.position.clone();
-    const damage = (72 + this.currentWave*10) * this.mods.heroDamage;
+    const damage = (72 + this.currentWave*10) * this.mods.heroDamage * (this.activeOmen?.heroDamage || 1) * (this.jackpotTimer > 0 ? 1.15 : 1);
     this.spawnSkillEffect(center);
     this.enemies.slice().forEach((enemy) => {
       const distance = enemy.group.position.distanceTo(center);
@@ -2242,7 +2334,7 @@ class DokkaebiLuckDefense {
 
   updateUnits(dt) {
     if (this.state === 'playing') this.commandCooldown = Math.max(0, (this.commandCooldown || 0) - dt);
-    const cooldownMult = (this.mods?.unitCooldown ?? 1) * this.getWindCooldownMultiplier();
+    const cooldownMult = (this.mods?.unitCooldown ?? 1) * this.getWindCooldownMultiplier() * (this.activeOmen?.unitCooldown || 1) * (this.jackpotTimer > 0 ? .82 : 1);
     let activeCommandFound = false;
     this.units.forEach((unit) => {
       const config = UNIT_TYPES[unit.type];
@@ -2296,7 +2388,8 @@ class DokkaebiLuckDefense {
     const config = UNIT_TYPES[unit.type];
     const rank = RANKS[unit.rank-1];
     const commandDamage = unit.commandTimer > 0 ? 1.55 : 1;
-    return { damage:config.damage*rank.mult*this.mods.unitDamage*this.getFireDamageMultiplier()*commandDamage, cooldown:config.cooldown };
+    const jackpotDamage = this.jackpotTimer > 0 ? 1.22 : 1;
+    return { damage:config.damage*rank.mult*this.mods.unitDamage*this.getFireDamageMultiplier()*commandDamage*jackpotDamage, cooldown:config.cooldown };
   }
 
   triggerUnitUltimate(unit) {
@@ -2527,6 +2620,10 @@ class DokkaebiLuckDefense {
       enemy.shieldFlash=Math.max(0,enemy.shieldFlash-dt);
       if (enemy.flash<=0) enemy.group.userData.body.material.emissiveIntensity=enemy.boss?.24:0;
       if (enemy.group.userData.shield) enemy.group.userData.shield.material.emissiveIntensity = enemy.shieldFlash > 0 ? 2.4 : .18;
+      if (enemy.group.userData.eliteAura?.visible) {
+        enemy.group.userData.eliteAura.rotation.z += dt * (enemy.elite?.id === 'swift' ? 2.8 : 1.35);
+        enemy.group.userData.eliteAura.material.opacity = .55 + Math.sin(this.elapsed * 7 + enemy.phase) * .16;
+      }
 
       const position=enemy.group.position;
       const distance=position.length();
@@ -3051,6 +3148,7 @@ class DokkaebiLuckDefense {
 
   killEnemy(enemy,source) {
     if (enemy.dead) return;
+    const deathPosition = enemy.group.position.clone();
     enemy.dead=true;
     const index=this.enemies.indexOf(enemy);
     if (index>=0) this.enemies.splice(index,1);
@@ -3058,14 +3156,19 @@ class DokkaebiLuckDefense {
     this.animations.remove(enemy.animation);
     this.releaseEnemyModel(enemy);
     const color=ENEMY_TYPES[enemy.type].color;
-    this.spawnParticles(enemy.group.position.clone().add(new THREE.Vector3(0,.8,0)),color,enemy.boss?35:12,enemy.boss?6:3.4);
-    const reward=Math.max(2,Math.round(enemy.reward*this.mods.goldMultiplier*this.getSpiritGoldMultiplier()*this.getContractRewardMultiplier()));
-    this.dropCoins(enemy.group.position,reward,enemy.boss?9:Math.min(4,1+Math.floor(reward/7)));
+    this.spawnParticles(deathPosition.clone().add(new THREE.Vector3(0,.8,0)),color,enemy.boss?35:12,enemy.boss?6:3.4);
+    const reward=Math.max(2,Math.round(enemy.reward*this.mods.goldMultiplier*this.getSpiritGoldMultiplier()*this.getContractRewardMultiplier()*(this.activeOmen?.reward || 1)*(enemy.elite?.reward || 1)));
+    this.dropCoins(deathPosition,reward,enemy.boss?9:Math.min(4,1+Math.floor(reward/7)));
     this.kills+=1;
+    if (enemy.elite) {
+      this.eliteKills += 1;
+      this.runStats.eliteKills += 1;
+      this.showCombo(`${enemy.elite.icon} 정예 ${enemy.elite.name} 격파!`, 900);
+    }
     this.killChain = this.killChainTimer > 0 ? this.killChain + 1 : 1;
     this.killChainTimer = 1.85;
     const chainMultiplier = 1 + Math.min(.6, Math.max(0, this.killChain - 1) * .018);
-    this.score+=Math.round(enemy.maxHp*(enemy.boss?3:1)*chainMultiplier);
+    this.score+=Math.round(enemy.maxHp*(enemy.boss?3:1)*chainMultiplier*(this.activeOmen?.score || 1)*(enemy.elite?.score || 1));
     if (this.killChain >= 2) {
       ui.killChain.classList.remove('hidden');
       ui.killChainValue.textContent = `x${this.killChain}`;
@@ -3087,6 +3190,15 @@ class DokkaebiLuckDefense {
   }
 
   damageCore(amount) {
+    if (this.moonWard > 0) {
+      this.moonWard -= 1;
+      this.runStats.wardBlocks += 1;
+      this.showCombo(`달빛 방패가 피해를 막았습니다 · ${this.moonWard}/3`, 1100);
+      this.spawnRing(new THREE.Vector3(0, 0, 0), 0x8cecff, 4.4);
+      this.haptic([16, 18, 38]);
+      this.updateHUD();
+      return;
+    }
     const reduced=amount*this.mods.coreDamage*this.getMountainDamageMultiplier()*this.getContractCoreDamageMultiplier();
     this.coreHp=Math.max(0,this.coreHp-reduced);
     this.showCombatText(new THREE.Vector3(0, 5.8, 0), reduced, { label: `-${Math.ceil(reduced)}` });
@@ -3482,7 +3594,8 @@ class DokkaebiLuckDefense {
     const alive=this.enemies.length;
     const progress=this.waveActive?1-(this.spawnRemaining+alive)/Math.max(1,this.spawnTotal*1.18):0;
     ui.waveProgress.style.width=`${clamp(progress*100,0,100)}%`;
-    ui.enemyCount.textContent=this.waveActive?`남은 요괴 ${this.spawnRemaining+alive}`:`${this.currentWave+1}번째 습격 준비`;
+    const eliteAlive = this.enemies.filter((enemy) => enemy.elite && !enemy.dead).length;
+    ui.enemyCount.textContent=this.waveActive?`남은 요괴 ${this.spawnRemaining+alive}${eliteAlive ? ` · 정예 ${eliteAlive}` : ''}`:`${this.currentWave+1}번째 습격 준비`;
     ui.luckValue.textContent=`${Math.floor(this.luck)}%`;
     ui.luckProgress.style.width=`${clamp(this.luck,0,100)}%`;
     ui.summonCost.textContent=this.getSummonCost();
@@ -3497,6 +3610,10 @@ class DokkaebiLuckDefense {
     ui.skill.classList.toggle('cooling',this.player?.skillCooldown>0);
     ui.wave.disabled=this.waveActive||this.currentWave>=this.maxWaves;
     ui.waveText.textContent=this.waveActive?'전투중':this.currentWave===0?'시작':`${this.currentWave+1}`;
+    ui.moonWardValue.textContent = `${this.moonWard}/3`;
+    ui.moonWard.classList.toggle('charged', this.moonWard > 0);
+    ui.jackpot.classList.toggle('hidden', this.jackpotTimer <= 0);
+    ui.jackpotTime.textContent = this.jackpotTimer > 0 ? `${this.jackpotTimer.toFixed(1)}s` : '0.0s';
     this.updateCommandChipStates();
     this.updateBossHUD();
   }
@@ -3548,7 +3665,8 @@ class DokkaebiLuckDefense {
     ui.resultAnalysis.innerHTML = `
       <div><span>최고 피해</span><b>${topType && topDamage > 0 ? `${UNIT_TYPES[topType].symbol} ${UNIT_TYPES[topType].name}` : '대장 깨비'}</b><small>${Math.round(topDamage || this.runStats.heroDamage).toLocaleString()} 피해</small></div>
       <div><span>집중 명령</span><b>${this.runStats.commandsUsed}회</b><small>${Math.round(this.runStats.commandDamage).toLocaleString()} 강화 피해</small></div>
-      <div><span>이동·수집</span><b>${this.runStats.moveOrders}회 지정</b><small>엽전 ${Math.round(this.runStats.coinsCollected).toLocaleString()} · 회피 ${this.runStats.dangerDodges}</small></div>`;
+      <div><span>이동·수집</span><b>${this.runStats.moveOrders}회 지정</b><small>엽전 ${Math.round(this.runStats.coinsCollected).toLocaleString()} · 회피 ${this.runStats.dangerDodges}</small></div>
+      <div><span>월식 전과</span><b>정예 ${this.runStats.eliteKills}체</b><small>결계 방어 ${this.runStats.wardBlocks}회 · 대박 폭주 ${this.runStats.jackpotTriggers}회</small></div>`;
     const shardReward = this.awardRunShards(won);
     ui.resultShards.textContent = `+${shardReward}`;
     ui.resultShardsTotal.textContent = this.metaProgress.shards.toLocaleString();
@@ -3597,15 +3715,15 @@ class DokkaebiLuckDefense {
   }
 
   updateBlobShadows() {
-    if (!this.blobShadows) return;
+    if (!this.blobShadows || !this.worldReady) return;
     const entries = [];
-    if (this.player?.group?.visible !== false) entries.push({ position: this.player.group.position, radius: .78 });
+    if (this.player?.group && this.player.group.visible !== false) entries.push({ position: this.player.group.position, radius: .78 });
     for (const unit of this.units) {
-      if (unit.group?.visible === false) continue;
+      if (!unit?.group || unit.group.visible === false) continue;
       entries.push({ position: unit.group.position, radius: .68 + unit.rank * .07 });
     }
     for (const enemy of this.enemies) {
-      if (enemy.dead || enemy.group?.visible === false) continue;
+      if (!enemy?.group || enemy.dead || enemy.group.visible === false) continue;
       entries.push({ position: enemy.group.position, radius: .58 * (enemy.group.userData.scale || 1) });
     }
     this.blobShadows.update(entries);
@@ -3623,14 +3741,14 @@ class DokkaebiLuckDefense {
     this.elapsed+=dt;
     this.updateWorldEffects(dt);
     if(this.state==='playing') {
-      this.updatePlayer(gameDt);this.updateWave(gameDt);this.updateEnemies(gameDt);this.updateHazards(gameDt);this.updateDangerHint(gameDt);this.updateUnits(gameDt);this.updateProjectiles(gameDt);this.updateCoins(gameDt);this.updateParticles(gameDt);this.updateMoveTargetMarker(gameDt);this.updateKillChain(gameDt);this.updateAdaptiveQuality(dt);this.animations.update(gameDt,this.camera);this.updateHUD();
+      this.updateRunMomentum(gameDt);this.updatePlayer(gameDt);this.updateWave(gameDt);this.updateEnemies(gameDt);this.updateHazards(gameDt);this.updateDangerHint(gameDt);this.updateUnits(gameDt);this.updateProjectiles(gameDt);this.updateCoins(gameDt);this.updateParticles(gameDt);this.updateMoveTargetMarker(gameDt);this.updateKillChain(gameDt);this.updateAdaptiveQuality(dt);this.animations.update(gameDt,this.camera);this.updateHUD();
     } else if(this.state==='title') {
       this.updateUnits(dt);this.animations.update(dt,this.camera);this.updateParticles(dt);
       if(this.player){this.player.group.rotation.y+=dt*.18;this.player.group.position.y=Math.sin(this.elapsed*2.3)*.05;}
     } else {
       this.updateParticles(dt);
     }
-    if (this.player) this.engine.worldChunks.update(this.player.group.position);
+    if (this.player?.group && this.worldReady) this.engine.worldChunks.update(this.player.group.position);
     this.updateBlobShadows();
     this.updateCamera(dt);
     this.renderer.render(this.scene,this.camera);
