@@ -1,4 +1,4 @@
-export const ENGINE_VERSION = '1.1.0';
+export const ENGINE_VERSION = '1.2.0';
 
 export const MOBILE_ENGINE_CONFIG = Object.freeze({
   renderer: {
@@ -18,7 +18,11 @@ export const MOBILE_ENGINE_CONFIG = Object.freeze({
     mediumScale: 0.84,
     lowScale: 0.7,
     recoveryFps: 57,
-    recoverySamples: 3
+    recoverySamples: 3,
+    lowEffectScale: .48,
+    mediumEffectScale: .7,
+    mobileEffectScale: .82,
+    desktopEffectScale: 1
   },
   assets: {
     textureBudgetLowMB: 64,

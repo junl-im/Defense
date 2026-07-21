@@ -4,6 +4,7 @@ import { isFirebaseEnabled, loadOnlineScores, submitOnlineScore } from './fireba
 import SoundEngine from './sound-engine.js';
 import { RANKS, UNIT_TYPES, UNIT_KEYS, ENEMY_TYPES, SYNERGIES, BLESSINGS, CONTRACTS } from './game-data.js';
 import { selectMoonOmen, rollEliteAffix } from './run-director.js';
+import { RUN_MODES, RELICS, getRunMode, selectRelicOptions, rollWaveTrial, getWaveTrialProgress, getWaveTrialReward, formatTrialProgress } from './expedition-director.js';
 import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, ObjectPool, RenderStatsHUD, AssetPipeline, CORE_ASSET_CATALOG, AnimationStateSystem } from './engine/index.js';
 
 const $ = (selector) => document.querySelector(selector);
@@ -40,6 +41,9 @@ const ui = {
   killChain: $('#kill-chain'), killChainValue: $('#kill-chain-value'), killChainBonus: $('#kill-chain-bonus'),
   moonOmen: $('#moon-omen'), moonOmenIcon: $('#moon-omen-icon'), moonOmenName: $('#moon-omen-name'), moonOmenEffect: $('#moon-omen-effect'),
   moonWard: $('#moon-ward'), moonWardValue: $('#moon-ward-value'), jackpot: $('#jackpot-rush'), jackpotTime: $('#jackpot-rush-time'),
+  waveTrial: $('#wave-trial'), waveTrialIcon: $('#wave-trial-icon'), waveTrialName: $('#wave-trial-name'), waveTrialProgress: $('#wave-trial-progress'), waveTrialReward: $('#wave-trial-reward'),
+  relicPanel: $('#relic-panel'), relicStrip: $('#relic-strip'), relicCount: $('#relic-count'), relicModal: $('#relic-modal'), relicOptions: $('#relic-options'),
+  burstMeter: $('#burst-meter'), burstValue: $('#burst-value'), burstProgress: $('#burst-progress'), burst: $('#burst-btn'), burstState: $('#burst-state'),
   dangerHint: $('#danger-hint'), dangerArrow: $('#danger-arrow'), dangerLevel: $('#danger-level'), dangerLabel: $('#danger-label'), dangerTime: $('#danger-time'),
   firstMissionPanel: $('#first-mission-panel'), firstMissionStep: $('#first-mission-step'), firstMissionTitle: $('#first-mission-title'),
   firstMissionProgress: $('#first-mission-progress'), firstMissionCopy: $('#first-mission-copy'),
@@ -47,10 +51,11 @@ const ui = {
   damageFlash: $('#damage-flash'), pauseModal: $('#pause-modal'), resume: $('#resume-btn'), restart: $('#restart-btn'),
   titleBtn: $('#title-btn'), resultModal: $('#result-modal'), resultKicker: $('#result-kicker'), resultTitle: $('#result-title'),
   resultScore: $('#result-score'), resultKills: $('#result-kills'), resultRank: $('#result-rank'), resultUnits: $('#result-units'), resultAnalysis: $('#result-analysis'), resultShards: $('#result-shards'), resultShardsTotal: $('#result-shards-total'), resultGrowth: $('#result-growth-btn'),
-  playerName: $('#player-name'), saveScore: $('#save-score-btn'), resultRetry: $('#result-retry-btn'), leaderboard: $('#leaderboard')
+  playerName: $('#player-name'), saveScore: $('#save-score-btn'), resultRetry: $('#result-retry-btn'), leaderboard: $('#leaderboard'),
+  runModeOptions: $('#run-mode-options'), runModeSummary: $('#run-mode-summary')
 };
 
-const GAME_VERSION = '1.8.0';
+const GAME_VERSION = '1.9.0';
 
 const FIRST_MISSIONS = [
   { id: 'summons', title: '수호대 3회 강림', goal: 3, reward: 35, copy: '무료 강림도 포함됩니다.' },
@@ -71,7 +76,10 @@ const DEFAULT_CONTROL_SETTINGS = Object.freeze({
 const META_TRAITS = {
   pouch: { icon: '◉', name: '달빛 주머니', copy: '매 판 시작 엽전을 10개씩 늘립니다.', effect: (level) => `시작 엽전 +${level * 10}`, costs: [12, 22, 34, 50, 70] },
   ward: { icon: '◆', name: '신목 결계', copy: '신목 최대 체력을 단계마다 7 늘립니다.', effect: (level) => `신목 체력 +${level * 7}`, costs: [12, 22, 34, 50, 70] },
-  bond: { icon: '鬼', name: '깨비 맹약', copy: '모든 도깨비의 공격력을 단계마다 3.5% 높입니다.', effect: (level) => `도깨비 피해 +${(level * 3.5).toFixed(level % 2 ? 1 : 0)}%`, costs: [15, 25, 38, 56, 78] }
+  bond: { icon: '鬼', name: '깨비 맹약', copy: '모든 도깨비의 공격력을 단계마다 3.5% 높입니다.', effect: (level) => `도깨비 피해 +${(level * 3.5).toFixed(level % 2 ? 1 : 0)}%`, costs: [15, 25, 38, 56, 78] },
+  stride: { icon: '➶', name: '야행 보법', copy: '이동 속도를 단계마다 2.5% 높입니다.', effect: (level) => `이동 속도 +${(level * 2.5).toFixed(level % 2 ? 1 : 0)}%`, costs: [14, 24, 37, 54, 75] },
+  fortune: { icon: '三', name: '운명 부적', copy: '대박 기운 획득량을 단계마다 5% 높입니다.', effect: (level) => `대박 기운 +${level * 5}%`, costs: [14, 24, 37, 54, 75] },
+  spirit: { icon: '✦', name: '수호신 그릇', copy: '매 판 수호신 혼불을 8%씩 충전한 채 시작합니다.', effect: (level) => `시작 혼불 ${level * 8}%`, costs: [16, 27, 41, 60, 84] }
 };
 
 class DokkaebiLuckDefense {
@@ -150,6 +158,16 @@ class DokkaebiLuckDefense {
     this.moonWard = 0;
     this.jackpotTimer = 0;
     this.eliteKills = 0;
+    this.selectedRunModeId = this.loadRunMode();
+    this.activeRunMode = getRunMode(this.selectedRunModeId);
+    this.relicHistory = [];
+    this.currentTrial = null;
+    this.lastTrialId = '';
+    this.postWaveQueue = [];
+    this.soulGauge = 0;
+    this.guardianBurstTimer = 0;
+    this.waveMaxChain = 0;
+    this.waveTrialEliteSpawned = 0;
     this.animations = new AnimationStateSystem({ lowPower: this.lowPower, mobile: this.engine.device.mobile });
 
     this.assertRequiredUI();
@@ -157,6 +175,8 @@ class DokkaebiLuckDefense {
     this.bindUI();
     this.populateCollection();
     this.renderMetaProgress();
+    this.renderRunModeSelector();
+    this.renderRelicStrip();
     this.animate();
     this.ready = this.initializeGame();
 
@@ -339,6 +359,10 @@ class DokkaebiLuckDefense {
     ui.controls.addEventListener('click', () => this.openControlSettings());
     ui.pauseControls.addEventListener('click', () => this.openControlSettings());
     ui.resultGrowth.addEventListener('click', () => this.openMetaModal());
+    ui.runModeOptions.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-run-mode]');
+      if (button) this.selectRunMode(button.dataset.runMode);
+    });
     $$('[data-close]').forEach((button) => button.addEventListener('click', () => this.hideModal($(`#${button.dataset.close}`))));
     ui.sound.addEventListener('click', () => {
       this.sound.enabled = !this.sound.enabled;
@@ -355,6 +379,7 @@ class DokkaebiLuckDefense {
     ui.wave.addEventListener('click', () => this.startWave());
     ui.dash.addEventListener('click', () => this.useDash());
     ui.skill.addEventListener('click', () => this.useHeroSkill());
+    ui.burst.addEventListener('click', () => this.activateGuardianBurst());
     ui.synergyToggle.addEventListener('click', () => ui.synergyPanel.classList.toggle('collapsed'));
     ui.leftUiToggle.addEventListener('click', () => this.toggleLeftMobileUi());
     try { this.setLeftMobileUiCollapsed(localStorage.getItem('dokkaebi-left-ui-collapsed') === '1'); } catch { this.setLeftMobileUiCollapsed(false); }
@@ -398,11 +423,12 @@ class DokkaebiLuckDefense {
         this.showToast(enabled ? '엔진 통계를 표시합니다.' : '엔진 통계를 숨깁니다.');
         return;
       }
-      if (['Space', 'KeyQ', 'KeyE', 'KeyR', 'Enter', 'Escape'].includes(code)) event.preventDefault();
+      if (['Space', 'KeyQ', 'KeyE', 'KeyR', 'KeyF', 'Enter', 'Escape'].includes(code)) event.preventDefault();
       if (code === 'Space') this.useDash();
       if (code === 'KeyQ') this.useHeroSkill();
       if (code === 'KeyE') this.summonUnit();
       if (code === 'KeyR') this.useBestUnitCommand();
+      if (code === 'KeyF') this.activateGuardianBurst();
       if (code === 'Enter' && this.state === 'playing' && !this.waveActive) this.startWave();
       if (code === 'Escape') this.state === 'paused' ? this.resumeGame() : this.pauseGame();
     }, { passive: false });
@@ -825,12 +851,17 @@ class DokkaebiLuckDefense {
       dangerDodges: 0,
       eliteKills: 0,
       wardBlocks: 0,
-      jackpotTriggers: 0
+      jackpotTriggers: 0,
+      dashUses: 0,
+      guardianBursts: 0,
+      trialsCompleted: 0,
+      relicsChosen: 0,
+      maxKillChain: 0
     };
   }
 
   loadMetaProgress() {
-    const fallback = { shards: 0, traits: { pouch: 0, ward: 0, bond: 0 } };
+    const fallback = { shards: 0, traits: Object.fromEntries(Object.keys(META_TRAITS).map((id) => [id, 0])) };
     try {
       const stored = JSON.parse(localStorage.getItem(META_STORAGE_KEY) || 'null');
       if (!stored || typeof stored !== 'object') return fallback;
@@ -876,10 +907,14 @@ class DokkaebiLuckDefense {
     const gold = 70 + (traits.pouch || 0) * 10;
     const hp = 100 + (traits.ward || 0) * 7;
     const damage = (traits.bond || 0) * 3.5;
+    const spirit = (traits.spirit || 0) * 8;
+    const mode = getRunMode(this.selectedRunModeId);
     ui.runPreview.innerHTML = `
-      <span><small>시작 엽전</small><b>${gold}</b></span>
+      <span><small>원정 모드</small><b>${mode.name}</b></span>
+      <span><small>시작 엽전</small><b>${gold + mode.startGold}</b></span>
       <span><small>신목 체력</small><b>${hp}</b></span>
-      <span><small>깨비 피해</small><b>+${damage.toFixed(damage % 1 ? 1 : 0)}%</b></span>`;
+      <span><small>깨비 피해</small><b>+${damage.toFixed(damage % 1 ? 1 : 0)}%</b></span>
+      <span><small>시작 혼불</small><b>${spirit}%</b></span>`;
   }
 
   openMetaModal() {
@@ -905,8 +940,10 @@ class DokkaebiLuckDefense {
 
   calculateShardReward(won) {
     const progress = Math.max(1, this.currentWave || 1);
-    const reward = 8 + progress * 2.4 + Math.floor(this.kills / 18) + this.maxRank * 2 + (won ? 20 : 0);
-    return clamp(Math.round(reward), 8, 70);
+    const modeBonus = this.activeRunMode?.id === 'abyss' ? 1.35 : this.activeRunMode?.id === 'eclipse' ? 1.18 : 1;
+    const expeditionBonus = this.runStats.trialsCompleted * 1.5 + this.runStats.relicsChosen * 1.25;
+    const reward = (8 + progress * 2.4 + Math.floor(this.kills / 18) + this.maxRank * 2 + (won ? 20 : 0) + expeditionBonus) * modeBonus;
+    return clamp(Math.round(reward), 8, 95);
   }
 
   awardRunShards(won) {
@@ -1527,15 +1564,179 @@ class DokkaebiLuckDefense {
     return {
       goldMultiplier: 1,
       pickupRadius: 1.65,
-      moveSpeed: 1,
+      moveSpeed: 1 + (metaTraits.stride || 0) * .025,
       unitDamage: 1 + (metaTraits.bond || 0) * .035,
       unitCooldown: 1,
       heroDamage: 1,
+      skillDamage: 1,
       skillCooldown: 1,
-      luckGain: 1,
+      dashCooldown: 1,
+      commandCooldown: 1,
+      luckGain: 1 + (metaTraits.fortune || 0) * .05,
+      soulGain: 1,
+      burstDuration: 0,
+      burstPower: 1,
+      objectiveReward: 1,
       coreDamage: 1,
       summonDiscount: 0
     };
+  }
+
+
+  loadRunMode() {
+    try { return getRunMode(localStorage.getItem('dokkaebi-run-mode-v1')).id; }
+    catch { return 'guardian'; }
+  }
+
+  selectRunMode(id) {
+    this.selectedRunModeId = getRunMode(id).id;
+    this.activeRunMode = getRunMode(this.selectedRunModeId);
+    try { localStorage.setItem('dokkaebi-run-mode-v1', this.selectedRunModeId); } catch {}
+    this.renderRunModeSelector();
+    this.renderRunPreview();
+    this.sound.ui();
+  }
+
+  renderRunModeSelector() {
+    const selected = getRunMode(this.selectedRunModeId);
+    ui.runModeOptions.innerHTML = Object.values(RUN_MODES).map((mode) => `
+      <button type="button" class="run-mode-option ${mode.id === selected.id ? 'active' : ''}" data-run-mode="${mode.id}" aria-pressed="${mode.id === selected.id}">
+        <span>${mode.icon}</span><b>${mode.name}</b><small>${mode.tag}</small>
+      </button>`).join('');
+    ui.runModeSummary.innerHTML = `<b>${selected.name}</b><span>${selected.description}</span><small>적 체력 ×${selected.enemyHp.toFixed(2)} · 점수 ×${selected.score.toFixed(2)} · 정예 +${Math.round(selected.eliteChance * 100)}%</small>`;
+  }
+
+  renderRelicStrip() {
+    const relics = this.relicHistory.map((id) => RELICS.find((item) => item.id === id)).filter(Boolean);
+    ui.relicCount.textContent = `${relics.length}/4`;
+    ui.relicStrip.innerHTML = relics.length
+      ? relics.map((relic) => `<span class="relic-chip" title="${relic.name} · ${relic.desc}">${relic.icon}<small>${relic.name}</small></span>`).join('')
+      : '<span class="relic-empty">원정 유물 없음</span>';
+  }
+
+  offerRelic() {
+    if (this.state !== 'playing') return;
+    this.state = 'relic';
+    const options = selectRelicOptions(this.relicHistory);
+    ui.relicOptions.innerHTML = options.map((relic) => `
+      <button class="relic-option" data-relic="${relic.id}">
+        <span>${relic.icon}</span><b>${relic.name}</b><p>${relic.desc}</p><small>${relic.grade} · ${relic.tag}</small>
+      </button>`).join('');
+    ui.relicOptions.querySelectorAll('[data-relic]').forEach((button) => {
+      button.addEventListener('click', () => this.selectRelic(button.dataset.relic), { once: true });
+    });
+    this.showModal(ui.relicModal);
+  }
+
+  selectRelic(id) {
+    const relic = RELICS.find((item) => item.id === id);
+    if (!relic || this.relicHistory.includes(id)) return;
+    relic.apply(this);
+    this.relicHistory.push(id);
+    this.runStats.relicsChosen += 1;
+    this.hideModal(ui.relicModal);
+    this.state = 'playing';
+    this.renderRelicStrip();
+    this.sound.merge(Math.min(5, 2 + this.relicHistory.length));
+    this.haptic([20, 24, 50]);
+    this.showCombo(`${relic.icon} 원정 유물 · ${relic.name}`, 1700);
+    this.advancePostWaveRewards();
+    this.updateHUD();
+  }
+
+  assignWaveTrial() {
+    this.currentTrial = rollWaveTrial(this.currentWave, this.activeRunMode.id, this.lastTrialId);
+    this.lastTrialId = this.currentTrial.id;
+    this.currentTrial.start = {
+      eliteKills: this.runStats.eliteKills,
+      coinsCollected: this.runStats.coinsCollected,
+      skillDamage: this.runStats.skillDamage,
+      dashUses: this.runStats.dashUses
+    };
+    this.waveMaxChain = 0;
+    this.waveTrialEliteSpawned = 0;
+    ui.waveTrialIcon.textContent = this.currentTrial.icon;
+    ui.waveTrialName.textContent = this.currentTrial.name;
+    const reward = getWaveTrialReward(this.currentWave, this.activeRunMode.id, this.mods.objectiveReward);
+    ui.waveTrialReward.textContent = `보상 ${reward.gold} 엽전 · 혼불 ${reward.soul}%`;
+    ui.waveTrial.classList.remove('hidden', 'complete', 'failed');
+    this.updateWaveTrial(true);
+  }
+
+  updateWaveTrial(force = false) {
+    if (!this.currentTrial || (!this.waveActive && !force)) return;
+    this.currentTrial.progress = getWaveTrialProgress(this, this.currentTrial);
+    const complete = this.currentTrial.progress >= this.currentTrial.target;
+    if (this.currentTrial.id === 'perfect' && this.currentTrial.progress < 1) ui.waveTrial.classList.add('failed');
+    if (complete && !this.currentTrial.completed && this.currentTrial.id !== 'perfect') {
+      this.currentTrial.completed = true;
+      ui.waveTrial.classList.add('complete');
+      this.showCombo(`${this.currentTrial.icon} 도전 달성 · ${this.currentTrial.name}`, 1100);
+      this.gainSoul(5, 'trial');
+    }
+    ui.waveTrialProgress.textContent = formatTrialProgress(this.currentTrial);
+  }
+
+  resolveWaveTrial(perfect) {
+    if (!this.currentTrial) return;
+    this.updateWaveTrial(true);
+    if (this.currentTrial.id === 'perfect') this.currentTrial.completed = perfect;
+    const reward = getWaveTrialReward(this.currentWave, this.activeRunMode.id, this.mods.objectiveReward);
+    if (this.currentTrial.completed) {
+      this.gold += reward.gold;
+      this.score += reward.score;
+      this.gainSoul(reward.soul, 'trial-reward');
+      this.runStats.trialsCompleted += 1;
+      ui.waveTrial.classList.add('complete');
+      this.showCombo(`${this.currentTrial.icon} ${this.currentTrial.name} 완수 · +${reward.gold} 엽전`, 1500);
+    } else {
+      this.currentTrial.failed = true;
+      ui.waveTrial.classList.add('failed');
+      this.showToast(`${this.currentTrial.name} 도전 실패 · 다음 습격에서 다시 도전하세요.`);
+    }
+  }
+
+  gainSoul(amount, reason = '') {
+    if (!Number.isFinite(amount) || amount <= 0 || this.guardianBurstTimer > 0) return;
+    const omenGain = this.activeOmen?.soulGain || 1;
+    const modeGain = this.activeRunMode?.soulGain || 1;
+    const before = this.soulGauge;
+    this.soulGauge = clamp(this.soulGauge + amount * this.mods.soulGain * omenGain * modeGain, 0, 100);
+    if (before < 100 && this.soulGauge >= 100) {
+      this.showCombo('수호신 혼불 충전 완료 · 폭주 가능!', 1350);
+      this.haptic([18, 20, 45]);
+    }
+  }
+
+  activateGuardianBurst() {
+    if (this.state !== 'playing' || this.soulGauge < 100 || this.guardianBurstTimer > 0) return;
+    this.soulGauge = 0;
+    this.guardianBurstTimer = 10 + this.mods.burstDuration;
+    this.runStats.guardianBursts += 1;
+    this.sound.skill();
+    this.haptic([28, 24, 50, 28, 78]);
+    this.spawnRing(this.player.group.position, 0x8cecff, 7.2);
+    this.spawnParticles(this.player.group.position.clone().add(new THREE.Vector3(0, 1.2, 0)), 0x8cecff, 36, 6.2);
+    this.showMission('수호신 폭주', '대장과 수호대의 공격·기동력이 폭발적으로 증가합니다.', 'GUARDIAN SPIRIT UNLEASHED', 1600);
+  }
+
+  buildPostWaveQueue() {
+    const queue = [];
+    if ([2, 5, 7, 9].includes(this.currentWave)) queue.push('relic');
+    if (this.currentWave === 4 || this.currentWave === 8) queue.push('contract');
+    if (this.currentWave % 3 === 0) queue.push('blessing');
+    this.postWaveQueue = queue;
+  }
+
+  advancePostWaveRewards() {
+    if (this.state !== 'playing') return;
+    const next = this.postWaveQueue.shift();
+    if (next === 'relic') { this.offerRelic(); return; }
+    if (next === 'contract') { this.offerContract(); return; }
+    if (next === 'blessing') { this.offerBlessing(); return; }
+    ui.wave.disabled = false;
+    ui.waveText.textContent = `${this.currentWave + 1}`;
+    this.showToast('전열을 정비하고 다음 습격을 시작하세요.');
   }
 
   startRun() {
@@ -1549,6 +1750,7 @@ class DokkaebiLuckDefense {
     this.previousState = 'playing';
     this.currentWave = 0;
     this.maxWaves = 10;
+    this.activeRunMode = getRunMode(this.selectedRunModeId);
     this.waveActive = false;
     this.spawnRemaining = 0;
     this.spawnTotal = 0;
@@ -1556,7 +1758,7 @@ class DokkaebiLuckDefense {
     const metaTraits = this.metaProgress.traits;
     this.coreMaxHp = 100 + (metaTraits.ward || 0) * 7;
     this.coreHp = this.coreMaxHp;
-    this.gold = 70 + (metaTraits.pouch || 0) * 10;
+    this.gold = 70 + (metaTraits.pouch || 0) * 10 + this.activeRunMode.startGold;
     this.score = 0;
     this.kills = 0;
     this.summonCount = 0;
@@ -1579,8 +1781,16 @@ class DokkaebiLuckDefense {
     this.commandActiveKey = '';
     this.activeOmen = null;
     this.lastOmenId = '';
-    this.moonWard = 0;
+    this.moonWard = this.activeRunMode.startWard || 0;
     this.jackpotTimer = 0;
+    this.guardianBurstTimer = 0;
+    this.soulGauge = clamp((metaTraits.spirit || 0) * 8, 0, 100);
+    this.relicHistory = [];
+    this.currentTrial = null;
+    this.lastTrialId = '';
+    this.postWaveQueue = [];
+    this.waveMaxChain = 0;
+    this.waveTrialEliteSpawned = 0;
     this.eliteKills = 0;
     this.runStats = this.createRunStats();
     this.cancelMoveTarget();
@@ -1598,6 +1808,8 @@ class DokkaebiLuckDefense {
     this.firstMissionIndex = 0;
     this.firstMissionStats = { summons: 0, merges: 0, bosses: 0 };
     this.mods = this.createDefaultMods(metaTraits);
+    this.renderRelicStrip();
+    ui.waveTrial.classList.add('hidden');
     this.player.group.position.set(0, 0, 6.2);
     this.player.attackCooldown = 0;
     this.player.dashCooldown = 0;
@@ -1612,7 +1824,7 @@ class DokkaebiLuckDefense {
     this.updateUnitStrip();
     this.updateFirstMissionPanel();
     this.updateHUD();
-    this.showMission('달빛 장터를 지켜라', '첫 도깨비가 무료로 강림합니다.', 'NIGHT 01 · FIRST SUMMON', 1450);
+    this.showMission(`${this.activeRunMode.icon} ${this.activeRunMode.name}`, '첫 도깨비가 무료로 강림합니다.', 'EXPEDITION START · FIRST SUMMON', 1450);
     window.setTimeout(() => {
       if (this.runId === activeRunId && this.state === 'playing' && this.units.length === 0) {
         this.summonUnit({ free: true, guaranteedRank: 2, starter: true });
@@ -1646,6 +1858,9 @@ class DokkaebiLuckDefense {
     ui.moonOmen.classList.toggle('hidden', !show || !this.activeOmen);
     ui.moonWard.classList.toggle('hidden', !show);
     ui.jackpot.classList.toggle('hidden', !show || this.jackpotTimer <= 0);
+    ui.waveTrial.classList.toggle('hidden', !show || !this.currentTrial);
+    ui.relicPanel.classList.toggle('hidden', !show);
+    ui.burstMeter.classList.toggle('hidden', !show);
     if (!show) {
       ui.dangerHint.classList.remove('visible', 'urgent');
       ui.dangerHint.classList.add('hidden');
@@ -1903,6 +2118,7 @@ class DokkaebiLuckDefense {
     this.activeOmen = selectMoonOmen(this.lastOmenId);
     this.lastOmenId = this.activeOmen.id;
     this.showMoonOmen();
+    this.assignWaveTrial();
     this.activatePendingContract();
     const bossWave = this.currentWave === 5 || this.currentWave === 10;
     this.spawnRemaining = bossWave ? (this.currentWave === 5 ? 15 : 22) : 7 + this.currentWave * 3;
@@ -1940,8 +2156,11 @@ class DokkaebiLuckDefense {
     const spawnPos = gate.position.clone();
     const perpendicular = new THREE.Vector3(-spawnPos.z, 0, spawnPos.x).normalize().multiplyScalar(rand(-2.2,2.2));
     spawnPos.add(perpendicular).multiplyScalar(.96);
-    const enemy = this.createEnemy(type, spawnPos, progress);
+    const trialNeedsElite = this.currentTrial?.id === 'hunt' && this.waveTrialEliteSpawned < this.currentTrial.target;
+    const forceElite = trialNeedsElite && !ENEMY_TYPES[type].boss && this.waveSpawned >= 1 && (this.spawnRemaining <= Math.max(3, this.currentTrial.target * 3) || Math.random() < .28);
+    const enemy = this.createEnemy(type, spawnPos, progress, { forceElite });
     if (!enemy) return;
+    if (enemy.elite) this.waveTrialEliteSpawned += 1;
     this.enemies.push(enemy);
     if (enemy.boss) {
       this.showMission(ENEMY_TYPES[type].name, '강력한 우두머리가 신목으로 돌진합니다.', 'BOSS HAS ENTERED', 1550);
@@ -1952,7 +2171,7 @@ class DokkaebiLuckDefense {
     this.waveSpawned += 1;
   }
 
-  createEnemy(type, position, progress = 0) {
+  createEnemy(type, position, progress = 0, options = {}) {
     const config = ENEMY_TYPES[type];
     const waveScale = 1 + (this.currentWave - 1) * .19 + progress * .08;
     const group = this.acquireEnemyModel(type);
@@ -1963,16 +2182,18 @@ class DokkaebiLuckDefense {
     const contractHp = this.activeContract?.id === 'bloodMoon' ? 1.45 : 1;
     const contractSpeed = this.activeContract?.id === 'bloodMoon' ? 1.12 : 1;
     const omen = this.activeOmen || {};
-    const elite = config.boss ? null : rollEliteAffix(this.currentWave, omen);
-    const hp = config.hp * waveScale * contractHp * (omen.enemyHp || 1) * (elite?.hp || 1);
-    const speed = config.speed * (1 + Math.min(.22, this.currentWave * .012)) * contractSpeed * (omen.enemySpeed || 1) * (elite?.speed || 1);
-    const damage = config.damage * (1 + (this.currentWave - 1) * .1) * (omen.enemyDamage || 1) * (elite?.damage || 1);
+    const mode = this.activeRunMode || RUN_MODES.guardian;
+    const trialEliteChance = this.currentTrial?.id === 'hunt' ? .12 : 0;
+    const elite = config.boss ? null : rollEliteAffix(this.currentWave, omen, Math.random, mode.eliteChance + trialEliteChance, options.forceElite);
+    const hp = config.hp * waveScale * contractHp * (omen.enemyHp || 1) * mode.enemyHp * (elite?.hp || 1);
+    const speed = config.speed * (1 + Math.min(.22, this.currentWave * .012)) * contractSpeed * (omen.enemySpeed || 1) * mode.enemySpeed * (elite?.speed || 1);
+    const damage = config.damage * (1 + (this.currentWave - 1) * .1) * (omen.enemyDamage || 1) * mode.enemyDamage * (elite?.damage || 1);
     this.applyEliteVisual(group, elite);
     if (elite) this.showCombatText(group.position.clone().add(new THREE.Vector3(0, 2.15, 0)), elite.name, { label: `${elite.icon} 정예` });
     return {
       id: ++this.enemySerial,
       type, group, hp, maxHp: hp, speed,
-      damage, reward: config.reward, elite,
+      damage, reward: config.reward, elite, eliteShield: elite?.shield ? hp * elite.shield : 0,
       slowTimer: 0, slowFactor: 1, attackTimer: 0, phase: rand(0, Math.PI*2), dead: false,
       boss: !!config.boss, bossPhase: 1, specialIndex: 0, specialTimer: config.boss ? 4.5 : 0, flash: 0, shieldFlash: 0,
       abilityTimer: type === 'runner' ? rand(2.2, 3.6) : type === 'shaman' ? rand(2.8, 4.2) : 0,
@@ -2010,10 +2231,11 @@ class DokkaebiLuckDefense {
 
   updateRunMomentum(dt) {
     if (this.jackpotTimer > 0) this.jackpotTimer = Math.max(0, this.jackpotTimer - dt);
-    const auraSpeed = this.jackpotTimer > 0 ? 1.9 : 1;
+    if (this.guardianBurstTimer > 0) this.guardianBurstTimer = Math.max(0, this.guardianBurstTimer - dt);
+    const auraSpeed = this.jackpotTimer > 0 || this.guardianBurstTimer > 0 ? 1.9 : 1;
     for (const unit of this.units) {
       const aura = unit?.group?.userData?.aura;
-      if (aura && this.jackpotTimer > 0) aura.rotation.z += dt * auraSpeed;
+      if (aura && (this.jackpotTimer > 0 || this.guardianBurstTimer > 0)) aura.rotation.z += dt * auraSpeed;
     }
   }
 
@@ -2064,6 +2286,7 @@ class DokkaebiLuckDefense {
 
   updateWave(dt) {
     if (!this.waveActive) return;
+    this.updateWaveTrial();
     if (this.spawnRemaining > 0) {
       this.spawnTimer -= dt;
       if (this.spawnTimer <= 0) {
@@ -2080,30 +2303,25 @@ class DokkaebiLuckDefense {
     this.waveActive = false;
     const perfect = this.coreHp >= this.waveStartHp - .01;
     const perfectBonus = perfect ? 10 + this.currentWave * 2 : 0;
-    const reward = 24 + this.currentWave * 7 + perfectBonus;
+    const reward = Math.round((24 + this.currentWave * 7 + perfectBonus) * this.activeRunMode.reward);
     this.gold += reward;
-    this.score += this.currentWave * 250 + Math.round(this.coreHp * 8);
+    this.score += Math.round((this.currentWave * 250 + this.coreHp * 8) * this.activeRunMode.score);
     this.showCombo(`웨이브 ${this.currentWave} 격파 · +${reward} 엽전${perfectBonus ? ' · 무결점!' : ''}`, 1600);
     if (perfectBonus) {
-      this.score += perfectBonus * 25;
+      this.score += Math.round(perfectBonus * 25 * this.activeRunMode.score);
       this.moonWard = Math.min(3, this.moonWard + 1);
+      this.gainSoul(10, 'perfect-wave');
       this.showToast(`무결점 결계 충전 · 달빛 방패 ${this.moonWard}/3`);
       this.haptic([18, 24, 42]);
     }
+    this.resolveWaveTrial(perfect);
     this.resolveActiveContract(perfect);
     if (this.currentWave >= this.maxWaves) {
       window.setTimeout(() => this.finishRun(true), 900);
       return;
     }
-    if (this.currentWave === 4 || this.currentWave === 8) {
-      window.setTimeout(() => this.offerContract(), 720);
-    } else if (this.currentWave % 3 === 0) {
-      window.setTimeout(() => this.offerBlessing(), 700);
-    } else {
-      ui.wave.disabled = false;
-      ui.waveText.textContent = `${this.currentWave + 1}`;
-      this.showToast('전열을 정비하고 다음 습격을 시작하세요.');
-    }
+    this.buildPostWaveQueue();
+    this.advancePostWaveRewards();
     this.updateHUD();
   }
 
@@ -2129,11 +2347,10 @@ class DokkaebiLuckDefense {
     this.pendingContract = { ...contract };
     this.hideModal(ui.contractModal);
     this.state = 'playing';
-    ui.wave.disabled = false;
-    ui.waveText.textContent = `${this.currentWave + 1}`;
     this.showCombo(`${contract.icon} ${contract.name} 체결`, 1600);
     this.showToast('다음 한 웨이브에 계약이 적용됩니다.');
     this.haptic([18, 20, 38]);
+    this.advancePostWaveRewards();
     this.updateHUD();
   }
 
@@ -2142,9 +2359,8 @@ class DokkaebiLuckDefense {
     this.pendingContract = null;
     this.hideModal(ui.contractModal);
     this.state = 'playing';
-    ui.wave.disabled = false;
-    ui.waveText.textContent = `${this.currentWave + 1}`;
     this.showToast('이번에는 안전하게 전열을 정비합니다.');
+    this.advancePostWaveRewards();
   }
 
   activatePendingContract() {
@@ -2218,10 +2434,9 @@ class DokkaebiLuckDefense {
     this.blessingHistory.push(id);
     this.hideModal(ui.blessingModal);
     this.state = 'playing';
-    ui.wave.disabled = false;
-    ui.waveText.textContent = `${this.currentWave + 1}`;
     this.sound.merge(2);
     this.showCombo(`${blessing.icon} ${blessing.name}`, 1500);
+    this.advancePostWaveRewards();
     this.updateHUD();
   }
 
@@ -2272,7 +2487,8 @@ class DokkaebiLuckDefense {
     if (moving) {
       move.normalize();
       this.player.facing.lerp(move, .22).normalize();
-      const speed = 5.25 * this.mods.moveSpeed * (this.player.dashTimer > 0 ? 2.5 : 1) * movementStrength;
+      const burstMove = this.guardianBurstTimer > 0 ? 1.18 : 1;
+      const speed = 5.25 * this.mods.moveSpeed * burstMove * (this.player.dashTimer > 0 ? 2.5 : 1) * movementStrength;
       this.player.group.position.addScaledVector(move, speed * dt);
       this.resolvePlayerNavigation(this.player.group.position);
       const targetRot = Math.atan2(move.x, move.z);
@@ -2294,7 +2510,8 @@ class DokkaebiLuckDefense {
       if (target) {
         this.player.attackCooldown = .54;
         const origin = this.player.group.position.clone().add(new THREE.Vector3(.55, 1.35, 0));
-        const damage = (13 + this.currentWave * 1.2) * this.mods.heroDamage * this.getThunderHeroMultiplier() * (this.activeOmen?.heroDamage || 1) * (this.jackpotTimer > 0 ? 1.15 : 1);
+        const burstDamage = this.guardianBurstTimer > 0 ? 1.48 * this.mods.burstPower : 1;
+        const damage = (13 + this.currentWave * 1.2) * this.mods.heroDamage * this.getThunderHeroMultiplier() * (this.activeOmen?.heroDamage || 1) * (this.jackpotTimer > 0 ? 1.15 : 1) * burstDamage;
         this.animations.trigger(this.player.animation, 'attack', .24);
         this.fireProjectile({ kind: 'hero', type: 'hero', origin, target, damage, speed: 20, color: 0x69edff, radius: .16 });
         this.sound.shoot('hero');
@@ -2305,7 +2522,8 @@ class DokkaebiLuckDefense {
   useDash() {
     if (this.state !== 'playing' || this.player.dashCooldown > 0) return;
     this.cancelMoveTarget();
-    this.player.dashCooldown = 4.2;
+    this.player.dashCooldown = 4.2 * this.mods.dashCooldown;
+    this.runStats.dashUses += 1;
     this.player.dashTimer = .34;
     const direction = this.player.facing.clone();
     if (direction.lengthSq() < .1) direction.set(0,0,-1);
@@ -2322,7 +2540,8 @@ class DokkaebiLuckDefense {
     this.sound.skill();
     this.haptic([25, 25, 65]);
     const center = this.player.group.position.clone();
-    const damage = (72 + this.currentWave*10) * this.mods.heroDamage * (this.activeOmen?.heroDamage || 1) * (this.jackpotTimer > 0 ? 1.15 : 1);
+    const burstDamage = this.guardianBurstTimer > 0 ? 1.45 * this.mods.burstPower : 1;
+    const damage = (72 + this.currentWave*10) * this.mods.heroDamage * this.mods.skillDamage * (this.activeOmen?.heroDamage || 1) * (this.jackpotTimer > 0 ? 1.15 : 1) * burstDamage;
     this.spawnSkillEffect(center);
     this.enemies.slice().forEach((enemy) => {
       const distance = enemy.group.position.distanceTo(center);
@@ -2334,7 +2553,8 @@ class DokkaebiLuckDefense {
 
   updateUnits(dt) {
     if (this.state === 'playing') this.commandCooldown = Math.max(0, (this.commandCooldown || 0) - dt);
-    const cooldownMult = (this.mods?.unitCooldown ?? 1) * this.getWindCooldownMultiplier() * (this.activeOmen?.unitCooldown || 1) * (this.jackpotTimer > 0 ? .82 : 1);
+    const burstCooldown = this.guardianBurstTimer > 0 ? .76 : 1;
+    const cooldownMult = (this.mods?.unitCooldown ?? 1) * this.getWindCooldownMultiplier() * (this.activeOmen?.unitCooldown || 1) * (this.jackpotTimer > 0 ? .82 : 1) * burstCooldown;
     let activeCommandFound = false;
     this.units.forEach((unit) => {
       const config = UNIT_TYPES[unit.type];
@@ -2389,7 +2609,8 @@ class DokkaebiLuckDefense {
     const rank = RANKS[unit.rank-1];
     const commandDamage = unit.commandTimer > 0 ? 1.55 : 1;
     const jackpotDamage = this.jackpotTimer > 0 ? 1.22 : 1;
-    return { damage:config.damage*rank.mult*this.mods.unitDamage*this.getFireDamageMultiplier()*commandDamage*jackpotDamage, cooldown:config.cooldown };
+    const burstDamage = this.guardianBurstTimer > 0 ? 1.3 * this.mods.burstPower : 1;
+    return { damage:config.damage*rank.mult*this.mods.unitDamage*this.getFireDamageMultiplier()*commandDamage*jackpotDamage*burstDamage, cooldown:config.cooldown };
   }
 
   triggerUnitUltimate(unit) {
@@ -3115,6 +3336,18 @@ class DokkaebiLuckDefense {
 
   damageEnemy(enemy,amount,source='',hitOrigin=null,owner=null) {
     if (!enemy || enemy.dead) return;
+    if (enemy.eliteShield > 0) {
+      const absorbed = Math.min(enemy.eliteShield, amount);
+      enemy.eliteShield -= absorbed;
+      amount -= absorbed;
+      enemy.flash = .08;
+      this.showCombatText(enemy.group.position.clone().add(new THREE.Vector3(0, 2.1, 0)), absorbed, { label: enemy.eliteShield > 0 ? '결계' : '결계 파괴!' });
+      if (enemy.eliteShield <= 0) {
+        this.spawnRing(enemy.group.position, enemy.elite?.color || 0x8de8ff, 1.8);
+        this.haptic(10);
+      }
+      if (amount <= 0) return;
+    }
     let shielded = false;
     const ultimate = source.startsWith('ultimate-');
     if (enemy.type === 'brute' && hitOrigin && source !== 'skill' && !ultimate) {
@@ -3157,9 +3390,12 @@ class DokkaebiLuckDefense {
     this.releaseEnemyModel(enemy);
     const color=ENEMY_TYPES[enemy.type].color;
     this.spawnParticles(deathPosition.clone().add(new THREE.Vector3(0,.8,0)),color,enemy.boss?35:12,enemy.boss?6:3.4);
-    const reward=Math.max(2,Math.round(enemy.reward*this.mods.goldMultiplier*this.getSpiritGoldMultiplier()*this.getContractRewardMultiplier()*(this.activeOmen?.reward || 1)*(enemy.elite?.reward || 1)));
+    const eliteOmenReward = enemy.elite ? (this.activeOmen?.eliteReward || 1) : 1;
+    const reward=Math.max(2,Math.round(enemy.reward*this.mods.goldMultiplier*this.getSpiritGoldMultiplier()*this.getContractRewardMultiplier()*(this.activeOmen?.reward || 1)*this.activeRunMode.reward*(enemy.elite?.reward || 1)*eliteOmenReward));
     this.dropCoins(deathPosition,reward,enemy.boss?9:Math.min(4,1+Math.floor(reward/7)));
     this.kills+=1;
+    this.gainSoul(enemy.boss ? 24 : enemy.elite ? 8 : 2, 'kill');
+    if (enemy.elite?.deathBurst) this.createEliteDeathBurst(deathPosition, enemy.damage);
     if (enemy.elite) {
       this.eliteKills += 1;
       this.runStats.eliteKills += 1;
@@ -3167,8 +3403,10 @@ class DokkaebiLuckDefense {
     }
     this.killChain = this.killChainTimer > 0 ? this.killChain + 1 : 1;
     this.killChainTimer = 1.85;
+    this.waveMaxChain = Math.max(this.waveMaxChain, this.killChain);
+    this.runStats.maxKillChain = Math.max(this.runStats.maxKillChain, this.killChain);
     const chainMultiplier = 1 + Math.min(.6, Math.max(0, this.killChain - 1) * .018);
-    this.score+=Math.round(enemy.maxHp*(enemy.boss?3:1)*chainMultiplier*(this.activeOmen?.score || 1)*(enemy.elite?.score || 1));
+    this.score+=Math.round(enemy.maxHp*(enemy.boss?3:1)*chainMultiplier*(this.activeOmen?.score || 1)*this.activeRunMode.score*(enemy.elite?.score || 1));
     if (this.killChain >= 2) {
       ui.killChain.classList.remove('hidden');
       ui.killChainValue.textContent = `x${this.killChain}`;
@@ -3187,6 +3425,23 @@ class DokkaebiLuckDefense {
       ui.bossHealth.classList.add('hidden');
       if (enemy.type === 'tiger') this.recordFirstMission('bosses', 1);
     }
+  }
+
+
+  createEliteDeathBurst(position, damage) {
+    this.createHazard({
+      type: 'elite-burst', position, radius: 3.15, color: 0xff765d, warning: .72, duration: .5,
+      onTrigger: (hazard) => {
+        const distance = this.player.group.position.distanceTo(hazard.position);
+        if (distance <= hazard.radius) {
+          this.player.stunTimer = Math.max(this.player.stunTimer, .35);
+          this.shake = Math.max(this.shake, .32);
+          this.showCombatText(this.player.group.position.clone().add(new THREE.Vector3(0, 2.2, 0)), Math.ceil(damage * .45), { label: '파열 충격' });
+        }
+        this.spawnParticles(hazard.position.clone().add(new THREE.Vector3(0, .45, 0)), 0xff765d, 22, 5);
+        this.sound.tone(120, .24, 'sawtooth', .028, 80);
+      }
+    });
   }
 
   damageCore(amount) {
@@ -3260,6 +3515,7 @@ class DokkaebiLuckDefense {
         this.gold+=coin.value;
         this.score+=coin.value*2;
         this.runStats.coinsCollected+=coin.value;
+        this.gainSoul(Math.min(3.2, coin.value * .12), 'coin');
         this.sound.coin();
         this.spawnTinyParticle(coin.mesh.position,0xffd36b);
         this.releaseCoin(coin,i);
@@ -3288,7 +3544,7 @@ class DokkaebiLuckDefense {
   }
 
   spawnParticles(position,color,count=8,speed=3) {
-    const actual=this.lowPower?Math.ceil(count*.58):count;
+    const actual = Math.max(1, Math.ceil(count * (this.engine.effectBudgetScale || (this.lowPower ? .58 : 1))));
     for (let i=0;i<actual;i+=1) {
       const particle = this.particlePool.acquire();
       if (!particle) break;
@@ -3488,7 +3744,7 @@ class DokkaebiLuckDefense {
     const rank = Number(rankString);
     const targets = this.units.filter((unit) => !unit.showcase && unit.type === type && unit.rank === rank);
     if (!targets.length || !UNIT_TYPES[type]) return;
-    this.commandCooldown = 18;
+    this.commandCooldown = 18 * this.mods.commandCooldown;
     this.commandActiveKey = key;
     this.runStats.commandsUsed += 1;
     targets.forEach((unit) => {
@@ -3590,7 +3846,7 @@ class DokkaebiLuckDefense {
     if (!this.coreHp && this.coreHp!==0) return;
     ui.hp.textContent=Math.ceil(this.coreHp);
     ui.gold.textContent=Math.floor(this.gold);
-    ui.waveLabel.textContent=this.currentWave?`WAVE ${this.currentWave} / ${this.maxWaves}`:'WAVE 준비';
+    ui.waveLabel.textContent=this.currentWave?`WAVE ${this.currentWave} / ${this.maxWaves} · ${this.activeRunMode.icon}`:`${this.activeRunMode.icon} WAVE 준비`;
     const alive=this.enemies.length;
     const progress=this.waveActive?1-(this.spawnRemaining+alive)/Math.max(1,this.spawnTotal*1.18):0;
     ui.waveProgress.style.width=`${clamp(progress*100,0,100)}%`;
@@ -3614,6 +3870,13 @@ class DokkaebiLuckDefense {
     ui.moonWard.classList.toggle('charged', this.moonWard > 0);
     ui.jackpot.classList.toggle('hidden', this.jackpotTimer <= 0);
     ui.jackpotTime.textContent = this.jackpotTimer > 0 ? `${this.jackpotTimer.toFixed(1)}s` : '0.0s';
+    const burstActive = this.guardianBurstTimer > 0;
+    ui.burstValue.textContent = burstActive ? `${this.guardianBurstTimer.toFixed(1)}s` : `${Math.floor(this.soulGauge)}%`;
+    ui.burstProgress.style.width = `${burstActive ? 100 : clamp(this.soulGauge, 0, 100)}%`;
+    ui.burstState.textContent = burstActive ? '폭주 중' : this.soulGauge >= 100 ? '발동 가능' : '혼불 충전';
+    ui.burst.disabled = burstActive || this.soulGauge < 100;
+    ui.burst.classList.toggle('ready', !burstActive && this.soulGauge >= 100);
+    ui.burst.classList.toggle('active', burstActive);
     this.updateCommandChipStates();
     this.updateBossHUD();
   }
@@ -3666,7 +3929,9 @@ class DokkaebiLuckDefense {
       <div><span>최고 피해</span><b>${topType && topDamage > 0 ? `${UNIT_TYPES[topType].symbol} ${UNIT_TYPES[topType].name}` : '대장 깨비'}</b><small>${Math.round(topDamage || this.runStats.heroDamage).toLocaleString()} 피해</small></div>
       <div><span>집중 명령</span><b>${this.runStats.commandsUsed}회</b><small>${Math.round(this.runStats.commandDamage).toLocaleString()} 강화 피해</small></div>
       <div><span>이동·수집</span><b>${this.runStats.moveOrders}회 지정</b><small>엽전 ${Math.round(this.runStats.coinsCollected).toLocaleString()} · 회피 ${this.runStats.dangerDodges}</small></div>
-      <div><span>월식 전과</span><b>정예 ${this.runStats.eliteKills}체</b><small>결계 방어 ${this.runStats.wardBlocks}회 · 대박 폭주 ${this.runStats.jackpotTriggers}회</small></div>`;
+      <div><span>월식 전과</span><b>정예 ${this.runStats.eliteKills}체</b><small>결계 방어 ${this.runStats.wardBlocks}회 · 대박 폭주 ${this.runStats.jackpotTriggers}회</small></div>
+      <div><span>원정 기록</span><b>${this.activeRunMode.icon} ${this.activeRunMode.name}</b><small>도전 ${this.runStats.trialsCompleted}회 · 유물 ${this.runStats.relicsChosen}개</small></div>
+      <div><span>수호신 폭주</span><b>${this.runStats.guardianBursts}회</b><small>최대 연속 처치 ${this.runStats.maxKillChain} · 질주 ${this.runStats.dashUses}회</small></div>`;
     const shardReward = this.awardRunShards(won);
     ui.resultShards.textContent = `+${shardReward}`;
     ui.resultShardsTotal.textContent = this.metaProgress.shards.toLocaleString();
@@ -3680,7 +3945,7 @@ class DokkaebiLuckDefense {
 
   async saveScore() {
     const name=(ui.playerName.value.trim()||'달빛 수호자').slice(0,12);
-    const entry={name,score:Math.round(this.score),wave:this.currentWave,kills:this.kills,maxRank:this.maxRank,date:Date.now()};
+    const entry={name,score:Math.round(this.score),wave:this.currentWave,kills:this.kills,maxRank:this.maxRank,mode:this.activeRunMode.id,date:Date.now()};
     const local=[...this.getLocalScores(),entry].sort((a,b)=>b.score-a.score).slice(0,10);
     localStorage.setItem('dokkaebi-luck-scores',JSON.stringify(local));
     ui.saveScore.disabled=true;ui.saveScore.textContent='저장 완료';
@@ -3708,7 +3973,7 @@ class DokkaebiLuckDefense {
     const result = this.engine.updateAdaptiveQuality(dt);
     if (!result) return;
     this.qualityScale = this.engine.qualityScale;
-    ui.qualityBadge.textContent = `모바일 엔진 ${result.tier.toUpperCase()} · ${Math.round(result.fps)} FPS · ${Math.round(this.qualityScale * 100)}%`;
+    ui.qualityBadge.textContent = `모바일 엔진 ${result.tier.toUpperCase()} · ${Math.round(result.fps)} FPS · 해상도 ${Math.round(this.qualityScale * 100)}% · FX ${Math.round(this.engine.effectBudgetScale * 100)}%`;
     ui.qualityBadge.classList.remove('hidden');
     window.setTimeout(() => ui.qualityBadge.classList.add('hidden'), 2400);
     this.qualityAdjusted = true;

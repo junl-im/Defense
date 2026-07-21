@@ -11,7 +11,9 @@ const html = read('index.html');
 const main = read('src/main.js');
 const data = read('src/game-data.js');
 const runDirector = read('src/run-director.js');
+const expeditionDirector = read('src/expedition-director.js');
 const style = read('src/style.css');
+const engineConfig = read('src/engine/engine-config.js');
 const sw = read('public/sw.js');
 const vite = read('vite.config.js');
 const pkg = JSON.parse(read('package.json'));
@@ -23,7 +25,7 @@ const missingIds = [...new Set(queriedIds.filter((id) => !htmlIds.has(id)))];
 if (missingIds.length) fail(`index.html에 없는 DOM ID: ${missingIds.join(', ')}`);
 else pass(`${queriedIds.length}개 DOM ID 연결`);
 
-if (pkg.version === '1.8.0') pass('package version 1.8.0');
+if (pkg.version === '1.9.0') pass('package version 1.9.0');
 else fail(`package version 불일치: ${pkg.version}`);
 
 for (const path of ['.env.production', '.firebaserc', '.github/workflows/deploy.yml', 'README.md', 'PROJECT_HANDOFF.md']) {
@@ -39,7 +41,7 @@ else fail(`루트 Markdown 정리 필요: ${rootMarkdown.join(', ')}`);
 if (manifest.start_url === './') pass('PWA 상대 경로 start_url');
 else fail(`PWA start_url 확인 필요: ${manifest.start_url}`);
 
-if (main.includes("const GAME_VERSION = '1.8.0'")) pass('런타임 version 1.8.0');
+if (main.includes("const GAME_VERSION = '1.9.0'")) pass('런타임 version 1.9.0');
 else fail('런타임 version 불일치');
 
 for (const feature of ['offerContract', 'resolveActiveContract', 'checkBossPhase', 'kingNightMarch', 'bossPounce']) {
@@ -78,7 +80,7 @@ for (const id of ['danger-hint', 'meta-modal', 'meta-trait-list', 'result-shards
 if (main.includes('id: ++this.enemySerial') && main.includes('id:++this.hazardSerial') && main.includes('pendingDangerTimer = .14')) pass('안정적인 위험 대상 ID와 전환 지연');
 else fail('위험 안내 안정화 코드 누락');
 
-if (main.includes('unit.commandTimer = 7') && main.includes('commandCooldown = 18') && main.includes('commandDamage = unit.commandTimer > 0 ? 1.55 : 1')) pass('집중 명령 7초/18초 밸런스');
+if (main.includes('unit.commandTimer = 7') && main.includes('commandCooldown = 18 * this.mods.commandCooldown') && main.includes('commandDamage = unit.commandTimer > 0 ? 1.55 : 1')) pass('집중 명령 7초/18초 밸런스');
 else fail('집중 명령 밸런스 코드 누락');
 
 
@@ -98,6 +100,23 @@ if (htmlIds.has('moon-omen') && style.includes('.moon-omen') && style.includes('
 else fail('v1.8 전투 상태 HUD 누락');
 if (read('src/engine/mobile-engine.js').includes("label: 'compatibility'") && read('src/engine/mobile-engine.js').includes("label: 'low-power'")) pass('WebGL 렌더러 3단 폴백');
 else fail('WebGL 렌더러 폴백 누락');
+
+
+if (expeditionDirector.includes('RUN_MODES') && expeditionDirector.includes('RELICS') && main.includes('selectRunMode') && main.includes('offerRelic')) pass('원정 난이도와 런 유물 시스템');
+else fail('원정 난이도 또는 런 유물 시스템 누락');
+if (main.includes('assignWaveTrial') && main.includes('resolveWaveTrial') && htmlIds.has('wave-trial')) pass('웨이브 도전과제 시스템');
+else fail('웨이브 도전과제 시스템 누락');
+if (main.includes('activateGuardianBurst') && main.includes('gainSoul') && htmlIds.has('burst-btn') && htmlIds.has('burst-meter')) pass('혼불 수호신 폭주 시스템');
+else fail('혼불 수호신 폭주 시스템 누락');
+for (const id of ['run-mode-options', 'run-mode-summary', 'relic-panel', 'relic-strip', 'relic-modal', 'relic-options', 'burst-btn', 'burst-meter']) {
+  if (htmlIds.has(id)) pass(`v1.9 UI ${id}`); else fail(`v1.9 UI 누락: ${id}`);
+}
+if (runDirector.includes("id: 'hunt'") && runDirector.includes("id: 'ghost'") && runDirector.includes("id: 'dawn'") && runDirector.includes("id: 'warded'") && runDirector.includes("id: 'explosive'") && runDirector.includes("id: 'ancient'")) pass('신규 징조 3종과 정예 속성 3종');
+else fail('신규 징조 또는 정예 속성 누락');
+if (main.includes('stride: {') && main.includes('fortune: {') && main.includes('spirit: {')) pass('영구 성장 특성 3종 확장');
+else fail('영구 성장 특성 확장 누락');
+if (read('src/engine/mobile-engine.js').includes('effectBudgetScale') && engineConfig.includes('lowEffectScale') && main.includes('this.engine.effectBudgetScale')) pass('FPS 연동 이펙트 예산 조절');
+else fail('적응형 이펙트 예산 누락');
 
 if (html.includes('__DOKKAEBI_SHOW_BOOT_ERROR__') && html.includes('boot-error')) pass('로딩 실패 복구 UI');
 else fail('로딩 실패 복구 UI 누락');
@@ -120,7 +139,7 @@ for (const legacy of [
   else fail(`구버전 호환 파일 누락: ${legacy}`);
 }
 
-for (const path of ['src/game-data.js', 'src/run-director.js', 'src/sound-engine.js']) {
+for (const path of ['src/game-data.js', 'src/run-director.js', 'src/expedition-director.js', 'src/sound-engine.js']) {
   if (existsSync(resolve(root, path))) pass(`모듈 분리 ${path}`);
   else fail(`모듈 누락: ${path}`);
 }
@@ -152,8 +171,7 @@ for (const path of [
   if (existsSync(resolve(root, path))) pass(`엔진 모듈 ${path}`);
   else fail(`엔진 모듈 누락: ${path}`);
 }
-const engineConfig = read('src/engine/engine-config.js');
-if (engineConfig.includes("ENGINE_VERSION = '1.1.0'") && engineConfig.includes('unitTriangles: 300') && engineConfig.includes('enemyTriangles: 500')) pass('엔진 버전과 폴리곤 예산');
+if (engineConfig.includes("ENGINE_VERSION = '1.2.0'") && engineConfig.includes('unitTriangles: 300') && engineConfig.includes('enemyTriangles: 500')) pass('엔진 버전과 폴리곤 예산');
 else fail('엔진 버전 또는 폴리곤 예산 누락');
 if (main.includes('new MobileGameEngine()') && main.includes('new BlobShadowSystem') && main.includes('createRockField(28)') && main.includes('createLanternField(16)')) pass('모바일 엔진 실제 연결');
 else fail('모바일 엔진 연결 누락');
@@ -220,7 +238,7 @@ if (failures.length) {
   console.error(`\nv1.7.7 추가 검증 실패 ${failures.length}건`);
   process.exit(1);
 }
-console.log('v1.8.0 카메라·에셋 추가 검증 완료');
+console.log('v1.9.0 카메라·에셋 추가 검증 완료');
 
 
 const assetCatalog = read('src/engine/asset-catalog.js');
@@ -239,7 +257,7 @@ else fail('비동기 부팅 오류 복구 누락');
 if (engineConfig.includes('textureBudgetLowMB: 64') && engineConfig.includes('textureBudgetMobileMB: 96') && engineConfig.includes('textureBudgetDesktopMB: 192')) pass('기기별 텍스처 메모리 예산');
 else fail('텍스처 메모리 예산 누락');
 if (failures.length) {
-  console.error(`\nv1.8.0 에셋 파이프라인 검증 실패 ${failures.length}건`);
+  console.error(`\nv1.9.0 에셋 파이프라인 검증 실패 ${failures.length}건`);
   process.exit(1);
 }
-console.log('v1.8.0 에셋 파이프라인 검증 완료');
+console.log('v1.9.0 에셋 파이프라인 검증 완료');
