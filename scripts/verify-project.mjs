@@ -22,7 +22,7 @@ const missingIds = [...new Set(queriedIds.filter((id) => !htmlIds.has(id)))];
 if (missingIds.length) fail(`index.html에 없는 DOM ID: ${missingIds.join(', ')}`);
 else pass(`${queriedIds.length}개 DOM ID 연결`);
 
-if (pkg.version === '1.7.0') pass('package version 1.7.0');
+if (pkg.version === '1.7.1') pass('package version 1.7.1');
 else fail(`package version 불일치: ${pkg.version}`);
 
 for (const path of ['.env.production', '.firebaserc', '.github/workflows/deploy.yml', 'README.md', 'PROJECT_HANDOFF.md']) {
@@ -38,7 +38,7 @@ else fail(`루트 Markdown 정리 필요: ${rootMarkdown.join(', ')}`);
 if (manifest.start_url === './') pass('PWA 상대 경로 start_url');
 else fail(`PWA start_url 확인 필요: ${manifest.start_url}`);
 
-if (main.includes("const GAME_VERSION = '1.7.0'")) pass('런타임 version 1.7.0');
+if (main.includes("const GAME_VERSION = '1.7.1'")) pass('런타임 version 1.7.1');
 else fail('런타임 version 불일치');
 
 for (const feature of ['offerContract', 'resolveActiveContract', 'checkBossPhase', 'kingNightMarch', 'bossPounce']) {
@@ -122,6 +122,26 @@ else fail('v1.7 UI 누락');
 if (style.includes('.move-readout') && style.includes('.result-analysis') && style.includes('.look-zone { left: 0;')) pass('전체 지형 입력 영역과 분석 스타일');
 else fail('v1.7 입력 스타일 누락');
 
+
+
+for (const path of [
+  'src/engine/index.js', 'src/engine/engine-config.js', 'src/engine/mobile-engine.js',
+  'src/engine/performance-monitor.js', 'src/engine/object-pool.js', 'src/engine/geometry-budget.js',
+  'src/engine/instance-batch.js', 'src/engine/blob-shadow-system.js',
+  'src/engine/texture-atlas.js', 'src/engine/world-chunk-manager.js'
+]) {
+  if (existsSync(resolve(root, path))) pass(`엔진 모듈 ${path}`);
+  else fail(`엔진 모듈 누락: ${path}`);
+}
+const engineConfig = read('src/engine/engine-config.js');
+if (engineConfig.includes("ENGINE_VERSION = '1.0.0'") && engineConfig.includes('unitTriangles: 300') && engineConfig.includes('enemyTriangles: 500')) pass('엔진 버전과 폴리곤 예산');
+else fail('엔진 버전 또는 폴리곤 예산 누락');
+if (main.includes('new MobileGameEngine()') && main.includes('new BlobShadowSystem') && main.includes('createRockField(28)') && main.includes('createLanternField(16)')) pass('모바일 엔진 실제 연결');
+else fail('모바일 엔진 연결 누락');
+if (main.includes('new InstanceBatch') && main.includes("name: 'StaticRocks'") && main.includes("name: 'LanternPosts'")) pass('InstancedMesh 정적 배치');
+else fail('InstancedMesh 정적 배치 누락');
+if (main.includes("this.moonLight.castShadow = this.renderer.shadowMap.enabled") && engineConfig.includes('shadowsMobile: false')) pass('모바일 실시간 그림자 비활성화');
+else fail('모바일 그림자 설정 누락');
 if (failures.length) {
   console.error(`\n검증 실패 ${failures.length}건`);
   process.exit(1);

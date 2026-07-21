@@ -3,6 +3,7 @@ import './style.css';
 import { isFirebaseEnabled, loadOnlineScores, submitOnlineScore } from './firebase.js';
 import SoundEngine from './sound-engine.js';
 import { RANKS, UNIT_TYPES, UNIT_KEYS, ENEMY_TYPES, SYNERGIES, BLESSINGS, CONTRACTS } from './game-data.js';
+import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, ObjectPool } from './engine/index.js';
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -42,7 +43,7 @@ const ui = {
   playerName: $('#player-name'), saveScore: $('#save-score-btn'), resultRetry: $('#result-retry-btn'), leaderboard: $('#leaderboard')
 };
 
-const GAME_VERSION = '1.7.0';
+const GAME_VERSION = '1.7.1';
 
 const FIRST_MISSIONS = [
   { id: 'summons', title: '수호대 3회 강림', goal: 3, reward: 35, copy: '무료 강림도 포함됩니다.' },
@@ -61,7 +62,8 @@ class DokkaebiLuckDefense {
   constructor() {
     this.sound = new SoundEngine();
     this.clock = new THREE.Clock();
-    this.lowPower = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
+    this.engine = new MobileGameEngine();
+    this.lowPower = this.engine.device.mobile || this.engine.device.lowEnd;
     this.state = 'loading';
     this.previousState = 'title';
     this.elapsed = 0;
@@ -87,9 +89,7 @@ class DokkaebiLuckDefense {
     this.killChain = 0;
     this.killChainTimer = 0;
     this.combatTextCount = 0;
-    this.qualityScale = this.lowPower ? .9 : 1;
-    this.qualitySampleTime = 0;
-    this.qualityFrames = 0;
+    this.qualityScale = this.engine.qualityScale;
     this.qualityAdjusted = false;
 
     this.enemies = [];
@@ -129,7 +129,7 @@ class DokkaebiLuckDefense {
     this.state = 'title';
     this.animate();
 
-    console.info(`[DokkaebiLuckDefense3D] v${GAME_VERSION}`);
+    console.info(`[DokkaebiLuckDefense3D] game v${GAME_VERSION} / engine v${ENGINE_VERSION}`, this.engine.diagnostics);
 
     window.setTimeout(() => {
       ui.loading.classList.remove('visible');
@@ -143,19 +143,8 @@ class DokkaebiLuckDefense {
   }
 
   initThree() {
-    this.renderer = new THREE.WebGLRenderer({
-      canvas: ui.canvas,
-      antialias: !this.lowPower,
-      powerPreference: 'high-performance',
-      alpha: false
-    });
-    this.renderer.setPixelRatio(this.getRenderPixelRatio());
+    this.renderer = this.engine.createRenderer(ui.canvas);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.renderer.outputColorSpace = THREE.SRGBColorSpace;
-    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.14;
-    this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x10091f);
@@ -168,7 +157,7 @@ class DokkaebiLuckDefense {
     this.scene.add(this.hemiLight);
     this.moonLight = new THREE.DirectionalLight(0xa9bdff, 2.8);
     this.moonLight.position.set(-16, 26, 13);
-    this.moonLight.castShadow = true;
+    this.moonLight.castShadow = this.renderer.shadowMap.enabled;
     this.moonLight.shadow.mapSize.set(this.lowPower ? 512 : 1024, this.lowPower ? 512 : 1024);
     this.moonLight.shadow.camera.left = -34;
     this.moonLight.shadow.camera.right = 34;
@@ -179,7 +168,29 @@ class DokkaebiLuckDefense {
     this.worldRoot = new THREE.Group();
     this.dynamicRoot = new THREE.Group();
     this.effectRoot = new THREE.Group();
-    this.scene.add(this.worldRoot, this.dynamicRoot, this.effectRoot);
+    this.pooledEffectRoot = new THREE.Group();
+    this.scene.add(this.worldRoot, this.dynamicRoot, this.effectRoot, this.pooledEffectRoot);
+    this.blobShadows = new BlobShadowSystem(this.lowPower ? 72 : 128);
+    this.scene.add(this.blobShadows.batch.mesh);
+    this.particleGeometry = new THREE.TetrahedronGeometry(.1, 0);
+    const particleLimit = this.lowPower ? this.engine.config.budgets.activeParticlesMobile : this.engine.config.budgets.activeParticlesDesktop;
+    this.particlePool = new ObjectPool({
+      initialSize: this.lowPower ? 36 : 72,
+      maxSize: particleLimit,
+      create: () => {
+        const mesh = new THREE.Mesh(this.particleGeometry, new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0 }));
+        mesh.visible = false;
+        this.pooledEffectRoot.add(mesh);
+        return { mesh, velocity: new THREE.Vector3(), life: 0, maxLife: 1, gravity: 0 };
+      },
+      reset: (particle) => {
+        particle.mesh.visible = false;
+        particle.mesh.material.opacity = 0;
+        particle.mesh.scale.setScalar(1);
+        particle.velocity.set(0, 0, 0);
+        particle.life = 0;
+      }
+    });
 
     this.raycaster = new THREE.Raycaster();
     this.pointer = new THREE.Vector2();
@@ -757,12 +768,14 @@ class DokkaebiLuckDefense {
     this.units.length = 0;
     this.projectiles.length = 0;
     this.coins.length = 0;
+    this.particles.forEach((particle) => this.particlePool?.release(particle));
     this.particles.length = 0;
     this.wisps.length = 0;
     this.unitPads.length = 0;
     this.gates.length = 0;
     this.hazards.length = 0;
     this.navigationObstacles.length = 0;
+    this.engine.worldChunks.clear();
     this.moveTarget = null;
     this.moveTargetRaw = null;
     this.moveTargetMarker = null;
@@ -804,25 +817,10 @@ class DokkaebiLuckDefense {
     inner.rotation.x = -Math.PI / 2;
     this.worldRoot.add(inner);
 
-    for (let i = 0; i < 28; i += 1) {
-      const angle = i / 28 * Math.PI * 2;
-      const radius = rand(13.5, 31.5);
-      this.createRock(Math.cos(angle) * radius + rand(-1.2, 1.2), Math.sin(angle) * radius + rand(-1.2, 1.2), rand(.45, 1.1));
-    }
+    this.createRockField(28);
+    this.createLanternField(16);
 
-    for (let i = 0; i < 16; i += 1) {
-      const angle = i / 16 * Math.PI * 2;
-      const radius = i % 2 ? 19.5 : 23.5;
-      this.createLantern(Math.cos(angle) * radius, Math.sin(angle) * radius, angle + Math.PI / 2, i);
-    }
-
-    for (let i = 0; i < 8; i += 1) {
-      const angle = i / 8 * Math.PI * 2 + Math.PI / 8;
-      const x = Math.cos(angle) * 16.2;
-      const z = Math.sin(angle) * 16.2;
-      this.createMarketStall(x, z, angle + Math.PI / 2, i);
-      this.navigationObstacles.push({ x, z, radius: 2.05, type: 'stall' });
-    }
+    this.createMarketField(8);
 
     for (let i = 0; i < 4; i += 1) {
       const angle = i / 4 * Math.PI * 2;
@@ -858,6 +856,61 @@ class DokkaebiLuckDefense {
     this.worldRoot.add(halo);
   }
 
+  createRockField(count) {
+    const batch = new InstanceBatch(
+      new THREE.DodecahedronGeometry(.7, 0),
+      this.createMaterial(0x45384d, 1),
+      count,
+      { name: 'StaticRocks', receiveShadow: false }
+    );
+    for (let i = 0; i < count; i += 1) {
+      const angle = i / count * Math.PI * 2;
+      const radius = rand(13.5, 31.5);
+      const scale = rand(.45, 1.1);
+      batch.add({
+        position: new THREE.Vector3(Math.cos(angle) * radius + rand(-1.2, 1.2), .35 * scale, Math.sin(angle) * radius + rand(-1.2, 1.2)),
+        rotation: new THREE.Euler(rand(-.3, .3), rand(0, Math.PI), rand(-.2, .2)),
+        scale
+      });
+    }
+    batch.commit();
+    this.worldRoot.add(batch.mesh);
+    this.engine.worldChunks.register('0:0', batch.mesh);
+  }
+
+  createLanternField(count) {
+    const wood = this.createMaterial(0x3a2029, .9);
+    const warm = this.createMaterial(0xffbe58, .35, .05, 0xff7b28, 2.6);
+    const posts = new InstanceBatch(new THREE.CylinderGeometry(.12, .15, 3.5, 6), wood, count, { name: 'LanternPosts' });
+    const arms = new InstanceBatch(new THREE.BoxGeometry(1.2, .13, .13), wood, count, { name: 'LanternArms' });
+    const lamps = new InstanceBatch(new THREE.CylinderGeometry(.34, .27, .68, 7), warm, count, { name: 'LanternLamps' });
+    const lightLimit = this.engine.config.budgets.pointLightsMobile;
+    let mobileLights = 0;
+    for (let i = 0; i < count; i += 1) {
+      const angle = i / count * Math.PI * 2;
+      const radius = i % 2 ? 19.5 : 23.5;
+      const x = Math.cos(angle) * radius;
+      const z = Math.sin(angle) * radius;
+      const rotation = angle + Math.PI / 2;
+      const offset = (distance, y) => new THREE.Vector3(x + Math.cos(rotation) * distance, y, z - Math.sin(rotation) * distance);
+      posts.add({ position: new THREE.Vector3(x, 1.75, z), rotation: new THREE.Euler(0, rotation, 0) });
+      arms.add({ position: offset(.48, 3.32), rotation: new THREE.Euler(0, rotation, 0) });
+      lamps.add({ position: offset(.91, 2.85), rotation: new THREE.Euler(0, rotation, 0) });
+      const allowLight = !this.lowPower ? i % 2 === 0 : mobileLights < lightLimit && i % 4 === 0;
+      if (allowLight) {
+        const light = new THREE.PointLight(0xff9c42, this.lowPower ? .38 : .65, 7, 2);
+        light.position.copy(offset(.91, 2.85));
+        this.worldRoot.add(light);
+        mobileLights += 1;
+      }
+    }
+    posts.commit(); arms.commit(); lamps.commit();
+    this.worldRoot.add(posts.mesh, arms.mesh, lamps.mesh);
+    this.engine.worldChunks.register('0:0', posts.mesh);
+    this.engine.worldChunks.register('0:0', arms.mesh);
+    this.engine.worldChunks.register('0:0', lamps.mesh);
+  }
+
   createRock(x, z, scale = 1) {
     const rock = this.mesh(new THREE.DodecahedronGeometry(.7 * scale, 0), this.createMaterial(0x45384d, 1), x, .35 * scale, z);
     rock.rotation.set(rand(-.3, .3), rand(0, Math.PI), rand(-.2, .2));
@@ -880,6 +933,57 @@ class DokkaebiLuckDefense {
       group.add(light);
     }
     this.worldRoot.add(group);
+  }
+
+  createMarketField(count) {
+    const whiteWood = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: .9, metalness: .05, vertexColors: true });
+    const whiteCloth = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: .83, metalness: .02, vertexColors: true });
+    const counters = new InstanceBatch(new THREE.BoxGeometry(3.1, 1.05, 1.35), whiteWood, count, { name: 'MarketCounters' });
+    const roofs = new InstanceBatch(new THREE.BoxGeometry(3.5, .18, 1.8), whiteCloth, count, { name: 'MarketRoofs' });
+    const poles = new InstanceBatch(new THREE.BoxGeometry(.12, 2.2, .12), whiteWood, count * 2, { name: 'MarketPoles' });
+    const jarColors = [0xd87a62, 0x73a976, 0xc7a65e];
+    const jars = jarColors.map((color, index) => new InstanceBatch(
+      new THREE.SphereGeometry(.22 + index * .03, 7, 5),
+      this.createMaterial(color, .7),
+      count,
+      { name: `MarketJars${index + 1}` }
+    ));
+    const woodColors = [0x39283b, 0x432235];
+    const clothColors = [0x813c68, 0x365d73, 0x74463d, 0x4f467c];
+    const parent = new THREE.Matrix4();
+    const local = new THREE.Matrix4();
+    const world = new THREE.Matrix4();
+    const parentQuaternion = new THREE.Quaternion();
+    const localQuaternion = new THREE.Quaternion();
+    const one = new THREE.Vector3(1, 1, 1);
+    const compose = (batch, parentPosition, parentRotation, localPosition, localRotation, color) => {
+      parentQuaternion.setFromEuler(parentRotation);
+      localQuaternion.setFromEuler(localRotation);
+      parent.compose(parentPosition, parentQuaternion, one);
+      local.compose(localPosition, localQuaternion, one);
+      world.multiplyMatrices(parent, local);
+      batch.addMatrix(world.clone(), color ? new THREE.Color(color) : undefined);
+    };
+    for (let i = 0; i < count; i += 1) {
+      const angle = i / count * Math.PI * 2 + Math.PI / count;
+      const position = new THREE.Vector3(Math.cos(angle) * 16.2, 0, Math.sin(angle) * 16.2);
+      const rotation = new THREE.Euler(0, angle + Math.PI / 2, 0);
+      const woodColor = woodColors[i % woodColors.length];
+      compose(counters, position, rotation, new THREE.Vector3(0, .53, 0), new THREE.Euler(), woodColor);
+      compose(roofs, position, rotation, new THREE.Vector3(0, 2.65, -.05), new THREE.Euler(0, 0, i % 2 ? -.06 : .06), clothColors[i % clothColors.length]);
+      compose(poles, position, rotation, new THREE.Vector3(-1.35, 1.65, .52), new THREE.Euler(), woodColor);
+      compose(poles, position, rotation, new THREE.Vector3(1.35, 1.65, .52), new THREE.Euler(), woodColor);
+      for (let jarIndex = 0; jarIndex < jars.length; jarIndex += 1) {
+        compose(jars[jarIndex], position, rotation, new THREE.Vector3(-.65 + jarIndex * .62, 1.2, -.18), new THREE.Euler());
+      }
+      this.navigationObstacles.push({ x: position.x, z: position.z, radius: 2.05, type: 'stall' });
+    }
+    const batches = [counters, roofs, poles, ...jars];
+    batches.forEach((batch) => {
+      batch.commit();
+      this.worldRoot.add(batch.mesh);
+      this.engine.worldChunks.register('0:0', batch.mesh);
+    });
   }
 
   createMarketStall(x, z, rotation, variant) {
@@ -975,18 +1079,19 @@ class DokkaebiLuckDefense {
     const skinMat = this.createMaterial(0xd39a7b, .75);
     const clothMat = this.createMaterial(0x242139, .7);
     const glowMat = this.createMaterial(0x6eeeff, .28, .1, 0x37d8ff, 3.4);
-    const body = this.mesh(new THREE.SphereGeometry(.55, 12, 9), bodyMat, 0, 1.05, 0); body.scale.set(1, 1.25, .82);
-    const head = this.mesh(new THREE.SphereGeometry(.43, 12, 9), skinMat, 0, 1.85, 0);
-    const hat = this.mesh(new THREE.ConeGeometry(.72, .62, 12), clothMat, 0, 2.28, 0); hat.rotation.z = -.08;
-    const brim = this.mesh(new THREE.CylinderGeometry(.78, .78, .08, 14), clothMat, 0, 2.04, 0);
-    const horn1 = this.mesh(new THREE.ConeGeometry(.14, .5, 7), glowMat, -.26, 2.48, 0); horn1.rotation.z = -.24;
+    const body = this.mesh(new THREE.SphereGeometry(.55, 7, 5), bodyMat, 0, 1.05, 0); body.scale.set(1, 1.25, .82);
+    const head = this.mesh(new THREE.SphereGeometry(.43, 7, 5), skinMat, 0, 1.85, 0);
+    const hat = this.mesh(new THREE.ConeGeometry(.72, .62, 8), clothMat, 0, 2.28, 0); hat.rotation.z = -.08;
+    const brim = this.mesh(new THREE.CylinderGeometry(.78, .78, .08, 8), clothMat, 0, 2.04, 0);
+    const horn1 = this.mesh(new THREE.ConeGeometry(.14, .5, 5), glowMat, -.26, 2.48, 0); horn1.rotation.z = -.24;
     const horn2 = horn1.clone(); horn2.position.x = .26; horn2.rotation.z = .24;
-    const foot1 = this.mesh(new THREE.SphereGeometry(.22, 8, 6), clothMat, -.28, .35, .03); foot1.scale.set(1, .7, 1.35);
+    const foot1 = this.mesh(new THREE.SphereGeometry(.22, 5, 3), clothMat, -.28, .35, .03); foot1.scale.set(1, .7, 1.35);
     const foot2 = foot1.clone(); foot2.position.x = .28;
-    const flame = this.mesh(new THREE.SphereGeometry(.22, 10, 7), glowMat, .72, 1.25, .1);
+    const flame = this.mesh(new THREE.SphereGeometry(.22, 6, 4), glowMat, .72, 1.25, .1);
     group.add(body, head, hat, brim, horn1, horn2, foot1, foot2, flame);
     group.traverse((object) => { if (object.isMesh) object.userData.baseY = object.position.y; });
     this.dynamicRoot.add(group);
+    this.engine.geometryBudget.inspect('hero', group, 'unitTriangles');
     return { group, flame, attackCooldown: 0, dashCooldown: 0, skillCooldown: 0, dashTimer: 0, stunTimer: 0, facing: new THREE.Vector3(0,0,-1) };
   }
 
@@ -1245,6 +1350,7 @@ class DokkaebiLuckDefense {
       ultimateCooldown: rank === 5 ? rand(1.8, 3.1) : Infinity
     };
     this.units.push(unit);
+    this.engine.geometryBudget.inspect(`unit:${type}:rank${rank}`, model, 'unitTriangles');
     return unit;
   }
 
@@ -1261,45 +1367,45 @@ class DokkaebiLuckDefense {
     const eyeMat = this.createMaterial(rankConfig.color, .25, .05, rankConfig.glow, 3.2);
     const rankMat = this.createMaterial(rankConfig.color, .34, .12, rankConfig.glow, rank >= 3 ? 2.2 : .7);
 
-    const body = this.mesh(new THREE.SphereGeometry(.55, 11, 8), bodyMat, 0, 1.05, 0); body.scale.set(1, 1.22, .88);
-    const head = this.mesh(new THREE.SphereGeometry(.42, 11, 8), faceMat, 0, 1.78, 0);
-    const eye1 = this.mesh(new THREE.SphereGeometry(.055, 7, 5), eyeMat, -.15, 1.84, .385, false, false);
+    const body = this.mesh(new THREE.SphereGeometry(.55, 7, 5), bodyMat, 0, 1.05, 0); body.scale.set(1, 1.22, .88);
+    const head = this.mesh(new THREE.SphereGeometry(.42, 7, 5), faceMat, 0, 1.78, 0);
+    const eye1 = this.mesh(new THREE.SphereGeometry(.055, 5, 3), eyeMat, -.15, 1.84, .385, false, false);
     const eye2 = eye1.clone(); eye2.position.x = .15;
-    const horn1 = this.mesh(new THREE.ConeGeometry(.14 + rank * .012, .48 + rank * .07, 7), rankMat, -.28, 2.2, -.02);
+    const horn1 = this.mesh(new THREE.ConeGeometry(.14 + rank * .012, .48 + rank * .07, 5), rankMat, -.28, 2.2, -.02);
     horn1.rotation.z = -.24;
     const horn2 = horn1.clone(); horn2.position.x = .28; horn2.rotation.z = .24;
-    const foot1 = this.mesh(new THREE.SphereGeometry(.2, 8, 6), darkMat, -.27, .37, .05); foot1.scale.set(1, .7, 1.35);
+    const foot1 = this.mesh(new THREE.SphereGeometry(.2, 5, 3), darkMat, -.27, .37, .05); foot1.scale.set(1, .7, 1.35);
     const foot2 = foot1.clone(); foot2.position.x = .27;
     group.add(body, head, eye1, eye2, horn1, horn2, foot1, foot2);
 
     if (type === 'ember') {
-      const flame = this.mesh(new THREE.ConeGeometry(.24, .75, 9), rankMat, .72, 1.28, .02); flame.rotation.z = -.35;
+      const flame = this.mesh(new THREE.ConeGeometry(.24, .75, 6), rankMat, .72, 1.28, .02); flame.rotation.z = -.35;
       group.add(flame);
     } else if (type === 'frost') {
-      const staff = this.mesh(new THREE.CylinderGeometry(.055,.07,1.55,7), darkMat, .6,1.2,.02); staff.rotation.z = -.18;
+      const staff = this.mesh(new THREE.CylinderGeometry(.055,.07,1.55,6), darkMat, .6,1.2,.02); staff.rotation.z = -.18;
       const crystal = this.mesh(new THREE.OctahedronGeometry(.22), rankMat, .74,1.96,.02);
       group.add(staff, crystal);
     } else if (type === 'wind') {
-      const hat = this.mesh(new THREE.ConeGeometry(.75,.48,12), darkMat, 0,2.15,0); hat.scale.y=.68;
-      const bow = this.mesh(new THREE.TorusGeometry(.43,.045,7,18,Math.PI*1.35), rankMat, .55,1.25,.1); bow.rotation.z=-.72;
+      const hat = this.mesh(new THREE.ConeGeometry(.75,.48,8), darkMat, 0,2.15,0); hat.scale.y=.68;
+      const bow = this.mesh(new THREE.RingGeometry(.34,.43,10,1,0,Math.PI*1.35), rankMat, .55,1.25,.1); bow.rotation.z=-.72;
       group.add(hat,bow);
     } else if (type === 'stone') {
-      const club = this.mesh(new THREE.CylinderGeometry(.2,.12,1.3,7), darkMat, .65,1.25,.02); club.rotation.z=-.65;
+      const club = this.mesh(new THREE.CylinderGeometry(.2,.12,1.3,6), darkMat, .65,1.25,.02); club.rotation.z=-.65;
       const clubTop = this.mesh(new THREE.DodecahedronGeometry(.34,0), rankMat, .98,1.7,.02);
       group.add(club,clubTop);
     } else if (type === 'bell') {
-      const hood = this.mesh(new THREE.ConeGeometry(.7,.85,10), darkMat, 0,2.15,0); hood.scale.y=.75;
-      const bell = this.mesh(new THREE.CylinderGeometry(.26,.4,.5,9), rankMat, .68,1.23,.05); bell.rotation.z=-.25;
+      const hood = this.mesh(new THREE.ConeGeometry(.7,.85,8), darkMat, 0,2.15,0); hood.scale.y=.75;
+      const bell = this.mesh(new THREE.CylinderGeometry(.26,.4,.5,7), rankMat, .68,1.23,.05); bell.rotation.z=-.25;
       group.add(hood,bell);
     } else if (type === 'thunder') {
-      const helm = this.mesh(new THREE.CylinderGeometry(.52,.62,.38,8), darkMat, 0,2.05,0);
+      const helm = this.mesh(new THREE.CylinderGeometry(.52,.62,.38,6), darkMat, 0,2.05,0);
       const blade = this.mesh(new THREE.BoxGeometry(.14,1.45,.18), rankMat, .65,1.35,.04); blade.rotation.z=-.45;
       group.add(helm,blade);
     }
 
     if (rank >= 2) {
-      const ring = this.mesh(new THREE.TorusGeometry(.72 + rank*.04,.035 + rank*.009,7,24), new THREE.MeshBasicMaterial({ color: rankConfig.color, transparent:true, opacity:.5, depthWrite:false }),0,.42,0,false,false);
-      ring.rotation.x = Math.PI/2;
+      const ring = this.mesh(new THREE.RingGeometry(.68 + rank*.04,.76 + rank*.04,14), new THREE.MeshBasicMaterial({ color: rankConfig.color, transparent:true, opacity:.5, depthWrite:false }),0,.42,0,false,false);
+      ring.rotation.x = -Math.PI/2;
       group.add(ring);
       group.userData.aura = ring;
     }
@@ -1421,6 +1527,7 @@ class DokkaebiLuckDefense {
     const config = ENEMY_TYPES[type];
     const waveScale = 1 + (this.currentWave - 1) * .19 + progress * .08;
     const group = this.createEnemyModel(type, config);
+    this.engine.geometryBudget.inspect(`enemy:${type}`, group, 'enemyTriangles');
     group.position.copy(position);
     this.dynamicRoot.add(group);
     const contractHp = this.activeContract?.id === 'bloodMoon' ? 1.45 : 1;
@@ -1443,17 +1550,17 @@ class DokkaebiLuckDefense {
     const darkMat = this.createMaterial(tempColor.set(config.color).multiplyScalar(.32).getHex(), .82);
     const eyeMat = this.createMaterial(0xffe06f, .2, 0, 0xffa42d, 2.8);
     const scale = config.scale;
-    const body = this.mesh(new THREE.SphereGeometry(.55 * scale, 11, 8), bodyMat, 0, .95 * scale, 0);
+    const body = this.mesh(new THREE.SphereGeometry(.55 * scale, 8, 6), bodyMat, 0, .95 * scale, 0);
     body.scale.set(1, 1.17, .88);
-    const head = this.mesh(new THREE.SphereGeometry(.4 * scale, 10, 8), bodyMat, 0, 1.63 * scale, 0);
-    const eye1 = this.mesh(new THREE.SphereGeometry(.065 * scale, 6, 5), eyeMat, -.15*scale,1.7*scale,.365*scale,false,false);
+    const head = this.mesh(new THREE.SphereGeometry(.4 * scale, 7, 5), bodyMat, 0, 1.63 * scale, 0);
+    const eye1 = this.mesh(new THREE.SphereGeometry(.065 * scale, 5, 3), eyeMat, -.15*scale,1.7*scale,.365*scale,false,false);
     const eye2 = eye1.clone(); eye2.position.x = .15 * scale;
-    const horn1 = this.mesh(new THREE.ConeGeometry(.13*scale,.48*scale,6), darkMat,-.27*scale,2.03*scale,0);
+    const horn1 = this.mesh(new THREE.ConeGeometry(.13*scale,.48*scale,5), darkMat,-.27*scale,2.03*scale,0);
     horn1.rotation.z=-.28;
     const horn2=horn1.clone(); horn2.position.x=.27*scale; horn2.rotation.z=.28;
     group.add(body,head,eye1,eye2,horn1,horn2);
     if (type === 'runner') {
-      const leg1=this.mesh(new THREE.CylinderGeometry(.08,.1,.65,6),darkMat,-.22,.34,0); leg1.rotation.z=.15;
+      const leg1=this.mesh(new THREE.CylinderGeometry(.08,.1,.65,5),darkMat,-.22,.34,0); leg1.rotation.z=.15;
       const leg2=leg1.clone();leg2.position.x=.22;leg2.rotation.z=-.15; group.add(leg1,leg2);
     }
     if (type === 'brute') {
@@ -1462,12 +1569,12 @@ class DokkaebiLuckDefense {
       const shield=this.mesh(new THREE.BoxGeometry(.95*scale,1.2*scale,.17*scale),shieldMat,0,1.15*scale,.72*scale);shield.rotation.x=-.08;group.add(armor,shield);group.userData.shield=shield;
     }
     if (type === 'shaman') {
-      const staff=this.mesh(new THREE.CylinderGeometry(.07,.09,1.8,7),darkMat,.63,1.15,0);staff.rotation.z=-.15;
+      const staff=this.mesh(new THREE.CylinderGeometry(.07,.09,1.8,6),darkMat,.63,1.15,0);staff.rotation.z=-.15;
       const gem=this.mesh(new THREE.OctahedronGeometry(.22),eyeMat,.77,2.03,0);group.add(staff,gem);
     }
     if (config.boss) {
-      const mane=this.mesh(new THREE.TorusGeometry(.55*scale,.18*scale,8,18),darkMat,0,1.52*scale,-.08);mane.rotation.x=Math.PI/2;group.add(mane);
-      const crown=this.mesh(new THREE.ConeGeometry(.72*scale,.65*scale,7),eyeMat,0,2.42*scale,0);group.add(crown);
+      const mane=this.mesh(new THREE.TorusGeometry(.55*scale,.18*scale,5,12),darkMat,0,1.52*scale,-.08);mane.rotation.x=Math.PI/2;group.add(mane);
+      const crown=this.mesh(new THREE.ConeGeometry(.72*scale,.65*scale,6),eyeMat,0,2.42*scale,0);group.add(crown);
       if (!this.lowPower) { const light=new THREE.PointLight(config.color,1.3,8,2);light.position.y=1.6*scale;group.add(light); }
     }
     group.userData={...group.userData,body,baseColor:config.color,scale,phase:rand(0,Math.PI*2)};
@@ -2645,19 +2752,31 @@ class DokkaebiLuckDefense {
   spawnParticles(position,color,count=8,speed=3) {
     const actual=this.lowPower?Math.ceil(count*.58):count;
     for (let i=0;i<actual;i+=1) {
+      const particle = this.particlePool.acquire();
+      if (!particle) break;
       const size=rand(.045,.13);
-      const mesh=this.mesh(new THREE.TetrahedronGeometry(size,0),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.95}),position.x+rand(-.25,.25),position.y+rand(-.2,.25),position.z+rand(-.25,.25),false,false);
-      const velocity=new THREE.Vector3(rand(-1,1),rand(.1,1.25),rand(-1,1)).normalize().multiplyScalar(rand(speed*.45,speed));
-      this.effectRoot.add(mesh);
-      this.particles.push({mesh,velocity,life:rand(.35,.85),maxLife:1,gravity:rand(1.5,5)});
+      particle.mesh.visible = true;
+      particle.mesh.position.set(position.x+rand(-.25,.25),position.y+rand(-.2,.25),position.z+rand(-.25,.25));
+      particle.mesh.scale.setScalar(size / .1);
+      particle.mesh.material.color.setHex(color);
+      particle.mesh.material.opacity=.95;
+      particle.velocity.set(rand(-1,1),rand(.1,1.25),rand(-1,1)).normalize().multiplyScalar(rand(speed*.45,speed));
+      particle.life=rand(.35,.85);particle.maxLife=particle.life;particle.gravity=rand(1.5,5);
+      this.particles.push(particle);
     }
   }
 
   spawnTinyParticle(position,color) {
-    if (this.particles.length>(this.lowPower?90:180)) return;
-    const mesh=this.mesh(new THREE.SphereGeometry(.035,5,4),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.7}),position.x,position.y,position.z,false,false);
-    this.effectRoot.add(mesh);
-    this.particles.push({mesh,velocity:new THREE.Vector3(rand(-.3,.3),rand(.1,.7),rand(-.3,.3)),life:.25,maxLife:.25,gravity:0});
+    const particle = this.particlePool.acquire();
+    if (!particle) return;
+    particle.mesh.visible = true;
+    particle.mesh.position.copy(position);
+    particle.mesh.scale.setScalar(.35);
+    particle.mesh.material.color.setHex(color);
+    particle.mesh.material.opacity=.7;
+    particle.velocity.set(rand(-.3,.3),rand(.1,.7),rand(-.3,.3));
+    particle.life=.25;particle.maxLife=.25;particle.gravity=0;
+    this.particles.push(particle);
   }
 
   updateParticles(dt) {
@@ -2666,7 +2785,7 @@ class DokkaebiLuckDefense {
       particle.life-=dt;particle.velocity.y-=particle.gravity*dt;particle.mesh.position.addScaledVector(particle.velocity,dt);
       particle.mesh.material.opacity=clamp(particle.life/particle.maxLife,0,1);
       particle.mesh.scale.multiplyScalar(Math.max(.92,1-dt*1.7));
-      if (particle.life<=0) {this.effectRoot.remove(particle.mesh);particle.mesh.geometry.dispose();particle.mesh.material.dispose();this.particles.splice(i,1);}
+      if (particle.life<=0) {this.particlePool.release(particle);this.particles.splice(i,1);}
     }
   }
 
@@ -3003,36 +3122,38 @@ class DokkaebiLuckDefense {
   escapeHtml(value) {return String(value).replace(/[&<>'"]/g,(char)=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));}
 
   getRenderPixelRatio() {
-    const ceiling = this.lowPower ? 1.25 : 1.65;
-    return Math.min(window.devicePixelRatio || 1, ceiling) * this.qualityScale;
+    return this.engine.pixelRatio();
   }
 
   updateAdaptiveQuality(dt) {
     if (this.state !== 'playing') return;
-    this.qualitySampleTime += dt;
-    this.qualityFrames += 1;
-    if (this.qualitySampleTime < 4.5) return;
-    const fps = this.qualityFrames / Math.max(.001, this.qualitySampleTime);
-    let nextScale = this.qualityScale;
-    if (fps < 37 && this.qualityScale > .72) nextScale = .72;
-    else if (fps < 49 && this.qualityScale > .84) nextScale = .84;
-    if (nextScale < this.qualityScale) {
-      this.qualityScale = nextScale;
-      this.renderer.setPixelRatio(this.getRenderPixelRatio());
-      if (nextScale <= .72) this.moonLight.castShadow = false;
-      ui.qualityBadge.textContent = `모바일 최적화 ON · ${Math.round(fps)} FPS`;
-      ui.qualityBadge.classList.remove('hidden');
-      window.setTimeout(() => ui.qualityBadge.classList.add('hidden'), 2400);
-      this.qualityAdjusted = true;
+    const result = this.engine.updateAdaptiveQuality(dt);
+    if (!result) return;
+    this.qualityScale = this.engine.qualityScale;
+    ui.qualityBadge.textContent = `모바일 엔진 ${result.tier.toUpperCase()} · ${Math.round(result.fps)} FPS · ${Math.round(this.qualityScale * 100)}%`;
+    ui.qualityBadge.classList.remove('hidden');
+    window.setTimeout(() => ui.qualityBadge.classList.add('hidden'), 2400);
+    this.qualityAdjusted = true;
+  }
+
+  updateBlobShadows() {
+    if (!this.blobShadows) return;
+    const entries = [];
+    if (this.player?.group?.visible !== false) entries.push({ position: this.player.group.position, radius: .78 });
+    for (const unit of this.units) {
+      if (unit.group?.visible === false) continue;
+      entries.push({ position: unit.group.position, radius: .68 + unit.rank * .07 });
     }
-    this.qualitySampleTime = 0;
-    this.qualityFrames = 0;
+    for (const enemy of this.enemies) {
+      if (enemy.dead || enemy.group?.visible === false) continue;
+      entries.push({ position: enemy.group.position, radius: .58 * (enemy.group.userData.scale || 1) });
+    }
+    this.blobShadows.update(entries);
   }
 
   onResize() {
     this.camera.aspect=window.innerWidth/window.innerHeight;this.camera.updateProjectionMatrix();
-    this.renderer.setSize(window.innerWidth,window.innerHeight);
-    this.renderer.setPixelRatio(this.getRenderPixelRatio());
+    this.engine.resize(window.innerWidth, window.innerHeight);
   }
 
   animate() {
@@ -3049,6 +3170,8 @@ class DokkaebiLuckDefense {
     } else {
       this.updateParticles(dt);
     }
+    if (this.player) this.engine.worldChunks.update(this.player.group.position);
+    this.updateBlobShadows();
     this.updateCamera(dt);
     this.renderer.render(this.scene,this.camera);
   }

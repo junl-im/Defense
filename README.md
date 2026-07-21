@@ -1,30 +1,18 @@
 # 도깨비 운빨 수호대 3D
 
-모바일 브라우저에서 직접 전장을 뛰어다니며 엽전을 줍고, 랜덤 도깨비를 소환·합성하는 Three.js 기반 3D 액션 운빨 디펜스입니다.
+모바일 웹용 Three.js 3D 액션 운빨 디펜스입니다.
 
-현재 버전: **1.6.0 — 집중 명령, 안정된 위험 안내, 성장 요약**
-
-## 핵심 플레이
-
-`이동 → 자동 공격 → 엽전 수집 → 랜덤 소환 → 3개 자동 합성 → 집중 명령 → 5성 궁극 진화 → 보스 격파 → 혼불 성장`
-
-## v1.6 주요 변경
-
-- 오른쪽 도깨비 목록을 눌러 같은 종류·같은 별 수호대 전체에 7초 집중 명령
-- 집중 명령 중 공격력 55%, 공격속도 약 61%, 5성 궁극 충전 속도 강화
-- 집중 명령 공용 재사용 대기시간 18초
-- 장판과 질주꾼에 고유 ID를 부여해 위험 안내 대상이 프레임마다 바뀌는 현상 방지
-- 덜 급한 경고는 0.14초 유지 확인 후 전환하고, 사라진 경고는 0.2초 완충 표시
-- 제목 화면에서 이번 판 시작 엽전·신목 체력·도깨비 피해를 바로 확인
-- 혼불 보상과 영구 성장 비용을 초반 1단계는 빠르고 후반은 선택이 필요하도록 재조정
-- PC에서는 `R` 키로 현재 최고 등급 도깨비에 집중 명령
+- 게임 버전: **1.7.1**
+- 엔진 버전: **1.0.0**
+- 배포 주소: `https://junl-im.github.io/Defense/`
+- Firebase 프로젝트: `web-game2`
 
 ## 실행
 
-Node.js `20.19+` 또는 `22.12+` 권장입니다.
+Node.js `20.19+` 또는 `22.12+` 환경에서 실행합니다.
 
 ```bash
-npm install
+npm ci
 npm run verify
 npm run dev
 ```
@@ -36,57 +24,62 @@ npm run build
 npm run preview
 ```
 
-전체 ZIP에는 미리 빌드된 `dist/`가 포함됩니다.
+GitHub Pages 경로 빌드:
 
-## GitHub Pages 배포
-
-- 저장소: `junl-im/Defense`
-- Pages: `https://junl-im.github.io/Defense/`
-- base path: `/Defense/`
-- 자동 배포: `.github/workflows/deploy.yml`
-
-패치 ZIP 내부 파일을 저장소 루트에 그대로 덮어쓴 뒤 GitHub Desktop에서 commit·push하면 Actions가 빌드하고 배포합니다.
-
-배포 후 최초 확인 주소:
-
-```text
-https://junl-im.github.io/Defense/?fresh=1.6.0
+```bash
+VITE_BASE_PATH=/Defense/ npm run build
 ```
 
-## Firebase
-
-- 프로젝트 ID: `web-game2`
-- Auth Domain: `web-game2.firebaseapp.com`
-- 랭킹 컬렉션: `dokkaebiScores`
-
-Firebase 연결이 실패해도 로컬 저장으로 플레이할 수 있습니다.
-
-## 주요 파일
+## 엔진 구조
 
 ```text
-src/main.js                 Three.js 월드, 전투, 집중 명령, 위험 안내, 영구 성장
-src/game-data.js            도깨비, 적, 시너지, 축복, 계약 데이터
-src/sound-engine.js         Web Audio 절차형 효과음
-src/style.css               모바일 HUD, 명령 상태, 위험 안내, 성장 화면
-src/firebase.js             익명 로그인과 온라인 랭킹
-public/sw.js                구버전 서비스워커 캐시 제거 스크립트
-PROJECT_HANDOFF.md          전체 개발 기록과 다음 작업 인수인계
+src/engine/mobile-engine.js          렌더러, 기기 감지, 동적 해상도
+src/engine/engine-config.js          모바일 품질과 성능 예산
+src/engine/performance-monitor.js    FPS 표본과 품질 단계 조절
+src/engine/instance-batch.js         InstancedMesh 배치
+src/engine/blob-shadow-system.js     단일 드로우콜 가짜 그림자
+src/engine/object-pool.js            파티클·효과 재사용 풀
+src/engine/geometry-budget.js        삼각형 수 검사
+src/engine/texture-atlas.js          향후 에셋 아틀라스 지원
+src/engine/world-chunk-manager.js    오픈월드 청크 표시 기반
 ```
 
-## 패치 ZIP 적용
+## 모바일 필수 설정
 
-패치 ZIP에는 변경된 프로젝트 파일만 상대 경로 그대로 들어 있습니다.
+- 모바일 실시간 그림자 비활성화
+- 플레이어·도깨비·적 그림자는 InstancedMesh blob 그림자로 대체
+- 저사양 안티앨리어싱 비활성화
+- 기기별 pixel ratio 상한 적용
+- FPS가 낮으면 렌더 해상도 자동 하향
+- 바위·등불·야시장 상점 InstancedMesh 배치
+- 파티클 ObjectPool 재사용
+- 도깨비 최대 300 triangles
+- 적 최대 500 triangles
+- Firebase는 결과 저장 시 1회 쓰고 명부를 1회 읽음
 
-1. 패치 ZIP 안의 파일 전체를 GitHub 저장소 루트에 덮어씁니다.
-2. `npm install`과 `npm run verify`를 실행합니다.
-3. GitHub Desktop으로 commit 후 push합니다.
+현재 월드는 절차형 단색 재질이 중심이라 텍스처 이미지가 거의 없습니다. 외부 모델과 텍스처를 도입할 때는 `TextureAtlas` 모듈을 사용해 종류별 개별 이미지를 만들지 않고 한 장의 아틀라스로 묶습니다.
 
-패치 ZIP에는 `dist/`, `node_modules`, 별도 안내 문서가 없습니다. GitHub Actions가 새 `dist/`를 생성합니다.
+## 조작
 
-## v1.7 입력 방식
+- PC: W/A/S/D 또는 방향키
+- 지형 짧은 클릭·터치: 해당 3D 좌표로 이동
+- 드래그: 카메라 회전
+- 모바일: 왼쪽 조이스틱과 지형 터치 이동
+- Space: 질주
+- Q: 광역기
+- E: 소환
+- R: 집중 명령
 
-- PC: W/A/S/D 또는 방향키는 카메라 화면 기준 상/좌/하/우로 이동합니다.
-- 모바일/마우스: 지형을 짧게 터치·클릭하면 해당 3D 좌표로 이동합니다.
-- 드래그: 카메라 회전. 터치와 드래그는 11px 임계값으로 분리됩니다.
-- 목적지에는 3D 링과 X/Z 좌표가 표시됩니다. 장애물 안을 누르면 가장 가까운 안전 지점으로 보정됩니다.
-- 조이스틱이나 키보드를 입력하면 터치 이동은 즉시 취소됩니다.
+## 배포
+
+패치 ZIP을 저장소 루트에 그대로 덮어쓰고 GitHub Desktop에서 commit·push합니다. GitHub Actions가 `/Defense/` 경로로 빌드합니다.
+
+전체 ZIP에는 빌드된 `dist/`가 포함됩니다. 패치 ZIP에는 변경 파일만 들어 있고 `dist/`와 `node_modules`는 포함하지 않습니다.
+
+## 버전 규칙
+
+- 작은 수정과 엔진 개선: `1.7.1 → 1.7.2 → 1.7.3`
+- 기능 묶음 완성: `1.7.x → 1.8.0`
+- 내부 엔진은 별도 버전 사용: 현재 `1.0.0`
+
+대화가 끊긴 뒤 작업을 이어갈 때는 `PROJECT_HANDOFF.md`를 먼저 확인합니다.
