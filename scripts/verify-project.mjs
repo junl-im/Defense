@@ -22,7 +22,7 @@ const missingIds = [...new Set(queriedIds.filter((id) => !htmlIds.has(id)))];
 if (missingIds.length) fail(`index.html에 없는 DOM ID: ${missingIds.join(', ')}`);
 else pass(`${queriedIds.length}개 DOM ID 연결`);
 
-if (pkg.version === '1.6.0') pass('package version 1.6.0');
+if (pkg.version === '1.7.0') pass('package version 1.7.0');
 else fail(`package version 불일치: ${pkg.version}`);
 
 for (const path of ['.env.production', '.firebaserc', '.github/workflows/deploy.yml', 'README.md', 'PROJECT_HANDOFF.md']) {
@@ -38,7 +38,7 @@ else fail(`루트 Markdown 정리 필요: ${rootMarkdown.join(', ')}`);
 if (manifest.start_url === './') pass('PWA 상대 경로 start_url');
 else fail(`PWA start_url 확인 필요: ${manifest.start_url}`);
 
-if (main.includes("const GAME_VERSION = '1.6.0'")) pass('런타임 version 1.6.0');
+if (main.includes("const GAME_VERSION = '1.7.0'")) pass('런타임 version 1.7.0');
 else fail('런타임 version 불일치');
 
 for (const feature of ['offerContract', 'resolveActiveContract', 'checkBossPhase', 'kingNightMarch', 'bossPounce']) {
@@ -107,6 +107,20 @@ for (const path of ['src/game-data.js', 'src/sound-engine.js']) {
 }
 
 if (existsSync(resolve(root, 'node_modules'))) console.log('INFO node_modules는 로컬 검증용이며 ZIP 생성 시 제외해야 합니다.');
+
+
+for (const feature of ['setMoveTargetFromScreen', 'resolveNavigationPoint', 'getNavigationDirection', 'showMoveTargetMarker', 'resetMovementInput', 'normalizeInputCode', 'createRunStats', 'getUnitCommandDescription']) {
+  if (main.includes(feature)) pass(`v1.7 입력·분석 기능 ${feature}`);
+  else fail(`v1.7 기능 누락: ${feature}`);
+}
+if (main.includes("this.camera.getWorldDirection(tempV2).setY(0)") && main.includes("this.cancelMoveTarget(false)")) pass('카메라 기준 WASD와 수동 입력 우선 처리');
+else fail('WASD 방향 또는 터치 목적지 취소 처리 누락');
+if (main.includes('intersectPlane(groundPlane, rawPoint)') && main.includes('this.runStats.moveOrders += 1')) pass('화면 좌표의 지형 좌표 변환과 이동 명령 기록');
+else fail('정밀 지형 터치 이동 누락');
+if (htmlIds.has('move-readout') && htmlIds.has('result-analysis')) pass('이동 좌표 확인 및 결과 분석 UI');
+else fail('v1.7 UI 누락');
+if (style.includes('.move-readout') && style.includes('.result-analysis') && style.includes('.look-zone { left: 0;')) pass('전체 지형 입력 영역과 분석 스타일');
+else fail('v1.7 입력 스타일 누락');
 
 if (failures.length) {
   console.error(`\n검증 실패 ${failures.length}건`);

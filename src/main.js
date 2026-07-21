@@ -35,14 +35,14 @@ const ui = {
   killChain: $('#kill-chain'), killChainValue: $('#kill-chain-value'), killChainBonus: $('#kill-chain-bonus'), dangerHint: $('#danger-hint'), dangerArrow: $('#danger-arrow'), dangerLevel: $('#danger-level'), dangerLabel: $('#danger-label'), dangerTime: $('#danger-time'),
   firstMissionPanel: $('#first-mission-panel'), firstMissionStep: $('#first-mission-step'), firstMissionTitle: $('#first-mission-title'),
   firstMissionProgress: $('#first-mission-progress'), firstMissionCopy: $('#first-mission-copy'),
-  combatTextRoot: $('#combat-text-root'), qualityBadge: $('#quality-badge'),
+  combatTextRoot: $('#combat-text-root'), qualityBadge: $('#quality-badge'), moveReadout: $('#move-readout'),
   damageFlash: $('#damage-flash'), pauseModal: $('#pause-modal'), resume: $('#resume-btn'), restart: $('#restart-btn'),
   titleBtn: $('#title-btn'), resultModal: $('#result-modal'), resultKicker: $('#result-kicker'), resultTitle: $('#result-title'),
-  resultScore: $('#result-score'), resultKills: $('#result-kills'), resultRank: $('#result-rank'), resultUnits: $('#result-units'), resultShards: $('#result-shards'), resultShardsTotal: $('#result-shards-total'), resultGrowth: $('#result-growth-btn'),
+  resultScore: $('#result-score'), resultKills: $('#result-kills'), resultRank: $('#result-rank'), resultUnits: $('#result-units'), resultAnalysis: $('#result-analysis'), resultShards: $('#result-shards'), resultShardsTotal: $('#result-shards-total'), resultGrowth: $('#result-growth-btn'),
   playerName: $('#player-name'), saveScore: $('#save-score-btn'), resultRetry: $('#result-retry-btn'), leaderboard: $('#leaderboard')
 };
 
-const GAME_VERSION = '1.6.0';
+const GAME_VERSION = '1.7.0';
 
 const FIRST_MISSIONS = [
   { id: 'summons', title: '수호대 3회 강림', goal: 3, reward: 35, copy: '무료 강림도 포함됩니다.' },
@@ -77,6 +77,13 @@ class DokkaebiLuckDefense {
     this.evolutionTimer = null;
     this.cinematic = null;
     this.input = { x: 0, y: 0, keys: new Set() };
+    this.moveTarget = null;
+    this.moveTargetRaw = null;
+    this.moveTargetMarker = null;
+    this.moveReadoutTimer = null;
+    this.navigationObstacles = [];
+    this.keyboardMoveActive = false;
+    this.runStats = this.createRunStats();
     this.killChain = 0;
     this.killChainTimer = 0;
     this.combatTextCount = 0;
@@ -215,18 +222,30 @@ class DokkaebiLuckDefense {
     this.setupLookControls();
 
     window.addEventListener('keydown', (event) => {
-      this.input.keys.add(event.code);
-      if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.code)) event.preventDefault();
-      if (event.code === 'Space') this.useDash();
-      if (event.code === 'KeyQ') this.useHeroSkill();
-      if (event.code === 'KeyE') this.summonUnit();
-      if (event.code === 'KeyR') this.useBestUnitCommand();
-      if (event.code === 'Enter' && this.state === 'playing' && !this.waveActive) this.startWave();
-      if (event.code === 'Escape') this.state === 'paused' ? this.resumeGame() : this.pauseGame();
-    });
-    window.addEventListener('keyup', (event) => this.input.keys.delete(event.code));
+      if (this.isTypingTarget(event.target)) return;
+      const code = this.normalizeInputCode(event);
+      const movementCodes = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+      if (movementCodes.includes(code)) {
+        event.preventDefault();
+        this.input.keys.add(code);
+        this.cancelMoveTarget();
+      }
+      if (event.repeat) return;
+      if (['Space', 'KeyQ', 'KeyE', 'KeyR', 'Enter', 'Escape'].includes(code)) event.preventDefault();
+      if (code === 'Space') this.useDash();
+      if (code === 'KeyQ') this.useHeroSkill();
+      if (code === 'KeyE') this.summonUnit();
+      if (code === 'KeyR') this.useBestUnitCommand();
+      if (code === 'Enter' && this.state === 'playing' && !this.waveActive) this.startWave();
+      if (code === 'Escape') this.state === 'paused' ? this.resumeGame() : this.pauseGame();
+    }, { passive: false });
+    window.addEventListener('keyup', (event) => this.input.keys.delete(this.normalizeInputCode(event)));
+    window.addEventListener('blur', () => this.resetMovementInput());
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden && this.state === 'playing') this.pauseGame();
+      if (document.hidden) {
+        this.resetMovementInput();
+        if (this.state === 'playing') this.pauseGame();
+      }
     });
   }
 
@@ -244,6 +263,7 @@ class DokkaebiLuckDefense {
       if (length > max) { x = x / length * max; y = y / length * max; }
       this.input.x = x / max;
       this.input.y = y / max;
+      if (Math.hypot(this.input.x, this.input.y) > .08) this.cancelMoveTarget();
       ui.joystickKnob.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
     };
     const end = (event) => {
@@ -261,15 +281,50 @@ class DokkaebiLuckDefense {
     ui.joystick.addEventListener('pointermove', move);
     ui.joystick.addEventListener('pointerup', end);
     ui.joystick.addEventListener('pointercancel', end);
+    window.addEventListener('pointerup', end);
+    window.addEventListener('pointercancel', end);
+  }
+
+  normalizeInputCode(event) {
+    if (event.code) return event.code;
+    const key = String(event.key || '').toLowerCase();
+    return ({ w: 'KeyW', a: 'KeyA', s: 'KeyS', d: 'KeyD', ' ': 'Space' })[key] || event.key;
+  }
+
+  isTypingTarget(target) {
+    return target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement || target?.isContentEditable;
+  }
+
+  resetMovementInput() {
+    this.input.keys.clear();
+    this.input.x = 0;
+    this.input.y = 0;
+    this.cancelMoveTarget();
+    ui.joystickKnob.style.transform = 'translate(-50%, -50%)';
   }
 
   setupLookControls() {
+    const dragThreshold = 11;
+    const tapDuration = 620;
     ui.lookZone.addEventListener('pointerdown', (event) => {
-      this.lookPointer = { id: event.pointerId, x: event.clientX, y: event.clientY };
+      if (this.state !== 'playing') return;
+      if (event.pointerType === 'mouse' && event.button !== 0) return;
+      this.lookPointer = {
+        id: event.pointerId,
+        x: event.clientX,
+        y: event.clientY,
+        startX: event.clientX,
+        startY: event.clientY,
+        startedAt: performance.now(),
+        dragging: false
+      };
       ui.lookZone.setPointerCapture(event.pointerId);
     });
     ui.lookZone.addEventListener('pointermove', (event) => {
       if (!this.lookPointer || this.lookPointer.id !== event.pointerId) return;
+      const totalDistance = Math.hypot(event.clientX - this.lookPointer.startX, event.clientY - this.lookPointer.startY);
+      if (!this.lookPointer.dragging && totalDistance >= dragThreshold) this.lookPointer.dragging = true;
+      if (!this.lookPointer.dragging) return;
       const dx = event.clientX - this.lookPointer.x;
       const dy = event.clientY - this.lookPointer.y;
       this.cameraYaw -= dx * .006;
@@ -277,12 +332,177 @@ class DokkaebiLuckDefense {
       this.lookPointer.x = event.clientX;
       this.lookPointer.y = event.clientY;
     });
-    const end = (event) => { if (this.lookPointer?.id === event.pointerId) this.lookPointer = null; };
+    const end = (event) => {
+      if (!this.lookPointer || this.lookPointer.id !== event.pointerId) return;
+      const pointer = this.lookPointer;
+      this.lookPointer = null;
+      const duration = performance.now() - pointer.startedAt;
+      if (!pointer.dragging && duration <= tapDuration && this.state === 'playing') {
+        this.setMoveTargetFromScreen(event.clientX, event.clientY);
+      }
+    };
     ui.lookZone.addEventListener('pointerup', end);
-    ui.lookZone.addEventListener('pointercancel', end);
-    ui.canvas.addEventListener('wheel', (event) => {
+    ui.lookZone.addEventListener('pointercancel', (event) => {
+      if (this.lookPointer?.id === event.pointerId) this.lookPointer = null;
+    });
+    ui.lookZone.addEventListener('wheel', (event) => {
       this.cameraDistance = clamp(this.cameraDistance + event.deltaY * .012, 11, 20);
     }, { passive: true });
+  }
+
+  setMoveTargetFromScreen(clientX, clientY) {
+    if (!this.player || this.state !== 'playing') return false;
+    const rect = ui.canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return false;
+    this.pointer.set(
+      ((clientX - rect.left) / rect.width) * 2 - 1,
+      -((clientY - rect.top) / rect.height) * 2 + 1
+    );
+    this.raycaster.setFromCamera(this.pointer, this.camera);
+    const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+    const rawPoint = new THREE.Vector3();
+    if (!this.raycaster.ray.intersectPlane(groundPlane, rawPoint)) return false;
+    rawPoint.y = 0;
+    const resolved = this.resolveNavigationPoint(rawPoint.clone());
+    this.moveTargetRaw = rawPoint.clone();
+    this.moveTarget = resolved.clone();
+    this.runStats.moveOrders += 1;
+    this.showMoveTargetMarker(rawPoint, resolved);
+    const adjusted = rawPoint.distanceTo(resolved) > .12;
+    this.showMoveReadout(resolved, adjusted);
+    this.haptic(8);
+    return true;
+  }
+
+  resolveNavigationPoint(point) {
+    point.y = 0;
+    const maxRadius = 25.15;
+    const radius = Math.hypot(point.x, point.z);
+    if (radius > maxRadius) point.multiplyScalar(maxRadius / radius);
+    for (let pass = 0; pass < 4; pass += 1) {
+      let changed = false;
+      for (const obstacle of this.navigationObstacles) {
+        const dx = point.x - obstacle.x;
+        const dz = point.z - obstacle.z;
+        const distance = Math.hypot(dx, dz);
+        const clearance = obstacle.radius + .62;
+        if (distance < clearance) {
+          const angle = distance > .001 ? Math.atan2(dz, dx) : Math.atan2(point.z || 1, point.x || 1);
+          point.x = obstacle.x + Math.cos(angle) * clearance;
+          point.z = obstacle.z + Math.sin(angle) * clearance;
+          changed = true;
+        }
+      }
+      if (!changed) break;
+    }
+    const finalRadius = Math.hypot(point.x, point.z);
+    if (finalRadius > maxRadius) point.multiplyScalar(maxRadius / finalRadius);
+    return point;
+  }
+
+  resolvePlayerNavigation(position) {
+    const resolved = this.resolveNavigationPoint(position.clone().setY(0));
+    position.x = resolved.x;
+    position.z = resolved.z;
+  }
+
+  getNavigationDirection(from, target) {
+    const desiredVector = target.clone().sub(from).setY(0);
+    const targetDistance = desiredVector.length();
+    if (targetDistance < .001) return desiredVector.set(0, 0, 0);
+    const desired = desiredVector.normalize();
+    let selectedWaypoint = null;
+    let selectedSeverity = 0;
+    for (const obstacle of this.navigationObstacles) {
+      const center = new THREE.Vector3(obstacle.x, 0, obstacle.z);
+      const toObstacle = center.clone().sub(from).setY(0);
+      const forwardDistance = toObstacle.dot(desired);
+      if (forwardDistance <= .05 || forwardDistance >= Math.min(targetDistance, 6.5)) continue;
+      const closest = from.clone().addScaledVector(desired, forwardDistance);
+      const lateralDistance = closest.distanceTo(center);
+      const clearance = obstacle.radius + .85;
+      if (lateralDistance >= clearance) continue;
+      const radial = from.clone().sub(center).setY(0);
+      if (radial.lengthSq() < .001) radial.set(-desired.z, 0, desired.x);
+      radial.normalize();
+      const tangentA = new THREE.Vector3(-radial.z, 0, radial.x);
+      const tangentB = tangentA.clone().multiplyScalar(-1);
+      const waypointA = center.clone().addScaledVector(tangentA, clearance + .28);
+      const waypointB = center.clone().addScaledVector(tangentB, clearance + .28);
+      const costA = from.distanceTo(waypointA) + waypointA.distanceTo(target);
+      const costB = from.distanceTo(waypointB) + waypointB.distanceTo(target);
+      const waypoint = costA <= costB ? waypointA : waypointB;
+      const severity = 1 - lateralDistance / clearance;
+      if (severity > selectedSeverity) {
+        selectedSeverity = severity;
+        selectedWaypoint = waypoint;
+      }
+    }
+    if (!selectedWaypoint) return desired;
+    const around = selectedWaypoint.sub(from).setY(0).normalize();
+    return desired.multiplyScalar(.38).addScaledVector(around, .62 + selectedSeverity * .48).normalize();
+  }
+
+  showMoveTargetMarker(rawPoint, resolvedPoint) {
+    if (this.moveTargetMarker?.parent) this.effectRoot.remove(this.moveTargetMarker);
+    if (this.moveTargetMarker) {
+      this.moveTargetMarker.traverse((object) => {
+        object.geometry?.dispose?.();
+        if (object.material) (Array.isArray(object.material) ? object.material : [object.material]).forEach((material) => material.dispose());
+      });
+    }
+    const group = new THREE.Group();
+    const adjusted = rawPoint.distanceTo(resolvedPoint) > .12;
+    const color = adjusted ? 0xffc45e : 0x79f4ff;
+    const ring = this.mesh(new THREE.RingGeometry(.38, .58, 32), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: .9, side: THREE.DoubleSide, depthWrite: false }), 0, .055, 0, false, false);
+    ring.rotation.x = -Math.PI / 2;
+    const dot = this.mesh(new THREE.CircleGeometry(.12, 20), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .95, side: THREE.DoubleSide, depthWrite: false }), 0, .061, 0, false, false);
+    dot.rotation.x = -Math.PI / 2;
+    const beam = this.mesh(new THREE.CylinderGeometry(.025, .08, 1.35, 10, 1, true), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: .38, depthWrite: false }), 0, .68, 0, false, false);
+    group.add(ring, dot, beam);
+    group.position.copy(resolvedPoint);
+    group.userData.life = 2.4;
+    group.userData.ring = ring;
+    group.userData.beam = beam;
+    this.effectRoot.add(group);
+    this.moveTargetMarker = group;
+  }
+
+  updateMoveTargetMarker(dt) {
+    if (!this.moveTargetMarker) return;
+    this.moveTargetMarker.userData.life -= dt;
+    const pulse = 1 + Math.sin(this.elapsed * 10) * .12;
+    this.moveTargetMarker.userData.ring.scale.setScalar(pulse);
+    this.moveTargetMarker.userData.ring.rotation.z += dt * 1.8;
+    this.moveTargetMarker.userData.beam.material.opacity = .24 + (Math.sin(this.elapsed * 8) + 1) * .1;
+    if (this.moveTargetMarker.userData.life <= 0 && !this.moveTarget) this.removeMoveTargetMarker();
+  }
+
+  removeMoveTargetMarker() {
+    if (!this.moveTargetMarker) return;
+    this.effectRoot.remove(this.moveTargetMarker);
+    this.moveTargetMarker.traverse((object) => {
+      object.geometry?.dispose?.();
+      if (object.material) (Array.isArray(object.material) ? object.material : [object.material]).forEach((material) => material.dispose());
+    });
+    this.moveTargetMarker = null;
+  }
+
+  showMoveReadout(point, adjusted = false) {
+    clearTimeout(this.moveReadoutTimer);
+    ui.moveReadout.textContent = `${adjusted ? '보정 목적지' : '이동 목적지'} · X ${point.x >= 0 ? '+' : ''}${point.x.toFixed(1)} · Z ${point.z >= 0 ? '+' : ''}${point.z.toFixed(1)}`;
+    ui.moveReadout.classList.remove('hidden');
+    requestAnimationFrame(() => ui.moveReadout.classList.add('visible'));
+    this.moveReadoutTimer = window.setTimeout(() => {
+      ui.moveReadout.classList.remove('visible');
+      window.setTimeout(() => ui.moveReadout.classList.add('hidden'), 180);
+    }, 1700);
+  }
+
+  cancelMoveTarget(removeMarker = true) {
+    this.moveTarget = null;
+    this.moveTargetRaw = null;
+    if (removeMarker) this.removeMoveTargetMarker();
   }
 
   showModal(element) {
@@ -298,6 +518,19 @@ class DokkaebiLuckDefense {
 
   haptic(pattern = 18) {
     if ('vibrate' in navigator) navigator.vibrate(pattern);
+  }
+
+  createRunStats() {
+    return {
+      damageByType: Object.fromEntries(UNIT_KEYS.map((type) => [type, 0])),
+      heroDamage: 0,
+      skillDamage: 0,
+      commandDamage: 0,
+      commandsUsed: 0,
+      coinsCollected: 0,
+      moveOrders: 0,
+      dangerDodges: 0
+    };
   }
 
   loadMetaProgress() {
@@ -529,6 +762,10 @@ class DokkaebiLuckDefense {
     this.unitPads.length = 0;
     this.gates.length = 0;
     this.hazards.length = 0;
+    this.navigationObstacles.length = 0;
+    this.moveTarget = null;
+    this.moveTargetRaw = null;
+    this.moveTargetMarker = null;
     this.disposeGroup(this.worldRoot);
     this.disposeGroup(this.dynamicRoot);
     this.disposeGroup(this.effectRoot);
@@ -554,7 +791,9 @@ class DokkaebiLuckDefense {
 
     const groundMat = this.createMaterial(0x241933, .96);
     const ground = this.mesh(new THREE.CylinderGeometry(34, 35, 1.2, 64), groundMat, 0, -.65, 0, false, true);
+    ground.userData.navigationGround = true;
     this.worldRoot.add(ground);
+    this.navigationObstacles.push({ x: 0, z: 0, radius: 2.35, type: 'core' });
 
     const ringMat = this.createMaterial(0x51405f, .82);
     const ring = this.mesh(new THREE.RingGeometry(8.2, 12.5, 64), ringMat, 0, .015, 0, false, true);
@@ -579,7 +818,10 @@ class DokkaebiLuckDefense {
 
     for (let i = 0; i < 8; i += 1) {
       const angle = i / 8 * Math.PI * 2 + Math.PI / 8;
-      this.createMarketStall(Math.cos(angle) * 16.2, Math.sin(angle) * 16.2, angle + Math.PI / 2, i);
+      const x = Math.cos(angle) * 16.2;
+      const z = Math.sin(angle) * 16.2;
+      this.createMarketStall(x, z, angle + Math.PI / 2, i);
+      this.navigationObstacles.push({ x, z, radius: 2.05, type: 'stall' });
     }
 
     for (let i = 0; i < 4; i += 1) {
@@ -811,6 +1053,8 @@ class DokkaebiLuckDefense {
     this.lastShardReward = 0;
     this.commandCooldown = 0;
     this.commandActiveKey = '';
+    this.runStats = this.createRunStats();
+    this.cancelMoveTarget();
     this.displayDanger = null;
     this.pendingDangerKey = '';
     this.pendingDangerTimer = 0;
@@ -856,6 +1100,7 @@ class DokkaebiLuckDefense {
   returnToTitle() {
     this.state = 'title';
     this.cinematic = null;
+    this.cancelMoveTarget();
     ui.evolution.classList.remove('show');
     ui.evolution.classList.add('hidden');
     this.showGameUI(false);
@@ -874,6 +1119,9 @@ class DokkaebiLuckDefense {
       ui.dangerHint.classList.add('hidden');
       this.displayDanger = null;
       this.pendingDangerKey = '';
+      ui.moveReadout.classList.remove('visible');
+      ui.moveReadout.classList.add('hidden');
+      this.cancelMoveTarget();
     }
   }
 
@@ -1076,6 +1324,7 @@ class DokkaebiLuckDefense {
     const merged = this.createUnit(type, rank + 1, targetPad, false);
     if (inheritedCommand > 0) {
       merged.commandTimer = inheritedCommand;
+      this.applyUnitCommandEffect(merged, type);
       this.commandActiveKey = `${type}-${rank + 1}`;
     }
     this.maxRank = Math.max(this.maxRank, rank + 1);
@@ -1388,47 +1637,73 @@ class DokkaebiLuckDefense {
 
   updatePlayer(dt) {
     if (!this.player) return;
-    let x = this.input.x;
-    let y = this.input.y;
-    if (this.input.keys.has('KeyA') || this.input.keys.has('ArrowLeft')) x -= 1;
-    if (this.input.keys.has('KeyD') || this.input.keys.has('ArrowRight')) x += 1;
-    if (this.input.keys.has('KeyW') || this.input.keys.has('ArrowUp')) y -= 1;
-    if (this.input.keys.has('KeyS') || this.input.keys.has('ArrowDown')) y += 1;
+    const left = this.input.keys.has('KeyA') || this.input.keys.has('ArrowLeft');
+    const rightKey = this.input.keys.has('KeyD') || this.input.keys.has('ArrowRight');
+    const up = this.input.keys.has('KeyW') || this.input.keys.has('ArrowUp');
+    const down = this.input.keys.has('KeyS') || this.input.keys.has('ArrowDown');
+    const keyboardX = (rightKey ? 1 : 0) - (left ? 1 : 0);
+    const keyboardY = (down ? 1 : 0) - (up ? 1 : 0);
+    const manualX = clamp(this.input.x + keyboardX, -1, 1);
+    const manualY = clamp(this.input.y + keyboardY, -1, 1);
+    const manualLength = Math.hypot(manualX, manualY);
+    this.keyboardMoveActive = Math.hypot(keyboardX, keyboardY) > 0;
+
     this.player.stunTimer = Math.max(0, this.player.stunTimer - dt);
     const stunned = this.player.stunTimer > 0;
-    if (stunned) { x *= .3; y *= .3; }
-    const length = Math.hypot(x, y);
-    const move = tempV.set(0,0,0);
-    if (length > .05) {
-      x /= Math.max(1,length); y /= Math.max(1,length);
-      const forward = tempV2.set(-Math.sin(this.cameraYaw),0,-Math.cos(this.cameraYaw));
-      const right = new THREE.Vector3(forward.z,0,-forward.x);
-      move.addScaledVector(right,x).addScaledVector(forward,-y).normalize();
-      this.player.facing.lerp(move,.22).normalize();
-      const speed = 5.25 * this.mods.moveSpeed * (this.player.dashTimer > 0 ? 2.5 : 1);
-      this.player.group.position.addScaledVector(move,speed*dt);
-      const radius = this.player.group.position.length();
-      if (radius > 25.5) this.player.group.position.multiplyScalar(25.5/radius);
-      const targetRot = Math.atan2(move.x,move.z);
-      this.player.group.rotation.y = this.lerpAngle(this.player.group.rotation.y,targetRot,1-Math.pow(.001,dt));
+    const move = tempV.set(0, 0, 0);
+    let movementStrength = 0;
+
+    if (manualLength > .05) {
+      this.cancelMoveTarget();
+      const x = manualX / Math.max(1, manualLength);
+      const y = manualY / Math.max(1, manualLength);
+      const forward = this.camera.getWorldDirection(tempV2).setY(0);
+      if (forward.lengthSq() < .0001) forward.set(0, 0, -1);
+      forward.normalize();
+      const cameraRight = new THREE.Vector3().crossVectors(forward, this.camera.up).normalize();
+      move.addScaledVector(cameraRight, x).addScaledVector(forward, -y);
+      movementStrength = Math.min(1, manualLength);
+    } else if (this.moveTarget) {
+      const toTarget = this.moveTarget.clone().sub(this.player.group.position).setY(0);
+      const distance = toTarget.length();
+      if (distance <= .2) {
+        this.cancelMoveTarget(false);
+        this.moveTargetMarker && (this.moveTargetMarker.userData.life = Math.min(this.moveTargetMarker.userData.life, .42));
+      } else {
+        move.copy(this.getNavigationDirection(this.player.group.position, this.moveTarget));
+        movementStrength = clamp(distance / 1.55, .22, 1);
+      }
     }
-    this.player.dashTimer = Math.max(0,this.player.dashTimer-dt);
-    this.player.dashCooldown = Math.max(0,this.player.dashCooldown-dt);
-    this.player.skillCooldown = Math.max(0,this.player.skillCooldown-dt);
+
+    if (stunned) movementStrength *= .3;
+    const moving = move.lengthSq() > .0001 && movementStrength > .01;
+    if (moving) {
+      move.normalize();
+      this.player.facing.lerp(move, .22).normalize();
+      const speed = 5.25 * this.mods.moveSpeed * (this.player.dashTimer > 0 ? 2.5 : 1) * movementStrength;
+      this.player.group.position.addScaledVector(move, speed * dt);
+      this.resolvePlayerNavigation(this.player.group.position);
+      const targetRot = Math.atan2(move.x, move.z);
+      this.player.group.rotation.y = this.lerpAngle(this.player.group.rotation.y, targetRot, 1 - Math.pow(.001, dt));
+    }
+
+    this.player.dashTimer = Math.max(0, this.player.dashTimer - dt);
+    this.player.dashCooldown = Math.max(0, this.player.dashCooldown - dt);
+    this.player.skillCooldown = Math.max(0, this.player.skillCooldown - dt);
     this.player.attackCooldown -= dt;
 
-    const bob = Math.sin(this.elapsed * (length > .05 ? 11 : 4)) * (length > .05 ? .09 : .04);
+    const bob = Math.sin(this.elapsed * (moving ? 11 : 4)) * (moving ? .09 : .04);
     this.player.group.position.y = bob;
-    this.player.flame.position.y = 1.25 + Math.sin(this.elapsed*7)*.12;
-    this.player.flame.scale.setScalar(1 + Math.sin(this.elapsed*9)*.14);
+    this.player.flame.position.y = 1.25 + Math.sin(this.elapsed * 7) * .12;
+    this.player.flame.scale.setScalar(1 + Math.sin(this.elapsed * 9) * .14);
 
     if (this.player.attackCooldown <= 0 && !stunned) {
-      const target = this.findNearestEnemy(this.player.group.position,8.8);
+      const target = this.findNearestEnemy(this.player.group.position, 8.8);
       if (target) {
         this.player.attackCooldown = .54;
-        const origin = this.player.group.position.clone().add(new THREE.Vector3(.55,1.35,0));
-        const damage = (13 + this.currentWave*1.2) * this.mods.heroDamage * this.getThunderHeroMultiplier();
-        this.fireProjectile({ kind:'hero', type:'hero', origin, target, damage, speed:20, color:0x69edff, radius:.16 });
+        const origin = this.player.group.position.clone().add(new THREE.Vector3(.55, 1.35, 0));
+        const damage = (13 + this.currentWave * 1.2) * this.mods.heroDamage * this.getThunderHeroMultiplier();
+        this.fireProjectile({ kind: 'hero', type: 'hero', origin, target, damage, speed: 20, color: 0x69edff, radius: .16 });
         this.sound.shoot('hero');
       }
     }
@@ -1436,6 +1711,7 @@ class DokkaebiLuckDefense {
 
   useDash() {
     if (this.state !== 'playing' || this.player.dashCooldown > 0) return;
+    this.cancelMoveTarget();
     this.player.dashCooldown = 4.2;
     this.player.dashTimer = .34;
     const direction = this.player.facing.clone();
@@ -1504,9 +1780,9 @@ class DokkaebiLuckDefense {
         const origin = unit.group.position.clone().add(new THREE.Vector3(0,1.55,0));
         this.fireProjectile({
           kind:'unit', type:unit.type, origin, target, damage:stats.damage, speed:config.projectileSpeed,
-          color:config.color, radius:(.11+unit.rank*.025)*(commandActive ? 1.22 : 1), splash:config.splash ? config.splash*(1+unit.rank*.04):0,
-          slow:config.slow ? config.slow+unit.rank*.12:0, chain:config.chain ? config.chain+Math.floor(unit.rank/3):0,
-          pierce:config.pierce ? config.pierce+Math.floor(unit.rank/3):0, execute:config.execute || 0, owner:unit
+          color:config.color, radius:(.11+unit.rank*.025)*(commandActive ? 1.22 : 1), splash:config.splash ? config.splash*(1+unit.rank*.04) + (commandActive ? unit.commandSplashBonus || 0 : 0):0,
+          slow:config.slow ? config.slow+unit.rank*.12:0, chain:config.chain ? config.chain+Math.floor(unit.rank/3) + (commandActive ? unit.commandChainBonus || 0 : 0):0,
+          pierce:config.pierce ? config.pierce+Math.floor(unit.rank/3) + (commandActive ? unit.commandPierceBonus || 0 : 0):0, execute:(config.execute || 0) + (commandActive ? unit.commandExecuteBonus || 0 : 0), owner:unit
         });
         this.sound.shoot(unit.type);
       }
@@ -1680,26 +1956,26 @@ class DokkaebiLuckDefense {
       damage*=1+projectile.owner.streak*.07;
     }
     if (projectile.execute && target.hp/target.maxHp<projectile.execute && !target.boss) damage=target.hp+1;
-    this.damageEnemy(target,damage,projectile.type,projectile.mesh.position);
+    this.damageEnemy(target,damage,projectile.type,projectile.mesh.position,projectile.owner);
     if (projectile.slow) { target.slowTimer=Math.max(target.slowTimer,projectile.slow);target.slowFactor=.58; }
     if (projectile.splash) {
       this.enemies.slice().forEach((enemy)=>{
-        if (enemy!==target && !enemy.dead && enemy.group.position.distanceTo(target.group.position)<=projectile.splash) this.damageEnemy(enemy,damage*.55,projectile.type,target.group.position);
+        if (enemy!==target && !enemy.dead && enemy.group.position.distanceTo(target.group.position)<=projectile.splash) this.damageEnemy(enemy,damage*.55,projectile.type,target.group.position,projectile.owner);
       });
       this.spawnRing(target.group.position,projectile.color,projectile.splash);
     }
-    if (projectile.chain) this.chainDamage(target,damage*.62,projectile.chain,projectile.color,new Set([target]));
+    if (projectile.chain) this.chainDamage(target,damage*.62,projectile.chain,projectile.color,new Set([target]),projectile.owner);
     this.spawnParticles(target.group.position.clone().add(new THREE.Vector3(0,.8,0)),projectile.color,projectile.type==='stone'?10:5,projectile.type==='stone'?3.8:2.3);
   }
 
-  chainDamage(source,damage,remaining,color,visited) {
+  chainDamage(source,damage,remaining,color,visited,owner=null) {
     if (remaining<=0) return;
     const next=this.enemies.filter((enemy)=>!enemy.dead&&!visited.has(enemy)&&enemy.group.position.distanceTo(source.group.position)<4.2).sort((a,b)=>a.group.position.distanceTo(source.group.position)-b.group.position.distanceTo(source.group.position))[0];
     if (!next) return;
     visited.add(next);
     this.createLightningLine(source.group.position.clone().add(new THREE.Vector3(0,.8,0)),next.group.position.clone().add(new THREE.Vector3(0,.8,0)),color);
-    this.damageEnemy(next,damage,'bell',source.group.position);
-    this.chainDamage(next,damage*.78,remaining-1,color,visited);
+    this.damageEnemy(next,damage,'bell',source.group.position,owner);
+    this.chainDamage(next,damage*.78,remaining-1,color,visited,owner);
   }
 
   removeProjectile(projectile,index=this.projectiles.indexOf(projectile)) {
@@ -2163,6 +2439,7 @@ class DokkaebiLuckDefense {
           this.haptic([40, 25, 65]);
         } else {
           this.score += 180;
+          this.runStats.dangerDodges += 1;
           this.showCombo('도약 회피! +180', 850);
         }
       }
@@ -2213,6 +2490,7 @@ class DokkaebiLuckDefense {
           this.haptic([45,30,70]);
         } else {
           this.score+=120;
+          this.runStats.dangerDodges += 1;
           this.showCombo('충격파 회피! +120',850);
         }
       }
@@ -2223,7 +2501,7 @@ class DokkaebiLuckDefense {
     }
   }
 
-  damageEnemy(enemy,amount,source='',hitOrigin=null) {
+  damageEnemy(enemy,amount,source='',hitOrigin=null,owner=null) {
     if (!enemy || enemy.dead) return;
     let shielded = false;
     const ultimate = source.startsWith('ultimate-');
@@ -2235,6 +2513,15 @@ class DokkaebiLuckDefense {
     const critChance = shielded ? 0 : source === 'hero' ? .12 : source === 'thunder' ? .18 : source === 'wind' ? .08 : .035;
     const crit = source !== 'skill' && !ultimate && Math.random() < critChance;
     if (crit) amount *= 1.75;
+    const appliedDamage = Math.max(0, Math.min(enemy.hp, amount));
+    if (owner?.type && owner.commandTimer > 0) this.runStats.commandDamage += appliedDamage;
+    if (owner?.type && this.runStats.damageByType[owner.type] !== undefined) this.runStats.damageByType[owner.type] += appliedDamage;
+    else if (source === 'hero') this.runStats.heroDamage += appliedDamage;
+    else if (source === 'skill') this.runStats.skillDamage += appliedDamage;
+    else if (source.startsWith('ultimate-')) {
+      const type = source.slice('ultimate-'.length);
+      if (this.runStats.damageByType[type] !== undefined) this.runStats.damageByType[type] += appliedDamage;
+    }
     enemy.hp-=amount;
     if (enemy.boss && enemy.hp > 0) this.checkBossPhase(enemy);
     enemy.flash=.09;
@@ -2512,10 +2799,12 @@ class DokkaebiLuckDefense {
     if (!targets.length || !UNIT_TYPES[type]) return;
     this.commandCooldown = 18;
     this.commandActiveKey = key;
+    this.runStats.commandsUsed += 1;
     targets.forEach((unit) => {
       unit.commandTimer = 7;
       unit.cooldown = Math.min(unit.cooldown, .08);
       if (unit.rank === 5) unit.ultimateCooldown = Math.max(.35, unit.ultimateCooldown - 4);
+      this.applyUnitCommandEffect(unit, type);
       this.spawnRing(unit.group.position, UNIT_TYPES[type].color, 1.6 + unit.rank * .18);
       this.spawnParticles(unit.group.position.clone().add(new THREE.Vector3(0, 1.15, 0)), UNIT_TYPES[type].color, 12, 3.2);
     });
@@ -2523,8 +2812,36 @@ class DokkaebiLuckDefense {
     this.sound.skill();
     this.haptic([20, 18, 42]);
     this.showCombo(`${UNIT_TYPES[type].symbol} 집중 명령 · ${UNIT_TYPES[type].name} ${rank}★`, 1200);
-    this.showToast(`${targets.length}기의 공격력·공격속도가 7초간 강화됩니다.`);
+    this.showToast(this.getUnitCommandDescription(type, targets.length));
     this.updateCommandChipStates();
+  }
+
+  applyUnitCommandEffect(unit, type) {
+    if (type === 'ember') unit.streak = Math.max(unit.streak || 0, 4);
+    if (type === 'frost') {
+      this.enemies.forEach((enemy) => {
+        if (!enemy.dead && enemy.group.position.distanceTo(unit.group.position) <= 9.5) {
+          enemy.slowTimer = Math.max(enemy.slowTimer, 2.4);
+          enemy.slowFactor = .48;
+        }
+      });
+    }
+    if (type === 'wind') unit.commandPierceBonus = 3;
+    if (type === 'stone') unit.commandSplashBonus = 1.45;
+    if (type === 'bell') unit.commandChainBonus = 3;
+    if (type === 'thunder') unit.commandExecuteBonus = .1;
+  }
+
+  getUnitCommandDescription(type, count) {
+    const descriptions = {
+      ember: `${count}기의 연속 공격이 즉시 달아오릅니다.`,
+      frost: `${count}기가 주변 요괴를 얼리고 둔화를 강화합니다.`,
+      wind: `${count}기의 관통 수가 증가합니다.`,
+      stone: `${count}기의 폭발 범위가 크게 넓어집니다.`,
+      bell: `${count}기의 연쇄 대상이 증가합니다.`,
+      thunder: `${count}기의 처형 기준이 높아집니다.`
+    };
+    return descriptions[type] || `${count}기의 수호대가 강화됩니다.`;
   }
 
   updateCommandChipStates() {
@@ -2647,6 +2964,12 @@ class DokkaebiLuckDefense {
     const summary={};
     this.units.filter((unit)=>!unit.showcase).forEach((unit)=>{summary[unit.type]=Math.max(summary[unit.type]||0,unit.rank);});
     ui.resultUnits.innerHTML=Object.entries(summary).map(([type,rank])=>`<span class="result-unit">${UNIT_TYPES[type].symbol} ${UNIT_TYPES[type].name} ${'★'.repeat(rank)}</span>`).join('')||'<span class="result-unit">소환 기록 없음</span>';
+    const damageEntries = Object.entries(this.runStats.damageByType).sort((a,b)=>b[1]-a[1]);
+    const [topType, topDamage] = damageEntries[0] || [null, 0];
+    ui.resultAnalysis.innerHTML = `
+      <div><span>최고 피해</span><b>${topType && topDamage > 0 ? `${UNIT_TYPES[topType].symbol} ${UNIT_TYPES[topType].name}` : '대장 깨비'}</b><small>${Math.round(topDamage || this.runStats.heroDamage).toLocaleString()} 피해</small></div>
+      <div><span>집중 명령</span><b>${this.runStats.commandsUsed}회</b><small>${Math.round(this.runStats.commandDamage).toLocaleString()} 강화 피해</small></div>
+      <div><span>이동·수집</span><b>${this.runStats.moveOrders}회 지정</b><small>엽전 ${Math.round(this.runStats.coinsCollected).toLocaleString()} · 회피 ${this.runStats.dangerDodges}</small></div>`;
     const shardReward = this.awardRunShards(won);
     ui.resultShards.textContent = `+${shardReward}`;
     ui.resultShardsTotal.textContent = this.metaProgress.shards.toLocaleString();
@@ -2719,7 +3042,7 @@ class DokkaebiLuckDefense {
     this.elapsed+=dt;
     this.updateWorldEffects(dt);
     if(this.state==='playing') {
-      this.updatePlayer(gameDt);this.updateWave(gameDt);this.updateEnemies(gameDt);this.updateHazards(gameDt);this.updateDangerHint(gameDt);this.updateUnits(gameDt);this.updateProjectiles(gameDt);this.updateCoins(gameDt);this.updateParticles(gameDt);this.updateKillChain(gameDt);this.updateAdaptiveQuality(dt);this.updateHUD();
+      this.updatePlayer(gameDt);this.updateWave(gameDt);this.updateEnemies(gameDt);this.updateHazards(gameDt);this.updateDangerHint(gameDt);this.updateUnits(gameDt);this.updateProjectiles(gameDt);this.updateCoins(gameDt);this.updateParticles(gameDt);this.updateMoveTargetMarker(gameDt);this.updateKillChain(gameDt);this.updateAdaptiveQuality(dt);this.updateHUD();
     } else if(this.state==='title') {
       this.updateUnits(dt);this.updateParticles(dt);
       if(this.player){this.player.group.rotation.y+=dt*.18;this.player.group.position.y=Math.sin(this.elapsed*2.3)*.05;}
