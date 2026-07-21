@@ -20,6 +20,9 @@ const ui = {
   how: $('#how-btn'), collection: $('#collection-btn'), meta: $('#meta-btn'), titleShards: $('#title-shards'), runPreview: $('#run-preview'), howModal: $('#how-modal'), collectionModal: $('#collection-modal'),
   blessingModal: $('#blessing-modal'), blessingOptions: $('#blessing-options'), collectionGrid: $('#collection-grid'),
   choiceSummonModal: $('#choice-summon-modal'), choiceSummonOptions: $('#choice-summon-options'), summonTicket: $('#summon-ticket'),
+  controls: $('#controls-btn'), pauseControls: $('#pause-controls-btn'), controlsModal: $('#controls-modal'), controlsReset: $('#controls-reset-btn'),
+  rotateSensitivity: $('#rotate-sensitivity'), rotateSensitivityValue: $('#rotate-sensitivity-value'), pinchSensitivity: $('#pinch-sensitivity'), pinchSensitivityValue: $('#pinch-sensitivity-value'),
+  wheelSensitivity: $('#wheel-sensitivity'), wheelSensitivityValue: $('#wheel-sensitivity-value'), minimumZoom: $('#minimum-zoom'), minimumZoomValue: $('#minimum-zoom-value'), maximumZoom: $('#maximum-zoom'), maximumZoomValue: $('#maximum-zoom-value'),
   contractModal: $('#contract-modal'), contractOptions: $('#contract-options'), contractSkip: $('#contract-skip-btn'), metaModal: $('#meta-modal'), metaShards: $('#meta-shards'), metaTraitList: $('#meta-trait-list'),
   hud: $('#hud'), hp: $('#hp-value'), gold: $('#gold-value'), waveLabel: $('#wave-label'), waveProgress: $('#wave-progress'),
   enemyCount: $('#enemy-count'), menu: $('#menu-btn'), sound: $('#sound-btn'), synergyPanel: $('#synergy-panel'),
@@ -43,7 +46,7 @@ const ui = {
   playerName: $('#player-name'), saveScore: $('#save-score-btn'), resultRetry: $('#result-retry-btn'), leaderboard: $('#leaderboard')
 };
 
-const GAME_VERSION = '1.7.6';
+const GAME_VERSION = '1.7.7';
 
 const FIRST_MISSIONS = [
   { id: 'summons', title: '수호대 3회 강림', goal: 3, reward: 35, copy: '무료 강림도 포함됩니다.' },
@@ -52,6 +55,15 @@ const FIRST_MISSIONS = [
 ];
 
 const META_STORAGE_KEY = 'dokkaebi-guardian-growth-v1';
+const CONTROL_STORAGE_KEY = 'dokkaebi-control-settings-v1';
+const DEFAULT_CONTROL_SETTINGS = Object.freeze({
+  rotateSensitivity: 1,
+  pinchSensitivity: 1,
+  wheelSensitivity: 1,
+  minZoom: 9.5,
+  maxZoom: 22,
+  handedness: 'right'
+});
 const META_TRAITS = {
   pouch: { icon: '◉', name: '달빛 주머니', copy: '매 판 시작 엽전을 10개씩 늘립니다.', effect: (level) => `시작 엽전 +${level * 10}`, costs: [12, 22, 34, 50, 70] },
   ward: { icon: '◆', name: '신목 결계', copy: '신목 최대 체력을 단계마다 7 늘립니다.', effect: (level) => `신목 체력 +${level * 7}`, costs: [12, 22, 34, 50, 70] },
@@ -72,6 +84,7 @@ class DokkaebiLuckDefense {
     this.cameraPitch = .66;
     this.cameraDistance = 15.5;
     this.cameraDistanceTarget = 15.5;
+    this.cameraCollisionDistance = 15.5;
     this.pointerDown = null;
     this.lookPointer = null;
     this.lookPointers = new Map();
@@ -86,6 +99,7 @@ class DokkaebiLuckDefense {
     this.moveTargetRaw = null;
     this.moveTargetMarker = null;
     this.navigationObstacles = [];
+    this.cameraObstacles = [];
     this.keyboardMoveActive = false;
     this.runStats = this.createRunStats();
     this.killChain = 0;
@@ -108,6 +122,7 @@ class DokkaebiLuckDefense {
     this.activeContract = null;
     this.bossSpecialSerial = 0;
     this.metaProgress = this.loadMetaProgress();
+    this.controlSettings = this.loadControlSettings();
     this.mods = this.createDefaultMods();
     this.runRewarded = false;
     this.lastShardReward = 0;
@@ -277,6 +292,8 @@ class DokkaebiLuckDefense {
     ui.how.addEventListener('click', () => this.showModal(ui.howModal));
     ui.collection.addEventListener('click', () => this.showModal(ui.collectionModal));
     ui.meta.addEventListener('click', () => this.openMetaModal());
+    ui.controls.addEventListener('click', () => this.openControlSettings());
+    ui.pauseControls.addEventListener('click', () => this.openControlSettings());
     ui.resultGrowth.addEventListener('click', () => this.openMetaModal());
     $$('[data-close]').forEach((button) => button.addEventListener('click', () => this.hideModal($(`#${button.dataset.close}`))));
     ui.sound.addEventListener('click', () => {
@@ -298,6 +315,18 @@ class DokkaebiLuckDefense {
     ui.leftUiToggle.addEventListener('click', () => this.toggleLeftMobileUi());
     try { this.setLeftMobileUiCollapsed(localStorage.getItem('dokkaebi-left-ui-collapsed') === '1'); } catch { this.setLeftMobileUiCollapsed(false); }
     ui.contractSkip.addEventListener('click', () => this.skipContract());
+    const bindControlRange = (element, key, transform = (value) => value) => {
+      element.addEventListener('input', () => this.updateControlSetting(key, transform(Number(element.value))));
+    };
+    bindControlRange(ui.rotateSensitivity, 'rotateSensitivity', (value) => value / 100);
+    bindControlRange(ui.pinchSensitivity, 'pinchSensitivity', (value) => value / 100);
+    bindControlRange(ui.wheelSensitivity, 'wheelSensitivity', (value) => value / 100);
+    bindControlRange(ui.minimumZoom, 'minZoom', (value) => value / 10);
+    bindControlRange(ui.maximumZoom, 'maxZoom', (value) => value / 10);
+    $$('[data-handedness]').forEach((button) => button.addEventListener('click', () => this.updateControlSetting('handedness', button.dataset.handedness)));
+    ui.controlsReset.addEventListener('click', () => this.resetControlSettings());
+    this.applyControlSettings();
+    this.renderControlSettings();
     ui.unitStrip.addEventListener('click', (event) => {
       const button = event.target.closest('[data-command-key]');
       if (!button) return;
@@ -341,6 +370,94 @@ class DokkaebiLuckDefense {
         if (this.state === 'playing') this.pauseGame();
       }
     });
+  }
+
+  loadControlSettings() {
+    const fallback = { ...DEFAULT_CONTROL_SETTINGS };
+    try {
+      const stored = JSON.parse(localStorage.getItem(CONTROL_STORAGE_KEY) || 'null');
+      if (!stored || typeof stored !== 'object') return fallback;
+      const settings = {
+        rotateSensitivity: clamp(Number(stored.rotateSensitivity ?? stored.rotate) || fallback.rotateSensitivity, .6, 1.6),
+        pinchSensitivity: clamp(Number(stored.pinchSensitivity ?? stored.pinch) || fallback.pinchSensitivity, .55, 1.45),
+        wheelSensitivity: clamp(Number(stored.wheelSensitivity ?? stored.pinch) || fallback.wheelSensitivity, .6, 1.6),
+        minZoom: clamp(Number(stored.minZoom) || fallback.minZoom, 8.5, 12.5),
+        maxZoom: clamp(Number(stored.maxZoom) || fallback.maxZoom, 18, 26),
+        handedness: stored.handedness === 'left' ? 'left' : 'right'
+      };
+      if (settings.maxZoom < settings.minZoom + 4) settings.maxZoom = Math.min(26, settings.minZoom + 4);
+      return settings;
+    } catch {
+      return fallback;
+    }
+  }
+
+  saveControlSettings() {
+    try { localStorage.setItem(CONTROL_STORAGE_KEY, JSON.stringify(this.controlSettings)); } catch {}
+  }
+
+  getCameraZoomBounds() {
+    const min = clamp(this.controlSettings?.minZoom ?? DEFAULT_CONTROL_SETTINGS.minZoom, 8.5, 12.5);
+    const max = clamp(this.controlSettings?.maxZoom ?? DEFAULT_CONTROL_SETTINGS.maxZoom, Math.max(18, min + 4), 26);
+    return { min, max };
+  }
+
+  applyControlSettings() {
+    document.body.classList.toggle('controls-left-handed', this.controlSettings.handedness === 'left');
+    const { min, max } = this.getCameraZoomBounds();
+    this.cameraDistanceTarget = clamp(this.cameraDistanceTarget, min, max);
+    this.cameraDistance = clamp(this.cameraDistance, min, max);
+    this.cameraCollisionDistance = Math.min(this.cameraCollisionDistance || this.cameraDistance, this.cameraDistance);
+  }
+
+  renderControlSettings() {
+    const settings = this.controlSettings;
+    ui.rotateSensitivity.value = String(Math.round(settings.rotateSensitivity * 100));
+    ui.pinchSensitivity.value = String(Math.round(settings.pinchSensitivity * 100));
+    ui.wheelSensitivity.value = String(Math.round(settings.wheelSensitivity * 100));
+    ui.minimumZoom.value = String(Math.round(settings.minZoom * 10));
+    ui.maximumZoom.value = String(Math.round(settings.maxZoom * 10));
+    ui.rotateSensitivityValue.textContent = `${Math.round(settings.rotateSensitivity * 100)}%`;
+    ui.pinchSensitivityValue.textContent = `${Math.round(settings.pinchSensitivity * 100)}%`;
+    ui.wheelSensitivityValue.textContent = `${Math.round(settings.wheelSensitivity * 100)}%`;
+    ui.minimumZoomValue.textContent = settings.minZoom.toFixed(1);
+    ui.maximumZoomValue.textContent = settings.maxZoom.toFixed(1);
+    $$('[data-handedness]').forEach((button) => {
+      const active = button.dataset.handedness === settings.handedness;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
+  }
+
+  updateControlSetting(key, value) {
+    if (key === 'handedness') this.controlSettings.handedness = value === 'left' ? 'left' : 'right';
+    else if (key === 'rotateSensitivity') this.controlSettings.rotateSensitivity = clamp(value, .6, 1.6);
+    else if (key === 'pinchSensitivity') this.controlSettings.pinchSensitivity = clamp(value, .55, 1.45);
+    else if (key === 'wheelSensitivity') this.controlSettings.wheelSensitivity = clamp(value, .6, 1.6);
+    else if (key === 'minZoom') {
+      this.controlSettings.minZoom = clamp(value, 8.5, 12.5);
+      this.controlSettings.maxZoom = Math.max(this.controlSettings.maxZoom, this.controlSettings.minZoom + 4);
+    } else if (key === 'maxZoom') {
+      this.controlSettings.maxZoom = clamp(value, 18, 26);
+      this.controlSettings.minZoom = Math.min(this.controlSettings.minZoom, this.controlSettings.maxZoom - 4);
+    }
+    this.applyControlSettings();
+    this.renderControlSettings();
+    this.saveControlSettings();
+  }
+
+  resetControlSettings() {
+    this.controlSettings = { ...DEFAULT_CONTROL_SETTINGS };
+    this.applyControlSettings();
+    this.renderControlSettings();
+    this.saveControlSettings();
+    this.haptic(12);
+    this.showToast('카메라와 조작 설정을 기본값으로 복원했습니다.');
+  }
+
+  openControlSettings() {
+    this.renderControlSettings();
+    this.showModal(ui.controlsModal);
   }
 
   setupJoystick() {
@@ -389,6 +506,7 @@ class DokkaebiLuckDefense {
     return target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement || target?.isContentEditable;
   }
 
+
   resetMovementInput() {
     this.input.keys.clear();
     this.input.x = 0;
@@ -413,8 +531,6 @@ class DokkaebiLuckDefense {
   setupLookControls() {
     const dragThreshold = 11;
     const tapDuration = 620;
-    const minZoom = 9.5;
-    const maxZoom = 22;
     const pointerDistance = () => {
       const points = [...this.lookPointers.values()];
       return points.length >= 2 ? Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y) : 0;
@@ -449,7 +565,8 @@ class DokkaebiLuckDefense {
       if (this.lookPointers.size >= 2 && this.pinchState) {
         const distance = pointerDistance();
         const delta = distance - this.pinchState.distance;
-        this.cameraDistanceTarget = clamp(this.pinchState.cameraDistance + delta * .018, minZoom, maxZoom);
+        const { min, max } = this.getCameraZoomBounds();
+        this.cameraDistanceTarget = clamp(this.pinchState.cameraDistance + delta * .018 * this.controlSettings.pinchSensitivity, min, max);
         return;
       }
       if (!this.lookPointer || this.lookPointer.id !== event.pointerId) return;
@@ -458,8 +575,9 @@ class DokkaebiLuckDefense {
       if (!this.lookPointer.dragging) return;
       const dx = event.clientX - this.lookPointer.x;
       const dy = event.clientY - this.lookPointer.y;
-      this.cameraYaw -= dx * .006;
-      this.cameraPitch = clamp(this.cameraPitch + dy * .004, .38, .9);
+      const rotationScale = this.controlSettings.rotateSensitivity;
+      this.cameraYaw -= dx * .006 * rotationScale;
+      this.cameraPitch = clamp(this.cameraPitch + dy * .004 * rotationScale, .38, .9);
       this.lookPointer.x = event.clientX;
       this.lookPointer.y = event.clientY;
     });
@@ -488,7 +606,8 @@ class DokkaebiLuckDefense {
       if (this.state !== 'playing') return;
       event.preventDefault();
       const normalized = event.deltaMode === 1 ? event.deltaY * 16 : event.deltaMode === 2 ? event.deltaY * innerHeight : event.deltaY;
-      this.cameraDistanceTarget = clamp(this.cameraDistanceTarget + normalized * .006, minZoom, maxZoom);
+      const { min, max } = this.getCameraZoomBounds();
+      this.cameraDistanceTarget = clamp(this.cameraDistanceTarget + normalized * .006 * this.controlSettings.wheelSensitivity, min, max);
     }, { passive: false });
   }
 
@@ -965,6 +1084,7 @@ class DokkaebiLuckDefense {
     this.gates.length = 0;
     this.hazards.length = 0;
     this.navigationObstacles.length = 0;
+    this.cameraObstacles.length = 0;
     this.engine.worldChunks.clear();
     this.moveTarget = null;
     this.moveTargetRaw = null;
@@ -997,6 +1117,7 @@ class DokkaebiLuckDefense {
     ground.userData.navigationGround = true;
     this.worldRoot.add(ground);
     this.navigationObstacles.push({ x: 0, z: 0, radius: 2.35, type: 'core' });
+    this.cameraObstacles.push({ x: 0, z: 0, radius: 2.8, height: 8.6, type: 'core' });
 
     const ringMat = this.createMaterial(0x51405f, .82);
     const ring = this.mesh(new THREE.RingGeometry(8.2, 12.5, 64), ringMat, 0, .015, 0, false, true);
@@ -1014,8 +1135,11 @@ class DokkaebiLuckDefense {
 
     for (let i = 0; i < 4; i += 1) {
       const angle = i / 4 * Math.PI * 2;
-      const gate = this.createGate(Math.cos(angle) * 28.5, Math.sin(angle) * 28.5, angle + Math.PI / 2, i);
+      const gateX = Math.cos(angle) * 28.5;
+      const gateZ = Math.sin(angle) * 28.5;
+      const gate = this.createGate(gateX, gateZ, angle + Math.PI / 2, i);
       this.gates.push(gate);
+      this.cameraObstacles.push({ x: gateX, z: gateZ, radius: 3.15, height: 6.4, type: 'gate' });
     }
 
     this.initUnitPadBatches(15);
@@ -1180,6 +1304,7 @@ class DokkaebiLuckDefense {
         compose(jars[jarIndex], position, rotation, new THREE.Vector3(-.65 + jarIndex * .62, 1.2, -.18), new THREE.Euler());
       }
       this.navigationObstacles.push({ x: position.x, z: position.z, radius: 2.05, type: 'stall' });
+      this.cameraObstacles.push({ x: position.x, z: position.z, radius: 2.45, height: 3.25, type: 'stall' });
     }
     const batches = [counters, roofs, poles, ...jars];
     batches.forEach((batch) => {
@@ -1386,6 +1511,7 @@ class DokkaebiLuckDefense {
     this.pendingContract = null;
     this.activeContract = null;
     this.cinematic = null;
+    this.cameraCollisionDistance = this.cameraDistance;
     this.runRewarded = false;
     this.lastShardReward = 0;
     this.commandCooldown = 0;
@@ -3097,6 +3223,36 @@ class DokkaebiLuckDefense {
 
   lerpAngle(a,b,t) { let diff=(b-a+Math.PI)%(Math.PI*2)-Math.PI;if(diff<-Math.PI)diff+=Math.PI*2;return a+diff*t; }
 
+  resolveCameraCollisionDistance(target, requestedDistance) {
+    if (!this.cameraObstacles.length) return requestedDistance;
+    const horizontal = Math.cos(this.cameraPitch) * requestedDistance;
+    const dx = Math.sin(this.cameraYaw) * horizontal;
+    const dy = Math.sin(this.cameraPitch) * requestedDistance;
+    const dz = Math.cos(this.cameraYaw) * horizontal;
+    const a = dx * dx + dz * dz;
+    if (a < .0001) return requestedDistance;
+    let collisionFraction = 1;
+    for (const obstacle of this.cameraObstacles) {
+      const radius = obstacle.radius + .42;
+      const ox = target.x - obstacle.x;
+      const oz = target.z - obstacle.z;
+      const c = ox * ox + oz * oz - radius * radius;
+      if (c <= 0) continue;
+      const b = 2 * (ox * dx + oz * dz);
+      const discriminant = b * b - 4 * a * c;
+      if (discriminant < 0) continue;
+      const sqrt = Math.sqrt(discriminant);
+      const roots = [(-b - sqrt) / (2 * a), (-b + sqrt) / (2 * a)].sort((left, right) => left - right);
+      const hit = roots.find((value) => value > .06 && value < collisionFraction);
+      if (hit === undefined) continue;
+      const heightAtHit = target.y + dy * hit;
+      if (heightAtHit > obstacle.height + .55) continue;
+      collisionFraction = Math.max(.24, hit - .045);
+    }
+    return Math.max(5.6, requestedDistance * collisionFraction);
+  }
+
+
   updateCamera(dt) {
     if (!this.player) return;
     this.cameraDistance = lerp(this.cameraDistance, this.cameraDistanceTarget, 1 - Math.pow(.00008, dt));
@@ -3117,10 +3273,13 @@ class DokkaebiLuckDefense {
       if (this.cinematic.time <= 0) this.cinematic = null;
     } else {
       target=this.player.group.position.clone().add(new THREE.Vector3(0,1.35,0));
-      const horizontal=Math.cos(this.cameraPitch)*this.cameraDistance;
+      const safeDistance = this.resolveCameraCollisionDistance(target, this.cameraDistance);
+      const collisionBlend = safeDistance < this.cameraCollisionDistance ? 1 - Math.pow(.000001, dt) : 1 - Math.pow(.02, dt);
+      this.cameraCollisionDistance = lerp(this.cameraCollisionDistance, safeDistance, collisionBlend);
+      const horizontal=Math.cos(this.cameraPitch)*this.cameraCollisionDistance;
       desired=new THREE.Vector3(
         target.x+Math.sin(this.cameraYaw)*horizontal,
-        target.y+Math.sin(this.cameraPitch)*this.cameraDistance,
+        target.y+Math.sin(this.cameraPitch)*this.cameraCollisionDistance,
         target.z+Math.cos(this.cameraYaw)*horizontal
       );
     }

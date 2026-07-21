@@ -1,4 +1,4 @@
-export const ENGINE_VERSION = '1.0.5';
+export const ENGINE_VERSION = '1.0.6';
 
 export const MOBILE_ENGINE_CONFIG = Object.freeze({
   renderer: {

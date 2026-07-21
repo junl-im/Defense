@@ -22,7 +22,7 @@ const missingIds = [...new Set(queriedIds.filter((id) => !htmlIds.has(id)))];
 if (missingIds.length) fail(`index.html에 없는 DOM ID: ${missingIds.join(', ')}`);
 else pass(`${queriedIds.length}개 DOM ID 연결`);
 
-if (pkg.version === '1.7.6') pass('package version 1.7.6');
+if (pkg.version === '1.7.7') pass('package version 1.7.7');
 else fail(`package version 불일치: ${pkg.version}`);
 
 for (const path of ['.env.production', '.firebaserc', '.github/workflows/deploy.yml', 'README.md', 'PROJECT_HANDOFF.md']) {
@@ -38,7 +38,7 @@ else fail(`루트 Markdown 정리 필요: ${rootMarkdown.join(', ')}`);
 if (manifest.start_url === './') pass('PWA 상대 경로 start_url');
 else fail(`PWA start_url 확인 필요: ${manifest.start_url}`);
 
-if (main.includes("const GAME_VERSION = '1.7.6'")) pass('런타임 version 1.7.6');
+if (main.includes("const GAME_VERSION = '1.7.7'")) pass('런타임 version 1.7.7');
 else fail('런타임 version 불일치');
 
 for (const feature of ['offerContract', 'resolveActiveContract', 'checkBossPhase', 'kingNightMarch', 'bossPounce']) {
@@ -134,7 +134,7 @@ for (const path of [
   else fail(`엔진 모듈 누락: ${path}`);
 }
 const engineConfig = read('src/engine/engine-config.js');
-if (engineConfig.includes("ENGINE_VERSION = '1.0.5'") && engineConfig.includes('unitTriangles: 300') && engineConfig.includes('enemyTriangles: 500')) pass('엔진 버전과 폴리곤 예산');
+if (engineConfig.includes("ENGINE_VERSION = '1.0.6'") && engineConfig.includes('unitTriangles: 300') && engineConfig.includes('enemyTriangles: 500')) pass('엔진 버전과 폴리곤 예산');
 else fail('엔진 버전 또는 폴리곤 예산 누락');
 if (main.includes('new MobileGameEngine()') && main.includes('new BlobShadowSystem') && main.includes('createRockField(28)') && main.includes('createLanternField(16)')) pass('모바일 엔진 실제 연결');
 else fail('모바일 엔진 연결 누락');
@@ -184,3 +184,21 @@ if (failures.length) {
   process.exit(1);
 }
 console.log('\n프로젝트 정적 검증 완료');
+
+if (main.includes('CONTROL_STORAGE_KEY') && main.includes('loadControlSettings()') && main.includes('getCameraZoomBounds()')) pass('카메라·조작 설정 저장과 사용자 줌 범위');
+else fail('카메라·조작 설정 저장 기능 누락');
+if (main.includes('this.controlSettings.pinchSensitivity') && main.includes('this.controlSettings.rotateSensitivity') && main.includes('this.controlSettings.wheelSensitivity')) pass('핀치·회전·휠 감도 실제 연결');
+else fail('입력 감도 연결 누락');
+if (main.includes('resolveCameraCollisionDistance') && main.includes('this.cameraObstacles.push') && main.includes('cameraCollisionDistance')) pass('구조물 카메라 충돌 보정');
+else fail('카메라 충돌 보정 누락');
+if (style.includes('body.controls-left-handed .joystick-zone') && style.includes('body.controls-left-handed .action-dock')) pass('왼손·오른손 모바일 UI 배치');
+else fail('모바일 좌우 조작 배치 CSS 누락');
+for (const id of ['controls-modal','rotate-sensitivity','pinch-sensitivity','minimum-zoom','maximum-zoom','pause-controls-btn']) {
+  if (htmlIds.has(id)) pass(`조작 설정 UI ${id}`); else fail(`조작 설정 UI 누락: ${id}`);
+}
+
+if (failures.length) {
+  console.error(`\nv1.7.7 추가 검증 실패 ${failures.length}건`);
+  process.exit(1);
+}
+console.log('v1.7.7 카메라·조작 추가 검증 완료');

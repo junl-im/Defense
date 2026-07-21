@@ -54,7 +54,8 @@
             <button id="collection-btn" class="btn ghost">도깨비 도감</button>
             <button id="meta-btn" class="btn ghost meta-entry"><span>혼불 <b id="title-shards">0</b></span>수호자 성장</button>
           </div>
-          <small>v1.7.6 · 모바일 UI 접기와 섬세한 핀치/휠 카메라 줌 적용.</small>
+          <button id="controls-btn" class="title-settings-btn" type="button">카메라 · 조작 설정</button>
+          <small>v1.7.7 · 감도·줌 범위·좌우 조작 배치와 카메라 충돌 보정 적용.</small>
         </div>
       </section>
 
@@ -213,10 +214,58 @@
         </div>
       </section>
 
+      <section id="controls-modal" class="modal" aria-hidden="true">
+        <div class="modal-card wide controls-card">
+          <button class="modal-x" data-close="controls-modal">×</button>
+          <p class="kicker">CAMERA & TOUCH</p>
+          <h2>카메라·조작 설정</h2>
+          <p>기기별 손가락 감각과 화면 크기에 맞춰 조정합니다.</p>
+          <div class="controls-settings">
+            <label class="control-setting">
+              <span><b>카메라 회전 감도</b><small>한 손가락 드래그 회전 속도</small></span>
+              <input id="rotate-sensitivity" type="range" min="60" max="160" step="5" />
+              <output id="rotate-sensitivity-value">100%</output>
+            </label>
+            <label class="control-setting">
+              <span><b>핀치 줌 감도</b><small>두 손가락 간격 변화 반응</small></span>
+              <input id="pinch-sensitivity" type="range" min="55" max="145" step="5" />
+              <output id="pinch-sensitivity-value">100%</output>
+            </label>
+            <label class="control-setting desktop-setting">
+              <span><b>마우스 휠 감도</b><small>PC 휠 한 칸의 줌 변화</small></span>
+              <input id="wheel-sensitivity" type="range" min="60" max="160" step="5" />
+              <output id="wheel-sensitivity-value">100%</output>
+            </label>
+            <label class="control-setting">
+              <span><b>최대 줌인</b><small>가장 가까운 카메라 거리</small></span>
+              <input id="minimum-zoom" type="range" min="85" max="125" step="5" />
+              <output id="minimum-zoom-value">9.5</output>
+            </label>
+            <label class="control-setting">
+              <span><b>최대 줌아웃</b><small>가장 먼 카메라 거리</small></span>
+              <input id="maximum-zoom" type="range" min="180" max="260" step="5" />
+              <output id="maximum-zoom-value">22.0</output>
+            </label>
+          </div>
+          <div class="handed-setting">
+            <div><b>모바일 조작 배치</b><small>이동 손을 기준으로 선택</small></div>
+            <div class="handed-options" role="group" aria-label="모바일 조작 배치">
+              <button type="button" data-handedness="right" aria-pressed="true">왼쪽 이동</button>
+              <button type="button" data-handedness="left" aria-pressed="false">오른쪽 이동</button>
+            </div>
+          </div>
+          <div class="controls-actions">
+            <button id="controls-reset-btn" class="btn ghost" type="button">기본값 복원</button>
+            <button class="btn primary" data-close="controls-modal">설정 완료</button>
+          </div>
+        </div>
+      </section>
+
       <section id="pause-modal" class="modal" aria-hidden="true">
         <div class="modal-card compact">
           <p class="kicker">PAUSED</p>
           <h2>잠시 숨 고르기</h2>
+          <button id="pause-controls-btn" class="btn ghost">카메라 · 조작 설정</button>
           <button id="resume-btn" class="btn primary">계속 수호하기</button>
           <button id="restart-btn" class="btn ghost">처음부터 다시</button>
           <button id="title-btn" class="btn danger">메인 화면으로</button>
@@ -248,7 +297,7 @@
     </div>
     <script>
       (() => {
-        const VERSION = '1.7.2';
+        const VERSION = '1.7.7';
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
         const retryButton = document.getElementById('boot-retry-btn');
