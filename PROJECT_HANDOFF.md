@@ -3,8 +3,8 @@
 이 문서는 대화가 끊기거나 다른 작업자가 이어받아도 프로젝트를 계속 개발할 수 있도록 모든 핵심 기록을 누적하는 단일 인수인계 파일입니다.
 
 - 마지막 갱신: 2026-07-22
-- 현재 버전: `3.7.1`
-- 프로젝트 폴더: `DokkaebiLuckDefense3D_FULL_v3.7.1`
+- 현재 버전: `3.7.2`
+- 프로젝트 폴더: `DokkaebiLuckDefense3D_FULL_v3.7.2`
 - 현재 패치명: 빌드 모듈 계약·공용 리그 적 2종·UI 스트레스 계약
 
 ---
@@ -2721,7 +2721,7 @@ v3.0.0의 스타일라이즈드 PBR 방향은 개별 자산의 품질을 높이�
 5. KTX2로 텍스처 예산 여유 확보
 
 
-## v3.7.1 / Engine 2.7.1 — 빌드 계약·공용 리그 적·UI 스트레스 안정화
+## v3.7.2 / Engine 2.7.2 — 빌드 계약·공용 리그 적·UI 스트레스 안정화
 
 ### GitHub Actions 빌드 오류 수정
 
@@ -2778,3 +2778,34 @@ npm run build
 ```
 
 사용자가 보고한 `BOSS_ASSET_IDS` 오류 경로는 직접 import로 제거됐다.
+
+
+## v3.7.2 / Engine 2.7.2 — CI 실패 원인 가시화 핫픽스
+
+### 배경
+
+GitHub Actions에서 `npm run verify`가 exit 1로 종료됐지만 로그 마지막에는 PASS 항목만 남아 실제 초기 FAIL이 가려졌다. 전체본 자체는 동일 환경에서 exit 0으로 통과했다.
+
+### 변경
+
+- `scripts/verify-project.mjs`의 중간 `process.exit(1)` 세 곳 제거.
+- 프로젝트 검사를 끝까지 수행한 뒤 마지막에 한 번만 종료.
+- 실패 목록을 `VERIFY FAILURE DIGEST`로 번호와 함께 재출력.
+- GitHub `::error title=Project verification failed` 주석 추가.
+- GitHub Pages 워크플로가 `verify.log`를 보존하고 실패 요약을 마지막에 다시 출력.
+- 추가 루트 Markdown은 런타임 무관 파일이므로 INFO 처리.
+- SVG 정책은 `public/`, `src/` 런타임 경로만 검사.
+- 구형 Vite 해시 번들을 동적 정규식으로 검사.
+- 게임 버전 비교는 `package.json`을 단일 기준으로 사용.
+- `scripts/verify-ci-reporting.mjs` 회귀 검사 추가.
+
+### 검증
+
+- 정상 전체 검증 exit 0.
+- 타이틀 버전을 의도적으로 손상시킨 실패 테스트 exit 1.
+- 실패 테스트에서 로그 마지막에 정확한 원인과 GitHub 오류 주석 출력.
+- 정적 ESM `/Defense/` 배포본 생성 및 14개 GLB 포함 검사 통과.
+
+### 환경 메모
+
+현재 컨테이너에는 Vite 실행 파일이 설치되지 않아 실제 Vite 번들은 로컬에서 생성하지 못했다. GitHub Actions는 `npm ci` 후 실제 Vite 빌드를 수행하며, 이번 변경은 그 이전 검증 실패 원인을 명확히 표시하고 비실행 파일 때문에 배포가 차단되는 조건을 제거한다.

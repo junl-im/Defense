@@ -36,7 +36,17 @@ jobs:
         run: npm run clean:obsolete
 
       - name: Verify source and module contracts
-        run: npm run verify
+        shell: bash
+        run: |
+          set -o pipefail
+          status=0
+          npm run verify 2>&1 | tee verify.log || status=$?
+          if [ "$status" -ne 0 ]; then
+            echo "::group::Verification failure digest"
+            grep -nE '^(FAIL|::error)|VERIFY FAILURE DIGEST|검증 실패' verify.log || true
+            echo "::endgroup::"
+            exit "$status"
+          fi
 
       - name: Build
         run: npm run build

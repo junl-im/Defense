@@ -45,7 +45,7 @@ npm run build
 
 `verify`와 `build`를 분리하지 않는다. 정적 검사만 통과하고 번들러 계약이 깨지는 상황을 줄이기 위해 두 명령을 같은 워크플로에서 연속 실행한다.
 
-## v3.7.1 검증 전 청소 계약
+## v3.7.2 검증 전 청소 계약
 
 이전 패치 ZIP은 루트 `PATCH_README.md`를 포함했고, ZIP 덮어쓰기는 기존 파일을 삭제하지 못하므로 구형 Vite 번들·SVG가 Git 작업 트리에 남을 수 있었다. GitHub Actions는 `verify`를 `prebuild`보다 먼저 실행하므로 기존 청소 단계가 늦었다.
 

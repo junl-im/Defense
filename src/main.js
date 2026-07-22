@@ -75,7 +75,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '3.7.1';
+const GAME_VERSION = '3.7.2';
 const CHARACTER_ASSET_IDS = Object.freeze([
   PLAYER_ASSET_ID,
   ...Object.values(GUARDIAN_ASSET_IDS),

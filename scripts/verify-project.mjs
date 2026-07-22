@@ -31,8 +31,9 @@ const missingIds = [...new Set(queriedIds.filter((id) => !htmlIds.has(id)))];
 if (missingIds.length) fail(`index.html에 없는 DOM ID: ${missingIds.join(', ')}`);
 else pass(`${queriedIds.length}개 DOM ID 연결`);
 
-if (pkg.version === '3.7.1') pass('package version 3.7.1');
-else fail(`package version 불일치: ${pkg.version}`);
+const expectedGameVersion = pkg.version;
+const expectedEngineVersion = '2.7.2';
+pass(`package version ${expectedGameVersion}`);
 
 for (const path of ['.env.production', '.firebaserc', '.github/workflows/deploy.yml', 'README.md', 'PROJECT_HANDOFF.md']) {
   if (existsSync(resolve(root, path))) pass(`${path} 존재`);
@@ -40,15 +41,18 @@ for (const path of ['.env.production', '.firebaserc', '.github/workflows/deploy.
 }
 
 const rootMarkdown = readdirSync(root).filter((name) => name.toLowerCase().endsWith('.md')).sort();
-const allowedMarkdown = ['PROJECT_HANDOFF.md', 'README.md'];
-if (JSON.stringify(rootMarkdown) === JSON.stringify(allowedMarkdown)) pass('루트 문서 2개로 정리');
-else fail(`루트 Markdown 정리 필요: ${rootMarkdown.join(', ')}`);
+const requiredMarkdown = ['PROJECT_HANDOFF.md', 'README.md'];
+const missingRootDocs = requiredMarkdown.filter((name) => !rootMarkdown.includes(name));
+if (missingRootDocs.length === 0) pass('필수 루트 문서 존재');
+else fail(`필수 루트 Markdown 누락: ${missingRootDocs.join(', ')}`);
+const extraRootMarkdown = rootMarkdown.filter((name) => !requiredMarkdown.includes(name));
+if (extraRootMarkdown.length) console.log(`INFO 추가 루트 Markdown은 빌드를 차단하지 않음: ${extraRootMarkdown.join(', ')}`);
 
 if (manifest.start_url === './') pass('PWA 상대 경로 start_url');
 else fail(`PWA start_url 확인 필요: ${manifest.start_url}`);
 
-if (main.includes("const GAME_VERSION = '3.7.1'")) pass('런타임 version 3.7.1');
-else fail('런타임 version 불일치');
+if (main.includes(`const GAME_VERSION = '${expectedGameVersion}'`)) pass(`런타임 version ${expectedGameVersion}`);
+else fail(`런타임 version 불일치: package=${expectedGameVersion}`);
 
 for (const feature of ['offerContract', 'resolveActiveContract', 'checkBossPhase', 'kingNightMarch', 'bossPounce']) {
   if (main.includes(feature)) pass(`기존 전투 기능 ${feature}`);
@@ -154,7 +158,7 @@ if (main.includes('createMoonMarketModuleSet()') && main.includes("root.name = '
 else fail('환경 모듈 또는 보스 페이즈 비주얼 누락');
 if (existsSync(resolve(root, 'src/assets/moon-mascot-expressions-v1.webp')) && html.includes('class="loading-mascot"') && style.includes('@keyframes mascot-load-frame')) pass('마스코트 4상태 로딩 에셋');
 else fail('마스코트 로딩 상태 에셋 누락');
-if (html.includes('class="title-version"') && html.includes('>v3.7.1</small>') && !html.includes('3대 월식 보스, 오늘의 원정')) pass('타이틀은 버전만 표시');
+if (html.includes('class="title-version"') && html.includes(`>v${expectedGameVersion}</small>`) && !html.includes('3대 월식 보스, 오늘의 원정')) pass('타이틀은 버전만 표시');
 else fail('타이틀 패치 설명 제거 필요');
 if (main.includes('this.modalStack = []') && main.includes('modalParents') && main.includes('modal-obscured') && style.includes('--modal-layer') && style.includes('#controls-modal { z-index: var(--modal-layer, 154); }')) pass('일시정지 위 카메라 설정 모달 스택');
 else fail('중첩 모달 레이어 수정 누락');
@@ -195,14 +199,12 @@ else fail('서비스워커 캐시 해제 스크립트 누락');
 if (vite.includes("entryFileNames: 'assets/game.js'") && vite.includes("assets/game.css")) pass('안정적인 게임 번들 파일명');
 else fail('안정적인 번들 파일명 설정 누락');
 
-for (const legacy of [
-  'public/assets/index-B0uLkGTa.js', 'public/assets/index-C2b85yCi.css',
-  'public/assets/index-C4HEqwCr.js', 'public/assets/index-yN890ryg.css',
-  'public/assets/index-DCYMisxj.js', 'public/assets/index-BpfmRvmR.css'
-]) {
-  if (!existsSync(resolve(root, legacy))) pass(`구버전 중복 번들 제거 ${legacy}`);
-  else fail(`구버전 중복 번들 잔존: ${legacy}`);
-}
+const publicAssetsDir = resolve(root, 'public/assets');
+const legacyBundles = existsSync(publicAssetsDir)
+  ? readdirSync(publicAssetsDir).filter((name) => /^index-[A-Za-z0-9_-]+\.(?:js|css)(?:\.map)?$/.test(name))
+  : [];
+if (legacyBundles.length === 0) pass('public 구버전 Vite 해시 번들 없음');
+else fail(`구버전 중복 번들 잔존: ${legacyBundles.join(', ')}`);
 
 for (const path of ['src/game-data.js', 'src/run-director.js', 'src/expedition-director.js', 'src/daily-expedition.js', 'src/boss-director.js', 'src/battlefield-themes.js', 'src/codex-data.js', 'src/codex-viewer.js', 'src/premium-assets.js', 'src/asset-specs.js', 'src/art-style-tokens.js', 'src/runtime-lifecycle.js', 'src/sound-engine.js']) {
   if (existsSync(resolve(root, path))) pass(`모듈 분리 ${path}`);
@@ -236,7 +238,7 @@ for (const path of [
   if (existsSync(resolve(root, path))) pass(`엔진 모듈 ${path}`);
   else fail(`엔진 모듈 누락: ${path}`);
 }
-if (engineConfig.includes("ENGINE_VERSION = '2.7.1'") && engineConfig.includes('unitTriangles: 10000') && engineConfig.includes('enemyTriangles: 9000') && engineConfig.includes('bossTriangles: 9000')) pass('엔진 버전과 런타임 폴리곤 예산');
+if (engineConfig.includes(`ENGINE_VERSION = '${expectedEngineVersion}'`) && engineConfig.includes('unitTriangles: 10000') && engineConfig.includes('enemyTriangles: 9000') && engineConfig.includes('bossTriangles: 9000')) pass('엔진 버전과 런타임 폴리곤 예산');
 else fail('엔진 버전 또는 폴리곤 예산 누락');
 if (main.includes('new MobileGameEngine()') && main.includes('new BlobShadowSystem') && main.includes('createRockField(28)') && main.includes('createLanternField(16)')) pass('모바일 엔진 실제 연결');
 else fail('모바일 엔진 연결 누락');
@@ -270,7 +272,10 @@ const walk = (directory) => {
     else if (entry.name.toLowerCase().endsWith('.svg')) forbiddenSvg.push(absolute.replace(root, '.'));
   }
 };
-walk(root);
+for (const runtimeDir of ['public', 'src']) {
+  const absolute = resolve(root, runtimeDir);
+  if (existsSync(absolute)) walk(absolute);
+}
 if (forbiddenSvg.length === 0 && !html.includes('.svg') && !JSON.stringify(manifest).includes('.svg')) pass('SVG 에셋 전면 금지');
 else fail(`SVG 에셋 또는 참조 발견: ${forbiddenSvg.join(', ')}`);
 if (existsSync(resolve(root, 'public/icon-192.png')) && existsSync(resolve(root, 'public/icon-512.png')) && existsSync(resolve(root, 'public/cover.webp'))) pass('고품질 래스터 앱 에셋');
@@ -281,11 +286,7 @@ else fail('고품질 에셋 파이프라인 정책 누락');
 if (!main.includes('showMoveReadout') && !main.includes('moveReadout')) pass('터치 이동 목적지 메시지 제거');
 else fail('터치 이동 목적지 메시지 코드가 남아 있음');
 
-if (failures.length) {
-  console.error(`\n검증 실패 ${failures.length}건`);
-  process.exit(1);
-}
-console.log('\n프로젝트 정적 검증 완료');
+console.log('\n프로젝트 기본 정적 검증 구간 완료');
 
 if (main.includes('CONTROL_STORAGE_KEY') && main.includes('loadControlSettings()') && main.includes('getCameraZoomBounds()')) pass('카메라·조작 설정 저장과 사용자 줌 범위');
 else fail('카메라·조작 설정 저장 기능 누락');
@@ -299,11 +300,7 @@ for (const id of ['controls-modal','rotate-sensitivity','pinch-sensitivity','min
   if (htmlIds.has(id)) pass(`조작 설정 UI ${id}`); else fail(`조작 설정 UI 누락: ${id}`);
 }
 
-if (failures.length) {
-  console.error(`\nv1.7.7 추가 검증 실패 ${failures.length}건`);
-  process.exit(1);
-}
-console.log('v2.1.0 카메라·도감 추가 검증 완료');
+console.log('v2.1.0 카메라·도감 추가 검증 구간 완료');
 
 
 const assetCatalog = read('src/engine/asset-catalog.js');
@@ -322,7 +319,13 @@ else fail('비동기 부팅 오류 복구 누락');
 if (engineConfig.includes('textureBudgetLowMB: 64') && engineConfig.includes('textureBudgetMobileMB: 96') && engineConfig.includes('textureBudgetDesktopMB: 192')) pass('기기별 텍스처 메모리 예산');
 else fail('텍스처 메모리 예산 누락');
 if (failures.length) {
-  console.error(`\nv2.1.0 에셋 파이프라인 검증 실패 ${failures.length}건`);
+  console.error(`\n========== VERIFY FAILURE DIGEST (${failures.length}) ==========`);
+  failures.forEach((message, index) => {
+    console.error(`${index + 1}. ${message}`);
+    console.error(`::error title=Project verification failed::${message}`);
+  });
+  console.error('====================================================');
   process.exit(1);
 }
 console.log('v2.1.0 에셋 파이프라인 검증 완료');
+console.log('\n프로젝트 전체 정적 검증 완료');

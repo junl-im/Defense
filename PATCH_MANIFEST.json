@@ -1,9 +1,9 @@
 {
-  "fromVersion": "3.7.0",
-  "toVersion": "3.7.1",
-  "engineVersion": "2.7.1",
+  "fromVersion": "3.7.1",
+  "toVersion": "3.7.2",
   "added": [
-    "docs/PATCH_NOTES_v3.7.1.md"
+    "docs/CI_VERIFY_HOTFIX_v3.7.2.md",
+    "scripts/verify-ci-reporting.mjs"
   ],
   "modified": [
     ".github/workflows/deploy.yml",
@@ -18,8 +18,6 @@
     "package.json",
     "scripts/audit-current-assets.mjs",
     "scripts/build-static-fallback.mjs",
-    "scripts/clean-obsolete-assets.mjs",
-    "scripts/verify-code-integrity.mjs",
     "scripts/verify-project.mjs",
     "scripts/verify-static-dist.mjs",
     "src/engine/asset-catalog.js",
@@ -29,17 +27,5 @@
     "src/style.css"
   ],
   "removed": [],
-  "runtimeCleanupTargets": [
-    "PATCH_README.md",
-    "public/icon.svg",
-    "public/cover.svg",
-    "public/assets/index-*.js",
-    "public/assets/index-*.css",
-    "public/assets/index-*.map"
-  ],
-  "apply": [
-    "Copy patch contents over the v3.7.0 project.",
-    "Run npm run verify. preverify removes obsolete tracked leftovers before validation.",
-    "Run npm run build for the normal Vite deployment."
-  ]
+  "notes": "CI verification reporting hotfix. Apply over v3.7.1, then run npm ci, npm run verify, npm run build."
 }

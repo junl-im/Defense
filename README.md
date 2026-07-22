@@ -1,25 +1,23 @@
 # 도깨비 운빨 수호대 3D
 
-- 게임 버전: **3.7.1**
-- 엔진 버전: **2.7.1**
+- 게임 버전: **3.7.2**
+- 엔진 버전: **2.7.2**
 - 아트 잠금: **DD-AAA-CASUAL-SD-PBR-3.0**
 
-## v3.7.1 핵심
+## v3.7.2 핵심
 
-이번 핫픽스는 GitHub Actions에서 검증 전에 이전 패치 잔여물을 자동 정리합니다. `PATCH_README.md`, `public/assets/index-*`, `public/icon.svg`, `public/cover.svg`가 남아 있어도 `preverify`가 제거한 뒤 동일 검증기가 깨끗한 상태를 재확인합니다.
+이번 핫픽스는 GitHub Actions에서 실제 FAIL이 긴 PASS 로그에 묻히는 문제를 해결합니다.
 
-이번 버전은 GitHub Actions의 `MISSING_EXPORT` 빌드 실패를 막고, 공용 리그 적 2종과 모바일 UI 스트레스 계약을 추가한 안정화·확장 패치입니다.
+- `verify-project.mjs`의 중간 종료 3곳을 제거하고 마지막 한 번만 종료
+- 실패 시 `VERIFY FAILURE DIGEST`와 GitHub `::error` 주석 출력
+- 워크플로가 전체 검증 로그를 보존하고 실패 원인을 스텝 마지막에 재출력
+- 추가 루트 Markdown은 배포를 차단하지 않고 INFO로 처리
+- SVG 금지 범위를 실제 런타임 디렉터리 `public/`, `src/`로 제한
+- 구형 Vite 해시 번들을 파일명 고정 목록이 아닌 패턴으로 검사
+- 버전 비교 기준을 `package.json` 단일 원본으로 정리
+- CI 실패 보고 구조 자체를 검사하는 회귀 테스트 추가
 
-- `BOSS_ASSET_IDS`를 배럴 모듈이 아닌 `asset-catalog.js`에서 직접 import
-- 모든 상대 모듈의 named import/export 계약 자동 검사
-- 돌갑옷 귀수·저주 무당을 Skin 1개, 7 AnimationClip, 공용 소켓, PBR 맵이 포함된 기술 리뷰 후보로 승격
-- 에셋 상태: 기술 리뷰 3종 / 프로토타입 11종 / 최종 승인 0종
-- 320×568, 360×640, 390×844, 430×932, 짧은 가로, 큰 글자 모드 UI 계약 검사
-- ResizeObserver 기반 HUD 크기 변화 감지
-- 긴 한국어 문구 overflow 검사와 긴급 축약 레이아웃
-- 모달을 실제 visual viewport 안에 고정하고 내부 스크롤 허용
-- 원거리 임포스터 6개를 768×576으로 최적화
-- 텍스처 예산 **53.19MB / 64MB**
+v3.7.0의 named export 계약, 공용 리그 적 2종, 모바일 UI 스트레스 계약과 v3.7.1의 자동 청소 기능은 그대로 유지됩니다.
 
 ## 검증
 
