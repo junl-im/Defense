@@ -31,7 +31,7 @@ const missingIds = [...new Set(queriedIds.filter((id) => !htmlIds.has(id)))];
 if (missingIds.length) fail(`index.html에 없는 DOM ID: ${missingIds.join(', ')}`);
 else pass(`${queriedIds.length}개 DOM ID 연결`);
 
-if (pkg.version === '3.1.0') pass('package version 3.1.0');
+if (pkg.version === '3.2.0') pass('package version 3.2.0');
 else fail(`package version 불일치: ${pkg.version}`);
 
 for (const path of ['.env.production', '.firebaserc', '.github/workflows/deploy.yml', 'README.md', 'PROJECT_HANDOFF.md']) {
@@ -47,7 +47,7 @@ else fail(`루트 Markdown 정리 필요: ${rootMarkdown.join(', ')}`);
 if (manifest.start_url === './') pass('PWA 상대 경로 start_url');
 else fail(`PWA start_url 확인 필요: ${manifest.start_url}`);
 
-if (main.includes("const GAME_VERSION = '3.1.0'")) pass('런타임 version 3.1.0');
+if (main.includes("const GAME_VERSION = '3.2.0'")) pass('런타임 version 3.2.0');
 else fail('런타임 version 불일치');
 
 for (const feature of ['offerContract', 'resolveActiveContract', 'checkBossPhase', 'kingNightMarch', 'bossPounce']) {
@@ -154,7 +154,7 @@ if (main.includes('createMoonMarketModuleSet()') && main.includes("root.name = '
 else fail('환경 모듈 또는 보스 페이즈 비주얼 누락');
 if (existsSync(resolve(root, 'src/assets/moon-mascot-expressions-v1.webp')) && html.includes('class="loading-mascot"') && style.includes('@keyframes mascot-load-frame')) pass('마스코트 4상태 로딩 에셋');
 else fail('마스코트 로딩 상태 에셋 누락');
-if (html.includes('class="title-version"') && html.includes('>v3.1.0</small>') && !html.includes('3대 월식 보스, 오늘의 원정')) pass('타이틀은 버전만 표시');
+if (html.includes('class="title-version"') && html.includes('>v3.2.0</small>') && !html.includes('3대 월식 보스, 오늘의 원정')) pass('타이틀은 버전만 표시');
 else fail('타이틀 패치 설명 제거 필요');
 if (main.includes('this.modalStack = []') && main.includes('modalParents') && main.includes('modal-obscured') && style.includes('--modal-layer') && style.includes('#controls-modal { z-index: var(--modal-layer, 154); }')) pass('일시정지 위 카메라 설정 모달 스택');
 else fail('중첩 모달 레이어 수정 누락');
@@ -200,11 +200,11 @@ for (const legacy of [
   'public/assets/index-C4HEqwCr.js', 'public/assets/index-yN890ryg.css',
   'public/assets/index-DCYMisxj.js', 'public/assets/index-BpfmRvmR.css'
 ]) {
-  if (existsSync(resolve(root, legacy))) pass(`구버전 캐시 구조 호환 ${legacy}`);
-  else fail(`구버전 호환 파일 누락: ${legacy}`);
+  if (!existsSync(resolve(root, legacy))) pass(`구버전 중복 번들 제거 ${legacy}`);
+  else fail(`구버전 중복 번들 잔존: ${legacy}`);
 }
 
-for (const path of ['src/game-data.js', 'src/run-director.js', 'src/expedition-director.js', 'src/daily-expedition.js', 'src/boss-director.js', 'src/battlefield-themes.js', 'src/codex-data.js', 'src/codex-viewer.js', 'src/premium-assets.js', 'src/asset-specs.js', 'src/art-style-tokens.js', 'src/sound-engine.js']) {
+for (const path of ['src/game-data.js', 'src/run-director.js', 'src/expedition-director.js', 'src/daily-expedition.js', 'src/boss-director.js', 'src/battlefield-themes.js', 'src/codex-data.js', 'src/codex-viewer.js', 'src/premium-assets.js', 'src/asset-specs.js', 'src/art-style-tokens.js', 'src/runtime-lifecycle.js', 'src/sound-engine.js']) {
   if (existsSync(resolve(root, path))) pass(`모듈 분리 ${path}`);
   else fail(`모듈 누락: ${path}`);
 }
@@ -236,7 +236,7 @@ for (const path of [
   if (existsSync(resolve(root, path))) pass(`엔진 모듈 ${path}`);
   else fail(`엔진 모듈 누락: ${path}`);
 }
-if (engineConfig.includes("ENGINE_VERSION = '2.1.0'") && engineConfig.includes('unitTriangles: 5600') && engineConfig.includes('enemyTriangles: 3200') && engineConfig.includes('bossTriangles: 9000')) pass('엔진 버전과 SD Toon 폴리곤 예산');
+if (engineConfig.includes("ENGINE_VERSION = '2.2.0'") && engineConfig.includes('unitTriangles: 5600') && engineConfig.includes('enemyTriangles: 3200') && engineConfig.includes('bossTriangles: 9000')) pass('엔진 버전과 SD Toon 폴리곤 예산');
 else fail('엔진 버전 또는 폴리곤 예산 누락');
 if (main.includes('new MobileGameEngine()') && main.includes('new BlobShadowSystem') && main.includes('createRockField(28)') && main.includes('createLanternField(16)')) pass('모바일 엔진 실제 연결');
 else fail('모바일 엔진 연결 누락');

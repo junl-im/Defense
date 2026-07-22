@@ -3,9 +3,9 @@
 이 문서는 대화가 끊기거나 다른 작업자가 이어받아도 프로젝트를 계속 개발할 수 있도록 모든 핵심 기록을 누적하는 단일 인수인계 파일입니다.
 
 - 마지막 갱신: 2026-07-22
-- 현재 버전: `3.1.0`
-- 프로젝트 폴더: `DokkaebiLuckDefense3D_FULL_v3.1.0`
-- 현재 패치명: SD 모바일 카툰 아트 바이블 잠금·5방향 미러링·대표 GLB 재비율
+- 현재 버전: `3.2.0`
+- 프로젝트 폴더: `DokkaebiLuckDefense3D_FULL_v3.2.0`
+- 현재 패치명: 코드 무결성·런 수명 관리·골든 모션 상태 안정화
 
 ---
 
@@ -2397,4 +2397,127 @@ v3.0.0의 스타일라이즈드 PBR 방향은 개별 자산의 품질을 높이�
 ### 다음 제작 작업
 
 불씨 깨비를 Blender에서 실제 리깅하고 `idle`, `walk`, `run`, `attack`, `skill`, `hit`, `death` 클립을 납품한다. 해당 골든 샘플이 실기기에서 승인되기 전에는 나머지 캐릭터를 대량 생산하지 않는다.
+
+---
+
+## v3.2.0 / Engine 2.2.0 — 코드 무결성·런 수명 관리 패치
+
+### 패치 목표
+
+다음 단계의 스켈레탈 리깅, 대량 GLB 교체, 전리품 외형 장착을 시작하기 전에 코드 중복과 수명 오류가 누적되지 않도록 기반을 정리한다. 기능을 크게 늘리기보다 이벤트·타이머·애니메이션 상태·배포 파일의 단일 소유권을 명확히 하고, 같은 문제가 다시 들어오면 자동 검증에서 차단하도록 만든다.
+
+### RuntimeLifecycle
+
+신규 모듈 `src/runtime-lifecycle.js`:
+
+- `EventRegistry`: 이벤트 등록·해제와 중복 키 검사
+- `TaskScope`: 이름 있는 지연 작업 교체, 세대 취소, pending 진단
+- `RuntimeLifecycle`: `ui`, `run`, `effects`, `system` 작업 영역 분리
+
+런 수명 경계:
+
+- `startRun()`에서 이전 런 작업과 효과 예약 취소
+- `returnToTitle()`에서 런 세대 무효화
+- `finishRun()`에서 남은 전투 예약 작업 취소
+- 자동 웨이브, 무료 강림, 자동 합성, 보스 연속 패턴, 궁극기 연쇄 타격은 모두 런 토큰을 통과해야 실행
+- 미션, 토스트, 콤보, 피격 섬광은 이름 있는 UI 작업으로 최신 요청만 유지
+
+### 이벤트 중복 제거
+
+- `bindUI()`는 두 번 호출되어도 재등록하지 않는 idempotent 구조
+- 정적 UI 이벤트는 모두 `EventRegistry` 사용
+- 유물·계약·축복·선택 강림·영구 성장 버튼은 생성할 때마다 리스너를 붙이지 않고 상위 컨테이너 이벤트 위임 사용
+- 조이스틱, 카메라 드래그, 키보드, viewport resize도 같은 레지스트리에서 관리
+- 동일 키 이벤트가 재등록되면 즉시 예외를 발생시켜 조용한 중복 입력을 방지
+
+### 도감 뷰어 수명 정리
+
+`src/codex-viewer.js`:
+
+- 전용 `EventRegistry`
+- 활성 상태 해제 시 `cancelAnimationFrame`
+- 모델·임포스터·복제 텍스처 dispose
+- WebGLRenderer dispose
+- 중복 `setActive(true)` 시 RAF 루프 추가 생성 방지
+
+### 골든 샘플 7모션 상태
+
+`src/engine/animation-state-system.js`:
+
+- `idle`, `move`, `run`, `attack`, `skill`, `hit`, `death`
+- `setBaseState()` 추가
+- Attack/Skill 원샷 중 입력 상태가 Walk에서 Run으로 바뀌면 종료 후 최신 Run으로 복귀
+- Run은 보폭·상체 기울기·팔다리 진폭을 Walk와 분리
+- Skill은 양팔·무기·대표 장식·월륜의 별도 충전 동작
+- 11방향 LOD는 Run을 Move 아틀라스, Skill을 Attack 아틀라스로 안전 매핑
+
+### 구버전 번들 제거
+
+과거 빌드의 다음 파일 6개가 `public/assets`에 남아 매 빌드마다 `dist`로 복사되고 있었다.
+
+- `index-B0uLkGTa.js`
+- `index-C4HEqwCr.js`
+- `index-DCYMisxj.js`
+- `index-BpfmRvmR.css`
+- `index-C2b85yCi.css`
+- `index-yN890ryg.css`
+
+모두 제거했으며 `prebuild`에서 `scripts/clean-obsolete-assets.mjs`를 자동 실행해 동일 패턴이 다시 들어오지 않게 했다. 실제 실행 번들은 `assets/game.js`와 코드 분할 chunk만 사용한다.
+
+### 신규 자동 검증
+
+- `scripts/verify-code-integrity.mjs`
+  - 상대 import 해석
+  - ES module 순환 의존성
+  - DOM ID 중복
+  - 메인 클래스 메서드 중복
+  - main.js의 직접 setTimeout/setInterval 사용
+  - EventRegistry 우회
+  - 도감 dispose 경로
+  - 구버전 Vite 해시 번들 잔존
+- `scripts/verify-runtime-lifecycle.mjs`
+  - 동일 이벤트 키 중복 차단
+  - dispose 이후 이벤트 차단
+  - 이름 있는 작업 최신 1개 유지
+  - 세대 취소 이후 이전 작업 무효화
+- `scripts/verify-golden-motion.mjs`
+  - Walk 기본 상태
+  - Attack 후 최신 Run 복귀
+  - Skill 후 최신 Run 복귀
+  - 7개 모션 상태
+  - 컨트롤러 제거
+
+### 최종 확인 항목
+
+- 패키지 버전 `3.2.0`
+- 엔진 버전 `2.2.0`
+- 클린 `npm ci` 후 전체 `npm run verify` 재통과
+- `/Defense/` 프로덕션 빌드와 번들 구문 검사 통과
+- 기존 저장 키 변경 없음
+- 전투 밸런스와 에셋 예산 변경 없음
+- 텍스처 예산 `63.69MB / 64MB` 유지
+- `npm audit`는 2026-07-21 검증 환경의 감사 API가 두 차례 HTTP 503을 반환해 결과를 확정하지 못함
+- 다음 대형 래스터 추가 전 KTX2 전환 필요
+
+### 다음 패치 방향 — v3.3.0 / Engine 2.3.0
+
+1. 불씨 깨비 골든 샘플 스켈레탈 리그와 7개 실제 GLB AnimationClip
+2. AnimationMixer 클립 우선, 절차형 모션 폴백 유지
+3. LOD0/LOD1 공용 리그와 무기·장식 소켓
+4. 5방향 원본 캡처 자동화 및 좌우 미러 검수 이미지
+5. 텍스처 KTX2 전환으로 64MB 예산 여유 확보
+6. 실제 모바일 브라우저 화면 기반 스크린샷 회귀 기준
+7. main.js에서 도감·UI 상태·전투 연출의 단계적 모듈 분리
+
+### 다음 작업 순서
+
+1. `npm ci`
+2. `npm run verify`
+3. `VITE_BASE_PATH=/Defense/ npm run build`
+4. 전체본에서 구형 `index-*.js/css` 미포함 확인
+5. 같은 시드 연속 재시작 후 이전 보스 패턴·자동 합성 미발동 확인
+6. 도감 반복 열기·닫기 후 RAF와 이벤트 수 증가 없음 확인
+7. Attack·Skill 중 질주 입력 후 Run 복귀 확인
+8. 다음 버전은 게임 `3.3.0`, 엔진 `2.3.0`
+9. 전체 ZIP과 변경분 패치 ZIP 두 개만 전달
 

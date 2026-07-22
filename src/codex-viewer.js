@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { createCodexPreviewModel } from './premium-assets.js';
 import { resolveDirectionalFrame } from './engine/directional-impostor.js';
+import { EventRegistry } from './runtime-lifecycle.js';
 
 const clamp = THREE.MathUtils.clamp;
 const IMPOSTOR_STATES = Object.freeze(['idle', 'move', 'attack']);
@@ -9,6 +10,8 @@ export default class CodexViewer {
   constructor(canvas, { impostorTextures = {}, onFrame = null, modelFactory = null } = {}) {
     if (!canvas) throw new Error('Codex preview canvas is missing.');
     this.canvas = canvas;
+    this.events = new EventRegistry('codex-viewer');
+    this.animationFrame = 0;
     this.onFrame = onFrame;
     this.modelFactory = modelFactory;
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'low-power' });
@@ -61,7 +64,8 @@ export default class CodexViewer {
   }
 
   bindControls() {
-    this.canvas.addEventListener('pointerdown', (event) => {
+    const on = (target, type, handler, options = {}, key = '') => this.events.listen(target, type, handler, options, key);
+    on(this.canvas, 'pointerdown', (event) => {
       this.pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
       this.canvas.setPointerCapture?.(event.pointerId);
       if (this.pointers.size >= 2) {
@@ -69,8 +73,8 @@ export default class CodexViewer {
         return;
       }
       this.dragPointer = { id: event.pointerId, x: event.clientX, y: event.clientY };
-    });
-    this.canvas.addEventListener('pointermove', (event) => {
+    }, {}, 'pointer-down');
+    on(this.canvas, 'pointermove', (event) => {
       if (!this.pointers.has(event.pointerId)) return;
       this.pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
       if (this.pointers.size >= 2 && this.pinchState) {
@@ -83,7 +87,7 @@ export default class CodexViewer {
       this.dragPointer.x = event.clientX;
       this.dragPointer.y = event.clientY;
       this.rotationY += dx * .012;
-    });
+    }, {}, 'pointer-move');
     const end = (event) => {
       this.pointers.delete(event.pointerId);
       this.canvas.releasePointerCapture?.(event.pointerId);
@@ -93,13 +97,13 @@ export default class CodexViewer {
         this.dragPointer = null;
       }
     };
-    this.canvas.addEventListener('pointerup', end);
-    this.canvas.addEventListener('pointercancel', end);
-    this.canvas.addEventListener('wheel', (event) => {
+    on(this.canvas, 'pointerup', end, {}, 'pointer-up');
+    on(this.canvas, 'pointercancel', end, {}, 'pointer-cancel');
+    on(this.canvas, 'wheel', (event) => {
       event.preventDefault();
       this.zoom = clamp(this.zoom + event.deltaY * .006, 4.6, 11.5);
-    }, { passive: false });
-    window.addEventListener('resize', () => this.resize());
+    }, { passive: false }, 'wheel');
+    on(window, 'resize', () => this.resize(), {}, 'window-resize');
   }
 
   resize() {
@@ -175,11 +179,22 @@ export default class CodexViewer {
 
   setMode(mode) { this.mode = mode === 'impostor' && this.impostor ? 'impostor' : 'model'; this.updateVisibility(); }
   updateVisibility() { if (this.model) this.model.visible = this.mode === 'model'; if (this.impostor) this.impostor.visible = this.mode === 'impostor'; }
-  setActive(active) { this.active = Boolean(active); if (this.active) { this.clock.getDelta(); this.animate(); } }
+  setActive(active) {
+    const next = Boolean(active);
+    if (this.active === next) return;
+    this.active = next;
+    if (this.active) {
+      this.clock.getDelta();
+      this.animate();
+    } else if (this.animationFrame) {
+      cancelAnimationFrame(this.animationFrame);
+      this.animationFrame = 0;
+    }
+  }
 
   animate = () => {
     if (!this.active) return;
-    requestAnimationFrame(this.animate);
+    this.animationFrame = requestAnimationFrame(this.animate);
     const dt = Math.min(.05, this.clock.getDelta());
     this.update(dt);
     this.renderer.render(this.scene, this.camera);
@@ -221,6 +236,15 @@ export default class CodexViewer {
       this.impostor.quaternion.copy(this.camera.quaternion);
       this.onFrame?.(frame);
     }
+  }
+
+  dispose() {
+    this.setActive(false);
+    this.events.dispose();
+    this.disposeObject(this.model);
+    this.disposeObject(this.impostor);
+    this.disposeImpostorMaps();
+    this.renderer.dispose();
   }
 
   disposeObject(object) {

@@ -14,6 +14,7 @@ import CodexViewer from './codex-viewer.js';
 import { createPremiumGuardian, createPremiumEnemy, createPremiumSacredTree, applyPremiumBossPhase, prepareImportedGuardian, prepareImportedEnemy } from './premium-assets.js';
 import { DirectionalImpostorSelector } from './engine/directional-impostor.js';
 import { loadCodexProgress, saveCodexProgress, recordCodexEncounter, recordCodexDefeat, recordGuardianUse, getCodexKnowledge, getCodexProgressSummary, getWeaknessDamageBonus, getWeaknessLabel } from './codex-progression.js';
+import { RuntimeLifecycle } from './runtime-lifecycle.js';
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -69,7 +70,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '3.1.0';
+const GAME_VERSION = '3.2.0';
 
 const FIRST_MISSIONS = [
   { id: 'summons', title: '수호대 3회 강림', goal: 3, reward: 35, copy: '무료 강림도 포함됩니다.' },
@@ -105,6 +106,7 @@ class DokkaebiLuckDefense {
     this.sound = new SoundEngine();
     this.clock = new THREE.Clock();
     this.engine = new MobileGameEngine();
+    this.lifecycle = new RuntimeLifecycle();
     this.lowPower = this.engine.device.mobile || this.engine.device.lowEnd;
     this.state = 'loading';
     this.previousState = 'title';
@@ -119,10 +121,6 @@ class DokkaebiLuckDefense {
     this.lookPointer = null;
     this.lookPointers = new Map();
     this.pinchState = null;
-    this.toastTimer = null;
-    this.bannerTimer = null;
-    this.missionTimer = null;
-    this.evolutionTimer = null;
     this.cinematic = null;
     this.input = { x: 0, y: 0, keys: new Set() };
     this.moveTarget = null;
@@ -203,6 +201,7 @@ class DokkaebiLuckDefense {
     this.codexViewer = null;
     this.fxAtlasTexture = null;
     this.viewportProfile = '';
+    this.uiBound = false;
 
     this.assertRequiredUI();
     this.applyViewportUiProfile();
@@ -217,6 +216,32 @@ class DokkaebiLuckDefense {
     this.ready = this.initializeGame();
 
     console.info(`[DokkaebiLuckDefense3D] game v${GAME_VERSION} / engine v${ENGINE_VERSION}`, this.engine.diagnostics);
+  }
+
+  listen(target, type, handler, options = {}, key = '') {
+    return this.lifecycle.events.listen(target, type, handler, options, key);
+  }
+
+  scheduleUi(callback, delay = 0, options = {}) {
+    return this.lifecycle.ui.schedule(callback, delay, options);
+  }
+
+  scheduleRun(callback, delay = 0, options = {}) {
+    const runId = this.runId;
+    const guard = options.guard;
+    return this.lifecycle.run.schedule(callback, delay, {
+      ...options,
+      guard: () => this.runId === runId && (!guard || guard())
+    });
+  }
+
+  scheduleEffect(callback, delay = 0, options = {}) {
+    const runId = this.runId;
+    const guard = options.guard;
+    return this.lifecycle.effects.schedule(callback, delay, {
+      ...options,
+      guard: () => this.runId === runId && (!guard || guard())
+    });
   }
 
   assertRequiredUI() {
@@ -256,7 +281,7 @@ class DokkaebiLuckDefense {
     ui.title.classList.add('visible');
     ui.qualityBadge.textContent = `에셋 ${this.engine.assetQualityTier.toUpperCase()} · GLB/KTX2 준비`;
     ui.qualityBadge.classList.remove('hidden');
-    window.setTimeout(() => ui.qualityBadge.classList.add('hidden'), 2200);
+    this.scheduleUi(() => ui.qualityBadge.classList.add('hidden'), 2200, { key: 'quality-badge-hide' });
     return this;
   }
 
@@ -322,8 +347,8 @@ class DokkaebiLuckDefense {
 
     this.raycaster = new THREE.Raycaster();
     this.pointer = new THREE.Vector2();
-    window.addEventListener('resize', () => this.onResize());
-    window.visualViewport?.addEventListener('resize', () => this.applyViewportUiProfile());
+    this.listen(window, 'resize', () => this.onResize(), {}, 'window-resize');
+    if (window.visualViewport) this.listen(window.visualViewport, 'resize', () => this.applyViewportUiProfile(), {}, 'visual-viewport-resize');
   }
 
   initReusablePools() {
@@ -412,74 +437,79 @@ class DokkaebiLuckDefense {
   }
 
   bindUI() {
-    ui.start.addEventListener('click', () => { this.sound.unlock(); this.sound.ui(); this.startRun({ reuseSeed: false }); });
-    ui.how.addEventListener('click', () => this.showModal(ui.howModal));
-    ui.collection.addEventListener('click', () => this.openCodex(ui.collection));
-    ui.meta.addEventListener('click', () => this.openMetaModal());
-    ui.controls.addEventListener('click', () => this.openControlSettings(null, ui.controls));
-    ui.pauseControls.addEventListener('click', () => this.openControlSettings(ui.pauseModal, ui.pauseControls));
-    ui.resultGrowth.addEventListener('click', () => this.openMetaModal());
-    ui.runModeOptions.addEventListener('click', (event) => {
+    if (this.uiBound) return;
+    this.uiBound = true;
+    const on = (target, type, handler, options = {}, key = '') => this.listen(target, type, handler, options, key);
+
+    on(ui.start, 'click', () => { this.sound.unlock(); this.sound.ui(); this.startRun({ reuseSeed: false }); }, {}, 'start-run');
+    on(ui.how, 'click', () => this.showModal(ui.howModal), {}, 'open-how');
+    on(ui.collection, 'click', () => this.openCodex(ui.collection), {}, 'open-codex');
+    on(ui.meta, 'click', () => this.openMetaModal(), {}, 'open-meta');
+    on(ui.controls, 'click', () => this.openControlSettings(null, ui.controls), {}, 'open-controls-title');
+    on(ui.pauseControls, 'click', () => this.openControlSettings(ui.pauseModal, ui.pauseControls), {}, 'open-controls-pause');
+    on(ui.resultGrowth, 'click', () => this.openMetaModal(), {}, 'open-meta-result');
+    on(ui.runModeOptions, 'click', (event) => {
       const button = event.target.closest('[data-run-mode]');
       if (button) this.selectRunMode(button.dataset.runMode);
-    });
-    ui.seedModeOptions.addEventListener('click', (event) => {
+    }, {}, 'run-mode-options');
+    on(ui.seedModeOptions, 'click', (event) => {
       const button = event.target.closest('[data-seed-mode]');
       if (button) this.selectSeedMode(button.dataset.seedMode);
-    });
-    $$('[data-close]').forEach((button) => button.addEventListener('click', () => this.hideModal($(`#${button.dataset.close}`))));
-    ui.collectionTabs.addEventListener('click', (event) => {
+    }, {}, 'seed-mode-options');
+    $$('[data-close]').forEach((button, index) => on(button, 'click', () => this.hideModal($(`#${button.dataset.close}`)), {}, `modal-close-${button.dataset.close}-${index}`));
+    on(ui.collectionTabs, 'click', (event) => {
       const button = event.target.closest('[data-codex-tab]');
       if (button) this.renderCodex(button.dataset.codexTab);
-    });
-    ui.collectionGrid.addEventListener('click', (event) => {
+    }, {}, 'codex-tabs');
+    on(ui.collectionGrid, 'click', (event) => {
       const card = event.target.closest('[data-codex-id]');
       if (card) this.openCodexPreview(card.dataset.codexSection, card.dataset.codexId, card);
-    });
-    ui.collectionGrid.addEventListener('keydown', (event) => {
+    }, {}, 'codex-grid-click');
+    on(ui.collectionGrid, 'keydown', (event) => {
       if (!['Enter', ' '].includes(event.key)) return;
       const card = event.target.closest('[data-codex-id]');
       if (!card) return;
       event.preventDefault();
       this.openCodexPreview(card.dataset.codexSection, card.dataset.codexId, card);
-    });
-    $$('[data-codex-state]').forEach((button) => button.addEventListener('click', () => {
+    }, {}, 'codex-grid-keydown');
+    $$('[data-codex-state]').forEach((button, index) => on(button, 'click', () => {
       this.codexViewer?.setState(button.dataset.codexState);
       $$('[data-codex-state]').forEach((item) => item.classList.toggle('active', item === button));
       ui.codexFrameStatus.textContent = `${button.textContent} 동작 미리보기`;
-    }));
-    $$('[data-codex-mode]').forEach((button) => button.addEventListener('click', () => {
+    }, {}, `codex-state-${index}`));
+    $$('[data-codex-mode]').forEach((button, index) => on(button, 'click', () => {
       if (button.disabled) return;
       this.codexViewer?.setMode(button.dataset.codexMode);
       $$('[data-codex-mode]').forEach((item) => item.classList.toggle('active', item === button));
       const impostor = button.dataset.codexMode === 'impostor';
       ui.codexLodReadout.textContent = impostor ? 'LOD2 · 11방향 WebP' : 'LOD0 · 절차형 3D';
       ui.codexDirectionReadout.textContent = impostor ? '프레임 01 / 11' : '3D 자유 회전';
-    }));
-    ui.sound.addEventListener('click', () => {
+    }, {}, `codex-mode-${index}`));
+    on(ui.sound, 'click', () => {
       this.sound.enabled = !this.sound.enabled;
       ui.sound.textContent = this.sound.enabled ? '♪' : '×';
       if (this.sound.enabled) { this.sound.unlock(); this.sound.ui(); }
-    });
-    ui.menu.addEventListener('click', () => this.pauseGame());
-    ui.resume.addEventListener('click', () => this.resumeGame());
-    ui.restart.addEventListener('click', () => { this.hideModal(ui.pauseModal); this.startRun({ reuseSeed: true }); });
-    ui.titleBtn.addEventListener('click', () => { this.hideModal(ui.pauseModal); this.returnToTitle(); });
-    ui.resultRetry.addEventListener('click', () => { this.hideModal(ui.resultModal); this.startRun({ reuseSeed: true }); });
-    ui.resultNewRun.addEventListener('click', () => { this.hideModal(ui.resultModal); this.startRun({ reuseSeed: false }); });
-    ui.performanceExport.addEventListener('click', () => this.exportPerformanceLog());
-    ui.saveScore.addEventListener('click', () => this.saveScore());
-    ui.summon.addEventListener('click', () => this.summonUnit());
-    ui.wave.addEventListener('click', () => this.startWave());
-    ui.dash.addEventListener('click', () => this.useDash());
-    ui.skill.addEventListener('click', () => this.useHeroSkill());
-    ui.burst.addEventListener('click', () => this.activateGuardianBurst());
-    ui.synergyToggle.addEventListener('click', () => ui.synergyPanel.classList.toggle('collapsed'));
-    ui.leftUiToggle.addEventListener('click', () => this.toggleLeftMobileUi());
+    }, {}, 'sound-toggle');
+    on(ui.menu, 'click', () => this.pauseGame(), {}, 'pause');
+    on(ui.resume, 'click', () => this.resumeGame(), {}, 'resume');
+    on(ui.restart, 'click', () => { this.hideModal(ui.pauseModal); this.startRun({ reuseSeed: true }); }, {}, 'restart');
+    on(ui.titleBtn, 'click', () => { this.hideModal(ui.pauseModal); this.returnToTitle(); }, {}, 'return-title');
+    on(ui.resultRetry, 'click', () => { this.hideModal(ui.resultModal); this.startRun({ reuseSeed: true }); }, {}, 'retry');
+    on(ui.resultNewRun, 'click', () => { this.hideModal(ui.resultModal); this.startRun({ reuseSeed: false }); }, {}, 'new-run');
+    on(ui.performanceExport, 'click', () => this.exportPerformanceLog(), {}, 'performance-export');
+    on(ui.saveScore, 'click', () => this.saveScore(), {}, 'save-score');
+    on(ui.summon, 'click', () => this.summonUnit(), {}, 'summon');
+    on(ui.wave, 'click', () => this.startWave(), {}, 'wave');
+    on(ui.dash, 'click', () => this.useDash(), {}, 'dash');
+    on(ui.skill, 'click', () => this.useHeroSkill(), {}, 'skill');
+    on(ui.burst, 'click', () => this.activateGuardianBurst(), {}, 'burst');
+    on(ui.synergyToggle, 'click', () => ui.synergyPanel.classList.toggle('collapsed'), {}, 'synergy-toggle');
+    on(ui.leftUiToggle, 'click', () => this.toggleLeftMobileUi(), {}, 'left-ui-toggle');
     try { this.setLeftMobileUiCollapsed(localStorage.getItem('dokkaebi-left-ui-collapsed') === '1'); } catch { this.setLeftMobileUiCollapsed(false); }
-    ui.contractSkip.addEventListener('click', () => this.skipContract());
+    on(ui.contractSkip, 'click', () => this.skipContract(), {}, 'contract-skip');
+
     const bindControlRange = (element, key, transform = (value) => value) => {
-      element.addEventListener('input', () => this.updateControlSetting(key, transform(Number(element.value))));
+      on(element, 'input', () => this.updateControlSetting(key, transform(Number(element.value))), {}, `control-range-${key}`);
     };
     bindControlRange(ui.rotateSensitivity, 'rotateSensitivity', (value) => value / 100);
     bindControlRange(ui.pinchSensitivity, 'pinchSensitivity', (value) => value / 100);
@@ -488,23 +518,44 @@ class DokkaebiLuckDefense {
     bindControlRange(ui.maximumZoom, 'maxZoom', (value) => value / 10);
     bindControlRange(ui.shakeIntensity, 'shakeIntensity', (value) => value / 100);
     bindControlRange(ui.flashIntensity, 'flashIntensity', (value) => value / 100);
-    $$('[data-control-toggle]').forEach((button) => button.addEventListener('click', () => this.updateControlSetting(button.dataset.controlToggle, button.getAttribute('aria-pressed') !== 'true')));
-    $$('[data-handedness]').forEach((button) => button.addEventListener('click', () => this.updateControlSetting('handedness', button.dataset.handedness)));
-    ui.controlsReset.addEventListener('click', () => this.resetControlSettings());
+    $$('[data-control-toggle]').forEach((button, index) => on(button, 'click', () => this.updateControlSetting(button.dataset.controlToggle, button.getAttribute('aria-pressed') !== 'true'), {}, `control-toggle-${index}`));
+    $$('[data-handedness]').forEach((button, index) => on(button, 'click', () => this.updateControlSetting('handedness', button.dataset.handedness), {}, `handedness-${index}`));
+    on(ui.controlsReset, 'click', () => this.resetControlSettings(), {}, 'controls-reset');
     this.applyControlSettings();
     this.renderControlSettings();
-    ui.unitStrip.addEventListener('click', (event) => {
+
+    on(ui.unitStrip, 'click', (event) => {
       const button = event.target.closest('[data-command-key]');
       if (!button) return;
       event.preventDefault();
       event.stopPropagation();
       this.useUnitCommand(button.dataset.commandKey);
-    });
+    }, {}, 'unit-command');
+    on(ui.metaTraitList, 'click', (event) => {
+      const button = event.target.closest('[data-meta-upgrade]');
+      if (button && !button.disabled) this.upgradeMetaTrait(button.dataset.metaUpgrade);
+    }, {}, 'meta-upgrade');
+    on(ui.relicOptions, 'click', (event) => {
+      const button = event.target.closest('[data-relic]');
+      if (button) this.selectRelic(button.dataset.relic);
+    }, {}, 'relic-select');
+    on(ui.choiceSummonOptions, 'click', (event) => {
+      const button = event.target.closest('[data-choice-type]');
+      if (button) this.selectChoiceSummon(button.dataset.choiceType);
+    }, {}, 'choice-summon-select');
+    on(ui.contractOptions, 'click', (event) => {
+      const button = event.target.closest('[data-contract]');
+      if (button) this.selectContract(button.dataset.contract);
+    }, {}, 'contract-select');
+    on(ui.blessingOptions, 'click', (event) => {
+      const button = event.target.closest('[data-blessing]');
+      if (button) this.selectBlessing(button.dataset.blessing);
+    }, {}, 'blessing-select');
 
     this.setupJoystick();
     this.setupLookControls();
 
-    window.addEventListener('keydown', (event) => {
+    on(window, 'keydown', (event) => {
       if (this.isTypingTarget(event.target)) return;
       const code = this.normalizeInputCode(event);
       const movementCodes = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
@@ -533,15 +584,15 @@ class DokkaebiLuckDefense {
         else if (topModal === ui.pauseModal || this.state === 'paused') this.resumeGame();
         else this.pauseGame();
       }
-    }, { passive: false });
-    window.addEventListener('keyup', (event) => this.input.keys.delete(this.normalizeInputCode(event)));
-    window.addEventListener('blur', () => this.resetMovementInput());
-    document.addEventListener('visibilitychange', () => {
+    }, { passive: false }, 'keyboard-down');
+    on(window, 'keyup', (event) => this.input.keys.delete(this.normalizeInputCode(event)), {}, 'keyboard-up');
+    on(window, 'blur', () => this.resetMovementInput(), {}, 'window-blur');
+    on(document, 'visibilitychange', () => {
       if (document.hidden) {
         this.resetMovementInput();
         if (this.state === 'playing') this.pauseGame();
       }
-    });
+    }, {}, 'visibility-change');
   }
 
   loadControlSettings() {
@@ -676,16 +727,16 @@ class DokkaebiLuckDefense {
       this.input.y = 0;
       ui.joystickKnob.style.transform = 'translate(-50%, -50%)';
     };
-    ui.joystick.addEventListener('pointerdown', (event) => {
+    this.listen(ui.joystick, 'pointerdown', (event) => {
       pointerId = event.pointerId;
       ui.joystick.setPointerCapture(pointerId);
       move(event);
-    });
-    ui.joystick.addEventListener('pointermove', move);
-    ui.joystick.addEventListener('pointerup', end);
-    ui.joystick.addEventListener('pointercancel', end);
-    window.addEventListener('pointerup', end);
-    window.addEventListener('pointercancel', end);
+    }, {}, 'joystick-down');
+    this.listen(ui.joystick, 'pointermove', move, {}, 'joystick-move');
+    this.listen(ui.joystick, 'pointerup', end, {}, 'joystick-up');
+    this.listen(ui.joystick, 'pointercancel', end, {}, 'joystick-cancel');
+    this.listen(window, 'pointerup', end, {}, 'joystick-window-up');
+    this.listen(window, 'pointercancel', end, {}, 'joystick-window-cancel');
   }
 
   normalizeInputCode(event) {
@@ -732,7 +783,7 @@ class DokkaebiLuckDefense {
       this.pinchState = { distance: pointerDistance(), cameraDistance: this.cameraDistanceTarget };
       this.lookPointer = null;
     };
-    ui.lookZone.addEventListener('pointerdown', (event) => {
+    this.listen(ui.lookZone, 'pointerdown', (event) => {
       if (this.state !== 'playing') return;
       if (event.pointerType === 'mouse' && event.button !== 0) return;
       this.lookPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
@@ -750,8 +801,8 @@ class DokkaebiLuckDefense {
         startedAt: performance.now(),
         dragging: false
       };
-    });
-    ui.lookZone.addEventListener('pointermove', (event) => {
+    }, {}, 'look-down');
+    this.listen(ui.lookZone, 'pointermove', (event) => {
       if (!this.lookPointers.has(event.pointerId)) return;
       this.lookPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
       if (this.lookPointers.size >= 2 && this.pinchState) {
@@ -772,7 +823,7 @@ class DokkaebiLuckDefense {
       this.cameraPitch = clamp(this.cameraPitch + dy * .004 * rotationScale, .38, .9);
       this.lookPointer.x = event.clientX;
       this.lookPointer.y = event.clientY;
-    });
+    }, {}, 'look-move');
     const end = (event) => {
       const wasPinching = Boolean(this.pinchState);
       const pointer = this.lookPointer;
@@ -792,15 +843,15 @@ class DokkaebiLuckDefense {
         this.setMoveTargetFromScreen(event.clientX, event.clientY);
       }
     };
-    ui.lookZone.addEventListener('pointerup', end);
-    ui.lookZone.addEventListener('pointercancel', end);
-    ui.lookZone.addEventListener('wheel', (event) => {
+    this.listen(ui.lookZone, 'pointerup', end, {}, 'look-up');
+    this.listen(ui.lookZone, 'pointercancel', end, {}, 'look-cancel');
+    this.listen(ui.lookZone, 'wheel', (event) => {
       if (this.state !== 'playing') return;
       event.preventDefault();
       const normalized = event.deltaMode === 1 ? event.deltaY * 16 : event.deltaMode === 2 ? event.deltaY * innerHeight : event.deltaY;
       const { min, max } = this.getCameraZoomBounds();
       this.cameraDistanceTarget = clamp(this.cameraDistanceTarget + normalized * .006 * this.controlSettings.wheelSensitivity, min, max);
-    }, { passive: false });
+    }, { passive: false }, 'look-wheel');
   }
 
   setMoveTargetFromScreen(clientX, clientY) {
@@ -1079,9 +1130,6 @@ class DokkaebiLuckDefense {
         <button class="meta-upgrade" data-meta-upgrade="${id}" ${level >= 5 || !affordable ? 'disabled' : ''}>${level >= 5 ? '최대 성장' : `혼불 ${cost} · 강화`}</button>
       </article>`;
     }).join('');
-    ui.metaTraitList.querySelectorAll('[data-meta-upgrade]').forEach((button) => {
-      button.addEventListener('click', () => this.upgradeMetaTrait(button.dataset.metaUpgrade));
-    });
   }
 
   renderRunPreview() {
@@ -1141,32 +1189,33 @@ class DokkaebiLuckDefense {
   }
 
   showMission(title, copy, kicker = 'MOON MARKET ALERT', duration = 1600) {
-    clearTimeout(this.missionTimer);
+    this.lifecycle.ui.cancel('mission-hide');
+    this.lifecycle.ui.cancel('mission-collapse');
     ui.missionKicker.textContent = kicker;
     ui.missionTitle.textContent = title;
     ui.missionCopy.textContent = copy;
-    ui.mission.classList.remove('show');
-    ui.mission.classList.remove('hidden');
+    ui.mission.classList.remove('show', 'hidden');
     requestAnimationFrame(() => ui.mission.classList.add('show'));
-    this.missionTimer = window.setTimeout(() => {
+    this.scheduleUi(() => {
       ui.mission.classList.remove('show');
-      window.setTimeout(() => ui.mission.classList.add('hidden'), 320);
-    }, duration);
+      this.scheduleUi(() => ui.mission.classList.add('hidden'), 320, { key: 'mission-collapse' });
+    }, duration, { key: 'mission-hide' });
   }
 
   playMythicEvolution(unit) {
     if (!unit || unit.rank !== 5 || unit.showcase) return;
     const config = UNIT_TYPES[unit.type];
-    clearTimeout(this.evolutionTimer);
+    this.lifecycle.ui.cancel('evolution-hide');
+    this.lifecycle.ui.cancel('evolution-collapse');
     ui.evolutionSymbol.textContent = config.symbol;
     ui.evolutionName.textContent = `${config.name} · 신화 각성`;
     ui.evolutionUltimate.textContent = `궁극기 「${config.ultimateName}」 개방`;
     ui.evolution.classList.remove('hidden');
     requestAnimationFrame(() => ui.evolution.classList.add('show'));
-    this.evolutionTimer = window.setTimeout(() => {
+    this.scheduleUi(() => {
       ui.evolution.classList.remove('show');
-      window.setTimeout(() => ui.evolution.classList.add('hidden'), 360);
-    }, 2300);
+      this.scheduleUi(() => ui.evolution.classList.add('hidden'), 360, { key: 'evolution-collapse' });
+    }, 2300, { key: 'evolution-hide' });
     this.cinematic = { unit, time: 2.25, total: 2.25, startYaw: this.cameraYaw };
     this.score += 1200;
     unit.ultimateCooldown = 1.6;
@@ -1177,10 +1226,10 @@ class DokkaebiLuckDefense {
     const position = unit.group.position.clone();
     const runId = this.runId;
     for (let index = 0; index < 5; index += 1) {
-      window.setTimeout(() => {
-        if (this.runId !== runId || !unit.group.parent) return;
+      this.scheduleEffect(() => {
+        if (!unit.group.parent) return;
         this.spawnRing(position, RANKS[4].color, 2.6 + index * 1.15);
-      }, index * 95);
+      }, index * 95, { guard: () => this.runId === runId });
     }
     this.spawnParticles(position.clone().add(new THREE.Vector3(0, 1.4, 0)), RANKS[4].color, 54, 7.2);
   }
@@ -1206,7 +1255,7 @@ class DokkaebiLuckDefense {
       this.firstMissionActive = false;
       try { localStorage.setItem('dokkaebi-first-missions-complete', '1'); } catch {}
       this.showMission('초행 수호 임무 완수', '이제 진짜 운빨 수호대의 밤이 시작됩니다.', 'FIRST NIGHT COMPLETE', 1900);
-      window.setTimeout(() => ui.firstMissionPanel.classList.add('hidden'), 900);
+      this.scheduleRun(() => ui.firstMissionPanel.classList.add('hidden'), 900, { key: 'first-mission-hide' });
     }
     this.updateFirstMissionPanel();
     if (completedAny) this.updateHUD();
@@ -1241,7 +1290,7 @@ class DokkaebiLuckDefense {
     node.style.top = `${y}px`;
     ui.combatTextRoot.appendChild(node);
     this.combatTextCount += 1;
-    window.setTimeout(() => {
+    this.scheduleUi(() => {
       node.remove();
       this.combatTextCount = Math.max(0, this.combatTextCount - 1);
     }, 760);
@@ -1509,7 +1558,7 @@ class DokkaebiLuckDefense {
 
   setDirectionalImpostorState(impostor, state = 'idle') {
     if (!impostor) return;
-    const normalized = state === 'attack' ? 'attack' : state === 'move' ? 'move' : 'idle';
+    const normalized = state === 'attack' || state === 'skill' ? 'attack' : state === 'move' || state === 'run' ? 'move' : 'idle';
     if (normalized === impostor.state) return;
     impostor.state = normalized;
     impostor.material.map = impostor.textures[normalized] || impostor.textures.idle;
@@ -2403,9 +2452,6 @@ class DokkaebiLuckDefense {
       <button class="relic-option" data-relic="${relic.id}">
         <span>${relic.icon}</span><b>${relic.name}</b><p>${relic.desc}</p><small>${relic.grade} · ${relic.tag}</small>
       </button>`).join('');
-    ui.relicOptions.querySelectorAll('[data-relic]').forEach((button) => {
-      button.addEventListener('click', () => this.selectRelic(button.dataset.relic), { once: true });
-    });
     this.showModal(ui.relicModal);
   }
 
@@ -2424,7 +2470,7 @@ class DokkaebiLuckDefense {
     this.showCombo(`${relic.icon} ${relic.cursed ? '저주 전설' : '원정 유물'} · ${relic.name}`, 1700);
     if (activatedSets.length) {
       this.runStats.relicSetsActivated += activatedSets.length;
-      window.setTimeout(() => this.showMission(`${activatedSets[0].icon} ${activatedSets[0].name}`, activatedSets[0].desc, 'RELIC SET AWAKENED', 1450), 420);
+      this.scheduleRun(() => this.showMission(`${activatedSets[0].icon} ${activatedSets[0].name}`, activatedSets[0].desc, 'RELIC SET AWAKENED', 1450), 420);
     }
     this.advancePostWaveRewards();
     this.updateHUD();
@@ -2529,6 +2575,8 @@ class DokkaebiLuckDefense {
 
   startRun({ reuseSeed = false } = {}) {
     this.prepareRunSeed(reuseSeed);
+    this.lifecycle.beginRun();
+    this.resetTransientUi();
     this.runId = (this.runId || 0) + 1;
     const activeRunId = this.runId;
     ui.title.classList.remove('visible');
@@ -2589,7 +2637,8 @@ class DokkaebiLuckDefense {
     this.pendingDangerTimer = 0;
     this.dangerLostGrace = 0;
     ui.resultShards.textContent = '+0';
-    clearTimeout(this.evolutionTimer);
+    this.lifecycle.ui.cancel('evolution-hide');
+    this.lifecycle.ui.cancel('evolution-collapse');
     ui.evolution.classList.remove('show');
     ui.evolution.classList.add('hidden');
     this.warningFlags.clear();
@@ -2619,20 +2668,21 @@ class DokkaebiLuckDefense {
     this.updateFirstMissionPanel();
     this.updateHUD();
     this.showMission(`${this.activeRunMode.icon} ${this.activeRunMode.name}`, `${this.dailyEdict.icon} ${this.dailyEdict.name} · 첫 도깨비가 무료로 강림합니다.`, `${this.selectedSeedModeId === 'daily' ? 'TODAY' : 'SEEDED'} EXPEDITION · ${this.runSeed}`, 1700);
-    window.setTimeout(() => {
-      if (this.runId === activeRunId && this.state === 'playing' && this.units.length === 0) {
-        this.summonUnit({ free: true, guaranteedRank: 2, starter: true });
-      }
-    }, 520);
-    window.setTimeout(() => {
-      if (this.runId === activeRunId && this.state === 'playing' && !this.waveActive && this.currentWave === 0) {
+    this.scheduleRun(() => {
+      if (this.units.length === 0) this.summonUnit({ free: true, guaranteedRank: 2, starter: true });
+    }, 520, { key: 'starter-summon', guard: () => this.runId === activeRunId && this.state === 'playing' });
+    this.scheduleRun(() => {
+      if (!this.waveActive && this.currentWave === 0) {
         this.showMission('사방의 요괴문 개방', '직접 뛰어 엽전을 줍고 수호대를 늘리세요.', 'WAVE 01 · AUTO START', 1350);
         this.startWave();
       }
-    }, 2450);
+    }, 2450, { key: 'auto-wave-start', guard: () => this.runId === activeRunId && this.state === 'playing' });
   }
 
   returnToTitle() {
+    this.lifecycle.endRun();
+    this.resetTransientUi();
+    this.runId = (this.runId || 0) + 1;
     this.state = 'title';
     this.cinematic = null;
     this.cancelMoveTarget();
@@ -2645,6 +2695,27 @@ class DokkaebiLuckDefense {
     this.createWorld(true);
     this.renderMetaProgress();
     ui.title.classList.add('visible');
+  }
+
+  resetTransientUi() {
+    this.lifecycle.ui.cancel('mission-hide');
+    this.lifecycle.ui.cancel('mission-collapse');
+    this.lifecycle.ui.cancel('evolution-hide');
+    this.lifecycle.ui.cancel('evolution-collapse');
+    this.lifecycle.ui.cancel('combo-hide');
+    this.lifecycle.ui.cancel('combo-collapse');
+    this.lifecycle.ui.cancel('damage-flash-hide');
+    ui.mission.classList.remove('show');
+    ui.mission.classList.add('hidden');
+    ui.evolution.classList.remove('show');
+    ui.evolution.classList.add('hidden');
+    ui.combo.classList.remove('show');
+    ui.combo.classList.add('hidden');
+    ui.boss.classList.remove('show');
+    ui.boss.classList.add('hidden');
+    ui.damageFlash.classList.remove('show');
+    ui.combatTextRoot.replaceChildren();
+    this.combatTextCount = 0;
   }
 
   showGameUI(show) {
@@ -2709,9 +2780,6 @@ class DokkaebiLuckDefense {
         <span>${unit.symbol}</span><small>${rankConfig.name} · ${'★'.repeat(pending.rank)}</small><b>${unit.name}</b><p>${unit.role} · ${unit.description}</p>
       </button>`;
     }).join('');
-    ui.choiceSummonOptions.querySelectorAll('[data-choice-type]').forEach((button) => {
-      button.addEventListener('click', () => this.selectChoiceSummon(button.dataset.choiceType), { once: true });
-    });
     this.showModal(ui.choiceSummonModal);
     this.haptic([18, 22, 32]);
   }
@@ -2889,7 +2957,7 @@ class DokkaebiLuckDefense {
     this.updateSynergies();
     this.updateUnitStrip();
     const mergeRunId = this.runId;
-    window.setTimeout(() => { if (this.runId === mergeRunId) this.autoMerge(type, rank + 1); }, 120);
+    this.scheduleRun(() => this.autoMerge(type, rank + 1), 120, { guard: () => this.runId === mergeRunId });
     return merged;
   }
 
@@ -2941,8 +3009,8 @@ class DokkaebiLuckDefense {
       requestAnimationFrame(() => ui.boss.classList.add('show'));
       this.sound.boss();
       this.haptic([45, 40, 70]);
-      window.setTimeout(() => ui.boss.classList.remove('show'), 1900);
-      window.setTimeout(() => ui.boss.classList.add('hidden'), 2350);
+      this.scheduleRun(() => ui.boss.classList.remove('show'), 1900, { key: 'boss-banner-hide' });
+      this.scheduleRun(() => ui.boss.classList.add('hidden'), 2350, { key: 'boss-banner-collapse' });
     }
     this.showToast(`웨이브 ${this.currentWave} 시작! 사방의 요괴문을 확인하세요.`);
     this.updateHUD();
@@ -3146,7 +3214,7 @@ class DokkaebiLuckDefense {
     this.resolveWaveTrial(perfect);
     this.resolveActiveContract(perfect);
     if (this.currentWave >= this.maxWaves) {
-      window.setTimeout(() => this.finishRun(true), 900);
+      this.scheduleRun(() => this.finishRun(true), 900, { key: 'finish-run-win' });
       return;
     }
     this.buildPostWaveQueue();
@@ -3164,9 +3232,6 @@ class DokkaebiLuckDefense {
         <span>${contract.icon}</span><b>${contract.name}</b><p>${contract.desc}</p><small>${contract.tag}</small>
       </button>
     `).join('');
-    ui.contractOptions.querySelectorAll('[data-contract]').forEach((button) => {
-      button.addEventListener('click', () => this.selectContract(button.dataset.contract), { once: true });
-    });
     this.showModal(ui.contractModal);
   }
 
@@ -3220,9 +3285,9 @@ class DokkaebiLuckDefense {
       this.choiceTickets += 1;
       this.showCombo('강림 봉인 해제 · 3성 강림!', 1700);
       const runId = this.runId;
-      window.setTimeout(() => {
-        if (this.runId === runId && this.state === 'playing') this.summonUnit({ free: true, guaranteedRank: 3 });
-      }, 420);
+      this.scheduleRun(() => {
+        if (this.state === 'playing') this.summonUnit({ free: true, guaranteedRank: 3 });
+      }, 420, { guard: () => this.runId === runId });
     }
     this.activeContract = null;
     this.updateHUD();
@@ -3250,9 +3315,6 @@ class DokkaebiLuckDefense {
     ui.blessingOptions.innerHTML = options.map((blessing) => `
       <button class="blessing-option" data-blessing="${blessing.id}"><span>${blessing.icon}</span><b>${blessing.name}</b><p>${blessing.desc}</p><small>${blessing.tag}</small></button>
     `).join('');
-    ui.blessingOptions.querySelectorAll('[data-blessing]').forEach((button) => {
-      button.addEventListener('click', () => this.selectBlessing(button.dataset.blessing), { once: true });
-    });
     this.showModal(ui.blessingModal);
   }
 
@@ -3313,6 +3375,8 @@ class DokkaebiLuckDefense {
 
     if (stunned) movementStrength *= .3;
     const moving = move.lengthSq() > .0001 && movementStrength > .01;
+    const locomotionState = moving ? (this.player.dashTimer > 0 ? 'run' : 'move') : 'idle';
+    this.animations.setBaseState(this.player.animation, locomotionState);
     if (moving) {
       move.normalize();
       this.player.facing.lerp(move, .22).normalize();
@@ -3366,6 +3430,7 @@ class DokkaebiLuckDefense {
   useHeroSkill() {
     if (this.state !== 'playing' || this.player.skillCooldown > 0) return;
     this.player.skillCooldown = 13 * this.mods.skillCooldown;
+    this.animations.trigger(this.player.animation, 'skill', .52);
     this.sound.skill();
     this.haptic([25, 25, 65]);
     const center = this.player.group.position.clone();
@@ -3471,9 +3536,9 @@ class DokkaebiLuckDefense {
           enemy.slowFactor = Math.min(enemy.slowFactor, .24);
         }
       });
-      for (let index = 0; index < 3; index += 1) window.setTimeout(() => {
-        if (this.runId === runId && unit.group.parent) this.spawnRing(unit.group.position, config.color, 4 + index * 3.1);
-      }, index * 75);
+      for (let index = 0; index < 3; index += 1) this.scheduleEffect(() => {
+        if (unit.group.parent) this.spawnRing(unit.group.position, config.color, 4 + index * 3.1);
+      }, index * 75, { guard: () => this.runId === runId });
       this.spawnParticles(origin, config.color, 34, 5.5);
       affected = victims.length;
     } else if (unit.type === 'wind') {
@@ -3483,12 +3548,12 @@ class DokkaebiLuckDefense {
         .slice(0, 12);
       if (!victims.length) return false;
       victims.forEach((enemy, index) => {
-        window.setTimeout(() => {
-          if (this.runId !== runId || enemy.dead || !unit.group.parent) return;
+        this.scheduleRun(() => {
+          if (enemy.dead || !unit.group.parent) return;
           const end = enemy.group.position.clone().add(new THREE.Vector3(0, .9, 0));
           this.createLightningLine(origin, end, config.color);
           this.damageEnemy(enemy, stats.damage * 1.12, 'ultimate-wind', origin);
-        }, index * 24);
+        }, index * 24, { guard: () => this.runId === runId });
       });
       this.spawnRing(unit.group.position, config.color, 8.5);
       affected = victims.length;
@@ -3518,12 +3583,12 @@ class DokkaebiLuckDefense {
       let previous = origin;
       victims.forEach((enemy, index) => {
         const end = enemy.group.position.clone().add(new THREE.Vector3(0, .9, 0));
-        window.setTimeout(() => {
-          if (this.runId !== runId || enemy.dead) return;
+        this.scheduleRun(() => {
+          if (enemy.dead) return;
           this.createLightningLine(previous, end, config.color);
           this.damageEnemy(enemy, stats.damage * .94, 'ultimate-bell', origin);
           previous = end;
-        }, index * 48);
+        }, index * 48, { guard: () => this.runId === runId });
       });
       this.spawnParticles(origin, config.color, 28, 5.2);
       affected = victims.length;
@@ -3536,13 +3601,9 @@ class DokkaebiLuckDefense {
       const end = target.group.position.clone().add(new THREE.Vector3(0, 1.2, 0));
       for (let index = 0; index < 3; index += 1) {
         const sky = end.clone().add(new THREE.Vector3(rand(-2.5, 2.5), 9 + index * 1.2, rand(-2.5, 2.5)));
-        window.setTimeout(() => {
-          if (this.runId === runId) this.createLightningLine(sky, end, config.color);
-        }, index * 65);
+        this.scheduleEffect(() => this.createLightningLine(sky, end, config.color), index * 65, { guard: () => this.runId === runId });
       }
-      window.setTimeout(() => {
-        if (this.runId === runId) this.damageEnemy(target, damage, 'ultimate-thunder', origin);
-      }, 130);
+      this.scheduleRun(() => this.damageEnemy(target, damage, 'ultimate-thunder', origin), 130, { guard: () => this.runId === runId && !target.dead });
       this.spawnRing(target.group.position, config.color, 3.7);
       this.shake = Math.max(this.shake, .58);
       affected = 1;
@@ -3705,7 +3766,7 @@ class DokkaebiLuckDefense {
 
       if (!abilityLocked) {
         if (distance>2.2) {
-          this.animations.setState(enemy.animation, 'move');
+          this.animations.setBaseState(enemy.animation, 'move');
           const direction=tempV.set(-position.x,0,-position.z).normalize();
           let speed=enemy.speed*enemy.slowFactor;
           if (enemy.boss && enemy.specialTimer<.7) speed*=1.7;
@@ -3713,7 +3774,7 @@ class DokkaebiLuckDefense {
           enemy.group.rotation.y=this.lerpAngle(enemy.group.rotation.y,Math.atan2(direction.x,direction.z),1-Math.pow(.002,dt));
           enemy.group.position.y=Math.sin(this.elapsed*(enemy.boss?4:7)+enemy.phase)*(.04*enemy.group.userData.scale);
         } else {
-          this.animations.setState(enemy.animation, 'idle');
+          this.animations.setBaseState(enemy.animation, 'idle');
           enemy.attackTimer-=dt;
           if (enemy.attackTimer<=0) { enemy.attackTimer=enemy.boss?1.45:1;this.animations.trigger(enemy.animation, 'attack', .32);this.damageCore(enemy.damage); }
         }
@@ -4203,9 +4264,9 @@ class DokkaebiLuckDefense {
   serpentMoonDance(enemy) {
     this.serpentPoisonRings(enemy);
     const runId = this.runId;
-    window.setTimeout(() => {
-      if (this.runId === runId && enemy && !enemy.dead) this.serpentSpiritSnare(enemy);
-    }, 720);
+    this.scheduleRun(() => {
+      if (enemy && !enemy.dead) this.serpentSpiritSnare(enemy);
+    }, 720, { guard: () => this.runId === runId });
     this.showCombo('청월 윤무 · 연속 장판!', 1100);
   }
 
@@ -4417,7 +4478,7 @@ class DokkaebiLuckDefense {
     this.showCombatText(new THREE.Vector3(0, this.core?.userData?.damageAnchorY || 4.55, 0), reduced, { label: `-${Math.ceil(reduced)}` });
     this.core.userData.hitPulse=.35;
     ui.damageFlash.classList.add('show');
-    window.setTimeout(()=>ui.damageFlash.classList.remove('show'),100);
+    this.scheduleUi(() => ui.damageFlash.classList.remove('show'), 100, { key: 'damage-flash-hide' });
     this.shake=Math.max(this.shake,.25);
     this.haptic([25, 25, 35]);
     this.spawnParticles(new THREE.Vector3(0,this.core?.userData?.impactY || 3.7,.78),0xff6688,10,3.5);
@@ -4596,13 +4657,13 @@ class DokkaebiLuckDefense {
   }
 
   spawnMergeEffect(position,color,rank) {
-    for(let i=0;i<3;i+=1)setTimeout(()=>this.spawnRing(position,color,2.4+i*.9),i*90);
+    for (let i = 0; i < 3; i += 1) this.scheduleEffect(() => this.spawnRing(position, color, 2.4 + i * .9), i * 90);
     this.spawnParticles(position.clone().add(new THREE.Vector3(0,1.2,0)),color,24+rank*5,5.5);
   }
 
   spawnSkillEffect(position) {
     const color=0x6befff;
-    for(let i=0;i<4;i+=1)setTimeout(()=>this.spawnRing(position,color,3+i*1.75),i*70);
+    for (let i = 0; i < 4; i += 1) this.scheduleEffect(() => this.spawnRing(position, color, 3 + i * 1.75), i * 70);
     for(let i=0;i<18;i+=1){
       const angle=i/18*Math.PI*2;
       const start=position.clone().add(new THREE.Vector3(Math.cos(angle)*.5,1,Math.sin(angle)*.5));
@@ -4876,18 +4937,21 @@ class DokkaebiLuckDefense {
   }
 
   showToast(message) {
-    clearTimeout(this.toastTimer);
-    ui.toast.textContent=message;
+    ui.toast.textContent = message;
     ui.toast.classList.add('show');
-    this.toastTimer=setTimeout(()=>ui.toast.classList.remove('show'),1800);
+    this.scheduleUi(() => ui.toast.classList.remove('show'), 1800, { key: 'toast-hide' });
   }
 
-  showCombo(message,duration=1100) {
-    clearTimeout(this.bannerTimer);
-    ui.comboText.textContent=message;
+  showCombo(message, duration = 1100) {
+    this.lifecycle.ui.cancel('combo-hide');
+    this.lifecycle.ui.cancel('combo-collapse');
+    ui.comboText.textContent = message;
     ui.combo.classList.remove('hidden');
-    requestAnimationFrame(()=>ui.combo.classList.add('show'));
-    this.bannerTimer=setTimeout(()=>{ui.combo.classList.remove('show');setTimeout(()=>ui.combo.classList.add('hidden'),250);},duration);
+    requestAnimationFrame(() => ui.combo.classList.add('show'));
+    this.scheduleUi(() => {
+      ui.combo.classList.remove('show');
+      this.scheduleUi(() => ui.combo.classList.add('hidden'), 250, { key: 'combo-collapse' });
+    }, duration, { key: 'combo-hide' });
   }
 
   exportPerformanceLog() {
@@ -4916,7 +4980,8 @@ class DokkaebiLuckDefense {
         engine: this.engine.diagnostics,
         assets: this.assetPipeline?.diagnostics || null,
         chunks: this.engine.worldChunks.diagnostics,
-        animations: this.animations?.diagnostics || null
+        animations: this.animations?.diagnostics || null,
+        lifecycle: this.lifecycle.diagnostics
       },
       settings: this.controlSettings,
       viewport: { width: window.innerWidth, height: window.innerHeight, pixelRatio: window.devicePixelRatio || 1 },
@@ -4930,7 +4995,7 @@ class DokkaebiLuckDefense {
     document.body.appendChild(anchor);
     anchor.click();
     anchor.remove();
-    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    this.lifecycle.system.schedule(() => URL.revokeObjectURL(url), 1000);
     this.showToast('성능 로그 JSON을 저장했습니다.');
   }
 
@@ -4944,8 +5009,10 @@ class DokkaebiLuckDefense {
   }
 
   finishRun(won) {
-    if(this.state==='result')return;
-    this.state='result';this.waveActive=false;this.cinematic=null;this.showGameUI(false);
+    if (this.state === 'result') return;
+    this.lifecycle.endRun();
+    this.resetTransientUi();
+    this.state = 'result';this.waveActive=false;this.cinematic=null;this.showGameUI(false);
     ui.evolution.classList.remove('show');ui.evolution.classList.add('hidden');
     ui.bossHealth.classList.add('hidden');
     document.body.classList.remove('boss-active');
@@ -4978,7 +5045,7 @@ class DokkaebiLuckDefense {
     ui.resultShards.textContent = `+${shardReward}`;
     ui.resultShardsTotal.textContent = this.metaProgress.shards.toLocaleString();
     this.renderLeaderboard(this.getLocalScores());
-    window.setTimeout(()=>this.showModal(ui.resultModal),700);
+    this.scheduleUi(() => { if (this.state === 'result') this.showModal(ui.resultModal); }, 700, { key: 'result-modal-show' });
   }
 
   getLocalScores() {
@@ -5017,7 +5084,7 @@ class DokkaebiLuckDefense {
     this.qualityScale = this.engine.qualityScale;
     ui.qualityBadge.textContent = `모바일 엔진 ${result.tier.toUpperCase()} · ${Math.round(result.fps)} FPS · 해상도 ${Math.round(this.qualityScale * 100)}% · FX ${Math.round(this.engine.effectBudgetScale * 100)}%`;
     ui.qualityBadge.classList.remove('hidden');
-    window.setTimeout(() => ui.qualityBadge.classList.add('hidden'), 2400);
+    this.scheduleUi(() => ui.qualityBadge.classList.add('hidden'), 2400, { key: 'quality-badge-hide' });
     this.qualityAdjusted = true;
   }
 
@@ -5080,6 +5147,7 @@ class DokkaebiLuckDefense {
       chunks: this.engine.worldChunks.diagnostics,
       assets: this.assetPipeline?.diagnostics,
       animations: this.animations?.diagnostics,
+      lifecycle: this.lifecycle.diagnostics,
       pools: {
         projectiles: this.projectiles.length,
         projectileCapacity: this.projectilePoolCapacity,

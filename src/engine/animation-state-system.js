@@ -2,8 +2,10 @@ import * as THREE from 'three';
 
 const DEFAULT_ALIASES = Object.freeze({
   idle: ['idle', 'stand', 'breath'],
-  move: ['walk', 'run', 'move'],
+  move: ['walk', 'move'],
+  run: ['run', 'sprint', 'dash'],
   attack: ['attack', 'strike', 'cast', 'shoot'],
+  skill: ['skill', 'ultimate', 'special', 'spell'],
   hit: ['hit', 'hurt', 'damage'],
   death: ['death', 'die', 'dead']
 });
@@ -35,7 +37,7 @@ export class AnimationStateSystem {
       if (clip && mixer) actions[state] = mixer.clipAction(clip);
     }
     const controller = {
-      root, mixer, actions, state: '', previousState: '', stateTime: 0,
+      root, mixer, actions, state: '', previousState: '', baseState: 'idle', returnState: 'idle', stateTime: 0,
       procedural, enabled: true, visibleLastFrame: true, oneShotUntil: 0,
       baseY: root.position.y, baseScale: root.scale.clone(), phase: Math.random() * Math.PI * 2,
       parts: root.userData?.parts || {}, partBase: {}
@@ -65,19 +67,40 @@ export class AnimationStateSystem {
 
   setState(controller, state, { immediate = false, oneShot = false, duration = 0.25 } = {}) {
     if (!controller || !controller.enabled) return;
-    if (controller.state === state && !oneShot) return;
-    controller.previousState = controller.state;
+    if (!oneShot && controller.oneShotUntil > 0) {
+      controller.baseState = state;
+      controller.returnState = state;
+      return;
+    }
+    if (controller.state === state && !oneShot) {
+      controller.baseState = state;
+      return;
+    }
+    const outgoingState = controller.state;
+    controller.previousState = outgoingState;
+    if (oneShot) controller.returnState = controller.oneShotUntil > 0 ? controller.returnState : controller.baseState || outgoingState || 'idle';
+    else {
+      controller.baseState = state;
+      controller.returnState = state;
+    }
     controller.state = state;
     controller.stateTime = 0;
-    controller.oneShotUntil = oneShot ? duration : 0;
+    controller.oneShotUntil = oneShot ? Math.max(0.01, duration) : 0;
     const next = controller.actions[state];
     if (next) {
-      const current = controller.actions[controller.previousState];
+      const current = controller.actions[outgoingState];
       if (current && current !== next) current.fadeOut(immediate ? 0 : 0.12);
       next.reset().setLoop(oneShot ? THREE.LoopOnce : THREE.LoopRepeat, oneShot ? 1 : Infinity);
       next.clampWhenFinished = oneShot;
       next.fadeIn(immediate ? 0 : 0.12).play();
     }
+  }
+
+  setBaseState(controller, state, options = {}) {
+    if (!controller || !controller.enabled) return;
+    controller.baseState = state;
+    controller.returnState = state;
+    if (controller.oneShotUntil <= 0) this.setState(controller, state, options);
   }
 
   trigger(controller, state, duration = 0.22) {
@@ -92,7 +115,7 @@ export class AnimationStateSystem {
     controller.stateTime += dt;
     if (controller.oneShotUntil > 0) {
       controller.oneShotUntil -= dt;
-      if (controller.oneShotUntil <= 0) this.setState(controller, controller.previousState || 'idle');
+      if (controller.oneShotUntil <= 0) this.setState(controller, controller.returnState || controller.baseState || 'idle');
     }
     if (!controller.procedural || controller.mixer || !inRange) return;
     const t = controller.stateTime;
@@ -111,15 +134,18 @@ export class AnimationStateSystem {
     if (rankBeads) rankBeads.rotation.y += dt * .8;
     if (halo) halo.rotation.z += dt * .48;
     if (signature) signature.position.y = (signature.userData.baseY ?? signature.position.y) + Math.sin(t * 3 + phase) * .025;
-    if (controller.state === 'move') {
-      const stride = Math.sin(t * 10.5 + phase);
-      controller.root.rotation.z = stride * 0.045;
-      controller.root.position.y = controller.baseY + Math.abs(stride) * .065;
-      if (shoulders) shoulders.rotation.z = stride * .08;
-      addRot(armL, 'armL', stride * .46, 0, .08);
-      addRot(armR, 'armR', -stride * .46, 0, -.08);
-      addRot(legL, 'legL', -stride * .5, 0, 0);
-      addRot(legR, 'legR', stride * .5, 0, 0);
+    if (controller.state === 'move' || controller.state === 'run') {
+      const running = controller.state === 'run';
+      const stride = Math.sin(t * (running ? 14.5 : 10.5) + phase);
+      const intensity = running ? 1.35 : 1;
+      controller.root.rotation.z = stride * 0.045 * intensity;
+      controller.root.rotation.x = running ? -0.08 : 0;
+      controller.root.position.y = controller.baseY + Math.abs(stride) * .065 * intensity;
+      if (shoulders) shoulders.rotation.z = stride * .08 * intensity;
+      addRot(armL, 'armL', stride * .46 * intensity, 0, .08);
+      addRot(armR, 'armR', -stride * .46 * intensity, 0, -.08);
+      addRot(legL, 'legL', -stride * .5 * intensity, 0, 0);
+      addRot(legR, 'legR', stride * .5 * intensity, 0, 0);
       addRot(cloth, 'cloth', -.08 - Math.abs(stride) * .08, 0, stride * .03);
       addRot(head, 'head', 0, -stride * .035, -stride * .018);
     } else if (controller.state === 'attack') {
@@ -131,6 +157,16 @@ export class AnimationStateSystem {
       addRot(weapon, 'weapon', -strike * .3, strike * -.62, strike * -.24);
       addRot(head, 'head', strike * -.08, strike * .08, 0);
       if (signature) signature.scale.multiplyScalar(1 + strike * .14);
+    } else if (controller.state === 'skill') {
+      const charge = Math.sin(Math.min(1, t / 0.48) * Math.PI);
+      controller.root.position.y = controller.baseY + charge * .12;
+      controller.root.rotation.x = -charge * .12;
+      addRot(armL, 'armL', -charge * .72, 0, -charge * .22);
+      addRot(armR, 'armR', -charge * .72, 0, charge * .22);
+      addRot(weapon, 'weapon', -charge * .35, charge * .55, 0);
+      addRot(head, 'head', -charge * .08, 0, 0);
+      if (signature) signature.scale.multiplyScalar(1 + charge * .3);
+      if (halo) halo.rotation.z += dt * 3.2;
     } else if (controller.state === 'hit') {
       const hit = Math.sin(t * 34);
       controller.root.rotation.z = hit * 0.09;
@@ -171,4 +207,4 @@ export class AnimationStateSystem {
   }
 }
 
-export const CHARACTER_ANIMATION_STATES = Object.freeze(['idle', 'move', 'attack', 'hit', 'death']);
+export const CHARACTER_ANIMATION_STATES = Object.freeze(['idle', 'move', 'run', 'attack', 'skill', 'hit', 'death']);
