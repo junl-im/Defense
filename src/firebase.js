@@ -52,7 +52,7 @@ export async function submitOnlineScore(entry) {
     wave: Math.max(0, Number(entry.wave) || 0),
     kills: Math.max(0, Number(entry.kills) || 0),
     maxRank: Math.max(1, Math.min(5, Number(entry.maxRank) || 1)),
-    version: '3.5.0',
+    version: '3.6.0',
     createdAt: firestore.serverTimestamp()
   });
   return true;

@@ -65,7 +65,7 @@
             <button id="meta-btn" class="btn ghost meta-entry"><span>혼불 <b id="title-shards">0</b></span>수호자 성장</button>
           </div>
           <button id="controls-btn" class="title-settings-btn" type="button" aria-label="카메라와 조작 설정" title="카메라와 조작 설정"><span aria-hidden="true">⚙️</span></button>
-          <small class="title-version" aria-label="게임 버전 3.5.0">v3.5.0</small>
+          <small class="title-version" aria-label="게임 버전 3.6.0">v3.6.0</small>
         </div>
       </section>
 
@@ -81,6 +81,7 @@
         </div>
         <div class="hud-right">
           <div class="currency-pill"><span>엽전</span><b id="gold-value">0</b></div>
+          <button id="hud-layout-btn" class="round-btn hud-layout-btn" aria-label="HUD 정보 표시: 자동" title="HUD 정보 표시 밀도"><span aria-hidden="true">▦</span></button>
           <button id="sound-btn" class="round-btn" aria-label="소리">♪</button>
         </div>
       </header>
@@ -175,16 +176,17 @@
       <div id="look-zone" class="look-zone" aria-label="지형 터치 이동 및 카메라 회전 영역"></div>
 
       <div id="action-dock" class="action-dock hidden">
-        <button id="dash-btn" class="skill-btn"><span>질주</span><b id="dash-cooldown">준비</b></button>
-        <button id="skill-btn" class="skill-btn ultimate"><span>도깨비불</span><b id="skill-cooldown">준비</b></button>
-        <button id="burst-btn" class="skill-btn spirit" disabled><span>수호신</span><b id="burst-state">혼불 충전</b></button>
+        <button id="dash-btn" class="skill-btn action-dash"><i class="action-glyph" aria-hidden="true">➜</i><span>질주</span><b id="dash-cooldown">준비</b></button>
+        <button id="skill-btn" class="skill-btn ultimate action-skill"><i class="action-glyph" aria-hidden="true">✦</i><span>도깨비불</span><b id="skill-cooldown">준비</b></button>
+        <button id="burst-btn" class="skill-btn spirit action-burst" disabled><i class="action-glyph" aria-hidden="true">☯</i><span>수호신</span><b id="burst-state">혼불 충전</b></button>
         <button id="summon-btn" class="summon-btn">
           <span class="summon-glow"></span>
           <span id="summon-ticket" class="summon-ticket hidden">선택권 ×0</span>
+          <i class="action-glyph summon-glyph" aria-hidden="true">鬼</i>
           <small>랜덤 소환</small>
           <b><i>●</i> <span id="summon-cost">30</span></b>
         </button>
-        <button id="wave-btn" class="wave-btn"><small>다음 습격</small><b id="wave-btn-text">시작</b></button>
+        <button id="wave-btn" class="wave-btn"><i class="action-glyph" aria-hidden="true">⚔</i><small>다음 습격</small><b id="wave-btn-text">시작</b></button>
       </div>
 
       <div id="toast" class="toast" aria-live="polite"></div>
@@ -360,6 +362,7 @@
             </label>
             <div class="toggle-setting"><div><b>진동 피드백</b><small>지원 기기의 햅틱 사용</small></div><button type="button" data-control-toggle="vibration" aria-pressed="true">ON</button></div>
             <div class="toggle-setting"><div><b>모션 감소</b><small>파티클·시네마틱 움직임 축소</small></div><button type="button" data-control-toggle="reducedMotion" aria-pressed="false">OFF</button></div>
+            <div class="toggle-setting"><div><b>HUD 자동 정리</b><small>화면이 좁거나 보스전일 때 보조 정보를 자동 압축</small></div><button type="button" data-control-toggle="autoHudLayout" aria-pressed="true">ON</button></div>
             <div class="toggle-setting asset-compare-toggle"><div><b>3D 모델 고정</b><small>원거리 11방향 이미지를 끄고 GLB를 계속 표시</small></div><button type="button" data-control-toggle="force3DModels" aria-pressed="false">OFF</button></div>
           </div>
           <section class="asset-diagnostics" aria-labelledby="asset-diagnostics-title">
@@ -425,7 +428,7 @@
     </div>
     <script>
       (() => {
-        const VERSION = '3.5.0';
+        const VERSION = '3.6.0';
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
         const retryButton = document.getElementById('boot-retry-btn');

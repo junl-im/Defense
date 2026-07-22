@@ -17,6 +17,7 @@ import { buildAssetDiagnostics } from './asset-diagnostics.js';
 import { GOLDEN_SAMPLE_CLIPS, GOLDEN_SAMPLE_SOCKETS, GOLDEN_SAMPLE_TEXTURE_MAPS } from './golden-sample-spec.js';
 import { loadCodexProgress, saveCodexProgress, recordCodexEncounter, recordCodexDefeat, recordGuardianUse, getCodexKnowledge, getCodexProgressSummary, getWeaknessDamageBonus, getWeaknessLabel } from './codex-progression.js';
 import { RuntimeLifecycle } from './runtime-lifecycle.js';
+import AdaptiveHudLayout from './ui-layout-manager.js';
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -40,7 +41,7 @@ const ui = {
   shakeIntensity: $('#shake-intensity'), shakeIntensityValue: $('#shake-intensity-value'), flashIntensity: $('#flash-intensity'), flashIntensityValue: $('#flash-intensity-value'), performanceExport: $('#performance-export-btn'),
   assetDiagnosticsSummary: $('#asset-diagnostics-summary'), assetDiagnosticsCount: $('#asset-diagnostics-count'), assetDiagnosticsList: $('#asset-diagnostics-list'), goldenSamplePreview: $('#golden-sample-preview-btn'),
   contractModal: $('#contract-modal'), contractOptions: $('#contract-options'), contractSkip: $('#contract-skip-btn'), metaModal: $('#meta-modal'), metaShards: $('#meta-shards'), metaTraitList: $('#meta-trait-list'),
-  hud: $('#hud'), hp: $('#hp-value'), gold: $('#gold-value'), waveLabel: $('#wave-label'), waveProgress: $('#wave-progress'),
+  hud: $('#hud'), hudLayout: $('#hud-layout-btn'), hp: $('#hp-value'), gold: $('#gold-value'), waveLabel: $('#wave-label'), waveProgress: $('#wave-progress'),
   enemyCount: $('#enemy-count'), menu: $('#menu-btn'), sound: $('#sound-btn'), synergyPanel: $('#synergy-panel'),
   leftUiToggle: $('#left-ui-toggle'), synergyToggle: $('#synergy-toggle'), synergyCount: $('#synergy-count'), synergyList: $('#synergy-list'),
   luckMeter: $('#luck-meter'), luckValue: $('#luck-value'), luckProgress: $('#luck-progress'), unitStrip: $('#unit-strip'),
@@ -73,7 +74,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '3.5.0';
+const GAME_VERSION = '3.6.0';
 const CHARACTER_ASSET_IDS = Object.freeze([
   PLAYER_ASSET_ID,
   ...Object.values(GUARDIAN_ASSET_IDS),
@@ -109,6 +110,7 @@ const DEFAULT_CONTROL_SETTINGS = Object.freeze({
   shakeIntensity: 1,
   flashIntensity: 1,
   reducedMotion: false,
+  autoHudLayout: true,
   force3DModels: false
 });
 const META_TRAITS = {
@@ -221,8 +223,19 @@ class DokkaebiLuckDefense {
     this.fxAtlasTexture = null;
     this.viewportProfile = '';
     this.uiBound = false;
+    this.hudLayout = null;
 
     this.assertRequiredUI();
+    this.hudLayout = new AdaptiveHudLayout({
+      elements: {
+        hud: ui.hud, runSeed: ui.runSeedChip, moonOmen: ui.moonOmen, moonWard: ui.moonWard,
+        luckMeter: ui.luckMeter, burstMeter: ui.burstMeter, waveTrial: ui.waveTrial,
+        synergyPanel: ui.synergyPanel, firstMission: ui.firstMissionPanel, killChain: ui.killChain,
+        relicPanel: ui.relicPanel, unitStrip: ui.unitStrip, bossHealth: ui.bossHealth,
+        joystick: ui.joystick, actionDock: ui.actionDock
+      }
+    });
+    this.hudLayout.mount();
     this.applyViewportUiProfile();
     this.initThree();
     this.bindUI();
@@ -506,6 +519,7 @@ class DokkaebiLuckDefense {
       ui.codexLodReadout.textContent = impostor ? 'LOD2 · 11방향 WebP' : 'LOD0 · 절차형 3D';
       ui.codexDirectionReadout.textContent = impostor ? '프레임 01 / 11' : '3D 자유 회전';
     }, {}, `codex-mode-${index}`));
+    on(ui.hudLayout, 'click', () => this.cycleHudDensity(), {}, 'hud-layout');
     on(ui.sound, 'click', () => {
       this.sound.enabled = !this.sound.enabled;
       ui.sound.textContent = this.sound.enabled ? '♪' : '×';
@@ -633,6 +647,7 @@ class DokkaebiLuckDefense {
         shakeIntensity: clamp(Number(stored.shakeIntensity ?? fallback.shakeIntensity), 0, 1),
         flashIntensity: clamp(Number(stored.flashIntensity ?? fallback.flashIntensity), 0, 1),
         reducedMotion: stored.reducedMotion === true,
+        autoHudLayout: stored.autoHudLayout !== false,
         force3DModels: stored.force3DModels === true
       };
       if (settings.maxZoom < settings.minZoom + 4) settings.maxZoom = Math.min(26, settings.minZoom + 4);
@@ -656,6 +671,11 @@ class DokkaebiLuckDefense {
     document.body.classList.toggle('controls-left-handed', this.controlSettings.handedness === 'left');
     document.body.classList.toggle('reduced-motion', Boolean(this.controlSettings.reducedMotion));
     document.body.classList.toggle('force-3d-models', Boolean(this.controlSettings.force3DModels));
+    if (this.hudLayout) {
+      if (this.controlSettings.autoHudLayout && this.hudLayout.mode === 'full') this.hudLayout.setMode('auto');
+      if (!this.controlSettings.autoHudLayout && this.hudLayout.mode === 'auto') this.hudLayout.setMode('full');
+      this.syncHudLayoutButton();
+    }
     document.documentElement.style.setProperty('--flash-strength', String(this.controlSettings.flashIntensity));
     const { min, max } = this.getCameraZoomBounds();
     this.cameraDistanceTarget = clamp(this.cameraDistanceTarget, min, max);
@@ -700,7 +720,7 @@ class DokkaebiLuckDefense {
     else if (key === 'wheelSensitivity') this.controlSettings.wheelSensitivity = clamp(value, .6, 1.6);
     else if (key === 'shakeIntensity') this.controlSettings.shakeIntensity = clamp(value, 0, 1);
     else if (key === 'flashIntensity') this.controlSettings.flashIntensity = clamp(value, 0, 1);
-    else if (key === 'vibration' || key === 'reducedMotion' || key === 'force3DModels') this.controlSettings[key] = Boolean(value);
+    else if (key === 'vibration' || key === 'reducedMotion' || key === 'autoHudLayout' || key === 'force3DModels') this.controlSettings[key] = Boolean(value);
     else if (key === 'minZoom') {
       this.controlSettings.minZoom = clamp(value, 8.5, 12.5);
       this.controlSettings.maxZoom = Math.max(this.controlSettings.maxZoom, this.controlSettings.minZoom + 4);
@@ -711,6 +731,11 @@ class DokkaebiLuckDefense {
     this.applyControlSettings();
     this.renderControlSettings();
     this.saveControlSettings();
+    if (key === 'autoHudLayout') {
+      this.hudLayout?.setMode(this.controlSettings.autoHudLayout ? 'auto' : 'full');
+      this.syncHudLayoutButton();
+      this.showToast(this.controlSettings.autoHudLayout ? 'HUD 자동 정리를 사용합니다.' : 'HUD 전체 표시를 고정합니다.');
+    }
     if (key === 'force3DModels') {
       this.syncImpostorVisibility();
       this.showToast(this.controlSettings.force3DModels ? '3D 모델 고정: 원거리 이미지 LOD를 사용하지 않습니다.' : '거리 기반 11방향 LOD를 다시 사용합니다.');
@@ -4942,6 +4967,7 @@ class DokkaebiLuckDefense {
       },
       diagnostics: {
         engine: this.engine.diagnostics,
+        hudLayout: this.hudLayout?.getReport() || null,
         assets: this.assetPipeline?.diagnostics || null,
         chunks: this.engine.worldChunks.diagnostics,
         animations: this.animations?.diagnostics || null,
@@ -5078,6 +5104,27 @@ class DokkaebiLuckDefense {
     document.body.classList.toggle('ui-landscape-compact', landscapeCompact);
     document.documentElement.style.setProperty('--viewport-height', `${height}px`);
     this.viewportProfile = ultraCompact ? 'ultra' : compact ? 'compact' : 'standard';
+    this.hudLayout?.refresh({ width, height });
+    this.syncHudLayoutButton();
+  }
+
+  cycleHudDensity() {
+    const mode = this.hudLayout?.cycleMode() || 'auto';
+    this.controlSettings.autoHudLayout = mode === 'auto';
+    this.saveControlSettings();
+    this.renderControlSettings();
+    this.syncHudLayoutButton();
+    this.showToast(`HUD 정보 표시 · ${this.hudLayout?.getModeLabel() || '자동'}`);
+  }
+
+  syncHudLayoutButton() {
+    if (!ui.hudLayout || !this.hudLayout) return;
+    const label = this.hudLayout.getModeLabel();
+    const icon = this.hudLayout.mode === 'minimal' ? '▤' : this.hudLayout.mode === 'full' ? '▦' : '◫';
+    ui.hudLayout.querySelector('span')?.replaceChildren(document.createTextNode(icon));
+    ui.hudLayout.setAttribute('aria-label', `HUD 정보 표시: ${label}`);
+    ui.hudLayout.title = `HUD 정보 표시 · ${label}`;
+    ui.hudLayout.dataset.mode = this.hudLayout.mode;
   }
 
   onResize() {

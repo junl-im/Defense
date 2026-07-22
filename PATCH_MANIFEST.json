@@ -1,0 +1,10 @@
+{
+  "fromVersion": "3.5.0",
+  "toVersion": "3.6.0",
+  "engineVersion": "2.6.0",
+  "addedFiles": 3,
+  "modifiedFiles": 16,
+  "removedFiles": 0,
+  "distIncluded": false,
+  "requiresRebuild": true
+}

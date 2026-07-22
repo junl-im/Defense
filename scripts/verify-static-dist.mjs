@@ -18,15 +18,15 @@ pass('static entrypoint and pinned import map');
 
 const main = await readFile(path.join(dist, 'src/main.js'), 'utf8');
 if (main.includes("import './style.css'")) fail('CSS module import remains in static build');
-if (!main.includes("const GAME_VERSION = '3.5.0'")) fail('static main version mismatch');
+if (!main.includes("const GAME_VERSION = '3.6.0'")) fail('static main version mismatch');
 if (!main.includes('renderAssetDiagnostics()')) fail('asset diagnostics missing from static build');
 if (!main.includes('force3DModels')) fail('force 3D model mode missing from static build');
 pass('static game module asset diagnostics');
 
 const catalog = await readFile(path.join(dist, 'src/engine/asset-catalog.js'), 'utf8');
-if (!catalog.includes("const ASSET_REVISION = '3.5.0'")) fail('asset cache revision missing');
+if (!catalog.includes("const ASSET_REVISION = '3.6.0'")) fail('asset cache revision missing');
 if (!catalog.includes('?v=${ASSET_REVISION}')) fail('asset cache-busting URL missing');
-pass('v3.5.0 asset cache revision');
+pass('v3.6.0 asset cache revision');
 
 const modelDir = path.join(dist, 'assets/models');
 const models = (await readdir(modelDir)).filter((name) => name.endsWith('.glb'));

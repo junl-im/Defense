@@ -1286,3 +1286,364 @@ body.reduced-motion .loading-mascot { animation: none; }
   .golden-sample-scorecard { align-items:stretch; flex-direction:column; }
   .golden-sample-scorecard button { width:100%; }
 }
+
+/* v3.6.0 Moonstone HUD: adaptive rails, collision-safe mobile controls, premium casual UI */
+:root {
+  --ui-cream: #fff5d7;
+  --ui-gold: #ffc857;
+  --ui-gold-deep: #d67b2c;
+  --ui-cyan: #67e8f9;
+  --ui-violet: #9b78ff;
+  --ui-pink: #ff7598;
+  --ui-surface: rgba(20, 13, 39, .88);
+  --ui-surface-strong: rgba(12, 8, 25, .96);
+  --ui-stroke: rgba(255, 241, 205, .19);
+  --ui-highlight: rgba(255, 255, 255, .12);
+  --ui-shadow: 0 10px 28px rgba(4, 2, 12, .42), inset 0 1px rgba(255,255,255,.09);
+  --ui-radius-sm: 12px;
+  --ui-radius-md: 16px;
+  --ui-radius-lg: 24px;
+  --combat-controls-clearance: calc(156px + var(--safe-bottom));
+}
+
+/* Strong, readable casual-mobile surfaces */
+.round-btn, .core-pill, .currency-pill, .wave-hud,
+.run-seed-chip, .moon-omen, .moon-ward, .luck-meter, .burst-meter,
+.wave-trial, .synergy-panel, .relic-panel, .kill-chain, .unit-chip,
+.first-mission-panel, .boss-health {
+  border-color: var(--ui-stroke);
+  background: linear-gradient(160deg, rgba(37,25,62,.94), rgba(13,9,27,.9));
+  box-shadow: var(--ui-shadow);
+  backdrop-filter: blur(12px) saturate(1.15);
+}
+.round-btn, .btn, .skill-btn, .summon-btn, .wave-btn, .modal-x {
+  outline: none;
+  isolation: isolate;
+}
+.round-btn:focus-visible, .btn:focus-visible, .skill-btn:focus-visible,
+.summon-btn:focus-visible, .wave-btn:focus-visible, .modal-x:focus-visible {
+  box-shadow: 0 0 0 3px rgba(103,232,249,.42), var(--ui-shadow);
+}
+.round-btn::before, .skill-btn::after, .wave-btn::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  z-index: -1;
+  border-radius: inherit;
+  border-top: 1px solid rgba(255,255,255,.14);
+  pointer-events: none;
+}
+.round-btn { position: relative; background: linear-gradient(160deg,#352553,#171027); }
+.hud-layout-btn[data-mode="auto"] { color: var(--ui-cyan); }
+.hud-layout-btn[data-mode="minimal"] { color: var(--ui-gold); }
+
+/* Main title: premium card hierarchy without overflowing short phones */
+#title-screen::before {
+  opacity: .78;
+  background:
+    radial-gradient(circle at 50% 17%, rgba(255,204,91,.16), transparent 28%),
+    linear-gradient(180deg, rgba(7,3,16,.12), rgba(7,3,16,.78)),
+    url('./assets/moon-market-keyart.webp') center/cover no-repeat;
+}
+.title-panel {
+  width: min(94vw, 470px);
+  max-height: calc(var(--viewport-height, 100dvh) - var(--safe-top) - var(--safe-bottom) - 16px);
+  overflow: auto;
+  scrollbar-width: none;
+  padding: 28px 24px 20px;
+  border: 2px solid rgba(255,218,121,.23);
+  border-radius: 30px;
+  background:
+    linear-gradient(145deg, rgba(55,31,83,.95), rgba(14,9,29,.97) 58%),
+    radial-gradient(circle at 50% 0, rgba(255,211,107,.16), transparent 45%);
+  box-shadow: 0 30px 90px rgba(0,0,0,.62), inset 0 2px rgba(255,255,255,.1), inset 0 -2px rgba(0,0,0,.22);
+}
+.title-panel::-webkit-scrollbar { display: none; }
+.title-panel h1 { text-shadow: 0 5px 0 rgba(55,28,60,.9), 0 0 28px rgba(255,202,92,.22); }
+.title-copy { color: #eee4f2; }
+.title-actions .btn { padding-inline: 10px; }
+.btn {
+  border-width: 2px;
+  border-radius: 16px;
+  box-shadow: 0 7px 0 rgba(5,3,12,.3), inset 0 2px rgba(255,255,255,.1);
+}
+.btn.primary {
+  border-color: rgba(255,245,198,.7);
+  background: linear-gradient(180deg,#fff0a6,#ffc55b 55%,#e98b36);
+  box-shadow: 0 8px 0 #8f4a2a, 0 13px 28px rgba(237,143,51,.25), inset 0 2px rgba(255,255,255,.75);
+}
+.btn.ghost { background: linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.045)); }
+.btn:active { box-shadow: 0 3px 0 rgba(5,3,12,.35), inset 0 2px rgba(0,0,0,.08); transform: translateY(3px) scale(.985); }
+
+/* Dynamic HUD rails replace dozens of competing fixed coordinates. */
+.combat-ui-rail {
+  position: fixed;
+  z-index: 24;
+  pointer-events: none;
+  transition: top .2s ease, opacity .2s ease, transform .2s ease;
+}
+.combat-ui-rail > * {
+  position: relative !important;
+  inset: auto !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  max-width: none;
+  margin: 0;
+}
+.top-status-rail {
+  top: calc(66px + var(--safe-top));
+  left: 50%;
+  width: min(calc(100vw - 28px - var(--safe-left) - var(--safe-right)), 880px);
+  transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: minmax(160px,.9fr) minmax(220px,1.3fr) auto;
+  gap: 8px;
+  align-items: stretch;
+}
+.top-status-rail > * { min-height: 46px; width: 100% !important; }
+.center-meter-rail {
+  top: calc(121px + var(--safe-top));
+  left: 50%;
+  width: min(calc(100vw - 40px), 520px);
+  transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.center-meter-rail > * { width: 100% !important; min-width: 0; }
+.left-insight-rail, .right-roster-rail {
+  top: calc(162px + var(--safe-top));
+  bottom: var(--combat-controls-clearance);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+}
+.left-insight-rail { left: calc(10px + var(--safe-left)); width: 208px; align-items: stretch; }
+.right-roster-rail { right: calc(10px + var(--safe-right)); width: 166px; align-items: stretch; }
+.left-insight-rail > *, .right-roster-rail > * { width: 100% !important; flex: 0 0 auto; }
+.right-roster-rail .unit-strip { display: grid; overflow: auto; scrollbar-width: none; }
+.right-roster-rail .unit-strip::-webkit-scrollbar { display: none; }
+body.boss-active .left-insight-rail, body.boss-active .right-roster-rail { top: calc(225px + var(--safe-top)); }
+body.boss-active .boss-health { top: calc(163px + var(--safe-top)); }
+
+/* Context chips are compact, icon-forward and easy to parse. */
+.top-status-rail .run-seed-chip,
+.top-status-rail .moon-omen { display: grid; grid-template-columns: 34px minmax(0,1fr); gap: 8px; align-items: center; padding: 8px 10px; }
+.top-status-rail .moon-ward { display: flex; min-width: 102px; align-items: center; justify-content: center; padding: 8px 10px; }
+.top-status-rail b, .top-status-rail em, .top-status-rail small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.top-status-rail em { color: #c9bfd2; }
+.center-meter-rail .luck-meter, .center-meter-rail .burst-meter { padding: 7px 10px; }
+
+/* Side rails: no absolute floating cards, predictable scrolling budget. */
+.left-insight-rail .wave-trial { order: 1; }
+.left-insight-rail .synergy-panel { order: 2; }
+.left-insight-rail .first-mission-panel { order: 3; margin-top: auto; }
+.right-roster-rail .kill-chain { order: 1; align-self: flex-end; }
+.right-roster-rail .relic-panel { order: 2; }
+.right-roster-rail .unit-strip { order: 3; min-height: 0; }
+.left-ui-toggle { top: calc(165px + var(--safe-top)) !important; left: calc(5px + var(--safe-left)) !important; transform: translateX(210px) !important; }
+body.left-ui-collapsed .left-insight-rail { transform: translateX(calc(-100% - 28px)); opacity: 0; pointer-events: none; }
+body.left-ui-collapsed .left-ui-toggle { transform: translateX(0) !important; }
+body.left-ui-collapsed .synergy-panel, body.left-ui-collapsed .first-mission-panel { transform: none; opacity: 1; }
+
+/* Boss and banners occupy a central lane and do not compete with side rails. */
+.boss-health { top: calc(163px + var(--safe-top)); width: min(72vw, 520px); border-width: 2px; }
+.boss-health-track { height: 9px; }
+.boss-banner { top: calc(225px + var(--safe-top)); }
+.mission-banner { top: 38%; }
+.toast { top: calc(174px + var(--safe-top)); }
+
+/* Correct five-action layout. Desktop: one row. Mobile: 3 + 2 ergonomic cluster. */
+.action-dock {
+  grid-template-columns: 56px 64px 64px 96px 60px;
+  grid-template-areas: "dash skill burst summon wave";
+  gap: 7px;
+  align-items: end;
+}
+.action-dock .action-dash { grid-area: dash; }
+.action-dock .action-skill { grid-area: skill; }
+.action-dock .action-burst { grid-area: burst; }
+.action-dock .summon-btn { grid-area: summon; }
+.action-dock .wave-btn { grid-area: wave; }
+.action-dock .skill-btn, .action-dock .summon-btn, .action-dock .wave-btn { width: 100%; }
+.action-glyph { display: block; font-style: normal; font-weight: 950; line-height: 1; text-shadow: 0 2px 0 rgba(0,0,0,.25); }
+.skill-btn .action-glyph { font-size: 20px; margin-bottom: 2px; color: var(--ui-cream); }
+.skill-btn.ultimate .action-glyph { color: var(--ui-cyan); }
+.skill-btn.spirit .action-glyph { color: var(--ui-gold); }
+.summon-glyph { position: relative; z-index: 2; font-size: 31px; color: rgba(255,239,179,.9); text-shadow: 0 3px 0 #7c4162,0 0 15px rgba(255,211,107,.45); }
+.summon-btn::before { display: none; }
+.summon-btn small { margin-top: 2px; }
+.wave-btn .action-glyph { color: #ffc4d2; font-size: 18px; margin-bottom: 3px; }
+.skill-btn, .summon-btn, .wave-btn { border-width: 2px; border-color: rgba(255,244,215,.22); }
+.skill-btn { background: linear-gradient(160deg,#493066,#1a102c); }
+.skill-btn.ultimate { background: linear-gradient(160deg,#28617a,#2c185c 66%); }
+.skill-btn.spirit { background: linear-gradient(160deg,#6d5525,#2f183d 68%); }
+.summon-btn { background: radial-gradient(circle at 50% 20%,rgba(255,236,141,.3),transparent 35%),linear-gradient(160deg,#704072,#281337); }
+.wave-btn { background: linear-gradient(160deg,#7a2948,#381226); }
+
+/* Modal / settings visual system */
+.modal { background: radial-gradient(circle at 50% 18%,rgba(113,77,174,.28),rgba(5,3,12,.88)); backdrop-filter: blur(14px); }
+.modal-card {
+  border: 2px solid rgba(255,225,158,.19);
+  border-radius: 28px;
+  background: linear-gradient(155deg,rgba(48,29,73,.98),rgba(11,7,24,.98) 68%);
+  box-shadow: 0 30px 100px rgba(0,0,0,.7), inset 0 2px rgba(255,255,255,.09);
+}
+.controls-card { text-align: left; }
+.controls-card > h2, .controls-card > p, .controls-card > .kicker { text-align: center; }
+.controls-settings, .accessibility-settings { border: 1px solid rgba(255,255,255,.07); border-radius: 18px; padding: 8px; background: rgba(7,4,16,.24); }
+.control-setting, .toggle-setting, .handed-setting { border-radius: 14px; }
+.toggle-setting button, .handed-options button { min-width: 58px; border: 2px solid rgba(255,255,255,.12); }
+.toggle-setting button.active, .handed-options button.active { color: #25152a; background: linear-gradient(180deg,#ffec9e,#f2b453); border-color: #fff1b4; }
+.asset-diagnostics { border-width: 2px; background: rgba(5,12,25,.58); }
+
+/* Automatic information density. Essential combat values stay visible. */
+body.hud-density-minimal .run-seed-chip em,
+body.hud-density-minimal .moon-omen em,
+body.hud-density-minimal .wave-trial small:last-child,
+body.hud-density-minimal .first-mission-panel small,
+body.hud-density-minimal .relic-panel-head span,
+body.ui-overflow-safe .run-seed-chip em,
+body.ui-overflow-safe .moon-omen em { display: none; }
+body.hud-density-minimal .left-insight-rail .first-mission-panel,
+body.ui-overflow-safe .left-insight-rail .first-mission-panel { padding: 7px 9px; }
+body.hud-density-minimal .first-mission-track,
+body.ui-overflow-safe .first-mission-track { display: none; }
+body.hud-density-minimal .synergy-list { max-height: 84px; overflow: hidden; }
+body.hud-density-minimal .right-roster-rail .unit-strip { max-height: 210px; }
+body.ui-overflow-safe .run-seed-chip { display: none !important; }
+
+@media (max-width: 720px), (pointer: coarse) {
+  :root { --combat-controls-clearance: calc(151px + var(--safe-bottom)); }
+  .hud { grid-template-columns: 1fr minmax(118px, 170px) 1fr; gap: 5px; padding-inline: calc(6px + var(--safe-left)) calc(6px + var(--safe-right)); }
+  .hud-right { gap: 4px; }
+  .round-btn { min-width: 38px; min-height: 38px; }
+  .core-pill { padding-inline: 8px; }
+  .currency-pill { padding-inline: 8px; }
+  .top-status-rail {
+    top: calc(57px + var(--safe-top));
+    width: calc(100vw - 12px - var(--safe-left) - var(--safe-right));
+    grid-template-columns: minmax(0,1fr) minmax(0,1.18fr) auto;
+    gap: 5px;
+  }
+  .top-status-rail > * { min-height: 42px; }
+  .top-status-rail .run-seed-chip, .top-status-rail .moon-omen { grid-template-columns: 26px minmax(0,1fr); padding: 6px 7px; gap: 5px; }
+  .top-status-rail .run-seed-chip > span, .top-status-rail .moon-omen > span { width: 26px; height: 26px; font-size: 13px; }
+  .top-status-rail .moon-ward { min-width: 62px; padding: 6px; }
+  .top-status-rail small { font-size: 6px; }
+  .top-status-rail b { font-size: 9px; }
+  .top-status-rail em { font-size: 7px; }
+  .center-meter-rail { top: calc(105px + var(--safe-top)); width: min(66vw, 248px); gap: 5px; }
+  .center-meter-rail .luck-meter, .center-meter-rail .burst-meter { padding: 5px 7px; }
+  .boss-health { top: calc(143px + var(--safe-top)); width: min(82vw, 340px); padding: 6px 8px 8px; }
+  .left-insight-rail, .right-roster-rail { top: calc(146px + var(--safe-top)); bottom: var(--combat-controls-clearance); gap: 5px; }
+  .left-insight-rail { left: calc(6px + var(--safe-left)); width: 132px; }
+  .right-roster-rail { right: calc(6px + var(--safe-right)); width: 106px; }
+  body.boss-active .left-insight-rail, body.boss-active .right-roster-rail { top: calc(202px + var(--safe-top)); }
+  body.boss-active .boss-health { top: calc(143px + var(--safe-top)); }
+  .left-ui-toggle { top: calc(149px + var(--safe-top)) !important; transform: translateX(132px) !important; }
+  body.boss-active .left-ui-toggle { top: calc(205px + var(--safe-top)) !important; }
+  .wave-trial { grid-template-columns: 27px 1fr; padding: 6px 7px; gap: 5px; border-radius: 12px; }
+  .wave-trial > span { width: 27px; height: 27px; font-size: 14px; }
+  .synergy-panel { border-radius: 13px; }
+  .synergy-toggle { padding: 7px 8px; }
+  .first-mission-panel { padding: 7px 8px; border-radius: 12px; }
+  .relic-panel { padding: 6px; border-radius: 12px; }
+  .relic-strip { gap: 3px; }
+  .unit-chip { grid-template-columns: 23px minmax(0,1fr); min-height: 36px; padding: 4px 5px; }
+  .unit-chip .unit-face { width: 23px; height: 23px; }
+  .unit-chip > b, .unit-chip .command-status { display: none; }
+  .kill-chain { min-width: 74px; padding: 6px 8px; }
+
+  .joystick-zone { left: calc(5px + var(--safe-left)); bottom: calc(8px + var(--safe-bottom)); width: 116px; height: 116px; }
+  .joystick-base { inset: 9px; }
+  .joystick-knob { width: 48px; height: 48px; }
+  .action-dock {
+    right: calc(5px + var(--safe-right));
+    bottom: calc(7px + var(--safe-bottom));
+    grid-template-columns: 54px 58px 58px;
+    grid-template-rows: 56px 64px;
+    grid-template-areas: "dash skill burst" "summon summon wave";
+    gap: 5px;
+    width: 180px;
+  }
+  .action-dock .skill-btn { height: 56px; border-radius: 18px; }
+  .action-dock .summon-btn { height: 64px; border-radius: 20px; }
+  .action-dock .wave-btn { height: 64px; border-radius: 18px; }
+  .skill-btn span { font-size: 9px; }
+  .skill-btn b { font-size: 7px; margin-top: 2px; }
+  .skill-btn .action-glyph { font-size: 17px; }
+  .summon-glyph { font-size: 23px; }
+  .summon-btn small { font-size: 9px; }
+  .summon-btn b { margin-top: 3px; font-size: 11px; }
+  .wave-btn small { font-size: 7px; }
+  .wave-btn b { font-size: 10px; }
+  .quality-badge { bottom: calc(138px + var(--safe-bottom)); }
+  .toast { top: calc(187px + var(--safe-top)); }
+
+  body.controls-left-handed .joystick-zone { left: auto; right: calc(5px + var(--safe-right)); }
+  body.controls-left-handed .action-dock { right: auto; left: calc(5px + var(--safe-left)); }
+  body.controls-left-handed .look-zone { left: 0; right: auto; }
+}
+
+@media (max-width: 390px) and (orientation: portrait) {
+  .hud { grid-template-columns: 1fr 112px 1fr; }
+  .currency-pill span { display: none; }
+  .hud-layout-btn { display: none; }
+  .top-status-rail { grid-template-columns: minmax(0,.9fr) minmax(0,1.1fr) 54px; }
+  .top-status-rail .run-seed-chip > span { display: none; }
+  .top-status-rail .run-seed-chip { grid-template-columns: minmax(0,1fr); }
+  .center-meter-rail { width: 218px; }
+  .left-insight-rail { width: 120px; }
+  .right-roster-rail { width: 96px; }
+  .left-ui-toggle { transform: translateX(120px) !important; }
+  .action-dock { width: 174px; grid-template-columns: 52px 56px 56px; }
+  .joystick-zone { width: 110px; height: 110px; }
+  .title-panel { width: calc(100vw - 10px - var(--safe-left) - var(--safe-right)); padding: 18px 12px 12px; border-radius: 22px; }
+  .title-panel h1 { font-size: clamp(37px,11vw,48px); margin-block: 2px 8px; }
+  .title-copy { font-size: 11px; line-height: 1.45; margin-bottom: 10px; }
+  .run-mode-options, .seed-mode-options { gap: 5px; }
+  .run-mode-option, .seed-mode-option { padding: 6px; }
+  .btn.primary.huge { min-height: 46px; }
+  .title-actions { gap: 5px; margin-top: 5px; }
+  .title-actions .btn { min-height: 40px; font-size: 10px; }
+}
+
+@media (max-height: 640px) and (orientation: portrait) {
+  .title-panel > .kicker, .title-copy { display: none; }
+  .title-panel { padding-top: 15px; padding-bottom: 10px; }
+  .title-panel h1 { margin: 0 0 6px; }
+  .daily-edict-preview { display: none; }
+  .run-preview { margin-block: 3px; }
+  .title-mascot { width: 48px !important; height: 48px !important; }
+  .top-status-rail .run-seed-chip { display: none !important; }
+  .top-status-rail { grid-template-columns: minmax(0,1fr) auto; }
+  .center-meter-rail { top: calc(104px + var(--safe-top)); }
+  .left-insight-rail, .right-roster-rail { top: calc(143px + var(--safe-top)); }
+  body.boss-active .left-insight-rail, body.boss-active .right-roster-rail { top: calc(199px + var(--safe-top)); }
+  .first-mission-panel { display: none !important; }
+}
+
+@media (max-height: 560px) and (orientation: landscape) {
+  :root { --combat-controls-clearance: calc(102px + var(--safe-bottom)); }
+  .hud { grid-template-columns: 1fr 150px 1fr; }
+  .top-status-rail { top: calc(52px + var(--safe-top)); width: min(68vw, 650px); }
+  .center-meter-rail { top: calc(98px + var(--safe-top)); width: 270px; }
+  .boss-health { top: calc(132px + var(--safe-top)); width: 360px; }
+  .left-insight-rail, .right-roster-rail { top: calc(102px + var(--safe-top)); bottom: calc(100px + var(--safe-bottom)); }
+  body.boss-active .left-insight-rail, body.boss-active .right-roster-rail { top: calc(180px + var(--safe-top)); }
+  .joystick-zone { width: 94px; height: 94px; }
+  .action-dock { grid-template-columns: repeat(5,52px); grid-template-rows: 54px; grid-template-areas: "dash skill burst summon wave"; width: 280px; }
+  .action-dock .skill-btn, .action-dock .summon-btn, .action-dock .wave-btn { height: 54px; border-radius: 17px; }
+  .summon-glyph { font-size: 18px; }
+  .summon-btn small { display: none; }
+  .summon-btn b { margin-top: 1px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .combat-ui-rail, .btn, .round-btn, .skill-btn, .summon-btn, .wave-btn { transition-duration: .01ms !important; }
+}

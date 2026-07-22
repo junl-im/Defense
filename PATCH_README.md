@@ -1,26 +1,43 @@
-# DokkaebiLuckDefense3D PATCH v3.4.0
+# DokkaebiLuckDefense3D v3.6.0 Patch
 
-기준 버전: v3.3.0
+기준 버전: **v3.5.0**
 
-## 변경
+## 적용 방법
 
-- `DD-AAA-CASUAL-SD-PBR-3.0` 절대 스타일 잠금
-- 2.3등신·손그림 Stylized PBR·Soft AO·Subtle Rim
-- 5방향 원본+미러링
-- 750종 프롬프트 카탈로그
-- 현재 GLB 14종 개발용 프로토타입 격리
-- 로딩 상태와 AAA 제작 승인 상태 분리
-- 승인된 미래 GLB의 BaseColor/Normal/ORM 재질 보존
-- 기존 절차형 모델 생성기는 `--prototype-only` 없이는 실행 차단
+1. v3.5.0 프로젝트 루트에 이 패치의 파일을 같은 경로로 덮어씁니다.
+2. 정상적인 npm 환경에서는 아래 명령을 실행합니다.
 
-## 적용
+```bash
+npm ci
+npm run verify
+npm run build
+```
 
-1. v3.3.0 루트에 파일을 덮어씁니다.
-2. `DELETE_FILES.txt`의 파일을 삭제합니다.
-3. `npm run generate:prompt-catalog`
-4. `npm run audit:art`
-5. `npm run verify`
-6. 정상 npm 환경: `npm run build`
-7. 저장소 장애 환경: `npm run build:static`
+3. 패키지 저장소를 사용할 수 없는 환경에서는 다음 정적 배포본을 생성합니다.
 
-현재 GLB 14종은 완성 에셋이 아닙니다. 자세한 실패 항목은 `docs/CURRENT_ASSET_AUDIT.md`를 확인하세요.
+```bash
+npm run verify
+npm run build:static
+node scripts/verify-static-dist.mjs
+```
+
+패치 ZIP에는 `dist/`가 포함되지 않습니다. 실제 서비스 반영 전 반드시 새 빌드를 배포해야 합니다.
+
+## 변경 범위
+
+- 신규 파일 3개
+- 수정 파일 16개
+- 삭제 파일 없음
+
+## 핵심 변경
+
+- AdaptiveHudLayout 동적 레일 시스템
+- HUD 자동/전체/간소 표시 모드
+- 런타임 UI 충돌 감사와 성능 로그 연동
+- 5개 액션 버튼의 4열 구조 오류 수정
+- 모바일 3+2 하단 조작 배열
+- 보스전 좌우 레일 자동 하강
+- Moonstone HUD 패널·버튼·모달 디자인
+- 320px 하단 조작 안전 간격 26px
+- 보스 에셋 라벨 중복 키 제거
+- v3.6 전용 UI 회귀 검증 추가
