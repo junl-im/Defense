@@ -3,9 +3,9 @@
 이 문서는 대화가 끊기거나 다른 작업자가 이어받아도 프로젝트를 계속 개발할 수 있도록 모든 핵심 기록을 누적하는 단일 인수인계 파일입니다.
 
 - 마지막 갱신: 2026-07-22
-- 현재 버전: `3.7.4`
-- 프로젝트 폴더: `DokkaebiLuckDefense3D_FULL_v3.7.4`
-- 현재 패치명: 빌드 모듈 계약·공용 리그 적 2종·UI 스트레스 계약
+- 현재 버전: `3.7.5`
+- 프로젝트 폴더: `DokkaebiLuckDefense3D_FULL_v3.7.5`
+- 현재 패치명: 전투 GLB 14종 복구·런타임 자산 무결성 계약
 
 ---
 
@@ -2721,7 +2721,7 @@ v3.0.0의 스타일라이즈드 PBR 방향은 개별 자산의 품질을 높이�
 5. KTX2로 텍스처 예산 여유 확보
 
 
-## v3.7.4 / Engine 2.7.3 — 빌드 계약·공용 리그 적·UI 스트레스 안정화
+## v3.7.5 / Engine 2.7.3 — 빌드 계약·공용 리그 적·UI 스트레스 안정화
 
 ### GitHub Actions 빌드 오류 수정
 
@@ -2780,7 +2780,7 @@ npm run build
 사용자가 보고한 `BOSS_ASSET_IDS` 오류 경로는 직접 import로 제거됐다.
 
 
-## v3.7.4 / Engine 2.7.3 — CI 실패 원인 가시화 핫픽스
+## v3.7.2 / Engine 2.7.3 — CI 실패 원인 가시화 핫픽스
 
 ### 배경
 
@@ -2810,10 +2810,40 @@ GitHub Actions에서 `npm run verify`가 exit 1로 종료됐지만 로그 마지
 
 현재 컨테이너에는 Vite 실행 파일이 설치되지 않아 실제 Vite 번들은 로컬에서 생성하지 못했다. GitHub Actions는 `npm ci` 후 실제 Vite 빌드를 수행하며, 이번 변경은 그 이전 검증 실패 원인을 명확히 표시하고 비실행 파일 때문에 배포가 차단되는 조건을 제거한다.
 
-## v3.7.4 / Engine 2.7.3 — Absolute No-SVG CI Hotfix
+## v3.7.3 / Engine 2.7.3 — Absolute No-SVG CI Hotfix
 
 - `scripts/svg-policy.mjs`를 단일 SVG 정책 검사기로 추가했다.
 - 실제 SVG 파일, `.svg` 런타임 참조, 인라인 `<svg>`, SVG data URI/MIME을 금지한다.
 - 기존 검증기의 빈 위반 메시지 오탐을 제거했다.
 - `preverify`와 `prebuild` 청소가 저장소에 남은 모든 `.svg` 파일을 재귀적으로 제거한다.
 - `verify-svg-policy.mjs`가 정책 문자열 오탐과 실제 참조 누락을 회귀 검사한다.
+
+
+## v3.7.4 / Engine 2.7.3 — PWA Manifest PNG Migration Hotfix
+
+- 기존 저장소의 `public/manifest.webmanifest`에 남은 `icon.svg`와 `image/svg+xml`을 PNG 3종으로 자동 마이그레이션한다.
+- `preverify`와 `prebuild`에서 동일한 멱등 마이그레이션을 실행한다.
+- SVG 오염 manifest 회귀 테스트를 통과했다.
+
+## v3.7.5 / Engine 2.7.3 — Runtime Asset Recovery Hotfix
+
+### 원인
+
+- v3.7.4 전체본에는 전투 GLB 14종이 있었지만 패치 ZIP에는 GLB가 0개였다.
+- 이미 파일이 누락된 Git 저장소에 패치를 덮어써도 `guardian-frost-sd-toon.glb` 같은 파일이 복구되지 않았다.
+- `verify-asset-readiness.mjs`가 `readFileSync`에서 즉시 예외를 던져 나머지 누락 파일을 확인할 수 없었다.
+
+### 변경
+
+- v3.7.5 패치 ZIP에 전투 GLB 14종 전부를 강제 포함한다.
+- `docs/RUNTIME_ASSET_INVENTORY_v3.7.5.json`에 정확한 바이트 크기와 SHA-256을 기록한다.
+- `scripts/verify-required-runtime-assets.mjs`가 존재 여부, Git LFS 포인터, GLB 2 헤더, 선언 길이, 파일 크기, SHA-256을 검증한다.
+- 누락·손상 항목은 GitHub `::error`와 `RUNTIME ASSET FAILURE DIGEST`로 모두 출력한다.
+- 기존 에셋 준비 검증도 누락 파일에서 예외로 죽지 않고 실패 목록을 누적한다.
+
+### 재현 검증
+
+- `guardian-frost-sd-toon.glb`를 의도적으로 제거했을 때 exit 1과 정확한 파일명·복구 안내가 출력됐다.
+- 파일 복원 후 14/14 크기·헤더·해시 검증 통과.
+- `npm run verify` 전체 통과.
+- 정적 ESM `dist/` 생성 후 전투 GLB 14종 포함 검사 통과.

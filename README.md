@@ -1,25 +1,21 @@
 # 도깨비 운빨 수호대 3D
 
-- 게임 버전: **3.7.4**
+- 게임 버전: **3.7.5**
 - 엔진 버전: **2.7.3**
 - 아트 잠금: **DD-AAA-CASUAL-SD-PBR-3.0**
 
-## v3.7.4 핵심
+## v3.7.5 핵심
 
-이번 핫픽스는 GitHub Actions에서 실제 FAIL이 긴 PASS 로그에 묻히는 문제를 해결합니다.
+이번 핫픽스는 패치 덮어쓰기 이후 일부 전투 GLB가 저장소에 복구되지 않아 CI가 `ENOENT`로 중단되던 문제를 해결합니다.
 
-- `verify-project.mjs`의 중간 종료 3곳을 제거하고 마지막 한 번만 종료
-- 실패 시 `VERIFY FAILURE DIGEST`와 GitHub `::error` 주석 출력
-- 워크플로가 전체 검증 로그를 보존하고 실패 원인을 스텝 마지막에 재출력
-- 추가 루트 Markdown은 배포를 차단하지 않고 INFO로 처리
-- SVG 파일·경로·인라인 마크업·data URI를 런타임과 배포 산출물에서 전면 금지
-- 구형 Vite 해시 번들을 파일명 고정 목록이 아닌 패턴으로 검사
-- 버전 비교 기준을 `package.json` 단일 원본으로 정리
-- CI 실패 보고 구조 자체를 검사하는 회귀 테스트 추가
+- 패치 ZIP에 플레이어·수호대·요괴·보스 GLB **14종 전부** 강제 포함
+- 14종의 파일 크기와 SHA-256을 기록한 런타임 자산 인벤토리 추가
+- 검증 시작 단계에서 누락 파일, Git LFS 포인터, 잘못된 GLB 헤더, 길이·해시 불일치를 일괄 검사
+- `verify-asset-readiness.mjs`가 첫 누락 파일에서 스택 오류로 죽지 않고 전체 누락 목록을 출력
+- v3.7.4의 PNG 전용 PWA manifest 마이그레이션과 절대 SVG 금지 정책 유지
+- v3.7.0의 named export 계약, 공용 리그 적 2종, 모바일 UI 스트레스 계약 유지
 
-v3.7.0의 named export 계약, 공용 리그 적 2종, 모바일 UI 스트레스 계약과 v3.7.1의 자동 청소 기능은 그대로 유지됩니다.
-
-## 검증
+## 설치·검증
 
 ```bash
 npm ci
@@ -27,14 +23,22 @@ npm run verify
 npm run build
 ```
 
-`npm run verify`에는 Vite 빌드 전에 이름 있는 import/export 불일치를 잡는 `verify-module-exports.mjs`가 포함됩니다.
-
-패키지 저장소를 사용할 수 없는 환경에서는 고정 Three.js import map 기반 정적 ESM 배포본을 생성합니다.
+패키지 저장소를 사용할 수 없는 환경에서는 고정 Three.js import map 기반 정적 ESM 배포본을 생성할 수 있습니다.
 
 ```bash
 npm run build:static
 node scripts/verify-static-dist.mjs
 ```
+
+## 자산 복구 확인
+
+검증 시작 부분에 다음 결과가 표시되어야 합니다.
+
+```text
+PASS required combat GLB contract · 14/14 files, headers, sizes and hashes
+```
+
+누락된 모델이 있으면 파일명과 복구 안내가 GitHub Actions 주석 및 실패 요약에 함께 표시됩니다.
 
 ## 제작 명령
 
@@ -49,6 +53,8 @@ npm run audit:art
 ## 주요 문서
 
 - `docs/ASSET_BIBLE.md`
+- `docs/RUNTIME_ASSET_INVENTORY_v3.7.5.json`
+- `docs/PATCH_NOTES_v3.7.5.md`
 - `docs/UI_SYSTEM_v3.6.md`
 - `docs/UI_STRESS_CONTRACT_v3.7.md`
 - `docs/RIGGED_ENEMY_CANDIDATES_v3.7.md`
@@ -56,12 +62,4 @@ npm run audit:art
 - `docs/GOLDEN_SAMPLE_PRODUCTION_SPEC.md`
 - `docs/CODE_ARCHITECTURE_v3.5.md`
 - `docs/CURRENT_ASSET_AUDIT.md`
-- `docs/AAA_ASSET_PROMPT_CATALOG.json`
 - `PROJECT_HANDOFF.md`
-
-## v3.7.4 SVG 정책 핫픽스
-
-- SVG 파일·경로·인라인 마크업·data URI를 전면 금지합니다.
-- PNG/WebP/KTX2/GLB만 런타임 에셋으로 허용합니다.
-- 빈 문자열을 SVG 위반으로 오인하던 검증기 문제를 수정했습니다.
-- 위반 시 실제 파일명과 줄 번호를 CI 로그 마지막에 표시합니다.

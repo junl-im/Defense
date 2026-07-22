@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { ART_DIRECTION, ASSET_LOD_POLICY, IMPOSTOR_SPEC, CHARACTER_ASSET_TARGETS, ENVIRONMENT_ASSET_TARGETS, EFFECT_ASSET_TARGETS } from '../src/asset-specs.js';
 import { MODEL_ASSET_SLOTS, ASSET_PRODUCTION_SUMMARY, PLAYER_ASSET_ID, GUARDIAN_ASSET_IDS, MONSTER_ASSET_IDS, BOSS_ASSET_IDS } from '../src/engine/asset-catalog.js';
@@ -52,7 +52,12 @@ for (const path of [
   'public/assets/impostors/monster/imp-attack-11.webp',
   ...combatModelPaths
 ]) {
-  assert(readFileSync(resolve(root, path)).length > 1000, `런타임 프로토타입 에셋 ${path}`);
+  const absolute = resolve(root, path);
+  if (!existsSync(absolute)) {
+    assert(false, `런타임 프로토타입 에셋 누락 ${path}`);
+    continue;
+  }
+  assert(readFileSync(absolute).length > 1000, `런타임 프로토타입 에셋 ${path}`);
 }
 assert(combatModelPaths.length === 14, '플레이어·수호대·요괴·보스 GLB 14종');
 

@@ -1,0 +1,91 @@
+{
+  "version": "3.7.5",
+  "assetClass": "combat-glb-runtime-baseline",
+  "requiredCount": 14,
+  "files": [
+    {
+      "path": "public/assets/models/boss-king-sd-toon.glb",
+      "bytes": 65648,
+      "sha256": "d7e1d8e26a88ce539b27ea631833fd1ade9059595bbeb05d4260e054ba9648fa",
+      "format": "glb2"
+    },
+    {
+      "path": "public/assets/models/boss-serpent-sd-toon.glb",
+      "bytes": 75576,
+      "sha256": "afb6a8f3cdcdd09cbc0c765db74d8dc19ce6c0f0e23565c5e663a10c60a174b8",
+      "format": "glb2"
+    },
+    {
+      "path": "public/assets/models/boss-tiger-sd-toon.glb",
+      "bytes": 86308,
+      "sha256": "bebed2482378f3a32ac91884032ada351dbadd59a57615e6ad5f9c0ec6f4f7f2",
+      "format": "glb2"
+    },
+    {
+      "path": "public/assets/models/guardian-bell-sd-toon.glb",
+      "bytes": 58912,
+      "sha256": "9fe01ec598f193fd210bfee0e2d7ff7225b55ef16a6d0735090dd145a16a11c0",
+      "format": "glb2"
+    },
+    {
+      "path": "public/assets/models/guardian-ember-sd-toon.glb",
+      "bytes": 58756,
+      "sha256": "f25c1822c8f6258015751629dc9e34c5b1363fbdf13ab14241a36a7fd37c8de3",
+      "format": "glb2"
+    },
+    {
+      "path": "public/assets/models/guardian-frost-sd-toon.glb",
+      "bytes": 58224,
+      "sha256": "2500acb36464b7edb0f9f03e3091e729f98fdca62ca73bcaa22bb0569d460a76",
+      "format": "glb2"
+    },
+    {
+      "path": "public/assets/models/guardian-stone-sd-toon.glb",
+      "bytes": 53000,
+      "sha256": "fe3497012147421eb488a5ac1351b2aee89a7d46f91b4514c9dc88f47e07b92e",
+      "format": "glb2"
+    },
+    {
+      "path": "public/assets/models/guardian-thunder-sd-toon.glb",
+      "bytes": 56196,
+      "sha256": "e3ecc76e8b0f776a7d1fce39efb46389d7e49b35a0834f76451d86e49768b1ee",
+      "format": "glb2"
+    },
+    {
+      "path": "public/assets/models/guardian-wind-sd-toon.glb",
+      "bytes": 58448,
+      "sha256": "33d9818634e4ee760f35308fd813da79f3cd87f4888a71e96afb2fb805822ba9",
+      "format": "glb2"
+    },
+    {
+      "path": "public/assets/models/monster-brute-sd-toon.glb",
+      "bytes": 359872,
+      "sha256": "1c26074ced9f0f7f016174e88902dc481e6a2c3d3dfdfd60c16f6167535ca23a",
+      "format": "glb2"
+    },
+    {
+      "path": "public/assets/models/monster-imp-sd-toon.glb",
+      "bytes": 43316,
+      "sha256": "edabd86706ebc6277a01ce26fe71dd578e896577026b81c3e46cee67ebb59ca0",
+      "format": "glb2"
+    },
+    {
+      "path": "public/assets/models/monster-runner-sd-toon.glb",
+      "bytes": 39364,
+      "sha256": "d1679edafc00edb155129219a0957d518fcbb18f4dee044a9c99c5697d4a8430",
+      "format": "glb2"
+    },
+    {
+      "path": "public/assets/models/monster-shaman-sd-toon.glb",
+      "bytes": 338444,
+      "sha256": "373bd6f0534bd26884d0ca8e82f1155ef208d6cd82bb329503af80110c58a7ba",
+      "format": "glb2"
+    },
+    {
+      "path": "public/assets/models/player-dokkaebi-warrior-golden-v1.glb",
+      "bytes": 387592,
+      "sha256": "f90d58a01133b33ae65bfa2537e33b91216818fc99206ee07eb48e48f6976427",
+      "format": "glb2"
+    }
+  ]
+}
