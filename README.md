@@ -1,10 +1,10 @@
 # 도깨비 운빨 수호대 3D
 
-- 게임 버전: **3.7.3**
+- 게임 버전: **3.7.4**
 - 엔진 버전: **2.7.3**
 - 아트 잠금: **DD-AAA-CASUAL-SD-PBR-3.0**
 
-## v3.7.3 핵심
+## v3.7.4 핵심
 
 이번 핫픽스는 GitHub Actions에서 실제 FAIL이 긴 PASS 로그에 묻히는 문제를 해결합니다.
 
@@ -59,7 +59,7 @@ npm run audit:art
 - `docs/AAA_ASSET_PROMPT_CATALOG.json`
 - `PROJECT_HANDOFF.md`
 
-## v3.7.3 SVG 정책 핫픽스
+## v3.7.4 SVG 정책 핫픽스
 
 - SVG 파일·경로·인라인 마크업·data URI를 전면 금지합니다.
 - PNG/WebP/KTX2/GLB만 런타임 에셋으로 허용합니다.

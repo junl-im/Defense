@@ -1,7 +1,7 @@
 import { CHARACTER_ASSET_TARGETS, ENVIRONMENT_ASSET_TARGETS, EFFECT_ASSET_TARGETS, IMPOSTOR_SPEC } from '../asset-specs.js';
 import { getAssetApproval } from './asset-quality.js';
 
-const ASSET_REVISION = '3.7.3';
+const ASSET_REVISION = '3.7.4';
 const keyartBaseUrl = new URL('../assets/moon-market-keyart.webp', import.meta.url);
 keyartBaseUrl.searchParams.set('v', ASSET_REVISION);
 const keyartUrl = keyartBaseUrl.href;

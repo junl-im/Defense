@@ -22,7 +22,7 @@ main = main.replace("import './style.css';\n", '');
 await writeFile(mainPath, main);
 
 await writeFile(path.join(dist, 'STATIC_BUILD_NOTICE.txt'), [
-  'DokkaebiLuckDefense3D v3.7.3 static ESM deployment',
+  'DokkaebiLuckDefense3D v3.7.4 static ESM deployment',
   'Three.js is loaded from the pinned jsDelivr 0.185.1 ESM URL.',
   'Use npm run build when the package registry is available to create the normal bundled build.',
   ''

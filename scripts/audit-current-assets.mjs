@@ -79,10 +79,10 @@ const summary = {
   missingAnimations: entries.filter((entry) => !entry.checks.animationClips).length,
   missingTextureSets: entries.filter((entry) => !entry.checks.handPaintedTextures).length
 };
-const document = { schemaVersion: 2, gameVersion: '3.7.3', styleLockId: ART_STYLE_LOCK_ID, summary, entries };
+const document = { schemaVersion: 2, gameVersion: '3.7.4', styleLockId: ART_STYLE_LOCK_ID, summary, entries };
 const jsonText = `${JSON.stringify(document, null, 2)}\n`;
 const rows = entries.map((entry) => `| ${entry.id} | ${entry.metrics.triangles} | ${entry.metrics.skins} | ${entry.metrics.animations.length} | ${entry.metrics.textures} | ${entry.declaredStatus} | ${entry.technicalPassed ? 'PASS' : 'FAIL'} | ${entry.productionPassed ? 'PASS' : 'WAIT'} |`).join('\n');
-const mdText = `# 현재 전투 에셋 제작 품질 감사 — v3.7.3
+const mdText = `# 현재 전투 에셋 제작 품질 감사 — v3.7.4
 
 - 스타일 잠금: \`${ART_STYLE_LOCK_ID}\`
 - 검사 모델: ${summary.total}

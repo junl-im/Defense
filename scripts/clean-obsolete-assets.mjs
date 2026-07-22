@@ -1,5 +1,6 @@
 import { existsSync, readdirSync, rmSync } from 'node:fs';
 import { basename, relative, resolve } from 'node:path';
+import { normalizeWebManifestFile } from './manifest-policy.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const fixedObsolete = [
@@ -24,6 +25,18 @@ const remove = (path) => {
 };
 
 fixedObsolete.forEach(remove);
+
+for (const path of [
+  'public/manifest.webmanifest',
+  'dist/manifest.webmanifest',
+  'dist-pages/manifest.webmanifest'
+]) {
+  const absolute = resolve(root, path);
+  if (!existsSync(absolute)) continue;
+  if (normalizeWebManifestFile(absolute)) {
+    console.log(`MIGRATE ${path} -> PNG-only icon manifest`);
+  }
+}
 
 const removeSvgFiles = (directory) => {
   if (!existsSync(directory)) return;
