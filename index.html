@@ -18,6 +18,7 @@
       <canvas id="game-canvas" aria-label="도깨비 운빨 수호대 3D 게임 화면"></canvas>
       <div id="vignette" aria-hidden="true"></div>
       <div id="damage-flash" aria-hidden="true"></div>
+      <div id="boss-danger-frame" class="boss-danger-frame hidden" data-urgency="stable" aria-hidden="true"></div>
       <div id="combat-text-root" aria-hidden="true"></div>
 
       <section id="loading" class="screen visible">
@@ -64,13 +65,14 @@
           </div>
           <div id="run-preview" class="run-preview" aria-label="이번 판 영구 성장 적용 효과"></div>
           <button id="start-btn" class="btn primary huge">달빛 장터 수호하기</button>
-          <div class="title-actions three">
+          <div class="title-actions four">
             <button id="how-btn" class="btn ghost">조작법</button>
             <button id="collection-btn" class="btn ghost">달빛 도감</button>
+            <button id="equipment-btn" class="btn ghost">장비 가방</button>
             <button id="meta-btn" class="btn ghost meta-entry"><span>혼불 <b id="title-shards">0</b></span>수호자 성장</button>
           </div>
           <button id="controls-btn" class="title-settings-btn" type="button" aria-label="카메라와 조작 설정" title="카메라와 조작 설정"><span aria-hidden="true">⚙️</span></button>
-          <small class="title-version" aria-label="게임 버전 3.9.0">v3.9.0</small>
+          <small class="title-version" aria-label="게임 버전 4.0.0">v4.0.0</small>
         </div>
       </section>
 
@@ -86,6 +88,7 @@
         </div>
         <div class="hud-right">
           <div class="currency-pill"><span>엽전</span><b id="gold-value">0</b></div>
+          <button id="hud-equipment-btn" class="round-btn" aria-label="장비 가방" title="장비 가방">◆</button>
           <button id="hud-layout-btn" class="round-btn hud-layout-btn" aria-label="HUD 정보 표시: 자동" title="HUD 정보 표시 밀도"><span aria-hidden="true">▦</span></button>
           <button id="sound-btn" class="round-btn" aria-label="소리">♪</button>
         </div>
@@ -123,6 +126,10 @@
 
       <aside id="run-seed-chip" class="run-seed-chip hidden" aria-live="polite">
         <span id="run-seed-icon">日</span><div><small id="run-seed-mode">TODAY'S EXPEDITION</small><b id="run-seed-value">MOON-00000000</b><em id="run-edict-name">오늘의 칙령</em></div>
+      </aside>
+
+      <aside id="stage-chip" class="stage-chip hidden" aria-live="polite">
+        <span id="stage-icon">門</span><div><small>STAGE 01</small><b id="stage-name">도깨비마을</b><em id="stage-zone">달문 입구</em><i><u id="stage-progress"></u></i></div>
       </aside>
 
       <aside id="moon-omen" class="moon-omen hidden" aria-live="polite">
@@ -324,6 +331,20 @@
         </div>
       </section>
 
+      <section id="equipment-modal" class="modal modal-subdialog" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="equipment-title">
+        <div class="modal-card wide equipment-card">
+          <button class="modal-x" data-close="equipment-modal">×</button>
+          <p class="kicker">MOONLIGHT LOADOUT</p>
+          <h2 id="equipment-title">장비 가방 · 직업 숙련</h2>
+          <p>장비 변경은 다음 원정부터 적용됩니다. 원정 종료 시 웨이브 성과에 따라 새 장비를 발견합니다.</p>
+          <div class="equipment-summary"><div><span>장비 정수</span><b id="equipment-essence">0</b></div><div><span>현재 보정</span><b id="equipment-bonus">대장 피해 +0%</b></div></div>
+          <div id="equipment-mastery" class="equipment-mastery">도깨비 전사 숙련 Lv.1</div>
+          <div id="equipment-slots" class="equipment-slots"></div>
+          <div id="equipment-list" class="equipment-list"></div>
+          <button class="btn primary equipment-done" data-close="equipment-modal">장비 확정</button>
+        </div>
+      </section>
+
       <section id="controls-modal" class="modal modal-subdialog" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="controls-title">
         <div class="modal-card wide controls-card">
           <button class="modal-x" data-close="controls-modal">×</button>
@@ -402,6 +423,7 @@
         <div class="modal-card compact">
           <p class="kicker">PAUSED</p>
           <h2 id="pause-title">잠시 숨 고르기</h2>
+          <button id="pause-equipment-btn" class="btn ghost">장비 가방 · 직업 숙련</button>
           <button id="pause-controls-btn" class="btn ghost">카메라 · 조작 설정</button>
           <button id="resume-btn" class="btn primary">계속 수호하기</button>
           <button id="restart-btn" class="btn ghost">같은 시드로 다시</button>
@@ -421,6 +443,10 @@
           </div>
           <div id="result-units" class="result-units"></div>
           <div id="result-analysis" class="result-analysis"></div>
+          <div class="result-progression">
+            <article id="result-equipment-reward"><span>–</span><div><small>장비 보상</small><b>결과 계산 중</b><em>원정 전리품을 확인합니다.</em></div></article>
+            <article id="result-mastery-reward"><span>Lv.1</span><div><small>직업 숙련</small><b>결과 계산 중</b><em>숙련 경험치를 정산합니다.</em></div></article>
+          </div>
           <div class="result-shards">
             <div><span>이번 판 혼불</span><b id="result-shards">+0</b></div>
             <small>보유 <strong id="result-shards-total">0</strong> · 다음 판 영구 성장에 사용</small>
@@ -436,7 +462,7 @@
     </div>
     <script>
       (() => {
-        const VERSION = '3.9.0';
+        const VERSION = '4.0.0';
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
         const retryButton = document.getElementById('boot-retry-btn');

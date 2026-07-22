@@ -15,6 +15,9 @@ import { HERO_CLASSES, HERO_CLASS_ORDER, HERO_CLASS_ASSET_IDS, getHeroClass } fr
 import { applyHeroClassVisuals, applyRelicVisuals } from './hero-visual-loadout.js';
 import { applyEnemyCandidateVisuals } from './enemy-candidate-visuals.js';
 import { getBossHudState } from './boss-hud-contract.js';
+import { EQUIPMENT_ITEMS, EQUIPMENT_SLOTS, EQUIPMENT_RARITIES, loadEquipmentState, saveEquipmentState, equipItem, getEquippedItems, applyEquipmentBonuses, awardEquipmentDrop } from './equipment-system.js';
+import { loadHeroMastery, saveHeroMastery, getHeroMasteryEntry, getHeroMasteryBonus, xpForNextLevel, awardHeroMastery, HERO_MASTERY_MAX_LEVEL } from './hero-mastery.js';
+import { getStageProgress } from './stage-progression.js';
 import CodexViewer from './codex-viewer.js';
 import { createPremiumGuardian, createPremiumEnemy, createPremiumSacredTree, applyPremiumBossPhase, prepareImportedGuardian, prepareImportedEnemy } from './premium-assets.js';
 import { DirectionalImpostorSelector } from './engine/directional-impostor.js';
@@ -37,7 +40,7 @@ const tempQ = new THREE.Quaternion();
 
 const ui = {
   canvas: $('#game-canvas'), loading: $('#loading'), loadingStatus: $('#loading-status'), loadingProgress: $('#loading-progress'), loadingDetail: $('#loading-detail'), title: $('#title-screen'), start: $('#start-btn'),
-  how: $('#how-btn'), collection: $('#collection-btn'), meta: $('#meta-btn'), titleShards: $('#title-shards'), runPreview: $('#run-preview'), howModal: $('#how-modal'), collectionModal: $('#collection-modal'),
+  how: $('#how-btn'), collection: $('#collection-btn'), meta: $('#meta-btn'), equipment: $('#equipment-btn'), hudEquipment: $('#hud-equipment-btn'), pauseEquipment: $('#pause-equipment-btn'), titleShards: $('#title-shards'), runPreview: $('#run-preview'), howModal: $('#how-modal'), collectionModal: $('#collection-modal'),
   blessingModal: $('#blessing-modal'), blessingOptions: $('#blessing-options'), collectionGrid: $('#collection-grid'), collectionTabs: $('#collection-tabs'), collectionSummary: $('#collection-summary'),
   choiceSummonModal: $('#choice-summon-modal'), choiceSummonOptions: $('#choice-summon-options'), summonTicket: $('#summon-ticket'),
   controls: $('#controls-btn'), pauseControls: $('#pause-controls-btn'), controlsModal: $('#controls-modal'), controlsReset: $('#controls-reset-btn'),
@@ -46,6 +49,7 @@ const ui = {
   shakeIntensity: $('#shake-intensity'), shakeIntensityValue: $('#shake-intensity-value'), flashIntensity: $('#flash-intensity'), flashIntensityValue: $('#flash-intensity-value'), performanceExport: $('#performance-export-btn'),
   assetDiagnosticsSummary: $('#asset-diagnostics-summary'), assetDiagnosticsCount: $('#asset-diagnostics-count'), assetDiagnosticsList: $('#asset-diagnostics-list'), goldenSamplePreview: $('#golden-sample-preview-btn'),
   contractModal: $('#contract-modal'), contractOptions: $('#contract-options'), contractSkip: $('#contract-skip-btn'), metaModal: $('#meta-modal'), metaShards: $('#meta-shards'), metaTraitList: $('#meta-trait-list'),
+  equipmentModal: $('#equipment-modal'), equipmentSlots: $('#equipment-slots'), equipmentList: $('#equipment-list'), equipmentEssence: $('#equipment-essence'), equipmentBonus: $('#equipment-bonus'), equipmentMastery: $('#equipment-mastery'),
   hud: $('#hud'), hudLayout: $('#hud-layout-btn'), hp: $('#hp-value'), gold: $('#gold-value'), waveLabel: $('#wave-label'), waveProgress: $('#wave-progress'),
   enemyCount: $('#enemy-count'), menu: $('#menu-btn'), sound: $('#sound-btn'), synergyPanel: $('#synergy-panel'),
   leftUiToggle: $('#left-ui-toggle'), synergyToggle: $('#synergy-toggle'), synergyCount: $('#synergy-count'), synergyList: $('#synergy-list'),
@@ -57,7 +61,7 @@ const ui = {
   mission: $('#mission-banner'), missionKicker: $('#mission-kicker'), missionTitle: $('#mission-title'), missionCopy: $('#mission-copy'),
   evolution: $('#evolution-banner'), evolutionSymbol: $('#evolution-symbol'), evolutionName: $('#evolution-name'), evolutionUltimate: $('#evolution-ultimate'),
   bossHealth: $('#boss-health'), bossHealthName: $('#boss-health-name'), bossHealthValue: $('#boss-health-value'), bossHealthProgress: $('#boss-health-progress'),
-  bossIntent: $('#boss-intent'), bossIntentIcon: $('#boss-intent-icon'), bossIntentType: $('#boss-intent-type'), bossIntentProgress: $('#boss-intent-progress'), bossPhase: $('#boss-phase'), bossIntentLabel: $('#boss-intent-label'), bossIntentTime: $('#boss-intent-time'),
+  bossIntent: $('#boss-intent'), bossIntentIcon: $('#boss-intent-icon'), bossIntentType: $('#boss-intent-type'), bossIntentProgress: $('#boss-intent-progress'), bossPhase: $('#boss-phase'), bossIntentLabel: $('#boss-intent-label'), bossIntentTime: $('#boss-intent-time'), bossDangerFrame: $('#boss-danger-frame'),
   killChain: $('#kill-chain'), killChainValue: $('#kill-chain-value'), killChainBonus: $('#kill-chain-bonus'),
   moonOmen: $('#moon-omen'), moonOmenIcon: $('#moon-omen-icon'), moonOmenName: $('#moon-omen-name'), moonOmenEffect: $('#moon-omen-effect'),
   moonWard: $('#moon-ward'), moonWardValue: $('#moon-ward-value'), jackpot: $('#jackpot-rush'), jackpotTime: $('#jackpot-rush-time'),
@@ -70,16 +74,16 @@ const ui = {
   combatTextRoot: $('#combat-text-root'), qualityBadge: $('#quality-badge'),
   damageFlash: $('#damage-flash'), pauseModal: $('#pause-modal'), resume: $('#resume-btn'), restart: $('#restart-btn'),
   titleBtn: $('#title-btn'), resultModal: $('#result-modal'), resultKicker: $('#result-kicker'), resultTitle: $('#result-title'),
-  resultScore: $('#result-score'), resultKills: $('#result-kills'), resultRank: $('#result-rank'), resultUnits: $('#result-units'), resultAnalysis: $('#result-analysis'), resultShards: $('#result-shards'), resultShardsTotal: $('#result-shards-total'), resultGrowth: $('#result-growth-btn'),
+  resultScore: $('#result-score'), resultKills: $('#result-kills'), resultRank: $('#result-rank'), resultUnits: $('#result-units'), resultAnalysis: $('#result-analysis'), resultShards: $('#result-shards'), resultShardsTotal: $('#result-shards-total'), resultGrowth: $('#result-growth-btn'), resultEquipmentReward: $('#result-equipment-reward'), resultMasteryReward: $('#result-mastery-reward'),
   playerName: $('#player-name'), saveScore: $('#save-score-btn'), resultRetry: $('#result-retry-btn'), leaderboard: $('#leaderboard'),
   runModeOptions: $('#run-mode-options'), runModeSummary: $('#run-mode-summary'), heroClassOptions: $('#hero-class-options'), heroClassSummary: $('#hero-class-summary'), seedModeOptions: $('#seed-mode-options'), dailyEdictPreview: $('#daily-edict-preview'),
-  runSeedChip: $('#run-seed-chip'), runSeedIcon: $('#run-seed-icon'), runSeedMode: $('#run-seed-mode'), runSeedValue: $('#run-seed-value'), runEdictName: $('#run-edict-name'), resultNewRun: $('#result-new-run-btn'),
+  runSeedChip: $('#run-seed-chip'), runSeedIcon: $('#run-seed-icon'), runSeedMode: $('#run-seed-mode'), runSeedValue: $('#run-seed-value'), runEdictName: $('#run-edict-name'), stageChip: $('#stage-chip'), stageIcon: $('#stage-icon'), stageName: $('#stage-name'), stageZone: $('#stage-zone'), stageProgress: $('#stage-progress'), resultNewRun: $('#result-new-run-btn'),
   codexPreviewModal: $('#codex-preview-modal'), codexPreviewCanvas: $('#codex-preview-canvas'), codexPreviewTitle: $('#codex-preview-title'), codexPreviewSubtitle: $('#codex-preview-subtitle'),
   codexFrameStatus: $('#codex-frame-status'), codexAssetSet: $('#codex-asset-set'), codexLodReadout: $('#codex-lod-readout'), codexDirectionReadout: $('#codex-direction-readout'), codexImpostorBtn: $('#codex-impostor-btn'),
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '3.9.0';
+const GAME_VERSION = '4.0.0';
 const CHARACTER_ASSET_IDS = Object.freeze([
   ...Object.values(HERO_CLASS_ASSET_IDS),
   ...Object.values(GUARDIAN_ASSET_IDS),
@@ -183,10 +187,14 @@ class DokkaebiLuckDefense {
     this.activeContract = null;
     this.bossSpecialSerial = 0;
     this.metaProgress = this.loadMetaProgress();
+    this.equipmentState = loadEquipmentState();
+    this.heroMastery = loadHeroMastery();
+    this.progressRewarded = false;
     this.codexProgress = loadCodexProgress();
     this.controlSettings = this.loadControlSettings();
     this.mods = this.createDefaultMods();
     this.runRewarded = false;
+    this.progressRewarded = false;
     this.lastShardReward = 0;
     this.lastDangerKey = '';
     this.dangerHapticCooldown = 0;
@@ -238,7 +246,7 @@ class DokkaebiLuckDefense {
     this.assertRequiredUI();
     this.hudLayout = new AdaptiveHudLayout({
       elements: {
-        hud: ui.hud, runSeed: ui.runSeedChip, moonOmen: ui.moonOmen, moonWard: ui.moonWard,
+        hud: ui.hud, runSeed: ui.runSeedChip, stageChip: ui.stageChip, moonOmen: ui.moonOmen, moonWard: ui.moonWard,
         luckMeter: ui.luckMeter, burstMeter: ui.burstMeter, waveTrial: ui.waveTrial,
         synergyPanel: ui.synergyPanel, firstMission: ui.firstMissionPanel, killChain: ui.killChain,
         relicPanel: ui.relicPanel, unitStrip: ui.unitStrip, bossHealth: ui.bossHealth,
@@ -255,6 +263,7 @@ class DokkaebiLuckDefense {
     this.renderHeroClassSelector();
     this.renderSeedModeSelector();
     this.renderRelicStrip();
+    this.renderEquipmentModal();
     this.animate();
     this.ready = this.initializeGame();
 
@@ -490,6 +499,9 @@ class DokkaebiLuckDefense {
     on(ui.how, 'click', () => this.showModal(ui.howModal), {}, 'open-how');
     on(ui.collection, 'click', () => this.openCodex(ui.collection), {}, 'open-codex');
     on(ui.meta, 'click', () => this.openMetaModal(), {}, 'open-meta');
+    on(ui.equipment, 'click', () => this.openEquipmentModal(ui.equipment), {}, 'open-equipment-title');
+    on(ui.hudEquipment, 'click', () => this.openEquipmentModal(ui.hudEquipment), {}, 'open-equipment-hud');
+    on(ui.pauseEquipment, 'click', () => this.openEquipmentModal(ui.pauseEquipment), {}, 'open-equipment-pause');
     on(ui.controls, 'click', () => this.openControlSettings(null, ui.controls), {}, 'open-controls-title');
     on(ui.pauseControls, 'click', () => this.openControlSettings(ui.pauseModal, ui.pauseControls), {}, 'open-controls-pause');
     on(ui.resultGrowth, 'click', () => this.openMetaModal(), {}, 'open-meta-result');
@@ -590,6 +602,10 @@ class DokkaebiLuckDefense {
       const button = event.target.closest('[data-relic]');
       if (button) this.selectRelic(button.dataset.relic);
     }, {}, 'relic-select');
+    on(ui.equipmentList, 'click', (event) => {
+      const button = event.target.closest('[data-equipment-id]');
+      if (button) this.selectEquipmentItem(button.dataset.equipmentId);
+    }, {}, 'equipment-select');
     on(ui.choiceSummonOptions, 'click', (event) => {
       const button = event.target.closest('[data-choice-type]');
       if (button) this.selectChoiceSummon(button.dataset.choiceType);
@@ -2507,11 +2523,14 @@ class DokkaebiLuckDefense {
 
   renderHeroClassSelector() {
     const selected = getHeroClass(this.selectedHeroClassId);
+    const selectedMastery = getHeroMasteryEntry(this.heroMastery, selected.id);
     ui.heroClassOptions.innerHTML = HERO_CLASS_ORDER.map((id) => {
       const entry = HERO_CLASSES[id];
-      return `<button type="button" class="hero-class-option ${entry.id === selected.id ? 'active' : ''}" data-hero-class="${entry.id}" aria-pressed="${entry.id === selected.id}"><img src="${entry.icon}?v=${GAME_VERSION}" alt="" /><span><b>${entry.name}</b><small>${entry.role}</small></span></button>`;
+      const mastery = getHeroMasteryEntry(this.heroMastery, entry.id);
+      return `<button type="button" class="hero-class-option ${entry.id === selected.id ? 'active' : ''}" data-hero-class="${entry.id}" aria-pressed="${entry.id === selected.id}"><img src="${entry.icon}?v=${GAME_VERSION}" alt="" /><span><b>${entry.name}</b><small>${entry.role} · 숙련 Lv.${mastery.level}</small></span></button>`;
     }).join('');
-    ui.heroClassSummary.innerHTML = `<b>${selected.name}</b><span>${selected.description}</span><small>기본 공격 ${selected.attack.damage} · 사거리 ${selected.attack.range} · ${selected.skill.name}</small>`;
+    const masteryNeed = selectedMastery.level >= HERO_MASTERY_MAX_LEVEL ? 'MAX' : `${selectedMastery.xp}/${xpForNextLevel(selectedMastery.level)}`;
+    ui.heroClassSummary.innerHTML = `<b>${selected.name} · 숙련 Lv.${selectedMastery.level}</b><span>${selected.description}</span><small>기본 공격 ${selected.attack.damage} · 사거리 ${selected.attack.range} · ${selected.skill.name} · 숙련 ${masteryNeed}</small>`;
     if (ui.skillLabel) ui.skillLabel.textContent = selected.skill.name.replace(/ .*/, '').slice(0, 5);
   }
 
@@ -2521,7 +2540,51 @@ class DokkaebiLuckDefense {
     this.mods.moveSpeed *= selected.modifiers.moveSpeed;
     this.mods.heroDamage *= selected.modifiers.heroDamage;
     this.mods.skillDamage *= selected.modifiers.skillDamage;
+    const mastery = getHeroMasteryBonus(this.heroMastery, selected.id);
+    this.mods.heroDamage *= mastery.heroDamage;
+    this.mods.skillDamage *= mastery.skillDamage;
+    this.mods.moveSpeed *= mastery.moveSpeed;
+    this.activeEquipmentBonuses = applyEquipmentBonuses(this.mods, this.equipmentState);
     if (this.player) this.player.classConfig = selected;
+  }
+
+  openEquipmentModal(origin = null) {
+    this.renderEquipmentModal();
+    const parent = this.modalStack.at(-1);
+    this.showModal(ui.equipmentModal, { parent: parent === ui.pauseModal ? parent : null, trigger: origin });
+  }
+
+  selectEquipmentItem(itemId) {
+    const previous = this.equipmentState;
+    this.equipmentState = saveEquipmentState(equipItem(previous, itemId));
+    const item = EQUIPMENT_ITEMS.find((entry) => entry.id === itemId);
+    this.renderEquipmentModal();
+    this.renderRunPreview();
+    this.sound.ui();
+    if (item) this.showToast(`${item.name} 장착 완료${this.state === 'playing' || this.state === 'paused' ? ' · 다음 원정부터 적용' : ''}`);
+  }
+
+  renderEquipmentModal() {
+    if (!ui.equipmentList) return;
+    const equipped = getEquippedItems(this.equipmentState);
+    ui.equipmentEssence.textContent = Number(this.equipmentState?.essence || 0).toLocaleString();
+    ui.equipmentSlots.innerHTML = EQUIPMENT_SLOTS.map((slot) => {
+      const item = equipped.find((entry) => entry.slot === slot.id);
+      const rarity = item ? EQUIPMENT_RARITIES[item.rarity] : null;
+      return `<article class="equipment-slot-card" style="--rarity:${rarity?.color || '#697386'}"><span>${slot.icon}</span><div><small>${slot.name}</small><b>${item?.name || '비어 있음'}</b><em>${item?.desc || '장비를 선택하세요.'}</em></div></article>`;
+    }).join('');
+    ui.equipmentList.innerHTML = EQUIPMENT_SLOTS.map((slot) => {
+      const items = EQUIPMENT_ITEMS.filter((item) => item.slot === slot.id && this.equipmentState.owned.includes(item.id));
+      return `<section class="equipment-group"><header><span>${slot.icon}</span><b>${slot.name}</b><small>${items.length}종 보유</small></header><div>${items.map((item) => {
+        const rarity = EQUIPMENT_RARITIES[item.rarity];
+        const active = this.equipmentState.equipped[slot.id] === item.id;
+        return `<button type="button" class="equipment-item ${active ? 'active' : ''}" data-equipment-id="${item.id}" style="--rarity:${rarity.color}"><span>${item.icon}</span><div><b>${item.name}</b><small>${rarity.name} · ${item.desc}</small></div><em>${active ? '장착 중' : '장착'}</em></button>`;
+      }).join('')}</div></section>`;
+    }).join('');
+    const bonuses = this.activeEquipmentBonuses || applyEquipmentBonuses({ heroDamage:1, skillDamage:1, moveSpeed:1, dashCooldown:1, soulGain:1, bossDamage:1, pickupRadius:0 }, this.equipmentState);
+    ui.equipmentBonus.textContent = `대장 피해 +${Math.round((bonuses.heroDamage - 1) * 100)}% · 기술 +${Math.round((bonuses.skillDamage - 1) * 100)}% · 이동 +${Math.round((bonuses.moveSpeed - 1) * 100)}%`;
+    const mastery = getHeroMasteryEntry(this.heroMastery, this.selectedHeroClassId);
+    ui.equipmentMastery.textContent = `${this.heroClass?.name || '도깨비 전사'} 숙련 Lv.${mastery.level} · 원정 ${mastery.runs}회 · 승리 ${mastery.wins}회`;
   }
 
   refreshHeroVisualLoadout() {
@@ -2625,6 +2688,7 @@ class DokkaebiLuckDefense {
     this.hideModal(ui.relicModal);
     this.state = 'playing';
     this.renderRelicStrip();
+    this.renderEquipmentModal();
     this.refreshHeroVisualLoadout();
     this.sound.merge(Math.min(5, 2 + this.relicHistory.length));
     this.haptic([20, 24, 50]);
@@ -2774,6 +2838,7 @@ class DokkaebiLuckDefense {
     this.cinematic = null;
     this.cameraCollisionDistance = this.cameraDistance;
     this.runRewarded = false;
+    this.progressRewarded = false;
     this.lastShardReward = 0;
     this.commandCooldown = 0;
     this.commandActiveKey = '';
@@ -2822,6 +2887,7 @@ class DokkaebiLuckDefense {
     this.player.stunTimer = 0;
     this.showGameUI(true);
     ui.bossHealth.classList.add('hidden');
+    ui.bossDangerFrame.classList.add('hidden');
     document.body.classList.remove('boss-active');
     ui.killChain.classList.add('hidden');
     ui.saveScore.disabled = false;
@@ -2853,6 +2919,7 @@ class DokkaebiLuckDefense {
     ui.evolution.classList.add('hidden');
     this.showGameUI(false);
     ui.bossHealth.classList.add('hidden');
+    ui.bossDangerFrame.classList.add('hidden');
     document.body.classList.remove('boss-active');
     ui.killChain.classList.add('hidden');
     this.createWorld(true);
@@ -2882,7 +2949,7 @@ class DokkaebiLuckDefense {
   }
 
   showGameUI(show) {
-    [ui.hud, ui.synergyPanel, ui.luckMeter, ui.unitStrip, ui.joystick, ui.actionDock, ui.leftUiToggle].forEach((element) => element.classList.toggle('hidden', !show));
+    [ui.hud, ui.synergyPanel, ui.luckMeter, ui.unitStrip, ui.joystick, ui.actionDock, ui.leftUiToggle, ui.stageChip].forEach((element) => element.classList.toggle('hidden', !show));
     ui.firstMissionPanel.classList.toggle('hidden', !show || !this.firstMissionActive);
     ui.moonOmen.classList.toggle('hidden', !show || !this.activeOmen);
     ui.runSeedChip.classList.toggle('hidden', !show || !this.runSeed);
@@ -4959,6 +5026,8 @@ class DokkaebiLuckDefense {
     const boss = this.enemies.find((enemy) => enemy.boss && !enemy.dead);
     if (!boss) {
       ui.bossHealth.classList.add('hidden');
+      ui.bossDangerFrame.classList.add('hidden');
+      ui.bossDangerFrame.dataset.urgency = 'stable';
       document.body.classList.remove('boss-active');
       return;
     }
@@ -4975,11 +5044,22 @@ class DokkaebiLuckDefense {
     ui.bossIntentProgress.style.width = `${(1 - hudState.progress) * 100}%`;
     ui.bossIntent.style.setProperty('--boss-intent-color', hudState.type.color);
     ui.bossIntent.dataset.urgency = hudState.urgency;
+    ui.bossDangerFrame.dataset.urgency = hudState.urgency;
+    ui.bossDangerFrame.classList.toggle('hidden', hudState.urgency === 'stable');
     const iconUrl = new URL(hudState.type.icon, document.baseURI);
     iconUrl.searchParams.set('v', GAME_VERSION);
     ui.bossIntentIcon.src = iconUrl.href;
     ui.bossHealth.classList.remove('hidden');
     document.body.classList.add('boss-active');
+  }
+
+  updateStageHUD() {
+    const state = getStageProgress(this.currentWave, this.maxWaves);
+    ui.stageIcon.textContent = state.zone.icon;
+    ui.stageName.textContent = state.stage.name;
+    ui.stageZone.textContent = `${state.zone.name} · ${state.zone.copy}`;
+    ui.stageProgress.style.width = `${Math.round(state.progress * 100)}%`;
+    ui.stageChip.style.setProperty('--stage-accent', state.stage.accent);
   }
 
   updateHUD() {
@@ -5018,6 +5098,7 @@ class DokkaebiLuckDefense {
     ui.burst.classList.toggle('ready', !burstActive && this.soulGauge >= 100);
     ui.burst.classList.toggle('active', burstActive);
     this.updateCommandChipStates();
+    this.updateStageHUD();
     this.updateBossHUD();
   }
 
@@ -5069,6 +5150,11 @@ class DokkaebiLuckDefense {
         animations: this.animations?.diagnostics || null,
         lifecycle: this.lifecycle.diagnostics
       },
+      progression: {
+        heroClass: this.selectedHeroClassId,
+        mastery: getHeroMasteryEntry(this.heroMastery, this.selectedHeroClassId),
+        equipment: { equipped: { ...this.equipmentState.equipped }, ownedCount: this.equipmentState.owned.length, essence: this.equipmentState.essence }
+      },
       settings: this.controlSettings,
       viewport: { width: window.innerWidth, height: window.innerHeight, pixelRatio: window.devicePixelRatio || 1 },
       userAgent: navigator.userAgent
@@ -5101,6 +5187,7 @@ class DokkaebiLuckDefense {
     this.state = 'result';this.waveActive=false;this.cinematic=null;this.showGameUI(false);
     ui.evolution.classList.remove('show');ui.evolution.classList.add('hidden');
     ui.bossHealth.classList.add('hidden');
+    ui.bossDangerFrame.classList.add('hidden');
     document.body.classList.remove('boss-active');
     ui.killChain.classList.add('hidden');
     ui.mission.classList.remove('show');
@@ -5128,10 +5215,30 @@ class DokkaebiLuckDefense {
       <div><span>도감 연구</span><b>발견 ${this.runStats.codexDiscoveries} · 전리품 ${this.runStats.codexDrops}</b><small>약점 해독 ${this.runStats.weaknessUnlocks} · 약점 공격 ${this.runStats.weaknessHits.toLocaleString()}회</small></div>
       <div><span>원정 시드</span><b>${this.runSeed}</b><small>${this.dailyEdict.icon} ${this.dailyEdict.name} · ${this.selectedSeedModeId === 'daily' ? '오늘의 원정' : '자유 원정'}</small></div>`;
     const shardReward = this.awardRunShards(won);
+    const persistentReward = this.awardPersistentProgress(won);
     ui.resultShards.textContent = `+${shardReward}`;
     ui.resultShardsTotal.textContent = this.metaProgress.shards.toLocaleString();
+    ui.resultEquipmentReward.innerHTML = persistentReward.drop ? `<span style="--rarity:${EQUIPMENT_RARITIES[persistentReward.drop.item.rarity].color}">${persistentReward.drop.item.icon}</span><div><small>${persistentReward.drop.duplicate ? '중복 장비 분해' : '새 장비 획득'}</small><b>${persistentReward.drop.item.name}</b><em>${persistentReward.drop.duplicate ? `장비 정수 +${persistentReward.drop.essence}` : persistentReward.drop.item.desc}</em></div>` : '<span>–</span><div><small>장비 보상</small><b>웨이브 3부터 획득</b><em>더 깊은 원정에서 장비를 발견하세요.</em></div>';
+    ui.resultMasteryReward.innerHTML = `<span>Lv.${persistentReward.mastery.entry.level}</span><div><small>${this.heroClass.name} 숙련</small><b>숙련 경험치 +${persistentReward.mastery.gained}</b><em>${persistentReward.mastery.levelsGained ? `${persistentReward.mastery.levelsGained}레벨 상승!` : `원정 ${persistentReward.mastery.entry.runs}회 누적`}</em></div>`;
     this.renderLeaderboard(this.getLocalScores());
     this.scheduleUi(() => { if (this.state === 'result') this.showModal(ui.resultModal); }, 700, { key: 'result-modal-show' });
+  }
+
+  awardPersistentProgress(won) {
+    if (this.progressRewarded) {
+      return { mastery: { gained: 0, levelsGained: 0, entry: getHeroMasteryEntry(this.heroMastery, this.selectedHeroClassId) }, drop: null };
+    }
+    this.progressRewarded = true;
+    const mastery = awardHeroMastery(this.heroMastery, this.selectedHeroClassId, { wave: this.currentWave, won });
+    this.heroMastery = saveHeroMastery(mastery.state);
+    let drop = null;
+    if (this.currentWave >= 3) {
+      drop = awardEquipmentDrop(this.equipmentState, { wave: this.currentWave, won, random: () => this.random() });
+      this.equipmentState = saveEquipmentState(drop.state);
+    }
+    this.renderHeroClassSelector();
+    this.renderEquipmentModal();
+    return { mastery, drop };
   }
 
   getLocalScores() {

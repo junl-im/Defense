@@ -62,6 +62,7 @@ export class AdaptiveHudLayout {
 
     makeRail('top-status-rail', 'top-status-rail combat-ui-rail', [
       this.elements.runSeed,
+      this.elements.stageChip,
       this.elements.moonOmen,
       this.elements.moonWard
     ]);
@@ -86,7 +87,7 @@ export class AdaptiveHudLayout {
     this.observer = new MutationObserver(() => this.scheduleRefresh());
     this.observer.observe(this.body, { attributes: true, attributeFilter: ['class'] });
     const watched = [
-      this.elements.runSeed, this.elements.moonOmen, this.elements.moonWard,
+      this.elements.runSeed, this.elements.stageChip, this.elements.moonOmen, this.elements.moonWard,
       this.elements.luckMeter, this.elements.burstMeter, this.elements.waveTrial,
       this.elements.synergyPanel, this.elements.firstMission, this.elements.killChain,
       this.elements.relicPanel, this.elements.unitStrip, this.elements.bossHealth,

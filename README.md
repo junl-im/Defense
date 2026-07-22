@@ -1,24 +1,25 @@
 # 도깨비 운빨 수호대 3D
 
-- 게임 버전: **3.9.0**
+- 게임 버전: **4.0.0**
 - 엔진 버전: **2.9.0**
 - 아트 잠금: **DD-AAA-CASUAL-SD-PBR-3.0**
+- 전투 모델 계약: **GLB 19종**
 - IP 제작 계획: **1,130개 시각 에셋**
 
-## v3.9.0 핵심
+## v4.0.0 핵심
 
-- 시작 영웅 선택: 도깨비 전사, 도깨비 궁수, 도깨비 법사
-- 궁수 장거리 관통 공격과 다중 화살 기술
-- 법사 광역 공격과 둔화 기술
-- 유물 선택 시 무기·관·후광이 영웅 소켓에 즉시 장착
-- 신규 일반 적: 달그림자 귀신, 백골 무사, 먹구름 까마귀
-- 신규 적 3종의 약점 연구와 전리품 도감 연결
-- 보스 공격 의도를 타격·소환·제어 PNG 아이콘과 진행 게이지로 표시
-- 직업·적·보스 UI 아이콘 9종을 256×256 PNG로 추가
-- 전투 GLB 19종의 파일 크기·GLB2 헤더·SHA-256 계약
-- 절대 SVG 금지 유지
+- 영구 장비 가방: 무기·부적·신발 3슬롯
+- 장비 9종과 등급별 전투 보정
+- 원정 종료 장비 드롭과 중복 장비 정수 변환
+- 전사·궁수·법사별 직업 숙련 레벨과 영구 보정
+- 타이틀·전투 HUD·일시정지에서 장비 창 접근
+- 도깨비마을 4구역 진행 HUD
+- 보스 공격 임박 화면 테두리 경고
+- 모바일 장비 모달·결과 보상 카드 반응형 재배치
+- 전투 GLB 19종 파일·크기·헤더·SHA-256 계약 유지
+- 래스터/CSS UI만 사용하며 벡터 이미지 금지 유지
 
-신규 궁수·법사·일반 적 3종은 공용 리그와 7개 AnimationClip을 사용하는 **기술 검수 후보**입니다. 런타임 실루엣 키트로 역할을 구분하지만, 최종 전용 조형과 손그림 텍스처의 아트 디렉터 승인은 아직 완료되지 않았습니다.
+장비와 숙련은 기기 로컬 저장소에 보존됩니다. 장비 변경은 다음 원정부터 적용되고, 직업 숙련은 선택한 직업에만 누적됩니다.
 
 ## 설치·검증
 
@@ -41,13 +42,16 @@ node scripts/verify-static-dist.mjs
 npm run generate:ip-masterlist
 npm run verify:ip
 npm run generate:v390-candidates
+npm run verify:v400
 ```
 
 ## 주요 문서
 
+- `docs/PERSISTENT_PROGRESSION_v4.0.0.md`
+- `docs/UI_HUD_v4.0.0.md`
+- `docs/PATCH_NOTES_v4.0.0.md`
+- `docs/RUNTIME_ASSET_INVENTORY_v4.0.0.json`
 - `docs/P0_RUNTIME_EXPANSION_v3.9.0.md`
-- `docs/PATCH_NOTES_v3.9.0.md`
-- `docs/RUNTIME_ASSET_INVENTORY_v3.9.0.json`
 - `docs/CURRENT_ASSET_AUDIT.md`
 - `docs/IP_PRODUCTION_INDEX_v3.8.0.md`
 - `production/DokkaebiDefense/ASSET_MASTERLIST_v3.8.0.json`
