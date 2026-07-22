@@ -26,6 +26,7 @@ import { GOLDEN_SAMPLE_CLIPS, GOLDEN_SAMPLE_SOCKETS, GOLDEN_SAMPLE_TEXTURE_MAPS 
 import { loadCodexProgress, saveCodexProgress, recordCodexEncounter, recordCodexDefeat, recordGuardianUse, getCodexKnowledge, getCodexProgressSummary, getWeaknessDamageBonus, getWeaknessLabel } from './codex-progression.js';
 import { RuntimeLifecycle } from './runtime-lifecycle.js';
 import AdaptiveHudLayout from './ui-layout-manager.js';
+import CombatPresentation, { faceActorTowards, resolveAttackOrigin } from './combat-presentation.js';
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -56,7 +57,7 @@ const ui = {
   luckMeter: $('#luck-meter'), luckValue: $('#luck-value'), luckProgress: $('#luck-progress'), unitStrip: $('#unit-strip'),
   joystick: $('#joystick-zone'), joystickKnob: $('#joystick-knob'), lookZone: $('#look-zone'), actionDock: $('#action-dock'),
   dash: $('#dash-btn'), dashCooldown: $('#dash-cooldown'), skill: $('#skill-btn'), skillLabel: $('#skill-label'), skillCooldown: $('#skill-cooldown'),
-  summon: $('#summon-btn'), summonCost: $('#summon-cost'), wave: $('#wave-btn'), waveText: $('#wave-btn-text'),
+  summon: $('#summon-btn'), summonCost: $('#summon-cost'), wave: $('#wave-btn'), waveLabelAction: $('#wave-btn-label'), waveText: $('#wave-btn-text'), autoWavePanel: $('#auto-wave-panel'), autoWaveTitle: $('#auto-wave-title'), autoWaveCopy: $('#auto-wave-copy'), autoWaveSeconds: $('#auto-wave-seconds'), autoWavePanelProgress: $('#auto-wave-panel-progress'),
   toast: $('#toast'), combo: $('#combo-banner'), comboText: $('#combo-text'), boss: $('#boss-banner'), bossName: $('#boss-name'),
   mission: $('#mission-banner'), missionKicker: $('#mission-kicker'), missionTitle: $('#mission-title'), missionCopy: $('#mission-copy'),
   evolution: $('#evolution-banner'), evolutionSymbol: $('#evolution-symbol'), evolutionName: $('#evolution-name'), evolutionUltimate: $('#evolution-ultimate'),
@@ -72,7 +73,7 @@ const ui = {
   firstMissionPanel: $('#first-mission-panel'), firstMissionStep: $('#first-mission-step'), firstMissionTitle: $('#first-mission-title'),
   firstMissionProgress: $('#first-mission-progress'), firstMissionCopy: $('#first-mission-copy'),
   combatTextRoot: $('#combat-text-root'), qualityBadge: $('#quality-badge'),
-  damageFlash: $('#damage-flash'), pauseModal: $('#pause-modal'), resume: $('#resume-btn'), restart: $('#restart-btn'),
+  damageFlash: $('#damage-flash'), combatImpactFlash: $('#combat-impact-flash'), pauseModal: $('#pause-modal'), resume: $('#resume-btn'), restart: $('#restart-btn'),
   titleBtn: $('#title-btn'), resultModal: $('#result-modal'), resultKicker: $('#result-kicker'), resultTitle: $('#result-title'),
   resultScore: $('#result-score'), resultKills: $('#result-kills'), resultRank: $('#result-rank'), resultUnits: $('#result-units'), resultAnalysis: $('#result-analysis'), resultShards: $('#result-shards'), resultShardsTotal: $('#result-shards-total'), resultGrowth: $('#result-growth-btn'), resultEquipmentReward: $('#result-equipment-reward'), resultMasteryReward: $('#result-mastery-reward'),
   playerName: $('#player-name'), saveScore: $('#save-score-btn'), resultRetry: $('#result-retry-btn'), leaderboard: $('#leaderboard'),
@@ -83,7 +84,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '4.0.0';
+const GAME_VERSION = '4.1.0';
 const CHARACTER_ASSET_IDS = Object.freeze([
   ...Object.values(HERO_CLASS_ASSET_IDS),
   ...Object.values(GUARDIAN_ASSET_IDS),
@@ -232,6 +233,9 @@ class DokkaebiLuckDefense {
     this.currentTrial = null;
     this.lastTrialId = '';
     this.postWaveQueue = [];
+    this.autoWaveCountdown = 0;
+    this.autoWaveCountdownDuration = 10;
+    this.autoWaveAnnounced = -1;
     this.soulGauge = 0;
     this.guardianBurstTimer = 0;
     this.waveMaxChain = 0;
@@ -256,6 +260,12 @@ class DokkaebiLuckDefense {
     this.hudLayout.mount();
     this.applyViewportUiProfile();
     this.initThree();
+    this.combatPresentation = new CombatPresentation({
+      parent: this.pooledEffectRoot,
+      flashElement: ui.combatImpactFlash,
+      lowPower: this.lowPower,
+      reducedMotion: () => Boolean(this.controlSettings?.reducedMotion)
+    });
     this.bindUI();
     this.populateCollection();
     this.renderMetaProgress();
@@ -562,7 +572,7 @@ class DokkaebiLuckDefense {
     on(ui.goldenSamplePreview, 'click', () => this.openGoldenSamplePreview(ui.goldenSamplePreview), {}, 'golden-sample-preview');
     on(ui.saveScore, 'click', () => this.saveScore(), {}, 'save-score');
     on(ui.summon, 'click', () => this.summonUnit(), {}, 'summon');
-    on(ui.wave, 'click', () => this.startWave(), {}, 'wave');
+    on(ui.wave, 'click', () => this.startWave({ manual: true }), {}, 'wave');
     on(ui.dash, 'click', () => this.useDash(), {}, 'dash');
     on(ui.skill, 'click', () => this.useHeroSkill(), {}, 'skill');
     on(ui.burst, 'click', () => this.activateGuardianBurst(), {}, 'burst');
@@ -1881,6 +1891,8 @@ class DokkaebiLuckDefense {
 
   clearWorld() {
     this.worldReady = false;
+    this.cancelAutoWaveCountdown();
+    this.combatPresentation?.clear();
     this.units.forEach((unit) => this.animations.remove(unit?.animation));
     this.enemies.forEach((enemy) => this.animations.remove(enemy?.animation));
     this.animations.remove(this.player?.animation);
@@ -2464,7 +2476,7 @@ class DokkaebiLuckDefense {
     this.renderAssetDiagnostics();
     return {
       group, flame, classConfig: heroClass, attackCooldown: 0, dashCooldown: 0, skillCooldown: 0, dashTimer: 0, stunTimer: 0,
-      facing: new THREE.Vector3(0,0,-1),
+      facing: new THREE.Vector3(0,0,-1), attackFacing: new THREE.Vector3(0,0,-1), attackFacingLock: 0,
       animation: this.animations.createController(group, group.userData.animations || [], { procedural: !(group.userData.animations?.length) })
     };
   }
@@ -2795,7 +2807,70 @@ class DokkaebiLuckDefense {
     if (next === 'blessing') { this.offerBlessing(); return; }
     ui.wave.disabled = false;
     ui.waveText.textContent = `${this.currentWave + 1}`;
-    this.showToast('전열을 정비하고 다음 습격을 시작하세요.');
+    this.beginAutoWaveCountdown(10);
+  }
+
+  beginAutoWaveCountdown(seconds = 10) {
+    if (this.state !== 'playing' || this.waveActive || this.currentWave >= this.maxWaves) return;
+    this.autoWaveCountdownDuration = Math.max(1, Number(seconds) || 10);
+    this.autoWaveCountdown = this.autoWaveCountdownDuration;
+    this.autoWaveAnnounced = Math.ceil(this.autoWaveCountdown);
+    ui.wave.classList.add('auto-countdown');
+    ui.wave.style.setProperty('--auto-wave-progress', '0deg');
+    ui.autoWavePanel?.classList.remove('hidden', 'imminent');
+    if (ui.autoWavePanel) {
+      void ui.autoWavePanel.offsetWidth;
+      ui.autoWavePanel.classList.add('show');
+    }
+    this.showToast(`전열 정비 · ${Math.ceil(this.autoWaveCountdown)}초 후 다음 습격 자동 시작`);
+    this.updateAutoWaveButton();
+  }
+
+  cancelAutoWaveCountdown() {
+    this.autoWaveCountdown = 0;
+    this.autoWaveAnnounced = -1;
+    ui.wave?.classList.remove('auto-countdown', 'auto-imminent');
+    ui.wave?.style.removeProperty('--auto-wave-progress');
+    ui.autoWavePanel?.classList.remove('show', 'imminent');
+    ui.autoWavePanel?.classList.add('hidden');
+    ui.autoWavePanelProgress?.style.removeProperty('width');
+    if (ui.waveLabelAction) ui.waveLabelAction.textContent = '다음 습격';
+  }
+
+  updateAutoWaveCountdown(dt) {
+    if (this.autoWaveCountdown <= 0 || this.state !== 'playing' || this.waveActive) return;
+    this.autoWaveCountdown = Math.max(0, this.autoWaveCountdown - dt);
+    const whole = Math.ceil(this.autoWaveCountdown);
+    if (whole !== this.autoWaveAnnounced) {
+      this.autoWaveAnnounced = whole;
+      if (whole > 0 && whole <= 3) {
+        this.showCombo(`${whole}초 후 다음 습격`, 620);
+        this.haptic(whole === 1 ? 18 : 8);
+      }
+    }
+    ui.wave.classList.toggle('auto-imminent', this.autoWaveCountdown <= 3);
+    this.updateAutoWaveButton();
+    if (this.autoWaveCountdown <= 0) this.startWave({ auto: true });
+  }
+
+  updateAutoWaveButton() {
+    if (!ui.wave || this.autoWaveCountdown <= 0) return;
+    const progress = 1 - this.autoWaveCountdown / Math.max(1, this.autoWaveCountdownDuration);
+    const seconds = Math.max(1, Math.ceil(this.autoWaveCountdown));
+    ui.wave.style.setProperty('--auto-wave-progress', `${Math.round(progress * 360)}deg`);
+    if (ui.waveLabelAction) ui.waveLabelAction.textContent = '자동 진군';
+    ui.waveText.textContent = `${seconds}초`;
+    ui.wave.setAttribute('aria-label', `${seconds}초 후 다음 습격 자동 시작. 누르면 즉시 시작`);
+    if (ui.autoWavePanel) {
+      ui.autoWavePanel.classList.remove('hidden');
+      ui.autoWavePanel.classList.add('show');
+      ui.autoWavePanel.classList.toggle('imminent', seconds <= 3);
+      ui.autoWavePanel.setAttribute('aria-label', `${seconds}초 후 웨이브 ${this.currentWave + 1} 자동 시작. 누르면 즉시 출발`);
+    }
+    if (ui.autoWaveTitle) ui.autoWaveTitle.textContent = `웨이브 ${this.currentWave + 1} 진군 준비`;
+    if (ui.autoWaveCopy) ui.autoWaveCopy.textContent = seconds <= 3 ? '월문이 열립니다 · 즉시 출발 가능' : '수호대를 정비하세요 · 누르면 즉시 출발';
+    if (ui.autoWaveSeconds) ui.autoWaveSeconds.textContent = `${seconds}`;
+    if (ui.autoWavePanelProgress) ui.autoWavePanelProgress.style.width = `${Math.round(progress * 100)}%`;
   }
 
   startRun({ reuseSeed = false } = {}) {
@@ -2944,12 +3019,16 @@ class DokkaebiLuckDefense {
     ui.boss.classList.remove('show');
     ui.boss.classList.add('hidden');
     ui.damageFlash.classList.remove('show');
+    ui.combatImpactFlash.classList.remove('show', 'critical', 'heavy');
+    ui.autoWavePanel?.classList.remove('show', 'imminent');
+    ui.autoWavePanel?.classList.add('hidden');
     ui.combatTextRoot.replaceChildren();
     this.combatTextCount = 0;
   }
 
   showGameUI(show) {
     [ui.hud, ui.synergyPanel, ui.luckMeter, ui.unitStrip, ui.joystick, ui.actionDock, ui.leftUiToggle, ui.stageChip].forEach((element) => element.classList.toggle('hidden', !show));
+    ui.autoWavePanel?.classList.toggle('hidden', !show || this.autoWaveCountdown <= 0);
     ui.firstMissionPanel.classList.toggle('hidden', !show || !this.firstMissionActive);
     ui.moonOmen.classList.toggle('hidden', !show || !this.activeOmen);
     ui.runSeedChip.classList.toggle('hidden', !show || !this.runSeed);
@@ -3157,8 +3236,10 @@ class DokkaebiLuckDefense {
     }
   }
 
-  startWave() {
+  startWave({ manual = false, auto = false } = {}) {
     if (this.state !== 'playing' || this.waveActive || this.currentWave >= this.maxWaves) return;
+    const wasCountingDown = this.autoWaveCountdown > 0;
+    this.cancelAutoWaveCountdown();
     this.currentWave += 1;
     this.waveActive = true;
     this.waveStartHp = this.coreHp;
@@ -3183,7 +3264,7 @@ class DokkaebiLuckDefense {
       this.scheduleRun(() => ui.boss.classList.remove('show'), 1900, { key: 'boss-banner-hide' });
       this.scheduleRun(() => ui.boss.classList.add('hidden'), 2350, { key: 'boss-banner-collapse' });
     }
-    this.showToast(`웨이브 ${this.currentWave} 시작! 사방의 요괴문을 확인하세요.`);
+    this.showToast(`${auto ? '자동 진군 · ' : manual && wasCountingDown ? '즉시 진군 · ' : ''}웨이브 ${this.currentWave} 시작! 사방의 요괴문을 확인하세요.`);
     this.updateHUD();
   }
 
@@ -3326,6 +3407,15 @@ class DokkaebiLuckDefense {
     this.gold += reward;
     this.score += Math.round((this.currentWave * 250 + this.coreHp * 8) * this.activeRunMode.score * (this.dailyEdict?.score || 1));
     this.showCombo(`웨이브 ${this.currentWave} 격파 · +${reward} 엽전${perfectBonus ? ' · 무결점!' : ''}`, 1600);
+    const clearImpact = this.combatPresentation?.impact({
+      position: new THREE.Vector3(0, 0, 0),
+      origin: this.player?.group?.position,
+      color: perfect ? 0xffe28b : 0x8cecff,
+      source: 'skill',
+      heavy: perfect
+    });
+    if (clearImpact?.shake) this.shake = Math.max(this.shake, clearImpact.shake * .72);
+    this.spawnRing(new THREE.Vector3(0, 0, 0), perfect ? 0xffe28b : 0x8cecff, perfect ? 7.5 : 5.8);
     if (perfectBonus) {
       this.score += Math.round(perfectBonus * 25 * this.activeRunMode.score);
       this.moonWard = Math.min(3, this.moonWard + 1);
@@ -3501,19 +3591,26 @@ class DokkaebiLuckDefense {
     this.animations.setBaseState(this.player.animation, locomotionState);
     if (moving) {
       move.normalize();
-      this.player.facing.lerp(move, .22).normalize();
+      if (this.player.attackFacingLock <= 0) this.player.facing.lerp(move, .22).normalize();
       const burstMove = this.guardianBurstTimer > 0 ? 1.18 : 1;
       const speed = 5.25 * this.mods.moveSpeed * burstMove * (this.player.dashTimer > 0 ? 2.5 : 1) * movementStrength;
       this.player.group.position.addScaledVector(move, speed * dt);
       this.resolvePlayerNavigation(this.player.group.position);
-      const targetRot = Math.atan2(move.x, move.z);
-      this.player.group.rotation.y = this.lerpAngle(this.player.group.rotation.y, targetRot, 1 - Math.pow(.001, dt));
+      if (this.player.attackFacingLock <= 0) {
+        const targetRot = Math.atan2(move.x, move.z);
+        this.player.group.rotation.y = this.lerpAngle(this.player.group.rotation.y, targetRot, 1 - Math.pow(.001, dt));
+      }
     }
 
     this.player.dashTimer = Math.max(0, this.player.dashTimer - dt);
     this.player.dashCooldown = Math.max(0, this.player.dashCooldown - dt);
     this.player.skillCooldown = Math.max(0, this.player.skillCooldown - dt);
     this.player.attackCooldown -= dt;
+    this.player.attackFacingLock = Math.max(0, (this.player.attackFacingLock || 0) - dt);
+    if (this.player.attackFacingLock > 0 && this.player.attackFacing?.lengthSq() > .001) {
+      const attackRotation = Math.atan2(this.player.attackFacing.x, this.player.attackFacing.z);
+      this.player.group.rotation.y = this.lerpAngle(this.player.group.rotation.y, attackRotation, 1 - Math.pow(.00001, dt));
+    }
 
     const bob = Math.sin(this.elapsed * (moving ? 11 : 4)) * (moving ? .09 : .04);
     this.player.group.position.y = bob;
@@ -3526,10 +3623,15 @@ class DokkaebiLuckDefense {
       const target = this.findNearestEnemy(this.player.group.position, attack.range);
       if (target) {
         this.player.attackCooldown = attack.cooldown;
-        const origin = this.player.group.position.clone().add(new THREE.Vector3(.55, 1.35, 0));
+        const attackDirection = faceActorTowards(this.player.group, target.group.position, .92) || this.player.facing;
+        this.player.facing.copy(attackDirection).normalize();
+        this.player.attackFacing.copy(attackDirection).normalize();
+        this.player.attackFacingLock = .18;
+        const origin = resolveAttackOrigin(this.player.group, 1.35, .22);
         const burstDamage = this.guardianBurstTimer > 0 ? 1.48 * this.mods.burstPower : 1;
         const damage = (attack.damage + this.currentWave * 1.2) * this.mods.heroDamage * this.getThunderHeroMultiplier() * (this.activeOmen?.heroDamage || 1) * (this.jackpotTimer > 0 ? 1.15 : 1) * burstDamage;
         this.animations.trigger(this.player.animation, 'attack', .24);
+        this.combatPresentation?.muzzle({ position: origin, direction: attackDirection, color: classConfig.color, style: classConfig.id === 'archer' ? 'wind' : classConfig.id === 'mage' ? 'skill' : 'hero' });
         this.fireProjectile({ kind: 'hero', type: classConfig.id === 'archer' ? 'wind' : 'hero', damageSource: 'hero', origin, target, damage, speed: attack.speed, color: classConfig.color, radius: attack.radius, pierce: attack.pierce || 0, splash: attack.splash || 0 });
         this.sound.shoot(classConfig.id === 'archer' ? 'wind' : 'hero');
       }
@@ -3560,6 +3662,15 @@ class DokkaebiLuckDefense {
     this.sound.skill();
     this.haptic([25, 25, 65]);
     const center = this.player.group.position.clone();
+    const facingTarget = this.findNearestEnemy(center, skill.radius);
+    if (facingTarget) {
+      const direction = faceActorTowards(this.player.group, facingTarget.group.position, 1);
+      if (direction) {
+        this.player.facing.copy(direction);
+        this.player.attackFacing.copy(direction);
+        this.player.attackFacingLock = .36;
+      }
+    }
     const burstDamage = this.guardianBurstTimer > 0 ? 1.45 * this.mods.burstPower : 1;
     const damage = (skill.damage + this.currentWave * 10) * this.mods.heroDamage * this.mods.skillDamage * (this.activeOmen?.heroDamage || 1) * (this.jackpotTimer > 0 ? 1.15 : 1) * burstDamage;
 
@@ -3608,6 +3719,12 @@ class DokkaebiLuckDefense {
         unit.group.userData.aura.material.opacity = commandActive ? .92 : .5;
       }
       if (unit.showcase || this.state !== 'playing') { this.animations.setState(unit.animation, 'idle'); return; }
+      if (unit.cooldown > 0 && unit.cooldown <= .16) {
+        const anticipationTarget = unit.type === 'wind'
+          ? this.findFarthestEnemyInRange(unit.group.position, config.range)
+          : this.findNearestEnemy(unit.group.position, config.range);
+        if (anticipationTarget) faceActorTowards(unit.group, anticipationTarget.group.position, .34);
+      }
       if (unit.rank === 5) {
         unit.ultimateCooldown -= dt * (commandActive ? 1.7 : 1);
         if (unit.ultimateCooldown <= 0 && this.triggerUnitUltimate(unit)) {
@@ -3625,9 +3742,11 @@ class DokkaebiLuckDefense {
         unit.cooldown = stats.cooldown * cooldownMult * (commandActive ? .62 : 1) * (cursed ? 1.85 : 1);
         const direction = target.group.position.clone().sub(unit.group.position);
         const targetRot = Math.atan2(direction.x,direction.z);
-        unit.group.rotation.y = this.lerpAngle(unit.group.rotation.y,targetRot,.65);
-        const origin = unit.group.position.clone().add(new THREE.Vector3(0,1.55,0));
+        unit.group.rotation.y = this.lerpAngle(unit.group.rotation.y,targetRot,.9);
+        const aimDirection = direction.setY(0).normalize();
+        const origin = resolveAttackOrigin(unit.group, 1.55, .16);
         this.animations.trigger(unit.animation, 'attack', .24);
+        this.combatPresentation?.muzzle({ position: origin, direction: aimDirection, color: config.color, style: unit.type, heavy: unit.rank >= 5 || commandActive });
         this.fireProjectile({
           kind:'unit', type:unit.type, origin, target, damage:stats.damage, speed:config.projectileSpeed,
           color:config.color, radius:(.11+unit.rank*.025)*(commandActive ? 1.22 : 1), splash:config.splash ? config.splash*(1+unit.rank*.04) + (commandActive ? unit.commandSplashBonus || 0 : 0):0,
@@ -3765,7 +3884,7 @@ class DokkaebiLuckDefense {
       this.resolveProjectileHit({ ...data, mesh: { position: data.origin }, hitTargets: new Set() }, data.target);
       return;
     }
-    Object.assign(projectile, data, { poolKey, alive: true, life: 3.2 });
+    Object.assign(projectile, data, { poolKey, alive: true, life: 3.2, launchOrigin: data.origin.clone() });
     projectile.hitTargets.clear();
     projectile.mesh.visible = true;
     projectile.mesh.position.copy(data.origin);
@@ -3828,11 +3947,11 @@ class DokkaebiLuckDefense {
       damage*=1+projectile.owner.streak*.07;
     }
     if (projectile.execute && target.hp/target.maxHp<projectile.execute && !target.boss) damage=target.hp+1;
-    this.damageEnemy(target,damage,projectile.damageSource || projectile.type,projectile.mesh.position,projectile.owner);
+    this.damageEnemy(target,damage,projectile.damageSource || projectile.type,projectile.launchOrigin || projectile.mesh.position,projectile.owner,projectile.type,projectile.color);
     if (projectile.slow) { target.slowTimer=Math.max(target.slowTimer,projectile.slow);target.slowFactor=.58; }
     if (projectile.splash) {
       this.enemies.slice().forEach((enemy)=>{
-        if (enemy!==target && !enemy.dead && enemy.group.position.distanceTo(target.group.position)<=projectile.splash) this.damageEnemy(enemy,damage*.55,projectile.type,target.group.position,projectile.owner);
+        if (enemy!==target && !enemy.dead && enemy.group.position.distanceTo(target.group.position)<=projectile.splash) this.damageEnemy(enemy,damage*.55,projectile.type,target.group.position,projectile.owner,projectile.type,projectile.color);
       });
       this.spawnRing(target.group.position,projectile.color,projectile.splash);
     }
@@ -3916,6 +4035,7 @@ class DokkaebiLuckDefense {
           enemy.group.position.y=Math.sin(this.elapsed*(enemy.boss?4:7)+enemy.phase)*(.04*enemy.group.userData.scale);
         } else {
           this.animations.setBaseState(enemy.animation, 'idle');
+          faceActorTowards(enemy.group, new THREE.Vector3(0, 0, 0), 1 - Math.pow(.0008, dt));
           enemy.attackTimer-=dt;
           if (enemy.attackTimer<=0) { enemy.attackTimer=enemy.boss?1.45:1;this.animations.trigger(enemy.animation, 'attack', .32);this.damageCore(enemy.damage); }
         }
@@ -4467,7 +4587,7 @@ class DokkaebiLuckDefense {
     }
   }
 
-  damageEnemy(enemy,amount,source='',hitOrigin=null,owner=null) {
+  damageEnemy(enemy,amount,source='',hitOrigin=null,owner=null,impactSource=source,impactColor=null) {
     if (!enemy || enemy.dead) return;
     const attackerType = owner?.type || (source.startsWith('ultimate-') ? source.slice('ultimate-'.length) : UNIT_KEYS.includes(source) ? source : '');
     const weaknessMultiplier = attackerType ? getWeaknessDamageBonus(this.codexProgress, enemy.type, attackerType) : 1;
@@ -4518,6 +4638,22 @@ class DokkaebiLuckDefense {
     enemy.group.userData.body.material.emissive.set(0xffffff);
     enemy.group.userData.body.material.emissiveIntensity=1.6;
     this.showCombatText(enemy.group.position.clone().add(new THREE.Vector3(0, enemy.boss ? 3.1 : 1.8, 0)), amount, { crit, label: shielded ? '방패!' : undefined });
+    const presentationColor = impactColor
+      || (source === 'hero' || source === 'skill' ? this.heroClass?.color : null)
+      || (attackerType ? UNIT_TYPES[attackerType]?.color : null)
+      || enemy.elite?.color
+      || ENEMY_TYPES[enemy.type]?.color
+      || 0xffffff;
+    const presentation = this.combatPresentation?.impact({
+      position: enemy.group.position,
+      origin: hitOrigin,
+      color: shielded ? 0x9deaff : presentationColor,
+      source: impactSource,
+      critical: crit,
+      heavy: enemy.boss || ultimate || source === 'skill',
+      shielded
+    });
+    if (presentation?.shake) this.shake = Math.max(this.shake, presentation.shake);
     if (crit) this.haptic(10);
     this.sound.hit();
     if (enemy.hp<=0) this.killEnemy(enemy,source);
@@ -5085,7 +5221,11 @@ class DokkaebiLuckDefense {
     ui.dash.classList.toggle('cooling',this.player?.dashCooldown>0);
     ui.skill.classList.toggle('cooling',this.player?.skillCooldown>0);
     ui.wave.disabled=this.waveActive||this.currentWave>=this.maxWaves;
-    ui.waveText.textContent=this.waveActive?'전투중':this.currentWave===0?'시작':`${this.currentWave+1}`;
+    if (this.autoWaveCountdown > 0 && !this.waveActive) this.updateAutoWaveButton();
+    else {
+      ui.waveText.textContent=this.waveActive?'전투중':this.currentWave===0?'시작':`${this.currentWave+1}`;
+      ui.wave.setAttribute('aria-label', this.waveActive ? '현재 습격 전투 중' : '다음 습격 시작');
+    }
     ui.moonWardValue.textContent = `${this.moonWard}/3`;
     ui.moonWard.classList.toggle('charged', this.moonWard > 0);
     ui.jackpot.classList.toggle('hidden', this.jackpotTimer <= 0);
@@ -5339,11 +5479,13 @@ class DokkaebiLuckDefense {
   animate() {
     requestAnimationFrame(()=>this.animate());
     const dt=Math.min(.033,this.clock.getDelta());
-    const gameDt=this.cinematic?dt*.42:dt;
+    this.combatPresentation?.update(dt);
+    const impactScale = this.combatPresentation?.timeScale ?? 1;
+    const gameDt=(this.cinematic?dt*.42:dt) * impactScale;
     this.elapsed+=dt;
     this.updateWorldEffects(dt);
     if(this.state==='playing') {
-      this.updateRunMomentum(gameDt);this.updatePlayer(gameDt);this.updateWave(gameDt);this.updateEnemies(gameDt);this.updateHazards(gameDt);this.updateDangerHint(gameDt);this.updateUnits(gameDt);this.updateProjectiles(gameDt);this.updateCoins(gameDt);this.updateParticles(gameDt);this.updateMoveTargetMarker(gameDt);this.updateKillChain(gameDt);this.updateAdaptiveQuality(dt);this.animations.update(gameDt,this.camera);this.updateHUD();
+      this.updateAutoWaveCountdown(dt);this.updateRunMomentum(gameDt);this.updatePlayer(gameDt);this.updateWave(gameDt);this.updateEnemies(gameDt);this.updateHazards(gameDt);this.updateDangerHint(gameDt);this.updateUnits(gameDt);this.updateProjectiles(gameDt);this.updateCoins(gameDt);this.updateParticles(gameDt);this.updateMoveTargetMarker(gameDt);this.updateKillChain(gameDt);this.updateAdaptiveQuality(dt);this.animations.update(gameDt,this.camera);this.updateHUD();
     } else if(this.state==='title') {
       this.updateUnits(dt);this.animations.update(dt,this.camera);this.updateParticles(dt);
       if(this.player){this.player.group.rotation.y+=dt*.18;this.player.group.position.y=Math.sin(this.elapsed*2.3)*.05;}

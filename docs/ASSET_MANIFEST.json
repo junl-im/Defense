@@ -1,7 +1,7 @@
 {
   "schemaVersion": 10,
-  "gameVersion": "4.0.0",
-  "engineVersion": "2.9.0",
+  "gameVersion": "4.1.0",
+  "engineVersion": "3.0.0",
   "artDirection": "aaa-casual-mobile-sd-stylized-pbr-korean-folklore",
   "productionStage": "p0-runtime-class-enemy-expansion-art-review",
   "impostorDirections": 11,
@@ -694,7 +694,7 @@
     "productionApproved": 0
   },
   "p0RuntimeExpansion": {
-    "version": "4.0.0",
+    "version": "4.1.0",
     "heroClasses": 3,
     "newEnemyCandidates": 3,
     "combatGlbCount": 19,

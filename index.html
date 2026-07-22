@@ -18,6 +18,7 @@
       <canvas id="game-canvas" aria-label="도깨비 운빨 수호대 3D 게임 화면"></canvas>
       <div id="vignette" aria-hidden="true"></div>
       <div id="damage-flash" aria-hidden="true"></div>
+      <div id="combat-impact-flash" aria-hidden="true"></div>
       <div id="boss-danger-frame" class="boss-danger-frame hidden" data-urgency="stable" aria-hidden="true"></div>
       <div id="combat-text-root" aria-hidden="true"></div>
 
@@ -72,7 +73,7 @@
             <button id="meta-btn" class="btn ghost meta-entry"><span>혼불 <b id="title-shards">0</b></span>수호자 성장</button>
           </div>
           <button id="controls-btn" class="title-settings-btn" type="button" aria-label="카메라와 조작 설정" title="카메라와 조작 설정"><span aria-hidden="true">⚙️</span></button>
-          <small class="title-version" aria-label="게임 버전 4.0.0">v4.0.0</small>
+          <small class="title-version" aria-label="게임 버전 4.1.0">v4.1.0</small>
         </div>
       </section>
 
@@ -201,8 +202,19 @@
           <small>랜덤 소환</small>
           <b><i>●</i> <span id="summon-cost">30</span></b>
         </button>
-        <button id="wave-btn" class="wave-btn"><i class="action-glyph" aria-hidden="true">⚔</i><small>다음 습격</small><b id="wave-btn-text">시작</b></button>
+        <button id="wave-btn" class="wave-btn"><i class="action-glyph" aria-hidden="true">⚔</i><small id="wave-btn-label">다음 습격</small><b id="wave-btn-text">시작</b></button>
       </div>
+
+      <aside id="auto-wave-panel" class="auto-wave-panel hidden" aria-live="polite" aria-label="다음 습격 자동 시작 안내">
+        <div class="auto-wave-emblem" aria-hidden="true"><span></span></div>
+        <div class="auto-wave-message">
+          <small>MOON GATE READY</small>
+          <b id="auto-wave-title">다음 습격 준비</b>
+          <span id="auto-wave-copy">전열을 정비하고 있습니다</span>
+          <div class="auto-wave-track" aria-hidden="true"><i id="auto-wave-panel-progress"></i></div>
+        </div>
+        <strong class="auto-wave-timer"><span id="auto-wave-seconds">10</span><small>SEC</small></strong>
+      </aside>
 
       <div id="toast" class="toast" aria-live="polite"></div>
       <div id="quality-badge" class="quality-badge hidden" aria-live="polite">모바일 최적화 ON</div>
@@ -462,7 +474,7 @@
     </div>
     <script>
       (() => {
-        const VERSION = '4.0.0';
+        const VERSION = '4.1.0';
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
         const retryButton = document.getElementById('boot-retry-btn');

@@ -1,0 +1,40 @@
+{
+  "version": "4.1.0",
+  "baseVersion": "4.0.0",
+  "addedCount": 6,
+  "modifiedCount": 22,
+  "deletedCount": 0,
+  "added": [
+    "dist/src/combat-presentation.js",
+    "docs/COMBAT_PRESENTATION_v4.1.0.md",
+    "docs/PATCH_APPLY_v4.1.0.md",
+    "docs/PATCH_NOTES_v4.1.0.md",
+    "scripts/verify-v410.mjs",
+    "src/combat-presentation.js"
+  ],
+  "modified": [
+    "PROJECT_HANDOFF.md",
+    "README.md",
+    "dist/STATIC_BUILD_NOTICE.txt",
+    "dist/index.html",
+    "dist/src/engine/asset-catalog.js",
+    "dist/src/engine/engine-config.js",
+    "dist/src/firebase.js",
+    "dist/src/main.js",
+    "dist/src/style.css",
+    "docs/ASSET_MANIFEST.json",
+    "docs/PRODUCTION_ROADMAP.md",
+    "index.html",
+    "package-lock.json",
+    "package.json",
+    "scripts/build-static-fallback.mjs",
+    "scripts/verify-project.mjs",
+    "scripts/verify-static-dist.mjs",
+    "src/engine/asset-catalog.js",
+    "src/engine/engine-config.js",
+    "src/firebase.js",
+    "src/main.js",
+    "src/style.css"
+  ],
+  "deleted": []
+}
