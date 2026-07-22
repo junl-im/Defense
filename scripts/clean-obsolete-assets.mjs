@@ -1,5 +1,5 @@
 import { existsSync, readdirSync, rmSync } from 'node:fs';
-import { basename, resolve } from 'node:path';
+import { basename, relative, resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 const fixedObsolete = [
@@ -24,6 +24,20 @@ const remove = (path) => {
 };
 
 fixedObsolete.forEach(remove);
+
+const removeSvgFiles = (directory) => {
+  if (!existsSync(directory)) return;
+  for (const entry of readdirSync(directory, { withFileTypes: true })) {
+    if (entry.isDirectory() && ['node_modules', '.git', '.firebase'].includes(entry.name)) continue;
+    const absolute = resolve(directory, entry.name);
+    if (entry.isDirectory()) removeSvgFiles(absolute);
+    else if (entry.name.toLowerCase().endsWith('.svg')) remove(relative(root, absolute).replaceAll('\\', '/'));
+  }
+};
+
+// SVG is forbidden for all shipped assets. Remove stale files before both
+// verification and build so patch overlays cannot leave old vector assets behind.
+removeSvgFiles(root);
 
 // Patch notes belong under docs/. Older patch archives placed this file at the
 // project root, which made source verification fail before prebuild could run.

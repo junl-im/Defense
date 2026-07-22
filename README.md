@@ -1,10 +1,10 @@
 # 도깨비 운빨 수호대 3D
 
-- 게임 버전: **3.7.2**
-- 엔진 버전: **2.7.2**
+- 게임 버전: **3.7.3**
+- 엔진 버전: **2.7.3**
 - 아트 잠금: **DD-AAA-CASUAL-SD-PBR-3.0**
 
-## v3.7.2 핵심
+## v3.7.3 핵심
 
 이번 핫픽스는 GitHub Actions에서 실제 FAIL이 긴 PASS 로그에 묻히는 문제를 해결합니다.
 
@@ -12,7 +12,7 @@
 - 실패 시 `VERIFY FAILURE DIGEST`와 GitHub `::error` 주석 출력
 - 워크플로가 전체 검증 로그를 보존하고 실패 원인을 스텝 마지막에 재출력
 - 추가 루트 Markdown은 배포를 차단하지 않고 INFO로 처리
-- SVG 금지 범위를 실제 런타임 디렉터리 `public/`, `src/`로 제한
+- SVG 파일·경로·인라인 마크업·data URI를 런타임과 배포 산출물에서 전면 금지
 - 구형 Vite 해시 번들을 파일명 고정 목록이 아닌 패턴으로 검사
 - 버전 비교 기준을 `package.json` 단일 원본으로 정리
 - CI 실패 보고 구조 자체를 검사하는 회귀 테스트 추가
@@ -58,3 +58,10 @@ npm run audit:art
 - `docs/CURRENT_ASSET_AUDIT.md`
 - `docs/AAA_ASSET_PROMPT_CATALOG.json`
 - `PROJECT_HANDOFF.md`
+
+## v3.7.3 SVG 정책 핫픽스
+
+- SVG 파일·경로·인라인 마크업·data URI를 전면 금지합니다.
+- PNG/WebP/KTX2/GLB만 런타임 에셋으로 허용합니다.
+- 빈 문자열을 SVG 위반으로 오인하던 검증기 문제를 수정했습니다.
+- 위반 시 실제 파일명과 줄 번호를 CI 로그 마지막에 표시합니다.

@@ -1,5 +1,6 @@
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { formatSvgViolations, scanSvgPolicy } from './svg-policy.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const read = (path) => readFileSync(resolve(root, path), 'utf8');
@@ -32,7 +33,7 @@ if (missingIds.length) fail(`index.html에 없는 DOM ID: ${missingIds.join(', '
 else pass(`${queriedIds.length}개 DOM ID 연결`);
 
 const expectedGameVersion = pkg.version;
-const expectedEngineVersion = '2.7.2';
+const expectedEngineVersion = '2.7.3';
 pass(`package version ${expectedGameVersion}`);
 
 for (const path of ['.env.production', '.firebaserc', '.github/workflows/deploy.yml', 'README.md', 'PROJECT_HANDOFF.md']) {
@@ -263,21 +264,9 @@ if (main.includes("EnemyPoolRoot") && main.includes('this.releaseAllEnemyModels(
 else fail('적 풀 수명 관리 누락');
 
 
-const forbiddenSvg = [];
-const walk = (directory) => {
-  for (const entry of readdirSync(directory, { withFileTypes: true })) {
-    if (['node_modules', 'dist', '.git'].includes(entry.name)) continue;
-    const absolute = resolve(directory, entry.name);
-    if (entry.isDirectory()) walk(absolute);
-    else if (entry.name.toLowerCase().endsWith('.svg')) forbiddenSvg.push(absolute.replace(root, '.'));
-  }
-};
-for (const runtimeDir of ['public', 'src']) {
-  const absolute = resolve(root, runtimeDir);
-  if (existsSync(absolute)) walk(absolute);
-}
-if (forbiddenSvg.length === 0 && !html.includes('.svg') && !JSON.stringify(manifest).includes('.svg')) pass('SVG 에셋 전면 금지');
-else fail(`SVG 에셋 또는 참조 발견: ${forbiddenSvg.join(', ')}`);
+const svgViolations = scanSvgPolicy(root);
+if (svgViolations.length === 0) pass('절대 SVG 금지: 파일·참조·인라인·data URI 0건');
+else fail(`절대 SVG 금지 정책 위반: ${formatSvgViolations(svgViolations).join(' | ')}`);
 if (existsSync(resolve(root, 'public/icon-192.png')) && existsSync(resolve(root, 'public/icon-512.png')) && existsSync(resolve(root, 'public/cover.webp'))) pass('고품질 래스터 앱 에셋');
 else fail('PNG/WebP 앱 에셋 누락');
 const assetPipeline = read('src/engine/asset-pipeline.js');

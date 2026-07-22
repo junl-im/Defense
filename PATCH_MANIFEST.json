@@ -1,31 +1,32 @@
 {
-  "fromVersion": "3.7.1",
-  "toVersion": "3.7.2",
-  "added": [
-    "docs/CI_VERIFY_HOTFIX_v3.7.2.md",
-    "scripts/verify-ci-reporting.mjs"
-  ],
-  "modified": [
-    ".github/workflows/deploy.yml",
+  "from": "3.7.2",
+  "to": "3.7.3",
+  "changed_files": [
     "PROJECT_HANDOFF.md",
     "README.md",
     "docs/ASSET_MANIFEST.json",
-    "docs/BUILD_CONTRACT_v3.7.md",
     "docs/CURRENT_ASSET_AUDIT.json",
     "docs/CURRENT_ASSET_AUDIT.md",
+    "docs/PATCH_NOTES_v3.7.3.md",
+    "docs/SVG_POLICY_v3.7.3.md",
     "index.html",
     "package-lock.json",
     "package.json",
     "scripts/audit-current-assets.mjs",
     "scripts/build-static-fallback.mjs",
+    "scripts/clean-obsolete-assets.mjs",
+    "scripts/svg-policy.mjs",
+    "scripts/verify-ci-reporting.mjs",
+    "scripts/verify-no-svg.mjs",
     "scripts/verify-project.mjs",
     "scripts/verify-static-dist.mjs",
+    "scripts/verify-svg-policy.mjs",
     "src/engine/asset-catalog.js",
     "src/engine/engine-config.js",
     "src/firebase.js",
     "src/main.js",
     "src/style.css"
   ],
-  "removed": [],
-  "notes": "CI verification reporting hotfix. Apply over v3.7.1, then run npm ci, npm run verify, npm run build."
+  "deleted_files": [],
+  "dist_included": false
 }

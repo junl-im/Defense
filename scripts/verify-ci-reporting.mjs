@@ -14,7 +14,8 @@ check(!verifyProject.includes("console.error(`\\n검증 실패 ${failures.length
 check(workflow.includes('npm run verify 2>&1 | tee verify.log'), 'workflow preserves full verification log');
 check(workflow.includes("grep -nE '^(FAIL|::error)|VERIFY FAILURE DIGEST|검증 실패' verify.log"), 'workflow repeats failure digest at step end');
 check(verifyProject.includes('추가 루트 Markdown은 빌드를 차단하지 않음'), 'non-runtime Markdown cannot block deployment');
-check(verifyProject.includes("for (const runtimeDir of ['public', 'src'])"), 'SVG policy scans runtime asset directories only');
+check(verifyProject.includes('scanSvgPolicy(root)') && read('scripts/svg-policy.mjs').includes("const RUNTIME_ROOTS = ['index.html', 'src', 'public', 'dist', 'dist-pages']"), 'SVG policy scans runtime and deployment asset directories');
+check(read('package.json').includes('verify-no-svg.mjs') && read('package.json').includes('verify-svg-policy.mjs'), 'SVG policy runs before project verification and includes regression coverage');
 
 if (failures.length) {
   failures.forEach((message) => console.error(`FAIL ${message}`));
