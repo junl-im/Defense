@@ -38,9 +38,9 @@ export const ABSOLUTE_NEGATIVE_PROMPT = `photorealistic, realistic skin pores, a
 export const SD_CHARACTER_STANDARD = Object.freeze({
   targetHeadsTall: 2.3,
   allowedHeadsTall: Object.freeze([2.2, 2.4]),
-  headHeightRatio: 0.435,
-  bodyHeightRatio: 0.345,
-  legHeightRatio: 0.22,
+  headHeightRatio: 0.42,
+  bodyHeightRatio: 0.35,
+  legHeightRatio: 0.23,
   handToHeadRatio: 0.25,
   footToHeadRatio: 0.32,
   eyeWidthToFaceRatio: 0.2,

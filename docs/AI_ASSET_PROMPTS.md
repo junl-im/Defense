@@ -81,3 +81,8 @@ Cute Korean Grim Reaper, Oversized Traditional Gat, Rounded Black Robe, Blue Gho
 ```bash
 npm run generate:prompt-catalog
 ```
+
+
+## v3.8.0 운영 구분
+
+기존 750개 프롬프트 카탈로그는 초기 스타일 연구·생성 예시 집합이다. 실제 제작 일정과 납품 파일의 단일 기준은 `production/DokkaebiDefense/ASSET_MASTERLIST_v3.8.0.json`의 1,130개 항목이다. 각 항목은 `01_ArtBible/PROMPT_TEMPLATES_v3.8.0.json`의 카테고리 템플릿을 참조하며 절대 스타일 프롬프트 원문은 변경하지 않는다.

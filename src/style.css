@@ -1648,7 +1648,7 @@ body.ui-overflow-safe .run-seed-chip { display: none !important; }
   .combat-ui-rail, .btn, .round-btn, .skill-btn, .summon-btn, .wave-btn { transition-duration: .01ms !important; }
 }
 
-/* v3.7.5 UI stress contract: resize-aware rails, long-copy fallback, modal viewport safety */
+/* v3.8.0 UI stress contract: resize-aware rails, long-copy fallback, modal viewport safety */
 .left-insight-rail { width: var(--ui-left-rail-width, 190px); }
 .right-roster-rail { width: var(--ui-right-rail-width, 164px); }
 .combat-ui-rail { --rail-copy-scale: var(--ui-copy-scale, 1); }

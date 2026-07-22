@@ -1,0 +1,2529 @@
+{
+  "schemaVersion": 1,
+  "project": "Dokkaebi Defense",
+  "productionVersion": "3.8.0",
+  "category": "tiles",
+  "count": 70,
+  "assets": [
+    {
+      "id": "TIL-001",
+      "category": "tiles",
+      "subcategory": "goblin-village",
+      "nameKo": "도깨비마을 Ground 타일",
+      "nameEn": "Dokkaebi Village Ground Tile",
+      "productionFolder": "08_Map/goblin-village/Tiles",
+      "deliveryFile": "tile_goblin-village_ground.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P0",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Launch Map Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "goblin-village",
+        "ground"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-002",
+      "category": "tiles",
+      "subcategory": "goblin-village",
+      "nameKo": "도깨비마을 Road 타일",
+      "nameEn": "Dokkaebi Village Road Tile",
+      "productionFolder": "08_Map/goblin-village/Tiles",
+      "deliveryFile": "tile_goblin-village_road.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P0",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Launch Map Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "goblin-village",
+        "road"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-003",
+      "category": "tiles",
+      "subcategory": "goblin-village",
+      "nameKo": "도깨비마을 Grass 타일",
+      "nameEn": "Dokkaebi Village Grass Tile",
+      "productionFolder": "08_Map/goblin-village/Tiles",
+      "deliveryFile": "tile_goblin-village_grass.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P0",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Launch Map Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "goblin-village",
+        "grass"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-004",
+      "category": "tiles",
+      "subcategory": "goblin-village",
+      "nameKo": "도깨비마을 Rock 타일",
+      "nameEn": "Dokkaebi Village Rock Tile",
+      "productionFolder": "08_Map/goblin-village/Tiles",
+      "deliveryFile": "tile_goblin-village_rock.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P0",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Launch Map Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "goblin-village",
+        "rock"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-005",
+      "category": "tiles",
+      "subcategory": "goblin-village",
+      "nameKo": "도깨비마을 Tree 타일",
+      "nameEn": "Dokkaebi Village Tree Tile",
+      "productionFolder": "08_Map/goblin-village/Tiles",
+      "deliveryFile": "tile_goblin-village_tree.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P0",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Launch Map Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "goblin-village",
+        "tree"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-006",
+      "category": "tiles",
+      "subcategory": "goblin-village",
+      "nameKo": "도깨비마을 Shrine 타일",
+      "nameEn": "Dokkaebi Village Shrine Tile",
+      "productionFolder": "08_Map/goblin-village/Tiles",
+      "deliveryFile": "tile_goblin-village_shrine.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P0",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Launch Map Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "goblin-village",
+        "shrine"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-007",
+      "category": "tiles",
+      "subcategory": "goblin-village",
+      "nameKo": "도깨비마을 Bridge 타일",
+      "nameEn": "Dokkaebi Village Bridge Tile",
+      "productionFolder": "08_Map/goblin-village/Tiles",
+      "deliveryFile": "tile_goblin-village_bridge.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P0",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Launch Map Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "goblin-village",
+        "bridge"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-008",
+      "category": "tiles",
+      "subcategory": "goblin-village",
+      "nameKo": "도깨비마을 Fence 타일",
+      "nameEn": "Dokkaebi Village Fence Tile",
+      "productionFolder": "08_Map/goblin-village/Tiles",
+      "deliveryFile": "tile_goblin-village_fence.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P0",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Launch Map Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "goblin-village",
+        "fence"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-009",
+      "category": "tiles",
+      "subcategory": "goblin-village",
+      "nameKo": "도깨비마을 Water 타일",
+      "nameEn": "Dokkaebi Village Water Tile",
+      "productionFolder": "08_Map/goblin-village/Tiles",
+      "deliveryFile": "tile_goblin-village_water.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P0",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Launch Map Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "goblin-village",
+        "water"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-010",
+      "category": "tiles",
+      "subcategory": "goblin-village",
+      "nameKo": "도깨비마을 Flower 타일",
+      "nameEn": "Dokkaebi Village Flower Tile",
+      "productionFolder": "08_Map/goblin-village/Tiles",
+      "deliveryFile": "tile_goblin-village_flower.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P0",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Launch Map Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "goblin-village",
+        "flower"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-011",
+      "category": "tiles",
+      "subcategory": "bamboo-forest",
+      "nameKo": "대나무숲 Ground 타일",
+      "nameEn": "Bamboo Forest Ground Tile",
+      "productionFolder": "08_Map/bamboo-forest/Tiles",
+      "deliveryFile": "tile_bamboo-forest_ground.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P0",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Launch Map Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "bamboo-forest",
+        "ground"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-012",
+      "category": "tiles",
+      "subcategory": "bamboo-forest",
+      "nameKo": "대나무숲 Road 타일",
+      "nameEn": "Bamboo Forest Road Tile",
+      "productionFolder": "08_Map/bamboo-forest/Tiles",
+      "deliveryFile": "tile_bamboo-forest_road.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P0",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Launch Map Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "bamboo-forest",
+        "road"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-013",
+      "category": "tiles",
+      "subcategory": "bamboo-forest",
+      "nameKo": "대나무숲 Grass 타일",
+      "nameEn": "Bamboo Forest Grass Tile",
+      "productionFolder": "08_Map/bamboo-forest/Tiles",
+      "deliveryFile": "tile_bamboo-forest_grass.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P0",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Launch Map Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "bamboo-forest",
+        "grass"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-014",
+      "category": "tiles",
+      "subcategory": "bamboo-forest",
+      "nameKo": "대나무숲 Rock 타일",
+      "nameEn": "Bamboo Forest Rock Tile",
+      "productionFolder": "08_Map/bamboo-forest/Tiles",
+      "deliveryFile": "tile_bamboo-forest_rock.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P0",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Launch Map Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "bamboo-forest",
+        "rock"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-015",
+      "category": "tiles",
+      "subcategory": "bamboo-forest",
+      "nameKo": "대나무숲 Tree 타일",
+      "nameEn": "Bamboo Forest Tree Tile",
+      "productionFolder": "08_Map/bamboo-forest/Tiles",
+      "deliveryFile": "tile_bamboo-forest_tree.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P0",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Launch Map Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "bamboo-forest",
+        "tree"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-016",
+      "category": "tiles",
+      "subcategory": "bamboo-forest",
+      "nameKo": "대나무숲 Shrine 타일",
+      "nameEn": "Bamboo Forest Shrine Tile",
+      "productionFolder": "08_Map/bamboo-forest/Tiles",
+      "deliveryFile": "tile_bamboo-forest_shrine.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P0",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Launch Map Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "bamboo-forest",
+        "shrine"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-017",
+      "category": "tiles",
+      "subcategory": "bamboo-forest",
+      "nameKo": "대나무숲 Bridge 타일",
+      "nameEn": "Bamboo Forest Bridge Tile",
+      "productionFolder": "08_Map/bamboo-forest/Tiles",
+      "deliveryFile": "tile_bamboo-forest_bridge.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P0",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Launch Map Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "bamboo-forest",
+        "bridge"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-018",
+      "category": "tiles",
+      "subcategory": "bamboo-forest",
+      "nameKo": "대나무숲 Fence 타일",
+      "nameEn": "Bamboo Forest Fence Tile",
+      "productionFolder": "08_Map/bamboo-forest/Tiles",
+      "deliveryFile": "tile_bamboo-forest_fence.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P0",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Launch Map Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "bamboo-forest",
+        "fence"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-019",
+      "category": "tiles",
+      "subcategory": "bamboo-forest",
+      "nameKo": "대나무숲 Water 타일",
+      "nameEn": "Bamboo Forest Water Tile",
+      "productionFolder": "08_Map/bamboo-forest/Tiles",
+      "deliveryFile": "tile_bamboo-forest_water.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P0",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Launch Map Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "bamboo-forest",
+        "water"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-020",
+      "category": "tiles",
+      "subcategory": "bamboo-forest",
+      "nameKo": "대나무숲 Flower 타일",
+      "nameEn": "Bamboo Forest Flower Tile",
+      "productionFolder": "08_Map/bamboo-forest/Tiles",
+      "deliveryFile": "tile_bamboo-forest_flower.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P0",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Launch Map Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "bamboo-forest",
+        "flower"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-021",
+      "category": "tiles",
+      "subcategory": "ruined-temple",
+      "nameKo": "폐사찰 Ground 타일",
+      "nameEn": "Ruined Temple Ground Tile",
+      "productionFolder": "08_Map/ruined-temple/Tiles",
+      "deliveryFile": "tile_ruined-temple_ground.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P1",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "ruined-temple",
+        "ground"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-022",
+      "category": "tiles",
+      "subcategory": "ruined-temple",
+      "nameKo": "폐사찰 Road 타일",
+      "nameEn": "Ruined Temple Road Tile",
+      "productionFolder": "08_Map/ruined-temple/Tiles",
+      "deliveryFile": "tile_ruined-temple_road.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P1",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "ruined-temple",
+        "road"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-023",
+      "category": "tiles",
+      "subcategory": "ruined-temple",
+      "nameKo": "폐사찰 Grass 타일",
+      "nameEn": "Ruined Temple Grass Tile",
+      "productionFolder": "08_Map/ruined-temple/Tiles",
+      "deliveryFile": "tile_ruined-temple_grass.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P1",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "ruined-temple",
+        "grass"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-024",
+      "category": "tiles",
+      "subcategory": "ruined-temple",
+      "nameKo": "폐사찰 Rock 타일",
+      "nameEn": "Ruined Temple Rock Tile",
+      "productionFolder": "08_Map/ruined-temple/Tiles",
+      "deliveryFile": "tile_ruined-temple_rock.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P1",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "ruined-temple",
+        "rock"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-025",
+      "category": "tiles",
+      "subcategory": "ruined-temple",
+      "nameKo": "폐사찰 Tree 타일",
+      "nameEn": "Ruined Temple Tree Tile",
+      "productionFolder": "08_Map/ruined-temple/Tiles",
+      "deliveryFile": "tile_ruined-temple_tree.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P1",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "ruined-temple",
+        "tree"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-026",
+      "category": "tiles",
+      "subcategory": "ruined-temple",
+      "nameKo": "폐사찰 Shrine 타일",
+      "nameEn": "Ruined Temple Shrine Tile",
+      "productionFolder": "08_Map/ruined-temple/Tiles",
+      "deliveryFile": "tile_ruined-temple_shrine.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P1",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "ruined-temple",
+        "shrine"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-027",
+      "category": "tiles",
+      "subcategory": "ruined-temple",
+      "nameKo": "폐사찰 Bridge 타일",
+      "nameEn": "Ruined Temple Bridge Tile",
+      "productionFolder": "08_Map/ruined-temple/Tiles",
+      "deliveryFile": "tile_ruined-temple_bridge.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P1",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "ruined-temple",
+        "bridge"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-028",
+      "category": "tiles",
+      "subcategory": "ruined-temple",
+      "nameKo": "폐사찰 Fence 타일",
+      "nameEn": "Ruined Temple Fence Tile",
+      "productionFolder": "08_Map/ruined-temple/Tiles",
+      "deliveryFile": "tile_ruined-temple_fence.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P1",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "ruined-temple",
+        "fence"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-029",
+      "category": "tiles",
+      "subcategory": "ruined-temple",
+      "nameKo": "폐사찰 Water 타일",
+      "nameEn": "Ruined Temple Water Tile",
+      "productionFolder": "08_Map/ruined-temple/Tiles",
+      "deliveryFile": "tile_ruined-temple_water.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P1",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "ruined-temple",
+        "water"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-030",
+      "category": "tiles",
+      "subcategory": "ruined-temple",
+      "nameKo": "폐사찰 Flower 타일",
+      "nameEn": "Ruined Temple Flower Tile",
+      "productionFolder": "08_Map/ruined-temple/Tiles",
+      "deliveryFile": "tile_ruined-temple_flower.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P1",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "ruined-temple",
+        "flower"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-031",
+      "category": "tiles",
+      "subcategory": "snow-mountain",
+      "nameKo": "설산 Ground 타일",
+      "nameEn": "Snow Mountain Ground Tile",
+      "productionFolder": "08_Map/snow-mountain/Tiles",
+      "deliveryFile": "tile_snow-mountain_ground.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P1",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "snow-mountain",
+        "ground"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-032",
+      "category": "tiles",
+      "subcategory": "snow-mountain",
+      "nameKo": "설산 Road 타일",
+      "nameEn": "Snow Mountain Road Tile",
+      "productionFolder": "08_Map/snow-mountain/Tiles",
+      "deliveryFile": "tile_snow-mountain_road.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P1",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "snow-mountain",
+        "road"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-033",
+      "category": "tiles",
+      "subcategory": "snow-mountain",
+      "nameKo": "설산 Grass 타일",
+      "nameEn": "Snow Mountain Grass Tile",
+      "productionFolder": "08_Map/snow-mountain/Tiles",
+      "deliveryFile": "tile_snow-mountain_grass.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P1",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "snow-mountain",
+        "grass"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-034",
+      "category": "tiles",
+      "subcategory": "snow-mountain",
+      "nameKo": "설산 Rock 타일",
+      "nameEn": "Snow Mountain Rock Tile",
+      "productionFolder": "08_Map/snow-mountain/Tiles",
+      "deliveryFile": "tile_snow-mountain_rock.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P1",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "snow-mountain",
+        "rock"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-035",
+      "category": "tiles",
+      "subcategory": "snow-mountain",
+      "nameKo": "설산 Tree 타일",
+      "nameEn": "Snow Mountain Tree Tile",
+      "productionFolder": "08_Map/snow-mountain/Tiles",
+      "deliveryFile": "tile_snow-mountain_tree.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P1",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "snow-mountain",
+        "tree"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-036",
+      "category": "tiles",
+      "subcategory": "snow-mountain",
+      "nameKo": "설산 Shrine 타일",
+      "nameEn": "Snow Mountain Shrine Tile",
+      "productionFolder": "08_Map/snow-mountain/Tiles",
+      "deliveryFile": "tile_snow-mountain_shrine.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P1",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "snow-mountain",
+        "shrine"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-037",
+      "category": "tiles",
+      "subcategory": "snow-mountain",
+      "nameKo": "설산 Bridge 타일",
+      "nameEn": "Snow Mountain Bridge Tile",
+      "productionFolder": "08_Map/snow-mountain/Tiles",
+      "deliveryFile": "tile_snow-mountain_bridge.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P1",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "snow-mountain",
+        "bridge"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-038",
+      "category": "tiles",
+      "subcategory": "snow-mountain",
+      "nameKo": "설산 Fence 타일",
+      "nameEn": "Snow Mountain Fence Tile",
+      "productionFolder": "08_Map/snow-mountain/Tiles",
+      "deliveryFile": "tile_snow-mountain_fence.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P1",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "snow-mountain",
+        "fence"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-039",
+      "category": "tiles",
+      "subcategory": "snow-mountain",
+      "nameKo": "설산 Water 타일",
+      "nameEn": "Snow Mountain Water Tile",
+      "productionFolder": "08_Map/snow-mountain/Tiles",
+      "deliveryFile": "tile_snow-mountain_water.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P1",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "snow-mountain",
+        "water"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-040",
+      "category": "tiles",
+      "subcategory": "snow-mountain",
+      "nameKo": "설산 Flower 타일",
+      "nameEn": "Snow Mountain Flower Tile",
+      "productionFolder": "08_Map/snow-mountain/Tiles",
+      "deliveryFile": "tile_snow-mountain_flower.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P1",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "snow-mountain",
+        "flower"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-041",
+      "category": "tiles",
+      "subcategory": "dragon-palace",
+      "nameKo": "용궁 Ground 타일",
+      "nameEn": "Dragon Palace Ground Tile",
+      "productionFolder": "08_Map/dragon-palace/Tiles",
+      "deliveryFile": "tile_dragon-palace_ground.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "dragon-palace",
+        "ground"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-042",
+      "category": "tiles",
+      "subcategory": "dragon-palace",
+      "nameKo": "용궁 Road 타일",
+      "nameEn": "Dragon Palace Road Tile",
+      "productionFolder": "08_Map/dragon-palace/Tiles",
+      "deliveryFile": "tile_dragon-palace_road.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "dragon-palace",
+        "road"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-043",
+      "category": "tiles",
+      "subcategory": "dragon-palace",
+      "nameKo": "용궁 Grass 타일",
+      "nameEn": "Dragon Palace Grass Tile",
+      "productionFolder": "08_Map/dragon-palace/Tiles",
+      "deliveryFile": "tile_dragon-palace_grass.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "dragon-palace",
+        "grass"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-044",
+      "category": "tiles",
+      "subcategory": "dragon-palace",
+      "nameKo": "용궁 Rock 타일",
+      "nameEn": "Dragon Palace Rock Tile",
+      "productionFolder": "08_Map/dragon-palace/Tiles",
+      "deliveryFile": "tile_dragon-palace_rock.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "dragon-palace",
+        "rock"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-045",
+      "category": "tiles",
+      "subcategory": "dragon-palace",
+      "nameKo": "용궁 Tree 타일",
+      "nameEn": "Dragon Palace Tree Tile",
+      "productionFolder": "08_Map/dragon-palace/Tiles",
+      "deliveryFile": "tile_dragon-palace_tree.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "dragon-palace",
+        "tree"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-046",
+      "category": "tiles",
+      "subcategory": "dragon-palace",
+      "nameKo": "용궁 Shrine 타일",
+      "nameEn": "Dragon Palace Shrine Tile",
+      "productionFolder": "08_Map/dragon-palace/Tiles",
+      "deliveryFile": "tile_dragon-palace_shrine.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "dragon-palace",
+        "shrine"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-047",
+      "category": "tiles",
+      "subcategory": "dragon-palace",
+      "nameKo": "용궁 Bridge 타일",
+      "nameEn": "Dragon Palace Bridge Tile",
+      "productionFolder": "08_Map/dragon-palace/Tiles",
+      "deliveryFile": "tile_dragon-palace_bridge.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "dragon-palace",
+        "bridge"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-048",
+      "category": "tiles",
+      "subcategory": "dragon-palace",
+      "nameKo": "용궁 Fence 타일",
+      "nameEn": "Dragon Palace Fence Tile",
+      "productionFolder": "08_Map/dragon-palace/Tiles",
+      "deliveryFile": "tile_dragon-palace_fence.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "dragon-palace",
+        "fence"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-049",
+      "category": "tiles",
+      "subcategory": "dragon-palace",
+      "nameKo": "용궁 Water 타일",
+      "nameEn": "Dragon Palace Water Tile",
+      "productionFolder": "08_Map/dragon-palace/Tiles",
+      "deliveryFile": "tile_dragon-palace_water.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "dragon-palace",
+        "water"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-050",
+      "category": "tiles",
+      "subcategory": "dragon-palace",
+      "nameKo": "용궁 Flower 타일",
+      "nameEn": "Dragon Palace Flower Tile",
+      "productionFolder": "08_Map/dragon-palace/Tiles",
+      "deliveryFile": "tile_dragon-palace_flower.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "dragon-palace",
+        "flower"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-051",
+      "category": "tiles",
+      "subcategory": "underworld",
+      "nameKo": "저승 Ground 타일",
+      "nameEn": "Underworld Ground Tile",
+      "productionFolder": "08_Map/underworld/Tiles",
+      "deliveryFile": "tile_underworld_ground.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "underworld",
+        "ground"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-052",
+      "category": "tiles",
+      "subcategory": "underworld",
+      "nameKo": "저승 Road 타일",
+      "nameEn": "Underworld Road Tile",
+      "productionFolder": "08_Map/underworld/Tiles",
+      "deliveryFile": "tile_underworld_road.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "underworld",
+        "road"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-053",
+      "category": "tiles",
+      "subcategory": "underworld",
+      "nameKo": "저승 Grass 타일",
+      "nameEn": "Underworld Grass Tile",
+      "productionFolder": "08_Map/underworld/Tiles",
+      "deliveryFile": "tile_underworld_grass.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "underworld",
+        "grass"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-054",
+      "category": "tiles",
+      "subcategory": "underworld",
+      "nameKo": "저승 Rock 타일",
+      "nameEn": "Underworld Rock Tile",
+      "productionFolder": "08_Map/underworld/Tiles",
+      "deliveryFile": "tile_underworld_rock.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "underworld",
+        "rock"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-055",
+      "category": "tiles",
+      "subcategory": "underworld",
+      "nameKo": "저승 Tree 타일",
+      "nameEn": "Underworld Tree Tile",
+      "productionFolder": "08_Map/underworld/Tiles",
+      "deliveryFile": "tile_underworld_tree.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "underworld",
+        "tree"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-056",
+      "category": "tiles",
+      "subcategory": "underworld",
+      "nameKo": "저승 Shrine 타일",
+      "nameEn": "Underworld Shrine Tile",
+      "productionFolder": "08_Map/underworld/Tiles",
+      "deliveryFile": "tile_underworld_shrine.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "underworld",
+        "shrine"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-057",
+      "category": "tiles",
+      "subcategory": "underworld",
+      "nameKo": "저승 Bridge 타일",
+      "nameEn": "Underworld Bridge Tile",
+      "productionFolder": "08_Map/underworld/Tiles",
+      "deliveryFile": "tile_underworld_bridge.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "underworld",
+        "bridge"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-058",
+      "category": "tiles",
+      "subcategory": "underworld",
+      "nameKo": "저승 Fence 타일",
+      "nameEn": "Underworld Fence Tile",
+      "productionFolder": "08_Map/underworld/Tiles",
+      "deliveryFile": "tile_underworld_fence.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "underworld",
+        "fence"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-059",
+      "category": "tiles",
+      "subcategory": "underworld",
+      "nameKo": "저승 Water 타일",
+      "nameEn": "Underworld Water Tile",
+      "productionFolder": "08_Map/underworld/Tiles",
+      "deliveryFile": "tile_underworld_water.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "underworld",
+        "water"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-060",
+      "category": "tiles",
+      "subcategory": "underworld",
+      "nameKo": "저승 Flower 타일",
+      "nameEn": "Underworld Flower Tile",
+      "productionFolder": "08_Map/underworld/Tiles",
+      "deliveryFile": "tile_underworld_flower.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "underworld",
+        "flower"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-061",
+      "category": "tiles",
+      "subcategory": "celestial-realm",
+      "nameKo": "천계 Ground 타일",
+      "nameEn": "Celestial Realm Ground Tile",
+      "productionFolder": "08_Map/celestial-realm/Tiles",
+      "deliveryFile": "tile_celestial-realm_ground.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "celestial-realm",
+        "ground"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-062",
+      "category": "tiles",
+      "subcategory": "celestial-realm",
+      "nameKo": "천계 Road 타일",
+      "nameEn": "Celestial Realm Road Tile",
+      "productionFolder": "08_Map/celestial-realm/Tiles",
+      "deliveryFile": "tile_celestial-realm_road.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "celestial-realm",
+        "road"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-063",
+      "category": "tiles",
+      "subcategory": "celestial-realm",
+      "nameKo": "천계 Grass 타일",
+      "nameEn": "Celestial Realm Grass Tile",
+      "productionFolder": "08_Map/celestial-realm/Tiles",
+      "deliveryFile": "tile_celestial-realm_grass.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "celestial-realm",
+        "grass"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-064",
+      "category": "tiles",
+      "subcategory": "celestial-realm",
+      "nameKo": "천계 Rock 타일",
+      "nameEn": "Celestial Realm Rock Tile",
+      "productionFolder": "08_Map/celestial-realm/Tiles",
+      "deliveryFile": "tile_celestial-realm_rock.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "celestial-realm",
+        "rock"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-065",
+      "category": "tiles",
+      "subcategory": "celestial-realm",
+      "nameKo": "천계 Tree 타일",
+      "nameEn": "Celestial Realm Tree Tile",
+      "productionFolder": "08_Map/celestial-realm/Tiles",
+      "deliveryFile": "tile_celestial-realm_tree.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "celestial-realm",
+        "tree"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-066",
+      "category": "tiles",
+      "subcategory": "celestial-realm",
+      "nameKo": "천계 Shrine 타일",
+      "nameEn": "Celestial Realm Shrine Tile",
+      "productionFolder": "08_Map/celestial-realm/Tiles",
+      "deliveryFile": "tile_celestial-realm_shrine.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "celestial-realm",
+        "shrine"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-067",
+      "category": "tiles",
+      "subcategory": "celestial-realm",
+      "nameKo": "천계 Bridge 타일",
+      "nameEn": "Celestial Realm Bridge Tile",
+      "productionFolder": "08_Map/celestial-realm/Tiles",
+      "deliveryFile": "tile_celestial-realm_bridge.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "celestial-realm",
+        "bridge"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-068",
+      "category": "tiles",
+      "subcategory": "celestial-realm",
+      "nameKo": "천계 Fence 타일",
+      "nameEn": "Celestial Realm Fence Tile",
+      "productionFolder": "08_Map/celestial-realm/Tiles",
+      "deliveryFile": "tile_celestial-realm_fence.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "celestial-realm",
+        "fence"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-069",
+      "category": "tiles",
+      "subcategory": "celestial-realm",
+      "nameKo": "천계 Water 타일",
+      "nameEn": "Celestial Realm Water Tile",
+      "productionFolder": "08_Map/celestial-realm/Tiles",
+      "deliveryFile": "tile_celestial-realm_water.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "celestial-realm",
+        "water"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TIL-070",
+      "category": "tiles",
+      "subcategory": "celestial-realm",
+      "nameKo": "천계 Flower 타일",
+      "nameEn": "Celestial Realm Flower Tile",
+      "productionFolder": "08_Map/celestial-realm/Tiles",
+      "deliveryFile": "tile_celestial-realm_flower.ktx2",
+      "format": "ktx2",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-TILE",
+      "priority": "P2",
+      "rarity": null,
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "seamless": true,
+        "tileMeters": 8,
+        "resolution": 2048,
+        "channels": [
+          "BaseColor",
+          "Normal",
+          "ORM"
+        ]
+      },
+      "tags": [
+        "map",
+        "celestial-realm",
+        "flower"
+      ],
+      "notes": ""
+    }
+  ]
+}

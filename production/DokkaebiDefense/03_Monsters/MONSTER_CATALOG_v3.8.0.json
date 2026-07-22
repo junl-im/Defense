@@ -1,0 +1,3009 @@
+{
+  "schemaVersion": 1,
+  "project": "Dokkaebi Defense",
+  "productionVersion": "3.8.0",
+  "category": "monsters",
+  "count": 60,
+  "assets": [
+    {
+      "id": "MON-001",
+      "category": "monsters",
+      "subcategory": "goblin-village",
+      "nameKo": "도깨비마을 떠도는 귀신",
+      "nameEn": "Dokkaebi Village Wandering Ghost",
+      "productionFolder": "03_Monsters/goblin-village",
+      "deliveryFile": "mon_goblin-village_wandering-ghost_001.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P0",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Enemy Readability Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "goblin-village",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-002",
+      "category": "monsters",
+      "subcategory": "goblin-village",
+      "nameKo": "도깨비마을 해골 병사",
+      "nameEn": "Dokkaebi Village Skeleton Soldier",
+      "productionFolder": "03_Monsters/goblin-village",
+      "deliveryFile": "mon_goblin-village_skeleton-soldier_002.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P0",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Enemy Readability Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "goblin-village",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-003",
+      "category": "monsters",
+      "subcategory": "goblin-village",
+      "nameKo": "도깨비마을 까마귀 요괴",
+      "nameEn": "Dokkaebi Village Crow Yokai",
+      "productionFolder": "03_Monsters/goblin-village",
+      "deliveryFile": "mon_goblin-village_crow-yokai_003.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P0",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Enemy Readability Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "goblin-village",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-004",
+      "category": "monsters",
+      "subcategory": "goblin-village",
+      "nameKo": "도깨비마을 산 늑대",
+      "nameEn": "Dokkaebi Village Mountain Wolf",
+      "productionFolder": "03_Monsters/goblin-village",
+      "deliveryFile": "mon_goblin-village_mountain-wolf_004.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P0",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Enemy Readability Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "goblin-village",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-005",
+      "category": "monsters",
+      "subcategory": "goblin-village",
+      "nameKo": "도깨비마을 욕심 돼지",
+      "nameEn": "Dokkaebi Village Greedy Pig",
+      "productionFolder": "03_Monsters/goblin-village",
+      "deliveryFile": "mon_goblin-village_greedy-pig_005.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P0",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Enemy Readability Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "goblin-village",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-006",
+      "category": "monsters",
+      "subcategory": "goblin-village",
+      "nameKo": "도깨비마을 독거미",
+      "nameEn": "Dokkaebi Village Venom Spider",
+      "productionFolder": "03_Monsters/goblin-village",
+      "deliveryFile": "mon_goblin-village_venom-spider_006.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P0",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Enemy Readability Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "goblin-village",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-007",
+      "category": "monsters",
+      "subcategory": "goblin-village",
+      "nameKo": "도깨비마을 밤 박쥐",
+      "nameEn": "Dokkaebi Village Night Bat",
+      "productionFolder": "03_Monsters/goblin-village",
+      "deliveryFile": "mon_goblin-village_night-bat_007.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P0",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Enemy Readability Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "goblin-village",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-008",
+      "category": "monsters",
+      "subcategory": "goblin-village",
+      "nameKo": "도깨비마을 장난 고블린",
+      "nameEn": "Dokkaebi Village Trick Goblin",
+      "productionFolder": "03_Monsters/goblin-village",
+      "deliveryFile": "mon_goblin-village_trick-goblin_008.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P0",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Enemy Readability Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "goblin-village",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-009",
+      "category": "monsters",
+      "subcategory": "bamboo-forest",
+      "nameKo": "대나무숲 떠도는 귀신",
+      "nameEn": "Bamboo Forest Wandering Ghost",
+      "productionFolder": "03_Monsters/bamboo-forest",
+      "deliveryFile": "mon_bamboo-forest_wandering-ghost_009.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P0",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "bamboo-forest",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-010",
+      "category": "monsters",
+      "subcategory": "bamboo-forest",
+      "nameKo": "대나무숲 해골 병사",
+      "nameEn": "Bamboo Forest Skeleton Soldier",
+      "productionFolder": "03_Monsters/bamboo-forest",
+      "deliveryFile": "mon_bamboo-forest_skeleton-soldier_010.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P0",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "bamboo-forest",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-011",
+      "category": "monsters",
+      "subcategory": "bamboo-forest",
+      "nameKo": "대나무숲 까마귀 요괴",
+      "nameEn": "Bamboo Forest Crow Yokai",
+      "productionFolder": "03_Monsters/bamboo-forest",
+      "deliveryFile": "mon_bamboo-forest_crow-yokai_011.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P0",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "bamboo-forest",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-012",
+      "category": "monsters",
+      "subcategory": "bamboo-forest",
+      "nameKo": "대나무숲 산 늑대",
+      "nameEn": "Bamboo Forest Mountain Wolf",
+      "productionFolder": "03_Monsters/bamboo-forest",
+      "deliveryFile": "mon_bamboo-forest_mountain-wolf_012.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P1",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "bamboo-forest",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-013",
+      "category": "monsters",
+      "subcategory": "bamboo-forest",
+      "nameKo": "대나무숲 욕심 돼지",
+      "nameEn": "Bamboo Forest Greedy Pig",
+      "productionFolder": "03_Monsters/bamboo-forest",
+      "deliveryFile": "mon_bamboo-forest_greedy-pig_013.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P1",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "bamboo-forest",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-014",
+      "category": "monsters",
+      "subcategory": "bamboo-forest",
+      "nameKo": "대나무숲 독거미",
+      "nameEn": "Bamboo Forest Venom Spider",
+      "productionFolder": "03_Monsters/bamboo-forest",
+      "deliveryFile": "mon_bamboo-forest_venom-spider_014.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P1",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "bamboo-forest",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-015",
+      "category": "monsters",
+      "subcategory": "bamboo-forest",
+      "nameKo": "대나무숲 밤 박쥐",
+      "nameEn": "Bamboo Forest Night Bat",
+      "productionFolder": "03_Monsters/bamboo-forest",
+      "deliveryFile": "mon_bamboo-forest_night-bat_015.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P1",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "bamboo-forest",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-016",
+      "category": "monsters",
+      "subcategory": "bamboo-forest",
+      "nameKo": "대나무숲 장난 고블린",
+      "nameEn": "Bamboo Forest Trick Goblin",
+      "productionFolder": "03_Monsters/bamboo-forest",
+      "deliveryFile": "mon_bamboo-forest_trick-goblin_016.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P1",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "bamboo-forest",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-017",
+      "category": "monsters",
+      "subcategory": "ruined-temple",
+      "nameKo": "폐사찰 떠도는 귀신",
+      "nameEn": "Ruined Temple Wandering Ghost",
+      "productionFolder": "03_Monsters/ruined-temple",
+      "deliveryFile": "mon_ruined-temple_wandering-ghost_017.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P1",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "ruined-temple",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-018",
+      "category": "monsters",
+      "subcategory": "ruined-temple",
+      "nameKo": "폐사찰 해골 병사",
+      "nameEn": "Ruined Temple Skeleton Soldier",
+      "productionFolder": "03_Monsters/ruined-temple",
+      "deliveryFile": "mon_ruined-temple_skeleton-soldier_018.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P1",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "ruined-temple",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-019",
+      "category": "monsters",
+      "subcategory": "ruined-temple",
+      "nameKo": "폐사찰 까마귀 요괴",
+      "nameEn": "Ruined Temple Crow Yokai",
+      "productionFolder": "03_Monsters/ruined-temple",
+      "deliveryFile": "mon_ruined-temple_crow-yokai_019.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P1",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "ruined-temple",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-020",
+      "category": "monsters",
+      "subcategory": "ruined-temple",
+      "nameKo": "폐사찰 산 늑대",
+      "nameEn": "Ruined Temple Mountain Wolf",
+      "productionFolder": "03_Monsters/ruined-temple",
+      "deliveryFile": "mon_ruined-temple_mountain-wolf_020.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P1",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "ruined-temple",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-021",
+      "category": "monsters",
+      "subcategory": "ruined-temple",
+      "nameKo": "폐사찰 욕심 돼지",
+      "nameEn": "Ruined Temple Greedy Pig",
+      "productionFolder": "03_Monsters/ruined-temple",
+      "deliveryFile": "mon_ruined-temple_greedy-pig_021.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P1",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "ruined-temple",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-022",
+      "category": "monsters",
+      "subcategory": "ruined-temple",
+      "nameKo": "폐사찰 독거미",
+      "nameEn": "Ruined Temple Venom Spider",
+      "productionFolder": "03_Monsters/ruined-temple",
+      "deliveryFile": "mon_ruined-temple_venom-spider_022.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P1",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "ruined-temple",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-023",
+      "category": "monsters",
+      "subcategory": "ruined-temple",
+      "nameKo": "폐사찰 밤 박쥐",
+      "nameEn": "Ruined Temple Night Bat",
+      "productionFolder": "03_Monsters/ruined-temple",
+      "deliveryFile": "mon_ruined-temple_night-bat_023.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P1",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "ruined-temple",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-024",
+      "category": "monsters",
+      "subcategory": "ruined-temple",
+      "nameKo": "폐사찰 장난 고블린",
+      "nameEn": "Ruined Temple Trick Goblin",
+      "productionFolder": "03_Monsters/ruined-temple",
+      "deliveryFile": "mon_ruined-temple_trick-goblin_024.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P1",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "ruined-temple",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-025",
+      "category": "monsters",
+      "subcategory": "snow-mountain",
+      "nameKo": "설산 떠도는 귀신",
+      "nameEn": "Snow Mountain Wandering Ghost",
+      "productionFolder": "03_Monsters/snow-mountain",
+      "deliveryFile": "mon_snow-mountain_wandering-ghost_025.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P1",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "snow-mountain",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-026",
+      "category": "monsters",
+      "subcategory": "snow-mountain",
+      "nameKo": "설산 해골 병사",
+      "nameEn": "Snow Mountain Skeleton Soldier",
+      "productionFolder": "03_Monsters/snow-mountain",
+      "deliveryFile": "mon_snow-mountain_skeleton-soldier_026.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P1",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "snow-mountain",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-027",
+      "category": "monsters",
+      "subcategory": "snow-mountain",
+      "nameKo": "설산 까마귀 요괴",
+      "nameEn": "Snow Mountain Crow Yokai",
+      "productionFolder": "03_Monsters/snow-mountain",
+      "deliveryFile": "mon_snow-mountain_crow-yokai_027.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P1",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "snow-mountain",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-028",
+      "category": "monsters",
+      "subcategory": "snow-mountain",
+      "nameKo": "설산 산 늑대",
+      "nameEn": "Snow Mountain Mountain Wolf",
+      "productionFolder": "03_Monsters/snow-mountain",
+      "deliveryFile": "mon_snow-mountain_mountain-wolf_028.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P1",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "snow-mountain",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-029",
+      "category": "monsters",
+      "subcategory": "snow-mountain",
+      "nameKo": "설산 욕심 돼지",
+      "nameEn": "Snow Mountain Greedy Pig",
+      "productionFolder": "03_Monsters/snow-mountain",
+      "deliveryFile": "mon_snow-mountain_greedy-pig_029.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P2",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "snow-mountain",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-030",
+      "category": "monsters",
+      "subcategory": "snow-mountain",
+      "nameKo": "설산 독거미",
+      "nameEn": "Snow Mountain Venom Spider",
+      "productionFolder": "03_Monsters/snow-mountain",
+      "deliveryFile": "mon_snow-mountain_venom-spider_030.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P2",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "snow-mountain",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-031",
+      "category": "monsters",
+      "subcategory": "snow-mountain",
+      "nameKo": "설산 밤 박쥐",
+      "nameEn": "Snow Mountain Night Bat",
+      "productionFolder": "03_Monsters/snow-mountain",
+      "deliveryFile": "mon_snow-mountain_night-bat_031.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P2",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "snow-mountain",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-032",
+      "category": "monsters",
+      "subcategory": "snow-mountain",
+      "nameKo": "설산 장난 고블린",
+      "nameEn": "Snow Mountain Trick Goblin",
+      "productionFolder": "03_Monsters/snow-mountain",
+      "deliveryFile": "mon_snow-mountain_trick-goblin_032.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P2",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "snow-mountain",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-033",
+      "category": "monsters",
+      "subcategory": "dragon-palace",
+      "nameKo": "용궁 떠도는 귀신",
+      "nameEn": "Dragon Palace Wandering Ghost",
+      "productionFolder": "03_Monsters/dragon-palace",
+      "deliveryFile": "mon_dragon-palace_wandering-ghost_033.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P2",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "dragon-palace",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-034",
+      "category": "monsters",
+      "subcategory": "dragon-palace",
+      "nameKo": "용궁 해골 병사",
+      "nameEn": "Dragon Palace Skeleton Soldier",
+      "productionFolder": "03_Monsters/dragon-palace",
+      "deliveryFile": "mon_dragon-palace_skeleton-soldier_034.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P2",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "dragon-palace",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-035",
+      "category": "monsters",
+      "subcategory": "dragon-palace",
+      "nameKo": "용궁 까마귀 요괴",
+      "nameEn": "Dragon Palace Crow Yokai",
+      "productionFolder": "03_Monsters/dragon-palace",
+      "deliveryFile": "mon_dragon-palace_crow-yokai_035.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P2",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "dragon-palace",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-036",
+      "category": "monsters",
+      "subcategory": "dragon-palace",
+      "nameKo": "용궁 산 늑대",
+      "nameEn": "Dragon Palace Mountain Wolf",
+      "productionFolder": "03_Monsters/dragon-palace",
+      "deliveryFile": "mon_dragon-palace_mountain-wolf_036.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P2",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "dragon-palace",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-037",
+      "category": "monsters",
+      "subcategory": "dragon-palace",
+      "nameKo": "용궁 욕심 돼지",
+      "nameEn": "Dragon Palace Greedy Pig",
+      "productionFolder": "03_Monsters/dragon-palace",
+      "deliveryFile": "mon_dragon-palace_greedy-pig_037.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P2",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "dragon-palace",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-038",
+      "category": "monsters",
+      "subcategory": "dragon-palace",
+      "nameKo": "용궁 독거미",
+      "nameEn": "Dragon Palace Venom Spider",
+      "productionFolder": "03_Monsters/dragon-palace",
+      "deliveryFile": "mon_dragon-palace_venom-spider_038.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P2",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "dragon-palace",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-039",
+      "category": "monsters",
+      "subcategory": "dragon-palace",
+      "nameKo": "용궁 밤 박쥐",
+      "nameEn": "Dragon Palace Night Bat",
+      "productionFolder": "03_Monsters/dragon-palace",
+      "deliveryFile": "mon_dragon-palace_night-bat_039.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P2",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "dragon-palace",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-040",
+      "category": "monsters",
+      "subcategory": "dragon-palace",
+      "nameKo": "용궁 장난 고블린",
+      "nameEn": "Dragon Palace Trick Goblin",
+      "productionFolder": "03_Monsters/dragon-palace",
+      "deliveryFile": "mon_dragon-palace_trick-goblin_040.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P2",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "dragon-palace",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-041",
+      "category": "monsters",
+      "subcategory": "underworld",
+      "nameKo": "저승 떠도는 귀신",
+      "nameEn": "Underworld Wandering Ghost",
+      "productionFolder": "03_Monsters/underworld",
+      "deliveryFile": "mon_underworld_wandering-ghost_041.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P2",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "underworld",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-042",
+      "category": "monsters",
+      "subcategory": "underworld",
+      "nameKo": "저승 해골 병사",
+      "nameEn": "Underworld Skeleton Soldier",
+      "productionFolder": "03_Monsters/underworld",
+      "deliveryFile": "mon_underworld_skeleton-soldier_042.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P2",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "underworld",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-043",
+      "category": "monsters",
+      "subcategory": "underworld",
+      "nameKo": "저승 까마귀 요괴",
+      "nameEn": "Underworld Crow Yokai",
+      "productionFolder": "03_Monsters/underworld",
+      "deliveryFile": "mon_underworld_crow-yokai_043.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P2",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "underworld",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-044",
+      "category": "monsters",
+      "subcategory": "underworld",
+      "nameKo": "저승 산 늑대",
+      "nameEn": "Underworld Mountain Wolf",
+      "productionFolder": "03_Monsters/underworld",
+      "deliveryFile": "mon_underworld_mountain-wolf_044.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P2",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "underworld",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-045",
+      "category": "monsters",
+      "subcategory": "underworld",
+      "nameKo": "저승 욕심 돼지",
+      "nameEn": "Underworld Greedy Pig",
+      "productionFolder": "03_Monsters/underworld",
+      "deliveryFile": "mon_underworld_greedy-pig_045.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P3",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "underworld",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-046",
+      "category": "monsters",
+      "subcategory": "underworld",
+      "nameKo": "저승 독거미",
+      "nameEn": "Underworld Venom Spider",
+      "productionFolder": "03_Monsters/underworld",
+      "deliveryFile": "mon_underworld_venom-spider_046.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P3",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "underworld",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-047",
+      "category": "monsters",
+      "subcategory": "underworld",
+      "nameKo": "저승 밤 박쥐",
+      "nameEn": "Underworld Night Bat",
+      "productionFolder": "03_Monsters/underworld",
+      "deliveryFile": "mon_underworld_night-bat_047.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P3",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "underworld",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-048",
+      "category": "monsters",
+      "subcategory": "underworld",
+      "nameKo": "저승 장난 고블린",
+      "nameEn": "Underworld Trick Goblin",
+      "productionFolder": "03_Monsters/underworld",
+      "deliveryFile": "mon_underworld_trick-goblin_048.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P3",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "underworld",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-049",
+      "category": "monsters",
+      "subcategory": "celestial-realm",
+      "nameKo": "천계 떠도는 귀신",
+      "nameEn": "Celestial Realm Wandering Ghost",
+      "productionFolder": "03_Monsters/celestial-realm",
+      "deliveryFile": "mon_celestial-realm_wandering-ghost_049.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P3",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "celestial-realm",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-050",
+      "category": "monsters",
+      "subcategory": "celestial-realm",
+      "nameKo": "천계 해골 병사",
+      "nameEn": "Celestial Realm Skeleton Soldier",
+      "productionFolder": "03_Monsters/celestial-realm",
+      "deliveryFile": "mon_celestial-realm_skeleton-soldier_050.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P3",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "celestial-realm",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-051",
+      "category": "monsters",
+      "subcategory": "celestial-realm",
+      "nameKo": "천계 까마귀 요괴",
+      "nameEn": "Celestial Realm Crow Yokai",
+      "productionFolder": "03_Monsters/celestial-realm",
+      "deliveryFile": "mon_celestial-realm_crow-yokai_051.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P3",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "celestial-realm",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-052",
+      "category": "monsters",
+      "subcategory": "celestial-realm",
+      "nameKo": "천계 산 늑대",
+      "nameEn": "Celestial Realm Mountain Wolf",
+      "productionFolder": "03_Monsters/celestial-realm",
+      "deliveryFile": "mon_celestial-realm_mountain-wolf_052.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P3",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "celestial-realm",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-053",
+      "category": "monsters",
+      "subcategory": "celestial-realm",
+      "nameKo": "천계 욕심 돼지",
+      "nameEn": "Celestial Realm Greedy Pig",
+      "productionFolder": "03_Monsters/celestial-realm",
+      "deliveryFile": "mon_celestial-realm_greedy-pig_053.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P3",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "celestial-realm",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-054",
+      "category": "monsters",
+      "subcategory": "celestial-realm",
+      "nameKo": "천계 독거미",
+      "nameEn": "Celestial Realm Venom Spider",
+      "productionFolder": "03_Monsters/celestial-realm",
+      "deliveryFile": "mon_celestial-realm_venom-spider_054.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P3",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "celestial-realm",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-055",
+      "category": "monsters",
+      "subcategory": "celestial-realm",
+      "nameKo": "천계 밤 박쥐",
+      "nameEn": "Celestial Realm Night Bat",
+      "productionFolder": "03_Monsters/celestial-realm",
+      "deliveryFile": "mon_celestial-realm_night-bat_055.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P3",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "celestial-realm",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-056",
+      "category": "monsters",
+      "subcategory": "celestial-realm",
+      "nameKo": "천계 장난 고블린",
+      "nameEn": "Celestial Realm Trick Goblin",
+      "productionFolder": "03_Monsters/celestial-realm",
+      "deliveryFile": "mon_celestial-realm_trick-goblin_056.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P3",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Stage Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "5000-9000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "celestial-realm",
+        "normal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-057",
+      "category": "monsters",
+      "subcategory": "elite",
+      "nameKo": "큰 귀신",
+      "nameEn": "Giant Ghost",
+      "productionFolder": "03_Monsters/Elite",
+      "deliveryFile": "mon_ruined-temple_giant-ghost_057.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P3",
+      "rarity": "epic",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Enemy Readability Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "7000-10000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "ruined-temple",
+        "elite"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-058",
+      "category": "monsters",
+      "subcategory": "elite",
+      "nameKo": "화염 도깨비",
+      "nameEn": "Flame Dokkaebi",
+      "productionFolder": "03_Monsters/Elite",
+      "deliveryFile": "mon_snow-mountain_flame-dokkaebi_058.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P3",
+      "rarity": "epic",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Enemy Readability Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "7000-10000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "snow-mountain",
+        "elite"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-059",
+      "category": "monsters",
+      "subcategory": "elite",
+      "nameKo": "얼음 도깨비",
+      "nameEn": "Frost Dokkaebi",
+      "productionFolder": "03_Monsters/Elite",
+      "deliveryFile": "mon_dragon-palace_frost-dokkaebi_059.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P3",
+      "rarity": "epic",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Enemy Readability Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "7000-10000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "dragon-palace",
+        "elite"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "MON-060",
+      "category": "monsters",
+      "subcategory": "elite",
+      "nameKo": "큰 귀신",
+      "nameEn": "Giant Ghost",
+      "productionFolder": "03_Monsters/Elite",
+      "deliveryFile": "mon_underworld_giant-ghost_060.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-MONSTER",
+      "priority": "P3",
+      "rarity": "epic",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Enemy Readability Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "7000-10000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ]
+      },
+      "tags": [
+        "underworld",
+        "elite"
+      ],
+      "notes": ""
+    }
+  ]
+}

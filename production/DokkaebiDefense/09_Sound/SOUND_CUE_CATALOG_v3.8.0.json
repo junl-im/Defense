@@ -1,0 +1,679 @@
+{
+  "productionVersion": "3.8.0",
+  "count": 96,
+  "countedInVisualAssetTotal": false,
+  "rows": [
+    {
+      "id": "SND-001",
+      "family": "UI",
+      "cue": "snd_ui_001.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-002",
+      "family": "Combat",
+      "cue": "snd_combat_002.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-003",
+      "family": "Skill",
+      "cue": "snd_skill_003.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-004",
+      "family": "Monster",
+      "cue": "snd_monster_004.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-005",
+      "family": "Boss",
+      "cue": "snd_boss_005.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-006",
+      "family": "Map",
+      "cue": "snd_map_006.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-007",
+      "family": "Reward",
+      "cue": "snd_reward_007.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-008",
+      "family": "Voice",
+      "cue": "snd_voice_008.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-009",
+      "family": "UI",
+      "cue": "snd_ui_009.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-010",
+      "family": "Combat",
+      "cue": "snd_combat_010.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-011",
+      "family": "Skill",
+      "cue": "snd_skill_011.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-012",
+      "family": "Monster",
+      "cue": "snd_monster_012.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-013",
+      "family": "Boss",
+      "cue": "snd_boss_013.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-014",
+      "family": "Map",
+      "cue": "snd_map_014.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-015",
+      "family": "Reward",
+      "cue": "snd_reward_015.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-016",
+      "family": "Voice",
+      "cue": "snd_voice_016.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-017",
+      "family": "UI",
+      "cue": "snd_ui_017.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-018",
+      "family": "Combat",
+      "cue": "snd_combat_018.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-019",
+      "family": "Skill",
+      "cue": "snd_skill_019.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-020",
+      "family": "Monster",
+      "cue": "snd_monster_020.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-021",
+      "family": "Boss",
+      "cue": "snd_boss_021.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-022",
+      "family": "Map",
+      "cue": "snd_map_022.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-023",
+      "family": "Reward",
+      "cue": "snd_reward_023.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-024",
+      "family": "Voice",
+      "cue": "snd_voice_024.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-025",
+      "family": "UI",
+      "cue": "snd_ui_025.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-026",
+      "family": "Combat",
+      "cue": "snd_combat_026.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-027",
+      "family": "Skill",
+      "cue": "snd_skill_027.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-028",
+      "family": "Monster",
+      "cue": "snd_monster_028.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-029",
+      "family": "Boss",
+      "cue": "snd_boss_029.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-030",
+      "family": "Map",
+      "cue": "snd_map_030.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-031",
+      "family": "Reward",
+      "cue": "snd_reward_031.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-032",
+      "family": "Voice",
+      "cue": "snd_voice_032.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-033",
+      "family": "UI",
+      "cue": "snd_ui_033.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-034",
+      "family": "Combat",
+      "cue": "snd_combat_034.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-035",
+      "family": "Skill",
+      "cue": "snd_skill_035.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-036",
+      "family": "Monster",
+      "cue": "snd_monster_036.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-037",
+      "family": "Boss",
+      "cue": "snd_boss_037.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-038",
+      "family": "Map",
+      "cue": "snd_map_038.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-039",
+      "family": "Reward",
+      "cue": "snd_reward_039.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-040",
+      "family": "Voice",
+      "cue": "snd_voice_040.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-041",
+      "family": "UI",
+      "cue": "snd_ui_041.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-042",
+      "family": "Combat",
+      "cue": "snd_combat_042.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-043",
+      "family": "Skill",
+      "cue": "snd_skill_043.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-044",
+      "family": "Monster",
+      "cue": "snd_monster_044.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-045",
+      "family": "Boss",
+      "cue": "snd_boss_045.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-046",
+      "family": "Map",
+      "cue": "snd_map_046.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-047",
+      "family": "Reward",
+      "cue": "snd_reward_047.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-048",
+      "family": "Voice",
+      "cue": "snd_voice_048.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-049",
+      "family": "UI",
+      "cue": "snd_ui_049.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-050",
+      "family": "Combat",
+      "cue": "snd_combat_050.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-051",
+      "family": "Skill",
+      "cue": "snd_skill_051.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-052",
+      "family": "Monster",
+      "cue": "snd_monster_052.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-053",
+      "family": "Boss",
+      "cue": "snd_boss_053.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-054",
+      "family": "Map",
+      "cue": "snd_map_054.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-055",
+      "family": "Reward",
+      "cue": "snd_reward_055.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-056",
+      "family": "Voice",
+      "cue": "snd_voice_056.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-057",
+      "family": "UI",
+      "cue": "snd_ui_057.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-058",
+      "family": "Combat",
+      "cue": "snd_combat_058.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-059",
+      "family": "Skill",
+      "cue": "snd_skill_059.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-060",
+      "family": "Monster",
+      "cue": "snd_monster_060.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-061",
+      "family": "Boss",
+      "cue": "snd_boss_061.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-062",
+      "family": "Map",
+      "cue": "snd_map_062.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-063",
+      "family": "Reward",
+      "cue": "snd_reward_063.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-064",
+      "family": "Voice",
+      "cue": "snd_voice_064.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-065",
+      "family": "UI",
+      "cue": "snd_ui_065.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-066",
+      "family": "Combat",
+      "cue": "snd_combat_066.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-067",
+      "family": "Skill",
+      "cue": "snd_skill_067.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-068",
+      "family": "Monster",
+      "cue": "snd_monster_068.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-069",
+      "family": "Boss",
+      "cue": "snd_boss_069.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-070",
+      "family": "Map",
+      "cue": "snd_map_070.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-071",
+      "family": "Reward",
+      "cue": "snd_reward_071.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-072",
+      "family": "Voice",
+      "cue": "snd_voice_072.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-073",
+      "family": "UI",
+      "cue": "snd_ui_073.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-074",
+      "family": "Combat",
+      "cue": "snd_combat_074.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-075",
+      "family": "Skill",
+      "cue": "snd_skill_075.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-076",
+      "family": "Monster",
+      "cue": "snd_monster_076.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-077",
+      "family": "Boss",
+      "cue": "snd_boss_077.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-078",
+      "family": "Map",
+      "cue": "snd_map_078.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-079",
+      "family": "Reward",
+      "cue": "snd_reward_079.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-080",
+      "family": "Voice",
+      "cue": "snd_voice_080.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-081",
+      "family": "UI",
+      "cue": "snd_ui_081.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-082",
+      "family": "Combat",
+      "cue": "snd_combat_082.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-083",
+      "family": "Skill",
+      "cue": "snd_skill_083.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-084",
+      "family": "Monster",
+      "cue": "snd_monster_084.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-085",
+      "family": "Boss",
+      "cue": "snd_boss_085.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-086",
+      "family": "Map",
+      "cue": "snd_map_086.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-087",
+      "family": "Reward",
+      "cue": "snd_reward_087.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-088",
+      "family": "Voice",
+      "cue": "snd_voice_088.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-089",
+      "family": "UI",
+      "cue": "snd_ui_089.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-090",
+      "family": "Combat",
+      "cue": "snd_combat_090.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-091",
+      "family": "Skill",
+      "cue": "snd_skill_091.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-092",
+      "family": "Monster",
+      "cue": "snd_monster_092.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-093",
+      "family": "Boss",
+      "cue": "snd_boss_093.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-094",
+      "family": "Map",
+      "cue": "snd_map_094.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-095",
+      "family": "Reward",
+      "cue": "snd_reward_095.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    },
+    {
+      "id": "SND-096",
+      "family": "Voice",
+      "cue": "snd_voice_096.ogg",
+      "status": "planned",
+      "note": "1,130 시각 에셋 합계에는 포함하지 않는 별도 오디오 제작 항목"
+    }
+  ]
+}

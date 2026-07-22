@@ -3,7 +3,7 @@ import { existsSync, readFileSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
-const inventoryPath = resolve(root, 'docs/RUNTIME_ASSET_INVENTORY_v3.7.5.json');
+const inventoryPath = resolve(root, 'docs/RUNTIME_ASSET_INVENTORY_v3.8.0.json');
 const failures = [];
 
 const fail = (path, reason) => {
@@ -14,7 +14,7 @@ const fail = (path, reason) => {
 };
 
 if (!existsSync(inventoryPath)) {
-  fail('docs/RUNTIME_ASSET_INVENTORY_v3.7.5.json', 'runtime asset inventory is missing');
+  fail('docs/RUNTIME_ASSET_INVENTORY_v3.8.0.json', 'runtime asset inventory is missing');
 } else {
   const inventory = JSON.parse(readFileSync(inventoryPath, 'utf8'));
   if (inventory.requiredCount !== 14 || inventory.files?.length !== 14) {
@@ -24,7 +24,7 @@ if (!existsSync(inventoryPath)) {
   for (const entry of inventory.files ?? []) {
     const absolute = resolve(root, entry.path);
     if (!existsSync(absolute)) {
-      fail(entry.path, 'required GLB file is missing; apply the full v3.7.5 asset recovery patch');
+      fail(entry.path, 'required GLB file is missing; apply the full v3.8.0 full or patch package');
       continue;
     }
 

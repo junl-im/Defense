@@ -1,9 +1,9 @@
 {
   "schemaVersion": 9,
-  "gameVersion": "3.7.5",
-  "engineVersion": "2.7.3",
+  "gameVersion": "3.8.0",
+  "engineVersion": "2.8.0",
   "artDirection": "aaa-casual-mobile-sd-stylized-pbr-korean-folklore",
-  "productionStage": "golden-hero-plus-two-shared-rig-enemy-technical-review",
+  "productionStage": "ip-production-foundation-1130-planned-assets",
   "impostorDirections": 11,
   "characters": {
     "guardians": [
@@ -596,5 +596,13 @@
       "hand-painted-texture-review",
       "animation-timing-review"
     ]
+  },
+  "ipProduction": {
+    "root": "production/DokkaebiDefense",
+    "plannedVisualAssets": 1130,
+    "starterClasses": 11,
+    "stages": 7,
+    "coreDocuments": 5,
+    "productionApproved": 0
   }
 }

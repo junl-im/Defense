@@ -1,0 +1,1592 @@
+{
+  "productionVersion": "3.8.0",
+  "characters": 11,
+  "clipsPerCharacter": 9,
+  "totalClipRows": 99,
+  "rows": [
+    {
+      "id": "ANM-DOKKAEBI-WARRIOR-01",
+      "characterId": "dokkaebi-warrior",
+      "character": "도깨비 전사",
+      "animation": "Idle",
+      "clipName": "idle",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DOKKAEBI-WARRIOR-02",
+      "characterId": "dokkaebi-warrior",
+      "character": "도깨비 전사",
+      "animation": "Walk",
+      "clipName": "walk",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DOKKAEBI-WARRIOR-03",
+      "characterId": "dokkaebi-warrior",
+      "character": "도깨비 전사",
+      "animation": "Run",
+      "clipName": "run",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DOKKAEBI-WARRIOR-04",
+      "characterId": "dokkaebi-warrior",
+      "character": "도깨비 전사",
+      "animation": "Attack",
+      "clipName": "attack",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DOKKAEBI-WARRIOR-05",
+      "characterId": "dokkaebi-warrior",
+      "character": "도깨비 전사",
+      "animation": "Skill1",
+      "clipName": "skill1",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DOKKAEBI-WARRIOR-06",
+      "characterId": "dokkaebi-warrior",
+      "character": "도깨비 전사",
+      "animation": "Skill2",
+      "clipName": "skill2",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DOKKAEBI-WARRIOR-07",
+      "characterId": "dokkaebi-warrior",
+      "character": "도깨비 전사",
+      "animation": "Hit",
+      "clipName": "hit",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DOKKAEBI-WARRIOR-08",
+      "characterId": "dokkaebi-warrior",
+      "character": "도깨비 전사",
+      "animation": "Death",
+      "clipName": "death",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DOKKAEBI-WARRIOR-09",
+      "characterId": "dokkaebi-warrior",
+      "character": "도깨비 전사",
+      "animation": "Victory",
+      "clipName": "victory",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DOKKAEBI-ARCHER-01",
+      "characterId": "dokkaebi-archer",
+      "character": "도깨비 궁수",
+      "animation": "Idle",
+      "clipName": "idle",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DOKKAEBI-ARCHER-02",
+      "characterId": "dokkaebi-archer",
+      "character": "도깨비 궁수",
+      "animation": "Walk",
+      "clipName": "walk",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DOKKAEBI-ARCHER-03",
+      "characterId": "dokkaebi-archer",
+      "character": "도깨비 궁수",
+      "animation": "Run",
+      "clipName": "run",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DOKKAEBI-ARCHER-04",
+      "characterId": "dokkaebi-archer",
+      "character": "도깨비 궁수",
+      "animation": "Attack",
+      "clipName": "attack",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DOKKAEBI-ARCHER-05",
+      "characterId": "dokkaebi-archer",
+      "character": "도깨비 궁수",
+      "animation": "Skill1",
+      "clipName": "skill1",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DOKKAEBI-ARCHER-06",
+      "characterId": "dokkaebi-archer",
+      "character": "도깨비 궁수",
+      "animation": "Skill2",
+      "clipName": "skill2",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DOKKAEBI-ARCHER-07",
+      "characterId": "dokkaebi-archer",
+      "character": "도깨비 궁수",
+      "animation": "Hit",
+      "clipName": "hit",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DOKKAEBI-ARCHER-08",
+      "characterId": "dokkaebi-archer",
+      "character": "도깨비 궁수",
+      "animation": "Death",
+      "clipName": "death",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DOKKAEBI-ARCHER-09",
+      "characterId": "dokkaebi-archer",
+      "character": "도깨비 궁수",
+      "animation": "Victory",
+      "clipName": "victory",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DOKKAEBI-MAGE-01",
+      "characterId": "dokkaebi-mage",
+      "character": "도깨비 법사",
+      "animation": "Idle",
+      "clipName": "idle",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DOKKAEBI-MAGE-02",
+      "characterId": "dokkaebi-mage",
+      "character": "도깨비 법사",
+      "animation": "Walk",
+      "clipName": "walk",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DOKKAEBI-MAGE-03",
+      "characterId": "dokkaebi-mage",
+      "character": "도깨비 법사",
+      "animation": "Run",
+      "clipName": "run",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DOKKAEBI-MAGE-04",
+      "characterId": "dokkaebi-mage",
+      "character": "도깨비 법사",
+      "animation": "Attack",
+      "clipName": "attack",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DOKKAEBI-MAGE-05",
+      "characterId": "dokkaebi-mage",
+      "character": "도깨비 법사",
+      "animation": "Skill1",
+      "clipName": "skill1",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DOKKAEBI-MAGE-06",
+      "characterId": "dokkaebi-mage",
+      "character": "도깨비 법사",
+      "animation": "Skill2",
+      "clipName": "skill2",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DOKKAEBI-MAGE-07",
+      "characterId": "dokkaebi-mage",
+      "character": "도깨비 법사",
+      "animation": "Hit",
+      "clipName": "hit",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DOKKAEBI-MAGE-08",
+      "characterId": "dokkaebi-mage",
+      "character": "도깨비 법사",
+      "animation": "Death",
+      "clipName": "death",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DOKKAEBI-MAGE-09",
+      "characterId": "dokkaebi-mage",
+      "character": "도깨비 법사",
+      "animation": "Victory",
+      "clipName": "victory",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-TAOIST-01",
+      "characterId": "taoist",
+      "character": "도사",
+      "animation": "Idle",
+      "clipName": "idle",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-TAOIST-02",
+      "characterId": "taoist",
+      "character": "도사",
+      "animation": "Walk",
+      "clipName": "walk",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-TAOIST-03",
+      "characterId": "taoist",
+      "character": "도사",
+      "animation": "Run",
+      "clipName": "run",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-TAOIST-04",
+      "characterId": "taoist",
+      "character": "도사",
+      "animation": "Attack",
+      "clipName": "attack",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-TAOIST-05",
+      "characterId": "taoist",
+      "character": "도사",
+      "animation": "Skill1",
+      "clipName": "skill1",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-TAOIST-06",
+      "characterId": "taoist",
+      "character": "도사",
+      "animation": "Skill2",
+      "clipName": "skill2",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-TAOIST-07",
+      "characterId": "taoist",
+      "character": "도사",
+      "animation": "Hit",
+      "clipName": "hit",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-TAOIST-08",
+      "characterId": "taoist",
+      "character": "도사",
+      "animation": "Death",
+      "clipName": "death",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-TAOIST-09",
+      "characterId": "taoist",
+      "character": "도사",
+      "animation": "Victory",
+      "clipName": "victory",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-SHAMAN-01",
+      "characterId": "shaman",
+      "character": "무당",
+      "animation": "Idle",
+      "clipName": "idle",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-SHAMAN-02",
+      "characterId": "shaman",
+      "character": "무당",
+      "animation": "Walk",
+      "clipName": "walk",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-SHAMAN-03",
+      "characterId": "shaman",
+      "character": "무당",
+      "animation": "Run",
+      "clipName": "run",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-SHAMAN-04",
+      "characterId": "shaman",
+      "character": "무당",
+      "animation": "Attack",
+      "clipName": "attack",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-SHAMAN-05",
+      "characterId": "shaman",
+      "character": "무당",
+      "animation": "Skill1",
+      "clipName": "skill1",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-SHAMAN-06",
+      "characterId": "shaman",
+      "character": "무당",
+      "animation": "Skill2",
+      "clipName": "skill2",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-SHAMAN-07",
+      "characterId": "shaman",
+      "character": "무당",
+      "animation": "Hit",
+      "clipName": "hit",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-SHAMAN-08",
+      "characterId": "shaman",
+      "character": "무당",
+      "animation": "Death",
+      "clipName": "death",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-SHAMAN-09",
+      "characterId": "shaman",
+      "character": "무당",
+      "animation": "Victory",
+      "clipName": "victory",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-TIGER-GUARDIAN-01",
+      "characterId": "tiger-guardian",
+      "character": "호랑이",
+      "animation": "Idle",
+      "clipName": "idle",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-TIGER-GUARDIAN-02",
+      "characterId": "tiger-guardian",
+      "character": "호랑이",
+      "animation": "Walk",
+      "clipName": "walk",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-TIGER-GUARDIAN-03",
+      "characterId": "tiger-guardian",
+      "character": "호랑이",
+      "animation": "Run",
+      "clipName": "run",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-TIGER-GUARDIAN-04",
+      "characterId": "tiger-guardian",
+      "character": "호랑이",
+      "animation": "Attack",
+      "clipName": "attack",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-TIGER-GUARDIAN-05",
+      "characterId": "tiger-guardian",
+      "character": "호랑이",
+      "animation": "Skill1",
+      "clipName": "skill1",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-TIGER-GUARDIAN-06",
+      "characterId": "tiger-guardian",
+      "character": "호랑이",
+      "animation": "Skill2",
+      "clipName": "skill2",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-TIGER-GUARDIAN-07",
+      "characterId": "tiger-guardian",
+      "character": "호랑이",
+      "animation": "Hit",
+      "clipName": "hit",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-TIGER-GUARDIAN-08",
+      "characterId": "tiger-guardian",
+      "character": "호랑이",
+      "animation": "Death",
+      "clipName": "death",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-TIGER-GUARDIAN-09",
+      "characterId": "tiger-guardian",
+      "character": "호랑이",
+      "animation": "Victory",
+      "clipName": "victory",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-HAETAE-01",
+      "characterId": "haetae",
+      "character": "해태",
+      "animation": "Idle",
+      "clipName": "idle",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-HAETAE-02",
+      "characterId": "haetae",
+      "character": "해태",
+      "animation": "Walk",
+      "clipName": "walk",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-HAETAE-03",
+      "characterId": "haetae",
+      "character": "해태",
+      "animation": "Run",
+      "clipName": "run",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-HAETAE-04",
+      "characterId": "haetae",
+      "character": "해태",
+      "animation": "Attack",
+      "clipName": "attack",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-HAETAE-05",
+      "characterId": "haetae",
+      "character": "해태",
+      "animation": "Skill1",
+      "clipName": "skill1",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-HAETAE-06",
+      "characterId": "haetae",
+      "character": "해태",
+      "animation": "Skill2",
+      "clipName": "skill2",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-HAETAE-07",
+      "characterId": "haetae",
+      "character": "해태",
+      "animation": "Hit",
+      "clipName": "hit",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-HAETAE-08",
+      "characterId": "haetae",
+      "character": "해태",
+      "animation": "Death",
+      "clipName": "death",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-HAETAE-09",
+      "characterId": "haetae",
+      "character": "해태",
+      "animation": "Victory",
+      "clipName": "victory",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-GUMIHO-01",
+      "characterId": "gumiho",
+      "character": "구미호",
+      "animation": "Idle",
+      "clipName": "idle",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-GUMIHO-02",
+      "characterId": "gumiho",
+      "character": "구미호",
+      "animation": "Walk",
+      "clipName": "walk",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-GUMIHO-03",
+      "characterId": "gumiho",
+      "character": "구미호",
+      "animation": "Run",
+      "clipName": "run",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-GUMIHO-04",
+      "characterId": "gumiho",
+      "character": "구미호",
+      "animation": "Attack",
+      "clipName": "attack",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-GUMIHO-05",
+      "characterId": "gumiho",
+      "character": "구미호",
+      "animation": "Skill1",
+      "clipName": "skill1",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-GUMIHO-06",
+      "characterId": "gumiho",
+      "character": "구미호",
+      "animation": "Skill2",
+      "clipName": "skill2",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-GUMIHO-07",
+      "characterId": "gumiho",
+      "character": "구미호",
+      "animation": "Hit",
+      "clipName": "hit",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-GUMIHO-08",
+      "characterId": "gumiho",
+      "character": "구미호",
+      "animation": "Death",
+      "clipName": "death",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-GUMIHO-09",
+      "characterId": "gumiho",
+      "character": "구미호",
+      "animation": "Victory",
+      "clipName": "victory",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-SANSHIN-01",
+      "characterId": "sanshin",
+      "character": "산신령",
+      "animation": "Idle",
+      "clipName": "idle",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-SANSHIN-02",
+      "characterId": "sanshin",
+      "character": "산신령",
+      "animation": "Walk",
+      "clipName": "walk",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-SANSHIN-03",
+      "characterId": "sanshin",
+      "character": "산신령",
+      "animation": "Run",
+      "clipName": "run",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-SANSHIN-04",
+      "characterId": "sanshin",
+      "character": "산신령",
+      "animation": "Attack",
+      "clipName": "attack",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-SANSHIN-05",
+      "characterId": "sanshin",
+      "character": "산신령",
+      "animation": "Skill1",
+      "clipName": "skill1",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-SANSHIN-06",
+      "characterId": "sanshin",
+      "character": "산신령",
+      "animation": "Skill2",
+      "clipName": "skill2",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-SANSHIN-07",
+      "characterId": "sanshin",
+      "character": "산신령",
+      "animation": "Hit",
+      "clipName": "hit",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-SANSHIN-08",
+      "characterId": "sanshin",
+      "character": "산신령",
+      "animation": "Death",
+      "clipName": "death",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-SANSHIN-09",
+      "characterId": "sanshin",
+      "character": "산신령",
+      "animation": "Victory",
+      "clipName": "victory",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-GRIM-REAPER-01",
+      "characterId": "grim-reaper",
+      "character": "저승사자",
+      "animation": "Idle",
+      "clipName": "idle",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-GRIM-REAPER-02",
+      "characterId": "grim-reaper",
+      "character": "저승사자",
+      "animation": "Walk",
+      "clipName": "walk",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-GRIM-REAPER-03",
+      "characterId": "grim-reaper",
+      "character": "저승사자",
+      "animation": "Run",
+      "clipName": "run",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-GRIM-REAPER-04",
+      "characterId": "grim-reaper",
+      "character": "저승사자",
+      "animation": "Attack",
+      "clipName": "attack",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-GRIM-REAPER-05",
+      "characterId": "grim-reaper",
+      "character": "저승사자",
+      "animation": "Skill1",
+      "clipName": "skill1",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-GRIM-REAPER-06",
+      "characterId": "grim-reaper",
+      "character": "저승사자",
+      "animation": "Skill2",
+      "clipName": "skill2",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-GRIM-REAPER-07",
+      "characterId": "grim-reaper",
+      "character": "저승사자",
+      "animation": "Hit",
+      "clipName": "hit",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-GRIM-REAPER-08",
+      "characterId": "grim-reaper",
+      "character": "저승사자",
+      "animation": "Death",
+      "clipName": "death",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-GRIM-REAPER-09",
+      "characterId": "grim-reaper",
+      "character": "저승사자",
+      "animation": "Victory",
+      "clipName": "victory",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DRAGON-01",
+      "characterId": "dragon",
+      "character": "용",
+      "animation": "Idle",
+      "clipName": "idle",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DRAGON-02",
+      "characterId": "dragon",
+      "character": "용",
+      "animation": "Walk",
+      "clipName": "walk",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DRAGON-03",
+      "characterId": "dragon",
+      "character": "용",
+      "animation": "Run",
+      "clipName": "run",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DRAGON-04",
+      "characterId": "dragon",
+      "character": "용",
+      "animation": "Attack",
+      "clipName": "attack",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DRAGON-05",
+      "characterId": "dragon",
+      "character": "용",
+      "animation": "Skill1",
+      "clipName": "skill1",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DRAGON-06",
+      "characterId": "dragon",
+      "character": "용",
+      "animation": "Skill2",
+      "clipName": "skill2",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DRAGON-07",
+      "characterId": "dragon",
+      "character": "용",
+      "animation": "Hit",
+      "clipName": "hit",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DRAGON-08",
+      "characterId": "dragon",
+      "character": "용",
+      "animation": "Death",
+      "clipName": "death",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    },
+    {
+      "id": "ANM-DRAGON-09",
+      "characterId": "dragon",
+      "character": "용",
+      "animation": "Victory",
+      "clipName": "victory",
+      "authoredDirections": [
+        0,
+        45,
+        90,
+        135,
+        180
+      ],
+      "runtimeViewRule": "5방향 제작 후 좌우 반전으로 10~11방향 구현",
+      "status": "planned"
+    }
+  ]
+}

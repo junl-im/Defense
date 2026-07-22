@@ -1,0 +1,949 @@
+{
+  "schemaVersion": 1,
+  "project": "Dokkaebi Defense",
+  "productionVersion": "3.8.0",
+  "category": "bosses",
+  "count": 20,
+  "assets": [
+    {
+      "id": "BOS-001",
+      "category": "bosses",
+      "subcategory": "goblin-village",
+      "nameKo": "도깨비왕",
+      "nameEn": "Dokkaebi King",
+      "productionFolder": "04_Boss/goblin-village",
+      "deliveryFile": "boss_dokkaebi-king_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-BOSS",
+      "priority": "P0",
+      "rarity": "legend",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Launch Boss Lineup",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "10000-18000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "AttackA",
+          "AttackB",
+          "SkillA",
+          "SkillB",
+          "Phase",
+          "Hit",
+          "Death"
+        ],
+        "phaseReadability": "silhouette + aura + HUD color must change together"
+      },
+      "tags": [
+        "boss",
+        "goblin-village"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "BOS-002",
+      "category": "bosses",
+      "subcategory": "bamboo-forest",
+      "nameKo": "구미호",
+      "nameEn": "Nine-Tailed Fox",
+      "productionFolder": "04_Boss/bamboo-forest",
+      "deliveryFile": "boss_nine-tailed-fox_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-BOSS",
+      "priority": "P0",
+      "rarity": "legend",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Launch Boss Lineup",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "10000-18000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "AttackA",
+          "AttackB",
+          "SkillA",
+          "SkillB",
+          "Phase",
+          "Hit",
+          "Death"
+        ],
+        "phaseReadability": "silhouette + aura + HUD color must change together"
+      },
+      "tags": [
+        "boss",
+        "bamboo-forest"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "BOS-003",
+      "category": "bosses",
+      "subcategory": "ruined-temple",
+      "nameKo": "구천현녀",
+      "nameEn": "Lady of the Ninth Heaven",
+      "productionFolder": "04_Boss/ruined-temple",
+      "deliveryFile": "boss_ninth-heaven-lady_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-BOSS",
+      "priority": "P0",
+      "rarity": "legend",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Launch Boss Lineup",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "10000-18000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "AttackA",
+          "AttackB",
+          "SkillA",
+          "SkillB",
+          "Phase",
+          "Hit",
+          "Death"
+        ],
+        "phaseReadability": "silhouette + aura + HUD color must change together"
+      },
+      "tags": [
+        "boss",
+        "ruined-temple"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "BOS-004",
+      "category": "bosses",
+      "subcategory": "snow-mountain",
+      "nameKo": "이무기",
+      "nameEn": "Imugi",
+      "productionFolder": "04_Boss/snow-mountain",
+      "deliveryFile": "boss_imugi_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-BOSS",
+      "priority": "P0",
+      "rarity": "legend",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Launch Boss Lineup",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "10000-18000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "AttackA",
+          "AttackB",
+          "SkillA",
+          "SkillB",
+          "Phase",
+          "Hit",
+          "Death"
+        ],
+        "phaseReadability": "silhouette + aura + HUD color must change together"
+      },
+      "tags": [
+        "boss",
+        "snow-mountain"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "BOS-005",
+      "category": "bosses",
+      "subcategory": "dragon-palace",
+      "nameKo": "용",
+      "nameEn": "Celestial Dragon",
+      "productionFolder": "04_Boss/dragon-palace",
+      "deliveryFile": "boss_celestial-dragon_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-BOSS",
+      "priority": "P0",
+      "rarity": "legend",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Launch Boss Lineup",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "10000-18000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "AttackA",
+          "AttackB",
+          "SkillA",
+          "SkillB",
+          "Phase",
+          "Hit",
+          "Death"
+        ],
+        "phaseReadability": "silhouette + aura + HUD color must change together"
+      },
+      "tags": [
+        "boss",
+        "dragon-palace"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "BOS-006",
+      "category": "bosses",
+      "subcategory": "underworld",
+      "nameKo": "저승대왕",
+      "nameEn": "Underworld King",
+      "productionFolder": "04_Boss/underworld",
+      "deliveryFile": "boss_underworld-king_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-BOSS",
+      "priority": "P0",
+      "rarity": "legend",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Launch Boss Lineup",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "10000-18000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "AttackA",
+          "AttackB",
+          "SkillA",
+          "SkillB",
+          "Phase",
+          "Hit",
+          "Death"
+        ],
+        "phaseReadability": "silhouette + aura + HUD color must change together"
+      },
+      "tags": [
+        "boss",
+        "underworld"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "BOS-007",
+      "category": "bosses",
+      "subcategory": "celestial-realm",
+      "nameKo": "백호 산군",
+      "nameEn": "White Tiger Lord",
+      "productionFolder": "04_Boss/celestial-realm",
+      "deliveryFile": "boss_white-tiger-lord_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-BOSS",
+      "priority": "P1",
+      "rarity": "mythic",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Boss Season Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "10000-18000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "AttackA",
+          "AttackB",
+          "SkillA",
+          "SkillB",
+          "Phase",
+          "Hit",
+          "Death"
+        ],
+        "phaseReadability": "silhouette + aura + HUD color must change together"
+      },
+      "tags": [
+        "boss",
+        "celestial-realm"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "BOS-008",
+      "category": "bosses",
+      "subcategory": "goblin-village",
+      "nameKo": "청룡 해신",
+      "nameEn": "Azure Dragon Sea Lord",
+      "productionFolder": "04_Boss/goblin-village",
+      "deliveryFile": "boss_azure-sea-dragon_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-BOSS",
+      "priority": "P1",
+      "rarity": "mythic",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Boss Season Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "10000-18000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "AttackA",
+          "AttackB",
+          "SkillA",
+          "SkillB",
+          "Phase",
+          "Hit",
+          "Death"
+        ],
+        "phaseReadability": "silhouette + aura + HUD color must change together"
+      },
+      "tags": [
+        "boss",
+        "goblin-village"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "BOS-009",
+      "category": "bosses",
+      "subcategory": "bamboo-forest",
+      "nameKo": "주작 화신",
+      "nameEn": "Vermilion Phoenix",
+      "productionFolder": "04_Boss/bamboo-forest",
+      "deliveryFile": "boss_vermilion-phoenix_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-BOSS",
+      "priority": "P1",
+      "rarity": "mythic",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Boss Season Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "10000-18000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "AttackA",
+          "AttackB",
+          "SkillA",
+          "SkillB",
+          "Phase",
+          "Hit",
+          "Death"
+        ],
+        "phaseReadability": "silhouette + aura + HUD color must change together"
+      },
+      "tags": [
+        "boss",
+        "bamboo-forest"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "BOS-010",
+      "category": "bosses",
+      "subcategory": "ruined-temple",
+      "nameKo": "현무 장군",
+      "nameEn": "Black Tortoise General",
+      "productionFolder": "04_Boss/ruined-temple",
+      "deliveryFile": "boss_black-tortoise_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-BOSS",
+      "priority": "P1",
+      "rarity": "mythic",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Boss Season Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "10000-18000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "AttackA",
+          "AttackB",
+          "SkillA",
+          "SkillB",
+          "Phase",
+          "Hit",
+          "Death"
+        ],
+        "phaseReadability": "silhouette + aura + HUD color must change together"
+      },
+      "tags": [
+        "boss",
+        "ruined-temple"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "BOS-011",
+      "category": "bosses",
+      "subcategory": "snow-mountain",
+      "nameKo": "달 먹는 불가사리",
+      "nameEn": "Moon-Eating Bulgasari",
+      "productionFolder": "04_Boss/snow-mountain",
+      "deliveryFile": "boss_moon-bulgasari_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-BOSS",
+      "priority": "P1",
+      "rarity": "mythic",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Boss Season Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "10000-18000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "AttackA",
+          "AttackB",
+          "SkillA",
+          "SkillB",
+          "Phase",
+          "Hit",
+          "Death"
+        ],
+        "phaseReadability": "silhouette + aura + HUD color must change together"
+      },
+      "tags": [
+        "boss",
+        "snow-mountain"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "BOS-012",
+      "category": "bosses",
+      "subcategory": "dragon-palace",
+      "nameKo": "천년 묵은 두꺼비",
+      "nameEn": "Ancient Moon Toad",
+      "productionFolder": "04_Boss/dragon-palace",
+      "deliveryFile": "boss_ancient-toad_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-BOSS",
+      "priority": "P1",
+      "rarity": "mythic",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Boss Season Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "10000-18000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "AttackA",
+          "AttackB",
+          "SkillA",
+          "SkillB",
+          "Phase",
+          "Hit",
+          "Death"
+        ],
+        "phaseReadability": "silhouette + aura + HUD color must change together"
+      },
+      "tags": [
+        "boss",
+        "dragon-palace"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "BOS-013",
+      "category": "bosses",
+      "subcategory": "underworld",
+      "nameKo": "귀면 장승",
+      "nameEn": "Demon-Faced Jangseung",
+      "productionFolder": "04_Boss/underworld",
+      "deliveryFile": "boss_demon-jangseung_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-BOSS",
+      "priority": "P2",
+      "rarity": "mythic",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Boss Season Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "10000-18000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "AttackA",
+          "AttackB",
+          "SkillA",
+          "SkillB",
+          "Phase",
+          "Hit",
+          "Death"
+        ],
+        "phaseReadability": "silhouette + aura + HUD color must change together"
+      },
+      "tags": [
+        "boss",
+        "underworld"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "BOS-014",
+      "category": "bosses",
+      "subcategory": "celestial-realm",
+      "nameKo": "설산 설녀",
+      "nameEn": "Snow Mountain Spirit",
+      "productionFolder": "04_Boss/celestial-realm",
+      "deliveryFile": "boss_snow-spirit_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-BOSS",
+      "priority": "P2",
+      "rarity": "mythic",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Boss Season Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "10000-18000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "AttackA",
+          "AttackB",
+          "SkillA",
+          "SkillB",
+          "Phase",
+          "Hit",
+          "Death"
+        ],
+        "phaseReadability": "silhouette + aura + HUD color must change together"
+      },
+      "tags": [
+        "boss",
+        "celestial-realm"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "BOS-015",
+      "category": "bosses",
+      "subcategory": "goblin-village",
+      "nameKo": "용궁 거북대감",
+      "nameEn": "Dragon Palace Turtle Lord",
+      "productionFolder": "04_Boss/goblin-village",
+      "deliveryFile": "boss_turtle-lord_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-BOSS",
+      "priority": "P2",
+      "rarity": "god",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Boss Season Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "10000-18000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "AttackA",
+          "AttackB",
+          "SkillA",
+          "SkillB",
+          "Phase",
+          "Hit",
+          "Death"
+        ],
+        "phaseReadability": "silhouette + aura + HUD color must change together"
+      },
+      "tags": [
+        "boss",
+        "goblin-village"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "BOS-016",
+      "category": "bosses",
+      "subcategory": "bamboo-forest",
+      "nameKo": "망각의 무녀",
+      "nameEn": "Shaman of Oblivion",
+      "productionFolder": "04_Boss/bamboo-forest",
+      "deliveryFile": "boss_oblivion-shaman_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-BOSS",
+      "priority": "P2",
+      "rarity": "god",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Boss Season Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "10000-18000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "AttackA",
+          "AttackB",
+          "SkillA",
+          "SkillB",
+          "Phase",
+          "Hit",
+          "Death"
+        ],
+        "phaseReadability": "silhouette + aura + HUD color must change together"
+      },
+      "tags": [
+        "boss",
+        "bamboo-forest"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "BOS-017",
+      "category": "bosses",
+      "subcategory": "ruined-temple",
+      "nameKo": "백귀 야행왕",
+      "nameEn": "King of the Hundred Ghosts",
+      "productionFolder": "04_Boss/ruined-temple",
+      "deliveryFile": "boss_hundred-ghost-king_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-BOSS",
+      "priority": "P2",
+      "rarity": "god",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Boss Season Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "10000-18000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "AttackA",
+          "AttackB",
+          "SkillA",
+          "SkillB",
+          "Phase",
+          "Hit",
+          "Death"
+        ],
+        "phaseReadability": "silhouette + aura + HUD color must change together"
+      },
+      "tags": [
+        "boss",
+        "ruined-temple"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "BOS-018",
+      "category": "bosses",
+      "subcategory": "snow-mountain",
+      "nameKo": "천계 뇌공",
+      "nameEn": "Celestial Thunder Lord",
+      "productionFolder": "04_Boss/snow-mountain",
+      "deliveryFile": "boss_thunder-lord_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-BOSS",
+      "priority": "P3",
+      "rarity": "god",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Boss Season Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "10000-18000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "AttackA",
+          "AttackB",
+          "SkillA",
+          "SkillB",
+          "Phase",
+          "Hit",
+          "Death"
+        ],
+        "phaseReadability": "silhouette + aura + HUD color must change together"
+      },
+      "tags": [
+        "boss",
+        "snow-mountain"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "BOS-019",
+      "category": "bosses",
+      "subcategory": "dragon-palace",
+      "nameKo": "태양 삼족오",
+      "nameEn": "Solar Three-Legged Crow",
+      "productionFolder": "04_Boss/dragon-palace",
+      "deliveryFile": "boss_three-legged-crow_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-BOSS",
+      "priority": "P3",
+      "rarity": "god",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Boss Season Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "10000-18000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "AttackA",
+          "AttackB",
+          "SkillA",
+          "SkillB",
+          "Phase",
+          "Hit",
+          "Death"
+        ],
+        "phaseReadability": "silhouette + aura + HUD color must change together"
+      },
+      "tags": [
+        "boss",
+        "dragon-palace"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "BOS-020",
+      "category": "bosses",
+      "subcategory": "underworld",
+      "nameKo": "무량 달신",
+      "nameEn": "Infinite Moon Deity",
+      "productionFolder": "04_Boss/underworld",
+      "deliveryFile": "boss_moon-deity_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-BOSS",
+      "priority": "P3",
+      "rarity": "god",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Boss Season Expansion",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "10000-18000",
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "AttackA",
+          "AttackB",
+          "SkillA",
+          "SkillB",
+          "Phase",
+          "Hit",
+          "Death"
+        ],
+        "phaseReadability": "silhouette + aura + HUD color must change together"
+      },
+      "tags": [
+        "boss",
+        "underworld"
+      ],
+      "notes": ""
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "productionVersion": "3.8.0",
+  "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+  "templateCount": 10,
+  "templates": [
+    {
+      "id": "PROMPT-CHARACTER",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "absoluteStylePrompt": "AAA Mobile Game Asset,\nPremium Korean Mobile RPG Defense Game Style,\nCute Stylized 3D Character,\nChibi 2.3 Heads Proportion,\nLarge Expressive Eyes,\nRounded Face,\nTiny Body,\nSoft Rounded Hands,\nSimple Fingers,\nShort Legs,\nHigh Quality Hand Painted Texture,\nSmooth Color Gradient,\nNo Realistic Skin,\nSoft Ambient Occlusion,\nSubtle Rim Light,\nClean Topology,\nGame Ready,\nLow Poly 6k~10k Triangles,\nPBR Stylized,\nBright Saturated Colors,\nFantasy Korean Folklore Theme,\nMobile Game Quality,\nConsistent Art Style,\nHighly Readable Silhouette,\nNo Noise,\nNo Photorealism,\nNo Anime Illustration,\n3D Model Concept,\nOrthographic View,\nCharacter Turnaround,\nWhite Background",
+      "categoryPrompt": "Cute stylized Korean folklore character, 2.3 heads, large expressive eyes, rounded face, tiny body, oversized readable weapon, orthographic 5-view turnaround",
+      "absoluteNegativePrompt": "photorealistic, realistic skin pores, anime illustration, 2D painting, long realistic body, thin limbs, tiny hands, tiny feet, western medieval realism, dark horror, muddy colors, noisy micro details, excessive ornaments, sharp realistic fingers, cinematic depth of field, dramatic perspective, cropped turnaround, inconsistent face, inconsistent proportions, text, watermark, logo",
+      "outputRule": "White or transparent background as appropriate; no text, no watermark, no vector delivery"
+    },
+    {
+      "id": "PROMPT-MONSTER",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "absoluteStylePrompt": "AAA Mobile Game Asset,\nPremium Korean Mobile RPG Defense Game Style,\nCute Stylized 3D Character,\nChibi 2.3 Heads Proportion,\nLarge Expressive Eyes,\nRounded Face,\nTiny Body,\nSoft Rounded Hands,\nSimple Fingers,\nShort Legs,\nHigh Quality Hand Painted Texture,\nSmooth Color Gradient,\nNo Realistic Skin,\nSoft Ambient Occlusion,\nSubtle Rim Light,\nClean Topology,\nGame Ready,\nLow Poly 6k~10k Triangles,\nPBR Stylized,\nBright Saturated Colors,\nFantasy Korean Folklore Theme,\nMobile Game Quality,\nConsistent Art Style,\nHighly Readable Silhouette,\nNo Noise,\nNo Photorealism,\nNo Anime Illustration,\n3D Model Concept,\nOrthographic View,\nCharacter Turnaround,\nWhite Background",
+      "categoryPrompt": "Cute readable Korean folklore monster, friendly but threatening silhouette, oversized attack feature, orthographic 5-view turnaround",
+      "absoluteNegativePrompt": "photorealistic, realistic skin pores, anime illustration, 2D painting, long realistic body, thin limbs, tiny hands, tiny feet, western medieval realism, dark horror, muddy colors, noisy micro details, excessive ornaments, sharp realistic fingers, cinematic depth of field, dramatic perspective, cropped turnaround, inconsistent face, inconsistent proportions, text, watermark, logo",
+      "outputRule": "White or transparent background as appropriate; no text, no watermark, no vector delivery"
+    },
+    {
+      "id": "PROMPT-BOSS",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "absoluteStylePrompt": "AAA Mobile Game Asset,\nPremium Korean Mobile RPG Defense Game Style,\nCute Stylized 3D Character,\nChibi 2.3 Heads Proportion,\nLarge Expressive Eyes,\nRounded Face,\nTiny Body,\nSoft Rounded Hands,\nSimple Fingers,\nShort Legs,\nHigh Quality Hand Painted Texture,\nSmooth Color Gradient,\nNo Realistic Skin,\nSoft Ambient Occlusion,\nSubtle Rim Light,\nClean Topology,\nGame Ready,\nLow Poly 6k~10k Triangles,\nPBR Stylized,\nBright Saturated Colors,\nFantasy Korean Folklore Theme,\nMobile Game Quality,\nConsistent Art Style,\nHighly Readable Silhouette,\nNo Noise,\nNo Photorealism,\nNo Anime Illustration,\n3D Model Concept,\nOrthographic View,\nCharacter Turnaround,\nWhite Background",
+      "categoryPrompt": "Premium chibi Korean mythology boss, massive readable silhouette, phase-change ornament and aura, orthographic turnaround",
+      "absoluteNegativePrompt": "photorealistic, realistic skin pores, anime illustration, 2D painting, long realistic body, thin limbs, tiny hands, tiny feet, western medieval realism, dark horror, muddy colors, noisy micro details, excessive ornaments, sharp realistic fingers, cinematic depth of field, dramatic perspective, cropped turnaround, inconsistent face, inconsistent proportions, text, watermark, logo",
+      "outputRule": "White or transparent background as appropriate; no text, no watermark, no vector delivery"
+    },
+    {
+      "id": "PROMPT-WEAPON",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "absoluteStylePrompt": "AAA Mobile Game Asset,\nPremium Korean Mobile RPG Defense Game Style,\nCute Stylized 3D Character,\nChibi 2.3 Heads Proportion,\nLarge Expressive Eyes,\nRounded Face,\nTiny Body,\nSoft Rounded Hands,\nSimple Fingers,\nShort Legs,\nHigh Quality Hand Painted Texture,\nSmooth Color Gradient,\nNo Realistic Skin,\nSoft Ambient Occlusion,\nSubtle Rim Light,\nClean Topology,\nGame Ready,\nLow Poly 6k~10k Triangles,\nPBR Stylized,\nBright Saturated Colors,\nFantasy Korean Folklore Theme,\nMobile Game Quality,\nConsistent Art Style,\nHighly Readable Silhouette,\nNo Noise,\nNo Photorealism,\nNo Anime Illustration,\n3D Model Concept,\nOrthographic View,\nCharacter Turnaround,\nWhite Background",
+      "categoryPrompt": "Oversized stylized Korean fantasy weapon, hand painted PBR, rounded mobile-game shapes, isolated orthographic presentation",
+      "absoluteNegativePrompt": "photorealistic, realistic skin pores, anime illustration, 2D painting, long realistic body, thin limbs, tiny hands, tiny feet, western medieval realism, dark horror, muddy colors, noisy micro details, excessive ornaments, sharp realistic fingers, cinematic depth of field, dramatic perspective, cropped turnaround, inconsistent face, inconsistent proportions, text, watermark, logo",
+      "outputRule": "White or transparent background as appropriate; no text, no watermark, no vector delivery"
+    },
+    {
+      "id": "PROMPT-SKILL-ICON",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "absoluteStylePrompt": "AAA Mobile Game Asset,\nPremium Korean Mobile RPG Defense Game Style,\nCute Stylized 3D Character,\nChibi 2.3 Heads Proportion,\nLarge Expressive Eyes,\nRounded Face,\nTiny Body,\nSoft Rounded Hands,\nSimple Fingers,\nShort Legs,\nHigh Quality Hand Painted Texture,\nSmooth Color Gradient,\nNo Realistic Skin,\nSoft Ambient Occlusion,\nSubtle Rim Light,\nClean Topology,\nGame Ready,\nLow Poly 6k~10k Triangles,\nPBR Stylized,\nBright Saturated Colors,\nFantasy Korean Folklore Theme,\nMobile Game Quality,\nConsistent Art Style,\nHighly Readable Silhouette,\nNo Noise,\nNo Photorealism,\nNo Anime Illustration,\n3D Model Concept,\nOrthographic View,\nCharacter Turnaround,\nWhite Background",
+      "categoryPrompt": "Premium mobile skill icon, one bold centered symbol, high contrast, transparent background, no text",
+      "absoluteNegativePrompt": "photorealistic, realistic skin pores, anime illustration, 2D painting, long realistic body, thin limbs, tiny hands, tiny feet, western medieval realism, dark horror, muddy colors, noisy micro details, excessive ornaments, sharp realistic fingers, cinematic depth of field, dramatic perspective, cropped turnaround, inconsistent face, inconsistent proportions, text, watermark, logo",
+      "outputRule": "White or transparent background as appropriate; no text, no watermark, no vector delivery"
+    },
+    {
+      "id": "PROMPT-UI",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "absoluteStylePrompt": "AAA Mobile Game Asset,\nPremium Korean Mobile RPG Defense Game Style,\nCute Stylized 3D Character,\nChibi 2.3 Heads Proportion,\nLarge Expressive Eyes,\nRounded Face,\nTiny Body,\nSoft Rounded Hands,\nSimple Fingers,\nShort Legs,\nHigh Quality Hand Painted Texture,\nSmooth Color Gradient,\nNo Realistic Skin,\nSoft Ambient Occlusion,\nSubtle Rim Light,\nClean Topology,\nGame Ready,\nLow Poly 6k~10k Triangles,\nPBR Stylized,\nBright Saturated Colors,\nFantasy Korean Folklore Theme,\nMobile Game Quality,\nConsistent Art Style,\nHighly Readable Silhouette,\nNo Noise,\nNo Photorealism,\nNo Anime Illustration,\n3D Model Concept,\nOrthographic View,\nCharacter Turnaround,\nWhite Background",
+      "categoryPrompt": "Premium rounded mobile game UI, Korean fantasy, soft gradient, strong depth, high contrast, no text baked into art",
+      "absoluteNegativePrompt": "photorealistic, realistic skin pores, anime illustration, 2D painting, long realistic body, thin limbs, tiny hands, tiny feet, western medieval realism, dark horror, muddy colors, noisy micro details, excessive ornaments, sharp realistic fingers, cinematic depth of field, dramatic perspective, cropped turnaround, inconsistent face, inconsistent proportions, text, watermark, logo",
+      "outputRule": "White or transparent background as appropriate; no text, no watermark, no vector delivery"
+    },
+    {
+      "id": "PROMPT-VFX",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "absoluteStylePrompt": "AAA Mobile Game Asset,\nPremium Korean Mobile RPG Defense Game Style,\nCute Stylized 3D Character,\nChibi 2.3 Heads Proportion,\nLarge Expressive Eyes,\nRounded Face,\nTiny Body,\nSoft Rounded Hands,\nSimple Fingers,\nShort Legs,\nHigh Quality Hand Painted Texture,\nSmooth Color Gradient,\nNo Realistic Skin,\nSoft Ambient Occlusion,\nSubtle Rim Light,\nClean Topology,\nGame Ready,\nLow Poly 6k~10k Triangles,\nPBR Stylized,\nBright Saturated Colors,\nFantasy Korean Folklore Theme,\nMobile Game Quality,\nConsistent Art Style,\nHighly Readable Silhouette,\nNo Noise,\nNo Photorealism,\nNo Anime Illustration,\n3D Model Concept,\nOrthographic View,\nCharacter Turnaround,\nWhite Background",
+      "categoryPrompt": "Stylized mobile magic effect, clear core-tail-impact structure, soft glow, transparent sprite sheet, high visibility",
+      "absoluteNegativePrompt": "photorealistic, realistic skin pores, anime illustration, 2D painting, long realistic body, thin limbs, tiny hands, tiny feet, western medieval realism, dark horror, muddy colors, noisy micro details, excessive ornaments, sharp realistic fingers, cinematic depth of field, dramatic perspective, cropped turnaround, inconsistent face, inconsistent proportions, text, watermark, logo",
+      "outputRule": "White or transparent background as appropriate; no text, no watermark, no vector delivery"
+    },
+    {
+      "id": "PROMPT-TILE",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "absoluteStylePrompt": "AAA Mobile Game Asset,\nPremium Korean Mobile RPG Defense Game Style,\nCute Stylized 3D Character,\nChibi 2.3 Heads Proportion,\nLarge Expressive Eyes,\nRounded Face,\nTiny Body,\nSoft Rounded Hands,\nSimple Fingers,\nShort Legs,\nHigh Quality Hand Painted Texture,\nSmooth Color Gradient,\nNo Realistic Skin,\nSoft Ambient Occlusion,\nSubtle Rim Light,\nClean Topology,\nGame Ready,\nLow Poly 6k~10k Triangles,\nPBR Stylized,\nBright Saturated Colors,\nFantasy Korean Folklore Theme,\nMobile Game Quality,\nConsistent Art Style,\nHighly Readable Silhouette,\nNo Noise,\nNo Photorealism,\nNo Anime Illustration,\n3D Model Concept,\nOrthographic View,\nCharacter Turnaround,\nWhite Background",
+      "categoryPrompt": "Seamless stylized Korean fantasy map tile, hand painted, rounded low-poly forms, soft shadow, mobile quality",
+      "absoluteNegativePrompt": "photorealistic, realistic skin pores, anime illustration, 2D painting, long realistic body, thin limbs, tiny hands, tiny feet, western medieval realism, dark horror, muddy colors, noisy micro details, excessive ornaments, sharp realistic fingers, cinematic depth of field, dramatic perspective, cropped turnaround, inconsistent face, inconsistent proportions, text, watermark, logo",
+      "outputRule": "White or transparent background as appropriate; no text, no watermark, no vector delivery"
+    },
+    {
+      "id": "PROMPT-BACKGROUND",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "absoluteStylePrompt": "AAA Mobile Game Asset,\nPremium Korean Mobile RPG Defense Game Style,\nCute Stylized 3D Character,\nChibi 2.3 Heads Proportion,\nLarge Expressive Eyes,\nRounded Face,\nTiny Body,\nSoft Rounded Hands,\nSimple Fingers,\nShort Legs,\nHigh Quality Hand Painted Texture,\nSmooth Color Gradient,\nNo Realistic Skin,\nSoft Ambient Occlusion,\nSubtle Rim Light,\nClean Topology,\nGame Ready,\nLow Poly 6k~10k Triangles,\nPBR Stylized,\nBright Saturated Colors,\nFantasy Korean Folklore Theme,\nMobile Game Quality,\nConsistent Art Style,\nHighly Readable Silhouette,\nNo Noise,\nNo Photorealism,\nNo Anime Illustration,\n3D Model Concept,\nOrthographic View,\nCharacter Turnaround,\nWhite Background",
+      "categoryPrompt": "Bright Korean fantasy stage background, layered parallax composition, soft atmosphere, no characters, no text",
+      "absoluteNegativePrompt": "photorealistic, realistic skin pores, anime illustration, 2D painting, long realistic body, thin limbs, tiny hands, tiny feet, western medieval realism, dark horror, muddy colors, noisy micro details, excessive ornaments, sharp realistic fingers, cinematic depth of field, dramatic perspective, cropped turnaround, inconsistent face, inconsistent proportions, text, watermark, logo",
+      "outputRule": "White or transparent background as appropriate; no text, no watermark, no vector delivery"
+    },
+    {
+      "id": "PROMPT-OBJECT",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "absoluteStylePrompt": "AAA Mobile Game Asset,\nPremium Korean Mobile RPG Defense Game Style,\nCute Stylized 3D Character,\nChibi 2.3 Heads Proportion,\nLarge Expressive Eyes,\nRounded Face,\nTiny Body,\nSoft Rounded Hands,\nSimple Fingers,\nShort Legs,\nHigh Quality Hand Painted Texture,\nSmooth Color Gradient,\nNo Realistic Skin,\nSoft Ambient Occlusion,\nSubtle Rim Light,\nClean Topology,\nGame Ready,\nLow Poly 6k~10k Triangles,\nPBR Stylized,\nBright Saturated Colors,\nFantasy Korean Folklore Theme,\nMobile Game Quality,\nConsistent Art Style,\nHighly Readable Silhouette,\nNo Noise,\nNo Photorealism,\nNo Anime Illustration,\n3D Model Concept,\nOrthographic View,\nCharacter Turnaround,\nWhite Background",
+      "categoryPrompt": "Stylized Korean fantasy environment prop, rounded silhouette, hand painted PBR, game ready, orthographic view",
+      "absoluteNegativePrompt": "photorealistic, realistic skin pores, anime illustration, 2D painting, long realistic body, thin limbs, tiny hands, tiny feet, western medieval realism, dark horror, muddy colors, noisy micro details, excessive ornaments, sharp realistic fingers, cinematic depth of field, dramatic perspective, cropped turnaround, inconsistent face, inconsistent proportions, text, watermark, logo",
+      "outputRule": "White or transparent background as appropriate; no text, no watermark, no vector delivery"
+    }
+  ]
+}

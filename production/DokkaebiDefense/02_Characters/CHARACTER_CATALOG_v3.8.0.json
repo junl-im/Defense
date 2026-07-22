@@ -1,0 +1,2959 @@
+{
+  "schemaVersion": 1,
+  "project": "Dokkaebi Defense",
+  "productionVersion": "3.8.0",
+  "category": "characters",
+  "count": 50,
+  "assets": [
+    {
+      "id": "CHR-001",
+      "category": "characters",
+      "subcategory": "starter",
+      "nameKo": "도깨비 전사",
+      "nameEn": "Dokkaebi Warrior",
+      "productionFolder": "02_Characters/starter",
+      "deliveryFile": "chr_dokkaebi-warrior_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P0",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Starter Roster",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "starter"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-002",
+      "category": "characters",
+      "subcategory": "starter",
+      "nameKo": "도깨비 궁수",
+      "nameEn": "Dokkaebi Archer",
+      "productionFolder": "02_Characters/starter",
+      "deliveryFile": "chr_dokkaebi-archer_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P0",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Starter Roster",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "starter"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-003",
+      "category": "characters",
+      "subcategory": "starter",
+      "nameKo": "도깨비 법사",
+      "nameEn": "Dokkaebi Mage",
+      "productionFolder": "02_Characters/starter",
+      "deliveryFile": "chr_dokkaebi-mage_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P0",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Starter Roster",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "starter"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-004",
+      "category": "characters",
+      "subcategory": "starter",
+      "nameKo": "도사",
+      "nameEn": "Taoist",
+      "productionFolder": "02_Characters/starter",
+      "deliveryFile": "chr_taoist_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P0",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Starter Roster",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "starter"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-005",
+      "category": "characters",
+      "subcategory": "starter",
+      "nameKo": "무당",
+      "nameEn": "Shaman",
+      "productionFolder": "02_Characters/starter",
+      "deliveryFile": "chr_shaman_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P0",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Starter Roster",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "starter"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-006",
+      "category": "characters",
+      "subcategory": "starter",
+      "nameKo": "호랑이",
+      "nameEn": "Tiger Guardian",
+      "productionFolder": "02_Characters/starter",
+      "deliveryFile": "chr_tiger-guardian_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P0",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Starter Roster",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "starter"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-007",
+      "category": "characters",
+      "subcategory": "starter",
+      "nameKo": "해태",
+      "nameEn": "Haetae",
+      "productionFolder": "02_Characters/starter",
+      "deliveryFile": "chr_haetae_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P0",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Starter Roster",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "starter"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-008",
+      "category": "characters",
+      "subcategory": "starter",
+      "nameKo": "구미호",
+      "nameEn": "Gumiho",
+      "productionFolder": "02_Characters/starter",
+      "deliveryFile": "chr_gumiho_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P0",
+      "rarity": "common",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Starter Roster",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "starter"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-009",
+      "category": "characters",
+      "subcategory": "starter",
+      "nameKo": "산신령",
+      "nameEn": "Mountain Spirit",
+      "productionFolder": "02_Characters/starter",
+      "deliveryFile": "chr_sanshin_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P0",
+      "rarity": "rare",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Starter Roster",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "starter"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-010",
+      "category": "characters",
+      "subcategory": "starter",
+      "nameKo": "저승사자",
+      "nameEn": "Grim Reaper",
+      "productionFolder": "02_Characters/starter",
+      "deliveryFile": "chr_grim-reaper_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P0",
+      "rarity": "rare",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Starter Roster",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "starter"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-011",
+      "category": "characters",
+      "subcategory": "starter",
+      "nameKo": "용",
+      "nameEn": "Dragon",
+      "productionFolder": "02_Characters/starter",
+      "deliveryFile": "chr_dragon_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P0",
+      "rarity": "rare",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Starter Roster",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "starter"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-012",
+      "category": "characters",
+      "subcategory": "elemental",
+      "nameKo": "불꽃 도깨비 전사",
+      "nameEn": "Flame Dokkaebi Warrior",
+      "productionFolder": "02_Characters/elemental",
+      "deliveryFile": "chr_flame-warrior_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P1",
+      "rarity": "rare",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Ascension Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "elemental"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-013",
+      "category": "characters",
+      "subcategory": "elemental",
+      "nameKo": "서리 도깨비 궁수",
+      "nameEn": "Frost Dokkaebi Archer",
+      "productionFolder": "02_Characters/elemental",
+      "deliveryFile": "chr_frost-archer_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P1",
+      "rarity": "rare",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Ascension Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "elemental"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-014",
+      "category": "characters",
+      "subcategory": "elemental",
+      "nameKo": "천둥 도깨비 법사",
+      "nameEn": "Thunder Dokkaebi Mage",
+      "productionFolder": "02_Characters/elemental",
+      "deliveryFile": "chr_thunder-mage_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P1",
+      "rarity": "rare",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Ascension Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "elemental"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-015",
+      "category": "characters",
+      "subcategory": "ascended",
+      "nameKo": "청명 도사",
+      "nameEn": "Azure Taoist",
+      "productionFolder": "02_Characters/ascended",
+      "deliveryFile": "chr_azure-taoist_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P1",
+      "rarity": "rare",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Ascension Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "ascended"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-016",
+      "category": "characters",
+      "subcategory": "ascended",
+      "nameKo": "홍련 무당",
+      "nameEn": "Crimson Shaman",
+      "productionFolder": "02_Characters/ascended",
+      "deliveryFile": "chr_crimson-shaman_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P1",
+      "rarity": "rare",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Ascension Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "ascended"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-017",
+      "category": "characters",
+      "subcategory": "ascended",
+      "nameKo": "백호 수호자",
+      "nameEn": "White Tiger Guardian",
+      "productionFolder": "02_Characters/ascended",
+      "deliveryFile": "chr_white-tiger_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P1",
+      "rarity": "epic",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Ascension Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "ascended"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-018",
+      "category": "characters",
+      "subcategory": "ascended",
+      "nameKo": "금빛 해태",
+      "nameEn": "Golden Haetae",
+      "productionFolder": "02_Characters/ascended",
+      "deliveryFile": "chr_golden-haetae_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P1",
+      "rarity": "epic",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Ascension Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "ascended"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-019",
+      "category": "characters",
+      "subcategory": "ascended",
+      "nameKo": "설화 구미호",
+      "nameEn": "Snow Gumiho",
+      "productionFolder": "02_Characters/ascended",
+      "deliveryFile": "chr_snow-gumiho_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P1",
+      "rarity": "epic",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Ascension Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "ascended"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-020",
+      "category": "characters",
+      "subcategory": "ascended",
+      "nameKo": "청록 산신령",
+      "nameEn": "Verdant Mountain Spirit",
+      "productionFolder": "02_Characters/ascended",
+      "deliveryFile": "chr_verdant-sanshin_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P1",
+      "rarity": "epic",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Ascension Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "ascended"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-021",
+      "category": "characters",
+      "subcategory": "ascended",
+      "nameKo": "청염 저승사자",
+      "nameEn": "Blue Flame Reaper",
+      "productionFolder": "02_Characters/ascended",
+      "deliveryFile": "chr_blue-flame-reaper_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P1",
+      "rarity": "epic",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Ascension Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "ascended"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-022",
+      "category": "characters",
+      "subcategory": "ascended",
+      "nameKo": "황금 용신",
+      "nameEn": "Golden Dragon Deity",
+      "productionFolder": "02_Characters/ascended",
+      "deliveryFile": "chr_golden-dragon_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P1",
+      "rarity": "epic",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Ascension Set",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "ascended"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-023",
+      "category": "characters",
+      "subcategory": "guardian",
+      "nameKo": "달빛 방패병",
+      "nameEn": "Moonlight Shieldbearer",
+      "productionFolder": "02_Characters/guardian",
+      "deliveryFile": "chr_moon-shield_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P2",
+      "rarity": "epic",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Roster Scale Out",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "guardian"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-024",
+      "category": "characters",
+      "subcategory": "guardian",
+      "nameKo": "별빛 창술사",
+      "nameEn": "Starlight Lancer",
+      "productionFolder": "02_Characters/guardian",
+      "deliveryFile": "chr_star-lancer_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P2",
+      "rarity": "epic",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Roster Scale Out",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "guardian"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-025",
+      "category": "characters",
+      "subcategory": "support",
+      "nameKo": "풍류 악사",
+      "nameEn": "Pungnyu Bard",
+      "productionFolder": "02_Characters/support",
+      "deliveryFile": "chr_pungnyu-bard_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P2",
+      "rarity": "legend",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Roster Scale Out",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "support"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-026",
+      "category": "characters",
+      "subcategory": "support",
+      "nameKo": "부적 연금술사",
+      "nameEn": "Talisman Alchemist",
+      "productionFolder": "02_Characters/support",
+      "deliveryFile": "chr_talisman-alchemist_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P2",
+      "rarity": "legend",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Roster Scale Out",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "support"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-027",
+      "category": "characters",
+      "subcategory": "support",
+      "nameKo": "달토끼 약사",
+      "nameEn": "Moon Rabbit Healer",
+      "productionFolder": "02_Characters/support",
+      "deliveryFile": "chr_moon-rabbit_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P2",
+      "rarity": "legend",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Roster Scale Out",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "support"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-028",
+      "category": "characters",
+      "subcategory": "seasonal",
+      "nameKo": "홍매화 검객",
+      "nameEn": "Red Plum Swordsman",
+      "productionFolder": "02_Characters/seasonal",
+      "deliveryFile": "chr_plum-swordsman_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P2",
+      "rarity": "legend",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Roster Scale Out",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "seasonal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-029",
+      "category": "characters",
+      "subcategory": "seasonal",
+      "nameKo": "대나무 그림자",
+      "nameEn": "Bamboo Shadow",
+      "productionFolder": "02_Characters/seasonal",
+      "deliveryFile": "chr_bamboo-shadow_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P2",
+      "rarity": "legend",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Roster Scale Out",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "seasonal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-030",
+      "category": "characters",
+      "subcategory": "seasonal",
+      "nameKo": "설산 사냥꾼",
+      "nameEn": "Snow Mountain Hunter",
+      "productionFolder": "02_Characters/seasonal",
+      "deliveryFile": "chr_snow-hunter_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P2",
+      "rarity": "legend",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Roster Scale Out",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "seasonal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-031",
+      "category": "characters",
+      "subcategory": "seasonal",
+      "nameKo": "용궁 파도술사",
+      "nameEn": "Dragon Palace Wavecaster",
+      "productionFolder": "02_Characters/seasonal",
+      "deliveryFile": "chr_wavecaster_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P2",
+      "rarity": "legend",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Roster Scale Out",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "seasonal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-032",
+      "category": "characters",
+      "subcategory": "seasonal",
+      "nameKo": "저승 문지기",
+      "nameEn": "Underworld Gatekeeper",
+      "productionFolder": "02_Characters/seasonal",
+      "deliveryFile": "chr_underworld-gatekeeper_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P2",
+      "rarity": "legend",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Roster Scale Out",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "seasonal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-033",
+      "category": "characters",
+      "subcategory": "seasonal",
+      "nameKo": "천계 별지기",
+      "nameEn": "Celestial Star Keeper",
+      "productionFolder": "02_Characters/seasonal",
+      "deliveryFile": "chr_star-keeper_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P2",
+      "rarity": "mythic",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Roster Scale Out",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "seasonal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-034",
+      "category": "characters",
+      "subcategory": "npc",
+      "nameKo": "깨비 대장장이",
+      "nameEn": "Dokkaebi Blacksmith",
+      "productionFolder": "02_Characters/npc",
+      "deliveryFile": "chr_blacksmith_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P2",
+      "rarity": "mythic",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Roster Scale Out",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "npc"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-035",
+      "category": "characters",
+      "subcategory": "npc",
+      "nameKo": "신선 상인",
+      "nameEn": "Immortal Merchant",
+      "productionFolder": "02_Characters/npc",
+      "deliveryFile": "chr_immortal-merchant_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P2",
+      "rarity": "mythic",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Roster Scale Out",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "npc"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-036",
+      "category": "characters",
+      "subcategory": "npc",
+      "nameKo": "무녀 안내자",
+      "nameEn": "Shrine Guide",
+      "productionFolder": "02_Characters/npc",
+      "deliveryFile": "chr_shrine-guide_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P3",
+      "rarity": "mythic",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Roster Scale Out",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "npc"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-037",
+      "category": "characters",
+      "subcategory": "npc",
+      "nameKo": "산신령 장로",
+      "nameEn": "Mountain Elder",
+      "productionFolder": "02_Characters/npc",
+      "deliveryFile": "chr_mountain-elder_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P3",
+      "rarity": "mythic",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Roster Scale Out",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "npc"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-038",
+      "category": "characters",
+      "subcategory": "npc",
+      "nameKo": "용궁 공주",
+      "nameEn": "Dragon Palace Princess",
+      "productionFolder": "02_Characters/npc",
+      "deliveryFile": "chr_dragon-princess_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P3",
+      "rarity": "mythic",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Roster Scale Out",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "npc"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-039",
+      "category": "characters",
+      "subcategory": "npc",
+      "nameKo": "저승 서기",
+      "nameEn": "Underworld Scribe",
+      "productionFolder": "02_Characters/npc",
+      "deliveryFile": "chr_underworld-scribe_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P3",
+      "rarity": "mythic",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Roster Scale Out",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "npc"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-040",
+      "category": "characters",
+      "subcategory": "pet",
+      "nameKo": "깨비 꼬마",
+      "nameEn": "Dokkaebi Kid",
+      "productionFolder": "02_Characters/pet",
+      "deliveryFile": "chr_dokkaebi-kid_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P3",
+      "rarity": "mythic",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Roster Scale Out",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "pet"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-041",
+      "category": "characters",
+      "subcategory": "pet",
+      "nameKo": "달빛 여우",
+      "nameEn": "Moonlight Fox",
+      "productionFolder": "02_Characters/pet",
+      "deliveryFile": "chr_moon-fox_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P3",
+      "rarity": "immortal",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Roster Scale Out",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "pet"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-042",
+      "category": "characters",
+      "subcategory": "pet",
+      "nameKo": "구름 호랑이",
+      "nameEn": "Cloud Tiger Cub",
+      "productionFolder": "02_Characters/pet",
+      "deliveryFile": "chr_cloud-tiger_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P3",
+      "rarity": "immortal",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Roster Scale Out",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "pet"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-043",
+      "category": "characters",
+      "subcategory": "pet",
+      "nameKo": "미니 해태",
+      "nameEn": "Mini Haetae",
+      "productionFolder": "02_Characters/pet",
+      "deliveryFile": "chr_mini-haetae_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P3",
+      "rarity": "immortal",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Roster Scale Out",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "pet"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-044",
+      "category": "characters",
+      "subcategory": "pet",
+      "nameKo": "청룡 새끼",
+      "nameEn": "Azure Dragonling",
+      "productionFolder": "02_Characters/pet",
+      "deliveryFile": "chr_azure-dragonling_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P3",
+      "rarity": "immortal",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Roster Scale Out",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "pet"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-045",
+      "category": "characters",
+      "subcategory": "pet",
+      "nameKo": "도깨비불 정령",
+      "nameEn": "Goblin Flame Spirit",
+      "productionFolder": "02_Characters/pet",
+      "deliveryFile": "chr_goblin-flame-spirit_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P3",
+      "rarity": "immortal",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Roster Scale Out",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "pet"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-046",
+      "category": "characters",
+      "subcategory": "pet",
+      "nameKo": "복주머니 요정",
+      "nameEn": "Lucky Pouch Fairy",
+      "productionFolder": "02_Characters/pet",
+      "deliveryFile": "chr_lucky-pouch-fairy_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P3",
+      "rarity": "immortal",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Roster Scale Out",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "pet"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-047",
+      "category": "characters",
+      "subcategory": "pet",
+      "nameKo": "연꽃 정령",
+      "nameEn": "Lotus Spirit",
+      "productionFolder": "02_Characters/pet",
+      "deliveryFile": "chr_lotus-spirit_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P3",
+      "rarity": "immortal",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Roster Scale Out",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "pet"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-048",
+      "category": "characters",
+      "subcategory": "seasonal",
+      "nameKo": "천계 금강역사",
+      "nameEn": "Celestial Vajra Guardian",
+      "productionFolder": "02_Characters/seasonal",
+      "deliveryFile": "chr_celestial-vajra_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P3",
+      "rarity": "immortal",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Roster Scale Out",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "seasonal"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-049",
+      "category": "characters",
+      "subcategory": "support",
+      "nameKo": "용궁 진주술사",
+      "nameEn": "Dragon Palace Pearl Sage",
+      "productionFolder": "02_Characters/support",
+      "deliveryFile": "chr_pearl-sage_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P3",
+      "rarity": "god",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Roster Scale Out",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "support"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CHR-050",
+      "category": "characters",
+      "subcategory": "pet",
+      "nameKo": "저승 까마귀 사자",
+      "nameEn": "Underworld Crow Familiar",
+      "productionFolder": "02_Characters/pet",
+      "deliveryFile": "chr_underworld-crow_lod0.glb",
+      "format": "glb",
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "promptTemplateId": "PROMPT-CHARACTER",
+      "priority": "P3",
+      "rarity": "god",
+      "status": "planned",
+      "artReview": "not-started",
+      "technicalReview": "not-started",
+      "milestone": "Roster Scale Out",
+      "owner": "unassigned",
+      "dependencies": [],
+      "technical": {
+        "triangles": "6000-10000",
+        "headsTall": 2.3,
+        "textures": [
+          "BaseColor",
+          "Normal",
+          "ORM",
+          "Emissive optional"
+        ],
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill1",
+          "Skill2",
+          "Hit",
+          "Death",
+          "Victory"
+        ],
+        "authoredDirections": [
+          0,
+          45,
+          90,
+          135,
+          180
+        ],
+        "runtimeDirections": "5 authored + mirroring = 10-11 views",
+        "sockets": [
+          "WeaponSocket",
+          "AccessorySocket"
+        ]
+      },
+      "tags": [
+        "korean-fantasy",
+        "chibi",
+        "pet"
+      ],
+      "notes": ""
+    }
+  ]
+}
