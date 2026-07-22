@@ -1,9 +1,9 @@
 {
-  "schemaVersion": 8,
-  "gameVersion": "3.5.0",
-  "engineVersion": "2.5.0",
+  "schemaVersion": 9,
+  "gameVersion": "3.7.0",
+  "engineVersion": "2.7.0",
   "artDirection": "aaa-casual-mobile-sd-stylized-pbr-korean-folklore",
-  "productionStage": "golden-hero-technical-review",
+  "productionStage": "golden-hero-plus-two-shared-rig-enemy-technical-review",
   "impostorDirections": 11,
   "characters": {
     "guardians": [
@@ -482,38 +482,42 @@
     {
       "id": "monster-brute-sd-toon",
       "path": "public/assets/models/monster-brute-sd-toon.glb",
-      "triangles": 2824,
-      "budget": 3200,
+      "triangles": 8396,
+      "budget": 9000,
       "category": "monster",
       "runtime": [
         "combat",
         "codex"
       ],
-      "animation": "procedural-part-transform",
-      "renderStyle": "prototype-toon-fallback",
-      "proportionStandard": "2.0-2.5-heads",
+      "animation": "skeletal-7-clips",
+      "renderStyle": "authored-stylized-pbr-review",
+      "proportionStandard": "2.3-heads",
       "diagnostics": "asset-pipeline-status",
-      "status": "prototype-placeholder",
+      "status": "art-review",
       "productionApproved": false,
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0"
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "technicalReady": true,
+      "rigVersion": "DOKKAEBI-HUMANOID-RIG-1"
     },
     {
       "id": "monster-shaman-sd-toon",
       "path": "public/assets/models/monster-shaman-sd-toon.glb",
-      "triangles": 2792,
-      "budget": 3200,
+      "triangles": 7712,
+      "budget": 9000,
       "category": "monster",
       "runtime": [
         "combat",
         "codex"
       ],
-      "animation": "procedural-part-transform",
-      "renderStyle": "prototype-toon-fallback",
-      "proportionStandard": "2.0-2.5-heads",
+      "animation": "skeletal-7-clips",
+      "renderStyle": "authored-stylized-pbr-review",
+      "proportionStandard": "2.3-heads",
       "diagnostics": "asset-pipeline-status",
-      "status": "prototype-placeholder",
+      "status": "art-review",
       "productionApproved": false,
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0"
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "technicalReady": true,
+      "rigVersion": "DOKKAEBI-HUMANOID-RIG-1"
     },
     {
       "id": "boss-tiger-sd-toon",

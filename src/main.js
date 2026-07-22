@@ -9,7 +9,8 @@ import { RUN_SEED_MODES, createSeededRandom, createDailySeed, createRandomSeed, 
 import { BOSS_PROFILES, getBossWave, getBossTypeForWave, getBossSpawnCount, isBossWave } from './boss-director.js';
 import { getBattlefieldTheme } from './battlefield-themes.js';
 import { CODEX_SECTION_META, CODEX_SECTION_ORDER, getCodexEntries, getCodexTotals } from './codex-data.js';
-import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, ObjectPool, RenderStatsHUD, AssetPipeline, CORE_ASSET_CATALOG, PLAYER_ASSET_ID, GUARDIAN_ASSET_IDS, MONSTER_ASSET_IDS, BOSS_ASSET_IDS, AnimationStateSystem } from './engine/index.js';
+import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, ObjectPool, RenderStatsHUD, AssetPipeline, AnimationStateSystem } from './engine/index.js';
+import { CORE_ASSET_CATALOG, PLAYER_ASSET_ID, GUARDIAN_ASSET_IDS, MONSTER_ASSET_IDS, BOSS_ASSET_IDS } from './engine/asset-catalog.js';
 import CodexViewer from './codex-viewer.js';
 import { createPremiumGuardian, createPremiumEnemy, createPremiumSacredTree, applyPremiumBossPhase, prepareImportedGuardian, prepareImportedEnemy } from './premium-assets.js';
 import { DirectionalImpostorSelector } from './engine/directional-impostor.js';
@@ -74,7 +75,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '3.6.0';
+const GAME_VERSION = '3.7.0';
 const CHARACTER_ASSET_IDS = Object.freeze([
   PLAYER_ASSET_ID,
   ...Object.values(GUARDIAN_ASSET_IDS),

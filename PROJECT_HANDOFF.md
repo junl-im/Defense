@@ -3,9 +3,9 @@
 이 문서는 대화가 끊기거나 다른 작업자가 이어받아도 프로젝트를 계속 개발할 수 있도록 모든 핵심 기록을 누적하는 단일 인수인계 파일입니다.
 
 - 마지막 갱신: 2026-07-22
-- 현재 버전: `3.6.0`
-- 프로젝트 폴더: `DokkaebiLuckDefense3D_FULL_v3.6.0`
-- 현재 패치명: 도깨비 전사 스켈레탈 골든 샘플·7클립·런타임 승인 파이프라인
+- 현재 버전: `3.7.0`
+- 프로젝트 폴더: `DokkaebiLuckDefense3D_FULL_v3.7.0`
+- 현재 패치명: 빌드 모듈 계약·공용 리그 적 2종·UI 스트레스 계약
 
 ---
 
@@ -2665,7 +2665,7 @@ v3.0.0의 스타일라이즈드 PBR 방향은 개별 자산의 품질을 높이�
 
 ### 승인 상태와 제한
 
-현재 골든 샘플은 **기술 검수 통과 / 아트 디렉터 리뷰 대기**다. 실제 모바일 GPU에서 실루엣, 얼굴, 손그림 재질, 림 라이트, 모션 타이밍을 검수하기 전에는 완성 에셋으로 표시하지 않는다. 나머지 13종 전투 GLB는 개발용 프로토타입으로 유지한다.
+현재 골든 샘플은 **기술 검수 통과 / 아트 디렉터 리뷰 대기**다. 실제 모바일 GPU에서 실루엣, 얼굴, 손그림 재질, 림 라이트, 모션 타이밍을 검수하기 전에는 완성 에셋으로 표시하지 않는다. 돌갑옷 귀수와 저주 무당도 기술 검수 통과 / 아트 리뷰 대기로 승격했다. 나머지 11종 전투 GLB는 개발용 프로토타입으로 유지한다.
 
 자동화 환경에서 npm 패키지 다운로드가 타임아웃되어 일반 Vite 번들을 최종 생성하지 못했다. 전체본의 `dist/`는 고정 Three.js 0.185.1 import map을 사용하는 정적 ESM 방식으로 생성하고 진입점·모듈 경로·GLB 14종·자산 리비전을 검증했다.
 
@@ -2719,3 +2719,62 @@ v3.0.0의 스타일라이즈드 PBR 방향은 개별 자산의 품질을 높이�
 3. 골든 샘플 아트 리뷰 수정
 4. 승인된 공용 리그 기반 근접·원거리 적 제작
 5. KTX2로 텍스처 예산 여유 확보
+
+
+## v3.7.0 / Engine 2.7.0 — 빌드 계약·공용 리그 적·UI 스트레스 안정화
+
+### GitHub Actions 빌드 오류 수정
+
+- Rolldown의 `[MISSING_EXPORT] BOSS_ASSET_IDS` 실패를 확인했다.
+- `main.js`가 에셋 ID를 `src/engine/index.js` 배럴에서 가져오지 않고 `src/engine/asset-catalog.js` 단일 원본에서 직접 가져오도록 변경했다.
+- `scripts/verify-module-exports.mjs`를 추가해 모든 상대 named import와 대상 export를 `npm run verify`에서 확인한다.
+- 동일 유형의 누락은 Vite 이전 검증 단계에서 실패한다.
+- `src/engine/index.js`의 재수출은 편의 API로 유지하지만 메인 게임 빌드의 필수 의존점이 아니다.
+
+### 공용 리그 적 2종
+
+- `monster-brute-sd-toon.glb`: 8,396 triangles, Skin 1, 7 AnimationClip, 공용 소켓, PBR 맵 4종.
+- `monster-shaman-sd-toon.glb`: 7,712 triangles, Skin 1, 7 AnimationClip, 공용 소켓, PBR 맵 4종.
+- 두 모델 모두 `DOKKAEBI-HUMANOID-RIG-1`을 사용한다.
+- 승인 상태는 `art-review`; production-approved는 아니다.
+- 현재 상태: 기술 리뷰 3종, 프로토타입 11종, 최종 승인 0종.
+- `scripts/generate_rigged_enemy_candidates.py`와 `scripts/verify-rigged-enemy-candidates.mjs` 추가.
+
+### UI 스트레스 계약
+
+- `src/ui-layout-contract.js`를 추가했다. 폭·높이·글자 배율·보스 상태를 단일 입력으로 받아 HUD 폭과 조작 간격을 계산한다.
+- 필수 프로필: 320×568, 360×640, 390×844, 430×932, 568×320, 360×640 큰 글자 122%.
+- `ResizeObserver`로 카드 크기 변화를 감지한다.
+- 긴 한국어 문구는 `scrollWidth/clientWidth`로 overflow를 감지한다.
+- `ui-copy-tight`, `ui-emergency-layout`은 저우선 정보부터 축약하며 핵심 전투 정보와 조작은 유지한다.
+- 모달은 visual viewport 안에서 스크롤되며 짧은 화면 밖으로 벗어나지 않는다.
+- `scripts/verify-ui-v370.mjs` 추가.
+
+### 텍스처 최적화
+
+- 불씨 깨비·장난 요괴의 상태별 11방향 아틀라스 6개를 1024×768에서 768×576으로 조정했다.
+- 각 셀은 192×192이며 원거리 LOD 가독성을 유지한다.
+- 정적 텍스처 예산은 63.69MB에서 53.19MB로 감소했다.
+
+### 검증 상태
+
+- `npm run verify` 전체 통과.
+- 상대 모듈 37개, 순환 의존 0건.
+- DOM ID 192개, 중복 0건.
+- 메인 클래스 메서드 253개, 중복 0건.
+- 직접 이벤트·직접 지연 타이머 우회 0건.
+- 골든 영웅과 공용 리그 적 2종의 Skin·7클립·소켓·PBR 맵 검사 통과.
+- 6개 UI 스트레스 프로필 검사 통과.
+- 정적 ESM `dist/` 생성 및 GLB 14종 포함 검사 통과.
+
+### 빌드 환경 메모
+
+현재 자동화 컨테이너는 `registry.npmjs.org` DNS를 해석하지 못해 `npm ci`와 실제 Vite 실행을 완료하지 못했다. 소스의 named import/export 계약과 정적 배포는 검증했으며, GitHub Actions에서는 다음 순서를 사용한다.
+
+```bash
+npm ci
+npm run verify
+npm run build
+```
+
+사용자가 보고한 `BOSS_ASSET_IDS` 오류 경로는 직접 import로 제거됐다.

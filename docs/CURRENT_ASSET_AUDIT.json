@@ -1,16 +1,16 @@
 {
   "schemaVersion": 2,
-  "gameVersion": "3.6.0",
+  "gameVersion": "3.7.0",
   "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
   "summary": {
     "total": 14,
     "productionApproved": 0,
-    "prototypes": 13,
-    "artReview": 1,
-    "technicalCandidates": 1,
-    "missingSkin": 13,
-    "missingAnimations": 13,
-    "missingTextureSets": 13
+    "prototypes": 11,
+    "artReview": 3,
+    "technicalCandidates": 3,
+    "missingSkin": 11,
+    "missingAnimations": 11,
+    "missingTextureSets": 11
   },
   "entries": [
     {
@@ -509,131 +509,6 @@
       }
     },
     {
-      "id": "monster-brute-sd-toon",
-      "category": "monster",
-      "declaredStatus": "prototype-placeholder",
-      "technicalPassed": false,
-      "productionPassed": false,
-      "requirements": {
-        "triangleRange": [
-          5000,
-          9000
-        ],
-        "requiredAnimations": 6
-      },
-      "metrics": {
-        "file": "monster-brute-sd-toon.glb",
-        "bytes": 43688,
-        "triangles": 2824,
-        "meshes": 25,
-        "nodes": 26,
-        "nodeNames": [
-          "world",
-          "pelvis",
-          "body",
-          "head",
-          "mask",
-          "eyeL",
-          "eyeR",
-          "shoulderL",
-          "shoulderR",
-          "armL",
-          "armR",
-          "handL",
-          "handR",
-          "legL",
-          "legR",
-          "footL",
-          "footR",
-          "cloth",
-          "sash",
-          "armorCore",
-          "shoulderRockL",
-          "shoulderRockR",
-          "weapon",
-          "signature",
-          "hornL",
-          "hornR"
-        ],
-        "materials": 4,
-        "textures": 0,
-        "images": 0,
-        "skins": 0,
-        "animations": [],
-        "extras": {}
-      },
-      "checks": {
-        "styleLockMetadata": false,
-        "triangleRange": false,
-        "handPaintedTextures": false,
-        "skin": false,
-        "animationClips": false,
-        "productionRegistry": false
-      }
-    },
-    {
-      "id": "monster-shaman-sd-toon",
-      "category": "monster",
-      "declaredStatus": "prototype-placeholder",
-      "technicalPassed": false,
-      "productionPassed": false,
-      "requirements": {
-        "triangleRange": [
-          5000,
-          9000
-        ],
-        "requiredAnimations": 6
-      },
-      "metrics": {
-        "file": "monster-shaman-sd-toon.glb",
-        "bytes": 46356,
-        "triangles": 2792,
-        "meshes": 24,
-        "nodes": 25,
-        "nodeNames": [
-          "world",
-          "pelvis",
-          "body",
-          "head",
-          "mask",
-          "eyeL",
-          "eyeR",
-          "shoulderL",
-          "shoulderR",
-          "armL",
-          "armR",
-          "handL",
-          "handR",
-          "legL",
-          "legR",
-          "footL",
-          "footR",
-          "cloth",
-          "sash",
-          "hatBrim",
-          "hat",
-          "weapon",
-          "signature",
-          "talisman",
-          "halo"
-        ],
-        "materials": 5,
-        "textures": 0,
-        "images": 0,
-        "skins": 0,
-        "animations": [],
-        "extras": {}
-      },
-      "checks": {
-        "styleLockMetadata": false,
-        "triangleRange": false,
-        "handPaintedTextures": false,
-        "skin": false,
-        "animationClips": false,
-        "productionRegistry": false
-      }
-    },
-    {
       "id": "boss-tiger-sd-toon",
       "category": "boss",
       "declaredStatus": "prototype-placeholder",
@@ -877,6 +752,148 @@
           "technicalReady": true,
           "artDirectorApproved": false,
           "notes": "Technical production candidate. Final hand-authored sculpture and texture review still required."
+        }
+      },
+      "checks": {
+        "styleLockMetadata": true,
+        "triangleRange": true,
+        "handPaintedTextures": true,
+        "skin": true,
+        "animationClips": true,
+        "productionRegistry": false
+      }
+    },
+    {
+      "id": "monster-brute-sd-toon",
+      "category": "monster",
+      "declaredStatus": "art-review",
+      "technicalPassed": true,
+      "productionPassed": false,
+      "requirements": {
+        "triangleRange": [
+          5000,
+          9000
+        ],
+        "requiredAnimations": 6
+      },
+      "metrics": {
+        "file": "monster-brute-sd-toon.glb",
+        "bytes": 359872,
+        "triangles": 8396,
+        "meshes": 1,
+        "nodes": 16,
+        "nodeNames": [
+          "SceneRoot",
+          "Armature",
+          "Hips",
+          "Spine",
+          "Head",
+          "Arm_L",
+          "Hand_L",
+          "Arm_R",
+          "Hand_R",
+          "WeaponSocket",
+          "Leg_L",
+          "Foot_L",
+          "Leg_R",
+          "Foot_R",
+          "AccessorySocket",
+          "BruteCandidateMesh"
+        ],
+        "materials": 8,
+        "textures": 4,
+        "images": 4,
+        "skins": 1,
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "extras": {
+          "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+          "approvalStage": "art-review",
+          "rigCandidate": true,
+          "rigVersion": "DOKKAEBI-HUMANOID-RIG-1",
+          "technicalReady": true,
+          "artDirectorApproved": false,
+          "archetype": "brute",
+          "displayName": "돌갑옷 귀수",
+          "notes": "Shared-rig technical candidate. Final art-direction approval is still required."
+        }
+      },
+      "checks": {
+        "styleLockMetadata": true,
+        "triangleRange": true,
+        "handPaintedTextures": true,
+        "skin": true,
+        "animationClips": true,
+        "productionRegistry": false
+      }
+    },
+    {
+      "id": "monster-shaman-sd-toon",
+      "category": "monster",
+      "declaredStatus": "art-review",
+      "technicalPassed": true,
+      "productionPassed": false,
+      "requirements": {
+        "triangleRange": [
+          5000,
+          9000
+        ],
+        "requiredAnimations": 6
+      },
+      "metrics": {
+        "file": "monster-shaman-sd-toon.glb",
+        "bytes": 338444,
+        "triangles": 7712,
+        "meshes": 1,
+        "nodes": 16,
+        "nodeNames": [
+          "SceneRoot",
+          "Armature",
+          "Hips",
+          "Spine",
+          "Head",
+          "Arm_L",
+          "Hand_L",
+          "Arm_R",
+          "Hand_R",
+          "WeaponSocket",
+          "Leg_L",
+          "Foot_L",
+          "Leg_R",
+          "Foot_R",
+          "AccessorySocket",
+          "ShamanCandidateMesh"
+        ],
+        "materials": 8,
+        "textures": 4,
+        "images": 4,
+        "skins": 1,
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "extras": {
+          "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+          "approvalStage": "art-review",
+          "rigCandidate": true,
+          "rigVersion": "DOKKAEBI-HUMANOID-RIG-1",
+          "technicalReady": true,
+          "artDirectorApproved": false,
+          "archetype": "shaman",
+          "displayName": "저주 무당",
+          "notes": "Shared-rig technical candidate. Final art-direction approval is still required."
         }
       },
       "checks": {

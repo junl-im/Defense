@@ -167,7 +167,7 @@ def draw_directional_character(kind, state, angle_index, cell=256):
 
 
 def make_atlas(kind, state, path):
-    cell = 256
+    cell = 192
     atlas = Image.new('RGBA', (cell*4, cell*3), (0,0,0,0))
     for i in range(11):
         frame = draw_directional_character(kind, state, i, cell)

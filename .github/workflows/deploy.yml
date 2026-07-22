@@ -32,6 +32,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify source and module contracts
+        run: npm run verify
+
       - name: Build
         run: npm run build
         env:

@@ -1,3 +1,5 @@
+import { resolveUiLayoutContract } from './ui-layout-contract.js';
+
 const DEFAULT_MODE = 'auto';
 const MODES = Object.freeze(['auto', 'full', 'minimal']);
 
@@ -23,6 +25,10 @@ export class AdaptiveHudLayout {
     this.rails = {};
     this.refreshQueued = false;
     this.observer = null;
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
+    this.textOverflowCount = 0;
+    this.contract = null;
   }
 
   loadMode() {
@@ -90,12 +96,21 @@ export class AdaptiveHudLayout {
       attributes: true,
       attributeFilter: ['class', 'aria-hidden']
     }));
+    if (typeof ResizeObserver !== 'undefined') {
+      this.resizeObserver = new ResizeObserver(() => this.scheduleRefresh());
+      watched.forEach((element) => this.resizeObserver.observe(element));
+      Object.values(this.rails).forEach((rail) => this.resizeObserver.observe(rail));
+    }
     this.refresh();
   }
 
   dispose() {
     this.observer?.disconnect();
     this.observer = null;
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
+    this.textOverflowCount = 0;
+    this.contract = null;
   }
 
   setMode(mode) {
@@ -123,30 +138,43 @@ export class AdaptiveHudLayout {
     });
   }
 
-  refresh({ width, height } = {}) {
+  refresh({ width, height, textScale = null } = {}) {
     const viewportWidth = Math.max(1, width || window.visualViewport?.width || window.innerWidth || 1);
     const viewportHeight = Math.max(1, height || window.visualViewport?.height || window.innerHeight || 1);
-    const portrait = viewportHeight >= viewportWidth;
-    const phone = viewportWidth <= 540;
-    const narrow = viewportWidth <= 390;
-    const short = viewportHeight <= 640;
-    const landscapePhone = !portrait && viewportHeight <= 560;
+    const measuredTextScale = textScale || Math.max(1, (Number.parseFloat(window.getComputedStyle(document.documentElement).fontSize) || 16) / 16);
+    this.contract = resolveUiLayoutContract({
+      width: viewportWidth,
+      height: viewportHeight,
+      textScale: measuredTextScale,
+      bossActive: this.body.classList.contains('boss-active')
+    });
+    const { profile, phone, narrow, ultraNarrow, short, landscapePhone, largeText, automaticMinimal } = this.contract;
 
-    this.profile = landscapePhone ? 'landscape-phone' : narrow && short ? 'micro' : phone ? 'phone' : viewportWidth <= 920 ? 'tablet' : 'standard';
-    this.body.dataset.hudProfile = this.profile;
+    this.profile = profile;
+    this.body.dataset.hudProfile = profile;
     this.body.dataset.hudDensityMode = this.mode;
     this.body.classList.toggle('ui-phone', phone);
     this.body.classList.toggle('ui-phone-narrow', narrow);
+    this.body.classList.toggle('ui-phone-ultra-narrow', ultraNarrow);
     this.body.classList.toggle('ui-phone-short', short);
     this.body.classList.toggle('ui-landscape-phone', landscapePhone);
+    this.body.classList.toggle('ui-large-text', largeText);
 
-    const automaticMinimal = this.mode === 'auto' && (narrow || short || landscapePhone || this.body.classList.contains('boss-active'));
     this.body.classList.toggle('hud-density-full', this.mode === 'full');
-    this.body.classList.toggle('hud-density-minimal', this.mode === 'minimal' || automaticMinimal);
+    this.body.classList.toggle('hud-density-minimal', this.mode === 'minimal' || (this.mode === 'auto' && automaticMinimal));
     this.body.style.setProperty('--ui-viewport-width', `${viewportWidth}px`);
     this.body.style.setProperty('--ui-viewport-height', `${viewportHeight}px`);
+    this.body.style.setProperty('--ui-density-scale', String(this.contract.densityScale));
+    this.body.style.setProperty('--ui-copy-scale', String(this.contract.copyScale));
+    this.body.style.setProperty('--ui-left-rail-width', `${this.contract.leftRailWidth}px`);
+    this.body.style.setProperty('--ui-right-rail-width', `${this.contract.rightRailWidth}px`);
+    this.body.style.setProperty('--ui-joystick-size', `${this.contract.joystickSize}px`);
+    this.body.style.setProperty('--ui-action-dock-width', `${this.contract.actionDockWidth}px`);
 
     this.auditCollisions();
+    this.auditTextOverflow();
+    const emergency = this.mode !== 'full' && (this.contract.emergencyRisk || this.overlapPairs.length > 0 || this.textOverflowCount > 2);
+    this.body.classList.toggle('ui-emergency-layout', emergency);
     return this.getReport();
   }
 
@@ -184,13 +212,37 @@ export class AdaptiveHudLayout {
     return pairs;
   }
 
+  auditTextOverflow() {
+    const roots = [
+      this.elements.hud,
+      this.rails['top-status-rail'],
+      this.rails['center-meter-rail'],
+      this.rails['left-insight-rail'],
+      this.rails['right-roster-rail'],
+      this.elements.actionDock
+    ].filter(Boolean);
+    let count = 0;
+    for (const root of roots) {
+      for (const element of root.querySelectorAll('b, small, em, [data-ui-copy]')) {
+        if (!isVisible(element)) continue;
+        if (element.scrollWidth > element.clientWidth + 1 || element.scrollHeight > element.clientHeight + 2) count += 1;
+      }
+    }
+    this.textOverflowCount = count;
+    this.body.dataset.uiTextOverflowCount = String(count);
+    this.body.classList.toggle('ui-copy-tight', count > 0 && this.mode !== 'full');
+    return count;
+  }
+
   getReport() {
     return Object.freeze({
       profile: this.profile,
       mode: this.mode,
       modeLabel: this.getModeLabel(),
       overlapCount: this.overlapPairs.length,
-      overlapPairs: [...this.overlapPairs]
+      overlapPairs: [...this.overlapPairs],
+      textOverflowCount: this.textOverflowCount,
+      contract: this.contract
     });
   }
 }

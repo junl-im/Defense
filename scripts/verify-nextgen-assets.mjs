@@ -12,7 +12,14 @@ const commonBipedNodes = ['body','head','armL','armR','legL','legR','weapon','si
 const specs = [
   { id: PLAYER_ASSET_ID, path: 'public/assets/models/player-dokkaebi-warrior-golden-v1.glb', maxTriangles: 10000, nodes: ['Armature','Hips','Spine','Head','Arm_L','Arm_R','Leg_L','Leg_R','WeaponSocket','AccessorySocket'] },
   ...Object.entries(GUARDIAN_ASSET_IDS).map(([type,id])=>({id,path:`public/assets/models/guardian-${type}-sd-toon.glb`,maxTriangles:5600,nodes:commonBipedNodes})),
-  ...Object.entries(MONSTER_ASSET_IDS).map(([type,id])=>({id,path:`public/assets/models/monster-${type}-sd-toon.glb`,maxTriangles:3200,nodes:commonBipedNodes})),
+  ...Object.entries(MONSTER_ASSET_IDS).map(([type,id])=>({
+    id,
+    path:`public/assets/models/monster-${type}-sd-toon.glb`,
+    maxTriangles: type === 'brute' || type === 'shaman' ? 9000 : 3200,
+    nodes: type === 'brute' || type === 'shaman'
+      ? ['Armature','Hips','Spine','Head','Arm_L','Arm_R','Leg_L','Leg_R','WeaponSocket','AccessorySocket']
+      : commonBipedNodes
+  })),
   { id:BOSS_ASSET_IDS.tiger,path:'public/assets/models/boss-tiger-sd-toon.glb',maxTriangles:9000,nodes:['body','head','frontLeg0','frontLeg1','weapon','signature','halo'] },
   { id:BOSS_ASSET_IDS.serpent,path:'public/assets/models/boss-serpent-sd-toon.glb',maxTriangles:9000,nodes:['body','head','armL','armR','weapon','signature','halo'] },
   { id:BOSS_ASSET_IDS.king,path:'public/assets/models/boss-king-sd-toon.glb',maxTriangles:9000,nodes:[...commonBipedNodes,'halo'] }
@@ -39,6 +46,7 @@ if (main.includes('renderAssetDiagnostics()')&&diagnostics.includes('approval?.p
 if (pipeline.includes('sharedAssetGeometry')&&pipeline.includes('assetApproval')&&pipeline.includes('getModelStatuses')) pass('GLB 공유 geometry 수명과 승인 상태 추적'); else fail('GLB 수명 또는 승인 상태 추적 누락');
 if (premium.includes('preserveAuthoredStylizedPbrMaterial')&&premium.includes('prototype-toon-fallback')) pass('승인 PBR 보존·프로토타입 Toon 폴백 분리'); else fail('PBR/프로토타입 렌더 분리 누락');
 if (premium.includes('uMoonRimColor')&&mobileEngine.includes('NeutralToneMapping')&&mobileEngine.includes('PCFSoftShadowMap')) pass('Subtle Rim·중립 톤매핑·소프트 섀도'); else fail('공통 Rim·톤매핑·섀도 설정 누락');
-if (CURRENT_ASSET_APPROVAL[PLAYER_ASSET_ID]?.status==='art-review' && specs.slice(1).every(({id})=>CURRENT_ASSET_APPROVAL[id]?.status==='prototype-placeholder')) pass('골든 샘플 리뷰 1종·프로토타입 13종 격리'); else fail('현재 전투 GLB 승인 상태 오표기');
+const reviewIds = new Set([PLAYER_ASSET_ID, MONSTER_ASSET_IDS.brute, MONSTER_ASSET_IDS.shaman]);
+if (specs.every(({id})=>CURRENT_ASSET_APPROVAL[id]?.status === (reviewIds.has(id) ? 'art-review' : 'prototype-placeholder'))) pass('기술 리뷰 3종·프로토타입 11종 격리'); else fail('현재 전투 GLB 승인 상태 오표기');
 if (failures.length) process.exit(1);
 console.log(`전투 GLB ${specs.length}종 구조·승인 상태 검증 완료`);

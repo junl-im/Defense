@@ -1647,3 +1647,79 @@ body.ui-overflow-safe .run-seed-chip { display: none !important; }
 @media (prefers-reduced-motion: reduce) {
   .combat-ui-rail, .btn, .round-btn, .skill-btn, .summon-btn, .wave-btn { transition-duration: .01ms !important; }
 }
+
+/* v3.7.0 UI stress contract: resize-aware rails, long-copy fallback, modal viewport safety */
+.left-insight-rail { width: var(--ui-left-rail-width, 190px); }
+.right-roster-rail { width: var(--ui-right-rail-width, 164px); }
+.combat-ui-rail { --rail-copy-scale: var(--ui-copy-scale, 1); }
+.combat-ui-rail b,
+.combat-ui-rail small,
+.combat-ui-rail em { max-width: 100%; overflow-wrap: anywhere; }
+
+.modal-card,
+.controls-card,
+.codex-card,
+.result-card {
+  max-height: calc(var(--viewport-height, 100dvh) - var(--safe-top) - var(--safe-bottom) - 20px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+.modal-card > .btn:last-child,
+.controls-card > .btn:last-child { position: sticky; bottom: 0; z-index: 2; }
+
+body.ui-copy-tight .combat-ui-rail small,
+body.ui-copy-tight .combat-ui-rail em { font-size: max(6px, calc(.72em * var(--ui-copy-scale, 1))); line-height: 1.15; }
+body.ui-copy-tight .combat-ui-rail b { font-size: max(8px, calc(.88em * var(--ui-copy-scale, 1))); line-height: 1.1; }
+body.ui-copy-tight .moon-omen em,
+body.ui-copy-tight .run-seed-chip em,
+body.ui-copy-tight .wave-trial small:last-child {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+body.ui-emergency-layout .run-seed-chip,
+body.ui-emergency-layout .first-mission-panel,
+body.ui-emergency-layout .relic-panel-head,
+body.ui-emergency-layout .synergy-list small { display: none !important; }
+body.ui-emergency-layout .top-status-rail { grid-template-columns: minmax(0,1fr) auto; }
+body.ui-emergency-layout .left-insight-rail,
+body.ui-emergency-layout .right-roster-rail { gap: 3px; }
+body.ui-emergency-layout .unit-strip { max-height: 142px; overflow: hidden; }
+body.ui-emergency-layout .wave-trial,
+body.ui-emergency-layout .relic-panel,
+body.ui-emergency-layout .synergy-panel { padding: 5px 6px; }
+
+@media (max-width: 720px), (pointer: coarse) {
+  .left-insight-rail { width: var(--ui-left-rail-width, 132px); }
+  .right-roster-rail { width: var(--ui-right-rail-width, 106px); }
+  .joystick-zone { width: var(--ui-joystick-size, 116px); height: var(--ui-joystick-size, 116px); }
+  .action-dock { width: var(--ui-action-dock-width, 180px); }
+  .modal { align-items: flex-start; padding-block: calc(8px + var(--safe-top)) calc(8px + var(--safe-bottom)); overflow-y: auto; }
+  .modal-card { margin-block: auto; }
+}
+
+@media (max-width: 340px) and (orientation: portrait) {
+  .hud { grid-template-columns: minmax(0,1fr) 102px minmax(0,1fr); padding-inline: calc(4px + var(--safe-left)) calc(4px + var(--safe-right)); }
+  .hud-left, .hud-right { gap: 2px; }
+  .round-btn { min-width: 36px; min-height: 36px; }
+  .core-pill { padding-inline: 6px; }
+  .currency-pill { padding-inline: 6px; }
+  .top-status-rail { width: calc(100vw - 8px - var(--safe-left) - var(--safe-right)); gap: 3px; }
+  .top-status-rail .moon-ward { min-width: 50px; }
+  .center-meter-rail { width: 204px; }
+  .left-ui-toggle { transform: translateX(var(--ui-left-rail-width, 112px)) !important; }
+  .action-dock { grid-template-columns: 50px 53px 53px; gap: 4px; }
+  .action-dock .skill-btn { height: 54px; }
+  .action-dock .summon-btn,
+  .action-dock .wave-btn { height: 62px; }
+  .skill-btn b, .wave-btn small { display: none; }
+  .title-panel { padding-inline: 10px; }
+  .title-actions .btn { font-size: 9px; padding-inline: 7px; }
+}
+
+@media (min-resolution: 1.5dppx) and (max-width: 390px) {
+  .combat-ui-rail, .hud, .action-dock, .joystick-zone { contain: layout style; }
+}

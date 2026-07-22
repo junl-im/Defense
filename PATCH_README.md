@@ -1,11 +1,20 @@
-# DokkaebiLuckDefense3D v3.6.0 Patch
+# v3.7.0 패치 적용 안내
 
-기준 버전: **v3.5.0**
+기준 버전: **v3.6.0**  
+대상 버전: **v3.7.0 / Engine 2.7.0**
 
-## 적용 방법
+## 중요 빌드 수정
 
-1. v3.5.0 프로젝트 루트에 이 패치의 파일을 같은 경로로 덮어씁니다.
-2. 정상적인 npm 환경에서는 아래 명령을 실행합니다.
+GitHub Actions의 `BOSS_ASSET_IDS` MISSING_EXPORT 오류를 제거했습니다.
+
+- `main.js`는 에셋 ID를 `src/engine/asset-catalog.js`에서 직접 가져옵니다.
+- `src/engine/index.js`에도 호환 재수출을 명시적으로 포함합니다.
+- `npm run verify`가 named import/export 계약을 빌드 전에 검사합니다.
+- GitHub Pages 워크플로는 verify 통과 후 build를 실행합니다.
+
+## 적용
+
+이 폴더의 내용을 v3.6.0 프로젝트 루트에 덮어쓴 뒤 실행합니다.
 
 ```bash
 npm ci
@@ -13,31 +22,14 @@ npm run verify
 npm run build
 ```
 
-3. 패키지 저장소를 사용할 수 없는 환경에서는 다음 정적 배포본을 생성합니다.
+패치 ZIP에는 `dist/`가 없습니다. 새 `dist/`를 배포해야 합니다.
 
-```bash
-npm run verify
-npm run build:static
-node scripts/verify-static-dist.mjs
-```
+## 범위
 
-패치 ZIP에는 `dist/`가 포함되지 않습니다. 실제 서비스 반영 전 반드시 새 빌드를 배포해야 합니다.
-
-## 변경 범위
-
-- 신규 파일 3개
-- 수정 파일 16개
-- 삭제 파일 없음
-
-## 핵심 변경
-
-- AdaptiveHudLayout 동적 레일 시스템
-- HUD 자동/전체/간소 표시 모드
-- 런타임 UI 충돌 감사와 성능 로그 연동
-- 5개 액션 버튼의 4열 구조 오류 수정
-- 모바일 3+2 하단 조작 배열
-- 보스전 좌우 레일 자동 하강
-- Moonstone HUD 패널·버튼·모달 디자인
-- 320px 하단 조작 안전 간격 26px
-- 보스 에셋 라벨 중복 키 제거
-- v3.6 전용 UI 회귀 검증 추가
+- 추가 9개
+- 수정 34개
+- 삭제 0개
+- 공용 리그 적 2종 GLB 교체
+- UI 스트레스 계약과 텍스트 overflow 방어
+- 원거리 아틀라스 6개 768×576 최적화
+- 텍스처 예산 53.19MB / 64MB

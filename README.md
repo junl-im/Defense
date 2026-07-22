@@ -1,34 +1,23 @@
 # 도깨비 운빨 수호대 3D
 
-- 게임 버전: **3.6.0**
-- 엔진 버전: **2.6.0**
+- 게임 버전: **3.7.0**
+- 엔진 버전: **2.7.0**
 - 아트 잠금: **DD-AAA-CASUAL-SD-PBR-3.0**
 
-## v3.6.0 핵심
+## v3.7.0 핵심
 
-이번 버전은 전투 HUD와 모바일 UI를 **Moonstone HUD** 구조로 전면 재편한 패치입니다.
+이번 버전은 GitHub Actions의 `MISSING_EXPORT` 빌드 실패를 막고, 공용 리그 적 2종과 모바일 UI 스트레스 계약을 추가한 안정화·확장 패치입니다.
 
-- 상단 기본 HUD, 상황 칩, 전투 게이지, 좌우 정보, 하단 조작을 독립 레일로 분리
-- 실제 표시 요소의 `getBoundingClientRect()`를 이용한 런타임 겹침 감사
-- HUD 표시 밀도 `자동 / 전체 / 간소` 3단계
-- 보스전에서 좌우 정보 레일 자동 하강
-- 충돌 감지 시 저우선 설명만 자동 축약
-- 5개 전투 버튼의 잘못된 4열 그리드 수정
-- 모바일 하단 조작을 3+2 배열로 변경
-- 320px 화면에서 조이스틱과 액션 도크 사이 26px 안전 간격
-- 제목 화면과 모달을 밝고 두꺼운 캐주얼 모바일 UI 계층으로 재설계
-- 골든 샘플 Skin·7 AnimationClip·소켓·PBR 경로 유지
-- 전투 GLB 14종과 도감·약점·전리품 시스템 회귀 검증 유지
-
-## HUD 조작
-
-전투 화면 우측 상단 `▦/◫/▤` 버튼으로 정보 표시를 순환합니다.
-
-- **자동:** 화면 크기와 보스전 상태에 따라 자동 압축
-- **전체:** 모든 보조 정보를 유지
-- **간소:** 핵심 수치만 표시
-
-카메라·조작 설정의 `HUD 자동 정리`에서도 자동 모드를 켜거나 끌 수 있습니다.
+- `BOSS_ASSET_IDS`를 배럴 모듈이 아닌 `asset-catalog.js`에서 직접 import
+- 모든 상대 모듈의 named import/export 계약 자동 검사
+- 돌갑옷 귀수·저주 무당을 Skin 1개, 7 AnimationClip, 공용 소켓, PBR 맵이 포함된 기술 리뷰 후보로 승격
+- 에셋 상태: 기술 리뷰 3종 / 프로토타입 11종 / 최종 승인 0종
+- 320×568, 360×640, 390×844, 430×932, 짧은 가로, 큰 글자 모드 UI 계약 검사
+- ResizeObserver 기반 HUD 크기 변화 감지
+- 긴 한국어 문구 overflow 검사와 긴급 축약 레이아웃
+- 모달을 실제 visual viewport 안에 고정하고 내부 스크롤 허용
+- 원거리 임포스터 6개를 768×576으로 최적화
+- 텍스처 예산 **53.19MB / 64MB**
 
 ## 검증
 
@@ -37,6 +26,8 @@ npm ci
 npm run verify
 npm run build
 ```
+
+`npm run verify`에는 Vite 빌드 전에 이름 있는 import/export 불일치를 잡는 `verify-module-exports.mjs`가 포함됩니다.
 
 패키지 저장소를 사용할 수 없는 환경에서는 고정 Three.js import map 기반 정적 ESM 배포본을 생성합니다.
 
@@ -49,6 +40,7 @@ node scripts/verify-static-dist.mjs
 
 ```bash
 npm run generate:golden-hero
+npm run generate:rigged-enemy-candidates
 npm run generate:prompt-catalog
 npm run generate:prototype-assets
 npm run audit:art
@@ -58,6 +50,9 @@ npm run audit:art
 
 - `docs/ASSET_BIBLE.md`
 - `docs/UI_SYSTEM_v3.6.md`
+- `docs/UI_STRESS_CONTRACT_v3.7.md`
+- `docs/RIGGED_ENEMY_CANDIDATES_v3.7.md`
+- `docs/BUILD_CONTRACT_v3.7.md`
 - `docs/GOLDEN_SAMPLE_PRODUCTION_SPEC.md`
 - `docs/CODE_ARCHITECTURE_v3.5.md`
 - `docs/CURRENT_ASSET_AUDIT.md`

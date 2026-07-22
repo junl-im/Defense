@@ -117,7 +117,7 @@ const atlases = [
 ];
 for (const path of atlases) {
   const size = existsSync(resolve(root, path)) ? webpSize(path) : null;
-  assert(size?.width === 1024 && size?.height === 768, `${path} 1024x768 상태 아틀라스`);
+  assert(size?.width === 768 && size?.height === 576, `${path} 768x576 상태 아틀라스`);
 }
 
 if (failures.length) {

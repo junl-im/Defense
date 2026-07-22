@@ -1,7 +1,7 @@
 import { CHARACTER_ASSET_TARGETS, ENVIRONMENT_ASSET_TARGETS, EFFECT_ASSET_TARGETS, IMPOSTOR_SPEC } from '../asset-specs.js';
 import { getAssetApproval } from './asset-quality.js';
 
-const ASSET_REVISION = '3.6.0';
+const ASSET_REVISION = '3.7.0';
 const keyartBaseUrl = new URL('../assets/moon-market-keyart.webp', import.meta.url);
 keyartBaseUrl.searchParams.set('v', ASSET_REVISION);
 const keyartUrl = keyartBaseUrl.href;
@@ -57,7 +57,7 @@ export const CORE_ASSET_CATALOG = Object.freeze([
   ...Object.entries(impostorUrls).map(([key, url]) => ({
     id: `${key}-impostor-v2`, kind: 'texture', required: false, retain: true, color: true,
     variants: { low: url, medium: url, high: url },
-    sourceWidth: 1024, sourceHeight: 768, estimatedBytes: 1024 * 768 * 4 * 1.333
+    sourceWidth: 768, sourceHeight: 576, estimatedBytes: 768 * 576 * 4 * 1.333
   })),
   ...Object.entries(sdToonModelUrls).map(([id, url]) => ({
     id, kind: 'model', required: false, retain: true,
@@ -151,6 +151,8 @@ export const ASSET_PRODUCTION_SUMMARY = Object.freeze({
   formats: Object.freeze(['glb', 'ktx2', 'webp', 'png']),
   integratedPrototypeAssets: 23,
   productionApprovedCharacterAssets: 0,
+  artReviewCharacterAssets: 3,
+  prototypeCharacterAssets: 11,
   styleLockId: 'DD-AAA-CASUAL-SD-PBR-3.0'
 });
 

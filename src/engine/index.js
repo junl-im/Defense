@@ -11,7 +11,18 @@ export { RenderStatsHUD } from './render-stats-hud.js';
 
 export { AssetPipeline, ASSET_POLICY } from './asset-pipeline.js';
 
-export { CORE_ASSET_CATALOG, MODEL_ASSET_SLOTS, ASSET_QUALITY_TIERS, ASSET_PRODUCTION_SUMMARY, selectAssetVariant } from './asset-catalog.js';
+// Compatibility re-export. Runtime entrypoints import asset IDs from asset-catalog.js directly.
+export {
+  CORE_ASSET_CATALOG,
+  MODEL_ASSET_SLOTS,
+  ASSET_QUALITY_TIERS,
+  ASSET_PRODUCTION_SUMMARY,
+  PLAYER_ASSET_ID,
+  GUARDIAN_ASSET_IDS,
+  MONSTER_ASSET_IDS,
+  BOSS_ASSET_IDS,
+  selectAssetVariant
+} from './asset-catalog.js';
 export { DirectionalImpostorSelector, resolveDirectionalFrame, resolveMirroredAuthoredView } from './directional-impostor.js';
 
 export { AnimationStateSystem, CHARACTER_ANIMATION_STATES } from './animation-state-system.js';

@@ -1,4 +1,4 @@
-export const ENGINE_VERSION = '2.6.0';
+export const ENGINE_VERSION = '2.7.0';
 
 export const MOBILE_ENGINE_CONFIG = Object.freeze({
   renderer: {
@@ -32,7 +32,7 @@ export const MOBILE_ENGINE_CONFIG = Object.freeze({
   },
   budgets: {
     unitTriangles: 10000,
-    enemyTriangles: 3200,
+    enemyTriangles: 9000,
     bossTriangles: 9000,
     staticDrawCalls: 45,
     dynamicDrawCalls: 95,
