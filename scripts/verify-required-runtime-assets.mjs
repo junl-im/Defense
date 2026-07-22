@@ -3,7 +3,7 @@ import { existsSync, readFileSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
-const inventoryPath = resolve(root, 'docs/RUNTIME_ASSET_INVENTORY_v3.8.0.json');
+const inventoryPath = resolve(root, 'docs/RUNTIME_ASSET_INVENTORY_v3.9.0.json');
 const failures = [];
 
 const fail = (path, reason) => {
@@ -14,17 +14,17 @@ const fail = (path, reason) => {
 };
 
 if (!existsSync(inventoryPath)) {
-  fail('docs/RUNTIME_ASSET_INVENTORY_v3.8.0.json', 'runtime asset inventory is missing');
+  fail('docs/RUNTIME_ASSET_INVENTORY_v3.9.0.json', 'runtime asset inventory is missing');
 } else {
   const inventory = JSON.parse(readFileSync(inventoryPath, 'utf8'));
-  if (inventory.requiredCount !== 14 || inventory.files?.length !== 14) {
-    fail('runtime asset inventory', `expected 14 combat GLBs, found ${inventory.files?.length ?? 0}`);
+  if (inventory.requiredCount !== 19 || inventory.files?.length !== 19) {
+    fail('runtime asset inventory', `expected 19 combat GLBs, found ${inventory.files?.length ?? 0}`);
   }
 
   for (const entry of inventory.files ?? []) {
     const absolute = resolve(root, entry.path);
     if (!existsSync(absolute)) {
-      fail(entry.path, 'required GLB file is missing; apply the full v3.8.0 full or patch package');
+      fail(entry.path, 'required GLB file is missing; apply the full v3.9.0 full or patch package');
       continue;
     }
 
@@ -68,4 +68,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log('PASS required combat GLB contract · 14/14 files, headers, sizes and hashes');
+console.log('PASS required combat GLB contract · 19/19 files, headers, sizes and hashes');

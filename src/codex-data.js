@@ -24,7 +24,10 @@ const MONSTER_ART = Object.freeze({
   imp: { symbol: '牙', shape: '큰 귀 · 짧은 팔다리 · 비대칭 뿔', motif: '장터 장난감과 깨진 탈', signature: '붉은 손톱과 튀는 웃음', danger: '기본 돌격' },
   runner: { symbol: '走', shape: '앞으로 숙인 몸 · 긴 종아리 · 뒤집힌 상투', motif: '두억시니와 짚신', signature: '주황 잔상과 돌진선', danger: '고속 침투' },
   brute: { symbol: '岩', shape: '거대한 상체 · 짧은 목 · 돌판 갑옷', motif: '성벽 돌과 무덤 석상', signature: '보라 균열과 묵직한 발자국', danger: '고체력 압박' },
-  shaman: { symbol: '呪', shape: '긴 팔 · 기울어진 탈 · 부적 치마', motif: '버려진 굿판과 젖은 부적', signature: '청록 저주 원과 떠도는 종이', danger: '장판 유도' }
+  shaman: { symbol: '呪', shape: '긴 팔 · 기울어진 탈 · 부적 치마', motif: '버려진 굿판과 젖은 부적', signature: '청록 저주 원과 떠도는 종이', danger: '장판 유도' },
+  ghost: { symbol: '魂', shape: '큰 얼굴 · 흐르는 꼬리 · 비어 있는 발', motif: '달그림자와 혼백 등불', signature: '청백 반투명 몸과 자주 후광', danger: '결계 침투' },
+  skeleton: { symbol: '骨', shape: '큰 해골 · 넓은 방패 · 짧은 다리', motif: '폐사찰 갑주와 백골 무사', signature: '상아색 뼈와 금빛 방패 문양', danger: '방패 압박' },
+  crow: { symbol: '烏', shape: '넓은 날개 · 작은 몸 · 날카로운 부리', motif: '먹구름과 까마귀 장승', signature: '보라 날개 잔상과 노란 부리', danger: '고속 우회' }
 });
 
 const BOSS_ART = Object.freeze({

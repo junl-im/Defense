@@ -22,10 +22,10 @@ const assert = (condition, message) => {
 
 const progress = createDefaultCodexProgress();
 let summary = getCodexProgressSummary(progress);
-assert(summary.discoverable === 29, '도감 전체 29종 유지');
+assert(summary.discoverable === 32, '도감 전체 32종 유지');
 assert(summary.discovered === 16, '전장·효과 16종 기본 발견');
-assert(summary.weaknessTotal === 7 && Object.keys(ENEMY_RESEARCH).length === 7, '요괴·보스 약점 연구 7종');
-assert(summary.lootTotal === 10 && Object.keys(LOOT_CATALOG).length === 10, '전리품 10종');
+assert(summary.weaknessTotal === 10 && Object.keys(ENEMY_RESEARCH).length === 10, '요괴·보스 약점 연구 10종');
+assert(summary.lootTotal === 13 && Object.keys(LOOT_CATALOG).length === 13, '전리품 13종');
 
 const summon = recordGuardianUse(progress, 'ember');
 assert(summon.newDiscovery && getCodexKnowledge(progress, 'guardian', 'ember').uses === 1, '첫 수호대 강림 발견 기록');

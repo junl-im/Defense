@@ -11,6 +11,10 @@ import { getBattlefieldTheme } from './battlefield-themes.js';
 import { CODEX_SECTION_META, CODEX_SECTION_ORDER, getCodexEntries, getCodexTotals } from './codex-data.js';
 import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, ObjectPool, RenderStatsHUD, AssetPipeline, AnimationStateSystem } from './engine/index.js';
 import { CORE_ASSET_CATALOG, PLAYER_ASSET_ID, GUARDIAN_ASSET_IDS, MONSTER_ASSET_IDS, BOSS_ASSET_IDS } from './engine/asset-catalog.js';
+import { HERO_CLASSES, HERO_CLASS_ORDER, HERO_CLASS_ASSET_IDS, getHeroClass } from './hero-classes.js';
+import { applyHeroClassVisuals, applyRelicVisuals } from './hero-visual-loadout.js';
+import { applyEnemyCandidateVisuals } from './enemy-candidate-visuals.js';
+import { getBossHudState } from './boss-hud-contract.js';
 import CodexViewer from './codex-viewer.js';
 import { createPremiumGuardian, createPremiumEnemy, createPremiumSacredTree, applyPremiumBossPhase, prepareImportedGuardian, prepareImportedEnemy } from './premium-assets.js';
 import { DirectionalImpostorSelector } from './engine/directional-impostor.js';
@@ -47,18 +51,18 @@ const ui = {
   leftUiToggle: $('#left-ui-toggle'), synergyToggle: $('#synergy-toggle'), synergyCount: $('#synergy-count'), synergyList: $('#synergy-list'),
   luckMeter: $('#luck-meter'), luckValue: $('#luck-value'), luckProgress: $('#luck-progress'), unitStrip: $('#unit-strip'),
   joystick: $('#joystick-zone'), joystickKnob: $('#joystick-knob'), lookZone: $('#look-zone'), actionDock: $('#action-dock'),
-  dash: $('#dash-btn'), dashCooldown: $('#dash-cooldown'), skill: $('#skill-btn'), skillCooldown: $('#skill-cooldown'),
+  dash: $('#dash-btn'), dashCooldown: $('#dash-cooldown'), skill: $('#skill-btn'), skillLabel: $('#skill-label'), skillCooldown: $('#skill-cooldown'),
   summon: $('#summon-btn'), summonCost: $('#summon-cost'), wave: $('#wave-btn'), waveText: $('#wave-btn-text'),
   toast: $('#toast'), combo: $('#combo-banner'), comboText: $('#combo-text'), boss: $('#boss-banner'), bossName: $('#boss-name'),
   mission: $('#mission-banner'), missionKicker: $('#mission-kicker'), missionTitle: $('#mission-title'), missionCopy: $('#mission-copy'),
   evolution: $('#evolution-banner'), evolutionSymbol: $('#evolution-symbol'), evolutionName: $('#evolution-name'), evolutionUltimate: $('#evolution-ultimate'),
   bossHealth: $('#boss-health'), bossHealthName: $('#boss-health-name'), bossHealthValue: $('#boss-health-value'), bossHealthProgress: $('#boss-health-progress'),
-  bossIntent: $('#boss-intent'), bossPhase: $('#boss-phase'), bossIntentLabel: $('#boss-intent-label'), bossIntentTime: $('#boss-intent-time'),
+  bossIntent: $('#boss-intent'), bossIntentIcon: $('#boss-intent-icon'), bossIntentType: $('#boss-intent-type'), bossIntentProgress: $('#boss-intent-progress'), bossPhase: $('#boss-phase'), bossIntentLabel: $('#boss-intent-label'), bossIntentTime: $('#boss-intent-time'),
   killChain: $('#kill-chain'), killChainValue: $('#kill-chain-value'), killChainBonus: $('#kill-chain-bonus'),
   moonOmen: $('#moon-omen'), moonOmenIcon: $('#moon-omen-icon'), moonOmenName: $('#moon-omen-name'), moonOmenEffect: $('#moon-omen-effect'),
   moonWard: $('#moon-ward'), moonWardValue: $('#moon-ward-value'), jackpot: $('#jackpot-rush'), jackpotTime: $('#jackpot-rush-time'),
   waveTrial: $('#wave-trial'), waveTrialIcon: $('#wave-trial-icon'), waveTrialName: $('#wave-trial-name'), waveTrialProgress: $('#wave-trial-progress'), waveTrialReward: $('#wave-trial-reward'),
-  relicPanel: $('#relic-panel'), relicStrip: $('#relic-strip'), relicCount: $('#relic-count'), relicModal: $('#relic-modal'), relicOptions: $('#relic-options'),
+  relicPanel: $('#relic-panel'), relicStrip: $('#relic-strip'), relicCount: $('#relic-count'), relicLoadout: $('#relic-loadout'), relicModal: $('#relic-modal'), relicOptions: $('#relic-options'),
   burstMeter: $('#burst-meter'), burstValue: $('#burst-value'), burstProgress: $('#burst-progress'), burst: $('#burst-btn'), burstState: $('#burst-state'),
   dangerHint: $('#danger-hint'), dangerArrow: $('#danger-arrow'), dangerLevel: $('#danger-level'), dangerLabel: $('#danger-label'), dangerTime: $('#danger-time'),
   firstMissionPanel: $('#first-mission-panel'), firstMissionStep: $('#first-mission-step'), firstMissionTitle: $('#first-mission-title'),
@@ -68,27 +72,30 @@ const ui = {
   titleBtn: $('#title-btn'), resultModal: $('#result-modal'), resultKicker: $('#result-kicker'), resultTitle: $('#result-title'),
   resultScore: $('#result-score'), resultKills: $('#result-kills'), resultRank: $('#result-rank'), resultUnits: $('#result-units'), resultAnalysis: $('#result-analysis'), resultShards: $('#result-shards'), resultShardsTotal: $('#result-shards-total'), resultGrowth: $('#result-growth-btn'),
   playerName: $('#player-name'), saveScore: $('#save-score-btn'), resultRetry: $('#result-retry-btn'), leaderboard: $('#leaderboard'),
-  runModeOptions: $('#run-mode-options'), runModeSummary: $('#run-mode-summary'), seedModeOptions: $('#seed-mode-options'), dailyEdictPreview: $('#daily-edict-preview'),
+  runModeOptions: $('#run-mode-options'), runModeSummary: $('#run-mode-summary'), heroClassOptions: $('#hero-class-options'), heroClassSummary: $('#hero-class-summary'), seedModeOptions: $('#seed-mode-options'), dailyEdictPreview: $('#daily-edict-preview'),
   runSeedChip: $('#run-seed-chip'), runSeedIcon: $('#run-seed-icon'), runSeedMode: $('#run-seed-mode'), runSeedValue: $('#run-seed-value'), runEdictName: $('#run-edict-name'), resultNewRun: $('#result-new-run-btn'),
   codexPreviewModal: $('#codex-preview-modal'), codexPreviewCanvas: $('#codex-preview-canvas'), codexPreviewTitle: $('#codex-preview-title'), codexPreviewSubtitle: $('#codex-preview-subtitle'),
   codexFrameStatus: $('#codex-frame-status'), codexAssetSet: $('#codex-asset-set'), codexLodReadout: $('#codex-lod-readout'), codexDirectionReadout: $('#codex-direction-readout'), codexImpostorBtn: $('#codex-impostor-btn'),
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '3.8.0';
+const GAME_VERSION = '3.9.0';
 const CHARACTER_ASSET_IDS = Object.freeze([
-  PLAYER_ASSET_ID,
+  ...Object.values(HERO_CLASS_ASSET_IDS),
   ...Object.values(GUARDIAN_ASSET_IDS),
   ...Object.values(MONSTER_ASSET_IDS),
   ...Object.values(BOSS_ASSET_IDS)
 ]);
 const CHARACTER_ASSET_LABELS = Object.freeze({
-  [PLAYER_ASSET_ID]: '도깨비 전사 · 골든 샘플',
+  [HERO_CLASS_ASSET_IDS.warrior]: '도깨비 전사 · 골든 샘플',
+  [HERO_CLASS_ASSET_IDS.archer]: '도깨비 궁수 · 공용 리그 후보',
+  [HERO_CLASS_ASSET_IDS.mage]: '도깨비 법사 · 공용 리그 후보',
   [GUARDIAN_ASSET_IDS.ember]: '불씨 깨비', [GUARDIAN_ASSET_IDS.frost]: '달서리 깨비',
   [GUARDIAN_ASSET_IDS.wind]: '바람 갓깨비', [GUARDIAN_ASSET_IDS.stone]: '바위 몽둥깨비',
   [GUARDIAN_ASSET_IDS.bell]: '방울 무당깨비', [GUARDIAN_ASSET_IDS.thunder]: '번개 장군깨비',
   [MONSTER_ASSET_IDS.imp]: '장난 요괴', [MONSTER_ASSET_IDS.runner]: '두억 질주꾼',
   [MONSTER_ASSET_IDS.brute]: '돌갑옷 귀수', [MONSTER_ASSET_IDS.shaman]: '저주 무당',
+  [MONSTER_ASSET_IDS.ghost]: '달그림자 귀신', [MONSTER_ASSET_IDS.skeleton]: '백골 무사', [MONSTER_ASSET_IDS.crow]: '먹구름 까마귀',
   [BOSS_ASSET_IDS.tiger]: '저승 호랑이', [BOSS_ASSET_IDS.serpent]: '청월 이무기', [BOSS_ASSET_IDS.king]: '백귀 야행왕'
 });
 
@@ -203,6 +210,8 @@ class DokkaebiLuckDefense {
     this.eliteKills = 0;
     this.selectedRunModeId = this.loadRunMode();
     this.activeRunMode = getRunMode(this.selectedRunModeId);
+    this.selectedHeroClassId = this.loadHeroClass();
+    this.heroClass = getHeroClass(this.selectedHeroClassId);
     this.selectedSeedModeId = this.loadSeedMode();
     this.runSeed = '';
     this.runRandom = Math.random;
@@ -243,6 +252,7 @@ class DokkaebiLuckDefense {
     this.populateCollection();
     this.renderMetaProgress();
     this.renderRunModeSelector();
+    this.renderHeroClassSelector();
     this.renderSeedModeSelector();
     this.renderRelicStrip();
     this.animate();
@@ -487,6 +497,10 @@ class DokkaebiLuckDefense {
       const button = event.target.closest('[data-run-mode]');
       if (button) this.selectRunMode(button.dataset.runMode);
     }, {}, 'run-mode-options');
+    on(ui.heroClassOptions, 'click', (event) => {
+      const button = event.target.closest('[data-hero-class]');
+      if (button) this.selectHeroClass(button.dataset.heroClass);
+    }, {}, 'hero-class-options');
     on(ui.seedModeOptions, 'click', (event) => {
       const button = event.target.closest('[data-seed-mode]');
       if (button) this.selectSeedMode(button.dataset.seedMode);
@@ -2419,18 +2433,21 @@ class DokkaebiLuckDefense {
       group.userData.assetTier = 'procedural-fallback';
       return group;
     };
-    const imported = this.assetPipeline.instantiateModel(PLAYER_ASSET_ID);
-    if (!imported) this.assetPipeline.recordFallback(PLAYER_ASSET_ID);
+    const heroClass = getHeroClass(this.selectedHeroClassId);
+    const assetId = heroClass.assetId || PLAYER_ASSET_ID;
+    const imported = this.assetPipeline.instantiateModel(assetId);
+    if (!imported) this.assetPipeline.recordFallback(assetId);
     const group = imported
-      ? prepareImportedGuardian(imported, 'player', 3, { color: 0x6c4592 }, RANKS[2], { lowPower: this.lowPower })
+      ? prepareImportedGuardian(imported, heroClass.id, 3, { color: heroClass.color }, RANKS[2], { lowPower: this.lowPower })
       : fallback();
+    applyHeroClassVisuals(group, heroClass.id);
     const flame = group.userData.parts?.signature || group.getObjectByName('signature') || group;
     group.traverse((object) => { if (object.isMesh) object.userData.baseY = object.position.y; });
     this.dynamicRoot.add(group);
     this.engine.geometryBudget.inspect('hero', group, 'unitTriangles');
     this.renderAssetDiagnostics();
     return {
-      group, flame, attackCooldown: 0, dashCooldown: 0, skillCooldown: 0, dashTimer: 0, stunTimer: 0,
+      group, flame, classConfig: heroClass, attackCooldown: 0, dashCooldown: 0, skillCooldown: 0, dashTimer: 0, stunTimer: 0,
       facing: new THREE.Vector3(0,0,-1),
       animation: this.animations.createController(group, group.userData.animations || [], { procedural: !(group.userData.animations?.length) })
     };
@@ -2471,6 +2488,47 @@ class DokkaebiLuckDefense {
     };
   }
 
+
+
+  loadHeroClass() {
+    try { return HERO_CLASSES[localStorage.getItem('dokkaebi-hero-class-v1')] ? localStorage.getItem('dokkaebi-hero-class-v1') : 'warrior'; }
+    catch { return 'warrior'; }
+  }
+
+  selectHeroClass(id) {
+    const selected = getHeroClass(id);
+    this.selectedHeroClassId = selected.id;
+    this.heroClass = selected;
+    try { localStorage.setItem('dokkaebi-hero-class-v1', selected.id); } catch {}
+    this.renderHeroClassSelector();
+    this.renderRunPreview();
+    this.sound.ui();
+  }
+
+  renderHeroClassSelector() {
+    const selected = getHeroClass(this.selectedHeroClassId);
+    ui.heroClassOptions.innerHTML = HERO_CLASS_ORDER.map((id) => {
+      const entry = HERO_CLASSES[id];
+      return `<button type="button" class="hero-class-option ${entry.id === selected.id ? 'active' : ''}" data-hero-class="${entry.id}" aria-pressed="${entry.id === selected.id}"><img src="${entry.icon}?v=${GAME_VERSION}" alt="" /><span><b>${entry.name}</b><small>${entry.role}</small></span></button>`;
+    }).join('');
+    ui.heroClassSummary.innerHTML = `<b>${selected.name}</b><span>${selected.description}</span><small>기본 공격 ${selected.attack.damage} · 사거리 ${selected.attack.range} · ${selected.skill.name}</small>`;
+    if (ui.skillLabel) ui.skillLabel.textContent = selected.skill.name.replace(/ .*/, '').slice(0, 5);
+  }
+
+  applyHeroClassRunModifiers() {
+    const selected = getHeroClass(this.selectedHeroClassId);
+    this.heroClass = selected;
+    this.mods.moveSpeed *= selected.modifiers.moveSpeed;
+    this.mods.heroDamage *= selected.modifiers.heroDamage;
+    this.mods.skillDamage *= selected.modifiers.skillDamage;
+    if (this.player) this.player.classConfig = selected;
+  }
+
+  refreshHeroVisualLoadout() {
+    if (!this.player?.group) return;
+    const state = applyRelicVisuals(this.player.group, this.relicHistory || []);
+    if (ui.relicLoadout) ui.relicLoadout.innerHTML = `<span>외형 장착</span><b>${state.labels.length ? state.labels.join(' · ') : `${this.heroClass?.name || '도깨비 전사'} 기본 장비`}</b>`;
+  }
 
   loadSeedMode() {
     try { return localStorage.getItem('dokkaebi-seed-mode-v1') === 'random' ? 'random' : 'daily'; }
@@ -2567,6 +2625,7 @@ class DokkaebiLuckDefense {
     this.hideModal(ui.relicModal);
     this.state = 'playing';
     this.renderRelicStrip();
+    this.refreshHeroVisualLoadout();
     this.sound.merge(Math.min(5, 2 + this.relicHistory.length));
     this.haptic([20, 24, 50]);
     this.showCombo(`${relic.icon} ${relic.cursed ? '저주 전설' : '원정 유물'} · ${relic.name}`, 1700);
@@ -2749,9 +2808,11 @@ class DokkaebiLuckDefense {
     this.firstMissionIndex = 0;
     this.firstMissionStats = { summons: 0, merges: 0, bosses: 0 };
     this.mods = this.createDefaultMods(metaTraits);
+    this.applyHeroClassRunModifiers();
     this.mods.heroDamage *= this.dailyEdict?.heroDamage || 1;
     this.mods.luckGain *= this.dailyEdict?.luckGain || 1;
     this.renderRelicStrip();
+    this.refreshHeroVisualLoadout();
     this.renderRunSeedChip();
     ui.waveTrial.classList.add('hidden');
     this.player.group.position.set(0, 0, 6.2);
@@ -2769,7 +2830,7 @@ class DokkaebiLuckDefense {
     this.updateUnitStrip();
     this.updateFirstMissionPanel();
     this.updateHUD();
-    this.showMission(`${this.activeRunMode.icon} ${this.activeRunMode.name}`, `${this.dailyEdict.icon} ${this.dailyEdict.name} · 첫 도깨비가 무료로 강림합니다.`, `${this.selectedSeedModeId === 'daily' ? 'TODAY' : 'SEEDED'} EXPEDITION · ${this.runSeed}`, 1700);
+    this.showMission(`${this.heroClass.name} · ${this.activeRunMode.name}`, `${this.dailyEdict.icon} ${this.dailyEdict.name} · ${this.heroClass.role} 출정`, `${this.selectedSeedModeId === 'daily' ? 'TODAY' : 'SEEDED'} EXPEDITION · ${this.runSeed}`, 1700);
     this.scheduleRun(() => {
       if (this.units.length === 0) this.summonUnit({ free: true, guaranteedRank: 2, starter: true });
     }, 520, { key: 'starter-summon', guard: () => this.runId === activeRunId && this.state === 'playing' });
@@ -3067,9 +3128,12 @@ class DokkaebiLuckDefense {
     if (bossType && this.spawnRemaining === 1) type = bossType;
     else {
       const roll = this.random();
-      if (wave >= 7 && roll < .22) type = 'shaman';
-      else if (wave >= 4 && roll < .43) type = 'brute';
-      else if (wave >= 2 && roll < .68) type = 'runner';
+      if (wave >= 8 && roll < .11) type = 'crow';
+      else if (wave >= 7 && roll < .22) type = 'shaman';
+      else if (wave >= 6 && roll < .34) type = 'ghost';
+      else if (wave >= 5 && roll < .46) type = 'skeleton';
+      else if (wave >= 4 && roll < .58) type = 'brute';
+      else if (wave >= 2 && roll < .76) type = 'runner';
     }
     const gate = this.gates[(this.waveSpawned + Math.floor(this.random() * 2)) % this.gates.length];
     const spawnPos = gate.position.clone();
@@ -3115,7 +3179,7 @@ class DokkaebiLuckDefense {
       type, group, hp, maxHp: hp, speed,
       damage, reward: config.reward, elite, eliteShield: elite?.shield ? hp * elite.shield : 0,
       slowTimer: 0, slowFactor: 1, attackTimer: 0, phase: rand(0, Math.PI*2), dead: false,
-      boss: !!config.boss, bossPhase: 1, specialIndex: 0, specialTimer: config.boss ? 4.5 : 0, flash: 0, shieldFlash: 0,
+      boss: !!config.boss, bossPhase: 1, specialIndex: 0, specialTimer: config.boss ? 4.5 : 0, intentDuration: config.boss ? 4.5 : 0, flash: 0, shieldFlash: 0,
       abilityTimer: type === 'runner' ? rand(2.2, 3.6) : type === 'shaman' ? rand(2.8, 4.2) : 0,
       abilityState: 'move', abilityTime: 0, telegraphMesh: null, chargeDirection: new THREE.Vector3(), chargeHitPlayer: false,
       animation: this.animations.createController(group, group.userData.animations || [], { procedural: !(group.userData.animations?.length) })
@@ -3167,6 +3231,7 @@ class DokkaebiLuckDefense {
       ? prepareImportedEnemy(root, type, config, { lowPower: this.lowPower })
       : createPremiumEnemy(type, config, { lowPower: this.lowPower });
     if (!root && assetId) this.assetPipeline.recordFallback(assetId);
+    applyEnemyCandidateVisuals(model, type);
     this.attachEnemyImpostor(model, type);
     return model;
   }
@@ -3389,15 +3454,17 @@ class DokkaebiLuckDefense {
     this.player.flame.scale.setScalar(1 + Math.sin(this.elapsed * 9) * .14);
 
     if (this.player.attackCooldown <= 0 && !stunned) {
-      const target = this.findNearestEnemy(this.player.group.position, 8.8);
+      const classConfig = this.player.classConfig || getHeroClass(this.selectedHeroClassId);
+      const attack = classConfig.attack;
+      const target = this.findNearestEnemy(this.player.group.position, attack.range);
       if (target) {
-        this.player.attackCooldown = .54;
+        this.player.attackCooldown = attack.cooldown;
         const origin = this.player.group.position.clone().add(new THREE.Vector3(.55, 1.35, 0));
         const burstDamage = this.guardianBurstTimer > 0 ? 1.48 * this.mods.burstPower : 1;
-        const damage = (13 + this.currentWave * 1.2) * this.mods.heroDamage * this.getThunderHeroMultiplier() * (this.activeOmen?.heroDamage || 1) * (this.jackpotTimer > 0 ? 1.15 : 1) * burstDamage;
+        const damage = (attack.damage + this.currentWave * 1.2) * this.mods.heroDamage * this.getThunderHeroMultiplier() * (this.activeOmen?.heroDamage || 1) * (this.jackpotTimer > 0 ? 1.15 : 1) * burstDamage;
         this.animations.trigger(this.player.animation, 'attack', .24);
-        this.fireProjectile({ kind: 'hero', type: 'hero', origin, target, damage, speed: 20, color: 0x69edff, radius: .16 });
-        this.sound.shoot('hero');
+        this.fireProjectile({ kind: 'hero', type: classConfig.id === 'archer' ? 'wind' : 'hero', damageSource: 'hero', origin, target, damage, speed: attack.speed, color: classConfig.color, radius: attack.radius, pierce: attack.pierce || 0, splash: attack.splash || 0 });
+        this.sound.shoot(classConfig.id === 'archer' ? 'wind' : 'hero');
       }
     }
   }
@@ -3419,20 +3486,37 @@ class DokkaebiLuckDefense {
 
   useHeroSkill() {
     if (this.state !== 'playing' || this.player.skillCooldown > 0) return;
-    this.player.skillCooldown = 13 * this.mods.skillCooldown;
+    const classConfig = this.player.classConfig || getHeroClass(this.selectedHeroClassId);
+    const skill = classConfig.skill;
+    this.player.skillCooldown = skill.cooldown * this.mods.skillCooldown;
     this.animations.trigger(this.player.animation, 'skill', .52);
     this.sound.skill();
     this.haptic([25, 25, 65]);
     const center = this.player.group.position.clone();
     const burstDamage = this.guardianBurstTimer > 0 ? 1.45 * this.mods.burstPower : 1;
-    const damage = (72 + this.currentWave*10) * this.mods.heroDamage * this.mods.skillDamage * (this.activeOmen?.heroDamage || 1) * (this.jackpotTimer > 0 ? 1.15 : 1) * burstDamage;
-    this.spawnSkillEffect(center);
-    this.enemies.slice().forEach((enemy) => {
-      const distance = enemy.group.position.distanceTo(center);
-      if (distance <= 8.2) this.damageEnemy(enemy,damage*(1-distance/13),'skill');
-    });
-    this.shake = Math.max(this.shake,.6);
-    this.showCombo('도깨비불 난무!',1000);
+    const damage = (skill.damage + this.currentWave * 10) * this.mods.heroDamage * this.mods.skillDamage * (this.activeOmen?.heroDamage || 1) * (this.jackpotTimer > 0 ? 1.15 : 1) * burstDamage;
+
+    if (classConfig.id === 'archer') {
+      const targets = this.enemies.filter((enemy) => !enemy.dead && enemy.group.position.distanceTo(center) <= skill.radius).sort((a, b) => a.group.position.distanceTo(center) - b.group.position.distanceTo(center)).slice(0, 6);
+      targets.forEach((target, index) => {
+        const origin = center.clone().add(new THREE.Vector3((index - 2.5) * .08, 1.35, 0));
+        this.fireProjectile({ kind: 'hero-skill', type: 'wind', damageSource: 'skill', origin, target, damage: damage * .72, speed: 34, color: classConfig.color, radius: .17, pierce: 2 });
+      });
+      this.spawnRing(center, classConfig.color, 3.2);
+    } else {
+      this.spawnSkillEffect(center);
+      this.enemies.slice().forEach((enemy) => {
+        const distance = enemy.group.position.distanceTo(center);
+        if (distance > skill.radius) return;
+        this.damageEnemy(enemy, damage * (1 - distance / (skill.radius + 5)), 'skill');
+        if (classConfig.id === 'mage') {
+          enemy.slowTimer = Math.max(enemy.slowTimer, skill.slow || 2.4);
+          enemy.slowFactor = Math.min(enemy.slowFactor, .5);
+        }
+      });
+    }
+    this.shake = Math.max(this.shake, .6);
+    this.showCombo(`${skill.name}!`, 1000);
   }
 
   updateUnits(dt) {
@@ -3677,7 +3761,7 @@ class DokkaebiLuckDefense {
       damage*=1+projectile.owner.streak*.07;
     }
     if (projectile.execute && target.hp/target.maxHp<projectile.execute && !target.boss) damage=target.hp+1;
-    this.damageEnemy(target,damage,projectile.type,projectile.mesh.position,projectile.owner);
+    this.damageEnemy(target,damage,projectile.damageSource || projectile.type,projectile.mesh.position,projectile.owner);
     if (projectile.slow) { target.slowTimer=Math.max(target.slowTimer,projectile.slow);target.slowFactor=.58; }
     if (projectile.splash) {
       this.enemies.slice().forEach((enemy)=>{
@@ -4100,6 +4184,7 @@ class DokkaebiLuckDefense {
     }
     enemy.specialIndex = index + 1;
     enemy.specialTimer = this.getBossSpecialDelay(enemy);
+    enemy.intentDuration = enemy.specialTimer;
   }
 
   checkBossPhase(enemy) {
@@ -4132,6 +4217,7 @@ class DokkaebiLuckDefense {
     applyPremiumBossPhase(enemy.group, enemy.type, phase);
     enemy.specialIndex = 0;
     enemy.specialTimer = .9;
+    enemy.intentDuration = .9;
     enemy.group.scale.multiplyScalar(1.055);
     enemy.group.userData.body.material.emissive.set(color);
     enemy.group.userData.body.material.emissiveIntensity = .75;
@@ -4877,12 +4963,21 @@ class DokkaebiLuckDefense {
       return;
     }
     const percent = clamp(boss.hp / boss.maxHp, 0, 1);
+    const intentName = this.getBossIntentName(boss);
+    const hudState = getBossHudState(boss, intentName);
     ui.bossHealthName.textContent = ENEMY_TYPES[boss.type].name;
     ui.bossHealthValue.textContent = `${Math.ceil(percent * 100)}%`;
     ui.bossHealthProgress.style.width = `${percent * 100}%`;
-    ui.bossPhase.textContent = `PHASE ${boss.bossPhase || 1}`;
-    ui.bossIntentLabel.textContent = `다음 공격 · ${this.getBossIntentName(boss)}`;
-    ui.bossIntentTime.textContent = `${Math.max(0, boss.specialTimer).toFixed(1)}s`;
+    ui.bossPhase.textContent = `PHASE ${hudState.phase}`;
+    ui.bossIntentLabel.textContent = `다음 공격 · ${intentName}`;
+    ui.bossIntentType.textContent = `${hudState.type.label} 패턴`;
+    ui.bossIntentTime.textContent = `${hudState.timer.toFixed(1)}s`;
+    ui.bossIntentProgress.style.width = `${(1 - hudState.progress) * 100}%`;
+    ui.bossIntent.style.setProperty('--boss-intent-color', hudState.type.color);
+    ui.bossIntent.dataset.urgency = hudState.urgency;
+    const iconUrl = new URL(hudState.type.icon, document.baseURI);
+    iconUrl.searchParams.set('v', GAME_VERSION);
+    ui.bossIntentIcon.src = iconUrl.href;
     ui.bossHealth.classList.remove('hidden');
     document.body.classList.add('boss-active');
   }

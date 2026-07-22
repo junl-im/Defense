@@ -1,7 +1,8 @@
 import { CHARACTER_ASSET_TARGETS, ENVIRONMENT_ASSET_TARGETS, EFFECT_ASSET_TARGETS, IMPOSTOR_SPEC } from '../asset-specs.js';
 import { getAssetApproval } from './asset-quality.js';
+import { HERO_CLASS_ASSET_IDS } from '../hero-classes.js';
 
-const ASSET_REVISION = '3.8.0';
+const ASSET_REVISION = '3.9.0';
 const keyartBaseUrl = new URL('../assets/moon-market-keyart.webp', import.meta.url);
 keyartBaseUrl.searchParams.set('v', ASSET_REVISION);
 const keyartUrl = keyartBaseUrl.href;
@@ -9,23 +10,25 @@ const runtimeBaseUrl = typeof document !== 'undefined' ? new URL('./', document.
 const publicAsset = (path) => `${import.meta.env?.BASE_URL || runtimeBaseUrl}assets/${path}?v=${ASSET_REVISION}`;
 const groundTextureUrl = publicAsset('textures/moon-market-ground-v1.webp');
 const moonFxAtlasUrl = publicAsset('effects/moon-fx-atlas-v1.webp');
-export const PLAYER_ASSET_ID = 'player-dokkaebi-warrior-golden-v1';
+export { HERO_CLASS_ASSET_IDS };
+export const PLAYER_ASSET_ID = HERO_CLASS_ASSET_IDS.warrior;
 export const GUARDIAN_ASSET_IDS = Object.freeze({
   ember: 'guardian-ember-sd-toon', frost: 'guardian-frost-sd-toon', wind: 'guardian-wind-sd-toon',
   stone: 'guardian-stone-sd-toon', bell: 'guardian-bell-sd-toon', thunder: 'guardian-thunder-sd-toon'
 });
 export const MONSTER_ASSET_IDS = Object.freeze({
-  imp: 'monster-imp-sd-toon', runner: 'monster-runner-sd-toon', brute: 'monster-brute-sd-toon', shaman: 'monster-shaman-sd-toon'
+  imp: 'monster-imp-sd-toon', runner: 'monster-runner-sd-toon', brute: 'monster-brute-sd-toon', shaman: 'monster-shaman-sd-toon',
+  ghost: 'monster-ghost-candidate-v1', skeleton: 'monster-skeleton-candidate-v1', crow: 'monster-crow-candidate-v1'
 });
 export const BOSS_ASSET_IDS = Object.freeze({
   tiger: 'boss-tiger-sd-toon', serpent: 'boss-serpent-sd-toon', king: 'boss-king-sd-toon'
 });
 
 const sdToonModelUrls = Object.freeze({
-  [PLAYER_ASSET_ID]: publicAsset('models/player-dokkaebi-warrior-golden-v1.glb'),
-  ...Object.fromEntries(Object.entries(GUARDIAN_ASSET_IDS).map(([type, id]) => [id, publicAsset(`models/guardian-${type}-sd-toon.glb`)])),
-  ...Object.fromEntries(Object.entries(MONSTER_ASSET_IDS).map(([type, id]) => [id, publicAsset(`models/monster-${type}-sd-toon.glb`)])),
-  ...Object.fromEntries(Object.entries(BOSS_ASSET_IDS).map(([type, id]) => [id, publicAsset(`models/boss-${type}-sd-toon.glb`)]))
+  ...Object.fromEntries(Object.values(HERO_CLASS_ASSET_IDS).map((id) => [id, publicAsset(`models/${id}.glb`)])),
+  ...Object.fromEntries(Object.values(GUARDIAN_ASSET_IDS).map((id) => [id, publicAsset(`models/${id}.glb`)])),
+  ...Object.fromEntries(Object.values(MONSTER_ASSET_IDS).map((id) => [id, publicAsset(`models/${id}.glb`)])),
+  ...Object.fromEntries(Object.values(BOSS_ASSET_IDS).map((id) => [id, publicAsset(`models/${id}.glb`)]))
 });
 const impostorUrls = Object.freeze({
   'ember-idle': publicAsset('impostors/guardian/ember-idle-11.webp'),
@@ -102,6 +105,7 @@ const makeEffectSlot = (id) => Object.freeze({
 
 export const MODEL_ASSET_SLOTS = Object.freeze({
   player: makeCharacterSlot('player', 'guardian'),
+  heroClasses: Object.freeze(Object.fromEntries(Object.entries(HERO_CLASS_ASSET_IDS).map(([id, assetId]) => [id, makeCharacterSlot(assetId, 'guardian')]))),
   guardians: Object.freeze({
     ember: makeCharacterSlot('guardian-ember', 'guardian'),
     frost: makeCharacterSlot('guardian-frost', 'guardian'),
@@ -114,7 +118,10 @@ export const MODEL_ASSET_SLOTS = Object.freeze({
     imp: makeCharacterSlot('monster-imp', 'monster'),
     runner: makeCharacterSlot('monster-runner', 'monster'),
     brute: makeCharacterSlot('monster-brute', 'monster'),
-    shaman: makeCharacterSlot('monster-shaman', 'monster')
+    shaman: makeCharacterSlot('monster-shaman', 'monster'),
+    ghost: makeCharacterSlot('monster-ghost', 'monster'),
+    skeleton: makeCharacterSlot('monster-skeleton', 'monster'),
+    crow: makeCharacterSlot('monster-crow', 'monster')
   }),
   bosses: Object.freeze({
     tiger: makeCharacterSlot('boss-tiger', 'boss'),
@@ -144,14 +151,14 @@ export const MODEL_ASSET_SLOTS = Object.freeze({
 });
 
 export const ASSET_PRODUCTION_SUMMARY = Object.freeze({
-  characterModels: 14,
+  characterModels: 19,
   environmentSets: ENVIRONMENT_ASSET_TARGETS.primarySetCount,
   effectFamilies: 8,
   farLodDirections: IMPOSTOR_SPEC.directions,
   formats: Object.freeze(['glb', 'ktx2', 'webp', 'png']),
-  integratedPrototypeAssets: 23,
+  integratedPrototypeAssets: 37,
   productionApprovedCharacterAssets: 0,
-  artReviewCharacterAssets: 3,
+  artReviewCharacterAssets: 8,
   prototypeCharacterAssets: 11,
   styleLockId: 'DD-AAA-CASUAL-SD-PBR-3.0'
 });

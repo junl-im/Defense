@@ -54,7 +54,7 @@ export const IMPOSTOR_SPEC = Object.freeze({
 
 export const CHARACTER_ASSET_TARGETS = Object.freeze({
   guardian: Object.freeze({ count: 6, requiredAnimations: CHARACTER_ANIMATION_STANDARD.hero, maxBones: 48, maxMaterials: 4, productionTriangles: Object.freeze([6000, 10000]), prototypeMaxTriangles: 5600, midTriangles: 4500, textureSize: 1024, headsTall: SD_CHARACTER_STANDARD.targetHeadsTall }),
-  monster: Object.freeze({ count: 4, requiredAnimations: CHARACTER_ANIMATION_STANDARD.monster, maxBones: 40, maxMaterials: 4, productionTriangles: Object.freeze([5000, 9000]), prototypeMaxTriangles: 3200, midTriangles: 3600, textureSize: 1024, headsTall: SD_CHARACTER_STANDARD.targetHeadsTall }),
+  monster: Object.freeze({ count: 7, requiredAnimations: CHARACTER_ANIMATION_STANDARD.monster, maxBones: 40, maxMaterials: 4, productionTriangles: Object.freeze([5000, 9000]), prototypeMaxTriangles: 3200, midTriangles: 3600, textureSize: 1024, headsTall: SD_CHARACTER_STANDARD.targetHeadsTall }),
   boss: Object.freeze({ count: 3, requiredAnimations: CHARACTER_ANIMATION_STANDARD.boss, maxBones: 72, maxMaterials: 5, productionTriangles: Object.freeze([10000, 18000]), prototypeMaxTriangles: 9000, midTriangles: 8000, textureSize: 2048, headsTall: 2.4 })
 });
 

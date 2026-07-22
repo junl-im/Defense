@@ -46,6 +46,9 @@ const ENEMY_TYPES = {
   runner: { name: '두억 질주꾼', hp: 30, speed: 4.25, damage: 4, reward: 7, color: 0xff8c5a, scale: .66 },
   brute: { name: '돌갑옷 귀수', hp: 118, speed: 1.65, damage: 11, reward: 13, color: 0x78628f, scale: 1.23 },
   shaman: { name: '저주 무당', hp: 72, speed: 2.15, damage: 7, reward: 11, color: 0x4f9eb2, scale: .95 },
+  ghost: { name: '달그림자 귀신', hp: 58, speed: 2.62, damage: 6, reward: 9, color: 0x72d9ff, scale: .82 },
+  skeleton: { name: '백골 무사', hp: 92, speed: 1.92, damage: 10, reward: 12, color: 0xf1dfbf, scale: 1.02 },
+  crow: { name: '먹구름 까마귀', hp: 42, speed: 3.48, damage: 5, reward: 8, color: 0xa65ce8, scale: .72 },
   tiger: { name: '저승 호랑이', hp: 920, speed: 1.58, damage: 21, reward: 90, color: 0xff5578, scale: 2.02, boss: true },
   serpent: { name: '청월 이무기', hp: 1540, speed: 1.42, damage: 28, reward: 150, color: 0x45d8b4, scale: 2.3, boss: true },
   king: { name: '백귀 야행왕', hp: 2380, speed: 1.35, damage: 35, reward: 230, color: 0x7b3eff, scale: 2.58, boss: true }

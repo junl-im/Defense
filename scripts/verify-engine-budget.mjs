@@ -7,7 +7,7 @@ const engineConfig = readFileSync(resolve(root, 'src/engine/engine-config.js'), 
 const premium = readFileSync(resolve(root, 'src/premium-assets.js'), 'utf8');
 const failures = [];
 const limits = { character: 10000, monster: 3200, boss: 9000 };
-const reviewMonsterIds = new Set(['monster-brute-sd-toon', 'monster-shaman-sd-toon']);
+const reviewMonsterIds = new Set(['monster-brute-sd-toon', 'monster-shaman-sd-toon', 'monster-ghost-candidate-v1', 'monster-skeleton-candidate-v1', 'monster-crow-candidate-v1']);
 for (const entry of audit.entries) {
   const limit = entry.category === 'monster' && reviewMonsterIds.has(entry.id) ? 9000 : limits[entry.category];
   if (!limit || entry.metrics.triangles > limit) failures.push(`${entry.id}: ${entry.metrics.triangles} > ${limit}`);

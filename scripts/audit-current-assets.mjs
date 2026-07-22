@@ -79,10 +79,10 @@ const summary = {
   missingAnimations: entries.filter((entry) => !entry.checks.animationClips).length,
   missingTextureSets: entries.filter((entry) => !entry.checks.handPaintedTextures).length
 };
-const document = { schemaVersion: 2, gameVersion: '3.8.0', styleLockId: ART_STYLE_LOCK_ID, summary, entries };
+const document = { schemaVersion: 2, gameVersion: '3.9.0', styleLockId: ART_STYLE_LOCK_ID, summary, entries };
 const jsonText = `${JSON.stringify(document, null, 2)}\n`;
 const rows = entries.map((entry) => `| ${entry.id} | ${entry.metrics.triangles} | ${entry.metrics.skins} | ${entry.metrics.animations.length} | ${entry.metrics.textures} | ${entry.declaredStatus} | ${entry.technicalPassed ? 'PASS' : 'FAIL'} | ${entry.productionPassed ? 'PASS' : 'WAIT'} |`).join('\n');
-const mdText = `# 현재 전투 에셋 제작 품질 감사 — v3.8.0
+const mdText = `# 현재 전투 에셋 제작 품질 감사 — v3.9.0
 
 - 스타일 잠금: \`${ART_STYLE_LOCK_ID}\`
 - 검사 모델: ${summary.total}
@@ -110,7 +110,7 @@ ${rows}
 if (checkOnly) {
   if (!existsSync(jsonOutput) || !existsSync(mdOutput)) throw new Error('Current asset audit outputs missing');
   if (readFileSync(jsonOutput, 'utf8') !== jsonText || readFileSync(mdOutput, 'utf8') !== mdText) throw new Error('Current asset audit is stale. Run npm run audit:art');
-  if (summary.productionApproved !== 0 || summary.prototypes !== 11 || summary.artReview !== 3 || summary.technicalCandidates !== 3) throw new Error('Asset review quarantine mismatch');
+  if (summary.productionApproved !== 0 || summary.prototypes !== 11 || summary.artReview !== 8 || summary.technicalCandidates !== 8) throw new Error('Asset review quarantine mismatch');
   console.log(`PASS current asset audit: technical ${summary.technicalCandidates}, review ${summary.artReview}, prototypes ${summary.prototypes}`);
 } else {
   writeFileSync(jsonOutput, jsonText);

@@ -1,9 +1,9 @@
 {
-  "schemaVersion": 9,
-  "gameVersion": "3.8.0",
-  "engineVersion": "2.8.0",
+  "schemaVersion": 10,
+  "gameVersion": "3.9.0",
+  "engineVersion": "2.9.0",
   "artDirection": "aaa-casual-mobile-sd-stylized-pbr-korean-folklore",
-  "productionStage": "ip-production-foundation-1130-planned-assets",
+  "productionStage": "p0-runtime-class-enemy-expansion-art-review",
   "impostorDirections": 11,
   "characters": {
     "guardians": [
@@ -18,12 +18,20 @@
       "imp",
       "runner",
       "brute",
-      "shaman"
+      "shaman",
+      "ghost",
+      "skeleton",
+      "crow"
     ],
     "bosses": [
       "tiger",
       "serpent",
       "king"
+    ],
+    "heroes": [
+      "warrior",
+      "archer",
+      "mage"
     ]
   },
   "environment": [
@@ -260,9 +268,9 @@
     "rotating-energy-layer"
   ],
   "assetLimitations": [
-    "현재 전투 GLB 14종은 개발용 프로토타입이며 AAA 제작 승인품이 아니다.",
-    "현재 GLB에는 Skin, 필수 AnimationClip, 손그림 BaseColor/Normal/ORM 세트가 없다.",
-    "production-approved 상태는 자동 검사와 실제 모바일 아트 리뷰를 모두 통과한 자산에만 부여한다."
+    "전투 GLB 19종 중 기술 리뷰 후보는 8종, 개발용 프로토타입은 11종이며 최종 제작 승인품은 0종이다.",
+    "궁수·법사·귀신·해골·까마귀 후보는 공용 리그 메시에서 파생했으며 런타임 실루엣 키트는 임시 표현이다.",
+    "production-approved 상태는 자동 기술 검사와 실제 모바일 아트 디렉터 리뷰를 모두 통과한 자산에만 부여한다."
   ],
   "authoredImpostorDirections": 5,
   "authoredAnglesDegrees": [
@@ -296,51 +304,11 @@
   },
   "integratedSdToonModels": [
     {
-      "id": "player-dokkaebi-warrior-golden-v1",
-      "path": "public/assets/models/player-dokkaebi-warrior-golden-v1.glb",
-      "triangles": 9572,
-      "budget": 10000,
-      "category": "player",
-      "runtime": [
-        "combat",
-        "codex",
-        "golden-sample-review"
-      ],
-      "animation": "embedded-skeletal-7-clips",
-      "renderStyle": "art-review-stylized-pbr",
-      "proportionStandard": "2.3-heads",
-      "diagnostics": "asset-pipeline-status-and-golden-review",
-      "status": "art-review",
-      "technicalReady": true,
-      "productionApproved": false,
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
-      "skinCount": 1,
-      "animationClips": [
-        "Idle",
-        "Walk",
-        "Run",
-        "Attack",
-        "Skill",
-        "Hit",
-        "Death"
-      ],
-      "textureMaps": [
-        "BaseColor",
-        "Normal",
-        "ORM",
-        "Emissive"
-      ],
-      "sockets": [
-        "WeaponSocket",
-        "AccessorySocket"
-      ]
-    },
-    {
       "id": "guardian-ember-sd-toon",
       "path": "public/assets/models/guardian-ember-sd-toon.glb",
       "triangles": 4142,
-      "budget": 5600,
-      "category": "guardian",
+      "budget": 10000,
+      "category": "character",
       "runtime": [
         "combat",
         "codex"
@@ -357,8 +325,8 @@
       "id": "guardian-frost-sd-toon",
       "path": "public/assets/models/guardian-frost-sd-toon.glb",
       "triangles": 4164,
-      "budget": 5600,
-      "category": "guardian",
+      "budget": 10000,
+      "category": "character",
       "runtime": [
         "combat",
         "codex"
@@ -375,8 +343,8 @@
       "id": "guardian-wind-sd-toon",
       "path": "public/assets/models/guardian-wind-sd-toon.glb",
       "triangles": 4144,
-      "budget": 5600,
-      "category": "guardian",
+      "budget": 10000,
+      "category": "character",
       "runtime": [
         "combat",
         "codex"
@@ -393,8 +361,8 @@
       "id": "guardian-stone-sd-toon",
       "path": "public/assets/models/guardian-stone-sd-toon.glb",
       "triangles": 3964,
-      "budget": 5600,
-      "category": "guardian",
+      "budget": 10000,
+      "category": "character",
       "runtime": [
         "combat",
         "codex"
@@ -411,8 +379,8 @@
       "id": "guardian-bell-sd-toon",
       "path": "public/assets/models/guardian-bell-sd-toon.glb",
       "triangles": 4156,
-      "budget": 5600,
-      "category": "guardian",
+      "budget": 10000,
+      "category": "character",
       "runtime": [
         "combat",
         "codex"
@@ -429,8 +397,8 @@
       "id": "guardian-thunder-sd-toon",
       "path": "public/assets/models/guardian-thunder-sd-toon.glb",
       "triangles": 4052,
-      "budget": 5600,
-      "category": "guardian",
+      "budget": 10000,
+      "category": "character",
       "runtime": [
         "combat",
         "codex"
@@ -478,46 +446,6 @@
       "status": "prototype-placeholder",
       "productionApproved": false,
       "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0"
-    },
-    {
-      "id": "monster-brute-sd-toon",
-      "path": "public/assets/models/monster-brute-sd-toon.glb",
-      "triangles": 8396,
-      "budget": 9000,
-      "category": "monster",
-      "runtime": [
-        "combat",
-        "codex"
-      ],
-      "animation": "skeletal-7-clips",
-      "renderStyle": "authored-stylized-pbr-review",
-      "proportionStandard": "2.3-heads",
-      "diagnostics": "asset-pipeline-status",
-      "status": "art-review",
-      "productionApproved": false,
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
-      "technicalReady": true,
-      "rigVersion": "DOKKAEBI-HUMANOID-RIG-1"
-    },
-    {
-      "id": "monster-shaman-sd-toon",
-      "path": "public/assets/models/monster-shaman-sd-toon.glb",
-      "triangles": 7712,
-      "budget": 9000,
-      "category": "monster",
-      "runtime": [
-        "combat",
-        "codex"
-      ],
-      "animation": "skeletal-7-clips",
-      "renderStyle": "authored-stylized-pbr-review",
-      "proportionStandard": "2.3-heads",
-      "diagnostics": "asset-pipeline-status",
-      "status": "art-review",
-      "productionApproved": false,
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
-      "technicalReady": true,
-      "rigVersion": "DOKKAEBI-HUMANOID-RIG-1"
     },
     {
       "id": "boss-tiger-sd-toon",
@@ -572,6 +500,166 @@
       "status": "prototype-placeholder",
       "productionApproved": false,
       "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0"
+    },
+    {
+      "id": "player-dokkaebi-warrior-golden-v1",
+      "path": "public/assets/models/player-dokkaebi-warrior-golden-v1.glb",
+      "triangles": 9572,
+      "budget": 10000,
+      "category": "character",
+      "runtime": [
+        "combat",
+        "codex"
+      ],
+      "animation": "skeletal-7-clips",
+      "renderStyle": "authored-stylized-pbr-review",
+      "proportionStandard": "2.3-heads",
+      "diagnostics": "asset-pipeline-status",
+      "status": "art-review",
+      "productionApproved": false,
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "technicalReady": true,
+      "rigVersion": "DOKKAEBI-HUMANOID-RIG-1"
+    },
+    {
+      "id": "player-dokkaebi-archer-candidate-v1",
+      "path": "public/assets/models/player-dokkaebi-archer-candidate-v1.glb",
+      "triangles": 9572,
+      "budget": 10000,
+      "category": "character",
+      "runtime": [
+        "combat",
+        "codex"
+      ],
+      "animation": "skeletal-7-clips",
+      "renderStyle": "authored-stylized-pbr-review",
+      "proportionStandard": "2.3-heads",
+      "diagnostics": "asset-pipeline-status",
+      "status": "art-review",
+      "productionApproved": false,
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "technicalReady": true,
+      "rigVersion": "DOKKAEBI-HUMANOID-RIG-1"
+    },
+    {
+      "id": "player-dokkaebi-mage-candidate-v1",
+      "path": "public/assets/models/player-dokkaebi-mage-candidate-v1.glb",
+      "triangles": 9572,
+      "budget": 10000,
+      "category": "character",
+      "runtime": [
+        "combat",
+        "codex"
+      ],
+      "animation": "skeletal-7-clips",
+      "renderStyle": "authored-stylized-pbr-review",
+      "proportionStandard": "2.3-heads",
+      "diagnostics": "asset-pipeline-status",
+      "status": "art-review",
+      "productionApproved": false,
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "technicalReady": true,
+      "rigVersion": "DOKKAEBI-HUMANOID-RIG-1"
+    },
+    {
+      "id": "monster-brute-sd-toon",
+      "path": "public/assets/models/monster-brute-sd-toon.glb",
+      "triangles": 8396,
+      "budget": 9000,
+      "category": "monster",
+      "runtime": [
+        "combat",
+        "codex"
+      ],
+      "animation": "skeletal-7-clips",
+      "renderStyle": "authored-stylized-pbr-review",
+      "proportionStandard": "2.3-heads",
+      "diagnostics": "asset-pipeline-status",
+      "status": "art-review",
+      "productionApproved": false,
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "technicalReady": true,
+      "rigVersion": "DOKKAEBI-HUMANOID-RIG-1"
+    },
+    {
+      "id": "monster-shaman-sd-toon",
+      "path": "public/assets/models/monster-shaman-sd-toon.glb",
+      "triangles": 7712,
+      "budget": 9000,
+      "category": "monster",
+      "runtime": [
+        "combat",
+        "codex"
+      ],
+      "animation": "skeletal-7-clips",
+      "renderStyle": "authored-stylized-pbr-review",
+      "proportionStandard": "2.3-heads",
+      "diagnostics": "asset-pipeline-status",
+      "status": "art-review",
+      "productionApproved": false,
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "technicalReady": true,
+      "rigVersion": "DOKKAEBI-HUMANOID-RIG-1"
+    },
+    {
+      "id": "monster-ghost-candidate-v1",
+      "path": "public/assets/models/monster-ghost-candidate-v1.glb",
+      "triangles": 7712,
+      "budget": 9000,
+      "category": "monster",
+      "runtime": [
+        "combat",
+        "codex"
+      ],
+      "animation": "skeletal-7-clips",
+      "renderStyle": "authored-stylized-pbr-review",
+      "proportionStandard": "2.3-heads",
+      "diagnostics": "asset-pipeline-status",
+      "status": "art-review",
+      "productionApproved": false,
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "technicalReady": true,
+      "rigVersion": "DOKKAEBI-HUMANOID-RIG-1"
+    },
+    {
+      "id": "monster-skeleton-candidate-v1",
+      "path": "public/assets/models/monster-skeleton-candidate-v1.glb",
+      "triangles": 8396,
+      "budget": 9000,
+      "category": "monster",
+      "runtime": [
+        "combat",
+        "codex"
+      ],
+      "animation": "skeletal-7-clips",
+      "renderStyle": "authored-stylized-pbr-review",
+      "proportionStandard": "2.3-heads",
+      "diagnostics": "asset-pipeline-status",
+      "status": "art-review",
+      "productionApproved": false,
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "technicalReady": true,
+      "rigVersion": "DOKKAEBI-HUMANOID-RIG-1"
+    },
+    {
+      "id": "monster-crow-candidate-v1",
+      "path": "public/assets/models/monster-crow-candidate-v1.glb",
+      "triangles": 7712,
+      "budget": 9000,
+      "category": "monster",
+      "runtime": [
+        "combat",
+        "codex"
+      ],
+      "animation": "skeletal-7-clips",
+      "renderStyle": "authored-stylized-pbr-review",
+      "proportionStandard": "2.3-heads",
+      "diagnostics": "asset-pipeline-status",
+      "status": "art-review",
+      "productionApproved": false,
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "technicalReady": true,
+      "rigVersion": "DOKKAEBI-HUMANOID-RIG-1"
     }
   ],
   "promptCatalog": {
@@ -603,6 +691,17 @@
     "starterClasses": 11,
     "stages": 7,
     "coreDocuments": 5,
+    "productionApproved": 0
+  },
+  "p0RuntimeExpansion": {
+    "version": "3.9.0",
+    "heroClasses": 3,
+    "newEnemyCandidates": 3,
+    "combatGlbCount": 19,
+    "rasterUiIcons": 9,
+    "codexEntries": 32,
+    "weaknessStudies": 10,
+    "lootEntries": 13,
     "productionApproved": 0
   }
 }

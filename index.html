@@ -53,6 +53,11 @@
             <div id="run-mode-options" class="run-mode-options"></div>
             <div id="run-mode-summary" class="run-mode-summary"></div>
           </div>
+          <div class="hero-class-selector" aria-label="대장 깨비 직업 선택">
+            <div class="hero-class-heading"><span>대장 깨비</span><small>공용 리그 P0 후보</small></div>
+            <div id="hero-class-options" class="hero-class-options"></div>
+            <div id="hero-class-summary" class="hero-class-summary"></div>
+          </div>
           <div class="seed-mode-selector" aria-label="원정 시드 방식 선택">
             <div id="seed-mode-options" class="seed-mode-options"></div>
             <div id="daily-edict-preview" class="daily-edict-preview"></div>
@@ -65,7 +70,7 @@
             <button id="meta-btn" class="btn ghost meta-entry"><span>혼불 <b id="title-shards">0</b></span>수호자 성장</button>
           </div>
           <button id="controls-btn" class="title-settings-btn" type="button" aria-label="카메라와 조작 설정" title="카메라와 조작 설정"><span aria-hidden="true">⚙️</span></button>
-          <small class="title-version" aria-label="게임 버전 3.8.0">v3.8.0</small>
+          <small class="title-version" aria-label="게임 버전 3.9.0">v3.9.0</small>
         </div>
       </section>
 
@@ -101,10 +106,12 @@
       <div id="boss-health" class="boss-health hidden" aria-live="polite">
         <div class="boss-health-head"><span id="boss-health-name">저승 호랑이</span><b id="boss-health-value">100%</b></div>
         <div class="boss-health-track"><span id="boss-health-progress"></span></div>
-        <div id="boss-intent" class="boss-intent">
+        <div id="boss-intent" class="boss-intent" data-urgency="stable">
+          <img id="boss-intent-icon" src="./assets/ui/v390/boss-strike.png" alt="" />
           <span id="boss-phase">PHASE 1</span>
-          <b id="boss-intent-label">다음 공격 · 충격파</b>
+          <div class="boss-intent-copy"><small id="boss-intent-type">직격 패턴</small><b id="boss-intent-label">다음 공격 · 충격파</b></div>
           <em id="boss-intent-time">4.5s</em>
+          <div class="boss-intent-track" aria-hidden="true"><span id="boss-intent-progress"></span></div>
         </div>
       </div>
 
@@ -133,8 +140,9 @@
       </aside>
 
       <aside id="relic-panel" class="relic-panel hidden" aria-label="보유 원정 유물">
-        <div class="relic-panel-head"><span>원정 유물</span><b id="relic-count">0/4</b></div>
+        <div class="relic-panel-head"><span>원정 유물</span><b id="relic-count">0/5</b></div>
         <div id="relic-strip" class="relic-strip"></div>
+        <div id="relic-loadout" class="relic-loadout"><span>외형 장착</span><b>기본 장비</b></div>
       </aside>
 
       <div id="jackpot-rush" class="jackpot-rush hidden" aria-live="assertive">
@@ -177,7 +185,7 @@
 
       <div id="action-dock" class="action-dock hidden">
         <button id="dash-btn" class="skill-btn action-dash"><i class="action-glyph" aria-hidden="true">➜</i><span>질주</span><b id="dash-cooldown">준비</b></button>
-        <button id="skill-btn" class="skill-btn ultimate action-skill"><i class="action-glyph" aria-hidden="true">✦</i><span>도깨비불</span><b id="skill-cooldown">준비</b></button>
+        <button id="skill-btn" class="skill-btn ultimate action-skill"><i class="action-glyph" aria-hidden="true">✦</i><span id="skill-label">도깨비불</span><b id="skill-cooldown">준비</b></button>
         <button id="burst-btn" class="skill-btn spirit action-burst" disabled><i class="action-glyph" aria-hidden="true">☯</i><span>수호신</span><b id="burst-state">혼불 충전</b></button>
         <button id="summon-btn" class="summon-btn">
           <span class="summon-glow"></span>
@@ -428,7 +436,7 @@
     </div>
     <script>
       (() => {
-        const VERSION = '3.8.0';
+        const VERSION = '3.9.0';
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
         const retryButton = document.getElementById('boot-retry-btn');

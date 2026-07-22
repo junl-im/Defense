@@ -33,7 +33,7 @@ if (missingIds.length) fail(`index.html에 없는 DOM ID: ${missingIds.join(', '
 else pass(`${queriedIds.length}개 DOM ID 연결`);
 
 const expectedGameVersion = pkg.version;
-const expectedEngineVersion = '2.8.0';
+const expectedEngineVersion = '2.9.0';
 pass(`package version ${expectedGameVersion}`);
 
 for (const path of ['.env.production', '.firebaserc', '.github/workflows/deploy.yml', 'README.md', 'PROJECT_HANDOFF.md']) {
@@ -181,8 +181,8 @@ else fail('v2.2 텍스처 런타임 연결 누락');
 if (main.includes('attachUnitImpostor(unit)') && main.includes('updateUnitImpostor(unit)') && main.includes('new DirectionalImpostorSelector') && main.includes("attachUnitImpostor(unit)") && main.includes("attachEnemyImpostor(group, type)") && main.includes("setDirectionalImpostorState")) pass('불씨 깨비·장난 요괴 상태별 11방향 원거리 LOD 연결');
 else fail('v2.3 상태별 실전 임포스터 LOD 연결 누락');
 
-if (main.includes('PLAYER_ASSET_ID') && main.includes('GUARDIAN_ASSET_IDS[type]') && main.includes('MONSTER_ASSET_IDS[type]') && main.includes('BOSS_ASSET_IDS[type]') && main.includes('renderAssetDiagnostics()') && htmlIds.has('asset-diagnostics-list') && read('src/premium-assets.js').includes('prepareImportedGuardian')) pass('전투 GLB 14종과 품질·적용 진단 연결');
-else fail('전투 GLB 14종 또는 품질 진단 누락');
+if (main.includes('PLAYER_ASSET_ID') && main.includes('GUARDIAN_ASSET_IDS[type]') && main.includes('MONSTER_ASSET_IDS[type]') && main.includes('BOSS_ASSET_IDS[type]') && main.includes('renderAssetDiagnostics()') && htmlIds.has('asset-diagnostics-list') && read('src/premium-assets.js').includes('prepareImportedGuardian')) pass('전투 GLB 19종과 품질·적용 진단 연결');
+else fail('전투 GLB 19종 또는 품질 진단 누락');
 if (main.includes('createNextGenEnvironmentPass') && main.includes('fxRing') && main.includes('fxTrail')) pass('NextGen 야시장 환경과 다층 발사체 VFX');
 else fail('NextGen 환경 또는 VFX 누락');
 if (read('src/premium-assets.js').includes('MeshToonMaterial') && read('src/premium-assets.js').includes('TOON_GRADIENT') && read('src/engine/mobile-engine.js').includes('NeutralToneMapping') && read('src/engine/mobile-engine.js').includes('PCFSoftShadowMap')) pass('4단 SD 카툰 명암·월광 림·소프트 섀도');

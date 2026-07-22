@@ -1,6 +1,8 @@
 import { ART_STYLE_LOCK_ID, ASSET_APPROVAL_STATES, PRODUCTION_ASSET_REQUIREMENTS } from '../art-style-tokens.js';
 
 const GOLDEN_SAMPLE_ID = 'player-dokkaebi-warrior-golden-v1';
+const HERO_CLASS_CANDIDATE_IDS = Object.freeze(['player-dokkaebi-archer-candidate-v1', 'player-dokkaebi-mage-candidate-v1']);
+const P0_ENEMY_CANDIDATE_IDS = Object.freeze(['monster-ghost-candidate-v1', 'monster-skeleton-candidate-v1', 'monster-crow-candidate-v1']);
 
 const CURRENT_PROTOTYPE_IDS = Object.freeze([
   'guardian-ember-sd-toon', 'guardian-frost-sd-toon', 'guardian-wind-sd-toon', 'guardian-stone-sd-toon', 'guardian-bell-sd-toon', 'guardian-thunder-sd-toon',
@@ -42,6 +44,11 @@ export const CURRENT_ASSET_APPROVAL = Object.freeze(Object.fromEntries([
     'BaseColor·Normal·ORM·Emissive 임베디드',
     '실기기 실루엣·표정·손그림 텍스처 아트 디렉터 승인 대기'
   ]),
+  ...HERO_CLASS_CANDIDATE_IDS.map((id) => reviewEntry(id, id.includes('archer') ? '공용 리그 궁수 · 아트 리뷰' : '공용 리그 법사 · 아트 리뷰', [
+    '골든 샘플 Skin·7개 AnimationClip·소켓 구조 재사용',
+    '직업별 무기·오라는 런타임 실루엣 키트로 분리',
+    '최종 조형·표정·손그림 텍스처 아트 디렉터 승인 대기'
+  ])),
   reviewEntry('monster-brute-sd-toon', '공용 리그 근접 적 · 아트 리뷰', [
     '공용 휴머노이드 Skin과 7개 AnimationClip 기술 검수 통과',
     'BaseColor·Normal·ORM·Emissive 및 무기·장식 소켓 포함',
@@ -51,14 +58,19 @@ export const CURRENT_ASSET_APPROVAL = Object.freeze(Object.fromEntries([
     '공용 휴머노이드 Skin과 7개 AnimationClip 기술 검수 통과',
     'BaseColor·Normal·ORM·Emissive 및 무기·장식 소켓 포함',
     '도사 모자·부적·주술 발광 실기기 아트 승인 대기'
-  ])
+  ]),
+  ...P0_ENEMY_CANDIDATE_IDS.map((id) => reviewEntry(id, `P0 일반 적 · ${id.split('-')[1]} · 아트 리뷰`, [
+    '공용 휴머노이드 Skin과 7개 AnimationClip 기술 검수 통과',
+    '런타임 실루엣 키트와 역할별 색상으로 전투 가독성 분리',
+    '최종 전용 메시·날개·뼈대·유령 꼬리 조형 아트 승인 대기'
+  ]))
 ]));
 
 export const ASSET_APPROVAL_POLICY = Object.freeze({
   styleLockId: ART_STYLE_LOCK_ID,
   productionRequirements: PRODUCTION_ASSET_REQUIREMENTS,
   currentPrototypeCount: CURRENT_PROTOTYPE_IDS.length,
-  currentReviewCount: 3,
+  currentReviewCount: 8,
   rule: 'production-approved 상태가 아니면 게임 진단과 문서에서 완성 에셋으로 표시하지 않는다.'
 });
 

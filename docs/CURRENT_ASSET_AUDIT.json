@@ -1,13 +1,13 @@
 {
   "schemaVersion": 2,
-  "gameVersion": "3.8.0",
+  "gameVersion": "3.9.0",
   "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
   "summary": {
-    "total": 14,
+    "total": 19,
     "productionApproved": 0,
     "prototypes": 11,
-    "artReview": 3,
-    "technicalCandidates": 3,
+    "artReview": 8,
+    "technicalCandidates": 8,
     "missingSkin": 11,
     "missingAnimations": 11,
     "missingTextureSets": 11
@@ -764,6 +764,152 @@
       }
     },
     {
+      "id": "player-dokkaebi-archer-candidate-v1",
+      "category": "character",
+      "declaredStatus": "art-review",
+      "technicalPassed": true,
+      "productionPassed": false,
+      "requirements": {
+        "triangleRange": [
+          6000,
+          10000
+        ],
+        "requiredAnimations": 7
+      },
+      "metrics": {
+        "file": "player-dokkaebi-archer-candidate-v1.glb",
+        "bytes": 388092,
+        "triangles": 9572,
+        "meshes": 1,
+        "nodes": 16,
+        "nodeNames": [
+          "SceneRoot",
+          "Armature",
+          "Hips",
+          "Spine",
+          "Head",
+          "Arm_L",
+          "Hand_L",
+          "Arm_R",
+          "Hand_R",
+          "WeaponSocket",
+          "Leg_L",
+          "Foot_L",
+          "Leg_R",
+          "Foot_R",
+          "AccessorySocket",
+          "GoldenHeroMesh"
+        ],
+        "materials": 8,
+        "textures": 4,
+        "images": 4,
+        "skins": 1,
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "extras": {
+          "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+          "approvalStage": "art-review",
+          "goldenSample": true,
+          "rigVersion": "DOKKAEBI-HUMANOID-RIG-1",
+          "technicalReady": true,
+          "artDirectorApproved": false,
+          "notes": "Shared-rig technical candidate. Runtime silhouette kit is temporary; final authored sculpt and textures require art review.",
+          "rigCandidate": true,
+          "archetype": "archer",
+          "displayName": "도깨비 궁수",
+          "derivedRigBase": "player-dokkaebi-warrior-golden-v1.glb"
+        }
+      },
+      "checks": {
+        "styleLockMetadata": true,
+        "triangleRange": true,
+        "handPaintedTextures": true,
+        "skin": true,
+        "animationClips": true,
+        "productionRegistry": false
+      }
+    },
+    {
+      "id": "player-dokkaebi-mage-candidate-v1",
+      "category": "character",
+      "declaredStatus": "art-review",
+      "technicalPassed": true,
+      "productionPassed": false,
+      "requirements": {
+        "triangleRange": [
+          6000,
+          10000
+        ],
+        "requiredAnimations": 7
+      },
+      "metrics": {
+        "file": "player-dokkaebi-mage-candidate-v1.glb",
+        "bytes": 388068,
+        "triangles": 9572,
+        "meshes": 1,
+        "nodes": 16,
+        "nodeNames": [
+          "SceneRoot",
+          "Armature",
+          "Hips",
+          "Spine",
+          "Head",
+          "Arm_L",
+          "Hand_L",
+          "Arm_R",
+          "Hand_R",
+          "WeaponSocket",
+          "Leg_L",
+          "Foot_L",
+          "Leg_R",
+          "Foot_R",
+          "AccessorySocket",
+          "GoldenHeroMesh"
+        ],
+        "materials": 8,
+        "textures": 4,
+        "images": 4,
+        "skins": 1,
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "extras": {
+          "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+          "approvalStage": "art-review",
+          "goldenSample": true,
+          "rigVersion": "DOKKAEBI-HUMANOID-RIG-1",
+          "technicalReady": true,
+          "artDirectorApproved": false,
+          "notes": "Shared-rig technical candidate. Runtime silhouette kit is temporary; final authored sculpt and textures require art review.",
+          "rigCandidate": true,
+          "archetype": "mage",
+          "displayName": "도깨비 법사",
+          "derivedRigBase": "player-dokkaebi-warrior-golden-v1.glb"
+        }
+      },
+      "checks": {
+        "styleLockMetadata": true,
+        "triangleRange": true,
+        "handPaintedTextures": true,
+        "skin": true,
+        "animationClips": true,
+        "productionRegistry": false
+      }
+    },
+    {
       "id": "monster-brute-sd-toon",
       "category": "monster",
       "declaredStatus": "art-review",
@@ -894,6 +1040,222 @@
           "archetype": "shaman",
           "displayName": "저주 무당",
           "notes": "Shared-rig technical candidate. Final art-direction approval is still required."
+        }
+      },
+      "checks": {
+        "styleLockMetadata": true,
+        "triangleRange": true,
+        "handPaintedTextures": true,
+        "skin": true,
+        "animationClips": true,
+        "productionRegistry": false
+      }
+    },
+    {
+      "id": "monster-ghost-candidate-v1",
+      "category": "monster",
+      "declaredStatus": "art-review",
+      "technicalPassed": true,
+      "productionPassed": false,
+      "requirements": {
+        "triangleRange": [
+          5000,
+          9000
+        ],
+        "requiredAnimations": 6
+      },
+      "metrics": {
+        "file": "monster-ghost-candidate-v1.glb",
+        "bytes": 338556,
+        "triangles": 7712,
+        "meshes": 1,
+        "nodes": 16,
+        "nodeNames": [
+          "SceneRoot",
+          "Armature",
+          "Hips",
+          "Spine",
+          "Head",
+          "Arm_L",
+          "Hand_L",
+          "Arm_R",
+          "Hand_R",
+          "WeaponSocket",
+          "Leg_L",
+          "Foot_L",
+          "Leg_R",
+          "Foot_R",
+          "AccessorySocket",
+          "ShamanCandidateMesh"
+        ],
+        "materials": 8,
+        "textures": 4,
+        "images": 4,
+        "skins": 1,
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "extras": {
+          "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+          "approvalStage": "art-review",
+          "rigCandidate": true,
+          "rigVersion": "DOKKAEBI-HUMANOID-RIG-1",
+          "technicalReady": true,
+          "artDirectorApproved": false,
+          "archetype": "ghost",
+          "displayName": "달그림자 귀신",
+          "notes": "Shared-rig technical candidate. Runtime silhouette kit is temporary; final authored sculpt and textures require art review.",
+          "derivedRigBase": "monster-shaman-sd-toon.glb"
+        }
+      },
+      "checks": {
+        "styleLockMetadata": true,
+        "triangleRange": true,
+        "handPaintedTextures": true,
+        "skin": true,
+        "animationClips": true,
+        "productionRegistry": false
+      }
+    },
+    {
+      "id": "monster-skeleton-candidate-v1",
+      "category": "monster",
+      "declaredStatus": "art-review",
+      "technicalPassed": true,
+      "productionPassed": false,
+      "requirements": {
+        "triangleRange": [
+          5000,
+          9000
+        ],
+        "requiredAnimations": 6
+      },
+      "metrics": {
+        "file": "monster-skeleton-candidate-v1.glb",
+        "bytes": 360024,
+        "triangles": 8396,
+        "meshes": 1,
+        "nodes": 16,
+        "nodeNames": [
+          "SceneRoot",
+          "Armature",
+          "Hips",
+          "Spine",
+          "Head",
+          "Arm_L",
+          "Hand_L",
+          "Arm_R",
+          "Hand_R",
+          "WeaponSocket",
+          "Leg_L",
+          "Foot_L",
+          "Leg_R",
+          "Foot_R",
+          "AccessorySocket",
+          "BruteCandidateMesh"
+        ],
+        "materials": 8,
+        "textures": 4,
+        "images": 4,
+        "skins": 1,
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "extras": {
+          "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+          "approvalStage": "art-review",
+          "rigCandidate": true,
+          "rigVersion": "DOKKAEBI-HUMANOID-RIG-1",
+          "technicalReady": true,
+          "artDirectorApproved": false,
+          "archetype": "skeleton",
+          "displayName": "백골 무사",
+          "notes": "Shared-rig technical candidate. Runtime silhouette kit is temporary; final authored sculpt and textures require art review.",
+          "derivedRigBase": "monster-brute-sd-toon.glb"
+        }
+      },
+      "checks": {
+        "styleLockMetadata": true,
+        "triangleRange": true,
+        "handPaintedTextures": true,
+        "skin": true,
+        "animationClips": true,
+        "productionRegistry": false
+      }
+    },
+    {
+      "id": "monster-crow-candidate-v1",
+      "category": "monster",
+      "declaredStatus": "art-review",
+      "technicalPassed": true,
+      "productionPassed": false,
+      "requirements": {
+        "triangleRange": [
+          5000,
+          9000
+        ],
+        "requiredAnimations": 6
+      },
+      "metrics": {
+        "file": "monster-crow-candidate-v1.glb",
+        "bytes": 338548,
+        "triangles": 7712,
+        "meshes": 1,
+        "nodes": 16,
+        "nodeNames": [
+          "SceneRoot",
+          "Armature",
+          "Hips",
+          "Spine",
+          "Head",
+          "Arm_L",
+          "Hand_L",
+          "Arm_R",
+          "Hand_R",
+          "WeaponSocket",
+          "Leg_L",
+          "Foot_L",
+          "Leg_R",
+          "Foot_R",
+          "AccessorySocket",
+          "ShamanCandidateMesh"
+        ],
+        "materials": 8,
+        "textures": 4,
+        "images": 4,
+        "skins": 1,
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "extras": {
+          "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+          "approvalStage": "art-review",
+          "rigCandidate": true,
+          "rigVersion": "DOKKAEBI-HUMANOID-RIG-1",
+          "technicalReady": true,
+          "artDirectorApproved": false,
+          "archetype": "crow",
+          "displayName": "먹구름 까마귀",
+          "notes": "Shared-rig technical candidate. Runtime silhouette kit is temporary; final authored sculpt and textures require art review.",
+          "derivedRigBase": "monster-shaman-sd-toon.glb"
         }
       },
       "checks": {

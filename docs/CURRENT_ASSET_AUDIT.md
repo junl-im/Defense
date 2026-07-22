@@ -1,9 +1,9 @@
-# 현재 전투 에셋 제작 품질 감사 — v3.8.0
+# 현재 전투 에셋 제작 품질 감사 — v3.9.0
 
 - 스타일 잠금: `DD-AAA-CASUAL-SD-PBR-3.0`
-- 검사 모델: 14
-- 기술 골든 샘플 통과: **3**
-- 아트 리뷰 대기: **3**
+- 검사 모델: 19
+- 기술 골든 샘플 통과: **8**
+- 아트 리뷰 대기: **8**
 - 최종 제작 승인: **0**
 - 개발용 프로토타입: **11**
 
@@ -23,8 +23,13 @@
 | boss-serpent-sd-toon | 5116 | 0 | 0 | 0 | prototype-placeholder | FAIL | WAIT |
 | boss-king-sd-toon | 4484 | 0 | 0 | 0 | prototype-placeholder | FAIL | WAIT |
 | player-dokkaebi-warrior-golden-v1 | 9572 | 1 | 7 | 4 | art-review | PASS | WAIT |
+| player-dokkaebi-archer-candidate-v1 | 9572 | 1 | 7 | 4 | art-review | PASS | WAIT |
+| player-dokkaebi-mage-candidate-v1 | 9572 | 1 | 7 | 4 | art-review | PASS | WAIT |
 | monster-brute-sd-toon | 8396 | 1 | 7 | 4 | art-review | PASS | WAIT |
 | monster-shaman-sd-toon | 7712 | 1 | 7 | 4 | art-review | PASS | WAIT |
+| monster-ghost-candidate-v1 | 7712 | 1 | 7 | 4 | art-review | PASS | WAIT |
+| monster-skeleton-candidate-v1 | 8396 | 1 | 7 | 4 | art-review | PASS | WAIT |
+| monster-crow-candidate-v1 | 7712 | 1 | 7 | 4 | art-review | PASS | WAIT |
 
 ## 자동 승인 필수 조건
 
