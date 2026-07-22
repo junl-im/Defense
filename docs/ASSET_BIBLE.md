@@ -1,7 +1,7 @@
 # 도깨비 디펜스 AAA 캐주얼 SD 3D 아트 바이블 v3.0
 
-- 적용 게임 버전: `3.4.0`
-- 적용 엔진 버전: `2.4.0`
+- 적용 게임 버전: `3.5.0`
+- 적용 엔진 버전: `2.5.0`
 - 스타일 잠금 ID: `DD-AAA-CASUAL-SD-PBR-3.0`
 - 상태: **LOCKED — 임의 변경 금지**
 
@@ -190,16 +190,24 @@ photorealistic, realistic skin pores, anime illustration, 2D painting, long real
 - [ ] 색상 팔레트와 재질 규칙 준수
 - [ ] 모바일 메모리·드로우콜 예산 준수
 
-## 13. 현재 에셋 격리
+## 13. 현재 에셋 승인·격리 상태
 
-v3.3까지 생성된 전투 GLB 14종은 로딩·LOD·도감·수명 관리 기능을 검증하기 위한 **개발용 프로토타입**이다. 다음 항목이 없어 AAA 완성 에셋으로 승인하지 않는다.
+v3.5.0의 도깨비 전사 `player-dokkaebi-warrior-golden-v1`은 다음 기술 조건을 통과한 **아트 리뷰 후보**다.
 
-- 스켈레탈 Skin
-- 내장 AnimationClip
-- 손그림 BaseColor·Normal·ORM 텍스처
-- 아트 디렉터 골든 샘플 승인
+현재 승인 표기는 **기술 검수 통과 / 아트 리뷰 대기**이며, 최종 제작 승인이 아니다.
 
-게임 진단 UI는 앞으로 `GLB 로드 성공`과 `AAA 제작 승인`을 별도로 표시한다. 파일이 로드된다는 이유로 완성 에셋이라고 부르지 않는다.
+- 9,572 triangles
+- Skin 1개와 공용 휴머노이드 리그
+- Idle, Walk, Run, Attack, Skill, Hit, Death의 7개 AnimationClip
+- WeaponSocket, AccessorySocket
+- BaseColor·Normal·ORM·Emissive 임베디드 맵
+- 전투와 도감에서 AnimationMixer 우선 재생
+
+기술 검수를 통과해도 실제 모바일 화면의 얼굴 가독성, 64px 실루엣, 손그림 질감, 동작 타이밍을 승인하기 전에는 `production-approved`로 승격하지 않는다.
+
+나머지 전투 GLB 13종은 로딩·LOD·도감·수명 관리 기능을 위한 **개발용 프로토타입**이다. Skin, 필수 AnimationClip, 손그림 PBR 텍스처 세트가 없어 완성 에셋으로 승인하지 않는다.
+
+게임 진단 UI는 `GLB 로드 성공`, `기술 검수`, `최종 제작 승인`을 별도로 표시한다. 파일이 로드된다는 이유로 완성 에셋이라고 부르지 않는다.
 
 ## 14. 생성 프롬프트 카탈로그
 

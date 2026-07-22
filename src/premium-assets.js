@@ -458,37 +458,48 @@ function findImportedPart(root, name) {
   return result;
 }
 
+function findImportedPartAny(root, names = []) {
+  for (const name of names) {
+    const result = findImportedPart(root, name);
+    if (result) return result;
+  }
+  return null;
+}
+
 function prepareImportedRoot(root) {
-  const productionApproved = root?.userData?.assetApproval?.status === 'production-approved';
+  const approvalStatus = root?.userData?.assetApproval?.status;
+  const authoredPbr = approvalStatus === 'production-approved' || approvalStatus === 'art-review';
   root.traverse((node) => {
     if (!node.isMesh) return;
     node.castShadow = true;
     node.receiveShadow = true;
     const materials = Array.isArray(node.material) ? node.material : [node.material];
-    const upgraded = materials.map((material) => productionApproved ? preserveAuthoredStylizedPbrMaterial(material) : upgradeImportedMaterial(material));
+    const upgraded = materials.map((material) => authoredPbr ? preserveAuthoredStylizedPbrMaterial(material) : upgradeImportedMaterial(material));
     node.material = Array.isArray(node.material) ? upgraded : upgraded[0];
     node.userData.baseY = node.position.y;
   });
-  root.userData.renderProfile = productionApproved ? 'aaa-casual-stylized-pbr' : 'prototype-toon-fallback';
+  root.userData.renderProfile = authoredPbr ? 'aaa-casual-stylized-pbr-review' : 'prototype-toon-fallback';
   return root;
 }
 
 function importedPartMap(root) {
   const shoulderRig = new THREE.Group();
   shoulderRig.name = 'shoulderRig';
-  const signature = findImportedPart(root, 'signature');
+  const signature = findImportedPartAny(root, ['signature', 'MoonHalo', 'AccessorySocket', 'halo']);
   return {
-    weapon: findImportedPart(root, 'weapon'),
+    weapon: findImportedPartAny(root, ['weapon', 'Club', 'WeaponSocket']),
     signature,
-    halo: findImportedPart(root, 'halo') || signature,
-    head: findImportedPart(root, 'head'),
-    armL: findImportedPart(root, 'armL'),
-    armR: findImportedPart(root, 'armR'),
-    legL: findImportedPart(root, 'legL') || findImportedPart(root, 'frontLeg0'),
-    legR: findImportedPart(root, 'legR') || findImportedPart(root, 'frontLeg1'),
-    cloth: findImportedPart(root, 'cloth'),
-    shoulderL: findImportedPart(root, 'shoulderL'),
-    shoulderR: findImportedPart(root, 'shoulderR'),
+    halo: findImportedPartAny(root, ['halo', 'MoonHalo', 'AccessorySocket']) || signature,
+    head: findImportedPartAny(root, ['head', 'Head']),
+    armL: findImportedPartAny(root, ['armL', 'Arm_L']),
+    armR: findImportedPartAny(root, ['armR', 'Arm_R']),
+    legL: findImportedPartAny(root, ['legL', 'Leg_L', 'frontLeg0']),
+    legR: findImportedPartAny(root, ['legR', 'Leg_R', 'frontLeg1']),
+    cloth: findImportedPartAny(root, ['cloth', 'Body', 'Pelvis']),
+    shoulderL: findImportedPartAny(root, ['shoulderL', 'Arm_L']),
+    shoulderR: findImportedPartAny(root, ['shoulderR', 'Arm_R']),
+    weaponSocket: findImportedPartAny(root, ['WeaponSocket', 'weaponSocket']),
+    accessorySocket: findImportedPartAny(root, ['AccessorySocket', 'accessorySocket']),
     shoulders: shoulderRig,
     rankBeads: null
   };
@@ -522,7 +533,8 @@ export function prepareImportedGuardian(root, type, rank, config, rankConfig, { 
   }
   group.userData = {
     body: findImportedPart(root, 'body'), type, rank, baseY: .3, phase: Math.random() * Math.PI * 2,
-    aura, parts, assetTier: root.userData.renderProfile || 'prototype-toon-fallback', assetId: `guardian-${type}-sd-toon`
+    aura, parts, animations: root.userData.animations || [], assetMetrics: root.userData.assetMetrics || null,
+    assetTier: root.userData.renderProfile || 'prototype-toon-fallback', assetId: root.userData.assetSourceId || `guardian-${type}-sd-toon`
   };
   return group;
 }
@@ -549,7 +561,8 @@ export function prepareImportedEnemy(root, type, config, { lowPower = false } = 
   group.userData = {
     body, baseColor: config.color, scale: config.scale || 1, phase: Math.random() * Math.PI * 2,
     isBoss: Boolean(config.boss), eliteAura, shield: null, lodState: 'high', lodHigh: [], parts,
-    assetTier: root.userData.renderProfile || 'prototype-toon-fallback', assetId: `${config.boss ? 'boss' : 'monster'}-${type}-sd-toon`
+    animations: root.userData.animations || [], assetMetrics: root.userData.assetMetrics || null,
+    assetTier: root.userData.renderProfile || 'prototype-toon-fallback', assetId: root.userData.assetSourceId || `${config.boss ? 'boss' : 'monster'}-${type}-sd-toon`
   };
   return group;
 }

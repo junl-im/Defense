@@ -1,9 +1,9 @@
 {
-  "schemaVersion": 7,
-  "gameVersion": "3.4.0",
-  "engineVersion": "2.4.0",
+  "schemaVersion": 8,
+  "gameVersion": "3.5.0",
+  "engineVersion": "2.5.0",
   "artDirection": "aaa-casual-mobile-sd-stylized-pbr-korean-folklore",
-  "productionStage": "absolute-style-lock-and-prototype-quarantine",
+  "productionStage": "golden-hero-technical-review",
   "impostorDirections": 11,
   "characters": {
     "guardians": [
@@ -296,22 +296,44 @@
   },
   "integratedSdToonModels": [
     {
-      "id": "player-moon-captain-sd-toon",
-      "path": "public/assets/models/player-moon-captain-sd-toon.glb",
-      "triangles": 4496,
-      "budget": 5600,
+      "id": "player-dokkaebi-warrior-golden-v1",
+      "path": "public/assets/models/player-dokkaebi-warrior-golden-v1.glb",
+      "triangles": 9572,
+      "budget": 10000,
       "category": "player",
       "runtime": [
         "combat",
-        "codex"
+        "codex",
+        "golden-sample-review"
       ],
-      "animation": "procedural-part-transform",
-      "renderStyle": "prototype-toon-fallback",
-      "proportionStandard": "2.0-2.5-heads",
-      "diagnostics": "asset-pipeline-status",
-      "status": "prototype-placeholder",
+      "animation": "embedded-skeletal-7-clips",
+      "renderStyle": "art-review-stylized-pbr",
+      "proportionStandard": "2.3-heads",
+      "diagnostics": "asset-pipeline-status-and-golden-review",
+      "status": "art-review",
+      "technicalReady": true,
       "productionApproved": false,
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0"
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "skinCount": 1,
+      "animationClips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "Skill",
+        "Hit",
+        "Death"
+      ],
+      "textureMaps": [
+        "BaseColor",
+        "Normal",
+        "ORM",
+        "Emissive"
+      ],
+      "sockets": [
+        "WeaponSocket",
+        "AccessorySocket"
+      ]
     },
     {
       "id": "guardian-ember-sd-toon",
@@ -558,5 +580,17 @@
     "vfx": 150,
     "environment": 80,
     "total": 750
+  },
+  "goldenSample": {
+    "id": "player-dokkaebi-warrior-golden-v1",
+    "gate": "hero",
+    "technicalStatus": "passed",
+    "artStatus": "review-required",
+    "requiredBeforeScaleOut": [
+      "real-device-silhouette-review",
+      "face-expression-review",
+      "hand-painted-texture-review",
+      "animation-timing-review"
+    ]
   }
 }

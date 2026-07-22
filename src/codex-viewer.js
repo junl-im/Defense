@@ -47,6 +47,8 @@ export default class CodexViewer {
     this.impostorBaseKey = '';
     this.impostor = null;
     this.model = null;
+    this.mixer = null;
+    this.actions = {};
     this.baseScale = 1;
     this.bindControls();
     this.resize();
@@ -115,6 +117,9 @@ export default class CodexViewer {
   }
 
   setEntry(section, id, entry, context = {}) {
+    this.mixer?.stopAllAction();
+    this.mixer = null;
+    this.actions = {};
     this.disposeObject(this.model);
     this.disposeObject(this.impostor);
     this.disposeImpostorMaps();
@@ -129,6 +134,17 @@ export default class CodexViewer {
     this.baseScale = clamp(3.5 / max, .42, 1.6);
     this.model.scale.multiplyScalar(this.baseScale);
     this.model.userData.previewBaseY = this.model.position.y;
+    const clips = this.model.userData.animations || [];
+    if (clips.length) {
+      this.mixer = new THREE.AnimationMixer(this.model);
+      const aliases = {
+        idle: ['idle'], move: ['walk', 'move'], run: ['run'], attack: ['attack'], skill: ['skill'], hit: ['hit'], death: ['death']
+      };
+      for (const [state, names] of Object.entries(aliases)) {
+        const clip = clips.find((item) => names.some((name) => item.name.toLowerCase().includes(name)));
+        if (clip) this.actions[state] = this.mixer.clipAction(clip);
+      }
+    }
     this.rotationY = .42;
     this.zoom = section === 'boss' ? 8.7 : section === 'world' ? 8 : 6.8;
     this.state = 'idle';
@@ -137,6 +153,7 @@ export default class CodexViewer {
     if (baseKey && this.impostorTextures[`${baseKey}-idle`]) this.createImpostor(baseKey);
     this.updateVisibility();
     this.resize();
+    this.setState('idle');
   }
 
   cloneImpostorTexture(source) {
@@ -169,9 +186,20 @@ export default class CodexViewer {
   }
 
   setState(state) {
-    this.state = ['idle', 'move', 'attack', 'skill'].includes(state) ? state : 'idle';
+    const allowed = ['idle', 'move', 'run', 'attack', 'skill', 'hit', 'death'];
+    const nextState = allowed.includes(state) ? state : 'idle';
+    const previous = this.actions[this.state];
+    const next = this.actions[nextState];
+    this.state = nextState;
+    if (next) {
+      if (previous && previous !== next) previous.fadeOut(.12);
+      const oneShot = ['attack', 'skill', 'hit', 'death'].includes(nextState);
+      next.reset().setLoop(oneShot ? THREE.LoopOnce : THREE.LoopRepeat, oneShot ? 1 : Infinity);
+      next.clampWhenFinished = oneShot;
+      next.fadeIn(.12).play();
+    }
     if (this.impostor) {
-      const key = this.state === 'skill' ? 'attack' : this.state;
+      const key = ['skill', 'hit', 'death'].includes(this.state) ? 'attack' : this.state === 'run' ? 'move' : this.state;
       this.impostor.material.map = this.impostorMaps[key] || this.impostorMaps.idle;
       this.impostor.material.needsUpdate = true;
     }
@@ -205,17 +233,22 @@ export default class CodexViewer {
     const target = new THREE.Vector3(0, 1.75, 0);
     this.camera.position.set(Math.sin(this.rotationY) * this.zoom, 2.8 + Math.sin(this.rotationY * .55) * .35, Math.cos(this.rotationY) * this.zoom);
     this.camera.lookAt(target);
+    this.mixer?.update(dt);
     if (this.model) {
       const baseY = this.model.userData.previewBaseY || 0;
       this.model.rotation.set(0, 0, 0);
       this.model.position.y = baseY;
       const parts = this.model.userData.parts || {};
-      if (this.state === 'idle') {
+      if (this.mixer) {
+        this.model.scale.setScalar(this.baseScale);
+      } else if (this.state === 'idle') {
         this.model.position.y = baseY + Math.sin(t * 2.5) * .045;
         this.model.rotation.z = Math.sin(t * 1.8) * .018;
-      } else if (this.state === 'move') {
-        this.model.position.y = baseY + Math.abs(Math.sin(t * 7)) * .08;
-        this.model.rotation.z = Math.sin(t * 7) * .055;
+      } else if (this.state === 'move' || this.state === 'run') {
+        const speed = this.state === 'run' ? 11 : 7;
+        const scale = this.state === 'run' ? 1.35 : 1;
+        this.model.position.y = baseY + Math.abs(Math.sin(t * speed)) * .08 * scale;
+        this.model.rotation.z = Math.sin(t * speed) * .055 * scale;
       } else if (this.state === 'attack') {
         this.model.rotation.x = -Math.sin((t * 5) % Math.PI) * .16;
         if (parts.weapon) parts.weapon.rotation.y += dt * 4;
@@ -223,7 +256,7 @@ export default class CodexViewer {
         this.model.scale.setScalar(this.baseScale * (1 + Math.sin(t * 6) * .035));
         if (parts.signature) parts.signature.rotation.y += dt * 2.8;
       }
-      if (this.state !== 'skill') this.model.scale.setScalar(this.baseScale);
+      if (!this.mixer && this.state !== 'skill') this.model.scale.setScalar(this.baseScale);
       if (parts.halo) parts.halo.rotation.z += dt * .75;
       if (parts.rankBeads) parts.rankBeads.rotation.y += dt * .6;
     }
@@ -241,6 +274,9 @@ export default class CodexViewer {
   dispose() {
     this.setActive(false);
     this.events.dispose();
+    this.mixer?.stopAllAction();
+    this.mixer = null;
+    this.actions = {};
     this.disposeObject(this.model);
     this.disposeObject(this.impostor);
     this.disposeImpostorMaps();
@@ -251,7 +287,7 @@ export default class CodexViewer {
     if (!object) return;
     this.root.remove(object);
     object.traverse((node) => {
-      node.geometry?.dispose();
+      if (!node.userData?.sharedAssetGeometry) node.geometry?.dispose();
       if (node.material) {
         const materials = Array.isArray(node.material) ? node.material : [node.material];
         materials.forEach((material) => material.dispose());

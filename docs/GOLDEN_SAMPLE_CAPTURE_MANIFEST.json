@@ -1,0 +1,228 @@
+{
+  "schemaVersion": 1,
+  "assetId": "player-dokkaebi-warrior-golden-v1",
+  "orthographic": true,
+  "feetAnchor": "center",
+  "sourceDirections": 5,
+  "runtimeDirections": 11,
+  "mirroring": true,
+  "captures": [
+    {
+      "motion": "Idle",
+      "angle": 0,
+      "mirrored": false,
+      "frames": 72,
+      "fps": 30
+    },
+    {
+      "motion": "Idle",
+      "angle": 45,
+      "mirrored": false,
+      "frames": 72,
+      "fps": 30
+    },
+    {
+      "motion": "Idle",
+      "angle": 90,
+      "mirrored": false,
+      "frames": 72,
+      "fps": 30
+    },
+    {
+      "motion": "Idle",
+      "angle": 135,
+      "mirrored": false,
+      "frames": 72,
+      "fps": 30
+    },
+    {
+      "motion": "Idle",
+      "angle": 180,
+      "mirrored": false,
+      "frames": 72,
+      "fps": 30
+    },
+    {
+      "motion": "Walk",
+      "angle": 0,
+      "mirrored": false,
+      "frames": 24,
+      "fps": 30
+    },
+    {
+      "motion": "Walk",
+      "angle": 45,
+      "mirrored": false,
+      "frames": 24,
+      "fps": 30
+    },
+    {
+      "motion": "Walk",
+      "angle": 90,
+      "mirrored": false,
+      "frames": 24,
+      "fps": 30
+    },
+    {
+      "motion": "Walk",
+      "angle": 135,
+      "mirrored": false,
+      "frames": 24,
+      "fps": 30
+    },
+    {
+      "motion": "Walk",
+      "angle": 180,
+      "mirrored": false,
+      "frames": 24,
+      "fps": 30
+    },
+    {
+      "motion": "Run",
+      "angle": 0,
+      "mirrored": false,
+      "frames": 24,
+      "fps": 30
+    },
+    {
+      "motion": "Run",
+      "angle": 45,
+      "mirrored": false,
+      "frames": 24,
+      "fps": 30
+    },
+    {
+      "motion": "Run",
+      "angle": 90,
+      "mirrored": false,
+      "frames": 24,
+      "fps": 30
+    },
+    {
+      "motion": "Run",
+      "angle": 135,
+      "mirrored": false,
+      "frames": 24,
+      "fps": 30
+    },
+    {
+      "motion": "Run",
+      "angle": 180,
+      "mirrored": false,
+      "frames": 24,
+      "fps": 30
+    },
+    {
+      "motion": "Attack",
+      "angle": 0,
+      "mirrored": false,
+      "frames": 24,
+      "fps": 30
+    },
+    {
+      "motion": "Attack",
+      "angle": 45,
+      "mirrored": false,
+      "frames": 24,
+      "fps": 30
+    },
+    {
+      "motion": "Attack",
+      "angle": 90,
+      "mirrored": false,
+      "frames": 24,
+      "fps": 30
+    },
+    {
+      "motion": "Attack",
+      "angle": 135,
+      "mirrored": false,
+      "frames": 24,
+      "fps": 30
+    },
+    {
+      "motion": "Attack",
+      "angle": 180,
+      "mirrored": false,
+      "frames": 24,
+      "fps": 30
+    },
+    {
+      "motion": "Skill",
+      "angle": 0,
+      "mirrored": false,
+      "frames": 36,
+      "fps": 30
+    },
+    {
+      "motion": "Skill",
+      "angle": 45,
+      "mirrored": false,
+      "frames": 36,
+      "fps": 30
+    },
+    {
+      "motion": "Skill",
+      "angle": 90,
+      "mirrored": false,
+      "frames": 36,
+      "fps": 30
+    },
+    {
+      "motion": "Skill",
+      "angle": 135,
+      "mirrored": false,
+      "frames": 36,
+      "fps": 30
+    },
+    {
+      "motion": "Skill",
+      "angle": 180,
+      "mirrored": false,
+      "frames": 36,
+      "fps": 30
+    },
+    {
+      "motion": "Hit",
+      "angle": 0,
+      "mirrored": false,
+      "frames": 24,
+      "fps": 30
+    },
+    {
+      "motion": "Hit",
+      "angle": 45,
+      "mirrored": false,
+      "frames": 24,
+      "fps": 30
+    },
+    {
+      "motion": "Hit",
+      "angle": 90,
+      "mirrored": false,
+      "frames": 24,
+      "fps": 30
+    },
+    {
+      "motion": "Hit",
+      "angle": 135,
+      "mirrored": false,
+      "frames": 24,
+      "fps": 30
+    },
+    {
+      "motion": "Hit",
+      "angle": 180,
+      "mirrored": false,
+      "frames": 24,
+      "fps": 30
+    },
+    {
+      "motion": "Death",
+      "angle": 45,
+      "mirrored": false,
+      "frames": 48,
+      "fps": 30
+    }
+  ]
+}

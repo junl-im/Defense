@@ -1,7 +1,7 @@
 import { CHARACTER_ASSET_TARGETS, ENVIRONMENT_ASSET_TARGETS, EFFECT_ASSET_TARGETS, IMPOSTOR_SPEC } from '../asset-specs.js';
 import { getAssetApproval } from './asset-quality.js';
 
-const ASSET_REVISION = '3.4.0';
+const ASSET_REVISION = '3.5.0';
 const keyartBaseUrl = new URL('../assets/moon-market-keyart.webp', import.meta.url);
 keyartBaseUrl.searchParams.set('v', ASSET_REVISION);
 const keyartUrl = keyartBaseUrl.href;
@@ -9,7 +9,7 @@ const runtimeBaseUrl = typeof document !== 'undefined' ? new URL('./', document.
 const publicAsset = (path) => `${import.meta.env?.BASE_URL || runtimeBaseUrl}assets/${path}?v=${ASSET_REVISION}`;
 const groundTextureUrl = publicAsset('textures/moon-market-ground-v1.webp');
 const moonFxAtlasUrl = publicAsset('effects/moon-fx-atlas-v1.webp');
-export const PLAYER_ASSET_ID = 'player-moon-captain-sd-toon';
+export const PLAYER_ASSET_ID = 'player-dokkaebi-warrior-golden-v1';
 export const GUARDIAN_ASSET_IDS = Object.freeze({
   ember: 'guardian-ember-sd-toon', frost: 'guardian-frost-sd-toon', wind: 'guardian-wind-sd-toon',
   stone: 'guardian-stone-sd-toon', bell: 'guardian-bell-sd-toon', thunder: 'guardian-thunder-sd-toon'
@@ -22,7 +22,7 @@ export const BOSS_ASSET_IDS = Object.freeze({
 });
 
 const sdToonModelUrls = Object.freeze({
-  [PLAYER_ASSET_ID]: publicAsset('models/player-moon-captain-sd-toon.glb'),
+  [PLAYER_ASSET_ID]: publicAsset('models/player-dokkaebi-warrior-golden-v1.glb'),
   ...Object.fromEntries(Object.entries(GUARDIAN_ASSET_IDS).map(([type, id]) => [id, publicAsset(`models/guardian-${type}-sd-toon.glb`)])),
   ...Object.fromEntries(Object.entries(MONSTER_ASSET_IDS).map(([type, id]) => [id, publicAsset(`models/monster-${type}-sd-toon.glb`)])),
   ...Object.fromEntries(Object.entries(BOSS_ASSET_IDS).map(([type, id]) => [id, publicAsset(`models/boss-${type}-sd-toon.glb`)]))

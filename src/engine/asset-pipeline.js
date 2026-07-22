@@ -65,39 +65,36 @@ export class AssetPipeline {
     return this.ktx2LoaderPromise;
   }
 
-  async ensureModelLoaders() {
-    if (this.gltfLoader) return this.gltfLoader;
-    if (!this.modelLoaderPromise) {
-      this.modelLoaderPromise = Promise.all([
-        import('three/addons/loaders/GLTFLoader.js'),
-        import('three/addons/loaders/DRACOLoader.js'),
-        this.ensureKTX2Loader()
-      ]).then(([{ GLTFLoader }, { DRACOLoader }, ktx2Loader]) => {
-        this.dracoLoader = new DRACOLoader(this.manager)
-          .setDecoderPath(`${THREE_ADDON_CDN}/draco/gltf/`)
-          .setWorkerLimit(this.lowPower ? 2 : 4);
-        this.gltfLoader = new GLTFLoader(this.manager)
-          .setDRACOLoader(this.dracoLoader)
-          .setKTX2Loader(ktx2Loader);
-        return this.gltfLoader;
-      });
+  async ensureModelLoaders({ draco = false, ktx2 = false } = {}) {
+    if (!this.gltfLoader) {
+      const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js');
+      this.gltfLoader = new GLTFLoader(this.manager);
     }
-    return this.modelLoaderPromise;
+    if (draco && !this.dracoLoader) {
+      const { DRACOLoader } = await import('three/addons/loaders/DRACOLoader.js');
+      this.dracoLoader = new DRACOLoader(this.manager)
+        .setDecoderPath(`${THREE_ADDON_CDN}/draco/gltf/`)
+        .setWorkerLimit(this.lowPower ? 2 : 4);
+      this.gltfLoader.setDRACOLoader(this.dracoLoader);
+    }
+    if (ktx2 && !this.ktx2Loader) {
+      this.gltfLoader.setKTX2Loader(await this.ensureKTX2Loader());
+    }
+    return this.gltfLoader;
   }
 
   async warmDecoders(entries = []) {
     await this.renderer.init?.();
-    const selectedExtensions = entries.map((entry) => extensionOf(selectAssetVariant(entry, this.qualityTier).url));
-    const needsModels = entries.some((entry) => entry.kind === 'model');
-    const needsKTX2 = selectedExtensions.includes('ktx2');
-    if (needsModels) {
-      await this.ensureModelLoaders();
-    } else if (needsKTX2) {
-      await this.ensureKTX2Loader();
-    }
+    const selected = entries.map((entry) => ({ entry, extension: extensionOf(selectAssetVariant(entry, this.qualityTier).url) }));
+    const needsModels = selected.some(({ entry }) => entry.kind === 'model');
+    const needsDraco = selected.some(({ entry }) => entry.kind === 'model' && entry.compression === 'draco');
+    const needsKTX2 = selected.some(({ entry, extension }) => extension === 'ktx2' || entry.embeddedTextures === 'ktx2');
+    if (needsModels) await this.ensureModelLoaders({ draco: needsDraco, ktx2: needsKTX2 });
+    else if (needsKTX2) await this.ensureKTX2Loader();
     return {
-      draco: needsModels,
-      ktx2: needsModels || needsKTX2,
+      gltf: needsModels,
+      draco: needsDraco,
+      ktx2: needsKTX2,
       deferred: !needsModels && !needsKTX2,
       workerLimit: this.lowPower ? 2 : 4
     };
@@ -165,7 +162,7 @@ export class AssetPipeline {
 
   async loadModel(entry, url) {
     this.assertAllowed(url, 'model');
-    const gltf = await (await this.ensureModelLoaders()).loadAsync(url);
+    const gltf = await (await this.ensureModelLoaders({ draco: entry.compression === 'draco', ktx2: entry.embeddedTextures === 'ktx2' })).loadAsync(url);
     this.prepareModel(gltf.scene);
     return {
       kind: 'model',
@@ -173,6 +170,14 @@ export class AssetPipeline {
       animations: gltf.animations || [],
       cameras: gltf.cameras || [],
       parser: gltf.parser,
+      metrics: {
+        skins: gltf.parser?.json?.skins?.length || 0,
+        animations: (gltf.animations || []).map((clip) => clip.name || 'unnamed'),
+        materials: gltf.parser?.json?.materials?.length || 0,
+        textures: gltf.parser?.json?.textures?.length || 0,
+        images: gltf.parser?.json?.images?.length || 0,
+        extras: gltf.parser?.json?.asset?.extras || gltf.parser?.json?.extras || {}
+      },
       url
     };
   }
@@ -247,6 +252,8 @@ export class AssetPipeline {
         object.userData.assetApproval = record.approval || null;
       });
       instance.userData.assetApproval = record.approval || null;
+      instance.userData.animations = record.animations || [];
+      instance.userData.assetMetrics = record.metrics || null;
       this.instanceCounts.set(id, (this.instanceCounts.get(id) || 0) + 1);
       return instance;
     }
@@ -278,7 +285,8 @@ export class AssetPipeline {
       instances: this.instanceCounts.get(id) || 0,
       fallbacks: this.fallbackCounts.get(id) || 0,
       failure: failure?.reason || '',
-      approval: record?.approval || null
+      approval: record?.approval || null,
+      metrics: record?.metrics || null
     };
   }
 

@@ -1,7 +1,8 @@
 import { ART_STYLE_LOCK_ID, ASSET_APPROVAL_STATES, PRODUCTION_ASSET_REQUIREMENTS } from '../art-style-tokens.js';
 
+const GOLDEN_SAMPLE_ID = 'player-dokkaebi-warrior-golden-v1';
+
 const CURRENT_PROTOTYPE_IDS = Object.freeze([
-  'player-moon-captain-sd-toon',
   'guardian-ember-sd-toon', 'guardian-frost-sd-toon', 'guardian-wind-sd-toon', 'guardian-stone-sd-toon', 'guardian-bell-sd-toon', 'guardian-thunder-sd-toon',
   'monster-imp-sd-toon', 'monster-runner-sd-toon', 'monster-brute-sd-toon', 'monster-shaman-sd-toon',
   'boss-tiger-sd-toon', 'boss-serpent-sd-toon', 'boss-king-sd-toon'
@@ -14,19 +15,38 @@ const PROTOTYPE_REASONS = Object.freeze([
   'AAA 골든 샘플 아트 리뷰 미승인'
 ]);
 
-export const CURRENT_ASSET_APPROVAL = Object.freeze(Object.fromEntries(CURRENT_PROTOTYPE_IDS.map((id) => [id, Object.freeze({
+const prototypeEntries = CURRENT_PROTOTYPE_IDS.map((id) => [id, Object.freeze({
   id,
   styleLockId: ART_STYLE_LOCK_ID,
   status: ASSET_APPROVAL_STATES.prototype,
   productionReady: false,
+  technicalReady: false,
   displayLabel: '개발용 프로토타입',
   reasons: PROTOTYPE_REASONS
-})])));
+})]);
+
+export const CURRENT_ASSET_APPROVAL = Object.freeze(Object.fromEntries([
+  ...prototypeEntries,
+  [GOLDEN_SAMPLE_ID, Object.freeze({
+    id: GOLDEN_SAMPLE_ID,
+    styleLockId: ART_STYLE_LOCK_ID,
+    status: ASSET_APPROVAL_STATES.review,
+    productionReady: false,
+    technicalReady: true,
+    displayLabel: '골든 샘플 · 아트 리뷰',
+    reasons: Object.freeze([
+      'Skin 1개와 7개 AnimationClip 기술 검수 통과',
+      'BaseColor·Normal·ORM·Emissive 임베디드',
+      '실기기 실루엣·표정·손그림 텍스처 아트 디렉터 승인 대기'
+    ])
+  })]
+]));
 
 export const ASSET_APPROVAL_POLICY = Object.freeze({
   styleLockId: ART_STYLE_LOCK_ID,
   productionRequirements: PRODUCTION_ASSET_REQUIREMENTS,
   currentPrototypeCount: CURRENT_PROTOTYPE_IDS.length,
+  currentReviewCount: 1,
   rule: 'production-approved 상태가 아니면 게임 진단과 문서에서 완성 에셋으로 표시하지 않는다.'
 });
 

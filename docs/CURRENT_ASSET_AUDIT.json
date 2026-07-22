@@ -1,82 +1,23 @@
 {
-  "schemaVersion": 1,
-  "gameVersion": "3.4.0",
+  "schemaVersion": 2,
+  "gameVersion": "3.5.0",
   "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
   "summary": {
     "total": 14,
     "productionApproved": 0,
-    "prototypes": 14,
-    "missingSkin": 14,
-    "missingAnimations": 14,
-    "missingTextureSets": 14
+    "prototypes": 13,
+    "artReview": 1,
+    "technicalCandidates": 1,
+    "missingSkin": 13,
+    "missingAnimations": 13,
+    "missingTextureSets": 13
   },
   "entries": [
-    {
-      "id": "player-moon-captain-sd-toon",
-      "category": "character",
-      "declaredStatus": "prototype-placeholder",
-      "productionPassed": false,
-      "requirements": {
-        "triangleRange": [
-          6000,
-          10000
-        ],
-        "requiredAnimations": 7
-      },
-      "metrics": {
-        "file": "player-moon-captain-sd-toon.glb",
-        "bytes": 65784,
-        "triangles": 4496,
-        "meshes": 25,
-        "nodes": 26,
-        "nodeNames": [
-          "world",
-          "pelvis",
-          "body",
-          "head",
-          "eyeL",
-          "eyeR",
-          "shoulderL",
-          "shoulderR",
-          "armL",
-          "armR",
-          "handL",
-          "handR",
-          "legL",
-          "legR",
-          "footL",
-          "footR",
-          "cloth",
-          "sash",
-          "hornL",
-          "hornR",
-          "gatBrim",
-          "gatCrown",
-          "weapon",
-          "signature",
-          "halo",
-          "talisman"
-        ],
-        "materials": 7,
-        "textures": 0,
-        "images": 0,
-        "skins": 0,
-        "animations": [],
-        "extras": {}
-      },
-      "checks": {
-        "styleLockMetadata": false,
-        "triangleRange": false,
-        "handPaintedTextures": false,
-        "skin": false,
-        "animationClips": false,
-        "productionRegistry": false
-      }
-    },
     {
       "id": "guardian-ember-sd-toon",
       "category": "character",
       "declaredStatus": "prototype-placeholder",
+      "technicalPassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
@@ -138,6 +79,7 @@
       "id": "guardian-frost-sd-toon",
       "category": "character",
       "declaredStatus": "prototype-placeholder",
+      "technicalPassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
@@ -198,6 +140,7 @@
       "id": "guardian-wind-sd-toon",
       "category": "character",
       "declaredStatus": "prototype-placeholder",
+      "technicalPassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
@@ -259,6 +202,7 @@
       "id": "guardian-stone-sd-toon",
       "category": "character",
       "declaredStatus": "prototype-placeholder",
+      "technicalPassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
@@ -319,6 +263,7 @@
       "id": "guardian-bell-sd-toon",
       "category": "character",
       "declaredStatus": "prototype-placeholder",
+      "technicalPassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
@@ -380,6 +325,7 @@
       "id": "guardian-thunder-sd-toon",
       "category": "character",
       "declaredStatus": "prototype-placeholder",
+      "technicalPassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
@@ -441,6 +387,7 @@
       "id": "monster-imp-sd-toon",
       "category": "monster",
       "declaredStatus": "prototype-placeholder",
+      "technicalPassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
@@ -503,6 +450,7 @@
       "id": "monster-runner-sd-toon",
       "category": "monster",
       "declaredStatus": "prototype-placeholder",
+      "technicalPassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
@@ -564,6 +512,7 @@
       "id": "monster-brute-sd-toon",
       "category": "monster",
       "declaredStatus": "prototype-placeholder",
+      "technicalPassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
@@ -626,6 +575,7 @@
       "id": "monster-shaman-sd-toon",
       "category": "monster",
       "declaredStatus": "prototype-placeholder",
+      "technicalPassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
@@ -687,6 +637,7 @@
       "id": "boss-tiger-sd-toon",
       "category": "boss",
       "declaredStatus": "prototype-placeholder",
+      "technicalPassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
@@ -746,6 +697,7 @@
       "id": "boss-serpent-sd-toon",
       "category": "boss",
       "declaredStatus": "prototype-placeholder",
+      "technicalPassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
@@ -802,6 +754,7 @@
       "id": "boss-king-sd-toon",
       "category": "boss",
       "declaredStatus": "prototype-placeholder",
+      "technicalPassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
@@ -863,6 +816,75 @@
         "handPaintedTextures": false,
         "skin": false,
         "animationClips": false,
+        "productionRegistry": false
+      }
+    },
+    {
+      "id": "player-dokkaebi-warrior-golden-v1",
+      "category": "character",
+      "declaredStatus": "art-review",
+      "technicalPassed": true,
+      "productionPassed": false,
+      "requirements": {
+        "triangleRange": [
+          6000,
+          10000
+        ],
+        "requiredAnimations": 7
+      },
+      "metrics": {
+        "file": "player-dokkaebi-warrior-golden-v1.glb",
+        "bytes": 387592,
+        "triangles": 9572,
+        "meshes": 1,
+        "nodes": 16,
+        "nodeNames": [
+          "SceneRoot",
+          "Armature",
+          "Hips",
+          "Spine",
+          "Head",
+          "Arm_L",
+          "Hand_L",
+          "Arm_R",
+          "Hand_R",
+          "WeaponSocket",
+          "Leg_L",
+          "Foot_L",
+          "Leg_R",
+          "Foot_R",
+          "AccessorySocket",
+          "GoldenHeroMesh"
+        ],
+        "materials": 8,
+        "textures": 4,
+        "images": 4,
+        "skins": 1,
+        "animations": [
+          "Idle",
+          "Walk",
+          "Run",
+          "Attack",
+          "Skill",
+          "Hit",
+          "Death"
+        ],
+        "extras": {
+          "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+          "approvalStage": "art-review",
+          "goldenSample": true,
+          "rigVersion": "DOKKAEBI-HUMANOID-RIG-1",
+          "technicalReady": true,
+          "artDirectorApproved": false,
+          "notes": "Technical production candidate. Final hand-authored sculpture and texture review still required."
+        }
+      },
+      "checks": {
+        "styleLockMetadata": true,
+        "triangleRange": true,
+        "handPaintedTextures": true,
+        "skin": true,
+        "animationClips": true,
         "productionRegistry": false
       }
     }

@@ -34,11 +34,11 @@ const right = resolveMirroredAuthoredView(0, Math.PI / 2);
 const left = resolveMirroredAuthoredView(0, Math.PI * 1.5);
 if (front.authoredAngle === 0 && right.authoredAngle === 90 && left.authoredAngle === 90 && left.mirrored) pass('방향 접기와 좌우 미러링 계산'); else fail('5방향 미러링 계산');
 
-for (const path of ['docs/ASSET_BIBLE.md', 'docs/AI_ASSET_PROMPTS.md', 'docs/AAA_ASSET_PROMPT_CATALOG.json', 'docs/CURRENT_ASSET_AUDIT.json', 'docs/BLENDER_EXPORT_GUIDE.md', 'docs/PRODUCTION_ROADMAP.md', 'docs/ASSET_MANIFEST.json']) {
+for (const path of ['docs/ASSET_BIBLE.md', 'docs/AI_ASSET_PROMPTS.md', 'docs/AAA_ASSET_PROMPT_CATALOG.json', 'docs/CURRENT_ASSET_AUDIT.json', 'docs/BLENDER_EXPORT_GUIDE.md', 'docs/PRODUCTION_ROADMAP.md', 'docs/ASSET_MANIFEST.json', 'docs/GOLDEN_SAMPLE_PRODUCTION_SPEC.md', 'docs/GOLDEN_SAMPLE_CAPTURE_MANIFEST.json', 'docs/CODE_ARCHITECTURE_v3.5.md']) {
   if (existsSync(resolve(root, path))) pass(`${path} 존재`); else fail(`${path} 누락`);
 }
 const bible = readFileSync(resolve(root, 'docs/ASSET_BIBLE.md'), 'utf8');
-for (const token of ['절대 스타일 프롬프트', '2.3등신', '스타일라이즈드 PBR', '5방향 원본 + 미러링', '승인 체크리스트', '현재 에셋 격리']) {
+for (const token of ['절대 스타일 프롬프트', '2.3등신', '스타일라이즈드 PBR', '5방향 원본 + 미러링', '승인 체크리스트', '현재 에셋 승인·격리 상태', '기술 검수 통과 / 아트 리뷰 대기']) {
   if (bible.includes(token)) pass(`바이블 섹션 ${token}`); else fail(`바이블 섹션 누락: ${token}`);
 }
 

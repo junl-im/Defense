@@ -1,4 +1,4 @@
-const RESET_VERSION = '3.4.0';
+const RESET_VERSION = '3.5.0';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(self.skipWaiting());

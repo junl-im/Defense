@@ -1,28 +1,30 @@
-# 현재 전투 에셋 AAA 품질 감사 — v3.4.0
+# 현재 전투 에셋 제작 품질 감사 — v3.5.0
 
 - 스타일 잠금: `DD-AAA-CASUAL-SD-PBR-3.0`
 - 검사 모델: 14
-- 제작 승인 통과: **0**
-- 개발용 프로토타입: **14**
+- 기술 골든 샘플 통과: **1**
+- 아트 리뷰 대기: **1**
+- 최종 제작 승인: **0**
+- 개발용 프로토타입: **13**
 
-현재 모델은 런타임 연결 기술을 검증하는 프로토타입이다. GLB 로딩 성공과 AAA 아트 제작 승인을 혼동하지 않는다.
+도깨비 전사 골든 샘플은 Skin·7개 AnimationClip·PBR 텍스처·소켓 기술 조건을 통과했지만, 실기기 아트 디렉터 승인이 끝나기 전에는 production-approved로 승격하지 않는다.
 
-| Asset | Triangles | Skins | Clips | Textures | Declared | AAA |
-|---|---:|---:|---:|---:|---|---|
-| player-moon-captain-sd-toon | 4496 | 0 | 0 | 0 | prototype-placeholder | FAIL |
-| guardian-ember-sd-toon | 4142 | 0 | 0 | 0 | prototype-placeholder | FAIL |
-| guardian-frost-sd-toon | 4164 | 0 | 0 | 0 | prototype-placeholder | FAIL |
-| guardian-wind-sd-toon | 4144 | 0 | 0 | 0 | prototype-placeholder | FAIL |
-| guardian-stone-sd-toon | 3964 | 0 | 0 | 0 | prototype-placeholder | FAIL |
-| guardian-bell-sd-toon | 4156 | 0 | 0 | 0 | prototype-placeholder | FAIL |
-| guardian-thunder-sd-toon | 4052 | 0 | 0 | 0 | prototype-placeholder | FAIL |
-| monster-imp-sd-toon | 2652 | 0 | 0 | 0 | prototype-placeholder | FAIL |
-| monster-runner-sd-toon | 2634 | 0 | 0 | 0 | prototype-placeholder | FAIL |
-| monster-brute-sd-toon | 2824 | 0 | 0 | 0 | prototype-placeholder | FAIL |
-| monster-shaman-sd-toon | 2792 | 0 | 0 | 0 | prototype-placeholder | FAIL |
-| boss-tiger-sd-toon | 5346 | 0 | 0 | 0 | prototype-placeholder | FAIL |
-| boss-serpent-sd-toon | 5116 | 0 | 0 | 0 | prototype-placeholder | FAIL |
-| boss-king-sd-toon | 4484 | 0 | 0 | 0 | prototype-placeholder | FAIL |
+| Asset | Triangles | Skins | Clips | Textures | Declared | Technical | Production |
+|---|---:|---:|---:|---:|---|---|---|
+| guardian-ember-sd-toon | 4142 | 0 | 0 | 0 | prototype-placeholder | FAIL | WAIT |
+| guardian-frost-sd-toon | 4164 | 0 | 0 | 0 | prototype-placeholder | FAIL | WAIT |
+| guardian-wind-sd-toon | 4144 | 0 | 0 | 0 | prototype-placeholder | FAIL | WAIT |
+| guardian-stone-sd-toon | 3964 | 0 | 0 | 0 | prototype-placeholder | FAIL | WAIT |
+| guardian-bell-sd-toon | 4156 | 0 | 0 | 0 | prototype-placeholder | FAIL | WAIT |
+| guardian-thunder-sd-toon | 4052 | 0 | 0 | 0 | prototype-placeholder | FAIL | WAIT |
+| monster-imp-sd-toon | 2652 | 0 | 0 | 0 | prototype-placeholder | FAIL | WAIT |
+| monster-runner-sd-toon | 2634 | 0 | 0 | 0 | prototype-placeholder | FAIL | WAIT |
+| monster-brute-sd-toon | 2824 | 0 | 0 | 0 | prototype-placeholder | FAIL | WAIT |
+| monster-shaman-sd-toon | 2792 | 0 | 0 | 0 | prototype-placeholder | FAIL | WAIT |
+| boss-tiger-sd-toon | 5346 | 0 | 0 | 0 | prototype-placeholder | FAIL | WAIT |
+| boss-serpent-sd-toon | 5116 | 0 | 0 | 0 | prototype-placeholder | FAIL | WAIT |
+| boss-king-sd-toon | 4484 | 0 | 0 | 0 | prototype-placeholder | FAIL | WAIT |
+| player-dokkaebi-warrior-golden-v1 | 9572 | 1 | 7 | 4 | art-review | PASS | WAIT |
 
 ## 자동 승인 필수 조건
 

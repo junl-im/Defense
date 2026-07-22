@@ -64,27 +64,54 @@ const entries = modelPaths.map(({ id, path }) => {
     animationClips: metrics.animations.length >= requiredAnimations,
     productionRegistry: CURRENT_ASSET_APPROVAL[id]?.productionReady === true
   };
-  const passed = Object.values(checks).every(Boolean);
-  return { id, category, declaredStatus: CURRENT_ASSET_APPROVAL[id]?.status || 'missing', productionPassed: passed, requirements: { triangleRange, requiredAnimations }, metrics, checks };
+  const technicalChecks = ['styleLockMetadata', 'triangleRange', 'handPaintedTextures', 'skin', 'animationClips'];
+  const technicalPassed = technicalChecks.every((key) => checks[key]);
+  const productionPassed = technicalPassed && checks.productionRegistry;
+  return { id, category, declaredStatus: CURRENT_ASSET_APPROVAL[id]?.status || 'missing', technicalPassed, productionPassed, requirements: { triangleRange, requiredAnimations }, metrics, checks };
 });
 const summary = {
   total: entries.length,
   productionApproved: entries.filter((entry) => entry.productionPassed).length,
   prototypes: entries.filter((entry) => entry.declaredStatus === 'prototype-placeholder').length,
+  artReview: entries.filter((entry) => entry.declaredStatus === 'art-review').length,
+  technicalCandidates: entries.filter((entry) => entry.technicalPassed).length,
   missingSkin: entries.filter((entry) => !entry.checks.skin).length,
   missingAnimations: entries.filter((entry) => !entry.checks.animationClips).length,
   missingTextureSets: entries.filter((entry) => !entry.checks.handPaintedTextures).length
 };
-const document = { schemaVersion: 1, gameVersion: '3.4.0', styleLockId: ART_STYLE_LOCK_ID, summary, entries };
+const document = { schemaVersion: 2, gameVersion: '3.5.0', styleLockId: ART_STYLE_LOCK_ID, summary, entries };
 const jsonText = `${JSON.stringify(document, null, 2)}\n`;
-const rows = entries.map((entry) => `| ${entry.id} | ${entry.metrics.triangles} | ${entry.metrics.skins} | ${entry.metrics.animations.length} | ${entry.metrics.textures} | ${entry.declaredStatus} | ${entry.productionPassed ? 'PASS' : 'FAIL'} |`).join('\n');
-const mdText = `# 현재 전투 에셋 AAA 품질 감사 — v3.4.0\n\n- 스타일 잠금: \`${ART_STYLE_LOCK_ID}\`\n- 검사 모델: ${summary.total}\n- 제작 승인 통과: **${summary.productionApproved}**\n- 개발용 프로토타입: **${summary.prototypes}**\n\n현재 모델은 런타임 연결 기술을 검증하는 프로토타입이다. GLB 로딩 성공과 AAA 아트 제작 승인을 혼동하지 않는다.\n\n| Asset | Triangles | Skins | Clips | Textures | Declared | AAA |\n|---|---:|---:|---:|---:|---|---|\n${rows}\n\n## 자동 승인 필수 조건\n\n- GLB extras의 \`styleLockId\` 일치\n- 일반 캐릭터 6k~10k, 일반 몬스터 5k~9k, 보스 10k~18k triangles\n- BaseColor·Normal·ORM에 해당하는 텍스처/이미지 3개 이상\n- Skin 1개 이상\n- 카테고리별 필수 AnimationClip\n- 승인 레지스트리의 \`productionReady: true\`\n`;
+const rows = entries.map((entry) => `| ${entry.id} | ${entry.metrics.triangles} | ${entry.metrics.skins} | ${entry.metrics.animations.length} | ${entry.metrics.textures} | ${entry.declaredStatus} | ${entry.technicalPassed ? 'PASS' : 'FAIL'} | ${entry.productionPassed ? 'PASS' : 'WAIT'} |`).join('\n');
+const mdText = `# 현재 전투 에셋 제작 품질 감사 — v3.5.0
+
+- 스타일 잠금: \`${ART_STYLE_LOCK_ID}\`
+- 검사 모델: ${summary.total}
+- 기술 골든 샘플 통과: **${summary.technicalCandidates}**
+- 아트 리뷰 대기: **${summary.artReview}**
+- 최종 제작 승인: **${summary.productionApproved}**
+- 개발용 프로토타입: **${summary.prototypes}**
+
+도깨비 전사 골든 샘플은 Skin·7개 AnimationClip·PBR 텍스처·소켓 기술 조건을 통과했지만, 실기기 아트 디렉터 승인이 끝나기 전에는 production-approved로 승격하지 않는다.
+
+| Asset | Triangles | Skins | Clips | Textures | Declared | Technical | Production |
+|---|---:|---:|---:|---:|---|---|---|
+${rows}
+
+## 자동 승인 필수 조건
+
+- GLB extras의 \`styleLockId\` 일치
+- 일반 캐릭터 6k~10k, 일반 몬스터 5k~9k, 보스 10k~18k triangles
+- BaseColor·Normal·ORM에 해당하는 텍스처/이미지 3개 이상
+- Skin 1개 이상
+- 카테고리별 필수 AnimationClip
+- 승인 레지스트리의 \`productionReady: true\`
+`;
 
 if (checkOnly) {
   if (!existsSync(jsonOutput) || !existsSync(mdOutput)) throw new Error('Current asset audit outputs missing');
   if (readFileSync(jsonOutput, 'utf8') !== jsonText || readFileSync(mdOutput, 'utf8') !== mdText) throw new Error('Current asset audit is stale. Run npm run audit:art');
-  if (summary.productionApproved !== 0 || summary.prototypes !== 14) throw new Error('Prototype quarantine mismatch');
-  console.log(`PASS current asset audit: approved ${summary.productionApproved}, prototypes ${summary.prototypes}`);
+  if (summary.productionApproved !== 0 || summary.prototypes !== 13 || summary.artReview !== 1 || summary.technicalCandidates !== 1) throw new Error('Asset review quarantine mismatch');
+  console.log(`PASS current asset audit: technical ${summary.technicalCandidates}, review ${summary.artReview}, prototypes ${summary.prototypes}`);
 } else {
   writeFileSync(jsonOutput, jsonText);
   writeFileSync(mdOutput, mdText);

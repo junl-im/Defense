@@ -8,7 +8,9 @@ const fixedObsolete = [
   'dist/icon.svg',
   'dist/cover.svg',
   'dist-pages/icon.svg',
-  'dist-pages/cover.svg'
+  'dist-pages/cover.svg',
+  'public/assets/models/player-moon-captain-sd-toon.glb',
+  'dist/assets/models/player-moon-captain-sd-toon.glb'
 ];
 
 const remove = (path) => {

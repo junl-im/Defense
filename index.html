@@ -65,7 +65,7 @@
             <button id="meta-btn" class="btn ghost meta-entry"><span>혼불 <b id="title-shards">0</b></span>수호자 성장</button>
           </div>
           <button id="controls-btn" class="title-settings-btn" type="button" aria-label="카메라와 조작 설정" title="카메라와 조작 설정"><span aria-hidden="true">⚙️</span></button>
-          <small class="title-version" aria-label="게임 버전 3.4.0">v3.4.0</small>
+          <small class="title-version" aria-label="게임 버전 3.5.0">v3.5.0</small>
         </div>
       </section>
 
@@ -240,8 +240,10 @@
             </div>
             <aside class="codex-preview-controls" aria-label="도감 모델 조작">
               <div><small>동작</small><div class="codex-control-grid">
-                <button type="button" data-codex-state="idle" class="active">대기</button><button type="button" data-codex-state="move">이동</button>
-                <button type="button" data-codex-state="attack">공격</button><button type="button" data-codex-state="skill">기술</button>
+                <button type="button" data-codex-state="idle" class="active">대기</button><button type="button" data-codex-state="move">걷기</button>
+                <button type="button" data-codex-state="run">달리기</button><button type="button" data-codex-state="attack">공격</button>
+                <button type="button" data-codex-state="skill">기술</button><button type="button" data-codex-state="hit">피격</button>
+                <button type="button" data-codex-state="death">사망</button>
               </div></div>
               <div><small>표현 단계</small><div class="codex-control-grid">
                 <button type="button" data-codex-mode="model" class="active">3D 모델</button>
@@ -365,6 +367,10 @@
               <div><b id="asset-diagnostics-title">전투 에셋 품질·적용 상태</b><small id="asset-diagnostics-summary">로드 여부와 AAA 아트 승인 여부를 구분해 표시합니다.</small></div>
               <span id="asset-diagnostics-count">승인 0 / 14</span>
             </div>
+            <div class="golden-sample-scorecard">
+              <div><b>도깨비 전사 골든 샘플</b><small>Skin 1 · Clip 7 · Socket 2 · PBR Map 4</small></div>
+              <button id="golden-sample-preview-btn" type="button">7모션 검수</button>
+            </div>
             <div id="asset-diagnostics-list" class="asset-diagnostics-list" aria-live="polite"></div>
           </section>
           <div class="handed-setting">
@@ -419,7 +425,7 @@
     </div>
     <script>
       (() => {
-        const VERSION = '3.4.0';
+        const VERSION = '3.5.0';
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
         const retryButton = document.getElementById('boot-retry-btn');

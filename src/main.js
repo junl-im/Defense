@@ -13,6 +13,8 @@ import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, Obje
 import CodexViewer from './codex-viewer.js';
 import { createPremiumGuardian, createPremiumEnemy, createPremiumSacredTree, applyPremiumBossPhase, prepareImportedGuardian, prepareImportedEnemy } from './premium-assets.js';
 import { DirectionalImpostorSelector } from './engine/directional-impostor.js';
+import { buildAssetDiagnostics } from './asset-diagnostics.js';
+import { GOLDEN_SAMPLE_CLIPS, GOLDEN_SAMPLE_SOCKETS, GOLDEN_SAMPLE_TEXTURE_MAPS } from './golden-sample-spec.js';
 import { loadCodexProgress, saveCodexProgress, recordCodexEncounter, recordCodexDefeat, recordGuardianUse, getCodexKnowledge, getCodexProgressSummary, getWeaknessDamageBonus, getWeaknessLabel } from './codex-progression.js';
 import { RuntimeLifecycle } from './runtime-lifecycle.js';
 
@@ -36,7 +38,7 @@ const ui = {
   rotateSensitivity: $('#rotate-sensitivity'), rotateSensitivityValue: $('#rotate-sensitivity-value'), pinchSensitivity: $('#pinch-sensitivity'), pinchSensitivityValue: $('#pinch-sensitivity-value'),
   wheelSensitivity: $('#wheel-sensitivity'), wheelSensitivityValue: $('#wheel-sensitivity-value'), minimumZoom: $('#minimum-zoom'), minimumZoomValue: $('#minimum-zoom-value'), maximumZoom: $('#maximum-zoom'), maximumZoomValue: $('#maximum-zoom-value'),
   shakeIntensity: $('#shake-intensity'), shakeIntensityValue: $('#shake-intensity-value'), flashIntensity: $('#flash-intensity'), flashIntensityValue: $('#flash-intensity-value'), performanceExport: $('#performance-export-btn'),
-  assetDiagnosticsSummary: $('#asset-diagnostics-summary'), assetDiagnosticsCount: $('#asset-diagnostics-count'), assetDiagnosticsList: $('#asset-diagnostics-list'),
+  assetDiagnosticsSummary: $('#asset-diagnostics-summary'), assetDiagnosticsCount: $('#asset-diagnostics-count'), assetDiagnosticsList: $('#asset-diagnostics-list'), goldenSamplePreview: $('#golden-sample-preview-btn'),
   contractModal: $('#contract-modal'), contractOptions: $('#contract-options'), contractSkip: $('#contract-skip-btn'), metaModal: $('#meta-modal'), metaShards: $('#meta-shards'), metaTraitList: $('#meta-trait-list'),
   hud: $('#hud'), hp: $('#hp-value'), gold: $('#gold-value'), waveLabel: $('#wave-label'), waveProgress: $('#wave-progress'),
   enemyCount: $('#enemy-count'), menu: $('#menu-btn'), sound: $('#sound-btn'), synergyPanel: $('#synergy-panel'),
@@ -71,7 +73,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '3.4.0';
+const GAME_VERSION = '3.5.0';
 const CHARACTER_ASSET_IDS = Object.freeze([
   PLAYER_ASSET_ID,
   ...Object.values(GUARDIAN_ASSET_IDS),
@@ -79,7 +81,7 @@ const CHARACTER_ASSET_IDS = Object.freeze([
   ...Object.values(BOSS_ASSET_IDS)
 ]);
 const CHARACTER_ASSET_LABELS = Object.freeze({
-  [PLAYER_ASSET_ID]: '대장 깨비',
+  [PLAYER_ASSET_ID]: '도깨비 전사 · 골든 샘플',
   [GUARDIAN_ASSET_IDS.ember]: '불씨 깨비', [GUARDIAN_ASSET_IDS.frost]: '달서리 깨비',
   [GUARDIAN_ASSET_IDS.wind]: '바람 갓깨비', [GUARDIAN_ASSET_IDS.stone]: '바위 몽둥깨비',
   [GUARDIAN_ASSET_IDS.bell]: '방울 무당깨비', [GUARDIAN_ASSET_IDS.thunder]: '번개 장군깨비',
@@ -516,6 +518,7 @@ class DokkaebiLuckDefense {
     on(ui.resultRetry, 'click', () => { this.hideModal(ui.resultModal); this.startRun({ reuseSeed: true }); }, {}, 'retry');
     on(ui.resultNewRun, 'click', () => { this.hideModal(ui.resultModal); this.startRun({ reuseSeed: false }); }, {}, 'new-run');
     on(ui.performanceExport, 'click', () => this.exportPerformanceLog(), {}, 'performance-export');
+    on(ui.goldenSamplePreview, 'click', () => this.openGoldenSamplePreview(ui.goldenSamplePreview), {}, 'golden-sample-preview');
     on(ui.saveScore, 'click', () => this.saveScore(), {}, 'save-score');
     on(ui.summon, 'click', () => this.summonUnit(), {}, 'summon');
     on(ui.wave, 'click', () => this.startWave(), {}, 'wave');
@@ -716,20 +719,10 @@ class DokkaebiLuckDefense {
 
   renderAssetDiagnostics() {
     if (!ui.assetDiagnosticsList || !this.assetPipeline) return;
-    const statuses = this.assetPipeline.getModelStatuses(CHARACTER_ASSET_IDS);
-    const loaded = statuses.filter((status) => status.loaded).length;
-    const approved = statuses.filter((status) => status.approval?.productionReady).length;
-    const fallbacks = statuses.reduce((sum, status) => sum + status.fallbacks, 0);
-    ui.assetDiagnosticsCount.textContent = `승인 ${approved} / ${statuses.length}`;
-    ui.assetDiagnosticsSummary.textContent = `GLB 로드 ${loaded}/${statuses.length} · 현재 전투 모델은 AAA 아트 승인 전 프로토타입${fallbacks ? ` · 폴백 ${fallbacks}회` : ''}`;
-    ui.assetDiagnosticsList.innerHTML = statuses.map((status) => {
-      const approval = status.approval;
-      const state = status.loaded ? (approval?.productionReady ? 'AAA 승인 에셋' : '개발용 프로토타입 GLB') : '절차형 폴백';
-      const runtime = status.instances || status.fallbacks ? ` · 생성 ${status.instances || 0}${status.fallbacks ? ` / 폴백 ${status.fallbacks}` : ''}` : '';
-      const reason = approval?.reasons?.join(' · ') || status.failure || status.url || status.id;
-      const className = approval?.productionReady ? 'approved' : status.loaded ? 'prototype' : 'fallback';
-      return `<div class="asset-diagnostic-item ${className}" title="${reason}"><i></i><span><b>${CHARACTER_ASSET_LABELS[status.id] || status.id}</b><small>${state}${runtime}</small></span></div>`;
-    }).join('');
+    const diagnostic = buildAssetDiagnostics(this.assetPipeline.getModelStatuses(CHARACTER_ASSET_IDS), CHARACTER_ASSET_LABELS, PLAYER_ASSET_ID);
+    ui.assetDiagnosticsCount.textContent = diagnostic.count;
+    ui.assetDiagnosticsSummary.textContent = diagnostic.summary;
+    ui.assetDiagnosticsList.innerHTML = diagnostic.html;
   }
 
   syncImpostorVisibility() {
@@ -1511,6 +1504,10 @@ class DokkaebiLuckDefense {
   }
 
   createNextGenCodexModel(section, id, entry, context = {}) {
+    if (section === 'golden') {
+      const root = this.assetPipeline.instantiateModel(PLAYER_ASSET_ID);
+      if (root) return prepareImportedGuardian(root, 'player', 3, context.config || { color: 0x6c4592 }, context.rankConfig || RANKS[2], { lowPower: this.lowPower });
+    }
     if (section === 'guardian') {
       const assetId = GUARDIAN_ASSET_IDS[id];
       const root = assetId ? this.assetPipeline.instantiateModel(assetId) : null;
@@ -1543,6 +1540,28 @@ class DokkaebiLuckDefense {
       ui.codexPreviewCanvas.classList.add('unavailable');
     }
     return this.codexViewer;
+  }
+
+  openGoldenSamplePreview(trigger = document.activeElement) {
+    ui.codexPreviewTitle.textContent = '도깨비 전사 · 골든 샘플';
+    ui.codexPreviewSubtitle.textContent = '실제 Skin · 7 AnimationClip · 무기/장식 소켓 기술 검수';
+    ui.codexImpostorBtn.disabled = true;
+    ui.codexImpostorBtn.title = '골든 샘플 검수에서는 실제 3D 모델만 표시합니다.';
+    ui.codexAssetSet.textContent = 'Art Review GLB · Stylized PBR';
+    ui.codexLodReadout.textContent = 'LOD0 · Skinned GLB';
+    ui.codexDirectionReadout.textContent = '3D 자유 회전';
+    ui.codexProgressReadout.textContent = `Skin 1 · Clip ${GOLDEN_SAMPLE_CLIPS.length} · Socket ${GOLDEN_SAMPLE_SOCKETS.length}`;
+    ui.codexWeaknessReadout.textContent = '기술 검수 통과 · 아트 승인 대기';
+    ui.codexLootReadout.textContent = GOLDEN_SAMPLE_TEXTURE_MAPS.join(' · ');
+    ui.codexResearchTip.textContent = '대기·걷기·달리기·공격·기술·피격·사망 모션을 각각 확인하세요.';
+    $$('[data-codex-state]').forEach((button) => button.classList.toggle('active', button.dataset.codexState === 'idle'));
+    $$('[data-codex-mode]').forEach((button) => button.classList.toggle('active', button.dataset.codexMode === 'model'));
+    const viewer = this.ensureCodexViewer();
+    if (viewer) {
+      viewer.setEntry('golden', 'player', { name: '도깨비 전사' }, { config: { color: 0x6c4592 }, rankConfig: RANKS[2] });
+      viewer.setActive(true);
+    }
+    this.showModal(ui.codexPreviewModal, { parent: ui.controlsModal, trigger });
   }
 
   openCodexPreview(section, id, trigger = document.activeElement) {
@@ -2387,7 +2406,7 @@ class DokkaebiLuckDefense {
     return {
       group, flame, attackCooldown: 0, dashCooldown: 0, skillCooldown: 0, dashTimer: 0, stunTimer: 0,
       facing: new THREE.Vector3(0,0,-1),
-      animation: this.animations.createController(group, group.userData.animations || [], { procedural: true })
+      animation: this.animations.createController(group, group.userData.animations || [], { procedural: !(group.userData.animations?.length) })
     };
   }
 
@@ -2910,7 +2929,7 @@ class DokkaebiLuckDefense {
       showcase, shotCount: 0, streakTarget: null, streak: 0,
       commandTimer: 0, baseScale: model.scale.x,
       ultimateCooldown: rank === 5 ? 1.8 + this.random() * 1.3 : Infinity,
-      animation: this.animations.createController(model, model.userData.animations || [], { procedural: true })
+      animation: this.animations.createController(model, model.userData.animations || [], { procedural: !(model.userData.animations?.length) })
     };
     this.attachUnitImpostor(unit);
     this.units.push(unit);
@@ -3073,7 +3092,7 @@ class DokkaebiLuckDefense {
       boss: !!config.boss, bossPhase: 1, specialIndex: 0, specialTimer: config.boss ? 4.5 : 0, flash: 0, shieldFlash: 0,
       abilityTimer: type === 'runner' ? rand(2.2, 3.6) : type === 'shaman' ? rand(2.8, 4.2) : 0,
       abilityState: 'move', abilityTime: 0, telegraphMesh: null, chargeDirection: new THREE.Vector3(), chargeHitPlayer: false,
-      animation: this.animations.createController(group, group.userData.animations || [], { procedural: true })
+      animation: this.animations.createController(group, group.userData.animations || [], { procedural: !(group.userData.animations?.length) })
     };
   }
 
