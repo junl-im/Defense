@@ -71,6 +71,18 @@ else pass('main.js 지연 작업 RuntimeLifecycle 단일화');
 if (main.includes('.addEventListener(')) fail('main.js 이벤트가 EventRegistry를 우회');
 else pass('main.js 이벤트 EventRegistry 단일화');
 
+const unreachablePatterns = [
+  /return\s+premium;\s*const\s+group\s*=\s*new THREE\.Group\(\)/,
+  /return\s+createPremiumGuardian\([^;]+;\s*const\s+group\s*=\s*new THREE\.Group\(\)/,
+  /return\s+model;\s*const\s+group\s*=\s*new THREE\.Group\(\)/
+];
+if (unreachablePatterns.some((pattern) => pattern.test(main))) fail('모델 생성 함수에 return 이후 구형 죽은 코드 잔존');
+else pass('모델 생성 함수 return 이후 죽은 코드 없음');
+if (main.includes('.fallbackCounts.set(') || main.includes('.fallbackCounts.get(')) fail('main.js가 AssetPipeline 내부 상태에 직접 접근');
+else pass('에셋 폴백 집계 AssetPipeline API 단일화');
+if (main.includes('sharedAssetGeometry') && read('src/codex-viewer.js').includes('sharedAssetGeometry')) pass('GLB 공유 geometry 이중 dispose 방지');
+else fail('GLB 공유 geometry 수명 보호 누락');
+
 const codex = read('src/codex-viewer.js');
 if (codex.includes('.addEventListener(')) fail('codex-viewer 이벤트가 EventRegistry를 우회');
 else pass('도감 이벤트 EventRegistry 단일화');
@@ -88,8 +100,16 @@ if (staleBundles.length) fail(`구버전 해시 번들 잔존: ${staleBundles.jo
 else pass('public 구버전 Vite 해시 번들 없음');
 
 const packageJson = JSON.parse(read('package.json'));
-if (packageJson.scripts?.prebuild === 'node scripts/clean-obsolete-assets.mjs') pass('빌드 전 구버전 번들 자동 정리');
-else fail('prebuild 정리 스크립트 연결 누락');
+const cleanCommand = packageJson.scripts?.['clean:obsolete'];
+const preverifyCommand = packageJson.scripts?.preverify;
+const prebuildCommand = packageJson.scripts?.prebuild;
+if (cleanCommand === 'node scripts/clean-obsolete-assets.mjs'
+  && preverifyCommand === 'npm run clean:obsolete'
+  && prebuildCommand === 'npm run clean:obsolete') {
+  pass('검증·빌드 전 구버전 번들 자동 정리');
+} else {
+  fail('preverify/prebuild 정리 스크립트 연결 누락');
+}
 if (main.includes("from './runtime-lifecycle.js'") && main.includes('this.lifecycle.beginRun()') && main.includes('this.lifecycle.endRun()')) pass('런 수명 토큰과 작업 취소 연결');
 else fail('런 수명 관리 연결 누락');
 

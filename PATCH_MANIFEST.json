@@ -1,64 +1,45 @@
 {
-  "baseVersion": "3.6.0",
-  "targetVersion": "3.7.0",
-  "engineVersion": "2.7.0",
+  "fromVersion": "3.7.0",
+  "toVersion": "3.7.1",
+  "engineVersion": "2.7.1",
   "added": [
-    "docs/BUILD_CONTRACT_v3.7.md",
-    "docs/RIGGED_ENEMY_CANDIDATES_v3.7.md",
-    "docs/UI_STRESS_CONTRACT_v3.7.md",
-    "scripts/generate_rigged_enemy_candidates.py",
-    "scripts/verify-module-exports.mjs",
-    "scripts/verify-rigged-enemy-candidates.mjs",
-    "scripts/verify-ui-v370.mjs",
-    "src/rigged-enemy-candidate-spec.js",
-    "src/ui-layout-contract.js"
+    "docs/PATCH_NOTES_v3.7.1.md"
   ],
   "modified": [
     ".github/workflows/deploy.yml",
     "PROJECT_HANDOFF.md",
     "README.md",
     "docs/ASSET_MANIFEST.json",
+    "docs/BUILD_CONTRACT_v3.7.md",
     "docs/CURRENT_ASSET_AUDIT.json",
     "docs/CURRENT_ASSET_AUDIT.md",
     "index.html",
     "package-lock.json",
     "package.json",
-    "public/assets/impostors/guardian/ember-attack-11.webp",
-    "public/assets/impostors/guardian/ember-idle-11.webp",
-    "public/assets/impostors/guardian/ember-move-11.webp",
-    "public/assets/impostors/monster/imp-attack-11.webp",
-    "public/assets/impostors/monster/imp-idle-11.webp",
-    "public/assets/impostors/monster/imp-move-11.webp",
-    "public/assets/models/monster-brute-sd-toon.glb",
-    "public/assets/models/monster-shaman-sd-toon.glb",
     "scripts/audit-current-assets.mjs",
     "scripts/build-static-fallback.mjs",
-    "scripts/generate_moon_forge_assets.py",
-    "scripts/verify-aaa-style-lock.mjs",
-    "scripts/verify-engine-budget.mjs",
-    "scripts/verify-nextgen-assets.mjs",
+    "scripts/clean-obsolete-assets.mjs",
+    "scripts/verify-code-integrity.mjs",
     "scripts/verify-project.mjs",
     "scripts/verify-static-dist.mjs",
-    "scripts/verify-ui-v230.mjs",
     "src/engine/asset-catalog.js",
-    "src/engine/asset-quality.js",
     "src/engine/engine-config.js",
-    "src/engine/index.js",
     "src/firebase.js",
     "src/main.js",
-    "src/style.css",
-    "src/ui-layout-manager.js"
+    "src/style.css"
   ],
-  "deleted": [],
-  "counts": {
-    "added": 9,
-    "modified": 34,
-    "deleted": 0
-  },
-  "distIncluded": false,
-  "postApply": [
-    "npm ci",
-    "npm run verify",
-    "npm run build"
+  "removed": [],
+  "runtimeCleanupTargets": [
+    "PATCH_README.md",
+    "public/icon.svg",
+    "public/cover.svg",
+    "public/assets/index-*.js",
+    "public/assets/index-*.css",
+    "public/assets/index-*.map"
+  ],
+  "apply": [
+    "Copy patch contents over the v3.7.0 project.",
+    "Run npm run verify. preverify removes obsolete tracked leftovers before validation.",
+    "Run npm run build for the normal Vite deployment."
   ]
 }

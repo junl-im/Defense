@@ -32,6 +32,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Remove obsolete patch and generated artifacts
+        run: npm run clean:obsolete
+
       - name: Verify source and module contracts
         run: npm run verify
 

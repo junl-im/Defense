@@ -1,10 +1,12 @@
 # 도깨비 운빨 수호대 3D
 
-- 게임 버전: **3.7.0**
-- 엔진 버전: **2.7.0**
+- 게임 버전: **3.7.1**
+- 엔진 버전: **2.7.1**
 - 아트 잠금: **DD-AAA-CASUAL-SD-PBR-3.0**
 
-## v3.7.0 핵심
+## v3.7.1 핵심
+
+이번 핫픽스는 GitHub Actions에서 검증 전에 이전 패치 잔여물을 자동 정리합니다. `PATCH_README.md`, `public/assets/index-*`, `public/icon.svg`, `public/cover.svg`가 남아 있어도 `preverify`가 제거한 뒤 동일 검증기가 깨끗한 상태를 재확인합니다.
 
 이번 버전은 GitHub Actions의 `MISSING_EXPORT` 빌드 실패를 막고, 공용 리그 적 2종과 모바일 UI 스트레스 계약을 추가한 안정화·확장 패치입니다.
 

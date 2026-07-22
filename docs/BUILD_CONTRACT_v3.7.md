@@ -38,8 +38,23 @@ import {
 
 ```bash
 npm ci
+npm run clean:obsolete
 npm run verify
 npm run build
 ```
 
 `verify`와 `build`를 분리하지 않는다. 정적 검사만 통과하고 번들러 계약이 깨지는 상황을 줄이기 위해 두 명령을 같은 워크플로에서 연속 실행한다.
+
+## v3.7.1 검증 전 청소 계약
+
+이전 패치 ZIP은 루트 `PATCH_README.md`를 포함했고, ZIP 덮어쓰기는 기존 파일을 삭제하지 못하므로 구형 Vite 번들·SVG가 Git 작업 트리에 남을 수 있었다. GitHub Actions는 `verify`를 `prebuild`보다 먼저 실행하므로 기존 청소 단계가 늦었다.
+
+현재 계약:
+
+- `clean:obsolete`: 루트 패치 문서, SVG, `public/assets/index-*`를 멱등 제거
+- `preverify`: 검증 전에 `clean:obsolete` 실행
+- `prebuild`: 빌드 전에 같은 청소를 한 번 더 실행
+- `verify-project.mjs`: 청소 후 잔여물이 없는지 다시 검사
+
+따라서 오염된 v3.7.0 작업 트리에서도 `npm run verify` 한 번으로 청소와 검증이 순서대로 실행된다.
+
