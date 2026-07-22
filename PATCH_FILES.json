@@ -1,0 +1,47 @@
+{
+  "added": [
+    "docs/AAA_ASSET_PROMPT_CATALOG.json",
+    "docs/CURRENT_ASSET_AUDIT.json",
+    "docs/CURRENT_ASSET_AUDIT.md",
+    "scripts/audit-current-assets.mjs",
+    "scripts/generate-aaa-prompt-catalog.mjs",
+    "scripts/verify-aaa-style-lock.mjs",
+    "src/engine/asset-quality.js"
+  ],
+  "modified": [
+    "PROJECT_HANDOFF.md",
+    "README.md",
+    "docs/AI_ASSET_PROMPTS.md",
+    "docs/ASSET_BIBLE.md",
+    "docs/ASSET_MANIFEST.json",
+    "docs/BLENDER_EXPORT_GUIDE.md",
+    "docs/PRODUCTION_ROADMAP.md",
+    "index.html",
+    "package-lock.json",
+    "package.json",
+    "public/sw.js",
+    "scripts/build-static-fallback.mjs",
+    "scripts/generate_sd_toon_models.py",
+    "scripts/verify-art-bible.mjs",
+    "scripts/verify-asset-readiness.mjs",
+    "scripts/verify-camera-controls.mjs",
+    "scripts/verify-engine-budget.mjs",
+    "scripts/verify-golden-motion.mjs",
+    "scripts/verify-input-basis.mjs",
+    "scripts/verify-nextgen-assets.mjs",
+    "scripts/verify-project.mjs",
+    "scripts/verify-static-dist.mjs",
+    "src/art-style-tokens.js",
+    "src/asset-specs.js",
+    "src/engine/asset-catalog.js",
+    "src/engine/asset-pipeline.js",
+    "src/engine/engine-config.js",
+    "src/firebase.js",
+    "src/main.js",
+    "src/premium-assets.js",
+    "src/style.css"
+  ],
+  "deleted": [
+    "docs/ASSET_PREVIEW_v3.3.0.png"
+  ]
+}

@@ -1,9 +1,9 @@
 {
-  "schemaVersion": 6,
-  "gameVersion": "3.2.0",
-  "engineVersion": "2.2.0",
-  "artDirection": "sd-mobile-toon-moonlit-korean-folklore",
-  "productionStage": "art-bible-locked-golden-sample-preproduction",
+  "schemaVersion": 7,
+  "gameVersion": "3.4.0",
+  "engineVersion": "2.4.0",
+  "artDirection": "aaa-casual-mobile-sd-stylized-pbr-korean-folklore",
+  "productionStage": "absolute-style-lock-and-prototype-quarantine",
   "impostorDirections": 11,
   "characters": {
     "guardians": [
@@ -237,11 +237,11 @@
   },
   "rendering": {
     "toneMapping": "NeutralToneMapping",
-    "shading": "MeshToonMaterial-4-band",
-    "rimLight": "moon-cyan-selective",
-    "outline": "selective-hero-boss-policy",
-    "shadow": "blob-mobile-pcf-soft-high",
-    "pbrPolicy": "optional-for-boss-and-hero-environment-only"
+    "shading": "authored-stylized-pbr-production/prototype-toon-fallback",
+    "rimLight": "subtle-moonlight",
+    "outline": "optional-silhouette-support",
+    "shadow": "soft-contact-and-soft-cast",
+    "pbrPolicy": "hand-painted-basecolor-normal-orm"
   },
   "nextGenEnvironment": [
     "layered-market-pavilion",
@@ -260,9 +260,9 @@
     "rotating-energy-layer"
   ],
   "assetLimitations": [
-    "대표 GLB 3종은 파츠 기반 정적 모델이며 스켈레탈 리깅은 골든 샘플 승인 이후 진행한다.",
-    "기존 11프레임 WebP는 호환 유지하며 신규 제작은 5방향 원본과 미러링 파이프라인을 사용한다.",
-    "최종 캐릭터 대량 제작은 불씨 깨비 7개 모션 실기기 승인 전 시작하지 않는다."
+    "현재 전투 GLB 14종은 개발용 프로토타입이며 AAA 제작 승인품이 아니다.",
+    "현재 GLB에는 Skin, 필수 AnimationClip, 손그림 BaseColor/Normal/ORM 세트가 없다.",
+    "production-approved 상태는 자동 검사와 실제 모바일 아트 리뷰를 모두 통과한 자산에만 부여한다."
   ],
   "authoredImpostorDirections": 5,
   "authoredAnglesDegrees": [
@@ -274,17 +274,18 @@
   ],
   "mirroredImpostors": true,
   "artBible": {
-    "version": "2.0.0",
+    "version": "3.0.0",
     "status": "locked",
+    "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
     "document": "docs/ASSET_BIBLE.md",
-    "targetHeadsTall": 2.25,
+    "targetHeadsTall": 2.3,
     "allowedHeadsTall": [
-      2.0,
-      2.5
+      2.2,
+      2.4
     ],
-    "renderStyle": "four-band-mobile-toon",
-    "palette": "moon-market-core-12",
+    "renderStyle": "hand-painted-stylized-pbr",
     "productionOrder": [
+      "style-lock",
       "hero",
       "enemy-trio",
       "environment",
@@ -295,46 +296,267 @@
   },
   "integratedSdToonModels": [
     {
-      "id": "guardian-ember-sd-toon",
-      "path": "public/assets/models/guardian-ember-sd-toon.glb",
-      "triangles": 4816,
+      "id": "player-moon-captain-sd-toon",
+      "path": "public/assets/models/player-moon-captain-sd-toon.glb",
+      "triangles": 4496,
       "budget": 5600,
-      "nodes": 9,
+      "category": "player",
       "runtime": [
         "combat",
         "codex"
       ],
       "animation": "procedural-part-transform",
-      "renderStyle": "sd-mobile-toon",
-      "proportionStandard": "2.0-2.5-heads"
+      "renderStyle": "prototype-toon-fallback",
+      "proportionStandard": "2.0-2.5-heads",
+      "diagnostics": "asset-pipeline-status",
+      "status": "prototype-placeholder",
+      "productionApproved": false,
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0"
+    },
+    {
+      "id": "guardian-ember-sd-toon",
+      "path": "public/assets/models/guardian-ember-sd-toon.glb",
+      "triangles": 4142,
+      "budget": 5600,
+      "category": "guardian",
+      "runtime": [
+        "combat",
+        "codex"
+      ],
+      "animation": "procedural-part-transform",
+      "renderStyle": "prototype-toon-fallback",
+      "proportionStandard": "2.0-2.5-heads",
+      "diagnostics": "asset-pipeline-status",
+      "status": "prototype-placeholder",
+      "productionApproved": false,
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0"
+    },
+    {
+      "id": "guardian-frost-sd-toon",
+      "path": "public/assets/models/guardian-frost-sd-toon.glb",
+      "triangles": 4164,
+      "budget": 5600,
+      "category": "guardian",
+      "runtime": [
+        "combat",
+        "codex"
+      ],
+      "animation": "procedural-part-transform",
+      "renderStyle": "prototype-toon-fallback",
+      "proportionStandard": "2.0-2.5-heads",
+      "diagnostics": "asset-pipeline-status",
+      "status": "prototype-placeholder",
+      "productionApproved": false,
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0"
+    },
+    {
+      "id": "guardian-wind-sd-toon",
+      "path": "public/assets/models/guardian-wind-sd-toon.glb",
+      "triangles": 4144,
+      "budget": 5600,
+      "category": "guardian",
+      "runtime": [
+        "combat",
+        "codex"
+      ],
+      "animation": "procedural-part-transform",
+      "renderStyle": "prototype-toon-fallback",
+      "proportionStandard": "2.0-2.5-heads",
+      "diagnostics": "asset-pipeline-status",
+      "status": "prototype-placeholder",
+      "productionApproved": false,
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0"
+    },
+    {
+      "id": "guardian-stone-sd-toon",
+      "path": "public/assets/models/guardian-stone-sd-toon.glb",
+      "triangles": 3964,
+      "budget": 5600,
+      "category": "guardian",
+      "runtime": [
+        "combat",
+        "codex"
+      ],
+      "animation": "procedural-part-transform",
+      "renderStyle": "prototype-toon-fallback",
+      "proportionStandard": "2.0-2.5-heads",
+      "diagnostics": "asset-pipeline-status",
+      "status": "prototype-placeholder",
+      "productionApproved": false,
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0"
+    },
+    {
+      "id": "guardian-bell-sd-toon",
+      "path": "public/assets/models/guardian-bell-sd-toon.glb",
+      "triangles": 4156,
+      "budget": 5600,
+      "category": "guardian",
+      "runtime": [
+        "combat",
+        "codex"
+      ],
+      "animation": "procedural-part-transform",
+      "renderStyle": "prototype-toon-fallback",
+      "proportionStandard": "2.0-2.5-heads",
+      "diagnostics": "asset-pipeline-status",
+      "status": "prototype-placeholder",
+      "productionApproved": false,
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0"
+    },
+    {
+      "id": "guardian-thunder-sd-toon",
+      "path": "public/assets/models/guardian-thunder-sd-toon.glb",
+      "triangles": 4052,
+      "budget": 5600,
+      "category": "guardian",
+      "runtime": [
+        "combat",
+        "codex"
+      ],
+      "animation": "procedural-part-transform",
+      "renderStyle": "prototype-toon-fallback",
+      "proportionStandard": "2.0-2.5-heads",
+      "diagnostics": "asset-pipeline-status",
+      "status": "prototype-placeholder",
+      "productionApproved": false,
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0"
     },
     {
       "id": "monster-imp-sd-toon",
       "path": "public/assets/models/monster-imp-sd-toon.glb",
-      "triangles": 2252,
+      "triangles": 2652,
       "budget": 3200,
-      "nodes": 8,
+      "category": "monster",
       "runtime": [
         "combat",
         "codex"
       ],
       "animation": "procedural-part-transform",
-      "renderStyle": "sd-mobile-toon",
-      "proportionStandard": "2.0-2.5-heads"
+      "renderStyle": "prototype-toon-fallback",
+      "proportionStandard": "2.0-2.5-heads",
+      "diagnostics": "asset-pipeline-status",
+      "status": "prototype-placeholder",
+      "productionApproved": false,
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0"
+    },
+    {
+      "id": "monster-runner-sd-toon",
+      "path": "public/assets/models/monster-runner-sd-toon.glb",
+      "triangles": 2634,
+      "budget": 3200,
+      "category": "monster",
+      "runtime": [
+        "combat",
+        "codex"
+      ],
+      "animation": "procedural-part-transform",
+      "renderStyle": "prototype-toon-fallback",
+      "proportionStandard": "2.0-2.5-heads",
+      "diagnostics": "asset-pipeline-status",
+      "status": "prototype-placeholder",
+      "productionApproved": false,
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0"
+    },
+    {
+      "id": "monster-brute-sd-toon",
+      "path": "public/assets/models/monster-brute-sd-toon.glb",
+      "triangles": 2824,
+      "budget": 3200,
+      "category": "monster",
+      "runtime": [
+        "combat",
+        "codex"
+      ],
+      "animation": "procedural-part-transform",
+      "renderStyle": "prototype-toon-fallback",
+      "proportionStandard": "2.0-2.5-heads",
+      "diagnostics": "asset-pipeline-status",
+      "status": "prototype-placeholder",
+      "productionApproved": false,
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0"
+    },
+    {
+      "id": "monster-shaman-sd-toon",
+      "path": "public/assets/models/monster-shaman-sd-toon.glb",
+      "triangles": 2792,
+      "budget": 3200,
+      "category": "monster",
+      "runtime": [
+        "combat",
+        "codex"
+      ],
+      "animation": "procedural-part-transform",
+      "renderStyle": "prototype-toon-fallback",
+      "proportionStandard": "2.0-2.5-heads",
+      "diagnostics": "asset-pipeline-status",
+      "status": "prototype-placeholder",
+      "productionApproved": false,
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0"
     },
     {
       "id": "boss-tiger-sd-toon",
       "path": "public/assets/models/boss-tiger-sd-toon.glb",
-      "triangles": 6404,
+      "triangles": 5346,
       "budget": 9000,
-      "nodes": 7,
+      "category": "boss",
       "runtime": [
         "combat",
         "codex"
       ],
       "animation": "procedural-part-transform",
-      "renderStyle": "sd-mobile-toon",
-      "proportionStandard": "2.0-2.5-heads"
+      "renderStyle": "prototype-toon-fallback",
+      "proportionStandard": "2.0-2.5-heads",
+      "diagnostics": "asset-pipeline-status",
+      "status": "prototype-placeholder",
+      "productionApproved": false,
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0"
+    },
+    {
+      "id": "boss-serpent-sd-toon",
+      "path": "public/assets/models/boss-serpent-sd-toon.glb",
+      "triangles": 5116,
+      "budget": 9000,
+      "category": "boss",
+      "runtime": [
+        "combat",
+        "codex"
+      ],
+      "animation": "procedural-part-transform",
+      "renderStyle": "prototype-toon-fallback",
+      "proportionStandard": "2.0-2.5-heads",
+      "diagnostics": "asset-pipeline-status",
+      "status": "prototype-placeholder",
+      "productionApproved": false,
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0"
+    },
+    {
+      "id": "boss-king-sd-toon",
+      "path": "public/assets/models/boss-king-sd-toon.glb",
+      "triangles": 4484,
+      "budget": 9000,
+      "category": "boss",
+      "runtime": [
+        "combat",
+        "codex"
+      ],
+      "animation": "procedural-part-transform",
+      "renderStyle": "prototype-toon-fallback",
+      "proportionStandard": "2.0-2.5-heads",
+      "diagnostics": "asset-pipeline-status",
+      "status": "prototype-placeholder",
+      "productionApproved": false,
+      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0"
     }
-  ]
+  ],
+  "promptCatalog": {
+    "document": "docs/AAA_ASSET_PROMPT_CATALOG.json",
+    "characters": 50,
+    "monsters": 50,
+    "bosses": 20,
+    "weapons": 100,
+    "ui": 300,
+    "vfx": 150,
+    "environment": 80,
+    "total": 750
+  }
 }

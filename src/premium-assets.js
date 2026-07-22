@@ -394,6 +394,38 @@ export function applyPremiumBossPhase(group, type, phase = 1) {
 }
 
 
+function applyStylizedPbrRim(material, color, strength = .12) {
+  const rim = new THREE.Color(color || 0xb8e8ff).lerp(new THREE.Color(0xb8e8ff), .7);
+  material.userData.rimColor = rim;
+  material.userData.rimStrength = strength;
+  material.userData.renderStyle = 'aaa-casual-stylized-pbr';
+  material.onBeforeCompile = (shader) => {
+    shader.uniforms.uMoonRimColor = { value: rim };
+    shader.uniforms.uMoonRimStrength = { value: strength };
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <common>',
+      '#include <common>\nuniform vec3 uMoonRimColor;\nuniform float uMoonRimStrength;'
+    ).replace(
+      '#include <opaque_fragment>',
+      'float moonRim = pow(1.0 - clamp(dot(normalize(normal), normalize(vViewPosition)), 0.0, 1.0), 3.0);\noutgoingLight += uMoonRimColor * smoothstep(0.45, 0.92, moonRim) * uMoonRimStrength;\n#include <opaque_fragment>'
+    );
+  };
+  material.customProgramCacheKey = () => `aaa-sd-pbr-rim-${rim.getHexString()}-${strength}`;
+  return material;
+}
+
+function preserveAuthoredStylizedPbrMaterial(source) {
+  const material = source.clone();
+  material.roughness = Math.max(.42, Math.min(.92, material.roughness ?? .72));
+  material.metalness = Math.max(0, Math.min(.58, material.metalness ?? .05));
+  material.envMapIntensity = Math.min(.65, material.envMapIntensity ?? .45);
+  material.userData.sourceMaterial = source.name || 'unnamed';
+  material.userData.productionApproved = true;
+  applyStylizedPbrRim(material, source.color?.clone?.() || 0xb8e8ff, .11);
+  material.needsUpdate = true;
+  return material;
+}
+
 function upgradeImportedMaterial(source) {
   if (!source) return source;
   const base = source.color?.clone?.() || new THREE.Color(0x8f7bb4);
@@ -427,15 +459,17 @@ function findImportedPart(root, name) {
 }
 
 function prepareImportedRoot(root) {
+  const productionApproved = root?.userData?.assetApproval?.status === 'production-approved';
   root.traverse((node) => {
     if (!node.isMesh) return;
     node.castShadow = true;
     node.receiveShadow = true;
     const materials = Array.isArray(node.material) ? node.material : [node.material];
-    const upgraded = materials.map(upgradeImportedMaterial);
+    const upgraded = materials.map((material) => productionApproved ? preserveAuthoredStylizedPbrMaterial(material) : upgradeImportedMaterial(material));
     node.material = Array.isArray(node.material) ? upgraded : upgraded[0];
     node.userData.baseY = node.position.y;
   });
+  root.userData.renderProfile = productionApproved ? 'aaa-casual-stylized-pbr' : 'prototype-toon-fallback';
   return root;
 }
 
@@ -488,7 +522,7 @@ export function prepareImportedGuardian(root, type, rank, config, rankConfig, { 
   }
   group.userData = {
     body: findImportedPart(root, 'body'), type, rank, baseY: .3, phase: Math.random() * Math.PI * 2,
-    aura, parts, assetTier: 'sd-toon-glb', assetId: `guardian-${type}-sd-toon`
+    aura, parts, assetTier: root.userData.renderProfile || 'prototype-toon-fallback', assetId: `guardian-${type}-sd-toon`
   };
   return group;
 }
@@ -515,7 +549,7 @@ export function prepareImportedEnemy(root, type, config, { lowPower = false } = 
   group.userData = {
     body, baseColor: config.color, scale: config.scale || 1, phase: Math.random() * Math.PI * 2,
     isBoss: Boolean(config.boss), eliteAura, shield: null, lodState: 'high', lodHigh: [], parts,
-    assetTier: 'sd-toon-glb', assetId: `${config.boss ? 'boss' : 'monster'}-${type}-sd-toon`
+    assetTier: root.userData.renderProfile || 'prototype-toon-fallback', assetId: `${config.boss ? 'boss' : 'monster'}-${type}-sd-toon`
   };
   return group;
 }

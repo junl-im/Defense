@@ -1,13 +1,31 @@
 import { CHARACTER_ASSET_TARGETS, ENVIRONMENT_ASSET_TARGETS, EFFECT_ASSET_TARGETS, IMPOSTOR_SPEC } from '../asset-specs.js';
+import { getAssetApproval } from './asset-quality.js';
 
-const keyartUrl = new URL('../assets/moon-market-keyart.webp', import.meta.url).href;
-const publicAsset = (path) => `${import.meta.env?.BASE_URL || '/'}assets/${path}`;
+const ASSET_REVISION = '3.4.0';
+const keyartBaseUrl = new URL('../assets/moon-market-keyart.webp', import.meta.url);
+keyartBaseUrl.searchParams.set('v', ASSET_REVISION);
+const keyartUrl = keyartBaseUrl.href;
+const runtimeBaseUrl = typeof document !== 'undefined' ? new URL('./', document.baseURI).pathname : '/';
+const publicAsset = (path) => `${import.meta.env?.BASE_URL || runtimeBaseUrl}assets/${path}?v=${ASSET_REVISION}`;
 const groundTextureUrl = publicAsset('textures/moon-market-ground-v1.webp');
 const moonFxAtlasUrl = publicAsset('effects/moon-fx-atlas-v1.webp');
+export const PLAYER_ASSET_ID = 'player-moon-captain-sd-toon';
+export const GUARDIAN_ASSET_IDS = Object.freeze({
+  ember: 'guardian-ember-sd-toon', frost: 'guardian-frost-sd-toon', wind: 'guardian-wind-sd-toon',
+  stone: 'guardian-stone-sd-toon', bell: 'guardian-bell-sd-toon', thunder: 'guardian-thunder-sd-toon'
+});
+export const MONSTER_ASSET_IDS = Object.freeze({
+  imp: 'monster-imp-sd-toon', runner: 'monster-runner-sd-toon', brute: 'monster-brute-sd-toon', shaman: 'monster-shaman-sd-toon'
+});
+export const BOSS_ASSET_IDS = Object.freeze({
+  tiger: 'boss-tiger-sd-toon', serpent: 'boss-serpent-sd-toon', king: 'boss-king-sd-toon'
+});
+
 const sdToonModelUrls = Object.freeze({
-  'guardian-ember-sd-toon': publicAsset('models/guardian-ember-sd-toon.glb'),
-  'monster-imp-sd-toon': publicAsset('models/monster-imp-sd-toon.glb'),
-  'boss-tiger-sd-toon': publicAsset('models/boss-tiger-sd-toon.glb')
+  [PLAYER_ASSET_ID]: publicAsset('models/player-moon-captain-sd-toon.glb'),
+  ...Object.fromEntries(Object.entries(GUARDIAN_ASSET_IDS).map(([type, id]) => [id, publicAsset(`models/guardian-${type}-sd-toon.glb`)])),
+  ...Object.fromEntries(Object.entries(MONSTER_ASSET_IDS).map(([type, id]) => [id, publicAsset(`models/monster-${type}-sd-toon.glb`)])),
+  ...Object.fromEntries(Object.entries(BOSS_ASSET_IDS).map(([type, id]) => [id, publicAsset(`models/boss-${type}-sd-toon.glb`)]))
 });
 const impostorUrls = Object.freeze({
   'ember-idle': publicAsset('impostors/guardian/ember-idle-11.webp'),
@@ -44,7 +62,8 @@ export const CORE_ASSET_CATALOG = Object.freeze([
   ...Object.entries(sdToonModelUrls).map(([id, url]) => ({
     id, kind: 'model', required: false, retain: true,
     variants: { low: url, medium: url, high: url },
-    fallback: `procedural-${id}`
+    fallback: `procedural-${id}`,
+    approval: getAssetApproval(id)
   }))
 ]);
 
@@ -55,6 +74,7 @@ const makeCharacterSlot = (id, category) => Object.freeze({
   fallback: `procedural-${id}`,
   variants: Object.freeze({}),
   production: CHARACTER_ASSET_TARGETS[category],
+  approval: getAssetApproval(id),
   impostor: IMPOSTOR_SPEC
 });
 
@@ -129,7 +149,9 @@ export const ASSET_PRODUCTION_SUMMARY = Object.freeze({
   effectFamilies: 8,
   farLodDirections: IMPOSTOR_SPEC.directions,
   formats: Object.freeze(['glb', 'ktx2', 'webp', 'png']),
-  integratedPrototypeAssets: 12
+  integratedPrototypeAssets: 23,
+  productionApprovedCharacterAssets: 0,
+  styleLockId: 'DD-AAA-CASUAL-SD-PBR-3.0'
 });
 
 export function selectAssetVariant(entry, tier = 'high') {

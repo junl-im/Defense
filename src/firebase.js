@@ -1,12 +1,15 @@
 const config = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+  apiKey: import.meta.env?.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env?.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env?.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env?.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env?.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env?.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env?.VITE_FIREBASE_MEASUREMENT_ID
 };
+
+const FIREBASE_VERSION = '12.16.0';
+const FIREBASE_CDN_BASE = `https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}`;
 
 const enabled = Boolean(config.apiKey && config.projectId && config.appId);
 let contextPromise = null;
@@ -15,9 +18,9 @@ async function getContext() {
   if (!enabled) return null;
   if (!contextPromise) {
     contextPromise = Promise.all([
-      import('firebase/app'),
-      import('firebase/auth'),
-      import('firebase/firestore')
+      import(/* @vite-ignore */ `${FIREBASE_CDN_BASE}/firebase-app.js`),
+      import(/* @vite-ignore */ `${FIREBASE_CDN_BASE}/firebase-auth.js`),
+      import(/* @vite-ignore */ `${FIREBASE_CDN_BASE}/firebase-firestore.js`)
     ]).then(async ([appModule, authModule, firestoreModule]) => {
       const app = appModule.initializeApp(config);
       const auth = authModule.getAuth(app);
@@ -49,7 +52,7 @@ export async function submitOnlineScore(entry) {
     wave: Math.max(0, Number(entry.wave) || 0),
     kills: Math.max(0, Number(entry.kills) || 0),
     maxRank: Math.max(1, Math.min(5, Number(entry.maxRank) || 1)),
-    version: '1.7.4',
+    version: '3.4.0',
     createdAt: firestore.serverTimestamp()
   });
   return true;

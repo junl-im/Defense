@@ -1,0 +1,870 @@
+{
+  "schemaVersion": 1,
+  "gameVersion": "3.4.0",
+  "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+  "summary": {
+    "total": 14,
+    "productionApproved": 0,
+    "prototypes": 14,
+    "missingSkin": 14,
+    "missingAnimations": 14,
+    "missingTextureSets": 14
+  },
+  "entries": [
+    {
+      "id": "player-moon-captain-sd-toon",
+      "category": "character",
+      "declaredStatus": "prototype-placeholder",
+      "productionPassed": false,
+      "requirements": {
+        "triangleRange": [
+          6000,
+          10000
+        ],
+        "requiredAnimations": 7
+      },
+      "metrics": {
+        "file": "player-moon-captain-sd-toon.glb",
+        "bytes": 65784,
+        "triangles": 4496,
+        "meshes": 25,
+        "nodes": 26,
+        "nodeNames": [
+          "world",
+          "pelvis",
+          "body",
+          "head",
+          "eyeL",
+          "eyeR",
+          "shoulderL",
+          "shoulderR",
+          "armL",
+          "armR",
+          "handL",
+          "handR",
+          "legL",
+          "legR",
+          "footL",
+          "footR",
+          "cloth",
+          "sash",
+          "hornL",
+          "hornR",
+          "gatBrim",
+          "gatCrown",
+          "weapon",
+          "signature",
+          "halo",
+          "talisman"
+        ],
+        "materials": 7,
+        "textures": 0,
+        "images": 0,
+        "skins": 0,
+        "animations": [],
+        "extras": {}
+      },
+      "checks": {
+        "styleLockMetadata": false,
+        "triangleRange": false,
+        "handPaintedTextures": false,
+        "skin": false,
+        "animationClips": false,
+        "productionRegistry": false
+      }
+    },
+    {
+      "id": "guardian-ember-sd-toon",
+      "category": "character",
+      "declaredStatus": "prototype-placeholder",
+      "productionPassed": false,
+      "requirements": {
+        "triangleRange": [
+          6000,
+          10000
+        ],
+        "requiredAnimations": 7
+      },
+      "metrics": {
+        "file": "guardian-ember-sd-toon.glb",
+        "bytes": 58756,
+        "triangles": 4142,
+        "meshes": 24,
+        "nodes": 25,
+        "nodeNames": [
+          "world",
+          "pelvis",
+          "body",
+          "head",
+          "eyeL",
+          "eyeR",
+          "shoulderL",
+          "shoulderR",
+          "armL",
+          "armR",
+          "handL",
+          "handR",
+          "legL",
+          "legR",
+          "footL",
+          "footR",
+          "cloth",
+          "sash",
+          "hornL",
+          "hornR",
+          "weapon",
+          "signature",
+          "flameCore",
+          "halo",
+          "talisman"
+        ],
+        "materials": 7,
+        "textures": 0,
+        "images": 0,
+        "skins": 0,
+        "animations": [],
+        "extras": {}
+      },
+      "checks": {
+        "styleLockMetadata": false,
+        "triangleRange": false,
+        "handPaintedTextures": false,
+        "skin": false,
+        "animationClips": false,
+        "productionRegistry": false
+      }
+    },
+    {
+      "id": "guardian-frost-sd-toon",
+      "category": "character",
+      "declaredStatus": "prototype-placeholder",
+      "productionPassed": false,
+      "requirements": {
+        "triangleRange": [
+          6000,
+          10000
+        ],
+        "requiredAnimations": 7
+      },
+      "metrics": {
+        "file": "guardian-frost-sd-toon.glb",
+        "bytes": 58224,
+        "triangles": 4164,
+        "meshes": 23,
+        "nodes": 24,
+        "nodeNames": [
+          "world",
+          "pelvis",
+          "body",
+          "head",
+          "eyeL",
+          "eyeR",
+          "shoulderL",
+          "shoulderR",
+          "armL",
+          "armR",
+          "handL",
+          "handR",
+          "legL",
+          "legR",
+          "footL",
+          "footR",
+          "cloth",
+          "sash",
+          "hornL",
+          "hornR",
+          "hood",
+          "weapon",
+          "signature",
+          "halo"
+        ],
+        "materials": 6,
+        "textures": 0,
+        "images": 0,
+        "skins": 0,
+        "animations": [],
+        "extras": {}
+      },
+      "checks": {
+        "styleLockMetadata": false,
+        "triangleRange": false,
+        "handPaintedTextures": false,
+        "skin": false,
+        "animationClips": false,
+        "productionRegistry": false
+      }
+    },
+    {
+      "id": "guardian-wind-sd-toon",
+      "category": "character",
+      "declaredStatus": "prototype-placeholder",
+      "productionPassed": false,
+      "requirements": {
+        "triangleRange": [
+          6000,
+          10000
+        ],
+        "requiredAnimations": 7
+      },
+      "metrics": {
+        "file": "guardian-wind-sd-toon.glb",
+        "bytes": 58448,
+        "triangles": 4144,
+        "meshes": 24,
+        "nodes": 25,
+        "nodeNames": [
+          "world",
+          "pelvis",
+          "body",
+          "head",
+          "eyeL",
+          "eyeR",
+          "shoulderL",
+          "shoulderR",
+          "armL",
+          "armR",
+          "handL",
+          "handR",
+          "legL",
+          "legR",
+          "footL",
+          "footR",
+          "cloth",
+          "sash",
+          "hornL",
+          "hornR",
+          "gatBrim",
+          "gatCrown",
+          "weapon",
+          "signature",
+          "ribbon"
+        ],
+        "materials": 6,
+        "textures": 0,
+        "images": 0,
+        "skins": 0,
+        "animations": [],
+        "extras": {}
+      },
+      "checks": {
+        "styleLockMetadata": false,
+        "triangleRange": false,
+        "handPaintedTextures": false,
+        "skin": false,
+        "animationClips": false,
+        "productionRegistry": false
+      }
+    },
+    {
+      "id": "guardian-stone-sd-toon",
+      "category": "character",
+      "declaredStatus": "prototype-placeholder",
+      "productionPassed": false,
+      "requirements": {
+        "triangleRange": [
+          6000,
+          10000
+        ],
+        "requiredAnimations": 7
+      },
+      "metrics": {
+        "file": "guardian-stone-sd-toon.glb",
+        "bytes": 53000,
+        "triangles": 3964,
+        "meshes": 23,
+        "nodes": 24,
+        "nodeNames": [
+          "world",
+          "pelvis",
+          "body",
+          "head",
+          "eyeL",
+          "eyeR",
+          "shoulderL",
+          "shoulderR",
+          "armL",
+          "armR",
+          "handL",
+          "handR",
+          "legL",
+          "legR",
+          "footL",
+          "footR",
+          "cloth",
+          "sash",
+          "hornL",
+          "hornR",
+          "chestArmor",
+          "weapon",
+          "signature",
+          "backStone"
+        ],
+        "materials": 5,
+        "textures": 0,
+        "images": 0,
+        "skins": 0,
+        "animations": [],
+        "extras": {}
+      },
+      "checks": {
+        "styleLockMetadata": false,
+        "triangleRange": false,
+        "handPaintedTextures": false,
+        "skin": false,
+        "animationClips": false,
+        "productionRegistry": false
+      }
+    },
+    {
+      "id": "guardian-bell-sd-toon",
+      "category": "character",
+      "declaredStatus": "prototype-placeholder",
+      "productionPassed": false,
+      "requirements": {
+        "triangleRange": [
+          6000,
+          10000
+        ],
+        "requiredAnimations": 7
+      },
+      "metrics": {
+        "file": "guardian-bell-sd-toon.glb",
+        "bytes": 58912,
+        "triangles": 4156,
+        "meshes": 24,
+        "nodes": 25,
+        "nodeNames": [
+          "world",
+          "pelvis",
+          "body",
+          "head",
+          "eyeL",
+          "eyeR",
+          "shoulderL",
+          "shoulderR",
+          "armL",
+          "armR",
+          "handL",
+          "handR",
+          "legL",
+          "legR",
+          "footL",
+          "footR",
+          "cloth",
+          "sash",
+          "hornL",
+          "hornR",
+          "hood",
+          "weapon",
+          "signature",
+          "talisman",
+          "halo"
+        ],
+        "materials": 7,
+        "textures": 0,
+        "images": 0,
+        "skins": 0,
+        "animations": [],
+        "extras": {}
+      },
+      "checks": {
+        "styleLockMetadata": false,
+        "triangleRange": false,
+        "handPaintedTextures": false,
+        "skin": false,
+        "animationClips": false,
+        "productionRegistry": false
+      }
+    },
+    {
+      "id": "guardian-thunder-sd-toon",
+      "category": "character",
+      "declaredStatus": "prototype-placeholder",
+      "productionPassed": false,
+      "requirements": {
+        "triangleRange": [
+          6000,
+          10000
+        ],
+        "requiredAnimations": 7
+      },
+      "metrics": {
+        "file": "guardian-thunder-sd-toon.glb",
+        "bytes": 56196,
+        "triangles": 4052,
+        "meshes": 24,
+        "nodes": 25,
+        "nodeNames": [
+          "world",
+          "pelvis",
+          "body",
+          "head",
+          "eyeL",
+          "eyeR",
+          "shoulderL",
+          "shoulderR",
+          "armL",
+          "armR",
+          "handL",
+          "handR",
+          "legL",
+          "legR",
+          "footL",
+          "footR",
+          "cloth",
+          "sash",
+          "hornL",
+          "hornR",
+          "helmet",
+          "crest",
+          "weapon",
+          "guard",
+          "signature"
+        ],
+        "materials": 6,
+        "textures": 0,
+        "images": 0,
+        "skins": 0,
+        "animations": [],
+        "extras": {}
+      },
+      "checks": {
+        "styleLockMetadata": false,
+        "triangleRange": false,
+        "handPaintedTextures": false,
+        "skin": false,
+        "animationClips": false,
+        "productionRegistry": false
+      }
+    },
+    {
+      "id": "monster-imp-sd-toon",
+      "category": "monster",
+      "declaredStatus": "prototype-placeholder",
+      "productionPassed": false,
+      "requirements": {
+        "triangleRange": [
+          5000,
+          9000
+        ],
+        "requiredAnimations": 6
+      },
+      "metrics": {
+        "file": "monster-imp-sd-toon.glb",
+        "bytes": 43316,
+        "triangles": 2652,
+        "meshes": 25,
+        "nodes": 26,
+        "nodeNames": [
+          "world",
+          "pelvis",
+          "body",
+          "head",
+          "mask",
+          "eyeL",
+          "eyeR",
+          "shoulderL",
+          "shoulderR",
+          "armL",
+          "armR",
+          "handL",
+          "handR",
+          "legL",
+          "legR",
+          "footL",
+          "footR",
+          "cloth",
+          "sash",
+          "hornL",
+          "hornR",
+          "earL",
+          "earR",
+          "weapon",
+          "signature",
+          "tail"
+        ],
+        "materials": 5,
+        "textures": 0,
+        "images": 0,
+        "skins": 0,
+        "animations": [],
+        "extras": {}
+      },
+      "checks": {
+        "styleLockMetadata": false,
+        "triangleRange": false,
+        "handPaintedTextures": false,
+        "skin": false,
+        "animationClips": false,
+        "productionRegistry": false
+      }
+    },
+    {
+      "id": "monster-runner-sd-toon",
+      "category": "monster",
+      "declaredStatus": "prototype-placeholder",
+      "productionPassed": false,
+      "requirements": {
+        "triangleRange": [
+          5000,
+          9000
+        ],
+        "requiredAnimations": 6
+      },
+      "metrics": {
+        "file": "monster-runner-sd-toon.glb",
+        "bytes": 39364,
+        "triangles": 2634,
+        "meshes": 24,
+        "nodes": 25,
+        "nodeNames": [
+          "world",
+          "pelvis",
+          "body",
+          "head",
+          "mask",
+          "eyeL",
+          "eyeR",
+          "shoulderL",
+          "shoulderR",
+          "armL",
+          "armR",
+          "handL",
+          "handR",
+          "legL",
+          "legR",
+          "footL",
+          "footR",
+          "cloth",
+          "sash",
+          "headWrap",
+          "earL",
+          "earR",
+          "weapon",
+          "signature",
+          "scarf"
+        ],
+        "materials": 4,
+        "textures": 0,
+        "images": 0,
+        "skins": 0,
+        "animations": [],
+        "extras": {}
+      },
+      "checks": {
+        "styleLockMetadata": false,
+        "triangleRange": false,
+        "handPaintedTextures": false,
+        "skin": false,
+        "animationClips": false,
+        "productionRegistry": false
+      }
+    },
+    {
+      "id": "monster-brute-sd-toon",
+      "category": "monster",
+      "declaredStatus": "prototype-placeholder",
+      "productionPassed": false,
+      "requirements": {
+        "triangleRange": [
+          5000,
+          9000
+        ],
+        "requiredAnimations": 6
+      },
+      "metrics": {
+        "file": "monster-brute-sd-toon.glb",
+        "bytes": 43688,
+        "triangles": 2824,
+        "meshes": 25,
+        "nodes": 26,
+        "nodeNames": [
+          "world",
+          "pelvis",
+          "body",
+          "head",
+          "mask",
+          "eyeL",
+          "eyeR",
+          "shoulderL",
+          "shoulderR",
+          "armL",
+          "armR",
+          "handL",
+          "handR",
+          "legL",
+          "legR",
+          "footL",
+          "footR",
+          "cloth",
+          "sash",
+          "armorCore",
+          "shoulderRockL",
+          "shoulderRockR",
+          "weapon",
+          "signature",
+          "hornL",
+          "hornR"
+        ],
+        "materials": 4,
+        "textures": 0,
+        "images": 0,
+        "skins": 0,
+        "animations": [],
+        "extras": {}
+      },
+      "checks": {
+        "styleLockMetadata": false,
+        "triangleRange": false,
+        "handPaintedTextures": false,
+        "skin": false,
+        "animationClips": false,
+        "productionRegistry": false
+      }
+    },
+    {
+      "id": "monster-shaman-sd-toon",
+      "category": "monster",
+      "declaredStatus": "prototype-placeholder",
+      "productionPassed": false,
+      "requirements": {
+        "triangleRange": [
+          5000,
+          9000
+        ],
+        "requiredAnimations": 6
+      },
+      "metrics": {
+        "file": "monster-shaman-sd-toon.glb",
+        "bytes": 46356,
+        "triangles": 2792,
+        "meshes": 24,
+        "nodes": 25,
+        "nodeNames": [
+          "world",
+          "pelvis",
+          "body",
+          "head",
+          "mask",
+          "eyeL",
+          "eyeR",
+          "shoulderL",
+          "shoulderR",
+          "armL",
+          "armR",
+          "handL",
+          "handR",
+          "legL",
+          "legR",
+          "footL",
+          "footR",
+          "cloth",
+          "sash",
+          "hatBrim",
+          "hat",
+          "weapon",
+          "signature",
+          "talisman",
+          "halo"
+        ],
+        "materials": 5,
+        "textures": 0,
+        "images": 0,
+        "skins": 0,
+        "animations": [],
+        "extras": {}
+      },
+      "checks": {
+        "styleLockMetadata": false,
+        "triangleRange": false,
+        "handPaintedTextures": false,
+        "skin": false,
+        "animationClips": false,
+        "productionRegistry": false
+      }
+    },
+    {
+      "id": "boss-tiger-sd-toon",
+      "category": "boss",
+      "declaredStatus": "prototype-placeholder",
+      "productionPassed": false,
+      "requirements": {
+        "triangleRange": [
+          10000,
+          18000
+        ],
+        "requiredAnimations": 8
+      },
+      "metrics": {
+        "file": "boss-tiger-sd-toon.glb",
+        "bytes": 86308,
+        "triangles": 5346,
+        "meshes": 22,
+        "nodes": 23,
+        "nodeNames": [
+          "world",
+          "body",
+          "chestArmor",
+          "head",
+          "muzzle",
+          "nose",
+          "eyeL",
+          "eyeR",
+          "earL",
+          "earR",
+          "mane",
+          "frontLeg0",
+          "frontPaw0",
+          "backLeg0",
+          "backPaw0",
+          "frontLeg1",
+          "frontPaw1",
+          "backLeg1",
+          "backPaw1",
+          "tail",
+          "weapon",
+          "signature",
+          "halo"
+        ],
+        "materials": 7,
+        "textures": 0,
+        "images": 0,
+        "skins": 0,
+        "animations": [],
+        "extras": {}
+      },
+      "checks": {
+        "styleLockMetadata": false,
+        "triangleRange": false,
+        "handPaintedTextures": false,
+        "skin": false,
+        "animationClips": false,
+        "productionRegistry": false
+      }
+    },
+    {
+      "id": "boss-serpent-sd-toon",
+      "category": "boss",
+      "declaredStatus": "prototype-placeholder",
+      "productionPassed": false,
+      "requirements": {
+        "triangleRange": [
+          10000,
+          18000
+        ],
+        "requiredAnimations": 8
+      },
+      "metrics": {
+        "file": "boss-serpent-sd-toon.glb",
+        "bytes": 75576,
+        "triangles": 5116,
+        "meshes": 19,
+        "nodes": 20,
+        "nodeNames": [
+          "world",
+          "coil0",
+          "coil1",
+          "coil2",
+          "coil3",
+          "coil4",
+          "coil5",
+          "coil6",
+          "body",
+          "head",
+          "muzzle",
+          "eyeL",
+          "eyeR",
+          "hornL",
+          "hornR",
+          "armL",
+          "armR",
+          "weapon",
+          "signature",
+          "halo"
+        ],
+        "materials": 5,
+        "textures": 0,
+        "images": 0,
+        "skins": 0,
+        "animations": [],
+        "extras": {}
+      },
+      "checks": {
+        "styleLockMetadata": false,
+        "triangleRange": false,
+        "handPaintedTextures": false,
+        "skin": false,
+        "animationClips": false,
+        "productionRegistry": false
+      }
+    },
+    {
+      "id": "boss-king-sd-toon",
+      "category": "boss",
+      "declaredStatus": "prototype-placeholder",
+      "productionPassed": false,
+      "requirements": {
+        "triangleRange": [
+          10000,
+          18000
+        ],
+        "requiredAnimations": 8
+      },
+      "metrics": {
+        "file": "boss-king-sd-toon.glb",
+        "bytes": 65648,
+        "triangles": 4484,
+        "meshes": 31,
+        "nodes": 32,
+        "nodeNames": [
+          "world",
+          "pelvis",
+          "body",
+          "head",
+          "mask",
+          "eyeL",
+          "eyeR",
+          "shoulderL",
+          "shoulderR",
+          "armL",
+          "armR",
+          "handL",
+          "handR",
+          "legL",
+          "legR",
+          "footL",
+          "footR",
+          "cloth",
+          "sash",
+          "crownBase",
+          "crownSpike0",
+          "crownSpike1",
+          "crownSpike2",
+          "crownSpike3",
+          "crownSpike4",
+          "weapon",
+          "signature",
+          "halo",
+          "orbitMask0",
+          "orbitMask1",
+          "orbitMask2",
+          "orbitMask3"
+        ],
+        "materials": 6,
+        "textures": 0,
+        "images": 0,
+        "skins": 0,
+        "animations": [],
+        "extras": {}
+      },
+      "checks": {
+        "styleLockMetadata": false,
+        "triangleRange": false,
+        "handPaintedTextures": false,
+        "skin": false,
+        "animationClips": false,
+        "productionRegistry": false
+      }
+    }
+  ]
+}

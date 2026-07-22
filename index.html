@@ -65,7 +65,7 @@
             <button id="meta-btn" class="btn ghost meta-entry"><span>혼불 <b id="title-shards">0</b></span>수호자 성장</button>
           </div>
           <button id="controls-btn" class="title-settings-btn" type="button" aria-label="카메라와 조작 설정" title="카메라와 조작 설정"><span aria-hidden="true">⚙️</span></button>
-          <small class="title-version" aria-label="게임 버전 3.2.0">v3.2.0</small>
+          <small class="title-version" aria-label="게임 버전 3.4.0">v3.4.0</small>
         </div>
       </section>
 
@@ -358,7 +358,15 @@
             </label>
             <div class="toggle-setting"><div><b>진동 피드백</b><small>지원 기기의 햅틱 사용</small></div><button type="button" data-control-toggle="vibration" aria-pressed="true">ON</button></div>
             <div class="toggle-setting"><div><b>모션 감소</b><small>파티클·시네마틱 움직임 축소</small></div><button type="button" data-control-toggle="reducedMotion" aria-pressed="false">OFF</button></div>
+            <div class="toggle-setting asset-compare-toggle"><div><b>3D 모델 고정</b><small>원거리 11방향 이미지를 끄고 GLB를 계속 표시</small></div><button type="button" data-control-toggle="force3DModels" aria-pressed="false">OFF</button></div>
           </div>
+          <section class="asset-diagnostics" aria-labelledby="asset-diagnostics-title">
+            <div class="asset-diagnostics-heading">
+              <div><b id="asset-diagnostics-title">전투 에셋 품질·적용 상태</b><small id="asset-diagnostics-summary">로드 여부와 AAA 아트 승인 여부를 구분해 표시합니다.</small></div>
+              <span id="asset-diagnostics-count">승인 0 / 14</span>
+            </div>
+            <div id="asset-diagnostics-list" class="asset-diagnostics-list" aria-live="polite"></div>
+          </section>
           <div class="handed-setting">
             <div><b>모바일 조작 배치</b><small>이동 손을 기준으로 선택</small></div>
             <div class="handed-options" role="group" aria-label="모바일 조작 배치">
@@ -411,7 +419,7 @@
     </div>
     <script>
       (() => {
-        const VERSION = '3.2.0';
+        const VERSION = '3.4.0';
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
         const retryButton = document.getElementById('boot-retry-btn');

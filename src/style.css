@@ -1254,3 +1254,23 @@ body.reduced-motion .loading-mascot { animation: none; }
   .codex-research-row { gap: 4px; }
   .codex-research-row > span { padding: 3px 6px; }
 }
+
+.asset-diagnostics { margin: 12px 0; padding: 12px; border: 1px solid rgba(141,236,255,.16); border-radius: 16px; background: rgba(8,12,25,.5); text-align: left; }
+.asset-diagnostics-heading { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; }
+.asset-diagnostics-heading b, .asset-diagnostics-heading small { display: block; }
+.asset-diagnostics-heading b { font-size: 11px; color: #f3ecff; }
+.asset-diagnostics-heading small { margin-top: 3px; color: #aa9db2; font-size: 8px; line-height: 1.45; }
+#asset-diagnostics-count { padding: 5px 8px; border-radius: 999px; background: rgba(112,232,255,.12); color: #a9f4ff; font-size: 9px; font-weight: 900; white-space: nowrap; }
+.asset-diagnostics-list { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 6px; margin-top: 10px; }
+.asset-diagnostic-item { display: grid; grid-template-columns: auto 1fr; gap: 7px; align-items: center; min-width: 0; padding: 7px 8px; border-radius: 11px; background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.055); }
+.asset-diagnostic-item i { width: 8px; height: 8px; border-radius: 50%; background: #ff8a80; box-shadow: 0 0 8px rgba(255,90,90,.5); }
+.asset-diagnostic-item.loaded i { background: #75efbd; box-shadow: 0 0 8px rgba(80,255,190,.5); }
+.asset-diagnostic-item b, .asset-diagnostic-item small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.asset-diagnostic-item b { font-size: 9px; color: #ece5f7; }
+.asset-diagnostic-item small { margin-top: 2px; font-size: 7px; color: #92869d; }
+@media (max-width: 430px) { .asset-diagnostics-list { grid-template-columns: 1fr; } }
+
+.asset-diagnostic-item.prototype { border-color: rgba(255,194,92,.24); background: rgba(93,58,18,.22); }
+.asset-diagnostic-item.prototype i { background: #ffc25c; box-shadow: 0 0 8px rgba(255,194,92,.5); }
+.asset-diagnostic-item.approved { border-color: rgba(91,226,194,.3); background: rgba(16,84,68,.24); }
+.asset-diagnostic-item.approved i { background: #5be2c2; box-shadow: 0 0 8px rgba(91,226,194,.55); }

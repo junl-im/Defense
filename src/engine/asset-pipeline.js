@@ -5,6 +5,7 @@ import { selectAssetVariant } from './asset-catalog.js';
 const ALLOWED_MODEL_EXTENSIONS = new Set(['glb', 'gltf']);
 const ALLOWED_TEXTURE_EXTENSIONS = new Set(['png', 'webp', 'ktx2', 'jpg', 'jpeg']);
 const MIP_FACTOR = 4 / 3;
+const THREE_ADDON_CDN = 'https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/libs';
 
 function extensionOf(url) {
   const clean = String(url || '').split(/[?#]/)[0].toLowerCase();
@@ -30,6 +31,8 @@ export class AssetPipeline {
     this.maxAnisotropy = Math.min(lowPower ? 2 : 4, renderer.capabilities.getMaxAnisotropy?.() || 1);
     this.cache = new Map();
     this.failures = [];
+    this.instanceCounts = new Map();
+    this.fallbackCounts = new Map();
     this.textureBytes = 0;
     this.manager = new THREE.LoadingManager();
     this.textureLoader = new THREE.TextureLoader(this.manager);
@@ -53,6 +56,7 @@ export class AssetPipeline {
     if (!this.ktx2LoaderPromise) {
       this.ktx2LoaderPromise = import('three/addons/loaders/KTX2Loader.js').then(({ KTX2Loader }) => {
         this.ktx2Loader = new KTX2Loader(this.manager)
+          .setTranscoderPath(`${THREE_ADDON_CDN}/basis/`)
           .setWorkerLimit(this.lowPower ? 1 : 2)
           .detectSupport(this.renderer);
         return this.ktx2Loader;
@@ -69,7 +73,9 @@ export class AssetPipeline {
         import('three/addons/loaders/DRACOLoader.js'),
         this.ensureKTX2Loader()
       ]).then(([{ GLTFLoader }, { DRACOLoader }, ktx2Loader]) => {
-        this.dracoLoader = new DRACOLoader(this.manager).setWorkerLimit(this.lowPower ? 2 : 4);
+        this.dracoLoader = new DRACOLoader(this.manager)
+          .setDecoderPath(`${THREE_ADDON_CDN}/draco/gltf/`)
+          .setWorkerLimit(this.lowPower ? 2 : 4);
         this.gltfLoader = new GLTFLoader(this.manager)
           .setDRACOLoader(this.dracoLoader)
           .setKTX2Loader(ktx2Loader);
@@ -86,7 +92,6 @@ export class AssetPipeline {
     const needsKTX2 = selectedExtensions.includes('ktx2');
     if (needsModels) {
       await this.ensureModelLoaders();
-      this.dracoLoader.preload();
     } else if (needsKTX2) {
       await this.ensureKTX2Loader();
     }
@@ -178,7 +183,7 @@ export class AssetPipeline {
     const loaded = entry.kind === 'model'
       ? await this.loadModel(entry, selected.url)
       : await this.loadTexture(entry, selected.url);
-    const record = { ...loaded, id: entry.id, selectedTier: selected.tier, required: Boolean(entry.required) };
+    const record = { ...loaded, id: entry.id, selectedTier: selected.tier, required: Boolean(entry.required), approval: entry.approval || null };
     if (entry.retain !== false) this.cache.set(entry.id, record);
     else if (record.texture) record.texture.dispose();
     return record;
@@ -233,8 +238,52 @@ export class AssetPipeline {
 
   instantiateModel(id, fallbackFactory = null) {
     const record = this.get(id);
-    if (record?.scene) return cloneSkinned(record.scene);
-    return typeof fallbackFactory === 'function' ? fallbackFactory() : null;
+    if (record?.scene) {
+      const instance = cloneSkinned(record.scene);
+      instance.traverse?.((object) => {
+        if (!object.isMesh) return;
+        object.userData.assetSourceId = id;
+        object.userData.sharedAssetGeometry = true;
+        object.userData.assetApproval = record.approval || null;
+      });
+      instance.userData.assetApproval = record.approval || null;
+      this.instanceCounts.set(id, (this.instanceCounts.get(id) || 0) + 1);
+      return instance;
+    }
+    if (typeof fallbackFactory === 'function') {
+      const fallback = fallbackFactory();
+      if (fallback) {
+        fallback.userData.assetSourceId = id;
+        fallback.userData.assetFallback = true;
+        this.fallbackCounts.set(id, (this.fallbackCounts.get(id) || 0) + 1);
+      }
+      return fallback;
+    }
+    return null;
+  }
+
+  recordFallback(id) {
+    if (!id) return;
+    this.fallbackCounts.set(id, (this.fallbackCounts.get(id) || 0) + 1);
+  }
+
+  getModelStatus(id) {
+    const record = this.get(id);
+    const failure = [...this.failures].reverse().find((item) => item.id === id);
+    return {
+      id,
+      loaded: Boolean(record?.scene),
+      url: record?.url || '',
+      selectedTier: record?.selectedTier || 'none',
+      instances: this.instanceCounts.get(id) || 0,
+      fallbacks: this.fallbackCounts.get(id) || 0,
+      failure: failure?.reason || '',
+      approval: record?.approval || null
+    };
+  }
+
+  getModelStatuses(ids = []) {
+    return ids.map((id) => this.getModelStatus(id));
   }
 
   dispose() {
@@ -257,6 +306,8 @@ export class AssetPipeline {
       qualityTier: this.qualityTier,
       cachedAssets: this.cache.size,
       failedAssets: this.failures.length,
+      modelInstances: Object.fromEntries(this.instanceCounts),
+      modelFallbacks: Object.fromEntries(this.fallbackCounts),
       textureMemoryMB: Number(bytesToMB(this.textureBytes).toFixed(2)),
       textureBudgetMB: this.textureBudgetMB,
       anisotropy: this.maxAnisotropy,

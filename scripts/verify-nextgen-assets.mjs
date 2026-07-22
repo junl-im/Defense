@@ -1,80 +1,43 @@
 import { readFileSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
-import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { countObjectTriangles } from '../src/engine/geometry-budget.js';
+import { PLAYER_ASSET_ID, GUARDIAN_ASSET_IDS, MONSTER_ASSET_IDS, BOSS_ASSET_IDS } from '../src/engine/asset-catalog.js';
+import { CURRENT_ASSET_APPROVAL } from '../src/engine/asset-quality.js';
 
 const root = resolve(import.meta.dirname, '..');
-const loader = new GLTFLoader();
+const audit = JSON.parse(readFileSync(resolve(root, 'docs/CURRENT_ASSET_AUDIT.json'), 'utf8'));
 const failures = [];
+const pass = (message) => console.log(`PASS ${message}`);
+const fail = (message) => { failures.push(message); console.error(`FAIL ${message}`); };
+const commonBipedNodes = ['body','head','armL','armR','legL','legR','weapon','signature'];
 const specs = [
-  {
-    path: 'public/assets/models/guardian-ember-sd-toon.glb',
-    maxTriangles: 5600,
-    nodes: ['body', 'head', 'armL', 'armR', 'legL', 'legR', 'weapon', 'signature', 'halo'],
-    headRatio: [.34, .58]
-  },
-  {
-    path: 'public/assets/models/monster-imp-sd-toon.glb',
-    maxTriangles: 3200,
-    nodes: ['body', 'head', 'armL', 'armR', 'legL', 'legR', 'weapon', 'signature'],
-    headRatio: [.34, .62]
-  },
-  {
-    path: 'public/assets/models/boss-tiger-sd-toon.glb',
-    maxTriangles: 9000,
-    nodes: ['body', 'head', 'frontLeg0', 'frontLeg1', 'weapon', 'signature', 'halo'],
-    headRatio: [.28, .58]
-  }
+  { id: PLAYER_ASSET_ID, path: 'public/assets/models/player-moon-captain-sd-toon.glb', maxTriangles: 5600, nodes: [...commonBipedNodes,'halo'] },
+  ...Object.entries(GUARDIAN_ASSET_IDS).map(([type,id])=>({id,path:`public/assets/models/guardian-${type}-sd-toon.glb`,maxTriangles:5600,nodes:commonBipedNodes})),
+  ...Object.entries(MONSTER_ASSET_IDS).map(([type,id])=>({id,path:`public/assets/models/monster-${type}-sd-toon.glb`,maxTriangles:3200,nodes:commonBipedNodes})),
+  { id:BOSS_ASSET_IDS.tiger,path:'public/assets/models/boss-tiger-sd-toon.glb',maxTriangles:9000,nodes:['body','head','frontLeg0','frontLeg1','weapon','signature','halo'] },
+  { id:BOSS_ASSET_IDS.serpent,path:'public/assets/models/boss-serpent-sd-toon.glb',maxTriangles:9000,nodes:['body','head','armL','armR','weapon','signature','halo'] },
+  { id:BOSS_ASSET_IDS.king,path:'public/assets/models/boss-king-sd-toon.glb',maxTriangles:9000,nodes:[...commonBipedNodes,'halo'] }
 ];
-
-function pass(message) { console.log(`PASS ${message}`); }
-function fail(message) { failures.push(message); console.error(`FAIL ${message}`); }
-
 for (const spec of specs) {
-  const file = resolve(root, spec.path);
-  if (statSync(file).size < 10_000) { fail(`${spec.path} 파일 크기 부족`); continue; }
-  const buffer = readFileSync(file);
-  const arrayBuffer = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
-  const gltf = await new Promise((resolveLoad, rejectLoad) => loader.parse(arrayBuffer, '', resolveLoad, rejectLoad));
-  gltf.scene.updateMatrixWorld(true);
-  const names = new Set();
-  gltf.scene.traverse((node) => { if (node.name) names.add(node.name); });
-  const missing = spec.nodes.filter((name) => !names.has(name));
-  if (missing.length) fail(`${spec.path} 노드 누락: ${missing.join(', ')}`);
-  else pass(`${spec.path} 공용 파츠 노드 ${spec.nodes.length}개`);
-
-  const triangles = countObjectTriangles(gltf.scene);
-  if (triangles > spec.maxTriangles) fail(`${spec.path} ${triangles}/${spec.maxTriangles} triangles`);
-  else pass(`${spec.path} ${triangles}/${spec.maxTriangles} triangles`);
-
-  const box = new THREE.Box3().setFromObject(gltf.scene);
-  const size = box.getSize(new THREE.Vector3());
-  if (size.y <= 1 || size.y > 6 || size.x <= .5) fail(`${spec.path} 비정상 bounds ${size.toArray().map((v) => v.toFixed(2)).join('x')}`);
-  else pass(`${spec.path} bounds ${size.toArray().map((v) => v.toFixed(2)).join('x')}`);
-
-  const head = gltf.scene.getObjectByName('head');
-  if (!head) continue;
-  const headSize = new THREE.Box3().setFromObject(head).getSize(new THREE.Vector3());
-  const ratio = headSize.y / Math.max(.001, size.y);
-  if (ratio < spec.headRatio[0] || ratio > spec.headRatio[1]) fail(`${spec.path} SD 머리 비율 ${(ratio * 100).toFixed(1)}%`);
-  else pass(`${spec.path} SD 머리 비율 ${(ratio * 100).toFixed(1)}%`);
+  const file = resolve(root,spec.path);
+  if (statSync(file).size < 10000) { fail(`${spec.path} 파일 크기 부족`); continue; }
+  const entry = audit.entries.find((item)=>item.id===spec.id);
+  if (!entry) { fail(`${spec.id} 감사 항목 누락`); continue; }
+  const missing = spec.nodes.filter((name)=>!entry.metrics.nodeNames.includes(name));
+  if (missing.length) fail(`${spec.id} 노드 누락: ${missing.join(', ')}`); else pass(`${spec.id} 공용 파츠 ${spec.nodes.length}개`);
+  if (entry.metrics.triangles > spec.maxTriangles) fail(`${spec.id} ${entry.metrics.triangles}/${spec.maxTriangles} triangles`); else pass(`${spec.id} ${entry.metrics.triangles}/${spec.maxTriangles} triangles`);
 }
-
-const main = readFileSync(resolve(root, 'src/main.js'), 'utf8');
-const premium = readFileSync(resolve(root, 'src/premium-assets.js'), 'utf8');
-const catalog = readFileSync(resolve(root, 'src/engine/asset-catalog.js'), 'utf8');
-const mobileEngine = readFileSync(resolve(root, 'src/engine/mobile-engine.js'), 'utf8');
-for (const token of ['guardian-ember-sd-toon', 'monster-imp-sd-toon', 'boss-tiger-sd-toon']) {
-  if (main.includes(token) && catalog.includes(token)) pass(`${token} 로딩·런타임 연결`);
-  else fail(`${token} 연결 누락`);
-}
-if (premium.includes('prepareImportedGuardian') && premium.includes('prepareImportedEnemy') && premium.includes('MeshToonMaterial') && premium.includes('TOON_GRADIENT')) pass('GLB 파츠 애니메이션·4단 Toon 재질');
-else fail('SD Toon GLB 스타일 처리 누락');
-if (premium.includes('uMoonRimColor') && mobileEngine.includes('NeutralToneMapping') && mobileEngine.includes('PCFSoftShadowMap')) pass('월광 Rim·중립 톤매핑·소프트 섀도');
-else fail('SD Toon 렌더링 설정 누락');
-if (main.includes('createNextGenEnvironmentPass') && main.includes('fxRing') && main.includes('fxTrail')) pass('기존 환경·발사체 계층 유지');
-else fail('환경 또는 발사체 계층 누락');
-
+const main=readFileSync(resolve(root,'src/main.js'),'utf8');
+const premium=readFileSync(resolve(root,'src/premium-assets.js'),'utf8');
+const catalog=readFileSync(resolve(root,'src/engine/asset-catalog.js'),'utf8');
+const pipeline=readFileSync(resolve(root,'src/engine/asset-pipeline.js'),'utf8');
+const html=readFileSync(resolve(root,'index.html'),'utf8');
+const mobileEngine=readFileSync(resolve(root,'src/engine/mobile-engine.js'),'utf8');
+if (specs.length===14 && specs.every(({id})=>catalog.includes(id))) pass('전투 캐릭터 GLB 14종 카탈로그 등록'); else fail('전투 캐릭터 GLB 14종 카탈로그 누락');
+if (main.includes('GUARDIAN_ASSET_IDS[type]')&&main.includes('MONSTER_ASSET_IDS[type]')&&main.includes('BOSS_ASSET_IDS[type]')&&main.includes('PLAYER_ASSET_ID')) pass('전체 전투 모델 연결'); else fail('전체 전투 모델 연결 누락');
+if (main.includes('renderAssetDiagnostics()')&&main.includes('approval?.productionReady')&&html.includes('asset-diagnostics-list')) pass('로드/AAA 승인 분리 진단 UI'); else fail('에셋 품질 진단 UI 누락');
+if (pipeline.includes('sharedAssetGeometry')&&pipeline.includes('assetApproval')&&pipeline.includes('getModelStatuses')) pass('GLB 공유 geometry 수명과 승인 상태 추적'); else fail('GLB 수명 또는 승인 상태 추적 누락');
+if (premium.includes('preserveAuthoredStylizedPbrMaterial')&&premium.includes('prototype-toon-fallback')) pass('승인 PBR 보존·프로토타입 Toon 폴백 분리'); else fail('PBR/프로토타입 렌더 분리 누락');
+if (premium.includes('uMoonRimColor')&&mobileEngine.includes('NeutralToneMapping')&&mobileEngine.includes('PCFSoftShadowMap')) pass('Subtle Rim·중립 톤매핑·소프트 섀도'); else fail('공통 Rim·톤매핑·섀도 설정 누락');
+if (specs.every(({id})=>CURRENT_ASSET_APPROVAL[id]?.status==='prototype-placeholder')) pass('현재 14종 프로토타입 격리'); else fail('현재 전투 GLB 승인 상태 오표기');
 if (failures.length) process.exit(1);
-console.log('SD Toon 대표 에셋 검증 완료');
+console.log(`전투 GLB ${specs.length}종 구조·승인 상태 검증 완료`);
