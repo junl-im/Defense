@@ -2829,3 +2829,21 @@ body[data-camera-profile="scenic"] #game-canvas { filter:saturate(1.035) brightn
 body.background-recovering #wave-recovery {
   border-color: rgba(255, 225, 139, .72);
 }
+
+/* v19.0.0 Browser Reliability Lab */
+body.webgl-context-lost::after {
+  content: '그래픽 화면을 복구하는 중입니다';
+  position: fixed;
+  z-index: 100000;
+  left: 50%;
+  top: max(16px, env(safe-area-inset-top));
+  transform: translateX(-50%);
+  padding: 10px 16px;
+  border: 1px solid rgba(255, 215, 122, .65);
+  border-radius: 999px;
+  color: #fff7d6;
+  background: rgba(17, 11, 31, .92);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
+  font-size: 13px;
+  pointer-events: none;
+}

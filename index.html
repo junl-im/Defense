@@ -15,7 +15,7 @@
     <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-desktop-v17.webp" media="(min-width: 721px) and (orientation: landscape)" />
     <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-mobile-v17.webp" media="(max-width: 720px), (orientation: portrait)" />
     <link rel="preload" as="image" href="./src/assets/title-v17/title-mascot-v17.webp" />
-    <!-- active lineage v18.0.0 · TEN-WAVE RELIABILITY -->
+    <!-- active lineage v19.0.0 · BROWSER RELIABILITY LAB -->
   </head>
   <body>
     <div id="app">
@@ -547,10 +547,19 @@
     </div>
     <script>
       (() => {
-        const VERSION = '18.0.0';
+        const VERSION = '19.0.0';
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
         const retryButton = document.getElementById('boot-retry-btn');
+        const diagnostics = window.__DOKKAEBI_BOOT_DIAGNOSTICS__ = {
+          version: VERSION,
+          startedAt: Date.now(),
+          serviceWorkerVersion: '',
+          serviceWorkerControlled: false,
+          updateFound: false,
+          purgeCount: 0,
+          registrationError: ''
+        };
         let bootTimer = 0;
 
         const clearLegacyCaches = async () => {
@@ -562,9 +571,42 @@
             if ('caches' in window) {
               const keys = await caches.keys();
               await Promise.all(keys.map((key) => caches.delete(key)));
+              diagnostics.purgeCount += keys.length;
             }
           } catch (error) {
             console.warn('[boot] cache cleanup skipped', error);
+          }
+        };
+
+        const messageWorker = (worker, payload, timeout = 1800) => new Promise((resolve) => {
+          if (!worker) return resolve(null);
+          const channel = new MessageChannel();
+          const timer = window.setTimeout(() => resolve(null), timeout);
+          channel.port1.onmessage = (event) => {
+            window.clearTimeout(timer);
+            resolve(event.data || null);
+          };
+          worker.postMessage(payload, [channel.port2]);
+        });
+
+        const registerServiceWorker = async () => {
+          if (!('serviceWorker' in navigator)) return;
+          if (!window.isSecureContext && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') return;
+          try {
+            const registration = await navigator.serviceWorker.register(`./sw.js?v=${VERSION}`, { scope: './', updateViaCache: 'none' });
+            diagnostics.serviceWorkerControlled = Boolean(navigator.serviceWorker.controller);
+            registration.addEventListener('updatefound', () => { diagnostics.updateFound = true; });
+            await registration.update().catch(() => undefined);
+            const worker = registration.active || registration.waiting || registration.installing || navigator.serviceWorker.controller;
+            const result = await messageWorker(worker, { type: 'DOKKAEBI_GET_VERSION' });
+            if (result?.version) diagnostics.serviceWorkerVersion = result.version;
+            if (result?.version && result.version !== VERSION) {
+              const purged = await messageWorker(worker, { type: 'DOKKAEBI_PURGE', targetVersion: VERSION }, 3500);
+              diagnostics.purgeCount += Array.isArray(purged?.removed) ? purged.removed.length : 0;
+            }
+          } catch (error) {
+            diagnostics.registrationError = error instanceof Error ? error.message : String(error);
+            console.warn('[boot] service worker registration skipped', error);
           }
         };
 
@@ -584,14 +626,17 @@
           window.location.replace(url.toString());
         });
 
-        window.addEventListener('dokkaebi:boot-ready', () => window.clearTimeout(bootTimer), { once: true });
+        window.addEventListener('dokkaebi:boot-ready', () => {
+          diagnostics.bootReadyAt = Date.now();
+          window.clearTimeout(bootTimer);
+        }, { once: true });
         bootTimer = window.setTimeout(() => {
           if (!window.__DOKKAEBI_BOOT_OK__) {
-            window.__DOKKAEBI_SHOW_BOOT_ERROR__('게임 모듈이 시작되지 않았습니다. 이전 캐시를 정리한 뒤 다시 시도해 주세요.');
+            window.__DOKKAEBI_SHOW_BOOT_ERROR__('게임 모듈이 시작되지 않았습니다. 캐시 복구 후 다시 시도해 주세요.');
           }
         }, 18000);
 
-        if ('serviceWorker' in navigator || 'caches' in window) clearLegacyCaches();
+        registerServiceWorker();
       })();
     </script>
     <script type="module" src="/src/main.js"></script>

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dokkaebi Browser Reliability Lab v19</title>
+  <style>
+    body{font-family:system-ui,sans-serif;background:#0e0b18;color:#f7f2ff;margin:0;padding:24px}main{max-width:760px;margin:auto}article{border:1px solid #554674;border-radius:14px;padding:16px;background:#171126}b{color:#ffd77a}pre{white-space:pre-wrap;word-break:break-word;background:#090711;padding:12px;border-radius:10px}.pass{color:#80ed99}.warn{color:#ffd166}.fail{color:#ff7b7b}
+  </style>
+</head>
+<body>
+<main id="browser-lab" data-status="pending">
+  <article>
+    <h1>Browser Reliability Lab v19</h1>
+    <p id="summary">브라우저 셸과 캐시 계약을 확인하는 중...</p>
+    <pre id="result">pending</pre>
+  </article>
+</main>
+<script>
+(async () => {
+  const VERSION = '19.0.0';
+  const root = document.getElementById('browser-lab');
+  const summary = document.getElementById('summary');
+  const output = document.getElementById('result');
+  const checks = [];
+  const check = (name, passed, detail = '') => checks.push({ name, passed: Boolean(passed), detail: String(detail || '') });
+  const fetchCheck = async (path, minimum = 1) => {
+    try {
+      const response = await fetch(path, { cache: 'no-store' });
+      const body = await response.arrayBuffer();
+      check(`fetch:${path}`, response.ok && body.byteLength >= minimum, `${response.status} · ${body.byteLength} bytes`);
+      return new TextDecoder().decode(body);
+    } catch (error) {
+      check(`fetch:${path}`, false, error.message);
+      return '';
+    }
+  };
+
+  const index = await fetchCheck('./index.html', 1000);
+  check('title-contract', index.includes('id="title-screen"') && index.includes('id="start-btn"'), 'title/start DOM');
+  check('v19-lineage', index.includes('active lineage v19.0.0'), 'index lineage');
+  await fetchCheck('./src/style.css', 1000);
+  await fetchCheck('./src/main.js', 1000);
+  await fetchCheck('./src/assets/title-v17/title-bg-desktop-v17.webp', 1000);
+  await fetchCheck('./src/assets/title-v17/title-bg-mobile-v17.webp', 1000);
+  await fetchCheck('./src/assets/title-v17/title-mascot-v17.webp', 1000);
+
+  let cacheApi = false;
+  try {
+    const cache = await caches.open('dokkaebi-browser-lab-v19-probe');
+    await cache.put('./browser-lab-probe', new Response('ok'));
+    cacheApi = (await cache.match('./browser-lab-probe'))?.ok === true;
+    await caches.delete('dokkaebi-browser-lab-v19-probe');
+  } catch (error) {
+    check('cache-api', false, error.message);
+  }
+  if (cacheApi) check('cache-api', true, 'put/match/delete');
+
+  let swVersion = '';
+  try {
+    const swSource = await fetchCheck('./sw.js', 100);
+    swVersion = swSource.match(/const VERSION = '([^']+)'/)?.[1] || '';
+    check('service-worker-version', swVersion === VERSION, swVersion || 'version missing');
+    check('service-worker-repair-contract', swSource.includes('DOKKAEBI_PURGE') && swSource.includes('DOKKAEBI_GET_VERSION'), 'message contract');
+  } catch (error) {
+    check('service-worker-version', false, error.message);
+  }
+
+  let webgl = 'none';
+  try {
+    const canvas = document.createElement('canvas');
+    if (canvas.getContext('webgl2')) webgl = 'webgl2';
+    else if (canvas.getContext('webgl')) webgl = 'webgl1';
+  } catch {}
+
+  const hardChecks = checks.filter((item) => !item.name.startsWith('service-worker'));
+  const passed = hardChecks.every((item) => item.passed);
+  root.dataset.status = passed ? 'pass' : 'fail';
+  root.dataset.webgl = webgl;
+  root.dataset.swVersion = swVersion;
+  summary.textContent = passed ? '브라우저 셸 계약 통과' : '브라우저 셸 계약 실패';
+  summary.className = passed ? 'pass' : 'fail';
+  output.textContent = JSON.stringify({ version: VERSION, passed, webgl, swVersion, checks }, null, 2);
+  window.__DOKKAEBI_BROWSER_LAB_RESULT__ = { version: VERSION, passed, webgl, swVersion, checks };
+})();
+</script>
+</body>
+</html>

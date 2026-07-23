@@ -21,7 +21,7 @@ const consoleSource = read('src/production-console.js');
 const titleBlock = html.slice(html.indexOf('<section id="title-screen"'), html.indexOf('<header id="hud"'));
 
 check(Number(pkg.version.split('.')[0]) >= 16, 'package version remains v16 or later');
-check(/const GAME_VERSION = '(?:16|17|18)\.0\.0'/.test(main), 'runtime game version remains v16 or later');
+check(/const GAME_VERSION = '(?:16|17|18|19)\.0\.0'/.test(main), 'runtime game version remains v16 or later');
 check(Number(ENGINE_VERSION.split('.')[0]) >= 13, 'engine version remains 13.0.0 or later');
 check(SAVE_SCHEMA_VERSION >= 14, 'save schema version remains 14 or later');
 

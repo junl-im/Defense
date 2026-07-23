@@ -150,3 +150,15 @@ v3.5.0에서 도깨비 전사 골든 샘플은 Skin·7개 AnimationClip·PBR Map
 - 백그라운드 자동 일시정지·자동 재개 완료
 - 결정론적 10웨이브 장애 주입 시뮬레이션 완료
 - 최종 제작 아트 승인 0/6 및 대량 생산 잠금 유지
+
+
+## M18 — Browser Reliability Lab v19.0.0
+
+- [x] 부팅·리소스·Long Task·Heap 감시
+- [x] WebGL context loss/restore 격리
+- [x] 버전형 서비스 워커와 캐시 복구
+- [x] 매 접속 전체 캐시 삭제 제거
+- [x] 브라우저 자동화 API
+- [x] Chromium Browser Lab 실행기
+- [ ] GPU 제공 환경 실제 10웨이브 DOM 자동 플레이
+- [ ] 최종 제작 아트 6/6

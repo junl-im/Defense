@@ -1,37 +1,39 @@
 # Dokkaebi Luck Defense 3D
 
-## v18.0.0 Ten-Wave Reliability
+## v19.0.0 Browser Reliability Lab
 
-- 게임 버전: **18.0.0**
-- 엔진 버전: **15.0.0**
-- 세이브 스키마: **16**
-- 기준 패치: v17.0.0 Moon Gate Reborn
+- 게임 버전: **19.0.0**
+- 엔진 버전: **16.0.0**
+- 세이브 스키마: **17**
+- 기준 패치: v18.0.0 Ten-Wave Reliability
 
 ### 핵심 업데이트
 
-- 10웨이브 전체 상태 전환 감시
-- 적 체력·거리 기반 정지 탐지와 경로 복구
-- 보상 큐·첫 웨이브 타이머 자동 복구
-- 백그라운드 자동 일시정지·자동 재개
-- 웨이브 체크포인트와 진단 타임라인
-- F6 통합 신뢰성 JSON 내보내기
-- 결정론적 10웨이브 장애 주입 시뮬레이션
+- 브라우저 부팅·캐시·WebGL·페이지 수명주기 감시
+- Long Task와 지원 브라우저 Heap 표본
+- 버전형 서비스 워커와 자동 캐시 복구
+- 매 접속 전체 캐시 삭제 및 강제 재이동 제거
+- F7 브라우저 안정성 스냅샷
+- F6 통합 진단에 브라우저 보고서 병합
+- 실제 브라우저 자동화를 위한 공개 테스트 API
+- Chromium 기반 Browser Lab 실행 스크립트
 
 ### 검증
 
 ```bash
 npm run verify
+npm run simulate:v1800
 npm run build:static
 node scripts/verify-static-dist.mjs
-npm run simulate:v1800
+npm run browserlab:v1900
 ```
 
 ### 운영 문서
 
-- `docs/TEN_WAVE_RELIABILITY_v18.0.0.md`
-- `docs/TEN_WAVE_RELIABILITY_SIMULATION_v18.0.0.json`
-- `docs/PATCH_NOTES_v18.0.0.md`
-- `docs/PATCH_APPLY_v18.0.0.md`
-- `docs/NEXT_PATCH_LINEUP_v18.x.md`
+- `docs/BROWSER_RELIABILITY_LAB_v19.0.0.md`
+- `docs/BROWSER_RELIABILITY_LAB_v19.0.0.json`
+- `docs/PATCH_NOTES_v19.0.0.md`
+- `docs/PATCH_APPLY_v19.0.0.md`
+- `docs/NEXT_PATCH_LINEUP_v19.x.md`
 
-Absolute Art Bible v2.0과 Character DNA v3.0은 계속 최상위 제작 계약이다. 런타임 안정성 통과와 최종 제작 아트 승인은 별도로 관리한다.
+Absolute Art Bible v2.0과 Character DNA v3.0은 최상위 제작 계약이다. 브라우저 안정성 통과와 최종 제작 아트 승인은 별도로 관리한다.

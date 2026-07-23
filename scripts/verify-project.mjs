@@ -33,7 +33,7 @@ if (missingIds.length) fail(`index.html에 없는 DOM ID: ${missingIds.join(', '
 else pass(`${queriedIds.length}개 DOM ID 연결`);
 
 const expectedGameVersion = pkg.version;
-const expectedEngineVersion = '15.0.0';
+const expectedEngineVersion = '16.0.0';
 pass(`package version ${expectedGameVersion}`);
 
 for (const path of ['.env.production', '.firebaserc', '.github/workflows/deploy.yml', 'README.md', 'PROJECT_HANDOFF.md']) {
@@ -195,8 +195,8 @@ else fail('로딩 실패 복구 UI 누락');
 if (!main.includes('serviceWorker.register')) pass('게임 번들에서 구형 서비스워커 등록 제거');
 else fail('구형 서비스워커 등록 코드가 남아 있음');
 
-if (sw.includes('registration.unregister') && sw.includes('caches.delete')) pass('서비스워커 캐시 해제 스크립트');
-else fail('서비스워커 캐시 해제 스크립트 누락');
+if ((sw.includes('registration.unregister') && sw.includes('caches.delete')) || (sw.includes('DOKKAEBI_PURGE') && sw.includes('CACHE_NAME') && sw.includes('removeOldCaches'))) pass('서비스워커 캐시 복구 계약');
+else fail('서비스워커 캐시 복구 계약 누락');
 
 if (vite.includes("entryFileNames: 'assets/game.js'") && vite.includes("assets/game.css")) pass('안정적인 게임 번들 파일명');
 else fail('안정적인 번들 파일명 설정 누락');

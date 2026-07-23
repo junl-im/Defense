@@ -53,6 +53,7 @@ import BattlefieldEventDirector from './combat/battlefield-event-director.js';
 import { auditRuntimeVisuals } from './runtime/runtime-visual-audit.js';
 import WaveFlowGuard from './runtime/wave-flow-guard.js';
 import WaveReliabilityDirector from './runtime/wave-reliability-director.js';
+import BrowserReliabilityLab from './runtime/browser-reliability-lab.js';
 // CameraDirector v14/v15 lineage is preserved by CameraDirectorV16.
 
 const $ = (selector) => document.querySelector(selector);
@@ -113,7 +114,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '18.0.0';
+const GAME_VERSION = '19.0.0';
 function runtimeSpriteMarkup(path, alt = '', className = '') {
   if (!path) return '';
   const atlas = atlasSpriteMarkup(path, alt, className);
@@ -305,7 +306,9 @@ class DokkaebiLuckDefense {
     this.battlefieldProps = new BattlefieldPropSystem({ lowPower: this.lowPower });
     this.waveFlowGuard = new WaveFlowGuard();
     this.waveReliability = new WaveReliabilityDirector();
+    this.browserReliability = new BrowserReliabilityLab({ version: GAME_VERSION });
     this.autoPausedByVisibility = false;
+    this.autoPausedByContextLoss = false;
     this.lastVisibilityResumeSeconds = 0;
     this.runtimeErrors = [];
     this.runtimeErrorKeys = new Set();
@@ -327,6 +330,10 @@ class DokkaebiLuckDefense {
     this.hudLayout.mount();
     this.applyViewportUiProfile();
     this.initThree();
+    this.browserReliability.mount({
+      canvas: ui.canvas,
+      getRuntimeSnapshot: () => this.getBrowserReliabilitySnapshot()
+    });
     this.combatPresentation = new CombatPresentation({
       parent: this.pooledEffectRoot,
       flashElement: ui.combatImpactFlash,
@@ -515,7 +522,9 @@ class DokkaebiLuckDefense {
         battlefieldProps: this.battlefieldProps?.diagnostics || {},
         runtimeVisualAudit: this.runtimeVisualAudit || null,
         waveFlow: this.waveFlowGuard?.diagnostics || {},
+        reliability: this.waveReliability?.diagnostics || {},
         waveReliability: this.waveReliability?.report || {},
+        browserReliability: this.browserReliability?.diagnostics || {},
         runtimeErrors: { count: this.runtimeErrors.length, last: this.runtimeErrors.at(-1) || null },
         battlefieldEvent: this.battlefieldEvents?.diagnostics || {},
         cameraDirector: this.cameraDirectorV16?.snapshot || {},
@@ -765,6 +774,7 @@ class DokkaebiLuckDefense {
     }, {}, 'blessing-select');
     on(window, 'error', (event) => this.recordRuntimeError(event.error || event.message, 'window-error'), {}, 'runtime-window-error');
     on(window, 'unhandledrejection', (event) => this.recordRuntimeError(event.reason, 'unhandled-rejection'), {}, 'runtime-unhandled-rejection');
+    on(window, 'dokkaebi:webgl-recovery', (event) => this.handleWebGLRecovery(event.detail || {}), {}, 'webgl-recovery');
 
     this.setupJoystick();
     this.setupLookControls();
@@ -779,6 +789,13 @@ class DokkaebiLuckDefense {
         this.cancelMoveTarget();
       }
       if (event.repeat) return;
+      if (code === 'F7') {
+        event.preventDefault();
+        this.browserReliability?.sample('manual', this.getBrowserReliabilitySnapshot());
+        this.browserReliability?.persist();
+        this.showToast('브라우저 안정성 스냅샷을 저장했습니다.');
+        return;
+      }
       if (code === 'F6') {
         event.preventDefault();
         this.exportPerformanceLog();
@@ -3857,6 +3874,59 @@ class DokkaebiLuckDefense {
     return model;
   }
 
+  getBrowserReliabilitySnapshot() {
+    return {
+      state: this.state,
+      wave: this.currentWave || 0,
+      fps: this.engine?.monitor?.lastFps || 0,
+      renderer: {
+        drawCalls: this.renderer?.info?.render?.calls || 0,
+        triangles: this.renderer?.info?.render?.triangles || 0,
+        textures: this.renderer?.info?.memory?.textures || 0
+      },
+      counts: {
+        enemies: this.enemies?.length || 0,
+        units: this.units?.length || 0,
+        projectiles: this.projectiles?.length || 0,
+        particles: this.particles?.length || 0
+      }
+    };
+  }
+
+  getBrowserAutomationSnapshot() {
+    return Object.freeze({
+      version: GAME_VERSION,
+      engineVersion: ENGINE_VERSION,
+      saveSchemaVersion: SAVE_SCHEMA_VERSION,
+      state: this.state,
+      currentWave: this.currentWave || 0,
+      maxWaves: this.maxWaves || 10,
+      waveActive: Boolean(this.waveActive),
+      enemies: this.enemies?.length || 0,
+      spawnRemaining: this.spawnRemaining || 0,
+      postWaveQueueLength: this.postWaveQueue?.length || 0,
+      modalState: this.modalStack?.at(-1)?.id || '',
+      bootReady: Boolean(window.__DOKKAEBI_BOOT_OK__),
+      runtimeErrors: this.runtimeErrors.length,
+      reliability: this.waveReliability?.diagnostics || {},
+      browserReliability: this.browserReliability?.diagnostics || {}
+    });
+  }
+
+  handleWebGLRecovery({ lost = false } = {}) {
+    if (lost) {
+      this.autoPausedByContextLoss = this.state === 'playing';
+      if (this.autoPausedByContextLoss) this.pauseGame({ automatic: true });
+      document.body.classList.add('webgl-context-lost');
+      this.showWaveRecovery('그래픽 복구 중', '화면 컨텍스트를 다시 연결하고 있습니다.');
+      return;
+    }
+    document.body.classList.remove('webgl-context-lost');
+    if (this.autoPausedByContextLoss && this.state === 'paused') this.resumeGame({ automatic: true });
+    this.autoPausedByContextLoss = false;
+    this.showToast('그래픽 화면이 복구되었습니다.');
+  }
+
   recordRuntimeError(error, source = 'runtime') {
     const message = error instanceof Error ? error.message : String(error || 'unknown runtime error');
     const key = `${source}:${message}`.slice(0, 220);
@@ -3869,6 +3939,7 @@ class DokkaebiLuckDefense {
     });
     this.runtimeErrors.push(entry);
     if (this.runtimeErrors.length > 30) this.runtimeErrors.shift();
+    this.browserReliability?.noteMilestone('runtime-error', { source, message: entry.message, wave: entry.wave });
     if (this.runtimeErrorKeys.has(key)) return entry;
     this.runtimeErrorKeys.add(key);
     console.error(`[RuntimeGuard:${source}]`, error);
@@ -6177,6 +6248,7 @@ class DokkaebiLuckDefense {
         runtimeVisualAudit: this.runtimeVisualAudit || null,
         waveFlow: this.waveFlowGuard?.diagnostics || {},
         reliability: this.waveReliability?.diagnostics || {},
+        browserReliability: this.browserReliability?.report || {},
         runtimeErrors: { count: this.runtimeErrors.length, last: this.runtimeErrors.at(-1) || null },
         battlefieldEvent: this.battlefieldEvents?.diagnostics || {},
         cameraDirector: this.cameraDirectorV16?.snapshot || {},
@@ -6408,6 +6480,7 @@ class DokkaebiLuckDefense {
     this.runSafe('battlefield-props', () => this.updateBattlefieldProps(dt));
     this.runSafe('wave-flow-guard', () => this.updateWaveFlowGuard(dt));
     this.runSafe('wave-reliability', () => this.updateWaveReliability(dt));
+    this.runSafe('browser-reliability', () => this.browserReliability?.update(dt, this.getBrowserReliabilitySnapshot()));
 
     if (this.state === 'playing') {
       this.runSafe('auto-wave', () => this.updateAutoWaveCountdown(dt));
@@ -6464,6 +6537,7 @@ class DokkaebiLuckDefense {
       bossEscalation: this.bossEscalation?.diagnostics,
       waveFlow: this.waveFlowGuard?.diagnostics,
       reliability: this.waveReliability?.diagnostics,
+      browserReliability: this.browserReliability?.diagnostics,
       runtimeErrors: this.runtimeErrors.length,
       pools: {
         projectiles: this.projectiles.length,
@@ -6481,6 +6555,26 @@ try {
   window.__DOKKAEBI_GAME__ = game;
   game.ready.then(() => {
     window.__DOKKAEBI_BOOT_OK__ = true;
+    window.__DOKKAEBI_TEST_API__ = Object.freeze({
+      version: GAME_VERSION,
+      snapshot: () => game.getBrowserAutomationSnapshot(),
+      startRun: () => {
+        if (game.state === 'title') game.startRun();
+        return game.getBrowserAutomationSnapshot();
+      },
+      startWave: () => {
+        if (game.state === 'playing' && !game.waveActive) game.startWave();
+        return game.getBrowserAutomationSnapshot();
+      },
+      chooseRecommendedReward: () => {
+        if (game.state === 'blessing') game.selectRecommendedReward('blessing');
+        else if (game.state === 'relic') game.selectRecommendedReward('relic');
+        else if (game.state === 'contract') game.skipContract();
+        return game.getBrowserAutomationSnapshot();
+      },
+      reliabilityReport: () => ({ wave: game.waveReliability?.report || {}, browser: game.browserReliability?.report || {} })
+    });
+    game.browserReliability?.noteMilestone('game-ready', { state: game.state });
     window.dispatchEvent(new Event('dokkaebi:boot-ready'));
   }).catch((error) => {
     console.error('[DokkaebiLuckDefense3D] async boot failed', error);
