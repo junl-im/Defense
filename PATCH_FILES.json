@@ -1,24 +1,18 @@
 {
-  "baseVersion": "16.0.0",
-  "targetVersion": "17.0.0",
-  "new": [
-    "docs/MOON_GATE_REBORN_v17.0.0.md",
-    "docs/NEXT_PATCH_LINEUP_v17.x.md",
-    "docs/PATCH_APPLY_v17.0.0.md",
-    "docs/PATCH_NOTES_v17.0.0.md",
-    "docs/STAGE_STALL_AUDIT_v17.0.0.json",
-    "docs/TITLE_ASSET_OPTIMIZATION_v17.0.0.json",
-    "docs/TITLE_PRESENTATION_PREVIEW_v17.0.0.jpg",
-    "scripts/verify-v1700.mjs",
-    "src/assets/title-v17/title-bg-desktop-v17.webp",
-    "src/assets/title-v17/title-bg-mobile-v17.webp",
-    "src/assets/title-v17/title-mascot-v17.webp",
-    "src/runtime/wave-flow-guard.js"
-  ],
-  "overwrite": [
+  "schemaVersion": 1,
+  "targetVersion": "18.0.0",
+  "files": [
+    "docs/NEXT_PATCH_LINEUP_v18.x.md",
+    "docs/PATCH_APPLY_v18.0.0.md",
+    "docs/PATCH_NOTES_v18.0.0.md",
+    "docs/TEN_WAVE_RELIABILITY_SIMULATION_v18.0.0.json",
+    "docs/TEN_WAVE_RELIABILITY_v18.0.0.md",
+    "scripts/simulate-ten-wave-run-v18.mjs",
+    "scripts/verify-v1800.mjs",
+    "src/runtime/ten-wave-reliability-simulation.js",
+    "src/runtime/wave-reliability-director.js",
     "PROJECT_HANDOFF.md",
     "README.md",
-    "docs/GOLDEN_SLICE_RUNTIME_CERTIFICATION_v12.0.0.json",
     "docs/PRODUCTION_ROADMAP.md",
     "index.html",
     "package-lock.json",
@@ -31,22 +25,12 @@
     "scripts/verify-v1200.mjs",
     "scripts/verify-v1500.mjs",
     "scripts/verify-v1600.mjs",
-    "src/assets/moon-market-keyart.webp",
-    "src/assets/moon-mascot-expressions-v1.webp",
-    "src/assets/moon-mascot-v1.webp",
+    "scripts/verify-v1700.mjs",
     "src/engine/asset-catalog.js",
-    "src/engine/camera-profile.js",
     "src/engine/engine-config.js",
     "src/main.js",
     "src/production-console.js",
-    "src/runtime/battlefield-sprite-director-v16.js",
-    "src/runtime/runtime-visual-audit.js",
     "src/runtime/save-schema.js",
     "src/style.css"
-  ],
-  "delete": [
-    "static_build_v16.0.0.log",
-    "static_verify_v16.0.0.log",
-    "verify_v16.0.0.log"
   ]
 }

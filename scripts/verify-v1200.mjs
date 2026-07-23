@@ -111,7 +111,7 @@ check(Boolean(currentBackup), 'save migration writes current backup');
 check(Boolean(currentBackup?.includes('dokkaebi-control-settings-v1')), 'save backup includes camera settings');
 
 check(html.includes('id="controls-modal"') && html.includes('data-camera-preset="scenic"') && html.includes('id="title-setup-modal"'), 'v12 scenic camera lineage retained without patch text on title');
-check((consoleSource.includes('GOLDEN DOMINION v12') || consoleSource.includes('TRANSPARENT ARSENAL v13') || consoleSource.includes('ATLAS DOMINION v14') || consoleSource.includes('LIVING BATTLEFIELD v15') || (consoleSource.includes('CLEAR HORIZON v16') || consoleSource.includes('MOON GATE REBORN v17'))) && consoleSource.includes('RUNTIME SLICE') && consoleSource.includes('CAMERA'), 'production console retains v12 diagnostics');
+check((consoleSource.includes('GOLDEN DOMINION v12') || consoleSource.includes('TRANSPARENT ARSENAL v13') || consoleSource.includes('ATLAS DOMINION v14') || consoleSource.includes('LIVING BATTLEFIELD v15') || (consoleSource.includes('CLEAR HORIZON v16') || (consoleSource.includes('MOON GATE REBORN v17') || consoleSource.includes('TEN-WAVE RELIABILITY v18')))) && consoleSource.includes('RUNTIME SLICE') && consoleSource.includes('CAMERA'), 'production console retains v12 diagnostics');
 check(existsSync(resolve(root, 'docs/GOLDEN_DOMINION_v12.0.0.md')) && existsSync(resolve(root, 'docs/PATCH_NOTES_v12.0.0.md')) && existsSync(resolve(root, 'docs/PATCH_APPLY_v12.0.0.md')) && existsSync(resolve(root, 'docs/GOLDEN_SLICE_RUNTIME_BOARD_v12.0.0.jpg')), 'v12 operating documents and certification board exist');
 
 if (failures) {

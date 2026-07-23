@@ -18,15 +18,15 @@ pass('static entrypoint and pinned import map');
 
 const main = await readFile(path.join(dist, 'src/main.js'), 'utf8');
 if (main.includes("import './style.css'")) fail('CSS module import remains in static build');
-if (!main.includes("const GAME_VERSION = '17.0.0'")) fail('static main version mismatch');
+if (!main.includes("const GAME_VERSION = '18.0.0'")) fail('static main version mismatch');
 if (!main.includes('renderAssetDiagnostics()')) fail('asset diagnostics missing from static build');
 if (!main.includes('force3DModels')) fail('force 3D model mode missing from static build');
 pass('static game module asset diagnostics');
 
 const catalog = await readFile(path.join(dist, 'src/engine/asset-catalog.js'), 'utf8');
-if (!catalog.includes("const ASSET_REVISION = '17.0.0'")) fail('asset cache revision missing');
+if (!catalog.includes("const ASSET_REVISION = '18.0.0'")) fail('asset cache revision missing');
 if (!catalog.includes('?v=${ASSET_REVISION}')) fail('asset cache-busting URL missing');
-pass('v17.0.0 asset cache revision');
+pass('v18.0.0 asset cache revision');
 
 const modelDir = path.join(dist, 'assets/models');
 const models = (await readdir(modelDir)).filter((name) => name.endsWith('.glb'));
@@ -97,5 +97,12 @@ const waveGuard = await readFile(path.join(dist, 'src/runtime/wave-flow-guard.js
 if (!waveGuard.includes("WAVE_FLOW_GUARD_VERSION = '17.0.0'")) fail('v17 wave flow guard missing from static dist');
 if (!html.includes('title-mascot-v17.webp') || !html.includes('title-panel-v17')) fail('v17 title presentation missing from static entrypoint');
 pass('v17 responsive title artwork and wave flow guard');
+
+const reliability = await readFile(path.join(dist, 'src/runtime/wave-reliability-director.js'), 'utf8');
+if (!reliability.includes("WAVE_RELIABILITY_VERSION = '18.0.0'")) fail('v18 reliability director missing from static dist');
+const simulation = await readFile(path.join(dist, 'src/runtime/ten-wave-reliability-simulation.js'), 'utf8');
+if (!simulation.includes('simulateTenWaveReliability')) fail('v18 ten-wave simulation module missing from static dist');
+if (!main.includes('updateWaveReliability') || !main.includes('handleVisibilityChange')) fail('v18 runtime recovery hooks missing from static dist');
+pass('v18 ten-wave reliability, background recovery and checkpoint modules');
 
 console.log('Static deployment verification passed.');

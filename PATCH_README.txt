@@ -1,14 +1,13 @@
-DOKKAEBI DEFENSE v17.0.0 OVERWRITE PATCH
+DOKKAEBI DEFENSE v18.0.0 OVERWRITE PATCH
 
-Base: v16.0.0 Clear Horizon
-Target: v17.0.0 Moon Gate Reborn
+Base: v17.0.0 Moon Gate Reborn
+Target: v18.0.0 Ten-Wave Reliability
 
-1. Stop the development server.
-2. Extract this ZIP into the v16 project root and overwrite matching files.
-3. Optionally delete paths listed in DELETE_FILES.txt (stale logs only).
-4. Run:
-   npm run verify
-   npm run build:static
-   node scripts/verify-static-dist.mjs
+1. Extract this archive at the v17 project root and overwrite matching files.
+2. Run: npm run verify
+3. Run: npm run build:static
+4. Run: node scripts/verify-static-dist.mjs
+5. Optional: npm run simulate:v1800
 
-If the old title remains, clear site data/service-worker cache and hard refresh.
+This patch does not include dist or node_modules.
+No files must be deleted for v18.0.0.

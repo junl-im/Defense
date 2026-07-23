@@ -141,3 +141,12 @@ v3.5.0에서 도깨비 전사 골든 샘플은 Skin·7개 AnimationClip·PBR Map
 - Stage 3/4 reward-state recovery
 - Spawn deadlock prevention
 - Runtime subsystem error isolation
+
+## M17 — Ten-Wave Reliability v18.0.0
+
+- 10웨이브 상태 전환·시간·복구 저널 완료
+- 적 진행 정지 및 비정상 좌표 복구 완료
+- 보상 큐·첫 웨이브 타이머 복구 완료
+- 백그라운드 자동 일시정지·자동 재개 완료
+- 결정론적 10웨이브 장애 주입 시뮬레이션 완료
+- 최종 제작 아트 승인 0/6 및 대량 생산 잠금 유지

@@ -1,0 +1,1538 @@
+{
+  "version": "18.0.0",
+  "passed": true,
+  "wavesCompleted": 10,
+  "timeline": [
+    {
+      "wave": 1,
+      "rewards": [],
+      "checkpoint": "wave-complete"
+    },
+    {
+      "wave": 2,
+      "rewards": [
+        "relic"
+      ],
+      "checkpoint": "state-progress"
+    },
+    {
+      "wave": 3,
+      "rewards": [
+        "blessing"
+      ],
+      "checkpoint": "recovery:restore-modal"
+    },
+    {
+      "wave": 4,
+      "rewards": [
+        "relic"
+      ],
+      "checkpoint": "state-progress"
+    },
+    {
+      "wave": 5,
+      "rewards": [
+        "relic",
+        "contract"
+      ],
+      "checkpoint": "recovery:reward-reminder"
+    },
+    {
+      "wave": 6,
+      "rewards": [
+        "blessing"
+      ],
+      "checkpoint": "visibility:hidden"
+    },
+    {
+      "wave": 7,
+      "rewards": [
+        "relic"
+      ],
+      "checkpoint": "state-progress"
+    },
+    {
+      "wave": 8,
+      "rewards": [
+        "contract"
+      ],
+      "checkpoint": "state-progress"
+    },
+    {
+      "wave": 9,
+      "rewards": [
+        "relic",
+        "blessing"
+      ],
+      "checkpoint": "recovery:reward-reminder"
+    },
+    {
+      "wave": 10,
+      "rewards": [],
+      "checkpoint": "wave-complete"
+    }
+  ],
+  "recoveries": [
+    {
+      "wave": 3,
+      "type": "restore-modal",
+      "state": "blessing"
+    },
+    {
+      "wave": 4,
+      "type": "force-spawn",
+      "failures": 0
+    },
+    {
+      "wave": 5,
+      "type": "resume-reward-queue",
+      "stalledFor": 0.5999999999999996
+    },
+    {
+      "wave": 5,
+      "type": "reward-reminder",
+      "state": "contract",
+      "stalledFor": 0.9000000000000004
+    },
+    {
+      "wave": 6,
+      "type": "background-resume",
+      "durationSeconds": 5.1
+    },
+    {
+      "wave": 8,
+      "type": "unstick-enemies",
+      "reason": "invalid-enemy",
+      "stalledFor": 0.010000000000001563
+    },
+    {
+      "wave": 9,
+      "type": "resume-reward-queue",
+      "stalledFor": 0.6000000000000014
+    },
+    {
+      "wave": 9,
+      "type": "reward-reminder",
+      "state": "blessing",
+      "stalledFor": 0.8999999999999986
+    }
+  ],
+  "diagnostics": {
+    "version": "18.0.0",
+    "recoveries": 7,
+    "enemySweeps": 1,
+    "rewardReminders": 2,
+    "rewardQueueResumes": 2,
+    "firstWaveResumes": 0,
+    "backgroundPauses": 1,
+    "backgroundResumes": 1,
+    "backgroundSeconds": 5.1,
+    "completedWaves": 10,
+    "lastRecovery": "reward-reminder",
+    "eventCount": 180,
+    "previousCheckpointWave": 10,
+    "previousCheckpointState": "playing"
+  },
+  "report": {
+    "version": "18.0.0",
+    "meta": {
+      "seed": "v18-simulation",
+      "maxWaves": 10
+    },
+    "elapsed": 30.65,
+    "recoveries": 7,
+    "enemySweeps": 1,
+    "rewardReminders": 2,
+    "rewardQueueResumes": 2,
+    "firstWaveResumes": 0,
+    "backgroundPauses": 1,
+    "backgroundResumes": 1,
+    "backgroundSeconds": 5.1,
+    "waveDurations": {
+      "1": 0.8,
+      "2": 0.96,
+      "3": 1.12,
+      "4": 2.5,
+      "5": 1.44,
+      "6": 1.6,
+      "7": 1.76,
+      "8": 2.03,
+      "9": 2.08,
+      "10": 0.16
+    },
+    "lastRecovery": "reward-reminder",
+    "lastCheckpoint": {
+      "version": "18.0.0",
+      "savedAt": "SIMULATED",
+      "reason": "wave-complete",
+      "meta": {
+        "seed": "v18-simulation",
+        "maxWaves": 10
+      },
+      "snapshot": {
+        "state": "playing",
+        "waveActive": false,
+        "currentWave": 10,
+        "maxWaves": 10,
+        "spawnRemaining": 0,
+        "waveSpawned": 1,
+        "enemyCount": 0,
+        "enemyHealthSignature": 0,
+        "enemyRadiusSignature": 0,
+        "invalidEnemyCount": 0,
+        "postWaveQueueLength": 0,
+        "autoWaveCountdown": 0,
+        "modalVisible": false,
+        "coreHp": 100,
+        "score": 10000,
+        "gold": 270
+      },
+      "recoveries": 7,
+      "lastRecovery": "reward-reminder"
+    },
+    "events": [
+      {
+        "elapsed": 6.18,
+        "type": "state-progress",
+        "wave": 3,
+        "state": "blessing",
+        "detail": {
+          "previous": "playing|0|3|0|7|0|0|0|0|1|0|0"
+        }
+      },
+      {
+        "elapsed": 7.08,
+        "type": "recovery:restore-modal",
+        "wave": 3,
+        "state": "blessing",
+        "detail": {
+          "simulated": true
+        }
+      },
+      {
+        "elapsed": 7.08,
+        "type": "simulation:restore-modal",
+        "wave": 3,
+        "state": "blessing",
+        "detail": {}
+      },
+      {
+        "elapsed": 7.08,
+        "type": "reward-selected",
+        "wave": 3,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 7.08,
+        "type": "wave-start",
+        "wave": 4,
+        "state": "playing",
+        "detail": {
+          "wave": 4
+        }
+      },
+      {
+        "elapsed": 8.38,
+        "type": "recovery:force-spawn",
+        "wave": 4,
+        "state": "playing",
+        "detail": {
+          "simulated": true
+        }
+      },
+      {
+        "elapsed": 8.38,
+        "type": "simulation:force-spawn",
+        "wave": 4,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 8.38,
+        "type": "spawn",
+        "wave": 4,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 8.46,
+        "type": "spawn",
+        "wave": 4,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 8.54,
+        "type": "spawn",
+        "wave": 4,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 8.62,
+        "type": "spawn",
+        "wave": 4,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 8.7,
+        "type": "spawn",
+        "wave": 4,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 8.78,
+        "type": "spawn",
+        "wave": 4,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 8.86,
+        "type": "spawn",
+        "wave": 4,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 8.94,
+        "type": "kill",
+        "wave": 4,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 9.02,
+        "type": "kill",
+        "wave": 4,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 9.1,
+        "type": "kill",
+        "wave": 4,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 9.18,
+        "type": "kill",
+        "wave": 4,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 9.26,
+        "type": "kill",
+        "wave": 4,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 9.34,
+        "type": "kill",
+        "wave": 4,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 9.42,
+        "type": "kill",
+        "wave": 4,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 9.5,
+        "type": "kill",
+        "wave": 4,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 9.58,
+        "type": "wave-complete",
+        "wave": 4,
+        "state": "playing",
+        "detail": {
+          "wave": 4,
+          "duration": 2.5
+        }
+      },
+      {
+        "elapsed": 10.18,
+        "type": "state-progress",
+        "wave": 4,
+        "state": "playing",
+        "detail": {
+          "previous": "playing|0|4|0|8|0|0|0|0|0|0|0"
+        }
+      },
+      {
+        "elapsed": 11.08,
+        "type": "state-progress",
+        "wave": 4,
+        "state": "relic",
+        "detail": {
+          "previous": "playing|0|4|0|8|0|0|0|0|1|0|0"
+        }
+      },
+      {
+        "elapsed": 11.08,
+        "type": "reward-selected",
+        "wave": 4,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 11.08,
+        "type": "wave-start",
+        "wave": 5,
+        "state": "playing",
+        "detail": {
+          "wave": 5
+        }
+      },
+      {
+        "elapsed": 11.08,
+        "type": "spawn",
+        "wave": 5,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 11.16,
+        "type": "spawn",
+        "wave": 5,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 11.24,
+        "type": "spawn",
+        "wave": 5,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 11.32,
+        "type": "spawn",
+        "wave": 5,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 11.4,
+        "type": "spawn",
+        "wave": 5,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 11.48,
+        "type": "spawn",
+        "wave": 5,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 11.56,
+        "type": "spawn",
+        "wave": 5,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 11.64,
+        "type": "spawn",
+        "wave": 5,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 11.72,
+        "type": "spawn",
+        "wave": 5,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 11.8,
+        "type": "kill",
+        "wave": 5,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 11.88,
+        "type": "kill",
+        "wave": 5,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 11.96,
+        "type": "kill",
+        "wave": 5,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 12.04,
+        "type": "kill",
+        "wave": 5,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 12.12,
+        "type": "kill",
+        "wave": 5,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 12.2,
+        "type": "kill",
+        "wave": 5,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 12.28,
+        "type": "kill",
+        "wave": 5,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 12.36,
+        "type": "kill",
+        "wave": 5,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 12.44,
+        "type": "kill",
+        "wave": 5,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 12.52,
+        "type": "wave-complete",
+        "wave": 5,
+        "state": "playing",
+        "detail": {
+          "wave": 5,
+          "duration": 1.44
+        }
+      },
+      {
+        "elapsed": 13.12,
+        "type": "state-progress",
+        "wave": 5,
+        "state": "playing",
+        "detail": {
+          "previous": "playing|0|5|0|9|0|0|0|0|0|0|0"
+        }
+      },
+      {
+        "elapsed": 14.02,
+        "type": "state-progress",
+        "wave": 5,
+        "state": "relic",
+        "detail": {
+          "previous": "playing|0|5|0|9|0|0|0|0|2|0|0"
+        }
+      },
+      {
+        "elapsed": 14.02,
+        "type": "reward-selected",
+        "wave": 5,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 14.62,
+        "type": "recovery:resume-reward-queue",
+        "wave": 5,
+        "state": "contract",
+        "detail": {
+          "simulated": true
+        }
+      },
+      {
+        "elapsed": 14.62,
+        "type": "simulation:resume-reward-queue",
+        "wave": 5,
+        "state": "contract",
+        "detail": {}
+      },
+      {
+        "elapsed": 15.52,
+        "type": "recovery:reward-reminder",
+        "wave": 5,
+        "state": "contract",
+        "detail": {
+          "simulated": true
+        }
+      },
+      {
+        "elapsed": 15.52,
+        "type": "simulation:reward-reminder",
+        "wave": 5,
+        "state": "contract",
+        "detail": {}
+      },
+      {
+        "elapsed": 15.52,
+        "type": "reward-selected",
+        "wave": 5,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 15.52,
+        "type": "wave-start",
+        "wave": 6,
+        "state": "playing",
+        "detail": {
+          "wave": 6
+        }
+      },
+      {
+        "elapsed": 15.52,
+        "type": "spawn",
+        "wave": 6,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 15.6,
+        "type": "spawn",
+        "wave": 6,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 15.68,
+        "type": "spawn",
+        "wave": 6,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 15.76,
+        "type": "spawn",
+        "wave": 6,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 15.84,
+        "type": "spawn",
+        "wave": 6,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 15.92,
+        "type": "spawn",
+        "wave": 6,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 16,
+        "type": "spawn",
+        "wave": 6,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 16.08,
+        "type": "spawn",
+        "wave": 6,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 16.16,
+        "type": "spawn",
+        "wave": 6,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 16.24,
+        "type": "spawn",
+        "wave": 6,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 16.32,
+        "type": "kill",
+        "wave": 6,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 16.4,
+        "type": "kill",
+        "wave": 6,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 16.48,
+        "type": "kill",
+        "wave": 6,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 16.56,
+        "type": "kill",
+        "wave": 6,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 16.64,
+        "type": "kill",
+        "wave": 6,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 16.72,
+        "type": "kill",
+        "wave": 6,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 16.8,
+        "type": "kill",
+        "wave": 6,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 16.88,
+        "type": "kill",
+        "wave": 6,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 16.96,
+        "type": "kill",
+        "wave": 6,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 17.04,
+        "type": "kill",
+        "wave": 6,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 17.12,
+        "type": "wave-complete",
+        "wave": 6,
+        "state": "playing",
+        "detail": {
+          "wave": 6,
+          "duration": 1.6
+        }
+      },
+      {
+        "elapsed": 17.72,
+        "type": "state-progress",
+        "wave": 6,
+        "state": "playing",
+        "detail": {
+          "previous": "playing|0|6|0|10|0|0|0|0|0|0|0"
+        }
+      },
+      {
+        "elapsed": 18.62,
+        "type": "state-progress",
+        "wave": 6,
+        "state": "blessing",
+        "detail": {
+          "previous": "playing|0|6|0|10|0|0|0|0|1|0|0"
+        }
+      },
+      {
+        "elapsed": 18.62,
+        "type": "reward-selected",
+        "wave": 6,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 18.62,
+        "type": "visibility:hidden",
+        "wave": 6,
+        "state": "playing",
+        "detail": {
+          "autoPaused": true
+        }
+      },
+      {
+        "elapsed": 18.62,
+        "type": "visibility:visible",
+        "wave": 6,
+        "state": "playing",
+        "detail": {
+          "autoPaused": true,
+          "durationSeconds": 5.1
+        }
+      },
+      {
+        "elapsed": 18.62,
+        "type": "wave-start",
+        "wave": 7,
+        "state": "playing",
+        "detail": {
+          "wave": 7
+        }
+      },
+      {
+        "elapsed": 18.62,
+        "type": "spawn",
+        "wave": 7,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 18.7,
+        "type": "spawn",
+        "wave": 7,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 18.78,
+        "type": "spawn",
+        "wave": 7,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 18.86,
+        "type": "spawn",
+        "wave": 7,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 18.94,
+        "type": "spawn",
+        "wave": 7,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 19.02,
+        "type": "spawn",
+        "wave": 7,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 19.1,
+        "type": "spawn",
+        "wave": 7,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 19.18,
+        "type": "spawn",
+        "wave": 7,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 19.26,
+        "type": "spawn",
+        "wave": 7,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 19.34,
+        "type": "spawn",
+        "wave": 7,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 19.42,
+        "type": "spawn",
+        "wave": 7,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 19.5,
+        "type": "kill",
+        "wave": 7,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 19.58,
+        "type": "kill",
+        "wave": 7,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 19.66,
+        "type": "kill",
+        "wave": 7,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 19.74,
+        "type": "kill",
+        "wave": 7,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 19.82,
+        "type": "kill",
+        "wave": 7,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 19.9,
+        "type": "kill",
+        "wave": 7,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 19.98,
+        "type": "kill",
+        "wave": 7,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 20.06,
+        "type": "kill",
+        "wave": 7,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 20.14,
+        "type": "kill",
+        "wave": 7,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 20.22,
+        "type": "kill",
+        "wave": 7,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 20.3,
+        "type": "kill",
+        "wave": 7,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 20.38,
+        "type": "wave-complete",
+        "wave": 7,
+        "state": "playing",
+        "detail": {
+          "wave": 7,
+          "duration": 1.76
+        }
+      },
+      {
+        "elapsed": 20.98,
+        "type": "state-progress",
+        "wave": 7,
+        "state": "playing",
+        "detail": {
+          "previous": "playing|0|7|0|11|0|0|0|0|0|0|0"
+        }
+      },
+      {
+        "elapsed": 21.88,
+        "type": "state-progress",
+        "wave": 7,
+        "state": "relic",
+        "detail": {
+          "previous": "playing|0|7|0|11|0|0|0|0|1|0|0"
+        }
+      },
+      {
+        "elapsed": 21.88,
+        "type": "reward-selected",
+        "wave": 7,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 21.88,
+        "type": "wave-start",
+        "wave": 8,
+        "state": "playing",
+        "detail": {
+          "wave": 8
+        }
+      },
+      {
+        "elapsed": 21.88,
+        "type": "spawn",
+        "wave": 8,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 21.96,
+        "type": "spawn",
+        "wave": 8,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 22.04,
+        "type": "spawn",
+        "wave": 8,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 22.12,
+        "type": "spawn",
+        "wave": 8,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 22.2,
+        "type": "spawn",
+        "wave": 8,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 22.28,
+        "type": "spawn",
+        "wave": 8,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 22.36,
+        "type": "spawn",
+        "wave": 8,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 22.44,
+        "type": "spawn",
+        "wave": 8,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 22.52,
+        "type": "spawn",
+        "wave": 8,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 22.6,
+        "type": "spawn",
+        "wave": 8,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 22.68,
+        "type": "spawn",
+        "wave": 8,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 22.76,
+        "type": "spawn",
+        "wave": 8,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 22.94,
+        "type": "state-progress",
+        "wave": 8,
+        "state": "playing",
+        "detail": {
+          "previous": "playing|1|8|0|12|12|12000|1680|0|0|0|0"
+        }
+      },
+      {
+        "elapsed": 22.95,
+        "type": "recovery:unstick-enemies",
+        "wave": 8,
+        "state": "playing",
+        "detail": {
+          "simulated": true
+        }
+      },
+      {
+        "elapsed": 22.95,
+        "type": "simulation:unstick-enemies",
+        "wave": 8,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 22.95,
+        "type": "kill",
+        "wave": 8,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 23.03,
+        "type": "kill",
+        "wave": 8,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 23.11,
+        "type": "kill",
+        "wave": 8,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 23.19,
+        "type": "kill",
+        "wave": 8,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 23.27,
+        "type": "kill",
+        "wave": 8,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 23.35,
+        "type": "kill",
+        "wave": 8,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 23.43,
+        "type": "kill",
+        "wave": 8,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 23.51,
+        "type": "kill",
+        "wave": 8,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 23.59,
+        "type": "kill",
+        "wave": 8,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 23.67,
+        "type": "kill",
+        "wave": 8,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 23.75,
+        "type": "kill",
+        "wave": 8,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 23.83,
+        "type": "kill",
+        "wave": 8,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 23.91,
+        "type": "wave-complete",
+        "wave": 8,
+        "state": "playing",
+        "detail": {
+          "wave": 8,
+          "duration": 2.03
+        }
+      },
+      {
+        "elapsed": 24.51,
+        "type": "state-progress",
+        "wave": 8,
+        "state": "playing",
+        "detail": {
+          "previous": "playing|0|8|0|12|0|0|0|0|0|0|0"
+        }
+      },
+      {
+        "elapsed": 25.41,
+        "type": "state-progress",
+        "wave": 8,
+        "state": "contract",
+        "detail": {
+          "previous": "playing|0|8|0|12|0|0|0|0|1|0|0"
+        }
+      },
+      {
+        "elapsed": 25.41,
+        "type": "reward-selected",
+        "wave": 8,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 25.41,
+        "type": "wave-start",
+        "wave": 9,
+        "state": "playing",
+        "detail": {
+          "wave": 9
+        }
+      },
+      {
+        "elapsed": 25.41,
+        "type": "spawn",
+        "wave": 9,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 25.49,
+        "type": "spawn",
+        "wave": 9,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 25.57,
+        "type": "spawn",
+        "wave": 9,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 25.65,
+        "type": "spawn",
+        "wave": 9,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 25.73,
+        "type": "spawn",
+        "wave": 9,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 25.81,
+        "type": "spawn",
+        "wave": 9,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 25.89,
+        "type": "spawn",
+        "wave": 9,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 25.97,
+        "type": "spawn",
+        "wave": 9,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 26.05,
+        "type": "spawn",
+        "wave": 9,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 26.13,
+        "type": "spawn",
+        "wave": 9,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 26.21,
+        "type": "spawn",
+        "wave": 9,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 26.29,
+        "type": "spawn",
+        "wave": 9,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 26.37,
+        "type": "spawn",
+        "wave": 9,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 26.45,
+        "type": "kill",
+        "wave": 9,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 26.53,
+        "type": "kill",
+        "wave": 9,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 26.61,
+        "type": "kill",
+        "wave": 9,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 26.69,
+        "type": "kill",
+        "wave": 9,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 26.77,
+        "type": "kill",
+        "wave": 9,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 26.85,
+        "type": "kill",
+        "wave": 9,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 26.93,
+        "type": "kill",
+        "wave": 9,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 27.01,
+        "type": "kill",
+        "wave": 9,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 27.09,
+        "type": "kill",
+        "wave": 9,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 27.17,
+        "type": "kill",
+        "wave": 9,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 27.25,
+        "type": "kill",
+        "wave": 9,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 27.33,
+        "type": "kill",
+        "wave": 9,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 27.41,
+        "type": "kill",
+        "wave": 9,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 27.49,
+        "type": "wave-complete",
+        "wave": 9,
+        "state": "playing",
+        "detail": {
+          "wave": 9,
+          "duration": 2.08
+        }
+      },
+      {
+        "elapsed": 28.09,
+        "type": "state-progress",
+        "wave": 9,
+        "state": "playing",
+        "detail": {
+          "previous": "playing|0|9|0|13|0|0|0|0|0|0|0"
+        }
+      },
+      {
+        "elapsed": 28.99,
+        "type": "state-progress",
+        "wave": 9,
+        "state": "relic",
+        "detail": {
+          "previous": "playing|0|9|0|13|0|0|0|0|2|0|0"
+        }
+      },
+      {
+        "elapsed": 28.99,
+        "type": "reward-selected",
+        "wave": 9,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 29.59,
+        "type": "recovery:resume-reward-queue",
+        "wave": 9,
+        "state": "blessing",
+        "detail": {
+          "simulated": true
+        }
+      },
+      {
+        "elapsed": 29.59,
+        "type": "simulation:resume-reward-queue",
+        "wave": 9,
+        "state": "blessing",
+        "detail": {}
+      },
+      {
+        "elapsed": 30.49,
+        "type": "recovery:reward-reminder",
+        "wave": 9,
+        "state": "blessing",
+        "detail": {
+          "simulated": true
+        }
+      },
+      {
+        "elapsed": 30.49,
+        "type": "simulation:reward-reminder",
+        "wave": 9,
+        "state": "blessing",
+        "detail": {}
+      },
+      {
+        "elapsed": 30.49,
+        "type": "reward-selected",
+        "wave": 9,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 30.49,
+        "type": "wave-start",
+        "wave": 10,
+        "state": "playing",
+        "detail": {
+          "wave": 10
+        }
+      },
+      {
+        "elapsed": 30.49,
+        "type": "spawn",
+        "wave": 10,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 30.57,
+        "type": "kill",
+        "wave": 10,
+        "state": "playing",
+        "detail": {}
+      },
+      {
+        "elapsed": 30.65,
+        "type": "wave-complete",
+        "wave": 10,
+        "state": "playing",
+        "detail": {
+          "wave": 10,
+          "duration": 0.16
+        }
+      }
+    ]
+  }
+}

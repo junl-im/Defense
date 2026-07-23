@@ -52,6 +52,7 @@ import BattlefieldPropSystem from './runtime/battlefield-prop-system.js';
 import BattlefieldEventDirector from './combat/battlefield-event-director.js';
 import { auditRuntimeVisuals } from './runtime/runtime-visual-audit.js';
 import WaveFlowGuard from './runtime/wave-flow-guard.js';
+import WaveReliabilityDirector from './runtime/wave-reliability-director.js';
 // CameraDirector v14/v15 lineage is preserved by CameraDirectorV16.
 
 const $ = (selector) => document.querySelector(selector);
@@ -112,7 +113,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '17.0.0';
+const GAME_VERSION = '18.0.0';
 function runtimeSpriteMarkup(path, alt = '', className = '') {
   if (!path) return '';
   const atlas = atlasSpriteMarkup(path, alt, className);
@@ -303,6 +304,9 @@ class DokkaebiLuckDefense {
     this.battlefieldEvents = new BattlefieldEventDirector({ random: () => this.random() });
     this.battlefieldProps = new BattlefieldPropSystem({ lowPower: this.lowPower });
     this.waveFlowGuard = new WaveFlowGuard();
+    this.waveReliability = new WaveReliabilityDirector();
+    this.autoPausedByVisibility = false;
+    this.lastVisibilityResumeSeconds = 0;
     this.runtimeErrors = [];
     this.runtimeErrorKeys = new Set();
     this.saveMigration = migrateSaveSchema();
@@ -511,6 +515,7 @@ class DokkaebiLuckDefense {
         battlefieldProps: this.battlefieldProps?.diagnostics || {},
         runtimeVisualAudit: this.runtimeVisualAudit || null,
         waveFlow: this.waveFlowGuard?.diagnostics || {},
+        waveReliability: this.waveReliability?.report || {},
         runtimeErrors: { count: this.runtimeErrors.length, last: this.runtimeErrors.at(-1) || null },
         battlefieldEvent: this.battlefieldEvents?.diagnostics || {},
         cameraDirector: this.cameraDirectorV16?.snapshot || {},
@@ -774,6 +779,11 @@ class DokkaebiLuckDefense {
         this.cancelMoveTarget();
       }
       if (event.repeat) return;
+      if (code === 'F6') {
+        event.preventDefault();
+        this.exportPerformanceLog();
+        return;
+      }
       if (code === 'F5') {
         event.preventDefault();
         this.cycleCameraView();
@@ -808,12 +818,13 @@ class DokkaebiLuckDefense {
     }, { passive: false }, 'keyboard-down');
     on(window, 'keyup', (event) => this.input.keys.delete(this.normalizeInputCode(event)), {}, 'keyboard-up');
     on(window, 'blur', () => this.resetMovementInput(), {}, 'window-blur');
-    on(document, 'visibilitychange', () => {
-      if (document.hidden) {
-        this.resetMovementInput();
-        if (this.state === 'playing') this.pauseGame();
-      }
-    }, {}, 'visibility-change');
+    on(document, 'visibilitychange', () => this.handleVisibilityChange(document.hidden), {}, 'visibility-change');
+    on(window, 'pageshow', (event) => {
+      if (event.persisted || !document.hidden) this.handleVisibilityChange(false, { pageShow: true });
+    }, {}, 'page-show-recovery');
+    on(window, 'focus', () => {
+      if (!document.hidden && this.autoPausedByVisibility) this.handleVisibilityChange(false, { focus: true });
+    }, {}, 'window-focus-recovery');
   }
 
   loadControlSettings() {
@@ -3221,6 +3232,9 @@ class DokkaebiLuckDefense {
     this.spawnTotal = 0;
     this.spawnTimer = 0;
     this.waveFlowGuard.reset();
+    this.waveReliability.resetRun({ seed: this.runSeed, mode: this.selectedRunModeId, hero: this.selectedHeroClassId, maxWaves: 10 });
+    this.autoPausedByVisibility = false;
+    this.lastVisibilityResumeSeconds = 0;
     const metaTraits = this.metaProgress.traits;
     this.coreMaxHp = 100 + (metaTraits.ward || 0) * 7;
     this.coreHp = this.coreMaxHp;
@@ -3661,6 +3675,7 @@ class DokkaebiLuckDefense {
     this.spawnTimer = .2;
     this.waveSpawned = 0;
     this.waveFlowGuard.beginWave(this.currentWave, this.getWaveFlowSnapshot());
+    this.waveReliability.beginWave(this.currentWave, this.getWaveFlowSnapshot());
     ui.wave.disabled = true;
     if (bossWave) {
       const bossType = getBossTypeForWave(this.currentWave);
@@ -3738,6 +3753,7 @@ class DokkaebiLuckDefense {
       this.combatTelemetry.recordDroppedSpawn();
       this.waveFlowGuard.recordSpawnFailure(`unavailable:${type}`);
       if (emergency) this.showWaveRecovery('적 소환 대체', `${type} 모델을 건너뛰고 웨이브를 계속합니다.`);
+      this.waveReliability.noteProgress(this.getWaveFlowSnapshot(), 'spawn-slot-skipped');
       return false;
     }
     if (enemy.elite) this.waveTrialEliteSpawned += 1;
@@ -3754,6 +3770,7 @@ class DokkaebiLuckDefense {
     this.waveSpawned += 1;
     this.encounterDirector.recordSpawn();
     this.waveFlowGuard.noteProgress(this.getWaveFlowSnapshot(), emergency ? 'emergency-spawn' : 'spawn');
+    this.waveReliability.noteProgress(this.getWaveFlowSnapshot(), emergency ? 'emergency-spawn' : 'spawn');
     return true;
   }
 
@@ -3886,6 +3903,17 @@ class DokkaebiLuckDefense {
 
   getWaveFlowSnapshot() {
     const rewardModal = this.getRewardModalForState();
+    const livingEnemies = this.enemies.filter((enemy) => !enemy.dead);
+    let enemyHealthSignature = 0;
+    let enemyRadiusSignature = 0;
+    let invalidEnemyCount = 0;
+    for (const enemy of livingEnemies) {
+      const hpRatio = Number(enemy.maxHp) > 0 ? Number(enemy.hp) / Number(enemy.maxHp) : 0;
+      const position = enemy.group?.position;
+      if (!Number.isFinite(hpRatio) || !position || ![position.x, position.y, position.z].every(Number.isFinite)) invalidEnemyCount += 1;
+      enemyHealthSignature += Math.max(0, Math.round((Number.isFinite(hpRatio) ? hpRatio : 0) * 1000));
+      enemyRadiusSignature += position ? Math.round(Math.hypot(position.x || 0, position.z || 0) * 10) : 0;
+    }
     return {
       state: this.state,
       waveActive: Boolean(this.waveActive),
@@ -3893,11 +3921,17 @@ class DokkaebiLuckDefense {
       maxWaves: this.maxWaves || 10,
       spawnRemaining: this.spawnRemaining || 0,
       waveSpawned: this.waveSpawned || 0,
-      enemyCount: this.enemies.filter((enemy) => !enemy.dead).length,
+      enemyCount: livingEnemies.length,
+      enemyHealthSignature,
+      enemyRadiusSignature,
+      invalidEnemyCount,
       enemyCap: this.runtimeBudget?.diagnostics?.caps?.enemies || (this.lowPower ? 18 : 30),
       postWaveQueueLength: this.postWaveQueue?.length || 0,
       autoWaveCountdown: this.autoWaveCountdown || 0,
-      modalVisible: Boolean(rewardModal?.classList.contains('visible'))
+      modalVisible: Boolean(rewardModal?.classList.contains('visible')),
+      coreHp: this.coreHp || 0,
+      gold: this.gold || 0,
+      score: this.score || 0
     };
   }
 
@@ -3941,6 +3975,85 @@ class DokkaebiLuckDefense {
     }
   }
 
+  handleVisibilityChange(hidden, detail = {}) {
+    const snapshot = this.getWaveFlowSnapshot();
+    if (hidden) {
+      this.resetMovementInput();
+      const visibility = this.waveReliability.noteVisibility(true, snapshot);
+      if (visibility.autoPaused && this.state === 'playing') this.pauseGame({ automatic: true });
+      return;
+    }
+    const visibility = this.waveReliability.noteVisibility(false, snapshot);
+    this.lastVisibilityResumeSeconds = visibility.durationSeconds || 0;
+    this.clock.getDelta();
+    if (visibility.autoPaused && this.autoPausedByVisibility && this.state === 'paused') {
+      this.resumeGame({ automatic: true });
+      const seconds = Math.round(visibility.durationSeconds || 0);
+      this.showWaveRecovery('전투 시간 복구', seconds > 0 ? `백그라운드 ${seconds}초를 보정하고 전투를 이어갑니다.` : '백그라운드 전환 후 전투를 안전하게 이어갑니다.');
+      this.waveReliability.noteRecovery('background-resume', this.getWaveFlowSnapshot(), detail);
+    }
+  }
+
+  unstickWaveEnemies(reason = 'enemy-progress-stall') {
+    const living = this.enemies.filter((enemy) => !enemy.dead);
+    let moved = 0;
+    let repaired = 0;
+    for (let index = 0; index < living.length; index += 1) {
+      const enemy = living[index];
+      const position = enemy.group?.position;
+      if (!position) continue;
+      const validPosition = [position.x, position.y, position.z].every(Number.isFinite);
+      const validHp = Number.isFinite(enemy.hp) && Number.isFinite(enemy.maxHp) && enemy.maxHp > 0;
+      if (!validPosition || !validHp) {
+        position.set(Math.sin(index + 1) * 11, 0, Math.cos(index + 1) * 11);
+        enemy.hp = Math.max(1, Number.isFinite(enemy.maxHp) ? enemy.maxHp * .25 : 1);
+        repaired += 1;
+      } else {
+        const radius = Math.hypot(position.x, position.z);
+        if (radius > 14 || radius < 2.6 || enemy.abilityState === 'windup' || enemy.abilityState === 'charge' || enemy.abilityState === 'casting') {
+          const angle = radius > .01 ? Math.atan2(position.z, position.x) : (index / Math.max(1, living.length)) * Math.PI * 2;
+          const targetRadius = 8.5 + (index % 4) * 1.15;
+          position.set(Math.cos(angle) * targetRadius, 0, Math.sin(angle) * targetRadius);
+          moved += 1;
+        }
+      }
+      enemy.abilityState = 'move';
+      enemy.abilityTime = 0;
+      enemy.abilityTimer = Math.min(Number(enemy.abilityTimer) || 0, 1.2);
+      enemy.attackTimer = Math.min(Number(enemy.attackTimer) || .4, .4);
+      this.removeEnemyTelegraph(enemy);
+    }
+    this.waveReliability.noteRecovery('unstick-enemies', this.getWaveFlowSnapshot(), { reason, moved, repaired });
+    this.showWaveRecovery('적 경로 복구', `${moved + repaired}개 적의 위치·행동 상태를 정상화했습니다.`);
+    return moved + repaired;
+  }
+
+  updateWaveReliability(dt) {
+    const action = this.waveReliability.update(dt, this.getWaveFlowSnapshot());
+    if (!action) return;
+    if (action.type === 'unstick-enemies') {
+      this.unstickWaveEnemies(action.reason);
+      return;
+    }
+    if (action.type === 'reward-reminder') {
+      this.waveReliability.noteRecovery('reward-reminder', this.getWaveFlowSnapshot(), { state: action.state });
+      this.restoreRewardModal(action.state);
+      this.showWaveRecovery('보상 선택 대기', '추천 선택 버튼으로 즉시 다음 웨이브를 이어갈 수 있습니다.', 3200);
+      return;
+    }
+    if (action.type === 'resume-reward-queue' && this.state === 'playing' && !this.waveActive && this.postWaveQueue.length > 0) {
+      this.waveReliability.noteRecovery('resume-reward-queue', this.getWaveFlowSnapshot());
+      this.showWaveRecovery('보상 흐름 복구', '대기 중인 웨이브 보상을 다시 불러옵니다.');
+      this.advancePostWaveRewards();
+      return;
+    }
+    if (action.type === 'resume-first-wave' && this.state === 'playing' && this.currentWave === 0 && !this.waveActive) {
+      this.waveReliability.noteRecovery('resume-first-wave', this.getWaveFlowSnapshot());
+      this.showWaveRecovery('첫 습격 복구', '초기 진군 타이머를 다시 시작합니다.');
+      this.beginAutoWaveCountdown(2);
+    }
+  }
+
   updateWave(dt) {
     if (!this.waveActive) return;
     this.updateWaveTrial();
@@ -3969,6 +4082,7 @@ class DokkaebiLuckDefense {
   completeWave() {
     this.waveActive = false;
     this.waveFlowGuard.noteProgress(this.getWaveFlowSnapshot(), 'wave-complete');
+    this.waveReliability.completeWave(this.currentWave, this.getWaveFlowSnapshot());
     const perfect = this.coreHp >= this.waveStartHp - .01;
     const battlefieldEvent = this.battlefieldEvents?.active;
     const perfectBonus = perfect ? 10 + this.currentWave * 2 : 0;
@@ -4066,6 +4180,7 @@ class DokkaebiLuckDefense {
     this.pendingContract = { ...contract };
     this.hideModal(ui.contractModal);
     this.state = 'playing';
+    this.waveReliability.noteProgress(this.getWaveFlowSnapshot(), 'contract-selected');
     this.showCombo(`${contract.icon} ${contract.name} 체결`, 1600);
     this.showToast('다음 한 웨이브에 계약이 적용됩니다.');
     this.haptic([18, 20, 38]);
@@ -4078,6 +4193,7 @@ class DokkaebiLuckDefense {
     this.pendingContract = null;
     this.hideModal(ui.contractModal);
     this.state = 'playing';
+    this.waveReliability.noteProgress(this.getWaveFlowSnapshot(), 'contract-skipped');
     this.showToast('이번에는 안전하게 전열을 정비합니다.');
     this.advancePostWaveRewards();
   }
@@ -4154,6 +4270,7 @@ class DokkaebiLuckDefense {
     this.hideModal(ui.blessingModal);
     this.state = 'playing';
     this.waveFlowGuard.noteProgress(this.getWaveFlowSnapshot(), 'blessing-selected');
+    this.waveReliability.noteProgress(this.getWaveFlowSnapshot(), 'blessing-selected');
     this.sound.merge(2);
     this.showCombo(`${blessing.icon} ${blessing.name}`, 1500);
     this.advancePostWaveRewards();
@@ -6059,6 +6176,7 @@ class DokkaebiLuckDefense {
         battlefieldProps: this.battlefieldProps?.diagnostics || {},
         runtimeVisualAudit: this.runtimeVisualAudit || null,
         waveFlow: this.waveFlowGuard?.diagnostics || {},
+        reliability: this.waveReliability?.diagnostics || {},
         runtimeErrors: { count: this.runtimeErrors.length, last: this.runtimeErrors.at(-1) || null },
         battlefieldEvent: this.battlefieldEvents?.diagnostics || {},
         cameraDirector: this.cameraDirectorV16?.snapshot || {},
@@ -6091,25 +6209,35 @@ class DokkaebiLuckDefense {
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement('a');
     anchor.href = url;
-    anchor.download = `dokkaebi-performance-${this.runSeed || 'title'}-${Date.now()}.json`;
+    anchor.download = `dokkaebi-reliability-${this.runSeed || 'title'}-${Date.now()}.json`;
     document.body.appendChild(anchor);
     anchor.click();
     anchor.remove();
     this.lifecycle.system.schedule(() => URL.revokeObjectURL(url), 1000);
-    this.showToast('성능 로그 JSON을 저장했습니다.');
+    this.showToast('성능·웨이브 진단 JSON을 저장했습니다.');
   }
 
-  pauseGame() {
-    if (this.state!=='playing') return;
-    this.previousState=this.state;this.state='paused';this.showModal(ui.pauseModal);
+  pauseGame({ automatic = false } = {}) {
+    if (this.state !== 'playing') return;
+    this.previousState = this.state;
+    this.state = 'paused';
+    this.autoPausedByVisibility = Boolean(automatic);
+    if (!automatic) this.showModal(ui.pauseModal);
+    this.waveReliability.noteProgress(this.getWaveFlowSnapshot(), automatic ? 'auto-pause-background' : 'manual-pause');
   }
 
-  resumeGame() {
-    if(this.state!=='paused')return;this.hideModal(ui.pauseModal);this.state='playing';this.clock.getDelta();
+  resumeGame({ automatic = false } = {}) {
+    if (this.state !== 'paused') return;
+    if (ui.pauseModal.classList.contains('visible')) this.hideModal(ui.pauseModal);
+    this.state = 'playing';
+    this.clock.getDelta();
+    this.autoPausedByVisibility = false;
+    this.waveReliability.noteProgress(this.getWaveFlowSnapshot(), automatic ? 'auto-resume-background' : 'manual-resume');
   }
 
   finishRun(won) {
     if (this.state === 'result') return;
+    this.waveReliability.noteProgress(this.getWaveFlowSnapshot(), won ? 'run-finished-win' : 'run-finished-loss');
     this.lifecycle.endRun();
     this.resetTransientUi();
     this.state = 'result';this.waveActive=false;this.cinematic=null;this.showGameUI(false);
@@ -6279,6 +6407,7 @@ class DokkaebiLuckDefense {
     this.runSafe('battlefield-sprites', () => this.battlefieldSprites?.update(this.elapsed));
     this.runSafe('battlefield-props', () => this.updateBattlefieldProps(dt));
     this.runSafe('wave-flow-guard', () => this.updateWaveFlowGuard(dt));
+    this.runSafe('wave-reliability', () => this.updateWaveReliability(dt));
 
     if (this.state === 'playing') {
       this.runSafe('auto-wave', () => this.updateAutoWaveCountdown(dt));
@@ -6334,6 +6463,7 @@ class DokkaebiLuckDefense {
       momentum: this.battleMomentum?.diagnostics,
       bossEscalation: this.bossEscalation?.diagnostics,
       waveFlow: this.waveFlowGuard?.diagnostics,
+      reliability: this.waveReliability?.diagnostics,
       runtimeErrors: this.runtimeErrors.length,
       pools: {
         projectiles: this.projectiles.length,

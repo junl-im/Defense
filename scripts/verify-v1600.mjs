@@ -21,7 +21,7 @@ const consoleSource = read('src/production-console.js');
 const titleBlock = html.slice(html.indexOf('<section id="title-screen"'), html.indexOf('<header id="hud"'));
 
 check(Number(pkg.version.split('.')[0]) >= 16, 'package version remains v16 or later');
-check(/const GAME_VERSION = '(?:16|17)\.0\.0'/.test(main), 'runtime game version remains v16 or later');
+check(/const GAME_VERSION = '(?:16|17|18)\.0\.0'/.test(main), 'runtime game version remains v16 or later');
 check(Number(ENGINE_VERSION.split('.')[0]) >= 13, 'engine version remains 13.0.0 or later');
 check(SAVE_SCHEMA_VERSION >= 14, 'save schema version remains 14 or later');
 
@@ -41,7 +41,7 @@ check(sprites.includes('versionedAssetUrl') && sprites.includes('fallbackUsed') 
 check(sprites.includes("RuntimeAtlasBattlefieldPropsV16") && sprites.includes("position: [-8.6, 1.8, 10.5]") && sprites.includes('scale: 7.4'), 'atlas environment placed prominently in battlefield');
 check(html.includes('id="hero-hud-portrait"') && main.includes('updateHeroHudPortrait'), 'selected atlas hero is visible in combat HUD');
 check(audit.includes('core-collision-guard') && audit.includes('title-simplified') && main.includes('runRuntimeVisualAudit'), 'runtime visual self-audit integrated');
-check(consoleSource.includes('VISUAL AUDIT') && (consoleSource.includes('CLEAR HORIZON v16') || consoleSource.includes('MOON GATE REBORN v17')), 'production console reports visual audit without cluttering title');
+check(consoleSource.includes('VISUAL AUDIT') && (consoleSource.includes('CLEAR HORIZON v16') || (consoleSource.includes('MOON GATE REBORN v17') || consoleSource.includes('TEN-WAVE RELIABILITY v18'))), 'production console reports visual audit without cluttering title');
 check(html.includes(`const VERSION = '${pkg.version}'`), 'boot cache reset uses current version');
 check(['docs/CLEAR_HORIZON_v16.0.0.md', 'docs/RUNTIME_VISUAL_AUDIT_v16.0.0.json', 'docs/PATCH_NOTES_v16.0.0.md', 'docs/PATCH_APPLY_v16.0.0.md', 'docs/NEXT_PATCH_LINEUP_v16.x.md'].every((path) => existsSync(resolve(root, path))), 'v16 operating and audit documents exist');
 

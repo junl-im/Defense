@@ -2818,3 +2818,14 @@ body[data-camera-profile="scenic"] #game-canvas { filter:saturate(1.035) brightn
 @media (prefers-reduced-motion: reduce) {
   .title-mascot-v17, .wave-recovery > span { animation: none; }
 }
+
+
+/* v18.0.0 Ten-Wave Reliability · background-safe combat and diagnostic polish */
+#pause-modal #performance-export-btn::after {
+  content: ' · F6';
+  color: rgba(186, 228, 255, .72);
+  font-size: 10px;
+}
+body.background-recovering #wave-recovery {
+  border-color: rgba(255, 225, 139, .72);
+}

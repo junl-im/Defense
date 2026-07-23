@@ -1,36 +1,32 @@
 {
   "schemaVersion": 1,
-  "patchId": "DD-MOON-GATE-REBORN-17.0.0",
-  "baseVersion": "16.0.0",
-  "targetVersion": "17.0.0",
-  "engineVersion": "14.0.0",
-  "saveSchema": 15,
-  "createdAt": "2026-07-23T08:55:00Z",
+  "patchId": "DD-TEN-WAVE-RELIABILITY-18.0.0",
+  "baseVersion": "17.0.0",
+  "targetVersion": "18.0.0",
+  "engineVersion": "15.0.0",
+  "saveSchema": 16,
+  "createdAt": "2026-07-23T09:37:50Z",
   "summary": {
-    "newFiles": 12,
-    "overwrittenFiles": 27,
-    "deletedFiles": 3,
-    "patchPayloadFiles": 39,
-    "payloadBytes": 1587796
+    "newFiles": 9,
+    "overwrittenFiles": 21,
+    "deletedFiles": 0,
+    "patchPayloadFiles": 30,
+    "payloadBytes": 758855
   },
   "newFiles": [
-    "docs/MOON_GATE_REBORN_v17.0.0.md",
-    "docs/NEXT_PATCH_LINEUP_v17.x.md",
-    "docs/PATCH_APPLY_v17.0.0.md",
-    "docs/PATCH_NOTES_v17.0.0.md",
-    "docs/STAGE_STALL_AUDIT_v17.0.0.json",
-    "docs/TITLE_ASSET_OPTIMIZATION_v17.0.0.json",
-    "docs/TITLE_PRESENTATION_PREVIEW_v17.0.0.jpg",
-    "scripts/verify-v1700.mjs",
-    "src/assets/title-v17/title-bg-desktop-v17.webp",
-    "src/assets/title-v17/title-bg-mobile-v17.webp",
-    "src/assets/title-v17/title-mascot-v17.webp",
-    "src/runtime/wave-flow-guard.js"
+    "docs/NEXT_PATCH_LINEUP_v18.x.md",
+    "docs/PATCH_APPLY_v18.0.0.md",
+    "docs/PATCH_NOTES_v18.0.0.md",
+    "docs/TEN_WAVE_RELIABILITY_SIMULATION_v18.0.0.json",
+    "docs/TEN_WAVE_RELIABILITY_v18.0.0.md",
+    "scripts/simulate-ten-wave-run-v18.mjs",
+    "scripts/verify-v1800.mjs",
+    "src/runtime/ten-wave-reliability-simulation.js",
+    "src/runtime/wave-reliability-director.js"
   ],
   "overwrittenFiles": [
     "PROJECT_HANDOFF.md",
     "README.md",
-    "docs/GOLDEN_SLICE_RUNTIME_CERTIFICATION_v12.0.0.json",
     "docs/PRODUCTION_ROADMAP.md",
     "index.html",
     "package-lock.json",
@@ -43,267 +39,195 @@
     "scripts/verify-v1200.mjs",
     "scripts/verify-v1500.mjs",
     "scripts/verify-v1600.mjs",
-    "src/assets/moon-market-keyart.webp",
-    "src/assets/moon-mascot-expressions-v1.webp",
-    "src/assets/moon-mascot-v1.webp",
+    "scripts/verify-v1700.mjs",
     "src/engine/asset-catalog.js",
-    "src/engine/camera-profile.js",
     "src/engine/engine-config.js",
     "src/main.js",
     "src/production-console.js",
-    "src/runtime/battlefield-sprite-director-v16.js",
-    "src/runtime/runtime-visual-audit.js",
     "src/runtime/save-schema.js",
     "src/style.css"
   ],
-  "deleteFiles": [
-    "static_build_v16.0.0.log",
-    "static_verify_v16.0.0.log",
-    "verify_v16.0.0.log"
-  ],
+  "deleteFiles": [],
   "files": [
     {
-      "path": "docs/MOON_GATE_REBORN_v17.0.0.md",
-      "bytes": 2029,
-      "sha256": "b2c646ea75145a627995b71c51d6b135e5e046e1bcaca58a27ea9965652e9e19",
+      "path": "docs/NEXT_PATCH_LINEUP_v18.x.md",
+      "bytes": 666,
+      "sha256": "a3b5acd889bb5ab8d9cc2cdf3450f62c9ae02e25eecdb96e5eee43a4a711e0b8",
       "change": "new"
     },
     {
-      "path": "docs/NEXT_PATCH_LINEUP_v17.x.md",
-      "bytes": 669,
-      "sha256": "bf5908b5fc4034d934845d997dd72740b194e08a5cadd9d1c9b770ca18a6930c",
+      "path": "docs/PATCH_APPLY_v18.0.0.md",
+      "bytes": 507,
+      "sha256": "6e94cdae22a2f619d7c1ad7c59c9cec92452aeeee4fc09c52fa2c5c627053061",
       "change": "new"
     },
     {
-      "path": "docs/PATCH_APPLY_v17.0.0.md",
-      "bytes": 453,
-      "sha256": "d5ac5de0f5fa1c3faabcca641a35fa32180f2a17590e369e29180e08f7708267",
+      "path": "docs/PATCH_NOTES_v18.0.0.md",
+      "bytes": 769,
+      "sha256": "be052c6792307c4f1a33d9ef6718debee7ff47b8bbcb1678ab0ae8dde75b4f3f",
       "change": "new"
     },
     {
-      "path": "docs/PATCH_NOTES_v17.0.0.md",
-      "bytes": 480,
-      "sha256": "6212f09e1dbcc7d99b8f29d17ae6825c4baae0cf833f1756e9c4d0d14a7259a4",
+      "path": "docs/TEN_WAVE_RELIABILITY_SIMULATION_v18.0.0.json",
+      "bytes": 30767,
+      "sha256": "0bb0d5bb31e8aaef85dff43c23d789d792da1ba82c168c27745c57156829f964",
       "change": "new"
     },
     {
-      "path": "docs/STAGE_STALL_AUDIT_v17.0.0.json",
-      "bytes": 1293,
-      "sha256": "e96fe074ded2a1ad1babfcfc93a2e84ff511a6fbbae85ad133968b8e9aa36c8f",
+      "path": "docs/TEN_WAVE_RELIABILITY_v18.0.0.md",
+      "bytes": 2684,
+      "sha256": "65bced993674bc34da99f273afc39be440c23a40f6b0a76c04b40e9beaa543d1",
       "change": "new"
     },
     {
-      "path": "docs/TITLE_ASSET_OPTIMIZATION_v17.0.0.json",
-      "bytes": 1663,
-      "sha256": "6e5d11fc1d0c6c14020041a38792611cd55cc97d6c7b16c3a6908449c439e25f",
+      "path": "scripts/simulate-ten-wave-run-v18.mjs",
+      "bytes": 605,
+      "sha256": "e9477f01b8d11cf1686ae4f5710225bce6f23e6e6afabdb13fcce3aa463e6ec3",
       "change": "new"
     },
     {
-      "path": "docs/TITLE_PRESENTATION_PREVIEW_v17.0.0.jpg",
-      "bytes": 320582,
-      "sha256": "9064c8af32f72af5150a67b60c4c0987fdd29a500e7763f6c4b0eeec9cf82e4e",
+      "path": "scripts/verify-v1800.mjs",
+      "bytes": 5390,
+      "sha256": "e7ecfc3d81624fd9d90f80a0623f92b7762556c31551c6475942411040cfff05",
       "change": "new"
     },
     {
-      "path": "scripts/verify-v1700.mjs",
-      "bytes": 5451,
-      "sha256": "8731b50bfb3671a3b701a4a149046c077c3021765bd5b8dced47ff3a8a8c0ea0",
+      "path": "src/runtime/ten-wave-reliability-simulation.js",
+      "bytes": 5809,
+      "sha256": "8e889758926cef3db12a8c23a8945718fed9d377ba8def3b91c49683f340725f",
       "change": "new"
     },
     {
-      "path": "src/assets/title-v17/title-bg-desktop-v17.webp",
-      "bytes": 119708,
-      "sha256": "b09bbaf419866a86a6b6712c3a663365d41b1f35f95a68208c82a84414711d38",
-      "change": "new"
-    },
-    {
-      "path": "src/assets/title-v17/title-bg-mobile-v17.webp",
-      "bytes": 111516,
-      "sha256": "53db2cbce89cb5b5f62cc026b6fe3c0321561921295e5b2863c7eba1aa6b11d1",
-      "change": "new"
-    },
-    {
-      "path": "src/assets/title-v17/title-mascot-v17.webp",
-      "bytes": 99686,
-      "sha256": "78023b651ff87d301dbcb9c2c89b188936148d1f9e7959fdedca294544baf187",
-      "change": "new"
-    },
-    {
-      "path": "src/runtime/wave-flow-guard.js",
-      "bytes": 4268,
-      "sha256": "da69e1823f74fbbea37529d1742573785793c07895ba9f2e3be4b4a3fdc88393",
+      "path": "src/runtime/wave-reliability-director.js",
+      "bytes": 10822,
+      "sha256": "b6be712f7af980635b797e7330b07f087c54792c1b5531712fc733035137f412",
       "change": "new"
     },
     {
       "path": "PROJECT_HANDOFF.md",
-      "bytes": 1164,
-      "sha256": "79c7ecabb2afb4a92695fddf3413b19519a8fa35723ab399af488fcd39ac82f8",
+      "bytes": 1428,
+      "sha256": "d35ff752d624f2e1bdac9d03f95edc3fad2d3460b5fbee410300f7b998994e9c",
       "change": "overwrite"
     },
     {
       "path": "README.md",
-      "bytes": 847,
-      "sha256": "61d948da03e558e998f229673f7fe8851d9955c0e1dee8edd8cc627f20a2bf10",
-      "change": "overwrite"
-    },
-    {
-      "path": "docs/GOLDEN_SLICE_RUNTIME_CERTIFICATION_v12.0.0.json",
-      "bytes": 9205,
-      "sha256": "1d3913c134a83c761153d2dac7e91fa7bfa1610f77dcd07ffc89a93f7edf477c",
+      "bytes": 1077,
+      "sha256": "98985570f9f4b545962da8162d9d6c318d04dad5a01b047b858d0f09e4fb4f69",
       "change": "overwrite"
     },
     {
       "path": "docs/PRODUCTION_ROADMAP.md",
-      "bytes": 5330,
-      "sha256": "22e0c3bf50bd50c8dbaf7d80ec465e889810ca200b4541676ce831cd5a183955",
+      "bytes": 5727,
+      "sha256": "7941fc8ca21e57c20e0183d5f33f8f222af495936fe8084e99e93db86e5523e1",
       "change": "overwrite"
     },
     {
       "path": "index.html",
-      "bytes": 39551,
-      "sha256": "232daf04e796acb706aeae1586f6504a4c012d5d500c514c33fc52530b4c5787",
+      "bytes": 39566,
+      "sha256": "9d9d90e85f68bef50f6d94854c40fee81d94f7fde2f7de3c4bd86d01b44daa01",
       "change": "overwrite"
     },
     {
       "path": "package-lock.json",
       "bytes": 28668,
-      "sha256": "9d94a5d59efc0d82ec38e81ddae83ec154e09b17ebc5e016c7a16cbbf8885a86",
+      "sha256": "50b090758a4a8fb76e8adaa527111a8411901ed45b96092eeeffb3b8f89b8ab4",
       "change": "overwrite"
     },
     {
       "path": "package.json",
-      "bytes": 8544,
-      "sha256": "c5e858500e5f0d44f9065bc5c2c6913390a35f4071203cdeee59c47cf44694b8",
+      "bytes": 8938,
+      "sha256": "7bbad96b7e14d5571dca6c6502115bea44ed800c65d703cadf8c4b05ed5c965f",
       "change": "overwrite"
     },
     {
       "path": "public/sw.js",
       "bytes": 757,
-      "sha256": "a5f7eb4f9a76f6f3186afdb73e0b81a86a3d13fc507f8a561a72ab3286ac52a8",
+      "sha256": "1a02f9822d78cb5ae1eb95087b0528755c8aa7e8b082d3606c0f868f828f311e",
       "change": "overwrite"
     },
     {
       "path": "scripts/build-static-fallback.mjs",
       "bytes": 1928,
-      "sha256": "588ed0333fabd5f5e16284c5907ae4e8e075d8f327a932385beb39e91c64c1dd",
+      "sha256": "03e8343a343e4368312c3eed9ef9300f1bb6981ac5e92ac5cd44cf0850517766",
       "change": "overwrite"
     },
     {
       "path": "scripts/verify-project.mjs",
       "bytes": 27352,
-      "sha256": "8e0dc83f85bc54fc62d512bacf7518908a7e50bd56bd52a87c43431229730273",
+      "sha256": "48cf39d3b27cc24bcb61441b07ad013395982e839781c1993d664576263715fb",
       "change": "overwrite"
     },
     {
       "path": "scripts/verify-static-dist.mjs",
-      "bytes": 6854,
-      "sha256": "70104b6ce74777389fdb717c8c7ccfed85d586a5ce45c2e95aeda1c695d69409",
+      "bytes": 7544,
+      "sha256": "cd5ccc7698aba97682643bdbd898e171e028d7f517dd055aac1779317b6a5241",
       "change": "overwrite"
     },
     {
       "path": "scripts/verify-v1000.mjs",
-      "bytes": 6636,
-      "sha256": "5c4a8c7af9996a0b4eb0500044101dddf6975b01a21e3f7480369423e64df52b",
+      "bytes": 6642,
+      "sha256": "77d33731d262a5713e2c50844179d0856f424d5971e3045dc130828db94f7768",
       "change": "overwrite"
     },
     {
       "path": "scripts/verify-v1200.mjs",
-      "bytes": 8684,
-      "sha256": "12ac16d117d88d5092b608dd48f1a10c86e4e2895b65b98c08968153ede6b82a",
+      "bytes": 8740,
+      "sha256": "1ed94076cf4c3553ba25f2a518307d5f1e0b6d7fdf0bb03c50f3ae8af62f0167",
       "change": "overwrite"
     },
     {
       "path": "scripts/verify-v1500.mjs",
-      "bytes": 5657,
-      "sha256": "ee708e78fa84e2d20d218ad65ee3bc969493903f5f30564eef83081f14f76365",
+      "bytes": 5660,
+      "sha256": "ac9a1033abc526c839dd262b09f2c67970523968b56dd019d85896b62e0dba72",
       "change": "overwrite"
     },
     {
       "path": "scripts/verify-v1600.mjs",
-      "bytes": 5010,
-      "sha256": "32dc66bab880592c5d51f13b629768379c2311aaba7f76450dbec0af179108b0",
+      "bytes": 5069,
+      "sha256": "e587e4c8e6eda39fff6e9616f9623861da47b03375c297067ef37eafd631f985",
       "change": "overwrite"
     },
     {
-      "path": "src/assets/moon-market-keyart.webp",
-      "bytes": 68764,
-      "sha256": "6ee86e6b6a379eb88d275cca3d1c4bb3a2ff010f0d651b5e9f380f532dee4aa3",
-      "change": "overwrite"
-    },
-    {
-      "path": "src/assets/moon-mascot-expressions-v1.webp",
-      "bytes": 71752,
-      "sha256": "a0dfe17505f3000c7017edfab4f606cbe9356465ec8085c9b8d08bf8b00ba189",
-      "change": "overwrite"
-    },
-    {
-      "path": "src/assets/moon-mascot-v1.webp",
-      "bytes": 74552,
-      "sha256": "83e34dae34aa0091f7366fdc185d6ad85cc446da0837b07f53cb503949469d7e",
+      "path": "scripts/verify-v1700.mjs",
+      "bytes": 5595,
+      "sha256": "1e64ab002cd3e7962ef7ee85889ad5be265eb518201f409248ef4adf99d86b85",
       "change": "overwrite"
     },
     {
       "path": "src/engine/asset-catalog.js",
       "bytes": 8193,
-      "sha256": "53d46a1f668c6cab68b1b54a2664767f95b120b1becde43c98fb5dc17df25ef0",
-      "change": "overwrite"
-    },
-    {
-      "path": "src/engine/camera-profile.js",
-      "bytes": 2015,
-      "sha256": "1ff98202a1714862101ec77dcadd739659edb78ad3f697331054d55877796172",
+      "sha256": "aaa7ef59763bd48498dfb2cf8b62982b48bc9c201c11e0572c49fbff75abb26b",
       "change": "overwrite"
     },
     {
       "path": "src/engine/engine-config.js",
       "bytes": 1629,
-      "sha256": "505cc0abb8e07ca87876f991eb68ea8562d603775bad2e52b654d5125fab04e9",
+      "sha256": "7a95cbfad60da9693015d9e3b2358b87d0671368be165d71007d6fc2256a8ef1",
       "change": "overwrite"
     },
     {
       "path": "src/main.js",
-      "bytes": 336711,
-      "sha256": "1c5ec8bd16d85d4348fe3161ea1d068e39713f2e087294bc2eeea32b6ceca2c5",
+      "bytes": 344121,
+      "sha256": "005ed59c19f099ee9925a504c0abd99bb8df59633759ced1f3c9df4840666e5d",
       "change": "overwrite"
     },
     {
       "path": "src/production-console.js",
-      "bytes": 9355,
-      "sha256": "ef7db11720812950fb3a51bd448caa73c2f409d7e2448a7b8842fa4be6291101",
-      "change": "overwrite"
-    },
-    {
-      "path": "src/runtime/battlefield-sprite-director-v16.js",
-      "bytes": 6677,
-      "sha256": "68371aaef7c56bca327b34a92b993dbed4a4b2d1e9b15d52170f13a7bfb0c370",
-      "change": "overwrite"
-    },
-    {
-      "path": "src/runtime/runtime-visual-audit.js",
-      "bytes": 1951,
-      "sha256": "a1ffb32d52088452c49151dd0c45e85b1809b199ba365b351ad3afad155e4c7c",
+      "bytes": 9660,
+      "sha256": "573c37757ace96badc838f2ce8fb86ab63fc00eb487c1b8c04fe1825f69775a7",
       "change": "overwrite"
     },
     {
       "path": "src/runtime/save-schema.js",
-      "bytes": 1672,
-      "sha256": "a31deaee48daa22095176a2726ebc6dc27936981adfcf74a32e698f9b025b7ee",
+      "bytes": 1706,
+      "sha256": "588ef6d19bbf6d1adbdc64484fd1ccdc643c7c1bcb3450d791a4d7c7a8b7b6f2",
       "change": "overwrite"
     },
     {
       "path": "src/style.css",
-      "bytes": 180540,
-      "sha256": "68ec12c8e0dc25d804644da2f4d8e2ad5ac6727ca69049002ba7b126b47803aa",
+      "bytes": 180836,
+      "sha256": "a644635e6245e537a8c57fc338d3578f2b34b0e9a47b0a86398f643aee0425e2",
       "change": "overwrite"
     }
-  ],
-  "verification": [
-    "npm run verify",
-    "npm run build:static",
-    "node scripts/verify-static-dist.mjs"
-  ],
-  "limitations": [
-    "Full automated ten-wave browser play was not executed in the container.",
-    "Manual mobile background-resume and long-session thermal QA remain required."
   ]
 }

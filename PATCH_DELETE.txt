@@ -1,3 +1,0 @@
-static_build_v16.0.0.log
-static_verify_v16.0.0.log
-verify_v16.0.0.log

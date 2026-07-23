@@ -15,10 +15,10 @@ const consoleSource = read('src/production-console.js');
 let failures = 0;
 const check = (condition, message) => condition ? console.log(`PASS ${message}`) : (failures += 1, console.error(`FAIL ${message}`));
 
-check(pkg.version === '17.0.0', 'package version 17.0.0');
-check(main.includes("const GAME_VERSION = '17.0.0'"), 'runtime game version 17.0.0');
-check(ENGINE_VERSION === '14.0.0', 'engine version 14.0.0');
-check(SAVE_SCHEMA_VERSION === 15, 'save schema version 15');
+check(Number(pkg.version.split('.')[0]) >= 17, 'package version remains v17 or later');
+check(/const GAME_VERSION = '(?:17|18)\.0\.0'/.test(main), 'runtime game version remains v17 or later');
+check(Number(ENGINE_VERSION.split('.')[0]) >= 14, 'engine version remains 14.0.0 or later');
+check(SAVE_SCHEMA_VERSION >= 15, 'save schema remains 15 or later');
 check(WAVE_FLOW_GUARD_VERSION === '17.0.0', 'wave flow guard version 17.0.0');
 
 const titleAssets = [
@@ -55,7 +55,7 @@ check(main.includes('recordRuntimeError') && main.includes('runSafe') && main.in
 check(main.includes('blessing-modal-visibility-guard') && main.includes('relic-modal-visibility-guard'), 'stage 3 and 4 reward modals have visibility guards');
 check(html.includes('id="blessing-recommend-btn"') && html.includes('id="relic-recommend-btn"'), 'reward screens expose continue recovery actions');
 check(html.includes('id="wave-recovery"') && style.includes('.wave-recovery'), 'player-facing recovery indicator exists');
-check(consoleSource.includes('WAVE FLOW') && consoleSource.includes('MOON GATE REBORN v17'), 'production console exposes wave flow diagnostics');
+check(consoleSource.includes('WAVE FLOW') && (consoleSource.includes('MOON GATE REBORN v17') || consoleSource.includes('TEN-WAVE RELIABILITY v18')), 'production console exposes wave flow diagnostics');
 
 check(['docs/MOON_GATE_REBORN_v17.0.0.md', 'docs/STAGE_STALL_AUDIT_v17.0.0.json', 'docs/TITLE_ASSET_OPTIMIZATION_v17.0.0.json', 'docs/TITLE_PRESENTATION_PREVIEW_v17.0.0.jpg', 'docs/PATCH_NOTES_v17.0.0.md', 'docs/PATCH_APPLY_v17.0.0.md', 'docs/NEXT_PATCH_LINEUP_v17.x.md'].every((path) => existsSync(resolve(root, path))), 'v17 operating, audit and preview documents exist');
 

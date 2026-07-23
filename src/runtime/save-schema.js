@@ -1,4 +1,4 @@
-export const SAVE_SCHEMA_VERSION = 15;
+export const SAVE_SCHEMA_VERSION = 16;
 export const SAVE_MIGRATION_KEY = 'dokkaebi-save-schema-version';
 
 const SAFE_KEYS = Object.freeze([
@@ -15,7 +15,8 @@ const SAFE_KEYS = Object.freeze([
   'dokkaebi-asset-review-v10',
   'dokkaebi-asset-review-v13',
   'dokkaebi-atlas-review-v14',
-  'dokkaebi-guardian-council-v1'
+  'dokkaebi-guardian-council-v1',
+  'dokkaebi-wave-checkpoint-v18'
 ]);
 
 export function migrateSaveSchema(storage = globalThis.localStorage) {

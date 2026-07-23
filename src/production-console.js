@@ -59,13 +59,14 @@ export class ProductionConsole {
     const battlefieldEvent = data.battlefieldEvent || {};
     const runtimeVisualAudit = data.runtimeVisualAudit || {};
     const waveFlow = data.waveFlow || {};
+    const reliability = data.reliability || {};
     const runtimeErrors = data.runtimeErrors || {};
     const approved = Number(this.artSummary.approved || 0);
     const total = Number(this.artSummary.total || 0);
     const progress = total ? Math.round((approved / total) * 100) : 0;
     const milestoneHtml = this.milestones.slice(0, 4).map((item) => `<li><span>${item.status === 'done' ? 'DONE' : item.status === 'active' ? 'NOW' : 'NEXT'}</span>${item.label}</li>`).join('');
     this.element.innerHTML = `
-      <header><div><small>DD PRODUCTION OS</small><b>MOON GATE REBORN v17 · RESPONSIVE TITLE · WAVE GUARD</b></div><button type="button" data-close-console aria-label="제작 콘솔 닫기">×</button></header>
+      <header><div><small>DD PRODUCTION OS</small><b>TEN-WAVE RELIABILITY v18 · CHECKPOINT · BACKGROUND RECOVERY</b></div><button type="button" data-close-console aria-label="제작 콘솔 닫기">×</button></header>
       <section class="production-console-grid">
         <article><small>ART LOCK</small><b>${this.artSummary.styleLockId || 'UNKNOWN'}</b><span>Production art ${approved}/${total} · ${progress}%</span></article>
         <article><small>RUNTIME SLICE</small><b>${goldenSlice.runtimeCertified || 0}/${goldenSlice.total || 6} PASS</b><span>${goldenSlice.runtimePassed ? 'Hero · Enemy · Boss · Map · HUD · VFX' : 'Evidence incomplete'}</span></article>
@@ -85,6 +86,7 @@ export class ProductionConsole {
         <article><small>BATTLEFIELD SPRITES</small><b>${spriteAtlas.activeSprites || 0} ACTIVE</b><span>${spriteAtlas.atlasPages || 0} pages · ${spriteAtlas.loaded ? 'ready' : 'fallback'} · billboard budget</span></article>
         <article><small>VISUAL AUDIT</small><b>${runtimeVisualAudit.passCount || 0}/${runtimeVisualAudit.total || 7} PASS</b><span>${runtimeVisualAudit.passed ? 'Atlas · title · camera guard ready' : `${runtimeVisualAudit.warnings?.length || 0} warning`}</span></article>
         <article><small>WAVE FLOW</small><b>${waveFlow.recoveries || 0} RECOVERY</b><span>Spawn ${waveFlow.forcedSpawns || 0} · Modal ${waveFlow.modalRestores || 0} · Error ${runtimeErrors.count || 0}</span></article>
+        <article><small>RUN RELIABILITY</small><b>${reliability.completedWaves || 0}/10 WAVES</b><span>Sweep ${reliability.enemySweeps || 0} · Queue ${reliability.rewardQueueResumes || 0} · BG ${reliability.backgroundResumes || 0}</span></article>
         <article><small>LIVING PROPS</small><b>${battlefieldProps.active || 0} ACTIVE</b><span>상호작용 ${battlefieldProps.interactable || 0} · 자동 방어 ${battlefieldProps.automated || 0} · 발동 ${battlefieldProps.activations || 0}</span></article>
         <article><small>BATTLEFIELD EVENT</small><b>${battlefieldEvent.active?.name || 'STANDBY'}</b><span>완료 ${battlefieldEvent.completed || 0} · 회복 ${battlefieldEvent.totalHealing || 0}</span></article>
         <article><small>DOCTRINE</small><b>${String(encounter.active?.name || 'STANDBY').toUpperCase()}</b><span>${encounter.active?.mutatorId || 'none'} · 압력 ${encounter.active?.adaptivePressure ?? 0}</span></article>
