@@ -5,15 +5,15 @@ const css = read('src/style.css');
 const html = read('index.html');
 const pkg = JSON.parse(read('package.json'));
 const checks = [
-  ['package version 22.0.0', pkg.version === '22.0.0'],
-  ['game version 22.0.0', main.includes("GAME_VERSION = '22.0.0'")],
-  ['engine version 19.0.0', read('src/engine/engine-config.js').includes("ENGINE_VERSION = '19.0.0'")],
-  ['save schema 20', read('src/runtime/save-schema.js').includes('SAVE_SCHEMA_VERSION = 20')],
-  ['service worker 22.0.0', read('public/sw.js').includes("VERSION = '22.0.0'")],
+  ['package version remains v22 or later', Number(pkg.version.split('.')[0]) >= 22],
+  ['runtime retains v22 lineage', /GAME_VERSION = '(?:2[2-9]|[3-9]\d)\.0\.0'/.test(main)],
+  ['engine remains 19.0.0 or later', /ENGINE_VERSION = '(?:19|[2-9]\d)\.0\.0'/.test(read('src/engine/engine-config.js'))],
+  ['save schema remains 20 or later', Number(read('src/runtime/save-schema.js').match(/SAVE_SCHEMA_VERSION = (\d+)/)?.[1] || 0) >= 20],
+  ['service worker remains v22 or later', /VERSION = '(?:2[2-9]|[3-9]\d)\.0\.0'/.test(read('public/sw.js'))],
   ['guardian targeting director wired', main.includes('new GuardianTargetingDirectorV22') && fs.existsSync('src/combat/guardian-targeting-director-v22.js')],
   ['tower extended acquisition and sticky target', read('src/combat/guardian-targeting-director-v22.js').includes('getAcquisitionRange') && read('src/combat/guardian-targeting-director-v22.js').includes('autoTarget')],
   ['shaman range capped', main.includes('distance <= 12.5') && main.includes('distanceTo(this.player.group.position) <= 10.5')],
-  ['global wheel and zoom buttons', main.includes('camera-wheel-global') && html.includes('zoom-in-btn') && html.includes('zoom-out-btn')],
+  ['global wheel and pinch zoom retained without forced buttons', main.includes('camera-wheel-global') && main.includes('pinchSensitivity') && !html.includes('zoom-in-btn') && !html.includes('zoom-out-btn')],
   ['centered title layout', css.includes(".title-scene-v17 { display:grid; grid-template-columns:1fr; place-items:center")],
   ['mobile HUD v22 wired', main.includes('new MobileHudDirectorV22') && css.includes('mobile-hud-v22-emergency')],
   ['treasure prompts localized', read('src/runtime/battlefield-prop-system.js').includes("prompt: '상자 열기'")],

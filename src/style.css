@@ -2976,9 +2976,6 @@ body.mobile-hud-v21-emergency .center-meter-rail, body.mobile-hud-v21-emergency 
 .title-panel-v17 { position:relative; z-index:3; align-self:center; justify-self:center; text-align:center; width:min(430px,92vw); margin:auto; }
 .title-feature-ribbon-v21 { justify-content:center; }
 .title-ready-v21 { text-align:left; }
-.camera-zoom-controls { position:fixed; z-index:52; right:calc(12px + var(--safe-right)); top:50%; transform:translateY(-50%); display:grid; gap:7px; }
-.camera-zoom-controls button { width:42px; height:42px; border-radius:15px; border:1px solid rgba(170,224,255,.35); color:#effaff; background:rgba(8,18,45,.78); box-shadow:0 8px 24px rgba(0,0,0,.34); font-size:22px; font-weight:900; backdrop-filter:blur(8px); }
-.camera-zoom-controls button:active { transform:scale(.92); }
 .reward-auto-countdown { position:relative; overflow:hidden; display:flex; align-items:center; justify-content:space-between; gap:10px; margin:12px 0 3px; padding:9px 12px; border-radius:14px; border:1px solid rgba(116,210,255,.28); background:rgba(7,20,49,.68); color:#dff7ff; }
 .reward-auto-countdown span { font-size:11px; font-weight:800; }
 .reward-auto-countdown b { color:#ffe49a; font-size:12px; }
@@ -3010,8 +3007,6 @@ body.mobile-hud-v21-emergency .center-meter-rail, body.mobile-hud-v21-emergency 
   body.mobile-hud-v22 .center-meter-rail, body.mobile-hud-v22 .left-insight-rail, body.mobile-hud-v22 .right-roster-rail, body.mobile-hud-v22 #unit-strip, body.mobile-hud-v22 #relic-panel, body.mobile-hud-v22 #wave-trial { display:none!important; }
   body.mobile-hud-v22 #danger-hint { bottom:calc(105px + var(--safe-bottom)); max-width:170px; }
   body.mobile-hud-v22 #interact-btn { left:50%; right:auto; bottom:calc(106px + var(--safe-bottom)); transform:translateX(-50%); max-width:156px; min-width:0; padding:7px 10px; }
-  body.mobile-hud-v22 .camera-zoom-controls { right:calc(8px + var(--safe-right)); top:calc(112px + var(--safe-top)); transform:none; gap:5px; }
-  body.mobile-hud-v22 .camera-zoom-controls button { width:35px; height:35px; border-radius:12px; font-size:18px; }
 }
 @media (max-width:430px) {
   body.mobile-hud-v22-narrow .hud-right #hud-equipment-btn { display:none!important; }
@@ -3030,3 +3025,211 @@ body.mobile-hud-v21-emergency .center-meter-rail, body.mobile-hud-v21-emergency 
   body.mobile-hud-v22-landscape #interact-btn { bottom:calc(55px + var(--safe-bottom)); }
 }
 body.mobile-hud-v22-emergency .center-meter-rail, body.mobile-hud-v22-emergency #unit-strip, body.mobile-hud-v22-emergency #relic-panel, body.mobile-hud-v22-emergency #danger-hint { display:none!important; }
+
+
+/* v23.0.0 — Quiet Screen mobile HUD. Controls, information and context occupy reserved lanes. */
+.mobile-context-suppressed-v23 { pointer-events:none!important; }
+
+@media (max-width:820px) {
+  body.mobile-hud-v23 {
+    --v23-top-hud-height: 43px;
+    --v23-wave-top: calc(var(--safe-top) + 50px);
+    --v23-boss-top: calc(var(--safe-top) + 82px);
+    --v23-control-bottom: calc(var(--safe-bottom) + 8px);
+    --v23-context-bottom: calc(var(--safe-bottom) + var(--mobile-control-reserve-v23) + 8px);
+  }
+  body.mobile-hud-v23 #hud {
+    top:calc(4px + var(--safe-top));
+    left:calc(5px + var(--safe-left));
+    right:calc(5px + var(--safe-right));
+    height:var(--v23-top-hud-height);
+    grid-template-columns:minmax(0,1fr) auto;
+    align-items:center;
+    gap:5px;
+    padding:3px 5px;
+    border:1px solid rgba(159,220,255,.18);
+    border-radius:14px;
+    background:rgba(5,11,30,.72);
+    box-shadow:0 8px 24px rgba(0,0,0,.24);
+    backdrop-filter:blur(10px);
+  }
+  body.mobile-hud-v23 .hud-left,
+  body.mobile-hud-v23 .hud-right { min-width:0; max-width:none; gap:4px; }
+  body.mobile-hud-v23 .hud-left { justify-self:start; }
+  body.mobile-hud-v23 .hud-right { justify-self:end; }
+  body.mobile-hud-v23 #menu-btn,
+  body.mobile-hud-v23 #hud-equipment-btn { width:31px; height:31px; min-width:31px; }
+  body.mobile-hud-v23 #sound-btn,
+  body.mobile-hud-v23 #hud-layout-btn { display:none!important; }
+  body.mobile-hud-v23 .core-pill { min-width:78px; height:34px; padding:2px 7px; border-radius:11px; }
+  body.mobile-hud-v23 .core-pill small { font-size:8px; }
+  body.mobile-hud-v23 .core-pill b { font-size:13px; }
+  body.mobile-hud-v23 .hero-hud-portrait { width:28px; height:28px; }
+  body.mobile-hud-v23 .currency-pill { min-width:58px; height:31px; padding:2px 7px; border-radius:11px; }
+  body.mobile-hud-v23 .currency-pill span { font-size:8px; }
+  body.mobile-hud-v23 .currency-pill b { font-size:13px; }
+
+  body.mobile-hud-v23 .wave-hud {
+    position:fixed;
+    z-index:31;
+    top:var(--v23-wave-top);
+    left:50%;
+    width:min(44vw,164px);
+    transform:translateX(-50%);
+    padding:4px 8px 5px;
+    border-radius:11px;
+    background:rgba(5,10,29,.78);
+    pointer-events:none;
+  }
+  body.mobile-hud-v23 .wave-hud > span { font-size:10px; }
+  body.mobile-hud-v23 .wave-hud small { margin-top:2px; font-size:8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  body.mobile-hud-v23 #boss-health {
+    top:var(--v23-boss-top);
+    width:min(88vw,390px);
+    max-height:86px;
+    overflow:hidden;
+  }
+  body.mobile-hud-v23 #boss-health .boss-intent { display:none!important; }
+  body.mobile-hud-v23 #boss-health .boss-break em { display:none!important; }
+
+  body.mobile-hud-v23 #joystick-zone {
+    left:calc(8px + var(--safe-left));
+    bottom:var(--v23-control-bottom);
+    width:88px!important;
+    height:88px!important;
+    transform:scale(var(--mobile-hud-scale-v23))!important;
+    transform-origin:left bottom!important;
+  }
+  body.mobile-hud-v23 #action-dock {
+    right:calc(7px + var(--safe-right));
+    bottom:var(--v23-control-bottom);
+    width:154px!important;
+    min-width:0!important;
+    transform:scale(var(--mobile-hud-scale-v23))!important;
+    transform-origin:right bottom!important;
+    grid-template-columns:43px 46px 57px!important;
+    grid-template-rows:43px 35px!important;
+    grid-template-areas:'dash skill summon' 'burst wave summon'!important;
+    gap:4px!important;
+  }
+  body.mobile-hud-v23 #action-dock #dash-btn { grid-area:dash; }
+  body.mobile-hud-v23 #action-dock #skill-btn { grid-area:skill; }
+  body.mobile-hud-v23 #action-dock #burst-btn { grid-area:burst; }
+  body.mobile-hud-v23 #action-dock #wave-btn { grid-area:wave; height:35px!important; }
+  body.mobile-hud-v23 #action-dock #summon-btn { grid-area:summon; height:82px!important; }
+  body.mobile-hud-v23 #action-dock button { min-width:0; padding-inline:3px; }
+  body.mobile-hud-v23 #action-dock .action-glyph { width:22px; height:22px; }
+  body.mobile-hud-v23 #action-dock .skill-btn span,
+  body.mobile-hud-v23 #action-dock .wave-btn small,
+  body.mobile-hud-v23 #action-dock .summon-btn small { font-size:8px; }
+  body.mobile-hud-v23 #action-dock .skill-btn b,
+  body.mobile-hud-v23 #action-dock .wave-btn b,
+  body.mobile-hud-v23 #action-dock .summon-btn b { font-size:8px; }
+
+  body.mobile-hud-v23 .center-meter-rail,
+  body.mobile-hud-v23 .left-insight-rail,
+  body.mobile-hud-v23 .right-roster-rail,
+  body.mobile-hud-v23 #unit-strip,
+  body.mobile-hud-v23 #relic-panel,
+  body.mobile-hud-v23 #wave-trial,
+  body.mobile-hud-v23 #first-mission-panel,
+  body.mobile-hud-v23 #synergy-panel,
+  body.mobile-hud-v23 #left-ui-toggle { display:none!important; }
+
+  /* One shared context lane. Runtime priority: recovery > next wave > interaction > danger. */
+  body.mobile-hud-v23 #wave-recovery,
+  body.mobile-hud-v23 #auto-wave-panel,
+  body.mobile-hud-v23 #interact-btn,
+  body.mobile-hud-v23 #danger-hint {
+    position:fixed!important;
+    z-index:58!important;
+    left:50%!important;
+    right:auto!important;
+    top:auto!important;
+    bottom:var(--v23-context-bottom)!important;
+    width:min(72vw,260px)!important;
+    max-width:calc(100vw - 28px - var(--safe-left) - var(--safe-right))!important;
+    min-width:0!important;
+    margin:0!important;
+    transform:translateX(-50%)!important;
+    transform-origin:center bottom!important;
+  }
+  body.mobile-hud-v23 #auto-wave-panel {
+    min-height:54px;
+    grid-template-columns:36px minmax(0,1fr) 32px;
+    padding:7px 9px;
+    border-radius:15px;
+  }
+  body.mobile-hud-v23 #auto-wave-panel .auto-wave-emblem { width:34px; height:34px; }
+  body.mobile-hud-v23 #auto-wave-panel .auto-wave-message small { display:none; }
+  body.mobile-hud-v23 #auto-wave-panel .auto-wave-message b { font-size:11px; }
+  body.mobile-hud-v23 #auto-wave-panel .auto-wave-message span { font-size:8px; }
+  body.mobile-hud-v23 #auto-wave-panel .auto-wave-timer { font-size:17px; }
+  body.mobile-hud-v23 #interact-btn { justify-content:center; padding:7px 10px; min-height:48px; }
+  body.mobile-hud-v23 #interact-btn b { font-size:12px; }
+  body.mobile-hud-v23 #interact-btn small { font-size:9px; }
+  body.mobile-hud-v23 #danger-hint { min-height:48px; grid-template-columns:34px 1fr; padding:6px 9px 6px 6px; }
+  body.mobile-hud-v23 #danger-hint .danger-arrow { width:32px; height:32px; }
+  body.mobile-hud-v23 #wave-recovery { min-height:48px; padding:7px 10px; border-radius:14px; }
+  body.mobile-hud-v23 .mobile-context-suppressed-v23 { display:none!important; }
+}
+
+@media (max-width:430px) {
+  body.mobile-hud-v23-compact #hud-equipment-btn { display:none!important; }
+  body.mobile-hud-v23-compact .wave-hud { width:132px; }
+  body.mobile-hud-v23-compact #action-dock .skill-btn span,
+  body.mobile-hud-v23-compact #action-dock .summon-btn small { display:none; }
+  body.mobile-hud-v23-compact #action-dock .action-glyph { width:25px; height:25px; }
+  body.mobile-hud-v23-compact #boss-health { width:94vw; }
+}
+
+@media (max-width:360px) {
+  body.mobile-hud-v23-micro .hero-hud-portrait,
+  body.mobile-hud-v23-micro .core-pill .heart { display:none!important; }
+  body.mobile-hud-v23-micro .core-pill { min-width:58px; }
+  body.mobile-hud-v23-micro #joystick-zone { width:78px!important; height:78px!important; }
+  body.mobile-hud-v23-micro #action-dock { width:140px!important; grid-template-columns:39px 42px 51px!important; grid-template-rows:39px 32px!important; }
+  body.mobile-hud-v23-micro #action-dock #summon-btn { height:75px!important; }
+  body.mobile-hud-v23-micro #action-dock #wave-btn { height:32px!important; }
+  body.mobile-hud-v23-micro #auto-wave-panel,
+  body.mobile-hud-v23-micro #interact-btn,
+  body.mobile-hud-v23-micro #danger-hint,
+  body.mobile-hud-v23-micro #wave-recovery { width:min(68vw,220px)!important; }
+}
+
+@media (max-height:620px) and (orientation:portrait) {
+  body.mobile-hud-v23-short #boss-health .boss-break { display:none!important; }
+  body.mobile-hud-v23-short #boss-health { max-height:58px; }
+}
+
+@media (max-height:560px) and (orientation:landscape) {
+  body.mobile-hud-v23-landscape {
+    --v23-wave-top: calc(var(--safe-top) + 45px);
+    --v23-boss-top: calc(var(--safe-top) + 72px);
+    --v23-context-bottom: calc(var(--safe-bottom) + 52px);
+  }
+  body.mobile-hud-v23-landscape #joystick-zone { width:72px!important; height:72px!important; }
+  body.mobile-hud-v23-landscape #action-dock {
+    width:218px!important;
+    grid-template-columns:repeat(5,40px)!important;
+    grid-template-rows:40px!important;
+    grid-template-areas:'dash skill burst summon wave'!important;
+  }
+  body.mobile-hud-v23-landscape #action-dock #summon-btn,
+  body.mobile-hud-v23-landscape #action-dock #wave-btn { height:40px!important; }
+  body.mobile-hud-v23-landscape #action-dock .skill-btn span,
+  body.mobile-hud-v23-landscape #action-dock .skill-btn b,
+  body.mobile-hud-v23-landscape #action-dock .summon-btn small,
+  body.mobile-hud-v23-landscape #action-dock .summon-btn b,
+  body.mobile-hud-v23-landscape #action-dock .wave-btn small { display:none!important; }
+  body.mobile-hud-v23-landscape #auto-wave-panel,
+  body.mobile-hud-v23-landscape #interact-btn,
+  body.mobile-hud-v23-landscape #danger-hint,
+  body.mobile-hud-v23-landscape #wave-recovery { width:min(42vw,240px)!important; }
+}
+
+body.mobile-hud-v23-emergency #boss-health .boss-intent,
+body.mobile-hud-v23-emergency #boss-health .boss-break,
+body.mobile-hud-v23-emergency #first-mission-panel,
+body.mobile-hud-v23-emergency #kill-chain,
+body.mobile-hud-v23-emergency #jackpot-rush { display:none!important; }

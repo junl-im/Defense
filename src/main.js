@@ -58,6 +58,7 @@ import { installKoreanLanguageGuard } from './runtime/korean-language-guard.js';
 import VisualIntegrationDirector from './runtime/visual-integration-director.js';
 import AssetPresenceEnforcer from './runtime/asset-presence-enforcer.js';
 import MobileHudDirectorV22 from './runtime/mobile-hud-director-v22.js';
+import MobileHudDirectorV23 from './runtime/mobile-hud-director-v23.js';
 import CombatReadabilityDirectorV21 from './combat/combat-readability-director-v21.js';
 import GuardianTargetingDirectorV22 from './combat/guardian-targeting-director-v22.js';
 import AutomationDirectorV22 from './runtime/automation-director-v22.js';
@@ -91,7 +92,6 @@ const ui = {
   leftUiToggle: $('#left-ui-toggle'), synergyToggle: $('#synergy-toggle'), synergyCount: $('#synergy-count'), synergyList: $('#synergy-list'),
   luckMeter: $('#luck-meter'), luckValue: $('#luck-value'), luckProgress: $('#luck-progress'), unitStrip: $('#unit-strip'),
   joystick: $('#joystick-zone'), joystickKnob: $('#joystick-knob'), lookZone: $('#look-zone'), actionDock: $('#action-dock'),
-  zoomControls: $('#camera-zoom-controls'), zoomIn: $('#zoom-in-btn'), zoomOut: $('#zoom-out-btn'),
   blessingAutoSeconds: $('#blessing-auto-seconds'), blessingAutoProgress: $('#blessing-auto-progress'), relicAutoSeconds: $('#relic-auto-seconds'), relicAutoProgress: $('#relic-auto-progress'), contractAutoSeconds: $('#contract-auto-seconds'), contractAutoProgress: $('#contract-auto-progress'), choiceAutoSeconds: $('#choice-auto-seconds'), choiceAutoProgress: $('#choice-auto-progress'),
   dash: $('#dash-btn'), dashCooldown: $('#dash-cooldown'), skill: $('#skill-btn'), skillLabel: $('#skill-label'), skillCooldown: $('#skill-cooldown'), interact: $('#interact-btn'), interactLabel: $('#interact-label'), interactState: $('#interact-state'),
   summon: $('#summon-btn'), summonCost: $('#summon-cost'), wave: $('#wave-btn'), waveLabelAction: $('#wave-btn-label'), waveText: $('#wave-btn-text'), autoWavePanel: $('#auto-wave-panel'), autoWaveTitle: $('#auto-wave-title'), autoWaveCopy: $('#auto-wave-copy'), autoWaveSeconds: $('#auto-wave-seconds'), autoWavePanelProgress: $('#auto-wave-panel-progress'),
@@ -123,7 +123,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '22.0.0';
+const GAME_VERSION = '23.0.0';
 function runtimeSpriteMarkup(path, alt = '', className = '') {
   if (!path) return '';
   const atlas = atlasSpriteMarkup(path, alt, className);
@@ -317,7 +317,8 @@ class DokkaebiLuckDefense {
     this.waveReliability = new WaveReliabilityDirector();
     this.browserReliability = new BrowserReliabilityLab({ version: GAME_VERSION });
     this.assetPresence = new AssetPresenceEnforcer({ version: GAME_VERSION });
-    this.mobileHudV22 = new MobileHudDirectorV22();
+    this.mobileHudV22 = new MobileHudDirectorV22(); // v22 lineage retained for regression inspection.
+    this.mobileHudV23 = new MobileHudDirectorV23();
     this.guardianTargetingV22 = new GuardianTargetingDirectorV22();
     this.automationV22 = new AutomationDirectorV22();
     this.autoPausedByVisibility = false;
@@ -341,7 +342,7 @@ class DokkaebiLuckDefense {
       }
     });
     this.hudLayout.mount();
-    this.mobileHudV22.install();
+    this.mobileHudV23.install();
     this.assetPresence.install();
     this.applyViewportUiProfile();
     this.initThree();
@@ -543,6 +544,7 @@ class DokkaebiLuckDefense {
         browserReliability: this.browserReliability?.diagnostics || {},
         assetPresence: this.assetPresence?.report || {},
         mobileHudV22: this.mobileHudV22?.report || {},
+        mobileHudV23: this.mobileHudV23?.report || {},
         combatReadability: this.combatReadability?.snapshot || {},
         runtimeErrors: { count: this.runtimeErrors.length, last: this.runtimeErrors.at(-1) || null },
         battlefieldEvent: this.battlefieldEvents?.diagnostics || {},
@@ -729,8 +731,6 @@ class DokkaebiLuckDefense {
     on(ui.wave, 'click', () => { if (this.autoWaveCountdown > 0) this.automationV22.noteWaveSkip(); this.startWave({ manual: true }); }, {}, 'wave');
     on(ui.autoWavePanel, 'click', () => { if (this.state === 'playing' && !this.waveActive) { this.automationV22.noteWaveSkip(); this.startWave({ manual: true }); } }, {}, 'auto-wave-panel-click');
     on(ui.autoWavePanel, 'keydown', (event) => { if ((event.key === 'Enter' || event.key === ' ') && this.state === 'playing' && !this.waveActive) { event.preventDefault(); this.automationV22.noteWaveSkip(); this.startWave({ manual: true }); } }, {}, 'auto-wave-panel-key');
-    on(ui.zoomIn, 'click', () => this.adjustCameraZoom(-2.2), {}, 'camera-zoom-in');
-    on(ui.zoomOut, 'click', () => this.adjustCameraZoom(2.2), {}, 'camera-zoom-out');
     on(ui.dash, 'click', () => this.useDash(), {}, 'dash');
     on(ui.skill, 'click', () => this.useHeroSkill(), {}, 'skill');
     on(ui.burst, 'click', () => this.activateGuardianBurst(), {}, 'burst');
@@ -6594,7 +6594,7 @@ class DokkaebiLuckDefense {
       hazards: this.hazards.length,
       battlefieldSprites: this.battlefieldSprites?.diagnostics?.activeSprites || 0
     }));
-    this.runSafe('mobile-hud-v22', () => this.mobileHudV22?.update(dt));
+    this.runSafe('mobile-hud-v23', () => this.mobileHudV23?.update(dt));
     this.runSafe('automation-v22', () => this.updateAutomationV22(dt));
     this.runSafe('combat-readability-v21', () => this.combatReadability?.update(dt, { enemies: this.enemies, state: this.state }));
 
@@ -6691,7 +6691,7 @@ try {
         else if (game.state === 'contract') game.skipContract();
         return game.getBrowserAutomationSnapshot();
       },
-      reliabilityReport: () => ({ wave: game.waveReliability?.report || {}, browser: game.browserReliability?.report || {}, automation: game.automationV22?.report || {}, targeting: game.guardianTargetingV22?.report || {}, mobileHud: game.mobileHudV22?.report || {} })
+      reliabilityReport: () => ({ wave: game.waveReliability?.report || {}, browser: game.browserReliability?.report || {}, automation: game.automationV22?.report || {}, targeting: game.guardianTargetingV22?.report || {}, mobileHud: game.mobileHudV23?.report || {} })
     });
     game.browserReliability?.noteMilestone('game-ready', { state: game.state });
     window.dispatchEvent(new Event('dokkaebi:boot-ready'));

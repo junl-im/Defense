@@ -1,233 +1,206 @@
 {
-  "schemaVersion": 1,
-  "patchId": "DD-TEN-WAVE-RELIABILITY-18.0.0",
-  "baseVersion": "17.0.0",
-  "targetVersion": "18.0.0",
-  "engineVersion": "15.0.0",
-  "saveSchema": 16,
-  "createdAt": "2026-07-23T09:37:50Z",
-  "summary": {
-    "newFiles": 9,
-    "overwrittenFiles": 21,
-    "deletedFiles": 0,
-    "patchPayloadFiles": 30,
-    "payloadBytes": 758855
-  },
-  "newFiles": [
-    "docs/NEXT_PATCH_LINEUP_v18.x.md",
-    "docs/PATCH_APPLY_v18.0.0.md",
-    "docs/PATCH_NOTES_v18.0.0.md",
-    "docs/TEN_WAVE_RELIABILITY_SIMULATION_v18.0.0.json",
-    "docs/TEN_WAVE_RELIABILITY_v18.0.0.md",
-    "scripts/simulate-ten-wave-run-v18.mjs",
-    "scripts/verify-v1800.mjs",
-    "src/runtime/ten-wave-reliability-simulation.js",
-    "src/runtime/wave-reliability-director.js"
-  ],
-  "overwrittenFiles": [
-    "PROJECT_HANDOFF.md",
-    "README.md",
-    "docs/PRODUCTION_ROADMAP.md",
-    "index.html",
-    "package-lock.json",
-    "package.json",
-    "public/sw.js",
-    "scripts/build-static-fallback.mjs",
-    "scripts/verify-project.mjs",
-    "scripts/verify-static-dist.mjs",
-    "scripts/verify-v1000.mjs",
-    "scripts/verify-v1200.mjs",
-    "scripts/verify-v1500.mjs",
-    "scripts/verify-v1600.mjs",
-    "scripts/verify-v1700.mjs",
-    "src/engine/asset-catalog.js",
-    "src/engine/engine-config.js",
-    "src/main.js",
-    "src/production-console.js",
-    "src/runtime/save-schema.js",
-    "src/style.css"
-  ],
-  "deleteFiles": [],
+  "patchName": "Quiet Screen",
+  "version": "23.0.0",
+  "baseVersion": "22.0.0",
+  "newFiles": 8,
+  "modifiedFiles": 28,
+  "deletedFiles": 0,
+  "changedFiles": 36,
   "files": [
     {
-      "path": "docs/NEXT_PATCH_LINEUP_v18.x.md",
-      "bytes": 666,
-      "sha256": "a3b5acd889bb5ab8d9cc2cdf3450f62c9ae02e25eecdb96e5eee43a4a711e0b8",
-      "change": "new"
+      "path": "docs/MOBILE_UI_SIMULATION_v23.0.0.json",
+      "kind": "new",
+      "sha256": "78ea6207e5be91a016a02debd4090a3ed63b2d7b9c78d079daf8836431f14f5e"
     },
     {
-      "path": "docs/PATCH_APPLY_v18.0.0.md",
-      "bytes": 507,
-      "sha256": "6e94cdae22a2f619d7c1ad7c59c9cec92452aeeee4fc09c52fa2c5c627053061",
-      "change": "new"
+      "path": "docs/NEXT_PATCH_LINEUP_v23.x.md",
+      "kind": "new",
+      "sha256": "75c74d4208ce568652ff8e6eddec28f965a833c25285c1c3f745a953a4ece681"
     },
     {
-      "path": "docs/PATCH_NOTES_v18.0.0.md",
-      "bytes": 769,
-      "sha256": "be052c6792307c4f1a33d9ef6718debee7ff47b8bbcb1678ab0ae8dde75b4f3f",
-      "change": "new"
+      "path": "docs/PATCH_APPLY_v23.0.0.md",
+      "kind": "new",
+      "sha256": "3fff1517d92241e15ccbc136cd3af2e2380762c7dbcd0a6ad0a2e5a73b3c8988"
     },
     {
-      "path": "docs/TEN_WAVE_RELIABILITY_SIMULATION_v18.0.0.json",
-      "bytes": 30767,
-      "sha256": "0bb0d5bb31e8aaef85dff43c23d789d792da1ba82c168c27745c57156829f964",
-      "change": "new"
+      "path": "docs/PATCH_NOTES_v23.0.0.md",
+      "kind": "new",
+      "sha256": "b67226410212fbe52f608b1b8af01bd78aa44d84e6879923fa494804df66bb8c"
     },
     {
-      "path": "docs/TEN_WAVE_RELIABILITY_v18.0.0.md",
-      "bytes": 2684,
-      "sha256": "65bced993674bc34da99f273afc39be440c23a40f6b0a76c04b40e9beaa543d1",
-      "change": "new"
+      "path": "docs/QUIET_SCREEN_v23.0.0.md",
+      "kind": "new",
+      "sha256": "66d42bd1ed9db3d9456e0db148afbdc05e0624d8785f6768a17da1d9fa354201"
     },
     {
-      "path": "scripts/simulate-ten-wave-run-v18.mjs",
-      "bytes": 605,
-      "sha256": "e9477f01b8d11cf1686ae4f5710225bce6f23e6e6afabdb13fcce3aa463e6ec3",
-      "change": "new"
+      "path": "scripts/simulate-mobile-hud-v23.mjs",
+      "kind": "new",
+      "sha256": "b4eada8e8f62f983f8b35d2ed7a425c1864217cf48b05a7813268dd8a07e1345"
     },
     {
-      "path": "scripts/verify-v1800.mjs",
-      "bytes": 5390,
-      "sha256": "e7ecfc3d81624fd9d90f80a0623f92b7762556c31551c6475942411040cfff05",
-      "change": "new"
+      "path": "scripts/verify-v2300.mjs",
+      "kind": "new",
+      "sha256": "06232e3333e61b18408a97ea1b3513167920423d162fe2371012eee40782786e"
     },
     {
-      "path": "src/runtime/ten-wave-reliability-simulation.js",
-      "bytes": 5809,
-      "sha256": "8e889758926cef3db12a8c23a8945718fed9d377ba8def3b91c49683f340725f",
-      "change": "new"
-    },
-    {
-      "path": "src/runtime/wave-reliability-director.js",
-      "bytes": 10822,
-      "sha256": "b6be712f7af980635b797e7330b07f087c54792c1b5531712fc733035137f412",
-      "change": "new"
+      "path": "src/runtime/mobile-hud-director-v23.js",
+      "kind": "new",
+      "sha256": "010567e8644d45d10f03b2425e8dca5867919b0839a3180092f21af5ac7dbf8f"
     },
     {
       "path": "PROJECT_HANDOFF.md",
-      "bytes": 1428,
-      "sha256": "d35ff752d624f2e1bdac9d03f95edc3fad2d3460b5fbee410300f7b998994e9c",
-      "change": "overwrite"
+      "kind": "modified",
+      "sha256": "810afa54e62fe75b600281de6025d21f8e3e9cefedfbdf02bca173c13fa9d016"
     },
     {
       "path": "README.md",
-      "bytes": 1077,
-      "sha256": "98985570f9f4b545962da8162d9d6c318d04dad5a01b047b858d0f09e4fb4f69",
-      "change": "overwrite"
+      "kind": "modified",
+      "sha256": "832b210a956e905f173d368d810ae30f6309e9dddc82e32504540c4747579068"
     },
     {
-      "path": "docs/PRODUCTION_ROADMAP.md",
-      "bytes": 5727,
-      "sha256": "7941fc8ca21e57c20e0183d5f33f8f222af495936fe8084e99e93db86e5523e1",
-      "change": "overwrite"
+      "path": "docs/ASSET_PRESENCE_AUDIT_v21.0.0.json",
+      "kind": "modified",
+      "sha256": "2606468fd9882fdde567aefc495b4b4046563691cd4395b1de131f5eb35d234c"
     },
     {
       "path": "index.html",
-      "bytes": 39566,
-      "sha256": "9d9d90e85f68bef50f6d94854c40fee81d94f7fde2f7de3c4bd86d01b44daa01",
-      "change": "overwrite"
+      "kind": "modified",
+      "sha256": "a8bc08c5eb59a0ab99bd338655f0d66787ab146dd4d7f252137e9369207e5793"
     },
     {
       "path": "package-lock.json",
-      "bytes": 28668,
-      "sha256": "50b090758a4a8fb76e8adaa527111a8411901ed45b96092eeeffb3b8f89b8ab4",
-      "change": "overwrite"
+      "kind": "modified",
+      "sha256": "06948a120b3ecb89c2c106611736a58f895791d927405aa509317c7bd322565f"
     },
     {
       "path": "package.json",
-      "bytes": 8938,
-      "sha256": "7bbad96b7e14d5571dca6c6502115bea44ed800c65d703cadf8c4b05ed5c965f",
-      "change": "overwrite"
+      "kind": "modified",
+      "sha256": "1cdca1b53ceee3cd954b12ef8212bc5860878383208cb096c07778c43b1a3e84"
     },
     {
       "path": "public/sw.js",
-      "bytes": 757,
-      "sha256": "1a02f9822d78cb5ae1eb95087b0528755c8aa7e8b082d3606c0f868f828f311e",
-      "change": "overwrite"
+      "kind": "modified",
+      "sha256": "b88596a924281a20e207dc2ff3eee8989f7f32624ad092036bde3108d2d3ac64"
     },
     {
-      "path": "scripts/build-static-fallback.mjs",
-      "bytes": 1928,
-      "sha256": "03e8343a343e4368312c3eed9ef9300f1bb6981ac5e92ac5cd44cf0850517766",
-      "change": "overwrite"
+      "path": "scripts/audit-asset-presence-v21.mjs",
+      "kind": "modified",
+      "sha256": "cea7bb64dadc129cb7e1b8fe1a2a9c1506407ae6ae3f18fe048665e951dbda31"
     },
     {
       "path": "scripts/verify-project.mjs",
-      "bytes": 27352,
-      "sha256": "48cf39d3b27cc24bcb61441b07ad013395982e839781c1993d664576263715fb",
-      "change": "overwrite"
+      "kind": "modified",
+      "sha256": "0c8054dff8ec3f4265f50826650ce239dd67da362c5b10a65deea4d9fce6a662"
     },
     {
       "path": "scripts/verify-static-dist.mjs",
-      "bytes": 7544,
-      "sha256": "cd5ccc7698aba97682643bdbd898e171e028d7f517dd055aac1779317b6a5241",
-      "change": "overwrite"
+      "kind": "modified",
+      "sha256": "778945676ac45fe29ed32566ceefa6c8eca180970a05768fd40c6c9bebdf1f50"
     },
     {
       "path": "scripts/verify-v1000.mjs",
-      "bytes": 6642,
-      "sha256": "77d33731d262a5713e2c50844179d0856f424d5971e3045dc130828db94f7768",
-      "change": "overwrite"
-    },
-    {
-      "path": "scripts/verify-v1200.mjs",
-      "bytes": 8740,
-      "sha256": "1ed94076cf4c3553ba25f2a518307d5f1e0b6d7fdf0bb03c50f3ae8af62f0167",
-      "change": "overwrite"
+      "kind": "modified",
+      "sha256": "87a03dc291e02c99629ceb2f20d23080fa4c5cb963fe329193529e6574025977"
     },
     {
       "path": "scripts/verify-v1500.mjs",
-      "bytes": 5660,
-      "sha256": "ac9a1033abc526c839dd262b09f2c67970523968b56dd019d85896b62e0dba72",
-      "change": "overwrite"
+      "kind": "modified",
+      "sha256": "266b4e1bb0042a7b02c4d7558034440394e91da6e7a2e75ec4eead44523c7627"
     },
     {
       "path": "scripts/verify-v1600.mjs",
-      "bytes": 5069,
-      "sha256": "e587e4c8e6eda39fff6e9616f9623861da47b03375c297067ef37eafd631f985",
-      "change": "overwrite"
+      "kind": "modified",
+      "sha256": "7aca07c790be3d2698d1a7b21b1888826552aa77ab2684e02caeb04b16f5977f"
     },
     {
       "path": "scripts/verify-v1700.mjs",
-      "bytes": 5595,
-      "sha256": "1e64ab002cd3e7962ef7ee85889ad5be265eb518201f409248ef4adf99d86b85",
-      "change": "overwrite"
+      "kind": "modified",
+      "sha256": "953ad470aa8edb40792866227dd31a5431d75be1e48db99dd94cf3cf583835c8"
+    },
+    {
+      "path": "scripts/verify-v1800.mjs",
+      "kind": "modified",
+      "sha256": "5f7d7022f6cb2b67694876f0b40bed4d7458009ecde40a2cf0dd060fb56f6e38"
+    },
+    {
+      "path": "scripts/verify-v1900.mjs",
+      "kind": "modified",
+      "sha256": "f8fcfd4761bf47b1d757bfe9389fef28436e6bec58f9864068ea87e1d5e2685c"
+    },
+    {
+      "path": "scripts/verify-v2000.mjs",
+      "kind": "modified",
+      "sha256": "52bacfa24d54138b89832c0c1570a3805172088d2cd39f7afe629fca369fc48d"
+    },
+    {
+      "path": "scripts/verify-v2100.mjs",
+      "kind": "modified",
+      "sha256": "de211cf449d230fad198ed116140963e54be21968c3e71ed7b463c74e8866ba4"
+    },
+    {
+      "path": "scripts/verify-v2200.mjs",
+      "kind": "modified",
+      "sha256": "34e5a7c50c804f1e64354150cf26143488ff9ecc46e5f1821d76f49fb7463993"
     },
     {
       "path": "src/engine/asset-catalog.js",
-      "bytes": 8193,
-      "sha256": "aaa7ef59763bd48498dfb2cf8b62982b48bc9c201c11e0572c49fbff75abb26b",
-      "change": "overwrite"
+      "kind": "modified",
+      "sha256": "de9d72db02c003069551e3cfa131f02099716440361443e2a280ac4bd3eaf7ac"
+    },
+    {
+      "path": "src/engine/camera-profile.js",
+      "kind": "modified",
+      "sha256": "92b5135f33be679c9a59ac073db46f29941efc551b7cee5f06462d57bb22c050"
     },
     {
       "path": "src/engine/engine-config.js",
-      "bytes": 1629,
-      "sha256": "7a95cbfad60da9693015d9e3b2358b87d0671368be165d71007d6fc2256a8ef1",
-      "change": "overwrite"
+      "kind": "modified",
+      "sha256": "bfc34d48c3b18bfe16f78378547c7b9e8d50ad863072bcce9d9ebeca4d6bea83"
     },
     {
       "path": "src/main.js",
-      "bytes": 344121,
-      "sha256": "005ed59c19f099ee9925a504c0abd99bb8df59633759ced1f3c9df4840666e5d",
-      "change": "overwrite"
+      "kind": "modified",
+      "sha256": "829f87a9f47981e5ca9b9fc34bc00444dd59dd9c2467a946a93987c98e4582b8"
     },
     {
       "path": "src/production-console.js",
-      "bytes": 9660,
-      "sha256": "573c37757ace96badc838f2ce8fb86ab63fc00eb487c1b8c04fe1825f69775a7",
-      "change": "overwrite"
+      "kind": "modified",
+      "sha256": "f636c5959041703fe7d36e32386408892f036207022349a2a99f7d891d5d2f70"
+    },
+    {
+      "path": "src/runtime/korean-language-guard.js",
+      "kind": "modified",
+      "sha256": "436364a05646fa9b8ce43cde59f50f4c8faad83b46307ff3610da84ad65b3392"
     },
     {
       "path": "src/runtime/save-schema.js",
-      "bytes": 1706,
-      "sha256": "588ef6d19bbf6d1adbdc64484fd1ccdc643c7c1bcb3450d791a4d7c7a8b7b6f2",
-      "change": "overwrite"
+      "kind": "modified",
+      "sha256": "dad0222aa855e5938a0c66898095e9d8b684bf80f40604bb7e88bdda3451c6eb"
+    },
+    {
+      "path": "src/runtime/visual-integration-director.js",
+      "kind": "modified",
+      "sha256": "5e770903c5ff34bbd79c529236680fa2a8cb4be950f58474f84d779c186e186a"
     },
     {
       "path": "src/style.css",
-      "bytes": 180836,
-      "sha256": "a644635e6245e537a8c57fc338d3578f2b34b0e9a47b0a86398f643aee0425e2",
-      "change": "overwrite"
+      "kind": "modified",
+      "sha256": "646e497d625c2bcc4abaecb1d5c0bccca9e120ec88b2e9c67b194c780808c6ef"
     }
-  ]
+  ],
+  "delete": [],
+  "contracts": {
+    "zoomButtonsRemoved": true,
+    "wheelZoomRetained": true,
+    "pinchZoomRetained": true,
+    "mobileProfiles": 7,
+    "contextPriority": [
+      "recovery",
+      "wave",
+      "interact",
+      "danger"
+    ],
+    "production3DApproved": 0,
+    "massProductionUnlocked": false
+  }
 }

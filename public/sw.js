@@ -1,4 +1,4 @@
-const VERSION = '22.0.0';
+const VERSION = '23.0.0';
 const CACHE_PREFIX = 'dokkaebi-shell-';
 const CACHE_NAME = `${CACHE_PREFIX}v${VERSION}`;
 const SHELL_ASSETS = [

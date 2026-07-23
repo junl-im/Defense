@@ -63,7 +63,7 @@ export class ProductionConsole {
     const reliability = data.reliability || {};
     const browserReliability = data.browserReliability || {};
     const assetPresence = data.assetPresence || {};
-    const mobileHudV21 = data.mobileHudV21 || {};
+    const mobileHud = data.mobileHudV23 || data.mobileHudV22 || data.mobileHudV21 || {};
     const combatReadability = data.combatReadability || {};
     const runtimeErrors = data.runtimeErrors || {};
     const approved = Number(this.artSummary.approved || 0);
@@ -71,7 +71,7 @@ export class ProductionConsole {
     const progress = total ? Math.round((approved / total) * 100) : 0;
     const milestoneHtml = this.milestones.slice(0, 4).map((item) => `<li><span>${item.status === 'done' ? 'DONE' : item.status === 'active' ? 'NOW' : 'NEXT'}</span>${item.label}</li>`).join('');
     this.element.innerHTML = `
-      <header><div><small>DD PRODUCTION OS</small><b>ASSET PRESENCE OS v21 · VISIBLE COMBAT · MOBILE HUD</b></div><button type="button" data-close-console aria-label="제작 콘솔 닫기">×</button></header>
+      <header><div><small>DD PRODUCTION OS</small><b>QUIET SCREEN v23 · ASSET PRESENCE · MOBILE HUD</b></div><button type="button" data-close-console aria-label="제작 콘솔 닫기">×</button></header>
       <section class="production-console-grid">
         <article><small>ART LOCK</small><b>${this.artSummary.styleLockId || 'UNKNOWN'}</b><span>Production art ${approved}/${total} · ${progress}%</span></article>
         <article><small>RUNTIME SLICE</small><b>${goldenSlice.runtimeCertified || 0}/${goldenSlice.total || 6} PASS</b><span>${goldenSlice.runtimePassed ? 'Hero · Enemy · Boss · Map · HUD · VFX' : 'Evidence incomplete'}</span></article>
@@ -94,7 +94,7 @@ export class ProductionConsole {
         <article><small>RUN RELIABILITY</small><b>${reliability.completedWaves || 0}/10 WAVES</b><span>Sweep ${reliability.enemySweeps || 0} · Queue ${reliability.rewardQueueResumes || 0} · BG ${reliability.backgroundResumes || 0}</span></article>
         <article><small>BROWSER LAB</small><b>${browserReliability.healthy ? 'HEALTHY' : 'WATCH'}</b><span>Boot ${browserReliability.bootReadyMs || 0}ms · Long ${browserReliability.longTasks || 0} · Heap +${browserReliability.heapGrowthMB || 0}MB · SW ${browserReliability.serviceWorker?.version || 'n/a'}</span></article>
         <article><small>ASSET PRESENCE</small><b>${assetPresence.healthy ? 'VISIBLE' : 'REVIEW'}</b><span>DOM ${assetPresence.visibleAtlasCount || 0}/${assetPresence.domAtlasCount || 0} · Action ${assetPresence.actionAssetCount || 0}/6 · Missing ${assetPresence.missing?.length || 0}</span></article>
-        <article><small>MOBILE HUD v21</small><b>${String(mobileHudV21.profile || 'desktop').toUpperCase()}</b><span>Overlap ${mobileHudV21.overlapCount || 0} · Mitigation ${mobileHudV21.mitigations || 0} · ${mobileHudV21.healthy === false ? 'emergency layout' : 'stable'}</span></article>
+        <article><small>MOBILE HUD v23</small><b>${String(mobileHud.context || (mobileHud.phone ? 'mobile' : 'desktop')).toUpperCase()}</b><span>Overlap ${mobileHud.overlapCount || 0} · Mitigation ${mobileHud.mitigations || 0} · ${mobileHud.healthy === false ? 'emergency layout' : 'stable'}</span></article>
         <article><small>COMBAT READABILITY</small><b>${combatReadability.markers || 0} MARKERS</b><span>Threat tracer ${combatReadability.tracers || 0} · Total ${combatReadability.totalTracers || 0} · Budget ${combatReadability.maxMarkers || 0}</span></article>
         <article><small>LIVING PROPS</small><b>${battlefieldProps.active || 0} ACTIVE</b><span>상호작용 ${battlefieldProps.interactable || 0} · 자동 방어 ${battlefieldProps.automated || 0} · 발동 ${battlefieldProps.activations || 0}</span></article>
         <article><small>BATTLEFIELD EVENT</small><b>${battlefieldEvent.active?.name || 'STANDBY'}</b><span>완료 ${battlefieldEvent.completed || 0} · 회복 ${battlefieldEvent.totalHealing || 0}</span></article>

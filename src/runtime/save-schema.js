@@ -1,4 +1,4 @@
-export const SAVE_SCHEMA_VERSION = 20;
+export const SAVE_SCHEMA_VERSION = 21;
 export const SAVE_MIGRATION_KEY = 'dokkaebi-save-schema-version';
 
 const SAFE_KEYS = Object.freeze([

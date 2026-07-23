@@ -32,7 +32,7 @@
   },
   "runtimeContracts": {
     "assetPresenceEnforcer": true,
-    "mobileHudDirector": false,
+    "mobileHudDirector": true,
     "combatReadability": true,
     "shamanThreatTracer": true,
     "enemyMarkers": true,
@@ -44,8 +44,8 @@
     "pass": true
   },
   "titlePresentation": {
-    "cacheRevision": false,
-    "mascotMarkup": false,
+    "cacheRevision": true,
+    "mascotMarkup": true,
     "featureRibbon": true
   }
 }

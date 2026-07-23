@@ -1,0 +1,473 @@
+{
+  "version": "23.0.0",
+  "contract": "Quiet Screen mobile HUD reserved-lane geometry simulation",
+  "zoomButtonsPresent": false,
+  "profiles": [
+    {
+      "name": "mobile-320",
+      "width": 320,
+      "height": 568,
+      "safeTop": 20,
+      "safeBottom": 16,
+      "phone": true,
+      "compact": true,
+      "micro": true,
+      "landscape": false,
+      "scale": 0.82,
+      "reserve": 94,
+      "criticalOverlaps": [],
+      "pass": true,
+      "rectangles": {
+        "hud": {
+          "left": 5,
+          "top": 24,
+          "right": 315,
+          "bottom": 67,
+          "width": 310,
+          "height": 43
+        },
+        "wave": {
+          "left": 89.6,
+          "top": 70,
+          "right": 230.4,
+          "bottom": 99,
+          "width": 140.8,
+          "height": 29
+        },
+        "boss": {
+          "left": 19.19999999999999,
+          "top": 102,
+          "right": 300.8,
+          "bottom": 188,
+          "width": 281.6,
+          "height": 86
+        },
+        "joystick": {
+          "left": 8,
+          "top": 480.04,
+          "right": 71.96,
+          "bottom": 544,
+          "width": 63.959999999999994,
+          "height": 63.959999999999994
+        },
+        "actions": {
+          "left": 198.2,
+          "top": 482.5,
+          "right": 313,
+          "bottom": 544,
+          "width": 114.8,
+          "height": 61.49999999999999
+        },
+        "context": {
+          "left": 44.80000000000001,
+          "top": 396,
+          "right": 275.2,
+          "bottom": 450,
+          "width": 230.39999999999998,
+          "height": 54
+        }
+      }
+    },
+    {
+      "name": "mobile-360",
+      "width": 360,
+      "height": 640,
+      "safeTop": 24,
+      "safeBottom": 18,
+      "phone": true,
+      "compact": true,
+      "micro": true,
+      "landscape": false,
+      "scale": 0.82,
+      "reserve": 94,
+      "criticalOverlaps": [],
+      "pass": true,
+      "rectangles": {
+        "hud": {
+          "left": 5,
+          "top": 28,
+          "right": 355,
+          "bottom": 71,
+          "width": 350,
+          "height": 43
+        },
+        "wave": {
+          "left": 100.8,
+          "top": 74,
+          "right": 259.2,
+          "bottom": 103,
+          "width": 158.4,
+          "height": 29
+        },
+        "boss": {
+          "left": 21.599999999999994,
+          "top": 106,
+          "right": 338.4,
+          "bottom": 192,
+          "width": 316.8,
+          "height": 86
+        },
+        "joystick": {
+          "left": 8,
+          "top": 550.04,
+          "right": 71.96,
+          "bottom": 614,
+          "width": 63.959999999999994,
+          "height": 63.959999999999994
+        },
+        "actions": {
+          "left": 238.2,
+          "top": 552.5,
+          "right": 353,
+          "bottom": 614,
+          "width": 114.8,
+          "height": 61.49999999999999
+        },
+        "context": {
+          "left": 50.400000000000006,
+          "top": 466,
+          "right": 309.6,
+          "bottom": 520,
+          "width": 259.2,
+          "height": 54
+        }
+      }
+    },
+    {
+      "name": "mobile-390",
+      "width": 390,
+      "height": 844,
+      "safeTop": 47,
+      "safeBottom": 34,
+      "phone": true,
+      "compact": true,
+      "micro": false,
+      "landscape": false,
+      "scale": 0.9,
+      "reserve": 102,
+      "criticalOverlaps": [],
+      "pass": true,
+      "rectangles": {
+        "hud": {
+          "left": 5,
+          "top": 51,
+          "right": 385,
+          "bottom": 94,
+          "width": 380,
+          "height": 43
+        },
+        "wave": {
+          "left": 113,
+          "top": 97,
+          "right": 277,
+          "bottom": 126,
+          "width": 164,
+          "height": 29
+        },
+        "boss": {
+          "left": 23.400000000000006,
+          "top": 129,
+          "right": 366.6,
+          "bottom": 215,
+          "width": 343.2,
+          "height": 86
+        },
+        "joystick": {
+          "left": 8,
+          "top": 722.8,
+          "right": 87.2,
+          "bottom": 802,
+          "width": 79.2,
+          "height": 79.2
+        },
+        "actions": {
+          "left": 244.4,
+          "top": 728.2,
+          "right": 383,
+          "bottom": 802,
+          "width": 138.6,
+          "height": 73.8
+        },
+        "context": {
+          "left": 65,
+          "top": 646,
+          "right": 325,
+          "bottom": 700,
+          "width": 260,
+          "height": 54
+        }
+      }
+    },
+    {
+      "name": "mobile-430",
+      "width": 430,
+      "height": 932,
+      "safeTop": 47,
+      "safeBottom": 34,
+      "phone": true,
+      "compact": true,
+      "micro": false,
+      "landscape": false,
+      "scale": 0.9,
+      "reserve": 102,
+      "criticalOverlaps": [],
+      "pass": true,
+      "rectangles": {
+        "hud": {
+          "left": 5,
+          "top": 51,
+          "right": 425,
+          "bottom": 94,
+          "width": 420,
+          "height": 43
+        },
+        "wave": {
+          "left": 133,
+          "top": 97,
+          "right": 297,
+          "bottom": 126,
+          "width": 164,
+          "height": 29
+        },
+        "boss": {
+          "left": 25.80000000000001,
+          "top": 129,
+          "right": 404.2,
+          "bottom": 215,
+          "width": 378.4,
+          "height": 86
+        },
+        "joystick": {
+          "left": 8,
+          "top": 810.8,
+          "right": 87.2,
+          "bottom": 890,
+          "width": 79.2,
+          "height": 79.2
+        },
+        "actions": {
+          "left": 284.4,
+          "top": 816.2,
+          "right": 423,
+          "bottom": 890,
+          "width": 138.6,
+          "height": 73.8
+        },
+        "context": {
+          "left": 85,
+          "top": 734,
+          "right": 345,
+          "bottom": 788,
+          "width": 260,
+          "height": 54
+        }
+      }
+    },
+    {
+      "name": "mobile-wide",
+      "width": 760,
+      "height": 1024,
+      "safeTop": 24,
+      "safeBottom": 20,
+      "phone": true,
+      "compact": false,
+      "micro": false,
+      "landscape": false,
+      "scale": 1,
+      "reserve": 112,
+      "criticalOverlaps": [],
+      "pass": true,
+      "rectangles": {
+        "hud": {
+          "left": 5,
+          "top": 28,
+          "right": 755,
+          "bottom": 71,
+          "width": 750,
+          "height": 43
+        },
+        "wave": {
+          "left": 298,
+          "top": 74,
+          "right": 462,
+          "bottom": 103,
+          "width": 164,
+          "height": 29
+        },
+        "boss": {
+          "left": 185,
+          "top": 106,
+          "right": 575,
+          "bottom": 192,
+          "width": 390,
+          "height": 86
+        },
+        "joystick": {
+          "left": 8,
+          "top": 908,
+          "right": 96,
+          "bottom": 996,
+          "width": 88,
+          "height": 88
+        },
+        "actions": {
+          "left": 599,
+          "top": 914,
+          "right": 753,
+          "bottom": 996,
+          "width": 154,
+          "height": 82
+        },
+        "context": {
+          "left": 250,
+          "top": 830,
+          "right": 510,
+          "bottom": 884,
+          "width": 260,
+          "height": 54
+        }
+      }
+    },
+    {
+      "name": "landscape-667",
+      "width": 667,
+      "height": 375,
+      "safeTop": 0,
+      "safeBottom": 12,
+      "phone": true,
+      "compact": false,
+      "micro": false,
+      "landscape": true,
+      "scale": 0.88,
+      "reserve": 82,
+      "criticalOverlaps": [],
+      "pass": true,
+      "rectangles": {
+        "hud": {
+          "left": 5,
+          "top": 4,
+          "right": 662,
+          "bottom": 47,
+          "width": 657,
+          "height": 43
+        },
+        "wave": {
+          "left": 251.5,
+          "top": 45,
+          "right": 415.5,
+          "bottom": 74,
+          "width": 164,
+          "height": 29
+        },
+        "boss": {
+          "left": 138.5,
+          "top": 72,
+          "right": 528.5,
+          "bottom": 130,
+          "width": 390,
+          "height": 58
+        },
+        "joystick": {
+          "left": 8,
+          "top": 291.64,
+          "right": 71.36,
+          "bottom": 355,
+          "width": 63.36,
+          "height": 63.36
+        },
+        "actions": {
+          "left": 468.15999999999997,
+          "top": 319.8,
+          "right": 660,
+          "bottom": 355,
+          "width": 191.84,
+          "height": 35.2
+        },
+        "context": {
+          "left": 213.5,
+          "top": 257,
+          "right": 453.5,
+          "bottom": 311,
+          "width": 240,
+          "height": 54
+        }
+      }
+    },
+    {
+      "name": "landscape-844",
+      "width": 844,
+      "height": 390,
+      "safeTop": 0,
+      "safeBottom": 12,
+      "phone": false,
+      "compact": false,
+      "micro": false,
+      "landscape": false,
+      "scale": 1,
+      "reserve": 112,
+      "criticalOverlaps": [],
+      "pass": true,
+      "rectangles": {
+        "hud": {
+          "left": 5,
+          "top": 4,
+          "right": 839,
+          "bottom": 47,
+          "width": 834,
+          "height": 43
+        },
+        "wave": {
+          "left": 340,
+          "top": 50,
+          "right": 504,
+          "bottom": 79,
+          "width": 164,
+          "height": 29
+        },
+        "boss": {
+          "left": 227,
+          "top": 82,
+          "right": 617,
+          "bottom": 168,
+          "width": 390,
+          "height": 86
+        },
+        "joystick": {
+          "left": 8,
+          "top": 282,
+          "right": 96,
+          "bottom": 370,
+          "width": 88,
+          "height": 88
+        },
+        "actions": {
+          "left": 683,
+          "top": 288,
+          "right": 837,
+          "bottom": 370,
+          "width": 154,
+          "height": 82
+        },
+        "context": {
+          "left": 292,
+          "top": 204,
+          "right": 552,
+          "bottom": 258,
+          "width": 260,
+          "height": 54
+        }
+      }
+    }
+  ],
+  "summary": {
+    "testedProfiles": 7,
+    "passedProfiles": 7,
+    "failedProfiles": 0,
+    "contextLaneModes": [
+      "recovery",
+      "wave",
+      "interact",
+      "danger"
+    ]
+  }
+}

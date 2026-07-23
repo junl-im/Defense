@@ -25,7 +25,7 @@ const cameraSource = read(existsSync(resolve(root, 'src/engine/camera-director-v
 const eventSource = read('src/combat/battlefield-event-director.js');
 
 check(Number(pkg.version.split('.')[0]) >= 15, 'package version remains v15 or later');
-check(/const GAME_VERSION = '(?:15|16|17|18|19|20|21|22)\.0\.0'/.test(main), 'runtime game version remains v15 or later');
+check(/const GAME_VERSION = '(?:15|16|17|18|19|20|21|22|23)\.0\.0'/.test(main), 'runtime game version remains v15 or later');
 check(Number(ENGINE_VERSION.split('.')[0]) >= 12, 'engine version remains 12.0.0 or later');
 check(SAVE_SCHEMA_VERSION >= 13, 'save schema version remains 13 or later');
 check(IP_ASSET_LIBRARY_V15.totalFrames === 154 && atlas.summary.totalFrames === 154, '154 living battlefield atlas frames');

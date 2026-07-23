@@ -12,9 +12,9 @@
     <link rel="icon" href="./icon-192.png" type="image/png" />
     <link rel="apple-touch-icon" href="./icon-192.png" />
     <title>도깨비 운빨 수호대 3D</title>
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-desktop-v17.webp?rev=automation-v22" media="(min-width: 721px) and (orientation: landscape)" />
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-mobile-v17.webp?rev=automation-v22" media="(max-width: 720px), (orientation: portrait)" />
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-mascot-v17.webp?rev=automation-v22" />
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-desktop-v17.webp?rev=quiet-screen-v23" media="(min-width: 721px) and (orientation: landscape)" />
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-mobile-v17.webp?rev=quiet-screen-v23" media="(max-width: 720px), (orientation: portrait)" />
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-mascot-v17.webp?rev=quiet-screen-v23" />
     <!-- active lineage v22.0.0 · BROWSER RELIABILITY LAB -->
   </head>
   <body>
@@ -52,8 +52,8 @@
       <section id="title-screen" class="screen title-screen-v17">
         <div class="title-scene-v17">
           <picture class="title-mascot-stage">
-            <source media="(max-width: 720px), (orientation: portrait)" srcset="./src/assets/title-v17/title-mascot-v17.webp?rev=automation-v22" />
-            <img class="title-mascot title-mascot-v17" src="./src/assets/title-v17/title-mascot-v17.webp?rev=automation-v22" alt="푸른 도깨비불과 곤봉을 든 도깨비 수호대 마스코트" fetchpriority="high" decoding="async" />
+            <source media="(max-width: 720px), (orientation: portrait)" srcset="./src/assets/title-v17/title-mascot-v17.webp?rev=quiet-screen-v23" />
+            <img class="title-mascot title-mascot-v17" src="./src/assets/title-v17/title-mascot-v17.webp?rev=quiet-screen-v23" alt="푸른 도깨비불과 곤봉을 든 도깨비 수호대 마스코트" fetchpriority="high" decoding="async" />
           </picture>
           <div class="title-panel title-panel-simple title-panel-v17">
             <p class="kicker">KOREAN FANTASY DEFENSE</p>
@@ -211,10 +211,6 @@
         <button id="wave-btn" class="wave-btn"><i class="action-glyph" aria-hidden="true">⚔</i><small id="wave-btn-label">다음 습격</small><b id="wave-btn-text">시작</b></button>
       </div>
 
-      <div id="camera-zoom-controls" class="camera-zoom-controls" aria-label="카메라 확대 축소">
-        <button id="zoom-in-btn" type="button" aria-label="카메라 확대">＋</button>
-        <button id="zoom-out-btn" type="button" aria-label="카메라 축소">−</button>
-      </div>
       <button id="interact-btn" class="world-interact-btn hidden" type="button" aria-label="전장 오브젝트 상호작용">
         <span class="world-interact-glyph" aria-hidden="true">◎</span>
         <span><b id="interact-label">전장 오브젝트</b><small id="interact-state">상호작용 · G</small></span>
@@ -557,7 +553,7 @@
     </div>
     <script>
       (() => {
-        const VERSION = '22.0.0';
+        const VERSION = '23.0.0';
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
         const retryButton = document.getElementById('boot-retry-btn');

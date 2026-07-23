@@ -36,7 +36,7 @@ const report = {
   },
   runtimeContracts: {
     assetPresenceEnforcer: main.includes('AssetPresenceEnforcer') && fs.existsSync('src/runtime/asset-presence-enforcer.js'),
-    mobileHudDirector: main.includes('MobileHudDirectorV21') && fs.existsSync('src/runtime/mobile-hud-director-v21.js'),
+    mobileHudDirector: (main.includes('MobileHudDirectorV21') || main.includes('MobileHudDirectorV22') || main.includes('MobileHudDirectorV23')) && fs.existsSync('src/runtime/mobile-hud-director-v23.js'),
     combatReadability: main.includes('CombatReadabilityDirectorV21') && fs.existsSync('src/combat/combat-readability-director-v21.js'),
     shamanThreatTracer: main.includes('spawnThreatTracer(enemy.group.position, target'),
     enemyMarkers: read('src/combat/combat-readability-director-v21.js').includes('ensureMarker(enemy)'),
@@ -48,8 +48,8 @@ const report = {
     pass: isolatedHan.length === 0
   },
   titlePresentation: {
-    cacheRevision: html.includes('presence-v21'),
-    mascotMarkup: html.includes('title-mascot-v17.webp?rev=presence-v21'),
+    cacheRevision: /(?:presence-v21|automation-v22|quiet-screen-v23)/.test(html),
+    mascotMarkup: /title-mascot-v17\.webp\?rev=(?:presence-v21|automation-v22|quiet-screen-v23)/.test(html),
     featureRibbon: html.includes('title-feature-ribbon-v21')
   }
 };
