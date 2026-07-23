@@ -33,7 +33,7 @@ if (missingIds.length) fail(`index.html에 없는 DOM ID: ${missingIds.join(', '
 else pass(`${queriedIds.length}개 DOM ID 연결`);
 
 const expectedGameVersion = pkg.version;
-const expectedEngineVersion = '6.0.0';
+const expectedEngineVersion = '7.0.0';
 pass(`package version ${expectedGameVersion}`);
 
 for (const path of ['.env.production', '.firebaserc', '.github/workflows/deploy.yml', 'README.md', 'PROJECT_HANDOFF.md']) {

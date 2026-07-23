@@ -1,3 +1,40 @@
+# PROJECT HANDOFF — CURRENT v9.0.0
+
+- Project: `DokkaebiLuckDefense3D_FULL_v9.0.0`
+- Baseline: user-provided `Defense.zip` v8.0.0
+- Game version: `9.0.0`
+- Engine version: `7.0.0`
+- Save schema: `7`
+- Absolute art lock: `DD-ABSOLUTE-ART-BIBLE-2.0`
+- Production-approved assets: `0`
+
+## Asset Renaissance diagnosis
+
+The imported v8 library contains 970 raster source files, not 970 finished assets. v9 separates them into:
+
+- 40 named 512px high-resolution review candidates
+- 101 manually selected sheet crops for reference only
+- 823 auto-sliced low-resolution fragments in quarantine
+- 6 source atlases
+- 0 transparent files
+- 0 production-approved deliverables
+
+## v9.0.0 implemented
+
+- Deterministic quality registry for all 970 files.
+- Honest source-file, review-candidate and production-approved counts.
+- Studio Asset Review OS v9 with tier, category, score and issue filters.
+- Three high-resolution dokkaebi hero candidates routed into the title class selector as review art.
+- Raw fragments forbidden at runtime and reference crops forbidden as final assets.
+- Production Console reports 40 High-Res, 823 Quarantine and 0 Approved.
+- Game 9.0.0, Engine 7.0.0 and asset cache revision 9.0.0.
+
+## Non-negotiable status
+
+No single-view PNG may be described as a final character model. The 19 runtime GLBs remain legacy candidates. The 1,130-asset mass-production plan stays locked until the six golden vertical-slice categories pass all Absolute Art Bible evidence gates.
+
+---
+
 # PROJECT HANDOFF — CURRENT v8.0.0
 
 - Project: DokkaebiLuckDefense3D_FULL_v8.0.0

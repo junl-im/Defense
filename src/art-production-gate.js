@@ -1,7 +1,7 @@
 import { ART_STYLE_LOCK_ID } from './art-style-tokens.js';
 import { CHARACTER_DNA_VERSION } from './character-dna.js';
 
-export const ART_PRODUCTION_GATE_VERSION = '8.0.0';
+export const ART_PRODUCTION_GATE_VERSION = '9.0.0';
 export const GOLDEN_VERTICAL_SLICE_ID = 'DD-GVS-001';
 
 export const GOLDEN_VERTICAL_SLICE = Object.freeze([
@@ -33,7 +33,7 @@ export const MASSIVE_UPDATE_MILESTONES = Object.freeze([
   Object.freeze({ id: 'M3', label: 'Engine 5.0 런타임 예산·전투 계측', status: 'done' }),
   Object.freeze({ id: 'M4', label: 'Battle Doctrine·상태이상·적응형 웨이브', status: 'done' }),
   Object.freeze({ id: 'M5', label: '원소 반응·신명 기세·보스 광폭화', status: 'done' }),
-  Object.freeze({ id: 'M6', label: '970개 래스터 IP 콘셉트 라이브러리 확보', status: 'done' }),
+  Object.freeze({ id: 'M6', label: '970개 파일 감사 · 고해상도 후보 40종 분리', status: 'done' }),
   Object.freeze({ id: 'M7', label: '골든 수직 슬라이스 최종 제작·승인', status: 'active' }),
   Object.freeze({ id: 'M8', label: '1,130개 승인 DNA 최종 생산', status: 'next' })
 ]);
@@ -47,6 +47,9 @@ export const RUNTIME_ART_POLICY = Object.freeze({
   runtimeHarmonizationRequired: true,
   massConceptGenerationUnlocked: true,
   massProductionBlockedUntilGoldenSliceApproved: true,
+  rawFragmentsForbiddenAtRuntime: true,
+  referenceCropsForbiddenAsFinalAssets: true,
+  highResolutionCandidatesRequireHumanReview: true,
   approvedStatus: 'production-approved'
 });
 
@@ -69,6 +72,11 @@ export function summarizeArtProductionGate(entries = GOLDEN_VERTICAL_SLICE) {
     runtimeHarmonizationRequired: true,
     massConceptGenerationUnlocked: true,
     conceptAssetCount: 970,
+    highResolutionReviewCandidates: 40,
+    referenceCropCount: 101,
+    quarantinedFragmentCount: 823,
+    sourceAtlasCount: 6,
+    productionApprovedAssetCount: 0,
     massProductionUnlocked: approved === entries.length
   });
 }

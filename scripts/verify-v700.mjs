@@ -18,7 +18,7 @@ const pass = (message) => console.log(`PASS ${message}`);
 const check = (condition, message) => condition ? pass(message) : failures.push(message);
 
 check(Number(pkg.version.split('.')[0]) >= 7, 'package version remains v7 or later');
-check(ENGINE_VERSION === '6.0.0', 'engine version 6.0.0');
+check(Number(ENGINE_VERSION.split('.')[0]) >= 6, 'engine version remains 6.0.0 or later');
 check(Number(ART_PRODUCTION_GATE_VERSION.split('.')[0]) >= 7, 'art gate version remains v7 or later');
 check(SAVE_SCHEMA_VERSION === 7, 'save schema version 7');
 check(ELEMENTAL_REACTION_SYSTEM_VERSION === '1.0.0', 'elemental reaction version 1.0.0');

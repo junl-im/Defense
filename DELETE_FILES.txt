@@ -1,1 +1,10 @@
-docs/ASSET_PREVIEW_v3.3.0.png
+dist/assets/models/boss-tiger-nextgen.glb
+dist/assets/models/guardian-ember-nextgen.glb
+dist/assets/models/monster-imp-nextgen.glb
+dist/cover.svg
+dist/icon.svg
+public/assets/models/boss-tiger-nextgen.glb
+public/assets/models/guardian-ember-nextgen.glb
+public/assets/models/monster-imp-nextgen.glb
+public/cover.svg
+public/icon.svg

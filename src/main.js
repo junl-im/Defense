@@ -96,7 +96,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '8.0.0';
+const GAME_VERSION = '9.0.0';
 const CHARACTER_ASSET_IDS = Object.freeze([
   ...Object.values(HERO_CLASS_ASSET_IDS),
   ...Object.values(GUARDIAN_ASSET_IDS),
@@ -2598,10 +2598,10 @@ class DokkaebiLuckDefense {
     ui.heroClassOptions.innerHTML = HERO_CLASS_ORDER.map((id) => {
       const entry = HERO_CLASSES[id];
       const mastery = getHeroMasteryEntry(this.heroMastery, entry.id);
-      return `<button type="button" class="hero-class-option ${entry.id === selected.id ? 'active' : ''}" data-hero-class="${entry.id}" aria-pressed="${entry.id === selected.id}"><img src="${entry.icon}?v=${GAME_VERSION}" alt="" /><span><b>${entry.name}</b><small>${entry.role} · 숙련 Lv.${mastery.level}</small></span></button>`;
+      return `<button type="button" class="hero-class-option ${entry.id === selected.id ? 'active' : ''}" data-hero-class="${entry.id}" aria-pressed="${entry.id === selected.id}"><img src="${entry.conceptArt || entry.icon}?v=${GAME_VERSION}" alt="${entry.name} 고해상도 콘셉트 후보" /><span><b>${entry.name}</b><small>${entry.role} · 숙련 Lv.${mastery.level}</small></span></button>`;
     }).join('');
     const masteryNeed = selectedMastery.level >= HERO_MASTERY_MAX_LEVEL ? 'MAX' : `${selectedMastery.xp}/${xpForNextLevel(selectedMastery.level)}`;
-    ui.heroClassSummary.innerHTML = `<b>${selected.name} · 숙련 Lv.${selectedMastery.level}</b><span>${selected.description}</span><small>기본 공격 ${selected.attack.damage} · 사거리 ${selected.attack.range} · ${selected.skill.name} · 숙련 ${masteryNeed}</small>`;
+    ui.heroClassSummary.innerHTML = `<b>${selected.name} · 숙련 Lv.${selectedMastery.level}</b><span>${selected.description}</span><small>고해상도 콘셉트 REVIEW · 최종 승인 아님 · 기본 공격 ${selected.attack.damage} · ${selected.skill.name} · 숙련 ${masteryNeed}</small>`;
     if (ui.skillLabel) ui.skillLabel.textContent = selected.skill.name.replace(/ .*/, '').slice(0, 5);
   }
 

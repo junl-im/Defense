@@ -11,7 +11,13 @@ const fixedObsolete = [
   'dist-pages/icon.svg',
   'dist-pages/cover.svg',
   'public/assets/models/player-moon-captain-sd-toon.glb',
-  'dist/assets/models/player-moon-captain-sd-toon.glb'
+  'dist/assets/models/player-moon-captain-sd-toon.glb',
+  'public/assets/models/boss-tiger-nextgen.glb',
+  'public/assets/models/guardian-ember-nextgen.glb',
+  'public/assets/models/monster-imp-nextgen.glb',
+  'dist/assets/models/boss-tiger-nextgen.glb',
+  'dist/assets/models/guardian-ember-nextgen.glb',
+  'dist/assets/models/monster-imp-nextgen.glb'
 ];
 
 const removed = [];

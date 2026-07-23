@@ -2,6 +2,8 @@ import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+await import('./clean-obsolete-assets.mjs');
+
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dist = path.join(root, 'dist');
 const importMap = `    <script type="importmap">\n      {\n        "imports": {\n          "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",\n          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/"\n        }\n      }\n    </script>\n`;
@@ -22,7 +24,7 @@ main = main.replace("import './style.css';\n", '');
 await writeFile(mainPath, main);
 
 await writeFile(path.join(dist, 'STATIC_BUILD_NOTICE.txt'), [
-  'DokkaebiLuckDefense3D v6.0.0 static ESM deployment',
+  'DokkaebiLuckDefense3D v9.0.0 static ESM deployment',
   'Three.js is loaded from the pinned jsDelivr 0.185.1 ESM URL.',
   'Use npm run build when the package registry is available to create the normal bundled build.',
   ''
