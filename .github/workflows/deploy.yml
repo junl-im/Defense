@@ -29,11 +29,21 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
 
+      - name: Setup Python for dependency-free atlas checks
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
       - name: Install dependencies
         run: npm ci
 
       - name: Remove obsolete patch and generated artifacts
         run: npm run clean:obsolete
+
+      - name: Verify atlas checks without optional image packages
+        run: |
+          python -S scripts/generate-runtime-atlases-v14.py --check
+          python -S scripts/generate-runtime-atlases-v15.py --check
 
       - name: Verify source and module contracts
         shell: bash

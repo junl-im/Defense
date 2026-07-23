@@ -12,6 +12,9 @@ const html = read('index.html');
 const sw = read('public/sw.js');
 const consoleSource = read('src/production-console.js');
 const saveSchema = read('src/runtime/save-schema.js');
+const atlasV14Generator = read('scripts/generate-runtime-atlases-v14.py');
+const atlasV15Generator = read('scripts/generate-runtime-atlases-v15.py');
+const deployWorkflow = read('.github/workflows/deploy.yml');
 let failures = 0;
 const check = (condition, message) => condition ? console.log(`PASS ${message}`) : (failures += 1, console.error(`FAIL ${message}`));
 
@@ -54,10 +57,18 @@ const docs = [
   'docs/BROWSER_RELIABILITY_LAB_v19.0.0.md',
   'docs/PATCH_NOTES_v19.0.0.md',
   'docs/PATCH_APPLY_v19.0.0.md',
-  'docs/NEXT_PATCH_LINEUP_v19.x.md'
+  'docs/NEXT_PATCH_LINEUP_v19.x.md',
+  'docs/CI_ATLAS_CHECK_HOTFIX_v19.0.0.md'
 ];
 check(docs.every((path) => existsSync(resolve(root, path))), 'v19 browser lab, operating and patch documents exist');
 check(pkg.scripts['browserlab:v1900']?.includes('run-browser-reliability-lab-v19.mjs'), 'browser lab execution command exists');
+check(!/^(from PIL|import cv2|import numpy)/m.test(atlasV14Generator), 'v14 atlas check has no eager third-party image imports');
+check(!/^(from PIL|import cv2|import numpy)/m.test(atlasV15Generator), 'v15 atlas check has no eager third-party image imports');
+check(atlasV14Generator.includes('if not check:\n        require_image_dependencies()'), 'v14 loads image tooling only for regeneration');
+check(atlasV15Generator.includes('if not check:\n        require_image_dependencies()'), 'v15 loads image tooling only for regeneration');
+check(existsSync(resolve(root, 'requirements-atlas.txt')), 'optional atlas regeneration requirements are documented');
+check(deployWorkflow.includes('actions/setup-python@v5') && deployWorkflow.includes('python -S scripts/generate-runtime-atlases-v14.py --check'), 'CI pins Python and proves dependency-free atlas checks');
+check(pkg.scripts['setup:atlas-python']?.includes('requirements-atlas.txt'), 'optional atlas dependency setup command exists');
 
 if (failures) {
   console.error(`\nFAIL v19.0.0 Browser Reliability Lab contract ${failures}`);

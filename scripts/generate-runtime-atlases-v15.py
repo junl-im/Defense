@@ -2,9 +2,39 @@
 from __future__ import annotations
 import argparse, hashlib, json
 from pathlib import Path
-from PIL import Image, ImageDraw
-import cv2
-import numpy as np
+
+Image = None
+ImageDraw = None
+ImageFilter = None
+cv2 = None
+np = None
+
+
+def require_image_dependencies():
+    """Load heavy image tooling only for atlas regeneration, never for --check."""
+    global Image, ImageDraw, ImageFilter, cv2, np
+    if Image is not None and cv2 is not None and np is not None:
+        return
+    try:
+        from PIL import Image as PILImage, ImageDraw as PILImageDraw
+        try:
+            from PIL import ImageFilter as PILImageFilter
+        except ImportError:
+            PILImageFilter = None
+        import cv2 as cv2_module
+        import numpy as numpy_module
+    except ModuleNotFoundError as exc:
+        missing = exc.name or 'image dependency'
+        raise SystemExit(
+            f"Atlas regeneration requires {missing}. "
+            "Install the optional tooling with: "
+            "python -m pip install -r requirements-atlas.txt"
+        ) from exc
+    Image = PILImage
+    ImageDraw = PILImageDraw
+    ImageFilter = PILImageFilter
+    cv2 = cv2_module
+    np = numpy_module
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_MANIFEST = ROOT / 'public/assets/ip-v13/asset-manifest-v13.json'
@@ -172,6 +202,8 @@ def write_preview(manifest):
 
 
 def generate(check=False):
+    if not check:
+        require_image_dependencies()
     source=json.loads(SOURCE_MANIFEST.read_text('utf-8'))
     by_path={a['path']:a for a in source['assets']}
     v14=json.loads(V14_MANIFEST.read_text('utf-8'))

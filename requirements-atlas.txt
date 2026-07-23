@@ -1,0 +1,5 @@
+# Optional dependencies used only when regenerating v14/v15 sprite atlases.
+# CI verification with --check does not require these packages.
+Pillow>=10.4,<13
+numpy>=1.26,<3
+opencv-python-headless>=4.10,<5

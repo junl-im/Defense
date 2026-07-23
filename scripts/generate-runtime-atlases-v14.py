@@ -4,9 +4,39 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
-from PIL import Image, ImageDraw, ImageFilter
-import cv2
-import numpy as np
+
+Image = None
+ImageDraw = None
+ImageFilter = None
+cv2 = None
+np = None
+
+
+def require_image_dependencies():
+    """Load heavy image tooling only for atlas regeneration, never for --check."""
+    global Image, ImageDraw, ImageFilter, cv2, np
+    if Image is not None and cv2 is not None and np is not None:
+        return
+    try:
+        from PIL import Image as PILImage, ImageDraw as PILImageDraw
+        try:
+            from PIL import ImageFilter as PILImageFilter
+        except ImportError:
+            PILImageFilter = None
+        import cv2 as cv2_module
+        import numpy as numpy_module
+    except ModuleNotFoundError as exc:
+        missing = exc.name or 'image dependency'
+        raise SystemExit(
+            f"Atlas regeneration requires {missing}. "
+            "Install the optional tooling with: "
+            "python -m pip install -r requirements-atlas.txt"
+        ) from exc
+    Image = PILImage
+    ImageDraw = PILImageDraw
+    ImageFilter = PILImageFilter
+    cv2 = cv2_module
+    np = numpy_module
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_MANIFEST = ROOT / 'public/assets/ip-v13/asset-manifest-v13.json'
@@ -122,9 +152,30 @@ def write_preview(pages, assets):
 
 
 def generate(check=False):
+    if not check:
+        require_image_dependencies()
     source = json.loads(SOURCE_MANIFEST.read_text('utf-8'))
     selected = [asset for asset in source['assets'] if asset['status'] in INCLUDED_STATUSES or asset['path'] in FORCED_PATHS]
     selected.sort(key=lambda a: (0 if a.get('alias') else 1, a['category'], a['id']))
+    if check:
+        manifest = json.loads(MANIFEST_PATH.read_text('utf-8'))
+        if manifest['summary']['totalFrames'] != len(selected):
+            raise SystemExit('v14 atlas frame count mismatch')
+        missing = [f['masteredPath'] for f in manifest['frames'] if not (ROOT / 'public' / f['masteredPath']).exists()]
+        if missing:
+            raise SystemExit(f'missing v14 mastered sprites: {missing[:5]}')
+        for page in manifest['pages']:
+            for key in ('png', 'webp'):
+                p = ROOT / 'public' / page[key]
+                if not p.exists() or sha256(p) != page[f'{key}Sha256']:
+                    raise SystemExit(f'v14 atlas hash mismatch: {p}')
+        for frame in manifest['frames']:
+            p = ROOT / 'public' / frame['masteredPath']
+            if sha256(p) != frame['sha256']:
+                raise SystemExit(f'v14 mastered hash mismatch: {p}')
+        print(f'[v14 atlas] PASS {len(manifest["frames"])} frames / {len(manifest["pages"])} pages')
+        return
+
     pages = []
     frames = []
     for index, asset in enumerate(selected):
@@ -163,25 +214,6 @@ def generate(check=False):
             'audit': audit,
             'sha256': sha256(mastered_path) if check and mastered_path.exists() else None,
         })
-
-    if check:
-        manifest = json.loads(MANIFEST_PATH.read_text('utf-8'))
-        if manifest['summary']['totalFrames'] != len(selected):
-            raise SystemExit('v14 atlas frame count mismatch')
-        missing = [f['masteredPath'] for f in manifest['frames'] if not (ROOT / 'public' / f['masteredPath']).exists()]
-        if missing:
-            raise SystemExit(f'missing v14 mastered sprites: {missing[:5]}')
-        for page in manifest['pages']:
-            for key in ('png', 'webp'):
-                p = ROOT / 'public' / page[key]
-                if not p.exists() or sha256(p) != page[f'{key}Sha256']:
-                    raise SystemExit(f'v14 atlas hash mismatch: {p}')
-        for frame in manifest['frames']:
-            p = ROOT / 'public' / frame['masteredPath']
-            if sha256(p) != frame['sha256']:
-                raise SystemExit(f'v14 mastered hash mismatch: {p}')
-        print(f'[v14 atlas] PASS {len(manifest["frames"])} frames / {len(manifest["pages"])} pages')
-        return
 
     ATLAS_ROOT.mkdir(parents=True, exist_ok=True)
     page_records = []

@@ -45,3 +45,11 @@ npm run browserlab:v1900
 - 컨테이너 Chromium에서 EGL/WebGL이 차단되면 Browser Lab은 셸·캐시·로컬 자산 계약까지만 실행한다.
 - 실제 10웨이브 DOM 조작과 WebGL 화면 캡처는 GPU가 제공되는 브라우저 또는 실기기에서 수행해야 한다.
 - 최종 신규 3D 영웅·몬스터·보스·환경은 아직 production-approved가 아니다.
+## v19.0.0 CI atlas check hotfix
+
+- Fixed GitHub Actions failure `ModuleNotFoundError: No module named 'PIL'`.
+- v14/v15 atlas `--check` mode now uses the Python standard library only.
+- Heavy image packages load only during intentional atlas regeneration.
+- CI runs both checks with `python -S` before the full verification suite.
+- Optional regeneration dependencies are listed in `requirements-atlas.txt`.
+

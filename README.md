@@ -37,3 +37,7 @@ npm run browserlab:v1900
 - `docs/NEXT_PATCH_LINEUP_v19.x.md`
 
 Absolute Art Bible v2.0과 Character DNA v3.0은 최상위 제작 계약이다. 브라우저 안정성 통과와 최종 제작 아트 승인은 별도로 관리한다.
+## CI atlas verification hotfix
+
+GitHub Actions verification no longer requires Pillow, OpenCV or NumPy when running the committed v14/v15 atlas `--check` contracts. Atlas regeneration remains available through `npm run setup:atlas-python` and the `generate:runtime-atlas:*` commands.
+
