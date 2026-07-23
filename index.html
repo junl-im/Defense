@@ -12,10 +12,10 @@
     <link rel="icon" href="./icon-192.png" type="image/png" />
     <link rel="apple-touch-icon" href="./icon-192.png" />
     <title>도깨비 운빨 수호대 3D</title>
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-desktop-v17.webp?rev=visible-v20" media="(min-width: 721px) and (orientation: landscape)" />
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-mobile-v17.webp?rev=visible-v20" media="(max-width: 720px), (orientation: portrait)" />
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-mascot-v17.webp?rev=visible-v20" />
-    <!-- active lineage v20.0.0 · BROWSER RELIABILITY LAB -->
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-desktop-v17.webp?rev=presence-v21" media="(min-width: 721px) and (orientation: landscape)" />
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-mobile-v17.webp?rev=presence-v21" media="(max-width: 720px), (orientation: portrait)" />
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-mascot-v17.webp?rev=presence-v21" />
+    <!-- active lineage v21.0.0 · BROWSER RELIABILITY LAB -->
   </head>
   <body>
     <div id="app">
@@ -40,7 +40,7 @@
 
       <section id="boot-error" class="screen boot-error" aria-live="assertive">
         <div class="boot-error-card">
-          <div class="moon-logo small"><span>鬼</span></div>
+          <div class="moon-logo small"><span>🌙</span></div>
           <p class="kicker">BOOT RECOVERY</p>
           <h2>달빛 장터를 깨우지 못했습니다</h2>
           <p id="boot-error-message">이전 버전 캐시 또는 WebGL 초기화 문제를 감지했습니다.</p>
@@ -52,13 +52,15 @@
       <section id="title-screen" class="screen title-screen-v17">
         <div class="title-scene-v17">
           <picture class="title-mascot-stage">
-            <source media="(max-width: 720px), (orientation: portrait)" srcset="./src/assets/title-v17/title-mascot-v17.webp?rev=visible-v20" />
-            <img class="title-mascot title-mascot-v17" src="./src/assets/title-v17/title-mascot-v17.webp?rev=visible-v20" alt="푸른 도깨비불과 곤봉을 든 도깨비 수호대 마스코트" fetchpriority="high" decoding="async" />
+            <source media="(max-width: 720px), (orientation: portrait)" srcset="./src/assets/title-v17/title-mascot-v17.webp?rev=presence-v21" />
+            <img class="title-mascot title-mascot-v17" src="./src/assets/title-v17/title-mascot-v17.webp?rev=presence-v21" alt="푸른 도깨비불과 곤봉을 든 도깨비 수호대 마스코트" fetchpriority="high" decoding="async" />
           </picture>
           <div class="title-panel title-panel-simple title-panel-v17">
             <p class="kicker">KOREAN FANTASY DEFENSE</p>
             <h1>도깨비<br /><em>운빨 수호대</em></h1>
             <p class="title-copy">달빛 장터의 월문을 지키고 도깨비 수호대를 이끄세요.</p>
+            <div class="title-feature-ribbon-v21" aria-label="게임 핵심 특징"><span>10웨이브 수호전</span><span>5직업 대장</span><span>모바일 전투 최적화</span></div>
+            <div class="title-ready-v21"><i aria-hidden="true"></i><b>달빛 장터 수호 준비 완료</b><small>최근 원정 설정으로 즉시 출전</small></div>
             <div id="title-loadout-summary" class="title-loadout-summary" aria-live="polite"></div>
             <button id="start-btn" class="btn primary huge">수호 시작</button>
             <div class="title-primary-actions">
@@ -97,7 +99,7 @@
         <span id="mission-copy">무료 소환으로 수호대를 깨우세요.</span>
       </div>
       <div id="evolution-banner" class="evolution-banner hidden" aria-live="assertive">
-        <span id="evolution-symbol">鬼</span>
+        <span id="evolution-symbol">✦</span>
         <div><small>MYTHIC AWAKENING · 5★</small><b id="evolution-name">신화 도깨비 각성</b><em id="evolution-ultimate">궁극기 개방</em></div>
       </div>
 
@@ -121,15 +123,15 @@
       </div>
 
       <aside id="run-seed-chip" class="run-seed-chip hidden" aria-live="polite">
-        <span id="run-seed-icon">日</span><div><small id="run-seed-mode">TODAY'S EXPEDITION</small><b id="run-seed-value">MOON-00000000</b><em id="run-edict-name">오늘의 칙령</em></div>
+        <span id="run-seed-icon">☀</span><div><small id="run-seed-mode">TODAY'S EXPEDITION</small><b id="run-seed-value">MOON-00000000</b><em id="run-edict-name">오늘의 칙령</em></div>
       </aside>
 
       <aside id="stage-chip" class="stage-chip hidden" aria-live="polite">
-        <span id="stage-icon">門</span><div><small>STAGE 01</small><b id="stage-name">도깨비마을</b><em id="stage-zone">달문 입구</em><i><u id="stage-progress"></u></i></div>
+        <span id="stage-icon">🚪</span><div><small>STAGE 01</small><b id="stage-name">도깨비마을</b><em id="stage-zone">달문 입구</em><i><u id="stage-progress"></u></i></div>
       </aside>
 
       <aside id="council-chip" class="council-chip hidden" aria-live="polite">
-        <span id="council-chip-icon">護</span><div><small>GUARDIAN COUNCIL</small><b id="council-chip-name">선조의 방패</b><em id="council-chip-support">신목 무당 지원</em></div>
+        <span id="council-chip-icon">🛡</span><div><small>GUARDIAN COUNCIL</small><b id="council-chip-name">선조의 방패</b><em id="council-chip-support">신목 무당 지원</em></div>
       </aside>
 
       <aside id="moon-omen" class="moon-omen hidden" aria-live="polite">
@@ -153,7 +155,7 @@
       </aside>
 
       <div id="jackpot-rush" class="jackpot-rush hidden" aria-live="assertive">
-        <span>大</span><div><small>JACKPOT RUSH</small><b>왕대박 폭주</b></div><em id="jackpot-rush-time">0.0s</em>
+        <span>★</span><div><small>JACKPOT RUSH</small><b>왕대박 폭주</b></div><em id="jackpot-rush-time">0.0s</em>
       </div>
 
       <div id="danger-hint" class="danger-hint hidden" aria-live="assertive">
@@ -202,7 +204,7 @@
         <button id="summon-btn" class="summon-btn">
           <span class="summon-glow"></span>
           <span id="summon-ticket" class="summon-ticket hidden">선택권 ×0</span>
-          <i class="action-glyph summon-glyph" aria-hidden="true">鬼</i>
+          <i class="action-glyph summon-glyph" aria-hidden="true">👹</i>
           <small>랜덤 소환</small>
           <b><i>●</i> <span id="summon-cost">30</span></b>
         </button>
@@ -547,7 +549,7 @@
     </div>
     <script>
       (() => {
-        const VERSION = '20.0.0';
+        const VERSION = '21.0.0';
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
         const retryButton = document.getElementById('boot-retry-btn');

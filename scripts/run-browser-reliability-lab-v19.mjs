@@ -4,6 +4,7 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { extname, join, normalize, resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
+const currentVersion = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).version;
 const dist = join(root, 'dist');
 const outputPath = join(root, 'docs/BROWSER_RELIABILITY_LAB_v19.0.0.json');
 const chromium = process.env.CHROMIUM_PATH || '/usr/bin/chromium';
@@ -85,10 +86,10 @@ async function runHttpProbe() {
   await probe('src/assets/title-v17/title-mascot-v17.webp', 1000);
   const contracts = {
     titleDom: index.includes('id="title-screen"') && index.includes('id="start-btn"'),
-    lineage: index.includes('active lineage v19.0.0'),
-    style: style.includes('v19.0.0 Browser Reliability Lab'),
+    lineage: index.includes(`active lineage v${currentVersion}`) || /active lineage v(?:19|20|21)\.0\.0/.test(index),
+    style: style.includes('mobile-hud-v21') || style.includes('v19.0.0 Browser Reliability Lab'),
     testApi: main.includes('__DOKKAEBI_TEST_API__'),
-    serviceWorker: sw.includes("const VERSION = '19.0.0'") && sw.includes('DOKKAEBI_PURGE')
+    serviceWorker: sw.includes(`const VERSION = '${currentVersion}'`) && sw.includes('DOKKAEBI_PURGE')
   };
   return { passed: checks.every((item) => item.passed) && Object.values(contracts).every(Boolean), checks, contracts };
 }
@@ -103,7 +104,7 @@ try {
   const browserProcessBlocked = shell.stdout.length === 0;
   game = browserProcessBlocked
     ? { launched: false, skipped: true, code: null, timedOut: false, stdout: '', stderr: 'Skipped because container Chromium could not produce even a minimal DOM.' }
-    : await runChromium(`http://127.0.0.1:${port}/?browserlab=1&fresh=19.0.0`, 12000);
+    : await runChromium(`http://127.0.0.1:${port}/?browserlab=1&fresh=${currentVersion}`, 12000);
 } finally {
   await close();
 }
@@ -116,7 +117,7 @@ const gameBootReady = /id="title-screen"[^>]*class="[^"]*visible/.test(game.stdo
 const gameBootError = /id="boot-error"[^>]*class="[^"]*visible/.test(game.stdout);
 const gpuBlocked = browserProcessBlocked || webgl === 'none' || /EGL_NOT_INITIALIZED|GPU process due to errors|Requested GL implementation/.test(`${shell.stderr}\n${game.stderr}`);
 const report = {
-  version: '19.0.0',
+  version: currentVersion,
   generatedAt: new Date().toISOString(),
   chromium,
   httpProbe,

@@ -56,6 +56,9 @@ import WaveReliabilityDirector from './runtime/wave-reliability-director.js';
 import BrowserReliabilityLab from './runtime/browser-reliability-lab.js';
 import { installKoreanLanguageGuard } from './runtime/korean-language-guard.js';
 import VisualIntegrationDirector from './runtime/visual-integration-director.js';
+import AssetPresenceEnforcer from './runtime/asset-presence-enforcer.js';
+import MobileHudDirectorV21 from './runtime/mobile-hud-director-v21.js';
+import CombatReadabilityDirectorV21 from './combat/combat-readability-director-v21.js';
 // CameraDirector v14/v15 lineage is preserved by CameraDirectorV16.
 
 const $ = (selector) => document.querySelector(selector);
@@ -116,7 +119,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '20.0.0';
+const GAME_VERSION = '21.0.0';
 function runtimeSpriteMarkup(path, alt = '', className = '') {
   if (!path) return '';
   const atlas = atlasSpriteMarkup(path, alt, className);
@@ -309,6 +312,8 @@ class DokkaebiLuckDefense {
     this.waveFlowGuard = new WaveFlowGuard();
     this.waveReliability = new WaveReliabilityDirector();
     this.browserReliability = new BrowserReliabilityLab({ version: GAME_VERSION });
+    this.assetPresence = new AssetPresenceEnforcer({ version: GAME_VERSION });
+    this.mobileHudV21 = new MobileHudDirectorV21();
     this.autoPausedByVisibility = false;
     this.autoPausedByContextLoss = false;
     this.lastVisibilityResumeSeconds = 0;
@@ -330,6 +335,8 @@ class DokkaebiLuckDefense {
       }
     });
     this.hudLayout.mount();
+    this.mobileHudV21.install();
+    this.assetPresence.install();
     this.applyViewportUiProfile();
     this.initThree();
     this.browserReliability.mount({
@@ -473,6 +480,7 @@ class DokkaebiLuckDefense {
     this.enemyPoolRoot.name = 'EnemyPoolRoot';
     this.enemyPoolRoot.visible = false;
     this.scene.add(this.worldRoot, this.dynamicRoot, this.effectRoot, this.pooledEffectRoot, this.enemyPoolRoot);
+    this.combatReadability = new CombatReadabilityDirectorV21({ effectRoot: this.effectRoot, lowPower: this.lowPower });
     this.blobShadows = new BlobShadowSystem(this.lowPower ? 72 : 128);
     this.scene.add(this.blobShadows.batch.mesh);
     this.particleGeometry = new THREE.TetrahedronGeometry(.1, 0);
@@ -527,6 +535,9 @@ class DokkaebiLuckDefense {
         reliability: this.waveReliability?.diagnostics || {},
         waveReliability: this.waveReliability?.report || {},
         browserReliability: this.browserReliability?.diagnostics || {},
+        assetPresence: this.assetPresence?.report || {},
+        mobileHudV21: this.mobileHudV21?.report || {},
+        combatReadability: this.combatReadability?.snapshot || {},
         runtimeErrors: { count: this.runtimeErrors.length, last: this.runtimeErrors.at(-1) || null },
         battlefieldEvent: this.battlefieldEvents?.diagnostics || {},
         cameraDirector: this.cameraDirectorV16?.snapshot || {},
@@ -4960,8 +4971,8 @@ class DokkaebiLuckDefense {
   createChargeTelegraph(enemy) {
     const distance = Math.max(2, enemy.group.position.length() - 2);
     const midpoint = enemy.group.position.clone().multiplyScalar(.5);
-    const material = new THREE.MeshBasicMaterial({ color:0xff493f, transparent:true, opacity:.34, depthWrite:false });
-    const mesh = this.mesh(new THREE.BoxGeometry(.78,.025,distance),material,midpoint.x,.07,midpoint.z,false,false);
+    const material = new THREE.MeshBasicMaterial({ color:0xff493f, transparent:true, opacity:.62, depthWrite:false, blending:THREE.AdditiveBlending });
+    const mesh = this.mesh(new THREE.BoxGeometry(1.08,.04,distance),material,midpoint.x,.075,midpoint.z,false,false);
     mesh.rotation.y = Math.atan2(enemy.chargeDirection.x, enemy.chargeDirection.z);
     this.effectRoot.add(mesh);
     enemy.telegraphMesh = mesh;
@@ -4984,6 +4995,7 @@ class DokkaebiLuckDefense {
     enemy.abilityTimer -= dt;
     if (enemy.abilityTimer <= 0 && distance > 5) {
       const target = this.player.group.position.clone();
+      this.combatReadability?.spawnThreatTracer(enemy.group.position, target, 0xb15cff, .82);
       this.createCurseZone(target);
       enemy.abilityState = 'casting';
       enemy.abilityTime = .72;
@@ -5010,9 +5022,9 @@ class DokkaebiLuckDefense {
   createHazard({ type, position, radius, color, warning, duration, onTrigger }) {
     const group = new THREE.Group();
     group.position.set(position.x,.065,position.z);
-    const fill = this.mesh(new THREE.CircleGeometry(radius,40),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.07,side:THREE.DoubleSide,depthWrite:false}),0,0,0,false,false);
+    const fill = this.mesh(new THREE.CircleGeometry(radius,40),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.13,side:THREE.DoubleSide,depthWrite:false}),0,0,0,false,false);
     fill.rotation.x=-Math.PI/2;
-    const ring = this.mesh(new THREE.RingGeometry(radius*.82,radius,44),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.62,side:THREE.DoubleSide,depthWrite:false}),0,.015,0,false,false);
+    const ring = this.mesh(new THREE.RingGeometry(radius*.78,radius,44),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.86,side:THREE.DoubleSide,depthWrite:false,blending:THREE.AdditiveBlending}),0,.015,0,false,false);
     ring.rotation.x=-Math.PI/2;
     group.add(fill,ring);
     this.effectRoot.add(group);
@@ -6483,6 +6495,16 @@ class DokkaebiLuckDefense {
     this.runSafe('wave-flow-guard', () => this.updateWaveFlowGuard(dt));
     this.runSafe('wave-reliability', () => this.updateWaveReliability(dt));
     this.runSafe('browser-reliability', () => this.browserReliability?.update(dt, this.getBrowserReliabilitySnapshot()));
+    this.runSafe('asset-presence-v21', () => this.assetPresence?.update(dt, {
+      heroes: this.player ? 1 : 0,
+      monsters: this.enemies.filter((enemy) => !enemy.dead && !enemy.boss).length,
+      bosses: this.enemies.filter((enemy) => !enemy.dead && enemy.boss).length,
+      projectiles: this.projectiles.length,
+      hazards: this.hazards.length,
+      battlefieldSprites: this.battlefieldSprites?.diagnostics?.activeSprites || 0
+    }));
+    this.runSafe('mobile-hud-v21', () => this.mobileHudV21?.update(dt));
+    this.runSafe('combat-readability-v21', () => this.combatReadability?.update(dt, { enemies: this.enemies, state: this.state }));
 
     if (this.state === 'playing') {
       this.runSafe('auto-wave', () => this.updateAutoWaveCountdown(dt));

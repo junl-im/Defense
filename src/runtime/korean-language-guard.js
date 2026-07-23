@@ -1,4 +1,4 @@
-export const KOREAN_LANGUAGE_GUARD_VERSION = '20.0.0';
+export const KOREAN_LANGUAGE_GUARD_VERSION = '21.0.0';
 
 const ICON_MAP = Object.freeze({
   '鬼':'👹','王':'👑','面':'🎭','履':'🥾','岩':'🪨','符':'🧿','魂':'💠','骨':'🦴','羽':'🪶','牙':'🦷','鬣':'🦁','鱗':'💎','珠':'🔮','蝕':'🌘','卷':'📜','三':'✦','鈴':'🔔','靈':'✨','封':'🔒','月':'🌙','五':'✦','刃':'⚔️','祭':'🕯️','護':'🛡️','盾':'🛡️','禁':'⛔','鎭':'🔨','山':'⛰️','鏡':'🪞','冊':'📖','裂':'💥','日':'☀️','妖':'👾','走':'💨','呪':'🌀','烏':'🐦','虎':'🐯','龍':'🐉','木':'🌳','門':'⛩️','市':'🏮','燈':'🏮','將':'🗿','壺':'🏺','石':'🪨','物':'📦','火':'🔥','氷':'❄️','風':'🌪️','雷':'⚡','警':'⚠️','神':'✨','砲':'💣','大':'★'
@@ -41,7 +41,7 @@ export function installKoreanLanguageGuard() {
     stats.mutations += records.length;
   });
   observer.observe(document.documentElement, { subtree: true, childList: true, characterData: true });
-  document.documentElement.lang = 'ko';
+  document.documentElement.lang = 'ko-KR';
   window.__DOKKAEBI_LANGUAGE_GUARD__ = Object.freeze({ version: KOREAN_LANGUAGE_GUARD_VERSION, stats });
   return { observer, stats };
 }

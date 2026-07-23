@@ -1,13 +1,13 @@
-DOKKAEBI DEFENSE v18.0.0 OVERWRITE PATCH
+Dokkaebi Luck Defense 3D v21.0.0 overwrite patch
 
-Base: v17.0.0 Moon Gate Reborn
-Target: v18.0.0 Ten-Wave Reliability
+Base: v20.0.0
+Target: v21.0.0
 
-1. Extract this archive at the v17 project root and overwrite matching files.
-2. Run: npm run verify
-3. Run: npm run build:static
-4. Run: node scripts/verify-static-dist.mjs
-5. Optional: npm run simulate:v1800
+Apply this archive at the project root and overwrite matching files.
+Then run:
+  npm ci
+  npm run verify
+  npm run build:static
+  node scripts/verify-static-dist.mjs
 
-This patch does not include dist or node_modules.
-No files must be deleted for v18.0.0.
+Final production art approval remains 0/6.

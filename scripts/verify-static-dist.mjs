@@ -17,16 +17,17 @@ if (html.includes('src="/src/main.js"')) fail('root-only module path remains');
 pass('static entrypoint and pinned import map');
 
 const main = await readFile(path.join(dist, 'src/main.js'), 'utf8');
+const style = await readFile(path.join(dist, 'src/style.css'), 'utf8');
 if (main.includes("import './style.css'")) fail('CSS module import remains in static build');
-if (!main.includes("const GAME_VERSION = '20.0.0'")) fail('static main version mismatch');
+if (!main.includes("const GAME_VERSION = '21.0.0'")) fail('static main version mismatch');
 if (!main.includes('renderAssetDiagnostics()')) fail('asset diagnostics missing from static build');
 if (!main.includes('force3DModels')) fail('force 3D model mode missing from static build');
 pass('static game module asset diagnostics');
 
 const catalog = await readFile(path.join(dist, 'src/engine/asset-catalog.js'), 'utf8');
-if (!catalog.includes("const ASSET_REVISION = '20.0.0'")) fail('asset cache revision missing');
+if (!catalog.includes("const ASSET_REVISION = '21.0.0'")) fail('asset cache revision missing');
 if (!catalog.includes('?v=${ASSET_REVISION}')) fail('asset cache-busting URL missing');
-pass('v20.0.0 asset cache revision');
+pass('v21.0.0 asset cache revision');
 
 const modelDir = path.join(dist, 'assets/models');
 const models = (await readdir(modelDir)).filter((name) => name.endsWith('.glb'));
@@ -111,8 +112,14 @@ const browserLab = await readFile(path.join(dist, 'src/runtime/browser-reliabili
 if (!browserLab.includes("BROWSER_RELIABILITY_VERSION = '19.0.0'")) fail('v19 browser reliability module missing from static dist');
 if (!main.includes('getBrowserAutomationSnapshot') || !main.includes('__DOKKAEBI_TEST_API__')) fail('v19 browser automation hooks missing from static dist');
 const serviceWorker = await readFile(path.join(dist, 'sw.js'), 'utf8');
-if (!/const VERSION = '(?:19|20)\.0\.0'/.test(serviceWorker) || !serviceWorker.includes('DOKKAEBI_PURGE')) fail('v19 service worker recovery contract missing');
+if (!/const VERSION = '(?:19|20|21)\.0\.0'/.test(serviceWorker) || !serviceWorker.includes('DOKKAEBI_PURGE')) fail('v19 service worker recovery contract missing');
 await access(path.join(dist, 'browser-lab-v19.html'));
 pass('v19 browser reliability, test API, versioned service worker and browser lab page');
+
+
+if (!main.includes('AssetPresenceEnforcer') || !main.includes('MobileHudDirectorV21') || !main.includes('CombatReadabilityDirectorV21')) fail('v21 runtime integration modules missing');
+if (!style.includes('mobile-hud-v21') || !style.includes('action-asset-v21')) fail('v21 mobile HUD and action asset styles missing');
+if (!html.includes('title-feature-ribbon-v21') || !html.includes('presence-v21')) fail('v21 title presentation missing');
+pass('v21 asset presence, mobile HUD and combat readability integration');
 
 console.log('Static deployment verification passed.');

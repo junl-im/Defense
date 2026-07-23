@@ -17,5 +17,7 @@ export function atlasSpriteMarkup(key, alt = '', className = '') {
   const posX = frame.columns > 1 ? `${(frame.column / (frame.columns - 1)) * 100}%` : '0%';
   const posY = frame.rows > 1 ? `${(frame.row / (frame.rows - 1)) * 100}%` : '0%';
   const safeAlt = String(alt).replaceAll('\"', '&quot;');
-  return `<span class="atlas-sprite ${className}" role="img" aria-label="${safeAlt}" style="--atlas-image:url('${pageUrl}');--atlas-size-x:${sizeX};--atlas-size-y:${sizeY};--atlas-pos-x:${posX};--atlas-pos-y:${posY}"></span>`;
+  const safeKey = String(frame.alias || frame.id || key).replaceAll('\"', '&quot;');
+  const safeCategory = String(frame.category || 'unclassified').replaceAll('\"', '&quot;');
+  return `<span class="atlas-sprite ${className}" role="img" aria-label="${safeAlt}" data-asset-key="${safeKey}" data-asset-category="${safeCategory}" data-asset-source="atlas-v15" style="--atlas-image:url('${pageUrl}');--atlas-size-x:${sizeX};--atlas-size-y:${sizeY};--atlas-pos-x:${posX};--atlas-pos-y:${posY}"></span>`;
 }

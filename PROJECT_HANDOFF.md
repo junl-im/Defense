@@ -1,4 +1,48 @@
-# PROJECT HANDOFF — CURRENT v19.0.0
+# PROJECT HANDOFF — CURRENT v21.0.0
+
+- Project: `DokkaebiLuckDefense3D_FULL_v21.0.0`
+- Game: `21.0.0`
+- Engine: `18.0.0`
+- Save schema: `19`
+- Patch: `Asset Presence Enforcement`
+- Art lock: `DD-ABSOLUTE-ART-BIBLE-2.0`
+
+## Current runtime
+
+- Three.js 0.185.1
+- Vite 8.1.5
+- 전투 GLB 19종
+- v13 개별 스프라이트 415개
+- v15 런타임 아틀라스 154프레임
+- 액션 버튼 에셋 연결 6종
+- 모바일 HUD 겹침 감사
+- 적 실루엣·위협 추적 연출
+- 최종 제작 아트 0/6
+- 1,130개 생산 잠금 유지
+
+## v21 runtime modules
+
+- `src/runtime/asset-presence-enforcer.js`
+- `src/runtime/mobile-hud-director-v21.js`
+- `src/combat/combat-readability-director-v21.js`
+- `scripts/audit-asset-presence-v21.mjs`
+- `scripts/verify-v2100.mjs`
+
+## Verification commands
+
+```bash
+npm run verify
+npm run build:static
+node scripts/verify-static-dist.mjs
+```
+
+## Known limitations
+
+- 아틀라스의 화면 노출은 강화했지만 최종 신규 3D 모델을 제작한 것은 아니다.
+- 모바일 겹침 감사는 브라우저 DOM 기준이며 실제 기기 터치 체감·발열 검수는 남아 있다.
+- 컨테이너의 GPU 제한이 있을 경우 실제 WebGL 자동 플레이는 상태 머신 검증으로 대체된다.
+
+## Historical handoff notes
 
 - Project: `DokkaebiLuckDefense3D_FULL_v19.0.0`
 - Game: `19.0.0`

@@ -1,5 +1,38 @@
 # Dokkaebi Luck Defense 3D
 
+## v21.0.0 Asset Presence Enforcement
+
+- 게임 버전: **21.0.0**
+- 엔진 버전: **18.0.0**
+- 세이브 스키마: **19**
+- 기준 패치: v20.0.0 Visible Combat Rebuild
+
+### 핵심 업데이트
+
+- 타이틀·영웅·몬스터·스킬·전장 아틀라스의 실제 화면 노출 추적
+- 질주·기술·수호신·소환·웨이브·상호작용 버튼에 실제 에셋 연결
+- 모바일 전용 HUD 재배치와 겹침 자동 완화
+- 적 실루엣 링, 주술 위협선, 돌진·장판 예고 강화
+- 정적 화면의 고립 한자 제거와 한국어 UI 가드 유지
+
+### 검증
+
+```bash
+npm run verify
+npm run build:static
+node scripts/verify-static-dist.mjs
+```
+
+### 운영 문서
+
+- `docs/ASSET_PRESENCE_ENFORCEMENT_v21.0.0.md`
+- `docs/ASSET_PRESENCE_AUDIT_v21.0.0.json`
+- `docs/PATCH_NOTES_v21.0.0.md`
+- `docs/PATCH_APPLY_v21.0.0.md`
+- `docs/NEXT_PATCH_LINEUP_v21.x.md`
+
+최종 제작 아트는 0/6이며 1,130개 생산 잠금은 유지한다.
+
 ## v19.0.0 Browser Reliability Lab
 
 - 게임 버전: **19.0.0**

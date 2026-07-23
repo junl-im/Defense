@@ -2854,20 +2854,20 @@ body.webgl-context-lost::after {
   background-image:
     linear-gradient(90deg,rgba(4,8,28,.08) 0%,rgba(4,8,25,.04) 48%,rgba(4,5,20,.58) 82%,rgba(3,4,16,.78) 100%),
     linear-gradient(180deg,rgba(8,18,50,.02),rgba(3,5,18,.38)),
-    url('./assets/title-v17/title-bg-desktop-v17.webp?v=20.0.0');
+    url('./assets/title-v17/title-bg-desktop-v17.webp?v=21.0.0');
 }
 .title-mascot-stage { z-index: 2; opacity: 1 !important; visibility: visible !important; }
 .title-mascot-v17 { opacity: 1 !important; filter: saturate(1.08) contrast(1.04) drop-shadow(0 18px 28px rgba(0,0,0,.48)); }
 .title-panel-v17 { border-width: 2px; box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px rgba(255,255,255,.15), 0 0 0 1px rgba(89,190,255,.16); }
 .title-panel-v17::before { content:''; display:block; width:54px; height:4px; margin:0 auto 10px; border-radius:9px; background:linear-gradient(90deg,#7be7ff,#ffe39b); }
-body.title-mascot-fallback .title-mascot-stage { background:url('./assets/title-v17/title-mascot-v17.webp?v=20.0.0') center bottom/contain no-repeat; }
+body.title-mascot-fallback .title-mascot-stage { background:url('./assets/title-v17/title-mascot-v17.webp?v=21.0.0') center bottom/contain no-repeat; }
 
 .enemy-healthbar, .enemy-hp, .boss-healthbar { filter: drop-shadow(0 2px 2px rgba(0,0,0,.9)); }
 .damage-number, .combat-text { text-shadow:0 2px 3px #000,0 0 8px currentColor; font-weight:900; }
 
 @media (max-width:900px), (orientation:portrait) {
   #title-screen.title-screen-v17::before {
-    background-image:linear-gradient(180deg,rgba(4,9,28,.03),rgba(4,7,23,.35) 66%,rgba(3,4,17,.86)),url('./assets/title-v17/title-bg-mobile-v17.webp?v=20.0.0');
+    background-image:linear-gradient(180deg,rgba(4,9,28,.03),rgba(4,7,23,.35) 66%,rgba(3,4,17,.86)),url('./assets/title-v17/title-bg-mobile-v17.webp?v=21.0.0');
   }
 }
 
@@ -2895,3 +2895,75 @@ body.title-mascot-fallback .title-mascot-stage { background:url('./assets/title-
   #joystick-zone { transform:scale(.78); }
   #unit-strip { display:none; }
 }
+
+
+/* v21.0.0 Asset Presence Enforcement + Mobile HUD Rebuild */
+.title-panel-v17 {
+  border-color: rgba(255,219,134,.78);
+  background: linear-gradient(155deg,rgba(9,15,40,.9),rgba(14,23,61,.76));
+  box-shadow: 0 18px 52px rgba(0,0,0,.46), inset 0 0 0 1px rgba(111,185,255,.18);
+  backdrop-filter: blur(13px) saturate(1.16);
+}
+.title-feature-ribbon-v21 { display:flex; flex-wrap:wrap; gap:6px; margin:2px 0 4px; }
+.title-feature-ribbon-v21 span { padding:5px 9px; border:1px solid rgba(116,202,255,.34); border-radius:999px; background:rgba(25,87,144,.22); color:#dff6ff; font-size:10px; font-weight:800; letter-spacing:.02em; }
+.title-ready-v21 { display:grid; grid-template-columns:10px 1fr; gap:1px 8px; align-items:center; margin:2px 0 7px; padding:8px 10px; border-radius:14px; background:rgba(5,12,31,.48); border:1px solid rgba(255,224,143,.18); }
+.title-ready-v21 i { grid-row:1/3; width:9px; height:9px; border-radius:50%; background:#72f4bf; box-shadow:0 0 12px rgba(114,244,191,.9); }
+.title-ready-v21 b { color:#fff3c6; font-size:12px; }
+.title-ready-v21 small { color:#a9c8e9; font-size:9px; }
+.title-mascot-v17 { filter: drop-shadow(0 18px 28px rgba(0,0,0,.42)) saturate(1.08) contrast(1.03); }
+
+.action-dock button, .world-interact-btn { position:relative; overflow:hidden; }
+.action-asset-v21 { position:absolute; left:50%; top:5px; width:27px; height:27px; transform:translateX(-50%); pointer-events:none; z-index:0; filter:drop-shadow(0 2px 4px rgba(0,0,0,.58)) saturate(1.15); opacity:.96; }
+.action-dock .action-glyph { opacity:.18; }
+.action-dock .skill-btn span, .action-dock .skill-btn b, .action-dock .summon-btn small, .action-dock .summon-btn b, .action-dock .wave-btn small, .action-dock .wave-btn b { position:relative; z-index:1; }
+.action-dock #summon-btn .action-asset-v21 { width:40px; height:40px; top:7px; }
+.action-dock #wave-btn .action-asset-v21 { width:23px; height:23px; top:4px; left:18px; }
+.world-interact-btn .action-asset-v21 { position:relative; display:block; left:auto; top:auto; transform:none; width:30px; height:30px; flex:0 0 auto; }
+
+.enemy-readability-active #game-canvas { image-rendering:auto; }
+.atlas-sprite[data-asset-source="atlas-v15"] { background-image:var(--atlas-image); }
+
+@media (max-width:720px) {
+  body.mobile-hud-v21 #hud { top:calc(4px + var(--safe-top)); left:calc(5px + var(--safe-left)); right:calc(5px + var(--safe-right)); height:48px; padding:4px 6px; border-radius:15px; background:linear-gradient(180deg,rgba(5,10,28,.88),rgba(7,14,38,.7)); backdrop-filter:blur(8px); }
+  body.mobile-hud-v21 .hud-left, body.mobile-hud-v21 .hud-right { gap:4px; }
+  body.mobile-hud-v21 .core-pill { min-width:78px; height:39px; padding:3px 7px; }
+  body.mobile-hud-v21 .core-pill .hero-hud-portrait { width:31px; height:31px; }
+  body.mobile-hud-v21 .currency-pill { min-width:66px; height:34px; padding:3px 7px; }
+  body.mobile-hud-v21 .hud-right .round-btn { width:31px; height:31px; }
+  body.mobile-hud-v21 .wave-hud { top:calc(55px + var(--safe-top)); width:min(46vw,178px); padding:4px 9px; border-radius:13px; background:rgba(5,10,29,.78); }
+  body.mobile-hud-v21 #boss-health { top:calc(92px + var(--safe-top)); width:min(92vw,430px); }
+  body.mobile-hud-v21 #danger-hint { bottom:calc(114px + var(--safe-bottom)); max-width:210px; padding:7px 9px; }
+  body.mobile-hud-v21 #joystick-zone { width:102px!important; height:102px!important; left:calc(8px + var(--safe-left)); bottom:calc(10px + var(--safe-bottom)); transform:none!important; }
+  body.mobile-hud-v21 #action-dock { right:calc(7px + var(--safe-right)); bottom:calc(8px + var(--safe-bottom)); width:176px!important; transform:none!important; grid-template-columns:50px 54px 64px!important; grid-template-rows:50px 40px!important; grid-template-areas:"dash skill summon" "burst wave summon"!important; gap:4px!important; }
+  body.mobile-hud-v21 #action-dock #dash-btn { grid-area:dash; }
+  body.mobile-hud-v21 #action-dock #skill-btn { grid-area:skill; }
+  body.mobile-hud-v21 #action-dock #burst-btn { grid-area:burst; }
+  body.mobile-hud-v21 #action-dock #summon-btn { grid-area:summon; height:94px!important; }
+  body.mobile-hud-v21 #action-dock #wave-btn { grid-area:wave; height:40px!important; }
+  body.mobile-hud-v21 .center-meter-rail { bottom:calc(112px + var(--safe-bottom)); transform:scale(.86); transform-origin:center bottom; }
+  body.mobile-hud-v21 .left-insight-rail, body.mobile-hud-v21 .right-roster-rail { display:none!important; }
+  body.mobile-hud-v21 #interact-btn { bottom:calc(116px + var(--safe-bottom)); right:calc(8px + var(--safe-right)); max-width:184px; }
+  body.mobile-hud-v21 .title-feature-ribbon-v21 span { font-size:9px; padding:4px 7px; }
+  body.mobile-hud-v21 .title-ready-v21 { padding:7px 9px; }
+}
+@media (max-width:420px) {
+  body.mobile-hud-v21-narrow .hud-right #sound-btn, body.mobile-hud-v21-narrow .hud-right #hud-layout-btn { display:none!important; }
+  body.mobile-hud-v21-narrow .wave-hud { width:144px; }
+  body.mobile-hud-v21-narrow #joystick-zone { width:92px!important; height:92px!important; }
+  body.mobile-hud-v21-narrow #action-dock { width:158px!important; grid-template-columns:44px 48px 58px!important; grid-template-rows:46px 37px!important; }
+  body.mobile-hud-v21-narrow #action-dock #summon-btn { height:87px!important; }
+  body.mobile-hud-v21-narrow .center-meter-rail { display:none!important; }
+  body.mobile-hud-v21-narrow #danger-hint { bottom:calc(103px + var(--safe-bottom)); max-width:176px; }
+  body.mobile-hud-v21-narrow #interact-btn { bottom:calc(101px + var(--safe-bottom)); max-width:160px; }
+  .title-feature-ribbon-v21 { justify-content:center; }
+}
+@media (max-height:620px) and (orientation:landscape) {
+  body.mobile-hud-v21-landscape #hud { height:42px; }
+  body.mobile-hud-v21-landscape .wave-hud { top:calc(46px + var(--safe-top)); }
+  body.mobile-hud-v21-landscape #boss-health { top:calc(76px + var(--safe-top)); }
+  body.mobile-hud-v21-landscape #joystick-zone { width:82px!important; height:82px!important; }
+  body.mobile-hud-v21-landscape #action-dock { width:246px!important; grid-template-columns:repeat(5,46px)!important; grid-template-rows:46px!important; grid-template-areas:"dash skill burst summon wave"!important; }
+  body.mobile-hud-v21-landscape #action-dock #summon-btn, body.mobile-hud-v21-landscape #action-dock #wave-btn { height:46px!important; }
+  body.mobile-hud-v21-landscape .center-meter-rail, body.mobile-hud-v21-landscape .left-insight-rail, body.mobile-hud-v21-landscape .right-roster-rail { display:none!important; }
+}
+body.mobile-hud-v21-emergency .center-meter-rail, body.mobile-hud-v21-emergency #unit-strip, body.mobile-hud-v21-emergency #relic-panel { display:none!important; }

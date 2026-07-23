@@ -1,4 +1,4 @@
-export const CAMERA_PROFILE_VERSION = '20.0.0';
+export const CAMERA_PROFILE_VERSION = '21.0.0';
 export const DEFAULT_CAMERA_PROFILE_ID = 'scenic';
 
 export const CAMERA_PROFILES = Object.freeze({
