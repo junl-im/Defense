@@ -1,4 +1,4 @@
-const VERSION = '19.0.0';
+const VERSION = '20.0.0';
 const CACHE_PREFIX = 'dokkaebi-shell-';
 const CACHE_NAME = `${CACHE_PREFIX}v${VERSION}`;
 const SHELL_ASSETS = [

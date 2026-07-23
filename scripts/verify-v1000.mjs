@@ -28,9 +28,9 @@ const consoleSource = read('src/production-console.js');
 const assetCatalog = read('src/engine/asset-catalog.js');
 
 check(Number(pkg.version.split('.')[0]) >= 10, 'package version remains v10 or later');
-check(/const GAME_VERSION = '(?:10|11|12|13|14|15|16|17|18|19)\.0\.0'/.test(main), 'runtime retains v10 lineage or later');
+check(/const GAME_VERSION = '(?:10|11|12|13|14|15|16|17|18|19|20)\.0\.0'/.test(main), 'runtime retains v10 lineage or later');
 check(Number(ENGINE_VERSION.split('.')[0]) >= 8, 'engine version remains 8.0.0 or later');
-check(/ASSET_REVISION = '(?:10|11|12|13|14|15|16|17|18|19)\.0\.0'/.test(assetCatalog), 'asset revision remains v10 or later');
+check(/ASSET_REVISION = '(?:10|11|12|13|14|15|16|17|18|19|20)\.0\.0'/.test(assetCatalog), 'asset revision remains v10 or later');
 check(SAVE_SCHEMA_VERSION >= 8, 'save schema remains v8 or later');
 
 check(forge.summary.sourceCandidates === 40, '40 high-resolution source candidates retained');

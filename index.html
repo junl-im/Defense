@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko-KR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
@@ -12,10 +12,10 @@
     <link rel="icon" href="./icon-192.png" type="image/png" />
     <link rel="apple-touch-icon" href="./icon-192.png" />
     <title>도깨비 운빨 수호대 3D</title>
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-desktop-v17.webp" media="(min-width: 721px) and (orientation: landscape)" />
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-mobile-v17.webp" media="(max-width: 720px), (orientation: portrait)" />
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-mascot-v17.webp" />
-    <!-- active lineage v19.0.0 · BROWSER RELIABILITY LAB -->
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-desktop-v17.webp?rev=visible-v20" media="(min-width: 721px) and (orientation: landscape)" />
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-mobile-v17.webp?rev=visible-v20" media="(max-width: 720px), (orientation: portrait)" />
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-mascot-v17.webp?rev=visible-v20" />
+    <!-- active lineage v20.0.0 · BROWSER RELIABILITY LAB -->
   </head>
   <body>
     <div id="app">
@@ -52,8 +52,8 @@
       <section id="title-screen" class="screen title-screen-v17">
         <div class="title-scene-v17">
           <picture class="title-mascot-stage">
-            <source media="(max-width: 720px), (orientation: portrait)" srcset="./src/assets/title-v17/title-mascot-v17.webp" />
-            <img class="title-mascot title-mascot-v17" src="./src/assets/title-v17/title-mascot-v17.webp" alt="푸른 도깨비불과 곤봉을 든 도깨비 수호대 마스코트" fetchpriority="high" decoding="async" />
+            <source media="(max-width: 720px), (orientation: portrait)" srcset="./src/assets/title-v17/title-mascot-v17.webp?rev=visible-v20" />
+            <img class="title-mascot title-mascot-v17" src="./src/assets/title-v17/title-mascot-v17.webp?rev=visible-v20" alt="푸른 도깨비불과 곤봉을 든 도깨비 수호대 마스코트" fetchpriority="high" decoding="async" />
           </picture>
           <div class="title-panel title-panel-simple title-panel-v17">
             <p class="kicker">KOREAN FANTASY DEFENSE</p>
@@ -547,7 +547,7 @@
     </div>
     <script>
       (() => {
-        const VERSION = '19.0.0';
+        const VERSION = '20.0.0';
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
         const retryButton = document.getElementById('boot-retry-btn');

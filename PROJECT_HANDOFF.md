@@ -53,3 +53,14 @@ npm run browserlab:v1900
 - CI runs both checks with `python -S` before the full verification suite.
 - Optional regeneration dependencies are listed in `requirements-atlas.txt`.
 
+
+## v20.0.0 Visible Combat Rebuild
+
+- 기준: v19.0.0 CI Hotfix
+- 게임/에셋 리비전: 20.0.0
+- 엔진: 17.0.0
+- 세이브 스키마: 18
+- 타이틀 마스코트와 반응형 배경은 `src/assets/title-v17/`를 계속 사용하며 v20 캐시 키를 적용합니다.
+- `src/runtime/korean-language-guard.js`가 고립된 한자 아이콘의 화면 노출을 차단합니다.
+- 신목 스케일 0.62, Scenic pitch 0.86입니다.
+- 모바일에서는 비필수 상단 칩을 숨기고 조작 UI를 축소합니다.

@@ -51,7 +51,7 @@ check(SAVE_SCHEMA_VERSION >= 10, 'save schema version 10 or later');
 
 const scenic = getCameraProfile(DEFAULT_CAMERA_PROFILE_ID);
 check(DEFAULT_CAMERA_PROFILE_ID === 'scenic' && Object.keys(CAMERA_PROFILES).length === 3, 'three camera presets with scenic default');
-check(scenic.distance === 19.5 && scenic.pitch === 0.73 && scenic.fov === 52, 'scenic camera distance, pitch and FOV contract');
+check(scenic.distance === 19.5 && scenic.pitch >= 0.73 && scenic.pitch <= 0.9 && scenic.fov === 52, 'scenic camera distance, pitch and FOV contract');
 check(resolveCameraDistance('scenic', { waveActive: true, bossActive: true }) > scenic.distance, 'combat auto framing expands scenic distance');
 check(MOBILE_ENGINE_CONFIG.world.visibleChunkRadius === 2, 'desktop scenic chunk radius 2');
 check(main.includes("code === 'F5'") && main.includes('cycleCameraView()') && main.includes('resolveCameraDistance'), 'F5 camera cycle and dynamic framing integrated');

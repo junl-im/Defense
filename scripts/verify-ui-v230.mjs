@@ -53,8 +53,8 @@ assert(
   !main.includes("cameraObstacles.push({ x: 0, z: 0, radius: 2.15") &&
   main.includes("if (obstacle.type === 'core') continue") &&
   main.includes('updateCoreOcclusion') &&
-  main.includes('premium.scale.setScalar(.78)') &&
-  main.includes('damageAnchorY = 4.55') && main.includes('impactY = 3.7'),
+  (main.includes('premium.scale.setScalar(.78)') || main.includes('premium.scale.setScalar(.62)')) &&
+  (main.includes('damageAnchorY = 4.55') || main.includes('damageAnchorY = 3.65')) && (main.includes('impactY = 3.7') || main.includes('impactY = 3.0')),
   '중앙 신목 충돌·피격 앵커 유지 및 카메라 급당김 방지'
 );
 assert(

@@ -2847,3 +2847,51 @@ body.webgl-context-lost::after {
   font-size: 13px;
   pointer-events: none;
 }
+
+
+/* v20.0.0 Visible Combat Rebuild */
+#title-screen.title-screen-v17::before {
+  background-image:
+    linear-gradient(90deg,rgba(4,8,28,.08) 0%,rgba(4,8,25,.04) 48%,rgba(4,5,20,.58) 82%,rgba(3,4,16,.78) 100%),
+    linear-gradient(180deg,rgba(8,18,50,.02),rgba(3,5,18,.38)),
+    url('./assets/title-v17/title-bg-desktop-v17.webp?v=20.0.0');
+}
+.title-mascot-stage { z-index: 2; opacity: 1 !important; visibility: visible !important; }
+.title-mascot-v17 { opacity: 1 !important; filter: saturate(1.08) contrast(1.04) drop-shadow(0 18px 28px rgba(0,0,0,.48)); }
+.title-panel-v17 { border-width: 2px; box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px rgba(255,255,255,.15), 0 0 0 1px rgba(89,190,255,.16); }
+.title-panel-v17::before { content:''; display:block; width:54px; height:4px; margin:0 auto 10px; border-radius:9px; background:linear-gradient(90deg,#7be7ff,#ffe39b); }
+body.title-mascot-fallback .title-mascot-stage { background:url('./assets/title-v17/title-mascot-v17.webp?v=20.0.0') center bottom/contain no-repeat; }
+
+.enemy-healthbar, .enemy-hp, .boss-healthbar { filter: drop-shadow(0 2px 2px rgba(0,0,0,.9)); }
+.damage-number, .combat-text { text-shadow:0 2px 3px #000,0 0 8px currentColor; font-weight:900; }
+
+@media (max-width:900px), (orientation:portrait) {
+  #title-screen.title-screen-v17::before {
+    background-image:linear-gradient(180deg,rgba(4,9,28,.03),rgba(4,7,23,.35) 66%,rgba(3,4,17,.86)),url('./assets/title-v17/title-bg-mobile-v17.webp?v=20.0.0');
+  }
+}
+
+@media (max-width:720px), (pointer:coarse) {
+  .hud { padding: max(6px,var(--safe-top)) 7px 6px; gap:4px; }
+  .hud-left,.hud-right { gap:4px; }
+  .resource-pill,.round-btn { transform:scale(.9); transform-origin:center; }
+  #mission-panel,#run-seed-chip,#stage-chip,#council-chip { display:none !important; }
+  #synergy-panel { max-height:28vh; max-width:42vw; overflow:hidden; }
+  #unit-strip { max-width:58vw; gap:3px; }
+  #action-dock { right:max(6px,var(--safe-right)); bottom:calc(8px + var(--safe-bottom)); gap:5px; transform:scale(.88); transform-origin:right bottom; }
+  #joystick-zone { left:max(8px,var(--safe-left)); bottom:calc(10px + var(--safe-bottom)); transform:scale(.86); transform-origin:left bottom; }
+  #look-zone { inset:22% 0 22% 34%; }
+  .boss-hud { top:calc(48px + var(--safe-top)); width:min(88vw,430px); }
+  .wave-recovery { top:calc(52px + var(--safe-top)); }
+}
+@media (max-width:420px) and (orientation:portrait) {
+  .title-panel-v17 { width:94vw; padding:12px 12px 10px; }
+  .title-panel-v17 h1 { font-size:34px; }
+  .title-mascot-stage { bottom:148px !important; height:55vh !important; width:88vw !important; }
+  .title-mascot-v17 { height:53vh !important; }
+  .title-primary-actions { grid-template-columns:repeat(3,1fr) !important; gap:5px; }
+  .title-primary-actions .btn { padding-inline:5px; font-size:11px; }
+  #action-dock { transform:scale(.78); }
+  #joystick-zone { transform:scale(.78); }
+  #unit-strip { display:none; }
+}

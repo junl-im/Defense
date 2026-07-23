@@ -1,0 +1,40 @@
+{
+  "patch": "v20.0.0 Visible Combat Rebuild",
+  "baseVersion": "19.0.0 CI Hotfix",
+  "changedFiles": 25,
+  "newFiles": [
+    "docs/VISIBLE_COMBAT_REBUILD_v20.0.0.md",
+    "scripts/verify-v2000.mjs",
+    "src/runtime/korean-language-guard.js",
+    "src/runtime/visual-integration-director.js"
+  ],
+  "modifiedFiles": [
+    "PROJECT_HANDOFF.md",
+    "README.md",
+    "index.html",
+    "package.json",
+    "public/sw.js",
+    "scripts/verify-project.mjs",
+    "scripts/verify-static-dist.mjs",
+    "scripts/verify-ui-v230.mjs",
+    "scripts/verify-v1000.mjs",
+    "scripts/verify-v1200.mjs",
+    "scripts/verify-v1500.mjs",
+    "scripts/verify-v1600.mjs",
+    "scripts/verify-v1700.mjs",
+    "scripts/verify-v1800.mjs",
+    "scripts/verify-v1900.mjs",
+    "src/engine/asset-catalog.js",
+    "src/engine/camera-profile.js",
+    "src/engine/engine-config.js",
+    "src/main.js",
+    "src/runtime/save-schema.js",
+    "src/style.css"
+  ],
+  "deletedFiles": [],
+  "verification": {
+    "npmVerify": "PASS",
+    "staticBuild": "PASS",
+    "staticDistVerify": "PASS"
+  }
+}

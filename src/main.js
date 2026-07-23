@@ -54,6 +54,8 @@ import { auditRuntimeVisuals } from './runtime/runtime-visual-audit.js';
 import WaveFlowGuard from './runtime/wave-flow-guard.js';
 import WaveReliabilityDirector from './runtime/wave-reliability-director.js';
 import BrowserReliabilityLab from './runtime/browser-reliability-lab.js';
+import { installKoreanLanguageGuard } from './runtime/korean-language-guard.js';
+import VisualIntegrationDirector from './runtime/visual-integration-director.js';
 // CameraDirector v14/v15 lineage is preserved by CameraDirectorV16.
 
 const $ = (selector) => document.querySelector(selector);
@@ -114,7 +116,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '19.0.0';
+const GAME_VERSION = '20.0.0';
 function runtimeSpriteMarkup(path, alt = '', className = '') {
   if (!path) return '';
   const atlas = atlasSpriteMarkup(path, alt, className);
@@ -1733,7 +1735,7 @@ class DokkaebiLuckDefense {
       map.offset.set((cell % 4) * .25, (3 - Math.floor(cell / 4)) * .25);
       map.needsUpdate = true;
       material.map = map;
-      material.alphaTest = .02;
+      material.alphaTest = .01;
       material.needsUpdate = true;
       material.userData.disposeMap = true;
     }
@@ -2649,10 +2651,10 @@ class DokkaebiLuckDefense {
 
   createSacredTree() {
     const premium = createPremiumSacredTree({ lowPower: this.lowPower });
-    premium.scale.setScalar(.78);
-    premium.userData.visualScale = .78;
-    premium.userData.damageAnchorY = 4.55;
-    premium.userData.impactY = 3.7;
+    premium.scale.setScalar(.62);
+    premium.userData.visualScale = .62;
+    premium.userData.damageAnchorY = 3.65;
+    premium.userData.impactY = 3.0;
     premium.userData.occlusionMaterials = [];
     premium.traverse((object) => {
       if (!object.isMesh || !object.material) return;
@@ -2675,12 +2677,12 @@ class DokkaebiLuckDefense {
     if (!entries.length || !target || !desired) return;
     const line = tempV.copy(target).sub(desired);
     const lengthSq = Math.max(.0001, line.lengthSq());
-    const center = tempV2.set(0, 3.1, 0);
+    const center = tempV2.set(0, 2.55, 0);
     const t = clamp(center.clone().sub(desired).dot(line) / lengthSq, 0, 1);
     const closest = desired.clone().addScaledVector(line, t);
     const lineDistance = closest.distanceTo(center);
     const playerDistance = this.player?.group ? Math.hypot(this.player.group.position.x, this.player.group.position.z) : 99;
-    const occluded = lineDistance < 2.9 && playerDistance < 7.2;
+    const occluded = lineDistance < 2.45 && playerDistance < 6.3;
     const targetOpacity = occluded ? .28 : 1;
     const blend = 1 - Math.pow(occluded ? .0008 : .025, dt);
     for (const entry of entries) {
@@ -4711,15 +4713,15 @@ class DokkaebiLuckDefense {
     projectile.hitTargets.clear();
     projectile.mesh.visible = true;
     projectile.mesh.position.copy(data.origin);
-    projectile.mesh.scale.setScalar(data.radius);
+    projectile.mesh.scale.setScalar(data.radius * 1.32);
     projectile.mesh.material.color.set(data.color);
-    projectile.mesh.material.opacity = .95;
+    projectile.mesh.material.opacity = 1;
     for (const child of [projectile.mesh.userData.fxCore, projectile.mesh.userData.fxRing, projectile.mesh.userData.fxTrail]) {
       if (child?.material?.color) child.material.color.set(data.color);
     }
     if (projectile.mesh.userData.fxCore) projectile.mesh.userData.fxCore.material.opacity = .88;
-    if (projectile.mesh.userData.fxRing) projectile.mesh.userData.fxRing.material.opacity = .48;
-    if (projectile.mesh.userData.fxTrail) projectile.mesh.userData.fxTrail.material.opacity = poolKey === 'wind' ? .35 : .22;
+    if (projectile.mesh.userData.fxRing) projectile.mesh.userData.fxRing.material.opacity = .72;
+    if (projectile.mesh.userData.fxTrail) projectile.mesh.userData.fxTrail.material.opacity = poolKey === 'wind' ? .7 : .5;
     if (poolKey === 'wind') projectile.mesh.rotation.set(Math.PI / 2, 0, 0);
     else projectile.mesh.rotation.set(0, 0, 0);
     this.projectiles.push(projectile);
@@ -6549,6 +6551,9 @@ class DokkaebiLuckDefense {
   }
 
 }
+
+installKoreanLanguageGuard();
+const visualIntegration = new VisualIntegrationDirector().install();
 
 try {
   const game = new DokkaebiLuckDefense();

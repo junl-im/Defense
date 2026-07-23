@@ -1,4 +1,4 @@
-export const CAMERA_PROFILE_VERSION = '17.0.0';
+export const CAMERA_PROFILE_VERSION = '20.0.0';
 export const DEFAULT_CAMERA_PROFILE_ID = 'scenic';
 
 export const CAMERA_PROFILES = Object.freeze({
@@ -7,9 +7,9 @@ export const CAMERA_PROFILES = Object.freeze({
     label: '전장 조망',
     description: '맵과 웨이브 동선을 넓게 보는 기본 시야',
     distance: 19.5,
-    pitch: 0.73,
+    pitch: 0.86,
     fov: 52,
-    targetHeight: 1.05,
+    targetHeight: .72,
     waveBonus: 0.8,
     bossBonus: 1.35,
     minZoom: 10,
@@ -20,9 +20,9 @@ export const CAMERA_PROFILES = Object.freeze({
     label: '균형 시야',
     description: '캐릭터와 전장을 균형 있게 표시',
     distance: 17.25,
-    pitch: 0.69,
+    pitch: 0.79,
     fov: 50,
-    targetHeight: 1.18,
+    targetHeight: .9,
     waveBonus: 0.45,
     bossBonus: 0.8,
     minZoom: 9.5,
@@ -33,9 +33,9 @@ export const CAMERA_PROFILES = Object.freeze({
     label: '근접 시야',
     description: '캐릭터 액션을 크게 보는 기존형 시야',
     distance: 15.5,
-    pitch: 0.66,
+    pitch: 0.73,
     fov: 49,
-    targetHeight: 1.35,
+    targetHeight: 1.05,
     waveBonus: 0,
     bossBonus: 0.35,
     minZoom: 9,

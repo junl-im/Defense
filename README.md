@@ -41,3 +41,11 @@ Absolute Art Bible v2.0과 Character DNA v3.0은 최상위 제작 계약이다. 
 
 GitHub Actions verification no longer requires Pillow, OpenCV or NumPy when running the committed v14/v15 atlas `--check` contracts. Atlas regeneration remains available through `npm run setup:atlas-python` and the `generate:runtime-atlas:*` commands.
 
+
+## v20.0.0 Visible Combat Rebuild
+
+- 접속 마스코트와 PC/모바일 배경 캐시를 v20으로 갱신했습니다.
+- 고립된 한자 아이콘을 한국어 UI용 기호로 바꾸는 런타임 가드를 추가했습니다.
+- 모바일 HUD를 전투 필수 정보 중심으로 축소했습니다.
+- 중앙 신목 크기를 줄이고 Scenic 카메라 각도를 높였습니다.
+- 투사체 크기·링·트레일 가시성을 강화했습니다.
