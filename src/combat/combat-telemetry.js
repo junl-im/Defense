@@ -1,4 +1,4 @@
-export const COMBAT_TELEMETRY_VERSION = '1.0.0';
+export const COMBAT_TELEMETRY_VERSION = '2.0.0';
 
 export class CombatTelemetry {
   constructor() {
@@ -16,6 +16,10 @@ export class CombatTelemetry {
     this.kills = 0;
     this.bossKills = 0;
     this.droppedSpawns = 0;
+    this.reactions = {};
+    this.reactionDamage = 0;
+    this.overdrives = 0;
+    this.bossEnrages = 0;
   }
 
   startWave(wave, plan) {
@@ -34,6 +38,20 @@ export class CombatTelemetry {
   recordStatus(type) {
     if (!type) return;
     this.statusApplications[type] = (this.statusApplications[type] || 0) + 1;
+  }
+
+  recordReaction(id, damage = 0) {
+    if (!id) return;
+    this.reactions[id] = (this.reactions[id] || 0) + 1;
+    this.reactionDamage += Math.max(0, Number(damage) || 0);
+  }
+
+  recordOverdrive() {
+    this.overdrives += 1;
+  }
+
+  recordBossEnrage() {
+    this.bossEnrages += 1;
   }
 
   recordKill({ boss = false } = {}) {
@@ -72,6 +90,10 @@ export class CombatTelemetry {
       kills: this.kills,
       bossKills: this.bossKills,
       droppedSpawns: this.droppedSpawns,
+      reactions: { ...this.reactions },
+      reactionDamage: Math.round(this.reactionDamage),
+      overdrives: this.overdrives,
+      bossEnrages: this.bossEnrages,
       waveHistory: [...this.waveHistory]
     });
   }

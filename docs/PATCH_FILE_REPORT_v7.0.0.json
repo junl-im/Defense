@@ -1,0 +1,49 @@
+{
+  "patchVersion": "7.0.0",
+  "baseVersion": "6.0.0",
+  "engineVersion": "6.0.0",
+  "saveSchema": 7,
+  "changedFiles": [
+    "PROJECT_HANDOFF.md",
+    "README.md",
+    "index.html",
+    "package-lock.json",
+    "package.json",
+    "scripts/verify-project.mjs",
+    "scripts/verify-static-dist.mjs",
+    "scripts/verify-v500.mjs",
+    "scripts/verify-v600.mjs",
+    "src/art-production-gate.js",
+    "src/combat/combat-telemetry.js",
+    "src/combat/status-effect-system.js",
+    "src/engine/asset-catalog.js",
+    "src/engine/engine-config.js",
+    "src/main.js",
+    "src/production-console.js",
+    "src/runtime/save-schema.js",
+    "src/style.css",
+    "src/ui-layout-manager.js"
+  ],
+  "addedFiles": [
+    "docs/ART_ASSET_APPROVAL_REGISTRY_v7.0.0.json",
+    "docs/MYTHIC_CONVERGENCE_v7.0.0.md",
+    "docs/NEXT_PATCH_LINEUP_v7.x.md",
+    "docs/PATCH_APPLY_v7.0.0.md",
+    "docs/PATCH_FILE_REPORT_v7.0.0.json",
+    "docs/PATCH_NOTES_v7.0.0.md",
+    "scripts/verify-v700.mjs",
+    "src/combat/battle-momentum-system.js",
+    "src/combat/boss-escalation-director.js",
+    "src/combat/elemental-reaction-system.js"
+  ],
+  "deletedFiles": [],
+  "summary": {
+    "changed": 19,
+    "added": 10,
+    "deleted": 0,
+    "elementalReactions": 10,
+    "runtimeGlbs": 19,
+    "productionApprovedGlbs": 0,
+    "goldenSliceApproved": 0
+  }
+}

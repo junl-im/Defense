@@ -1,4 +1,4 @@
-export const ENGINE_VERSION = '5.0.0';
+export const ENGINE_VERSION = '6.0.0';
 
 export const MOBILE_ENGINE_CONFIG = Object.freeze({
   renderer: {
@@ -55,7 +55,10 @@ export const MOBILE_ENGINE_CONFIG = Object.freeze({
     activeEnemiesDesktop: 128,
     statusEffectsMobile: 96,
     statusEffectsDesktop: 180,
-    encounterHistoryEntries: 20
+    encounterHistoryEntries: 24,
+    elementalReactionsMobile: 72,
+    elementalReactionsDesktop: 140,
+    bossEscalationStates: 4
   },
   world: {
     chunkSize: 24,

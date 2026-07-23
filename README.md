@@ -1,3 +1,24 @@
+# Dokkaebi Luck Defense 3D
+
+## v8.0.0 Mythic Convergence
+
+This build upgrades the combat engine with ten elemental reactions, Mythic Momentum Overdrive, boss escalation, combat telemetry v2 and save schema v7. Absolute Art Bible v2.0 and Character DNA v3.0 remain immutable; all 19 existing runtime GLBs remain unapproved legacy candidates.
+
+### v7 controls and diagnostics
+
+- `F3`: render statistics
+- `F4`: production console
+- `?stats=1`: boot with statistics visible
+- `?director=1`: boot with production console visible
+
+### v7 documents
+
+- `docs/MYTHIC_CONVERGENCE_v8.0.0.md`
+- `docs/PATCH_NOTES_v8.0.0.md`
+- `docs/PATCH_APPLY_v8.0.0.md`
+- `docs/NEXT_PATCH_LINEUP_v7.x.md`
+- `docs/ART_ASSET_APPROVAL_REGISTRY_v8.0.0.json`
+
 # 도깨비 운빨 수호대 3D
 
 - 게임 버전: **6.0.0**
@@ -56,3 +77,6 @@ node scripts/verify-static-dist.mjs
 - `docs/NEXT_PATCH_LINEUP_v6.x.md`
 - `production/DokkaebiDefense/ASSET_MASTERLIST_v3.8.0.json`
 - `PROJECT_HANDOFF.md`
+
+
+Open `asset-library-v8.html` for the IP asset library.

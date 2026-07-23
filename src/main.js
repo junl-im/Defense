@@ -35,6 +35,9 @@ import StatusEffectSystem from './combat/status-effect-system.js';
 import CombatTelemetry from './combat/combat-telemetry.js';
 import RuntimeBudgetManager from './engine/runtime-budget-manager.js';
 import { migrateSaveSchema, SAVE_SCHEMA_VERSION } from './runtime/save-schema.js';
+import ElementalReactionSystem from './combat/elemental-reaction-system.js';
+import BattleMomentumSystem from './combat/battle-momentum-system.js';
+import BossEscalationDirector from './combat/boss-escalation-director.js';
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -77,6 +80,7 @@ const ui = {
   waveTrial: $('#wave-trial'), waveTrialIcon: $('#wave-trial-icon'), waveTrialName: $('#wave-trial-name'), waveTrialProgress: $('#wave-trial-progress'), waveTrialReward: $('#wave-trial-reward'),
   relicPanel: $('#relic-panel'), relicStrip: $('#relic-strip'), relicCount: $('#relic-count'), relicLoadout: $('#relic-loadout'), relicModal: $('#relic-modal'), relicOptions: $('#relic-options'),
   burstMeter: $('#burst-meter'), burstValue: $('#burst-value'), burstProgress: $('#burst-progress'), burst: $('#burst-btn'), burstState: $('#burst-state'),
+  momentumMeter: $('#momentum-meter'), momentumValue: $('#momentum-value'), momentumProgress: $('#momentum-progress'), momentumState: $('#momentum-state'),
   dangerHint: $('#danger-hint'), dangerArrow: $('#danger-arrow'), dangerLevel: $('#danger-level'), dangerLabel: $('#danger-label'), dangerTime: $('#danger-time'),
   firstMissionPanel: $('#first-mission-panel'), firstMissionStep: $('#first-mission-step'), firstMissionTitle: $('#first-mission-title'),
   firstMissionProgress: $('#first-mission-progress'), firstMissionCopy: $('#first-mission-copy'),
@@ -92,7 +96,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '6.0.0';
+const GAME_VERSION = '8.0.0';
 const CHARACTER_ASSET_IDS = Object.freeze([
   ...Object.values(HERO_CLASS_ASSET_IDS),
   ...Object.values(GUARDIAN_ASSET_IDS),
@@ -259,6 +263,9 @@ class DokkaebiLuckDefense {
     this.statusEffects = new StatusEffectSystem({ random: () => this.random() });
     this.combatTelemetry = new CombatTelemetry();
     this.runtimeBudget = new RuntimeBudgetManager({ config: this.engine.config, lowPower: this.lowPower });
+    this.elementalReactions = new ElementalReactionSystem();
+    this.battleMomentum = new BattleMomentumSystem();
+    this.bossEscalation = new BossEscalationDirector();
     this.saveMigration = migrateSaveSchema();
     this.activeEncounterPlan = null;
     this.lastEncounterResult = null;
@@ -268,7 +275,7 @@ class DokkaebiLuckDefense {
     this.hudLayout = new AdaptiveHudLayout({
       elements: {
         hud: ui.hud, runSeed: ui.runSeedChip, stageChip: ui.stageChip, moonOmen: ui.moonOmen, moonWard: ui.moonWard,
-        luckMeter: ui.luckMeter, burstMeter: ui.burstMeter, waveTrial: ui.waveTrial,
+        luckMeter: ui.luckMeter, burstMeter: ui.burstMeter, momentumMeter: ui.momentumMeter, waveTrial: ui.waveTrial,
         synergyPanel: ui.synergyPanel, firstMission: ui.firstMissionPanel, killChain: ui.killChain,
         relicPanel: ui.relicPanel, unitStrip: ui.unitStrip, bossHealth: ui.bossHealth,
         joystick: ui.joystick, actionDock: ui.actionDock
@@ -444,6 +451,9 @@ class DokkaebiLuckDefense {
         combat: this.combatTelemetry?.snapshot || {},
         statusEffects: this.statusEffects?.diagnostics || {},
         runtimeBudget: this.runtimeBudget?.diagnostics || {},
+        reactions: this.elementalReactions?.diagnostics || {},
+        momentum: this.battleMomentum?.diagnostics || {},
+        bossEscalation: this.bossEscalation?.diagnostics || {},
         saveSchemaVersion: SAVE_SCHEMA_VERSION
       })
     });
@@ -2982,6 +2992,9 @@ class DokkaebiLuckDefense {
     this.eliteKills = 0;
     this.runStats = this.createRunStats();
     this.combatTelemetry.resetRun();
+    this.battleMomentum.resetRun();
+    this.bossEscalation.resetRun();
+    document.body.classList.remove('momentum-overdrive');
     this.activeEncounterPlan = null;
     this.lastEncounterResult = null;
     this.cancelMoveTarget();
@@ -3089,6 +3102,7 @@ class DokkaebiLuckDefense {
     ui.waveTrial.classList.toggle('hidden', !show || !this.currentTrial);
     ui.relicPanel.classList.toggle('hidden', !show);
     ui.burstMeter.classList.toggle('hidden', !show);
+    ui.momentumMeter.classList.toggle('hidden', !show);
     if (!show) {
       ui.dangerHint.classList.remove('visible', 'urgent');
       ui.dangerHint.classList.add('hidden');
@@ -3366,6 +3380,7 @@ class DokkaebiLuckDefense {
     this.enemies.push(enemy);
     this.recordCodexDiscovery(enemy.boss ? 'boss' : 'monster', type);
     if (enemy.boss) {
+      this.bossEscalation.register(enemy);
       this.showMission(ENEMY_TYPES[type].name, '강력한 우두머리가 신목으로 돌진합니다.', 'BOSS HAS ENTERED', 1550);
       this.haptic([70, 45, 100]);
       this.updateBossHUD();
@@ -3489,7 +3504,8 @@ class DokkaebiLuckDefense {
     const encounterResult = this.encounterDirector.completeWave({ perfect, coreHpRatio: this.coreHp / Math.max(1, this.coreMaxHp) });
     this.lastEncounterResult = encounterResult;
     this.combatTelemetry.endWave({ wave: this.currentWave, perfect, coreHpRatio: this.coreHp / Math.max(1, this.coreMaxHp), planResult: encounterResult });
-    const reward = Math.round((24 + this.currentWave * 7 + perfectBonus) * this.activeRunMode.reward * (this.dailyEdict?.reward || 1) * (this.activeEncounterPlan?.rewardMultiplier || 1));
+    this.notifyMomentumActivation(this.battleMomentum.recordWave({ perfect }));
+    const reward = Math.round((24 + this.currentWave * 7 + perfectBonus) * this.activeRunMode.reward * (this.dailyEdict?.reward || 1) * (this.activeEncounterPlan?.rewardMultiplier || 1) * this.battleMomentum.rewardMultiplier);
     this.gold += reward;
     this.score += Math.round((this.currentWave * 250 + this.coreHp * 8) * this.activeRunMode.score * (this.dailyEdict?.score || 1));
     this.showCombo(`웨이브 ${this.currentWave} 격파 · +${reward} 엽전${perfectBonus ? ' · 무결점!' : ''}`, 1600);
@@ -4129,12 +4145,20 @@ class DokkaebiLuckDefense {
           this.animations.setBaseState(enemy.animation, 'idle');
           faceActorTowards(enemy.group, new THREE.Vector3(0, 0, 0), 1 - Math.pow(.0008, dt));
           enemy.attackTimer-=dt;
-          if (enemy.attackTimer<=0) { enemy.attackTimer=enemy.boss?1.45:1;this.animations.trigger(enemy.animation, 'attack', .32);this.damageCore(enemy.damage); }
+          if (enemy.attackTimer<=0) { enemy.attackTimer=enemy.boss?1.45:1;this.animations.trigger(enemy.animation, 'attack', .32);this.damageCore(enemy.damage * (enemy.boss ? this.bossEscalation.damageMultiplier(enemy) : 1)); }
         }
       }
 
       enemy.group.rotation.z=Math.sin(this.elapsed*5+enemy.phase)*.035;
       if (enemy.boss) {
+        const escalation = this.bossEscalation.update(enemy, dt);
+        if (escalation?.enteredEnrage) {
+          this.combatTelemetry.recordBossEnrage();
+          this.showMission('월식 광폭화', '보스의 공격력과 패턴 속도가 극한까지 상승합니다.', 'MYTHIC BOSS ENRAGE', 1800);
+          this.showCombo('⚠ 월식 광폭화 · 처치 보상 +20%', 1500);
+          this.spawnRing(enemy.group.position, 0xff4f82, 7.2);
+          this.haptic([50, 30, 80, 35, 110]);
+        }
         enemy.specialTimer-=dt;
         if (enemy.specialTimer<=0) this.triggerBossSpecial(enemy);
       }
@@ -4418,11 +4442,12 @@ class DokkaebiLuckDefense {
   }
 
   getBossSpecialDelay(enemy) {
-    if (enemy.type === 'tiger') return enemy.bossPhase >= 2 ? 3.35 + this.random() * .9 : 4.8 + this.random();
-    if (enemy.type === 'serpent') return enemy.bossPhase >= 2 ? 3.1 + this.random() * .8 : 4.35 + this.random() * .8;
-    if (enemy.bossPhase >= 3) return 2.9 + this.random() * .8;
-    if (enemy.bossPhase >= 2) return 3.6 + this.random();
-    return 5.1 + this.random() * 1.1;
+    let delay = 5.1 + this.random() * 1.1;
+    if (enemy.type === 'tiger') delay = enemy.bossPhase >= 2 ? 3.35 + this.random() * .9 : 4.8 + this.random();
+    else if (enemy.type === 'serpent') delay = enemy.bossPhase >= 2 ? 3.1 + this.random() * .8 : 4.35 + this.random() * .8;
+    else if (enemy.bossPhase >= 3) delay = 2.9 + this.random() * .8;
+    else if (enemy.bossPhase >= 2) delay = 3.6 + this.random();
+    return delay * this.bossEscalation.specialDelayMultiplier(enemy);
   }
 
   getBossIntentName(enemy) {
@@ -4493,6 +4518,7 @@ class DokkaebiLuckDefense {
 
   enterBossPhase(enemy, phase, title, copy, color) {
     enemy.bossPhase = phase;
+    this.bossEscalation.recordPhase(enemy, phase);
     applyPremiumBossPhase(enemy.group, enemy.type, phase);
     enemy.specialIndex = 0;
     enemy.specialTimer = .9;
@@ -4679,9 +4705,35 @@ class DokkaebiLuckDefense {
     }
   }
 
+  notifyMomentumActivation(activated) {
+    if (!activated) return;
+    this.combatTelemetry.recordOverdrive();
+    this.showMission('도깨비 신명 폭주', '피해 +22% · 전리품 +14% · 7.5초 지속', 'MYTHIC MOMENTUM', 1450);
+    this.showCombo('✦ 신명 폭주 발동!', 1350);
+    this.haptic([24, 18, 42, 22, 68]);
+  }
+
+  updateBattleMomentum(dt) {
+    const active = this.battleMomentum.update(dt);
+    document.body.classList.toggle('momentum-overdrive', active);
+  }
+
   damageEnemy(enemy,amount,source='',hitOrigin=null,owner=null,impactSource=source,impactColor=null) {
     if (!enemy || enemy.dead) return;
-    if (!String(source).startsWith('status-')) amount *= this.statusEffects.damageTakenMultiplier(enemy);
+    const isStatusTick = String(source).startsWith('status-');
+    const incomingStatusType = this.statusEffects.getTypeForSource(source);
+    const reaction = this.elementalReactions.resolve(enemy, incomingStatusType, amount, { boss: enemy.boss });
+    if (reaction) {
+      amount += reaction.bonusDamage;
+      this.combatTelemetry.recordReaction(reaction.id, reaction.bonusDamage);
+      this.notifyMomentumActivation(this.battleMomentum.recordReaction(reaction.momentum));
+      this.showCombatText(enemy.group.position.clone().add(new THREE.Vector3(0, enemy.boss ? 4.15 : 2.7, 0)), reaction.bonusDamage, { label: `${reaction.icon} ${reaction.label}` });
+      this.spawnRing(enemy.group.position, reaction.color, enemy.boss ? 4.8 : 2.7);
+    }
+    if (!isStatusTick) {
+      amount *= this.statusEffects.damageTakenMultiplier(enemy);
+      amount *= this.battleMomentum.damageMultiplier;
+    }
     const attackerType = owner?.type || (source.startsWith('ultimate-') ? source.slice('ultimate-'.length) : UNIT_KEYS.includes(source) ? source : '');
     const weaknessMultiplier = attackerType ? getWeaknessDamageBonus(this.codexProgress, enemy.type, attackerType) : 1;
     if (weaknessMultiplier > 1) {
@@ -4725,6 +4777,7 @@ class DokkaebiLuckDefense {
     }
     const appliedDamage = Math.max(0, Math.min(enemy.hp, amount));
     this.combatTelemetry.recordDamage(source, appliedDamage);
+    if (!isStatusTick) this.notifyMomentumActivation(this.battleMomentum.recordDamage(appliedDamage));
     if (owner?.type && owner.commandTimer > 0) this.runStats.commandDamage += appliedDamage;
     if (owner?.type && this.runStats.damageByType[owner.type] !== undefined) this.runStats.damageByType[owner.type] += appliedDamage;
     else if (source === 'hero') this.runStats.heroDamage += appliedDamage;
@@ -4764,8 +4817,10 @@ class DokkaebiLuckDefense {
   killEnemy(enemy,source) {
     if (enemy.dead) return;
     const deathPosition = enemy.group.position.clone();
+    const bossEscalationReward = this.bossEscalation.rewardMultiplier(enemy);
     enemy.dead=true;
     this.statusEffects.clear(enemy);
+    this.bossEscalation.unregister(enemy);
     this.encounterDirector.recordKill();
     this.combatTelemetry.recordKill({ boss: enemy.boss });
     const index=this.enemies.indexOf(enemy);
@@ -4776,7 +4831,7 @@ class DokkaebiLuckDefense {
     const color=ENEMY_TYPES[enemy.type].color;
     this.spawnParticles(deathPosition.clone().add(new THREE.Vector3(0,.8,0)),color,enemy.boss?35:12,enemy.boss?6:3.4);
     const eliteOmenReward = enemy.elite ? (this.activeOmen?.eliteReward || 1) : 1;
-    const reward=Math.max(2,Math.round(enemy.reward*(this.activeEncounterPlan?.rewardMultiplier || 1)*this.mods.goldMultiplier*this.getSpiritGoldMultiplier()*this.getContractRewardMultiplier()*(this.activeOmen?.reward || 1)*this.activeRunMode.reward*(enemy.elite?.reward || 1)*eliteOmenReward*(this.dailyEdict?.reward || 1)*(enemy.elite ? this.mods.eliteReward : 1)));
+    const reward=Math.max(2,Math.round(enemy.reward*(this.activeEncounterPlan?.rewardMultiplier || 1)*this.mods.goldMultiplier*this.getSpiritGoldMultiplier()*this.getContractRewardMultiplier()*(this.activeOmen?.reward || 1)*this.activeRunMode.reward*(enemy.elite?.reward || 1)*eliteOmenReward*(this.dailyEdict?.reward || 1)*(enemy.elite ? this.mods.eliteReward : 1)*bossEscalationReward*this.battleMomentum.rewardMultiplier));
     this.dropCoins(deathPosition,reward,enemy.boss?9:Math.min(4,1+Math.floor(reward/7)));
     this.kills+=1;
     this.gainSoul(enemy.boss ? 24 : enemy.elite ? 8 : 2, 'kill');
@@ -4788,6 +4843,7 @@ class DokkaebiLuckDefense {
     }
     this.killChain = this.killChainTimer > 0 ? this.killChain + 1 : 1;
     this.killChainTimer = 1.85;
+    this.notifyMomentumActivation(this.battleMomentum.recordKill({ boss: enemy.boss, elite: Boolean(enemy.elite), chain: this.killChain }));
     this.waveMaxChain = Math.max(this.waveMaxChain, this.killChain);
     this.runStats.maxKillChain = Math.max(this.runStats.maxKillChain, this.killChain);
     const chainMultiplier = 1 + Math.min(.6, Math.max(0, this.killChain - 1) * .018);
@@ -5342,6 +5398,11 @@ class DokkaebiLuckDefense {
     ui.burst.disabled = burstActive || this.soulGauge < 100;
     ui.burst.classList.toggle('ready', !burstActive && this.soulGauge >= 100);
     ui.burst.classList.toggle('active', burstActive);
+    const mythicMomentum = this.battleMomentum.diagnostics;
+    ui.momentumValue.textContent = mythicMomentum.active ? `${mythicMomentum.overdriveRemaining.toFixed(1)}s` : `${Math.floor(mythicMomentum.gauge)}%`;
+    ui.momentumProgress.style.width = `${mythicMomentum.active ? 100 : clamp(mythicMomentum.gauge, 0, 100)}%`;
+    ui.momentumState.textContent = mythicMomentum.active ? '신명 폭주 · 피해 +22% · 전리품 +14%' : '반응과 연속 처치로 충전';
+    ui.momentumMeter.classList.toggle('active', mythicMomentum.active);
     this.updateCommandChipStates();
     this.updateStageHUD();
     this.updateBossHUD();
@@ -5601,7 +5662,7 @@ class DokkaebiLuckDefense {
     this.elapsed+=dt;
     this.updateWorldEffects(dt);
     if(this.state==='playing') {
-      this.updateAutoWaveCountdown(dt);this.updateRunMomentum(gameDt);this.updatePlayer(gameDt);this.updateWave(gameDt);this.updateEnemies(gameDt);this.updateHazards(gameDt);this.updateDangerHint(gameDt);this.updateUnits(gameDt);this.updateProjectiles(gameDt);this.updateCoins(gameDt);this.updateParticles(gameDt);this.updateMoveTargetMarker(gameDt);this.updateKillChain(gameDt);this.updateAdaptiveQuality(dt);this.animations.update(gameDt,this.camera);if(this.frameScheduler.shouldRun('hud', this.engine.qualityProfile?.hudHz || 30))this.updateHUD();
+      this.updateAutoWaveCountdown(dt);this.updateRunMomentum(gameDt);this.updateBattleMomentum(gameDt);this.updatePlayer(gameDt);this.updateWave(gameDt);this.updateEnemies(gameDt);this.updateHazards(gameDt);this.updateDangerHint(gameDt);this.updateUnits(gameDt);this.updateProjectiles(gameDt);this.updateCoins(gameDt);this.updateParticles(gameDt);this.updateMoveTargetMarker(gameDt);this.updateKillChain(gameDt);this.updateAdaptiveQuality(dt);this.animations.update(gameDt,this.camera);if(this.frameScheduler.shouldRun('hud', this.engine.qualityProfile?.hudHz || 30))this.updateHUD();
     } else if(this.state==='title') {
       this.updateUnits(dt);this.animations.update(dt,this.camera);this.updateParticles(dt);
       if(this.player){this.player.group.rotation.y+=dt*.18;this.player.group.position.y=Math.sin(this.elapsed*2.3)*.05;}
@@ -5626,6 +5687,9 @@ class DokkaebiLuckDefense {
       combat: this.combatTelemetry?.snapshot,
       statusEffects: this.statusEffects?.diagnostics,
       runtimeBudget: this.runtimeBudget?.diagnostics,
+      reactions: this.elementalReactions?.diagnostics,
+      momentum: this.battleMomentum?.diagnostics,
+      bossEscalation: this.bossEscalation?.diagnostics,
       pools: {
         projectiles: this.projectiles.length,
         projectileCapacity: this.projectilePoolCapacity,

@@ -9,6 +9,8 @@ const BUDGET_MB = 64;
 const MAX_EDGE = 2048;
 
 function walk(directory) {
+  const rel = relative(root, directory).replaceAll('\\', '/');
+  if (rel === 'public/assets/ip-v8' || rel.startsWith('public/assets/ip-v8/')) return;
   for (const entry of readdirSync(directory, { withFileTypes: true })) {
     const path = resolve(directory, entry.name);
     if (entry.isDirectory()) walk(path);

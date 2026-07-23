@@ -68,7 +68,8 @@ export class AdaptiveHudLayout {
     ]);
     makeRail('center-meter-rail', 'center-meter-rail combat-ui-rail', [
       this.elements.luckMeter,
-      this.elements.burstMeter
+      this.elements.burstMeter,
+      this.elements.momentumMeter
     ]);
     makeRail('left-insight-rail', 'left-insight-rail combat-ui-rail', [
       this.elements.waveTrial,
@@ -88,7 +89,7 @@ export class AdaptiveHudLayout {
     this.observer.observe(this.body, { attributes: true, attributeFilter: ['class'] });
     const watched = [
       this.elements.runSeed, this.elements.stageChip, this.elements.moonOmen, this.elements.moonWard,
-      this.elements.luckMeter, this.elements.burstMeter, this.elements.waveTrial,
+      this.elements.luckMeter, this.elements.burstMeter, this.elements.momentumMeter, this.elements.waveTrial,
       this.elements.synergyPanel, this.elements.firstMission, this.elements.killChain,
       this.elements.relicPanel, this.elements.unitStrip, this.elements.bossHealth,
       this.elements.joystick, this.elements.actionDock

@@ -16,14 +16,14 @@ const failures = [];
 const pass = (message) => console.log(`PASS ${message}`);
 const check = (condition, message) => condition ? pass(message) : failures.push(message);
 
-check(pkg.version === '6.0.0', 'package version 6.0.0');
-check(ENGINE_VERSION === '5.0.0', 'engine version 5.0.0');
-check(ART_PRODUCTION_GATE_VERSION === '6.0.0', 'art production gate version 6.0.0');
+check(Number(pkg.version.split('.')[0]) >= 6, 'package version remains v6 or later');
+check(Number(ENGINE_VERSION.split('.')[0]) >= 5, 'engine version remains 5.0.0 or later');
+check(Number(ART_PRODUCTION_GATE_VERSION.split('.')[0]) >= 6, 'art production gate remains v6 or later');
 check(ENCOUNTER_DIRECTOR_VERSION === '1.0.0', 'encounter director version 1.0.0');
-check(STATUS_EFFECT_SYSTEM_VERSION === '1.0.0', 'status effect system version 1.0.0');
-check(COMBAT_TELEMETRY_VERSION === '1.0.0', 'combat telemetry version 1.0.0');
+check(Number(STATUS_EFFECT_SYSTEM_VERSION.split('.')[0]) >= 1, 'status effect system remains compatible');
+check(Number(COMBAT_TELEMETRY_VERSION.split('.')[0]) >= 1, 'combat telemetry remains compatible');
 check(RUNTIME_BUDGET_MANAGER_VERSION === '1.0.0', 'runtime budget manager version 1.0.0');
-check(SAVE_SCHEMA_VERSION === 6, 'save schema version 6');
+check(SAVE_SCHEMA_VERSION >= 6, 'save schema remains v6 or later');
 check(Object.keys(ENCOUNTER_MUTATORS).length === 7, 'six field doctrines plus boss doctrine');
 check(Object.keys(STATUS_EFFECTS).length === 6, 'six elemental status effects');
 
@@ -72,7 +72,7 @@ const fakeStorage = {
 };
 fakeStorage.setItem('dokkaebi-run-mode-v1', 'guardian');
 const migration = migrateSaveSchema(fakeStorage);
-check(migration.migrated && fakeStorage.getItem('dokkaebi-save-schema-version') === '6', 'save migration creates schema v6 backup and marker');
+check(migration.migrated && Number(fakeStorage.getItem('dokkaebi-save-schema-version')) >= 6, 'save migration creates current backup and marker');
 
 const main = read('src/main.js');
 const html = read('index.html');
@@ -83,9 +83,9 @@ check(main.includes('StatusEffectSystem') && main.includes('statusSpeedMultiplie
 check(main.includes('RuntimeBudgetManager') && main.includes("canSpawn('enemies'"), 'runtime spawn budget integrated');
 check(main.includes('CombatTelemetry') && main.includes('combatTelemetry.recordDamage'), 'combat telemetry integrated');
 check(main.includes('SAVE_SCHEMA_VERSION') && main.includes('saveMigration'), 'save schema diagnostics integrated');
-check(html.includes('BATTLEFRONT ASCENSION') && html.includes('ENGINE 5.0') && html.includes('v6.0.0'), 'v6 title identity and version');
-check(style.includes('BATTLEFRONT ASCENSION v6.0.0') && style.includes('--battlefront-cyan'), 'v6 battlefront design tokens');
-check(consoleSource.includes('BATTLEFRONT v6') && consoleSource.includes('DOCTRINE') && consoleSource.includes('BUDGET'), 'production console v6 combat diagnostics');
+check((html.includes('BATTLEFRONT ASCENSION') || html.includes('MYTHIC CONVERGENCE')) && html.includes('ENGINE 6.0') && html.includes('v7.0.0'), 'later title identity preserves battlefront lineage');
+check(style.includes('--battlefront-cyan'), 'battlefront design tokens remain available');
+check((consoleSource.includes('BATTLEFRONT v6') || consoleSource.includes('MYTHIC CONVERGENCE v7')) && consoleSource.includes('DOCTRINE') && consoleSource.includes('BUDGET'), 'production console preserves v6 combat diagnostics');
 
 check(GOLDEN_VERTICAL_SLICE.length === 6 && ART_PRODUCTION_SUMMARY.approved === 0, 'golden slice remains honest with zero final approvals');
 check(!ART_PRODUCTION_SUMMARY.massProductionUnlocked, 'mass production remains locked');

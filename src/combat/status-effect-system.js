@@ -1,4 +1,4 @@
-export const STATUS_EFFECT_SYSTEM_VERSION = '1.0.0';
+export const STATUS_EFFECT_SYSTEM_VERSION = '2.0.0';
 
 export const STATUS_EFFECTS = Object.freeze({
   burn: Object.freeze({ id: 'burn', icon: '🔥', label: '연소', duration: 3.2, tickInterval: .5, maxStacks: 3, speedMultiplier: 1, damageTakenMultiplier: 1 }),
@@ -46,6 +46,24 @@ export class StatusEffectSystem {
     effects.set(type, state);
     this.applied += 1;
     return Object.freeze({ ...state, definition });
+  }
+
+  getTypeForSource(source) {
+    if (!source || String(source).startsWith('status-')) return '';
+    return STATUS_SOURCE_MAP[source] || '';
+  }
+
+  getActiveTypes(target) {
+    return target?.statusEffects ? [...target.statusEffects.keys()] : [];
+  }
+
+  consume(target, types = []) {
+    if (!target?.statusEffects) return 0;
+    let consumed = 0;
+    for (const type of types) {
+      if (target.statusEffects.delete(type)) consumed += 1;
+    }
+    return consumed;
   }
 
   applyFromSource(target, source, amount = 0) {

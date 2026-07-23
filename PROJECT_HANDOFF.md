@@ -1,3 +1,40 @@
+# PROJECT HANDOFF — CURRENT v8.0.0
+
+- Project: DokkaebiLuckDefense3D_FULL_v8.0.0
+- Raster IP library: 970
+- Curated candidates: 141
+- Raw concepts: 823
+- SVG: 0
+- Concept generation: UNLOCKED
+- Production approved: 0
+
+---
+
+# PROJECT HANDOFF — CURRENT v7.0.0
+
+- Project folder: `DokkaebiLuckDefense3D_FULL_v7.0.0`
+- Game version: `7.0.0`
+- Engine version: `6.0.0`
+- Save schema: `7`
+- Absolute art lock: `DD-ABSOLUTE-ART-BIBLE-2.0`
+- Production-approved runtime assets: `0`
+
+## v7.0.0 implemented
+
+- Ten elemental reactions integrated into the actual damage path.
+- Mythic Momentum gauge and 7.5 second Overdrive integrated into damage and rewards.
+- Boss escalation based on HP, phase and encounter time.
+- Player-facing momentum meter and F4 production diagnostics.
+- Status Effect System 2.0 and Combat Telemetry 2.0.
+- Save migration and backup schema v7.
+- Engine 6.0.0 runtime budgets extended for reaction and boss state diagnostics.
+
+## Non-negotiable art status
+
+The existing 19 GLBs are still `legacy-runtime-candidate`. Do not call them final or production approved. The 1,130-asset production list remains locked until hero, normal enemy, boss, environment, HUD and VFX all pass the golden vertical-slice gate.
+
+---
+
 # PROJECT HANDOFF — 도깨비 운빨 수호대 3D
 
 ## 2026-07-23 — ABSOLUTE ART BIBLE v2.0 LOCK
