@@ -14,7 +14,11 @@
       "productionFolder": "04_Boss/goblin-village",
       "deliveryFile": "boss_dokkaebi-king_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-BOSS",
       "priority": "P0",
       "rarity": "legend",
@@ -25,7 +29,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "10000-18000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -36,13 +40,17 @@
           "Idle",
           "Walk",
           "Run",
-          "AttackA",
-          "AttackB",
-          "SkillA",
-          "SkillB",
-          "Phase",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
+        ],
+        "optionalAnimations": [
+          "Phase"
         ],
         "phaseReadability": "silhouette + aura + HUD color must change together"
       },
@@ -61,7 +69,11 @@
       "productionFolder": "04_Boss/bamboo-forest",
       "deliveryFile": "boss_nine-tailed-fox_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-BOSS",
       "priority": "P0",
       "rarity": "legend",
@@ -72,7 +84,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "10000-18000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -83,13 +95,17 @@
           "Idle",
           "Walk",
           "Run",
-          "AttackA",
-          "AttackB",
-          "SkillA",
-          "SkillB",
-          "Phase",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
+        ],
+        "optionalAnimations": [
+          "Phase"
         ],
         "phaseReadability": "silhouette + aura + HUD color must change together"
       },
@@ -108,7 +124,11 @@
       "productionFolder": "04_Boss/ruined-temple",
       "deliveryFile": "boss_ninth-heaven-lady_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-BOSS",
       "priority": "P0",
       "rarity": "legend",
@@ -119,7 +139,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "10000-18000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -130,13 +150,17 @@
           "Idle",
           "Walk",
           "Run",
-          "AttackA",
-          "AttackB",
-          "SkillA",
-          "SkillB",
-          "Phase",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
+        ],
+        "optionalAnimations": [
+          "Phase"
         ],
         "phaseReadability": "silhouette + aura + HUD color must change together"
       },
@@ -155,7 +179,11 @@
       "productionFolder": "04_Boss/snow-mountain",
       "deliveryFile": "boss_imugi_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-BOSS",
       "priority": "P0",
       "rarity": "legend",
@@ -166,7 +194,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "10000-18000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -177,13 +205,17 @@
           "Idle",
           "Walk",
           "Run",
-          "AttackA",
-          "AttackB",
-          "SkillA",
-          "SkillB",
-          "Phase",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
+        ],
+        "optionalAnimations": [
+          "Phase"
         ],
         "phaseReadability": "silhouette + aura + HUD color must change together"
       },
@@ -202,7 +234,11 @@
       "productionFolder": "04_Boss/dragon-palace",
       "deliveryFile": "boss_celestial-dragon_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-BOSS",
       "priority": "P0",
       "rarity": "legend",
@@ -213,7 +249,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "10000-18000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -224,13 +260,17 @@
           "Idle",
           "Walk",
           "Run",
-          "AttackA",
-          "AttackB",
-          "SkillA",
-          "SkillB",
-          "Phase",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
+        ],
+        "optionalAnimations": [
+          "Phase"
         ],
         "phaseReadability": "silhouette + aura + HUD color must change together"
       },
@@ -249,7 +289,11 @@
       "productionFolder": "04_Boss/underworld",
       "deliveryFile": "boss_underworld-king_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-BOSS",
       "priority": "P0",
       "rarity": "legend",
@@ -260,7 +304,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "10000-18000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -271,13 +315,17 @@
           "Idle",
           "Walk",
           "Run",
-          "AttackA",
-          "AttackB",
-          "SkillA",
-          "SkillB",
-          "Phase",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
+        ],
+        "optionalAnimations": [
+          "Phase"
         ],
         "phaseReadability": "silhouette + aura + HUD color must change together"
       },
@@ -296,7 +344,11 @@
       "productionFolder": "04_Boss/celestial-realm",
       "deliveryFile": "boss_white-tiger-lord_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-BOSS",
       "priority": "P1",
       "rarity": "mythic",
@@ -307,7 +359,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "10000-18000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -318,13 +370,17 @@
           "Idle",
           "Walk",
           "Run",
-          "AttackA",
-          "AttackB",
-          "SkillA",
-          "SkillB",
-          "Phase",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
+        ],
+        "optionalAnimations": [
+          "Phase"
         ],
         "phaseReadability": "silhouette + aura + HUD color must change together"
       },
@@ -343,7 +399,11 @@
       "productionFolder": "04_Boss/goblin-village",
       "deliveryFile": "boss_azure-sea-dragon_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-BOSS",
       "priority": "P1",
       "rarity": "mythic",
@@ -354,7 +414,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "10000-18000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -365,13 +425,17 @@
           "Idle",
           "Walk",
           "Run",
-          "AttackA",
-          "AttackB",
-          "SkillA",
-          "SkillB",
-          "Phase",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
+        ],
+        "optionalAnimations": [
+          "Phase"
         ],
         "phaseReadability": "silhouette + aura + HUD color must change together"
       },
@@ -390,7 +454,11 @@
       "productionFolder": "04_Boss/bamboo-forest",
       "deliveryFile": "boss_vermilion-phoenix_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-BOSS",
       "priority": "P1",
       "rarity": "mythic",
@@ -401,7 +469,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "10000-18000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -412,13 +480,17 @@
           "Idle",
           "Walk",
           "Run",
-          "AttackA",
-          "AttackB",
-          "SkillA",
-          "SkillB",
-          "Phase",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
+        ],
+        "optionalAnimations": [
+          "Phase"
         ],
         "phaseReadability": "silhouette + aura + HUD color must change together"
       },
@@ -437,7 +509,11 @@
       "productionFolder": "04_Boss/ruined-temple",
       "deliveryFile": "boss_black-tortoise_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-BOSS",
       "priority": "P1",
       "rarity": "mythic",
@@ -448,7 +524,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "10000-18000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -459,13 +535,17 @@
           "Idle",
           "Walk",
           "Run",
-          "AttackA",
-          "AttackB",
-          "SkillA",
-          "SkillB",
-          "Phase",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
+        ],
+        "optionalAnimations": [
+          "Phase"
         ],
         "phaseReadability": "silhouette + aura + HUD color must change together"
       },
@@ -484,7 +564,11 @@
       "productionFolder": "04_Boss/snow-mountain",
       "deliveryFile": "boss_moon-bulgasari_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-BOSS",
       "priority": "P1",
       "rarity": "mythic",
@@ -495,7 +579,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "10000-18000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -506,13 +590,17 @@
           "Idle",
           "Walk",
           "Run",
-          "AttackA",
-          "AttackB",
-          "SkillA",
-          "SkillB",
-          "Phase",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
+        ],
+        "optionalAnimations": [
+          "Phase"
         ],
         "phaseReadability": "silhouette + aura + HUD color must change together"
       },
@@ -531,7 +619,11 @@
       "productionFolder": "04_Boss/dragon-palace",
       "deliveryFile": "boss_ancient-toad_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-BOSS",
       "priority": "P1",
       "rarity": "mythic",
@@ -542,7 +634,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "10000-18000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -553,13 +645,17 @@
           "Idle",
           "Walk",
           "Run",
-          "AttackA",
-          "AttackB",
-          "SkillA",
-          "SkillB",
-          "Phase",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
+        ],
+        "optionalAnimations": [
+          "Phase"
         ],
         "phaseReadability": "silhouette + aura + HUD color must change together"
       },
@@ -578,7 +674,11 @@
       "productionFolder": "04_Boss/underworld",
       "deliveryFile": "boss_demon-jangseung_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-BOSS",
       "priority": "P2",
       "rarity": "mythic",
@@ -589,7 +689,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "10000-18000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -600,13 +700,17 @@
           "Idle",
           "Walk",
           "Run",
-          "AttackA",
-          "AttackB",
-          "SkillA",
-          "SkillB",
-          "Phase",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
+        ],
+        "optionalAnimations": [
+          "Phase"
         ],
         "phaseReadability": "silhouette + aura + HUD color must change together"
       },
@@ -625,7 +729,11 @@
       "productionFolder": "04_Boss/celestial-realm",
       "deliveryFile": "boss_snow-spirit_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-BOSS",
       "priority": "P2",
       "rarity": "mythic",
@@ -636,7 +744,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "10000-18000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -647,13 +755,17 @@
           "Idle",
           "Walk",
           "Run",
-          "AttackA",
-          "AttackB",
-          "SkillA",
-          "SkillB",
-          "Phase",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
+        ],
+        "optionalAnimations": [
+          "Phase"
         ],
         "phaseReadability": "silhouette + aura + HUD color must change together"
       },
@@ -672,7 +784,11 @@
       "productionFolder": "04_Boss/goblin-village",
       "deliveryFile": "boss_turtle-lord_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-BOSS",
       "priority": "P2",
       "rarity": "god",
@@ -683,7 +799,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "10000-18000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -694,13 +810,17 @@
           "Idle",
           "Walk",
           "Run",
-          "AttackA",
-          "AttackB",
-          "SkillA",
-          "SkillB",
-          "Phase",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
+        ],
+        "optionalAnimations": [
+          "Phase"
         ],
         "phaseReadability": "silhouette + aura + HUD color must change together"
       },
@@ -719,7 +839,11 @@
       "productionFolder": "04_Boss/bamboo-forest",
       "deliveryFile": "boss_oblivion-shaman_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-BOSS",
       "priority": "P2",
       "rarity": "god",
@@ -730,7 +854,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "10000-18000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -741,13 +865,17 @@
           "Idle",
           "Walk",
           "Run",
-          "AttackA",
-          "AttackB",
-          "SkillA",
-          "SkillB",
-          "Phase",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
+        ],
+        "optionalAnimations": [
+          "Phase"
         ],
         "phaseReadability": "silhouette + aura + HUD color must change together"
       },
@@ -766,7 +894,11 @@
       "productionFolder": "04_Boss/ruined-temple",
       "deliveryFile": "boss_hundred-ghost-king_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-BOSS",
       "priority": "P2",
       "rarity": "god",
@@ -777,7 +909,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "10000-18000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -788,13 +920,17 @@
           "Idle",
           "Walk",
           "Run",
-          "AttackA",
-          "AttackB",
-          "SkillA",
-          "SkillB",
-          "Phase",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
+        ],
+        "optionalAnimations": [
+          "Phase"
         ],
         "phaseReadability": "silhouette + aura + HUD color must change together"
       },
@@ -813,7 +949,11 @@
       "productionFolder": "04_Boss/snow-mountain",
       "deliveryFile": "boss_thunder-lord_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-BOSS",
       "priority": "P3",
       "rarity": "god",
@@ -824,7 +964,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "10000-18000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -835,13 +975,17 @@
           "Idle",
           "Walk",
           "Run",
-          "AttackA",
-          "AttackB",
-          "SkillA",
-          "SkillB",
-          "Phase",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
+        ],
+        "optionalAnimations": [
+          "Phase"
         ],
         "phaseReadability": "silhouette + aura + HUD color must change together"
       },
@@ -860,7 +1004,11 @@
       "productionFolder": "04_Boss/dragon-palace",
       "deliveryFile": "boss_three-legged-crow_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-BOSS",
       "priority": "P3",
       "rarity": "god",
@@ -871,7 +1019,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "10000-18000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -882,13 +1030,17 @@
           "Idle",
           "Walk",
           "Run",
-          "AttackA",
-          "AttackB",
-          "SkillA",
-          "SkillB",
-          "Phase",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
+        ],
+        "optionalAnimations": [
+          "Phase"
         ],
         "phaseReadability": "silhouette + aura + HUD color must change together"
       },
@@ -907,7 +1059,11 @@
       "productionFolder": "04_Boss/underworld",
       "deliveryFile": "boss_moon-deity_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-BOSS",
       "priority": "P3",
       "rarity": "god",
@@ -918,7 +1074,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "10000-18000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -929,13 +1085,17 @@
           "Idle",
           "Walk",
           "Run",
-          "AttackA",
-          "AttackB",
-          "SkillA",
-          "SkillB",
-          "Phase",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
+        ],
+        "optionalAnimations": [
+          "Phase"
         ],
         "phaseReadability": "silhouette + aura + HUD color must change together"
       },

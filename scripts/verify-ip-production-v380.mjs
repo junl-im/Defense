@@ -34,10 +34,12 @@ for (const document of CORE_DOCUMENTS) {
 
 if (CHARACTER_PROPORTIONS.headsTall === 2.3
   && CHARACTER_PROPORTIONS.headPercent === 42
-  && CHARACTER_PROPORTIONS.bodyPercent === 35
-  && CHARACTER_PROPORTIONS.legPercent === 23
-  && CHARACTER_PROPORTIONS.headPercent + CHARACTER_PROPORTIONS.bodyPercent + CHARACTER_PROPORTIONS.legPercent === 100) {
-  pass('2.3-head character proportion contract 42/35/23');
+  && CHARACTER_PROPORTIONS.chestPercent === 18
+  && CHARACTER_PROPORTIONS.waistPercent === 15
+  && CHARACTER_PROPORTIONS.bodyPercent === 33
+  && CHARACTER_PROPORTIONS.legPercent === 25
+  && CHARACTER_PROPORTIONS.headPercent + CHARACTER_PROPORTIONS.chestPercent + CHARACTER_PROPORTIONS.waistPercent + CHARACTER_PROPORTIONS.legPercent === 100) {
+  pass('2.3-head character proportion contract 42/18/15/25');
 } else fail('character proportion contract mismatch');
 
 const expectedClasses = ['도깨비 전사', '도깨비 궁수', '도깨비 법사', '도사', '무당', '호랑이', '해태', '구미호', '산신령', '저승사자', '용'];
@@ -49,7 +51,7 @@ if (RARITIES.map((entry) => entry.id).join('|') === expectedRarities.join('|')) 
 else fail('rarity ladder mismatch');
 if (STAGES.length === 7) pass('stage roster 7/7'); else fail(`stage roster expected 7, found ${STAGES.length}`);
 if (MAIN_UI_SCREENS.length === 10) pass('main UI screens 10/10'); else fail(`main UI screens expected 10, found ${MAIN_UI_SCREENS.length}`);
-if (PLAYER_ANIMATIONS.length === 9) pass('player animation set 9/9'); else fail(`player animations expected 9, found ${PLAYER_ANIMATIONS.length}`);
+if (PLAYER_ANIMATIONS.length === 11 && PLAYER_ANIMATIONS.includes('Attack1') && PLAYER_ANIMATIONS.includes('Attack2') && PLAYER_ANIMATIONS.includes('Spawn')) pass('player animation set 11/11'); else fail(`player animations expected 11, found ${PLAYER_ANIMATIONS.length}`);
 
 const promptPath = resolve(productionRoot, '01_ArtBible/PROMPT_TEMPLATES_v3.8.0.json');
 const promptIds = new Set();
@@ -96,7 +98,7 @@ else {
 const animationPath = resolve(productionRoot, '10_Animation/STARTER_ANIMATION_MATRIX_v3.8.0.json');
 if (existsSync(animationPath)) {
   const animation = JSON.parse(readFileSync(animationPath, 'utf8'));
-  if (animation.characters === 11 && animation.clipsPerCharacter === 9 && animation.totalClipRows === 99 && animation.rows?.length === 99) pass('starter animation matrix 11x9=99');
+  if (animation.characters === 11 && animation.clipsPerCharacter === 11 && animation.totalClipRows === 121 && animation.rows?.length === 121) pass('starter animation matrix 11x11=121');
   else fail('starter animation matrix mismatch');
 } else fail('starter animation matrix missing');
 

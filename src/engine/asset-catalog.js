@@ -2,7 +2,7 @@ import { CHARACTER_ASSET_TARGETS, ENVIRONMENT_ASSET_TARGETS, EFFECT_ASSET_TARGET
 import { getAssetApproval } from './asset-quality.js';
 import { HERO_CLASS_ASSET_IDS } from '../hero-classes.js';
 
-const ASSET_REVISION = '4.1.0';
+const ASSET_REVISION = '5.0.0';
 const keyartBaseUrl = new URL('../assets/moon-market-keyart.webp', import.meta.url);
 keyartBaseUrl.searchParams.set('v', ASSET_REVISION);
 const keyartUrl = keyartBaseUrl.href;
@@ -160,7 +160,9 @@ export const ASSET_PRODUCTION_SUMMARY = Object.freeze({
   productionApprovedCharacterAssets: 0,
   artReviewCharacterAssets: 8,
   prototypeCharacterAssets: 11,
-  styleLockId: 'DD-AAA-CASUAL-SD-PBR-3.0'
+  styleLockId: 'DD-ABSOLUTE-ART-BIBLE-2.0',
+  runtimeLegacyStyleLockId: 'DD-AAA-CASUAL-SD-PBR-3.0',
+  absoluteArtBibleCompliantCharacterAssets: 0
 });
 
 export function selectAssetVariant(entry, tier = 'high') {

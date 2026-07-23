@@ -17,7 +17,8 @@ import {
   ASSET_COUNTS,
   TOTAL_ASSET_COUNT
 } from '../src/ip-production-spec.js';
-import { ABSOLUTE_STYLE_PROMPT, ABSOLUTE_NEGATIVE_PROMPT } from '../src/art-style-tokens.js';
+import { ART_BIBLE_VERSION, ABSOLUTE_STYLE_PROMPT, ABSOLUTE_NEGATIVE_PROMPT } from '../src/art-style-tokens.js';
+import { CHARACTER_DNA_VERSION, EQUIPMENT_DNA } from '../src/character-dna.js';
 
 const root = resolve(import.meta.dirname, '..');
 const productionRoot = resolve(root, 'production/DokkaebiDefense');
@@ -72,6 +73,10 @@ const makeAsset = ({
   deliveryFile: fileName,
   format,
   styleLockId: IP_STYLE_LOCK_ID,
+  artBibleVersion: ART_BIBLE_VERSION,
+  characterDnaVersion: ['characters', 'monsters', 'bosses'].includes(category) ? CHARACTER_DNA_VERSION : null,
+  productionGate: 'golden-vertical-slice-locked',
+  productionApproved: false,
   promptTemplateId: promptTemplateForCategory(category),
   priority,
   rarity,
@@ -152,7 +157,7 @@ for (let i = 0; i < characterNames.length; i++) {
       animations: PLAYER_ANIMATIONS,
       authoredDirections: AUTHORED_DIRECTIONS.map((entry) => entry.degrees),
       runtimeDirections: '5 authored + mirroring = 10-11 views',
-      sockets: ['WeaponSocket', 'AccessorySocket']
+      sockets: EQUIPMENT_DNA.requiredSockets
     },
     tags: ['korean-fantasy', 'chibi', group]
   }));
@@ -196,9 +201,9 @@ monsterRows.forEach((row, index) => assets.push(makeAsset({
   rarity: row.elite ? 'epic' : 'common',
   milestone: row.elite || index < 8 ? 'Enemy Readability Set' : 'Stage Expansion',
   technical: {
-    triangles: row.elite ? '7000-10000' : '5000-9000',
+    triangles: '6000-10000',
     textures: ['BaseColor', 'Normal', 'ORM', 'Emissive optional'],
-    animations: ['Idle', 'Walk', 'Run', 'Attack', 'Skill', 'Hit', 'Death'],
+    animations: PLAYER_ANIMATIONS,
     authoredDirections: AUTHORED_DIRECTIONS.map((entry) => entry.degrees)
   },
   tags: [row.stage.id, row.elite ? 'elite' : 'normal']
@@ -229,9 +234,10 @@ bossNames.forEach(([ko, en, slug], index) => assets.push(makeAsset({
   rarity: index < 6 ? 'legend' : index < 14 ? 'mythic' : 'god',
   milestone: index < 6 ? 'Launch Boss Lineup' : 'Boss Season Expansion',
   technical: {
-    triangles: '10000-18000',
+    triangles: '6000-10000',
     textures: ['BaseColor', 'Normal', 'ORM', 'Emissive'],
-    animations: ['Idle', 'Walk', 'Run', 'AttackA', 'AttackB', 'SkillA', 'SkillB', 'Phase', 'Hit', 'Death'],
+    animations: PLAYER_ANIMATIONS,
+    optionalAnimations: ['Phase'],
     phaseReadability: 'silhouette + aura + HUD color must change together'
   },
   tags: ['boss', STAGES[index % STAGES.length].id]
@@ -425,23 +431,23 @@ const master = {
 writeGenerated('ASSET_MASTERLIST_v3.8.0.json', stableJson(master));
 
 const promptTemplates = [
-  ['PROMPT-CHARACTER', 'Cute stylized Korean folklore character, 2.3 heads, large expressive eyes, rounded face, tiny body, oversized readable weapon, orthographic 5-view turnaround'],
-  ['PROMPT-MONSTER', 'Cute readable Korean folklore monster, friendly but threatening silhouette, oversized attack feature, orthographic 5-view turnaround'],
-  ['PROMPT-BOSS', 'Premium chibi Korean mythology boss, massive readable silhouette, phase-change ornament and aura, orthographic turnaround'],
-  ['PROMPT-WEAPON', 'Oversized stylized Korean fantasy weapon, hand painted PBR, rounded mobile-game shapes, isolated orthographic presentation'],
-  ['PROMPT-SKILL-ICON', 'Premium mobile skill icon, one bold centered symbol, high contrast, transparent background, no text'],
-  ['PROMPT-UI', 'Premium rounded mobile game UI, Korean fantasy, soft gradient, strong depth, high contrast, no text baked into art'],
-  ['PROMPT-VFX', 'Stylized mobile magic effect, clear core-tail-impact structure, soft glow, transparent sprite sheet, high visibility'],
-  ['PROMPT-TILE', 'Seamless stylized Korean fantasy map tile, hand painted, rounded low-poly forms, soft shadow, mobile quality'],
-  ['PROMPT-BACKGROUND', 'Bright Korean fantasy stage background, layered parallax composition, soft atmosphere, no characters, no text'],
-  ['PROMPT-OBJECT', 'Stylized Korean fantasy environment prop, rounded silhouette, hand painted PBR, game ready, orthographic view']
+  ['PROMPT-CHARACTER', 'Cute stylized Korean folklore character, 2.3 heads, 42/18/15/25 proportions, eyes 28% of face width, three-part 0.3-second silhouette, oversized weapon at least 18% character height, orthographic 5-view turnaround'],
+  ['PROMPT-MONSTER', 'Cute 70% + Cool 30% Korean folklore monster, Gross 0%, rounded silhouette, oversized attack feature, bright lighting, orthographic 5-view turnaround'],
+  ['PROMPT-BOSS', 'Premium chibi Korean mythology boss, player scale x2, weapon x3, FX x4, bright readable silhouette, orthographic turnaround'],
+  ['PROMPT-WEAPON', 'Oversized stylized Korean fantasy weapon, minimum 18% character height, hand-painted PBR, rounded beveled shapes, isolated orthographic presentation'],
+  ['PROMPT-SKILL-ICON', 'Premium mobile skill icon, 45-degree perspective, one bright object, soft shadow, no background, no text'],
+  ['PROMPT-UI', 'Premium rounded mobile game UI, Gold Border, Blue Glow, Depth, Drop Shadow, hover 105%, pressed 95%, no text baked into art'],
+  ['PROMPT-VFX', 'Stylized mobile magic effect, Outer Glow, Inner Glow, Gradient, Minimal Noise, Blur 10%, round cute particles, transparent sprite sheet'],
+  ['PROMPT-TILE', 'Seamless stylized Korean fantasy map tile, Large Shape, Simple Detail, Soft Edge, Hand Painted, mobile quality'],
+  ['PROMPT-BACKGROUND', 'Bright Korean fantasy stage background, Large Shape, Simple Detail, Soft Edge, Hand Painted, warm key and cool rim separation, no characters, no text'],
+  ['PROMPT-OBJECT', 'Stylized Korean fantasy environment prop, Large Shape, Simple Detail, Soft Edge, Hand Painted PBR, game ready, orthographic view']
 ].map(([id, categoryPrompt]) => ({
   id,
   styleLockId: IP_STYLE_LOCK_ID,
   absoluteStylePrompt: ABSOLUTE_STYLE_PROMPT,
   categoryPrompt,
   absoluteNegativePrompt: ABSOLUTE_NEGATIVE_PROMPT,
-  outputRule: 'White or transparent background as appropriate; no text, no watermark, no vector delivery'
+  outputRule: 'White background for turnarounds; transparent/no background for icons and VFX; no text, watermark, or vector delivery'
 }));
 writeGenerated('01_ArtBible/PROMPT_TEMPLATES_v3.8.0.json', stableJson({
   productionVersion: IP_PRODUCTION_VERSION,
@@ -508,7 +514,8 @@ writeGenerated('09_Sound/SOUND_CUE_CATALOG_v3.8.0.json', stableJson({
 }));
 
 const summaryRows = Object.entries(ASSET_COUNTS).map(([category, count]) => `| ${category} | ${count.toLocaleString()} |`).join('\n');
-writeGenerated('ASSET_MASTERLIST_SUMMARY_v3.8.0.md', `# ${IP_PROJECT_NAME} 에셋 제작 마스터리스트 요약\n\n- 제작 기준 버전: ${IP_PRODUCTION_VERSION}\n- 아트 잠금: ${IP_STYLE_LOCK_ID}\n- 사용자가 제시한 약 1,100개 목표의 정확한 산술 합계: **${TOTAL_ASSET_COUNT.toLocaleString()}개**\n- 현재 제작 승인: 0개\n- 모든 항목은 아트 리뷰와 기술 리뷰를 각각 통과해야 approved 상태가 된다.\n\n| 분류 | 수량 |\n|---|---:|\n${summaryRows}\n| **합계** | **${TOTAL_ASSET_COUNT.toLocaleString()}** |\n\n## 우선순위\n\n- P0: 11개 시작 직업, 핵심 적·보스, 전투 HUD, 첫 2개 스테이지\n- P1: 승급 캐릭터, 런칭 UI, 장비·스킬 아이콘, 3~4번째 스테이지\n- P2: 시즌 확장과 전체 수집 루프\n- P3: NPC·펫·월드 드레싱 장기 확장\n`);
+writeGenerated('ASSET_MASTERLIST_SUMMARY_v3.8.0.md', `# ${IP_PROJECT_NAME} 에셋 제작 마스터리스트 요약\n\n- 제작 기준 버전: ${IP_PRODUCTION_VERSION}\n- 아트 잠금: ${IP_STYLE_LOCK_ID}\n- 사용자가 제시한 약 1,100개 목표의 정확한 산술 합계: **${TOTAL_ASSET_COUNT.toLocaleString()}개**\n- 현재 제작 승인: 0개\n- 1,130개 전 항목은 Absolute Art Bible v2.0 잠금과 골든 수직 슬라이스 승인 전까지 productionApproved=false를 유지한다.
+- 캐릭터·몬스터·보스는 Character DNA v3.0, 6k~10k triangles, 11개 공통 클립 계약을 사용한다.\n\n| 분류 | 수량 |\n|---|---:|\n${summaryRows}\n| **합계** | **${TOTAL_ASSET_COUNT.toLocaleString()}** |\n\n## 우선순위\n\n- P0: 11개 시작 직업, 핵심 적·보스, 전투 HUD, 첫 2개 스테이지\n- P1: 승급 캐릭터, 런칭 UI, 장비·스킬 아이콘, 3~4번째 스테이지\n- P2: 시즌 확장과 전체 수집 루프\n- P3: NPC·펫·월드 드레싱 장기 확장\n`);
 
 if (checkOnly) console.log(`PASS IP production master list ${TOTAL_ASSET_COUNT} assets is current`);
 else console.log(`Generated ${writes.length} IP production files · ${TOTAL_ASSET_COUNT} assets`);

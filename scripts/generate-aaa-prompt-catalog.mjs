@@ -62,16 +62,16 @@ const make = (category, index, name, detail, extra = {}) => ({
 
 const assets = [];
 characterNames.forEach((name, index) => assets.push(make('character', index, name, `${characterDetails[index % characterDetails.length]}, Korean folklore guardian, premium collectible toy-like form, separated Head HairOrHat Body Weapon Accessory parts`)));
-monsterNames.forEach((name, index) => assets.push(make('monster', index, name, `cute hostile Korean folklore monster, asymmetrical silhouette, readable attack anticipation, rounded toy-like body, distinct role silhouette, separated Head Body Weapon Accessory parts`)));
-bossNames.forEach((name, index) => assets.push(make('boss', index, name, `large collectible chibi boss, huge expressive head, oversized paws or hands, compact powerful body, phase one and phase two silhouette comparison, premium Korean folklore ornaments`, { triangleTarget: '10k-18k' })));
+monsterNames.forEach((name, index) => assets.push(make('monster', index, name, `Cute 70% + Cool 30%, Gross 0%, Korean folklore monster, readable 0.3-second silhouette, rounded beveled body, bright lighting, distinct role silhouette, separated Helmet Shoulder Weapon Accessory BackItem parts`)));
+bossNames.forEach((name, index) => assets.push(make('boss', index, name, `large collectible chibi boss, player scale x2, weapon x3, FX x4, huge expressive head, compact powerful body, bright Korean folklore styling`, { triangleTarget: '10k-18k' })));
 let index = 0;
-for (const theme of weaponThemes) for (const type of weaponTypes) assets.push(make('weapon', index++, `${theme} ${type}`, `premium stylized Korean fantasy ${type}, ${theme} theme, oversized readable shape, hand painted texture, clean game-ready topology, white background orthographic prop turnaround`, { triangleTarget: '1k-4k' }));
+for (const theme of weaponThemes) for (const type of weaponTypes) assets.push(make('weapon', index++, `${theme} ${type}`, `premium stylized Korean fantasy ${type}, ${theme} theme, minimum 18% character height, oversized readable shape, hand-painted stylized PBR, rounded bevel, white background orthographic prop turnaround`, { triangleTarget: '1k-4k' }));
 index = 0;
-for (const group of uiGroups) for (const item of uiItems) assets.push(make('ui', index++, `${group} ${item}`, `Premium Mobile Game UI, Fantasy Korean Style, Soft Gradient, Gold Frame, Rounded Shape, High Contrast, Simple Readability, No Text, Mobile Game Icon, ${group} ${item}, 1024x1024`, { minimumReadability: '32px' }));
+for (const group of uiGroups) for (const item of uiItems) assets.push(make('ui', index++, `${group} ${item}`, `Premium Mobile Game UI, Korean Fantasy, Gold Border, Blue Glow, Rounded, Depth, Drop Shadow, hover 105%, pressed 95%, No Text, ${group} ${item}, 1024x1024`, { minimumReadability: '32px' }));
 index = 0;
-for (const element of vfxElements) for (const event of vfxEvents) assets.push(make('vfx', index++, `${element} ${event}`, `Stylized Magic Effect, ${element} energy, ${event}, soft glow, mobile game, fantasy, high visibility, transparent background, VFX sprite sheet style, core trail impact stages`, { atlasReady: true }));
+for (const element of vfxElements) for (const event of vfxEvents) assets.push(make('vfx', index++, `${element} ${event}`, `Stylized Magic Effect, ${element} energy, ${event}, Outer Glow, Inner Glow, Gradient, Minimal Noise, Blur 10%, Round Cute Particles, bright mobile game visibility, transparent background`, { atlasReady: true }));
 index = 0;
-for (const variant of environmentVariants) for (const type of environmentTypes) assets.push(make('environment', index++, `${variant} ${type}`, `stylized Korean fantasy ${type}, ${variant} variant, hand painted, soft shadows, rounded low poly shape, game ready, modular mobile environment asset, orthographic front side top views`, { gridMeters: 8 }));
+for (const variant of environmentVariants) for (const type of environmentTypes) assets.push(make('environment', index++, `${variant} ${type}`, `stylized Korean fantasy ${type}, ${variant} variant, Large Shape, Simple Detail, Soft Edge, Hand Painted, bright soft shadow, rounded low poly shape, game ready, orthographic front side top views`, { gridMeters: 8 }));
 
 const counts = assets.reduce((acc, asset) => ((acc[asset.category] = (acc[asset.category] || 0) + 1), acc), {});
 const document = {

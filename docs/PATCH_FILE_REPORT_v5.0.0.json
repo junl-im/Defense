@@ -1,0 +1,366 @@
+{
+  "version": "5.0.0",
+  "engineVersion": "4.0.0",
+  "patchName": "Moonstone Genesis",
+  "baseVersion": "4.2.0",
+  "applyMode": "overwrite-project-root",
+  "distIncluded": false,
+  "added": [
+    "docs/ART_ASSET_APPROVAL_REGISTRY_v5.0.0.json",
+    "docs/MOONSTONE_GENESIS_v5.0.0.md",
+    "docs/NEXT_PATCH_LINEUP_v5.x.md",
+    "docs/PATCH_APPLY_v5.0.0.md",
+    "docs/PATCH_FILE_REPORT_v5.0.0.json",
+    "docs/PATCH_NOTES_v5.0.0.md",
+    "production/DokkaebiDefense/01_ArtBible/CHARACTER_DNA_v3.0.md",
+    "scripts/verify-v500.mjs",
+    "src/character-dna.js",
+    "src/engine/frame-budget-scheduler.js",
+    "src/engine/quality-governor.js",
+    "src/production-console.js",
+    "src/runtime-art-harmonizer.js"
+  ],
+  "modified": [
+    "PROJECT_HANDOFF.md",
+    "README.md",
+    "docs/ASSET_MANIFEST.json",
+    "docs/CURRENT_ASSET_AUDIT.json",
+    "docs/PRODUCTION_ROADMAP.md",
+    "index.html",
+    "package-lock.json",
+    "package.json",
+    "production/DokkaebiDefense/02_Characters/CHARACTER_CATALOG_v3.8.0.json",
+    "production/DokkaebiDefense/02_Characters/Weapons/WEAPON_CATALOG_v3.8.0.json",
+    "production/DokkaebiDefense/03_Monsters/MONSTER_CATALOG_v3.8.0.json",
+    "production/DokkaebiDefense/04_Boss/BOSS_CATALOG_v3.8.0.json",
+    "production/DokkaebiDefense/05_UI/UI_ASSET_CATALOG_v3.8.0.json",
+    "production/DokkaebiDefense/06_Icons/SKILL_ICON_CATALOG_v3.8.0.json",
+    "production/DokkaebiDefense/07_VFX/VFX_CATALOG_v3.8.0.json",
+    "production/DokkaebiDefense/08_Map/BACKGROUND_CATALOG_v3.8.0.json",
+    "production/DokkaebiDefense/08_Map/OBJECT_CATALOG_v3.8.0.json",
+    "production/DokkaebiDefense/08_Map/TILE_CATALOG_v3.8.0.json",
+    "production/DokkaebiDefense/ASSET_MASTERLIST_SUMMARY_v3.8.0.md",
+    "production/DokkaebiDefense/ASSET_MASTERLIST_v3.8.0.json",
+    "scripts/audit-current-assets.mjs",
+    "scripts/build-static-fallback.mjs",
+    "scripts/generate-ip-production-masterlist.mjs",
+    "scripts/verify-project.mjs",
+    "scripts/verify-static-dist.mjs",
+    "scripts/verify-v420.mjs",
+    "src/art-production-gate.js",
+    "src/engine/asset-catalog.js",
+    "src/engine/asset-pipeline.js",
+    "src/engine/engine-config.js",
+    "src/engine/index.js",
+    "src/engine/mobile-engine.js",
+    "src/engine/performance-monitor.js",
+    "src/engine/render-stats-hud.js",
+    "src/firebase.js",
+    "src/main.js",
+    "src/style.css"
+  ],
+  "deleted": [],
+  "counts": {
+    "added": 13,
+    "modified": 37,
+    "deleted": 0,
+    "totalPatchFiles": 50
+  },
+  "files": [
+    {
+      "path": "PROJECT_HANDOFF.md",
+      "sha256": "d0a02eb8cf3478eb769790dbb3ade559a099348d6d4b802b5d03a1797c6b432c",
+      "bytes": 125129,
+      "change": "modified"
+    },
+    {
+      "path": "README.md",
+      "sha256": "d6570fa46f71d53852b65dfb961a6bc4f0fcc96c6cd512698a26f03f5b372c50",
+      "bytes": 2000,
+      "change": "modified"
+    },
+    {
+      "path": "docs/ART_ASSET_APPROVAL_REGISTRY_v5.0.0.json",
+      "sha256": "e8bab2e3e612327294d3fd78a40c38e881ca3e0350d452f986f65638720e5728",
+      "bytes": 8678,
+      "change": "added"
+    },
+    {
+      "path": "docs/ASSET_MANIFEST.json",
+      "sha256": "faa63fdbb5bd55e90f828921eaad3e532dfbbf92cda68a1817b9da37273f76a6",
+      "bytes": 19729,
+      "change": "modified"
+    },
+    {
+      "path": "docs/CURRENT_ASSET_AUDIT.json",
+      "sha256": "b4016498a5d7f4754e09764881957f1eee87ddb03e8f9458b5539d6e216b6f23",
+      "bytes": 32848,
+      "change": "modified"
+    },
+    {
+      "path": "docs/MOONSTONE_GENESIS_v5.0.0.md",
+      "sha256": "1cf49f2036e3a656cbc8aa81df4a3a09c18cf95b4930020ff41f4d59f8a9ace6",
+      "bytes": 2038,
+      "change": "added"
+    },
+    {
+      "path": "docs/NEXT_PATCH_LINEUP_v5.x.md",
+      "sha256": "e1e2fd5bff09070b3413025e41608e63a0c9a2305b78c3d267c26426078b9974",
+      "bytes": 971,
+      "change": "added"
+    },
+    {
+      "path": "docs/PATCH_APPLY_v5.0.0.md",
+      "sha256": "b735cbcc1c5f04ffb2c71065a5522670bc5c78c4f5d2a73b4c22c12cb643d7b5",
+      "bytes": 560,
+      "change": "added"
+    },
+    {
+      "path": "docs/PATCH_NOTES_v5.0.0.md",
+      "sha256": "3d64d237d0aae0383f3cd95519daa0345cc1607298ddf18d74b6004cd0d8052c",
+      "bytes": 923,
+      "change": "added"
+    },
+    {
+      "path": "docs/PRODUCTION_ROADMAP.md",
+      "sha256": "5e4c0397ffc066a942597d856627de0d624328b7a4f5e42836e0cbb1125df932",
+      "bytes": 2847,
+      "change": "modified"
+    },
+    {
+      "path": "index.html",
+      "sha256": "e331e80492f45c506d9c7895e935e26009d1fcefabc16ad2df2c2829f8ace7fe",
+      "bytes": 34328,
+      "change": "modified"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "14046b98fdc20f76fb4d3ddcfffdcf65f3f3d92b9af14a962a5d7447d4d6237a",
+      "bytes": 28666,
+      "change": "modified"
+    },
+    {
+      "path": "package.json",
+      "sha256": "aed7f0470b47e9ae4cd40ffab11eaad3bb13d7f07deed7abd7dda61ebe74ea15",
+      "bytes": 5188,
+      "change": "modified"
+    },
+    {
+      "path": "production/DokkaebiDefense/01_ArtBible/CHARACTER_DNA_v3.0.md",
+      "sha256": "dc72834d14bbd524b29db4788190fb4b2edf608edf56105ecfc83bce7598c3cf",
+      "bytes": 2673,
+      "change": "added"
+    },
+    {
+      "path": "production/DokkaebiDefense/02_Characters/CHARACTER_CATALOG_v3.8.0.json",
+      "sha256": "829d16759f23bcc53ecf971501ebe7cf927270042c15883ef5e25bd5ae0360e6",
+      "bytes": 86782,
+      "change": "modified"
+    },
+    {
+      "path": "production/DokkaebiDefense/02_Characters/Weapons/WEAPON_CATALOG_v3.8.0.json",
+      "sha256": "b3da42172d31ba1da94dcfdf852764f3d1f848f57c17d559e0307d2c06e9ef57",
+      "bytes": 103509,
+      "change": "modified"
+    },
+    {
+      "path": "production/DokkaebiDefense/03_Monsters/MONSTER_CATALOG_v3.8.0.json",
+      "sha256": "db2c9ab265e957f096febd06022b70ff38419842469ece8d4885f006117f3b2e",
+      "bytes": 88006,
+      "change": "modified"
+    },
+    {
+      "path": "production/DokkaebiDefense/04_Boss/BOSS_CATALOG_v3.8.0.json",
+      "sha256": "049e9acd57620a018f6103b24cf5f9f020cde0cdef5028992f4b447626d2ed7c",
+      "bytes": 29214,
+      "change": "modified"
+    },
+    {
+      "path": "production/DokkaebiDefense/05_UI/UI_ASSET_CATALOG_v3.8.0.json",
+      "sha256": "100b7c59cf31a5c37f0938340b39c146c410284574eac7f0f1624da59e31323c",
+      "bytes": 254470,
+      "change": "modified"
+    },
+    {
+      "path": "production/DokkaebiDefense/06_Icons/SKILL_ICON_CATALOG_v3.8.0.json",
+      "sha256": "8309f3b14c212804783d8237a8534ab4374b4a9af27eec31382379f88be06787",
+      "bytes": 125432,
+      "change": "modified"
+    },
+    {
+      "path": "production/DokkaebiDefense/07_VFX/VFX_CATALOG_v3.8.0.json",
+      "sha256": "5855f4518549b9f4d30f11af84f95c1765ff008312c6eea81ac7ded5ba02376d",
+      "bytes": 180577,
+      "change": "modified"
+    },
+    {
+      "path": "production/DokkaebiDefense/08_Map/BACKGROUND_CATALOG_v3.8.0.json",
+      "sha256": "cdcdc7f56a58197a3ff50524cb9582eba23063456385cbeacb028a703738f263",
+      "bytes": 32376,
+      "change": "modified"
+    },
+    {
+      "path": "production/DokkaebiDefense/08_Map/OBJECT_CATALOG_v3.8.0.json",
+      "sha256": "e214d48987e112a1b4a54de6778980d441dd79289e2b3f86484ab28d817e18ec",
+      "bytes": 267652,
+      "change": "modified"
+    },
+    {
+      "path": "production/DokkaebiDefense/08_Map/TILE_CATALOG_v3.8.0.json",
+      "sha256": "98745d6d5a6ba085fe218bf4c081833ad5374edddec67731808900bda3168c6b",
+      "bytes": 77984,
+      "change": "modified"
+    },
+    {
+      "path": "production/DokkaebiDefense/ASSET_MASTERLIST_SUMMARY_v3.8.0.md",
+      "sha256": "c0e12431fe50b149c029ddc1faa80e97ea9f10c423b26b61ca45b0f72a424f5d",
+      "bytes": 1016,
+      "change": "modified"
+    },
+    {
+      "path": "production/DokkaebiDefense/ASSET_MASTERLIST_v3.8.0.json",
+      "sha256": "8fa21017f9575b1416e02d8736a43ca7de9ce8571c2fac6eef0fbda41ccd8460",
+      "bytes": 1245359,
+      "change": "modified"
+    },
+    {
+      "path": "scripts/audit-current-assets.mjs",
+      "sha256": "31621ef3a8cc1a7fc31489589c0fa3e8299428116843356811d263189edadbdf",
+      "bytes": 7481,
+      "change": "modified"
+    },
+    {
+      "path": "scripts/build-static-fallback.mjs",
+      "sha256": "bbaeac8108c16a484463623db0636a8cfe34f0f1e8a46e736f21447b16065ac0",
+      "bytes": 1701,
+      "change": "modified"
+    },
+    {
+      "path": "scripts/generate-ip-production-masterlist.mjs",
+      "sha256": "50f56d28c881453bed0ddcf19c45fd17982bab49b915fe8f4c8ffb6b8cabf2c1",
+      "bytes": 25805,
+      "change": "modified"
+    },
+    {
+      "path": "scripts/verify-project.mjs",
+      "sha256": "85da81580737e97e8d4c2226de11f3c0c27278f2e9bb6c376c9502c61795d289",
+      "bytes": 27127,
+      "change": "modified"
+    },
+    {
+      "path": "scripts/verify-static-dist.mjs",
+      "sha256": "5302353d6c0d043a51c3ee5a0a7e555dc98a27794888ee012c4393a6344f3a5d",
+      "bytes": 2990,
+      "change": "modified"
+    },
+    {
+      "path": "scripts/verify-v420.mjs",
+      "sha256": "b7d661d1d330248c1592c9472219ebfffb7a95fcd408a0a460ff64a579d766ca",
+      "bytes": 1384,
+      "change": "modified"
+    },
+    {
+      "path": "scripts/verify-v500.mjs",
+      "sha256": "ab9cfef43f8f9eaf5603a060ad6dec56122f72f4afdac38b345b9feb6e2de0b5",
+      "bytes": 7535,
+      "change": "added"
+    },
+    {
+      "path": "src/art-production-gate.js",
+      "sha256": "cf94a25362b7fc46c7887ea797418f2220e045d6bd058503304952e76ed2fbd5",
+      "bytes": 3548,
+      "change": "modified"
+    },
+    {
+      "path": "src/character-dna.js",
+      "sha256": "a27ad9004e2a859d10450499eb834e429a4e2355291f0d2634e7c97f1cf75103",
+      "bytes": 6386,
+      "change": "added"
+    },
+    {
+      "path": "src/engine/asset-catalog.js",
+      "sha256": "31b6dd47d600d93c6cf1e3ec3d0a4a1fb14986276380a7d1fa276748d5eed4f6",
+      "bytes": 8192,
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/asset-pipeline.js",
+      "sha256": "de95df9b24b8595dccd785302deb74cefb96f5fe8216ef8c3a0fd93d5541dfd9",
+      "bytes": 12578,
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/engine-config.js",
+      "sha256": "a90d50bf2f6f5ab269efe95a982985121b738239d140c3732290d10b53a6adbe",
+      "bytes": 1436,
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/frame-budget-scheduler.js",
+      "sha256": "379a6e3cf244b64287ea7744d0830d5eaf2d745afff794f57b6ac7c45da24787",
+      "bytes": 1255,
+      "change": "added"
+    },
+    {
+      "path": "src/engine/index.js",
+      "sha256": "2c1e9fd259782f18c5453d5ff47da3e55fbdd50db675928de1342ca9014ba6b0",
+      "bytes": 1336,
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/mobile-engine.js",
+      "sha256": "0f8805414cb28729287b2b0a57e257cba68ab73914818d48052e26c2cbfd94f4",
+      "bytes": 6091,
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/performance-monitor.js",
+      "sha256": "293ef3940c9a1a3fe718a3d4806a2ecbd1f6c1519513557e39d292f5fbc3c153",
+      "bytes": 4792,
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/quality-governor.js",
+      "sha256": "aca8e2b11ec5c507200731d00028dbe871f7e643babac8d521dff60e0cf10931",
+      "bytes": 3648,
+      "change": "added"
+    },
+    {
+      "path": "src/engine/render-stats-hud.js",
+      "sha256": "54ba31aa5c07e3411ae77805a3fef0bbd803bbeb18fda4de9f9a9e7b17dfc32c",
+      "bytes": 2811,
+      "change": "modified"
+    },
+    {
+      "path": "src/firebase.js",
+      "sha256": "00205500e8513ebf3990dbfff356e86790f5e49fc00ef9bcdbfe7796a16fec7a",
+      "bytes": 2556,
+      "change": "modified"
+    },
+    {
+      "path": "src/main.js",
+      "sha256": "22792e64d7179e46eabebc45ebffb6cda5f4e437af87ff477ad8d5a89d1051d4",
+      "bytes": 287851,
+      "change": "modified"
+    },
+    {
+      "path": "src/production-console.js",
+      "sha256": "a52427b90675d8192126cfd2967f42875c8da9d7e1cab4720ac707373ffca34e",
+      "bytes": 3229,
+      "change": "added"
+    },
+    {
+      "path": "src/runtime-art-harmonizer.js",
+      "sha256": "62a73bf9367ef6f494667689f591f1bb52bf448d7475299564fc972dd019a074",
+      "bytes": 2608,
+      "change": "added"
+    },
+    {
+      "path": "src/style.css",
+      "sha256": "3b701671e9c5c115271e513e6ff123026d8baeaf90cde297d0c81d39fcde151a",
+      "bytes": 152345,
+      "change": "modified"
+    }
+  ],
+  "note": "PATCH_FILE_REPORT_v5.0.0.json is intentionally excluded from its own checksum list."
+}

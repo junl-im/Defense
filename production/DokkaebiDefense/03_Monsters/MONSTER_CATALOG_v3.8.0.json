@@ -14,7 +14,11 @@
       "productionFolder": "03_Monsters/goblin-village",
       "deliveryFile": "mon_goblin-village_wandering-ghost_001.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P0",
       "rarity": "common",
@@ -25,7 +29,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -36,10 +40,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -64,7 +72,11 @@
       "productionFolder": "03_Monsters/goblin-village",
       "deliveryFile": "mon_goblin-village_skeleton-soldier_002.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P0",
       "rarity": "common",
@@ -75,7 +87,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -86,10 +98,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -114,7 +130,11 @@
       "productionFolder": "03_Monsters/goblin-village",
       "deliveryFile": "mon_goblin-village_crow-yokai_003.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P0",
       "rarity": "common",
@@ -125,7 +145,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -136,10 +156,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -164,7 +188,11 @@
       "productionFolder": "03_Monsters/goblin-village",
       "deliveryFile": "mon_goblin-village_mountain-wolf_004.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P0",
       "rarity": "common",
@@ -175,7 +203,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -186,10 +214,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -214,7 +246,11 @@
       "productionFolder": "03_Monsters/goblin-village",
       "deliveryFile": "mon_goblin-village_greedy-pig_005.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P0",
       "rarity": "common",
@@ -225,7 +261,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -236,10 +272,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -264,7 +304,11 @@
       "productionFolder": "03_Monsters/goblin-village",
       "deliveryFile": "mon_goblin-village_venom-spider_006.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P0",
       "rarity": "common",
@@ -275,7 +319,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -286,10 +330,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -314,7 +362,11 @@
       "productionFolder": "03_Monsters/goblin-village",
       "deliveryFile": "mon_goblin-village_night-bat_007.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P0",
       "rarity": "common",
@@ -325,7 +377,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -336,10 +388,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -364,7 +420,11 @@
       "productionFolder": "03_Monsters/goblin-village",
       "deliveryFile": "mon_goblin-village_trick-goblin_008.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P0",
       "rarity": "common",
@@ -375,7 +435,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -386,10 +446,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -414,7 +478,11 @@
       "productionFolder": "03_Monsters/bamboo-forest",
       "deliveryFile": "mon_bamboo-forest_wandering-ghost_009.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P0",
       "rarity": "common",
@@ -425,7 +493,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -436,10 +504,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -464,7 +536,11 @@
       "productionFolder": "03_Monsters/bamboo-forest",
       "deliveryFile": "mon_bamboo-forest_skeleton-soldier_010.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P0",
       "rarity": "common",
@@ -475,7 +551,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -486,10 +562,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -514,7 +594,11 @@
       "productionFolder": "03_Monsters/bamboo-forest",
       "deliveryFile": "mon_bamboo-forest_crow-yokai_011.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P0",
       "rarity": "common",
@@ -525,7 +609,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -536,10 +620,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -564,7 +652,11 @@
       "productionFolder": "03_Monsters/bamboo-forest",
       "deliveryFile": "mon_bamboo-forest_mountain-wolf_012.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P1",
       "rarity": "common",
@@ -575,7 +667,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -586,10 +678,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -614,7 +710,11 @@
       "productionFolder": "03_Monsters/bamboo-forest",
       "deliveryFile": "mon_bamboo-forest_greedy-pig_013.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P1",
       "rarity": "common",
@@ -625,7 +725,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -636,10 +736,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -664,7 +768,11 @@
       "productionFolder": "03_Monsters/bamboo-forest",
       "deliveryFile": "mon_bamboo-forest_venom-spider_014.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P1",
       "rarity": "common",
@@ -675,7 +783,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -686,10 +794,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -714,7 +826,11 @@
       "productionFolder": "03_Monsters/bamboo-forest",
       "deliveryFile": "mon_bamboo-forest_night-bat_015.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P1",
       "rarity": "common",
@@ -725,7 +841,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -736,10 +852,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -764,7 +884,11 @@
       "productionFolder": "03_Monsters/bamboo-forest",
       "deliveryFile": "mon_bamboo-forest_trick-goblin_016.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P1",
       "rarity": "common",
@@ -775,7 +899,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -786,10 +910,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -814,7 +942,11 @@
       "productionFolder": "03_Monsters/ruined-temple",
       "deliveryFile": "mon_ruined-temple_wandering-ghost_017.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P1",
       "rarity": "common",
@@ -825,7 +957,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -836,10 +968,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -864,7 +1000,11 @@
       "productionFolder": "03_Monsters/ruined-temple",
       "deliveryFile": "mon_ruined-temple_skeleton-soldier_018.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P1",
       "rarity": "common",
@@ -875,7 +1015,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -886,10 +1026,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -914,7 +1058,11 @@
       "productionFolder": "03_Monsters/ruined-temple",
       "deliveryFile": "mon_ruined-temple_crow-yokai_019.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P1",
       "rarity": "common",
@@ -925,7 +1073,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -936,10 +1084,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -964,7 +1116,11 @@
       "productionFolder": "03_Monsters/ruined-temple",
       "deliveryFile": "mon_ruined-temple_mountain-wolf_020.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P1",
       "rarity": "common",
@@ -975,7 +1131,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -986,10 +1142,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1014,7 +1174,11 @@
       "productionFolder": "03_Monsters/ruined-temple",
       "deliveryFile": "mon_ruined-temple_greedy-pig_021.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P1",
       "rarity": "common",
@@ -1025,7 +1189,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -1036,10 +1200,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1064,7 +1232,11 @@
       "productionFolder": "03_Monsters/ruined-temple",
       "deliveryFile": "mon_ruined-temple_venom-spider_022.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P1",
       "rarity": "common",
@@ -1075,7 +1247,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -1086,10 +1258,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1114,7 +1290,11 @@
       "productionFolder": "03_Monsters/ruined-temple",
       "deliveryFile": "mon_ruined-temple_night-bat_023.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P1",
       "rarity": "common",
@@ -1125,7 +1305,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -1136,10 +1316,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1164,7 +1348,11 @@
       "productionFolder": "03_Monsters/ruined-temple",
       "deliveryFile": "mon_ruined-temple_trick-goblin_024.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P1",
       "rarity": "common",
@@ -1175,7 +1363,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -1186,10 +1374,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1214,7 +1406,11 @@
       "productionFolder": "03_Monsters/snow-mountain",
       "deliveryFile": "mon_snow-mountain_wandering-ghost_025.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P1",
       "rarity": "common",
@@ -1225,7 +1421,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -1236,10 +1432,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1264,7 +1464,11 @@
       "productionFolder": "03_Monsters/snow-mountain",
       "deliveryFile": "mon_snow-mountain_skeleton-soldier_026.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P1",
       "rarity": "common",
@@ -1275,7 +1479,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -1286,10 +1490,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1314,7 +1522,11 @@
       "productionFolder": "03_Monsters/snow-mountain",
       "deliveryFile": "mon_snow-mountain_crow-yokai_027.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P1",
       "rarity": "common",
@@ -1325,7 +1537,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -1336,10 +1548,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1364,7 +1580,11 @@
       "productionFolder": "03_Monsters/snow-mountain",
       "deliveryFile": "mon_snow-mountain_mountain-wolf_028.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P1",
       "rarity": "common",
@@ -1375,7 +1595,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -1386,10 +1606,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1414,7 +1638,11 @@
       "productionFolder": "03_Monsters/snow-mountain",
       "deliveryFile": "mon_snow-mountain_greedy-pig_029.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P2",
       "rarity": "common",
@@ -1425,7 +1653,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -1436,10 +1664,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1464,7 +1696,11 @@
       "productionFolder": "03_Monsters/snow-mountain",
       "deliveryFile": "mon_snow-mountain_venom-spider_030.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P2",
       "rarity": "common",
@@ -1475,7 +1711,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -1486,10 +1722,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1514,7 +1754,11 @@
       "productionFolder": "03_Monsters/snow-mountain",
       "deliveryFile": "mon_snow-mountain_night-bat_031.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P2",
       "rarity": "common",
@@ -1525,7 +1769,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -1536,10 +1780,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1564,7 +1812,11 @@
       "productionFolder": "03_Monsters/snow-mountain",
       "deliveryFile": "mon_snow-mountain_trick-goblin_032.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P2",
       "rarity": "common",
@@ -1575,7 +1827,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -1586,10 +1838,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1614,7 +1870,11 @@
       "productionFolder": "03_Monsters/dragon-palace",
       "deliveryFile": "mon_dragon-palace_wandering-ghost_033.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P2",
       "rarity": "common",
@@ -1625,7 +1885,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -1636,10 +1896,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1664,7 +1928,11 @@
       "productionFolder": "03_Monsters/dragon-palace",
       "deliveryFile": "mon_dragon-palace_skeleton-soldier_034.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P2",
       "rarity": "common",
@@ -1675,7 +1943,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -1686,10 +1954,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1714,7 +1986,11 @@
       "productionFolder": "03_Monsters/dragon-palace",
       "deliveryFile": "mon_dragon-palace_crow-yokai_035.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P2",
       "rarity": "common",
@@ -1725,7 +2001,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -1736,10 +2012,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1764,7 +2044,11 @@
       "productionFolder": "03_Monsters/dragon-palace",
       "deliveryFile": "mon_dragon-palace_mountain-wolf_036.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P2",
       "rarity": "common",
@@ -1775,7 +2059,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -1786,10 +2070,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1814,7 +2102,11 @@
       "productionFolder": "03_Monsters/dragon-palace",
       "deliveryFile": "mon_dragon-palace_greedy-pig_037.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P2",
       "rarity": "common",
@@ -1825,7 +2117,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -1836,10 +2128,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1864,7 +2160,11 @@
       "productionFolder": "03_Monsters/dragon-palace",
       "deliveryFile": "mon_dragon-palace_venom-spider_038.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P2",
       "rarity": "common",
@@ -1875,7 +2175,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -1886,10 +2186,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1914,7 +2218,11 @@
       "productionFolder": "03_Monsters/dragon-palace",
       "deliveryFile": "mon_dragon-palace_night-bat_039.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P2",
       "rarity": "common",
@@ -1925,7 +2233,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -1936,10 +2244,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1964,7 +2276,11 @@
       "productionFolder": "03_Monsters/dragon-palace",
       "deliveryFile": "mon_dragon-palace_trick-goblin_040.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P2",
       "rarity": "common",
@@ -1975,7 +2291,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -1986,10 +2302,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2014,7 +2334,11 @@
       "productionFolder": "03_Monsters/underworld",
       "deliveryFile": "mon_underworld_wandering-ghost_041.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P2",
       "rarity": "common",
@@ -2025,7 +2349,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -2036,10 +2360,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2064,7 +2392,11 @@
       "productionFolder": "03_Monsters/underworld",
       "deliveryFile": "mon_underworld_skeleton-soldier_042.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P2",
       "rarity": "common",
@@ -2075,7 +2407,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -2086,10 +2418,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2114,7 +2450,11 @@
       "productionFolder": "03_Monsters/underworld",
       "deliveryFile": "mon_underworld_crow-yokai_043.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P2",
       "rarity": "common",
@@ -2125,7 +2465,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -2136,10 +2476,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2164,7 +2508,11 @@
       "productionFolder": "03_Monsters/underworld",
       "deliveryFile": "mon_underworld_mountain-wolf_044.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P2",
       "rarity": "common",
@@ -2175,7 +2523,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -2186,10 +2534,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2214,7 +2566,11 @@
       "productionFolder": "03_Monsters/underworld",
       "deliveryFile": "mon_underworld_greedy-pig_045.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P3",
       "rarity": "common",
@@ -2225,7 +2581,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -2236,10 +2592,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2264,7 +2624,11 @@
       "productionFolder": "03_Monsters/underworld",
       "deliveryFile": "mon_underworld_venom-spider_046.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P3",
       "rarity": "common",
@@ -2275,7 +2639,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -2286,10 +2650,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2314,7 +2682,11 @@
       "productionFolder": "03_Monsters/underworld",
       "deliveryFile": "mon_underworld_night-bat_047.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P3",
       "rarity": "common",
@@ -2325,7 +2697,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -2336,10 +2708,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2364,7 +2740,11 @@
       "productionFolder": "03_Monsters/underworld",
       "deliveryFile": "mon_underworld_trick-goblin_048.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P3",
       "rarity": "common",
@@ -2375,7 +2755,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -2386,10 +2766,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2414,7 +2798,11 @@
       "productionFolder": "03_Monsters/celestial-realm",
       "deliveryFile": "mon_celestial-realm_wandering-ghost_049.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P3",
       "rarity": "common",
@@ -2425,7 +2813,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -2436,10 +2824,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2464,7 +2856,11 @@
       "productionFolder": "03_Monsters/celestial-realm",
       "deliveryFile": "mon_celestial-realm_skeleton-soldier_050.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P3",
       "rarity": "common",
@@ -2475,7 +2871,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -2486,10 +2882,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2514,7 +2914,11 @@
       "productionFolder": "03_Monsters/celestial-realm",
       "deliveryFile": "mon_celestial-realm_crow-yokai_051.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P3",
       "rarity": "common",
@@ -2525,7 +2929,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -2536,10 +2940,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2564,7 +2972,11 @@
       "productionFolder": "03_Monsters/celestial-realm",
       "deliveryFile": "mon_celestial-realm_mountain-wolf_052.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P3",
       "rarity": "common",
@@ -2575,7 +2987,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -2586,10 +2998,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2614,7 +3030,11 @@
       "productionFolder": "03_Monsters/celestial-realm",
       "deliveryFile": "mon_celestial-realm_greedy-pig_053.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P3",
       "rarity": "common",
@@ -2625,7 +3045,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -2636,10 +3056,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2664,7 +3088,11 @@
       "productionFolder": "03_Monsters/celestial-realm",
       "deliveryFile": "mon_celestial-realm_venom-spider_054.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P3",
       "rarity": "common",
@@ -2675,7 +3103,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -2686,10 +3114,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2714,7 +3146,11 @@
       "productionFolder": "03_Monsters/celestial-realm",
       "deliveryFile": "mon_celestial-realm_night-bat_055.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P3",
       "rarity": "common",
@@ -2725,7 +3161,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -2736,10 +3172,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2764,7 +3204,11 @@
       "productionFolder": "03_Monsters/celestial-realm",
       "deliveryFile": "mon_celestial-realm_trick-goblin_056.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P3",
       "rarity": "common",
@@ -2775,7 +3219,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "5000-9000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -2786,10 +3230,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2814,7 +3262,11 @@
       "productionFolder": "03_Monsters/Elite",
       "deliveryFile": "mon_ruined-temple_giant-ghost_057.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P3",
       "rarity": "epic",
@@ -2825,7 +3277,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "7000-10000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -2836,10 +3288,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2864,7 +3320,11 @@
       "productionFolder": "03_Monsters/Elite",
       "deliveryFile": "mon_snow-mountain_flame-dokkaebi_058.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P3",
       "rarity": "epic",
@@ -2875,7 +3335,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "7000-10000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -2886,10 +3346,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2914,7 +3378,11 @@
       "productionFolder": "03_Monsters/Elite",
       "deliveryFile": "mon_dragon-palace_frost-dokkaebi_059.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P3",
       "rarity": "epic",
@@ -2925,7 +3393,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "7000-10000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -2936,10 +3404,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2964,7 +3436,11 @@
       "productionFolder": "03_Monsters/Elite",
       "deliveryFile": "mon_underworld_giant-ghost_060.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-MONSTER",
       "priority": "P3",
       "rarity": "epic",
@@ -2975,7 +3451,7 @@
       "owner": "unassigned",
       "dependencies": [],
       "technical": {
-        "triangles": "7000-10000",
+        "triangles": "6000-10000",
         "textures": [
           "BaseColor",
           "Normal",
@@ -2986,10 +3462,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
-          "Skill",
+          "Attack1",
+          "Attack2",
+          "Skill1",
+          "Skill2",
           "Hit",
-          "Death"
+          "Death",
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,

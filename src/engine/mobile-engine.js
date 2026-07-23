@@ -3,6 +3,7 @@ import { MOBILE_ENGINE_CONFIG } from './engine-config.js';
 import { PerformanceMonitor } from './performance-monitor.js';
 import { GeometryBudget } from './geometry-budget.js';
 import { WorldChunkManager } from './world-chunk-manager.js';
+import { AdaptiveQualityGovernor } from './quality-governor.js';
 
 function detectDevice() {
   const ua = navigator.userAgent || '';
@@ -19,12 +20,10 @@ export class MobileGameEngine {
   constructor(config = MOBILE_ENGINE_CONFIG) {
     this.config = config;
     this.device = detectDevice();
-    this.qualityScale = this.device.lowEnd ? 0.9 : 1;
-    this.effectBudgetScale = this.device.lowEnd
-      ? config.adaptiveQuality.lowEffectScale
-      : this.device.mobile
-        ? config.adaptiveQuality.mobileEffectScale
-        : config.adaptiveQuality.desktopEffectScale;
+    this.qualityGovernor = new AdaptiveQualityGovernor(config.adaptiveQuality, this.device);
+    this.qualityProfile = this.qualityGovernor.profile;
+    this.qualityScale = this.qualityProfile.scale;
+    this.effectBudgetScale = this.qualityProfile.effectScale;
     this.monitor = new PerformanceMonitor(config.adaptiveQuality);
     this.geometryBudget = new GeometryBudget(config.budgets, { strict: false });
     this.worldChunks = new WorldChunkManager(config.world);
@@ -83,7 +82,7 @@ export class MobileGameEngine {
     this.renderer.toneMapping = THREE.NeutralToneMapping;
     this.renderer.toneMappingExposure = 1.04;
     const shadows = this.device.mobile ? this.config.renderer.shadowsMobile : this.config.renderer.shadowsDesktop;
-    this.renderer.shadowMap.enabled = Boolean(shadows);
+    this.renderer.shadowMap.enabled = Boolean(shadows && this.qualityProfile.shadowScale > 0);
     if (this.renderer.shadowMap.enabled) this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.setPixelRatio(this.pixelRatio());
     return this.renderer;
@@ -105,18 +104,18 @@ export class MobileGameEngine {
   }
 
   updateAdaptiveQuality(dt) {
-    const result = this.monitor.sample(dt, this.qualityScale);
-    if (!result || Math.abs(result.scale - this.qualityScale) < 0.001) return null;
+    const sample = this.monitor.sample(dt, this.qualityScale);
+    if (!sample) return null;
+    const snapshot = { ...this.monitor.snapshot, fps: sample.fps };
+    const result = this.qualityGovernor.evaluate(snapshot);
+    if (!result) return null;
+    this.qualityProfile = result;
     this.qualityScale = result.scale;
-    this.effectBudgetScale = result.tier === 'low'
-      ? this.config.adaptiveQuality.lowEffectScale
-      : result.tier === 'medium'
-        ? this.config.adaptiveQuality.mediumEffectScale
-        : this.device.mobile
-          ? this.config.adaptiveQuality.mobileEffectScale
-          : this.config.adaptiveQuality.desktopEffectScale;
+    this.effectBudgetScale = result.effectScale;
+    const shadowCapable = this.device.mobile ? this.config.renderer.shadowsMobile : this.config.renderer.shadowsDesktop;
+    if (this.renderer?.shadowMap) this.renderer.shadowMap.enabled = Boolean(shadowCapable && result.shadowScale > 0);
     this.renderer?.setPixelRatio(this.pixelRatio());
-    return { ...result, effectBudgetScale: this.effectBudgetScale };
+    return { ...result, fps: sample.fps, performance: snapshot, effectBudgetScale: this.effectBudgetScale };
   }
 
   get diagnostics() {
@@ -125,11 +124,14 @@ export class MobileGameEngine {
       device: this.device,
       qualityScale: this.qualityScale,
       effectBudgetScale: this.effectBudgetScale,
+      qualityProfile: this.qualityProfile,
+      qualityGovernor: this.qualityGovernor.diagnostics,
       pixelRatio: this.pixelRatio(),
       shadows: Boolean(this.renderer?.shadowMap.enabled),
       assetQualityTier: this.assetQualityTier,
       textureBudgetMB: this.textureBudgetMB,
       rendererFallback: this.rendererFallback || 'none',
+      performance: this.monitor.snapshot,
       rendererInfo: this.renderer?.info || null
     };
   }

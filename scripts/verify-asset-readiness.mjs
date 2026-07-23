@@ -11,8 +11,8 @@ const assert = (condition, message) => condition ? console.log(`PASS ${message}`
 assert(ART_DIRECTION.pillars.length >= 4, '아트 방향 핵심 원칙 4개 이상');
 assert(IMPOSTOR_SPEC.directions === 11 && IMPOSTOR_SPEC.frameOrder.length === 11, '11방향 임포스터 규격');
 assert(ASSET_LOD_POLICY.near && ASSET_LOD_POLICY.mid && ASSET_LOD_POLICY.far, '3단 LOD 정책');
-assert(CHARACTER_ASSET_TARGETS.guardian.requiredAnimations.includes('run') && CHARACTER_ASSET_TARGETS.guardian.requiredAnimations.includes('death'), '주인공 7개 필수 애니메이션 규격');
-assert(CHARACTER_ASSET_TARGETS.boss.requiredAnimations.includes('phase'), '보스 페이즈 애니메이션 규격');
+assert(CHARACTER_ASSET_TARGETS.guardian.requiredAnimations.length === 11 && CHARACTER_ASSET_TARGETS.guardian.requiredAnimations.includes('attack2') && CHARACTER_ASSET_TARGETS.guardian.requiredAnimations.includes('spawn'), '모든 캐릭터 11개 필수 애니메이션 규격');
+assert(CHARACTER_ASSET_TARGETS.boss.requiredAnimations.length === 11, '보스 11개 공통 필수 애니메이션 규격');
 assert(ENVIRONMENT_ASSET_TARGETS.tileMeters === 8 && ENVIRONMENT_ASSET_TARGETS.primarySetCount === 8, '8m 전장 타일과 8개 환경 세트');
 assert(EFFECT_ASSET_TARGETS.projectileAtlasSize === 1024 && EFFECT_ASSET_TARGETS.distortion === false, '모바일 발사체 아틀라스 정책');
 assert(Object.keys(MODEL_ASSET_SLOTS.guardians).length === 6, '수호대 모델 슬롯 6종');
@@ -30,7 +30,7 @@ assert(selector.update(0, 0) === 0, '임포스터 선택기 초기 프레임');
 
 const bible = readFileSync(resolve(root, 'docs/ASSET_BIBLE.md'), 'utf8');
 const manifest = JSON.parse(readFileSync(resolve(root, 'docs/ASSET_MANIFEST.json'), 'utf8'));
-assert(bible.includes('5방향 원본 + 미러링') && bible.includes('스타일라이즈드 PBR') && bible.includes('절대 스타일 프롬프트'), 'AAA 에셋 아트 바이블 핵심 규격');
+assert(bible.includes('ABSOLUTE LOCKED') && bible.includes('42/18/15/25') && bible.includes('MASTER STYLE LOCK PROMPT') && bible.includes('좌우 반전'), 'Absolute Art Bible v2.0 핵심 규격');
 assert(manifest.impostorDirections === 11 && manifest.characters.guardians.length === 6, '에셋 납품 매니페스트');
 
 

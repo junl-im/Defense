@@ -73,7 +73,8 @@
             <button id="meta-btn" class="btn ghost meta-entry"><span>혼불 <b id="title-shards">0</b></span>수호자 성장</button>
           </div>
           <button id="controls-btn" class="title-settings-btn" type="button" aria-label="카메라와 조작 설정" title="카메라와 조작 설정"><span aria-hidden="true">⚙️</span></button>
-          <small class="title-version" aria-label="게임 버전 4.1.0">v4.1.0</small>
+          <div class="absolute-lock-badge"><span>ABSOLUTE ART LOCK</span><b>DNA v3.0 · ENGINE 4.0</b></div>
+          <small class="title-version" aria-label="게임 버전 5.0.0">v5.0.0</small>
         </div>
       </section>
 
@@ -412,8 +413,12 @@
               <span id="asset-diagnostics-count">승인 0 / 14</span>
             </div>
             <div class="golden-sample-scorecard">
-              <div><b>도깨비 전사 골든 샘플</b><small>Skin 1 · Clip 7 · Socket 2 · PBR Map 4</small></div>
-              <button id="golden-sample-preview-btn" type="button">7모션 검수</button>
+              <div><b>도깨비 전사 골든 샘플</b><small>DNA v3.0 · Clip 11 · Equipment 5 · PBR 1024/2048</small></div>
+              <button id="golden-sample-preview-btn" type="button">11모션 검수</button>
+            </div>
+            <div class="production-os-card">
+              <div><b>Moonstone Production OS</b><small>아트 잠금 · DNA · 품질 · 프레임 · 에셋 현황</small></div>
+              <button id="production-console-btn" type="button">F4 제작 콘솔</button>
             </div>
             <div id="asset-diagnostics-list" class="asset-diagnostics-list" aria-live="polite"></div>
           </section>
@@ -474,7 +479,7 @@
     </div>
     <script>
       (() => {
-        const VERSION = '4.1.0';
+        const VERSION = '5.0.0';
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
         const retryButton = document.getElementById('boot-retry-btn');

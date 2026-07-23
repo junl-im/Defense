@@ -1,13 +1,15 @@
 {
-  "schemaVersion": 2,
-  "gameVersion": "4.0.0",
-  "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+  "schemaVersion": 3,
+  "gameVersion": "5.0.0",
+  "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+  "legacyTechnicalStyleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
   "summary": {
     "total": 19,
     "productionApproved": 0,
     "prototypes": 11,
     "artReview": 8,
     "technicalCandidates": 8,
+    "absoluteArtBibleCandidates": 0,
     "missingSkin": 11,
     "missingAnimations": 11,
     "missingTextureSets": 11
@@ -18,13 +20,15 @@
       "category": "character",
       "declaredStatus": "prototype-placeholder",
       "technicalPassed": false,
+      "absoluteArtBiblePassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
           6000,
           10000
         ],
-        "requiredAnimations": 7
+        "requiredAnimations": 7,
+        "absoluteRequiredAnimations": 11
       },
       "metrics": {
         "file": "guardian-ember-sd-toon.glb",
@@ -68,6 +72,7 @@
       },
       "checks": {
         "styleLockMetadata": false,
+        "absoluteStyleLockMetadata": false,
         "triangleRange": false,
         "handPaintedTextures": false,
         "skin": false,
@@ -80,13 +85,15 @@
       "category": "character",
       "declaredStatus": "prototype-placeholder",
       "technicalPassed": false,
+      "absoluteArtBiblePassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
           6000,
           10000
         ],
-        "requiredAnimations": 7
+        "requiredAnimations": 7,
+        "absoluteRequiredAnimations": 11
       },
       "metrics": {
         "file": "guardian-frost-sd-toon.glb",
@@ -129,6 +136,7 @@
       },
       "checks": {
         "styleLockMetadata": false,
+        "absoluteStyleLockMetadata": false,
         "triangleRange": false,
         "handPaintedTextures": false,
         "skin": false,
@@ -141,13 +149,15 @@
       "category": "character",
       "declaredStatus": "prototype-placeholder",
       "technicalPassed": false,
+      "absoluteArtBiblePassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
           6000,
           10000
         ],
-        "requiredAnimations": 7
+        "requiredAnimations": 7,
+        "absoluteRequiredAnimations": 11
       },
       "metrics": {
         "file": "guardian-wind-sd-toon.glb",
@@ -191,6 +201,7 @@
       },
       "checks": {
         "styleLockMetadata": false,
+        "absoluteStyleLockMetadata": false,
         "triangleRange": false,
         "handPaintedTextures": false,
         "skin": false,
@@ -203,13 +214,15 @@
       "category": "character",
       "declaredStatus": "prototype-placeholder",
       "technicalPassed": false,
+      "absoluteArtBiblePassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
           6000,
           10000
         ],
-        "requiredAnimations": 7
+        "requiredAnimations": 7,
+        "absoluteRequiredAnimations": 11
       },
       "metrics": {
         "file": "guardian-stone-sd-toon.glb",
@@ -252,6 +265,7 @@
       },
       "checks": {
         "styleLockMetadata": false,
+        "absoluteStyleLockMetadata": false,
         "triangleRange": false,
         "handPaintedTextures": false,
         "skin": false,
@@ -264,13 +278,15 @@
       "category": "character",
       "declaredStatus": "prototype-placeholder",
       "technicalPassed": false,
+      "absoluteArtBiblePassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
           6000,
           10000
         ],
-        "requiredAnimations": 7
+        "requiredAnimations": 7,
+        "absoluteRequiredAnimations": 11
       },
       "metrics": {
         "file": "guardian-bell-sd-toon.glb",
@@ -314,6 +330,7 @@
       },
       "checks": {
         "styleLockMetadata": false,
+        "absoluteStyleLockMetadata": false,
         "triangleRange": false,
         "handPaintedTextures": false,
         "skin": false,
@@ -326,13 +343,15 @@
       "category": "character",
       "declaredStatus": "prototype-placeholder",
       "technicalPassed": false,
+      "absoluteArtBiblePassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
           6000,
           10000
         ],
-        "requiredAnimations": 7
+        "requiredAnimations": 7,
+        "absoluteRequiredAnimations": 11
       },
       "metrics": {
         "file": "guardian-thunder-sd-toon.glb",
@@ -376,6 +395,7 @@
       },
       "checks": {
         "styleLockMetadata": false,
+        "absoluteStyleLockMetadata": false,
         "triangleRange": false,
         "handPaintedTextures": false,
         "skin": false,
@@ -388,13 +408,15 @@
       "category": "monster",
       "declaredStatus": "prototype-placeholder",
       "technicalPassed": false,
+      "absoluteArtBiblePassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
           5000,
           9000
         ],
-        "requiredAnimations": 6
+        "requiredAnimations": 6,
+        "absoluteRequiredAnimations": 11
       },
       "metrics": {
         "file": "monster-imp-sd-toon.glb",
@@ -439,6 +461,7 @@
       },
       "checks": {
         "styleLockMetadata": false,
+        "absoluteStyleLockMetadata": false,
         "triangleRange": false,
         "handPaintedTextures": false,
         "skin": false,
@@ -451,13 +474,15 @@
       "category": "monster",
       "declaredStatus": "prototype-placeholder",
       "technicalPassed": false,
+      "absoluteArtBiblePassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
           5000,
           9000
         ],
-        "requiredAnimations": 6
+        "requiredAnimations": 6,
+        "absoluteRequiredAnimations": 11
       },
       "metrics": {
         "file": "monster-runner-sd-toon.glb",
@@ -501,6 +526,7 @@
       },
       "checks": {
         "styleLockMetadata": false,
+        "absoluteStyleLockMetadata": false,
         "triangleRange": false,
         "handPaintedTextures": false,
         "skin": false,
@@ -513,13 +539,15 @@
       "category": "boss",
       "declaredStatus": "prototype-placeholder",
       "technicalPassed": false,
+      "absoluteArtBiblePassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
           10000,
           18000
         ],
-        "requiredAnimations": 8
+        "requiredAnimations": 8,
+        "absoluteRequiredAnimations": 11
       },
       "metrics": {
         "file": "boss-tiger-sd-toon.glb",
@@ -561,6 +589,7 @@
       },
       "checks": {
         "styleLockMetadata": false,
+        "absoluteStyleLockMetadata": false,
         "triangleRange": false,
         "handPaintedTextures": false,
         "skin": false,
@@ -573,13 +602,15 @@
       "category": "boss",
       "declaredStatus": "prototype-placeholder",
       "technicalPassed": false,
+      "absoluteArtBiblePassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
           10000,
           18000
         ],
-        "requiredAnimations": 8
+        "requiredAnimations": 8,
+        "absoluteRequiredAnimations": 11
       },
       "metrics": {
         "file": "boss-serpent-sd-toon.glb",
@@ -618,6 +649,7 @@
       },
       "checks": {
         "styleLockMetadata": false,
+        "absoluteStyleLockMetadata": false,
         "triangleRange": false,
         "handPaintedTextures": false,
         "skin": false,
@@ -630,13 +662,15 @@
       "category": "boss",
       "declaredStatus": "prototype-placeholder",
       "technicalPassed": false,
+      "absoluteArtBiblePassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
           10000,
           18000
         ],
-        "requiredAnimations": 8
+        "requiredAnimations": 8,
+        "absoluteRequiredAnimations": 11
       },
       "metrics": {
         "file": "boss-king-sd-toon.glb",
@@ -687,6 +721,7 @@
       },
       "checks": {
         "styleLockMetadata": false,
+        "absoluteStyleLockMetadata": false,
         "triangleRange": false,
         "handPaintedTextures": false,
         "skin": false,
@@ -699,13 +734,15 @@
       "category": "character",
       "declaredStatus": "art-review",
       "technicalPassed": true,
+      "absoluteArtBiblePassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
           6000,
           10000
         ],
-        "requiredAnimations": 7
+        "requiredAnimations": 7,
+        "absoluteRequiredAnimations": 11
       },
       "metrics": {
         "file": "player-dokkaebi-warrior-golden-v1.glb",
@@ -756,6 +793,7 @@
       },
       "checks": {
         "styleLockMetadata": true,
+        "absoluteStyleLockMetadata": false,
         "triangleRange": true,
         "handPaintedTextures": true,
         "skin": true,
@@ -768,13 +806,15 @@
       "category": "character",
       "declaredStatus": "art-review",
       "technicalPassed": true,
+      "absoluteArtBiblePassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
           6000,
           10000
         ],
-        "requiredAnimations": 7
+        "requiredAnimations": 7,
+        "absoluteRequiredAnimations": 11
       },
       "metrics": {
         "file": "player-dokkaebi-archer-candidate-v1.glb",
@@ -829,6 +869,7 @@
       },
       "checks": {
         "styleLockMetadata": true,
+        "absoluteStyleLockMetadata": false,
         "triangleRange": true,
         "handPaintedTextures": true,
         "skin": true,
@@ -841,13 +882,15 @@
       "category": "character",
       "declaredStatus": "art-review",
       "technicalPassed": true,
+      "absoluteArtBiblePassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
           6000,
           10000
         ],
-        "requiredAnimations": 7
+        "requiredAnimations": 7,
+        "absoluteRequiredAnimations": 11
       },
       "metrics": {
         "file": "player-dokkaebi-mage-candidate-v1.glb",
@@ -902,6 +945,7 @@
       },
       "checks": {
         "styleLockMetadata": true,
+        "absoluteStyleLockMetadata": false,
         "triangleRange": true,
         "handPaintedTextures": true,
         "skin": true,
@@ -914,13 +958,15 @@
       "category": "monster",
       "declaredStatus": "art-review",
       "technicalPassed": true,
+      "absoluteArtBiblePassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
           5000,
           9000
         ],
-        "requiredAnimations": 6
+        "requiredAnimations": 6,
+        "absoluteRequiredAnimations": 11
       },
       "metrics": {
         "file": "monster-brute-sd-toon.glb",
@@ -973,6 +1019,7 @@
       },
       "checks": {
         "styleLockMetadata": true,
+        "absoluteStyleLockMetadata": false,
         "triangleRange": true,
         "handPaintedTextures": true,
         "skin": true,
@@ -985,13 +1032,15 @@
       "category": "monster",
       "declaredStatus": "art-review",
       "technicalPassed": true,
+      "absoluteArtBiblePassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
           5000,
           9000
         ],
-        "requiredAnimations": 6
+        "requiredAnimations": 6,
+        "absoluteRequiredAnimations": 11
       },
       "metrics": {
         "file": "monster-shaman-sd-toon.glb",
@@ -1044,6 +1093,7 @@
       },
       "checks": {
         "styleLockMetadata": true,
+        "absoluteStyleLockMetadata": false,
         "triangleRange": true,
         "handPaintedTextures": true,
         "skin": true,
@@ -1056,13 +1106,15 @@
       "category": "monster",
       "declaredStatus": "art-review",
       "technicalPassed": true,
+      "absoluteArtBiblePassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
           5000,
           9000
         ],
-        "requiredAnimations": 6
+        "requiredAnimations": 6,
+        "absoluteRequiredAnimations": 11
       },
       "metrics": {
         "file": "monster-ghost-candidate-v1.glb",
@@ -1116,6 +1168,7 @@
       },
       "checks": {
         "styleLockMetadata": true,
+        "absoluteStyleLockMetadata": false,
         "triangleRange": true,
         "handPaintedTextures": true,
         "skin": true,
@@ -1128,13 +1181,15 @@
       "category": "monster",
       "declaredStatus": "art-review",
       "technicalPassed": true,
+      "absoluteArtBiblePassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
           5000,
           9000
         ],
-        "requiredAnimations": 6
+        "requiredAnimations": 6,
+        "absoluteRequiredAnimations": 11
       },
       "metrics": {
         "file": "monster-skeleton-candidate-v1.glb",
@@ -1188,6 +1243,7 @@
       },
       "checks": {
         "styleLockMetadata": true,
+        "absoluteStyleLockMetadata": false,
         "triangleRange": true,
         "handPaintedTextures": true,
         "skin": true,
@@ -1200,13 +1256,15 @@
       "category": "monster",
       "declaredStatus": "art-review",
       "technicalPassed": true,
+      "absoluteArtBiblePassed": false,
       "productionPassed": false,
       "requirements": {
         "triangleRange": [
           5000,
           9000
         ],
-        "requiredAnimations": 6
+        "requiredAnimations": 6,
+        "absoluteRequiredAnimations": 11
       },
       "metrics": {
         "file": "monster-crow-candidate-v1.glb",
@@ -1260,6 +1318,7 @@
       },
       "checks": {
         "styleLockMetadata": true,
+        "absoluteStyleLockMetadata": false,
         "triangleRange": true,
         "handPaintedTextures": true,
         "skin": true,

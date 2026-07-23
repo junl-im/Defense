@@ -1,10 +1,11 @@
 # Dokkaebi Defense 에셋 제작 마스터리스트 요약
 
 - 제작 기준 버전: 3.8.0
-- 아트 잠금: DD-AAA-CASUAL-SD-PBR-3.0
+- 아트 잠금: DD-ABSOLUTE-ART-BIBLE-2.0
 - 사용자가 제시한 약 1,100개 목표의 정확한 산술 합계: **1,130개**
 - 현재 제작 승인: 0개
-- 모든 항목은 아트 리뷰와 기술 리뷰를 각각 통과해야 approved 상태가 된다.
+- 1,130개 전 항목은 Absolute Art Bible v2.0 잠금과 골든 수직 슬라이스 승인 전까지 productionApproved=false를 유지한다.
+- 캐릭터·몬스터·보스는 Character DNA v3.0, 6k~10k triangles, 11개 공통 클립 계약을 사용한다.
 
 | 분류 | 수량 |
 |---|---:|

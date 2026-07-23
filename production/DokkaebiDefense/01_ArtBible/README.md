@@ -1,3 +1,10 @@
-# ArtBible
+# 01_ArtBible
 
-절대 스타일 잠금, 2.3등신 42/35/23 비율, 색상·재질·턴어라운드·프롬프트 템플릿을 관리한다. `PROMPT_TEMPLATES_v3.8.0.json`의 절대 프롬프트 문장은 기존 잠금 원문을 그대로 상속한다.
+절대 기준은 `ABSOLUTE_ART_BIBLE_v2.0.md`다.
+
+- 잠금 ID: `DD-ABSOLUTE-ART-BIBLE-2.0`
+- 기계 규격: `ART_BIBLE_MACHINE_SPEC_v2.0.json`
+- 프롬프트 템플릿: `PROMPT_TEMPLATES_v3.8.0.json`
+- 확장 초안: `CHARACTER_DNA_v3.0_DRAFT.md`
+
+v3.0 DNA는 확장 레이어일 뿐 v2.0 절대 규칙을 변경할 수 없다.

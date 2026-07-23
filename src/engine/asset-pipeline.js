@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js';
 import { selectAssetVariant } from './asset-catalog.js';
+import { applyRuntimeArtHarmonization } from '../runtime-art-harmonizer.js';
 
 const ALLOWED_MODEL_EXTENSIONS = new Set(['glb', 'gltf']);
 const ALLOWED_TEXTURE_EXTENSIONS = new Set(['png', 'webp', 'ktx2', 'jpg', 'jpeg']);
@@ -113,7 +114,7 @@ export class AssetPipeline {
     return texture;
   }
 
-  prepareModel(root) {
+  prepareModel(root, { role = 'default' } = {}) {
     root?.traverse?.((object) => {
       if (!object.isMesh) return;
       object.castShadow = !this.lowPower;
@@ -127,6 +128,7 @@ export class AssetPipeline {
         }
       });
     });
+    applyRuntimeArtHarmonization(root, { role, lowPower: this.lowPower });
     return root;
   }
 
@@ -163,7 +165,7 @@ export class AssetPipeline {
   async loadModel(entry, url) {
     this.assertAllowed(url, 'model');
     const gltf = await (await this.ensureModelLoaders({ draco: entry.compression === 'draco', ktx2: entry.embeddedTextures === 'ktx2' })).loadAsync(url);
-    this.prepareModel(gltf.scene);
+    this.prepareModel(gltf.scene, { role: entry.role || entry.category || 'default' });
     return {
       kind: 'model',
       scene: gltf.scene,

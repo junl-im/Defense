@@ -1,9 +1,9 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { ART_STYLE_LOCK_ID } from '../src/art-style-tokens.js';
 import { RIGGED_ENEMY_CANDIDATES } from '../src/rigged-enemy-candidate-spec.js';
 
 const root = resolve(import.meta.dirname, '..');
+const LEGACY_TECHNICAL_STYLE_LOCK_ID = 'DD-AAA-CASUAL-SD-PBR-3.0';
 const failures = [];
 const pass = (message) => console.log(`PASS ${message}`);
 const check = (condition, message) => condition ? pass(message) : failures.push(message);
@@ -38,7 +38,7 @@ for (const [key, spec] of Object.entries(RIGGED_ENEMY_CANDIDATES)) {
   check(spec.requiredClips.every((name) => clips.has(name)) && clips.size === spec.requiredClips.length, `${key} seven clips`);
   check(spec.requiredSockets.every((name) => nodes.has(name)), `${key} shared sockets`);
   check((json.images || []).length >= 4 && (json.textures || []).length >= 4, `${key} BaseColor/Normal/ORM/Emissive`);
-  check(json.asset?.extras?.styleLockId === ART_STYLE_LOCK_ID, `${key} style lock`);
+  check(json.asset?.extras?.styleLockId === LEGACY_TECHNICAL_STYLE_LOCK_ID, `${key} legacy technical style metadata`);
   check(json.asset?.extras?.approvalStage === 'art-review' && json.asset?.extras?.technicalReady === true, `${key} art-review technical stage`);
   check(json.asset?.extras?.rigVersion === spec.rigId, `${key} shared rig ${spec.rigId}`);
   check((json.meshes || []).flatMap((mesh) => mesh.primitives || []).every((primitive) => primitive.attributes?.JOINTS_0 != null && primitive.attributes?.WEIGHTS_0 != null), `${key} skinned primitives`);

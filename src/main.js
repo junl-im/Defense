@@ -9,7 +9,7 @@ import { RUN_SEED_MODES, createSeededRandom, createDailySeed, createRandomSeed, 
 import { BOSS_PROFILES, getBossWave, getBossTypeForWave, getBossSpawnCount, isBossWave } from './boss-director.js';
 import { getBattlefieldTheme } from './battlefield-themes.js';
 import { CODEX_SECTION_META, CODEX_SECTION_ORDER, getCodexEntries, getCodexTotals } from './codex-data.js';
-import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, ObjectPool, RenderStatsHUD, AssetPipeline, AnimationStateSystem } from './engine/index.js';
+import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, ObjectPool, RenderStatsHUD, AssetPipeline, AnimationStateSystem, FrameBudgetScheduler } from './engine/index.js';
 import { CORE_ASSET_CATALOG, PLAYER_ASSET_ID, GUARDIAN_ASSET_IDS, MONSTER_ASSET_IDS, BOSS_ASSET_IDS } from './engine/asset-catalog.js';
 import { HERO_CLASSES, HERO_CLASS_ORDER, HERO_CLASS_ASSET_IDS, getHeroClass } from './hero-classes.js';
 import { applyHeroClassVisuals, applyRelicVisuals } from './hero-visual-loadout.js';
@@ -22,6 +22,9 @@ import CodexViewer from './codex-viewer.js';
 import { createPremiumGuardian, createPremiumEnemy, createPremiumSacredTree, applyPremiumBossPhase, prepareImportedGuardian, prepareImportedEnemy } from './premium-assets.js';
 import { DirectionalImpostorSelector } from './engine/directional-impostor.js';
 import { buildAssetDiagnostics } from './asset-diagnostics.js';
+import { ART_PRODUCTION_SUMMARY, MASSIVE_UPDATE_MILESTONES } from './art-production-gate.js';
+import { CHARACTER_DNA_SUMMARY } from './character-dna.js';
+import { ProductionConsole } from './production-console.js';
 import { GOLDEN_SAMPLE_CLIPS, GOLDEN_SAMPLE_SOCKETS, GOLDEN_SAMPLE_TEXTURE_MAPS } from './golden-sample-spec.js';
 import { loadCodexProgress, saveCodexProgress, recordCodexEncounter, recordCodexDefeat, recordGuardianUse, getCodexKnowledge, getCodexProgressSummary, getWeaknessDamageBonus, getWeaknessLabel } from './codex-progression.js';
 import { RuntimeLifecycle } from './runtime-lifecycle.js';
@@ -48,7 +51,7 @@ const ui = {
   rotateSensitivity: $('#rotate-sensitivity'), rotateSensitivityValue: $('#rotate-sensitivity-value'), pinchSensitivity: $('#pinch-sensitivity'), pinchSensitivityValue: $('#pinch-sensitivity-value'),
   wheelSensitivity: $('#wheel-sensitivity'), wheelSensitivityValue: $('#wheel-sensitivity-value'), minimumZoom: $('#minimum-zoom'), minimumZoomValue: $('#minimum-zoom-value'), maximumZoom: $('#maximum-zoom'), maximumZoomValue: $('#maximum-zoom-value'),
   shakeIntensity: $('#shake-intensity'), shakeIntensityValue: $('#shake-intensity-value'), flashIntensity: $('#flash-intensity'), flashIntensityValue: $('#flash-intensity-value'), performanceExport: $('#performance-export-btn'),
-  assetDiagnosticsSummary: $('#asset-diagnostics-summary'), assetDiagnosticsCount: $('#asset-diagnostics-count'), assetDiagnosticsList: $('#asset-diagnostics-list'), goldenSamplePreview: $('#golden-sample-preview-btn'),
+  assetDiagnosticsSummary: $('#asset-diagnostics-summary'), assetDiagnosticsCount: $('#asset-diagnostics-count'), assetDiagnosticsList: $('#asset-diagnostics-list'), goldenSamplePreview: $('#golden-sample-preview-btn'), productionConsole: $('#production-console-btn'),
   contractModal: $('#contract-modal'), contractOptions: $('#contract-options'), contractSkip: $('#contract-skip-btn'), metaModal: $('#meta-modal'), metaShards: $('#meta-shards'), metaTraitList: $('#meta-trait-list'),
   equipmentModal: $('#equipment-modal'), equipmentSlots: $('#equipment-slots'), equipmentList: $('#equipment-list'), equipmentEssence: $('#equipment-essence'), equipmentBonus: $('#equipment-bonus'), equipmentMastery: $('#equipment-mastery'),
   hud: $('#hud'), hudLayout: $('#hud-layout-btn'), hp: $('#hp-value'), gold: $('#gold-value'), waveLabel: $('#wave-label'), waveProgress: $('#wave-progress'),
@@ -84,7 +87,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '4.1.0';
+const GAME_VERSION = '5.0.0';
 const CHARACTER_ASSET_IDS = Object.freeze([
   ...Object.values(HERO_CLASS_ASSET_IDS),
   ...Object.values(GUARDIAN_ASSET_IDS),
@@ -246,6 +249,8 @@ class DokkaebiLuckDefense {
     this.viewportProfile = '';
     this.uiBound = false;
     this.hudLayout = null;
+    this.frameScheduler = new FrameBudgetScheduler();
+    this.productionConsole = null;
 
     this.assertRequiredUI();
     this.hudLayout = new AdaptiveHudLayout({
@@ -359,16 +364,16 @@ class DokkaebiLuckDefense {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0x10091f);
-    this.scene.fog = new THREE.FogExp2(0x130b26, .024);
+    this.scene.background = new THREE.Color(0x38275a);
+    this.scene.fog = new THREE.FogExp2(0x4a356b, .018);
 
     this.camera = new THREE.PerspectiveCamera(49, window.innerWidth / window.innerHeight, .1, 130);
     this.camera.position.set(11, 12, 14);
 
-    this.hemiLight = new THREE.HemisphereLight(0xb8d6ff, 0x32203d, 1.45);
+    this.hemiLight = new THREE.HemisphereLight(0xcfe8ff, 0x6d4765, 1.7);
     this.scene.add(this.hemiLight);
-    this.moonLight = new THREE.DirectionalLight(0xd7ebff, 2.35);
-    this.moonLight.position.set(-16, 26, 13);
+    this.moonLight = new THREE.DirectionalLight(0xffd39a, 2.65);
+    this.moonLight.position.set(14, 24, 11);
     this.moonLight.castShadow = this.renderer.shadowMap.enabled;
     this.moonLight.shadow.mapSize.set(this.lowPower ? 512 : 1024, this.lowPower ? 512 : 1024);
     this.moonLight.shadow.camera.left = -34;
@@ -376,6 +381,10 @@ class DokkaebiLuckDefense {
     this.moonLight.shadow.camera.top = 34;
     this.moonLight.shadow.camera.bottom = -34;
     this.scene.add(this.moonLight);
+    this.rimLight = new THREE.DirectionalLight(0x78bfff, 1.25);
+    this.rimLight.position.set(-18, 15, -16);
+    this.rimLight.castShadow = false;
+    this.scene.add(this.rimLight);
 
     this.worldRoot = new THREE.Group();
     this.dynamicRoot = new THREE.Group();
@@ -408,6 +417,19 @@ class DokkaebiLuckDefense {
     });
     this.initReusablePools();
     this.renderStatsHud = new RenderStatsHUD(this.renderer);
+    this.productionConsole = new ProductionConsole({
+      artSummary: ART_PRODUCTION_SUMMARY,
+      milestones: MASSIVE_UPDATE_MILESTONES,
+      getDiagnostics: () => ({
+        performance: this.engine.monitor.snapshot,
+        quality: this.engine.qualityGovernor?.diagnostics || {},
+        qualityScale: this.engine.qualityScale,
+        effectBudgetScale: this.engine.effectBudgetScale,
+        drawCalls: this.renderer.info?.render?.calls || 0,
+        triangles: this.renderer.info?.render?.triangles || 0,
+        assets: this.assetPipeline?.diagnostics || {}
+      })
+    });
 
     this.raycaster = new THREE.Raycaster();
     this.pointer = new THREE.Vector2();
@@ -570,6 +592,10 @@ class DokkaebiLuckDefense {
     on(ui.resultNewRun, 'click', () => { this.hideModal(ui.resultModal); this.startRun({ reuseSeed: false }); }, {}, 'new-run');
     on(ui.performanceExport, 'click', () => this.exportPerformanceLog(), {}, 'performance-export');
     on(ui.goldenSamplePreview, 'click', () => this.openGoldenSamplePreview(ui.goldenSamplePreview), {}, 'golden-sample-preview');
+    on(ui.productionConsole, 'click', () => {
+      const enabled = this.productionConsole?.toggle();
+      this.showToast(enabled ? '제작 디렉터 콘솔을 표시합니다.' : '제작 디렉터 콘솔을 숨깁니다.');
+    }, {}, 'production-console');
     on(ui.saveScore, 'click', () => this.saveScore(), {}, 'save-score');
     on(ui.summon, 'click', () => this.summonUnit(), {}, 'summon');
     on(ui.wave, 'click', () => this.startWave({ manual: true }), {}, 'wave');
@@ -642,6 +668,12 @@ class DokkaebiLuckDefense {
         this.cancelMoveTarget();
       }
       if (event.repeat) return;
+      if (code === 'F4') {
+        event.preventDefault();
+        const enabled = this.productionConsole?.toggle();
+        this.showToast(enabled ? '제작 디렉터 콘솔 ON' : '제작 디렉터 콘솔 OFF');
+        return;
+      }
       if (code === 'F3') {
         event.preventDefault();
         const enabled = this.renderStatsHud?.toggle();
@@ -5280,7 +5312,8 @@ class DokkaebiLuckDefense {
         effectBudgetScale: this.engine.effectBudgetScale,
         fps: this.engine.monitor.lastFps,
         assetQualityTier: this.engine.assetQualityTier,
-        lowPower: this.lowPower
+        lowPower: this.lowPower,
+        performance: this.engine.monitor.snapshot
       },
       diagnostics: {
         engine: this.engine.diagnostics,
@@ -5288,7 +5321,11 @@ class DokkaebiLuckDefense {
         assets: this.assetPipeline?.diagnostics || null,
         chunks: this.engine.worldChunks.diagnostics,
         animations: this.animations?.diagnostics || null,
-        lifecycle: this.lifecycle.diagnostics
+        lifecycle: this.lifecycle.diagnostics,
+        artProduction: ART_PRODUCTION_SUMMARY,
+        characterDNA: CHARACTER_DNA_SUMMARY,
+        qualityGovernor: this.engine.qualityGovernor?.diagnostics || null,
+        frameScheduler: this.frameScheduler.diagnostics
       },
       progression: {
         heroClass: this.selectedHeroClassId,
@@ -5415,7 +5452,7 @@ class DokkaebiLuckDefense {
     const result = this.engine.updateAdaptiveQuality(dt);
     if (!result) return;
     this.qualityScale = this.engine.qualityScale;
-    ui.qualityBadge.textContent = `모바일 엔진 ${result.tier.toUpperCase()} · ${Math.round(result.fps)} FPS · 해상도 ${Math.round(this.qualityScale * 100)}% · FX ${Math.round(this.engine.effectBudgetScale * 100)}%`;
+    ui.qualityBadge.textContent = `Engine 4.0 ${result.id.toUpperCase()} · ${Math.round(result.fps)} FPS · 해상도 ${Math.round(this.qualityScale * 100)}% · FX ${Math.round(this.engine.effectBudgetScale * 100)}%`;
     ui.qualityBadge.classList.remove('hidden');
     this.scheduleUi(() => ui.qualityBadge.classList.add('hidden'), 2400, { key: 'quality-badge-hide' });
     this.qualityAdjusted = true;
@@ -5479,26 +5516,29 @@ class DokkaebiLuckDefense {
   animate() {
     requestAnimationFrame(()=>this.animate());
     const dt=Math.min(.033,this.clock.getDelta());
+    this.frameScheduler.tick(dt);
     this.combatPresentation?.update(dt);
     const impactScale = this.combatPresentation?.timeScale ?? 1;
     const gameDt=(this.cinematic?dt*.42:dt) * impactScale;
     this.elapsed+=dt;
     this.updateWorldEffects(dt);
     if(this.state==='playing') {
-      this.updateAutoWaveCountdown(dt);this.updateRunMomentum(gameDt);this.updatePlayer(gameDt);this.updateWave(gameDt);this.updateEnemies(gameDt);this.updateHazards(gameDt);this.updateDangerHint(gameDt);this.updateUnits(gameDt);this.updateProjectiles(gameDt);this.updateCoins(gameDt);this.updateParticles(gameDt);this.updateMoveTargetMarker(gameDt);this.updateKillChain(gameDt);this.updateAdaptiveQuality(dt);this.animations.update(gameDt,this.camera);this.updateHUD();
+      this.updateAutoWaveCountdown(dt);this.updateRunMomentum(gameDt);this.updatePlayer(gameDt);this.updateWave(gameDt);this.updateEnemies(gameDt);this.updateHazards(gameDt);this.updateDangerHint(gameDt);this.updateUnits(gameDt);this.updateProjectiles(gameDt);this.updateCoins(gameDt);this.updateParticles(gameDt);this.updateMoveTargetMarker(gameDt);this.updateKillChain(gameDt);this.updateAdaptiveQuality(dt);this.animations.update(gameDt,this.camera);if(this.frameScheduler.shouldRun('hud', this.engine.qualityProfile?.hudHz || 30))this.updateHUD();
     } else if(this.state==='title') {
       this.updateUnits(dt);this.animations.update(dt,this.camera);this.updateParticles(dt);
       if(this.player){this.player.group.rotation.y+=dt*.18;this.player.group.position.y=Math.sin(this.elapsed*2.3)*.05;}
     } else {
       this.updateParticles(dt);
     }
-    if (this.player?.group && this.worldReady) this.engine.worldChunks.update(this.player.group.position);
-    this.updateBlobShadows();
+    if (this.player?.group && this.worldReady && this.frameScheduler.shouldRun('chunks', this.engine.qualityProfile?.chunkHz || 15)) this.engine.worldChunks.update(this.player.group.position);
+    if (this.frameScheduler.shouldRun('shadows', this.engine.qualityProfile?.shadowHz || 18)) this.updateBlobShadows();
     this.updateCamera(dt);
     this.renderer.render(this.scene,this.camera);
+    this.productionConsole?.update(dt);
     this.renderStatsHud?.update(dt, {
       engineVersion: ENGINE_VERSION,
       fps: this.engine.monitor.lastFps,
+      performance: this.engine.monitor.snapshot,
       qualityScale: this.engine.qualityScale,
       chunks: this.engine.worldChunks.diagnostics,
       assets: this.assetPipeline?.diagnostics,

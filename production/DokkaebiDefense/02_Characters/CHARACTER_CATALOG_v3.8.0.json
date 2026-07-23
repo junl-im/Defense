@@ -14,7 +14,11 @@
       "productionFolder": "02_Characters/starter",
       "deliveryFile": "chr_dokkaebi-warrior_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P0",
       "rarity": "common",
@@ -37,12 +41,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -53,8 +59,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -73,7 +83,11 @@
       "productionFolder": "02_Characters/starter",
       "deliveryFile": "chr_dokkaebi-archer_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P0",
       "rarity": "common",
@@ -96,12 +110,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -112,8 +128,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -132,7 +152,11 @@
       "productionFolder": "02_Characters/starter",
       "deliveryFile": "chr_dokkaebi-mage_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P0",
       "rarity": "common",
@@ -155,12 +179,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -171,8 +197,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -191,7 +221,11 @@
       "productionFolder": "02_Characters/starter",
       "deliveryFile": "chr_taoist_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P0",
       "rarity": "common",
@@ -214,12 +248,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -230,8 +266,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -250,7 +290,11 @@
       "productionFolder": "02_Characters/starter",
       "deliveryFile": "chr_shaman_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P0",
       "rarity": "common",
@@ -273,12 +317,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -289,8 +335,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -309,7 +359,11 @@
       "productionFolder": "02_Characters/starter",
       "deliveryFile": "chr_tiger-guardian_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P0",
       "rarity": "common",
@@ -332,12 +386,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -348,8 +404,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -368,7 +428,11 @@
       "productionFolder": "02_Characters/starter",
       "deliveryFile": "chr_haetae_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P0",
       "rarity": "common",
@@ -391,12 +455,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -407,8 +473,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -427,7 +497,11 @@
       "productionFolder": "02_Characters/starter",
       "deliveryFile": "chr_gumiho_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P0",
       "rarity": "common",
@@ -450,12 +524,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -466,8 +542,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -486,7 +566,11 @@
       "productionFolder": "02_Characters/starter",
       "deliveryFile": "chr_sanshin_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P0",
       "rarity": "rare",
@@ -509,12 +593,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -525,8 +611,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -545,7 +635,11 @@
       "productionFolder": "02_Characters/starter",
       "deliveryFile": "chr_grim-reaper_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P0",
       "rarity": "rare",
@@ -568,12 +662,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -584,8 +680,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -604,7 +704,11 @@
       "productionFolder": "02_Characters/starter",
       "deliveryFile": "chr_dragon_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P0",
       "rarity": "rare",
@@ -627,12 +731,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -643,8 +749,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -663,7 +773,11 @@
       "productionFolder": "02_Characters/elemental",
       "deliveryFile": "chr_flame-warrior_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P1",
       "rarity": "rare",
@@ -686,12 +800,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -702,8 +818,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -722,7 +842,11 @@
       "productionFolder": "02_Characters/elemental",
       "deliveryFile": "chr_frost-archer_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P1",
       "rarity": "rare",
@@ -745,12 +869,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -761,8 +887,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -781,7 +911,11 @@
       "productionFolder": "02_Characters/elemental",
       "deliveryFile": "chr_thunder-mage_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P1",
       "rarity": "rare",
@@ -804,12 +938,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -820,8 +956,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -840,7 +980,11 @@
       "productionFolder": "02_Characters/ascended",
       "deliveryFile": "chr_azure-taoist_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P1",
       "rarity": "rare",
@@ -863,12 +1007,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -879,8 +1025,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -899,7 +1049,11 @@
       "productionFolder": "02_Characters/ascended",
       "deliveryFile": "chr_crimson-shaman_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P1",
       "rarity": "rare",
@@ -922,12 +1076,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -938,8 +1094,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -958,7 +1118,11 @@
       "productionFolder": "02_Characters/ascended",
       "deliveryFile": "chr_white-tiger_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P1",
       "rarity": "epic",
@@ -981,12 +1145,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -997,8 +1163,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -1017,7 +1187,11 @@
       "productionFolder": "02_Characters/ascended",
       "deliveryFile": "chr_golden-haetae_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P1",
       "rarity": "epic",
@@ -1040,12 +1214,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1056,8 +1232,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -1076,7 +1256,11 @@
       "productionFolder": "02_Characters/ascended",
       "deliveryFile": "chr_snow-gumiho_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P1",
       "rarity": "epic",
@@ -1099,12 +1283,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1115,8 +1301,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -1135,7 +1325,11 @@
       "productionFolder": "02_Characters/ascended",
       "deliveryFile": "chr_verdant-sanshin_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P1",
       "rarity": "epic",
@@ -1158,12 +1352,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1174,8 +1370,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -1194,7 +1394,11 @@
       "productionFolder": "02_Characters/ascended",
       "deliveryFile": "chr_blue-flame-reaper_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P1",
       "rarity": "epic",
@@ -1217,12 +1421,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1233,8 +1439,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -1253,7 +1463,11 @@
       "productionFolder": "02_Characters/ascended",
       "deliveryFile": "chr_golden-dragon_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P1",
       "rarity": "epic",
@@ -1276,12 +1490,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1292,8 +1508,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -1312,7 +1532,11 @@
       "productionFolder": "02_Characters/guardian",
       "deliveryFile": "chr_moon-shield_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P2",
       "rarity": "epic",
@@ -1335,12 +1559,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1351,8 +1577,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -1371,7 +1601,11 @@
       "productionFolder": "02_Characters/guardian",
       "deliveryFile": "chr_star-lancer_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P2",
       "rarity": "epic",
@@ -1394,12 +1628,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1410,8 +1646,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -1430,7 +1670,11 @@
       "productionFolder": "02_Characters/support",
       "deliveryFile": "chr_pungnyu-bard_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P2",
       "rarity": "legend",
@@ -1453,12 +1697,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1469,8 +1715,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -1489,7 +1739,11 @@
       "productionFolder": "02_Characters/support",
       "deliveryFile": "chr_talisman-alchemist_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P2",
       "rarity": "legend",
@@ -1512,12 +1766,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1528,8 +1784,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -1548,7 +1808,11 @@
       "productionFolder": "02_Characters/support",
       "deliveryFile": "chr_moon-rabbit_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P2",
       "rarity": "legend",
@@ -1571,12 +1835,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1587,8 +1853,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -1607,7 +1877,11 @@
       "productionFolder": "02_Characters/seasonal",
       "deliveryFile": "chr_plum-swordsman_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P2",
       "rarity": "legend",
@@ -1630,12 +1904,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1646,8 +1922,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -1666,7 +1946,11 @@
       "productionFolder": "02_Characters/seasonal",
       "deliveryFile": "chr_bamboo-shadow_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P2",
       "rarity": "legend",
@@ -1689,12 +1973,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1705,8 +1991,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -1725,7 +2015,11 @@
       "productionFolder": "02_Characters/seasonal",
       "deliveryFile": "chr_snow-hunter_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P2",
       "rarity": "legend",
@@ -1748,12 +2042,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1764,8 +2060,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -1784,7 +2084,11 @@
       "productionFolder": "02_Characters/seasonal",
       "deliveryFile": "chr_wavecaster_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P2",
       "rarity": "legend",
@@ -1807,12 +2111,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1823,8 +2129,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -1843,7 +2153,11 @@
       "productionFolder": "02_Characters/seasonal",
       "deliveryFile": "chr_underworld-gatekeeper_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P2",
       "rarity": "legend",
@@ -1866,12 +2180,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1882,8 +2198,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -1902,7 +2222,11 @@
       "productionFolder": "02_Characters/seasonal",
       "deliveryFile": "chr_star-keeper_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P2",
       "rarity": "mythic",
@@ -1925,12 +2249,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -1941,8 +2267,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -1961,7 +2291,11 @@
       "productionFolder": "02_Characters/npc",
       "deliveryFile": "chr_blacksmith_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P2",
       "rarity": "mythic",
@@ -1984,12 +2318,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2000,8 +2336,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -2020,7 +2360,11 @@
       "productionFolder": "02_Characters/npc",
       "deliveryFile": "chr_immortal-merchant_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P2",
       "rarity": "mythic",
@@ -2043,12 +2387,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2059,8 +2405,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -2079,7 +2429,11 @@
       "productionFolder": "02_Characters/npc",
       "deliveryFile": "chr_shrine-guide_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P3",
       "rarity": "mythic",
@@ -2102,12 +2456,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2118,8 +2474,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -2138,7 +2498,11 @@
       "productionFolder": "02_Characters/npc",
       "deliveryFile": "chr_mountain-elder_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P3",
       "rarity": "mythic",
@@ -2161,12 +2525,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2177,8 +2543,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -2197,7 +2567,11 @@
       "productionFolder": "02_Characters/npc",
       "deliveryFile": "chr_dragon-princess_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P3",
       "rarity": "mythic",
@@ -2220,12 +2594,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2236,8 +2612,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -2256,7 +2636,11 @@
       "productionFolder": "02_Characters/npc",
       "deliveryFile": "chr_underworld-scribe_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P3",
       "rarity": "mythic",
@@ -2279,12 +2663,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2295,8 +2681,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -2315,7 +2705,11 @@
       "productionFolder": "02_Characters/pet",
       "deliveryFile": "chr_dokkaebi-kid_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P3",
       "rarity": "mythic",
@@ -2338,12 +2732,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2354,8 +2750,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -2374,7 +2774,11 @@
       "productionFolder": "02_Characters/pet",
       "deliveryFile": "chr_moon-fox_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P3",
       "rarity": "immortal",
@@ -2397,12 +2801,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2413,8 +2819,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -2433,7 +2843,11 @@
       "productionFolder": "02_Characters/pet",
       "deliveryFile": "chr_cloud-tiger_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P3",
       "rarity": "immortal",
@@ -2456,12 +2870,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2472,8 +2888,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -2492,7 +2912,11 @@
       "productionFolder": "02_Characters/pet",
       "deliveryFile": "chr_mini-haetae_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P3",
       "rarity": "immortal",
@@ -2515,12 +2939,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2531,8 +2957,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -2551,7 +2981,11 @@
       "productionFolder": "02_Characters/pet",
       "deliveryFile": "chr_azure-dragonling_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P3",
       "rarity": "immortal",
@@ -2574,12 +3008,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2590,8 +3026,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -2610,7 +3050,11 @@
       "productionFolder": "02_Characters/pet",
       "deliveryFile": "chr_goblin-flame-spirit_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P3",
       "rarity": "immortal",
@@ -2633,12 +3077,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2649,8 +3095,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -2669,7 +3119,11 @@
       "productionFolder": "02_Characters/pet",
       "deliveryFile": "chr_lucky-pouch-fairy_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P3",
       "rarity": "immortal",
@@ -2692,12 +3146,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2708,8 +3164,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -2728,7 +3188,11 @@
       "productionFolder": "02_Characters/pet",
       "deliveryFile": "chr_lotus-spirit_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P3",
       "rarity": "immortal",
@@ -2751,12 +3215,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2767,8 +3233,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -2787,7 +3257,11 @@
       "productionFolder": "02_Characters/seasonal",
       "deliveryFile": "chr_celestial-vajra_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P3",
       "rarity": "immortal",
@@ -2810,12 +3284,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2826,8 +3302,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -2846,7 +3326,11 @@
       "productionFolder": "02_Characters/support",
       "deliveryFile": "chr_pearl-sage_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P3",
       "rarity": "god",
@@ -2869,12 +3353,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2885,8 +3371,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [
@@ -2905,7 +3395,11 @@
       "productionFolder": "02_Characters/pet",
       "deliveryFile": "chr_underworld-crow_lod0.glb",
       "format": "glb",
-      "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "artBibleVersion": "2.0.0",
+      "characterDnaVersion": "3.0.0",
+      "productionGate": "golden-vertical-slice-locked",
+      "productionApproved": false,
       "promptTemplateId": "PROMPT-CHARACTER",
       "priority": "P3",
       "rarity": "god",
@@ -2928,12 +3422,14 @@
           "Idle",
           "Walk",
           "Run",
-          "Attack",
+          "Attack1",
+          "Attack2",
           "Skill1",
           "Skill2",
           "Hit",
           "Death",
-          "Victory"
+          "Victory",
+          "Spawn"
         ],
         "authoredDirections": [
           0,
@@ -2944,8 +3440,12 @@
         ],
         "runtimeDirections": "5 authored + mirroring = 10-11 views",
         "sockets": [
+          "HeadSocket",
+          "ShoulderLSocket",
+          "ShoulderRSocket",
           "WeaponSocket",
-          "AccessorySocket"
+          "AccessorySocket",
+          "BackSocket"
         ]
       },
       "tags": [

@@ -1,0 +1,210 @@
+{
+  "schemaVersion": 2,
+  "artBibleVersion": "2.0.0",
+  "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+  "status": "absolute-locked",
+  "effectiveDate": "2026-07-23",
+  "immutable": true,
+  "genre": [
+    "Cute Stylized Fantasy",
+    "3D Mobile Game",
+    "AAA Casual",
+    "Korean Fantasy",
+    "Stylized PBR",
+    "Hand Painted"
+  ],
+  "proportion": {
+    "headsTall": 2.3,
+    "headPercent": 42,
+    "headAllowedPercent": [
+      40,
+      44
+    ],
+    "chestPercent": 18,
+    "waistPercent": 15,
+    "legPercent": 25,
+    "totalPercent": 100
+  },
+  "face": {
+    "eyePosition": "slightly-below-face-center",
+    "eyeWidthToFacePercent": 28,
+    "pupil": "round-large-gloss",
+    "eyelashes": "almost-none",
+    "nose": "single-dot",
+    "defaultMouth": "small-smile",
+    "eyeSizeLockedAcrossExpressions": true
+  },
+  "silhouette": {
+    "recognitionSecondsMax": 0.3,
+    "signatureElementsRequired": 3
+  },
+  "color": {
+    "maxMainColors": 4,
+    "distribution": {
+      "primary": 60,
+      "secondary": 25,
+      "accent": 10,
+      "fx": 5
+    },
+    "rainbowForbidden": true,
+    "lowSaturationDominantForbidden": true
+  },
+  "material": {
+    "skin": {
+      "smooth": true,
+      "pores": false,
+      "wrinkles": false,
+      "realism": false
+    },
+    "metal": {
+      "painted": true,
+      "stylized": true,
+      "goldEdge": true,
+      "reflection": "soft"
+    },
+    "cloth": {
+      "fabricPattern": "almost-none",
+      "gradient": "simple"
+    }
+  },
+  "edge": {
+    "rounded": true,
+    "bevel": true,
+    "sharp90DegreeForbidden": true
+  },
+  "weapon": {
+    "minimumCharacterHeightPercent": 18,
+    "mustReadLargerThanBody": true
+  },
+  "lighting": {
+    "order": [
+      "warm-key",
+      "cool-blue-rim",
+      "soft-ao",
+      "small-highlight"
+    ],
+    "darkMoodForbidden": true
+  },
+  "shadow": {
+    "type": "soft",
+    "opacityPercent": 40,
+    "pureBlackForbidden": true
+  },
+  "outline": {
+    "policy": "almost-none",
+    "separationMethods": [
+      "ao",
+      "contrast",
+      "color-separation"
+    ]
+  },
+  "expressions": {
+    "default": "small-smile",
+    "angerChange": [
+      "eyebrows"
+    ],
+    "sadnessChange": [
+      "mouth"
+    ],
+    "eyeSizeLocked": true
+  },
+  "equipmentParts": [
+    "Helmet",
+    "Shoulder",
+    "Weapon",
+    "Accessory",
+    "BackItem"
+  ],
+  "model": {
+    "triangles": [
+      6000,
+      10000
+    ],
+    "textureSizes": [
+      1024,
+      2048
+    ],
+    "rig": "Humanoid",
+    "cleanTopology": true
+  },
+  "animations": [
+    "Idle",
+    "Walk",
+    "Run",
+    "Attack1",
+    "Attack2",
+    "Skill1",
+    "Skill2",
+    "Hit",
+    "Death",
+    "Victory",
+    "Spawn"
+  ],
+  "authoredDirections": [
+    0,
+    45,
+    90,
+    135,
+    180
+  ],
+  "mirroring": true,
+  "monster": {
+    "cutePercent": 70,
+    "coolPercent": 30,
+    "grossPercent": 0
+  },
+  "boss": {
+    "scaleVsPlayer": 2,
+    "weaponScaleVsPlayer": 3,
+    "fxScaleVsPlayer": 4
+  },
+  "ui": {
+    "button": [
+      "Gold Border",
+      "Blue Glow",
+      "Rounded",
+      "Depth",
+      "Drop Shadow"
+    ],
+    "hoverScalePercent": 105,
+    "pressedScalePercent": 95
+  },
+  "icon": {
+    "perspectiveDegrees": 45,
+    "softShadow": true,
+    "bright": true,
+    "objectCount": 1,
+    "background": false
+  },
+  "map": {
+    "largeShape": true,
+    "simpleDetail": true,
+    "softEdge": true,
+    "handPainted": true
+  },
+  "vfx": {
+    "outerGlow": true,
+    "innerGlow": true,
+    "gradient": true,
+    "noise": "minimal",
+    "blurPercent": 10,
+    "particleShape": "round-cute"
+  },
+  "absoluteNegativeRules": [
+    "현실적인 피부 질감",
+    "과도한 근육",
+    "긴 다리",
+    "긴 목",
+    "작은 눈",
+    "포토리얼 스타일",
+    "과도한 장식",
+    "복잡한 갑옷",
+    "저채도 색감",
+    "어두운 라이팅",
+    "검은 그림자",
+    "과도한 텍스처 노이즈",
+    "고어(피, 절단, 내장)",
+    "공포 분위기"
+  ],
+  "masterStyleLockPrompt": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details."
+}

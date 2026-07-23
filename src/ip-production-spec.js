@@ -1,6 +1,6 @@
 export const IP_PRODUCTION_VERSION = '3.8.0';
 export const IP_PROJECT_NAME = 'Dokkaebi Defense';
-export const IP_STYLE_LOCK_ID = 'DD-AAA-CASUAL-SD-PBR-3.0';
+export const IP_STYLE_LOCK_ID = 'DD-ABSOLUTE-ART-BIBLE-2.0';
 
 export const PRODUCTION_DIRECTORIES = Object.freeze([
   '01_ArtBible',
@@ -30,11 +30,13 @@ export const ART_CONCEPT = Object.freeze({
 export const CHARACTER_PROPORTIONS = Object.freeze({
   headsTall: 2.3,
   headPercent: 42,
-  bodyPercent: 35,
-  legPercent: 23,
-  eyeRule: '크고 둥근 눈, 굵고 명확한 눈썹',
+  chestPercent: 18,
+  waistPercent: 15,
+  bodyPercent: 33,
+  legPercent: 25,
+  eyeRule: '눈은 얼굴 폭 28%, 얼굴 중앙보다 조금 아래, 동그란 눈동자와 큰 광택, 속눈썹 거의 없음',
   handRule: '둥근 손과 단순한 손가락',
-  weaponRule: '몸 대비 크게, 64px 실루엣에서도 역할이 읽히게'
+  weaponRule: '전체 높이의 18% 이상이며 몸보다 크게 읽히고 0.3초 안에 역할이 식별되게'
 });
 
 export const STARTER_CLASSES = Object.freeze([
@@ -57,7 +59,7 @@ export const RARITIES = Object.freeze([
   Object.freeze({ id: 'epic', ko: 'Epic', color: 'Purple' }),
   Object.freeze({ id: 'legend', ko: 'Legend', color: 'Orange' }),
   Object.freeze({ id: 'mythic', ko: 'Mythic', color: 'Red' }),
-  Object.freeze({ id: 'immortal', ko: 'Immortal', color: 'Rainbow' }),
+  Object.freeze({ id: 'immortal', ko: 'Immortal', color: 'Blue-Gold Iridescent', usage: '무지개 금지; Blue와 Gold 두 색만 사용' }),
   Object.freeze({ id: 'god', ko: 'God', color: 'Gold' })
 ]);
 
@@ -85,7 +87,7 @@ export const BUTTON_RULES = Object.freeze(['둥근 모서리', '명확한 입체
 export const ICON_SEEDS = Object.freeze(['Coin', 'Gem', 'Attack', 'HP', 'Mana', 'Speed', 'Critical', 'Boss', 'Fire', 'Ice', 'Lightning', 'Poison', 'Heal', 'Shield', 'Sword', 'Bow', 'Staff']);
 export const VFX_SEEDS = Object.freeze(['Slash', 'Explosion', 'Summon', 'Fire', 'Ice', 'Heal', 'Level Up', 'Critical', 'Lightning', 'Wind', 'Dark', 'Holy']);
 
-export const PLAYER_ANIMATIONS = Object.freeze(['Idle', 'Walk', 'Run', 'Attack', 'Skill1', 'Skill2', 'Hit', 'Death', 'Victory']);
+export const PLAYER_ANIMATIONS = Object.freeze(['Idle', 'Walk', 'Run', 'Attack1', 'Attack2', 'Skill1', 'Skill2', 'Hit', 'Death', 'Victory', 'Spawn']);
 export const AUTHORED_DIRECTIONS = Object.freeze([
   Object.freeze({ id: 'front', degrees: 0, label: '정면' }),
   Object.freeze({ id: 'front-quarter', degrees: 45, label: '45°' }),

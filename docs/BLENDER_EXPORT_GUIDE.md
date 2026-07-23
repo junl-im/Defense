@@ -46,7 +46,7 @@
 
 ## 필수 extras
 
-- `styleLockId: DD-AAA-CASUAL-SD-PBR-3.0`
+- `styleLockId: DD-ABSOLUTE-ART-BIBLE-2.0`
 - `approvalStatus: art-review` 또는 `production-approved`
 - `sourcePromptId`
 - `artistRevision`

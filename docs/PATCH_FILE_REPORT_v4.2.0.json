@@ -1,0 +1,41 @@
+{
+  "version": "4.2.0",
+  "baseVersion": "4.1.0-art-bible-lock-v2.0",
+  "patchType": "overwrite-relative-paths",
+  "distIncludedInFullZip": true,
+  "distIncludedInPatchZip": false,
+  "addedCount": 6,
+  "modifiedCount": 20,
+  "deletedCount": 0,
+  "added": [
+    "docs/ART_ASSET_APPROVAL_REGISTRY_v4.2.0.json",
+    "docs/PATCH_FILE_REPORT_v4.2.0.json",
+    "docs/PATCH_NOTES_v4.2.0.md",
+    "docs/PRODUCTION_GATE_AND_PERFORMANCE_v4.2.0.md",
+    "scripts/verify-v420.mjs",
+    "src/art-production-gate.js"
+  ],
+  "modified": [
+    "PROJECT_HANDOFF.md",
+    "README.md",
+    "docs/ASSET_MANIFEST.json",
+    "docs/CURRENT_ASSET_AUDIT.json",
+    "docs/PRODUCTION_ROADMAP.md",
+    "index.html",
+    "package-lock.json",
+    "package.json",
+    "scripts/audit-current-assets.mjs",
+    "scripts/build-static-fallback.mjs",
+    "scripts/verify-project.mjs",
+    "scripts/verify-static-dist.mjs",
+    "src/engine/asset-catalog.js",
+    "src/engine/engine-config.js",
+    "src/engine/mobile-engine.js",
+    "src/engine/performance-monitor.js",
+    "src/engine/render-stats-hud.js",
+    "src/firebase.js",
+    "src/main.js",
+    "src/style.css"
+  ],
+  "deleted": []
+}

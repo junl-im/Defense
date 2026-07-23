@@ -1,0 +1,239 @@
+{
+  "schemaVersion": 1,
+  "gameVersion": "4.2.0",
+  "gateVersion": "4.2.0",
+  "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+  "policy": {
+    "productionLabelRequiresAllEvidence": true,
+    "massProductionBlockedUntilGoldenSliceApproved": true,
+    "approvedStatus": "production-approved"
+  },
+  "approvalEvidence": [
+    "style-lock-metadata",
+    "art-review-checklist",
+    "turnaround-5-view",
+    "silhouette-0.3s",
+    "palette-60-25-10-5",
+    "technical-budget",
+    "runtime-device-review",
+    "art-director-approval"
+  ],
+  "summary": {
+    "runtimeAssetCount": 19,
+    "runtimeProductionApproved": 0,
+    "goldenSliceTotal": 6,
+    "goldenSliceApproved": 0,
+    "massProductionUnlocked": false
+  },
+  "goldenVerticalSlice": [
+    {
+      "id": "GVS-HERO-WARRIOR",
+      "category": "hero",
+      "label": "도깨비 전사",
+      "status": "planned"
+    },
+    {
+      "id": "GVS-MONSTER-GRUNT",
+      "category": "monster",
+      "label": "일반 요괴",
+      "status": "planned"
+    },
+    {
+      "id": "GVS-BOSS-TIGER",
+      "category": "boss",
+      "label": "저승 호랑이",
+      "status": "planned"
+    },
+    {
+      "id": "GVS-ENV-MOON-MARKET",
+      "category": "environment",
+      "label": "도깨비마을 전장",
+      "status": "planned"
+    },
+    {
+      "id": "GVS-UI-COMBAT",
+      "category": "ui",
+      "label": "전투 HUD",
+      "status": "planned"
+    },
+    {
+      "id": "GVS-VFX-COMBAT",
+      "category": "vfx",
+      "label": "전투 VFX",
+      "status": "planned"
+    }
+  ],
+  "runtimeAssets": [
+    {
+      "id": "guardian-ember-sd-toon",
+      "file": "guardian-ember-sd-toon.glb",
+      "category": "character",
+      "status": "prototype-placeholder",
+      "absoluteArtBiblePassed": false,
+      "productionApproved": false,
+      "usage": "legacy-runtime-candidate"
+    },
+    {
+      "id": "guardian-frost-sd-toon",
+      "file": "guardian-frost-sd-toon.glb",
+      "category": "character",
+      "status": "prototype-placeholder",
+      "absoluteArtBiblePassed": false,
+      "productionApproved": false,
+      "usage": "legacy-runtime-candidate"
+    },
+    {
+      "id": "guardian-wind-sd-toon",
+      "file": "guardian-wind-sd-toon.glb",
+      "category": "character",
+      "status": "prototype-placeholder",
+      "absoluteArtBiblePassed": false,
+      "productionApproved": false,
+      "usage": "legacy-runtime-candidate"
+    },
+    {
+      "id": "guardian-stone-sd-toon",
+      "file": "guardian-stone-sd-toon.glb",
+      "category": "character",
+      "status": "prototype-placeholder",
+      "absoluteArtBiblePassed": false,
+      "productionApproved": false,
+      "usage": "legacy-runtime-candidate"
+    },
+    {
+      "id": "guardian-bell-sd-toon",
+      "file": "guardian-bell-sd-toon.glb",
+      "category": "character",
+      "status": "prototype-placeholder",
+      "absoluteArtBiblePassed": false,
+      "productionApproved": false,
+      "usage": "legacy-runtime-candidate"
+    },
+    {
+      "id": "guardian-thunder-sd-toon",
+      "file": "guardian-thunder-sd-toon.glb",
+      "category": "character",
+      "status": "prototype-placeholder",
+      "absoluteArtBiblePassed": false,
+      "productionApproved": false,
+      "usage": "legacy-runtime-candidate"
+    },
+    {
+      "id": "monster-imp-sd-toon",
+      "file": "monster-imp-sd-toon.glb",
+      "category": "monster",
+      "status": "prototype-placeholder",
+      "absoluteArtBiblePassed": false,
+      "productionApproved": false,
+      "usage": "legacy-runtime-candidate"
+    },
+    {
+      "id": "monster-runner-sd-toon",
+      "file": "monster-runner-sd-toon.glb",
+      "category": "monster",
+      "status": "prototype-placeholder",
+      "absoluteArtBiblePassed": false,
+      "productionApproved": false,
+      "usage": "legacy-runtime-candidate"
+    },
+    {
+      "id": "boss-tiger-sd-toon",
+      "file": "boss-tiger-sd-toon.glb",
+      "category": "boss",
+      "status": "prototype-placeholder",
+      "absoluteArtBiblePassed": false,
+      "productionApproved": false,
+      "usage": "legacy-runtime-candidate"
+    },
+    {
+      "id": "boss-serpent-sd-toon",
+      "file": "boss-serpent-sd-toon.glb",
+      "category": "boss",
+      "status": "prototype-placeholder",
+      "absoluteArtBiblePassed": false,
+      "productionApproved": false,
+      "usage": "legacy-runtime-candidate"
+    },
+    {
+      "id": "boss-king-sd-toon",
+      "file": "boss-king-sd-toon.glb",
+      "category": "boss",
+      "status": "prototype-placeholder",
+      "absoluteArtBiblePassed": false,
+      "productionApproved": false,
+      "usage": "legacy-runtime-candidate"
+    },
+    {
+      "id": "player-dokkaebi-warrior-golden-v1",
+      "file": "player-dokkaebi-warrior-golden-v1.glb",
+      "category": "character",
+      "status": "art-review",
+      "absoluteArtBiblePassed": false,
+      "productionApproved": false,
+      "usage": "legacy-runtime-candidate"
+    },
+    {
+      "id": "player-dokkaebi-archer-candidate-v1",
+      "file": "player-dokkaebi-archer-candidate-v1.glb",
+      "category": "character",
+      "status": "art-review",
+      "absoluteArtBiblePassed": false,
+      "productionApproved": false,
+      "usage": "legacy-runtime-candidate"
+    },
+    {
+      "id": "player-dokkaebi-mage-candidate-v1",
+      "file": "player-dokkaebi-mage-candidate-v1.glb",
+      "category": "character",
+      "status": "art-review",
+      "absoluteArtBiblePassed": false,
+      "productionApproved": false,
+      "usage": "legacy-runtime-candidate"
+    },
+    {
+      "id": "monster-brute-sd-toon",
+      "file": "monster-brute-sd-toon.glb",
+      "category": "monster",
+      "status": "art-review",
+      "absoluteArtBiblePassed": false,
+      "productionApproved": false,
+      "usage": "legacy-runtime-candidate"
+    },
+    {
+      "id": "monster-shaman-sd-toon",
+      "file": "monster-shaman-sd-toon.glb",
+      "category": "monster",
+      "status": "art-review",
+      "absoluteArtBiblePassed": false,
+      "productionApproved": false,
+      "usage": "legacy-runtime-candidate"
+    },
+    {
+      "id": "monster-ghost-candidate-v1",
+      "file": "monster-ghost-candidate-v1.glb",
+      "category": "monster",
+      "status": "art-review",
+      "absoluteArtBiblePassed": false,
+      "productionApproved": false,
+      "usage": "legacy-runtime-candidate"
+    },
+    {
+      "id": "monster-skeleton-candidate-v1",
+      "file": "monster-skeleton-candidate-v1.glb",
+      "category": "monster",
+      "status": "art-review",
+      "absoluteArtBiblePassed": false,
+      "productionApproved": false,
+      "usage": "legacy-runtime-candidate"
+    },
+    {
+      "id": "monster-crow-candidate-v1",
+      "file": "monster-crow-candidate-v1.glb",
+      "category": "monster",
+      "status": "art-review",
+      "absoluteArtBiblePassed": false,
+      "productionApproved": false,
+      "usage": "legacy-runtime-candidate"
+    }
+  ]
+}

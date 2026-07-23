@@ -1,9 +1,9 @@
 {
   "schemaVersion": 10,
-  "gameVersion": "4.1.0",
-  "engineVersion": "3.0.0",
-  "artDirection": "aaa-casual-mobile-sd-stylized-pbr-korean-folklore",
-  "productionStage": "p0-runtime-class-enemy-expansion-art-review",
+  "gameVersion": "5.0.0",
+  "engineVersion": "4.0.0",
+  "artDirection": "cute-stylized-fantasy-aaa-casual-korean-fantasy-hand-painted-stylized-pbr",
+  "productionStage": "v5-moonstone-genesis-runtime-remaster",
   "impostorDirections": 11,
   "characters": {
     "guardians": [
@@ -282,23 +282,58 @@
   ],
   "mirroredImpostors": true,
   "artBible": {
-    "version": "3.0.0",
-    "status": "locked",
-    "styleLockId": "DD-AAA-CASUAL-SD-PBR-3.0",
-    "document": "docs/ASSET_BIBLE.md",
+    "version": "2.0.0",
+    "status": "absolute-locked",
+    "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+    "document": "docs/ABSOLUTE_ART_BIBLE_v2.0.md",
+    "machineSpec": "docs/ART_BIBLE_MACHINE_SPEC_v2.0.json",
+    "reviewChecklist": "docs/ART_REVIEW_CHECKLIST_v2.0.md",
+    "immutable": true,
     "targetHeadsTall": 2.3,
-    "allowedHeadsTall": [
-      2.2,
-      2.4
+    "headPercent": 42,
+    "headAllowedPercent": [
+      40,
+      44
     ],
+    "chestPercent": 18,
+    "waistPercent": 15,
+    "legPercent": 25,
+    "eyeWidthToFacePercent": 28,
+    "maxMainColors": 4,
+    "colorDistribution": [
+      60,
+      25,
+      10,
+      5
+    ],
+    "rainbowForbidden": true,
     "renderStyle": "hand-painted-stylized-pbr",
+    "shadowOpacityPercent": 40,
+    "requiredAnimations": [
+      "Idle",
+      "Walk",
+      "Run",
+      "Attack1",
+      "Attack2",
+      "Skill1",
+      "Skill2",
+      "Hit",
+      "Death",
+      "Victory",
+      "Spawn"
+    ],
+    "equipmentParts": [
+      "Helmet",
+      "Shoulder",
+      "Weapon",
+      "Accessory",
+      "BackItem"
+    ],
     "productionOrder": [
-      "style-lock",
-      "hero",
-      "enemy-trio",
-      "environment",
-      "ui",
-      "vfx",
+      "absolute-lock",
+      "character-dna",
+      "golden-vertical-slice",
+      "technical-production",
       "scale-out"
     ]
   },
@@ -671,7 +706,8 @@
     "ui": 300,
     "vfx": 150,
     "environment": 80,
-    "total": 750
+    "total": 750,
+    "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0"
   },
   "goldenSample": {
     "id": "player-dokkaebi-warrior-golden-v1",
@@ -691,7 +727,8 @@
     "starterClasses": 11,
     "stages": 7,
     "coreDocuments": 5,
-    "productionApproved": 0
+    "productionApproved": 0,
+    "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0"
   },
   "p0RuntimeExpansion": {
     "version": "4.1.0",
@@ -703,5 +740,18 @@
     "weaknessStudies": 10,
     "lootEntries": 13,
     "productionApproved": 0
+  },
+  "artBibleMigration": {
+    "currentRuntimeAssets": 19,
+    "absoluteCompliant": 0,
+    "productionApproved": 0,
+    "legacyTechnicalReview": 8,
+    "prototype": 11
+  },
+  "artSystem": {
+    "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+    "characterDnaVersion": "3.0.0",
+    "runtimeHarmonizerVersion": "1.0.0",
+    "productionApprovedAssets": 0
   }
 }

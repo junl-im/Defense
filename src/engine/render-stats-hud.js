@@ -31,9 +31,15 @@ export class RenderStatsHUD {
     const chunks = diagnostics.chunks || {};
     const pools = diagnostics.pools || {};
     const assets = diagnostics.assets || {};
+    const performance = diagnostics.performance || {};
+    const frameState = performance.p95FrameMs >= 40 ? 'critical' : performance.p95FrameMs >= 25 ? 'warning' : 'good';
+    this.element.dataset.frameState = frameState;
     this.element.innerHTML = `
       <b>ENGINE ${diagnostics.engineVersion || ''}</b>
       <span>FPS <strong>${Math.round(fps)}</strong> · SCALE ${Math.round((diagnostics.qualityScale || 1) * 100)}%</span>
+      <span>FRAME <strong>${performance.averageFrameMs || 0}ms</strong> · P95 <strong>${performance.p95FrameMs || 0}ms</strong> · P99 ${performance.p99FrameMs || 0}ms</span>
+      <span>SMOOTH <strong>${performance.smoothnessScore ?? 100}</strong> · JITTER ${performance.frameJitterMs || 0}ms</span>
+      <span>LONG <strong>${performance.longFramePercent || 0}%</strong> · SEVERE ${performance.severeFramePercent || 0}%</span>
       <span>CALLS <strong>${render.calls || 0}</strong> · TRI <strong>${Number(render.triangles || 0).toLocaleString()}</strong></span>
       <span>GEO ${memory.geometries || 0} · TEX ${memory.textures || 0}</span>
       <span>CHUNK ${chunks.active || 0}/${chunks.total || 0} · OBJ ${chunks.visibleObjects || 0}/${chunks.totalObjects || 0}</span>
