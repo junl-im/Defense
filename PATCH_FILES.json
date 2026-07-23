@@ -1,49 +1,2809 @@
 {
-  "added": [
-    "docs/ART_ASSET_APPROVAL_REGISTRY_v9.0.0.json",
-    "docs/ASSET_QUALITY_AUDIT_v9.0.0.md",
-    "docs/ASSET_RENAISSANCE_v9.0.0.md",
-    "docs/ASSET_REVIEW_BOARD_v9.0.0.jpg",
-    "docs/NEXT_PATCH_LINEUP_v9.x.md",
-    "docs/PATCH_APPLY_v9.0.0.md",
-    "docs/PATCH_NOTES_v9.0.0.md",
-    "public/asset-library-v9.html",
-    "public/assets/ip-v8/quality-registry-v9.json",
-    "scripts/generate-asset-quality-registry-v9.mjs",
-    "scripts/verify-v900.mjs",
-    "src/ip-asset-library-v9.js"
+  "schemaVersion": 3,
+  "fromVersion": "12.0.0",
+  "toVersion": "13.0.0",
+  "generatedAtUtc": "2026-07-23T06:32:19.412413+00:00",
+  "summary": {
+    "new": 436,
+    "overwritten": 31,
+    "deleted": 0,
+    "payloadWithoutMetadata": 462,
+    "totalPatchFiles": 467
+  },
+  "payloadFiles": [
+    {
+      "path": "docs/ASSET_SHEET_CUT_PREVIEW_v13.0.0.jpg",
+      "status": "new",
+      "size": 838658,
+      "sha256": "d77c85583d2fb3c32198fccb93a1079ba7206c1cdcefb9f410c1f78819728b91"
+    },
+    {
+      "path": "docs/NEXT_PATCH_LINEUP_v13.x.md",
+      "status": "new",
+      "size": 965,
+      "sha256": "86ddaeb75a01f15f1720da0f7470f643ac03f7d7dcf5f6f9cce979a548f8677c"
+    },
+    {
+      "path": "docs/PATCH_APPLY_v13.0.0.md",
+      "status": "new",
+      "size": 536,
+      "sha256": "8df6197ecb758c7da477ea454690fe6a583a993abf7c4ebe6d6fcea6caf60397"
+    },
+    {
+      "path": "docs/PATCH_NOTES_v13.0.0.md",
+      "status": "new",
+      "size": 1009,
+      "sha256": "da9d5e14a2538f4e7f6e9997e46d46103b9affe8a35ad087de726ce0da2bf094"
+    },
+    {
+      "path": "docs/SPRITE_SHEET_IMPORT_REPORT_v13.0.0.json",
+      "status": "new",
+      "size": 410,
+      "sha256": "0089adbefec272b145e02048c245dae632c5b40d3e7fbc58a9d27ba2b4fda249"
+    },
+    {
+      "path": "docs/TRANSPARENT_ARSENAL_v13.0.0.md",
+      "status": "new",
+      "size": 1342,
+      "sha256": "a385a1e30962e869e45d17bf6361427c5ac374b8b6cf57a4fa87be36134a5828"
+    },
+    {
+      "path": "public/asset-library-v13.html",
+      "status": "new",
+      "size": 4392,
+      "sha256": "30d369b38c2f7a8f152ccc27686f6bf639d6a66e703b5bad4a0a74d13810d1ad"
+    },
+    {
+      "path": "public/assets/ip-v13/asset-manifest-v13.json",
+      "status": "new",
+      "size": 242055,
+      "sha256": "20c8d1f338bfae84096d0ee55f29ccf84803af7d2474d08b96a7b98979bb488f"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/bosses/bosses-r01-c01.png",
+      "status": "new",
+      "size": 93134,
+      "sha256": "1725af097896ecc64262639c32ff418897bdbc73f396a139b7110bfac18961f1"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/bosses/bosses-r01-c02.png",
+      "status": "new",
+      "size": 95968,
+      "sha256": "79edf77ec5fcd2ecd5b0477fc0d81f9a623df7e59f7229c0610315d6a4d00e32"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/bosses/bosses-r01-c03.png",
+      "status": "new",
+      "size": 102195,
+      "sha256": "bcf1263be0bd1eebe6e5507fcddbd336cb1e079b1681812939381098ee92ebd3"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/bosses/bosses-r01-c04.png",
+      "status": "new",
+      "size": 90994,
+      "sha256": "084904bdc8f2d0055a3c372b01143c46256d820aa2ad707ce7dc69961ffae1a2"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/bosses/bosses-r01-c05.png",
+      "status": "new",
+      "size": 96554,
+      "sha256": "d60e3f73c3b6f08b6703f5e5b870e7c6f66f6eff4dda6f8a1a46ad93616b659d"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/bosses/bosses-r02-c01.png",
+      "status": "new",
+      "size": 88978,
+      "sha256": "aa1c835e667e61c03a32c8de6d5fc7e673eac01e22a745af88df51a7bfebd7e0"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/bosses/bosses-r02-c02.png",
+      "status": "new",
+      "size": 97619,
+      "sha256": "6a426ea2cec45d9b6e596a092d1f57cf5e1fdc70421784817fa2097320c374b7"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/bosses/bosses-r02-c03.png",
+      "status": "new",
+      "size": 99668,
+      "sha256": "68e76baa5c20572b8c2b71e48e249876e577deaefc01bab0acab34c76f47431a"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/bosses/bosses-r02-c04.png",
+      "status": "new",
+      "size": 100675,
+      "sha256": "86ce63c72143dbc490380342d57859ecaaa05d41ab74e47dfcf34c126e273e79"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/bosses/bosses-r02-c05.png",
+      "status": "new",
+      "size": 88128,
+      "sha256": "fa93738c7b92218ef7ccef3abf28212d3459ea4883eb05d5c0bdcc46e9da51cc"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/bosses/bosses-r03-c01.png",
+      "status": "new",
+      "size": 89586,
+      "sha256": "40097c9b533670e15d9f090936133fbf2b38be7fed4e52995ff7866fccad81f2"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/bosses/bosses-r03-c02.png",
+      "status": "new",
+      "size": 86329,
+      "sha256": "b36eac046ae9231f7cf7509e6bf3d54e1ff47322873c76189d62ce904edb5089"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/bosses/bosses-r03-c03.png",
+      "status": "new",
+      "size": 81091,
+      "sha256": "58eb325699aa5c296d14a8528b054900dc186e83d5b0d3ec538986d37a66eb92"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/bosses/bosses-r03-c04.png",
+      "status": "new",
+      "size": 90381,
+      "sha256": "937a12f51a096bbcb8d502e72d59c54dd5d4127770304f58e936660fdf230db1"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/bosses/bosses-r03-c05.png",
+      "status": "new",
+      "size": 88477,
+      "sha256": "d98c60d89999bdc24f6a28df460ea20ee2c0112e69c8cdc1e44f4d9bc8338af2"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/bosses/bosses-r04-c01.png",
+      "status": "new",
+      "size": 88575,
+      "sha256": "8f54f6b05a77a300aaeae403f6ea482caf1356d842d3c40c5ef88fdce245e9d6"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/bosses/bosses-r04-c02.png",
+      "status": "new",
+      "size": 69165,
+      "sha256": "574b3fa376544c840947f5dd556a79489eeb441f5bca95d8fada320a67df8121"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/bosses/bosses-r04-c03.png",
+      "status": "new",
+      "size": 89910,
+      "sha256": "12a6808f7a2edf77f15c53e7ef7abfabe53e2b591e671a72d7ca429682e5519f"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/bosses/bosses-r04-c04.png",
+      "status": "new",
+      "size": 105113,
+      "sha256": "b3a993ae692693b525d3ac7c0c07536ac2868ef65021d60f57cfecde307fa510"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/bosses/bosses-r04-c05.png",
+      "status": "new",
+      "size": 84055,
+      "sha256": "b5d80f63f9a86c0d9bd77415d5b04bb0f636d1525552fe12834f157666b03608"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/bosses/bosses-r05-c01.png",
+      "status": "new",
+      "size": 82028,
+      "sha256": "cd4abbcb82050ad43554efa3553c699284a78f1cd4f9c75a8a56819e28c08667"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/bosses/bosses-r05-c02.png",
+      "status": "new",
+      "size": 91456,
+      "sha256": "bfe251d4701b8eab42a4d95a694d252accfa996ebd955debe4e17998e4de1c77"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/bosses/bosses-r05-c03.png",
+      "status": "new",
+      "size": 81497,
+      "sha256": "716b0aa65105419c4e57b201adb5b25dd8297b03e9fcf5bb2f87fa478c180fb3"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/bosses/bosses-r05-c04.png",
+      "status": "new",
+      "size": 86717,
+      "sha256": "f856e2da3ce83d5b5a8f3aa917b6c867132242f979392a351b989e032d64206e"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/bosses/bosses-r05-c05.png",
+      "status": "new",
+      "size": 90182,
+      "sha256": "36f67c204a6a60ae0af1a115c109b64a16677025e0a58fe6b6c01fb0670921a5"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r01-c01.png",
+      "status": "new",
+      "size": 40896,
+      "sha256": "5e1d89028fc5ab8b26c49e675ef1f72eba4ca27a73c642caa87e5a32bb8cda59"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r01-c02.png",
+      "status": "new",
+      "size": 40990,
+      "sha256": "9cbabbee09cef464d832ae71e6c8a254c35153cca92e5e54fb5c2ba247ad4ff7"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r01-c03.png",
+      "status": "new",
+      "size": 47156,
+      "sha256": "860fa280d2f03ad39864a1e8a886ab1544ccd1c7f61337d46cecb097489ddefe"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r01-c04.png",
+      "status": "new",
+      "size": 55474,
+      "sha256": "56182a5715edecc510adb1196f8140c6023e3239c3959f12a1ac1b5bcb21dbf5"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r01-c05.png",
+      "status": "new",
+      "size": 58111,
+      "sha256": "8f7a455f4d792dcdb18eb510ff904ee63257b25942a3c9cb0f104d8d44972701"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r01-c06.png",
+      "status": "new",
+      "size": 42766,
+      "sha256": "c22f63b617e2bb398581fcbbfafa57719426bda5c95fad23d0f7fbac9ed55ae7"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r02-c01.png",
+      "status": "new",
+      "size": 50753,
+      "sha256": "7766c3e1987af818000608234536dc54aa9877bab0d729ffcb466a2b44034148"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r02-c02.png",
+      "status": "new",
+      "size": 70306,
+      "sha256": "3869664192f5a8f6cdfede8c7aa0534c9509c7a4ba635485f903b85f6d4efcc3"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r02-c03.png",
+      "status": "new",
+      "size": 55317,
+      "sha256": "909c19b33550ef4d3dc0d78db76f090ec53ed40377e485c130fa77f9e89493c8"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r02-c04.png",
+      "status": "new",
+      "size": 46427,
+      "sha256": "71d8ef355de7dc7f7ecc3970d2440d53581970a11c7f1adcc6e0c795b4f1f9e0"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r02-c05.png",
+      "status": "new",
+      "size": 67530,
+      "sha256": "5bd278d975e0046dd54f75193bafee4bea38d684971dd4242f479482be4448c9"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r02-c06.png",
+      "status": "new",
+      "size": 83487,
+      "sha256": "0065d8293df52ad5f8ca6aaf0e910feddb69321bca73446b48d45abaf90829cf"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r03-c01.png",
+      "status": "new",
+      "size": 64046,
+      "sha256": "3c3b5599fc02f78e19f6ea98bbd3c52c08c67512d9d32e6a4eead8f6dda18c7e"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r03-c02.png",
+      "status": "new",
+      "size": 59926,
+      "sha256": "7eadc20d0ac3eee21bae1b389093a2a4d44bd53e30e56948f3e08c1a6ff7501f"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r03-c03.png",
+      "status": "new",
+      "size": 64742,
+      "sha256": "badfe07ca1bcec314bde2f23832475c19d38d1dbe2cbdb1e120412fbce78e10a"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r03-c04.png",
+      "status": "new",
+      "size": 73432,
+      "sha256": "ad6fbcac916fa8c0b9c5eb9b72058474b304bf4b526756a4919d563773ca2900"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r03-c05.png",
+      "status": "new",
+      "size": 82702,
+      "sha256": "60690542ed555997f75cd83d27c89c6b0ba38347cb9661bd5ee1e5a1c0f4fa6f"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r03-c06.png",
+      "status": "new",
+      "size": 60248,
+      "sha256": "700a838a13781b8745be5638daab76a7cd1cb4ec9fcb95f6591b3f7e9469742d"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r04-c01.png",
+      "status": "new",
+      "size": 74509,
+      "sha256": "335b72e2d0afd62541be36814d315faf7a5f313a3399dee7a24d5fc461f847cb"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r04-c02.png",
+      "status": "new",
+      "size": 73673,
+      "sha256": "156ce9024adbedac5754fc400f6381b97c9a9ef544aa917d7ff0da9f6a174de3"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r04-c03.png",
+      "status": "new",
+      "size": 72442,
+      "sha256": "c35dd8c46efd091e40df39fa28c0df44272ca5ada191cc196dd475a23c95525c"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r04-c04.png",
+      "status": "new",
+      "size": 58893,
+      "sha256": "adc2d4c38369469c0b0adce83918acafa57b13ea6f5bcad563593aeffbfc9bf1"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r04-c05.png",
+      "status": "new",
+      "size": 47318,
+      "sha256": "c936ff359c154f65f1d96e116863dc9f0e3b4debd16f3ec1ff763e987884b896"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r04-c06.png",
+      "status": "new",
+      "size": 50838,
+      "sha256": "d947b2c2ded3d8d0407abc92939813d017719038704b538f1eafa057e29ab842"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r05-c01.png",
+      "status": "new",
+      "size": 84181,
+      "sha256": "30a6af33a4cc849bb7607db8097589a7652fb51797e0cf11a771b91c18c904fd"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r05-c02.png",
+      "status": "new",
+      "size": 72555,
+      "sha256": "8db9013dc6ee81ed8da8cf06abe2da8ea8fe3235d343017086c97f23ed6d55c4"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r05-c03.png",
+      "status": "new",
+      "size": 68975,
+      "sha256": "46dcdfb529746722aa3fab71da5c58c3054b210a42c592de80e0cb0d9ea4c296"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r05-c04.png",
+      "status": "new",
+      "size": 57547,
+      "sha256": "726ef3511e9a4bcb2e23e57d7b89d1716c647b8121a3124ec34f5cbada275c78"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r05-c05.png",
+      "status": "new",
+      "size": 64140,
+      "sha256": "9f5e3b79fc8ed97c1c7a542602d6f8206b0e8097cb75ce44cc40eef4d7452131"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r05-c06.png",
+      "status": "new",
+      "size": 66697,
+      "sha256": "c6ed2d3f0e81a23fa9a09822f762cb3ed7b55e9eaeaee6760bc80f445711e0cc"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r06-c01.png",
+      "status": "new",
+      "size": 79355,
+      "sha256": "c1f25efeb5f62872a1f41ced89853b9c82881a94201eeb21e0ad80dbab656bbf"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r06-c02.png",
+      "status": "new",
+      "size": 76586,
+      "sha256": "d9630ef3d34792e997da4d1808335a31992708c9344a6f2f8ce40c02b95f928c"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r06-c03.png",
+      "status": "new",
+      "size": 68819,
+      "sha256": "5d393b8ffb296e1b7da65ce325fb0a8ba8c658c176fad94157267fc2270ed447"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r06-c04.png",
+      "status": "new",
+      "size": 75243,
+      "sha256": "0d7c44e4d289990e28ffe60f0e1a2abac2d30056047c9dba75b94c1b724205e6"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r06-c05.png",
+      "status": "new",
+      "size": 77074,
+      "sha256": "a5cf498c593d03434315278941ec6fc5f2aee670241b94a5839922820acd1cdf"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r06-c06.png",
+      "status": "new",
+      "size": 52540,
+      "sha256": "c2463d20ce9df77267e66c52bfd71744b049d611e78909c3a1d45d647e0c11fc"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r07-c01.png",
+      "status": "new",
+      "size": 31740,
+      "sha256": "bb6da6f574419ced965bf516cdf4fe3cfac78c4d0de3f1ef3c77b88dfeaeab78"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r07-c02.png",
+      "status": "new",
+      "size": 32016,
+      "sha256": "a2834dd6c9c4eb0f4d1a58bf425a42ec19144ee0da808ec29b29c7783a0d4f68"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r07-c03.png",
+      "status": "new",
+      "size": 37447,
+      "sha256": "16c7173822ec7be12592c1256c892fbd9710aef486546ba6636eebf54441066f"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r07-c04.png",
+      "status": "new",
+      "size": 69465,
+      "sha256": "2a99d9256ccd70628cd3462f603b3dbde5fec1059062a476a015d8af02258921"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r07-c05.png",
+      "status": "new",
+      "size": 58521,
+      "sha256": "82e03e8deec296e80561892d20d70ff7ef991dc70ad107160037006e34465852"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/combat-props/combat-props-r07-c06.png",
+      "status": "new",
+      "size": 68468,
+      "sha256": "d66382d9433a2c996648cc76c88333a511215b1c3b4e3af3268087df2060e1f6"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r01-c01.png",
+      "status": "new",
+      "size": 60283,
+      "sha256": "da3d856cd75c29ea9c695ae32736270914288344caf63b75a1eee303a8825c41"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r01-c02.png",
+      "status": "new",
+      "size": 41172,
+      "sha256": "5c60c0f943efaeb17b1bf6f7f597cc02848214904032d4b0a42ff4068143332e"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r01-c03.png",
+      "status": "new",
+      "size": 47315,
+      "sha256": "ebb99ee6885b361b28eadb8d937ead000049010a853efbc27523d00069f888ea"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r01-c04.png",
+      "status": "new",
+      "size": 40361,
+      "sha256": "3cbff5bde87f98053ea1f667450e8d8fe154242c1337b58d2cc323e2cc592462"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r01-c05.png",
+      "status": "new",
+      "size": 36380,
+      "sha256": "3860bfcbe92ecbb20331d6d36427ca85c25a29201cd4d1bfc37b12803a4cc7bb"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r01-c06.png",
+      "status": "new",
+      "size": 24793,
+      "sha256": "d0597ae78361d9c9233bde8e2fc9e8e1538219b297f06f18622ba1c3a788c26a"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r01-c07.png",
+      "status": "new",
+      "size": 34023,
+      "sha256": "440c40d6c817fed1965b4eadadbb33bdda71adc22f0cb38f234e09dd55c36d80"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r01-c08.png",
+      "status": "new",
+      "size": 44608,
+      "sha256": "682653116b5fa68aa190ec15099cb9bc7f6e6feb66f034652abeee7954a5ab2c"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r02-c01.png",
+      "status": "new",
+      "size": 86747,
+      "sha256": "33b695e6535364420ccfffe7951441aa3ad85568db4c26374431c4e18da1b8a4"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r02-c02.png",
+      "status": "new",
+      "size": 29106,
+      "sha256": "9068b9038083b788130fbed7bd83781a1819d041500134ff816f568b57e295dd"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r02-c03.png",
+      "status": "new",
+      "size": 56947,
+      "sha256": "7d42670d71722f7e857100205fd2346277aa35bdab6df11e342595e700d44fa6"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r02-c04.png",
+      "status": "new",
+      "size": 61424,
+      "sha256": "3f97ef561e22fdba54390c099383acaf11b38890e9a6295717a1f80162a91617"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r02-c05.png",
+      "status": "new",
+      "size": 57699,
+      "sha256": "a2ea9e795d3e25989bf8e7215e19bc3f55c3b9edad04fb48d2c83d856bcf05f0"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r02-c06.png",
+      "status": "new",
+      "size": 59052,
+      "sha256": "722b098d3b62a0fcfdc127ec9a0f32d110029a8e86f6fc311a8e849f37dbc035"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r02-c07.png",
+      "status": "new",
+      "size": 66522,
+      "sha256": "220b92a9a3a336c9a60e3387952ab424ce7489d4533604c90aedaceca7994e76"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r03-c01.png",
+      "status": "new",
+      "size": 74571,
+      "sha256": "9bdb18c1d71affb6e1eb9347895f94d3d29921cb12a8daadd4b0fec9d94dc2b1"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r03-c02.png",
+      "status": "new",
+      "size": 71322,
+      "sha256": "3ea948b45e959b9b3d98080b1500e9eb69ab3c3f5822dd1f9ab3db805e9a2905"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r03-c03.png",
+      "status": "new",
+      "size": 70644,
+      "sha256": "a7e6bad30c513a47baf94a6e10333e8af9d1879571e6ee58bb0376f4a90a5722"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r03-c04.png",
+      "status": "new",
+      "size": 71619,
+      "sha256": "66f3ff1683ee2a4ef5df156eab800e2e1844ec8ec6eb571cc2e31408d962cee4"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r03-c05.png",
+      "status": "new",
+      "size": 61676,
+      "sha256": "b9c713cc50098014e4f95b3669576279f8626af89b9ab657e5eb5b1704372960"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r03-c06.png",
+      "status": "new",
+      "size": 48795,
+      "sha256": "84035c449babddee22c34d04a15dfab9e0103df61cfe501a819d3ffecf40ebd3"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r03-c07.png",
+      "status": "new",
+      "size": 49756,
+      "sha256": "432825a3d32bbe03329217743bdb2a740eb055315e5a3236176d46a67f80c9c3"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r03-c08.png",
+      "status": "new",
+      "size": 58246,
+      "sha256": "8673e1e9be01fd9d27035c329a0ff20b72c4fa0c4454b7f09f4089893eb0f424"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r04-c01.png",
+      "status": "new",
+      "size": 64103,
+      "sha256": "ffd5e9dadf5bd0b3f90559215a32e6325adde3a32e7784060e3e3a3192c205d6"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r04-c02.png",
+      "status": "new",
+      "size": 59403,
+      "sha256": "839e3e2d7bf47afb2f31db8801c70882398319317b0ec405ad4f9acbebb64758"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r04-c03.png",
+      "status": "new",
+      "size": 59219,
+      "sha256": "1ef2f1c5e19db4ab04fe20bd3f9cf513f22ef91510a1b4d19c70c5c5aa38f7d7"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r04-c04.png",
+      "status": "new",
+      "size": 73236,
+      "sha256": "8f1a2bef651b8eb105db9d78f6cd1b371f7ec192b57bff79899a950c751904ac"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r04-c05.png",
+      "status": "new",
+      "size": 63803,
+      "sha256": "caaebf1f2de6f5634d25c832134fcd2240b91eede8d5387b91e22eedfbf9f8e2"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r04-c06.png",
+      "status": "new",
+      "size": 76794,
+      "sha256": "d72651eb04b59d7e4881e1e27398fadaf9956d356aed9bf32763c3a0c883db41"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r04-c07.png",
+      "status": "new",
+      "size": 69985,
+      "sha256": "a6d067e521572f310993021b924052fa4ac04eb583e72217b698c0df199ed163"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r04-c08.png",
+      "status": "new",
+      "size": 60831,
+      "sha256": "204ad844d69be392de699e3e8d25638a043a3db7c2525b6eb58c21fd7c4513da"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r05-c01.png",
+      "status": "new",
+      "size": 70129,
+      "sha256": "b16a88da4dfdf0c69e7a3aa0601196296a89c719f7b07fd806df5bec3c6558a7"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r05-c02.png",
+      "status": "new",
+      "size": 69606,
+      "sha256": "205827b36812ef7aacbdd2a336362f0786092f46d01d440c16dc9eb061ec7903"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r05-c03.png",
+      "status": "new",
+      "size": 70056,
+      "sha256": "1cf8649a2f91792767b7f927e0a3e03258734395cf62b561126497f2fa9f681e"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r05-c04.png",
+      "status": "new",
+      "size": 55238,
+      "sha256": "04b66d80bf96cb8ce3fd01eeb4b4704d6f4e7f51d93a2d775fcddde787e8f57d"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r05-c05.png",
+      "status": "new",
+      "size": 64031,
+      "sha256": "62116c612c52189757bc782483a3f66cc2fed5c851f1d7bf0b08eb91a01a87b7"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r05-c06.png",
+      "status": "new",
+      "size": 45912,
+      "sha256": "089fbc198de7e437ef28b0ea626619010c2d8ab2a9797fa480f5dfa48c2e5796"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/environment/environment-r05-c07.png",
+      "status": "new",
+      "size": 62330,
+      "sha256": "1c50f001615d663de1a01e6d281138448f8611cbf46cb78e3ec28bbc851015c8"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r01-c01.png",
+      "status": "new",
+      "size": 78538,
+      "sha256": "ac71a363b2d3e47c050531809d108b6e1ed5f2f02dbe899cafe57da315c2596b"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r01-c02.png",
+      "status": "new",
+      "size": 74266,
+      "sha256": "eb152be969678522cfbb0cd7df7239e137c636881fe827153bf59d67b831ba61"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r01-c03.png",
+      "status": "new",
+      "size": 84142,
+      "sha256": "537d7a7dca00dca7811d3eb293ba1fd687ab9948e0eae0f3af91fc8440d31376"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r01-c04.png",
+      "status": "new",
+      "size": 79711,
+      "sha256": "42a4b898c01cd4cbe96e48d34d2451dff1c1f1430a5295857268b3fbd81ce967"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r01-c05.png",
+      "status": "new",
+      "size": 63283,
+      "sha256": "44b6f481f37d452440e73e5eec7a2f5d290e4af31d0cb90b298b922164c2c97c"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r01-c06.png",
+      "status": "new",
+      "size": 85924,
+      "sha256": "dc5ed0764f4dbbd571f448aa02da88b28e71d6b60007930f1888b62c18a8d963"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r02-c01.png",
+      "status": "new",
+      "size": 79664,
+      "sha256": "1bb6982156dca003f12905aae17741262dc4b847ddfa6d96a67dc979aff07d80"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r02-c02.png",
+      "status": "new",
+      "size": 85930,
+      "sha256": "9a31050044aeeaa09321a319389ec8ec840f29e917bddd82da0d97364baf9a44"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r02-c03.png",
+      "status": "new",
+      "size": 87510,
+      "sha256": "f3463c3698f83701ccc5e695becb835f70df63fca970de23828adfa8b277cb94"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r02-c04.png",
+      "status": "new",
+      "size": 77477,
+      "sha256": "2c5871ca015ed6e30039b7f6d580899ca380c9bfdd13eb247baffc6146c0384e"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r02-c05.png",
+      "status": "new",
+      "size": 65858,
+      "sha256": "3582beb0a7f05673e8f9fd770cc0299037205b4fb300aeb4fd8eba0e2273daf7"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r02-c06.png",
+      "status": "new",
+      "size": 70335,
+      "sha256": "df6cfed6ce59fc20f41281c6d97a3b698028fd1de0c3eae21716af44b4f77123"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r03-c01.png",
+      "status": "new",
+      "size": 96618,
+      "sha256": "084c008455e489f68d26083fc724e814c13d879487f80a8cb94c0ac3e241aa57"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r03-c02.png",
+      "status": "new",
+      "size": 72364,
+      "sha256": "7107cb19054e08fabf9dee23ea716cb629d55642c8ff7f29981c6406210db736"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r03-c03.png",
+      "status": "new",
+      "size": 70908,
+      "sha256": "489dab2e86f2441238a4fcf6a277d479dc36db7b7be631aa0e0e27c7ce27c88b"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r03-c04.png",
+      "status": "new",
+      "size": 86121,
+      "sha256": "14c08de0f7d2312779dda72ec50f90e9b416c448b60e0a11e7dd0fec3c181dca"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r03-c05.png",
+      "status": "new",
+      "size": 85720,
+      "sha256": "0b8247f92238febf3f8ed75d32ad9f5e502ede3052ca375ea30251397da17913"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r03-c06.png",
+      "status": "new",
+      "size": 86414,
+      "sha256": "9ede91b87a94e25818e148f40e7b8028dc34ce2d761afb1d792d55fb769c6801"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r04-c01.png",
+      "status": "new",
+      "size": 71424,
+      "sha256": "d6a2e498647238daef3fbc233407a517a2c14901a77c40b1401b41ae8cdd1b4e"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r04-c02.png",
+      "status": "new",
+      "size": 95859,
+      "sha256": "8b44b57f01f2832ab33e2de054c6e0bb1b0dea840f0bd6a3c9d917623cb7438e"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r04-c03.png",
+      "status": "new",
+      "size": 89591,
+      "sha256": "cb16ec552a2b7c1553d64c64c35032e639419d0693f5d5f1c7eae107e486cc4c"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r04-c04.png",
+      "status": "new",
+      "size": 81872,
+      "sha256": "048b0328bc8a2590692e77b2004cfd1f06fbbb719cd6d3a2d345246e5e155746"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r04-c05.png",
+      "status": "new",
+      "size": 91413,
+      "sha256": "4b027689456e33031389fb90bc5a3150382f5ce8fff7efa5da90dee56cbeadc7"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r04-c06.png",
+      "status": "new",
+      "size": 84701,
+      "sha256": "546848d39576274e32a295297e000ba57906485f0097ed97c39a47d616e379b3"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r05-c01.png",
+      "status": "new",
+      "size": 79178,
+      "sha256": "96f17bc920c293c67943f7ad49666452e214e68752a07bfef4396f37ad95ab53"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r05-c02.png",
+      "status": "new",
+      "size": 78214,
+      "sha256": "ddb9f2633a985d8ae40e6c0657e753c858f5b3daf8b92509bca414978c73d677"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r05-c03.png",
+      "status": "new",
+      "size": 93084,
+      "sha256": "f9b52331a96840c6d2d09bafca4286a6b74f16d817005e9f6752421e19ff4dc7"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r05-c04.png",
+      "status": "new",
+      "size": 94877,
+      "sha256": "a478f1fec82ff39c2af02452d57f7242ebc127352f410870e4f3fca2d0f13424"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r05-c05.png",
+      "status": "new",
+      "size": 90295,
+      "sha256": "544d8abe9b9bb544f3f52e5bcffb53da33ee974981f4df05b98e7f55616cc125"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r05-c06.png",
+      "status": "new",
+      "size": 83108,
+      "sha256": "abed252cb37b799708d422b5a409170f5e09f703429e562dce87d209de01fe41"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r06-c01.png",
+      "status": "new",
+      "size": 85468,
+      "sha256": "fc209e7b984965809166316183c5d6a33b3b848026954eef5bb05d2cf775c73a"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r06-c02.png",
+      "status": "new",
+      "size": 74414,
+      "sha256": "680a1e830192071773c1a6fefbb60523f411d5f177685459c1d45d18b3b4f739"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r06-c03.png",
+      "status": "new",
+      "size": 93033,
+      "sha256": "70172747a52000d94c75ce29d4c6262e6a3e3cf5fcc47501ede69efda0bd8a84"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r06-c04.png",
+      "status": "new",
+      "size": 71490,
+      "sha256": "2941eaac0f2acdb9c9c29bdedfa077c92c41d90d2ec2abd58e9b100218ddf5e4"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r06-c05.png",
+      "status": "new",
+      "size": 75892,
+      "sha256": "77f7d75069e0b3304d5b1a6c9b4cb13a2fa1fc3b1e528a9f32134c8fd374b8bc"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/heroes/heroes-r06-c06.png",
+      "status": "new",
+      "size": 48574,
+      "sha256": "712cd734c0a8aafe52a1fad62bddceed59a1ae3bc825c38a64fe23e56742fcc4"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r01-c01.png",
+      "status": "new",
+      "size": 59059,
+      "sha256": "206f11d6316f7b05ef986c9422fbe1aa8f5de8fafefb6740f266b21cd700bdd2"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r01-c02.png",
+      "status": "new",
+      "size": 59823,
+      "sha256": "c472c8ba9041b3416a7444037383d78d3a62a4ba35211647a3978f8123981c3b"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r01-c03.png",
+      "status": "new",
+      "size": 56599,
+      "sha256": "88db2d754953961819eb3178ed0e25bf02feacf420663bec1f97df011b286ac8"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r01-c04.png",
+      "status": "new",
+      "size": 71069,
+      "sha256": "3bf6f92fa1c5ba2092e4557b86ac613f524cfa9460c085272163b3fc9c046008"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r01-c05.png",
+      "status": "new",
+      "size": 61508,
+      "sha256": "94a8c8d7932629b2450fcbdb9f92c355dbd4ce29408c46aec8eb175ff87f7aed"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r01-c06.png",
+      "status": "new",
+      "size": 45328,
+      "sha256": "27782534553a398b07f9b96da6d1a42fac807170b65a48af68d21dbd717970c2"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r01-c07.png",
+      "status": "new",
+      "size": 53023,
+      "sha256": "31488341bf34f4c00633a4bf7492f124d60f8c09b2268912dac20d2b008be58d"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r01-c08.png",
+      "status": "new",
+      "size": 61663,
+      "sha256": "07ab35273920d5f3207193696aa71c2659dc0dcabc157c46116f70d989ec6a2f"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r02-c01.png",
+      "status": "new",
+      "size": 62799,
+      "sha256": "32c8ddfea825a79eb711d6564cf429443582584a079b8d3fe8b45793a2533c43"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r02-c02.png",
+      "status": "new",
+      "size": 51458,
+      "sha256": "581e4f6950c9d634150e75c091ede9d3fe45cd4f20639b316dfc6fe40f04147c"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r02-c03.png",
+      "status": "new",
+      "size": 67262,
+      "sha256": "bf5022b276e3581d3da1bb19eed7cb0b5960a35880111e9adc1adce753ae70c4"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r02-c04.png",
+      "status": "new",
+      "size": 57816,
+      "sha256": "eb7ff9394e02c845da9240889db82768929a3c96fb3e02c60197289b437ad603"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r02-c05.png",
+      "status": "new",
+      "size": 69349,
+      "sha256": "8c1d5dfdaf086395adae82832f320b93ef37b0f0ee24f26bea755d610bf6846c"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r02-c06.png",
+      "status": "new",
+      "size": 60604,
+      "sha256": "418b134e8dadef0b6227c2e427d6b43375a8ba1e6daf48436f90d271d6948334"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r02-c07.png",
+      "status": "new",
+      "size": 71147,
+      "sha256": "60eb8b6dca71cef5ebe357b2f0e9076e18f39f0710d9e6435ce5edd7e2ae4d2a"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r02-c08.png",
+      "status": "new",
+      "size": 61272,
+      "sha256": "bf52f60d7e19cd63449e85d722915d5be488c8357d20e1cd1436d6411739add4"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r03-c01.png",
+      "status": "new",
+      "size": 51582,
+      "sha256": "04b2844685b10df99ee5089b95ca2dae17ff5fa2efa6abd686c33f8d58c38782"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r03-c02.png",
+      "status": "new",
+      "size": 49690,
+      "sha256": "f1b1cefa00bb13640f92ad82a400fa4bd708b13ab6a9d47a2585c94a3bec9fed"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r03-c03.png",
+      "status": "new",
+      "size": 53968,
+      "sha256": "7934fffb6b895ceeac1d98cb3a7ba428bd9c78e428a34073e3c91eef8193742b"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r03-c04.png",
+      "status": "new",
+      "size": 51074,
+      "sha256": "6b3cb446b894545e0c250c29aac1366e7f78f975fd386139681dd8ac5d80d63a"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r03-c05.png",
+      "status": "new",
+      "size": 75767,
+      "sha256": "5bd21aace004041ff03a6734c4233f10e06f254b7a3249615dcf1efbe7d0f368"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r03-c06.png",
+      "status": "new",
+      "size": 61239,
+      "sha256": "8733727022e4667cd3e760bb1e78df052a97cafb9ae62602232b945a1f177860"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r03-c07.png",
+      "status": "new",
+      "size": 83743,
+      "sha256": "4ce5a0a53825fd4c0bd8800f621292878fa4e70dd6c37aa444f7c01a8389dd21"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r03-c08.png",
+      "status": "new",
+      "size": 70352,
+      "sha256": "b57730143abf738c86372eb208ad2b61badc010c9183ddd864daffb5b3a7bb78"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r04-c01.png",
+      "status": "new",
+      "size": 49800,
+      "sha256": "6f39b32a284aa5be660c5ad953ccc4eaabe1f404790714cd164fe743e5e7ff5e"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r04-c02.png",
+      "status": "new",
+      "size": 46353,
+      "sha256": "238b69508b7b9c2f046acd491a33f95527dab00807184338394e62324be85f46"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r04-c03.png",
+      "status": "new",
+      "size": 36050,
+      "sha256": "178d627823d8c247eadbcd7480f21730dd1887cbd2fff90e65de916c329c77a9"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r04-c04.png",
+      "status": "new",
+      "size": 56627,
+      "sha256": "fad240014ecd298429d845eecf8e3487b5923032bb7a0d2dcfd7231e09d375b0"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r04-c05.png",
+      "status": "new",
+      "size": 44288,
+      "sha256": "49a5c2c7eb43cba2b7958b38572405c32a38e1e2a8bf7a3991e8ddddc22b0b68"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r04-c06.png",
+      "status": "new",
+      "size": 42560,
+      "sha256": "81ad93c70b3fe4108b1c59cd9c289e15716af7030f669c630028439305f37088"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r04-c07.png",
+      "status": "new",
+      "size": 43239,
+      "sha256": "0937d7aa6e68ee63d7b2f12946894ed2cf4b2080934b115942defa1080762a55"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r04-c08.png",
+      "status": "new",
+      "size": 42728,
+      "sha256": "8e5fb141ed1d5184ead4a5f2139899eb96e8c8b150576422d12f6ed577c785ac"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r05-c01.png",
+      "status": "new",
+      "size": 48339,
+      "sha256": "3ee4c9c51fddc19082ee97ae6ebb22369771051a46951c2e3dfd9c94326278e8"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r05-c02.png",
+      "status": "new",
+      "size": 53733,
+      "sha256": "b1c5de6a7cd149e066a600f6dcc2d655e82c25b58825c1c25834444fbb1b8e16"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r05-c03.png",
+      "status": "new",
+      "size": 44390,
+      "sha256": "11fe8bc3242dfdab8fccf184a051d9407cca9a1f80bfd3c6c407e8dce49b4167"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r05-c04.png",
+      "status": "new",
+      "size": 61514,
+      "sha256": "f079339bde4112fb06bb508512b4d494f7342a4c6a9d516f931ee458f62da551"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r05-c05.png",
+      "status": "new",
+      "size": 57752,
+      "sha256": "63a703060263feb39a762cacced284427a7206a11fa630d36b8309d6ad0be09d"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r05-c06.png",
+      "status": "new",
+      "size": 64801,
+      "sha256": "3b80e128fc8ea78b0365c649ef5c615fc10b93553c80c0001f6d9cd463607de4"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r05-c07.png",
+      "status": "new",
+      "size": 49067,
+      "sha256": "d87091ef26f6e71328dfaba88daf8a78ea4cf6360d8a2c7ac92e0056d74bf37e"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r05-c08.png",
+      "status": "new",
+      "size": 53903,
+      "sha256": "d81ccae298d5af1645d03770b16114abe84280fc064e6272ba0081075052332a"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r06-c01.png",
+      "status": "new",
+      "size": 85254,
+      "sha256": "5cd89074d7d7a4a0bda5cbab49470f916ee2d9e17c14b3090d778541fecee681"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r06-c02.png",
+      "status": "new",
+      "size": 67257,
+      "sha256": "d5d73c34eccfe061386eeba743732e63f78283d6af4150dc47c69aea3ae962f7"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r06-c03.png",
+      "status": "new",
+      "size": 45941,
+      "sha256": "c19d4203edca801ef1c5aa5dba913be87d7b8a214821b9c459efe27e49af970f"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r06-c04.png",
+      "status": "new",
+      "size": 49917,
+      "sha256": "5d377d544bc8c7042dbaf4282e40c39d105a308d28297cb96ca862fcaec3c66f"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r06-c05.png",
+      "status": "new",
+      "size": 49919,
+      "sha256": "e2d6a2b3992db77515d5a267d1123ec6096995bcfdb481c74ab5c5d090bf34d2"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r06-c06.png",
+      "status": "new",
+      "size": 60762,
+      "sha256": "6742c491f0ed4e1e8e1783d36d4858dfaeda79918047e3aaf67ec8b9b0e7ea85"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r06-c07.png",
+      "status": "new",
+      "size": 76130,
+      "sha256": "e00dfd7db14ec62fa00ee81dba08c34c9ae3ab69a00bbb93e9429bec04a632e1"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/items/items-r06-c08.png",
+      "status": "new",
+      "size": 69720,
+      "sha256": "c61ab12f8005e75f5239a30a2755dce042bc6a73c53bee22044637b1eda26f83"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/mixed/mixed-r01-c01.png",
+      "status": "new",
+      "size": 77067,
+      "sha256": "67eec763ce475b0a4de20eece4d86d5d954290d1d87d73c6e643795cbfb93f37"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/mixed/mixed-r01-c02.png",
+      "status": "new",
+      "size": 70046,
+      "sha256": "9137619f1fb7e29e32615e8ee315391cdc4ccadde1bca5012ad6b47f2856164d"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/mixed/mixed-r01-c03.png",
+      "status": "new",
+      "size": 76207,
+      "sha256": "7d6c5ba34eb4a2f4019fb93b956da4490d3069821623eb8ab8ee60dd52990e4b"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/mixed/mixed-r01-c04.png",
+      "status": "new",
+      "size": 81999,
+      "sha256": "e163516a562f113afabd53a64d934b09d112b4e473381c774a355c6fe1e6f3f1"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/mixed/mixed-r01-c05.png",
+      "status": "new",
+      "size": 60674,
+      "sha256": "c0fb2860dc25fa4fb53df15b2d017a8c2a6f1ed045898b2d3c4fdcff8b9c6053"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/mixed/mixed-r01-c06.png",
+      "status": "new",
+      "size": 85525,
+      "sha256": "9e37fb6b1e4fac5eae0945bf3f0e332f64db42168e974550744b8494c9ed1268"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/mixed/mixed-r02-c01.png",
+      "status": "new",
+      "size": 44194,
+      "sha256": "7fe601d4cea88df037a8bd81334b32478206ea533d4f9b200d566816d13e3754"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/mixed/mixed-r02-c02.png",
+      "status": "new",
+      "size": 637,
+      "sha256": "40bd693a4b1422d8613067b59dd2ab6d92dd05720478f48233b27584e61af510"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/mixed/mixed-r03-c01.png",
+      "status": "new",
+      "size": 62186,
+      "sha256": "e093d12b612aa7ad8ced1d33df6fb656329d82ac492b2c89e4669a3e11791426"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/mixed/mixed-r03-c02.png",
+      "status": "new",
+      "size": 71139,
+      "sha256": "9a78c9805c1246875659cb5d2de1afdcee9d842d1bef0734c788cf00e84023bc"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/mixed/mixed-r03-c03.png",
+      "status": "new",
+      "size": 91468,
+      "sha256": "a5a0f06647dc749308b3da0991b25f66a6a5f71a0ea5c5722177b73f6558df3a"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/mixed/mixed-r03-c04.png",
+      "status": "new",
+      "size": 70546,
+      "sha256": "91d5c17b42dd23e71b8eb6c7dd6f77a6d92d0355c8194c8e875f98b56a632bbd"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/mixed/mixed-r03-c05.png",
+      "status": "new",
+      "size": 76748,
+      "sha256": "972cd1a5438903c4bf1f1d0137266e4525ef373b3c60ab0e01546e40ab623b17"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/mixed/mixed-r03-c06.png",
+      "status": "new",
+      "size": 54640,
+      "sha256": "b02dc2d97a1a7337d32918ed7733ed138b874b98227d5c29a7d3b7626fcad7d0"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/mixed/mixed-r04-c01.png",
+      "status": "new",
+      "size": 36416,
+      "sha256": "c84dbf489ac8035b68a246c9b41fd810bb1b89521eef62d84c6cec0055b405ef"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/mixed/mixed-r04-c02.png",
+      "status": "new",
+      "size": 57568,
+      "sha256": "be02d1b49b6b3bbf6265a64871b0419edcdb921aa84657aa831873019c001b9a"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/mixed/mixed-r04-c03.png",
+      "status": "new",
+      "size": 52389,
+      "sha256": "871bf50e2c1eeed79c9d3b6244c984d3c729a2ec69dadc3d927e0bd401f51cfe"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/mixed/mixed-r04-c04.png",
+      "status": "new",
+      "size": 39641,
+      "sha256": "fdd4a2a0ede87f29b9e90b04d084eb6537f168b06420d5a33696bcc3933bde44"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/mixed/mixed-r04-c05.png",
+      "status": "new",
+      "size": 31629,
+      "sha256": "9a68d63034e39c1e5f91f50d53eca6b16d515833e472c69d172fdeb7ce40cc91"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/mixed/mixed-r04-c06.png",
+      "status": "new",
+      "size": 44477,
+      "sha256": "43f3c5322691451f608e94807907192395b2c757baee7a79468ab23f461a07ba"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/mixed/mixed-r05-c01.png",
+      "status": "new",
+      "size": 7044,
+      "sha256": "c973754c2564df74a98e979d7a1f44e2cc6420364fc225bdfa79dee21fe5b05d"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/mixed/mixed-r05-c02.png",
+      "status": "new",
+      "size": 10684,
+      "sha256": "436f9010bd23c0944c1a12d878608b79da58212500a4fb0a059d43dc11ac0a0f"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/mixed/mixed-r05-c03.png",
+      "status": "new",
+      "size": 15177,
+      "sha256": "1da3963d8db2cf1326aec9c9ef337a8c06204d674dd583bd90b5b900e78eafeb"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/mixed/mixed-r05-c04.png",
+      "status": "new",
+      "size": 6811,
+      "sha256": "149e298874197152c95d9fcfc8f85faf6bfea3570279fac0760004a00a63145f"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/mixed/mixed-r05-c05.png",
+      "status": "new",
+      "size": 6100,
+      "sha256": "7327c019ca5f8fd689679a2b1fc7c16ebda9fcfe19aae7cc6afc878861ca54b3"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/mixed/mixed-r05-c06.png",
+      "status": "new",
+      "size": 7037,
+      "sha256": "c6756ebc9c9560cde06ca2b0c0d0ad56f91405c5ccf980a353a8f2911fa82cd0"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/mixed/mixed-r05-c07.png",
+      "status": "new",
+      "size": 5935,
+      "sha256": "c3b235878b6a453b7b343ac8d0128115ca12b03dd13c4239ec6754dfad28aed2"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r01-c01.png",
+      "status": "new",
+      "size": 58208,
+      "sha256": "17990a7a1ca16bc62bc57fd4caf4055073d08f8253a7dd0f412afebb7fbd375b"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r01-c02.png",
+      "status": "new",
+      "size": 69730,
+      "sha256": "1179668c99172c622b96893790e3a30a585fa5dd3bec5b994fb72850997077c1"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r01-c03.png",
+      "status": "new",
+      "size": 68424,
+      "sha256": "e772be44f0e7040b44217ce8fb8cf12cc1b4c128b1ba8f951afbbb5eba95ec2d"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r01-c04.png",
+      "status": "new",
+      "size": 67570,
+      "sha256": "9a671c01b4e334b1085ecabe96a5e300730cb97a3c70bdec22c3257482551219"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r01-c05.png",
+      "status": "new",
+      "size": 48515,
+      "sha256": "915df189328797dfd59f6d0525771451a7a7af0dfb12b91dd67e18bca0de3365"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r01-c06.png",
+      "status": "new",
+      "size": 52727,
+      "sha256": "a1b956786a24e5fd88b9d848a934c136f45ee29bd48c28e6c471ba7cd8200d37"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r01-c07.png",
+      "status": "new",
+      "size": 49454,
+      "sha256": "fe1340c166bec12842afc4b0f5788af3f751a9ad9d1270a5e8beba1c5a22ef54"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r01-c08.png",
+      "status": "new",
+      "size": 69986,
+      "sha256": "f8c8f2f491d8eb85b12f1bcd1b6bbc81bfa988944b9c93130bbdf013f830d7c0"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r02-c01.png",
+      "status": "new",
+      "size": 72634,
+      "sha256": "20b5f4259d9174ce62cb49f155eca1f2800a8c290a34816a175ffa3c632d333c"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r02-c02.png",
+      "status": "new",
+      "size": 64453,
+      "sha256": "46d4e17913ae70de734e3806232cfc16462f18ba0b21b6e8c496111cc0f5c8b6"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r02-c03.png",
+      "status": "new",
+      "size": 76871,
+      "sha256": "6e64388e6cb7f7c093f6b40cbaa7cd2718f0813a25cd0397b021f836e0d50523"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r02-c04.png",
+      "status": "new",
+      "size": 50304,
+      "sha256": "1d4c6f0ddf92bc00eb925e67fa1184329555b59a550a0028273b4476865bbef5"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r02-c05.png",
+      "status": "new",
+      "size": 82850,
+      "sha256": "b715b868dacd00e0d20d64531fac84d746e56aaa4f4f3224bc0ecc92aa4170ea"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r02-c06.png",
+      "status": "new",
+      "size": 77792,
+      "sha256": "7218d368e12e697005a89d3bc97381b5ce57cf7c8791f326acbbfafdde9fc59b"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r02-c07.png",
+      "status": "new",
+      "size": 71570,
+      "sha256": "2869a86fc256e3b98c0cf186e07c9f251b87bf9da4ffbc23e1517350c17ddade"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r02-c08.png",
+      "status": "new",
+      "size": 67996,
+      "sha256": "aab37b21726be903a6038e402ee6223f1b7d4b62f7b99b8ce06824defc374160"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r03-c01.png",
+      "status": "new",
+      "size": 65678,
+      "sha256": "28eca387507845dcadc1124587a4b771d94613cbe045cb319fe052e04209d01e"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r03-c02.png",
+      "status": "new",
+      "size": 65068,
+      "sha256": "1359b19e06cf3d4984ba5fa43b737eb7c6eebd4869162c3279c3b6d88b14f4bb"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r03-c03.png",
+      "status": "new",
+      "size": 71324,
+      "sha256": "c2ad6f80be8c24a8e67cc599dbf76d3ae294d0bfe52c1651711e6ef25e638795"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r03-c04.png",
+      "status": "new",
+      "size": 68694,
+      "sha256": "6cade5b4505e0f013bf256fa9b05b22175b1c9c5bbd70ca2c288927ecf68100d"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r03-c05.png",
+      "status": "new",
+      "size": 69356,
+      "sha256": "52700e4b556176dd01a037ec0d04edda56e70f6ddf259c52a806b7f4dba5e3d7"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r03-c06.png",
+      "status": "new",
+      "size": 62985,
+      "sha256": "13024fe98d4aaba58d15d6514b204534b8224e379275a4b569bc6ae59dc67098"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r03-c07.png",
+      "status": "new",
+      "size": 67286,
+      "sha256": "eaa0feeeb3a04493063c280a1af3b44951e716a4c2cab2034152d3758e5dd643"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r03-c08.png",
+      "status": "new",
+      "size": 60594,
+      "sha256": "f1bb1b87d04546e9aaefa14166678cd7d2bf4cc7800eff39acc1c459ec83284e"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r04-c01.png",
+      "status": "new",
+      "size": 68259,
+      "sha256": "3a05a09b615dc533c67fedc27edb5b6ea1990215b5aae750cfb582859638558b"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r04-c02.png",
+      "status": "new",
+      "size": 80930,
+      "sha256": "de3ced440def44d3484fab102e792c582a4bf197e1ebea96c226d7d93626c0d2"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r04-c03.png",
+      "status": "new",
+      "size": 74103,
+      "sha256": "8c684920508003840bf4e13b458294129e3520dfe826d5db617663ecb4cb2bc3"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r04-c04.png",
+      "status": "new",
+      "size": 61008,
+      "sha256": "294eaeae5d8b682075bcf8b2ef5a3a54bef338b0d1c61e86e3e1a550b746745a"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r04-c05.png",
+      "status": "new",
+      "size": 57713,
+      "sha256": "59fbdb6fd6994f7fa4147606dc12e1e66c5a13959a9bfce642890659db6b0edb"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r04-c06.png",
+      "status": "new",
+      "size": 56378,
+      "sha256": "b63cd595b2d41f2a5eb9f0fed0cb06b5062b8a43f340ac0c05dd3d5b91c955d5"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r04-c07.png",
+      "status": "new",
+      "size": 60494,
+      "sha256": "da54cc7a8b99e5091226fccb6c0623102ccb0747bfd17f8f30835d1f2f720d40"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r04-c08.png",
+      "status": "new",
+      "size": 61691,
+      "sha256": "6781a4b840a3201e103afa0861f055805e9dc57582e744d6adf03813012c6d09"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r05-c01.png",
+      "status": "new",
+      "size": 72458,
+      "sha256": "2a8e9a131b1c4d78322afa43a01c4a2259b49c39b095cda6cdb1485c62e3b59a"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r05-c02.png",
+      "status": "new",
+      "size": 72274,
+      "sha256": "b5b3a34cebb9032c7ce7769e2cdb5b0656f658d3140244b59ae5f115988b7138"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r05-c03.png",
+      "status": "new",
+      "size": 75879,
+      "sha256": "020470c95f25ec503ba1713040f682abac22db465d4c4ddf9883ef48b498bb77"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r05-c04.png",
+      "status": "new",
+      "size": 76469,
+      "sha256": "3ce4ce2e1991cd09bf3d1ca67bfa29427addcbb3b4fba959067e84ea3235fefb"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r05-c05.png",
+      "status": "new",
+      "size": 74142,
+      "sha256": "f5f208abb6263db86d92adfb09b28ba6937e8e9d5bcbc2603923efee3116b538"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r05-c06.png",
+      "status": "new",
+      "size": 72232,
+      "sha256": "8df410bc57fe86c493a23ed869b47d0e46c1dd3560f8cfa29a3aa5aabd6d18ac"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r05-c07.png",
+      "status": "new",
+      "size": 60225,
+      "sha256": "c80d66f8ef03610de2ad4fe3ef8310222e738e79332fc947336e26ea1ec9b5cc"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/monsters/monsters-r05-c08.png",
+      "status": "new",
+      "size": 63932,
+      "sha256": "a742d0d6b1ada4b842bb9fef1605564031e77525e20558dacba7560e12a77b45"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r01-c01.png",
+      "status": "new",
+      "size": 83182,
+      "sha256": "903c81ba0ff3fd39ca8ee28c1d57012b8353d28decbe67297c124bf4b5728082"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r01-c02.png",
+      "status": "new",
+      "size": 76228,
+      "sha256": "c444d9b3cd3dfdd9b60f1d2fe9f0e6e1ed4507ca15343917fc8cc08ef763084b"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r01-c03.png",
+      "status": "new",
+      "size": 74866,
+      "sha256": "f2fb4e9e2867ef00836d56cd2e5196ef0564a97dba162156a3bbd4f04548016e"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r01-c04.png",
+      "status": "new",
+      "size": 78566,
+      "sha256": "243167ff43c2262b551ca361c36eed872ad6700d964d6e9f53e3cdf5178271a8"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r01-c05.png",
+      "status": "new",
+      "size": 55073,
+      "sha256": "a35d1c847b8584ab06b644e8e99c1d2fb6ad12af6d6c69560baafe3775e15925"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r01-c06.png",
+      "status": "new",
+      "size": 53378,
+      "sha256": "46b12b8161658b5b6c41395af53413afe937d229a2a76ebc9e6b1530ed6c05f5"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r01-c07.png",
+      "status": "new",
+      "size": 50459,
+      "sha256": "b58e0933e5770322d752b3ae7273fe20c1b1e1ac5cae3d0eb070f3687a35758e"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r01-c08.png",
+      "status": "new",
+      "size": 52170,
+      "sha256": "e2985ad67603c1cab288cfc32ca43e84a172bf22f8e461bfed2d6eee7dfb83a4"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r01-c09.png",
+      "status": "new",
+      "size": 52398,
+      "sha256": "a7bff35016de1406dbd0ad9c98aee1757fb2576af4b97a63c0d84b9e5e35155d"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r02-c01.png",
+      "status": "new",
+      "size": 38575,
+      "sha256": "75e71dd4e2b688e30e06dd12bf1011d9b988f1e8f704af6ae3086795695b1b58"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r02-c02.png",
+      "status": "new",
+      "size": 42324,
+      "sha256": "0e2f6ede5f9e9c129291c438ee4ae4f6c2fc0c243112a07eae8a5b6c468a27df"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r02-c03.png",
+      "status": "new",
+      "size": 41282,
+      "sha256": "866748d077921b125d776b16886f8d94869fc18ae0c40a63da47c2a75e70e96c"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r02-c04.png",
+      "status": "new",
+      "size": 39336,
+      "sha256": "d4d1ab6f6cb2fad125d9089670e73ca142a97461fb4cef3a959069a08bd16be9"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r02-c05.png",
+      "status": "new",
+      "size": 36859,
+      "sha256": "0783469603c320364514b5021b0424a98a4d8525a96545e2d5a9e4be6ce97976"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r02-c06.png",
+      "status": "new",
+      "size": 47692,
+      "sha256": "3e1edff47cf1e956a41cf9aa4612491275ac05567b02056ea1aa9893c492ceeb"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r02-c07.png",
+      "status": "new",
+      "size": 38869,
+      "sha256": "9e98c4395151ceebd8695c6ebb359067023491c6bd0f7efd065b684cd6e04356"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r02-c08.png",
+      "status": "new",
+      "size": 44285,
+      "sha256": "363ae8b20bc3e457594b10559565f0e0c35fca208261a6df761c07f0b538aa7b"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r03-c01.png",
+      "status": "new",
+      "size": 62836,
+      "sha256": "309c7d02456e93c86e027b797f28ca0056760dba5b30157689b9d34be37718f6"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r03-c02.png",
+      "status": "new",
+      "size": 61285,
+      "sha256": "7a49f66a9bbba2c0cc43464fcf111c0d094fa066ec2f5b7d018b470a429c0dde"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r03-c03.png",
+      "status": "new",
+      "size": 58916,
+      "sha256": "c5b749370d35d61782ce0d91100a333d0406b6dc89b991b75c0ab951c211cde0"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r03-c04.png",
+      "status": "new",
+      "size": 58363,
+      "sha256": "6e446baff92453002bd4373bdd17060d12fe9543d44c9b6ff531c83322a77277"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r03-c05.png",
+      "status": "new",
+      "size": 59813,
+      "sha256": "dc3cfca07b54cade31343512c019123b8d27c25d13c0f1b2ccab3af45b38235b"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r03-c06.png",
+      "status": "new",
+      "size": 62084,
+      "sha256": "2170a8543813d184f27a40424a86ce1c01c79ed40d4eafe6a16d6d0bef6756b7"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r03-c07.png",
+      "status": "new",
+      "size": 60111,
+      "sha256": "c053ac911b5c42358ccb99ea29c4e2be1d1b6e6e1268803120ae0400e115c008"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r03-c08.png",
+      "status": "new",
+      "size": 63788,
+      "sha256": "d085efb76fbc1cf6a28be9de8dbd30d297c1d3a31e6cde4479d22a16382a7f32"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r03-c09.png",
+      "status": "new",
+      "size": 62994,
+      "sha256": "682a873b21c597e3d3f1775add81c39f8304a24f2fec41eef287bfcc3e45f169"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r03-c10.png",
+      "status": "new",
+      "size": 61712,
+      "sha256": "e08e54efe14fe077f99ed8badd4269c3074188e80a3de595d27abfc95e4edf72"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r04-c01.png",
+      "status": "new",
+      "size": 59645,
+      "sha256": "4749684dfcb7819b87f885a9c626582bc5c806dded2e191eedd4978d260059bd"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r04-c02.png",
+      "status": "new",
+      "size": 65189,
+      "sha256": "da9d33d15c4a47a89cb0034df1e73e9710b919ac77547a308afb0a63a0099090"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r04-c03.png",
+      "status": "new",
+      "size": 64222,
+      "sha256": "2246e8f2f5136ed0166b62ec23bdbeb428da3e33d92664048e30182e8308e554"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r04-c04.png",
+      "status": "new",
+      "size": 61771,
+      "sha256": "6173353dab8ed3847b90cf88eec3e50dab70e94a3b93038c236222692184a1d3"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r04-c05.png",
+      "status": "new",
+      "size": 65782,
+      "sha256": "d1ce6042e81c56cdbb63e858af778c7af70dbe26df0a291cf735d5621e515983"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r04-c06.png",
+      "status": "new",
+      "size": 64191,
+      "sha256": "5454fef121c84a553e62181685b1dad3bcd4147b4c7e5f58b5860b971850f3ce"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r04-c07.png",
+      "status": "new",
+      "size": 64502,
+      "sha256": "b025f1a45610538cedc50f26b9afdd38ac81a266bd92af3ac914cbb614b65a07"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r04-c08.png",
+      "status": "new",
+      "size": 65580,
+      "sha256": "d9191d788305292642fa96293cdbe93efafa8b29ed100e9e1f9aebde6fc092a0"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r04-c09.png",
+      "status": "new",
+      "size": 62705,
+      "sha256": "b4d33d2e6b97c170e9e4db5624ff80faae207d2e72835d508e1b16cdc13ff214"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r04-c10.png",
+      "status": "new",
+      "size": 64089,
+      "sha256": "fde36dc5ffe2c8d6116163a1dc91053d89bfcebfb846caaf883b86c4ea0cb06f"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r05-c01.png",
+      "status": "new",
+      "size": 63658,
+      "sha256": "3b97c8cfb4138544ec706da4a921daf0010b9679f67bf03189678c1b622902e2"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r05-c02.png",
+      "status": "new",
+      "size": 65980,
+      "sha256": "5e6e4d445d16f44bbfcd4bfab06434a0da0f77867052ffd96b2693e4a00027d8"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r05-c03.png",
+      "status": "new",
+      "size": 65211,
+      "sha256": "7307590d80d7058e52cc24ad68d847758f2464f0af9ab4520c4ca5044c7cc5a3"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r05-c04.png",
+      "status": "new",
+      "size": 60988,
+      "sha256": "8f7c705302aef8cc68eb7765ea2379ce745eb49adc3d293304e9c5e08a700c4c"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r05-c05.png",
+      "status": "new",
+      "size": 63191,
+      "sha256": "16596cacc134cf471e3247c7647131ee0e33098fdf7ec6abc12920d7fbd185a3"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r05-c06.png",
+      "status": "new",
+      "size": 64046,
+      "sha256": "64dc2ef37d37b04c18e05bc0497390ed4288ca0e93413e033183a1ed9a3c6239"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r05-c07.png",
+      "status": "new",
+      "size": 63025,
+      "sha256": "0547830157dca1b2662681bfd10e7915f56bb984ee6f7b70a3d8bc2a08064d7b"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r05-c08.png",
+      "status": "new",
+      "size": 59473,
+      "sha256": "40e53934e5414a571a05e4099a8a9f54f9c19167556c18557ac18107bd27466e"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r05-c09.png",
+      "status": "new",
+      "size": 59674,
+      "sha256": "756c1ac2d1c543a3c2d1396c430300ad0c47ececc8908eab8ced8fed3f97266e"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r05-c10.png",
+      "status": "new",
+      "size": 56637,
+      "sha256": "f3ce7695ac4254d7bc310be8505f10531037ae0ccd530573704abe30007f3509"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r06-c01.png",
+      "status": "new",
+      "size": 79029,
+      "sha256": "3f6a8a441f8d9e55daf323be6ea1628303b80703db9a79a5c773ca5890068685"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r06-c02.png",
+      "status": "new",
+      "size": 79573,
+      "sha256": "1dd6f7cbba659839023faa34f545fd651f72ef4315949a618249eb886233dc39"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r06-c03.png",
+      "status": "new",
+      "size": 81726,
+      "sha256": "b9f3bcd1ed94325d5d533b3f0d6ff53c9eb5fc7828fcbca6ea21b1a2a4f71f27"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r06-c04.png",
+      "status": "new",
+      "size": 79737,
+      "sha256": "d8439f1feba4f7bbdd172354e9b05961b57a12611c760925190131cd897cb66d"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r06-c05.png",
+      "status": "new",
+      "size": 83369,
+      "sha256": "7e4ae688a4d667a2ae791d0ab9c1ad9c2175f4762efc6f2bdfc709fa16d9e8d7"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r06-c06.png",
+      "status": "new",
+      "size": 82294,
+      "sha256": "23f8ca0262838cb2b2f799ccb1ef905c053baaf7d19812c77851f7edf29fdcfd"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r06-c07.png",
+      "status": "new",
+      "size": 86202,
+      "sha256": "c955b93161dc237ac6a66e805bcc67ba58f8cd8b6fab1c744aaba2f81064c169"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r06-c08.png",
+      "status": "new",
+      "size": 74655,
+      "sha256": "8d8dc066e2161fb8c79735d43af43bfd31be394a660328b8ea6c7ba67c8177ea"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r07-c01.png",
+      "status": "new",
+      "size": 69678,
+      "sha256": "b63a8a0d8e874cfd040d4a8dd448e50ebe14a712771a4b1b3c474d319b1fd0b8"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r07-c02.png",
+      "status": "new",
+      "size": 63084,
+      "sha256": "491c7b0b363fcfa39e3103243c5cab70bd0a857c4e3ed999857c5e2a81ff0afd"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r07-c03.png",
+      "status": "new",
+      "size": 65711,
+      "sha256": "da6eb7d9cd2f3c26bb1cb967772952b48782801b857f2da7b8d6f5f17cae35f5"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r07-c04.png",
+      "status": "new",
+      "size": 64332,
+      "sha256": "0e7408f15ce175fc75b021a47833cd5628d0538ec3ebdb851f36ae72aea5965b"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r07-c05.png",
+      "status": "new",
+      "size": 66692,
+      "sha256": "98adb135e793990dd40f7618ce3744e83d7eb155727619ab392a554502724241"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r07-c06.png",
+      "status": "new",
+      "size": 67027,
+      "sha256": "18fe0e7820b3e22b8764d2d179c7708dfcc19808926eb46405c7bd7f5e936023"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r07-c07.png",
+      "status": "new",
+      "size": 65490,
+      "sha256": "968c714b67c6d3273d17e399216a58f50f42c45f569197bdb791fb14cf26223f"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r07-c08.png",
+      "status": "new",
+      "size": 63606,
+      "sha256": "5ddeb349667ae6e86a671bf19b49df71b0f375d22a00872b3a72365545d486f9"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r07-c09.png",
+      "status": "new",
+      "size": 57087,
+      "sha256": "a512b5d964efa238dfa35e0fc42b0abd52bcee7e7ac01856990347fa2f528966"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r07-c10.png",
+      "status": "new",
+      "size": 55933,
+      "sha256": "8f236bc3a451c6b56d03807c7f2d60f1a5a6ecbbf2641fb42d0da43f5e31a333"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r08-c01.png",
+      "status": "new",
+      "size": 27641,
+      "sha256": "0767ef72e737388f5f1898768dd645aefaab533d3e2c8f0b88fee4e46d3242a7"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r08-c02.png",
+      "status": "new",
+      "size": 39528,
+      "sha256": "6db1a33ef98315164fe3c2cf36bfdde122d63f7e191eb3e55ad57299338706c7"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r08-c03.png",
+      "status": "new",
+      "size": 35437,
+      "sha256": "add83af6de32e0ae1b7ae3b1652124cc2e86e07e5431648d5c23e0d0a3fff004"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r08-c04.png",
+      "status": "new",
+      "size": 65374,
+      "sha256": "2cd7d74a45e9c159552a20913bf65f0dd13512cb0d02af7b1f5e139064de0a61"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r08-c05.png",
+      "status": "new",
+      "size": 67596,
+      "sha256": "c55593aa579183d90ba4bc05688e21054a04049fae930003fa4488feaf7e0b16"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r08-c06.png",
+      "status": "new",
+      "size": 65337,
+      "sha256": "b9ca08e51061b0f11329fdb10c530575bf92f6578aaeb8b7f7489b7c70a53582"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r08-c07.png",
+      "status": "new",
+      "size": 64479,
+      "sha256": "d3bdcb996b3f561efc5ca7919efb1ef85defe52cbbd30ef5d8477ce219de55c9"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r08-c08.png",
+      "status": "new",
+      "size": 64586,
+      "sha256": "1b54d758e6644cef090e63c85adf776d97ed7f137986b317b8002e8bdbba60fd"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r08-c09.png",
+      "status": "new",
+      "size": 61552,
+      "sha256": "a5419df6b01161de5091102239c0b92621076e276789ee34a7a01e3dac9baa8b"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/ui/ui-r08-c10.png",
+      "status": "new",
+      "size": 61830,
+      "sha256": "f44c22d1e95dfdc4429be8b2d2ae31a3bcd4866c3076072b2832ef32725de723"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r01-c01.png",
+      "status": "new",
+      "size": 46680,
+      "sha256": "4a66098d209668e1b25d3819b3f6f38db3de3809554e26ad8d3b6aa834a092b9"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r01-c02.png",
+      "status": "new",
+      "size": 45950,
+      "sha256": "5c0cf0c70513da2ddfd99ab3f20a83d1080e18ab1208ae2eb2f5e9b6e32051b8"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r01-c03.png",
+      "status": "new",
+      "size": 49661,
+      "sha256": "24dba51cc108520931d3c8819176c595f64db04b20ab952c7ab57a92efc67037"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r01-c04.png",
+      "status": "new",
+      "size": 60228,
+      "sha256": "c639b17eabfffec4d7a7055a2c367001e24212288faed29a1bc73f936baf37db"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r01-c05.png",
+      "status": "new",
+      "size": 49528,
+      "sha256": "673d8e3ba0b70a16463e4c76aaadc0e3c847bb59b4c714e0c82def65e75d7325"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r01-c06.png",
+      "status": "new",
+      "size": 53924,
+      "sha256": "829b037bd5e45fc209f22c3e90a6be82a15c16e3ccd06468585849b27bce2263"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r01-c07.png",
+      "status": "new",
+      "size": 58550,
+      "sha256": "fe9698b6b043f652f872f8782243b94ee24e76b1c6fc3f3df9370b19e23aada5"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r01-c08.png",
+      "status": "new",
+      "size": 71866,
+      "sha256": "ec58afd098145de96d484ccca71863ee8e902865ecb09db3c4e13b4c850de550"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r02-c01.png",
+      "status": "new",
+      "size": 53150,
+      "sha256": "8eae647432c4bb2ee22ab699d3c3f7320ae4968334da4ed9b4614d29d5e33192"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r02-c02.png",
+      "status": "new",
+      "size": 42012,
+      "sha256": "2f7c16f13ac7f286fff1d607d475123ed48bb3898e9424acf1b03db1dd6cf0fe"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r02-c03.png",
+      "status": "new",
+      "size": 41595,
+      "sha256": "6955c6fb0f073a87cd216b0fcbd9380b0578693f0e1eaa7bbc50a3687c39315b"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r02-c04.png",
+      "status": "new",
+      "size": 48913,
+      "sha256": "3ada96048cd9844f8c1d3f19d8d77f398a5e6f290e0901d4c3aa5db542aa9353"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r02-c05.png",
+      "status": "new",
+      "size": 58979,
+      "sha256": "8f12f7c7fce5d5f30a7317b3192af80ca9a8eb7befb8a83699bbe5ebfff2304c"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r02-c06.png",
+      "status": "new",
+      "size": 40865,
+      "sha256": "0eb1030d9fecfeabc6024b1b3d64b8bd8689089086e6bcc63749c28d1a725039"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r02-c07.png",
+      "status": "new",
+      "size": 54406,
+      "sha256": "62a8a9ef186b5ba95684d72ce0bbf3f9a609dc24726a0aa5081fe3ed367d46c4"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r02-c08.png",
+      "status": "new",
+      "size": 60378,
+      "sha256": "8b8549c588f7c362cc191b01982450c2a534d3cc834c65aaa1959016be618415"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r03-c01.png",
+      "status": "new",
+      "size": 68383,
+      "sha256": "5fa052979377f68e7a6f0377fc9e6fa4803cfac8e235b865c62f171604e50e47"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r03-c02.png",
+      "status": "new",
+      "size": 73120,
+      "sha256": "3ece3a70cd81096990384c17678d17a561ca15f6c39310fd54ec5dcbebc99075"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r03-c03.png",
+      "status": "new",
+      "size": 59713,
+      "sha256": "542da8d4ee6457c2e23b7c93ae07aa59ec613475d224f7012b9ab8e4d9902229"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r03-c04.png",
+      "status": "new",
+      "size": 23921,
+      "sha256": "ad5505ac49ab6dc07a32ba25ce1cf9ef3801801e1e2b1581c3d7bdb75cfd1a21"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r03-c05.png",
+      "status": "new",
+      "size": 60764,
+      "sha256": "27de26f10fd8ec4e9f39e03e158867e828453e5887b49849b81424aa9961e41e"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r03-c06.png",
+      "status": "new",
+      "size": 54781,
+      "sha256": "9d34d7f91f2b5039324b939d473c7fa7cb9d5dc6aacb8734f523a51b8ddc6418"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r03-c07.png",
+      "status": "new",
+      "size": 78614,
+      "sha256": "3759e4abd81e8cd47a929f454a6345138fcb547762845048460d30dd1de489b1"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r03-c08.png",
+      "status": "new",
+      "size": 70098,
+      "sha256": "497f241988765dd9748cb814828a73463fc8320d2d183625f02f09396197bda6"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r04-c01.png",
+      "status": "new",
+      "size": 34633,
+      "sha256": "b91059ebbb27b59865a485599b69a51e3703f429414b5a717ba93c27f174160f"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r04-c02.png",
+      "status": "new",
+      "size": 35592,
+      "sha256": "a9255fff3c9a71baa4151636937d63a4a6740ac0f48b6009095f77dadd56e5c4"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r04-c03.png",
+      "status": "new",
+      "size": 35716,
+      "sha256": "1c17cc79094ed03fc31f2e0b2e8502e391091541698c3baaecd3834826422a1e"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r04-c04.png",
+      "status": "new",
+      "size": 13869,
+      "sha256": "c3c9a212c259d12fe4cc50a0d3a1eddda006ee82614f7c017e37b98c1d1e41d7"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r04-c05.png",
+      "status": "new",
+      "size": 36895,
+      "sha256": "da651399d4e49fdf943d21fcf81c34419ced8bcfffd4ba00cac038da99c6274d"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r04-c06.png",
+      "status": "new",
+      "size": 32403,
+      "sha256": "995902462c4eb033d56d26b492f5994cd142bbde4d285da34edfee9e1421cbe6"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r04-c07.png",
+      "status": "new",
+      "size": 35747,
+      "sha256": "7c2bd9193f2aca926451373e1536fe36ea917e302f36694b6a567ffcccf54f04"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r04-c08.png",
+      "status": "new",
+      "size": 39262,
+      "sha256": "a74a1f1a6f692e95216d9119f484284cfda032a385af20645fa855e055862601"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r05-c01.png",
+      "status": "new",
+      "size": 78389,
+      "sha256": "9ec5f8b74135f30b99eec7648db8c9bc20bff07203cc67bf57032d91e6177856"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r05-c02.png",
+      "status": "new",
+      "size": 77046,
+      "sha256": "025dc8fc2522532e4560fae4dcf5262f7a635138a65351432f4e12e7a6763297"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r05-c03.png",
+      "status": "new",
+      "size": 85272,
+      "sha256": "138c9785c4ebbcc13041680e815f08bbbae41accea01e5de912e80bfc9273c0e"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r05-c04.png",
+      "status": "new",
+      "size": 82256,
+      "sha256": "30e91b4b409ce88483f5b001789eda1a7ee90bbd948c200f9fa7dd75d771103e"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r05-c05.png",
+      "status": "new",
+      "size": 21135,
+      "sha256": "81a21837c1004547f4d4c992f33604bbdc845e07242c17d0b2783ca5049f79cc"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r05-c06.png",
+      "status": "new",
+      "size": 66725,
+      "sha256": "545d48d39ee06645d2fcc84b14a5e34ac5b00469989ab6d06c8ec795d01edbc9"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r05-c07.png",
+      "status": "new",
+      "size": 73782,
+      "sha256": "234be61014d5dfb151efb1b64d21c8f477f91f29c35a2552a01dd6f13301b492"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r05-c08.png",
+      "status": "new",
+      "size": 43694,
+      "sha256": "0f253b903a3ca1a834cb6ee86a466e21f0650a57cfdced148f12bcfce878acf6"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r06-c01.png",
+      "status": "new",
+      "size": 54612,
+      "sha256": "a776d741b275e718cd575eabfd3608dc62194ade7ebee2a5ab44ce1660f57f89"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r06-c02.png",
+      "status": "new",
+      "size": 71726,
+      "sha256": "a096c74198f0b9dc05135f3514e13a957eede2df742a9219008eb99fa37496a3"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r06-c03.png",
+      "status": "new",
+      "size": 54020,
+      "sha256": "d924b5c6e4fb318092628c783b03555a21b47d1de291ef47870bf59e3802d7f6"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r06-c04.png",
+      "status": "new",
+      "size": 16850,
+      "sha256": "7d1d8197a857672ae91816788f5fde37dd5f8db5c90a799f4d60bf8fd598a4e7"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r06-c05.png",
+      "status": "new",
+      "size": 68423,
+      "sha256": "0af4cb548fa77b54d6a8c7f70259d4436fba19781f41f5b2f93f9b8b51469465"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r06-c06.png",
+      "status": "new",
+      "size": 61145,
+      "sha256": "ca7688d695f3286ed3e917ada18058dc755af3926e9c921d0df040ace82d65b9"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r06-c07.png",
+      "status": "new",
+      "size": 41962,
+      "sha256": "1e1751c14a026450c980656c891cb4170b04eb3306bb887f70223d6fa7e5c8f3"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/vfx/vfx-r06-c08.png",
+      "status": "new",
+      "size": 43646,
+      "sha256": "33134af77c9dd03886fb240316f4b320db2b618a26ab38fe593d5e7c02f0fb5f"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r01-c01.png",
+      "status": "new",
+      "size": 42228,
+      "sha256": "16636ebe56aa2701b03cab8e2b78048386d8234ac763ad2f787cb0db1cbf027e"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r01-c02.png",
+      "status": "new",
+      "size": 44069,
+      "sha256": "34b5545d375d500212a2a7af7f2d01bf04d1d1cd4cb70d41c14fa09af6b9c0c2"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r01-c03.png",
+      "status": "new",
+      "size": 51908,
+      "sha256": "bb8d195a34be079cb39c0ed7003ab9f1ec2c867d2b21765c23b1e20aae82cc32"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r01-c04.png",
+      "status": "new",
+      "size": 49817,
+      "sha256": "937421dc918c8ebb3b0f7183f72938395a3bd65958a0915a404e0b45aa2a964c"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r01-c05.png",
+      "status": "new",
+      "size": 40791,
+      "sha256": "cec97215aa3db4f4cf57a2ab794bd733a2c46c2b6f18f8af11b8fd9d2d66b607"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r01-c06.png",
+      "status": "new",
+      "size": 41134,
+      "sha256": "fa81f15e25708e7d21660a43dc30d39d19ec64aa6c3fdaaa64b1193b726dd7c6"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r02-c01.png",
+      "status": "new",
+      "size": 32248,
+      "sha256": "65f9486510f03beba0199f7577c5d3047f116e52e37a7a93cfadc937bce0c631"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r02-c02.png",
+      "status": "new",
+      "size": 48913,
+      "sha256": "c2fc6b23b1aa5e14fc54e720dbaadb924a17f8764d6ad8429f3aa4ac37e88064"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r02-c03.png",
+      "status": "new",
+      "size": 62510,
+      "sha256": "d791b7a4c135e25df5614d2e869d66e0e477ba00f33a83a51f5a935b52a47f5f"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r02-c04.png",
+      "status": "new",
+      "size": 71481,
+      "sha256": "6a2331ae68fa7ee4e3a5f1409d4d1c53f10756ace384e26c371a9eb98ea73c5b"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r02-c05.png",
+      "status": "new",
+      "size": 35206,
+      "sha256": "cd3dbe81798a38b1f746501ff417987022758590be3ca39e6ee41c0279b96810"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r02-c06.png",
+      "status": "new",
+      "size": 35814,
+      "sha256": "a53d7be30b0a13eb7650928943981a683db3ad0d1e6ff8bfbdf7b60bc6f6aca8"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r03-c01.png",
+      "status": "new",
+      "size": 31377,
+      "sha256": "e8e516a8b1a55c036927dd746617c28bb538aab4814f30dad371146edfc9a26c"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r03-c02.png",
+      "status": "new",
+      "size": 31765,
+      "sha256": "966dee15300b7dca5f94a697be978490e17a5e5b00c26bb7e8b5560c60dc7042"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r03-c03.png",
+      "status": "new",
+      "size": 37224,
+      "sha256": "b998efb6c767465d2ef40cd0498290b6e35d882d2d76e4c2f6ea6c0a98ec9d63"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r03-c04.png",
+      "status": "new",
+      "size": 34341,
+      "sha256": "71dc2a19e52387152b5c10f2e0ec676f675b036458434b39b45743ebbe0ffe96"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r03-c05.png",
+      "status": "new",
+      "size": 78658,
+      "sha256": "057ebd6dd0651037e578584a064e43b943b3bb7ba4d81ff55d6638606a1ebf71"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r03-c06.png",
+      "status": "new",
+      "size": 74610,
+      "sha256": "5770994c6481bcb9bc8824f6fb5e381a2c54646fef48803a06448f41f4a18acb"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r04-c01.png",
+      "status": "new",
+      "size": 86165,
+      "sha256": "025175d968eebcbc466a1cb5527c5105ded689c38fdbba6a554a02edbc38dd60"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r04-c02.png",
+      "status": "new",
+      "size": 74631,
+      "sha256": "82750473b119639ef4c8dd7eefce83bc63c4e5b60603058370949362e81b529b"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r04-c03.png",
+      "status": "new",
+      "size": 72770,
+      "sha256": "cf15d49d282f1b89cf04e781786a73cb9764e16d62d934f6b1e763597c671215"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r04-c04.png",
+      "status": "new",
+      "size": 67214,
+      "sha256": "5c6a3d470836f4cf202f3a032912634d49e359a3713b42d4cd70d87285e8034f"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r04-c05.png",
+      "status": "new",
+      "size": 67659,
+      "sha256": "a398a08e100d93018c9c2f6a0571d4f48137ad0f40e858742efe47a572527948"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r04-c06.png",
+      "status": "new",
+      "size": 64608,
+      "sha256": "1e0f281e6bdac265eb0a0b423e67fd1f4ad397d3f8cf1d7e9b94ca2897c962a9"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r05-c01.png",
+      "status": "new",
+      "size": 53832,
+      "sha256": "fde61224f41688453b1197995628aed182f51c7ccf3511921e95b331aaa099ef"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r05-c02.png",
+      "status": "new",
+      "size": 54293,
+      "sha256": "2ab7f9a440744412dcf6b7aa2c6352917e7c082eabd44e07a8d27f713e4a195e"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r05-c03.png",
+      "status": "new",
+      "size": 55969,
+      "sha256": "553ec597b83ec54604614029924c7a08b337622c3f4f7cf779fe89db900eeb16"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r05-c04.png",
+      "status": "new",
+      "size": 57056,
+      "sha256": "4003ad3838d2141e846eaaa2341f4a02fc94359d6380cb13976893603414e24c"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r05-c05.png",
+      "status": "new",
+      "size": 59733,
+      "sha256": "a6ec9e9f397b117a1c083d0e2de73099d725b5d25cc33bfce5543aeb8b20dc6c"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r05-c06.png",
+      "status": "new",
+      "size": 50905,
+      "sha256": "cca1aaaff23a50a529115abb13938729e022e7bd7fc0854351d18e49a60d3d00"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r06-c01.png",
+      "status": "new",
+      "size": 35587,
+      "sha256": "bcfce205acab0e41c51491f474cd8a91e7e6b4ed4975d22edd9eaa13327bc711"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r06-c02.png",
+      "status": "new",
+      "size": 73399,
+      "sha256": "5af603b2b24570df3389151cc521a03662935a595726803494967cbb0d8ed566"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r06-c03.png",
+      "status": "new",
+      "size": 62734,
+      "sha256": "bdc1789ceec5760271849a3f64dc34f2dabe82dcd630448ad78f374fe88b1889"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r06-c04.png",
+      "status": "new",
+      "size": 59255,
+      "sha256": "b87809669a38928350465b83c220dc89c15e3490e79ac830743d8c05ea933aab"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r06-c05.png",
+      "status": "new",
+      "size": 68978,
+      "sha256": "8241dda02b112f0395e88399020f077fe43736b1216da8bf89e3ec9a5cdc152b"
+    },
+    {
+      "path": "public/assets/ip-v13/crops/weapons/weapons-r06-c06.png",
+      "status": "new",
+      "size": 55215,
+      "sha256": "d94eac0f6ee80059445147d3c094090b88da8b90993ecc03402f391011a09412"
+    },
+    {
+      "path": "public/assets/ip-v13/sheets/sheet-01-mixed.png",
+      "status": "new",
+      "size": 2836099,
+      "sha256": "20a0197d6fb2a2930361182238b2149af3bb57b49936f6610fe9d8830a6ccea9"
+    },
+    {
+      "path": "public/assets/ip-v13/sheets/sheet-02-heroes.png",
+      "status": "new",
+      "size": 3385755,
+      "sha256": "e087900269cc20152b48af952ed116565f50f1ebcba0f548ef9d1e748c323fc9"
+    },
+    {
+      "path": "public/assets/ip-v13/sheets/sheet-03-monsters.png",
+      "status": "new",
+      "size": 2703861,
+      "sha256": "80eef33e8f8ae4535e44c68f34efe576d1a66db3e8efa3c3ed1352e1a9b70487"
+    },
+    {
+      "path": "public/assets/ip-v13/sheets/sheet-04-bosses.png",
+      "status": "new",
+      "size": 3515471,
+      "sha256": "663afe53e9bbff9af8ca086e9ab248d49e32e1681c1813f18329962ebc6f802d"
+    },
+    {
+      "path": "public/assets/ip-v13/sheets/sheet-05-weapons.png",
+      "status": "new",
+      "size": 2586913,
+      "sha256": "0f5ecba9a28fe855dc20d3d0170032ff8d7cdba3fabd24f2c86c0c15c52d4b1f"
+    },
+    {
+      "path": "public/assets/ip-v13/sheets/sheet-06-items.png",
+      "status": "new",
+      "size": 3208779,
+      "sha256": "67fad19aedf09cbaaf939a348a6ddffa5749bd776ad30209fa2d2b7cde74dc7e"
+    },
+    {
+      "path": "public/assets/ip-v13/sheets/sheet-07-vfx.png",
+      "status": "new",
+      "size": 2874052,
+      "sha256": "8e483da8bef62ffad1a8a653da91a834077c0c279b0270b46b89079e68ca5ddf"
+    },
+    {
+      "path": "public/assets/ip-v13/sheets/sheet-08-combat-props.png",
+      "status": "new",
+      "size": 2801182,
+      "sha256": "3b4e202f8c061a6978766d0637e064589baecf3d67d10cd579439e3f38a6f1e7"
+    },
+    {
+      "path": "public/assets/ip-v13/sheets/sheet-09-environment.png",
+      "status": "new",
+      "size": 2824656,
+      "sha256": "29ddcaa3b75cfa64bf19cb7d1c9c76a2011e70eb6a721f9c981f0cf7c5e1a520"
+    },
+    {
+      "path": "public/assets/ip-v13/sheets/sheet-10-ui.png",
+      "status": "new",
+      "size": 3062696,
+      "sha256": "dccfdaa4f4637d6afd6754a84619b2aaeb7fd350b06fec65a586e8dbb07607e5"
+    },
+    {
+      "path": "scripts/generate-asset-sheets-v13.py",
+      "status": "new",
+      "size": 10571,
+      "sha256": "61a9b705bfa06f41956a32f161b3e7d2758dad06417a9b73b788b1b271b4c9e9"
+    },
+    {
+      "path": "scripts/verify-v1300.mjs",
+      "status": "new",
+      "size": 3092,
+      "sha256": "40a3b90551b7cd3440ecc1c9d09082cd5617d75feb11ff8dde460f22f350bd25"
+    },
+    {
+      "path": "src/ip-asset-library-v13.js",
+      "status": "new",
+      "size": 1723,
+      "sha256": "7dec8cb0da5a7ab8e08f185bb1ceb7d18a254c082b05c1c3b8419d6cf6e54c34"
+    },
+    {
+      "path": "PROJECT_HANDOFF.md",
+      "status": "overwrite",
+      "size": 134375,
+      "sha256": "e08c83dec369cf357dd9a01c39fbdbe803c9348f3fde734532d395e82b5f0632"
+    },
+    {
+      "path": "README.md",
+      "status": "overwrite",
+      "size": 3531,
+      "sha256": "b72004e4110e8ce3350a1b8354ce1824d091118c7d493dcf09e5ec29672e8760"
+    },
+    {
+      "path": "docs/CURRENT_ASSET_AUDIT.json",
+      "status": "overwrite",
+      "size": 36841,
+      "sha256": "441d492aaf277b0e32cbb3c0c8c3817aff1960e68f568c38a983be6c73e27cfd"
+    },
+    {
+      "path": "docs/PRODUCTION_ROADMAP.md",
+      "status": "overwrite",
+      "size": 3545,
+      "sha256": "fa64ed5b3fb0affad5441dc05d3ec8e2933e35b57cd1dd9c614fedfcce2f19ff"
+    },
+    {
+      "path": "index.html",
+      "status": "overwrite",
+      "size": 36836,
+      "sha256": "1ba57b96fb3a8baad52b9b0146ffcdcd6e6d8042d0aad13532d3aa9706b2d24a"
+    },
+    {
+      "path": "package-lock.json",
+      "status": "overwrite",
+      "size": 28668,
+      "sha256": "e50f06b8bf334089873168b5fb3d4529680dff660f2c08cd887fc17e42a0482b"
+    },
+    {
+      "path": "package.json",
+      "status": "overwrite",
+      "size": 7119,
+      "sha256": "20f8d83fd1c293a0ad84c04f78b0aa243d90072649d715dc0c970ee107a7f6b8"
+    },
+    {
+      "path": "public/sw.js",
+      "status": "overwrite",
+      "size": 757,
+      "sha256": "514437032c4eb4a8bc79113d83cb03acf272c32c7b4d1e02db37482ebf9c7f92"
+    },
+    {
+      "path": "scripts/audit-current-assets.mjs",
+      "status": "overwrite",
+      "size": 7482,
+      "sha256": "79d186acf8884fd622563dc00b124963e6c5e58af00f8a5c7dec39fb4d08d963"
+    },
+    {
+      "path": "scripts/build-static-fallback.mjs",
+      "status": "overwrite",
+      "size": 1928,
+      "sha256": "61c962c7004bbdf0fb236be0308175c36a71ebf76790fbc9cdadce15d840af7c"
+    },
+    {
+      "path": "scripts/verify-static-dist.mjs",
+      "status": "overwrite",
+      "size": 4428,
+      "sha256": "002672b3f7bc0d50913940f1a0ebfdbf7e3e78ec2882f7bac3049eb14817833e"
+    },
+    {
+      "path": "scripts/verify-texture-budget.mjs",
+      "status": "overwrite",
+      "size": 4701,
+      "sha256": "9189cde981c363689a8f93d77e714f63c8fa65b7334e770bb0eea305f6ffdc5d"
+    },
+    {
+      "path": "scripts/verify-v1000.mjs",
+      "status": "overwrite",
+      "size": 6741,
+      "sha256": "1de7ebd5027d969240b3d8add3bd43203cfc32e6fc95fc240855b67531795aa7"
+    },
+    {
+      "path": "scripts/verify-v1100.mjs",
+      "status": "overwrite",
+      "size": 6794,
+      "sha256": "6aadc2ca47f2c51df4e17bf85b68926ac202931f62fcda6d80ee818cbe87e05e"
+    },
+    {
+      "path": "scripts/verify-v1200.mjs",
+      "status": "overwrite",
+      "size": 8335,
+      "sha256": "119e45aefdb1867193dccb94bdc0996c4341d3a0caea691a8c85d5f11408b9ed"
+    },
+    {
+      "path": "scripts/verify-v900.mjs",
+      "status": "overwrite",
+      "size": 5513,
+      "sha256": "acb9e502279671d99511d154f8b349a0ea7464d7cefab3463275a70d07eb817c"
+    },
+    {
+      "path": "src/art-production-gate.js",
+      "status": "overwrite",
+      "size": 5386,
+      "sha256": "1abc337d2230cd88a2119e982164c18af9bc1b2c4da6794dcdacf9cff9898354"
+    },
+    {
+      "path": "src/codex-data.js",
+      "status": "overwrite",
+      "size": 11755,
+      "sha256": "39661a8f9958d60aeeaad91567bc5074c93043e70512e184ffba59bae6e07340"
+    },
+    {
+      "path": "src/engine/asset-catalog.js",
+      "status": "overwrite",
+      "size": 8193,
+      "sha256": "709015ccae2e01a6190e8bfa321565113434a9e890527a05dbe0f6c48c4c1fff"
+    },
+    {
+      "path": "src/equipment-system.js",
+      "status": "overwrite",
+      "size": 9030,
+      "sha256": "061c6df5796ebb6da6a8274f35013dc95853ed276b92660f1c84a7b5a6abd23e"
+    },
+    {
+      "path": "src/golden-slice-certification.js",
+      "status": "overwrite",
+      "size": 3841,
+      "sha256": "e1eb3f7094fae93f359b6e6559a44bbcf4d39c6d8adf27cda015f8a4091c425a"
+    },
+    {
+      "path": "src/hero-classes.js",
+      "status": "overwrite",
+      "size": 4855,
+      "sha256": "66e7a71c41ea70d61c6b857f8c1aa9e2d893e20b698d4ff2f00141b395139d30"
+    },
+    {
+      "path": "src/main.js",
+      "status": "overwrite",
+      "size": 315683,
+      "sha256": "6d9701d37d076e900b5deb09679a5eb6505d842ed02a2efa41f6033d69406b04"
+    },
+    {
+      "path": "src/production-console.js",
+      "status": "overwrite",
+      "size": 7606,
+      "sha256": "f18544d86f089afc8be7de5682284c37b5b9410ee46749b2649c17463360353c"
+    },
+    {
+      "path": "src/runtime/save-schema.js",
+      "status": "overwrite",
+      "size": 1621,
+      "sha256": "45cbe2348ff987cf2b102d04054581aa22f67a21caf2520f156cc5e6ed34f733"
+    },
+    {
+      "path": "src/style.css",
+      "status": "overwrite",
+      "size": 168700,
+      "sha256": "b7c12e26aba9afbd2679a17ec78c8f139143e5ed888e9e470df6c71e3373e00e"
+    }
   ],
-  "modified": [
-    "PROJECT_HANDOFF.md",
-    "README.md",
-    "index.html",
-    "package-lock.json",
-    "package.json",
-    "public/assets/ip-v8/README.md",
-    "public/sw.js",
-    "scripts/build-static-fallback.mjs",
-    "scripts/clean-obsolete-assets.mjs",
-    "scripts/verify-project.mjs",
-    "scripts/verify-static-dist.mjs",
-    "scripts/verify-v700.mjs",
-    "src/art-production-gate.js",
-    "src/engine/asset-catalog.js",
-    "src/engine/engine-config.js",
-    "src/hero-classes.js",
-    "src/main.js",
-    "src/production-console.js",
-    "src/style.css"
-  ],
-  "deleted": [
-    "dist/assets/models/boss-tiger-nextgen.glb",
-    "dist/assets/models/guardian-ember-nextgen.glb",
-    "dist/assets/models/monster-imp-nextgen.glb",
-    "dist/cover.svg",
-    "dist/icon.svg",
-    "public/assets/models/boss-tiger-nextgen.glb",
-    "public/assets/models/guardian-ember-nextgen.glb",
-    "public/assets/models/monster-imp-nextgen.glb",
-    "public/cover.svg",
-    "public/icon.svg"
+  "metadataFiles": [
+    {
+      "path": "PATCH_MANIFEST.json",
+      "status": "overwrite-metadata"
+    },
+    {
+      "path": "PATCH_FILES.json",
+      "status": "overwrite-metadata"
+    },
+    {
+      "path": "PATCH_DELETE.txt",
+      "status": "overwrite-metadata"
+    },
+    {
+      "path": "DELETE_FILES.txt",
+      "status": "overwrite-metadata"
+    },
+    {
+      "path": "PATCH_README.txt",
+      "status": "overwrite-metadata"
+    }
   ]
 }

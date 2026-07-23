@@ -1,64 +1,53 @@
 {
-  "from": "8.0.0",
-  "to": "9.0.0",
-  "baseline": "Defense.zip",
-  "changed_files": [
-    "DELETE_FILES.txt",
-    "PATCH_DELETE.txt",
-    "PATCH_FILES.json",
-    "PATCH_MANIFEST.json",
-    "PATCH_README.txt",
-    "PROJECT_HANDOFF.md",
-    "README.md",
-    "docs/ART_ASSET_APPROVAL_REGISTRY_v9.0.0.json",
-    "docs/ASSET_QUALITY_AUDIT_v9.0.0.md",
-    "docs/ASSET_RENAISSANCE_v9.0.0.md",
-    "docs/ASSET_REVIEW_BOARD_v9.0.0.jpg",
-    "docs/NEXT_PATCH_LINEUP_v9.x.md",
-    "docs/PATCH_APPLY_v9.0.0.md",
-    "docs/PATCH_NOTES_v9.0.0.md",
-    "index.html",
-    "package-lock.json",
-    "package.json",
-    "public/asset-library-v9.html",
-    "public/assets/ip-v8/README.md",
-    "public/assets/ip-v8/quality-registry-v9.json",
-    "public/sw.js",
-    "scripts/build-static-fallback.mjs",
-    "scripts/clean-obsolete-assets.mjs",
-    "scripts/generate-asset-quality-registry-v9.mjs",
-    "scripts/verify-project.mjs",
-    "scripts/verify-static-dist.mjs",
-    "scripts/verify-v700.mjs",
-    "scripts/verify-v900.mjs",
-    "src/art-production-gate.js",
-    "src/engine/asset-catalog.js",
-    "src/engine/engine-config.js",
-    "src/hero-classes.js",
-    "src/ip-asset-library-v9.js",
-    "src/main.js",
-    "src/production-console.js",
-    "src/style.css"
-  ],
-  "deleted_files": [
-    "dist/assets/models/boss-tiger-nextgen.glb",
-    "dist/assets/models/guardian-ember-nextgen.glb",
-    "dist/assets/models/monster-imp-nextgen.glb",
-    "dist/cover.svg",
-    "dist/icon.svg",
-    "public/assets/models/boss-tiger-nextgen.glb",
-    "public/assets/models/guardian-ember-nextgen.glb",
-    "public/assets/models/monster-imp-nextgen.glb",
-    "public/cover.svg",
-    "public/icon.svg"
-  ],
-  "dist_included": false,
-  "art_asset_summary": {
-    "sourceFiles": 970,
-    "highResolutionCandidates": 40,
-    "referenceCrops": 101,
-    "quarantinedFragments": 823,
-    "sourceAtlases": 6,
-    "productionApproved": 0
-  }
+  "schemaVersion": 3,
+  "patchName": "Transparent Arsenal",
+  "fromVersion": "12.0.0",
+  "toVersion": "13.0.0",
+  "engineVersion": "10.0.0",
+  "saveSchemaVersion": 11,
+  "baseline": "DokkaebiLuckDefense3D_FULL_v12.0.0",
+  "artStyleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+  "characterDnaVersion": "3.0",
+  "camera": {
+    "defaultProfile": "scenic",
+    "defaultDistance": 19.5,
+    "fov": 52,
+    "note": "v12 wide battlefield camera retained"
+  },
+  "spriteForge": {
+    "sourceSheets": 10,
+    "sheetResolution": "1254x1254",
+    "checkerboardWasBaked": true,
+    "alphaReconstruction": "border-connected bright-neutral matte removal",
+    "individualCrops": 415,
+    "curatedRuntime2D": 42,
+    "runtimeReady2D": 124,
+    "reviewRequired": 291,
+    "production3DApproved": 0
+  },
+  "runtimeVerticalSlice": {
+    "certified": 6,
+    "total": 6,
+    "status": "runtime-certified"
+  },
+  "productionArtApproval": {
+    "approved": 0,
+    "total": 6,
+    "status": "locked"
+  },
+  "massProductionUnlocked": false,
+  "fileCounts": {
+    "new": 436,
+    "overwritten": 31,
+    "deleted": 0,
+    "payloadWithoutMetadata": 462,
+    "totalPatchFiles": 467
+  },
+  "deleteFiles": [],
+  "generatedAtUtc": "2026-07-23T06:32:19.412413+00:00",
+  "notes": [
+    "The uploaded PNG files contained a baked checkerboard despite using RGBA mode.",
+    "Generated transparent sprites are approved for curated 2D runtime use only; they are not final 3D production art.",
+    "Extract over the v12.0.0 project root, then run verification and static build commands."
+  ]
 }

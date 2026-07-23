@@ -20,7 +20,7 @@ const check = (condition, message) => condition ? pass(message) : failures.push(
 check(Number(pkg.version.split('.')[0]) >= 7, 'package version remains v7 or later');
 check(Number(ENGINE_VERSION.split('.')[0]) >= 6, 'engine version remains 6.0.0 or later');
 check(Number(ART_PRODUCTION_GATE_VERSION.split('.')[0]) >= 7, 'art gate version remains v7 or later');
-check(SAVE_SCHEMA_VERSION === 7, 'save schema version 7');
+check(SAVE_SCHEMA_VERSION >= 7, 'save schema remains v7 or later');
 check(ELEMENTAL_REACTION_SYSTEM_VERSION === '1.0.0', 'elemental reaction version 1.0.0');
 check(BATTLE_MOMENTUM_VERSION === '1.0.0', 'battle momentum version 1.0.0');
 check(BOSS_ESCALATION_VERSION === '1.0.0', 'boss escalation version 1.0.0');
@@ -63,8 +63,8 @@ check(telemetry.snapshot.reactions.steamBurst === 1 && telemetry.snapshot.overdr
 const fakeData = new Map([['dokkaebi-guardian-growth-v1', '{"shards":10}']]);
 const fakeStorage = { getItem: (key) => fakeData.has(key) ? fakeData.get(key) : null, setItem: (key, value) => fakeData.set(key, String(value)) };
 const migration = migrateSaveSchema(fakeStorage);
-check(migration.migrated && fakeStorage.getItem('dokkaebi-save-schema-version') === '7', 'save migration writes schema v7');
-check(Boolean(fakeStorage.getItem('dokkaebi-save-backup-v7')), 'save migration writes v7 backup');
+check(migration.migrated && fakeStorage.getItem('dokkaebi-save-schema-version') === String(SAVE_SCHEMA_VERSION), 'save migration writes current schema');
+check(Boolean(fakeStorage.getItem(`dokkaebi-save-backup-v${SAVE_SCHEMA_VERSION}`)), 'save migration writes current-version backup');
 
 const main = read('src/main.js');
 const html = read('index.html');
@@ -73,10 +73,10 @@ const productionConsole = read('src/production-console.js');
 check(main.includes('ElementalReactionSystem') && main.includes('elementalReactions.resolve'), 'elemental reactions integrated into damage flow');
 check(main.includes('BattleMomentumSystem') && main.includes('updateBattleMomentum') && main.includes('momentum-overdrive'), 'battle momentum integrated into runtime and UI');
 check(main.includes('BossEscalationDirector') && main.includes('MYTHIC BOSS ENRAGE'), 'boss escalation integrated into runtime');
-check(html.includes('MYTHIC CONVERGENCE') && html.includes('ENGINE 6.0') && html.includes('v7.0.0'), 'v7 title identity and version');
+check((html.includes('MYTHIC CONVERGENCE') || html.includes('GOLDEN CONVERGENCE') || html.includes('SOVEREIGN ASSEMBLY') || html.includes('GOLDEN DOMINION')) && (html.includes('ENGINE 6.0') || html.includes('ENGINE 8.0') || html.includes('ENGINE 9.0') || html.includes('ENGINE 10')) && (html.includes('v7.0.0') || html.includes('v10.0.0') || html.includes('v11.0.0') || html.includes('v12.0.0')), 'v7 lineage retained in current title identity');
 check(html.includes('momentum-meter') && html.includes('momentum-progress'), 'player-facing momentum meter exists');
 check(style.includes('MYTHIC CONVERGENCE v7.0.0') && style.includes('momentum-overdrive'), 'v7 visual tokens and overdrive feedback exist');
-check(productionConsole.includes('MYTHIC CONVERGENCE v7') && productionConsole.includes('REACTIONS') && productionConsole.includes('BOSS RAGE'), 'production console includes v7 diagnostics');
+check((productionConsole.includes('MYTHIC CONVERGENCE v7') || productionConsole.includes('GOLDEN CONVERGENCE v10') || productionConsole.includes('SOVEREIGN ASSEMBLY v11') || productionConsole.includes('GOLDEN DOMINION v12')) && productionConsole.includes('REACTIONS') && productionConsole.includes('BOSS RAGE'), 'production console includes v7 diagnostics');
 check(registry.gameVersion === '7.0.0' && registry.engineVersion === '6.0.0' && registry.gateVersion === '7.0.0', 'v7 art registry versions');
 check(registry.runtimeAssets.length === 19 && registry.runtimeAssets.every((entry) => !entry.productionApproved), 'legacy assets remain honestly unapproved');
 check(ART_PRODUCTION_SUMMARY.approved === 0 && !ART_PRODUCTION_SUMMARY.massProductionUnlocked, 'golden slice production lock remains enforced');

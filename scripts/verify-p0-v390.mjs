@@ -44,7 +44,7 @@ const candidateModels = [
   ['monster-skeleton-candidate-v1', 'skeleton'],
   ['monster-crow-candidate-v1', 'crow']
 ];
-const requiredClips = ['Idle', 'Walk', 'Run', 'Attack', 'Skill', 'Hit', 'Death'];
+const requiredClips = ['Idle', 'Walk', 'Run', 'Attack1', 'Attack2', 'Skill1', 'Skill2', 'Hit', 'Death', 'Victory', 'Spawn'];
 for (const [id, archetype] of candidateModels) {
   const path = `public/assets/models/${id}.glb`;
   if (existsSync(resolve(root, path)) && statSync(resolve(root, path)).size < 100000) {
@@ -56,7 +56,7 @@ for (const [id, archetype] of candidateModels) {
   const clips = new Set((gltf.animations || []).map((item) => item.name));
   const missingClips = requiredClips.filter((clip) => !clips.has(clip));
   const nodeNames = new Set((gltf.nodes || []).map((node) => node.name));
-  const missingSockets = ['WeaponSocket', 'AccessorySocket'].filter((name) => !nodeNames.has(name));
+  const missingSockets = ['HelmetSocket', 'ShoulderSocket', 'WeaponSocket', 'AccessorySocket', 'BackSocket', 'FXSocket'].filter((name) => !nodeNames.has(name));
   const extras = gltf.asset?.extras || {};
   if (!(gltf.skins?.length >= 1)) fail(`${id} Skin 누락`);
   if (missingClips.length) fail(`${id} 필수 클립 누락: ${missingClips.join(', ')}`);
@@ -64,7 +64,7 @@ for (const [id, archetype] of candidateModels) {
   if (extras.approvalStage !== 'art-review' || extras.technicalReady !== true) fail(`${id} art-review 기술 후보 메타데이터 누락`);
   if (extras.archetype !== archetype) fail(`${id} archetype 불일치: ${extras.archetype ?? '없음'}`);
   if (extras.rigVersion !== 'DOKKAEBI-HUMANOID-RIG-1') fail(`${id} 공용 리그 버전 불일치`);
-  if (!missingClips.length && !missingSockets.length && gltf.skins?.length >= 1) pass(`${id} 공용 Skin·7클립·소켓 후보`);
+  if (!missingClips.length && !missingSockets.length && gltf.skins?.length >= 1) pass(`${id} 공용 Skin·11클립·6소켓 후보`);
 }
 
 const rasterIcons = [
@@ -91,8 +91,9 @@ for (const name of rasterIcons) {
   else pass(`${path} 래스터 PNG 256x256`);
 }
 
-if (HERO_CLASS_ORDER.length === 3 && Object.keys(HERO_CLASS_ASSET_IDS).length === 3) pass('플레이어 직업 3종 계약');
-else fail(`플레이어 직업 계약 오류: order ${HERO_CLASS_ORDER.length}, assets ${Object.keys(HERO_CLASS_ASSET_IDS).length}`);
+const uniqueHeroAssets = new Set(Object.values(HERO_CLASS_ASSET_IDS));
+if (HERO_CLASS_ORDER.length === 5 && Object.keys(HERO_CLASS_ASSET_IDS).length === 5 && uniqueHeroAssets.size === 3) pass('플레이어 논리 직업 5종·검증 런타임 GLB 3종 계약');
+else fail(`플레이어 직업 계약 오류: order ${HERO_CLASS_ORDER.length}, logical assets ${Object.keys(HERO_CLASS_ASSET_IDS).length}, unique runtime ${uniqueHeroAssets.size}`);
 
 const monsterTypes = Object.keys(MONSTER_ASSET_IDS);
 if (monsterTypes.length === 7 && ['ghost', 'skeleton', 'crow'].every((type) => monsterTypes.includes(type))) pass('일반 요괴 모델 슬롯 7종');
@@ -113,7 +114,7 @@ else pass('v3.9 UI는 PNG 전용');
 
 if (main.includes('renderHeroClassSelector()') && main.includes('applyHeroClassRunModifiers()') && main.includes('refreshHeroVisualLoadout()')) pass('직업 선택과 전투 능력 연결');
 else fail('직업 선택 런타임 연결 누락');
-if (main.includes("classConfig.id === 'archer'") && main.includes("classConfig.id === 'mage'") && main.includes('damageSource')) pass('궁수 관통·법사 광역 전투 분기');
+if (main.includes("classConfig.id === 'archer'") && main.includes("classConfig.id === 'mage'") && main.includes("classConfig.id === 'taoist'") && main.includes("classConfig.id === 'shaman'") && main.includes('damageSource')) pass('궁수·법사·도사·무당 직업별 전투 분기');
 else fail('직업별 공격 분기 누락');
 if (heroVisual.includes('applyRelicVisuals') && heroVisual.includes('WeaponSocket') && heroVisual.includes('AccessorySocket')) pass('유물 무기·관·후광 소켓 장착');
 else fail('유물 외형 소켓 연결 누락');

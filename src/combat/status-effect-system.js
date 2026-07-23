@@ -11,7 +11,9 @@ export const STATUS_EFFECTS = Object.freeze({
 
 export const STATUS_SOURCE_MAP = Object.freeze({
   ember: 'burn', frost: 'frost', wind: 'mark', stone: 'fracture', bell: 'resonance', thunder: 'shock',
-  'ultimate-ember': 'burn', 'ultimate-frost': 'frost', 'ultimate-wind': 'mark', 'ultimate-stone': 'fracture', 'ultimate-bell': 'resonance', 'ultimate-thunder': 'shock'
+  'ultimate-ember': 'burn', 'ultimate-frost': 'frost', 'ultimate-wind': 'mark', 'ultimate-stone': 'fracture', 'ultimate-bell': 'resonance', 'ultimate-thunder': 'shock',
+  'hero-archer': 'mark', 'hero-mage': 'frost', 'hero-taoist': 'resonance', 'hero-shaman': 'frost',
+  'skill-archer': 'mark', 'skill-mage': 'frost', 'skill-taoist': 'resonance', 'skill-shaman': 'resonance'
 });
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
@@ -66,15 +68,16 @@ export class StatusEffectSystem {
     return consumed;
   }
 
-  applyFromSource(target, source, amount = 0) {
+  applyFromSource(target, source, amount = 0, { potencyMultiplier = 1, durationMultiplier = 1 } = {}) {
     if (!source || String(source).startsWith('status-')) return null;
     const type = STATUS_SOURCE_MAP[source];
     if (!type) return null;
     const bossPenalty = target?.boss ? .72 : 1;
     const chanceByType = { burn: .72, frost: .88, mark: .78, fracture: .66, resonance: .72, shock: .62 };
     const chance = clamp((chanceByType[type] || .7) * bossPenalty, .25, .95);
-    const potency = clamp((Number(amount) || 1) / Math.max(20, target?.maxHp * .08), .55, 1.85);
-    return this.apply(target, type, { potency, source, chance });
+    const potency = clamp((Number(amount) || 1) / Math.max(20, target?.maxHp * .08) * Math.max(.25, Number(potencyMultiplier) || 1), .55, 2.5);
+    const duration = (STATUS_EFFECTS[type]?.duration || 1) * Math.max(.4, Number(durationMultiplier) || 1);
+    return this.apply(target, type, { potency, duration, source, chance });
   }
 
   update(target, dt, { onDamage } = {}) {

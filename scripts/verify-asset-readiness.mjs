@@ -16,7 +16,7 @@ assert(CHARACTER_ASSET_TARGETS.boss.requiredAnimations.length === 11, '보스 11
 assert(ENVIRONMENT_ASSET_TARGETS.tileMeters === 8 && ENVIRONMENT_ASSET_TARGETS.primarySetCount === 8, '8m 전장 타일과 8개 환경 세트');
 assert(EFFECT_ASSET_TARGETS.projectileAtlasSize === 1024 && EFFECT_ASSET_TARGETS.distortion === false, '모바일 발사체 아틀라스 정책');
 assert(Object.keys(MODEL_ASSET_SLOTS.guardians).length === 6, '수호대 모델 슬롯 6종');
-assert(Object.keys(MODEL_ASSET_SLOTS.heroClasses).length === 3, '대장 깨비 직업 모델 슬롯 3종');
+assert(Object.keys(MODEL_ASSET_SLOTS.heroClasses).length === 5, '대장 깨비 논리 직업 슬롯 5종');
 assert(Object.keys(MODEL_ASSET_SLOTS.monsters).length === 7, '일반 요괴 모델 슬롯 7종');
 assert(Object.keys(MODEL_ASSET_SLOTS.bosses).length === 3, '보스 모델 슬롯 3종');
 assert(Object.keys(MODEL_ASSET_SLOTS.environment).length === 8, '환경 모델 슬롯 8종');
@@ -35,7 +35,7 @@ assert(manifest.impostorDirections === 11 && manifest.characters.guardians.lengt
 
 
 const combatModelPaths = [
-  ...Object.values(HERO_CLASS_ASSET_IDS).map((id) => `public/assets/models/${id}.glb`),
+  ...[...new Set(Object.values(HERO_CLASS_ASSET_IDS))].map((id) => `public/assets/models/${id}.glb`),
   ...Object.values(GUARDIAN_ASSET_IDS).map((id) => `public/assets/models/${id}.glb`),
   ...Object.values(MONSTER_ASSET_IDS).map((id) => `public/assets/models/${id}.glb`),
   ...Object.values(BOSS_ASSET_IDS).map((id) => `public/assets/models/${id}.glb`)
@@ -60,7 +60,7 @@ for (const path of [
   }
   assert(readFileSync(absolute).length > 1000, `런타임 프로토타입 에셋 ${path}`);
 }
-assert(combatModelPaths.length === 19, '직업·수호대·요괴·보스 GLB 19종');
+assert(combatModelPaths.length === 19, '직업 런타임 GLB 3종·수호대·요괴·보스 총 19종');
 
 if (failures.length) {
   failures.forEach((message) => console.error(`FAIL ${message}`));

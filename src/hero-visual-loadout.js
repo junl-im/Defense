@@ -93,11 +93,49 @@ function addStaff(socket, color) {
   return kit;
 }
 
+function addTalismanFan(socket, color) {
+  const kit = new THREE.Group();
+  kit.name = 'HeroClassTalismanFanKit';
+  const handleMat = material(0x5f3b25, color, .16, { roughness: .74 });
+  const paperMat = material(0xffedb8, color, .42, { roughness: .62 });
+  const inkMat = material(color, color, 1.2, { roughness: .28 });
+  const handle = mesh(new THREE.CylinderGeometry(.045, .055, .88, 10), handleMat, [0, -.02, 0], [0, 0, -.08]);
+  kit.add(handle);
+  for (let index = 0; index < 5; index += 1) {
+    const angle = (index - 2) * .22;
+    const paper = mesh(new THREE.BoxGeometry(.22, .48, .025), paperMat, [Math.sin(angle) * .22, .48, Math.cos(angle) * .06], [0, 0, -angle]);
+    const seal = mesh(new THREE.BoxGeometry(.055, .27, .032), inkMat, [0, 0, .018]);
+    paper.add(seal);
+    kit.add(paper);
+  }
+  kit.position.set(.02, -.34, .08);
+  socket.add(kit);
+  return kit;
+}
+
+function addRitualFan(socket, color) {
+  const kit = new THREE.Group();
+  kit.name = 'HeroClassRitualFanKit';
+  const wood = material(0x7a4b35, color, .22, { roughness: .7 });
+  const silk = material(0xffd6e6, color, .68, { roughness: .48 });
+  const bellMat = material(0xffcf68, 0xffa83f, .9, { metalness: .38, roughness: .3 });
+  const handle = mesh(new THREE.CylinderGeometry(.04, .055, .82, 10), wood, [0, -.08, 0], [0, 0, -.12]);
+  const fan = mesh(new THREE.CylinderGeometry(.08, .38, .48, 14, 1, false, -Math.PI / 2, Math.PI), silk, [0, .42, 0], [Math.PI / 2, 0, 0]);
+  kit.add(handle, fan);
+  for (let index = 0; index < 3; index += 1) {
+    const bell = mesh(new THREE.SphereGeometry(.055, 8, 6), bellMat, [(index - 1) * .16, .1, .04]);
+    kit.add(bell);
+  }
+  kit.position.set(.02, -.28, .1);
+  socket.add(kit);
+  return kit;
+}
+
 function addClassAura(socket, classConfig) {
   const aura = new THREE.Group();
   aura.name = 'HeroClassAuraKit';
   const ring = mesh(new THREE.TorusGeometry(.58, .035, 8, 30), basic(classConfig.color, .46), [0, .04, 0], [Math.PI / 2, 0, 0]);
-  const beadCount = classConfig.id === 'mage' ? 5 : classConfig.id === 'archer' ? 3 : 2;
+  const beadCount = classConfig.id === 'mage' ? 5 : classConfig.id === 'taoist' ? 4 : classConfig.id === 'shaman' ? 6 : classConfig.id === 'archer' ? 3 : 2;
   aura.add(ring);
   for (let index = 0; index < beadCount; index += 1) {
     const angle = index / beadCount * Math.PI * 2;
@@ -134,6 +172,8 @@ export function applyHeroClassVisuals(group, classId) {
   setBaseWeaponVisibility(group, config.id === 'warrior');
   if (config.id === 'archer') group.userData.classVisualAttachments.push(addBow(weaponSocket, config.color));
   if (config.id === 'mage') group.userData.classVisualAttachments.push(addStaff(weaponSocket, config.color));
+  if (config.id === 'taoist') group.userData.classVisualAttachments.push(addTalismanFan(weaponSocket, config.color));
+  if (config.id === 'shaman') group.userData.classVisualAttachments.push(addRitualFan(weaponSocket, config.color));
   group.userData.classVisualAttachments.push(addClassAura(accessorySocket, config));
   tintClassMaterials(group, config);
   group.userData.heroClassId = config.id;

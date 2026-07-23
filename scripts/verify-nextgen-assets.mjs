@@ -11,7 +11,7 @@ const fail = (message) => { failures.push(message); console.error(`FAIL ${messag
 const commonBipedNodes = ['body','head','armL','armR','legL','legR','weapon','signature'];
 const rigNodes = ['Armature','Hips','Spine','Head','Arm_L','Arm_R','Leg_L','Leg_R','WeaponSocket','AccessorySocket'];
 const specs = [
-  ...Object.values(HERO_CLASS_ASSET_IDS).map((id)=>({id,path:`public/assets/models/${id}.glb`,maxTriangles:10000,nodes:rigNodes})),
+  ...[...new Set(Object.values(HERO_CLASS_ASSET_IDS))].map((id)=>({id,path:`public/assets/models/${id}.glb`,maxTriangles:10000,nodes:rigNodes})),
   ...Object.values(GUARDIAN_ASSET_IDS).map((id)=>({id,path:`public/assets/models/${id}.glb`,maxTriangles:5600,nodes:commonBipedNodes})),
   ...Object.entries(MONSTER_ASSET_IDS).map(([type,id])=>({
     id,

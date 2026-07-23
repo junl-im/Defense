@@ -89,7 +89,7 @@ check(main.includes('CHARACTER_DNA_SUMMARY') && main.includes('qualityGovernor')
 check(pipeline.includes('applyRuntimeArtHarmonization') && pipeline.includes("role: entry.role || entry.category || 'default'"), 'asset pipeline runtime art harmonizer integrated');
 check(mobileEngine.includes('AdaptiveQualityGovernor') && mobileEngine.includes('qualityProfile'), 'mobile engine adaptive quality governor integrated');
 check(monitor.includes('p99FrameMs') && monitor.includes('frameJitterMs') && monitor.includes('smoothnessScore'), 'P99 jitter and smoothness telemetry integrated');
-check(html.includes('production-console-btn') && html.includes('DNA v3.0 · ENGINE') && /v[5-9]\.0\.0/.test(html), 'v5 foundation title and production console UI retained');
+check(html.includes('production-console-btn') && html.includes('DNA v3.0 · ENGINE') && /v(?:[5-9]|1[0-9])\.0\.0/.test(html), 'v5 foundation title and production console UI retained');
 check(style.includes('MOONSTONE GENESIS') && style.includes('transform: scale(1.05)') && style.includes('transform: scale(.95)'), 'absolute UI hover and pressed scale contract');
 check(style.includes('.production-console') && style.includes('--moonstone-gold'), 'Moonstone runtime design system');
 

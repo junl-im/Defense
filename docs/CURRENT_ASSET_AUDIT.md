@@ -23,14 +23,14 @@
 | boss-tiger-sd-toon | 5346 | 0 | 0 | 0 | prototype-placeholder | FAIL | FAIL | WAIT |
 | boss-serpent-sd-toon | 5116 | 0 | 0 | 0 | prototype-placeholder | FAIL | FAIL | WAIT |
 | boss-king-sd-toon | 4484 | 0 | 0 | 0 | prototype-placeholder | FAIL | FAIL | WAIT |
-| player-dokkaebi-warrior-golden-v1 | 9572 | 1 | 7 | 4 | art-review | PASS | FAIL | WAIT |
-| player-dokkaebi-archer-candidate-v1 | 9572 | 1 | 7 | 4 | art-review | PASS | FAIL | WAIT |
-| player-dokkaebi-mage-candidate-v1 | 9572 | 1 | 7 | 4 | art-review | PASS | FAIL | WAIT |
-| monster-brute-sd-toon | 8396 | 1 | 7 | 4 | art-review | PASS | FAIL | WAIT |
-| monster-shaman-sd-toon | 7712 | 1 | 7 | 4 | art-review | PASS | FAIL | WAIT |
-| monster-ghost-candidate-v1 | 7712 | 1 | 7 | 4 | art-review | PASS | FAIL | WAIT |
-| monster-skeleton-candidate-v1 | 8396 | 1 | 7 | 4 | art-review | PASS | FAIL | WAIT |
-| monster-crow-candidate-v1 | 7712 | 1 | 7 | 4 | art-review | PASS | FAIL | WAIT |
+| player-dokkaebi-warrior-golden-v1 | 9572 | 1 | 11 | 4 | art-review | PASS | FAIL | WAIT |
+| player-dokkaebi-archer-candidate-v1 | 9572 | 1 | 11 | 4 | art-review | PASS | FAIL | WAIT |
+| player-dokkaebi-mage-candidate-v1 | 9572 | 1 | 11 | 4 | art-review | PASS | FAIL | WAIT |
+| monster-brute-sd-toon | 8396 | 1 | 11 | 4 | art-review | PASS | FAIL | WAIT |
+| monster-shaman-sd-toon | 7712 | 1 | 11 | 4 | art-review | PASS | FAIL | WAIT |
+| monster-ghost-candidate-v1 | 7712 | 1 | 11 | 4 | art-review | PASS | FAIL | WAIT |
+| monster-skeleton-candidate-v1 | 8396 | 1 | 11 | 4 | art-review | PASS | FAIL | WAIT |
+| monster-crow-candidate-v1 | 7712 | 1 | 11 | 4 | art-review | PASS | FAIL | WAIT |
 
 ## 자동 승인 필수 조건
 

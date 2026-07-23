@@ -26,7 +26,7 @@ export class MobileGameEngine {
     this.effectBudgetScale = this.qualityProfile.effectScale;
     this.monitor = new PerformanceMonitor(config.adaptiveQuality);
     this.geometryBudget = new GeometryBudget(config.budgets, { strict: false });
-    this.worldChunks = new WorldChunkManager(config.world);
+    this.worldChunks = new WorldChunkManager({ ...config.world, visibleChunkRadius: this.device.mobile ? 1 : config.world.visibleChunkRadius });
     this.renderer = null;
     this.assetQualityTier = this.device.assetTier;
     this.textureBudgetMB = this.device.lowEnd

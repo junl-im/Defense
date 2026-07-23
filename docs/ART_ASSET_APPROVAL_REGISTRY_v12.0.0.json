@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 12,
+  "gameVersion": "12.0.0",
+  "engineVersion": "10.0.0",
+  "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+  "sourceLibrary": "public/assets/ip-v8",
+  "assetForge": "public/assets/ip-v10/asset-forge-v10.json",
+  "summary": {
+    "sourceFiles": 970,
+    "highResolutionCandidates": 40,
+    "transparentPresentationDerivatives": 40,
+    "silhouetteDerivatives": 40,
+    "playableHeroClasses": 5,
+    "uniqueVerifiedHeroRuntimeModels": 3,
+    "riggedRuntimeAssetsWith11Clips": 8,
+    "riggedRuntimeAssetsWith6Sockets": 8,
+    "uiAndVfxDerivatives": 11,
+    "referenceCrops": 101,
+    "quarantinedFragments": 823,
+    "runtimeSliceCertified": 6,
+    "runtimeSliceRequired": 6,
+    "productionApproved": 0
+  },
+  "runtimeVerticalSliceApproved": 6,
+  "runtimeVerticalSliceRequired": 6,
+  "goldenVerticalSliceApproved": 0,
+  "goldenVerticalSliceRequired": 6,
+  "massProductionUnlocked": false,
+  "productionApprovedAssetIds": [],
+  "automaticApprovalForbidden": true,
+  "cameraProfile": {
+    "default": "scenic",
+    "distance": 19.5,
+    "fov": 52,
+    "profileCount": 3
+  },
+  "manualReviewRequirements": [
+    "Create final authored five-view turnaround for hero, monster and boss.",
+    "Complete art-director review at 100 and 400 percent zoom.",
+    "Replace runtime candidates with final production GLBs before mass production.",
+    "Maintain Absolute Art Bible v2.0 and Character DNA v3.0 evidence.",
+    "Runtime certification must never be relabeled as production-art approval."
+  ],
+  "runtimeCertification": "docs/GOLDEN_SLICE_RUNTIME_CERTIFICATION_v12.0.0.json"
+}

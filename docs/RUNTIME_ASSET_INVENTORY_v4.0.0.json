@@ -59,20 +59,20 @@
     },
     {
       "path": "public/assets/models/monster-brute-sd-toon.glb",
-      "bytes": 359872,
-      "sha256": "1c26074ced9f0f7f016174e88902dc481e6a2c3d3dfdfd60c16f6167535ca23a",
+      "bytes": 361924,
+      "sha256": "36bc3032ae53af3730709eb2e25a292632dfcbec11991d415646334d2575e313",
       "format": "glb2"
     },
     {
       "path": "public/assets/models/monster-crow-candidate-v1.glb",
-      "bytes": 338548,
-      "sha256": "1253a9f797fa68e404845465e1e3feb0d168cb599964f368776dd230b946f4eb",
+      "bytes": 340596,
+      "sha256": "349d3a4da19a9fbe2630108670ab593935a4fac21f537fad24e708e6a041873c",
       "format": "glb2"
     },
     {
       "path": "public/assets/models/monster-ghost-candidate-v1.glb",
-      "bytes": 338556,
-      "sha256": "80d72ceaa652fc9ee4b2ff27de147df297d42c65cf2892b0ed6ac3ed7cf46e54",
+      "bytes": 340608,
+      "sha256": "672150b40a082da72f32930e35686a974b9410a0c0568a198a86265c19c28f6f",
       "format": "glb2"
     },
     {
@@ -89,32 +89,32 @@
     },
     {
       "path": "public/assets/models/monster-shaman-sd-toon.glb",
-      "bytes": 338444,
-      "sha256": "373bd6f0534bd26884d0ca8e82f1155ef208d6cd82bb329503af80110c58a7ba",
+      "bytes": 340500,
+      "sha256": "632b48c0da9a00712255e1dcf155cfd90e54e0302f1be21c7cbe7e3b7c2c2b5a",
       "format": "glb2"
     },
     {
       "path": "public/assets/models/monster-skeleton-candidate-v1.glb",
-      "bytes": 360024,
-      "sha256": "7d308240c8c1e2c935fcb17d4281441848263bd47ffe9b26244c481dda5cf6b8",
+      "bytes": 362088,
+      "sha256": "8b512165332b224c46f23d7217662b62ebaf9cd2be01e8d9149f6b3ffbeaa59f",
       "format": "glb2"
     },
     {
       "path": "public/assets/models/player-dokkaebi-archer-candidate-v1.glb",
-      "bytes": 388092,
-      "sha256": "4109ebf7bddced498b06e0b71a6621f9038e015c2a7a311333d4b90eaf5e07de",
+      "bytes": 390436,
+      "sha256": "0f23ee345ae8c202248b2528c855b09fc26fef386dc902b62c010b5f0263cd53",
       "format": "glb2"
     },
     {
       "path": "public/assets/models/player-dokkaebi-mage-candidate-v1.glb",
-      "bytes": 388068,
-      "sha256": "0f1ab836334384fd51cfca66a560d8049719bbcb0f6e706bfe1e9ec2702dce45",
+      "bytes": 390404,
+      "sha256": "955351208d3dcd1fad4812d5f42e8fa774240421df9b6d41a8e079d2bc56ff8c",
       "format": "glb2"
     },
     {
       "path": "public/assets/models/player-dokkaebi-warrior-golden-v1.glb",
-      "bytes": 387592,
-      "sha256": "f90d58a01133b33ae65bfa2537e33b91216818fc99206ee07eb48e48f6976427",
+      "bytes": 389772,
+      "sha256": "6783e429d3fde9938ca19d297d20171ca81032a782739ed3391b1a79181acbfe",
       "format": "glb2"
     }
   ]

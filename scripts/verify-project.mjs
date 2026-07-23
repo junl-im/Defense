@@ -33,7 +33,7 @@ if (missingIds.length) fail(`index.html에 없는 DOM ID: ${missingIds.join(', '
 else pass(`${queriedIds.length}개 DOM ID 연결`);
 
 const expectedGameVersion = pkg.version;
-const expectedEngineVersion = '7.0.0';
+const expectedEngineVersion = '10.0.0';
 pass(`package version ${expectedGameVersion}`);
 
 for (const path of ['.env.production', '.firebaserc', '.github/workflows/deploy.yml', 'README.md', 'PROJECT_HANDOFF.md']) {
@@ -254,7 +254,7 @@ if (main.includes("name: 'UnitPadBases'") && main.includes("name: 'UnitPadRunes'
 else fail('UnitPad 인스턴싱 누락');
 if (main.includes('new RenderStatsHUD') && main.includes("code === 'F3'") && style.includes('.render-stats-hud')) pass('렌더 통계 개발 HUD');
 else fail('렌더 통계 HUD 누락');
-if (main.includes('keyFromPosition(item.position)') && main.includes('StaticRocks:') && engineConfig.includes('visibleChunkRadius: 1')) pass('거리 기반 외곽 정적 청크');
+if (main.includes('keyFromPosition(item.position)') && main.includes('StaticRocks:') && (engineConfig.includes('visibleChunkRadius: 1') || engineConfig.includes('visibleChunkRadius: 2'))) pass('거리 기반 외곽 정적 청크');
 else fail('월드 청크 실제 적용 누락');
 if (main.includes('this.runStats.coinsCollected+=coin.value')) pass('실제 엽전 수집 통계');
 else fail('엽전 수집 통계 누락');

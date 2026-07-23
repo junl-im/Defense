@@ -1,0 +1,1823 @@
+{
+  "schemaVersion": 1,
+  "generatedFor": "Dokkaebi Defense v10.0.0",
+  "generatedAt": "2026-07-23",
+  "summary": {
+    "version": "10.0.0",
+    "sourceRegistryVersion": "9.0.0",
+    "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+    "sourceCandidates": 40,
+    "transparentPresentationDerivatives": 40,
+    "silhouetteDerivatives": 40,
+    "presentationReadyByAutomation": 40,
+    "manualReviewRequired": 40,
+    "productionApproved": 0,
+    "uiAndVfxDerivatives": 11,
+    "characterFamilyDerivatives": 12,
+    "monsterFamilyDerivatives": 12,
+    "bossDerivatives": 2,
+    "gate": "transparent presentation derivatives are review aids, never automatic production approval"
+  },
+  "assets": [
+    {
+      "id": "boss_dokkaebi_king",
+      "category": "bosses",
+      "family": "boss-family",
+      "sourcePath": "assets/ip-v8/curated/bosses/boss_dokkaebi_king.png",
+      "presentationPath": "assets/ip-v10/presentation/bosses/boss_dokkaebi_king.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/bosses/boss_dokkaebi_king.png",
+      "sourceSha256": "aa1a003f814d8ab1afb4fc71e5359effdc0146c500aed245e4b88818eb439776",
+      "presentationSha256": "707f26645076eb241ab0a947b687b2ea00a01dead79c834b8463edfdb39f7279",
+      "silhouetteSha256": "8b65da5ae609fc82661654d27cea7f1d6d728c2507602658aafdfda4c827e919",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          253.0,
+          253.0,
+          253.0
+        ],
+        "borderDeviation": 0.715,
+        "alphaCoverage": 0.4665,
+        "softAlphaCoverage": 0.4756,
+        "sourceBounds": [
+          10,
+          18,
+          490,
+          484
+        ],
+        "normalizedBounds": [
+          37,
+          43,
+          475,
+          468
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9443,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "boss_fire_dokkaebi",
+      "category": "bosses",
+      "family": "boss-family",
+      "sourcePath": "assets/ip-v8/curated/bosses/boss_fire_dokkaebi.png",
+      "presentationPath": "assets/ip-v10/presentation/bosses/boss_fire_dokkaebi.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/bosses/boss_fire_dokkaebi.png",
+      "sourceSha256": "f48022caf79d9b926bae70190d71dd8ea21f153926de71c95ffef4bf2d050476",
+      "presentationSha256": "0d2734fdddcc577c9f28afe055d4672b0d23f4297d38b6827d14e56a5329aa07",
+      "silhouetteSha256": "5fe0a414e2c8e20da7c9073f2c55727a5b17e6d41b5532f8a20ec11a8dc29876",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          254.0,
+          254.0,
+          254.0
+        ],
+        "borderDeviation": 0.613,
+        "alphaCoverage": 0.3941,
+        "softAlphaCoverage": 0.4049,
+        "sourceBounds": [
+          37,
+          11,
+          447,
+          487
+        ],
+        "normalizedBounds": [
+          67,
+          37,
+          444,
+          475
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9662,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "hero_dokkaebi_archer",
+      "category": "characters",
+      "family": "core-dokkaebi-hero",
+      "sourcePath": "assets/ip-v8/curated/characters/hero_dokkaebi_archer.png",
+      "presentationPath": "assets/ip-v10/presentation/characters/hero_dokkaebi_archer.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/characters/hero_dokkaebi_archer.png",
+      "sourceSha256": "f5fcca5b88199333182e569854889802802a167dab20ca81ffac529e16672962",
+      "presentationSha256": "0d445381ab692c08952365669569f1f43e4a0dbceba060fabedcf27e2df0d49a",
+      "silhouetteSha256": "9bf82d408c708bc85ee2ecffd08cb6da5c86fc1238b8f790b89832112686280a",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          254.0,
+          254.0,
+          254.0
+        ],
+        "borderDeviation": 0.503,
+        "alphaCoverage": 0.3614,
+        "softAlphaCoverage": 0.3692,
+        "sourceBounds": [
+          64,
+          19,
+          460,
+          491
+        ],
+        "normalizedBounds": [
+          72,
+          37,
+          439,
+          475
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9349,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "hero_dokkaebi_assassin",
+      "category": "characters",
+      "family": "core-dokkaebi-hero",
+      "sourcePath": "assets/ip-v8/curated/characters/hero_dokkaebi_assassin.png",
+      "presentationPath": "assets/ip-v10/presentation/characters/hero_dokkaebi_assassin.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/characters/hero_dokkaebi_assassin.png",
+      "sourceSha256": "28329f2e24eb7f407aab993ebb508a49c4905c521887d9f1c2316ef367120d47",
+      "presentationSha256": "ff715fb1a9265231d32bd78286c92167d93bca8c91dd2b271584356ee44d5ce6",
+      "silhouetteSha256": "397cc05701a6a3534f22ac81f3a0737936e54b7daf04ffa175fa4757900bb08a",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          254.0,
+          254.0,
+          254.0
+        ],
+        "borderDeviation": 0.554,
+        "alphaCoverage": 0.3325,
+        "softAlphaCoverage": 0.342,
+        "sourceBounds": [
+          25,
+          17,
+          488,
+          489
+        ],
+        "normalizedBounds": [
+          41,
+          37,
+          471,
+          475
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9053,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "hero_dokkaebi_mage",
+      "category": "characters",
+      "family": "core-dokkaebi-hero",
+      "sourcePath": "assets/ip-v8/curated/characters/hero_dokkaebi_mage.png",
+      "presentationPath": "assets/ip-v10/presentation/characters/hero_dokkaebi_mage.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/characters/hero_dokkaebi_mage.png",
+      "sourceSha256": "656466ebb0e20f91487d8f4897b713fe6b224b0ff3ee25041a3245b783571c57",
+      "presentationSha256": "cb4fac7436338e2d432a79bf4366dd4a5164b05a9bc52ac59eedcbfbaf67d8fa",
+      "silhouetteSha256": "5afa8184529ba757352f48a5f3aec8d0a23d7f550c963522a6b90364ad4593aa",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          254.0,
+          254.0,
+          254.0
+        ],
+        "borderDeviation": 0.497,
+        "alphaCoverage": 0.3785,
+        "softAlphaCoverage": 0.3879,
+        "sourceBounds": [
+          20,
+          25,
+          453,
+          485
+        ],
+        "normalizedBounds": [
+          50,
+          37,
+          462,
+          475
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9521,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "hero_dokkaebi_monk",
+      "category": "characters",
+      "family": "core-dokkaebi-hero",
+      "sourcePath": "assets/ip-v8/curated/characters/hero_dokkaebi_monk.png",
+      "presentationPath": "assets/ip-v10/presentation/characters/hero_dokkaebi_monk.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/characters/hero_dokkaebi_monk.png",
+      "sourceSha256": "9c404d606a73b9a894196c0cb4dfa2f6af80e23c1600350fbe934bbc26d4c261",
+      "presentationSha256": "0650e23a3a058b4787c5236c9ca8639d338335b3ced1fade2203bd7b2184984f",
+      "silhouetteSha256": "ee41bb78568a207e9ad7dd126e233af3b7c879b041912e0378a9329c64f4cd4f",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          253.0,
+          253.0,
+          252.0
+        ],
+        "borderDeviation": 1.249,
+        "alphaCoverage": 0.3375,
+        "softAlphaCoverage": 0.3447,
+        "sourceBounds": [
+          69,
+          16,
+          431,
+          488
+        ],
+        "normalizedBounds": [
+          88,
+          37,
+          424,
+          475
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9014,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "hero_dokkaebi_spearman_action",
+      "category": "characters",
+      "family": "core-dokkaebi-hero",
+      "sourcePath": "assets/ip-v8/curated/characters/hero_dokkaebi_spearman_action.png",
+      "presentationPath": "assets/ip-v10/presentation/characters/hero_dokkaebi_spearman_action.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/characters/hero_dokkaebi_spearman_action.png",
+      "sourceSha256": "4ec3a623f40557f7e274b44542d7637cf58a7c24849b07c65e91dd2f79c1a334",
+      "presentationSha256": "eba63b2e17ed6260a51595b0290d361ddf7156c75e1fa369b5171e511b4491c5",
+      "silhouetteSha256": "823d04156704301c74065686f4c2e5c059ae8c2509972c48a382a65bee0a32f1",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          253.0,
+          253.0,
+          252.0
+        ],
+        "borderDeviation": 1.265,
+        "alphaCoverage": 0.2892,
+        "softAlphaCoverage": 0.2983,
+        "sourceBounds": [
+          13,
+          20,
+          505,
+          493
+        ],
+        "normalizedBounds": [
+          37,
+          45,
+          475,
+          466
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.8529,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "hero_dokkaebi_thunder_mage",
+      "category": "characters",
+      "family": "core-dokkaebi-hero",
+      "sourcePath": "assets/ip-v8/curated/characters/hero_dokkaebi_thunder_mage.png",
+      "presentationPath": "assets/ip-v10/presentation/characters/hero_dokkaebi_thunder_mage.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/characters/hero_dokkaebi_thunder_mage.png",
+      "sourceSha256": "f55bb8aa3f6ef8cd52945325992b40e1bd320dc5a541aaa96b0c678d5d2cfae8",
+      "presentationSha256": "835d90c57d6c4350f36e3859bd2c1988fa9fd56081b5a643dc42a251b80f1ded",
+      "silhouetteSha256": "224d87f48bfc0261573dbbec330369b53f34fb8c6f310c5fc7bd3230dec43a10",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          253.0,
+          253.0,
+          253.0
+        ],
+        "borderDeviation": 0.781,
+        "alphaCoverage": 0.3586,
+        "softAlphaCoverage": 0.3687,
+        "sourceBounds": [
+          55,
+          24,
+          488,
+          481
+        ],
+        "normalizedBounds": [
+          48,
+          37,
+          463,
+          475
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9285,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "hero_dokkaebi_warrior",
+      "category": "characters",
+      "family": "core-dokkaebi-hero",
+      "sourcePath": "assets/ip-v8/curated/characters/hero_dokkaebi_warrior.png",
+      "presentationPath": "assets/ip-v10/presentation/characters/hero_dokkaebi_warrior.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/characters/hero_dokkaebi_warrior.png",
+      "sourceSha256": "e0d3f524d82b491d3b4a3862b7613d53e8dbf6835943089934bff48b237247f0",
+      "presentationSha256": "bb64726366aaf97b080a781c5acdc791f7d2fc1544ff1ed432907d81b8858a3e",
+      "silhouetteSha256": "8502ef3719d8d3258573502bdcb3eea3b04aaa9ef0256266f3c9684a79312bad",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          254.0,
+          254.0,
+          254.0
+        ],
+        "borderDeviation": 0.5,
+        "alphaCoverage": 0.3682,
+        "softAlphaCoverage": 0.3777,
+        "sourceBounds": [
+          43,
+          27,
+          414,
+          479
+        ],
+        "normalizedBounds": [
+          76,
+          37,
+          436,
+          475
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9418,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "hero_fox_spirit",
+      "category": "characters",
+      "family": "korean-fantasy-hero",
+      "sourcePath": "assets/ip-v8/curated/characters/hero_fox_spirit.png",
+      "presentationPath": "assets/ip-v10/presentation/characters/hero_fox_spirit.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/characters/hero_fox_spirit.png",
+      "sourceSha256": "ff0fbebafe562e6a980df8ec7fe1b055b171434e35e88e65f03538d9b06235af",
+      "presentationSha256": "22d2c74875e0da28c6950ee7e28771dc04f06f3b5f51735ddcae6a245a77b98f",
+      "silhouetteSha256": "a13f5aa5378a42d1e881333293a1888ced5b8b5c89278823375f4b35b9cc4588",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          253.0,
+          252.0,
+          252.0
+        ],
+        "borderDeviation": 1.162,
+        "alphaCoverage": 0.4398,
+        "softAlphaCoverage": 0.4567,
+        "sourceBounds": [
+          43,
+          26,
+          491,
+          478
+        ],
+        "normalizedBounds": [
+          39,
+          37,
+          473,
+          475
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9653,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "hero_grim_reaper",
+      "category": "characters",
+      "family": "korean-fantasy-hero",
+      "sourcePath": "assets/ip-v8/curated/characters/hero_grim_reaper.png",
+      "presentationPath": "assets/ip-v10/presentation/characters/hero_grim_reaper.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/characters/hero_grim_reaper.png",
+      "sourceSha256": "eec98140a3f103ca3807043574744f674572f2c2979e4fca6818b58c40822f98",
+      "presentationSha256": "a00e05522946a1d3792fb00af38f8207d96a7d46debf92c1c2edc3aba8f14715",
+      "silhouetteSha256": "3efe66c1a4e3c080cce419c41a257f86b31cf2f5d2d89f3856a4ee845a6f2fab",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          253.0,
+          253.0,
+          253.0
+        ],
+        "borderDeviation": 0.799,
+        "alphaCoverage": 0.3884,
+        "softAlphaCoverage": 0.3996,
+        "sourceBounds": [
+          18,
+          44,
+          435,
+          479
+        ],
+        "normalizedBounds": [
+          46,
+          37,
+          466,
+          475
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9581,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "hero_mudang_shaman",
+      "category": "characters",
+      "family": "korean-fantasy-hero",
+      "sourcePath": "assets/ip-v8/curated/characters/hero_mudang_shaman.png",
+      "presentationPath": "assets/ip-v10/presentation/characters/hero_mudang_shaman.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/characters/hero_mudang_shaman.png",
+      "sourceSha256": "5394a1d6d6a85ef3bf902ca5cb4c103d8e9d44e55f1e9cd171b5d70381fed79b",
+      "presentationSha256": "684befa62469452e8d27e926b833d0de4878e48a06c841db99aacc3fbfa6c174",
+      "silhouetteSha256": "d382011130267ce943dc1603c046e4e6b68e0dee70f82862c8ed93da6a5c903c",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          254.0,
+          254.0,
+          254.0
+        ],
+        "borderDeviation": 0.497,
+        "alphaCoverage": 0.3311,
+        "softAlphaCoverage": 0.3387,
+        "sourceBounds": [
+          41,
+          15,
+          398,
+          478
+        ],
+        "normalizedBounds": [
+          87,
+          37,
+          425,
+          475
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9047,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "hero_taoist_exorcist",
+      "category": "characters",
+      "family": "korean-fantasy-hero",
+      "sourcePath": "assets/ip-v8/curated/characters/hero_taoist_exorcist.png",
+      "presentationPath": "assets/ip-v10/presentation/characters/hero_taoist_exorcist.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/characters/hero_taoist_exorcist.png",
+      "sourceSha256": "a172ad0f430d4322d0497a376afbd613bd03891dec6a6f5c60b07ef44840da97",
+      "presentationSha256": "302b7840e592aab90ed10fb8d9db0864a2a9c44bbebd87de7053c42593c0f2de",
+      "silhouetteSha256": "fb387b04e320462a47d2110735437318756cbafe65f63305ac3fd995dabcf7b9",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          254.0,
+          254.0,
+          254.0
+        ],
+        "borderDeviation": 0.521,
+        "alphaCoverage": 0.3636,
+        "softAlphaCoverage": 0.3735,
+        "sourceBounds": [
+          53,
+          28,
+          426,
+          498
+        ],
+        "normalizedBounds": [
+          82,
+          37,
+          430,
+          475
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9369,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "hero_water_priestess",
+      "category": "characters",
+      "family": "korean-fantasy-hero",
+      "sourcePath": "assets/ip-v8/curated/characters/hero_water_priestess.png",
+      "presentationPath": "assets/ip-v10/presentation/characters/hero_water_priestess.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/characters/hero_water_priestess.png",
+      "sourceSha256": "9e0c571f50957c71231a748c85fb0cad3324feee49377b7865a6c82657ea7b49",
+      "presentationSha256": "86dc364175ebeaef45ab03df4f659576cb86196d76b22c44ebd7ff98a8da176f",
+      "silhouetteSha256": "e39b2bc67681746948893a5afb4cd6c95d9e6b827b1e43401eab32af8c53360c",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          253.0,
+          253.0,
+          253.0
+        ],
+        "borderDeviation": 0.72,
+        "alphaCoverage": 0.3987,
+        "softAlphaCoverage": 0.4095,
+        "sourceBounds": [
+          42,
+          20,
+          468,
+          486
+        ],
+        "normalizedBounds": [
+          56,
+          37,
+          456,
+          475
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9694,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "monster_bat",
+      "category": "monsters",
+      "family": "monster-family",
+      "sourcePath": "assets/ip-v8/curated/monsters/monster_bat.png",
+      "presentationPath": "assets/ip-v10/presentation/monsters/monster_bat.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/monsters/monster_bat.png",
+      "sourceSha256": "bee58df021c21f67be93a05fc2ab7b62deb7cf388d32b2efdabc6ef80dd46045",
+      "presentationSha256": "dbec96723dfcb2f312170f6123b3e7ec6b57ec655ceb0f868304c49b076286a4",
+      "silhouetteSha256": "cc5acef541dc30b8af2cfd80893fe1d0e0b27475524b35a9a18e1d4ee9f2f2f5",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          254.0,
+          254.0,
+          254.0
+        ],
+        "borderDeviation": 0.503,
+        "alphaCoverage": 0.2493,
+        "softAlphaCoverage": 0.2572,
+        "sourceBounds": [
+          11,
+          94,
+          497,
+          454
+        ],
+        "normalizedBounds": [
+          37,
+          94,
+          475,
+          418
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.8228,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "monster_crow",
+      "category": "monsters",
+      "family": "monster-family",
+      "sourcePath": "assets/ip-v8/curated/monsters/monster_crow.png",
+      "presentationPath": "assets/ip-v10/presentation/monsters/monster_crow.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/monsters/monster_crow.png",
+      "sourceSha256": "93b401730f1107b1376c79948367bd9c0c863e8bc62c0989ab062d906086a9f2",
+      "presentationSha256": "e9d489e121144dd110356b8c280900f0e07741e795f4643348c154101d50389e",
+      "silhouetteSha256": "72ad41c8e3fa1c948e149a9d90876b4fd353e76922824f2838183884dc98614c",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          253.0,
+          253.0,
+          253.0
+        ],
+        "borderDeviation": 0.816,
+        "alphaCoverage": 0.4173,
+        "softAlphaCoverage": 0.4266,
+        "sourceBounds": [
+          68,
+          58,
+          450,
+          452
+        ],
+        "normalizedBounds": [
+          43,
+          37,
+          468,
+          475
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9868,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "monster_fire_boar",
+      "category": "monsters",
+      "family": "monster-family",
+      "sourcePath": "assets/ip-v8/curated/monsters/monster_fire_boar.png",
+      "presentationPath": "assets/ip-v10/presentation/monsters/monster_fire_boar.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/monsters/monster_fire_boar.png",
+      "sourceSha256": "2f8744125f519f8dc1ffda447a7f4ba061c860bad8a4e9bdb1d6d68e5a06dae4",
+      "presentationSha256": "f8433e732a6cf7521d9b32640ada7ccf0ba54165435c98d114e8ae41c36fead2",
+      "silhouetteSha256": "cb64056ecea0623e72002b898992622b7161e587d594a42bd6650a7b523a080c",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          253.0,
+          253.0,
+          253.0
+        ],
+        "borderDeviation": 0.805,
+        "alphaCoverage": 0.4348,
+        "softAlphaCoverage": 0.4432,
+        "sourceBounds": [
+          53,
+          68,
+          481,
+          434
+        ],
+        "normalizedBounds": [
+          37,
+          68,
+          475,
+          443
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9748,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "monster_ghost",
+      "category": "monsters",
+      "family": "monster-family",
+      "sourcePath": "assets/ip-v8/curated/monsters/monster_ghost.png",
+      "presentationPath": "assets/ip-v10/presentation/monsters/monster_ghost.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/monsters/monster_ghost.png",
+      "sourceSha256": "26a9294a9d618b155ae4bf0f17c9b97d86d08ff9f18067a9a33bc0d16c8ece90",
+      "presentationSha256": "8642074a93c52fe4af446e4cc4c046e587217f347567a4a75aac857fd138b9f7",
+      "silhouetteSha256": "bac29bc8082dfe514ee5ade827ef957da6e7fc6ef09790c7a8659cf18b5c1079",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          254.0,
+          254.0,
+          254.0
+        ],
+        "borderDeviation": 0.595,
+        "alphaCoverage": 0.3513,
+        "softAlphaCoverage": 0.3607,
+        "sourceBounds": [
+          77,
+          57,
+          420,
+          455
+        ],
+        "normalizedBounds": [
+          67,
+          37,
+          444,
+          475
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9236,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "monster_goblin_bomber",
+      "category": "monsters",
+      "family": "monster-family",
+      "sourcePath": "assets/ip-v8/curated/monsters/monster_goblin_bomber.png",
+      "presentationPath": "assets/ip-v10/presentation/monsters/monster_goblin_bomber.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/monsters/monster_goblin_bomber.png",
+      "sourceSha256": "807519c618fcb6e3fd6c47421698e169fa661e50177fb32a8519c9ab6924a9c2",
+      "presentationSha256": "2492f6af0d64dc2a5fdaf7b356e3bc1ce74b414bb03c1aba8fdfe61f72e623c5",
+      "silhouetteSha256": "568610b69555c743a273e13d5bcb8d175d4e47a5c68091351c7df5d0fe6f2c90",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          254.0,
+          254.0,
+          254.0
+        ],
+        "borderDeviation": 0.496,
+        "alphaCoverage": 0.3183,
+        "softAlphaCoverage": 0.3264,
+        "sourceBounds": [
+          56,
+          24,
+          447,
+          482
+        ],
+        "normalizedBounds": [
+          69,
+          37,
+          443,
+          475
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.8919,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "monster_poison_mushroom",
+      "category": "monsters",
+      "family": "monster-family",
+      "sourcePath": "assets/ip-v8/curated/monsters/monster_poison_mushroom.png",
+      "presentationPath": "assets/ip-v10/presentation/monsters/monster_poison_mushroom.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/monsters/monster_poison_mushroom.png",
+      "sourceSha256": "44ca1439ae499fb565f579a8af7d59ef3ed4269764931fd266ebd38d32a81bce",
+      "presentationSha256": "69d9d17c484092450e36b1474dd4a4892e05ad3144355cd4e0c5d6fc272dceb4",
+      "silhouetteSha256": "4fa8c24938210234a59014f4542dcb76ce6d13f8e295cf6d7eb8e25860d20408",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          239.0,
+          239.0,
+          239.0
+        ],
+        "borderDeviation": 0.772,
+        "alphaCoverage": 0.4418,
+        "softAlphaCoverage": 0.4501,
+        "sourceBounds": [
+          40,
+          66,
+          470,
+          458
+        ],
+        "normalizedBounds": [
+          37,
+          56,
+          475,
+          455
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9682,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "monster_skeleton_archer",
+      "category": "monsters",
+      "family": "monster-family",
+      "sourcePath": "assets/ip-v8/curated/monsters/monster_skeleton_archer.png",
+      "presentationPath": "assets/ip-v10/presentation/monsters/monster_skeleton_archer.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/monsters/monster_skeleton_archer.png",
+      "sourceSha256": "e818e27300c6fe1a9bc8ae8fe0976431632343ebe291222c7696d6e540fc43f6",
+      "presentationSha256": "a906be0b1024e73af8abee16a7c537194524f08a32aeaa957116b83334abfd98",
+      "silhouetteSha256": "f13d61a574a0739a616a67cceba21fad322ba29d20d3331c1cfbe888fb6efaed",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          253.0,
+          253.0,
+          253.0
+        ],
+        "borderDeviation": 0.984,
+        "alphaCoverage": 0.3368,
+        "softAlphaCoverage": 0.3445,
+        "sourceBounds": [
+          73,
+          38,
+          415,
+          469
+        ],
+        "normalizedBounds": [
+          82,
+          37,
+          430,
+          475
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9041,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "monster_skeleton_guard",
+      "category": "monsters",
+      "family": "monster-family",
+      "sourcePath": "assets/ip-v8/curated/monsters/monster_skeleton_guard.png",
+      "presentationPath": "assets/ip-v10/presentation/monsters/monster_skeleton_guard.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/monsters/monster_skeleton_guard.png",
+      "sourceSha256": "24bd1c2e4feb60024343e40fbcfb97895fc2792694c7cb3e07376af28d5dd42d",
+      "presentationSha256": "01d3faff10059633f4536464beaeb06c64ce8c7f13ea74c846a387771c175b7e",
+      "silhouetteSha256": "727ddd3ba58e4898f2000f8fe257fbec46c8a4ed3b75f6d1971dd774efc3262b",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          252.0,
+          252.0,
+          252.0
+        ],
+        "borderDeviation": 0.904,
+        "alphaCoverage": 0.3448,
+        "softAlphaCoverage": 0.3512,
+        "sourceBounds": [
+          53,
+          24,
+          440,
+          482
+        ],
+        "normalizedBounds": [
+          71,
+          37,
+          441,
+          475
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9132,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "monster_slime",
+      "category": "monsters",
+      "family": "monster-family",
+      "sourcePath": "assets/ip-v8/curated/monsters/monster_slime.png",
+      "presentationPath": "assets/ip-v10/presentation/monsters/monster_slime.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/monsters/monster_slime.png",
+      "sourceSha256": "56d66a3267e1bc38311ae770892dbd6ce02c4c901f5cb7fc9357d46d4b3d8f17",
+      "presentationSha256": "bea044410987354e7e794c4d9bcc74c3ebfe1ffd123cf221e111ada806363a2c",
+      "silhouetteSha256": "a2673cf9e4f41b55360094a369c707ef49f3d883a048c77fcbf9610b13433b98",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          254.0,
+          254.0,
+          254.0
+        ],
+        "borderDeviation": 0.538,
+        "alphaCoverage": 0.4169,
+        "softAlphaCoverage": 0.4268,
+        "sourceBounds": [
+          78,
+          86,
+          440,
+          423
+        ],
+        "normalizedBounds": [
+          37,
+          52,
+          475,
+          460
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9899,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "monster_wolf",
+      "category": "monsters",
+      "family": "monster-family",
+      "sourcePath": "assets/ip-v8/curated/monsters/monster_wolf.png",
+      "presentationPath": "assets/ip-v10/presentation/monsters/monster_wolf.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/monsters/monster_wolf.png",
+      "sourceSha256": "864eef64fb2f34171310ef05dd040664eec1a1963006aca56cb3a171b2af4fd2",
+      "presentationSha256": "e2dceb82784da6f82c8a27bb6995fe5bab46b9b89ec793e1b08b5126ffde0ac9",
+      "silhouetteSha256": "882f4d263579f3b32aaae00269a28bfdf264f1b4cdb641a8c384b7b6a5b237de",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          253.0,
+          253.0,
+          253.0
+        ],
+        "borderDeviation": 0.729,
+        "alphaCoverage": 0.496,
+        "softAlphaCoverage": 0.5053,
+        "sourceBounds": [
+          112,
+          82,
+          447,
+          429
+        ],
+        "normalizedBounds": [
+          44,
+          37,
+          467,
+          475
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9146,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "pet_baby_dragon",
+      "category": "monsters",
+      "family": "monster-family",
+      "sourcePath": "assets/ip-v8/curated/monsters/pet_baby_dragon.png",
+      "presentationPath": "assets/ip-v10/presentation/monsters/pet_baby_dragon.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/monsters/pet_baby_dragon.png",
+      "sourceSha256": "8ec9087ed141589da1e6ffe43d922952598a563aa7b53f842b955997925ecb66",
+      "presentationSha256": "c666db9b6d62f41b84b3bd08578eea4bd67207e47283d2961fba331e2f241f64",
+      "silhouetteSha256": "c05d5569a14e7ef778a374029414277056567d3ef3fabd615ee3b38a71930b22",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          253.0,
+          252.0,
+          252.0
+        ],
+        "borderDeviation": 1.156,
+        "alphaCoverage": 0.4094,
+        "softAlphaCoverage": 0.4192,
+        "sourceBounds": [
+          79,
+          50,
+          451,
+          461
+        ],
+        "normalizedBounds": [
+          58,
+          37,
+          454,
+          475
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9745,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "pet_tiger_guardian",
+      "category": "monsters",
+      "family": "monster-family",
+      "sourcePath": "assets/ip-v8/curated/monsters/pet_tiger_guardian.png",
+      "presentationPath": "assets/ip-v10/presentation/monsters/pet_tiger_guardian.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/monsters/pet_tiger_guardian.png",
+      "sourceSha256": "ae33af2513c781db26414afc738f54b1f93a024958ee4d7c6f7a8b4762e5dc48",
+      "presentationSha256": "0d5e810e3f55806fd44d4f976fbce07a48647e5d50e5371dd9040bfcdb639df2",
+      "silhouetteSha256": "d84879309eb192a00aa152b38a55261a6936f3d58bfdbcec36dc1b054b723ce7",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          254.0,
+          254.0,
+          254.0
+        ],
+        "borderDeviation": 0.568,
+        "alphaCoverage": 0.4458,
+        "softAlphaCoverage": 0.4532,
+        "sourceBounds": [
+          81,
+          47,
+          452,
+          472
+        ],
+        "normalizedBounds": [
+          65,
+          37,
+          447,
+          475
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9669,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "object_dokkaebi_shrine",
+      "category": "objects",
+      "family": "environment-prop-family",
+      "sourcePath": "assets/ip-v8/curated/objects/object_dokkaebi_shrine.png",
+      "presentationPath": "assets/ip-v10/presentation/objects/object_dokkaebi_shrine.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/objects/object_dokkaebi_shrine.png",
+      "sourceSha256": "85333a8514bba1086d410a726df205ac9ce75823cab5ecf08218dedf334b5218",
+      "presentationSha256": "fb7b7b165f56cefcb110ea2975d1435e62b6c8a13f43dfde32e9d8f53b97869c",
+      "silhouetteSha256": "59a33c43aa472f09fa45130b8b21a8d1c366b584c882d842fd80eee2a50dfe62",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          253.0,
+          253.0,
+          253.0
+        ],
+        "borderDeviation": 1.042,
+        "alphaCoverage": 0.35,
+        "softAlphaCoverage": 0.3551,
+        "sourceBounds": [
+          89,
+          30,
+          416,
+          469
+        ],
+        "normalizedBounds": [
+          93,
+          37,
+          419,
+          475
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9165,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "object_magic_chest",
+      "category": "objects",
+      "family": "environment-prop-family",
+      "sourcePath": "assets/ip-v8/curated/objects/object_magic_chest.png",
+      "presentationPath": "assets/ip-v10/presentation/objects/object_magic_chest.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/objects/object_magic_chest.png",
+      "sourceSha256": "f1a70c5ee5a8d6c0a39bac55c922830fb03757986813162d76ea2edf32ad292d",
+      "presentationSha256": "f8b43e33243fc0e8d20bcfcf06d806f0c7ec07ee86db3302c8ab3f9108dd3028",
+      "silhouetteSha256": "1ece3a199df1286de81659660c88140c529fa9b4191e951f50111952bd4c8450",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          245.0,
+          244.0,
+          244.0
+        ],
+        "borderDeviation": 0.885,
+        "alphaCoverage": 0.5596,
+        "softAlphaCoverage": 0.5668,
+        "sourceBounds": [
+          71,
+          94,
+          440,
+          427
+        ],
+        "normalizedBounds": [
+          37,
+          58,
+          475,
+          453
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.849,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "object_wood_barricade",
+      "category": "objects",
+      "family": "environment-prop-family",
+      "sourcePath": "assets/ip-v8/curated/objects/object_wood_barricade.png",
+      "presentationPath": "assets/ip-v10/presentation/objects/object_wood_barricade.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/objects/object_wood_barricade.png",
+      "sourceSha256": "33d3bd63be14cbe953885e91a9ee8b0b08ea8b7685b394ce3bc3ec438e692f3c",
+      "presentationSha256": "8d7917dc944a0ba1f29a6a444ac547c5af6eb4eaa21122c9cbbfd86c49f048f1",
+      "silhouetteSha256": "7de6674822dd4dcc2f1d74ac8c90ec82ae0529cb000d3788895604eb52cbe07e",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          245.0,
+          245.0,
+          245.0
+        ],
+        "borderDeviation": 0.683,
+        "alphaCoverage": 0.3706,
+        "softAlphaCoverage": 0.3757,
+        "sourceBounds": [
+          38,
+          85,
+          480,
+          427
+        ],
+        "normalizedBounds": [
+          37,
+          86,
+          475,
+          425
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9418,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "button_shop",
+      "category": "ui",
+      "family": "ui-family",
+      "sourcePath": "assets/ip-v8/curated/ui/button_shop.png",
+      "presentationPath": "assets/ip-v10/presentation/ui/button_shop.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/ui/button_shop.png",
+      "sourceSha256": "d8733520425218c85008abca910f1d9542096d68f40bf83065446ebe0e565d0e",
+      "presentationSha256": "197a5d2cfd986ed8f84a91009c2e87199ce5824d459962d284866f8024f18585",
+      "silhouetteSha256": "9cdc3804bf5c73e07680cc87a0ccb6770db390e906a2fd1b52f43e4aaa56057c",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          254.0,
+          254.0,
+          254.0
+        ],
+        "borderDeviation": 0.673,
+        "alphaCoverage": 0.3531,
+        "softAlphaCoverage": 0.3543,
+        "sourceBounds": [
+          14,
+          135,
+          497,
+          374
+        ],
+        "normalizedBounds": [
+          37,
+          147,
+          475,
+          364
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9245,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "button_start",
+      "category": "ui",
+      "family": "ui-family",
+      "sourcePath": "assets/ip-v8/curated/ui/button_start.png",
+      "presentationPath": "assets/ip-v10/presentation/ui/button_start.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/ui/button_start.png",
+      "sourceSha256": "1e83cc4311dbebc9573f35b27a276897dc798bc70cf92e688243dafa88304adf",
+      "presentationSha256": "ab38300b773613bc869561488b8d7de1f4f0affbb96c61598d5be0314668cbb9",
+      "silhouetteSha256": "9e3f46684fe311378022b1edee0fa31cfdbc36ab867c15e0931828dc20debeb9",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          254.0,
+          254.0,
+          254.0
+        ],
+        "borderDeviation": 0.707,
+        "alphaCoverage": 0.3419,
+        "softAlphaCoverage": 0.3441,
+        "sourceBounds": [
+          24,
+          141,
+          489,
+          365
+        ],
+        "normalizedBounds": [
+          37,
+          150,
+          475,
+          361
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9128,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "button_summon",
+      "category": "ui",
+      "family": "ui-family",
+      "sourcePath": "assets/ip-v8/curated/ui/button_summon.png",
+      "presentationPath": "assets/ip-v10/presentation/ui/button_summon.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/ui/button_summon.png",
+      "sourceSha256": "a8bc08a16b552104f93ca548aa7199010420ad9fcd10dc5cac048e0462ade293",
+      "presentationSha256": "a09db343fd91e142fc463237e989c27160926c6594e70df001246594bf73eb4d",
+      "silhouetteSha256": "e19169f4b01596ece424a92c77b76818307087ff15adaf9008036585133429a1",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          254.0,
+          254.0,
+          254.0
+        ],
+        "borderDeviation": 0.51,
+        "alphaCoverage": 0.3443,
+        "softAlphaCoverage": 0.3478,
+        "sourceBounds": [
+          16,
+          139,
+          492,
+          370
+        ],
+        "normalizedBounds": [
+          37,
+          149,
+          475,
+          362
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9177,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "button_upgrade",
+      "category": "ui",
+      "family": "ui-family",
+      "sourcePath": "assets/ip-v8/curated/ui/button_upgrade.png",
+      "presentationPath": "assets/ip-v10/presentation/ui/button_upgrade.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/ui/button_upgrade.png",
+      "sourceSha256": "2a56cca112745d179ba771fafbc440fcd4a570a907e95dfd652482d4f247df7e",
+      "presentationSha256": "b4292f4ee3d11714e4144a3d789db3b019ad048e80a0d6a2e90ba2cb54580074",
+      "silhouetteSha256": "fda0ec806b1ab4329b6555c7420c54610ff81b008a71ce1965b47c5259f443e2",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          254.0,
+          254.0,
+          254.0
+        ],
+        "borderDeviation": 0.565,
+        "alphaCoverage": 0.3433,
+        "softAlphaCoverage": 0.3444,
+        "sourceBounds": [
+          23,
+          141,
+          489,
+          365
+        ],
+        "normalizedBounds": [
+          37,
+          150,
+          475,
+          361
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.916,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "frame_legendary",
+      "category": "ui",
+      "family": "ui-family",
+      "sourcePath": "assets/ip-v8/curated/ui/frame_legendary.png",
+      "presentationPath": "assets/ip-v10/presentation/ui/frame_legendary.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/ui/frame_legendary.png",
+      "sourceSha256": "78be6943bb745332965f31936960d0efe26fab8e2f97d148a37fa6099480ba9a",
+      "presentationSha256": "61ce5609897ffaddb71141892361403bdf91ee05ab5d9f23af3b87c1799c4979",
+      "silhouetteSha256": "27e1b259084cd3ce3beb7383ec209cea3dc919fb02c22f9a39458092ac3e140d",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          254.0,
+          254.0,
+          254.0
+        ],
+        "borderDeviation": 0.512,
+        "alphaCoverage": 0.5279,
+        "softAlphaCoverage": 0.5333,
+        "sourceBounds": [
+          55,
+          11,
+          457,
+          495
+        ],
+        "normalizedBounds": [
+          74,
+          37,
+          438,
+          475
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.8855,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "frame_rare",
+      "category": "ui",
+      "family": "ui-family",
+      "sourcePath": "assets/ip-v8/curated/ui/frame_rare.png",
+      "presentationPath": "assets/ip-v10/presentation/ui/frame_rare.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/ui/frame_rare.png",
+      "sourceSha256": "30921cec3ce9af0f9589e8866359f6372653eefd051d61956600dda90aa7a650",
+      "presentationSha256": "6b9f081d9916fef46d5cc01d4b04e5f4aa4c1fa9afad1c6f71938e5100d7e2d4",
+      "silhouetteSha256": "b8b2022153cce64786fc993ff374f9b2d710690299b895243b6a7edf54cf949c",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          254.0,
+          254.0,
+          254.0
+        ],
+        "borderDeviation": 0.496,
+        "alphaCoverage": 0.5894,
+        "softAlphaCoverage": 0.5944,
+        "sourceBounds": [
+          36,
+          19,
+          475,
+          494
+        ],
+        "normalizedBounds": [
+          53,
+          37,
+          458,
+          475
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.8242,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "icon_blue_gem",
+      "category": "ui",
+      "family": "ui-family",
+      "sourcePath": "assets/ip-v8/curated/ui/icon_blue_gem.png",
+      "presentationPath": "assets/ip-v10/presentation/ui/icon_blue_gem.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/ui/icon_blue_gem.png",
+      "sourceSha256": "fba8e6d2555c623962a50f8f0c371aafcba09acfa0f6cc82410600f4a6f7e404",
+      "presentationSha256": "2b505b2837a1c35d541cdd588532988b169d5dd54518e3d12d3a76fd67596ab2",
+      "silhouetteSha256": "eeb8f28b890333cc9de33d4da62a60551a5fdc58d12c0b9fafb8898ebf22766a",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          254.0,
+          254.0,
+          254.0
+        ],
+        "borderDeviation": 0.572,
+        "alphaCoverage": 0.4151,
+        "softAlphaCoverage": 0.4237,
+        "sourceBounds": [
+          91,
+          91,
+          420,
+          407
+        ],
+        "normalizedBounds": [
+          37,
+          45,
+          475,
+          466
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9878,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "icon_dokkaebi_medal",
+      "category": "ui",
+      "family": "ui-family",
+      "sourcePath": "assets/ip-v8/curated/ui/icon_dokkaebi_medal.png",
+      "presentationPath": "assets/ip-v10/presentation/ui/icon_dokkaebi_medal.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/ui/icon_dokkaebi_medal.png",
+      "sourceSha256": "8d2c36fbc11963c42435c16a84849f240f64d9d24d1a87e3f65c66a0afa16f3d",
+      "presentationSha256": "f81a034485272e43ae94518fb7276e641ffa01c2672305020f4c7e3aa8a1aeec",
+      "silhouetteSha256": "3acdca129ccf8eec896fb20826188374815037eb78c6bd32319ed4b4397ad9a2",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          254.0,
+          254.0,
+          254.0
+        ],
+        "borderDeviation": 0.754,
+        "alphaCoverage": 0.5487,
+        "softAlphaCoverage": 0.5538,
+        "sourceBounds": [
+          62,
+          49,
+          465,
+          466
+        ],
+        "normalizedBounds": [
+          44,
+          37,
+          467,
+          475
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.8615,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "icon_thunder_skill",
+      "category": "ui",
+      "family": "ui-family",
+      "sourcePath": "assets/ip-v8/curated/ui/icon_thunder_skill.png",
+      "presentationPath": "assets/ip-v10/presentation/ui/icon_thunder_skill.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/ui/icon_thunder_skill.png",
+      "sourceSha256": "23d8d32405c7ad83a39ebfb97f8765bb3d88e308e2569d4306c55687207024b0",
+      "presentationSha256": "f5257b064016f7c073ccc33d9d89e71f103c119b755e81c10b6a9547d4e55c49",
+      "silhouetteSha256": "c96617530c79bf96127dbf8addf5b40266bc9387722d96aefa008db14a91f351",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          247.0,
+          247.0,
+          247.0
+        ],
+        "borderDeviation": 0.848,
+        "alphaCoverage": 0.4543,
+        "softAlphaCoverage": 0.4591,
+        "sourceBounds": [
+          23,
+          21,
+          490,
+          491
+        ],
+        "normalizedBounds": [
+          38,
+          37,
+          473,
+          475
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.9548,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "vfx_blue_slash",
+      "category": "vfx",
+      "family": "vfx-family",
+      "sourcePath": "assets/ip-v8/curated/vfx/vfx_blue_slash.png",
+      "presentationPath": "assets/ip-v10/presentation/vfx/vfx_blue_slash.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/vfx/vfx_blue_slash.png",
+      "sourceSha256": "376b5592a9ca712a8055c774e6b13023aaa3dfce2bbeb05cad1294df52b23e03",
+      "presentationSha256": "49e5dfb722979e5f9eac4099edbb3cb5e510a5ef305240460457d35b66be4770",
+      "silhouetteSha256": "56013aded12440aeed324a4634579d41d5071faadc96a81ec2946cc20a9c3cbd",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          250.0,
+          250.0,
+          250.0
+        ],
+        "borderDeviation": 0.84,
+        "alphaCoverage": 0.2578,
+        "softAlphaCoverage": 0.2657,
+        "sourceBounds": [
+          20,
+          84,
+          493,
+          431
+        ],
+        "normalizedBounds": [
+          37,
+          95,
+          475,
+          416
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.827,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    },
+    {
+      "id": "vfx_fire_explosion",
+      "category": "vfx",
+      "family": "vfx-family",
+      "sourcePath": "assets/ip-v8/curated/vfx/vfx_fire_explosion.png",
+      "presentationPath": "assets/ip-v10/presentation/vfx/vfx_fire_explosion.png",
+      "silhouettePath": "assets/ip-v10/silhouettes/vfx/vfx_fire_explosion.png",
+      "sourceSha256": "2c52a5e9f5c75a3564393adcf349840eeef07867cc5cc8adc194b5617d0ca4a1",
+      "presentationSha256": "d464bbd9fe20b35c68c94a017206db5507094ad9101c722529b2a90a2ff7b658",
+      "silhouetteSha256": "db2772a38247450dbbb1e8b2dfee3d9e9ecc8e7335579f25d2b8f5e41c33ca9a",
+      "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "derivativeStatus": "transparent-presentation-candidate",
+      "productionApproved": false,
+      "metrics": {
+        "backgroundRgb": [
+          248.0,
+          248.0,
+          248.0
+        ],
+        "borderDeviation": 0.635,
+        "alphaCoverage": 0.3552,
+        "softAlphaCoverage": 0.3694,
+        "sourceBounds": [
+          60,
+          90,
+          456,
+          425
+        ],
+        "normalizedBounds": [
+          37,
+          70,
+          475,
+          441
+        ],
+        "borderTouch": false,
+        "matteConfidence": 0.927,
+        "presentationReady": true
+      },
+      "warnings": [
+        "automatic-background-isolation",
+        "single-view-source",
+        "human-edge-review-required",
+        "not-a-runtime-3d-deliverable"
+      ]
+    }
+  ]
+}

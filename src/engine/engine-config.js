@@ -1,4 +1,4 @@
-export const ENGINE_VERSION = '7.0.0';
+export const ENGINE_VERSION = '10.0.0';
 
 export const MOBILE_ENGINE_CONFIG = Object.freeze({
   renderer: {
@@ -62,6 +62,6 @@ export const MOBILE_ENGINE_CONFIG = Object.freeze({
   },
   world: {
     chunkSize: 24,
-    visibleChunkRadius: 1
+    visibleChunkRadius: 2
   }
 });

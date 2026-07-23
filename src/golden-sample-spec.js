@@ -1,7 +1,7 @@
 export const GOLDEN_SAMPLE_ASSET_ID = 'player-dokkaebi-warrior-golden-v1';
 export const GOLDEN_SAMPLE_RIG_ID = 'DOKKAEBI-HUMANOID-RIG-1';
-export const GOLDEN_SAMPLE_CLIPS = Object.freeze(['Idle', 'Walk', 'Run', 'Attack', 'Skill', 'Hit', 'Death']);
-export const GOLDEN_SAMPLE_SOCKETS = Object.freeze(['WeaponSocket', 'AccessorySocket']);
+export const GOLDEN_SAMPLE_CLIPS = Object.freeze(['Idle', 'Walk', 'Run', 'Attack1', 'Attack2', 'Skill1', 'Skill2', 'Hit', 'Death', 'Victory', 'Spawn']);
+export const GOLDEN_SAMPLE_SOCKETS = Object.freeze(['HelmetSocket', 'ShoulderSocket', 'WeaponSocket', 'AccessorySocket', 'BackSocket', 'FXSocket']);
 export const GOLDEN_SAMPLE_TEXTURE_MAPS = Object.freeze(['BaseColor', 'Normal', 'ORM', 'Emissive']);
 export const GOLDEN_SAMPLE_TECHNICAL_TARGET = Object.freeze({
   triangleRange: Object.freeze([6000, 10000]),

@@ -12,7 +12,7 @@
     <link rel="icon" href="./icon-192.png" type="image/png" />
     <link rel="apple-touch-icon" href="./icon-192.png" />
     <title>도깨비 운빨 수호대 3D</title>
-    <!-- lineage v7.0.0 · MYTHIC CONVERGENCE · ENGINE 6.0 preserved / active lineage v9.0.0 -->
+    <!-- lineage v10.0.0 · GOLDEN CONVERGENCE preserved / active lineage v13.0.0 · v12.0.0 preserved -->
   </head>
   <body>
     <div id="app">
@@ -49,7 +49,7 @@
       <section id="title-screen" class="screen">
         <div class="title-panel">
           <img class="title-mascot" src="./src/assets/moon-mascot-v1.webp" alt="달빛 장터 마스코트 도깨비" />
-          <p class="kicker">ASSET RENAISSANCE · 40 HIGH-RES REVIEW CANDIDATES · ART REVIEW OS</p>
+          <p class="kicker">GOLDEN DOMINION · RUNTIME SLICE 6/6 · SCENIC CAMERA · ENGINE 10</p>
           <h1>도깨비<br /><em>운빨 수호대</em></h1>
           <p class="title-copy">직접 전장을 누비며 엽전을 줍고,<br />운명처럼 소환되는 도깨비 군단을 완성하세요.</p>
           <div class="run-mode-selector" aria-label="원정 난이도 선택">
@@ -57,9 +57,14 @@
             <div id="run-mode-summary" class="run-mode-summary"></div>
           </div>
           <div class="hero-class-selector" aria-label="대장 깨비 직업 선택">
-            <div class="hero-class-heading"><span>대장 깨비</span><small>공용 리그 P0 후보</small></div>
+            <div class="hero-class-heading"><span>대장 깨비</span><small>5직업 공용 리그 · 신규 투명 시트 크롭</small></div>
             <div id="hero-class-options" class="hero-class-options"></div>
             <div id="hero-class-summary" class="hero-class-summary"></div>
+          </div>
+          <div class="council-selector" aria-label="수호 의회 보조 깨비 선택">
+            <div class="council-heading"><span>수호 의회</span><small>보조 깨비 1명 · 15개 결속 조합</small></div>
+            <div id="council-options" class="council-options"></div>
+            <div id="council-summary" class="council-summary"></div>
           </div>
           <div class="seed-mode-selector" aria-label="원정 시드 방식 선택">
             <div id="seed-mode-options" class="seed-mode-options"></div>
@@ -74,9 +79,9 @@
             <button id="meta-btn" class="btn ghost meta-entry"><span>혼불 <b id="title-shards">0</b></span>수호자 성장</button>
           </div>
           <button id="controls-btn" class="title-settings-btn" type="button" aria-label="카메라와 조작 설정" title="카메라와 조작 설정"><span aria-hidden="true">⚙️</span></button>
-          <a class="btn ghost asset-library-link" href="./asset-library-v9.html" target="_blank" rel="noopener">스튜디오 에셋 리뷰</a>
-          <div class="absolute-lock-badge"><span>ABSOLUTE ART LOCK</span><b>DNA v3.0 · ENGINE 7.0 · REVIEW 40 / APPROVED 0</b></div>
-          <small class="title-version" aria-label="게임 버전 9.0.0">v9.0.0</small>
+          <a class="btn ghost asset-library-link" href="./asset-library-v13.html" target="_blank" rel="noopener">Sprite Forge 리뷰 OS</a>
+          <div class="absolute-lock-badge"><span>ABSOLUTE ART LOCK</span><b>DNA v3.0 · ENGINE 10.0 · RUNTIME SLICE 6/6 · 415 CUT SPRITES · 3D ART 0/6</b></div>
+          <small class="title-version" aria-label="게임 버전 13.0.0">v13.0.0</small>
         </div>
       </section>
 
@@ -113,6 +118,7 @@
       <div id="boss-health" class="boss-health hidden" aria-live="polite">
         <div class="boss-health-head"><span id="boss-health-name">저승 호랑이</span><b id="boss-health-value">100%</b></div>
         <div class="boss-health-track"><span id="boss-health-progress"></span></div>
+        <div id="boss-break" class="boss-break" aria-label="보스 파훼 게이지"><div><small>BREAK</small><b id="boss-break-value">0%</b></div><i><u id="boss-break-progress"></u></i><em id="boss-break-state">원소 반응과 치명타로 파훼</em></div>
         <div id="boss-intent" class="boss-intent" data-urgency="stable">
           <img id="boss-intent-icon" src="./assets/ui/v390/boss-strike.png" alt="" />
           <span id="boss-phase">PHASE 1</span>
@@ -134,6 +140,10 @@
 
       <aside id="stage-chip" class="stage-chip hidden" aria-live="polite">
         <span id="stage-icon">門</span><div><small>STAGE 01</small><b id="stage-name">도깨비마을</b><em id="stage-zone">달문 입구</em><i><u id="stage-progress"></u></i></div>
+      </aside>
+
+      <aside id="council-chip" class="council-chip hidden" aria-live="polite">
+        <span id="council-chip-icon">護</span><div><small>GUARDIAN COUNCIL</small><b id="council-chip-name">선조의 방패</b><em id="council-chip-support">신목 무당 지원</em></div>
       </aside>
 
       <aside id="moon-omen" class="moon-omen hidden" aria-live="polite">
@@ -356,7 +366,7 @@
           <button class="modal-x" data-close="equipment-modal">×</button>
           <p class="kicker">MOONLIGHT LOADOUT</p>
           <h2 id="equipment-title">장비 가방 · 직업 숙련</h2>
-          <p>장비 변경은 다음 원정부터 적용됩니다. 원정 종료 시 웨이브 성과에 따라 새 장비를 발견합니다.</p>
+          <p>장비 변경은 다음 원정부터 적용됩니다. 중복 장비에서 얻은 정수로 보유 장비를 최대 +5까지 단조할 수 있습니다.</p>
           <div class="equipment-summary"><div><span>장비 정수</span><b id="equipment-essence">0</b></div><div><span>현재 보정</span><b id="equipment-bonus">대장 피해 +0%</b></div></div>
           <div id="equipment-mastery" class="equipment-mastery">도깨비 전사 숙련 Lv.1</div>
           <div id="equipment-slots" class="equipment-slots"></div>
@@ -370,7 +380,15 @@
           <button class="modal-x" data-close="controls-modal">×</button>
           <p class="kicker">CAMERA & TOUCH</p>
           <h2 id="controls-title">카메라·조작 설정</h2>
-          <p>기기별 손가락 감각과 화면 크기에 맞춰 조정합니다.</p>
+          <p>기본 시야는 전장 조망으로 확장되었습니다. F5로 시야 프리셋을 빠르게 전환할 수 있습니다.</p>
+          <div class="camera-preset-selector" aria-label="카메라 시야 프리셋">
+            <div><b>기본 시야 프리셋</b><small>전장 조망이 기본값이며 웨이브와 보스전에서 자동으로 조금 더 넓어집니다.</small></div>
+            <div class="camera-preset-options">
+              <button type="button" data-camera-preset="scenic" aria-pressed="true"><b>전장 조망</b><small>맵 전체 중심</small></button>
+              <button type="button" data-camera-preset="balanced" aria-pressed="false"><b>균형 시야</b><small>전투·캐릭터 균형</small></button>
+              <button type="button" data-camera-preset="close" aria-pressed="false"><b>근접 시야</b><small>기존 액션 중심</small></button>
+            </div>
+          </div>
           <div class="controls-settings">
             <label class="control-setting">
               <span><b>카메라 회전 감도</b><small>한 손가락 드래그 회전 속도</small></span>
@@ -389,13 +407,13 @@
             </label>
             <label class="control-setting">
               <span><b>최대 줌인</b><small>가장 가까운 카메라 거리</small></span>
-              <input id="minimum-zoom" type="range" min="85" max="125" step="5" />
-              <output id="minimum-zoom-value">9.5</output>
+              <input id="minimum-zoom" type="range" min="85" max="130" step="5" />
+              <output id="minimum-zoom-value">10.0</output>
             </label>
             <label class="control-setting">
               <span><b>최대 줌아웃</b><small>가장 먼 카메라 거리</small></span>
-              <input id="maximum-zoom" type="range" min="180" max="260" step="5" />
-              <output id="maximum-zoom-value">22.0</output>
+              <input id="maximum-zoom" type="range" min="180" max="300" step="5" />
+              <output id="maximum-zoom-value">28.0</output>
             </label>
           </div>
           <div class="accessibility-settings">
@@ -486,7 +504,7 @@
     </div>
     <script>
       (() => {
-        const VERSION = '9.0.0';
+        const VERSION = '11.0.0';
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
         const retryButton = document.getElementById('boot-retry-btn');

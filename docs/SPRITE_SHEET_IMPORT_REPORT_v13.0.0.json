@@ -1,0 +1,12 @@
+{
+  "gameVersion": "13.0.0",
+  "pipeline": "border-connected bright-neutral matte removal + adaptive grid split",
+  "sourceSheets": 10,
+  "individualCrops": 415,
+  "curatedRuntime2D": 42,
+  "runtimeReady2D": 124,
+  "reviewRequired": 291,
+  "production3DApproved": 0,
+  "runtimeUse": ["hero selector", "codex", "equipment", "reward UI", "Sprite Forge review OS"],
+  "sourceSheetsExcludedFromStaticDist": true
+}

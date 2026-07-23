@@ -10,12 +10,15 @@ import { BOSS_PROFILES, getBossWave, getBossTypeForWave, getBossSpawnCount, isBo
 import { getBattlefieldTheme } from './battlefield-themes.js';
 import { CODEX_SECTION_META, CODEX_SECTION_ORDER, getCodexEntries, getCodexTotals } from './codex-data.js';
 import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, ObjectPool, RenderStatsHUD, AssetPipeline, AnimationStateSystem, FrameBudgetScheduler } from './engine/index.js';
+import { DEFAULT_CAMERA_PROFILE_ID, getCameraProfile, sanitizeCameraProfileId, cycleCameraProfile, resolveCameraDistance } from './engine/camera-profile.js';
 import { CORE_ASSET_CATALOG, PLAYER_ASSET_ID, GUARDIAN_ASSET_IDS, MONSTER_ASSET_IDS, BOSS_ASSET_IDS } from './engine/asset-catalog.js';
 import { HERO_CLASSES, HERO_CLASS_ORDER, HERO_CLASS_ASSET_IDS, getHeroClass } from './hero-classes.js';
+import { applyHeroArchetypeModifiers, getHeroArchetypePassive, HERO_ARCHETYPE_SUMMARY } from './hero-archetype-system.js';
+import { IP_ASSET_LIBRARY_V13 } from './ip-asset-library-v13.js';
 import { applyHeroClassVisuals, applyRelicVisuals } from './hero-visual-loadout.js';
 import { applyEnemyCandidateVisuals } from './enemy-candidate-visuals.js';
 import { getBossHudState } from './boss-hud-contract.js';
-import { EQUIPMENT_ITEMS, EQUIPMENT_SLOTS, EQUIPMENT_RARITIES, loadEquipmentState, saveEquipmentState, equipItem, getEquippedItems, applyEquipmentBonuses, awardEquipmentDrop } from './equipment-system.js';
+import { EQUIPMENT_ITEMS, EQUIPMENT_SLOTS, EQUIPMENT_RARITIES, EQUIPMENT_FORGE_MAX_LEVEL, loadEquipmentState, saveEquipmentState, equipItem, getEquippedItems, getEquipmentForgeLevel, getEquipmentForgeCost, forgeEquipmentItem, applyEquipmentBonuses, awardEquipmentDrop } from './equipment-system.js';
 import { loadHeroMastery, saveHeroMastery, getHeroMasteryEntry, getHeroMasteryBonus, xpForNextLevel, awardHeroMastery, HERO_MASTERY_MAX_LEVEL } from './hero-mastery.js';
 import { getStageProgress } from './stage-progression.js';
 import CodexViewer from './codex-viewer.js';
@@ -23,6 +26,7 @@ import { createPremiumGuardian, createPremiumEnemy, createPremiumSacredTree, app
 import { DirectionalImpostorSelector } from './engine/directional-impostor.js';
 import { buildAssetDiagnostics } from './asset-diagnostics.js';
 import { ART_PRODUCTION_SUMMARY, MASSIVE_UPDATE_MILESTONES } from './art-production-gate.js';
+import { GOLDEN_SLICE_CERTIFICATION_SUMMARY } from './golden-slice-certification.js';
 import { CHARACTER_DNA_SUMMARY } from './character-dna.js';
 import { ProductionConsole } from './production-console.js';
 import { GOLDEN_SAMPLE_CLIPS, GOLDEN_SAMPLE_SOCKETS, GOLDEN_SAMPLE_TEXTURE_MAPS } from './golden-sample-spec.js';
@@ -38,6 +42,9 @@ import { migrateSaveSchema, SAVE_SCHEMA_VERSION } from './runtime/save-schema.js
 import ElementalReactionSystem from './combat/elemental-reaction-system.js';
 import BattleMomentumSystem from './combat/battle-momentum-system.js';
 import BossEscalationDirector from './combat/boss-escalation-director.js';
+import BossBreakSystem from './combat/boss-break-system.js';
+import MoonfrontCampaignDirector from './combat/moonfront-campaign-director.js';
+import { GUARDIAN_COUNCIL_STORAGE_KEY, GUARDIAN_COUNCIL_SUPPORTS, applyGuardianCouncilModifiers, resolveGuardianCouncil, sanitizeCouncilSupportId } from './guardian-council-system.js';
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -72,7 +79,7 @@ const ui = {
   toast: $('#toast'), combo: $('#combo-banner'), comboText: $('#combo-text'), boss: $('#boss-banner'), bossName: $('#boss-name'),
   mission: $('#mission-banner'), missionKicker: $('#mission-kicker'), missionTitle: $('#mission-title'), missionCopy: $('#mission-copy'),
   evolution: $('#evolution-banner'), evolutionSymbol: $('#evolution-symbol'), evolutionName: $('#evolution-name'), evolutionUltimate: $('#evolution-ultimate'),
-  bossHealth: $('#boss-health'), bossHealthName: $('#boss-health-name'), bossHealthValue: $('#boss-health-value'), bossHealthProgress: $('#boss-health-progress'),
+  bossHealth: $('#boss-health'), bossHealthName: $('#boss-health-name'), bossHealthValue: $('#boss-health-value'), bossHealthProgress: $('#boss-health-progress'), bossBreak: $('#boss-break'), bossBreakValue: $('#boss-break-value'), bossBreakProgress: $('#boss-break-progress'), bossBreakState: $('#boss-break-state'),
   bossIntent: $('#boss-intent'), bossIntentIcon: $('#boss-intent-icon'), bossIntentType: $('#boss-intent-type'), bossIntentProgress: $('#boss-intent-progress'), bossPhase: $('#boss-phase'), bossIntentLabel: $('#boss-intent-label'), bossIntentTime: $('#boss-intent-time'), bossDangerFrame: $('#boss-danger-frame'),
   killChain: $('#kill-chain'), killChainValue: $('#kill-chain-value'), killChainBonus: $('#kill-chain-bonus'),
   moonOmen: $('#moon-omen'), moonOmenIcon: $('#moon-omen-icon'), moonOmenName: $('#moon-omen-name'), moonOmenEffect: $('#moon-omen-effect'),
@@ -89,24 +96,29 @@ const ui = {
   titleBtn: $('#title-btn'), resultModal: $('#result-modal'), resultKicker: $('#result-kicker'), resultTitle: $('#result-title'),
   resultScore: $('#result-score'), resultKills: $('#result-kills'), resultRank: $('#result-rank'), resultUnits: $('#result-units'), resultAnalysis: $('#result-analysis'), resultShards: $('#result-shards'), resultShardsTotal: $('#result-shards-total'), resultGrowth: $('#result-growth-btn'), resultEquipmentReward: $('#result-equipment-reward'), resultMasteryReward: $('#result-mastery-reward'),
   playerName: $('#player-name'), saveScore: $('#save-score-btn'), resultRetry: $('#result-retry-btn'), leaderboard: $('#leaderboard'),
-  runModeOptions: $('#run-mode-options'), runModeSummary: $('#run-mode-summary'), heroClassOptions: $('#hero-class-options'), heroClassSummary: $('#hero-class-summary'), seedModeOptions: $('#seed-mode-options'), dailyEdictPreview: $('#daily-edict-preview'),
-  runSeedChip: $('#run-seed-chip'), runSeedIcon: $('#run-seed-icon'), runSeedMode: $('#run-seed-mode'), runSeedValue: $('#run-seed-value'), runEdictName: $('#run-edict-name'), stageChip: $('#stage-chip'), stageIcon: $('#stage-icon'), stageName: $('#stage-name'), stageZone: $('#stage-zone'), stageProgress: $('#stage-progress'), resultNewRun: $('#result-new-run-btn'),
+  runModeOptions: $('#run-mode-options'), runModeSummary: $('#run-mode-summary'), heroClassOptions: $('#hero-class-options'), heroClassSummary: $('#hero-class-summary'), councilOptions: $('#council-options'), councilSummary: $('#council-summary'), seedModeOptions: $('#seed-mode-options'), dailyEdictPreview: $('#daily-edict-preview'),
+  runSeedChip: $('#run-seed-chip'), runSeedIcon: $('#run-seed-icon'), runSeedMode: $('#run-seed-mode'), runSeedValue: $('#run-seed-value'), runEdictName: $('#run-edict-name'), stageChip: $('#stage-chip'), stageIcon: $('#stage-icon'), stageName: $('#stage-name'), stageZone: $('#stage-zone'), stageProgress: $('#stage-progress'), councilChip: $('#council-chip'), councilChipIcon: $('#council-chip-icon'), councilChipName: $('#council-chip-name'), councilChipSupport: $('#council-chip-support'), resultNewRun: $('#result-new-run-btn'),
   codexPreviewModal: $('#codex-preview-modal'), codexPreviewCanvas: $('#codex-preview-canvas'), codexPreviewTitle: $('#codex-preview-title'), codexPreviewSubtitle: $('#codex-preview-subtitle'),
   codexFrameStatus: $('#codex-frame-status'), codexAssetSet: $('#codex-asset-set'), codexLodReadout: $('#codex-lod-readout'), codexDirectionReadout: $('#codex-direction-readout'), codexImpostorBtn: $('#codex-impostor-btn'),
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '9.0.0';
-const CHARACTER_ASSET_IDS = Object.freeze([
+const GAME_VERSION = '13.0.0';
+function equipmentIconMarkup(item, className = '') {
+  if (item?.iconImage) return `<img class="equipment-sprite ${className}" src="${item.iconImage}" alt="" loading="lazy">`;
+  return `<span class="equipment-glyph ${className}">${item?.icon || '◆'}</span>`;
+}
+
+const CHARACTER_ASSET_IDS = Object.freeze([...new Set([
   ...Object.values(HERO_CLASS_ASSET_IDS),
   ...Object.values(GUARDIAN_ASSET_IDS),
   ...Object.values(MONSTER_ASSET_IDS),
   ...Object.values(BOSS_ASSET_IDS)
-]);
+])]);
 const CHARACTER_ASSET_LABELS = Object.freeze({
   [HERO_CLASS_ASSET_IDS.warrior]: '도깨비 전사 · 골든 샘플',
   [HERO_CLASS_ASSET_IDS.archer]: '도깨비 궁수 · 공용 리그 후보',
-  [HERO_CLASS_ASSET_IDS.mage]: '도깨비 법사 · 공용 리그 후보',
+  [HERO_CLASS_ASSET_IDS.mage]: '도깨비 법사·도사·무당 · 공용 리그 후보',
   [GUARDIAN_ASSET_IDS.ember]: '불씨 깨비', [GUARDIAN_ASSET_IDS.frost]: '달서리 깨비',
   [GUARDIAN_ASSET_IDS.wind]: '바람 갓깨비', [GUARDIAN_ASSET_IDS.stone]: '바위 몽둥깨비',
   [GUARDIAN_ASSET_IDS.bell]: '방울 무당깨비', [GUARDIAN_ASSET_IDS.thunder]: '번개 장군깨비',
@@ -128,8 +140,9 @@ const DEFAULT_CONTROL_SETTINGS = Object.freeze({
   rotateSensitivity: 1,
   pinchSensitivity: 1,
   wheelSensitivity: 1,
-  minZoom: 9.5,
-  maxZoom: 22,
+  cameraProfile: DEFAULT_CAMERA_PROFILE_ID,
+  minZoom: 10,
+  maxZoom: 28,
   handedness: 'right',
   vibration: true,
   shakeIntensity: 1,
@@ -158,11 +171,14 @@ class DokkaebiLuckDefense {
     this.previousState = 'title';
     this.elapsed = 0;
     this.shake = 0;
+    const initialCameraProfile = getCameraProfile(DEFAULT_CAMERA_PROFILE_ID);
     this.cameraYaw = Math.PI * .25;
-    this.cameraPitch = .66;
-    this.cameraDistance = 15.5;
-    this.cameraDistanceTarget = 15.5;
-    this.cameraCollisionDistance = 15.5;
+    this.cameraPitch = initialCameraProfile.pitch;
+    this.cameraDistance = initialCameraProfile.distance;
+    this.cameraDistanceTarget = initialCameraProfile.distance;
+    this.cameraCollisionDistance = initialCameraProfile.distance;
+    this.activeCameraProfile = initialCameraProfile;
+    this.lastAppliedCameraPreset = initialCameraProfile.id;
     this.pointerDown = null;
     this.lookPointer = null;
     this.lookPointers = new Map();
@@ -233,6 +249,8 @@ class DokkaebiLuckDefense {
     this.activeRunMode = getRunMode(this.selectedRunModeId);
     this.selectedHeroClassId = this.loadHeroClass();
     this.heroClass = getHeroClass(this.selectedHeroClassId);
+    this.selectedCouncilSupportId = this.loadCouncilSupport();
+    this.guardianCouncil = resolveGuardianCouncil(this.selectedHeroClassId, this.selectedCouncilSupportId);
     this.selectedSeedModeId = this.loadSeedMode();
     this.runSeed = '';
     this.runRandom = Math.random;
@@ -266,6 +284,8 @@ class DokkaebiLuckDefense {
     this.elementalReactions = new ElementalReactionSystem();
     this.battleMomentum = new BattleMomentumSystem();
     this.bossEscalation = new BossEscalationDirector();
+    this.bossBreak = new BossBreakSystem();
+    this.campaign = new MoonfrontCampaignDirector();
     this.saveMigration = migrateSaveSchema();
     this.activeEncounterPlan = null;
     this.lastEncounterResult = null;
@@ -274,7 +294,7 @@ class DokkaebiLuckDefense {
     this.assertRequiredUI();
     this.hudLayout = new AdaptiveHudLayout({
       elements: {
-        hud: ui.hud, runSeed: ui.runSeedChip, stageChip: ui.stageChip, moonOmen: ui.moonOmen, moonWard: ui.moonWard,
+        hud: ui.hud, runSeed: ui.runSeedChip, stageChip: ui.stageChip, councilChip: ui.councilChip, moonOmen: ui.moonOmen, moonWard: ui.moonWard,
         luckMeter: ui.luckMeter, burstMeter: ui.burstMeter, momentumMeter: ui.momentumMeter, waveTrial: ui.waveTrial,
         synergyPanel: ui.synergyPanel, firstMission: ui.firstMissionPanel, killChain: ui.killChain,
         relicPanel: ui.relicPanel, unitStrip: ui.unitStrip, bossHealth: ui.bossHealth,
@@ -295,6 +315,7 @@ class DokkaebiLuckDefense {
     this.renderMetaProgress();
     this.renderRunModeSelector();
     this.renderHeroClassSelector();
+    this.renderCouncilSelector();
     this.renderSeedModeSelector();
     this.renderRelicStrip();
     this.renderEquipmentModal();
@@ -384,10 +405,11 @@ class DokkaebiLuckDefense {
 
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x38275a);
-    this.scene.fog = new THREE.FogExp2(0x4a356b, .018);
+    this.scene.fog = new THREE.FogExp2(0x4a356b, .015);
 
-    this.camera = new THREE.PerspectiveCamera(49, window.innerWidth / window.innerHeight, .1, 130);
-    this.camera.position.set(11, 12, 14);
+    const initialCameraProfile = getCameraProfile(this.controlSettings?.cameraProfile || DEFAULT_CAMERA_PROFILE_ID);
+    this.camera = new THREE.PerspectiveCamera(initialCameraProfile.fov, window.innerWidth / window.innerHeight, .1, 160);
+    this.camera.position.set(14, 16, 18);
 
     this.hemiLight = new THREE.HemisphereLight(0xcfe8ff, 0x6d4765, 1.7);
     this.scene.add(this.hemiLight);
@@ -454,6 +476,14 @@ class DokkaebiLuckDefense {
         reactions: this.elementalReactions?.diagnostics || {},
         momentum: this.battleMomentum?.diagnostics || {},
         bossEscalation: this.bossEscalation?.diagnostics || {},
+        bossBreak: this.bossBreak?.diagnostics || {},
+        campaign: this.campaign?.diagnostics || {},
+        council: this.guardianCouncil || {},
+        equipmentForge: { forged: this.equipmentState?.forged || 0, essence: this.equipmentState?.essence || 0 },
+        heroRoster: { classes: HERO_CLASS_ORDER.length, selected: this.selectedHeroClassId, passive: this.activeHeroPassive?.id || '' },
+        assetForge: IP_ASSET_LIBRARY_V13,
+        goldenSlice: GOLDEN_SLICE_CERTIFICATION_SUMMARY,
+        camera: { profile: this.activeCameraProfile?.id || this.controlSettings.cameraProfile, label: this.activeCameraProfile?.label || '', distance: Number(this.cameraDistance.toFixed(2)), target: Number(this.cameraDistanceTarget.toFixed(2)), fov: this.camera?.fov || 0 },
         saveSchemaVersion: SAVE_SCHEMA_VERSION
       })
     });
@@ -572,6 +602,10 @@ class DokkaebiLuckDefense {
       const button = event.target.closest('[data-hero-class]');
       if (button) this.selectHeroClass(button.dataset.heroClass);
     }, {}, 'hero-class-options');
+    on(ui.councilOptions, 'click', (event) => {
+      const button = event.target.closest('[data-council-support]');
+      if (button) this.selectCouncilSupport(button.dataset.councilSupport);
+    }, {}, 'council-options');
     on(ui.seedModeOptions, 'click', (event) => {
       const button = event.target.closest('[data-seed-mode]');
       if (button) this.selectSeedMode(button.dataset.seedMode);
@@ -646,6 +680,7 @@ class DokkaebiLuckDefense {
     bindControlRange(ui.flashIntensity, 'flashIntensity', (value) => value / 100);
     $$('[data-control-toggle]').forEach((button, index) => on(button, 'click', () => this.updateControlSetting(button.dataset.controlToggle, button.getAttribute('aria-pressed') !== 'true'), {}, `control-toggle-${index}`));
     $$('[data-handedness]').forEach((button, index) => on(button, 'click', () => this.updateControlSetting('handedness', button.dataset.handedness), {}, `handedness-${index}`));
+    $$('[data-camera-preset]').forEach((button, index) => on(button, 'click', () => this.updateControlSetting('cameraProfile', button.dataset.cameraPreset), {}, `camera-preset-${index}`));
     on(ui.controlsReset, 'click', () => this.resetControlSettings(), {}, 'controls-reset');
     this.applyControlSettings();
     this.renderControlSettings();
@@ -666,6 +701,11 @@ class DokkaebiLuckDefense {
       if (button) this.selectRelic(button.dataset.relic);
     }, {}, 'relic-select');
     on(ui.equipmentList, 'click', (event) => {
+      const forgeButton = event.target.closest('[data-equipment-forge]');
+      if (forgeButton) {
+        this.forgeEquipment(forgeButton.dataset.equipmentForge);
+        return;
+      }
       const button = event.target.closest('[data-equipment-id]');
       if (button) this.selectEquipmentItem(button.dataset.equipmentId);
     }, {}, 'equipment-select');
@@ -695,6 +735,11 @@ class DokkaebiLuckDefense {
         this.cancelMoveTarget();
       }
       if (event.repeat) return;
+      if (code === 'F5') {
+        event.preventDefault();
+        this.cycleCameraView();
+        return;
+      }
       if (code === 'F4') {
         event.preventDefault();
         const enabled = this.productionConsole?.toggle();
@@ -737,11 +782,12 @@ class DokkaebiLuckDefense {
       const stored = JSON.parse(localStorage.getItem(CONTROL_STORAGE_KEY) || 'null');
       if (!stored || typeof stored !== 'object') return fallback;
       const settings = {
+        cameraProfile: sanitizeCameraProfileId(stored.cameraProfile || fallback.cameraProfile),
         rotateSensitivity: clamp(Number(stored.rotateSensitivity ?? stored.rotate) || fallback.rotateSensitivity, .6, 1.6),
         pinchSensitivity: clamp(Number(stored.pinchSensitivity ?? stored.pinch) || fallback.pinchSensitivity, .55, 1.45),
         wheelSensitivity: clamp(Number(stored.wheelSensitivity ?? stored.pinch) || fallback.wheelSensitivity, .6, 1.6),
-        minZoom: clamp(Number(stored.minZoom) || fallback.minZoom, 8.5, 12.5),
-        maxZoom: clamp(Number(stored.maxZoom) || fallback.maxZoom, 18, 26),
+        minZoom: clamp(Number(stored.minZoom) || fallback.minZoom, 8.5, 13),
+        maxZoom: clamp(Number(stored.maxZoom) || fallback.maxZoom, 18, 30),
         handedness: stored.handedness === 'left' ? 'left' : 'right',
         vibration: stored.vibration !== false,
         shakeIntensity: clamp(Number(stored.shakeIntensity ?? fallback.shakeIntensity), 0, 1),
@@ -750,7 +796,7 @@ class DokkaebiLuckDefense {
         autoHudLayout: stored.autoHudLayout !== false,
         force3DModels: stored.force3DModels === true
       };
-      if (settings.maxZoom < settings.minZoom + 4) settings.maxZoom = Math.min(26, settings.minZoom + 4);
+      if (settings.maxZoom < settings.minZoom + 5) settings.maxZoom = Math.min(30, settings.minZoom + 5);
       return settings;
     } catch {
       return fallback;
@@ -762,8 +808,8 @@ class DokkaebiLuckDefense {
   }
 
   getCameraZoomBounds() {
-    const min = clamp(this.controlSettings?.minZoom ?? DEFAULT_CONTROL_SETTINGS.minZoom, 8.5, 12.5);
-    const max = clamp(this.controlSettings?.maxZoom ?? DEFAULT_CONTROL_SETTINGS.maxZoom, Math.max(18, min + 4), 26);
+    const min = clamp(this.controlSettings?.minZoom ?? DEFAULT_CONTROL_SETTINGS.minZoom, 8.5, 13);
+    const max = clamp(this.controlSettings?.maxZoom ?? DEFAULT_CONTROL_SETTINGS.maxZoom, Math.max(18, min + 5), 30);
     return { min, max };
   }
 
@@ -771,6 +817,16 @@ class DokkaebiLuckDefense {
     document.body.classList.toggle('controls-left-handed', this.controlSettings.handedness === 'left');
     document.body.classList.toggle('reduced-motion', Boolean(this.controlSettings.reducedMotion));
     document.body.classList.toggle('force-3d-models', Boolean(this.controlSettings.force3DModels));
+    const cameraProfile = getCameraProfile(this.controlSettings.cameraProfile);
+    this.activeCameraProfile = cameraProfile;
+    document.body.dataset.cameraProfile = cameraProfile.id;
+    if (this.camera && this.lastAppliedCameraPreset !== cameraProfile.id) {
+      this.cameraPitch = cameraProfile.pitch;
+      this.cameraDistanceTarget = clamp(cameraProfile.distance, this.controlSettings.minZoom, this.controlSettings.maxZoom);
+      this.camera.fov = cameraProfile.fov;
+      this.camera.updateProjectionMatrix();
+      this.lastAppliedCameraPreset = cameraProfile.id;
+    }
     if (this.hudLayout) {
       if (this.controlSettings.autoHudLayout && this.hudLayout.mode === 'full') this.hudLayout.setMode('auto');
       if (!this.controlSettings.autoHudLayout && this.hudLayout.mode === 'auto') this.hudLayout.setMode('full');
@@ -799,6 +855,11 @@ class DokkaebiLuckDefense {
     ui.maximumZoomValue.textContent = settings.maxZoom.toFixed(1);
     ui.shakeIntensityValue.textContent = `${Math.round(settings.shakeIntensity * 100)}%`;
     ui.flashIntensityValue.textContent = `${Math.round(settings.flashIntensity * 100)}%`;
+    $$('[data-camera-preset]').forEach((button) => {
+      const active = button.dataset.cameraPreset === settings.cameraProfile;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
     $$('[data-control-toggle]').forEach((button) => {
       const key = button.dataset.controlToggle;
       const active = Boolean(settings[key]);
@@ -814,7 +875,8 @@ class DokkaebiLuckDefense {
   }
 
   updateControlSetting(key, value) {
-    if (key === 'handedness') this.controlSettings.handedness = value === 'left' ? 'left' : 'right';
+    if (key === 'cameraProfile') this.controlSettings.cameraProfile = sanitizeCameraProfileId(value);
+    else if (key === 'handedness') this.controlSettings.handedness = value === 'left' ? 'left' : 'right';
     else if (key === 'rotateSensitivity') this.controlSettings.rotateSensitivity = clamp(value, .6, 1.6);
     else if (key === 'pinchSensitivity') this.controlSettings.pinchSensitivity = clamp(value, .55, 1.45);
     else if (key === 'wheelSensitivity') this.controlSettings.wheelSensitivity = clamp(value, .6, 1.6);
@@ -822,15 +884,19 @@ class DokkaebiLuckDefense {
     else if (key === 'flashIntensity') this.controlSettings.flashIntensity = clamp(value, 0, 1);
     else if (key === 'vibration' || key === 'reducedMotion' || key === 'autoHudLayout' || key === 'force3DModels') this.controlSettings[key] = Boolean(value);
     else if (key === 'minZoom') {
-      this.controlSettings.minZoom = clamp(value, 8.5, 12.5);
-      this.controlSettings.maxZoom = Math.max(this.controlSettings.maxZoom, this.controlSettings.minZoom + 4);
+      this.controlSettings.minZoom = clamp(value, 8.5, 13);
+      this.controlSettings.maxZoom = Math.max(this.controlSettings.maxZoom, this.controlSettings.minZoom + 5);
     } else if (key === 'maxZoom') {
-      this.controlSettings.maxZoom = clamp(value, 18, 26);
-      this.controlSettings.minZoom = Math.min(this.controlSettings.minZoom, this.controlSettings.maxZoom - 4);
+      this.controlSettings.maxZoom = clamp(value, 18, 30);
+      this.controlSettings.minZoom = Math.min(this.controlSettings.minZoom, this.controlSettings.maxZoom - 5);
     }
     this.applyControlSettings();
     this.renderControlSettings();
     this.saveControlSettings();
+    if (key === 'cameraProfile') {
+      const profile = getCameraProfile(this.controlSettings.cameraProfile);
+      this.showToast(`카메라 · ${profile.label} (${profile.distance.toFixed(1)})`);
+    }
     if (key === 'autoHudLayout') {
       this.hudLayout?.setMode(this.controlSettings.autoHudLayout ? 'auto' : 'full');
       this.syncHudLayoutButton();
@@ -867,6 +933,12 @@ class DokkaebiLuckDefense {
       impostor.lod0Children.forEach((child) => { child.visible = true; });
       enemy.group.userData.lodState = 'high';
     }
+  }
+
+  cycleCameraView() {
+    const next = cycleCameraProfile(this.controlSettings.cameraProfile);
+    this.updateControlSetting('cameraProfile', next);
+    return next;
   }
 
   resetControlSettings() {
@@ -1271,7 +1343,11 @@ class DokkaebiLuckDefense {
       codexDiscoveries: 0,
       weaknessUnlocks: 0,
       weaknessHits: 0,
-      codexDrops: 0
+      codexDrops: 0,
+      bossBreaks: 0,
+      actsCleared: 0,
+      forgedAtStart: 0,
+      councilInterventions: 0
     };
   }
 
@@ -1321,8 +1397,16 @@ class DokkaebiLuckDefense {
     const damage = (traits.bond || 0) * 3.5;
     const spirit = (traits.spirit || 0) * 8;
     const mode = getRunMode(this.selectedRunModeId);
+    const heroClass = getHeroClass(this.selectedHeroClassId);
+    const passive = getHeroArchetypePassive(heroClass.id);
+    const council = resolveGuardianCouncil(heroClass.id, this.selectedCouncilSupportId);
+    const forged = Number(this.equipmentState?.forged || 0);
     ui.runPreview.innerHTML = `
       <span><small>원정 모드</small><b>${mode.name}</b></span>
+      <span><small>대장 깨비</small><b>${heroClass.name}</b></span>
+      <span><small>직업 패시브</small><b>${passive.icon} ${passive.name}</b></span>
+      <span><small>수호 의회</small><b>${council.bond.icon} ${council.bond.name}</b></span>
+      <span><small>장비 단조</small><b>${forged}회 · 정수 ${this.equipmentState?.essence || 0}</b></span>
       <span><small>시드 방식</small><b>${RUN_SEED_MODES[this.selectedSeedModeId]?.name || RUN_SEED_MODES.daily.name}</b></span>
       <span><small>시작 엽전</small><b>${gold + mode.startGold}</b></span>
       <span><small>신목 체력</small><b>${hp}</b></span>
@@ -1556,7 +1640,7 @@ class DokkaebiLuckDefense {
       const weakness = knowledge.research ? (knowledge.weaknessUnlocked ? `${getWeaknessLabel(entry.id)} · ×${knowledge.research.multiplier.toFixed(2)}` : `연구 ${knowledge.defeats}/${nextSection === 'boss' ? 1 : 3}`) : '환경 기록';
       const lootOwned = knowledge.loot.reduce((sum, loot) => sum + (loot.count > 0 ? 1 : 0), 0);
       return `<article class="collection-item codex-item${locked ? ' locked' : ''}" tabindex="0" role="button" data-codex-section="${nextSection}" data-codex-id="${entry.id}" aria-label="${this.escapeHtml(displayName)} ${locked ? '미발견' : '3D 보기'}" style="--unit-color:${color};--unit-soft:${color}22;--unit-line:${color}66">
-        <div class="portrait" aria-hidden="true">${locked ? '?' : entry.symbol || meta.icon}</div>
+        <div class="portrait" aria-hidden="true">${locked ? '?' : entry.art ? `<img src="${entry.art}" alt="" loading="lazy">` : entry.symbol || meta.icon}</div>
         <div class="codex-item-head"><b>${this.escapeHtml(displayName)}</b><small>${this.escapeHtml(subtitle)}</small></div>
         <p>${locked ? '실루엣과 약점, 전리품 정보가 아직 달빛 장부에 기록되지 않았습니다.' : this.escapeHtml(entry.description || entry.signature || '')}</p>
         <div class="codex-research-row"><span>숙련 <b>LV.${knowledge.mastery}</b></span><span class="codex-mastery-pips">${masteryPips}</span><span>${this.escapeHtml(weakness)}</span>${knowledge.loot.length ? `<span>전리품 ${lootOwned}/${knowledge.loot.length}</span>` : ''}</div>
@@ -2568,10 +2652,15 @@ class DokkaebiLuckDefense {
       burstPower: 1,
       objectiveReward: 1,
       coreDamage: 1,
+      coreHealing: 1,
+      reactionDamage: 1,
+      statusDuration: 1,
+      statusPotency: 1,
       summonDiscount: 0,
       eliteReward: 1,
       dodgeReward: 1,
-      bossDamage: 1
+      bossDamage: 1,
+      critChanceBonus: 0
     };
   }
 
@@ -2588,6 +2677,7 @@ class DokkaebiLuckDefense {
     this.heroClass = selected;
     try { localStorage.setItem('dokkaebi-hero-class-v1', selected.id); } catch {}
     this.renderHeroClassSelector();
+    this.renderCouncilSelector();
     this.renderRunPreview();
     this.sound.ui();
   }
@@ -2601,8 +2691,42 @@ class DokkaebiLuckDefense {
       return `<button type="button" class="hero-class-option ${entry.id === selected.id ? 'active' : ''}" data-hero-class="${entry.id}" aria-pressed="${entry.id === selected.id}"><img src="${entry.conceptArt || entry.icon}?v=${GAME_VERSION}" alt="${entry.name} 고해상도 콘셉트 후보" /><span><b>${entry.name}</b><small>${entry.role} · 숙련 Lv.${mastery.level}</small></span></button>`;
     }).join('');
     const masteryNeed = selectedMastery.level >= HERO_MASTERY_MAX_LEVEL ? 'MAX' : `${selectedMastery.xp}/${xpForNextLevel(selectedMastery.level)}`;
-    ui.heroClassSummary.innerHTML = `<b>${selected.name} · 숙련 Lv.${selectedMastery.level}</b><span>${selected.description}</span><small>고해상도 콘셉트 REVIEW · 최종 승인 아님 · 기본 공격 ${selected.attack.damage} · ${selected.skill.name} · 숙련 ${masteryNeed}</small>`;
+    const passive = getHeroArchetypePassive(selected.id);
+    ui.heroClassSummary.innerHTML = `<b>${selected.name} · 숙련 Lv.${selectedMastery.level}</b><span>${selected.description}</span><small>${passive.icon} ${passive.name} · ${passive.description} · 투명 REVIEW 파생본 · 최종 승인 아님 · 숙련 ${masteryNeed}</small>`;
     if (ui.skillLabel) ui.skillLabel.textContent = selected.skill.name.replace(/ .*/, '').slice(0, 5);
+  }
+
+  loadCouncilSupport() {
+    try { return sanitizeCouncilSupportId(localStorage.getItem(GUARDIAN_COUNCIL_STORAGE_KEY)); }
+    catch { return 'shaman'; }
+  }
+
+  selectCouncilSupport(id) {
+    this.selectedCouncilSupportId = sanitizeCouncilSupportId(id);
+    this.guardianCouncil = resolveGuardianCouncil(this.selectedHeroClassId, this.selectedCouncilSupportId);
+    try { localStorage.setItem(GUARDIAN_COUNCIL_STORAGE_KEY, this.selectedCouncilSupportId); } catch {}
+    this.renderCouncilSelector();
+    this.renderRunPreview();
+    this.sound.ui();
+  }
+
+  renderCouncilSelector() {
+    if (!ui.councilOptions || !ui.councilSummary) return;
+    const selectedId = sanitizeCouncilSupportId(this.selectedCouncilSupportId);
+    this.guardianCouncil = resolveGuardianCouncil(this.selectedHeroClassId, selectedId);
+    ui.councilOptions.innerHTML = Object.values(GUARDIAN_COUNCIL_SUPPORTS).map((entry) => `
+      <button type="button" class="council-option ${entry.id === selectedId ? 'active' : ''}" data-council-support="${entry.id}" aria-pressed="${entry.id === selectedId}">
+        <span>${entry.icon}</span><b>${entry.name}</b><small>${entry.role}</small>
+      </button>`).join('');
+    ui.councilSummary.innerHTML = `<span>${this.guardianCouncil.bond.icon}</span><div><small>${this.guardianCouncil.support.name} 지원</small><b>${this.guardianCouncil.bond.name}</b><em>${this.guardianCouncil.bond.description}</em></div>`;
+  }
+
+  updateCouncilHUD() {
+    if (!ui.councilChip) return;
+    const council = this.guardianCouncil || resolveGuardianCouncil(this.selectedHeroClassId, this.selectedCouncilSupportId);
+    ui.councilChipIcon.textContent = council.bond.icon;
+    ui.councilChipName.textContent = council.bond.name;
+    ui.councilChipSupport.textContent = `${council.support.name} · ${council.support.role} 지원`;
   }
 
   applyHeroClassRunModifiers() {
@@ -2611,6 +2735,8 @@ class DokkaebiLuckDefense {
     this.mods.moveSpeed *= selected.modifiers.moveSpeed;
     this.mods.heroDamage *= selected.modifiers.heroDamage;
     this.mods.skillDamage *= selected.modifiers.skillDamage;
+    this.activeHeroPassive = applyHeroArchetypeModifiers(this.mods, selected.id);
+    this.guardianCouncil = applyGuardianCouncilModifiers(this.mods, selected.id, this.selectedCouncilSupportId);
     const mastery = getHeroMasteryBonus(this.heroMastery, selected.id);
     this.mods.heroDamage *= mastery.heroDamage;
     this.mods.skillDamage *= mastery.skillDamage;
@@ -2635,6 +2761,22 @@ class DokkaebiLuckDefense {
     if (item) this.showToast(`${item.name} 장착 완료${this.state === 'playing' || this.state === 'paused' ? ' · 다음 원정부터 적용' : ''}`);
   }
 
+  forgeEquipment(itemId) {
+    const result = forgeEquipmentItem(this.equipmentState, itemId);
+    this.equipmentState = saveEquipmentState(result.state);
+    this.renderEquipmentModal();
+    this.renderRunPreview();
+    if (result.upgraded) {
+      this.sound.merge(Math.min(5, result.level));
+      this.haptic([18, 20, 36]);
+      this.showToast(`${result.item.name} +${result.level} 단조 완료 · 정수 -${result.cost}`);
+    } else if (result.reason === 'max-level') {
+      this.showToast(`${result.item?.name || '장비'}는 이미 +${EQUIPMENT_FORGE_MAX_LEVEL}입니다.`);
+    } else if (result.reason === 'insufficient-essence') {
+      this.showToast(`장비 정수 ${result.cost}개가 필요합니다.`);
+    }
+  }
+
   renderEquipmentModal() {
     if (!ui.equipmentList) return;
     const equipped = getEquippedItems(this.equipmentState);
@@ -2642,18 +2784,23 @@ class DokkaebiLuckDefense {
     ui.equipmentSlots.innerHTML = EQUIPMENT_SLOTS.map((slot) => {
       const item = equipped.find((entry) => entry.slot === slot.id);
       const rarity = item ? EQUIPMENT_RARITIES[item.rarity] : null;
-      return `<article class="equipment-slot-card" style="--rarity:${rarity?.color || '#697386'}"><span>${slot.icon}</span><div><small>${slot.name}</small><b>${item?.name || '비어 있음'}</b><em>${item?.desc || '장비를 선택하세요.'}</em></div></article>`;
+      const forgeLevel = item ? getEquipmentForgeLevel(this.equipmentState, item.id) : 0;
+      return `<article class="equipment-slot-card" style="--rarity:${rarity?.color || '#697386'}">${item ? equipmentIconMarkup(item) : `<span>${slot.icon}</span>`}<div><small>${slot.name}${forgeLevel ? ` · FORGE +${forgeLevel}` : ''}</small><b>${item?.name || '비어 있음'}</b><em>${item?.desc || '장비를 선택하세요.'}</em></div></article>`;
     }).join('');
     ui.equipmentList.innerHTML = EQUIPMENT_SLOTS.map((slot) => {
       const items = EQUIPMENT_ITEMS.filter((item) => item.slot === slot.id && this.equipmentState.owned.includes(item.id));
       return `<section class="equipment-group"><header><span>${slot.icon}</span><b>${slot.name}</b><small>${items.length}종 보유</small></header><div>${items.map((item) => {
         const rarity = EQUIPMENT_RARITIES[item.rarity];
         const active = this.equipmentState.equipped[slot.id] === item.id;
-        return `<button type="button" class="equipment-item ${active ? 'active' : ''}" data-equipment-id="${item.id}" style="--rarity:${rarity.color}"><span>${item.icon}</span><div><b>${item.name}</b><small>${rarity.name} · ${item.desc}</small></div><em>${active ? '장착 중' : '장착'}</em></button>`;
+        const forgeLevel = getEquipmentForgeLevel(this.equipmentState, item.id);
+        const forgeCost = getEquipmentForgeCost(item, forgeLevel);
+        const maxed = forgeLevel >= EQUIPMENT_FORGE_MAX_LEVEL;
+        const canForge = !maxed && this.equipmentState.essence >= forgeCost;
+        return `<article class="equipment-item-row ${active ? 'active' : ''}" style="--rarity:${rarity.color}"><button type="button" class="equipment-item ${active ? 'active' : ''}" data-equipment-id="${item.id}">${equipmentIconMarkup(item)}<div><b>${item.name}${forgeLevel ? ` +${forgeLevel}` : ''}</b><small>${rarity.name} · ${item.desc}</small></div><em>${active ? '장착 중' : '장착'}</em></button><button type="button" class="equipment-forge" data-equipment-forge="${item.id}" ${maxed || !canForge ? 'disabled' : ''}><span>鍛</span><b>${maxed ? 'MAX' : `+${forgeLevel + 1}`}</b><small>${maxed ? '완성' : `정수 ${forgeCost}`}</small></button></article>`;
       }).join('')}</div></section>`;
     }).join('');
-    const bonuses = this.activeEquipmentBonuses || applyEquipmentBonuses({ heroDamage:1, skillDamage:1, moveSpeed:1, dashCooldown:1, soulGain:1, bossDamage:1, pickupRadius:0 }, this.equipmentState);
-    ui.equipmentBonus.textContent = `대장 피해 +${Math.round((bonuses.heroDamage - 1) * 100)}% · 기술 +${Math.round((bonuses.skillDamage - 1) * 100)}% · 이동 +${Math.round((bonuses.moveSpeed - 1) * 100)}%`;
+    const bonuses = applyEquipmentBonuses({ heroDamage:1, skillDamage:1, moveSpeed:1, dashCooldown:1, soulGain:1, bossDamage:1, pickupRadius:0 }, this.equipmentState);
+    ui.equipmentBonus.textContent = `대장 +${Math.round((bonuses.heroDamage - 1) * 100)}% · 기술 +${Math.round((bonuses.skillDamage - 1) * 100)}% · 이동 +${Math.round((bonuses.moveSpeed - 1) * 100)}% · 단조 ${this.equipmentState.forged || 0}회`;
     const mastery = getHeroMasteryEntry(this.heroMastery, this.selectedHeroClassId);
     ui.equipmentMastery.textContent = `${this.heroClass?.name || '도깨비 전사'} 숙련 Lv.${mastery.level} · 원정 ${mastery.runs}회 · 승리 ${mastery.wins}회`;
   }
@@ -2994,6 +3141,8 @@ class DokkaebiLuckDefense {
     this.combatTelemetry.resetRun();
     this.battleMomentum.resetRun();
     this.bossEscalation.resetRun();
+    this.bossBreak.resetRun();
+    this.campaign.resetRun();
     document.body.classList.remove('momentum-overdrive');
     this.activeEncounterPlan = null;
     this.lastEncounterResult = null;
@@ -3013,12 +3162,17 @@ class DokkaebiLuckDefense {
     this.firstMissionIndex = 0;
     this.firstMissionStats = { summons: 0, merges: 0, bosses: 0 };
     this.mods = this.createDefaultMods(metaTraits);
+    this.runStats.forgedAtStart = this.equipmentState?.forged || 0;
     this.applyHeroClassRunModifiers();
+    this.mods.reactionDamage *= this.activeRunMode.reactionDamage || 1;
+    this.mods.bossDamage *= this.activeRunMode.bossDamage || 1;
+    this.mods.statusDuration *= this.activeRunMode.statusDuration || 1;
     this.mods.heroDamage *= this.dailyEdict?.heroDamage || 1;
     this.mods.luckGain *= this.dailyEdict?.luckGain || 1;
     this.renderRelicStrip();
     this.refreshHeroVisualLoadout();
     this.renderRunSeedChip();
+    this.updateCouncilHUD();
     ui.waveTrial.classList.add('hidden');
     this.player.group.position.set(0, 0, 6.2);
     this.player.attackCooldown = 0;
@@ -3036,7 +3190,7 @@ class DokkaebiLuckDefense {
     this.updateUnitStrip();
     this.updateFirstMissionPanel();
     this.updateHUD();
-    this.showMission(`${this.heroClass.name} · ${this.activeRunMode.name}`, `${this.dailyEdict.icon} ${this.dailyEdict.name} · ${this.heroClass.role} 출정`, `${this.selectedSeedModeId === 'daily' ? 'TODAY' : 'SEEDED'} EXPEDITION · ${this.runSeed}`, 1700);
+    this.showMission(`${this.heroClass.name} · ${this.activeRunMode.name}`, `${this.guardianCouncil.bond.icon} ${this.guardianCouncil.bond.name} · ${this.guardianCouncil.support.name} 지원`, `${this.selectedSeedModeId === 'daily' ? 'TODAY' : 'SEEDED'} EXPEDITION · ${this.runSeed}`, 1850);
     this.scheduleRun(() => {
       if (this.units.length === 0) this.summonUnit({ free: true, guaranteedRank: 2, starter: true });
     }, 520, { key: 'starter-summon', guard: () => this.runId === activeRunId && this.state === 'playing' });
@@ -3092,7 +3246,7 @@ class DokkaebiLuckDefense {
   }
 
   showGameUI(show) {
-    [ui.hud, ui.synergyPanel, ui.luckMeter, ui.unitStrip, ui.joystick, ui.actionDock, ui.leftUiToggle, ui.stageChip].forEach((element) => element.classList.toggle('hidden', !show));
+    [ui.hud, ui.synergyPanel, ui.luckMeter, ui.unitStrip, ui.joystick, ui.actionDock, ui.leftUiToggle, ui.stageChip, ui.councilChip].forEach((element) => element.classList.toggle('hidden', !show));
     ui.autoWavePanel?.classList.toggle('hidden', !show || this.autoWaveCountdown <= 0);
     ui.firstMissionPanel.classList.toggle('hidden', !show || !this.firstMissionActive);
     ui.moonOmen.classList.toggle('hidden', !show || !this.activeOmen);
@@ -3307,6 +3461,7 @@ class DokkaebiLuckDefense {
     const wasCountingDown = this.autoWaveCountdown > 0;
     this.cancelAutoWaveCountdown();
     this.currentWave += 1;
+    const campaignEntry = this.campaign.enterWave(this.currentWave);
     this.waveActive = true;
     this.waveStartHp = this.coreHp;
     this.activeOmen = selectMoonOmen(this.lastOmenId, () => this.random());
@@ -3337,6 +3492,10 @@ class DokkaebiLuckDefense {
       this.haptic([45, 40, 70]);
       this.scheduleRun(() => ui.boss.classList.remove('show'), 1900, { key: 'boss-banner-hide' });
       this.scheduleRun(() => ui.boss.classList.add('hidden'), 2350, { key: 'boss-banner-collapse' });
+    }
+    if (this.currentWave === 1 || campaignEntry.changed) {
+      const act = campaignEntry.act;
+      this.showMission(`${act.icon} ACT ${act.index} · ${act.name}`, act.description, `${act.subtitle} · WAVE ${act.startWave}-${act.endWave}`, 1850);
     }
     const doctrine = this.activeEncounterPlan;
     this.showToast(`${auto ? '자동 진군 · ' : manual && wasCountingDown ? '즉시 진군 · ' : ''}웨이브 ${this.currentWave} 시작! ${doctrine?.icon || '☾'} ${doctrine?.name || '달빛 진군'}`);
@@ -3381,6 +3540,7 @@ class DokkaebiLuckDefense {
     this.recordCodexDiscovery(enemy.boss ? 'boss' : 'monster', type);
     if (enemy.boss) {
       this.bossEscalation.register(enemy);
+      this.bossBreak.register(enemy);
       this.showMission(ENEMY_TYPES[type].name, '강력한 우두머리가 신목으로 돌진합니다.', 'BOSS HAS ENTERED', 1550);
       this.haptic([70, 45, 100]);
       this.updateBossHUD();
@@ -3404,10 +3564,11 @@ class DokkaebiLuckDefense {
     const mode = this.activeRunMode || RUN_MODES.guardian;
     const trialEliteChance = this.currentTrial?.id === 'hunt' ? .12 : 0;
     const encounter = this.activeEncounterPlan || {};
-    const elite = config.boss ? null : rollEliteAffix(this.currentWave, omen, () => this.random(), mode.eliteChance + trialEliteChance + (this.dailyEdict?.eliteChance || 0) + (encounter.eliteChanceBonus || 0), options.forceElite);
-    const hp = config.hp * waveScale * contractHp * (omen.enemyHp || 1) * mode.enemyHp * (this.dailyEdict?.enemyHp || 1) * (elite?.hp || 1) * (encounter.hpMultiplier || 1);
-    const speed = config.speed * (1 + Math.min(.22, this.currentWave * .012)) * contractSpeed * (omen.enemySpeed || 1) * mode.enemySpeed * (this.dailyEdict?.enemySpeed || 1) * (elite?.speed || 1) * (encounter.speedMultiplier || 1);
-    const damage = config.damage * (1 + (this.currentWave - 1) * .1) * (omen.enemyDamage || 1) * mode.enemyDamage * (this.dailyEdict?.enemyDamage || 1) * (elite?.damage || 1) * (encounter.damageMultiplier || 1);
+    const campaign = this.campaign?.modifiers || {};
+    const elite = config.boss ? null : rollEliteAffix(this.currentWave, omen, () => this.random(), mode.eliteChance + trialEliteChance + (this.dailyEdict?.eliteChance || 0) + (encounter.eliteChanceBonus || 0) + (campaign.eliteChance || 0), options.forceElite);
+    const hp = config.hp * waveScale * contractHp * (omen.enemyHp || 1) * mode.enemyHp * (this.dailyEdict?.enemyHp || 1) * (elite?.hp || 1) * (encounter.hpMultiplier || 1) * (campaign.enemyHp || 1);
+    const speed = config.speed * (1 + Math.min(.22, this.currentWave * .012)) * contractSpeed * (omen.enemySpeed || 1) * mode.enemySpeed * (this.dailyEdict?.enemySpeed || 1) * (elite?.speed || 1) * (encounter.speedMultiplier || 1) * (campaign.enemySpeed || 1);
+    const damage = config.damage * (1 + (this.currentWave - 1) * .1) * (omen.enemyDamage || 1) * mode.enemyDamage * (this.dailyEdict?.enemyDamage || 1) * (elite?.damage || 1) * (encounter.damageMultiplier || 1) * (campaign.enemyDamage || 1);
     this.applyEliteVisual(group, elite);
     if (elite) this.showCombatText(group.position.clone().add(new THREE.Vector3(0, 2.15, 0)), elite.name, { label: `${elite.icon} 정예` });
     return {
@@ -3505,8 +3666,11 @@ class DokkaebiLuckDefense {
     this.lastEncounterResult = encounterResult;
     this.combatTelemetry.endWave({ wave: this.currentWave, perfect, coreHpRatio: this.coreHp / Math.max(1, this.coreMaxHp), planResult: encounterResult });
     this.notifyMomentumActivation(this.battleMomentum.recordWave({ perfect }));
-    const reward = Math.round((24 + this.currentWave * 7 + perfectBonus) * this.activeRunMode.reward * (this.dailyEdict?.reward || 1) * (this.activeEncounterPlan?.rewardMultiplier || 1) * this.battleMomentum.rewardMultiplier);
+    const campaignResult = this.campaign.completeWave(this.currentWave);
+    if (campaignResult.completed) this.runStats.actsCleared = campaignResult.clearedCount;
+    const reward = Math.round((24 + this.currentWave * 7 + perfectBonus) * this.activeRunMode.reward * (this.dailyEdict?.reward || 1) * (this.activeEncounterPlan?.rewardMultiplier || 1) * (this.campaign.modifiers.reward || 1) * this.battleMomentum.rewardMultiplier);
     this.gold += reward;
+    this.applyCouncilWaveIntervention(perfect);
     this.score += Math.round((this.currentWave * 250 + this.coreHp * 8) * this.activeRunMode.score * (this.dailyEdict?.score || 1));
     this.showCombo(`웨이브 ${this.currentWave} 격파 · +${reward} 엽전${perfectBonus ? ' · 무결점!' : ''}`, 1600);
     const clearImpact = this.combatPresentation?.impact({
@@ -3534,6 +3698,37 @@ class DokkaebiLuckDefense {
     this.buildPostWaveQueue();
     this.advancePostWaveRewards();
     this.updateHUD();
+  }
+
+  applyCouncilWaveIntervention(perfect = false) {
+    const supportId = this.selectedCouncilSupportId;
+    let message = '';
+    if (supportId === 'warrior' && this.currentWave % 3 === 0) {
+      const before = this.moonWard;
+      this.moonWard = Math.min(3, this.moonWard + 1);
+      if (this.moonWard > before) message = '철벽 호위 · 달빛 방패 +1';
+    } else if (supportId === 'archer') {
+      const bonus = Math.round(6 + this.currentWave * 1.5 + (perfect ? 5 : 0));
+      this.gold += bonus;
+      message = `월영 척후 · 추적 전리품 +${bonus}`;
+    } else if (supportId === 'mage') {
+      const soul = 6 + (perfect ? 4 : 0);
+      this.gainSoul(soul, 'council-mage');
+      message = `원소 참모 · 혼불 +${soul}`;
+    } else if (supportId === 'taoist') {
+      const luck = 4 + (perfect ? 3 : 0);
+      this.luck = clamp(this.luck + luck, 0, 100);
+      message = `봉인 도사 · 대박 기운 +${luck}%`;
+    } else if (supportId === 'shaman') {
+      const heal = Math.max(1, Math.round(this.coreMaxHp * .045 * (this.mods.coreHealing || 1)));
+      const applied = Math.max(0, Math.min(heal, this.coreMaxHp - this.coreHp));
+      this.coreHp += applied;
+      if (applied > 0) message = `신목 무당 · 신목 회복 +${applied}`;
+    }
+    if (!message) return;
+    this.runStats.councilInterventions += 1;
+    this.showToast(message);
+    this.spawnRing(new THREE.Vector3(0, 0, 0), 0x8cecff, 4.6);
   }
 
   offerContract() {
@@ -3733,9 +3928,9 @@ class DokkaebiLuckDefense {
         const burstDamage = this.guardianBurstTimer > 0 ? 1.48 * this.mods.burstPower : 1;
         const damage = (attack.damage + this.currentWave * 1.2) * this.mods.heroDamage * this.getThunderHeroMultiplier() * (this.activeOmen?.heroDamage || 1) * (this.jackpotTimer > 0 ? 1.15 : 1) * burstDamage;
         this.animations.trigger(this.player.animation, 'attack', .24);
-        this.combatPresentation?.muzzle({ position: origin, direction: attackDirection, color: classConfig.color, style: classConfig.id === 'archer' ? 'wind' : classConfig.id === 'mage' ? 'skill' : 'hero' });
-        this.fireProjectile({ kind: 'hero', type: classConfig.id === 'archer' ? 'wind' : 'hero', damageSource: 'hero', origin, target, damage, speed: attack.speed, color: classConfig.color, radius: attack.radius, pierce: attack.pierce || 0, splash: attack.splash || 0 });
-        this.sound.shoot(classConfig.id === 'archer' ? 'wind' : 'hero');
+        this.combatPresentation?.muzzle({ position: origin, direction: attackDirection, color: classConfig.color, style: classConfig.attackStyle || 'hero' });
+        this.fireProjectile({ kind: 'hero', type: classConfig.attackStyle || 'hero', damageSource: classConfig.damageSource || 'hero', origin, target, damage, speed: attack.speed, color: classConfig.color, radius: attack.radius, pierce: attack.pierce || 0, splash: attack.splash || 0, chain: attack.chain || 0 });
+        this.sound.shoot(classConfig.attackStyle === 'wind' ? 'wind' : 'hero');
       }
     }
   }
@@ -3780,20 +3975,38 @@ class DokkaebiLuckDefense {
       const targets = this.enemies.filter((enemy) => !enemy.dead && enemy.group.position.distanceTo(center) <= skill.radius).sort((a, b) => a.group.position.distanceTo(center) - b.group.position.distanceTo(center)).slice(0, 6);
       targets.forEach((target, index) => {
         const origin = center.clone().add(new THREE.Vector3((index - 2.5) * .08, 1.35, 0));
-        this.fireProjectile({ kind: 'hero-skill', type: 'wind', damageSource: 'skill', origin, target, damage: damage * .72, speed: 34, color: classConfig.color, radius: .17, pierce: 2 });
+        this.fireProjectile({ kind: 'hero-skill', type: 'wind', damageSource: 'skill-archer', origin, target, damage: damage * .72, speed: 34, color: classConfig.color, radius: .17, pierce: 2 });
       });
       this.spawnRing(center, classConfig.color, 3.2);
+    } else if (classConfig.id === 'taoist') {
+      const targets = this.enemies.filter((enemy) => !enemy.dead && enemy.group.position.distanceTo(center) <= skill.radius).sort((a, b) => a.group.position.distanceTo(center) - b.group.position.distanceTo(center)).slice(0, skill.targets || 8);
+      targets.forEach((enemy, index) => {
+        const scale = 1 - index * .045;
+        this.damageEnemy(enemy, damage * Math.max(.68, scale), 'skill-taoist', center);
+        this.spawnParticles(enemy.group.position.clone().add(new THREE.Vector3(0, 1.4, 0)), classConfig.color, 8, 3.2);
+      });
+      this.spawnRing(center, classConfig.color, skill.radius * .72);
     } else {
       this.spawnSkillEffect(center);
+      const source = classConfig.id === 'mage' ? 'skill-mage' : classConfig.id === 'shaman' ? 'skill-shaman' : 'skill';
       this.enemies.slice().forEach((enemy) => {
         const distance = enemy.group.position.distanceTo(center);
         if (distance > skill.radius) return;
-        this.damageEnemy(enemy, damage * (1 - distance / (skill.radius + 5)), 'skill');
+        this.damageEnemy(enemy, damage * (1 - distance / (skill.radius + 5)), source, center);
         if (classConfig.id === 'mage') {
           enemy.slowTimer = Math.max(enemy.slowTimer, skill.slow || 2.4);
           enemy.slowFactor = Math.min(enemy.slowFactor, .5);
         }
       });
+      if (classConfig.id === 'shaman') {
+        const healing = Math.round((skill.healCore || 0) * (this.mods.coreHealing || 1));
+        const before = this.coreHp;
+        this.coreHp = Math.min(this.coreMaxHp, this.coreHp + healing);
+        const restored = Math.max(0, Math.round(this.coreHp - before));
+        this.moonWard = Math.min(3, this.moonWard + (restored >= 8 ? 1 : 0));
+        this.showToast(`신령 치유굿 · 신목 ${restored ? `+${restored}` : '최대'}${restored >= 8 ? ' · 달빛 방패 +1' : ''}`);
+        this.updateHUD();
+      }
     }
     this.shake = Math.max(this.shake, .6);
     this.showCombo(`${skill.name}!`, 1000);
@@ -4106,6 +4319,7 @@ class DokkaebiLuckDefense {
         onDamage: (damage, statusSource) => this.damageEnemy(enemy, damage, statusSource, enemy.group.position, null, statusSource)
       });
       if (enemy.dead) continue;
+      const breakState = enemy.boss ? this.bossBreak.update(enemy, dt) : null;
       enemy.statusSpeedMultiplier = statusState.speedMultiplier;
       enemy.slowTimer=Math.max(0,enemy.slowTimer-dt);
       if (enemy.slowTimer<=0) enemy.slowFactor=lerp(enemy.slowFactor,1,dt*5);
@@ -4128,8 +4342,13 @@ class DokkaebiLuckDefense {
       const position=enemy.group.position;
       const distance=position.length();
       if (this.lodFrame === 0 || enemy.group.userData.impostor?.active) this.updateEnemyLOD(enemy, position.distanceTo(this.camera.position));
-      let abilityLocked = false;
-      if (enemy.type === 'runner') abilityLocked = this.updateRunnerAbility(enemy, dt, distance);
+      let abilityLocked = Boolean(breakState?.staggered);
+      if (abilityLocked) {
+        this.animations.setBaseState(enemy.animation, 'idle');
+        enemy.group.rotation.z = Math.sin(this.elapsed * 22) * .075;
+        enemy.group.userData.body.material.emissive.setHex(0x8cecff);
+        enemy.group.userData.body.material.emissiveIntensity = 1.15;
+      } else if (enemy.type === 'runner') abilityLocked = this.updateRunnerAbility(enemy, dt, distance);
       else if (enemy.type === 'shaman') abilityLocked = this.updateShamanAbility(enemy, dt, distance);
 
       if (!abilityLocked) {
@@ -4159,8 +4378,10 @@ class DokkaebiLuckDefense {
           this.spawnRing(enemy.group.position, 0xff4f82, 7.2);
           this.haptic([50, 30, 80, 35, 110]);
         }
-        enemy.specialTimer-=dt;
-        if (enemy.specialTimer<=0) this.triggerBossSpecial(enemy);
+        if (!breakState?.staggered) {
+          enemy.specialTimer-=dt;
+          if (enemy.specialTimer<=0) this.triggerBossSpecial(enemy);
+        }
       }
     }
   }
@@ -4724,10 +4945,11 @@ class DokkaebiLuckDefense {
     const incomingStatusType = this.statusEffects.getTypeForSource(source);
     const reaction = this.elementalReactions.resolve(enemy, incomingStatusType, amount, { boss: enemy.boss });
     if (reaction) {
-      amount += reaction.bonusDamage;
-      this.combatTelemetry.recordReaction(reaction.id, reaction.bonusDamage);
+      const reactionDamage = reaction.bonusDamage * (this.mods.reactionDamage || 1) * (this.campaign.modifiers.reactionDamage || 1);
+      amount += reactionDamage;
+      this.combatTelemetry.recordReaction(reaction.id, reactionDamage);
       this.notifyMomentumActivation(this.battleMomentum.recordReaction(reaction.momentum));
-      this.showCombatText(enemy.group.position.clone().add(new THREE.Vector3(0, enemy.boss ? 4.15 : 2.7, 0)), reaction.bonusDamage, { label: `${reaction.icon} ${reaction.label}` });
+      this.showCombatText(enemy.group.position.clone().add(new THREE.Vector3(0, enemy.boss ? 4.15 : 2.7, 0)), reactionDamage, { label: `${reaction.icon} ${reaction.label}` });
       this.spawnRing(enemy.group.position, reaction.color, enemy.boss ? 4.8 : 2.7);
     }
     if (!isStatusTick) {
@@ -4744,7 +4966,10 @@ class DokkaebiLuckDefense {
         this.showCombatText(enemy.group.position.clone().add(new THREE.Vector3(0, enemy.boss ? 3.55 : 2.18, 0)), 0, { label: `약점 ×${weaknessMultiplier.toFixed(2)}` });
       }
     }
-    if (enemy.boss) amount *= this.mods.bossDamage;
+    if (enemy.boss) {
+      amount *= this.mods.bossDamage;
+      amount *= this.bossBreak.damageTakenMultiplier(enemy);
+    }
     if (enemy.eliteShield > 0) {
       const absorbed = Math.min(enemy.eliteShield, amount);
       enemy.eliteShield -= absorbed;
@@ -4764,10 +4989,11 @@ class DokkaebiLuckDefense {
       const forward = new THREE.Vector3(Math.sin(enemy.group.rotation.y),0,Math.cos(enemy.group.rotation.y));
       if (forward.dot(incoming) > .18) { amount *= .35; shielded = true; enemy.shieldFlash = .14; }
     }
-    const critChance = shielded ? 0 : source === 'hero' ? .12 : source === 'thunder' ? .18 : source === 'wind' ? .08 : .035;
-    const crit = source !== 'skill' && !ultimate && this.random() < critChance;
+    const baseCritChance = source.startsWith('hero') ? .12 : source === 'thunder' ? .18 : source === 'wind' ? .08 : .035;
+    const critChance = shielded ? 0 : clamp(baseCritChance + (this.mods.critChanceBonus || 0), 0, .42);
+    const crit = !source.startsWith('skill') && !ultimate && this.random() < critChance;
     if (crit) amount *= 1.75;
-    const appliedStatus = this.statusEffects.applyFromSource(enemy, source, amount);
+    const appliedStatus = this.statusEffects.applyFromSource(enemy, source, amount, { potencyMultiplier: this.mods.statusPotency || 1, durationMultiplier: this.mods.statusDuration || 1 });
     if (appliedStatus) {
       this.combatTelemetry.recordStatus(appliedStatus.type);
       if (!enemy.statusTextCooldown || enemy.statusTextCooldown <= 0) {
@@ -4776,12 +5002,22 @@ class DokkaebiLuckDefense {
       }
     }
     const appliedDamage = Math.max(0, Math.min(enemy.hp, amount));
+    const breakResult = enemy.boss ? this.bossBreak.recordDamage(enemy, appliedDamage, { reaction: Boolean(reaction), critical: crit, status: isStatusTick, source }) : null;
+    if (breakResult?.triggered) {
+      this.runStats.bossBreaks += 1;
+      enemy.specialTimer = Math.max(enemy.specialTimer, breakResult.duration + 1.1);
+      this.showMission('보스 파훼 성공', `균형 붕괴 ${breakResult.duration.toFixed(1)}초 · 받는 피해 +22%`, 'SOVEREIGN BREAK', 1600);
+      this.showCombo('⚡ BREAK · 집중 공격!', 1350);
+      this.spawnRing(enemy.group.position, 0x8cecff, 7.4);
+      this.spawnParticles(enemy.group.position.clone().add(new THREE.Vector3(0, 1.8, 0)), 0x8cecff, enemy.boss ? 30 : 14, 5.5);
+      this.haptic([30, 20, 65, 25, 85]);
+    }
     this.combatTelemetry.recordDamage(source, appliedDamage);
     if (!isStatusTick) this.notifyMomentumActivation(this.battleMomentum.recordDamage(appliedDamage));
     if (owner?.type && owner.commandTimer > 0) this.runStats.commandDamage += appliedDamage;
     if (owner?.type && this.runStats.damageByType[owner.type] !== undefined) this.runStats.damageByType[owner.type] += appliedDamage;
-    else if (source === 'hero') this.runStats.heroDamage += appliedDamage;
-    else if (source === 'skill') this.runStats.skillDamage += appliedDamage;
+    else if (source.startsWith('hero')) this.runStats.heroDamage += appliedDamage;
+    else if (source.startsWith('skill')) this.runStats.skillDamage += appliedDamage;
     else if (source.startsWith('ultimate-')) {
       const type = source.slice('ultimate-'.length);
       if (this.runStats.damageByType[type] !== undefined) this.runStats.damageByType[type] += appliedDamage;
@@ -4821,6 +5057,7 @@ class DokkaebiLuckDefense {
     enemy.dead=true;
     this.statusEffects.clear(enemy);
     this.bossEscalation.unregister(enemy);
+    this.bossBreak.unregister(enemy);
     this.encounterDirector.recordKill();
     this.combatTelemetry.recordKill({ boss: enemy.boss });
     const index=this.enemies.indexOf(enemy);
@@ -4831,7 +5068,7 @@ class DokkaebiLuckDefense {
     const color=ENEMY_TYPES[enemy.type].color;
     this.spawnParticles(deathPosition.clone().add(new THREE.Vector3(0,.8,0)),color,enemy.boss?35:12,enemy.boss?6:3.4);
     const eliteOmenReward = enemy.elite ? (this.activeOmen?.eliteReward || 1) : 1;
-    const reward=Math.max(2,Math.round(enemy.reward*(this.activeEncounterPlan?.rewardMultiplier || 1)*this.mods.goldMultiplier*this.getSpiritGoldMultiplier()*this.getContractRewardMultiplier()*(this.activeOmen?.reward || 1)*this.activeRunMode.reward*(enemy.elite?.reward || 1)*eliteOmenReward*(this.dailyEdict?.reward || 1)*(enemy.elite ? this.mods.eliteReward : 1)*bossEscalationReward*this.battleMomentum.rewardMultiplier));
+    const reward=Math.max(2,Math.round(enemy.reward*(this.activeEncounterPlan?.rewardMultiplier || 1)*this.mods.goldMultiplier*this.getSpiritGoldMultiplier()*this.getContractRewardMultiplier()*(this.activeOmen?.reward || 1)*this.activeRunMode.reward*(enemy.elite?.reward || 1)*eliteOmenReward*(this.dailyEdict?.reward || 1)*(enemy.elite ? this.mods.eliteReward : 1)*bossEscalationReward*(this.campaign.modifiers.reward || 1)*this.battleMomentum.rewardMultiplier));
     this.dropCoins(deathPosition,reward,enemy.boss?9:Math.min(4,1+Math.floor(reward/7)));
     this.kills+=1;
     this.gainSoul(enemy.boss ? 24 : enemy.elite ? 8 : 2, 'kill');
@@ -5175,8 +5412,11 @@ class DokkaebiLuckDefense {
       );
       if (this.cinematic.time <= 0) this.cinematic = null;
     } else {
-      target=this.player.group.position.clone().add(new THREE.Vector3(0,1.35,0));
-      const safeDistance = this.resolveCameraCollisionDistance(target, this.cameraDistance);
+      const profile = this.activeCameraProfile || getCameraProfile(this.controlSettings?.cameraProfile);
+      const bossActive = this.enemies.some((enemy) => enemy.boss && !enemy.dead);
+      const framedDistance = resolveCameraDistance(profile.id, { waveActive: this.waveActive, bossActive, manualDistance: this.cameraDistance });
+      target=this.player.group.position.clone().add(new THREE.Vector3(0,profile.targetHeight,0));
+      const safeDistance = this.resolveCameraCollisionDistance(target, framedDistance);
       const collisionBlend = safeDistance < this.cameraCollisionDistance ? 1 - Math.pow(.000001, dt) : 1 - Math.pow(.02, dt);
       this.cameraCollisionDistance = lerp(this.cameraCollisionDistance, safeDistance, collisionBlend);
       const horizontal=Math.cos(this.cameraPitch)*this.cameraCollisionDistance;
@@ -5326,9 +5566,19 @@ class DokkaebiLuckDefense {
       ui.bossDangerFrame.classList.add('hidden');
       ui.bossDangerFrame.dataset.urgency = 'stable';
       document.body.classList.remove('boss-active');
+      if (ui.bossBreakProgress) ui.bossBreakProgress.style.width = '0%';
+      if (ui.bossBreakValue) ui.bossBreakValue.textContent = '0%';
+      if (ui.bossBreakState) ui.bossBreakState.textContent = '원소 반응과 치명타로 파훼';
       return;
     }
     const percent = clamp(boss.hp / boss.maxHp, 0, 1);
+    const breakState = this.bossBreak.getState(boss);
+    const breakGauge = clamp(breakState?.gauge || 0, 0, 100);
+    ui.bossBreakProgress.style.width = `${breakState?.staggerRemaining > 0 ? 100 : breakGauge}%`;
+    ui.bossBreakValue.textContent = breakState?.staggerRemaining > 0 ? `${breakState.staggerRemaining.toFixed(1)}s` : `${Math.round(breakGauge)}%`;
+    ui.bossBreakState.textContent = breakState?.staggerRemaining > 0 ? '균형 붕괴 · 받는 피해 +22%' : breakState?.immunityRemaining > 0 ? `재정비 ${breakState.immunityRemaining.toFixed(1)}s` : '원소 반응과 치명타로 파훼';
+    ui.bossBreak.classList.toggle('staggered', breakState?.staggerRemaining > 0);
+    ui.bossBreak.classList.toggle('immune', breakState?.immunityRemaining > 0 && breakState?.staggerRemaining <= 0);
     const intentName = this.getBossIntentName(boss);
     const hudState = getBossHudState(boss, intentName);
     ui.bossHealthName.textContent = ENEMY_TYPES[boss.type].name;
@@ -5353,8 +5603,9 @@ class DokkaebiLuckDefense {
   updateStageHUD() {
     const state = getStageProgress(this.currentWave, this.maxWaves);
     ui.stageIcon.textContent = state.zone.icon;
-    ui.stageName.textContent = state.stage.name;
-    ui.stageZone.textContent = `${state.zone.name} · ${state.zone.copy}`;
+    const act = this.campaign?.current;
+    ui.stageName.textContent = act ? `${act.icon} ${act.name}` : state.stage.name;
+    ui.stageZone.textContent = act ? `ACT ${act.index} · ${state.zone.name} · ${state.zone.copy}` : `${state.zone.name} · ${state.zone.copy}`;
     ui.stageProgress.style.width = `${Math.round(state.progress * 100)}%`;
     ui.stageChip.style.setProperty('--stage-accent', state.stage.accent);
   }
@@ -5404,6 +5655,7 @@ class DokkaebiLuckDefense {
     ui.momentumState.textContent = mythicMomentum.active ? '신명 폭주 · 피해 +22% · 전리품 +14%' : '반응과 연속 처치로 충전';
     ui.momentumMeter.classList.toggle('active', mythicMomentum.active);
     this.updateCommandChipStates();
+    this.updateCouncilHUD();
     this.updateStageHUD();
     this.updateBossHUD();
   }
@@ -5457,19 +5709,31 @@ class DokkaebiLuckDefense {
         animations: this.animations?.diagnostics || null,
         lifecycle: this.lifecycle.diagnostics,
         artProduction: ART_PRODUCTION_SUMMARY,
+        goldenSliceCertification: GOLDEN_SLICE_CERTIFICATION_SUMMARY,
+        cameraProfile: { id: this.activeCameraProfile?.id || this.controlSettings.cameraProfile, distance: this.cameraDistance, target: this.cameraDistanceTarget, fov: this.camera?.fov || 0 },
         characterDNA: CHARACTER_DNA_SUMMARY,
+        heroArchetypes: HERO_ARCHETYPE_SUMMARY,
+        assetForge: IP_ASSET_LIBRARY_V13,
+        activeHeroPassive: this.activeHeroPassive || null,
         qualityGovernor: this.engine.qualityGovernor?.diagnostics || null,
         frameScheduler: this.frameScheduler.diagnostics,
         encounterDirector: this.encounterDirector.diagnostics,
         combatTelemetry: this.combatTelemetry.snapshot,
         statusEffects: this.statusEffects.diagnostics,
         runtimeBudget: this.runtimeBudget.diagnostics,
+        reactions: this.elementalReactions?.diagnostics,
+        momentum: this.battleMomentum?.diagnostics,
+        bossEscalation: this.bossEscalation?.diagnostics,
+        bossBreak: this.bossBreak?.diagnostics,
+        campaign: this.campaign?.diagnostics,
+        guardianCouncil: this.guardianCouncil,
         saveMigration: this.saveMigration
       },
       progression: {
         heroClass: this.selectedHeroClassId,
+        councilSupport: this.selectedCouncilSupportId,
         mastery: getHeroMasteryEntry(this.heroMastery, this.selectedHeroClassId),
-        equipment: { equipped: { ...this.equipmentState.equipped }, ownedCount: this.equipmentState.owned.length, essence: this.equipmentState.essence }
+        equipment: { equipped: { ...this.equipmentState.equipped }, upgrades: { ...(this.equipmentState.upgrades || {}) }, ownedCount: this.equipmentState.owned.length, essence: this.equipmentState.essence, forged: this.equipmentState.forged || 0 }
       },
       settings: this.controlSettings,
       viewport: { width: window.innerWidth, height: window.innerHeight, pixelRatio: window.devicePixelRatio || 1 },
@@ -5529,12 +5793,14 @@ class DokkaebiLuckDefense {
       <div><span>위험 패턴</span><b>회피 ${this.runStats.dangerDodges}회</b><small>파열 회피 ${this.runStats.eliteBurstDodges} · 피격 ${this.runStats.eliteBurstHits} · 보스 피격 ${this.runStats.bossHazardHits}</small></div>
       <div><span>수호신 폭주</span><b>${this.runStats.guardianBursts}회</b><small>최대 연속 처치 ${this.runStats.maxKillChain} · 질주 ${this.runStats.dashUses}회</small></div>
       <div><span>도감 연구</span><b>발견 ${this.runStats.codexDiscoveries} · 전리품 ${this.runStats.codexDrops}</b><small>약점 해독 ${this.runStats.weaknessUnlocks} · 약점 공격 ${this.runStats.weaknessHits.toLocaleString()}회</small></div>
+      <div><span>수호 의회</span><b>${this.guardianCouncil.bond.icon} ${this.guardianCouncil.bond.name}</b><small>${this.guardianCouncil.support.name} · 캠페인 ACT ${this.runStats.actsCleared}/4</small></div>
+      <div><span>보스 파훼</span><b>BREAK ${this.runStats.bossBreaks}회</b><small>장비 단조 누적 ${this.equipmentState.forged || 0}회 · 정수 ${this.equipmentState.essence || 0}</small></div>
       <div><span>원정 시드</span><b>${this.runSeed}</b><small>${this.dailyEdict.icon} ${this.dailyEdict.name} · ${this.selectedSeedModeId === 'daily' ? '오늘의 원정' : '자유 원정'}</small></div>`;
     const shardReward = this.awardRunShards(won);
     const persistentReward = this.awardPersistentProgress(won);
     ui.resultShards.textContent = `+${shardReward}`;
     ui.resultShardsTotal.textContent = this.metaProgress.shards.toLocaleString();
-    ui.resultEquipmentReward.innerHTML = persistentReward.drop ? `<span style="--rarity:${EQUIPMENT_RARITIES[persistentReward.drop.item.rarity].color}">${persistentReward.drop.item.icon}</span><div><small>${persistentReward.drop.duplicate ? '중복 장비 분해' : '새 장비 획득'}</small><b>${persistentReward.drop.item.name}</b><em>${persistentReward.drop.duplicate ? `장비 정수 +${persistentReward.drop.essence}` : persistentReward.drop.item.desc}</em></div>` : '<span>–</span><div><small>장비 보상</small><b>웨이브 3부터 획득</b><em>더 깊은 원정에서 장비를 발견하세요.</em></div>';
+    ui.resultEquipmentReward.innerHTML = persistentReward.drop ? `<span style="--rarity:${EQUIPMENT_RARITIES[persistentReward.drop.item.rarity].color}">${equipmentIconMarkup(persistentReward.drop.item, 'reward-sprite')}</span><div><small>${persistentReward.drop.duplicate ? '중복 장비 분해' : '새 장비 획득'}</small><b>${persistentReward.drop.item.name}</b><em>${persistentReward.drop.duplicate ? `장비 정수 +${persistentReward.drop.essence}` : persistentReward.drop.item.desc}</em></div>` : '<span>–</span><div><small>장비 보상</small><b>웨이브 3부터 획득</b><em>더 깊은 원정에서 장비를 발견하세요.</em></div>';
     ui.resultMasteryReward.innerHTML = `<span>Lv.${persistentReward.mastery.entry.level}</span><div><small>${this.heroClass.name} 숙련</small><b>숙련 경험치 +${persistentReward.mastery.gained}</b><em>${persistentReward.mastery.levelsGained ? `${persistentReward.mastery.levelsGained}레벨 상승!` : `원정 ${persistentReward.mastery.entry.runs}회 누적`}</em></div>`;
     this.renderLeaderboard(this.getLocalScores());
     this.scheduleUi(() => { if (this.state === 'result') this.showModal(ui.resultModal); }, 700, { key: 'result-modal-show' });
@@ -5591,7 +5857,7 @@ class DokkaebiLuckDefense {
     const result = this.engine.updateAdaptiveQuality(dt);
     if (!result) return;
     this.qualityScale = this.engine.qualityScale;
-    ui.qualityBadge.textContent = `Engine 5.0 ${result.id.toUpperCase()} · ${Math.round(result.fps)} FPS · 해상도 ${Math.round(this.qualityScale * 100)}% · FX ${Math.round(this.engine.effectBudgetScale * 100)}%`;
+    ui.qualityBadge.textContent = `Engine ${ENGINE_VERSION} ${result.id.toUpperCase()} · ${Math.round(result.fps)} FPS · 해상도 ${Math.round(this.qualityScale * 100)}% · FX ${Math.round(this.engine.effectBudgetScale * 100)}%`;
     ui.qualityBadge.classList.remove('hidden');
     this.scheduleUi(() => ui.qualityBadge.classList.add('hidden'), 2400, { key: 'quality-badge-hide' });
     this.qualityAdjusted = true;

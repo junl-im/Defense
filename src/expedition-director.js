@@ -16,6 +16,13 @@ export const RUN_MODES = Object.freeze({
     description: '정예가 쏟아지는 극한 모드입니다. 최고 점수 배율을 제공합니다.',
     enemyHp: 1.55, enemySpeed: 1.1, enemyDamage: 1.35, reward: 1.35, score: 2.1,
     eliteChance: .14, startGold: 25, startWard: 1, soulGain: 1.24
+  }),
+  convergence: Object.freeze({
+    id: 'convergence', icon: '✦', name: '신화 합류전', tag: 'v10',
+    description: '원소 반응과 직업 패시브가 강화되는 고난도 통합 원정입니다.',
+    enemyHp: 1.42, enemySpeed: 1.08, enemyDamage: 1.28, reward: 1.42, score: 2.35,
+    eliteChance: .12, startGold: 30, startWard: 1, soulGain: 1.2,
+    reactionDamage: 1.16, bossDamage: 1.1, statusDuration: 1.12
   })
 });
 

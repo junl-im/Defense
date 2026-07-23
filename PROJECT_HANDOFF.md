@@ -1,3 +1,91 @@
+# PROJECT HANDOFF — CURRENT v13.0.0
+
+- Project: `DokkaebiLuckDefense3D_FULL_v13.0.0`
+- Patch: `Transparent Arsenal`
+- Game version: `13.0.0`
+- Engine version: `10.0.0`
+- Save schema: `11`
+- Baseline: `DokkaebiLuckDefense3D_FULL_v12.0.0`
+- Absolute art lock: `DD-ABSOLUTE-ART-BIBLE-2.0`
+- Runtime vertical slice: `6/6`
+- Final 3D production art: `0/6`
+
+## v13 current state
+
+1. User-provided sprite sheets: 10.
+2. Generated transparent crops: 415.
+3. Curated and wired into runtime UI: 42.
+4. Total 2D runtime-ready after automatic checks: 124.
+5. Manual review queue: 291.
+6. Source sheets are preserved under `public/assets/ip-v13/sheets` but excluded from static deployment.
+7. The five hero selector cards, codex portraits and nine equipment icons use v13 crops.
+8. These are 2D presentation assets only; no final 3D model approval was granted.
+
+## Verification
+
+- `npm run verify`: PASS
+- `python scripts/generate-asset-sheets-v13.py --check`: PASS
+- Static deployment verification: required before release packaging
+
+---
+
+# PROJECT HANDOFF — CURRENT v11.0.0
+
+- Project: `DokkaebiLuckDefense3D_FULL_v11.0.0`
+- Baseline: `DokkaebiLuckDefense3D_FULL_v10.0.0`
+- Patch name: `Sovereign Assembly`
+- Game version: `11.0.0`
+- Engine version: `9.0.0`
+- Save schema: `9`
+- Absolute art lock: `DD-ABSOLUTE-ART-BIBLE-2.0`
+- Production-approved assets: `0`
+
+## Sovereign Assembly implemented
+
+- Added a Guardian Council with five support roles and fifteen leader-support bonds.
+- Connected council modifiers to hero damage, skills, bosses, reactions, statuses, core defense/healing and soul gain.
+- Added four Moonfront campaign acts covering waves 1 through 10 with act-specific combat and reward pressure.
+- Added a player-facing Boss BREAK gauge, 3.25 second stagger, 22% vulnerability and 8.5 second recovery immunity.
+- Added equipment forging from +0 to +5 using equipment essence, with bonus scaling and backward-compatible storage.
+- Added Guardian Council, Campaign Act, Boss Break and Equipment Forge cards to the F4 production console.
+- Upgraded game 11.0.0, engine 9.0.0, save schema 9 and asset revision 11.0.0.
+- Added v11 contract verification and kept the complete historic regression suite active.
+
+## Non-negotiable status
+
+The 40 transparent derivatives remain automated presentation candidates. Five logical classes still reuse three verified runtime hero GLBs. All 19 runtime GLBs remain legacy technical candidates. Production approval remains 0, golden vertical-slice approval remains 0/6, and the 1,130-asset production plan remains locked.
+
+---
+
+# PROJECT HANDOFF — CURRENT v10.0.0
+
+- Project: `DokkaebiLuckDefense3D_FULL_v10.0.0`
+- Baseline: `DokkaebiLuckDefense3D_FULL_v9.0.0` built from user-provided `Defense.zip`
+- Game version: `10.0.0`
+- Engine version: `8.0.0`
+- Save schema: `8`
+- Absolute art lock: `DD-ABSOLUTE-ART-BIBLE-2.0`
+- Production-approved assets: `0`
+
+## Golden Convergence implemented
+
+- Generated 40 transparent 512×512 presentation derivatives from the 40 named high-resolution candidates.
+- Generated 40 silhouette review derivatives and a combined review board.
+- Added Asset Review OS v10 with source/alpha/silhouette comparison, filters, local Pass/Rework/Reject decisions and JSON export.
+- Expanded the playable roster to warrior, archer, mage, taoist and shaman.
+- Added five class passives and runtime combat modifiers.
+- Added taoist seal combat, shaman ritual healing and procedural class loadouts.
+- Added the fourth run mode Mythic Convergence.
+- Added HERO ROSTER and ASSET FORGE diagnostics to the F4 production console.
+- Isolated review-library textures from the combat budget; only five title class cards count toward the verified 62.86MB / 64MB runtime texture budget.
+- Upgraded game 10.0.0, engine 8.0.0, save schema 8 and asset revision 10.0.0.
+
+## Non-negotiable status
+
+The 40 transparent derivatives are automated presentation candidates, not source art or final deliverables. Five logical classes currently reuse three verified runtime hero GLBs. The 19 combat GLBs remain legacy technical candidates, golden vertical-slice approval remains 0/6, and the 1,130-asset production plan remains locked.
+
+---
+
 # PROJECT HANDOFF — CURRENT v9.0.0
 
 - Project: `DokkaebiLuckDefense3D_FULL_v9.0.0`
@@ -3100,3 +3188,30 @@ GitHub Actions에서 `npm run verify`가 exit 1로 종료됐지만 로그 마지
 - 저비용 프로토타입 적은 3.2k, 공용 리그 기술 후보 적은 9k triangles 예산으로 분리한다.
 - `scripts/verify-p0-v390.mjs`가 후보 GLB 5종, PNG 9종, 직업 분기, 유물 소켓, 보스 HUD를 검사한다.
 - `npm run verify` 전체 회귀 검증을 통과해야 빌드가 진행된다.
+
+---
+
+## v12.0.0 / Engine 10.0.0 — Golden Dominion
+
+### 현재 기준
+
+- 기본 카메라를 `15.5`에서 `19.5`로 이동하고 pitch `0.73`, FOV `52`를 적용했다.
+- 전장 조망, 균형 시야, 근접 시야 3개 프리셋을 제공하며 F5로 순환한다.
+- 웨이브와 보스전에서는 카메라가 자동으로 조금 더 멀어져 맵과 적 동선을 함께 보여준다.
+- 데스크톱 월드 청크 반경은 2, 모바일은 1이다.
+
+### 골든 수직 슬라이스
+
+- 런타임 인증: `6/6`
+- 최종 제작 아트 승인: `0/6`
+- 대량 생산 잠금: 유지
+
+`runtime-certified`와 `production-approved`는 절대 같은 의미로 사용하지 않는다.
+
+### 애니메이션·장비 계약
+
+공용 Skin 런타임 GLB 8종은 11개 클립과 6개 장비 소켓을 가진다. 기존 Attack/Skill 클립은 Attack1/2 및 Skill1/2 계약으로 승격됐고 Victory/Spawn 클립이 추가됐다.
+
+### 다음 작업
+
+최종 작가 제작 도깨비 전사·일반 요괴·저승 호랑이·환경·HUD·VFX를 수동 검수해 production art 6/6을 달성한다. 그 전에는 1,130개 대량 생산 잠금을 해제하지 않는다.

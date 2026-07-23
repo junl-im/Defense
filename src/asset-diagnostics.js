@@ -8,7 +8,7 @@ export function buildAssetDiagnostics(statuses, labels, goldenSampleId) {
   const review = statuses.filter((status) => status.approval?.status === 'art-review').length;
   const fallbacks = statuses.reduce((sum, status) => sum + status.fallbacks, 0);
   const golden = statuses.find((status) => status.id === goldenSampleId);
-  const summary = `GLB 로드 ${loaded}/${statuses.length} · 골든 샘플 Skin ${golden?.metrics?.skins || 0} · Clip ${golden?.metrics?.animations?.length || 0}/7${fallbacks ? ` · 폴백 ${fallbacks}회` : ''}`;
+  const summary = `GLB 로드 ${loaded}/${statuses.length} · 골든 샘플 Skin ${golden?.metrics?.skins || 0} · Clip ${golden?.metrics?.animations?.length || 0}/11${fallbacks ? ` · 폴백 ${fallbacks}회` : ''}`;
   const html = statuses.map((status) => {
     const approval = status.approval;
     const isReview = approval?.status === 'art-review';

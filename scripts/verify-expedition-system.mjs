@@ -6,13 +6,14 @@ import {
 } from '../src/expedition-director.js';
 import { createSeededRandom } from '../src/daily-expedition.js';
 
-assert.equal(Object.keys(RUN_MODES).length, 3, 'run mode count');
+assert.equal(Object.keys(RUN_MODES).length, 4, 'run mode count');
 assert.equal(RELICS.length, 18, 'relic count');
 assert.equal(RELICS.filter((relic) => relic.cursed).length, 4, 'cursed relic count');
 assert.equal(Object.keys(RELIC_SET_BONUSES).length, 4, 'relic set count');
 assert.equal(getRunMode('missing').id, 'guardian', 'invalid mode fallback');
 assert.ok(RUN_MODES.abyss.enemyHp > RUN_MODES.guardian.enemyHp, 'abyss enemy scaling');
 assert.ok(RUN_MODES.abyss.score > RUN_MODES.eclipse.score, 'abyss score scaling');
+assert.ok(RUN_MODES.convergence.reactionDamage > 1 && RUN_MODES.convergence.statusDuration > 1, 'convergence reaction and status scaling');
 
 const excluded = RELICS.slice(0, 4).map((relic) => relic.id);
 const relicOptions = selectRelicOptions(excluded, createSeededRandom('relic-test'), 3);
@@ -46,7 +47,7 @@ assert.match(formatTrialProgress({ id: 'dash', target: 3, progress: 2 }), /2 \/ 
 assert.equal(formatTrialProgress({ id: 'perfect', completed: true, progress: 1 }), '무피해 달성', 'perfect formatting');
 
 const relicGame = {
-  mods: { goldMultiplier: 1, pickupRadius: 0, unitCooldown: 1, commandCooldown: 1, unitDamage: 1, coreDamage: 1, moveSpeed: 1, dashCooldown: 1, skillDamage: 1, skillCooldown: 1, luckGain: 1, summonDiscount: 0, heroDamage: 1, soulGain: 1, burstDuration: 0, burstPower: 1, objectiveReward: 1, eliteReward: 1 },
+  mods: { goldMultiplier: 1, pickupRadius: 0, unitCooldown: 1, commandCooldown: 1, unitDamage: 1, coreDamage: 1, moveSpeed: 1, dashCooldown: 1, skillDamage: 1, skillCooldown: 1, luckGain: 1, summonDiscount: 0, heroDamage: 1, soulGain: 1, burstDuration: 0, burstPower: 1, objectiveReward: 1, eliteReward: 1, reactionDamage: 1, statusDuration: 1, statusPotency: 1, coreHealing: 1 },
   coreMaxHp: 100, coreHp: 80, moonWard: 0, choiceTickets: 0,
   relicHistory: ['warDrum', 'spiritBlade'], activeRelicSets: []
 };

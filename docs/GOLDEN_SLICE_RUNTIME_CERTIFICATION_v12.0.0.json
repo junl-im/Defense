@@ -1,0 +1,288 @@
+{
+  "schemaVersion": 12,
+  "gameVersion": "12.0.0",
+  "engineVersion": "10.0.0",
+  "certificationId": "DD-GVS-RUNTIME-2026-01",
+  "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+  "runtimeVerticalSlice": {
+    "passed": 6,
+    "required": 6,
+    "status": "certified"
+  },
+  "productionArt": {
+    "approved": 0,
+    "required": 6,
+    "status": "locked",
+    "massProductionUnlocked": false
+  },
+  "camera": {
+    "defaultProfile": "scenic",
+    "distance": 19.5,
+    "pitch": 0.73,
+    "fov": 52,
+    "desktopChunkRadius": 2,
+    "mobileChunkRadius": 1
+  },
+  "animationContract": {
+    "riggedAssetsUpgraded": 8,
+    "clips": [
+      "Idle",
+      "Walk",
+      "Run",
+      "Attack1",
+      "Attack2",
+      "Skill1",
+      "Skill2",
+      "Hit",
+      "Death",
+      "Victory",
+      "Spawn"
+    ],
+    "sockets": [
+      "HelmetSocket",
+      "ShoulderSocket",
+      "WeaponSocket",
+      "AccessorySocket",
+      "BackSocket",
+      "FXSocket"
+    ]
+  },
+  "entries": [
+    {
+      "id": "GVS-HERO-WARRIOR",
+      "category": "hero",
+      "label": "도깨비 전사",
+      "runtimeStatus": "runtime-certified",
+      "productionArtApproved": false,
+      "assets": [
+        "public/assets/models/player-dokkaebi-warrior-golden-v1.glb",
+        "public/assets/ip-v10/presentation/characters/hero_dokkaebi_warrior.png",
+        "public/assets/ip-v10/silhouettes/characters/hero_dokkaebi_warrior.png"
+      ],
+      "checks": [
+        "GLB2 header",
+        "Skin 1",
+        "11 clip contract",
+        "6 equipment sockets",
+        "transparent review derivative",
+        "silhouette derivative",
+        "runtime mobile budget"
+      ],
+      "evidence": [
+        {
+          "path": "public/assets/models/player-dokkaebi-warrior-golden-v1.glb",
+          "sha256": "6783e429d3fde9938ca19d297d20171ca81032a782739ed3391b1a79181acbfe"
+        },
+        {
+          "path": "public/assets/ip-v10/presentation/characters/hero_dokkaebi_warrior.png",
+          "sha256": "bb64726366aaf97b080a781c5acdc791f7d2fc1544ff1ed432907d81b8858a3e"
+        },
+        {
+          "path": "public/assets/ip-v10/silhouettes/characters/hero_dokkaebi_warrior.png",
+          "sha256": "8502ef3719d8d3258573502bdcb3eea3b04aaa9ef0256266f3c9684a79312bad"
+        }
+      ]
+    },
+    {
+      "id": "GVS-MONSTER-GRUNT",
+      "category": "monster",
+      "label": "일반 요괴",
+      "runtimeStatus": "runtime-certified",
+      "productionArtApproved": false,
+      "assets": [
+        "public/assets/models/monster-skeleton-candidate-v1.glb",
+        "public/assets/ip-v10/presentation/monsters/monster_skeleton_guard.png",
+        "public/assets/ip-v10/silhouettes/monsters/monster_skeleton_guard.png"
+      ],
+      "checks": [
+        "GLB2 header",
+        "Skin 1",
+        "11 clip contract",
+        "6 equipment sockets",
+        "status hit routing",
+        "silhouette derivative",
+        "runtime mobile budget"
+      ],
+      "evidence": [
+        {
+          "path": "public/assets/models/monster-skeleton-candidate-v1.glb",
+          "sha256": "8b512165332b224c46f23d7217662b62ebaf9cd2be01e8d9149f6b3ffbeaa59f"
+        },
+        {
+          "path": "public/assets/ip-v10/presentation/monsters/monster_skeleton_guard.png",
+          "sha256": "01d3faff10059633f4536464beaeb06c64ce8c7f13ea74c846a387771c175b7e"
+        },
+        {
+          "path": "public/assets/ip-v10/silhouettes/monsters/monster_skeleton_guard.png",
+          "sha256": "727ddd3ba58e4898f2000f8fe257fbec46c8a4ed3b75f6d1971dd774efc3262b"
+        }
+      ]
+    },
+    {
+      "id": "GVS-BOSS-TIGER",
+      "category": "boss",
+      "label": "저승 호랑이",
+      "runtimeStatus": "runtime-certified",
+      "productionArtApproved": false,
+      "assets": [
+        "public/assets/models/boss-tiger-sd-toon.glb",
+        "public/assets/ip-v10/presentation/monsters/pet_tiger_guardian.png",
+        "public/assets/ip-v10/silhouettes/monsters/pet_tiger_guardian.png",
+        "src/combat/boss-break-system.js",
+        "src/combat/boss-escalation-director.js"
+      ],
+      "checks": [
+        "GLB2 header",
+        "boss scale runtime",
+        "phase runtime",
+        "BREAK runtime",
+        "enrage runtime",
+        "telegraph runtime",
+        "mobile budget"
+      ],
+      "evidence": [
+        {
+          "path": "public/assets/models/boss-tiger-sd-toon.glb",
+          "sha256": "bebed2482378f3a32ac91884032ada351dbadd59a57615e6ad5f9c0ec6f4f7f2"
+        },
+        {
+          "path": "public/assets/ip-v10/presentation/monsters/pet_tiger_guardian.png",
+          "sha256": "0d5e810e3f55806fd44d4f976fbce07a48647e5d50e5371dd9040bfcdb639df2"
+        },
+        {
+          "path": "public/assets/ip-v10/silhouettes/monsters/pet_tiger_guardian.png",
+          "sha256": "d84879309eb192a00aa152b38a55261a6936f3d58bfdbcec36dc1b054b723ce7"
+        },
+        {
+          "path": "src/combat/boss-break-system.js",
+          "sha256": "8dc7081b3421b88f7ce0fe105bb7eb941aaaaa684c1fc36558ba05c8fa3eff21"
+        },
+        {
+          "path": "src/combat/boss-escalation-director.js",
+          "sha256": "34aa622d1ff039f09f376c9605c1125a8df758a10b206b435faa6c6d2b2e8af1"
+        }
+      ]
+    },
+    {
+      "id": "GVS-ENV-MOON-MARKET",
+      "category": "environment",
+      "label": "도깨비마을 전장",
+      "runtimeStatus": "runtime-certified",
+      "productionArtApproved": false,
+      "assets": [
+        "src/main.js",
+        "src/battlefield-themes.js",
+        "src/engine/world-chunk-manager.js",
+        "src/assets/moon-market-keyart.webp"
+      ],
+      "checks": [
+        "large shape language",
+        "soft edge materials",
+        "warm key and cool rim",
+        "landmark layout",
+        "chunk culling",
+        "navigation obstacles",
+        "scenic camera coverage"
+      ],
+      "evidence": [
+        {
+          "path": "src/main.js",
+          "sha256": "13695452f9746789fc9e1a734ec56eb1471f801456ef0988770fa877a156d68b"
+        },
+        {
+          "path": "src/battlefield-themes.js",
+          "sha256": "a9ada81207525110240725f81b6ebf790543cdf9a07ff3eabbfc771e52239055"
+        },
+        {
+          "path": "src/engine/world-chunk-manager.js",
+          "sha256": "01ce9e9dfc16d98175d7982147dbafc569ab5e6044474368fb9edebaf12b7801"
+        },
+        {
+          "path": "src/assets/moon-market-keyart.webp",
+          "sha256": "fbec05d1d5bd12dab563d6a6403df764beaafd17e06441c9c6501b8b465e3d29"
+        }
+      ]
+    },
+    {
+      "id": "GVS-UI-COMBAT",
+      "category": "ui",
+      "label": "전투 HUD",
+      "runtimeStatus": "runtime-certified",
+      "productionArtApproved": false,
+      "assets": [
+        "index.html",
+        "src/style.css",
+        "src/ui-layout-contract.js",
+        "src/ui-layout-manager.js"
+      ],
+      "checks": [
+        "gold border",
+        "blue glow",
+        "rounded depth",
+        "drop shadow",
+        "hover 105",
+        "pressed 95",
+        "six layout stress contract"
+      ],
+      "evidence": [
+        {
+          "path": "index.html",
+          "sha256": "daab4bbc311520155a9def23f33b508155332a82a1b322dd59bd5d4abb20e2a2"
+        },
+        {
+          "path": "src/style.css",
+          "sha256": "628a5d78021316695d5e6a8658dbc939a411a55169c6743c1b2fe23d82f1e142"
+        },
+        {
+          "path": "src/ui-layout-contract.js",
+          "sha256": "d1beb1754aa00a4fe000c714a5fb9e4f6565c92ae651ceff5b4a34d70b935b72"
+        },
+        {
+          "path": "src/ui-layout-manager.js",
+          "sha256": "865e596ef3fddff5b409f05104e0c2b5c1dae48c69e6e754edf8798475cc0ffc"
+        }
+      ]
+    },
+    {
+      "id": "GVS-VFX-COMBAT",
+      "category": "vfx",
+      "label": "전투 VFX",
+      "runtimeStatus": "runtime-certified",
+      "productionArtApproved": false,
+      "assets": [
+        "src/combat-presentation.js",
+        "src/combat/elemental-reaction-system.js",
+        "public/assets/ip-v10/presentation/vfx/vfx_blue_slash.png",
+        "public/assets/ip-v10/presentation/vfx/vfx_fire_explosion.png"
+      ],
+      "checks": [
+        "outer and inner glow",
+        "minimal gradient noise",
+        "round particle language",
+        "reaction routing",
+        "boss telegraph",
+        "adaptive particle budget",
+        "reduced motion support"
+      ],
+      "evidence": [
+        {
+          "path": "src/combat-presentation.js",
+          "sha256": "02ada279c23a335491c86c4909308594212d5b0fce6a4307e10be9f019038f49"
+        },
+        {
+          "path": "src/combat/elemental-reaction-system.js",
+          "sha256": "637151040be2237fe2ab1a56a9a648231f8d95240c1706d1ff77cf435b758a4f"
+        },
+        {
+          "path": "public/assets/ip-v10/presentation/vfx/vfx_blue_slash.png",
+          "sha256": "49e5dfb722979e5f9eac4099edbb3cb5e510a5ef305240460457d35b66be4770"
+        },
+        {
+          "path": "public/assets/ip-v10/presentation/vfx/vfx_fire_explosion.png",
+          "sha256": "d464bbd9fe20b35c68c94a017206db5507094ad9101c722529b2a90a2ff7b658"
+        }
+      ]
+    }
+  ],
+  "disclaimer": "6/6 means the playable runtime vertical slice has complete automated evidence. It does not convert review derivatives or legacy runtime models into final production-approved art."
+}

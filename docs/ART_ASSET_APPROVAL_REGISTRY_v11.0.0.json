@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 11,
+  "gameVersion": "11.0.0",
+  "engineVersion": "9.0.0",
+  "styleLock": "DD-ABSOLUTE-ART-BIBLE-2.0",
+  "sourceLibrary": "public/assets/ip-v8",
+  "assetForge": "public/assets/ip-v10/asset-forge-v10.json",
+  "summary": {
+    "sourceFiles": 970,
+    "highResolutionCandidates": 40,
+    "transparentPresentationDerivatives": 40,
+    "silhouetteDerivatives": 40,
+    "playableHeroClasses": 5,
+    "uniqueVerifiedHeroRuntimeModels": 3,
+    "uiAndVfxDerivatives": 11,
+    "referenceCrops": 101,
+    "quarantinedFragments": 823,
+    "productionApproved": 0
+  },
+  "goldenVerticalSliceApproved": 0,
+  "goldenVerticalSliceRequired": 6,
+  "massProductionUnlocked": false,
+  "productionApprovedAssetIds": [],
+  "transparentReviewCandidateAssetIds": [
+    "boss_dokkaebi_king",
+    "boss_fire_dokkaebi",
+    "hero_dokkaebi_archer",
+    "hero_dokkaebi_assassin",
+    "hero_dokkaebi_mage",
+    "hero_dokkaebi_monk",
+    "hero_dokkaebi_spearman_action",
+    "hero_dokkaebi_thunder_mage",
+    "hero_dokkaebi_warrior",
+    "hero_fox_spirit",
+    "hero_grim_reaper",
+    "hero_mudang_shaman",
+    "hero_taoist_exorcist",
+    "hero_water_priestess",
+    "monster_bat",
+    "monster_crow",
+    "monster_fire_boar",
+    "monster_ghost",
+    "monster_goblin_bomber",
+    "monster_poison_mushroom",
+    "monster_skeleton_archer",
+    "monster_skeleton_guard",
+    "monster_slime",
+    "monster_wolf",
+    "pet_baby_dragon",
+    "pet_tiger_guardian",
+    "object_dokkaebi_shrine",
+    "object_magic_chest",
+    "object_wood_barricade",
+    "button_shop",
+    "button_start",
+    "button_summon",
+    "button_upgrade",
+    "frame_legendary",
+    "frame_rare",
+    "icon_blue_gem",
+    "icon_dokkaebi_medal",
+    "icon_thunder_skill",
+    "vfx_blue_slash",
+    "vfx_fire_explosion"
+  ],
+  "manualReviewRequirements": [
+    "Verify automatic matte edges at 100 percent and 400 percent zoom.",
+    "Run the 0.3 second silhouette recognition test.",
+    "Create five-view turnaround before 3D production.",
+    "Validate 42/18/15/25 proportions and 28 percent eye-width lock.",
+    "Final production approval still requires all 11 evidence gates.",
+    "Sovereign Assembly runtime systems do not change the zero-production-approval status."
+  ],
+  "automaticApprovalForbidden": true,
+  "runtimeSystems": {
+    "guardianCouncil": {
+      "supportCount": 5,
+      "bondCount": 15,
+      "productionArtImpact": "none"
+    },
+    "moonfrontCampaign": {
+      "actCount": 4,
+      "productionArtImpact": "none"
+    },
+    "bossBreak": {
+      "staggerSeconds": 3.25,
+      "productionArtImpact": "runtime-vfx-only"
+    },
+    "equipmentForge": {
+      "maxLevel": 5,
+      "productionArtImpact": "ui-only"
+    }
+  }
+}
