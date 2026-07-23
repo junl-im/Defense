@@ -1,10 +1,11 @@
-# PROJECT HANDOFF — CURRENT v21.0.0
+# PROJECT HANDOFF — CURRENT v22.0.0
 
-- Project: `DokkaebiLuckDefense3D_FULL_v21.0.0`
-- Game: `21.0.0`
-- Engine: `18.0.0`
-- Save schema: `19`
-- Patch: `Asset Presence Enforcement`
+- Project: `DokkaebiLuckDefense3D_FULL_v22.0.0`
+- Game: `22.0.0`
+- Engine: `19.0.0`
+- Save schema: `20`
+- Patch: `Autonomous Moonfront`
+- Base: `v21.0.0 Asset Presence Enforcement`
 - Art lock: `DD-ABSOLUTE-ART-BIBLE-2.0`
 
 ## Current runtime
@@ -14,33 +15,45 @@
 - 전투 GLB 19종
 - v13 개별 스프라이트 415개
 - v15 런타임 아틀라스 154프레임
-- 액션 버튼 에셋 연결 6종
-- 모바일 HUD 겹침 감사
-- 적 실루엣·위협 추적 연출
+- 런타임 수직 슬라이스 6/6
+- 10웨이브 상태 시뮬레이션 10/10
 - 최종 제작 아트 0/6
 - 1,130개 생산 잠금 유지
 
-## v21 runtime modules
+## v22 runtime modules
 
-- `src/runtime/asset-presence-enforcer.js`
-- `src/runtime/mobile-hud-director-v21.js`
-- `src/combat/combat-readability-director-v21.js`
-- `scripts/audit-asset-presence-v21.mjs`
-- `scripts/verify-v2100.mjs`
+- `src/combat/guardian-targeting-director-v22.js`
+- `src/runtime/automation-director-v22.js`
+- `src/runtime/mobile-hud-director-v22.js`
+- `scripts/simulate-autonomous-moonfront-v22.mjs`
+- `scripts/verify-v2200.mjs`
+
+## v22 behavior contracts
+
+- 수호대는 신목 근접 위협·보스·원거리 적·정예를 우선 탐색한다.
+- 고정 타겟과 최대 18의 확장 탐색 범위로 웨이브 후반 타겟 단절을 방지한다.
+- 저주 무당 장거리 기술은 신목 12.5, 플레이어 10.5 범위로 제한한다.
+- 휠·핀치·화면 버튼 줌을 모두 지원한다.
+- 다음 웨이브 카운트다운은 클릭 또는 키보드로 즉시 시작할 수 있다.
+- 축복·유물·계약·소환 선택은 10초 후 추천 항목을 자동 선택한다.
+- 웨이브 종료 시 남은 엽전을 전량 자동 회수한다.
+- 모바일 HUD는 default/narrow/landscape/emergency 프로필을 사용한다.
 
 ## Verification commands
 
 ```bash
 npm run verify
+npm run simulate:v2200
+npm run simulate:v1800
 npm run build:static
 node scripts/verify-static-dist.mjs
 ```
 
 ## Known limitations
 
-- 아틀라스의 화면 노출은 강화했지만 최종 신규 3D 모델을 제작한 것은 아니다.
-- 모바일 겹침 감사는 브라우저 DOM 기준이며 실제 기기 터치 체감·발열 검수는 남아 있다.
-- 컨테이너의 GPU 제한이 있을 경우 실제 WebGL 자동 플레이는 상태 머신 검증으로 대체된다.
+- 타워 자동 타게팅은 런타임 상태 머신과 시뮬레이션으로 검증했으며, 실제 모바일 장시간 터치·발열 QA는 남아 있다.
+- 컨테이너 Chromium의 DBus/GPU 제한으로 실제 WebGL 10웨이브 화면 자동 플레이는 수행하지 못했다.
+- 기존 후보 GLB와 2D 아틀라스는 최종 신규 제작 아트로 승인되지 않았다.
 
 ## Historical handoff notes
 

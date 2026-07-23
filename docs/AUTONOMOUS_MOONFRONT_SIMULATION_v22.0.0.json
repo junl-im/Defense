@@ -1,0 +1,40 @@
+{
+  "version": "22.0.0",
+  "status": "PASS",
+  "targeting": {
+    "selected": "tiger",
+    "acquisitionRange": 13.211199999999998,
+    "extended": false,
+    "report": {
+      "version": "22.0.0",
+      "acquisitions": 1,
+      "stickyReuses": 1,
+      "extendedShots": 0,
+      "misses": 0,
+      "lastRange": 13.21,
+      "lastTargetType": "tiger"
+    }
+  },
+  "automation": {
+    "action": {
+      "type": "auto-select-reward",
+      "rewardType": "relic"
+    },
+    "report": {
+      "version": "22.0.0",
+      "reward": null,
+      "autoSelections": 1,
+      "waveSkips": 1,
+      "vacuumEvents": 1,
+      "vacuumCoins": 14,
+      "vacuumValue": 92
+    }
+  },
+  "scenarios": [
+    "boss threat priority",
+    "sticky target retention",
+    "10 second reward auto choice",
+    "click-to-skip wave counter",
+    "wave-end loot vacuum accounting"
+  ]
+}

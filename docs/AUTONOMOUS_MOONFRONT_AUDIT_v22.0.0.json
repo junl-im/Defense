@@ -1,0 +1,60 @@
+{
+  "version": "22.0.0",
+  "name": "Autonomous Moonfront Audit",
+  "generatedAt": "2026-07-23T23:30:00Z",
+  "targeting": {
+    "strategy": "threat-priority-with-sticky-target",
+    "acquisitionRangeCap": 18,
+    "priorities": [
+      "core proximity",
+      "boss",
+      "ranged shaman",
+      "elite",
+      "health"
+    ],
+    "extendedShotDamageMultiplier": 0.86
+  },
+  "enemyRange": {
+    "shamanCoreRangeMax": 12.5,
+    "shamanPlayerRangeMax": 10.5,
+    "minimumCastDistance": 4.5
+  },
+  "camera": {
+    "wheelZoom": true,
+    "pinchZoom": true,
+    "buttonZoom": true
+  },
+  "automation": {
+    "clickableWaveCountdown": true,
+    "rewardAutoSelectSeconds": 10,
+    "rewardTypes": [
+      "blessing",
+      "relic",
+      "contract",
+      "choice-summon"
+    ],
+    "waveEndLootVacuum": true
+  },
+  "presentation": {
+    "centeredTitlePanel": true,
+    "localizedTreasurePrompt": "상자 열기",
+    "mobileHudProfiles": [
+      "default",
+      "narrow",
+      "landscape",
+      "emergency"
+    ]
+  },
+  "verification": {
+    "v22Simulation": "PASS",
+    "historicalRegression": "PASS",
+    "tenWaveSimulation": "10/10 PASS",
+    "staticBuild": "PASS",
+    "staticDist": "PASS"
+  },
+  "productionArt": {
+    "runtimeSlice": "6/6",
+    "finalProductionArt": "0/6",
+    "massProductionLocked": true
+  }
+}

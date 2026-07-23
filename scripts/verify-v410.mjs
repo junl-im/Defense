@@ -17,7 +17,7 @@ const check = (condition, message) => {
 check(main.includes("from './combat-presentation.js'"), 'combat presentation module import');
 check(main.includes('faceActorTowards(this.player.group, target.group.position, .92)'), 'player attack faces live target');
 check(main.includes('attackFacingLock = .18') && main.includes('attackFacingLock > 0'), 'player attack direction lock during animation');
-check(main.includes('faceActorTowards(unit.group, anticipationTarget.group.position, .34)'), 'guardian attack anticipation facing');
+check(main.includes('faceActorTowards(unit.group, anticipationTarget.group.position, .34)') || main.includes('faceActorTowards(unit.group, anticipation.target.group.position, .34)'), 'guardian attack anticipation facing');
 check(main.includes('faceActorTowards(enemy.group, new THREE.Vector3(0, 0, 0)'), 'enemy core attack facing');
 check(main.includes('resolveAttackOrigin(this.player.group') && main.includes('resolveAttackOrigin(unit.group'), 'weapon socket attack origins');
 check(main.includes('this.combatPresentation?.muzzle') && main.includes('this.combatPresentation?.impact'), 'muzzle and hit impact runtime integration');

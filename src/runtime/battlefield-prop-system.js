@@ -3,8 +3,8 @@ import * as THREE from 'three';
 export const BATTLEFIELD_PROP_VERSION = '1.0.0';
 
 const PROP_DEFINITIONS = Object.freeze([
-  Object.freeze({ id: 'treasure', key: 'prop-chest-bronze', label: '달빛 보물 상자', prompt: '보상 획득', position: [-6.8, 1.15, 8.4], scale: 2.7, kind: 'interact', cooldown: 22 }),
-  Object.freeze({ id: 'supply', key: 'prop-supply-crate', label: '장터 보급 상자', prompt: '보급품 획득', position: [7.4, 1.05, 7.6], scale: 2.45, kind: 'interact', cooldown: 25 }),
+  Object.freeze({ id: 'treasure', key: 'prop-chest-bronze', label: '달빛 보물 상자', prompt: '상자 열기', position: [-6.8, 1.15, 8.4], scale: 2.7, kind: 'interact', cooldown: 22 }),
+  Object.freeze({ id: 'supply', key: 'prop-supply-crate', label: '장터 보급 상자', prompt: '상자 열기', position: [7.4, 1.05, 7.6], scale: 2.45, kind: 'interact', cooldown: 25 }),
   Object.freeze({ id: 'reactor', key: 'prop-crystal-reactor', label: '수정 공명로', prompt: '혼불 공명', position: [-8.2, 1.2, -6.9], scale: 2.8, kind: 'interact', cooldown: 20, pulse: true }),
   Object.freeze({ id: 'brazier', key: 'env-fire-brazier', label: '성화 화로', position: [8.5, 1.2, -7.4], scale: 2.65, kind: 'auto', cooldown: 6.8, radius: 5.8, source: 'ember' }),
   Object.freeze({ id: 'cannon', key: 'prop-field-cannon', label: '월광 대포', position: [0.4, 1.15, -11.8], scale: 2.85, kind: 'auto', cooldown: 5.4, radius: 16.5, source: 'thunder' }),

@@ -1,37 +1,42 @@
 # Dokkaebi Luck Defense 3D
 
-## v21.0.0 Asset Presence Enforcement
+## v22.0.0 Autonomous Moonfront
 
-- 게임 버전: **21.0.0**
-- 엔진 버전: **18.0.0**
-- 세이브 스키마: **19**
-- 기준 패치: v20.0.0 Visible Combat Rebuild
+- 게임 버전: **22.0.0**
+- 엔진 버전: **19.0.0**
+- 세이브 스키마: **20**
+- 기준 패치: v21.0.0 Asset Presence Enforcement
 
 ### 핵심 업데이트
 
-- 타이틀·영웅·몬스터·스킬·전장 아틀라스의 실제 화면 노출 추적
-- 질주·기술·수호신·소환·웨이브·상호작용 버튼에 실제 에셋 연결
-- 모바일 전용 HUD 재배치와 겹침 자동 완화
-- 적 실루엣 링, 주술 위협선, 돌진·장판 예고 강화
-- 정적 화면의 고립 한자 제거와 한국어 UI 가드 유지
+- 수호대·타워의 위협 우선 타게팅, 확장 탐색 범위와 고정 타겟 유지
+- 원거리 주술 몬스터의 신목·플레이어 기준 최대 사거리 제한
+- 마우스 휠·핀치·화면 버튼 카메라 줌 지원
+- 첫 접속 패널 중앙 정렬과 모바일 HUD v22 전용 레이아웃
+- 상자 안내를 `상자 열기`로 통일하고 다음 웨이브 카운트다운 클릭 진행
+- 축복·유물·계약·소환 선택 10초 자동 추천
+- 웨이브 종료 시 남은 엽전 전량 자동 흡수
 
 ### 검증
 
 ```bash
 npm run verify
+npm run simulate:v2200
+npm run simulate:v1800
 npm run build:static
 node scripts/verify-static-dist.mjs
 ```
 
 ### 운영 문서
 
-- `docs/ASSET_PRESENCE_ENFORCEMENT_v21.0.0.md`
-- `docs/ASSET_PRESENCE_AUDIT_v21.0.0.json`
-- `docs/PATCH_NOTES_v21.0.0.md`
-- `docs/PATCH_APPLY_v21.0.0.md`
-- `docs/NEXT_PATCH_LINEUP_v21.x.md`
+- `docs/AUTONOMOUS_MOONFRONT_v22.0.0.md`
+- `docs/AUTONOMOUS_MOONFRONT_AUDIT_v22.0.0.json`
+- `docs/AUTONOMOUS_MOONFRONT_SIMULATION_v22.0.0.json`
+- `docs/PATCH_NOTES_v22.0.0.md`
+- `docs/PATCH_APPLY_v22.0.0.md`
+- `docs/NEXT_PATCH_LINEUP_v22.x.md`
 
-최종 제작 아트는 0/6이며 1,130개 생산 잠금은 유지한다.
+런타임 수직 슬라이스는 6/6이지만 최종 제작 아트는 0/6이며, 1,130개 생산 잠금은 유지합니다.
 
 ## v19.0.0 Browser Reliability Lab
 

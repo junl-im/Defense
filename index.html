@@ -12,10 +12,10 @@
     <link rel="icon" href="./icon-192.png" type="image/png" />
     <link rel="apple-touch-icon" href="./icon-192.png" />
     <title>도깨비 운빨 수호대 3D</title>
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-desktop-v17.webp?rev=presence-v21" media="(min-width: 721px) and (orientation: landscape)" />
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-mobile-v17.webp?rev=presence-v21" media="(max-width: 720px), (orientation: portrait)" />
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-mascot-v17.webp?rev=presence-v21" />
-    <!-- active lineage v21.0.0 · BROWSER RELIABILITY LAB -->
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-desktop-v17.webp?rev=automation-v22" media="(min-width: 721px) and (orientation: landscape)" />
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-mobile-v17.webp?rev=automation-v22" media="(max-width: 720px), (orientation: portrait)" />
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-mascot-v17.webp?rev=automation-v22" />
+    <!-- active lineage v22.0.0 · BROWSER RELIABILITY LAB -->
   </head>
   <body>
     <div id="app">
@@ -52,8 +52,8 @@
       <section id="title-screen" class="screen title-screen-v17">
         <div class="title-scene-v17">
           <picture class="title-mascot-stage">
-            <source media="(max-width: 720px), (orientation: portrait)" srcset="./src/assets/title-v17/title-mascot-v17.webp?rev=presence-v21" />
-            <img class="title-mascot title-mascot-v17" src="./src/assets/title-v17/title-mascot-v17.webp?rev=presence-v21" alt="푸른 도깨비불과 곤봉을 든 도깨비 수호대 마스코트" fetchpriority="high" decoding="async" />
+            <source media="(max-width: 720px), (orientation: portrait)" srcset="./src/assets/title-v17/title-mascot-v17.webp?rev=automation-v22" />
+            <img class="title-mascot title-mascot-v17" src="./src/assets/title-v17/title-mascot-v17.webp?rev=automation-v22" alt="푸른 도깨비불과 곤봉을 든 도깨비 수호대 마스코트" fetchpriority="high" decoding="async" />
           </picture>
           <div class="title-panel title-panel-simple title-panel-v17">
             <p class="kicker">KOREAN FANTASY DEFENSE</p>
@@ -211,12 +211,16 @@
         <button id="wave-btn" class="wave-btn"><i class="action-glyph" aria-hidden="true">⚔</i><small id="wave-btn-label">다음 습격</small><b id="wave-btn-text">시작</b></button>
       </div>
 
+      <div id="camera-zoom-controls" class="camera-zoom-controls" aria-label="카메라 확대 축소">
+        <button id="zoom-in-btn" type="button" aria-label="카메라 확대">＋</button>
+        <button id="zoom-out-btn" type="button" aria-label="카메라 축소">−</button>
+      </div>
       <button id="interact-btn" class="world-interact-btn hidden" type="button" aria-label="전장 오브젝트 상호작용">
         <span class="world-interact-glyph" aria-hidden="true">◎</span>
         <span><b id="interact-label">전장 오브젝트</b><small id="interact-state">상호작용 · G</small></span>
       </button>
 
-      <aside id="auto-wave-panel" class="auto-wave-panel hidden" aria-live="polite" aria-label="다음 습격 자동 시작 안내">
+      <aside id="auto-wave-panel" class="auto-wave-panel hidden" role="button" tabindex="0" aria-live="polite" aria-label="다음 습격 자동 시작 안내">
         <div class="auto-wave-emblem" aria-hidden="true"><span></span></div>
         <div class="auto-wave-message">
           <small>MOON GATE READY</small>
@@ -360,6 +364,7 @@
           <h2>달의 축복을 하나 고르세요</h2>
           <p>이번 판에만 적용됩니다.</p>
           <div id="blessing-options" class="blessing-options"></div>
+          <div class="reward-auto-countdown" data-reward-timer="blessing"><span>자동 추천 선택</span><b><em id="blessing-auto-seconds">10</em>초</b><i id="blessing-auto-progress"></i></div>
           <button id="blessing-recommend-btn" class="btn ghost reward-recovery-btn">추천 축복으로 계속</button>
         </div>
       </section>
@@ -370,6 +375,7 @@
           <h2>원정 유물을 하나 선택하세요</h2>
           <p>선택한 유물은 이번 판이 끝날 때까지 빌드에 누적됩니다.</p>
           <div id="relic-options" class="relic-options"></div>
+          <div class="reward-auto-countdown" data-reward-timer="relic"><span>자동 추천 선택</span><b><em id="relic-auto-seconds">10</em>초</b><i id="relic-auto-progress"></i></div>
           <button id="relic-recommend-btn" class="btn ghost reward-recovery-btn">추천 유물로 계속</button>
         </div>
       </section>
@@ -380,6 +386,7 @@
           <h2>운명의 도깨비를 고르세요</h2>
           <p>삼지선다 소환권을 사용했습니다. 하나를 선택하면 즉시 강림합니다.</p>
           <div id="choice-summon-options" class="choice-summon-options"></div>
+          <div class="reward-auto-countdown" data-reward-timer="choice"><span>자동 추천 선택</span><b><em id="choice-auto-seconds">10</em>초</b><i id="choice-auto-progress"></i></div>
         </div>
       </section>
 
@@ -390,6 +397,7 @@
           <h2>위험을 걸고 더 큰 보상을 노리세요</h2>
           <p>선택한 계약은 다음 한 웨이브에만 적용됩니다.</p>
           <div id="contract-options" class="contract-options"></div>
+          <div class="reward-auto-countdown" data-reward-timer="contract"><span>자동 추천 체결</span><b><em id="contract-auto-seconds">10</em>초</b><i id="contract-auto-progress"></i></div>
           <button id="contract-skip-btn" class="btn ghost">안전하게 넘어가기</button>
         </div>
       </section>
@@ -549,7 +557,7 @@
     </div>
     <script>
       (() => {
-        const VERSION = '21.0.0';
+        const VERSION = '22.0.0';
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
         const retryButton = document.getElementById('boot-retry-btn');

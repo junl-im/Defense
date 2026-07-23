@@ -57,8 +57,10 @@ import BrowserReliabilityLab from './runtime/browser-reliability-lab.js';
 import { installKoreanLanguageGuard } from './runtime/korean-language-guard.js';
 import VisualIntegrationDirector from './runtime/visual-integration-director.js';
 import AssetPresenceEnforcer from './runtime/asset-presence-enforcer.js';
-import MobileHudDirectorV21 from './runtime/mobile-hud-director-v21.js';
+import MobileHudDirectorV22 from './runtime/mobile-hud-director-v22.js';
 import CombatReadabilityDirectorV21 from './combat/combat-readability-director-v21.js';
+import GuardianTargetingDirectorV22 from './combat/guardian-targeting-director-v22.js';
+import AutomationDirectorV22 from './runtime/automation-director-v22.js';
 // CameraDirector v14/v15 lineage is preserved by CameraDirectorV16.
 
 const $ = (selector) => document.querySelector(selector);
@@ -89,6 +91,8 @@ const ui = {
   leftUiToggle: $('#left-ui-toggle'), synergyToggle: $('#synergy-toggle'), synergyCount: $('#synergy-count'), synergyList: $('#synergy-list'),
   luckMeter: $('#luck-meter'), luckValue: $('#luck-value'), luckProgress: $('#luck-progress'), unitStrip: $('#unit-strip'),
   joystick: $('#joystick-zone'), joystickKnob: $('#joystick-knob'), lookZone: $('#look-zone'), actionDock: $('#action-dock'),
+  zoomControls: $('#camera-zoom-controls'), zoomIn: $('#zoom-in-btn'), zoomOut: $('#zoom-out-btn'),
+  blessingAutoSeconds: $('#blessing-auto-seconds'), blessingAutoProgress: $('#blessing-auto-progress'), relicAutoSeconds: $('#relic-auto-seconds'), relicAutoProgress: $('#relic-auto-progress'), contractAutoSeconds: $('#contract-auto-seconds'), contractAutoProgress: $('#contract-auto-progress'), choiceAutoSeconds: $('#choice-auto-seconds'), choiceAutoProgress: $('#choice-auto-progress'),
   dash: $('#dash-btn'), dashCooldown: $('#dash-cooldown'), skill: $('#skill-btn'), skillLabel: $('#skill-label'), skillCooldown: $('#skill-cooldown'), interact: $('#interact-btn'), interactLabel: $('#interact-label'), interactState: $('#interact-state'),
   summon: $('#summon-btn'), summonCost: $('#summon-cost'), wave: $('#wave-btn'), waveLabelAction: $('#wave-btn-label'), waveText: $('#wave-btn-text'), autoWavePanel: $('#auto-wave-panel'), autoWaveTitle: $('#auto-wave-title'), autoWaveCopy: $('#auto-wave-copy'), autoWaveSeconds: $('#auto-wave-seconds'), autoWavePanelProgress: $('#auto-wave-panel-progress'),
   waveRecovery: $('#wave-recovery'), waveRecoveryTitle: $('#wave-recovery-title'), waveRecoveryCopy: $('#wave-recovery-copy'),
@@ -119,7 +123,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '21.0.0';
+const GAME_VERSION = '22.0.0';
 function runtimeSpriteMarkup(path, alt = '', className = '') {
   if (!path) return '';
   const atlas = atlasSpriteMarkup(path, alt, className);
@@ -313,7 +317,9 @@ class DokkaebiLuckDefense {
     this.waveReliability = new WaveReliabilityDirector();
     this.browserReliability = new BrowserReliabilityLab({ version: GAME_VERSION });
     this.assetPresence = new AssetPresenceEnforcer({ version: GAME_VERSION });
-    this.mobileHudV21 = new MobileHudDirectorV21();
+    this.mobileHudV22 = new MobileHudDirectorV22();
+    this.guardianTargetingV22 = new GuardianTargetingDirectorV22();
+    this.automationV22 = new AutomationDirectorV22();
     this.autoPausedByVisibility = false;
     this.autoPausedByContextLoss = false;
     this.lastVisibilityResumeSeconds = 0;
@@ -335,7 +341,7 @@ class DokkaebiLuckDefense {
       }
     });
     this.hudLayout.mount();
-    this.mobileHudV21.install();
+    this.mobileHudV22.install();
     this.assetPresence.install();
     this.applyViewportUiProfile();
     this.initThree();
@@ -536,7 +542,7 @@ class DokkaebiLuckDefense {
         waveReliability: this.waveReliability?.report || {},
         browserReliability: this.browserReliability?.diagnostics || {},
         assetPresence: this.assetPresence?.report || {},
-        mobileHudV21: this.mobileHudV21?.report || {},
+        mobileHudV22: this.mobileHudV22?.report || {},
         combatReadability: this.combatReadability?.snapshot || {},
         runtimeErrors: { count: this.runtimeErrors.length, last: this.runtimeErrors.at(-1) || null },
         battlefieldEvent: this.battlefieldEvents?.diagnostics || {},
@@ -720,7 +726,11 @@ class DokkaebiLuckDefense {
     }, {}, 'production-console');
     on(ui.saveScore, 'click', () => this.saveScore(), {}, 'save-score');
     on(ui.summon, 'click', () => this.summonUnit(), {}, 'summon');
-    on(ui.wave, 'click', () => this.startWave({ manual: true }), {}, 'wave');
+    on(ui.wave, 'click', () => { if (this.autoWaveCountdown > 0) this.automationV22.noteWaveSkip(); this.startWave({ manual: true }); }, {}, 'wave');
+    on(ui.autoWavePanel, 'click', () => { if (this.state === 'playing' && !this.waveActive) { this.automationV22.noteWaveSkip(); this.startWave({ manual: true }); } }, {}, 'auto-wave-panel-click');
+    on(ui.autoWavePanel, 'keydown', (event) => { if ((event.key === 'Enter' || event.key === ' ') && this.state === 'playing' && !this.waveActive) { event.preventDefault(); this.automationV22.noteWaveSkip(); this.startWave({ manual: true }); } }, {}, 'auto-wave-panel-key');
+    on(ui.zoomIn, 'click', () => this.adjustCameraZoom(-2.2), {}, 'camera-zoom-in');
+    on(ui.zoomOut, 'click', () => this.adjustCameraZoom(2.2), {}, 'camera-zoom-out');
     on(ui.dash, 'click', () => this.useDash(), {}, 'dash');
     on(ui.skill, 'click', () => this.useHeroSkill(), {}, 'skill');
     on(ui.burst, 'click', () => this.activateGuardianBurst(), {}, 'burst');
@@ -1105,6 +1115,69 @@ class DokkaebiLuckDefense {
     try { localStorage.setItem('dokkaebi-left-ui-collapsed', collapsed ? '1' : '0'); } catch {}
   }
 
+  adjustCameraZoom(delta) {
+    const { min, max } = this.getCameraZoomBounds();
+    this.cameraDistanceTarget = clamp(this.cameraDistanceTarget + Number(delta || 0), min, max);
+    this.showToast(`카메라 거리 ${this.cameraDistanceTarget.toFixed(1)}`);
+  }
+
+  startRewardAutoChoice(type, seconds = 10) {
+    this.automationV22.beginReward(type, seconds);
+    this.updateRewardAutoCountdown();
+  }
+
+  cancelRewardAutoChoice(type = '') {
+    this.automationV22.cancelReward(type);
+    this.updateRewardAutoCountdown();
+  }
+
+  updateRewardAutoCountdown() {
+    const reward = this.automationV22.reward;
+    const map = {
+      blessing: [ui.blessingAutoSeconds, ui.blessingAutoProgress], relic: [ui.relicAutoSeconds, ui.relicAutoProgress],
+      contract: [ui.contractAutoSeconds, ui.contractAutoProgress], choice: [ui.choiceAutoSeconds, ui.choiceAutoProgress]
+    };
+    Object.entries(map).forEach(([type, [secondsEl, progressEl]]) => {
+      const active = reward?.type === type;
+      const seconds = active ? Math.max(0, Math.ceil(reward.remaining)) : 10;
+      if (secondsEl) secondsEl.textContent = String(seconds);
+      if (progressEl) progressEl.style.width = `${active ? Math.round((1 - reward.remaining / reward.duration) * 100) : 0}%`;
+      secondsEl?.closest('.reward-auto-countdown')?.classList.toggle('imminent', active && reward.remaining <= 3);
+    });
+  }
+
+  updateAutomationV22(dt) {
+    const action = this.automationV22.update(dt, this.state);
+    this.updateRewardAutoCountdown();
+    if (action?.type === 'auto-select-reward') {
+      this.showCombo('자동 추천 선택', 760);
+      this.selectRecommendedReward(action.rewardType);
+    }
+  }
+
+  vacuumRemainingCoins() {
+    if (!this.coins.length || !this.player?.group) return { count: 0, value: 0 };
+    const target = this.player.group.position.clone().add(new THREE.Vector3(0, 1, 0));
+    const coins = [...this.coins];
+    let value = 0;
+    for (let index = coins.length - 1; index >= 0; index -= 1) {
+      const coin = coins[index];
+      value += Math.max(0, Number(coin.value) || 0);
+      const start = coin.mesh.position.clone();
+      this.createLightningLine(start, target, 0xffd66b);
+      this.spawnTinyParticle(start, 0xffd66b);
+      this.releaseCoin(coin);
+    }
+    this.gold += value;
+    this.score += value * 2;
+    this.runStats.coinsCollected += value;
+    this.gainSoul(Math.min(18, value * .12), 'wave-vacuum');
+    this.spawnParticles(target, 0xffd66b, Math.min(28, 8 + coins.length), 3.4);
+    this.automationV22.noteVacuum(coins.length, value);
+    this.showToast(`웨이브 전리품 자동 회수 · 엽전 +${value}`);
+    return { count: coins.length, value };
+  }
+
   setupLookControls() {
     const dragThreshold = 11;
     const tapDuration = 620;
@@ -1179,13 +1252,13 @@ class DokkaebiLuckDefense {
     };
     this.listen(ui.lookZone, 'pointerup', end, {}, 'look-up');
     this.listen(ui.lookZone, 'pointercancel', end, {}, 'look-cancel');
-    this.listen(ui.lookZone, 'wheel', (event) => {
-      if (this.state !== 'playing') return;
+    this.listen(window, 'wheel', (event) => {
+      if (this.state !== 'playing' || this.isTypingTarget(event.target) || event.target?.closest?.('button, input, select, textarea, .modal-card')) return;
       event.preventDefault();
       const normalized = event.deltaMode === 1 ? event.deltaY * 16 : event.deltaMode === 2 ? event.deltaY * innerHeight : event.deltaY;
       const { min, max } = this.getCameraZoomBounds();
-      this.cameraDistanceTarget = clamp(this.cameraDistanceTarget + normalized * .006 * this.controlSettings.wheelSensitivity, min, max);
-    }, { passive: false }, 'look-wheel');
+      this.cameraDistanceTarget = clamp(this.cameraDistanceTarget + normalized * .0075 * this.controlSettings.wheelSensitivity, min, max);
+    }, { passive: false, capture: true }, 'camera-wheel-global');
   }
 
   setMoveTargetFromScreen(clientX, clientY) {
@@ -3053,6 +3126,7 @@ class DokkaebiLuckDefense {
         <span>${relic.icon}</span><b>${relic.name}</b><p>${relic.desc}</p><small>${relic.grade} · ${relic.tag}</small>
       </button>`).join('');
     this.showModal(ui.relicModal);
+    this.startRewardAutoChoice('relic', 10);
     this.scheduleUi(() => {
       if (this.state === 'relic' && !ui.relicModal.classList.contains('visible')) this.restoreRewardModal('relic');
     }, 420, { key: 'relic-modal-visibility-guard' });
@@ -3062,6 +3136,7 @@ class DokkaebiLuckDefense {
     const relic = RELICS.find((item) => item.id === id);
     if (!relic || this.relicHistory.includes(id)) return;
     relic.apply(this);
+    this.cancelRewardAutoChoice('relic');
     this.relicHistory.push(id);
     const activatedSets = activateRelicSetBonuses(this);
     this.runStats.relicsChosen += 1;
@@ -3477,6 +3552,7 @@ class DokkaebiLuckDefense {
       </button>`;
     }).join('');
     this.showModal(ui.choiceSummonModal);
+    this.startRewardAutoChoice('choice', 10);
     this.haptic([18, 22, 32]);
   }
 
@@ -3484,6 +3560,7 @@ class DokkaebiLuckDefense {
     const pending = this.pendingSummon;
     if (!pending || !pending.types.includes(type)) return;
     this.pendingSummon = null;
+    this.cancelRewardAutoChoice('choice');
     this.hideModal(ui.choiceSummonModal);
     this.state = 'playing';
     this.completeSummon(type, pending.rank, { ...pending.options, chosen: true });
@@ -3974,6 +4051,16 @@ class DokkaebiLuckDefense {
     if (type === 'relic' && this.state === 'relic') {
       const option = ui.relicOptions?.querySelector('[data-relic]');
       if (option) this.selectRelic(option.dataset.relic);
+      return;
+    }
+    if (type === 'contract' && this.state === 'contract') {
+      const option = ui.contractOptions?.querySelector('[data-contract]');
+      if (option) this.selectContract(option.dataset.contract); else this.skipContract();
+      return;
+    }
+    if (type === 'choice' && this.state === 'choice') {
+      const option = ui.choiceSummonOptions?.querySelector('[data-choice-type]');
+      if (option) this.selectChoiceSummon(option.dataset.choiceType);
     }
   }
 
@@ -4165,6 +4252,7 @@ class DokkaebiLuckDefense {
 
   completeWave() {
     this.waveActive = false;
+    this.vacuumRemainingCoins();
     this.waveFlowGuard.noteProgress(this.getWaveFlowSnapshot(), 'wave-complete');
     this.waveReliability.completeWave(this.currentWave, this.getWaveFlowSnapshot());
     const perfect = this.coreHp >= this.waveStartHp - .01;
@@ -4256,12 +4344,14 @@ class DokkaebiLuckDefense {
       </button>
     `).join('');
     this.showModal(ui.contractModal);
+    this.startRewardAutoChoice('contract', 10);
   }
 
   selectContract(id) {
     const contract = CONTRACTS.find((item) => item.id === id);
     if (!contract) return;
     this.pendingContract = { ...contract };
+    this.cancelRewardAutoChoice('contract');
     this.hideModal(ui.contractModal);
     this.state = 'playing';
     this.waveReliability.noteProgress(this.getWaveFlowSnapshot(), 'contract-selected');
@@ -4275,6 +4365,7 @@ class DokkaebiLuckDefense {
   skipContract() {
     if (this.state !== 'contract') return;
     this.pendingContract = null;
+    this.cancelRewardAutoChoice('contract');
     this.hideModal(ui.contractModal);
     this.state = 'playing';
     this.waveReliability.noteProgress(this.getWaveFlowSnapshot(), 'contract-skipped');
@@ -4341,6 +4432,7 @@ class DokkaebiLuckDefense {
       <button class="blessing-option" data-blessing="${blessing.id}"><span>${blessing.icon}</span><b>${blessing.name}</b><p>${blessing.desc}</p><small>${blessing.tag}</small></button>
     `).join('');
     this.showModal(ui.blessingModal);
+    this.startRewardAutoChoice('blessing', 10);
     this.scheduleUi(() => {
       if (this.state === 'blessing' && !ui.blessingModal.classList.contains('visible')) this.restoreRewardModal('blessing');
     }, 420, { key: 'blessing-modal-visibility-guard' });
@@ -4351,6 +4443,7 @@ class DokkaebiLuckDefense {
     if (!blessing) return;
     blessing.apply(this);
     this.blessingHistory.push(id);
+    this.cancelRewardAutoChoice('blessing');
     this.hideModal(ui.blessingModal);
     this.state = 'playing';
     this.waveFlowGuard.noteProgress(this.getWaveFlowSnapshot(), 'blessing-selected');
@@ -4556,10 +4649,8 @@ class DokkaebiLuckDefense {
       }
       if (unit.showcase || this.state !== 'playing') { this.animations.setState(unit.animation, 'idle'); return; }
       if (unit.cooldown > 0 && unit.cooldown <= .16) {
-        const anticipationTarget = unit.type === 'wind'
-          ? this.findFarthestEnemyInRange(unit.group.position, config.range)
-          : this.findNearestEnemy(unit.group.position, config.range);
-        if (anticipationTarget) faceActorTowards(unit.group, anticipationTarget.group.position, .34);
+        const anticipation = this.guardianTargetingV22.select(unit, this.enemies, { baseRange: config.range, wave: this.currentWave, preferFarthest: unit.type === 'wind' });
+        if (anticipation?.target) faceActorTowards(unit.group, anticipation.target.group.position, .34);
       }
       if (unit.rank === 5) {
         unit.ultimateCooldown -= dt * (commandActive ? 1.7 : 1);
@@ -4569,11 +4660,11 @@ class DokkaebiLuckDefense {
         }
       }
       if (unit.cooldown <= 0) {
-        let target;
-        if (unit.type === 'wind') target = this.findFarthestEnemyInRange(unit.group.position,config.range);
-        else target = this.findNearestEnemy(unit.group.position,config.range);
+        const selection = this.guardianTargetingV22.select(unit, this.enemies, { baseRange: config.range, wave: this.currentWave, preferFarthest: unit.type === 'wind' });
+        const target = selection?.target;
         if (!target) return;
         const stats = this.getUnitStats(unit);
+        this.guardianTargetingV22.noteShot(selection);
         const cursed = this.hazards.some((hazard) => hazard.type === 'curse' && hazard.phase === 'active' && hazard.life > 0 && hazard.position.distanceTo(unit.group.position) <= hazard.radius);
         unit.cooldown = stats.cooldown * cooldownMult * (commandActive ? .62 : 1) * (cursed ? 1.85 : 1);
         const direction = target.group.position.clone().sub(unit.group.position);
@@ -4584,7 +4675,7 @@ class DokkaebiLuckDefense {
         this.animations.trigger(unit.animation, 'attack', .24);
         this.combatPresentation?.muzzle({ position: origin, direction: aimDirection, color: config.color, style: unit.type, heavy: unit.rank >= 5 || commandActive });
         this.fireProjectile({
-          kind:'unit', type:unit.type, origin, target, damage:stats.damage, speed:config.projectileSpeed,
+          kind:'unit', type:unit.type, origin, target, damage:stats.damage * (selection?.damageMultiplier || 1), speed:config.projectileSpeed,
           color:config.color, radius:(.11+unit.rank*.025)*(commandActive ? 1.22 : 1), splash:config.splash ? config.splash*(1+unit.rank*.04) + (commandActive ? unit.commandSplashBonus || 0 : 0):0,
           slow:config.slow ? config.slow+unit.rank*.12:0, chain:config.chain ? config.chain+Math.floor(unit.rank/3) + (commandActive ? unit.commandChainBonus || 0 : 0):0,
           pierce:config.pierce ? config.pierce+Math.floor(unit.rank/3) + (commandActive ? unit.commandPierceBonus || 0 : 0):0, execute:(config.execute || 0) + (commandActive ? unit.commandExecuteBonus || 0 : 0), owner:unit
@@ -4993,7 +5084,7 @@ class DokkaebiLuckDefense {
       return true;
     }
     enemy.abilityTimer -= dt;
-    if (enemy.abilityTimer <= 0 && distance > 5) {
+    if (enemy.abilityTimer <= 0 && distance > 4.5 && distance <= 12.5 && enemy.group.position.distanceTo(this.player.group.position) <= 10.5) {
       const target = this.player.group.position.clone();
       this.combatReadability?.spawnThreatTracer(enemy.group.position, target, 0xb15cff, .82);
       this.createCurseZone(target);
@@ -6503,7 +6594,8 @@ class DokkaebiLuckDefense {
       hazards: this.hazards.length,
       battlefieldSprites: this.battlefieldSprites?.diagnostics?.activeSprites || 0
     }));
-    this.runSafe('mobile-hud-v21', () => this.mobileHudV21?.update(dt));
+    this.runSafe('mobile-hud-v22', () => this.mobileHudV22?.update(dt));
+    this.runSafe('automation-v22', () => this.updateAutomationV22(dt));
     this.runSafe('combat-readability-v21', () => this.combatReadability?.update(dt, { enemies: this.enemies, state: this.state }));
 
     if (this.state === 'playing') {
@@ -6599,7 +6691,7 @@ try {
         else if (game.state === 'contract') game.skipContract();
         return game.getBrowserAutomationSnapshot();
       },
-      reliabilityReport: () => ({ wave: game.waveReliability?.report || {}, browser: game.browserReliability?.report || {} })
+      reliabilityReport: () => ({ wave: game.waveReliability?.report || {}, browser: game.browserReliability?.report || {}, automation: game.automationV22?.report || {}, targeting: game.guardianTargetingV22?.report || {}, mobileHud: game.mobileHudV22?.report || {} })
     });
     game.browserReliability?.noteMilestone('game-ready', { state: game.state });
     window.dispatchEvent(new Event('dokkaebi:boot-ready'));

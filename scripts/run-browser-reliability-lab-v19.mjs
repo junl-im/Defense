@@ -86,7 +86,7 @@ async function runHttpProbe() {
   await probe('src/assets/title-v17/title-mascot-v17.webp', 1000);
   const contracts = {
     titleDom: index.includes('id="title-screen"') && index.includes('id="start-btn"'),
-    lineage: index.includes(`active lineage v${currentVersion}`) || /active lineage v(?:19|20|21)\.0\.0/.test(index),
+    lineage: index.includes(`active lineage v${currentVersion}`) || /active lineage v(?:19|20|21|22)\.0\.0/.test(index),
     style: style.includes('mobile-hud-v21') || style.includes('v19.0.0 Browser Reliability Lab'),
     testApi: main.includes('__DOKKAEBI_TEST_API__'),
     serviceWorker: sw.includes(`const VERSION = '${currentVersion}'`) && sw.includes('DOKKAEBI_PURGE')

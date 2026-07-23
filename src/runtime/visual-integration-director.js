@@ -1,4 +1,4 @@
-export const VISUAL_INTEGRATION_VERSION = '21.0.0';
+export const VISUAL_INTEGRATION_VERSION = '22.0.0';
 
 export default class VisualIntegrationDirector {
   constructor() {
@@ -16,8 +16,8 @@ export default class VisualIntegrationDirector {
     probe.onload = () => { this.diagnostics.titleBackgroundReady = true; document.body.classList.add('title-background-ready'); };
     probe.onerror = () => document.body.classList.add('title-background-fallback');
     probe.src = matchMedia('(max-width:720px),(orientation:portrait)').matches
-      ? './src/assets/title-v17/title-bg-mobile-v17.webp?v=21.0.0'
-      : './src/assets/title-v17/title-bg-desktop-v17.webp?v=21.0.0';
+      ? './src/assets/title-v17/title-bg-mobile-v17.webp?v=22.0.0'
+      : './src/assets/title-v17/title-bg-desktop-v17.webp?v=22.0.0';
     this.diagnostics.atlasNodes = document.querySelectorAll('.atlas-sprite,[style*="runtime-atlas"]').length;
     this.diagnostics.languageGuard = Boolean(window.__DOKKAEBI_LANGUAGE_GUARD__);
     window.__DOKKAEBI_VISUAL_INTEGRATION__ = this.diagnostics;
