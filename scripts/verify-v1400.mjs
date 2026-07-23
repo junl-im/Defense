@@ -24,10 +24,10 @@ const consoleSource = read('src/production-console.js');
 const cameraSource = read('src/engine/camera-director-v14.js');
 const spriteSource = read('src/runtime/battlefield-sprite-director.js');
 
-check(pkg.version === '14.0.0', 'package version 14.0.0');
-check(main.includes("const GAME_VERSION = '14.0.0'"), 'runtime game version 14.0.0');
-check(ENGINE_VERSION === '11.0.0', 'engine version 11.0.0');
-check(SAVE_SCHEMA_VERSION === 12, 'save schema version 12');
+check(Number(pkg.version.split('.')[0]) >= 14, 'package version remains v14 or later');
+check(Number((main.match(/const GAME_VERSION = '(\d+)\./)?.[1] || 0)) >= 14, 'runtime game version remains v14 or later');
+check(Number(ENGINE_VERSION.split('.')[0]) >= 11, 'engine version remains 11.0.0 or later');
+check(SAVE_SCHEMA_VERSION >= 12, 'save schema version remains 12 or later');
 check(v13.summary.totalCrops === 415, 'v13 source crop library preserved');
 check(IP_ASSET_LIBRARY_V14.totalFrames === 128 && atlas.summary.totalFrames === 128, '128 runtime atlas frames');
 check(IP_ASSET_LIBRARY_V14.atlasPages === 1 && atlas.pages.length === 1 && IP_V14_ATLAS_PAGES.length === 1, 'one runtime atlas page');
@@ -39,12 +39,12 @@ check(atlas.frames.every((frame) => hash(resolve('public', frame.masteredPath)) 
 check(atlas.pages.every((page) => ['png', 'webp'].every((type) => existsSync(resolve(root, 'public', page[type])) && hash(resolve('public', page[type])) === page[`${type}Sha256`])), 'PNG and WebP atlas hashes match');
 check(HERO_CLASS_ORDER.every((id) => getV14AtlasFrame(HERO_CLASSES[id].conceptArt)), 'five hero cards resolve to v14 atlas frames');
 check(EQUIPMENT_ITEMS.every((item) => getV14AtlasFrame(item.iconImage)), 'all equipment icons resolve to v14 atlas frames');
-check(main.includes('atlasSpriteMarkup') && main.includes('BattlefieldSpriteDirector') && main.includes('CameraDirectorV14'), 'runtime integrates atlas UI, battlefield sprites and camera director');
+check(main.includes('atlasSpriteMarkup') && (main.includes('BattlefieldSpriteDirectorV16') || main.includes('BattlefieldSpriteDirector')) && (main.includes('CameraDirectorV16') || main.includes('CameraDirectorV14')), 'runtime integrates atlas UI, battlefield sprites and camera director');
 check(main.includes('battlefieldSprites?.populate') && main.includes('cameraDirective.spreadBonus'), 'world population and adaptive camera framing are active');
 check(style.includes('.atlas-sprite') && style.includes('background-size: var(--atlas-size-x) var(--atlas-size-y)'), 'atlas CSS frame renderer exists');
 check(spriteSource.includes('RuntimeAtlasBattlefieldPropsV14') && spriteSource.includes('vfx-heal-circle'), 'battlefield sprite director uses environment and VFX atlas props');
 check(cameraSource.includes('targetSpread') && cameraSource.includes('2.4'), 'camera director limits adaptive spread bonus');
-check(html.includes('asset-library-v14.html') && html.includes('128 ATLAS FRAMES') && html.includes('v14.0.0'), 'title exposes v14 Atlas Forge honestly');
+check(existsSync(resolve(root, 'public/asset-library-v14.html')) && (consoleSource.includes('ASSET FORGE') || html.includes('asset-library-v14.html')), 'v14 Atlas Forge lineage remains available outside simplified title');
 check(consoleSource.includes('IP_ASSET_LIBRARY_V14') && consoleSource.includes('BATTLEFIELD SPRITES'), 'production console exposes atlas and battlefield diagnostics');
 check(existsSync(resolve(root, 'docs/ATLAS_FORGE_PREVIEW_v14.0.0.jpg')), 'v14 atlas preview board exists');
 

@@ -12,7 +12,10 @@
     <link rel="icon" href="./icon-192.png" type="image/png" />
     <link rel="apple-touch-icon" href="./icon-192.png" />
     <title>도깨비 운빨 수호대 3D</title>
-    <!-- lineage v10.0.0 · GOLDEN CONVERGENCE preserved / active lineage v14.0.0 · v13.0.0/v12.0.0 preserved -->
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-desktop-v17.webp" media="(min-width: 721px) and (orientation: landscape)" />
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-mobile-v17.webp" media="(max-width: 720px), (orientation: portrait)" />
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-mascot-v17.webp" />
+    <!-- active lineage v17.0.0 · MOON GATE REBORN -->
   </head>
   <body>
     <div id="app">
@@ -46,49 +49,32 @@
         </div>
       </section>
 
-      <section id="title-screen" class="screen">
-        <div class="title-panel">
-          <img class="title-mascot" src="./src/assets/moon-mascot-v1.webp" alt="달빛 장터 마스코트 도깨비" />
-          <p class="kicker">ATLAS DOMINION · 128 RUNTIME FRAMES · ADAPTIVE SCENIC CAMERA · ENGINE 11</p>
-          <h1>도깨비<br /><em>운빨 수호대</em></h1>
-          <p class="title-copy">직접 전장을 누비며 엽전을 줍고,<br />운명처럼 소환되는 도깨비 군단을 완성하세요.</p>
-          <div class="run-mode-selector" aria-label="원정 난이도 선택">
-            <div id="run-mode-options" class="run-mode-options"></div>
-            <div id="run-mode-summary" class="run-mode-summary"></div>
+      <section id="title-screen" class="screen title-screen-v17">
+        <div class="title-scene-v17">
+          <picture class="title-mascot-stage">
+            <source media="(max-width: 720px), (orientation: portrait)" srcset="./src/assets/title-v17/title-mascot-v17.webp" />
+            <img class="title-mascot title-mascot-v17" src="./src/assets/title-v17/title-mascot-v17.webp" alt="푸른 도깨비불과 곤봉을 든 도깨비 수호대 마스코트" fetchpriority="high" decoding="async" />
+          </picture>
+          <div class="title-panel title-panel-simple title-panel-v17">
+            <p class="kicker">KOREAN FANTASY DEFENSE</p>
+            <h1>도깨비<br /><em>운빨 수호대</em></h1>
+            <p class="title-copy">달빛 장터의 월문을 지키고 도깨비 수호대를 이끄세요.</p>
+            <div id="title-loadout-summary" class="title-loadout-summary" aria-live="polite"></div>
+            <button id="start-btn" class="btn primary huge">수호 시작</button>
+            <div class="title-primary-actions">
+              <button id="title-setup-btn" class="btn ghost">원정 설정</button>
+              <button id="title-vault-btn" class="btn ghost">보관함</button>
+              <button id="controls-btn" class="btn ghost">설정</button>
+            </div>
+            <small class="title-help">최근 설정으로 바로 시작합니다.</small>
           </div>
-          <div class="hero-class-selector" aria-label="대장 깨비 직업 선택">
-            <div class="hero-class-heading"><span>대장 깨비</span><small>5직업 공용 리그 · v14 런타임 아틀라스</small></div>
-            <div id="hero-class-options" class="hero-class-options"></div>
-            <div id="hero-class-summary" class="hero-class-summary"></div>
-          </div>
-          <div class="council-selector" aria-label="수호 의회 보조 깨비 선택">
-            <div class="council-heading"><span>수호 의회</span><small>보조 깨비 1명 · 15개 결속 조합</small></div>
-            <div id="council-options" class="council-options"></div>
-            <div id="council-summary" class="council-summary"></div>
-          </div>
-          <div class="seed-mode-selector" aria-label="원정 시드 방식 선택">
-            <div id="seed-mode-options" class="seed-mode-options"></div>
-            <div id="daily-edict-preview" class="daily-edict-preview"></div>
-          </div>
-          <div id="run-preview" class="run-preview" aria-label="이번 판 영구 성장 적용 효과"></div>
-          <button id="start-btn" class="btn primary huge">달빛 장터 수호하기</button>
-          <div class="title-actions four">
-            <button id="how-btn" class="btn ghost">조작법</button>
-            <button id="collection-btn" class="btn ghost">달빛 도감</button>
-            <button id="equipment-btn" class="btn ghost">장비 가방</button>
-            <button id="meta-btn" class="btn ghost meta-entry"><span>혼불 <b id="title-shards">0</b></span>수호자 성장</button>
-          </div>
-          <button id="controls-btn" class="title-settings-btn" type="button" aria-label="카메라와 조작 설정" title="카메라와 조작 설정"><span aria-hidden="true">⚙️</span></button>
-          <a class="btn ghost asset-library-link" href="./asset-library-v14.html" target="_blank" rel="noopener">Runtime Atlas Forge</a>
-          <div class="absolute-lock-badge"><span>ABSOLUTE ART LOCK</span><b>DNA v3.0 · ENGINE 11.0 · RUNTIME SLICE 6/6 · 128 ATLAS FRAMES · 3D ART 0/6</b></div>
-          <small class="title-version" aria-label="게임 버전 14.0.0">v14.0.0</small>
         </div>
       </section>
 
       <header id="hud" class="hud hidden">
         <div class="hud-left">
           <button id="menu-btn" class="round-btn" aria-label="메뉴">☰</button>
-          <div class="core-pill"><span class="heart">◆</span><div><small>신목</small><b id="hp-value">100</b></div></div>
+          <div class="core-pill"><span id="hero-hud-portrait" class="hero-hud-portrait" aria-hidden="true"></span><span class="heart">◆</span><div><small>신목</small><b id="hp-value">100</b></div></div>
         </div>
         <div class="wave-hud">
           <span id="wave-label">WAVE 1</span>
@@ -223,6 +209,11 @@
         <button id="wave-btn" class="wave-btn"><i class="action-glyph" aria-hidden="true">⚔</i><small id="wave-btn-label">다음 습격</small><b id="wave-btn-text">시작</b></button>
       </div>
 
+      <button id="interact-btn" class="world-interact-btn hidden" type="button" aria-label="전장 오브젝트 상호작용">
+        <span class="world-interact-glyph" aria-hidden="true">◎</span>
+        <span><b id="interact-label">전장 오브젝트</b><small id="interact-state">상호작용 · G</small></span>
+      </button>
+
       <aside id="auto-wave-panel" class="auto-wave-panel hidden" aria-live="polite" aria-label="다음 습격 자동 시작 안내">
         <div class="auto-wave-emblem" aria-hidden="true"><span></span></div>
         <div class="auto-wave-message">
@@ -234,8 +225,58 @@
         <strong class="auto-wave-timer"><span id="auto-wave-seconds">10</span><small>SEC</small></strong>
       </aside>
 
+      <aside id="wave-recovery" class="wave-recovery hidden" aria-live="assertive">
+        <span aria-hidden="true">↻</span><div><b id="wave-recovery-title">진행 복구 중</b><small id="wave-recovery-copy">웨이브 흐름을 다시 연결하고 있습니다.</small></div>
+      </aside>
+
       <div id="toast" class="toast" aria-live="polite"></div>
       <div id="quality-badge" class="quality-badge hidden" aria-live="polite">모바일 최적화 ON</div>
+
+      <section id="title-setup-modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="title-setup-title">
+        <div class="modal-card wide title-setup-card">
+          <button class="modal-x" data-close="title-setup-modal" aria-label="원정 설정 닫기">×</button>
+          <p class="kicker">EXPEDITION SETUP</p>
+          <h2 id="title-setup-title">이번 원정 설정</h2>
+          <p>대장, 보조 깨비, 난이도와 시드만 정하면 바로 시작할 수 있습니다.</p>
+          <div class="title-setup-grid">
+            <div class="run-mode-selector" aria-label="원정 난이도 선택">
+              <div id="run-mode-options" class="run-mode-options"></div>
+              <div id="run-mode-summary" class="run-mode-summary"></div>
+            </div>
+            <div class="hero-class-selector" aria-label="대장 깨비 직업 선택">
+              <div class="hero-class-heading"><span>대장 깨비</span><small>전투 스타일 선택</small></div>
+              <div id="hero-class-options" class="hero-class-options"></div>
+              <div id="hero-class-summary" class="hero-class-summary"></div>
+            </div>
+            <div class="council-selector" aria-label="수호 의회 보조 깨비 선택">
+              <div class="council-heading"><span>수호 의회</span><small>보조 깨비 1명</small></div>
+              <div id="council-options" class="council-options"></div>
+              <div id="council-summary" class="council-summary"></div>
+            </div>
+            <div class="seed-mode-selector" aria-label="원정 시드 방식 선택">
+              <div id="seed-mode-options" class="seed-mode-options"></div>
+              <div id="daily-edict-preview" class="daily-edict-preview"></div>
+            </div>
+            <div id="run-preview" class="run-preview" aria-label="이번 판 영구 성장 적용 효과"></div>
+          </div>
+          <button class="btn primary setup-done" data-close="title-setup-modal">설정 완료</button>
+        </div>
+      </section>
+
+      <section id="title-vault-modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="title-vault-title">
+        <div class="modal-card title-vault-card">
+          <button class="modal-x" data-close="title-vault-modal" aria-label="보관함 닫기">×</button>
+          <p class="kicker">MOONLIGHT VAULT</p>
+          <h2 id="title-vault-title">보관함</h2>
+          <p>도감과 성장 메뉴는 여기에서 관리합니다.</p>
+          <div class="title-vault-actions">
+            <button id="collection-btn" class="btn ghost">달빛 도감</button>
+            <button id="equipment-btn" class="btn ghost">장비 가방</button>
+            <button id="meta-btn" class="btn ghost meta-entry"><span>혼불 <b id="title-shards">0</b></span>수호자 성장</button>
+            <button id="how-btn" class="btn ghost">조작법</button>
+          </div>
+        </div>
+      </section>
 
       <section id="how-modal" class="modal" aria-hidden="true">
         <div class="modal-card">
@@ -317,6 +358,7 @@
           <h2>달의 축복을 하나 고르세요</h2>
           <p>이번 판에만 적용됩니다.</p>
           <div id="blessing-options" class="blessing-options"></div>
+          <button id="blessing-recommend-btn" class="btn ghost reward-recovery-btn">추천 축복으로 계속</button>
         </div>
       </section>
 
@@ -326,6 +368,7 @@
           <h2>원정 유물을 하나 선택하세요</h2>
           <p>선택한 유물은 이번 판이 끝날 때까지 빌드에 누적됩니다.</p>
           <div id="relic-options" class="relic-options"></div>
+          <button id="relic-recommend-btn" class="btn ghost reward-recovery-btn">추천 유물로 계속</button>
         </div>
       </section>
 
@@ -504,7 +547,7 @@
     </div>
     <script>
       (() => {
-        const VERSION = '11.0.0';
+        const VERSION = '17.0.0';
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
         const retryButton = document.getElementById('boot-retry-btn');

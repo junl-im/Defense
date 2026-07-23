@@ -1,6 +1,7 @@
 // legacy lineage: BATTLEFRONT v6 · MYTHIC CONVERGENCE v7 diagnostics preserved
 import { CHARACTER_DNA_SUMMARY } from './character-dna.js';
-import { IP_ASSET_LIBRARY_V14, IP_ASSET_ATLAS_URL } from './ip-asset-library-v14.js';
+import { IP_ASSET_LIBRARY_V14 } from './ip-asset-library-v14.js';
+import { IP_ASSET_LIBRARY_V15, IP_ASSET_ATLAS_URL } from './ip-asset-library-v15.js';
 import { HERO_ARCHETYPE_SUMMARY } from './hero-archetype-system.js';
 import { GUARDIAN_COUNCIL_SUMMARY } from './guardian-council-system.js';
 
@@ -54,12 +55,17 @@ export class ProductionConsole {
     const camera = data.camera || {};
     const cameraDirector = data.cameraDirector || {};
     const spriteAtlas = data.spriteAtlas || {};
+    const battlefieldProps = data.battlefieldProps || {};
+    const battlefieldEvent = data.battlefieldEvent || {};
+    const runtimeVisualAudit = data.runtimeVisualAudit || {};
+    const waveFlow = data.waveFlow || {};
+    const runtimeErrors = data.runtimeErrors || {};
     const approved = Number(this.artSummary.approved || 0);
     const total = Number(this.artSummary.total || 0);
     const progress = total ? Math.round((approved / total) * 100) : 0;
     const milestoneHtml = this.milestones.slice(0, 4).map((item) => `<li><span>${item.status === 'done' ? 'DONE' : item.status === 'active' ? 'NOW' : 'NEXT'}</span>${item.label}</li>`).join('');
     this.element.innerHTML = `
-      <header><div><small>DD PRODUCTION OS</small><b>ATLAS DOMINION v14 · 128 RUNTIME FRAMES</b></div><button type="button" data-close-console aria-label="제작 콘솔 닫기">×</button></header>
+      <header><div><small>DD PRODUCTION OS</small><b>MOON GATE REBORN v17 · RESPONSIVE TITLE · WAVE GUARD</b></div><button type="button" data-close-console aria-label="제작 콘솔 닫기">×</button></header>
       <section class="production-console-grid">
         <article><small>ART LOCK</small><b>${this.artSummary.styleLockId || 'UNKNOWN'}</b><span>Production art ${approved}/${total} · ${progress}%</span></article>
         <article><small>RUNTIME SLICE</small><b>${goldenSlice.runtimeCertified || 0}/${goldenSlice.total || 6} PASS</b><span>${goldenSlice.runtimePassed ? 'Hero · Enemy · Boss · Map · HUD · VFX' : 'Evidence incomplete'}</span></article>
@@ -69,14 +75,18 @@ export class ProductionConsole {
         <article><small>FRAME</small><b>${Math.round(perf.fps || 0)} FPS</b><span>P95 ${perf.p95FrameMs || 0}ms · Severe ${perf.severeFramePercent || 0}%</span></article>
         <article><small>RENDER</small><b>${Number(data.drawCalls || 0)} CALLS</b><span>${Number(data.triangles || 0).toLocaleString()} tri</span></article>
         <article><small>ASSETS</small><b>${assets.cachedAssets || 0} READY</b><span>${assets.textureMemoryMB || 0}/${assets.textureBudgetMB || 0}MB</span></article>
-        <article><small>ASSET REVIEW</small><b>${IP_ASSET_LIBRARY_V14.totalFrames} ATLAS</b><span>Pages ${IP_ASSET_LIBRARY_V14.atlasPages} · Mastered ${IP_ASSET_LIBRARY_V14.edgeMasterPass} · 3D approved ${IP_ASSET_LIBRARY_V14.production3DApproved}</span></article>
+        <article><small>ASSET REVIEW</small><b>${IP_ASSET_LIBRARY_V15.totalFrames} ATLAS</b><span>Pages ${IP_ASSET_LIBRARY_V15.atlasPages} · 1x/2x · Mastered ${IP_ASSET_LIBRARY_V15.edgeMasterPass} · 3D approved ${IP_ASSET_LIBRARY_V15.production3DApproved}</span></article>
         <article><small>HERO ROSTER</small><b>${HERO_ARCHETYPE_SUMMARY.playableClasses} CLASSES</b><span>Passive ${HERO_ARCHETYPE_SUMMARY.passiveIds.length} · Runtime models 3 · Review art 5</span></article>
         <article><small>GUARDIAN COUNCIL</small><b>${council.bond?.name || 'STANDBY'}</b><span>${council.support?.name || 'No support'} · ${GUARDIAN_COUNCIL_SUMMARY.bondCount} bonds</span></article>
         <article><small>CAMPAIGN ACT</small><b>${campaign.current?.name || '달문 전초'}</b><span>ACT ${campaign.current?.index || 1}/4 · 전환 ${campaign.transitions || 0}</span></article>
         <article><small>BOSS BREAK</small><b>${bossBreak.breaks || 0} BREAK</b><span>활성 ${bossBreak.active?.length || 0} · 누적 ${Number(bossBreak.totalBreakDamage || 0).toLocaleString()} dmg</span></article>
         <article><small>EQUIPMENT FORGE</small><b>${equipmentForge.forged || 0} FORGED</b><span>정수 ${Number(equipmentForge.essence || 0).toLocaleString()} · Max +5</span></article>
-        <article><small>ASSET FORGE</small><b>${IP_ASSET_LIBRARY_V14.curatedFrames} CURATED</b><span>1 page · WebP/PNG · UV registry</span></article>
+        <article><small>ASSET FORGE</small><b>${IP_ASSET_LIBRARY_V15.curatedFrames} CURATED</b><span>${IP_ASSET_LIBRARY_V15.atlasPages} pages · 1x/2x WebP/PNG · UV registry</span></article>
         <article><small>BATTLEFIELD SPRITES</small><b>${spriteAtlas.activeSprites || 0} ACTIVE</b><span>${spriteAtlas.atlasPages || 0} pages · ${spriteAtlas.loaded ? 'ready' : 'fallback'} · billboard budget</span></article>
+        <article><small>VISUAL AUDIT</small><b>${runtimeVisualAudit.passCount || 0}/${runtimeVisualAudit.total || 7} PASS</b><span>${runtimeVisualAudit.passed ? 'Atlas · title · camera guard ready' : `${runtimeVisualAudit.warnings?.length || 0} warning`}</span></article>
+        <article><small>WAVE FLOW</small><b>${waveFlow.recoveries || 0} RECOVERY</b><span>Spawn ${waveFlow.forcedSpawns || 0} · Modal ${waveFlow.modalRestores || 0} · Error ${runtimeErrors.count || 0}</span></article>
+        <article><small>LIVING PROPS</small><b>${battlefieldProps.active || 0} ACTIVE</b><span>상호작용 ${battlefieldProps.interactable || 0} · 자동 방어 ${battlefieldProps.automated || 0} · 발동 ${battlefieldProps.activations || 0}</span></article>
+        <article><small>BATTLEFIELD EVENT</small><b>${battlefieldEvent.active?.name || 'STANDBY'}</b><span>완료 ${battlefieldEvent.completed || 0} · 회복 ${battlefieldEvent.totalHealing || 0}</span></article>
         <article><small>DOCTRINE</small><b>${String(encounter.active?.name || 'STANDBY').toUpperCase()}</b><span>${encounter.active?.mutatorId || 'none'} · 압력 ${encounter.active?.adaptivePressure ?? 0}</span></article>
         <article><small>COMBAT</small><b>${Number(combat.damageDealt || 0).toLocaleString()} DMG</b><span>처치 ${combat.kills || 0} · 상태 ${statusEffects.applied || 0}</span></article>
         <article><small>BUDGET</small><b>${runtimeBudget.caps?.enemies || 0} ENEMY</b><span>압력 ${Math.round((runtimeBudget.pressure || 0) * 100)}% · 차단 ${runtimeBudget.blocked?.enemies || 0}</span></article>

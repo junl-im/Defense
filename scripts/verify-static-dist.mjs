@@ -18,15 +18,15 @@ pass('static entrypoint and pinned import map');
 
 const main = await readFile(path.join(dist, 'src/main.js'), 'utf8');
 if (main.includes("import './style.css'")) fail('CSS module import remains in static build');
-if (!main.includes("const GAME_VERSION = '14.0.0'")) fail('static main version mismatch');
+if (!main.includes("const GAME_VERSION = '17.0.0'")) fail('static main version mismatch');
 if (!main.includes('renderAssetDiagnostics()')) fail('asset diagnostics missing from static build');
 if (!main.includes('force3DModels')) fail('force 3D model mode missing from static build');
 pass('static game module asset diagnostics');
 
 const catalog = await readFile(path.join(dist, 'src/engine/asset-catalog.js'), 'utf8');
-if (!catalog.includes("const ASSET_REVISION = '14.0.0'")) fail('asset cache revision missing');
+if (!catalog.includes("const ASSET_REVISION = '17.0.0'")) fail('asset cache revision missing');
 if (!catalog.includes('?v=${ASSET_REVISION}')) fail('asset cache-busting URL missing');
-pass('v14.0.0 asset cache revision');
+pass('v17.0.0 asset cache revision');
 
 const modelDir = path.join(dist, 'assets/models');
 const models = (await readdir(modelDir)).filter((name) => name.endsWith('.glb'));
@@ -71,5 +71,31 @@ await access(path.join(dist, 'asset-library-v14.html'));
 await access(path.join(dist, 'assets/ip-v14/atlas/runtime-atlas-v14-p01.webp'));
 await access(path.join(dist, 'assets/ip-v14/mastered/heroes/heroes-r01-c01.png'));
 pass('v14 runtime atlas manifest, review OS, pages and mastered sprites');
+
+const livingManifest = JSON.parse(await readFile(path.join(dist, 'assets/ip-v15/atlas-manifest-v15.json'), 'utf8'));
+if (livingManifest.summary.totalFrames !== 154 || livingManifest.summary.atlasPages !== 2) fail('v15 atlas manifest count mismatch');
+if (livingManifest.summary.production3DApproved !== 0 || livingManifest.summary.massProductionUnlocked) fail('v15 atlas must not grant 3D approval or production unlock');
+await access(path.join(dist, 'asset-library-v15.html'));
+for (const page of livingManifest.pages) {
+  await access(path.join(dist, page.png1x));
+  await access(path.join(dist, page.webp1x));
+  await access(path.join(dist, page.png2x));
+  await access(path.join(dist, page.webp2x));
+}
+await access(path.join(dist, 'assets/ip-v15/mastered/props/props-r01-c01.png')).catch(async () => {
+  const first = livingManifest.frames.find((frame) => frame.category === 'props') || livingManifest.frames[0];
+  await access(path.join(dist, first.masteredPath));
+});
+pass('v15 living battlefield atlas, review OS, 1x/2x pages and mastered sprites');
+
+
+
+await access(path.join(dist, 'src/assets/title-v17/title-bg-desktop-v17.webp'));
+await access(path.join(dist, 'src/assets/title-v17/title-bg-mobile-v17.webp'));
+await access(path.join(dist, 'src/assets/title-v17/title-mascot-v17.webp'));
+const waveGuard = await readFile(path.join(dist, 'src/runtime/wave-flow-guard.js'), 'utf8');
+if (!waveGuard.includes("WAVE_FLOW_GUARD_VERSION = '17.0.0'")) fail('v17 wave flow guard missing from static dist');
+if (!html.includes('title-mascot-v17.webp') || !html.includes('title-panel-v17')) fail('v17 title presentation missing from static entrypoint');
+pass('v17 responsive title artwork and wave flow guard');
 
 console.log('Static deployment verification passed.');

@@ -33,7 +33,7 @@ if (missingIds.length) fail(`index.html에 없는 DOM ID: ${missingIds.join(', '
 else pass(`${queriedIds.length}개 DOM ID 연결`);
 
 const expectedGameVersion = pkg.version;
-const expectedEngineVersion = '11.0.0';
+const expectedEngineVersion = '14.0.0';
 pass(`package version ${expectedGameVersion}`);
 
 for (const path of ['.env.production', '.firebaserc', '.github/workflows/deploy.yml', 'README.md', 'PROJECT_HANDOFF.md']) {
@@ -159,7 +159,8 @@ if (main.includes('createMoonMarketModuleSet()') && main.includes("root.name = '
 else fail('환경 모듈 또는 보스 페이즈 비주얼 누락');
 if (existsSync(resolve(root, 'src/assets/moon-mascot-expressions-v1.webp')) && html.includes('class="loading-mascot"') && style.includes('@keyframes mascot-load-frame')) pass('마스코트 4상태 로딩 에셋');
 else fail('마스코트 로딩 상태 에셋 누락');
-if (html.includes('class="title-version"') && html.includes(`>v${expectedGameVersion}</small>`) && !html.includes('3대 월식 보스, 오늘의 원정')) pass('타이틀은 버전만 표시');
+const titleBlock = html.slice(html.indexOf('<section id="title-screen"'), html.indexOf('<header id="hud"'));
+if (titleBlock.includes('id="start-btn"') && titleBlock.includes('id="title-setup-btn"') && !titleBlock.includes(expectedGameVersion) && !titleBlock.includes('ENGINE') && !titleBlock.includes('ATLAS FRAMES')) pass('타이틀 패치·버전 설명 제거');
 else fail('타이틀 패치 설명 제거 필요');
 if (main.includes('this.modalStack = []') && main.includes('modalParents') && main.includes('modal-obscured') && style.includes('--modal-layer') && style.includes('#controls-modal { z-index: var(--modal-layer, 154); }')) pass('일시정지 위 카메라 설정 모달 스택');
 else fail('중첩 모달 레이어 수정 누락');

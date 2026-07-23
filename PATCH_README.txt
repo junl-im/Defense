@@ -1,11 +1,14 @@
-Dokkaebi Luck Defense 3D v14.0.0 Atlas Dominion
+DOKKAEBI DEFENSE v17.0.0 OVERWRITE PATCH
 
-Base: v13.0.0 Transparent Arsenal
-Apply: extract this archive at the project root and overwrite matching files.
-Then run:
-  npm run verify
-  npm run build:static
-  node scripts/verify-static-dist.mjs
+Base: v16.0.0 Clear Horizon
+Target: v17.0.0 Moon Gate Reborn
 
-The patch excludes dist and node_modules. No files are deleted.
-Runtime atlas approval is not final production 3D art approval.
+1. Stop the development server.
+2. Extract this ZIP into the v16 project root and overwrite matching files.
+3. Optionally delete paths listed in DELETE_FILES.txt (stale logs only).
+4. Run:
+   npm run verify
+   npm run build:static
+   node scripts/verify-static-dist.mjs
+
+If the old title remains, clear site data/service-worker cache and hard refresh.

@@ -15,6 +15,7 @@ function walk(directory) {
   if (rel === 'public/assets/ip-v10' || rel.startsWith('public/assets/ip-v10/')) return;
   if (rel === 'public/assets/ip-v13' || rel.startsWith('public/assets/ip-v13/')) return;
   if (rel === 'public/assets/ip-v14' || rel.startsWith('public/assets/ip-v14/')) return;
+  if (rel === 'public/assets/ip-v15' || rel.startsWith('public/assets/ip-v15/')) return;
   for (const entry of readdirSync(directory, { withFileTypes: true })) {
     const path = resolve(directory, entry.name);
     if (entry.isDirectory()) walk(path);
@@ -71,10 +72,11 @@ function ktx2Size(buffer) {
 }
 
 for (const directory of roots) walk(directory);
-// The v10/v13 source libraries and v14 mastered individual files are isolated from gameplay.
-// Runtime UI and battlefield billboards share one 1024x512 atlas page, so count those pages once.
+// Source libraries and mastered individual files are isolated from gameplay.
+// The low-power runtime loads only the compact v15 1x WebP pages.
 for (const atlas of [
-  'public/assets/ip-v14/atlas/runtime-atlas-v14-p01.webp'
+  'public/assets/ip-v15/atlas/runtime-atlas-v15-p01-1x.webp',
+  'public/assets/ip-v15/atlas/runtime-atlas-v15-p02-1x.webp'
 ]) {
   const path = resolve(root, atlas);
   if (!files.includes(path)) files.push(path);

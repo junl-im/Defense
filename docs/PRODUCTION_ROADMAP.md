@@ -95,3 +95,49 @@ v3.5.0에서 도깨비 전사 골든 샘플은 Skin·7개 AnimationClip·PBR Map
 - [x] 적응형 카메라 압력 디렉터
 - [ ] 모바일 실기기 아틀라스 QA
 - [ ] 최종 제작 아트 6/6
+
+## M13 — Living Battlefield v15.0.0 (완료)
+
+- 154프레임 1x/2x 런타임 아틀라스
+- 플레이어 상호작용 프롭 3종
+- 자동 방어 프롭 4종
+- 전장 이벤트 5종
+- Camera Director 2.1
+- 런타임 6/6 유지
+- 최종 제작 아트 0/6 유지
+
+## M14 — Production Bridge v16.0.0 (예정)
+
+- 최종 3D 프롭·영웅·몬스터·보스 제작 브리지
+- 보스 BREAK와 전장 장치 연동
+- 실기기 성능·발열·멀미 QA
+- 최종 제작 아트 6/6 증거 심사
+
+## M15 — Clear Horizon v16.0.0 (완료)
+
+- 중앙 수호성 카메라 충돌 제거
+- Scenic 최소 충돌 거리 14.8
+- 중앙 수호성 가림 반투명 처리
+- 첫 접속 화면 플레이 행동 4개로 단순화
+- 전장 아틀라스 중앙권 재배치와 스케일 강화
+- 영웅 아틀라스 HUD 초상 추가
+- WebP 캐시 버전·PNG 대체 경로
+- 런타임 시각 감사 7항목
+- 런타임 6/6 유지
+- 최종 제작 아트 0/6 유지
+
+## M16 — Visible World Rebuild v17.0.0 (예정)
+
+- 실제 화면 노출 기반 에셋 사용 감사
+- 환경 3단계 밀도와 카메라 거리별 스케일
+- 공용 장애물 투명화와 카메라 경로 진단
+- 신규·복귀 유저 첫 화면 퍼널 분리
+- 실기기 시각·발열·멀미 QA
+
+## M17 — Moon Gate Reborn (complete)
+
+- Responsive optimized title art
+- New mascot presentation
+- Stage 3/4 reward-state recovery
+- Spawn deadlock prevention
+- Runtime subsystem error isolation

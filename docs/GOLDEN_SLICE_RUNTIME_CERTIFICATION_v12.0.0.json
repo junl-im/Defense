@@ -187,7 +187,7 @@
       "evidence": [
         {
           "path": "src/main.js",
-          "sha256": "13695452f9746789fc9e1a734ec56eb1471f801456ef0988770fa877a156d68b"
+          "sha256": "1c5ec8bd16d85d4348fe3161ea1d068e39713f2e087294bc2eeea32b6ceca2c5"
         },
         {
           "path": "src/battlefield-themes.js",
@@ -199,7 +199,7 @@
         },
         {
           "path": "src/assets/moon-market-keyart.webp",
-          "sha256": "fbec05d1d5bd12dab563d6a6403df764beaafd17e06441c9c6501b8b465e3d29"
+          "sha256": "6ee86e6b6a379eb88d275cca3d1c4bb3a2ff010f0d651b5e9f380f532dee4aa3"
         }
       ]
     },
@@ -227,11 +227,11 @@
       "evidence": [
         {
           "path": "index.html",
-          "sha256": "daab4bbc311520155a9def23f33b508155332a82a1b322dd59bd5d4abb20e2a2"
+          "sha256": "232daf04e796acb706aeae1586f6504a4c012d5d500c514c33fc52530b4c5787"
         },
         {
           "path": "src/style.css",
-          "sha256": "628a5d78021316695d5e6a8658dbc939a411a55169c6743c1b2fe23d82f1e142"
+          "sha256": "68ec12c8e0dc25d804644da2f4d8e2ad5ac6727ca69049002ba7b126b47803aa"
         },
         {
           "path": "src/ui-layout-contract.js",

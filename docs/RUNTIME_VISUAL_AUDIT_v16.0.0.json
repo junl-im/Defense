@@ -1,0 +1,45 @@
+{
+  "version": "16.0.0",
+  "patch": "Clear Horizon",
+  "status": "contract-passed-browser-visual-qa-pending",
+  "rootCauses": [
+    {
+      "id": "core-camera-collision",
+      "severity": "high",
+      "finding": "The central guardian castle was registered as a camera obstacle and could force the requested distance down to roughly 5-8 units.",
+      "resolution": "Removed the core from camera obstacles, retained navigation collision, added profile minimum distance and occlusion fading."
+    },
+    {
+      "id": "atlas-low-prominence",
+      "severity": "high",
+      "finding": "The v15 atlas was loaded but most visible usage was in peripheral decoration, codex and vault UI.",
+      "resolution": "Moved and enlarged battlefield sprites, added hero atlas portraits to title summary and combat HUD, and added runtime visibility checks."
+    },
+    {
+      "id": "stale-atlas-cache",
+      "severity": "medium",
+      "finding": "Static WebP filenames could remain in browser or service-worker caches across patches.",
+      "resolution": "Added v16 cache-busting query parameters and PNG fallback loading."
+    },
+    {
+      "id": "entry-screen-overload",
+      "severity": "medium",
+      "finding": "Player actions, production diagnostics and configuration controls competed on the first screen.",
+      "resolution": "Reduced the first screen to start, expedition setup, vault and settings."
+    }
+  ],
+  "contractChecks": {
+    "fullRegression": "passed",
+    "staticBuild": "passed",
+    "staticDist": "passed",
+    "combatGlbCount": 19,
+    "v13SpriteCount": 415,
+    "v15AtlasFrames": 154,
+    "runtimeSlice": "6/6",
+    "productionArt": "0/6"
+  },
+  "limitations": [
+    "Headless Chromium could not initialize EGL/GPU in the current container, so rendered WebGL screenshot QA remains pending.",
+    "Mobile device thermal, memory, touch and motion-sickness QA remains pending."
+  ]
+}

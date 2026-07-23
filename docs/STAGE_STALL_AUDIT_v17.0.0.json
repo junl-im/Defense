@@ -1,0 +1,37 @@
+{
+  "version": "17.0.0",
+  "scope": "wave 3 to wave 4 transition and frame-loop resilience",
+  "finding": "Two independent paths could appear as a stage freeze: a reward-selection state whose modal is not visible, and a spawn slot that never decrements after model acquisition failure.",
+  "highRiskTransitions": [
+    {
+      "wave": 3,
+      "path": "completeWave -> buildPostWaveQueue -> offerBlessing",
+      "risk": "state remains blessing while modal visibility is lost"
+    },
+    {
+      "wave": 4,
+      "path": "completeWave -> buildPostWaveQueue -> offerRelic",
+      "risk": "state remains relic while modal visibility is lost"
+    },
+    {
+      "wave": 4,
+      "path": "spawnEnemy introduces brute candidate",
+      "risk": "model or pool acquisition failure can leave spawnRemaining unchanged"
+    }
+  ],
+  "fixes": [
+    "WaveFlowGuard 17.0.0",
+    "reward modal visibility guards",
+    "recommended reward continue buttons",
+    "emergency imp spawn fallback",
+    "failed spawn slot consumption",
+    "per-subsystem runtime error isolation",
+    "post-wave countdown recovery"
+  ],
+  "verification": {
+    "sourceContract": "automated",
+    "waveGuardUnitScenarios": 3,
+    "fullBrowserTenWaveRun": "not executed in this container",
+    "manualDeviceQARequired": true
+  }
+}

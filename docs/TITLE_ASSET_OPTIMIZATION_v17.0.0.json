@@ -1,0 +1,66 @@
+{
+  "version": "17.0.0",
+  "sources": [
+    {
+      "name": "첫화면 캐릭.png",
+      "bytes": 2639744,
+      "size": [
+        1122,
+        1402
+      ],
+      "mode": "RGBA"
+    },
+    {
+      "name": "PC 배경.png",
+      "bytes": 3252594,
+      "size": [
+        1672,
+        941
+      ],
+      "mode": "RGBA"
+    },
+    {
+      "name": "모바일 배경.png",
+      "bytes": 3190090,
+      "size": [
+        941,
+        1672
+      ],
+      "mode": "RGBA"
+    }
+  ],
+  "optimized": [
+    {
+      "path": "src/assets/title-v17/title-bg-desktop-v17.webp",
+      "width": 1280,
+      "height": 720,
+      "mode": "RGB",
+      "bytes": 119708,
+      "sha256": "b09bbaf419866a86a6b6712c3a663365d41b1f35f95a68208c82a84414711d38"
+    },
+    {
+      "path": "src/assets/title-v17/title-bg-mobile-v17.webp",
+      "width": 600,
+      "height": 1067,
+      "mode": "RGB",
+      "bytes": 111516,
+      "sha256": "53db2cbce89cb5b5f62cc026b6fe3c0321561921295e5b2863c7eba1aa6b11d1"
+    },
+    {
+      "path": "src/assets/title-v17/title-mascot-v17.webp",
+      "width": 560,
+      "height": 705,
+      "mode": "RGBA",
+      "bytes": 99686,
+      "sha256": "78023b651ff87d301dbcb9c2c89b188936148d1f9e7959fdedca294544baf187"
+    }
+  ],
+  "totalOptimizedBytes": 330910,
+  "runtimeSavingsPercent": 96.36,
+  "notes": [
+    "Desktop and mobile backgrounds use separate aspect-ratio crops.",
+    "The mascot checkerboard was removed with border-connected matte extraction and edge decontamination.",
+    "Runtime title artwork is limited to three WebP files and each remains below 300KB.",
+    "Original uploaded source PNGs are not shipped in the runtime package."
+  ]
+}

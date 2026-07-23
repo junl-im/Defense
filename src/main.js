@@ -15,7 +15,7 @@ import { CORE_ASSET_CATALOG, PLAYER_ASSET_ID, GUARDIAN_ASSET_IDS, MONSTER_ASSET_
 import { HERO_CLASSES, HERO_CLASS_ORDER, HERO_CLASS_ASSET_IDS, getHeroClass } from './hero-classes.js';
 import { applyHeroArchetypeModifiers, getHeroArchetypePassive, HERO_ARCHETYPE_SUMMARY } from './hero-archetype-system.js';
 import { IP_ASSET_LIBRARY_V13 } from './ip-asset-library-v13.js';
-import { IP_ASSET_LIBRARY_V14, atlasSpriteMarkup } from './ip-asset-library-v14.js';
+import { IP_ASSET_LIBRARY_V15, atlasSpriteMarkup } from './ip-asset-library-v15.js';
 import { applyHeroClassVisuals, applyRelicVisuals } from './hero-visual-loadout.js';
 import { applyEnemyCandidateVisuals } from './enemy-candidate-visuals.js';
 import { getBossHudState } from './boss-hud-contract.js';
@@ -46,8 +46,13 @@ import BossEscalationDirector from './combat/boss-escalation-director.js';
 import BossBreakSystem from './combat/boss-break-system.js';
 import MoonfrontCampaignDirector from './combat/moonfront-campaign-director.js';
 import { GUARDIAN_COUNCIL_STORAGE_KEY, GUARDIAN_COUNCIL_SUPPORTS, applyGuardianCouncilModifiers, resolveGuardianCouncil, sanitizeCouncilSupportId } from './guardian-council-system.js';
-import BattlefieldSpriteDirector from './runtime/battlefield-sprite-director.js';
-import CameraDirectorV14 from './engine/camera-director-v14.js';
+import BattlefieldSpriteDirectorV16 from './runtime/battlefield-sprite-director-v16.js';
+import CameraDirectorV16 from './engine/camera-director-v16.js';
+import BattlefieldPropSystem from './runtime/battlefield-prop-system.js';
+import BattlefieldEventDirector from './combat/battlefield-event-director.js';
+import { auditRuntimeVisuals } from './runtime/runtime-visual-audit.js';
+import WaveFlowGuard from './runtime/wave-flow-guard.js';
+// CameraDirector v14/v15 lineage is preserved by CameraDirectorV16.
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -61,9 +66,9 @@ const tempColor = new THREE.Color();
 const tempQ = new THREE.Quaternion();
 
 const ui = {
-  canvas: $('#game-canvas'), loading: $('#loading'), loadingStatus: $('#loading-status'), loadingProgress: $('#loading-progress'), loadingDetail: $('#loading-detail'), title: $('#title-screen'), start: $('#start-btn'),
+  canvas: $('#game-canvas'), loading: $('#loading'), loadingStatus: $('#loading-status'), loadingProgress: $('#loading-progress'), loadingDetail: $('#loading-detail'), title: $('#title-screen'), start: $('#start-btn'), titleSetup: $('#title-setup-btn'), titleSetupModal: $('#title-setup-modal'), titleVault: $('#title-vault-btn'), titleVaultModal: $('#title-vault-modal'), titleLoadoutSummary: $('#title-loadout-summary'),
   how: $('#how-btn'), collection: $('#collection-btn'), meta: $('#meta-btn'), equipment: $('#equipment-btn'), hudEquipment: $('#hud-equipment-btn'), pauseEquipment: $('#pause-equipment-btn'), titleShards: $('#title-shards'), runPreview: $('#run-preview'), howModal: $('#how-modal'), collectionModal: $('#collection-modal'),
-  blessingModal: $('#blessing-modal'), blessingOptions: $('#blessing-options'), collectionGrid: $('#collection-grid'), collectionTabs: $('#collection-tabs'), collectionSummary: $('#collection-summary'),
+  blessingModal: $('#blessing-modal'), blessingOptions: $('#blessing-options'), blessingRecommend: $('#blessing-recommend-btn'), collectionGrid: $('#collection-grid'), collectionTabs: $('#collection-tabs'), collectionSummary: $('#collection-summary'),
   choiceSummonModal: $('#choice-summon-modal'), choiceSummonOptions: $('#choice-summon-options'), summonTicket: $('#summon-ticket'),
   controls: $('#controls-btn'), pauseControls: $('#pause-controls-btn'), controlsModal: $('#controls-modal'), controlsReset: $('#controls-reset-btn'),
   rotateSensitivity: $('#rotate-sensitivity'), rotateSensitivityValue: $('#rotate-sensitivity-value'), pinchSensitivity: $('#pinch-sensitivity'), pinchSensitivityValue: $('#pinch-sensitivity-value'),
@@ -72,13 +77,14 @@ const ui = {
   assetDiagnosticsSummary: $('#asset-diagnostics-summary'), assetDiagnosticsCount: $('#asset-diagnostics-count'), assetDiagnosticsList: $('#asset-diagnostics-list'), goldenSamplePreview: $('#golden-sample-preview-btn'), productionConsole: $('#production-console-btn'),
   contractModal: $('#contract-modal'), contractOptions: $('#contract-options'), contractSkip: $('#contract-skip-btn'), metaModal: $('#meta-modal'), metaShards: $('#meta-shards'), metaTraitList: $('#meta-trait-list'),
   equipmentModal: $('#equipment-modal'), equipmentSlots: $('#equipment-slots'), equipmentList: $('#equipment-list'), equipmentEssence: $('#equipment-essence'), equipmentBonus: $('#equipment-bonus'), equipmentMastery: $('#equipment-mastery'),
-  hud: $('#hud'), hudLayout: $('#hud-layout-btn'), hp: $('#hp-value'), gold: $('#gold-value'), waveLabel: $('#wave-label'), waveProgress: $('#wave-progress'),
+  hud: $('#hud'), hudLayout: $('#hud-layout-btn'), heroHudPortrait: $('#hero-hud-portrait'), hp: $('#hp-value'), gold: $('#gold-value'), waveLabel: $('#wave-label'), waveProgress: $('#wave-progress'),
   enemyCount: $('#enemy-count'), menu: $('#menu-btn'), sound: $('#sound-btn'), synergyPanel: $('#synergy-panel'),
   leftUiToggle: $('#left-ui-toggle'), synergyToggle: $('#synergy-toggle'), synergyCount: $('#synergy-count'), synergyList: $('#synergy-list'),
   luckMeter: $('#luck-meter'), luckValue: $('#luck-value'), luckProgress: $('#luck-progress'), unitStrip: $('#unit-strip'),
   joystick: $('#joystick-zone'), joystickKnob: $('#joystick-knob'), lookZone: $('#look-zone'), actionDock: $('#action-dock'),
-  dash: $('#dash-btn'), dashCooldown: $('#dash-cooldown'), skill: $('#skill-btn'), skillLabel: $('#skill-label'), skillCooldown: $('#skill-cooldown'),
+  dash: $('#dash-btn'), dashCooldown: $('#dash-cooldown'), skill: $('#skill-btn'), skillLabel: $('#skill-label'), skillCooldown: $('#skill-cooldown'), interact: $('#interact-btn'), interactLabel: $('#interact-label'), interactState: $('#interact-state'),
   summon: $('#summon-btn'), summonCost: $('#summon-cost'), wave: $('#wave-btn'), waveLabelAction: $('#wave-btn-label'), waveText: $('#wave-btn-text'), autoWavePanel: $('#auto-wave-panel'), autoWaveTitle: $('#auto-wave-title'), autoWaveCopy: $('#auto-wave-copy'), autoWaveSeconds: $('#auto-wave-seconds'), autoWavePanelProgress: $('#auto-wave-panel-progress'),
+  waveRecovery: $('#wave-recovery'), waveRecoveryTitle: $('#wave-recovery-title'), waveRecoveryCopy: $('#wave-recovery-copy'),
   toast: $('#toast'), combo: $('#combo-banner'), comboText: $('#combo-text'), boss: $('#boss-banner'), bossName: $('#boss-name'),
   mission: $('#mission-banner'), missionKicker: $('#mission-kicker'), missionTitle: $('#mission-title'), missionCopy: $('#mission-copy'),
   evolution: $('#evolution-banner'), evolutionSymbol: $('#evolution-symbol'), evolutionName: $('#evolution-name'), evolutionUltimate: $('#evolution-ultimate'),
@@ -88,7 +94,7 @@ const ui = {
   moonOmen: $('#moon-omen'), moonOmenIcon: $('#moon-omen-icon'), moonOmenName: $('#moon-omen-name'), moonOmenEffect: $('#moon-omen-effect'),
   moonWard: $('#moon-ward'), moonWardValue: $('#moon-ward-value'), jackpot: $('#jackpot-rush'), jackpotTime: $('#jackpot-rush-time'),
   waveTrial: $('#wave-trial'), waveTrialIcon: $('#wave-trial-icon'), waveTrialName: $('#wave-trial-name'), waveTrialProgress: $('#wave-trial-progress'), waveTrialReward: $('#wave-trial-reward'),
-  relicPanel: $('#relic-panel'), relicStrip: $('#relic-strip'), relicCount: $('#relic-count'), relicLoadout: $('#relic-loadout'), relicModal: $('#relic-modal'), relicOptions: $('#relic-options'),
+  relicPanel: $('#relic-panel'), relicStrip: $('#relic-strip'), relicCount: $('#relic-count'), relicLoadout: $('#relic-loadout'), relicModal: $('#relic-modal'), relicOptions: $('#relic-options'), relicRecommend: $('#relic-recommend-btn'),
   burstMeter: $('#burst-meter'), burstValue: $('#burst-value'), burstProgress: $('#burst-progress'), burst: $('#burst-btn'), burstState: $('#burst-state'),
   momentumMeter: $('#momentum-meter'), momentumValue: $('#momentum-value'), momentumProgress: $('#momentum-progress'), momentumState: $('#momentum-state'),
   dangerHint: $('#danger-hint'), dangerArrow: $('#danger-arrow'), dangerLevel: $('#danger-level'), dangerLabel: $('#danger-label'), dangerTime: $('#danger-time'),
@@ -106,7 +112,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '14.0.0';
+const GAME_VERSION = '17.0.0';
 function runtimeSpriteMarkup(path, alt = '', className = '') {
   if (!path) return '';
   const atlas = atlasSpriteMarkup(path, alt, className);
@@ -294,6 +300,11 @@ class DokkaebiLuckDefense {
     this.bossEscalation = new BossEscalationDirector();
     this.bossBreak = new BossBreakSystem();
     this.campaign = new MoonfrontCampaignDirector();
+    this.battlefieldEvents = new BattlefieldEventDirector({ random: () => this.random() });
+    this.battlefieldProps = new BattlefieldPropSystem({ lowPower: this.lowPower });
+    this.waveFlowGuard = new WaveFlowGuard();
+    this.runtimeErrors = [];
+    this.runtimeErrorKeys = new Set();
     this.saveMigration = migrateSaveSchema();
     this.activeEncounterPlan = null;
     this.lastEncounterResult = null;
@@ -323,6 +334,7 @@ class DokkaebiLuckDefense {
     this.renderMetaProgress();
     this.renderRunModeSelector();
     this.renderHeroClassSelector();
+    this.updateTitleLoadoutSummary();
     this.renderCouncilSelector();
     this.renderSeedModeSelector();
     this.renderRelicStrip();
@@ -387,11 +399,12 @@ class DokkaebiLuckDefense {
     this.assetReport = report;
     this.applyPrototypeTextures();
     this.renderAssetDiagnostics();
-    this.setLoadingProgress(68, '런타임 아틀라스를 준비하는 중...', '128개 스프라이트 · 1개 아틀라스 페이지');
+    this.setLoadingProgress(68, '살아있는 전장을 준비하는 중...', '154개 스프라이트 · 1x/2x 아틀라스 2페이지 · 상호작용 전장');
     await this.battlefieldSprites.preload();
 
     this.setLoadingProgress(72, '달빛 장터를 배치하는 중...', `텍스처 ${report.textureMemoryMB.toFixed(1)}MB / ${report.textureBudgetMB}MB`);
     this.createWorld(true);
+    this.runRuntimeVisualAudit();
     await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     this.state = 'title';
     this.setLoadingProgress(100, '준비 완료', `${this.engine.assetQualityTier.toUpperCase()} 에셋 품질 · 절차형 모델 대체 준비 완료`);
@@ -406,8 +419,8 @@ class DokkaebiLuckDefense {
 
   initThree() {
     this.renderer = this.engine.createRenderer(ui.canvas);
-    this.battlefieldSprites = new BattlefieldSpriteDirector({ lowPower: this.lowPower });
-    this.cameraDirectorV14 = new CameraDirectorV14();
+    this.battlefieldSprites = new BattlefieldSpriteDirectorV16({ lowPower: this.lowPower });
+    this.cameraDirectorV16 = new CameraDirectorV16();
     this.assetPipeline = new AssetPipeline(this.renderer, {
       qualityTier: this.engine.assetQualityTier,
       textureBudgetMB: this.engine.textureBudgetMB,
@@ -493,9 +506,14 @@ class DokkaebiLuckDefense {
         council: this.guardianCouncil || {},
         equipmentForge: { forged: this.equipmentState?.forged || 0, essence: this.equipmentState?.essence || 0 },
         heroRoster: { classes: HERO_CLASS_ORDER.length, selected: this.selectedHeroClassId, passive: this.activeHeroPassive?.id || '' },
-        assetForge: IP_ASSET_LIBRARY_V14,
+        assetForge: IP_ASSET_LIBRARY_V15,
         spriteAtlas: this.battlefieldSprites?.diagnostics || {},
-        cameraDirector: this.cameraDirectorV14?.snapshot || {},
+        battlefieldProps: this.battlefieldProps?.diagnostics || {},
+        runtimeVisualAudit: this.runtimeVisualAudit || null,
+        waveFlow: this.waveFlowGuard?.diagnostics || {},
+        runtimeErrors: { count: this.runtimeErrors.length, last: this.runtimeErrors.at(-1) || null },
+        battlefieldEvent: this.battlefieldEvents?.diagnostics || {},
+        cameraDirector: this.cameraDirectorV16?.snapshot || {},
         goldenSlice: GOLDEN_SLICE_CERTIFICATION_SUMMARY,
         camera: { profile: this.activeCameraProfile?.id || this.controlSettings.cameraProfile, label: this.activeCameraProfile?.label || '', distance: Number(this.cameraDistance.toFixed(2)), target: Number(this.cameraDistanceTarget.toFixed(2)), fov: this.camera?.fov || 0 },
         saveSchemaVersion: SAVE_SCHEMA_VERSION
@@ -599,10 +617,12 @@ class DokkaebiLuckDefense {
     const on = (target, type, handler, options = {}, key = '') => this.listen(target, type, handler, options, key);
 
     on(ui.start, 'click', () => { this.sound.unlock(); this.sound.ui(); this.startRun({ reuseSeed: false }); }, {}, 'start-run');
-    on(ui.how, 'click', () => this.showModal(ui.howModal), {}, 'open-how');
-    on(ui.collection, 'click', () => this.openCodex(ui.collection), {}, 'open-codex');
-    on(ui.meta, 'click', () => this.openMetaModal(), {}, 'open-meta');
-    on(ui.equipment, 'click', () => this.openEquipmentModal(ui.equipment), {}, 'open-equipment-title');
+    on(ui.titleSetup, 'click', () => this.showModal(ui.titleSetupModal, { trigger: ui.titleSetup }), {}, 'open-title-setup');
+    on(ui.titleVault, 'click', () => this.showModal(ui.titleVaultModal, { trigger: ui.titleVault }), {}, 'open-title-vault');
+    on(ui.how, 'click', () => this.showModal(ui.howModal, { parent: ui.titleVaultModal, trigger: ui.how }), {}, 'open-how');
+    on(ui.collection, 'click', () => { this.renderCodex(this.currentCodexSection); this.showModal(ui.collectionModal, { parent: ui.titleVaultModal, trigger: ui.collection }); }, {}, 'open-codex');
+    on(ui.meta, 'click', () => { this.renderMetaProgress(); this.showModal(ui.metaModal, { parent: ui.titleVaultModal, trigger: ui.meta }); }, {}, 'open-meta');
+    on(ui.equipment, 'click', () => { this.renderEquipmentModal(); this.showModal(ui.equipmentModal, { parent: ui.titleVaultModal, trigger: ui.equipment }); }, {}, 'open-equipment-title');
     on(ui.hudEquipment, 'click', () => this.openEquipmentModal(ui.hudEquipment), {}, 'open-equipment-hud');
     on(ui.pauseEquipment, 'click', () => this.openEquipmentModal(ui.pauseEquipment), {}, 'open-equipment-pause');
     on(ui.controls, 'click', () => this.openControlSettings(null, ui.controls), {}, 'open-controls-title');
@@ -681,6 +701,8 @@ class DokkaebiLuckDefense {
     on(ui.leftUiToggle, 'click', () => this.toggleLeftMobileUi(), {}, 'left-ui-toggle');
     try { this.setLeftMobileUiCollapsed(localStorage.getItem('dokkaebi-left-ui-collapsed') === '1'); } catch { this.setLeftMobileUiCollapsed(false); }
     on(ui.contractSkip, 'click', () => this.skipContract(), {}, 'contract-skip');
+    on(ui.blessingRecommend, 'click', () => this.selectRecommendedReward('blessing'), {}, 'blessing-recommend');
+    on(ui.relicRecommend, 'click', () => this.selectRecommendedReward('relic'), {}, 'relic-recommend');
 
     const bindControlRange = (element, key, transform = (value) => value) => {
       on(element, 'input', () => this.updateControlSetting(key, transform(Number(element.value))), {}, `control-range-${key}`);
@@ -723,6 +745,7 @@ class DokkaebiLuckDefense {
       const button = event.target.closest('[data-equipment-id]');
       if (button) this.selectEquipmentItem(button.dataset.equipmentId);
     }, {}, 'equipment-select');
+    on(ui.interact, 'click', () => this.interactWithBattlefieldProp(), {}, 'battlefield-interact');
     on(ui.choiceSummonOptions, 'click', (event) => {
       const button = event.target.closest('[data-choice-type]');
       if (button) this.selectChoiceSummon(button.dataset.choiceType);
@@ -735,6 +758,8 @@ class DokkaebiLuckDefense {
       const button = event.target.closest('[data-blessing]');
       if (button) this.selectBlessing(button.dataset.blessing);
     }, {}, 'blessing-select');
+    on(window, 'error', (event) => this.recordRuntimeError(event.error || event.message, 'window-error'), {}, 'runtime-window-error');
+    on(window, 'unhandledrejection', (event) => this.recordRuntimeError(event.reason, 'unhandled-rejection'), {}, 'runtime-unhandled-rejection');
 
     this.setupJoystick();
     this.setupLookControls();
@@ -766,12 +791,13 @@ class DokkaebiLuckDefense {
         this.showToast(enabled ? '엔진 통계를 표시합니다.' : '엔진 통계를 숨깁니다.');
         return;
       }
-      if (['Space', 'KeyQ', 'KeyE', 'KeyR', 'KeyF', 'Enter', 'Escape'].includes(code)) event.preventDefault();
+      if (['Space', 'KeyQ', 'KeyE', 'KeyR', 'KeyF', 'KeyG', 'Enter', 'Escape'].includes(code)) event.preventDefault();
       if (code === 'Space') this.useDash();
       if (code === 'KeyQ') this.useHeroSkill();
       if (code === 'KeyE') this.summonUnit();
       if (code === 'KeyR') this.useBestUnitCommand();
       if (code === 'KeyF') this.activateGuardianBurst();
+      if (code === 'KeyG') this.interactWithBattlefieldProp();
       if (code === 'Enter' && this.state === 'playing' && !this.waveActive) this.startWave();
       if (code === 'Escape') {
         const topModal = this.modalStack[this.modalStack.length - 1];
@@ -2074,6 +2100,8 @@ class DokkaebiLuckDefense {
     this.disposeGroup(this.worldRoot);
     this.disposeGroup(this.dynamicRoot);
     this.disposeGroup(this.effectRoot);
+    this.battlefieldProps?.clear();
+    ui.interact?.classList.add('hidden');
     this.battlefieldSprites?.clear();
     this.player = null;
     this.core = null;
@@ -2105,7 +2133,8 @@ class DokkaebiLuckDefense {
     ground.userData.navigationGround = true;
     this.worldRoot.add(ground);
     this.navigationObstacles.push({ x: 0, z: 0, radius: 1.82, type: 'core' });
-    this.cameraObstacles.push({ x: 0, z: 0, radius: 2.15, height: 6.7, type: 'core' });
+    // The central guardian castle is intentionally excluded from camera collision.
+    // v15 treated it as a solid camera obstacle and snapped Scenic view into a close-up.
 
     const ringMat = this.createMaterial(0x51405f, .82);
     this.ringMaterial = ringMat;
@@ -2126,6 +2155,7 @@ class DokkaebiLuckDefense {
     this.createMoonMarketModuleSet();
     this.createNextGenEnvironmentPass();
     this.battlefieldSprites?.populate(this.worldRoot, { titleMode });
+    this.battlefieldProps?.populate(this.worldRoot, this.battlefieldSprites, { titleMode });
 
     for (let i = 0; i < 4; i += 1) {
       const angle = i / 4 * Math.PI * 2;
@@ -2595,8 +2625,44 @@ class DokkaebiLuckDefense {
     premium.userData.visualScale = .78;
     premium.userData.damageAnchorY = 4.55;
     premium.userData.impactY = 3.7;
+    premium.userData.occlusionMaterials = [];
+    premium.traverse((object) => {
+      if (!object.isMesh || !object.material) return;
+      const materials = Array.isArray(object.material) ? object.material : [object.material];
+      const cloned = materials.map((material) => material.clone());
+      object.material = Array.isArray(object.material) ? cloned : cloned[0];
+      cloned.forEach((material) => premium.userData.occlusionMaterials.push({
+        material,
+        baseOpacity: Number.isFinite(material.opacity) ? material.opacity : 1,
+        baseTransparent: Boolean(material.transparent),
+        baseDepthWrite: material.depthWrite !== false
+      }));
+    });
     this.worldRoot.add(premium);
     return premium;
+  }
+
+  updateCoreOcclusion(dt, target, desired) {
+    const entries = this.core?.userData?.occlusionMaterials || [];
+    if (!entries.length || !target || !desired) return;
+    const line = tempV.copy(target).sub(desired);
+    const lengthSq = Math.max(.0001, line.lengthSq());
+    const center = tempV2.set(0, 3.1, 0);
+    const t = clamp(center.clone().sub(desired).dot(line) / lengthSq, 0, 1);
+    const closest = desired.clone().addScaledVector(line, t);
+    const lineDistance = closest.distanceTo(center);
+    const playerDistance = this.player?.group ? Math.hypot(this.player.group.position.x, this.player.group.position.z) : 99;
+    const occluded = lineDistance < 2.9 && playerDistance < 7.2;
+    const targetOpacity = occluded ? .28 : 1;
+    const blend = 1 - Math.pow(occluded ? .0008 : .025, dt);
+    for (const entry of entries) {
+      const desiredOpacity = entry.baseOpacity * targetOpacity;
+      entry.material.opacity = lerp(entry.material.opacity, desiredOpacity, blend);
+      const faded = entry.material.opacity < entry.baseOpacity * .98;
+      entry.material.transparent = faded || entry.baseTransparent;
+      entry.material.depthWrite = faded ? false : entry.baseDepthWrite;
+      entry.material.needsUpdate = true;
+    }
   }
 
   createHero() {
@@ -2682,6 +2748,37 @@ class DokkaebiLuckDefense {
 
 
 
+  updateTitleLoadoutSummary() {
+    if (!ui.titleLoadoutSummary) return;
+    const mode = getRunMode(this.selectedRunModeId);
+    const hero = getHeroClass(this.selectedHeroClassId);
+    const council = resolveGuardianCouncil(this.selectedHeroClassId, this.selectedCouncilSupportId);
+    const seed = RUN_SEED_MODES[this.selectedSeedModeId] || RUN_SEED_MODES.daily;
+    ui.titleLoadoutSummary.innerHTML = `${runtimeSpriteMarkup(hero.conceptArt || hero.icon, `${hero.name} 초상`, 'title-loadout-portrait')}<div><b>${hero.name} · ${mode.name}</b><small>${council.support.name} 지원 · ${seed.name}</small></div>`;
+    this.updateHeroHudPortrait();
+  }
+
+  updateHeroHudPortrait() {
+    if (!ui.heroHudPortrait) return;
+    const hero = getHeroClass(this.selectedHeroClassId);
+    ui.heroHudPortrait.innerHTML = runtimeSpriteMarkup(hero.conceptArt || hero.icon, `${hero.name} 전투 초상`, 'hero-hud-atlas');
+  }
+
+  runRuntimeVisualAudit() {
+    const report = auditRuntimeVisuals({
+      spriteDirector: this.battlefieldSprites,
+      propSystem: this.battlefieldProps,
+      cameraProfile: this.activeCameraProfile || getCameraProfile(this.controlSettings?.cameraProfile),
+      titleScreen: ui.title,
+      heroOptions: ui.heroClassOptions,
+      coreObstacleCount: this.cameraObstacles.filter((entry) => entry.type === 'core').length
+    });
+    this.runtimeVisualAudit = report;
+    globalThis.__DOKKAEBI_VISUAL_AUDIT__ = report;
+    if (!report.passed) console.warn('[RuntimeVisualAuditV17]', report.warnings);
+    return report;
+  }
+
   loadHeroClass() {
     try { return HERO_CLASSES[localStorage.getItem('dokkaebi-hero-class-v1')] ? localStorage.getItem('dokkaebi-hero-class-v1') : 'warrior'; }
     catch { return 'warrior'; }
@@ -2694,6 +2791,8 @@ class DokkaebiLuckDefense {
     try { localStorage.setItem('dokkaebi-hero-class-v1', selected.id); } catch {}
     this.renderHeroClassSelector();
     this.renderCouncilSelector();
+    this.updateTitleLoadoutSummary();
+    this.updateTitleLoadoutSummary();
     this.renderRunPreview();
     this.sound.ui();
   }
@@ -2722,6 +2821,7 @@ class DokkaebiLuckDefense {
     this.guardianCouncil = resolveGuardianCouncil(this.selectedHeroClassId, this.selectedCouncilSupportId);
     try { localStorage.setItem(GUARDIAN_COUNCIL_STORAGE_KEY, this.selectedCouncilSupportId); } catch {}
     this.renderCouncilSelector();
+    this.updateTitleLoadoutSummary();
     this.renderRunPreview();
     this.sound.ui();
   }
@@ -2837,6 +2937,7 @@ class DokkaebiLuckDefense {
     try { localStorage.setItem('dokkaebi-seed-mode-v1', this.selectedSeedModeId); } catch {}
     this.dailyEdict = getDailyEdict(createDailySeed());
     this.renderSeedModeSelector();
+    this.updateTitleLoadoutSummary();
     this.renderRunPreview();
     this.sound.ui();
   }
@@ -2879,6 +2980,7 @@ class DokkaebiLuckDefense {
     this.activeRunMode = getRunMode(this.selectedRunModeId);
     try { localStorage.setItem('dokkaebi-run-mode-v1', this.selectedRunModeId); } catch {}
     this.renderRunModeSelector();
+    this.updateTitleLoadoutSummary();
     this.renderRunPreview();
     this.sound.ui();
   }
@@ -2910,6 +3012,9 @@ class DokkaebiLuckDefense {
         <span>${relic.icon}</span><b>${relic.name}</b><p>${relic.desc}</p><small>${relic.grade} · ${relic.tag}</small>
       </button>`).join('');
     this.showModal(ui.relicModal);
+    this.scheduleUi(() => {
+      if (this.state === 'relic' && !ui.relicModal.classList.contains('visible')) this.restoreRewardModal('relic');
+    }, 420, { key: 'relic-modal-visibility-guard' });
   }
 
   selectRelic(id) {
@@ -2921,6 +3026,7 @@ class DokkaebiLuckDefense {
     this.runStats.relicsChosen += 1;
     this.hideModal(ui.relicModal);
     this.state = 'playing';
+    this.waveFlowGuard.noteProgress(this.getWaveFlowSnapshot(), 'relic-selected');
     this.renderRelicStrip();
     this.renderEquipmentModal();
     this.refreshHeroVisualLoadout();
@@ -2993,7 +3099,7 @@ class DokkaebiLuckDefense {
     const modeGain = this.activeRunMode?.soulGain || 1;
     const edictGain = this.dailyEdict?.soulGain || 1;
     const before = this.soulGauge;
-    this.soulGauge = clamp(this.soulGauge + amount * this.mods.soulGain * omenGain * modeGain * edictGain, 0, 100);
+    this.soulGauge = clamp(this.soulGauge + amount * this.mods.soulGain * omenGain * modeGain * edictGain * (this.battlefieldEvents?.soulMultiplier || 1), 0, 100);
     if (before < 100 && this.soulGauge >= 100) {
       this.showCombo('수호신 혼불 충전 완료 · 폭주 가능!', 1350);
       this.haptic([18, 20, 45]);
@@ -3114,6 +3220,7 @@ class DokkaebiLuckDefense {
     this.spawnRemaining = 0;
     this.spawnTotal = 0;
     this.spawnTimer = 0;
+    this.waveFlowGuard.reset();
     const metaTraits = this.metaProgress.traits;
     this.coreMaxHp = 100 + (metaTraits.ward || 0) * 7;
     this.coreHp = this.coreMaxHp;
@@ -3472,6 +3579,59 @@ class DokkaebiLuckDefense {
     }
   }
 
+  interactWithBattlefieldProp() {
+    if (this.state !== 'playing' || !this.player?.group) return;
+    const result = this.battlefieldProps?.interact({
+      wave: this.currentWave,
+      event: this.battlefieldEvents?.active,
+      soulMultiplier: this.battlefieldEvents?.soulMultiplier || 1,
+      coreMaxHp: this.coreMaxHp,
+      addGold: (amount) => { this.gold += amount; },
+      healCore: (amount) => {
+        const applied = Math.max(0, Math.min(amount, this.coreMaxHp - this.coreHp));
+        this.coreHp += applied;
+        return applied;
+      },
+      gainSoul: (amount) => this.gainSoul(amount, 'battlefield-prop'),
+      spawnEffect: (position, type) => this.spawnBattlefieldPropEffect(position, type)
+    });
+    if (!result) return;
+    this.showCombo(`${result.propLabel} · ${result.label}`, 1150);
+    this.haptic([14, 18, 32]);
+    this.updateHUD();
+  }
+
+  spawnBattlefieldPropEffect(position, type = 'gold', target = null) {
+    const colors = { gold: 0xffd36b, heal: 0x75ff99, soul: 0x8cecff, ember: 0xff7b3f, frost: 0x75d9ff, thunder: 0xc68cff, stone: 0xe3bd72 };
+    const color = colors[type] || colors.gold;
+    this.spawnRing(position, color, target ? 3.8 : 2.8);
+    this.spawnParticles(position.clone().add(new THREE.Vector3(0, .8, 0)), color, target ? 18 : 12, target ? 4.4 : 3.1);
+    if (target) this.combatPresentation?.impact({ position: target, origin: position, color, source: type, heavy: type === 'thunder' });
+  }
+
+  updateBattlefieldProps(dt) {
+    if (!this.battlefieldProps || !this.player?.group) return;
+    const nearest = this.battlefieldProps.update(dt, {
+      elapsed: this.elapsed,
+      wave: this.currentWave,
+      waveActive: this.waveActive,
+      playerPosition: this.player.group.position,
+      enemies: this.enemies,
+      propRateMultiplier: this.battlefieldEvents?.propRateMultiplier || 1,
+      damageEnemy: (enemy, damage, source, origin) => this.damageEnemy(enemy, damage, source, origin, null, source),
+      spawnAttackEffect: (position, source, target) => this.spawnBattlefieldPropEffect(position, source, target)
+    });
+    if (!ui.interact) return;
+    const visible = Boolean(nearest && this.state === 'playing');
+    ui.interact.classList.toggle('hidden', !visible);
+    ui.interact.disabled = !visible;
+    if (visible) {
+      ui.interactLabel.textContent = nearest.label;
+      ui.interactState.textContent = `${nearest.prompt} · G`;
+      ui.interact.setAttribute('aria-label', `${nearest.label} ${nearest.prompt}`);
+    }
+  }
+
   startWave({ manual = false, auto = false } = {}) {
     if (this.state !== 'playing' || this.waveActive || this.currentWave >= this.maxWaves) return;
     const wasCountingDown = this.autoWaveCountdown > 0;
@@ -3486,6 +3646,8 @@ class DokkaebiLuckDefense {
     this.assignWaveTrial();
     this.activatePendingContract();
     const bossWave = isBossWave(this.currentWave);
+    const battlefieldEvent = this.battlefieldEvents.beginWave({ wave: this.currentWave, boss: bossWave });
+    this.battlefieldProps?.beginWave();
     this.activeEncounterPlan = this.encounterDirector.beginWave({
       wave: this.currentWave,
       boss: bossWave,
@@ -3498,6 +3660,7 @@ class DokkaebiLuckDefense {
     this.spawnTotal = this.spawnRemaining;
     this.spawnTimer = .2;
     this.waveSpawned = 0;
+    this.waveFlowGuard.beginWave(this.currentWave, this.getWaveFlowSnapshot());
     ui.wave.disabled = true;
     if (bossWave) {
       const bossType = getBossTypeForWave(this.currentWave);
@@ -3514,20 +3677,21 @@ class DokkaebiLuckDefense {
       this.showMission(`${act.icon} ACT ${act.index} · ${act.name}`, act.description, `${act.subtitle} · WAVE ${act.startWave}-${act.endWave}`, 1850);
     }
     const doctrine = this.activeEncounterPlan;
-    this.showToast(`${auto ? '자동 진군 · ' : manual && wasCountingDown ? '즉시 진군 · ' : ''}웨이브 ${this.currentWave} 시작! ${doctrine?.icon || '☾'} ${doctrine?.name || '달빛 진군'}`);
+    this.showToast(`${auto ? '자동 진군 · ' : manual && wasCountingDown ? '즉시 진군 · ' : ''}웨이브 ${this.currentWave} 시작! ${doctrine?.icon || '☾'} ${doctrine?.name || '달빛 진군'} · ${battlefieldEvent.icon} ${battlefieldEvent.name}`);
+    this.showMission(battlefieldEvent.name, battlefieldEvent.description, `LIVING BATTLEFIELD · ${battlefieldEvent.id.toUpperCase()}`, 1250);
     if (!bossWave && doctrine?.mutatorId !== 'standard') {
       this.showMission(doctrine.name, doctrine.description, `BATTLE DOCTRINE · ${doctrine.mutatorId.toUpperCase()}`, 1450);
     }
     this.updateHUD();
   }
 
-  spawnEnemy() {
-    let type = 'imp';
+  spawnEnemy({ forceType = '', emergency = false } = {}) {
+    let type = forceType || 'imp';
     const wave = this.currentWave;
     const progress = this.waveSpawned / Math.max(1, this.spawnTotal);
     const bossType = getBossTypeForWave(wave);
-    if (bossType && this.spawnRemaining === 1) type = bossType;
-    else {
+    if (!forceType && bossType && this.spawnRemaining === 1) type = bossType;
+    else if (!forceType) {
       type = this.encounterDirector.selectEnemyType({
         wave,
         fallback: 'imp',
@@ -3543,27 +3707,54 @@ class DokkaebiLuckDefense {
         ]
       });
     }
-    const gate = this.gates[(this.waveSpawned + Math.floor(this.random() * 2)) % this.gates.length];
-    const spawnPos = gate.position.clone();
+    const gate = this.gates[(this.waveSpawned + Math.floor(this.random() * 2)) % Math.max(1, this.gates.length)];
+    const gatePosition = gate?.position || new THREE.Vector3(0, 0, 18);
+    const spawnPos = gatePosition.clone();
     const perpendicular = new THREE.Vector3(-spawnPos.z, 0, spawnPos.x).normalize().multiplyScalar(-2.2 + this.random() * 4.4);
     spawnPos.add(perpendicular).multiplyScalar(.96);
     const trialNeedsElite = this.currentTrial?.id === 'hunt' && this.waveTrialEliteSpawned < this.currentTrial.target;
-    const forceElite = trialNeedsElite && !ENEMY_TYPES[type].boss && this.waveSpawned >= 1 && (this.spawnRemaining <= Math.max(3, this.currentTrial.target * 3) || this.random() < .28);
-    const enemy = this.createEnemy(type, spawnPos, progress, { forceElite });
-    if (!enemy) return;
+    const forceElite = trialNeedsElite && !ENEMY_TYPES[type]?.boss && this.waveSpawned >= 1 && (this.spawnRemaining <= Math.max(3, this.currentTrial.target * 3) || this.random() < .28);
+    let enemy = null;
+    let resolvedType = type;
+    try {
+      enemy = this.createEnemy(type, spawnPos, progress, { forceElite });
+    } catch (error) {
+      this.waveFlowGuard.recordSpawnFailure(error instanceof Error ? error.message : String(error));
+      this.recordRuntimeError(error, `spawn:${type}`);
+    }
+    if (!enemy && type !== 'imp' && !ENEMY_TYPES[type]?.boss) {
+      resolvedType = 'imp';
+      try {
+        enemy = this.createEnemy('imp', spawnPos, progress, { forceElite: false });
+        this.assetPipeline?.recordFallback?.(MONSTER_ASSET_IDS[type] || type);
+      } catch (error) {
+        this.waveFlowGuard.recordSpawnFailure(error instanceof Error ? error.message : String(error));
+        this.recordRuntimeError(error, `spawn-fallback:${type}`);
+      }
+    }
+    if (!enemy) {
+      this.spawnRemaining = Math.max(0, this.spawnRemaining - 1);
+      this.waveSpawned += 1;
+      this.combatTelemetry.recordDroppedSpawn();
+      this.waveFlowGuard.recordSpawnFailure(`unavailable:${type}`);
+      if (emergency) this.showWaveRecovery('적 소환 대체', `${type} 모델을 건너뛰고 웨이브를 계속합니다.`);
+      return false;
+    }
     if (enemy.elite) this.waveTrialEliteSpawned += 1;
     this.enemies.push(enemy);
-    this.recordCodexDiscovery(enemy.boss ? 'boss' : 'monster', type);
+    this.recordCodexDiscovery(enemy.boss ? 'boss' : 'monster', resolvedType);
     if (enemy.boss) {
       this.bossEscalation.register(enemy);
       this.bossBreak.register(enemy);
-      this.showMission(ENEMY_TYPES[type].name, '강력한 우두머리가 신목으로 돌진합니다.', 'BOSS HAS ENTERED', 1550);
+      this.showMission(ENEMY_TYPES[resolvedType].name, '강력한 우두머리가 신목으로 돌진합니다.', 'BOSS HAS ENTERED', 1550);
       this.haptic([70, 45, 100]);
       this.updateBossHUD();
     }
-    this.spawnRemaining -= 1;
+    this.spawnRemaining = Math.max(0, this.spawnRemaining - 1);
     this.waveSpawned += 1;
     this.encounterDirector.recordSpawn();
+    this.waveFlowGuard.noteProgress(this.getWaveFlowSnapshot(), emergency ? 'emergency-spawn' : 'spawn');
+    return true;
   }
 
   createEnemy(type, position, progress = 0, options = {}) {
@@ -3649,6 +3840,107 @@ class DokkaebiLuckDefense {
     return model;
   }
 
+  recordRuntimeError(error, source = 'runtime') {
+    const message = error instanceof Error ? error.message : String(error || 'unknown runtime error');
+    const key = `${source}:${message}`.slice(0, 220);
+    const entry = Object.freeze({
+      at: new Date().toISOString(),
+      source,
+      message: message.slice(0, 240),
+      state: this.state,
+      wave: this.currentWave || 0
+    });
+    this.runtimeErrors.push(entry);
+    if (this.runtimeErrors.length > 30) this.runtimeErrors.shift();
+    if (this.runtimeErrorKeys.has(key)) return entry;
+    this.runtimeErrorKeys.add(key);
+    console.error(`[RuntimeGuard:${source}]`, error);
+    if (this.state === 'playing') this.showWaveRecovery('오류 자동 복구', `${source} 경로를 격리하고 전투를 계속합니다.`);
+    return entry;
+  }
+
+  runSafe(source, callback) {
+    try { return callback(); }
+    catch (error) { this.recordRuntimeError(error, source); return undefined; }
+  }
+
+  selectRecommendedReward(type) {
+    if (type === 'blessing' && this.state === 'blessing') {
+      const option = ui.blessingOptions?.querySelector('[data-blessing]');
+      if (option) this.selectBlessing(option.dataset.blessing);
+      return;
+    }
+    if (type === 'relic' && this.state === 'relic') {
+      const option = ui.relicOptions?.querySelector('[data-relic]');
+      if (option) this.selectRelic(option.dataset.relic);
+    }
+  }
+
+  getRewardModalForState(state = this.state) {
+    if (state === 'blessing') return ui.blessingModal;
+    if (state === 'relic') return ui.relicModal;
+    if (state === 'contract') return ui.contractModal;
+    if (state === 'choice') return ui.choiceSummonModal;
+    return null;
+  }
+
+  getWaveFlowSnapshot() {
+    const rewardModal = this.getRewardModalForState();
+    return {
+      state: this.state,
+      waveActive: Boolean(this.waveActive),
+      currentWave: this.currentWave || 0,
+      maxWaves: this.maxWaves || 10,
+      spawnRemaining: this.spawnRemaining || 0,
+      waveSpawned: this.waveSpawned || 0,
+      enemyCount: this.enemies.filter((enemy) => !enemy.dead).length,
+      enemyCap: this.runtimeBudget?.diagnostics?.caps?.enemies || (this.lowPower ? 18 : 30),
+      postWaveQueueLength: this.postWaveQueue?.length || 0,
+      autoWaveCountdown: this.autoWaveCountdown || 0,
+      modalVisible: Boolean(rewardModal?.classList.contains('visible'))
+    };
+  }
+
+  showWaveRecovery(title, copy, duration = 2100) {
+    if (!ui.waveRecovery) return;
+    ui.waveRecoveryTitle.textContent = title;
+    ui.waveRecoveryCopy.textContent = copy;
+    ui.waveRecovery.classList.remove('hidden');
+    this.scheduleUi(() => ui.waveRecovery.classList.add('hidden'), duration, { key: 'wave-recovery-hide' });
+  }
+
+  restoreRewardModal(state) {
+    const modal = this.getRewardModalForState(state);
+    if (!modal) return false;
+    this.showModal(modal);
+    this.showWaveRecovery('선택 화면 복구', '숨겨진 보상 선택 화면을 다시 표시했습니다.');
+    return true;
+  }
+
+  updateWaveFlowGuard(dt) {
+    const action = this.waveFlowGuard.update(dt, this.getWaveFlowSnapshot());
+    if (!action) return;
+    if (action.type === 'restore-modal') {
+      this.restoreRewardModal(action.state);
+      return;
+    }
+    if (action.type === 'force-spawn' && this.waveActive && this.spawnRemaining > 0) {
+      const spawned = this.spawnEnemy({ forceType: 'imp', emergency: true });
+      this.spawnTimer = spawned ? .42 : .18;
+      this.showWaveRecovery('웨이브 소환 복구', spawned ? '지연된 적 소환을 대체 경로로 이어갑니다.' : '손상된 소환 항목을 건너뛰고 진행합니다.');
+      return;
+    }
+    if (action.type === 'complete-wave' && this.waveActive && this.spawnRemaining <= 0 && this.enemies.length === 0) {
+      this.showWaveRecovery('웨이브 종료 복구', '남은 적이 없어 다음 단계로 진행합니다.');
+      this.completeWave();
+      return;
+    }
+    if (action.type === 'resume-countdown' && this.state === 'playing' && !this.waveActive) {
+      this.showWaveRecovery('다음 습격 복구', '진행 대기 상태를 감지해 자동 진군을 다시 시작합니다.');
+      this.beginAutoWaveCountdown(5);
+    }
+  }
+
   updateWave(dt) {
     if (!this.waveActive) return;
     this.updateWaveTrial();
@@ -3676,7 +3968,9 @@ class DokkaebiLuckDefense {
 
   completeWave() {
     this.waveActive = false;
+    this.waveFlowGuard.noteProgress(this.getWaveFlowSnapshot(), 'wave-complete');
     const perfect = this.coreHp >= this.waveStartHp - .01;
+    const battlefieldEvent = this.battlefieldEvents?.active;
     const perfectBonus = perfect ? 10 + this.currentWave * 2 : 0;
     const encounterResult = this.encounterDirector.completeWave({ perfect, coreHpRatio: this.coreHp / Math.max(1, this.coreMaxHp) });
     this.lastEncounterResult = encounterResult;
@@ -3684,8 +3978,14 @@ class DokkaebiLuckDefense {
     this.notifyMomentumActivation(this.battleMomentum.recordWave({ perfect }));
     const campaignResult = this.campaign.completeWave(this.currentWave);
     if (campaignResult.completed) this.runStats.actsCleared = campaignResult.clearedCount;
-    const reward = Math.round((24 + this.currentWave * 7 + perfectBonus) * this.activeRunMode.reward * (this.dailyEdict?.reward || 1) * (this.activeEncounterPlan?.rewardMultiplier || 1) * (this.campaign.modifiers.reward || 1) * this.battleMomentum.rewardMultiplier);
+    const reward = Math.round((24 + this.currentWave * 7 + perfectBonus) * this.activeRunMode.reward * (this.dailyEdict?.reward || 1) * (this.activeEncounterPlan?.rewardMultiplier || 1) * (this.campaign.modifiers.reward || 1) * this.battleMomentum.rewardMultiplier * (battlefieldEvent?.rewardMultiplier || 1));
     this.gold += reward;
+    const battlefieldEventResult = this.battlefieldEvents.completeWave({ coreHp: this.coreHp, coreMaxHp: this.coreMaxHp });
+    if (battlefieldEventResult.heal > 0) {
+      this.coreHp += battlefieldEventResult.heal;
+      this.showToast(`${battlefieldEventResult.event.icon} ${battlefieldEventResult.event.name} · 신목 회복 +${battlefieldEventResult.heal}`);
+      this.spawnBattlefieldPropEffect(new THREE.Vector3(0, .2, 0), 'heal');
+    }
     this.applyCouncilWaveIntervention(perfect);
     this.score += Math.round((this.currentWave * 250 + this.coreHp * 8) * this.activeRunMode.score * (this.dailyEdict?.score || 1));
     this.showCombo(`웨이브 ${this.currentWave} 격파 · +${reward} 엽전${perfectBonus ? ' · 무결점!' : ''}`, 1600);
@@ -3841,6 +4141,9 @@ class DokkaebiLuckDefense {
       <button class="blessing-option" data-blessing="${blessing.id}"><span>${blessing.icon}</span><b>${blessing.name}</b><p>${blessing.desc}</p><small>${blessing.tag}</small></button>
     `).join('');
     this.showModal(ui.blessingModal);
+    this.scheduleUi(() => {
+      if (this.state === 'blessing' && !ui.blessingModal.classList.contains('visible')) this.restoreRewardModal('blessing');
+    }, 420, { key: 'blessing-modal-visibility-guard' });
   }
 
   selectBlessing(id) {
@@ -3850,6 +4153,7 @@ class DokkaebiLuckDefense {
     this.blessingHistory.push(id);
     this.hideModal(ui.blessingModal);
     this.state = 'playing';
+    this.waveFlowGuard.noteProgress(this.getWaveFlowSnapshot(), 'blessing-selected');
     this.sound.merge(2);
     this.showCombo(`${blessing.icon} ${blessing.name}`, 1500);
     this.advancePostWaveRewards();
@@ -5084,7 +5388,7 @@ class DokkaebiLuckDefense {
     const color=ENEMY_TYPES[enemy.type].color;
     this.spawnParticles(deathPosition.clone().add(new THREE.Vector3(0,.8,0)),color,enemy.boss?35:12,enemy.boss?6:3.4);
     const eliteOmenReward = enemy.elite ? (this.activeOmen?.eliteReward || 1) : 1;
-    const reward=Math.max(2,Math.round(enemy.reward*(this.activeEncounterPlan?.rewardMultiplier || 1)*this.mods.goldMultiplier*this.getSpiritGoldMultiplier()*this.getContractRewardMultiplier()*(this.activeOmen?.reward || 1)*this.activeRunMode.reward*(enemy.elite?.reward || 1)*eliteOmenReward*(this.dailyEdict?.reward || 1)*(enemy.elite ? this.mods.eliteReward : 1)*bossEscalationReward*(this.campaign.modifiers.reward || 1)*this.battleMomentum.rewardMultiplier));
+    const reward=Math.max(2,Math.round(enemy.reward*(this.activeEncounterPlan?.rewardMultiplier || 1)*this.mods.goldMultiplier*this.getSpiritGoldMultiplier()*this.getContractRewardMultiplier()*(this.activeOmen?.reward || 1)*this.activeRunMode.reward*(enemy.elite?.reward || 1)*eliteOmenReward*(this.dailyEdict?.reward || 1)*(enemy.elite ? this.mods.eliteReward : 1)*bossEscalationReward*(this.campaign.modifiers.reward || 1)*this.battleMomentum.rewardMultiplier*(this.battlefieldEvents?.rewardMultiplier || 1)));
     this.dropCoins(deathPosition,reward,enemy.boss?9:Math.min(4,1+Math.floor(reward/7)));
     this.kills+=1;
     this.gainSoul(enemy.boss ? 24 : enemy.elite ? 8 : 2, 'kill');
@@ -5379,7 +5683,7 @@ class DokkaebiLuckDefense {
 
   lerpAngle(a,b,t) { let diff=(b-a+Math.PI)%(Math.PI*2)-Math.PI;if(diff<-Math.PI)diff+=Math.PI*2;return a+diff*t; }
 
-  resolveCameraCollisionDistance(target, requestedDistance) {
+  resolveCameraCollisionDistance(target, requestedDistance, profileId = 'scenic') {
     if (!this.cameraObstacles.length) return requestedDistance;
     const horizontal = Math.cos(this.cameraPitch) * requestedDistance;
     const dx = Math.sin(this.cameraYaw) * horizontal;
@@ -5389,7 +5693,8 @@ class DokkaebiLuckDefense {
     if (a < .0001) return requestedDistance;
     let collisionFraction = 1;
     for (const obstacle of this.cameraObstacles) {
-      const radius = obstacle.radius + .42;
+      if (obstacle.type === 'core') continue;
+      const radius = obstacle.radius + .32;
       const ox = target.x - obstacle.x;
       const oz = target.z - obstacle.z;
       const c = ox * ox + oz * oz - radius * radius;
@@ -5399,14 +5704,16 @@ class DokkaebiLuckDefense {
       if (discriminant < 0) continue;
       const sqrt = Math.sqrt(discriminant);
       const roots = [(-b - sqrt) / (2 * a), (-b + sqrt) / (2 * a)].sort((left, right) => left - right);
-      const hit = roots.find((value) => value > .06 && value < collisionFraction);
+      const hit = roots.find((value) => value > .08 && value < collisionFraction);
       if (hit === undefined) continue;
       const heightAtHit = target.y + dy * hit;
       if (heightAtHit > obstacle.height + .55) continue;
-      collisionFraction = Math.max(.24, hit - .045);
+      collisionFraction = Math.max(.58, hit - .035);
     }
-    return Math.max(5.6, requestedDistance * collisionFraction);
+    const minimumByProfile = profileId === 'scenic' ? 14.8 : profileId === 'balanced' ? 12.8 : 10.4;
+    return clamp(requestedDistance * collisionFraction, minimumByProfile, requestedDistance);
   }
+
 
 
   updateCamera(dt) {
@@ -5430,11 +5737,25 @@ class DokkaebiLuckDefense {
     } else {
       const profile = this.activeCameraProfile || getCameraProfile(this.controlSettings?.cameraProfile);
       const bossActive = this.enemies.some((enemy) => enemy.boss && !enemy.dead);
-      const cameraDirective = this.cameraDirectorV14.update({ player: this.player, enemies: this.enemies, waveActive: this.waveActive, bossActive, dt });
+      const cameraDirective = this.cameraDirectorV16.update({
+        player: this.player,
+        enemies: this.enemies,
+        waveActive: this.waveActive,
+        bossActive,
+        interestPoints: this.battlefieldProps?.interestPoints || [],
+        aspect: this.camera.aspect,
+        corePosition: this.core?.position || tempV.set(0, 0, 0),
+        dt
+      });
       const framedDistance = resolveCameraDistance(profile.id, { waveActive: this.waveActive, bossActive, manualDistance: this.cameraDistance }) + cameraDirective.spreadBonus;
+      const desiredFov = profile.fov + cameraDirective.fovBonus;
+      if (Math.abs(this.camera.fov - desiredFov) > .01) {
+        this.camera.fov = lerp(this.camera.fov, desiredFov, 1 - Math.pow(.02, dt));
+        this.camera.updateProjectionMatrix();
+      }
       target=this.player.group.position.clone().add(new THREE.Vector3(0,profile.targetHeight,0));
-      if (cameraDirective.focusWeight > .001) target.lerp(this.cameraDirectorV14.focusPoint, cameraDirective.focusWeight);
-      const safeDistance = this.resolveCameraCollisionDistance(target, framedDistance);
+      if (cameraDirective.focusWeight > .001) target.lerp(this.cameraDirectorV16.focusPoint, cameraDirective.focusWeight);
+      const safeDistance = this.resolveCameraCollisionDistance(target, framedDistance, profile.id);
       const collisionBlend = safeDistance < this.cameraCollisionDistance ? 1 - Math.pow(.000001, dt) : 1 - Math.pow(.02, dt);
       this.cameraCollisionDistance = lerp(this.cameraCollisionDistance, safeDistance, collisionBlend);
       const horizontal=Math.cos(this.cameraPitch)*this.cameraCollisionDistance;
@@ -5444,9 +5765,11 @@ class DokkaebiLuckDefense {
         target.z+Math.cos(this.cameraYaw)*horizontal
       );
     }
+    this.updateCoreOcclusion(dt, target, desired);
     this.camera.position.lerp(desired,1-Math.pow(.0007,dt));
     const shakePreference = this.controlSettings?.reducedMotion ? Math.min(.2, this.controlSettings.shakeIntensity) : this.controlSettings?.shakeIntensity ?? 1;
-    const shakeAmount=this.shake*this.shake*shakePreference;
+    const cameraShakeLimit = this.cameraDirectorV16?.shakeLimit ?? .86;
+    const shakeAmount=Math.min(this.shake, cameraShakeLimit)*Math.min(this.shake, cameraShakeLimit)*shakePreference;
     if(shakeAmount>.001)this.camera.position.add(new THREE.Vector3(rand(-shakeAmount,shakeAmount),rand(-shakeAmount,shakeAmount),rand(-shakeAmount,shakeAmount)));
     this.shake=Math.max(0,this.shake-dt*1.9);
     this.camera.lookAt(target);
@@ -5731,9 +6054,14 @@ class DokkaebiLuckDefense {
         cameraProfile: { id: this.activeCameraProfile?.id || this.controlSettings.cameraProfile, distance: this.cameraDistance, target: this.cameraDistanceTarget, fov: this.camera?.fov || 0 },
         characterDNA: CHARACTER_DNA_SUMMARY,
         heroArchetypes: HERO_ARCHETYPE_SUMMARY,
-        assetForge: IP_ASSET_LIBRARY_V14,
+        assetForge: IP_ASSET_LIBRARY_V15,
         spriteAtlas: this.battlefieldSprites?.diagnostics || {},
-        cameraDirector: this.cameraDirectorV14?.snapshot || {},
+        battlefieldProps: this.battlefieldProps?.diagnostics || {},
+        runtimeVisualAudit: this.runtimeVisualAudit || null,
+        waveFlow: this.waveFlowGuard?.diagnostics || {},
+        runtimeErrors: { count: this.runtimeErrors.length, last: this.runtimeErrors.at(-1) || null },
+        battlefieldEvent: this.battlefieldEvents?.diagnostics || {},
+        cameraDirector: this.cameraDirectorV16?.snapshot || {},
         activeHeroPassive: this.activeHeroPassive || null,
         qualityGovernor: this.engine.qualityGovernor?.diagnostics || null,
         frameScheduler: this.frameScheduler.diagnostics,
@@ -5939,29 +6267,57 @@ class DokkaebiLuckDefense {
   }
 
   animate() {
-    requestAnimationFrame(()=>this.animate());
-    const dt=Math.min(.033,this.clock.getDelta());
+    requestAnimationFrame(() => this.animate());
+    const dt = Math.min(.033, this.clock.getDelta());
     this.frameScheduler.tick(dt);
-    this.combatPresentation?.update(dt);
+    this.runSafe('combat-presentation', () => this.combatPresentation?.update(dt));
     const impactScale = this.combatPresentation?.timeScale ?? 1;
-    const gameDt=(this.cinematic?dt*.42:dt) * impactScale;
-    this.elapsed+=dt;
-    this.updateWorldEffects(dt);
-    this.battlefieldSprites?.update(this.elapsed);
-    if(this.state==='playing') {
-      this.updateAutoWaveCountdown(dt);this.updateRunMomentum(gameDt);this.updateBattleMomentum(gameDt);this.updatePlayer(gameDt);this.updateWave(gameDt);this.updateEnemies(gameDt);this.updateHazards(gameDt);this.updateDangerHint(gameDt);this.updateUnits(gameDt);this.updateProjectiles(gameDt);this.updateCoins(gameDt);this.updateParticles(gameDt);this.updateMoveTargetMarker(gameDt);this.updateKillChain(gameDt);this.updateAdaptiveQuality(dt);this.animations.update(gameDt,this.camera);if(this.frameScheduler.shouldRun('hud', this.engine.qualityProfile?.hudHz || 30))this.updateHUD();
-    } else if(this.state==='title') {
-      this.updateUnits(dt);this.animations.update(dt,this.camera);this.updateParticles(dt);
-      if(this.player){this.player.group.rotation.y+=dt*.18;this.player.group.position.y=Math.sin(this.elapsed*2.3)*.05;}
+    const gameDt = (this.cinematic ? dt * .42 : dt) * impactScale;
+    this.elapsed += dt;
+
+    this.runSafe('world-effects', () => this.updateWorldEffects(dt));
+    this.runSafe('battlefield-sprites', () => this.battlefieldSprites?.update(this.elapsed));
+    this.runSafe('battlefield-props', () => this.updateBattlefieldProps(dt));
+    this.runSafe('wave-flow-guard', () => this.updateWaveFlowGuard(dt));
+
+    if (this.state === 'playing') {
+      this.runSafe('auto-wave', () => this.updateAutoWaveCountdown(dt));
+      this.runSafe('run-momentum', () => this.updateRunMomentum(gameDt));
+      this.runSafe('battle-momentum', () => this.updateBattleMomentum(gameDt));
+      this.runSafe('player', () => this.updatePlayer(gameDt));
+      this.runSafe('wave', () => this.updateWave(gameDt));
+      this.runSafe('enemies', () => this.updateEnemies(gameDt));
+      this.runSafe('hazards', () => this.updateHazards(gameDt));
+      this.runSafe('danger-hint', () => this.updateDangerHint(gameDt));
+      this.runSafe('units', () => this.updateUnits(gameDt));
+      this.runSafe('projectiles', () => this.updateProjectiles(gameDt));
+      this.runSafe('coins', () => this.updateCoins(gameDt));
+      this.runSafe('particles', () => this.updateParticles(gameDt));
+      this.runSafe('move-marker', () => this.updateMoveTargetMarker(gameDt));
+      this.runSafe('kill-chain', () => this.updateKillChain(gameDt));
+      this.runSafe('adaptive-quality', () => this.updateAdaptiveQuality(dt));
+      this.runSafe('animations', () => this.animations.update(gameDt, this.camera));
+      if (this.frameScheduler.shouldRun('hud', this.engine.qualityProfile?.hudHz || 30)) this.runSafe('hud', () => this.updateHUD());
+    } else if (this.state === 'title') {
+      this.runSafe('title-units', () => this.updateUnits(dt));
+      this.runSafe('title-animations', () => this.animations.update(dt, this.camera));
+      this.runSafe('title-particles', () => this.updateParticles(dt));
+      if (this.player) {
+        this.player.group.rotation.y += dt * .18;
+        this.player.group.position.y = Math.sin(this.elapsed * 2.3) * .05;
+      }
     } else {
-      this.updateParticles(dt);
+      this.runSafe('modal-particles', () => this.updateParticles(dt));
     }
-    if (this.player?.group && this.worldReady && this.frameScheduler.shouldRun('chunks', this.engine.qualityProfile?.chunkHz || 15)) this.engine.worldChunks.update(this.player.group.position);
-    if (this.frameScheduler.shouldRun('shadows', this.engine.qualityProfile?.shadowHz || 18)) this.updateBlobShadows();
-    this.updateCamera(dt);
-    this.renderer.render(this.scene,this.camera);
-    this.productionConsole?.update(dt);
-    this.renderStatsHud?.update(dt, {
+
+    if (this.player?.group && this.worldReady && this.frameScheduler.shouldRun('chunks', this.engine.qualityProfile?.chunkHz || 15)) {
+      this.runSafe('world-chunks', () => this.engine.worldChunks.update(this.player.group.position));
+    }
+    if (this.frameScheduler.shouldRun('shadows', this.engine.qualityProfile?.shadowHz || 18)) this.runSafe('blob-shadows', () => this.updateBlobShadows());
+    this.runSafe('camera', () => this.updateCamera(dt));
+    this.runSafe('renderer', () => this.renderer.render(this.scene, this.camera));
+    this.runSafe('production-console', () => this.productionConsole?.update(dt));
+    this.runSafe('render-stats', () => this.renderStatsHud?.update(dt, {
       engineVersion: ENGINE_VERSION,
       fps: this.engine.monitor.lastFps,
       performance: this.engine.monitor.snapshot,
@@ -5977,14 +6333,17 @@ class DokkaebiLuckDefense {
       reactions: this.elementalReactions?.diagnostics,
       momentum: this.battleMomentum?.diagnostics,
       bossEscalation: this.bossEscalation?.diagnostics,
+      waveFlow: this.waveFlowGuard?.diagnostics,
+      runtimeErrors: this.runtimeErrors.length,
       pools: {
         projectiles: this.projectiles.length,
         projectileCapacity: this.projectilePoolCapacity,
         coins: this.coins.length,
         coinCapacity: this.coinPoolCapacity
       }
-    });
+    }));
   }
+
 }
 
 try {

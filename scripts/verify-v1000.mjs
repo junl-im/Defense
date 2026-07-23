@@ -28,9 +28,9 @@ const consoleSource = read('src/production-console.js');
 const assetCatalog = read('src/engine/asset-catalog.js');
 
 check(Number(pkg.version.split('.')[0]) >= 10, 'package version remains v10 or later');
-check(/const GAME_VERSION = '(?:10|11|12|13|14)\.0\.0'/.test(main), 'runtime retains v10 lineage or later');
+check(/const GAME_VERSION = '(?:10|11|12|13|14|15|16|17)\.0\.0'/.test(main), 'runtime retains v10 lineage or later');
 check(Number(ENGINE_VERSION.split('.')[0]) >= 8, 'engine version remains 8.0.0 or later');
-check(/ASSET_REVISION = '(?:10|11|12|13|14)\.0\.0'/.test(assetCatalog), 'asset revision remains v10 or later');
+check(/ASSET_REVISION = '(?:10|11|12|13|14|15|16|17)\.0\.0'/.test(assetCatalog), 'asset revision remains v10 or later');
 check(SAVE_SCHEMA_VERSION >= 8, 'save schema remains v8 or later');
 
 check(forge.summary.sourceCandidates === 40, '40 high-resolution source candidates retained');
@@ -67,10 +67,10 @@ check(ART_PRODUCTION_SUMMARY.transparentPresentationDerivatives === 40 && ART_PR
 check(GOLDEN_VERTICAL_SLICE.length === 6 && GOLDEN_VERTICAL_SLICE.every((entry) => entry.status !== 'production-approved'), 'six golden slice categories remain review-stage');
 check(approval.gameVersion === '10.0.0' && approval.productionApprovedAssetIds.length === 0, 'v10 approval registry remains locked');
 
-check((html.includes('asset-library-v14.html') || html.includes('asset-library-v13.html') || html.includes('asset-library-v10.html')) && (html.includes('5 CLASSES') || html.includes('COUNCIL 15') || html.includes('5직업') || html.includes('15개 결속')) && (html.includes('ALPHA 40') || html.includes('BREAK SYSTEM') || html.includes('RUNTIME SLICE 6/6')) && (html.includes('v10.0.0') || html.includes('v11.0.0') || html.includes('v12.0.0') || html.includes('v13.0.0') || html.includes('v14.0.0') || html.includes('v13.0.0')), 'title screen exposes v10 forge and roster');
+check(html.includes('id="title-setup-modal"') && html.includes('id="title-vault-modal"') && consoleSource.includes('ASSET FORGE') && HERO_CLASS_ORDER.length === 5, 'simplified title preserves setup access, forge diagnostics and five-class roster');
 check(review.includes('dokkaebi-asset-review-v10') && review.includes('리뷰 JSON 저장') && review.includes('productionApproved:0'), 'review OS stores local decisions and exports JSON without auto approval');
 check(style.includes('GOLDEN CONVERGENCE v10.0.0') && style.includes('repeat(5'), 'five-class responsive UI styles');
-check((consoleSource.includes('IP_ASSET_LIBRARY_V10') || consoleSource.includes('IP_ASSET_LIBRARY_V13') || consoleSource.includes('IP_ASSET_LIBRARY_V14')) && consoleSource.includes('HERO ROSTER') && consoleSource.includes('ASSET FORGE'), 'production console v10 diagnostics');
+check((consoleSource.includes('IP_ASSET_LIBRARY_V10') || consoleSource.includes('IP_ASSET_LIBRARY_V13') || consoleSource.includes('IP_ASSET_LIBRARY_V14') || consoleSource.includes('IP_ASSET_LIBRARY_V15')) && consoleSource.includes('HERO ROSTER') && consoleSource.includes('ASSET FORGE'), 'production console v10 diagnostics');
 
 if (failures.length) {
   console.error(`\nFAIL v10.0.0 Golden Convergence contract ${failures.length}`);

@@ -1,4 +1,4 @@
-export const SAVE_SCHEMA_VERSION = 12;
+export const SAVE_SCHEMA_VERSION = 15;
 export const SAVE_MIGRATION_KEY = 'dokkaebi-save-schema-version';
 
 const SAFE_KEYS = Object.freeze([
@@ -28,7 +28,7 @@ export function migrateSaveSchema(storage = globalThis.localStorage) {
       const value = storage.getItem(key);
       if (value !== null) backup[key] = value;
     }
-    storage.setItem('dokkaebi-save-backup-v12', JSON.stringify({ createdAt: new Date().toISOString(), fromVersion: before, values: backup }));
+    storage.setItem(`dokkaebi-save-backup-v${SAVE_SCHEMA_VERSION}`, JSON.stringify({ createdAt: new Date().toISOString(), fromVersion: before, values: backup }));
     storage.setItem(SAVE_MIGRATION_KEY, String(SAVE_SCHEMA_VERSION));
     return Object.freeze({ version: SAVE_SCHEMA_VERSION, migrated: true, fromVersion: before, backupCount: Object.keys(backup).length });
   } catch (error) {

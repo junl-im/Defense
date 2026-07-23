@@ -26,9 +26,11 @@ const catalog = read('src/engine/asset-catalog.js');
 const approval = json('docs/ART_ASSET_APPROVAL_REGISTRY_v11.0.0.json');
 
 check(Number(pkg.version.split('.')[0]) >= 11, 'package version remains v11 or later');
-check(/const GAME_VERSION = '(?:11|12|13|14)\.0\.0'/.test(main), 'runtime game version remains v11 or later');
+const runtimeVersion = Number(main.match(/const GAME_VERSION = '(\d+)\.0\.0'/)?.[1] || 0);
+check(runtimeVersion >= 11, 'runtime game version remains v11 or later');
 check(Number(ENGINE_VERSION.split('.')[0]) >= 9, 'engine version remains 9.0.0 or later');
-check(/ASSET_REVISION = '(?:11|12|13|14)\.0\.0'/.test(catalog), 'asset revision remains v11 or later');
+const assetRevision = Number(catalog.match(/ASSET_REVISION = '(\d+)\.0\.0'/)?.[1] || 0);
+check(assetRevision >= 11, 'asset revision remains v11 or later');
 check(SAVE_SCHEMA_VERSION >= 9, 'save schema remains v9 or later');
 
 check(Object.keys(GUARDIAN_COUNCIL_SUPPORTS).length === 5, 'five guardian council supports');
@@ -80,7 +82,7 @@ check(migration.migrated && fakeData.get('dokkaebi-save-schema-version') === Str
 check(Boolean(fakeData.get(`dokkaebi-save-backup-v${SAVE_SCHEMA_VERSION}`)), 'save migration writes current backup');
 check(fakeData.get(`dokkaebi-save-backup-v${SAVE_SCHEMA_VERSION}`).includes('dokkaebi-guardian-council-v1'), 'save backup includes guardian council');
 
-check((html.includes('SOVEREIGN ASSEMBLY') || html.includes('GOLDEN DOMINION') || html.includes('ATLAS DOMINION')) && html.includes('id="council-options"') && html.includes('id="boss-break-progress"') && (html.includes('v11.0.0') || html.includes('v12.0.0') || html.includes('v13.0.0') || html.includes('v14.0.0') || html.includes('v13.0.0')), 'v11 systems retained in current title and UI');
+check(html.includes('id="council-options"') && html.includes('id="boss-break-progress"') && html.includes('id="title-setup-modal"'), 'v11 council and boss break systems retained in setup and combat UI');
 check(style.includes('SOVEREIGN ASSEMBLY v11.0.0') && style.includes('.council-selector') && style.includes('.equipment-forge'), 'v11 responsive styles retained');
 check(main.includes('applyCouncilWaveIntervention') && main.includes('bossBreak.recordDamage') && main.includes('campaign.enterWave'), 'v11 runtime systems integrated');
 check(consoleSource.includes('GUARDIAN COUNCIL') && consoleSource.includes('CAMPAIGN ACT') && consoleSource.includes('BOSS BREAK') && consoleSource.includes('EQUIPMENT FORGE'), 'production console v11 diagnostics');

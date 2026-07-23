@@ -15,17 +15,17 @@ const style = read('src/style.css');
 const codexViewer = read('src/codex-viewer.js');
 
 assert(
-  html.includes('id="controls-btn" class="title-settings-btn"') &&
-  html.includes('aria-label="카메라와 조작 설정"') &&
-  html.includes('aria-hidden="true">⚙️</span>'),
-  '첫 화면 우측 상단 카메라 설정 톱니바퀴'
+  html.includes('class="title-primary-actions"') &&
+  html.includes('id="controls-btn" class="btn ghost"') &&
+  html.includes('>설정</button>'),
+  '첫 화면 단순 설정 진입 버튼'
 );
 assert(
-  style.includes('.title-settings-btn {') &&
-  style.includes('position: fixed; z-index: 128;') &&
-  style.includes('width: 44px; height: 44px;') &&
-  style.includes('var(--safe-top)') && style.includes('var(--safe-right)'),
-  '안전 영역을 반영한 44px 고정 설정 버튼'
+  style.includes('.title-panel-simple') &&
+  style.includes('.title-primary-actions') &&
+  style.includes('grid-template-columns: repeat(3') &&
+  style.includes('env(safe-area-inset-bottom'),
+  '안전 영역을 반영한 간결한 첫 화면 액션'
 );
 assert(
   main.includes("document.body.classList.toggle('ui-compact', compact)") &&
@@ -50,10 +50,12 @@ assert(
 );
 assert(
   main.includes("radius: 1.82, type: 'core'") &&
-  main.includes("radius: 2.15, height: 6.7, type: 'core'") &&
+  !main.includes("cameraObstacles.push({ x: 0, z: 0, radius: 2.15") &&
+  main.includes("if (obstacle.type === 'core') continue") &&
+  main.includes('updateCoreOcclusion') &&
   main.includes('premium.scale.setScalar(.78)') &&
   main.includes('damageAnchorY = 4.55') && main.includes('impactY = 3.7'),
-  '축소된 중앙 신목과 충돌·피격 앵커 동기화'
+  '중앙 신목 충돌·피격 앵커 유지 및 카메라 급당김 방지'
 );
 assert(
   main.includes("document.body.classList.add('boss-active')") &&
