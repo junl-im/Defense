@@ -1,0 +1,29 @@
+export const SAVE_SCHEMA_VERSION = 6;
+export const SAVE_MIGRATION_KEY = 'dokkaebi-save-schema-version';
+
+const SAFE_KEYS = Object.freeze([
+  'dokkaebi-run-mode-v1',
+  'dokkaebi-hero-class-v1',
+  'dokkaebi-seed-mode-v1',
+  'dokkaebi-control-settings-v1',
+  'dokkaebi-left-ui-collapsed',
+  'dokkaebi-luck-scores'
+]);
+
+export function migrateSaveSchema(storage = globalThis.localStorage) {
+  if (!storage) return Object.freeze({ version: SAVE_SCHEMA_VERSION, migrated: false, reason: 'storage-unavailable' });
+  try {
+    const before = Number(storage.getItem(SAVE_MIGRATION_KEY) || 0);
+    if (before >= SAVE_SCHEMA_VERSION) return Object.freeze({ version: before, migrated: false, reason: 'current' });
+    const backup = {};
+    for (const key of SAFE_KEYS) {
+      const value = storage.getItem(key);
+      if (value !== null) backup[key] = value;
+    }
+    storage.setItem('dokkaebi-save-backup-v6', JSON.stringify({ createdAt: new Date().toISOString(), fromVersion: before, values: backup }));
+    storage.setItem(SAVE_MIGRATION_KEY, String(SAVE_SCHEMA_VERSION));
+    return Object.freeze({ version: SAVE_SCHEMA_VERSION, migrated: true, fromVersion: before, backupCount: Object.keys(backup).length });
+  } catch (error) {
+    return Object.freeze({ version: SAVE_SCHEMA_VERSION, migrated: false, reason: 'migration-failed', message: error instanceof Error ? error.message : String(error) });
+  }
+}

@@ -10,6 +10,7 @@ export { WorldChunkManager } from './world-chunk-manager.js';
 export { RenderStatsHUD } from './render-stats-hud.js';
 export { AdaptiveQualityGovernor, QUALITY_PROFILES, QUALITY_PROFILE_VERSION } from './quality-governor.js';
 export { FrameBudgetScheduler } from './frame-budget-scheduler.js';
+export { RuntimeBudgetManager, RUNTIME_BUDGET_MANAGER_VERSION } from './runtime-budget-manager.js';
 
 export { AssetPipeline, ASSET_POLICY } from './asset-pipeline.js';
 

@@ -15,12 +15,30 @@
 이 문서는 대화가 끊기거나 다른 작업자가 이어받아도 프로젝트를 계속 개발할 수 있도록 모든 핵심 기록을 누적하는 단일 인수인계 파일입니다.
 
 - 마지막 갱신: 2026-07-23
-- 현재 버전: `5.0.0`
-- 프로젝트 폴더: `DokkaebiLuckDefense3D_FULL_v5.0.0`
-- 현재 패치명: Moonstone Genesis 초대규모 통합 업데이트
+- 현재 버전: `6.0.0`
+- 프로젝트 폴더: `DokkaebiLuckDefense3D_FULL_v6.0.0`
+- 현재 패치명: Battlefront Ascension 초대규모 통합 업데이트
 
 ---
 
+
+## v6.0.0 신규 구현 요약 — Battlefront Ascension
+
+- 게임 `6.0.0`, 엔진 `5.0.0`, 세이브 스키마 `6`
+- Encounter Director 1.0: 표준·군집·철갑·폭풍·주술·월식·보스 공세 교리
+- 신목 체력과 직전 웨이브 클리어 시간을 이용한 제한적 적응 난이도
+- 웨이브별 적 구성·개체 수·생성 간격·체력·속도·공격력·정예 확률·보상 배율 통합
+- 연소·빙결·풍인·균열·공명·감전 6종 상태이상과 중첩·지속·틱 피해
+- Runtime Budget Manager: 품질 프로필·FPS·P95·위험 프레임 기반 활성 적 상한 조정
+- Combat Telemetry: 피해원·상태이상·처치·보스·웨이브 클리어 기록
+- 세이브 스키마 v6 적용 전 기존 주요 설정과 기록 자동 백업
+- F4 Battlefront Production Console에 공세·전투·상태·예산 카드 추가
+- Battlefront Ascension 타이틀·HUD·제작 콘솔 디자인 토큰 적용
+- 신규 검증 `verify-v600.mjs` 추가
+
+아트 승인 상태는 변경하지 않았다. 런타임 시스템 완성도와 최종 제작 에셋 승인은 별도이며, Absolute Art Bible v2.0 최종 승인 에셋은 계속 0종이다.
+
+---
 
 ## v5.0.0 신규 구현 요약 — Moonstone Genesis
 

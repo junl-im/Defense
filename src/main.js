@@ -30,6 +30,11 @@ import { loadCodexProgress, saveCodexProgress, recordCodexEncounter, recordCodex
 import { RuntimeLifecycle } from './runtime-lifecycle.js';
 import AdaptiveHudLayout from './ui-layout-manager.js';
 import CombatPresentation, { faceActorTowards, resolveAttackOrigin } from './combat-presentation.js';
+import EncounterDirector from './combat/encounter-director.js';
+import StatusEffectSystem from './combat/status-effect-system.js';
+import CombatTelemetry from './combat/combat-telemetry.js';
+import RuntimeBudgetManager from './engine/runtime-budget-manager.js';
+import { migrateSaveSchema, SAVE_SCHEMA_VERSION } from './runtime/save-schema.js';
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -87,7 +92,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '5.0.0';
+const GAME_VERSION = '6.0.0';
 const CHARACTER_ASSET_IDS = Object.freeze([
   ...Object.values(HERO_CLASS_ASSET_IDS),
   ...Object.values(GUARDIAN_ASSET_IDS),
@@ -250,6 +255,13 @@ class DokkaebiLuckDefense {
     this.uiBound = false;
     this.hudLayout = null;
     this.frameScheduler = new FrameBudgetScheduler();
+    this.encounterDirector = new EncounterDirector({ random: () => this.random() });
+    this.statusEffects = new StatusEffectSystem({ random: () => this.random() });
+    this.combatTelemetry = new CombatTelemetry();
+    this.runtimeBudget = new RuntimeBudgetManager({ config: this.engine.config, lowPower: this.lowPower });
+    this.saveMigration = migrateSaveSchema();
+    this.activeEncounterPlan = null;
+    this.lastEncounterResult = null;
     this.productionConsole = null;
 
     this.assertRequiredUI();
@@ -427,7 +439,12 @@ class DokkaebiLuckDefense {
         effectBudgetScale: this.engine.effectBudgetScale,
         drawCalls: this.renderer.info?.render?.calls || 0,
         triangles: this.renderer.info?.render?.triangles || 0,
-        assets: this.assetPipeline?.diagnostics || {}
+        assets: this.assetPipeline?.diagnostics || {},
+        encounter: this.encounterDirector?.diagnostics || {},
+        combat: this.combatTelemetry?.snapshot || {},
+        statusEffects: this.statusEffects?.diagnostics || {},
+        runtimeBudget: this.runtimeBudget?.diagnostics || {},
+        saveSchemaVersion: SAVE_SCHEMA_VERSION
       })
     });
 
@@ -2964,6 +2981,9 @@ class DokkaebiLuckDefense {
     this.waveTrialEliteSpawned = 0;
     this.eliteKills = 0;
     this.runStats = this.createRunStats();
+    this.combatTelemetry.resetRun();
+    this.activeEncounterPlan = null;
+    this.lastEncounterResult = null;
     this.cancelMoveTarget();
     this.displayDanger = null;
     this.pendingDangerKey = '';
@@ -3281,7 +3301,15 @@ class DokkaebiLuckDefense {
     this.assignWaveTrial();
     this.activatePendingContract();
     const bossWave = isBossWave(this.currentWave);
-    this.spawnRemaining = bossWave ? getBossSpawnCount(this.currentWave) : 7 + this.currentWave * 3;
+    this.activeEncounterPlan = this.encounterDirector.beginWave({
+      wave: this.currentWave,
+      boss: bossWave,
+      coreHpRatio: this.coreHp / Math.max(1, this.coreMaxHp),
+      modeId: this.activeRunMode?.id || 'guardian'
+    });
+    this.combatTelemetry.startWave(this.currentWave, this.activeEncounterPlan);
+    const baseSpawnCount = bossWave ? getBossSpawnCount(this.currentWave) : 7 + this.currentWave * 3;
+    this.spawnRemaining = Math.max(1, Math.round(baseSpawnCount * (this.activeEncounterPlan?.spawnCountMultiplier || 1)));
     this.spawnTotal = this.spawnRemaining;
     this.spawnTimer = .2;
     this.waveSpawned = 0;
@@ -3296,7 +3324,11 @@ class DokkaebiLuckDefense {
       this.scheduleRun(() => ui.boss.classList.remove('show'), 1900, { key: 'boss-banner-hide' });
       this.scheduleRun(() => ui.boss.classList.add('hidden'), 2350, { key: 'boss-banner-collapse' });
     }
-    this.showToast(`${auto ? '자동 진군 · ' : manual && wasCountingDown ? '즉시 진군 · ' : ''}웨이브 ${this.currentWave} 시작! 사방의 요괴문을 확인하세요.`);
+    const doctrine = this.activeEncounterPlan;
+    this.showToast(`${auto ? '자동 진군 · ' : manual && wasCountingDown ? '즉시 진군 · ' : ''}웨이브 ${this.currentWave} 시작! ${doctrine?.icon || '☾'} ${doctrine?.name || '달빛 진군'}`);
+    if (!bossWave && doctrine?.mutatorId !== 'standard') {
+      this.showMission(doctrine.name, doctrine.description, `BATTLE DOCTRINE · ${doctrine.mutatorId.toUpperCase()}`, 1450);
+    }
     this.updateHUD();
   }
 
@@ -3307,13 +3339,20 @@ class DokkaebiLuckDefense {
     const bossType = getBossTypeForWave(wave);
     if (bossType && this.spawnRemaining === 1) type = bossType;
     else {
-      const roll = this.random();
-      if (wave >= 8 && roll < .11) type = 'crow';
-      else if (wave >= 7 && roll < .22) type = 'shaman';
-      else if (wave >= 6 && roll < .34) type = 'ghost';
-      else if (wave >= 5 && roll < .46) type = 'skeleton';
-      else if (wave >= 4 && roll < .58) type = 'brute';
-      else if (wave >= 2 && roll < .76) type = 'runner';
+      type = this.encounterDirector.selectEnemyType({
+        wave,
+        fallback: 'imp',
+        random: () => this.random(),
+        available: [
+          { id: 'imp', minWave: 1, weight: 1.5 },
+          { id: 'runner', minWave: 2, weight: 1.15 },
+          { id: 'brute', minWave: 4, weight: .72 },
+          { id: 'skeleton', minWave: 5, weight: .78 },
+          { id: 'ghost', minWave: 6, weight: .72 },
+          { id: 'shaman', minWave: 7, weight: .58 },
+          { id: 'crow', minWave: 8, weight: .54 }
+        ]
+      });
     }
     const gate = this.gates[(this.waveSpawned + Math.floor(this.random() * 2)) % this.gates.length];
     const spawnPos = gate.position.clone();
@@ -3333,6 +3372,7 @@ class DokkaebiLuckDefense {
     }
     this.spawnRemaining -= 1;
     this.waveSpawned += 1;
+    this.encounterDirector.recordSpawn();
   }
 
   createEnemy(type, position, progress = 0, options = {}) {
@@ -3348,17 +3388,18 @@ class DokkaebiLuckDefense {
     const omen = this.activeOmen || {};
     const mode = this.activeRunMode || RUN_MODES.guardian;
     const trialEliteChance = this.currentTrial?.id === 'hunt' ? .12 : 0;
-    const elite = config.boss ? null : rollEliteAffix(this.currentWave, omen, () => this.random(), mode.eliteChance + trialEliteChance + (this.dailyEdict?.eliteChance || 0), options.forceElite);
-    const hp = config.hp * waveScale * contractHp * (omen.enemyHp || 1) * mode.enemyHp * (this.dailyEdict?.enemyHp || 1) * (elite?.hp || 1);
-    const speed = config.speed * (1 + Math.min(.22, this.currentWave * .012)) * contractSpeed * (omen.enemySpeed || 1) * mode.enemySpeed * (this.dailyEdict?.enemySpeed || 1) * (elite?.speed || 1);
-    const damage = config.damage * (1 + (this.currentWave - 1) * .1) * (omen.enemyDamage || 1) * mode.enemyDamage * (this.dailyEdict?.enemyDamage || 1) * (elite?.damage || 1);
+    const encounter = this.activeEncounterPlan || {};
+    const elite = config.boss ? null : rollEliteAffix(this.currentWave, omen, () => this.random(), mode.eliteChance + trialEliteChance + (this.dailyEdict?.eliteChance || 0) + (encounter.eliteChanceBonus || 0), options.forceElite);
+    const hp = config.hp * waveScale * contractHp * (omen.enemyHp || 1) * mode.enemyHp * (this.dailyEdict?.enemyHp || 1) * (elite?.hp || 1) * (encounter.hpMultiplier || 1);
+    const speed = config.speed * (1 + Math.min(.22, this.currentWave * .012)) * contractSpeed * (omen.enemySpeed || 1) * mode.enemySpeed * (this.dailyEdict?.enemySpeed || 1) * (elite?.speed || 1) * (encounter.speedMultiplier || 1);
+    const damage = config.damage * (1 + (this.currentWave - 1) * .1) * (omen.enemyDamage || 1) * mode.enemyDamage * (this.dailyEdict?.enemyDamage || 1) * (elite?.damage || 1) * (encounter.damageMultiplier || 1);
     this.applyEliteVisual(group, elite);
     if (elite) this.showCombatText(group.position.clone().add(new THREE.Vector3(0, 2.15, 0)), elite.name, { label: `${elite.icon} 정예` });
     return {
       id: ++this.enemySerial,
       type, group, hp, maxHp: hp, speed,
       damage, reward: config.reward, elite, eliteShield: elite?.shield ? hp * elite.shield : 0,
-      slowTimer: 0, slowFactor: 1, attackTimer: 0, phase: rand(0, Math.PI*2), dead: false,
+      slowTimer: 0, slowFactor: 1, statusSpeedMultiplier: 1, statusEffects: new Map(), attackTimer: 0, phase: rand(0, Math.PI*2), dead: false,
       boss: !!config.boss, bossPhase: 1, specialIndex: 0, specialTimer: config.boss ? 4.5 : 0, intentDuration: config.boss ? 4.5 : 0, flash: 0, shieldFlash: 0,
       abilityTimer: type === 'runner' ? rand(2.2, 3.6) : type === 'shaman' ? rand(2.8, 4.2) : 0,
       abilityState: 'move', abilityTime: 0, telegraphMesh: null, chargeDirection: new THREE.Vector3(), chargeHitPlayer: false,
@@ -3422,9 +3463,19 @@ class DokkaebiLuckDefense {
     if (this.spawnRemaining > 0) {
       this.spawnTimer -= dt;
       if (this.spawnTimer <= 0) {
-        this.spawnEnemy();
-        const base = this.currentWave >= 8 ? .42 : .62;
-        this.spawnTimer = (base + this.random() * .26) * (this.activeOmen?.spawnInterval || 1) * (this.dailyEdict?.spawnInterval || 1);
+        const profile = this.engine.qualityProfile?.id || this.engine.qualityGovernor?.profile?.id || 'high';
+        this.runtimeBudget.update({ profile, performance: this.engine.monitor.snapshot });
+        if (this.runtimeBudget.canSpawn('enemies', this.enemies.length, profile)) {
+          this.spawnEnemy();
+          const base = this.currentWave >= 8 ? .42 : .62;
+          this.spawnTimer = (base + this.random() * .26)
+            * (this.activeOmen?.spawnInterval || 1)
+            * (this.dailyEdict?.spawnInterval || 1)
+            * (this.activeEncounterPlan?.spawnIntervalMultiplier || 1);
+        } else {
+          this.combatTelemetry.recordDroppedSpawn();
+          this.spawnTimer = .14;
+        }
       }
     } else if (this.enemies.length === 0) {
       this.completeWave();
@@ -3435,7 +3486,10 @@ class DokkaebiLuckDefense {
     this.waveActive = false;
     const perfect = this.coreHp >= this.waveStartHp - .01;
     const perfectBonus = perfect ? 10 + this.currentWave * 2 : 0;
-    const reward = Math.round((24 + this.currentWave * 7 + perfectBonus) * this.activeRunMode.reward * (this.dailyEdict?.reward || 1));
+    const encounterResult = this.encounterDirector.completeWave({ perfect, coreHpRatio: this.coreHp / Math.max(1, this.coreMaxHp) });
+    this.lastEncounterResult = encounterResult;
+    this.combatTelemetry.endWave({ wave: this.currentWave, perfect, coreHpRatio: this.coreHp / Math.max(1, this.coreMaxHp), planResult: encounterResult });
+    const reward = Math.round((24 + this.currentWave * 7 + perfectBonus) * this.activeRunMode.reward * (this.dailyEdict?.reward || 1) * (this.activeEncounterPlan?.rewardMultiplier || 1));
     this.gold += reward;
     this.score += Math.round((this.currentWave * 250 + this.coreHp * 8) * this.activeRunMode.score * (this.dailyEdict?.score || 1));
     this.showCombo(`웨이브 ${this.currentWave} 격파 · +${reward} 엽전${perfectBonus ? ' · 무결점!' : ''}`, 1600);
@@ -4032,11 +4086,17 @@ class DokkaebiLuckDefense {
     for (let i=this.enemies.length-1;i>=0;i-=1) {
       const enemy=this.enemies[i];
       if (enemy.dead) continue;
+      const statusState = this.statusEffects.update(enemy, dt, {
+        onDamage: (damage, statusSource) => this.damageEnemy(enemy, damage, statusSource, enemy.group.position, null, statusSource)
+      });
+      if (enemy.dead) continue;
+      enemy.statusSpeedMultiplier = statusState.speedMultiplier;
       enemy.slowTimer=Math.max(0,enemy.slowTimer-dt);
       if (enemy.slowTimer<=0) enemy.slowFactor=lerp(enemy.slowFactor,1,dt*5);
       enemy.flash=Math.max(0,enemy.flash-dt);
       enemy.shieldFlash=Math.max(0,enemy.shieldFlash-dt);
       enemy.weaknessTextCooldown=Math.max(0,(enemy.weaknessTextCooldown||0)-dt);
+      enemy.statusTextCooldown=Math.max(0,(enemy.statusTextCooldown||0)-dt);
       if (enemy.flash<=0) enemy.group.userData.body.material.emissiveIntensity = enemy.boss ? (enemy.bossPhase > 1 ? .56 + enemy.bossPhase * .16 : .24) : 0;
       if (enemy.group.userData.shield) enemy.group.userData.shield.material.emissiveIntensity = enemy.shieldFlash > 0 ? 2.4 : .18;
       if (enemy.group.userData.phaseVisual) {
@@ -4060,7 +4120,7 @@ class DokkaebiLuckDefense {
         if (distance>2.2) {
           this.animations.setBaseState(enemy.animation, 'move');
           const direction=tempV.set(-position.x,0,-position.z).normalize();
-          let speed=enemy.speed*enemy.slowFactor;
+          let speed=enemy.speed*enemy.slowFactor*(enemy.statusSpeedMultiplier || 1);
           if (enemy.boss && enemy.specialTimer<.7) speed*=1.7;
           position.addScaledVector(direction,speed*dt);
           enemy.group.rotation.y=this.lerpAngle(enemy.group.rotation.y,Math.atan2(direction.x,direction.z),1-Math.pow(.002,dt));
@@ -4621,6 +4681,7 @@ class DokkaebiLuckDefense {
 
   damageEnemy(enemy,amount,source='',hitOrigin=null,owner=null,impactSource=source,impactColor=null) {
     if (!enemy || enemy.dead) return;
+    if (!String(source).startsWith('status-')) amount *= this.statusEffects.damageTakenMultiplier(enemy);
     const attackerType = owner?.type || (source.startsWith('ultimate-') ? source.slice('ultimate-'.length) : UNIT_KEYS.includes(source) ? source : '');
     const weaknessMultiplier = attackerType ? getWeaknessDamageBonus(this.codexProgress, enemy.type, attackerType) : 1;
     if (weaknessMultiplier > 1) {
@@ -4654,7 +4715,16 @@ class DokkaebiLuckDefense {
     const critChance = shielded ? 0 : source === 'hero' ? .12 : source === 'thunder' ? .18 : source === 'wind' ? .08 : .035;
     const crit = source !== 'skill' && !ultimate && this.random() < critChance;
     if (crit) amount *= 1.75;
+    const appliedStatus = this.statusEffects.applyFromSource(enemy, source, amount);
+    if (appliedStatus) {
+      this.combatTelemetry.recordStatus(appliedStatus.type);
+      if (!enemy.statusTextCooldown || enemy.statusTextCooldown <= 0) {
+        enemy.statusTextCooldown = .7;
+        this.showCombatText(enemy.group.position.clone().add(new THREE.Vector3(0, enemy.boss ? 3.85 : 2.42, 0)), 0, { label: `${appliedStatus.definition.icon} ${appliedStatus.definition.label} ×${appliedStatus.stacks}` });
+      }
+    }
     const appliedDamage = Math.max(0, Math.min(enemy.hp, amount));
+    this.combatTelemetry.recordDamage(source, appliedDamage);
     if (owner?.type && owner.commandTimer > 0) this.runStats.commandDamage += appliedDamage;
     if (owner?.type && this.runStats.damageByType[owner.type] !== undefined) this.runStats.damageByType[owner.type] += appliedDamage;
     else if (source === 'hero') this.runStats.heroDamage += appliedDamage;
@@ -4695,6 +4765,9 @@ class DokkaebiLuckDefense {
     if (enemy.dead) return;
     const deathPosition = enemy.group.position.clone();
     enemy.dead=true;
+    this.statusEffects.clear(enemy);
+    this.encounterDirector.recordKill();
+    this.combatTelemetry.recordKill({ boss: enemy.boss });
     const index=this.enemies.indexOf(enemy);
     if (index>=0) this.enemies.splice(index,1);
     this.animations.trigger(enemy.animation, 'death', .28);
@@ -4703,7 +4776,7 @@ class DokkaebiLuckDefense {
     const color=ENEMY_TYPES[enemy.type].color;
     this.spawnParticles(deathPosition.clone().add(new THREE.Vector3(0,.8,0)),color,enemy.boss?35:12,enemy.boss?6:3.4);
     const eliteOmenReward = enemy.elite ? (this.activeOmen?.eliteReward || 1) : 1;
-    const reward=Math.max(2,Math.round(enemy.reward*this.mods.goldMultiplier*this.getSpiritGoldMultiplier()*this.getContractRewardMultiplier()*(this.activeOmen?.reward || 1)*this.activeRunMode.reward*(enemy.elite?.reward || 1)*eliteOmenReward*(this.dailyEdict?.reward || 1)*(enemy.elite ? this.mods.eliteReward : 1)));
+    const reward=Math.max(2,Math.round(enemy.reward*(this.activeEncounterPlan?.rewardMultiplier || 1)*this.mods.goldMultiplier*this.getSpiritGoldMultiplier()*this.getContractRewardMultiplier()*(this.activeOmen?.reward || 1)*this.activeRunMode.reward*(enemy.elite?.reward || 1)*eliteOmenReward*(this.dailyEdict?.reward || 1)*(enemy.elite ? this.mods.eliteReward : 1)));
     this.dropCoins(deathPosition,reward,enemy.boss?9:Math.min(4,1+Math.floor(reward/7)));
     this.kills+=1;
     this.gainSoul(enemy.boss ? 24 : enemy.elite ? 8 : 2, 'kill');
@@ -5325,7 +5398,12 @@ class DokkaebiLuckDefense {
         artProduction: ART_PRODUCTION_SUMMARY,
         characterDNA: CHARACTER_DNA_SUMMARY,
         qualityGovernor: this.engine.qualityGovernor?.diagnostics || null,
-        frameScheduler: this.frameScheduler.diagnostics
+        frameScheduler: this.frameScheduler.diagnostics,
+        encounterDirector: this.encounterDirector.diagnostics,
+        combatTelemetry: this.combatTelemetry.snapshot,
+        statusEffects: this.statusEffects.diagnostics,
+        runtimeBudget: this.runtimeBudget.diagnostics,
+        saveMigration: this.saveMigration
       },
       progression: {
         heroClass: this.selectedHeroClassId,
@@ -5452,7 +5530,7 @@ class DokkaebiLuckDefense {
     const result = this.engine.updateAdaptiveQuality(dt);
     if (!result) return;
     this.qualityScale = this.engine.qualityScale;
-    ui.qualityBadge.textContent = `Engine 4.0 ${result.id.toUpperCase()} · ${Math.round(result.fps)} FPS · 해상도 ${Math.round(this.qualityScale * 100)}% · FX ${Math.round(this.engine.effectBudgetScale * 100)}%`;
+    ui.qualityBadge.textContent = `Engine 5.0 ${result.id.toUpperCase()} · ${Math.round(result.fps)} FPS · 해상도 ${Math.round(this.qualityScale * 100)}% · FX ${Math.round(this.engine.effectBudgetScale * 100)}%`;
     ui.qualityBadge.classList.remove('hidden');
     this.scheduleUi(() => ui.qualityBadge.classList.add('hidden'), 2400, { key: 'quality-badge-hide' });
     this.qualityAdjusted = true;
@@ -5544,6 +5622,10 @@ class DokkaebiLuckDefense {
       assets: this.assetPipeline?.diagnostics,
       animations: this.animations?.diagnostics,
       lifecycle: this.lifecycle.diagnostics,
+      encounter: this.encounterDirector?.diagnostics,
+      combat: this.combatTelemetry?.snapshot,
+      statusEffects: this.statusEffects?.diagnostics,
+      runtimeBudget: this.runtimeBudget?.diagnostics,
       pools: {
         projectiles: this.projectiles.length,
         projectileCapacity: this.projectilePoolCapacity,

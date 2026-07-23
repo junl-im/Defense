@@ -2258,3 +2258,59 @@ body.reduced-motion .auto-wave-panel.imminent { animation:none; }
   .production-console { max-height: 70vh; }
   .absolute-lock-badge { margin-top: 9px; }
 }
+
+/* BATTLEFRONT ASCENSION v6.0.0 */
+:root {
+  --battlefront-cyan: #91ecff;
+  --battlefront-gold: #ffe38a;
+  --battlefront-coral: #ff9d86;
+  --battlefront-violet: #c7a8ff;
+}
+.title-panel {
+  isolation: isolate;
+  overflow: visible;
+}
+.title-panel::after {
+  content: "BATTLEFRONT ASCENSION";
+  position: absolute;
+  left: 50%;
+  top: -13px;
+  transform: translateX(-50%);
+  padding: 6px 15px;
+  border-radius: 999px;
+  color: #41264f;
+  background: linear-gradient(90deg, var(--battlefront-cyan), #fff2b0, var(--battlefront-coral));
+  border: 1px solid rgba(255,255,255,.82);
+  box-shadow: 0 5px 0 rgba(91,52,92,.38), 0 0 24px rgba(145,236,255,.32);
+  font-size: 8px;
+  font-weight: 1000;
+  letter-spacing: .18em;
+  white-space: nowrap;
+}
+.wave-hud {
+  position: relative;
+  overflow: hidden;
+}
+.wave-hud::after {
+  content: "ENGINE 5.0";
+  position: absolute;
+  right: 7px;
+  top: 5px;
+  color: rgba(194,239,255,.76);
+  font-size: 6px;
+  font-weight: 950;
+  letter-spacing: .12em;
+}
+.production-console-grid article:nth-child(7),
+.production-console-grid article:nth-child(8),
+.production-console-grid article:nth-child(9) {
+  background: linear-gradient(145deg, rgba(145,236,255,.11), rgba(255,227,138,.07));
+  border-color: rgba(145,236,255,.28);
+}
+.combat-text [data-status], .status-combat-label {
+  color: var(--battlefront-gold);
+  text-shadow: 0 0 10px rgba(145,236,255,.65), 0 2px 0 rgba(55,30,72,.55);
+}
+@media (max-width: 620px) {
+  .title-panel::after { top: -10px; font-size: 7px; padding: 5px 11px; }
+}

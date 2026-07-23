@@ -35,12 +35,16 @@ export class ProductionConsole {
     const perf = data.performance || {};
     const assets = data.assets || {};
     const quality = data.quality || {};
+    const encounter = data.encounter || {};
+    const combat = data.combat || {};
+    const statusEffects = data.statusEffects || {};
+    const runtimeBudget = data.runtimeBudget || {};
     const approved = Number(this.artSummary.approved || 0);
     const total = Number(this.artSummary.total || 0);
     const progress = total ? Math.round((approved / total) * 100) : 0;
     const milestoneHtml = this.milestones.slice(0, 4).map((item) => `<li><span>${item.status === 'done' ? 'DONE' : item.status === 'active' ? 'NOW' : 'NEXT'}</span>${item.label}</li>`).join('');
     this.element.innerHTML = `
-      <header><div><small>DD PRODUCTION OS</small><b>MOONSTONE v5</b></div><button type="button" data-close-console aria-label="제작 콘솔 닫기">×</button></header>
+      <header><div><small>DD PRODUCTION OS</small><b>BATTLEFRONT v6</b></div><button type="button" data-close-console aria-label="제작 콘솔 닫기">×</button></header>
       <section class="production-console-grid">
         <article><small>ART LOCK</small><b>${this.artSummary.styleLockId || 'UNKNOWN'}</b><span>GVS ${approved}/${total} · ${progress}%</span></article>
         <article><small>DNA</small><b>v${CHARACTER_DNA_SUMMARY.version}</b><span>${CHARACTER_DNA_SUMMARY.classCount}직업 · ${CHARACTER_DNA_SUMMARY.rarityCount}희귀도 · ${CHARACTER_DNA_SUMMARY.animationClipCount}모션</span></article>
@@ -48,9 +52,12 @@ export class ProductionConsole {
         <article><small>FRAME</small><b>${Math.round(perf.fps || 0)} FPS</b><span>P95 ${perf.p95FrameMs || 0}ms · Severe ${perf.severeFramePercent || 0}%</span></article>
         <article><small>RENDER</small><b>${Number(data.drawCalls || 0)} CALLS</b><span>${Number(data.triangles || 0).toLocaleString()} tri</span></article>
         <article><small>ASSETS</small><b>${assets.cachedAssets || 0} READY</b><span>${assets.textureMemoryMB || 0}/${assets.textureBudgetMB || 0}MB</span></article>
+        <article><small>DOCTRINE</small><b>${String(encounter.active?.name || 'STANDBY').toUpperCase()}</b><span>${encounter.active?.mutatorId || 'none'} · 압력 ${encounter.active?.adaptivePressure ?? 0}</span></article>
+        <article><small>COMBAT</small><b>${Number(combat.damageDealt || 0).toLocaleString()} DMG</b><span>처치 ${combat.kills || 0} · 상태 ${statusEffects.applied || 0}</span></article>
+        <article><small>BUDGET</small><b>${runtimeBudget.caps?.enemies || 0} ENEMY</b><span>압력 ${Math.round((runtimeBudget.pressure || 0) * 100)}% · 차단 ${runtimeBudget.blocked?.enemies || 0}</span></article>
       </section>
       <ol>${milestoneHtml}</ol>
-      <footer>F4 toggle · ?director=1 boot open</footer>`;
+      <footer>F4 toggle · ?director=1 boot open · save schema ${data.saveSchemaVersion || 0}</footer>`;
     this.element.querySelector('[data-close-console]')?.addEventListener('click', () => this.toggle(false), { once: true });
   }
 

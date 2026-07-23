@@ -1,28 +1,28 @@
 # 도깨비 운빨 수호대 3D
 
-- 게임 버전: **5.0.0**
-- 엔진 버전: **4.0.0**
+- 게임 버전: **6.0.0**
+- 엔진 버전: **5.0.0**
 - 아트 잠금: **DD-ABSOLUTE-ART-BIBLE-2.0**
 - Character DNA: **3.0.0**
+- 세이브 스키마: **6**
 - 런타임 GLB: **19종**
 - 계획 에셋: **1,130종**
 - 최종 제작 승인 에셋: **0종**
 
-## v5.0.0 Moonstone Genesis
+## v6.0.0 Battlefront Ascension
 
-Absolute Art Bible v2.0을 코드·에셋·UI·성능이 함께 따르는 제작 운영체제로 확장했습니다.
+전투 흐름과 성능 예산을 하나의 런타임 디렉터로 통합한 초대규모 시스템 업데이트입니다.
 
-- 얼굴·체형·헤어·직업·희귀도·장비·애니메이션 Character DNA v3.0
-- 1,130개 제작 목록 전체에 스타일 잠금·DNA·대량 생산 게이트 적용
-- Cinematic / High / Balanced / Performance 4단계 자동 품질
-- 평균·P95·P99·프레임 지터·부드러움 점수 계측
-- HUD·그림자·월드 청크 가변 갱신 프레임 예산
-- 기존 GLB 19종 런타임 재질 조화 처리
-- Warm Key + Cool Blue Rim 조명
-- Gold Border + Blue Glow + Rounded Depth UI 리마스터
-- `F4` 또는 `?director=1` 제작 콘솔
+- 웨이브별 6개 공세 교리와 보스 전용 교리를 선택하는 Encounter Director
+- 신목 체력과 직전 클리어 속도를 반영하는 적응형 난이도 압력
+- 연소·빙결·풍인·균열·공명·감전 6종 상태이상
+- 적 수와 프레임 상태에 따라 생성 상한을 조절하는 Runtime Budget Manager
+- 웨이브 시간·피해원·상태이상·처치 기록 Combat Telemetry
+- 세이브 스키마 v6 마이그레이션과 자동 로컬 백업
+- F4 제작 콘솔에 공세 교리·전투 피해·상태이상·런타임 예산 진단 추가
+- Engine 5.0과 Battlefront UI 아이덴티티 적용
 
-기존 GLB는 화면 일관성을 위해 런타임 조화 처리하지만 최종 승인 에셋으로 승격하지 않습니다. 신규 골든 수직 슬라이스 6종이 모두 승인되기 전까지 1,130개 대량 생산 잠금은 유지됩니다.
+기존 GLB 19종은 계속 레거시 런타임 후보이며 신규 아트 승인으로 승격하지 않습니다. 골든 수직 슬라이스 6종이 모두 최종 승인되기 전까지 1,130개 대량 생산 잠금은 유지됩니다.
 
 ## 설치·검증
 
@@ -42,7 +42,7 @@ node scripts/verify-static-dist.mjs
 ## 개발 진단
 
 - `F3`: 렌더 통계 HUD
-- `F4`: Moonstone Production Console
+- `F4`: Battlefront Production Console
 - `?stats=1`: 렌더 통계 HUD를 켠 상태로 시작
 - `?director=1`: 제작 콘솔을 켠 상태로 시작
 
@@ -50,9 +50,9 @@ node scripts/verify-static-dist.mjs
 
 - `docs/ABSOLUTE_ART_BIBLE_v2.0.md`
 - `production/DokkaebiDefense/01_ArtBible/CHARACTER_DNA_v3.0.md`
-- `docs/MOONSTONE_GENESIS_v5.0.0.md`
-- `docs/ART_ASSET_APPROVAL_REGISTRY_v5.0.0.json`
-- `docs/PATCH_NOTES_v5.0.0.md`
-- `docs/NEXT_PATCH_LINEUP_v5.x.md`
+- `docs/BATTLEFRONT_ASCENSION_v6.0.0.md`
+- `docs/ART_ASSET_APPROVAL_REGISTRY_v6.0.0.json`
+- `docs/PATCH_NOTES_v6.0.0.md`
+- `docs/NEXT_PATCH_LINEUP_v6.x.md`
 - `production/DokkaebiDefense/ASSET_MASTERLIST_v3.8.0.json`
 - `PROJECT_HANDOFF.md`
