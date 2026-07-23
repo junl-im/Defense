@@ -14,6 +14,7 @@ function walk(directory) {
   if (rel === 'public/assets/ip-v8' || rel.startsWith('public/assets/ip-v8/')) return;
   if (rel === 'public/assets/ip-v10' || rel.startsWith('public/assets/ip-v10/')) return;
   if (rel === 'public/assets/ip-v13' || rel.startsWith('public/assets/ip-v13/')) return;
+  if (rel === 'public/assets/ip-v14' || rel.startsWith('public/assets/ip-v14/')) return;
   for (const entry of readdirSync(directory, { withFileTypes: true })) {
     const path = resolve(directory, entry.name);
     if (entry.isDirectory()) walk(path);
@@ -70,11 +71,12 @@ function ktx2Size(buffer) {
 }
 
 for (const directory of roots) walk(directory);
-// The v10/v13 review libraries are isolated from gameplay. Count only the five concept cards
-// that the title-screen class selector can load; the remaining forge images belong to
-// the separate Asset Review OS and must not consume the combat runtime texture budget.
-for (const hero of Object.values(HERO_CLASSES)) {
-  const path = resolve(root, 'public', hero.conceptArt);
+// The v10/v13 source libraries and v14 mastered individual files are isolated from gameplay.
+// Runtime UI and battlefield billboards share one 1024x512 atlas page, so count those pages once.
+for (const atlas of [
+  'public/assets/ip-v14/atlas/runtime-atlas-v14-p01.webp'
+]) {
+  const path = resolve(root, atlas);
   if (!files.includes(path)) files.push(path);
 }
 let totalBytes = 0;

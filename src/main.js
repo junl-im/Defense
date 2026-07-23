@@ -15,6 +15,7 @@ import { CORE_ASSET_CATALOG, PLAYER_ASSET_ID, GUARDIAN_ASSET_IDS, MONSTER_ASSET_
 import { HERO_CLASSES, HERO_CLASS_ORDER, HERO_CLASS_ASSET_IDS, getHeroClass } from './hero-classes.js';
 import { applyHeroArchetypeModifiers, getHeroArchetypePassive, HERO_ARCHETYPE_SUMMARY } from './hero-archetype-system.js';
 import { IP_ASSET_LIBRARY_V13 } from './ip-asset-library-v13.js';
+import { IP_ASSET_LIBRARY_V14, atlasSpriteMarkup } from './ip-asset-library-v14.js';
 import { applyHeroClassVisuals, applyRelicVisuals } from './hero-visual-loadout.js';
 import { applyEnemyCandidateVisuals } from './enemy-candidate-visuals.js';
 import { getBossHudState } from './boss-hud-contract.js';
@@ -45,6 +46,8 @@ import BossEscalationDirector from './combat/boss-escalation-director.js';
 import BossBreakSystem from './combat/boss-break-system.js';
 import MoonfrontCampaignDirector from './combat/moonfront-campaign-director.js';
 import { GUARDIAN_COUNCIL_STORAGE_KEY, GUARDIAN_COUNCIL_SUPPORTS, applyGuardianCouncilModifiers, resolveGuardianCouncil, sanitizeCouncilSupportId } from './guardian-council-system.js';
+import BattlefieldSpriteDirector from './runtime/battlefield-sprite-director.js';
+import CameraDirectorV14 from './engine/camera-director-v14.js';
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -103,9 +106,14 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '13.0.0';
+const GAME_VERSION = '14.0.0';
+function runtimeSpriteMarkup(path, alt = '', className = '') {
+  if (!path) return '';
+  const atlas = atlasSpriteMarkup(path, alt, className);
+  return atlas || `<img class="${className}" src="${path}?v=${GAME_VERSION}" alt="${alt}" loading="lazy">`;
+}
 function equipmentIconMarkup(item, className = '') {
-  if (item?.iconImage) return `<img class="equipment-sprite ${className}" src="${item.iconImage}" alt="" loading="lazy">`;
+  if (item?.iconImage) return runtimeSpriteMarkup(item.iconImage, item.name || '', `equipment-sprite ${className}`);
   return `<span class="equipment-glyph ${className}">${item?.icon || '◆'}</span>`;
 }
 
@@ -379,6 +387,8 @@ class DokkaebiLuckDefense {
     this.assetReport = report;
     this.applyPrototypeTextures();
     this.renderAssetDiagnostics();
+    this.setLoadingProgress(68, '런타임 아틀라스를 준비하는 중...', '128개 스프라이트 · 1개 아틀라스 페이지');
+    await this.battlefieldSprites.preload();
 
     this.setLoadingProgress(72, '달빛 장터를 배치하는 중...', `텍스처 ${report.textureMemoryMB.toFixed(1)}MB / ${report.textureBudgetMB}MB`);
     this.createWorld(true);
@@ -396,6 +406,8 @@ class DokkaebiLuckDefense {
 
   initThree() {
     this.renderer = this.engine.createRenderer(ui.canvas);
+    this.battlefieldSprites = new BattlefieldSpriteDirector({ lowPower: this.lowPower });
+    this.cameraDirectorV14 = new CameraDirectorV14();
     this.assetPipeline = new AssetPipeline(this.renderer, {
       qualityTier: this.engine.assetQualityTier,
       textureBudgetMB: this.engine.textureBudgetMB,
@@ -481,7 +493,9 @@ class DokkaebiLuckDefense {
         council: this.guardianCouncil || {},
         equipmentForge: { forged: this.equipmentState?.forged || 0, essence: this.equipmentState?.essence || 0 },
         heroRoster: { classes: HERO_CLASS_ORDER.length, selected: this.selectedHeroClassId, passive: this.activeHeroPassive?.id || '' },
-        assetForge: IP_ASSET_LIBRARY_V13,
+        assetForge: IP_ASSET_LIBRARY_V14,
+        spriteAtlas: this.battlefieldSprites?.diagnostics || {},
+        cameraDirector: this.cameraDirectorV14?.snapshot || {},
         goldenSlice: GOLDEN_SLICE_CERTIFICATION_SUMMARY,
         camera: { profile: this.activeCameraProfile?.id || this.controlSettings.cameraProfile, label: this.activeCameraProfile?.label || '', distance: Number(this.cameraDistance.toFixed(2)), target: Number(this.cameraDistanceTarget.toFixed(2)), fov: this.camera?.fov || 0 },
         saveSchemaVersion: SAVE_SCHEMA_VERSION
@@ -1640,7 +1654,7 @@ class DokkaebiLuckDefense {
       const weakness = knowledge.research ? (knowledge.weaknessUnlocked ? `${getWeaknessLabel(entry.id)} · ×${knowledge.research.multiplier.toFixed(2)}` : `연구 ${knowledge.defeats}/${nextSection === 'boss' ? 1 : 3}`) : '환경 기록';
       const lootOwned = knowledge.loot.reduce((sum, loot) => sum + (loot.count > 0 ? 1 : 0), 0);
       return `<article class="collection-item codex-item${locked ? ' locked' : ''}" tabindex="0" role="button" data-codex-section="${nextSection}" data-codex-id="${entry.id}" aria-label="${this.escapeHtml(displayName)} ${locked ? '미발견' : '3D 보기'}" style="--unit-color:${color};--unit-soft:${color}22;--unit-line:${color}66">
-        <div class="portrait" aria-hidden="true">${locked ? '?' : entry.art ? `<img src="${entry.art}" alt="" loading="lazy">` : entry.symbol || meta.icon}</div>
+        <div class="portrait" aria-hidden="true">${locked ? '?' : entry.art ? runtimeSpriteMarkup(entry.art, entry.name || '', 'codex-atlas-sprite') : entry.symbol || meta.icon}</div>
         <div class="codex-item-head"><b>${this.escapeHtml(displayName)}</b><small>${this.escapeHtml(subtitle)}</small></div>
         <p>${locked ? '실루엣과 약점, 전리품 정보가 아직 달빛 장부에 기록되지 않았습니다.' : this.escapeHtml(entry.description || entry.signature || '')}</p>
         <div class="codex-research-row"><span>숙련 <b>LV.${knowledge.mastery}</b></span><span class="codex-mastery-pips">${masteryPips}</span><span>${this.escapeHtml(weakness)}</span>${knowledge.loot.length ? `<span>전리품 ${lootOwned}/${knowledge.loot.length}</span>` : ''}</div>
@@ -2060,6 +2074,7 @@ class DokkaebiLuckDefense {
     this.disposeGroup(this.worldRoot);
     this.disposeGroup(this.dynamicRoot);
     this.disposeGroup(this.effectRoot);
+    this.battlefieldSprites?.clear();
     this.player = null;
     this.core = null;
   }
@@ -2110,6 +2125,7 @@ class DokkaebiLuckDefense {
     this.createMarketHeritageProps();
     this.createMoonMarketModuleSet();
     this.createNextGenEnvironmentPass();
+    this.battlefieldSprites?.populate(this.worldRoot, { titleMode });
 
     for (let i = 0; i < 4; i += 1) {
       const angle = i / 4 * Math.PI * 2;
@@ -2688,7 +2704,7 @@ class DokkaebiLuckDefense {
     ui.heroClassOptions.innerHTML = HERO_CLASS_ORDER.map((id) => {
       const entry = HERO_CLASSES[id];
       const mastery = getHeroMasteryEntry(this.heroMastery, entry.id);
-      return `<button type="button" class="hero-class-option ${entry.id === selected.id ? 'active' : ''}" data-hero-class="${entry.id}" aria-pressed="${entry.id === selected.id}"><img src="${entry.conceptArt || entry.icon}?v=${GAME_VERSION}" alt="${entry.name} 고해상도 콘셉트 후보" /><span><b>${entry.name}</b><small>${entry.role} · 숙련 Lv.${mastery.level}</small></span></button>`;
+      return `<button type="button" class="hero-class-option ${entry.id === selected.id ? 'active' : ''}" data-hero-class="${entry.id}" aria-pressed="${entry.id === selected.id}">${runtimeSpriteMarkup(entry.conceptArt || entry.icon, `${entry.name} 아틀라스 프레젠테이션`, 'hero-class-sprite')}<span><b>${entry.name}</b><small>${entry.role} · 숙련 Lv.${mastery.level}</small></span></button>`;
     }).join('');
     const masteryNeed = selectedMastery.level >= HERO_MASTERY_MAX_LEVEL ? 'MAX' : `${selectedMastery.xp}/${xpForNextLevel(selectedMastery.level)}`;
     const passive = getHeroArchetypePassive(selected.id);
@@ -5414,8 +5430,10 @@ class DokkaebiLuckDefense {
     } else {
       const profile = this.activeCameraProfile || getCameraProfile(this.controlSettings?.cameraProfile);
       const bossActive = this.enemies.some((enemy) => enemy.boss && !enemy.dead);
-      const framedDistance = resolveCameraDistance(profile.id, { waveActive: this.waveActive, bossActive, manualDistance: this.cameraDistance });
+      const cameraDirective = this.cameraDirectorV14.update({ player: this.player, enemies: this.enemies, waveActive: this.waveActive, bossActive, dt });
+      const framedDistance = resolveCameraDistance(profile.id, { waveActive: this.waveActive, bossActive, manualDistance: this.cameraDistance }) + cameraDirective.spreadBonus;
       target=this.player.group.position.clone().add(new THREE.Vector3(0,profile.targetHeight,0));
+      if (cameraDirective.focusWeight > .001) target.lerp(this.cameraDirectorV14.focusPoint, cameraDirective.focusWeight);
       const safeDistance = this.resolveCameraCollisionDistance(target, framedDistance);
       const collisionBlend = safeDistance < this.cameraCollisionDistance ? 1 - Math.pow(.000001, dt) : 1 - Math.pow(.02, dt);
       this.cameraCollisionDistance = lerp(this.cameraCollisionDistance, safeDistance, collisionBlend);
@@ -5713,7 +5731,9 @@ class DokkaebiLuckDefense {
         cameraProfile: { id: this.activeCameraProfile?.id || this.controlSettings.cameraProfile, distance: this.cameraDistance, target: this.cameraDistanceTarget, fov: this.camera?.fov || 0 },
         characterDNA: CHARACTER_DNA_SUMMARY,
         heroArchetypes: HERO_ARCHETYPE_SUMMARY,
-        assetForge: IP_ASSET_LIBRARY_V13,
+        assetForge: IP_ASSET_LIBRARY_V14,
+        spriteAtlas: this.battlefieldSprites?.diagnostics || {},
+        cameraDirector: this.cameraDirectorV14?.snapshot || {},
         activeHeroPassive: this.activeHeroPassive || null,
         qualityGovernor: this.engine.qualityGovernor?.diagnostics || null,
         frameScheduler: this.frameScheduler.diagnostics,
@@ -5927,6 +5947,7 @@ class DokkaebiLuckDefense {
     const gameDt=(this.cinematic?dt*.42:dt) * impactScale;
     this.elapsed+=dt;
     this.updateWorldEffects(dt);
+    this.battlefieldSprites?.update(this.elapsed);
     if(this.state==='playing') {
       this.updateAutoWaveCountdown(dt);this.updateRunMomentum(gameDt);this.updateBattleMomentum(gameDt);this.updatePlayer(gameDt);this.updateWave(gameDt);this.updateEnemies(gameDt);this.updateHazards(gameDt);this.updateDangerHint(gameDt);this.updateUnits(gameDt);this.updateProjectiles(gameDt);this.updateCoins(gameDt);this.updateParticles(gameDt);this.updateMoveTargetMarker(gameDt);this.updateKillChain(gameDt);this.updateAdaptiveQuality(dt);this.animations.update(gameDt,this.camera);if(this.frameScheduler.shouldRun('hud', this.engine.qualityProfile?.hudHz || 30))this.updateHUD();
     } else if(this.state==='title') {

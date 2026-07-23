@@ -42,9 +42,9 @@ const registry = json('docs/ART_ASSET_APPROVAL_REGISTRY_v12.0.0.json');
 const certificate = json('docs/GOLDEN_SLICE_RUNTIME_CERTIFICATION_v12.0.0.json');
 
 check(Number(pkg.version.split('.')[0]) >= 12, 'package version v12 or later');
-check(/const GAME_VERSION = '(?:12|13)\.0\.0'/.test(main), 'runtime game version v12 or later');
-check(ENGINE_VERSION === '10.0.0', 'engine version 10.0.0');
-check(/ASSET_REVISION = '(?:12|13)\.0\.0'/.test(catalog), 'asset revision v12 or later');
+check(/const GAME_VERSION = '(?:12|13|14)\.0\.0'/.test(main), 'runtime game version v12 or later');
+check(Number(ENGINE_VERSION.split('.')[0]) >= 10, 'engine version remains 10.0.0 or later');
+check(/ASSET_REVISION = '(?:12|13|14)\.0\.0'/.test(catalog), 'asset revision v12 or later');
 check(SAVE_SCHEMA_VERSION >= 10, 'save schema version 10 or later');
 
 const scenic = getCameraProfile(DEFAULT_CAMERA_PROFILE_ID);
@@ -104,12 +104,12 @@ const fakeData = new Map([
 const storage = { getItem: (key) => fakeData.has(key) ? fakeData.get(key) : null, setItem: (key, value) => fakeData.set(key, String(value)) };
 const migration = migrateSaveSchema(storage);
 check(migration.migrated && Number(fakeData.get('dokkaebi-save-schema-version')) >= 10, 'save schema migration writes current schema');
-const currentBackup = fakeData.get('dokkaebi-save-backup-v11') || fakeData.get('dokkaebi-save-backup-v10');
+const currentBackup = fakeData.get('dokkaebi-save-backup-v12') || fakeData.get('dokkaebi-save-backup-v11') || fakeData.get('dokkaebi-save-backup-v10');
 check(Boolean(currentBackup), 'save migration writes current backup');
 check(currentBackup.includes('dokkaebi-control-settings-v1'), 'save backup includes camera settings');
 
-check((html.includes('GOLDEN DOMINION') || html.includes('TRANSPARENT ARSENAL') || html.includes('Sprite Forge')) && html.includes('v13.0.0'), 'current title retains v12 camera lineage');
-check((consoleSource.includes('GOLDEN DOMINION v12') || consoleSource.includes('TRANSPARENT ARSENAL v13')) && consoleSource.includes('RUNTIME SLICE') && consoleSource.includes('CAMERA'), 'production console retains v12 diagnostics');
+check((html.includes('GOLDEN DOMINION') || html.includes('ATLAS DOMINION') || html.includes('TRANSPARENT ARSENAL') || html.includes('Sprite Forge')) && html.includes('v13.0.0') || html.includes('v14.0.0'), 'current title retains v12 camera lineage');
+check((consoleSource.includes('GOLDEN DOMINION v12') || consoleSource.includes('TRANSPARENT ARSENAL v13') || consoleSource.includes('ATLAS DOMINION v14') || consoleSource.includes('TRANSPARENT ARSENAL v13')) && consoleSource.includes('RUNTIME SLICE') && consoleSource.includes('CAMERA'), 'production console retains v12 diagnostics');
 check(existsSync(resolve(root, 'docs/GOLDEN_DOMINION_v12.0.0.md')) && existsSync(resolve(root, 'docs/PATCH_NOTES_v12.0.0.md')) && existsSync(resolve(root, 'docs/PATCH_APPLY_v12.0.0.md')) && existsSync(resolve(root, 'docs/GOLDEN_SLICE_RUNTIME_BOARD_v12.0.0.jpg')), 'v12 operating documents and certification board exist');
 
 if (failures) {
