@@ -35,10 +35,10 @@ machine.transition('title', { source: 'verify' });
 
 const constructorBlock = main.slice(main.indexOf('constructor() {'), main.indexOf('this.assertRequiredUI();'));
 const checks = [
-  ['public release is 1.0.3', pkg.version === '1.0.3' && pkg.dokkaebi?.releaseVersion === '1.0.3'],
+  ['public release preserves v1.0.3 foundation or later', pkg.version === pkg.dokkaebi?.releaseVersion && Number(pkg.version.split('.')[2] || 0) >= 3],
   ['package lock release is synchronized', lock.version === pkg.version && lock.packages?.['']?.version === pkg.version],
-  ['monotonic build id is b24.3', pkg.dokkaebi?.buildId === 'b24.3' && policy.includes('BUILD_REVISION = 3')],
-  ['runtime and service worker identities match', main.includes("const GAME_VERSION = '1.0.3'") && sw.includes("RELEASE_VERSION = '1.0.3'") && sw.includes("BUILD_ID = 'b24.3'")],
+  ['monotonic build id preserves b24.3 or later', Number(pkg.dokkaebi?.buildRevision || 0) >= 3 && policy.includes(`BUILD_REVISION = ${pkg.dokkaebi?.buildRevision}`)],
+  ['runtime and service worker identities match', main.includes(`const GAME_VERSION = '${pkg.version}'`) && sw.includes(`RELEASE_VERSION = '${pkg.version}'`) && sw.includes(`BUILD_ID = '${pkg.dokkaebi?.buildId}'`)],
   ['central app state machine is installed', main.includes("AppStateMachineV103") && main.includes("Object.defineProperty(this, 'state'") && stateMachineSource.includes('ALLOWED_TRANSITIONS')],
   ['state transition contract passes representative flow', machine.current === 'title' && machine.invalidTransitions === 0 && machine.history.length >= 7],
   ['write-only previousState flag removed', !main.includes('previousState')],

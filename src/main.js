@@ -125,7 +125,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '1.0.3';
+const GAME_VERSION = '1.0.4';
 // const GAME_VERSION = '23.1.0'; historical lineage marker for pre-normalization contracts.
 if (GAME_VERSION !== PUBLIC_GAME_VERSION) throw new Error('Public version policy mismatch');
 function runtimeSpriteMarkup(path, alt = '', className = '') {
@@ -210,6 +210,7 @@ class DokkaebiLuckDefense {
     });
     this.disposed = false;
     this.animationFrameId = 0;
+    this.startRunPending = false;
     this.elapsed = 0;
     this.shake = 0;
     const initialCameraProfile = getCameraProfile(DEFAULT_CAMERA_PROFILE_ID);
@@ -672,7 +673,7 @@ class DokkaebiLuckDefense {
     this.uiBound = true;
     const on = (target, type, handler, options = {}, key = '') => this.listen(target, type, handler, options, key);
 
-    on(ui.start, 'click', () => { this.sound.unlock(); this.sound.ui(); this.startRun({ reuseSeed: false }); }, {}, 'start-run');
+    on(ui.start, 'click', () => this.startRunFromTitle({ reuseSeed: false }), {}, 'start-run');
     on(ui.titleSetup, 'click', () => this.showModal(ui.titleSetupModal, { trigger: ui.titleSetup }), {}, 'open-title-setup');
     on(ui.titleVault, 'click', () => this.showModal(ui.titleVaultModal, { trigger: ui.titleVault }), {}, 'open-title-vault');
     on(ui.how, 'click', () => this.showModal(ui.howModal, { parent: ui.titleVaultModal, trigger: ui.how }), {}, 'open-how');
@@ -3293,6 +3294,42 @@ class DokkaebiLuckDefense {
     if (ui.autoWaveCopy) ui.autoWaveCopy.textContent = seconds <= 3 ? '월문이 열립니다 · 즉시 출발 가능' : '수호대를 정비하세요 · 누르면 즉시 출발';
     if (ui.autoWaveSeconds) ui.autoWaveSeconds.textContent = `${seconds}`;
     if (ui.autoWavePanelProgress) ui.autoWavePanelProgress.style.width = `${Math.round(progress * 100)}%`;
+  }
+
+  startRunFromTitle({ reuseSeed = false } = {}) {
+    if (this.startRunPending || this.state !== 'title') return false;
+    this.startRunPending = true;
+    if (ui.start) {
+      ui.start.disabled = true;
+      ui.start.setAttribute('aria-busy', 'true');
+      ui.start.textContent = '수호대 출전 준비 중...';
+    }
+    try {
+      this.sound.unlock();
+      this.sound.ui();
+      this.startRun({ reuseSeed });
+      if (this.state !== 'playing') throw new Error(`전투 상태 전환 실패: ${this.state}`);
+      this.browserReliability?.noteMilestone('start-run-entered', { runId: this.runId, seed: this.runSeed });
+      return true;
+    } catch (error) {
+      this.recordRuntimeError(error, 'title-start-run');
+      this.lifecycle.endRun();
+      this.runId = (this.runId || 0) + 1;
+      try { this.state = 'title'; } catch { /* state recovery is best effort */ }
+      try { this.showGameUI(false); } catch { /* UI recovery is best effort */ }
+      try { this.createWorld(true); } catch { /* world recovery is best effort */ }
+      ui.title?.classList.add('visible');
+      const reason = error instanceof Error ? error.message : String(error);
+      window.__DOKKAEBI_SHOW_BOOT_ERROR__?.(`전투 진입 중 오류가 발생했습니다: ${reason}`);
+      return false;
+    } finally {
+      this.startRunPending = false;
+      if (ui.start && this.state === 'title') {
+        ui.start.disabled = false;
+        ui.start.setAttribute('aria-busy', 'false');
+        ui.start.textContent = '수호 시작';
+      }
+    }
   }
 
   startRun({ reuseSeed = false } = {}) {
@@ -6707,7 +6744,7 @@ try {
       snapshot: () => game.getBrowserAutomationSnapshot(),
       stateMachine: () => game.appState?.diagnostics || {},
       startRun: () => {
-        if (game.state === 'title') game.startRun();
+        if (game.state === 'title') game.startRunFromTitle();
         return game.getBrowserAutomationSnapshot();
       },
       startWave: () => {

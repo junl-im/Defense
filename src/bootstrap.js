@@ -5,7 +5,7 @@ window.__DOKKAEBI_ENTRY_DIAGNOSTICS__ = {
   lineageVersion: LEGACY_LINEAGE_VERSION,
   buildId: BUILD_ID,
   loadedAt: Date.now(),
-  mode: 'bundled-entry'
+  mode: 'resilient-entry'
 };
 
 import('./main.js').catch((error) => {

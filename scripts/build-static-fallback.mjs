@@ -6,8 +6,8 @@ await import('./clean-obsolete-assets.mjs');
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dist = path.join(root, 'dist');
-const version = '1.0.3';
-const buildId = 'b24.3';
+const version = '1.0.4';
+const buildId = 'b24.4';
 const revision = `${version}-${buildId}`;
 
 await rm(dist, { recursive: true, force: true });
@@ -32,8 +32,8 @@ try {
 let html = await readFile(path.join(root, 'index.html'), 'utf8');
 html = html.replace('    <title>', `    <link rel="stylesheet" href="./src/style.css?v=${revision}" />\n    <title>`);
 html = html.replace(
-  '<script type="module" src="/src/bootstrap.js"></script>',
-  `<script src="./static-bootstrap.js?v=${revision}"></script>`
+  '<script type="module" src="./src/bootstrap.js?v=1.0.4-b24.4"></script>',
+  `<script src="./static-bootstrap.js?v=${revision}" data-entry="./src/bootstrap.js" data-vendor-base="./vendor/three/"></script>`
 );
 await writeFile(path.join(dist, 'index.html'), html);
 
@@ -46,8 +46,8 @@ await writeFile(path.join(dist, 'STATIC_BUILD_NOTICE.txt'), [
   `DokkaebiLuckDefense3D v${version} (${buildId}) resilient static deployment`,
   localThreeVendored
     ? 'Three.js 0.185.1 was copied into dist/vendor/three and will load locally.'
-    : 'Local Three.js was unavailable during packaging. The runtime will probe local vendor, jsDelivr, unpkg, then esm.sh and show a Korean recovery error instead of leaving a dead start button.',
-  'For a fully self-contained production bundle, run npm ci && npm run build.',
+    : 'Local Three.js was unavailable during packaging. The runtime will probe the actual Three.js core and GLTF loader through local vendor, pinned jsDelivr endpoints, unpkg, then esm.sh and will show a Korean recovery error instead of leaving a dead start button.',
+  'For a fully self-contained static bundle, run npm ci && npm run build:static so dist/vendor/three is copied locally.',
   ''
 ].join('\n'));
 

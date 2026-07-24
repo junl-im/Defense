@@ -62,7 +62,7 @@
             <div class="title-feature-ribbon-v21" aria-label="게임 핵심 특징"><span>10웨이브 수호전</span><span>5직업 대장</span><span>모바일 전투 최적화</span></div>
             <div class="title-ready-v21"><i aria-hidden="true"></i><b>달빛 장터 수호 준비 완료</b><small>최근 원정 설정으로 즉시 출전</small></div>
             <div id="title-loadout-summary" class="title-loadout-summary" aria-live="polite"></div>
-            <button id="start-btn" class="btn primary huge" disabled aria-busy="true">엔진 연결 중...</button>
+            <button id="start-btn" class="btn primary huge" disabled aria-busy="true">게임 준비 중...</button>
             <div class="title-primary-actions">
               <button id="title-setup-btn" class="btn ghost">원정 설정</button>
               <button id="title-vault-btn" class="btn ghost">보관함</button>
@@ -553,8 +553,8 @@
     </div>
     <script>
       (() => {
-        const RELEASE_VERSION = '1.0.3';
-        const BUILD_ID = 'b24.3';
+        const RELEASE_VERSION = '1.0.4';
+        const BUILD_ID = 'b24.4';
         const VERSION = `${RELEASE_VERSION}-${BUILD_ID}`;
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
@@ -564,7 +564,7 @@
           if (!startButton) return;
           startButton.disabled = !ready;
           startButton.setAttribute('aria-busy', String(!ready));
-          startButton.textContent = ready ? '수호 시작' : '엔진 연결 중...';
+          startButton.textContent = ready ? '수호 시작' : '게임 준비 중...';
         };
         setStartReady(false);
         const diagnostics = window.__DOKKAEBI_BOOT_DIAGNOSTICS__ = {
@@ -670,6 +670,6 @@
         registerServiceWorker();
       })();
     </script>
-    <script type="module" src="/src/bootstrap.js"></script>
+    <script type="module" src="./src/bootstrap.js?v=1.0.4-b24.4"></script>
   </body>
 </html>

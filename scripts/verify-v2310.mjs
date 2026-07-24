@@ -13,7 +13,7 @@ const checks = [
   ['legacy package lineage 23.1.0', pkg.dokkaebi?.lineageVersion === '23.1.0'],
   ['runtime preserves v23.1.0 lineage marker', main.includes("const GAME_VERSION = '23.1.0'; historical lineage marker")],
   ['engine version 21.0.0', read('src/engine/engine-config.js').includes("ENGINE_VERSION = '21.0.0'")],
-  ['service worker preserves monotonic build generation', read('public/sw.js').includes("BUILD_ID = 'b24.3'")],
+  ['service worker preserves monotonic build generation', read('public/sw.js').includes(`BUILD_ID = '${pkg.dokkaebi?.buildId}'`) && Number(pkg.dokkaebi?.buildRevision || 0) >= 3],
   ['global game shortcuts disabled by policy', policy.includes('GLOBAL_GAME_SHORTCUTS_ENABLED = false')],
   ['movement input remains available', ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].every((code) => policy.includes(`'${code}'`))],
   ['global keyboard handler only processes movement', keyboardBlock.includes('isMovementCode(code)') && !/code === ['"]F\d+/.test(keyboardBlock)],

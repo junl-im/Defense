@@ -15,7 +15,7 @@ const checks = [
   ['game retains v23 boot recovery lineage', /^23\.(?:0\.[12]|[1-9]\.\d+)$/.test(pkg.dokkaebi?.lineageVersion || pkg.version) && main.includes('LEGACY_LINEAGE_VERSION')],
   ['asset revision retains boot recovery lineage', /ASSET_REVISION = '23\.(?:0\.[12]|[1-9]\.\d+)'/.test(catalog)],
   ['service worker retains boot recovery lineage', /VERSION = '23\.(?:0\.[12]|[1-9]\.\d+)'/.test(sw)],
-  ['Vite entry uses bootstrap module', html.includes('src="/src/bootstrap.js"') && !html.includes('src="/src/main.js"')],
+  ['Vite entry uses relative bootstrap module', (html.includes('src="./src/bootstrap.js') || html.includes('src="/src/bootstrap.js')) && !html.includes('src="/src/main.js"') && !html.includes('src="./src/main.js"')],
   ['start button waits for boot readiness', html.includes('disabled aria-busy="true"') && html.includes('setStartReady(true)')],
   ['entry import failure is surfaced', bootstrap.includes("import('./main.js').catch") && bootstrap.includes('__DOKKAEBI_SHOW_BOOT_ERROR__')],
   ['static loader probes local vendor and three CDNs', ['local-vendor','jsdelivr','unpkg','esm-sh'].every((id) => staticBootstrap.includes(id))],
