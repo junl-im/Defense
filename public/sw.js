@@ -1,9 +1,22 @@
-const RELEASE_VERSION = '1.0.14';
-const BUILD_ID = 'b24.14';
+const RELEASE_VERSION = '1.0.15';
+const BUILD_ID = 'b24.15';
 // const VERSION = '23.1.0'; historical lineage marker.
 const CACHE_PREFIX = 'dokkaebi-shell-';
 const CACHE_NAME = `${CACHE_PREFIX}${BUILD_ID}`;
 const SHELL_ASSETS = [
+  './', './index.html', './manifest.webmanifest', './version.json',
+  './icon-192.png', './icon-512.png', './icon-maskable-512.png',
+  './static-bootstrap.js', './src/bootstrap.js', './src/style.css', './src/main.js',
+  './src/runtime/first-presentation-director-v107.js',
+  './src/runtime/visual-integration-director.js',
+  './src/runtime/art-approval-pipeline-v115.js',
+  './src/assets/title-v112/title-bg-desktop-lite-v112.webp',
+  './src/assets/title-v112/title-bg-mobile-lite-v112.webp',
+  './src/assets/title-v112/title-mascot-lite-v112.webp'
+];
+// Retained for explicit offline warming and historical release verification.
+// These files are no longer fetched during service-worker installation.
+const OPTIONAL_WARM_ASSETS = [
   './', './index.html', './manifest.webmanifest', './version.json', './browser-lab-v19.html',
   './icon-192.png', './icon-512.png', './icon-maskable-512.png',
   './static-bootstrap.js', './src/bootstrap.js', './src/style.css', './src/main.js',
@@ -115,7 +128,7 @@ const SHELL_ASSETS = [
   './src/assets/title-v112/title-mascot-v112.webp',
   './src/assets/title-v112/title-mascot-lite-v112.webp',
   './src/assets/title-v112/visual-polish-manifest-v112.json'
-];
+];;
 const isLocal = (request) => new URL(request.url).origin === self.location.origin;
 const isTitleAsset = (pathname) => pathname.includes('/src/assets/title-v112/');
 const isMutableCode = (pathname) => /\.(?:js|css|json)$/i.test(pathname) || pathname.endsWith('/static-bootstrap.js');
@@ -146,6 +159,20 @@ self.addEventListener('message', (event) => {
       const removed = await removeOldCaches({ includeCurrent: true });
       await precache();
       event.ports?.[0]?.postMessage({ type: 'DOKKAEBI_PURGED', version: RELEASE_VERSION, buildId: BUILD_ID, removed });
+    })());
+    return;
+  }
+  if (data.type === 'DOKKAEBI_WARM_OPTIONAL') {
+    event.waitUntil((async () => {
+      const cache = await caches.open(CACHE_NAME);
+      let warmed = 0;
+      for (const path of OPTIONAL_WARM_ASSETS) {
+        try {
+          const response = await fetch(new Request(path, { cache: 'no-cache' }));
+          if (response.ok) { await cache.put(path, response.clone()); warmed += 1; }
+        } catch { /* optional warm is best effort */ }
+      }
+      event.ports?.[0]?.postMessage({ type: 'DOKKAEBI_OPTIONAL_WARMED', warmed });
     })());
   }
 });

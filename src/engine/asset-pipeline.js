@@ -196,9 +196,16 @@ export class AssetPipeline {
     return record;
   }
 
-  async preload(entries = [], { onProgress } = {}) {
-    const total = Math.max(1, entries.length);
+  async preload(entries = [], { onProgress, concurrency } = {}) {
+    const queue = [...entries];
+    const total = Math.max(1, queue.length);
+    const workerLimit = Math.max(1, Math.min(
+      queue.length || 1,
+      Number(concurrency) || (this.lowPower ? 2 : 4)
+    ));
     let completed = 0;
+    let cursor = 0;
+    let fatalError = null;
     const assets = new Map();
     const failures = [];
     const emit = (entry, status, detail = '') => {
@@ -213,7 +220,14 @@ export class AssetPipeline {
       });
     };
 
-    for (const entry of entries) {
+    const loadOne = async (entry) => {
+      const cached = this.cache.get(entry.id);
+      if (cached) {
+        assets.set(entry.id, cached);
+        completed += 1;
+        emit(entry, 'ready', `cached-${cached.selectedTier || this.qualityTier}`);
+        return;
+      }
       emit(entry, 'loading');
       try {
         const record = await this.loadEntry(entry);
@@ -226,13 +240,26 @@ export class AssetPipeline {
         this.failures.push({ id: entry.id, reason });
         completed += 1;
         emit(entry, entry.required ? 'failed' : 'fallback', reason);
-        if (entry.required && !entry.fallback) throw error;
+        if (entry.required && !entry.fallback && !fatalError) fatalError = error;
       }
-    }
+    };
+
+    const worker = async () => {
+      while (cursor < queue.length && !fatalError) {
+        const index = cursor;
+        cursor += 1;
+        await loadOne(queue[index]);
+      }
+    };
+    await Promise.all(Array.from({ length: workerLimit }, () => worker()));
+    if (fatalError) throw fatalError;
 
     return {
       assets,
       failures,
+      completed,
+      total: queue.length,
+      concurrency: workerLimit,
       qualityTier: this.qualityTier,
       textureMemoryMB: bytesToMB(this.textureBytes),
       textureBudgetMB: this.textureBudgetMB

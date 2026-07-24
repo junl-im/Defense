@@ -32,9 +32,9 @@ check(titleAssets.every((path) => bytes(path).subarray(0, 4).toString('ascii') =
 check(bytes('src/assets/title-v17/title-mascot-v17.webp').includes(Buffer.from('ALPH')) || bytes('src/assets/title-v17/title-mascot-v17.webp').includes(Buffer.from('VP8X')), 'mascot WebP retains alpha-capable container');
 
 const titleBlock = html.slice(html.indexOf('<section id="title-screen"'), html.indexOf('<header id="hud"'));
-check((titleBlock.includes('title-mascot-v112.webp') || titleBlock.includes('title-mascot-v17.webp')) && titleBlock.includes('title-panel-v17') && titleBlock.includes('title-scene-v17'), 'title uses v17-or-later mascot presentation');
+check((titleBlock.includes('title-mascot-v112.webp') || titleBlock.includes('title-mascot-lite-v112.webp') || titleBlock.includes('title-mascot-v17.webp')) && titleBlock.includes('title-panel-v17') && titleBlock.includes('title-scene-v17'), 'title uses v17-or-later mascot presentation');
 check(style.includes('title-bg-desktop-v17.webp') && style.includes('title-bg-mobile-v17.webp') && style.includes('@media (max-width: 900px), (orientation: portrait)'), 'desktop and mobile title backgrounds are responsive');
-check(html.includes('rel="preload"') && ((html.includes('title-bg-desktop-v112.webp') && html.includes('title-bg-mobile-v112.webp')) || (html.includes('title-bg-desktop-v17.webp') && html.includes('title-bg-mobile-v17.webp'))), 'title artwork preloads by viewport');
+check(html.includes('rel="preload"') && (((html.includes('title-bg-desktop-v112.webp') || html.includes('title-bg-desktop-lite-v112.webp')) && (html.includes('title-bg-mobile-v112.webp') || html.includes('title-bg-mobile-lite-v112.webp'))) || (html.includes('title-bg-desktop-v17.webp') && html.includes('title-bg-mobile-v17.webp'))), 'title artwork preloads by viewport');
 check(!titleBlock.includes('PATCH') && !titleBlock.includes('UPDATE') && !titleBlock.includes('ENGINE'), 'first screen remains free of patch and engine information');
 
 const waveSnapshot = Object.freeze({ state: 'playing', waveActive: true, currentWave: 4, maxWaves: 10, spawnRemaining: 4, waveSpawned: 2, enemyCount: 0, enemyCap: 20, postWaveQueueLength: 0, autoWaveCountdown: 0, modalVisible: false });

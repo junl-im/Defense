@@ -22,14 +22,14 @@ const style = text('src/style.css');
 const sw = text('public/sw.js');
 const index = text('index.html');
 
-check(pkg.version === '1.0.14', 'package version is not 1.0.14');
-check(pkg.dokkaebi?.releaseVersion === '1.0.14' && pkg.dokkaebi?.buildId === 'b24.14', 'package release metadata mismatch');
+check(pkg.version === pkg.dokkaebi?.releaseVersion, 'current package release metadata mismatch');
+check(Number(pkg.dokkaebi?.buildRevision || 0) >= 14, 'current build is older than the v1.0.14 foundation');
 check(lock.version === pkg.version && lock.packages?.['']?.version === pkg.version, 'package-lock identity mismatch');
-check(lock.packages?.['']?.dokkaebi?.buildId === 'b24.14', 'package-lock build metadata mismatch');
-check(version.releaseVersion === '1.0.14' && version.buildId === 'b24.14', 'public version identity mismatch');
-check(main.includes("const GAME_VERSION = '1.0.14'"), 'main release identity mismatch');
-check(index.includes("RELEASE_VERSION = '1.0.14'") && index.includes("BUILD_ID = 'b24.14'"), 'index boot identity mismatch');
-if (!failures.length) pass('v1.0.14 / b24.14 release identity is synchronized');
+check(lock.packages?.['']?.dokkaebi?.buildId === pkg.dokkaebi?.buildId, 'package-lock build metadata mismatch');
+check(version.releaseVersion === pkg.version && version.buildId === pkg.dokkaebi?.buildId, 'public version identity mismatch');
+check(main.includes(`const GAME_VERSION = '${pkg.version}'`), 'main release identity mismatch');
+check(index.includes(`RELEASE_VERSION = '${pkg.version}'`) && index.includes(`BUILD_ID = '${pkg.dokkaebi?.buildId}'`), 'index boot identity mismatch');
+if (!failures.length) pass(`v1.0.14 art foundation is preserved under current release ${pkg.version} / ${pkg.dokkaebi?.buildId}`);
 
 check(manifest.version === '1.0.14' && manifest.build === 'b24.14', 'art manifest identity mismatch');
 check(manifest.entries?.length === 25, 'art manifest must contain 25 entries');
@@ -68,7 +68,7 @@ check(style.includes('dd-shell-mobile-v112.dd-shell-portrait-v112.dd-shell-compa
 check(style.includes('--dd-v114-panel-bg'), 'v114 cross-platform panel material missing');
 if (!failures.length) pass('PC, tablet and mobile HUD readability polish is present');
 
-check(sw.includes("RELEASE_VERSION = '1.0.14'") && sw.includes("BUILD_ID = 'b24.14'"), 'service worker identity mismatch');
+check(sw.includes(`RELEASE_VERSION = '${pkg.version}'`) && sw.includes(`BUILD_ID = '${pkg.dokkaebi?.buildId}'`), 'service worker identity mismatch');
 for (const asset of [
   './src/runtime/combat-art-polish-policy-v114.js',
   './src/runtime/combat-art-polish-director-v114.js',

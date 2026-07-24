@@ -167,7 +167,7 @@ check(main.includes("import CrossPlatformShellV112 from './runtime/cross-platfor
 check(!main.includes('new CombatVisualDirectorV110'), 'obsolete v110 visual director is still instantiated');
 check(shell.includes("CROSS_PLATFORM_SHELL_V112_VERSION = '1.0.12'"), 'cross-platform shell version mismatch');
 check(shell.includes('shellSeparated: true') && shell.includes('sharedScaleOnly: false'), 'cross-platform shell separation diagnostics missing');
-check(visualIntegration.includes("VISUAL_INTEGRATION_VERSION = '1.1.2'") && visualIntegration.includes('title-bg-desktop-lite-v112.webp'), 'adaptive v112 title integration missing');
+check(/VISUAL_INTEGRATION_VERSION = '1\.1\.(?:[2-9]|[1-9]\d+)'/.test(visualIntegration) && visualIntegration.includes('title-bg-desktop-lite-v112.webp'), 'adaptive v112 title integration missing');
 check(!visualIntegration.includes('title-v17/title-bg'), 'obsolete title-v17 probe remains active');
 check(style.includes('title-art-lite-v112') && style.includes('title-bg-mobile-lite-v112.webp'), 'lite title-art CSS lifecycle missing');
 for (const className of ['dd-shell-pc-v112','dd-shell-tablet-v112','dd-shell-mobile-v112','dd-shell-overlap-safe-v112']) check(style.includes(className), `cross-platform CSS class missing: ${className}`);

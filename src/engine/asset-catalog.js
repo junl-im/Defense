@@ -207,6 +207,36 @@ export const CORE_ASSET_CATALOG = Object.freeze([
   }))
 ]);
 
+
+const BOOT_ASSET_ID_SET_V115 = new Set([
+  ...Object.values(COMBAT_ART_TEXTURE_IDS.heroes),
+  ...Object.values(COMBAT_ART_TEXTURE_IDS.guardians),
+  GUARDIAN_CITADEL_STATE_TEXTURE_IDS_V114.stable
+]);
+
+// v1.0.15: title screen opens after only the assets actually visible on the
+// first scene are ready. Monsters, bosses, alternate citadel states, impostors
+// and GLB models continue in the background and remain available before combat.
+export const BOOT_ASSET_CATALOG = Object.freeze(
+  CORE_ASSET_CATALOG.filter((entry) => entry.required || BOOT_ASSET_ID_SET_V115.has(entry.id))
+);
+export const DEFERRED_ASSET_CATALOG = Object.freeze(
+  CORE_ASSET_CATALOG.filter((entry) => !BOOT_ASSET_CATALOG.includes(entry))
+);
+export const ASSET_LOADING_PLAN_V115 = Object.freeze({
+  version: '1.0.15',
+  build: 'b24.15',
+  criticalCount: BOOT_ASSET_CATALOG.length,
+  deferredCount: DEFERRED_ASSET_CATALOG.length,
+  titleCharacters: Object.freeze([
+    ...Object.values(COMBAT_ART_TEXTURE_IDS.heroes),
+    ...Object.values(COMBAT_ART_TEXTURE_IDS.guardians)
+  ]),
+  titleCitadel: GUARDIAN_CITADEL_STATE_TEXTURE_IDS_V114.stable,
+  firstScreenPolicy: 'critical-first-idle-deferred',
+  fallbackPolicy: 'procedural-safe-until-approved-art-ready'
+});
+
 const makeCharacterSlot = (id, category) => Object.freeze({
   id,
   category,

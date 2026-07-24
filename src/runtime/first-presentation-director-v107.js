@@ -105,9 +105,9 @@ export default class FirstPresentationDirectorV107 {
   async prepare() {
     if (this.disposed) throw new Error('첫 화면 준비기가 이미 해제되었습니다.');
     const startedAt = performance.now();
-    const imageBudget = this.profile.lowEnd ? 5600 : 4200;
-    const fontBudget = this.profile.lowEnd ? 2800 : 2100;
-    const frameBudget = this.profile.lowEnd ? 4600 : 3400;
+    const imageBudget = this.profile.lowEnd ? 2600 : 1800;
+    const fontBudget = this.profile.lowEnd ? 1500 : 1000;
+    const frameBudget = this.profile.lowEnd ? 2600 : 1900;
 
     this.updateGate('타이틀 아트를 준비하는 중...', '배경과 수호자 아트를 먼저 완성합니다.', 'assets');
     const imageTasks = this.collectImageTasks();
@@ -118,7 +118,7 @@ export default class FirstPresentationDirectorV107 {
 
     this.updateGate('첫 장면을 렌더링하는 중...', 'GPU가 완성된 프레임을 만들 때까지 화면을 보호합니다.', 'rendering');
     let stableFrames = await this.withTimeout(
-      this.waitForFrames(this.profile.lowEnd ? 3 : 2, frameBudget),
+      this.waitForFrames(2, frameBudget),
       frameBudget + 250,
       false
     );

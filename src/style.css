@@ -4108,7 +4108,7 @@ body.presentation-safe-mode #vignette { opacity: .42; }
   background:
     radial-gradient(circle at 51% 39%, rgba(104, 193, 255, .12), transparent 27%),
     linear-gradient(180deg, rgba(3, 7, 20, .02), rgba(3, 5, 18, .24) 57%, rgba(2, 4, 13, .82) 100%),
-    url('./assets/title-v112/title-bg-desktop-v112.webp?rev=release-v112-b24-12') center 53% / cover no-repeat !important;
+    url('./assets/title-v112/title-bg-desktop-v112.webp?rev=release-v115-b24-15') center 53% / cover no-repeat !important;
 }
 
 .title-screen-v112::before {
@@ -4329,7 +4329,7 @@ body.dd-shell-overlap-safe-v112 .action-dock { transform-origin: bottom center; 
     background:
       radial-gradient(circle at 50% 35%, rgba(95, 188, 255, .13), transparent 29%),
       linear-gradient(180deg, rgba(3,7,20,.02), rgba(3,5,18,.24) 56%, rgba(2,4,13,.88) 100%),
-      url('./assets/title-v112/title-bg-mobile-v112.webp?rev=release-v112-b24-12') center 48% / cover no-repeat !important;
+      url('./assets/title-v112/title-bg-mobile-v112.webp?rev=release-v115-b24-15') center 48% / cover no-repeat !important;
   }
   .title-mascot-stage-v112 {
     width: min(92vw, 560px) !important;
@@ -4351,14 +4351,14 @@ body.title-art-lite-v112 .title-screen-v112 {
   background:
     radial-gradient(circle at 49% 47%, rgba(95, 188, 255, .13), transparent 26%),
     linear-gradient(180deg, rgba(3,7,20,.02), rgba(3,5,18,.26) 58%, rgba(2,4,13,.9) 100%),
-    url('./assets/title-v112/title-bg-desktop-lite-v112.webp?rev=release-v112-b24-12') center 53% / cover no-repeat !important;
+    url('./assets/title-v112/title-bg-desktop-lite-v112.webp?rev=release-v115-b24-15') center 53% / cover no-repeat !important;
 }
 @media (max-width: 720px), (orientation: portrait) {
   body.title-art-lite-v112 .title-screen-v112 {
     background:
       radial-gradient(circle at 50% 35%, rgba(95, 188, 255, .13), transparent 29%),
       linear-gradient(180deg, rgba(3,7,20,.02), rgba(3,5,18,.24) 56%, rgba(2,4,13,.88) 100%),
-      url('./assets/title-v112/title-bg-mobile-lite-v112.webp?rev=release-v112-b24-12') center 48% / cover no-repeat !important;
+      url('./assets/title-v112/title-bg-mobile-lite-v112.webp?rev=release-v115-b24-15') center 48% / cover no-repeat !important;
   }
 }
 
@@ -4451,3 +4451,14 @@ body.dd-shell-mobile-v112.dd-shell-landscape-v112 .center-meter-rail {
   body.dd-shell-pc-v112 :is(.left-insight-rail,.right-roster-rail),
   body.dd-shell-mobile-v112 .action-dock > button { transition: none !important; }
 }
+
+
+/* ========================================================================== */
+/* v1.0.15 Fast Boot & Title Mascot Safety                                    */
+/* ========================================================================== */
+.title-mascot-stage-v112[role="img"] { color: transparent; font-size: 0; line-height: 0; }
+.title-mascot-v112[hidden] { display: none !important; }
+body.title-mascot-fallback .title-mascot-stage-v112 {
+  background: url('./assets/title-v112/title-mascot-lite-v112.webp?rev=release-v115-b24-15') center bottom / contain no-repeat;
+}
+html[data-presentation-mode="loading"] .boot-gate-line::after { animation-duration: .82s; }

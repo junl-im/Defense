@@ -12,8 +12,9 @@ import { getBattlefieldTheme } from './battlefield-themes.js';
 import { CODEX_SECTION_META, CODEX_SECTION_ORDER, getCodexEntries, getCodexTotals } from './codex-data.js';
 import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, ObjectPool, RenderStatsHUD, AssetPipeline, AnimationStateSystem, FrameBudgetScheduler } from './engine/index.js';
 import { isMovementCode } from './runtime/native-input-policy-v231.js';
+import { createArtApprovalReportV115 } from './runtime/art-approval-pipeline-v115.js';
 import { DEFAULT_CAMERA_PROFILE_ID, getCameraProfile, sanitizeCameraProfileId, cycleCameraProfile, resolveCameraDistance } from './engine/camera-profile.js';
-import { CORE_ASSET_CATALOG, PLAYER_ASSET_ID, GUARDIAN_ASSET_IDS, MONSTER_ASSET_IDS, BOSS_ASSET_IDS } from './engine/asset-catalog.js';
+import { BOOT_ASSET_CATALOG, DEFERRED_ASSET_CATALOG, ASSET_LOADING_PLAN_V115, PLAYER_ASSET_ID, GUARDIAN_ASSET_IDS, MONSTER_ASSET_IDS, BOSS_ASSET_IDS } from './engine/asset-catalog.js';
 import { HERO_CLASSES, HERO_CLASS_ORDER, HERO_CLASS_ASSET_IDS, getHeroClass } from './hero-classes.js';
 import { applyHeroArchetypeModifiers, getHeroArchetypePassive, HERO_ARCHETYPE_SUMMARY } from './hero-archetype-system.js';
 import { IP_ASSET_LIBRARY_V15, atlasSpriteMarkup } from './ip-asset-library-v15.js';
@@ -128,7 +129,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '1.0.14';
+const GAME_VERSION = '1.0.15';
 // const GAME_VERSION = '23.1.0'; historical lineage marker for pre-normalization contracts.
 if (GAME_VERSION !== PUBLIC_GAME_VERSION) throw new Error('Public version policy mismatch');
 function runtimeSpriteMarkup(path, alt = '', className = '') {
@@ -218,6 +219,11 @@ class DokkaebiLuckDefense {
     this.firstPresentation = null;
     this.firstPresentationReport = null;
     this.startRunPending = false;
+    this.deferredAssetPromise = null;
+    this.deferredAssetsReady = false;
+    this.deferredAssetReport = null;
+    this.assetLoadingPlanV115 = ASSET_LOADING_PLAN_V115;
+    this.artApprovalReportV115 = createArtApprovalReportV115();
     this.elapsed = 0;
     this.shake = 0;
     const initialCameraProfile = getCameraProfile(DEFAULT_CAMERA_PROFILE_ID);
@@ -535,41 +541,100 @@ class DokkaebiLuckDefense {
   }
 
   async initializeGame() {
-    this.setLoadingProgress(8, '그래픽 엔진을 준비하는 중...', `에셋 품질 ${this.engine.assetQualityTier.toUpperCase()} · 텍스처 예산 ${this.engine.textureBudgetMB}MB`);
-    const decoderState = await this.assetPipeline.warmDecoders(CORE_ASSET_CATALOG);
-    this.setLoadingProgress(24, '에셋 로더 경로 확인 완료', decoderState.deferred ? '압축 GLB/KTX2 로더는 필요한 순간에만 불러옵니다.' : '압축 에셋 디코더를 준비했습니다.');
+    const bootStartedAt = performance.now();
+    this.setLoadingProgress(8, '빠른 시작 엔진을 준비하는 중...', `초기 ${BOOT_ASSET_CATALOG.length}개 · 백그라운드 ${DEFERRED_ASSET_CATALOG.length}개`);
+    const decoderState = await this.assetPipeline.warmDecoders(BOOT_ASSET_CATALOG);
+    this.setLoadingProgress(20, '필수 로더 준비 완료', decoderState.deferred ? '무거운 GLB 로더는 타이틀 화면 이후에 준비합니다.' : '필수 디코더를 준비했습니다.');
 
-    const report = await this.assetPipeline.preload(CORE_ASSET_CATALOG, {
+    const report = await this.assetPipeline.preload(BOOT_ASSET_CATALOG, {
+      concurrency: this.lowPower ? 2 : 4,
       onProgress: ({ ratio, label, status, detail }) => {
-        const percent = 24 + ratio * 42;
-        const stateLabel = status === 'failed' ? '대체 모델 적용' : status === 'fallback' ? '기본 모델 사용' : '고품질 에셋 확인 중';
-        this.setLoadingProgress(percent, stateLabel, `${label || 'core asset'}${detail ? ` · ${detail}` : ''}`);
+        const percent = 20 + ratio * 45;
+        const stateLabel = status === 'failed' ? '안전 에셋 적용' : status === 'fallback' ? '기본 그래픽 사용' : '첫 화면 에셋 확인 중';
+        this.setLoadingProgress(percent, stateLabel, `${label || 'critical asset'}${detail ? ` · ${detail}` : ''}`);
       }
     });
     this.assetReport = report;
     this.applyPrototypeTextures();
     this.renderAssetDiagnostics();
-    this.setLoadingProgress(68, '살아있는 전장을 준비하는 중...', '154개 스프라이트 · 1x/2x 아틀라스 2페이지 · 상호작용 전장');
-    await this.battlefieldSprites.preload();
 
-    this.setLoadingProgress(72, '달빛 장터를 배치하는 중...', `텍스처 ${report.textureMemoryMB.toFixed(1)}MB / ${report.textureBudgetMB}MB`);
+    // The optional battlefield atlas and the remaining art are intentionally
+    // not part of the first-screen gate. The procedural environment is already
+    // complete enough to show the title immediately.
+    this.setLoadingProgress(72, '달빛 장터를 빠르게 배치하는 중...', `필수 텍스처 ${report.textureMemoryMB.toFixed(1)}MB / ${report.textureBudgetMB}MB`);
     this.createWorld(true);
     this.runRuntimeVisualAudit();
     this.state = 'title';
     ui.title.classList.add('visible');
-    this.setLoadingProgress(94, '첫 장면을 다듬는 중...', '타이틀 아트와 첫 렌더 프레임을 동기화하고 있습니다.');
+    this.setLoadingProgress(90, '첫 장면을 여는 중...', '경량 타이틀 아트와 첫 렌더 프레임만 확인합니다.');
     const presentation = await this.prepareFirstPresentation();
+    const bootMs = Math.round(performance.now() - bootStartedAt);
     const readyDetail = presentation.fallbackApplied
-      ? '안전 그래픽 모드 · 완성 프레임 확인 완료'
-      : `${this.engine.assetQualityTier.toUpperCase()} 에셋 품질 · 완성 프레임 확인 완료`;
+      ? `안전 그래픽 모드 · ${bootMs}ms`
+      : `빠른 시작 완료 · ${bootMs}ms`;
     this.setLoadingProgress(100, '준비 완료', readyDetail);
     ui.loading.classList.remove('visible');
+    this.browserReliability?.noteMilestone('critical-boot-ready-v115', {
+      durationMs: bootMs,
+      criticalAssets: BOOT_ASSET_CATALOG.length,
+      deferredAssets: DEFERRED_ASSET_CATALOG.length
+    });
+    this.startDeferredAssetPreload();
     const loadedModels = CHARACTER_ASSET_IDS.filter((id) => this.assetPipeline.get(id)?.scene).length;
     const combatArt = this.combatVisualV112?.diagnostics || { loaded: 0, expected: 21 };
-    ui.qualityBadge.textContent = `전투 아트 ${combatArt.loaded}/${combatArt.expected} · GLB ${loadedModels}/${CHARACTER_ASSET_IDS.length}`;
+    ui.qualityBadge.textContent = `빠른 시작 · 전투 아트 ${combatArt.loaded}/${combatArt.expected} · 나머지 백그라운드 준비`;
     ui.qualityBadge.classList.remove('hidden');
-    this.scheduleUi(() => ui.qualityBadge.classList.add('hidden'), 2200, { key: 'quality-badge-hide' });
+    this.scheduleUi(() => ui.qualityBadge.classList.add('hidden'), 1800, { key: 'quality-badge-hide' });
     return this;
+  }
+
+  startDeferredAssetPreload() {
+    if (this.deferredAssetPromise) return this.deferredAssetPromise;
+    const task = async () => {
+      const startedAt = performance.now();
+      await this.assetPipeline.warmDecoders(DEFERRED_ASSET_CATALOG);
+      const report = await this.assetPipeline.preload(DEFERRED_ASSET_CATALOG, {
+        concurrency: this.lowPower ? 2 : 4
+      });
+      await this.battlefieldSprites.preload();
+      if (this.state === 'title' && this.worldRoot) {
+        this.battlefieldSprites.populate(this.worldRoot, { titleMode: true });
+      }
+      this.deferredAssetsReady = true;
+      this.deferredAssetReport = report;
+      this.renderAssetDiagnostics();
+      this.browserReliability?.noteMilestone('deferred-assets-ready-v115', {
+        durationMs: Math.round(performance.now() - startedAt),
+        loaded: report.assets.size,
+        failures: report.failures.length,
+        battlefieldAtlas: Boolean(this.battlefieldSprites?.loaded)
+      });
+      return report;
+    };
+    this.deferredAssetPromise = new Promise((resolve, reject) => {
+      const run = () => task().then(resolve, reject);
+      if (typeof window.requestIdleCallback === 'function') {
+        window.requestIdleCallback(run, { timeout: 700 });
+      } else {
+        this.scheduleUi(run, 80, { key: 'deferred-assets-v115' });
+      }
+    }).catch((error) => {
+      this.recordRuntimeError(error, 'deferred-assets-v115');
+      return null;
+    });
+    return this.deferredAssetPromise;
+  }
+
+  async waitForDeferredAssets(timeoutMs = 1200) {
+    if (this.deferredAssetsReady) return true;
+    const pending = this.startDeferredAssetPreload();
+    let timer = 0;
+    const timeout = new Promise((resolve) => {
+      timer = this.scheduleUi(() => resolve(false), Math.max(0, timeoutMs));
+    });
+    const ready = await Promise.race([pending.then(() => this.deferredAssetsReady), timeout]);
+    this.lifecycle.ui.cancel(timer);
+    return Boolean(ready);
   }
 
   initThree() {
@@ -3467,6 +3532,8 @@ class DokkaebiLuckDefense {
     try {
       this.sound.unlock();
       this.sound.ui();
+      const deferredReady = await this.waitForDeferredAssets(this.lowPower ? 900 : 1200);
+      if (!deferredReady && ui.loadingDetail) ui.loadingDetail.textContent = '남은 에셋은 전투 중 안전하게 이어서 준비합니다.';
       this.startRun({ reuseSeed });
       if (this.state !== 'playing') throw new Error(`전투 상태 전환 실패: ${this.state}`);
       this.browserReliability?.noteMilestone('start-run-entered', {
@@ -6972,7 +7039,7 @@ try {
       },
       foundationReport: () => game.coreFoundation?.report || {},
       dispose: () => game.dispose(),
-      reliabilityReport: () => ({ foundation: game.coreFoundation?.report || {}, wave: game.waveReliability?.report || {}, browser: game.browserReliability?.report || {}, firstPresentation: game.firstPresentationReport || game.firstPresentation?.report || {}, automation: game.automationV22?.report || {}, targeting: game.guardianTargetingV22?.report || {}, mobileHud: game.mobileHudV23?.report || {}, crossPlatformShell: game.crossPlatformShellV112?.report || {}, combatVisual: game.combatVisualV112?.diagnostics || {} })
+      reliabilityReport: () => ({ foundation: game.coreFoundation?.report || {}, wave: game.waveReliability?.report || {}, browser: game.browserReliability?.report || {}, firstPresentation: game.firstPresentationReport || game.firstPresentation?.report || {}, automation: game.automationV22?.report || {}, targeting: game.guardianTargetingV22?.report || {}, mobileHud: game.mobileHudV23?.report || {}, crossPlatformShell: game.crossPlatformShellV112?.report || {}, combatVisual: game.combatVisualV112?.diagnostics || {}, artApprovalV115: game.artApprovalReportV115 || {}, assetLoadingV115: { plan: game.assetLoadingPlanV115, ready: game.deferredAssetsReady, report: game.deferredAssetReport } })
     });
     game.browserReliability?.noteMilestone('game-ready', { state: game.state });
     window.dispatchEvent(new Event('dokkaebi:boot-ready'));
