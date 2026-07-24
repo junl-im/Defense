@@ -15,7 +15,7 @@ const style = read('src/style.css');
 const codexViewer = read('src/codex-viewer.js');
 
 assert(
-  html.includes('class="title-primary-actions"') &&
+  /class="[^"]*title-primary-actions[^"]*"/.test(html) &&
   html.includes('id="controls-btn" class="btn ghost"') &&
   html.includes('>설정</button>'),
   '첫 화면 단순 설정 진입 버튼'

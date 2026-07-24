@@ -49,9 +49,9 @@ const report = {
     pass: isolatedHan.length === 0
   },
   titlePresentation: {
-    cacheRevision: /(?:presence-v21|automation-v22|quiet-screen-v23)/.test(html),
-    mascotMarkup: /title-mascot-v17\.webp\?rev=(?:presence-v21|automation-v22|quiet-screen-v23)/.test(html),
-    featureRibbon: html.includes('title-feature-ribbon-v21')
+    cacheRevision: /(?:presence-v21|automation-v22|quiet-screen-v23|release-v105-b24-5)/.test(html),
+    mascotMarkup: /title-mascot-v17\.webp\?rev=(?:presence-v21|automation-v22|quiet-screen-v23|release-v105-b24-5)/.test(html),
+    featureRibbon: html.includes('title-feature-ribbon-v21') || html.includes('title-brand-v105')
   }
 };
 const output = `${JSON.stringify(report, null, 2)}\n`;

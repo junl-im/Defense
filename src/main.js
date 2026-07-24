@@ -125,7 +125,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '1.0.4';
+const GAME_VERSION = '1.0.5';
 // const GAME_VERSION = '23.1.0'; historical lineage marker for pre-normalization contracts.
 if (GAME_VERSION !== PUBLIC_GAME_VERSION) throw new Error('Public version policy mismatch');
 function runtimeSpriteMarkup(path, alt = '', className = '') {
@@ -3302,7 +3302,9 @@ class DokkaebiLuckDefense {
     if (ui.start) {
       ui.start.disabled = true;
       ui.start.setAttribute('aria-busy', 'true');
-      ui.start.textContent = '수호대 출전 준비 중...';
+      const startLabel = document.getElementById('title-start-label');
+      if (startLabel) startLabel.textContent = '수호대 출전 준비 중...';
+      ui.start.setAttribute('aria-label', '수호대 출전 준비 중...');
     }
     try {
       this.sound.unlock();
@@ -3327,7 +3329,9 @@ class DokkaebiLuckDefense {
       if (ui.start && this.state === 'title') {
         ui.start.disabled = false;
         ui.start.setAttribute('aria-busy', 'false');
-        ui.start.textContent = '수호 시작';
+        const startLabel = document.getElementById('title-start-label');
+        if (startLabel) startLabel.textContent = '달빛 장터 수호 준비 완료';
+        ui.start.setAttribute('aria-label', '수호 시작');
       }
     }
   }

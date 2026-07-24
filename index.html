@@ -12,9 +12,10 @@
     <link rel="icon" href="./icon-192.png" type="image/png" />
     <link rel="apple-touch-icon" href="./icon-192.png" />
     <title>도깨비 운빨 수호대 3D</title>
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-desktop-v17.webp?rev=release-v102-b24-2" media="(min-width: 721px) and (orientation: landscape)" />
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-mobile-v17.webp?rev=release-v102-b24-2" media="(max-width: 720px), (orientation: portrait)" />
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-mascot-v17.webp?rev=release-v102-b24-2" />
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-desktop-v17.webp?rev=release-v105-b24-5" media="(min-width: 721px) and (orientation: landscape)" />
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-mobile-v17.webp?rev=release-v105-b24-5" media="(max-width: 720px), (orientation: portrait)" />
+    <link rel="preload" as="image" href="./assets/ip-v10/presentation/ui/button_start.png" />
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-mascot-v17.webp?rev=release-v105-b24-5" />
     <!-- active lineage v22.0.0 · BROWSER RELIABILITY LAB -->
   </head>
   <body>
@@ -49,26 +50,30 @@
         </div>
       </section>
 
-      <section id="title-screen" class="screen title-screen-v17">
-        <div class="title-scene-v17">
-          <picture class="title-mascot-stage">
-            <source media="(max-width: 720px), (orientation: portrait)" srcset="./src/assets/title-v17/title-mascot-v17.webp?rev=release-v102-b24-2" />
-            <img class="title-mascot title-mascot-v17" src="./src/assets/title-v17/title-mascot-v17.webp?rev=release-v102-b24-2" alt="푸른 도깨비불과 곤봉을 든 도깨비 수호대 마스코트" fetchpriority="high" decoding="async" />
+      <section id="title-screen" class="screen title-screen-v17 title-screen-v105">
+        <div class="title-scene-v17 title-scene-v105">
+          <div class="title-brand-v105" aria-label="도깨비 디펜스 운빨 수호대">
+            <small>KOREAN FANTASY DEFENSE</small>
+            <h1><span>도깨비</span><strong>디펜스</strong></h1>
+            <em>운빨 수호대</em>
+            <b aria-hidden="true">수호전설</b>
+          </div>
+          <picture class="title-mascot-stage title-mascot-stage-v105">
+            <source media="(max-width: 720px), (orientation: portrait)" srcset="./src/assets/title-v17/title-mascot-v17.webp?rev=release-v105-b24-5" />
+            <img class="title-mascot title-mascot-v17 title-mascot-v105" src="./src/assets/title-v17/title-mascot-v17.webp?rev=release-v105-b24-5" alt="푸른 도깨비불과 곤봉을 든 도깨비 수호대 마스코트" fetchpriority="high" decoding="async" />
           </picture>
-          <div class="title-panel title-panel-simple title-panel-v17">
-            <p class="kicker">KOREAN FANTASY DEFENSE</p>
-            <h1>도깨비<br /><em>운빨 수호대</em></h1>
-            <p class="title-copy">달빛 장터의 월문을 지키고 도깨비 수호대를 이끄세요.</p>
-            <div class="title-feature-ribbon-v21" aria-label="게임 핵심 특징"><span>10웨이브 수호전</span><span>5직업 대장</span><span>모바일 전투 최적화</span></div>
-            <div class="title-ready-v21"><i aria-hidden="true"></i><b>달빛 장터 수호 준비 완료</b><small>최근 원정 설정으로 즉시 출전</small></div>
+          <div class="title-panel title-panel-simple title-panel-v17 title-panel-v105">
+            <div class="title-start-status-v105" aria-live="polite"><i aria-hidden="true"></i><span id="title-start-label">게임 준비 중...</span></div>
+            <button id="start-btn" class="title-start-button-v105" disabled aria-busy="true" aria-label="게임 준비 중...">
+              <img src="./assets/ip-v10/presentation/ui/button_start.png" alt="" aria-hidden="true" decoding="async" />
+            </button>
             <div id="title-loadout-summary" class="title-loadout-summary" aria-live="polite"></div>
-            <button id="start-btn" class="btn primary huge" disabled aria-busy="true">게임 준비 중...</button>
-            <div class="title-primary-actions">
+            <div class="title-primary-actions title-primary-actions-v105">
               <button id="title-setup-btn" class="btn ghost">원정 설정</button>
               <button id="title-vault-btn" class="btn ghost">보관함</button>
               <button id="controls-btn" class="btn ghost">설정</button>
             </div>
-            <small class="title-help">최근 설정으로 바로 시작합니다.</small>
+            <small class="title-help">달빛 장터의 월문을 지킬 수호대를 준비하세요.</small>
           </div>
         </div>
       </section>
@@ -553,18 +558,21 @@
     </div>
     <script>
       (() => {
-        const RELEASE_VERSION = '1.0.4';
-        const BUILD_ID = 'b24.4';
+        const RELEASE_VERSION = '1.0.5';
+        const BUILD_ID = 'b24.5';
         const VERSION = `${RELEASE_VERSION}-${BUILD_ID}`;
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
         const retryButton = document.getElementById('boot-retry-btn');
         const startButton = document.getElementById('start-btn');
+        const startLabel = document.getElementById('title-start-label');
         const setStartReady = (ready) => {
           if (!startButton) return;
           startButton.disabled = !ready;
           startButton.setAttribute('aria-busy', String(!ready));
-          startButton.textContent = ready ? '수호 시작' : '게임 준비 중...';
+          const label = ready ? '수호 시작' : '게임 준비 중...';
+          if (startLabel) startLabel.textContent = ready ? '달빛 장터 수호 준비 완료' : label;
+          startButton.setAttribute('aria-label', label);
         };
         setStartReady(false);
         const diagnostics = window.__DOKKAEBI_BOOT_DIAGNOSTICS__ = {
@@ -670,6 +678,6 @@
         registerServiceWorker();
       })();
     </script>
-    <script type="module" src="./src/bootstrap.js?v=1.0.4-b24.4"></script>
+    <script type="module" src="./src/bootstrap.js?v=1.0.5-b24.5"></script>
   </body>
 </html>

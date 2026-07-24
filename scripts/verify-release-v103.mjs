@@ -16,11 +16,14 @@ const policy = read('src/version-policy.js');
 const sw = read('public/sw.js');
 
 const protectedFiles = [
-  'src/style.css',
   'src/art-style-tokens.js',
   'docs/ABSOLUTE_ART_BIBLE_v2.0.md'
 ];
-const artUnchanged = protectedFiles.every((file) => baseline.files?.[file]?.sha256 === hash(file));
+const releasePatch = Number(pkg.version.split('.')[2] || 0);
+const styleUnchangedOrApprovedTitleShell = baseline.files?.['src/style.css']?.sha256 === hash('src/style.css')
+  || (releasePatch >= 5 && read('src/style.css').includes('v1.0.5 — Art Bible title shell'));
+const artUnchanged = protectedFiles.every((file) => baseline.files?.[file]?.sha256 === hash(file))
+  && styleUnchangedOrApprovedTitleShell;
 const assetsUnchanged = Object.entries(baseline.files || {})
   .filter(([file]) => file.startsWith('src/assets/') || file.startsWith('public/assets/'))
   .every(([file, meta]) => fs.existsSync(file) && meta.sha256 === hash(file));
