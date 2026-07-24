@@ -227,11 +227,11 @@
       "evidence": [
         {
           "path": "index.html",
-          "sha256": "232daf04e796acb706aeae1586f6504a4c012d5d500c514c33fc52530b4c5787"
+          "sha256": "ea68ae918980b228cd0200d4095223808c19ff793acd95f55601f7a1db680047"
         },
         {
           "path": "src/style.css",
-          "sha256": "68ec12c8e0dc25d804644da2f4d8e2ad5ac6727ca69049002ba7b126b47803aa"
+          "sha256": "c75ae659d50ef8b4e60171a2ef5748e72f99d61886a756800f1542e3835535c6"
         },
         {
           "path": "src/ui-layout-contract.js",
@@ -239,7 +239,7 @@
         },
         {
           "path": "src/ui-layout-manager.js",
-          "sha256": "0e51fafbc4116bdb07cff3d83dc821ceadf24928acc885a860b990d29f73fa41"
+          "sha256": "48637b1f2b34f3d74f2d66475136a13cc5c8e58a1bfb32f3e6c566897003e1b0"
         }
       ]
     },

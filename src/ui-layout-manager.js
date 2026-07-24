@@ -61,6 +61,11 @@ export class AdaptiveHudLayout {
       return rail;
     };
 
+    makeRail('top-context-rail', 'top-context-rail combat-ui-rail', [
+      this.elements.runSeed,
+      this.elements.stageChip,
+      this.elements.councilChip
+    ]);
     makeRail('top-status-rail', 'top-status-rail combat-ui-rail', [
       this.elements.moonOmen,
       this.elements.moonWard
@@ -71,9 +76,6 @@ export class AdaptiveHudLayout {
       this.elements.momentumMeter
     ]);
     makeRail('left-insight-rail', 'left-insight-rail combat-ui-rail', [
-      this.elements.runSeed,
-      this.elements.stageChip,
-      this.elements.councilChip,
       this.elements.waveTrial,
       this.elements.synergyPanel,
       this.elements.firstMission
@@ -189,6 +191,7 @@ export class AdaptiveHudLayout {
   auditCollisions() {
     const candidates = [
       ['hud', this.elements.hud],
+      ['context', this.rails['top-context-rail']],
       ['top', this.rails['top-status-rail']],
       ['meters', this.rails['center-meter-rail']],
       ['boss', this.elements.bossHealth],
@@ -223,6 +226,7 @@ export class AdaptiveHudLayout {
   auditTextOverflow() {
     const roots = [
       this.elements.hud,
+      this.rails['top-context-rail'],
       this.rails['top-status-rail'],
       this.rails['center-meter-rail'],
       this.rails['left-insight-rail'],

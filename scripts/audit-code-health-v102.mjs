@@ -57,6 +57,7 @@ const verificationOnlyAllowlist = new Set([
   'src/ip-asset-library-v14.js',
   'src/ip-production-spec.js',
   'src/rigged-enemy-candidate-spec.js',
+  'src/runtime/combat-art-skin-v109.js',
   'src/runtime/battlefield-sprite-director.js',
   'src/runtime/battlefield-sprite-director-v15.js',
   'src/runtime/mobile-hud-director-v21.js',

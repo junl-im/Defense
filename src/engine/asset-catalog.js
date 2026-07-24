@@ -58,6 +58,10 @@ export const COMBAT_ART_TEXTURE_IDS = Object.freeze({
   })
 });
 
+
+
+export const GUARDIAN_CITADEL_TEXTURE_ID = 'guardian-citadel-art-v110';
+
 const combatArtTextureUrls = Object.freeze({
   [COMBAT_ART_TEXTURE_IDS.heroes.warrior]: publicAsset('ip-v13/crops/heroes/heroes-r01-c01.png'),
   [COMBAT_ART_TEXTURE_IDS.heroes.archer]: publicAsset('ip-v13/crops/heroes/heroes-r01-c02.png'),
@@ -81,6 +85,10 @@ const combatArtTextureUrls = Object.freeze({
   [COMBAT_ART_TEXTURE_IDS.bosses.serpent]: publicAsset('ip-v13/crops/bosses/bosses-r05-c03.png'),
   [COMBAT_ART_TEXTURE_IDS.bosses.king]: publicAsset('ip-v13/crops/bosses/bosses-r05-c04.png')
 });
+
+
+
+const guardianCitadelTextureUrl = publicAsset('ip-v10/presentation/objects/object_dokkaebi_shrine.png');
 
 const sdToonModelUrls = Object.freeze({
   ...Object.fromEntries(Object.values(HERO_CLASS_ASSET_IDS).map((id) => [id, publicAsset(`models/${id}.glb`)])),
@@ -125,6 +133,11 @@ export const CORE_ASSET_CATALOG = Object.freeze([
     variants: { low: url, medium: url, high: url },
     sourceWidth: 256, sourceHeight: 256, estimatedBytes: 256 * 256 * 4 * 1.333
   })),
+  {
+    id: GUARDIAN_CITADEL_TEXTURE_ID, kind: 'texture', required: false, retain: true, color: true, role: 'guardian-citadel-v110',
+    variants: { low: guardianCitadelTextureUrl, medium: guardianCitadelTextureUrl, high: guardianCitadelTextureUrl },
+    sourceWidth: 512, sourceHeight: 512, estimatedBytes: 512 * 512 * 4 * 1.333
+  },
   ...Object.entries(sdToonModelUrls).map(([id, url]) => ({
     id, kind: 'model', required: false, retain: true,
     variants: { low: url, medium: url, high: url },

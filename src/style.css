@@ -3959,3 +3959,131 @@ body.presentation-safe-mode #vignette { opacity: .42; }
   body:not(.mobile-hud-v23) .right-roster-rail { width: 158px; }
   body:not(.mobile-hud-v23) .left-ui-toggle { transform: translateX(184px) !important; }
 }
+
+/* v1.0.10 — three-lane desktop tactical HUD and world-space health readability. */
+@media (min-width: 901px) {
+  body:not(.mobile-hud-v23) {
+    --desktop-hud-top-v110: calc(64px + var(--safe-top));
+    --desktop-side-top-v110: calc(150px + var(--safe-top));
+    --desktop-side-bottom-v110: calc(124px + var(--safe-bottom));
+  }
+
+  body:not(.mobile-hud-v23) .top-context-rail,
+  body:not(.mobile-hud-v23) .top-status-rail,
+  body:not(.mobile-hud-v23) .center-meter-rail {
+    position: fixed;
+    z-index: 36;
+    top: var(--desktop-hud-top-v110);
+    bottom: auto;
+    transform: none;
+    gap: 5px;
+    pointer-events: none;
+  }
+
+  body:not(.mobile-hud-v23) .top-context-rail {
+    left: calc(10px + var(--safe-left));
+    right: auto;
+    width: min(28vw, 360px);
+    display: grid;
+    grid-template-columns: minmax(0, .82fr) minmax(0, .78fr) minmax(0, 1.2fr);
+  }
+
+  body:not(.mobile-hud-v23) .top-status-rail {
+    left: auto;
+    right: calc(10px + var(--safe-right));
+    width: min(24vw, 310px);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  body:not(.mobile-hud-v23) .center-meter-rail {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: min(38vw, 470px);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  body:not(.mobile-hud-v23) .top-context-rail > *,
+  body:not(.mobile-hud-v23) .top-status-rail > *,
+  body:not(.mobile-hud-v23) .center-meter-rail > * {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    min-height: 42px;
+    max-height: 50px;
+    padding: 5px 7px;
+    transform: none !important;
+    overflow: hidden;
+    pointer-events: auto;
+  }
+
+  body:not(.mobile-hud-v23) .top-context-rail .run-seed-chip,
+  body:not(.mobile-hud-v23) .top-context-rail .stage-chip,
+  body:not(.mobile-hud-v23) .top-context-rail .council-chip {
+    display: grid;
+    align-items: center;
+  }
+
+  body:not(.mobile-hud-v23) .left-insight-rail,
+  body:not(.mobile-hud-v23) .right-roster-rail,
+  body:not(.mobile-hud-v23).boss-active .left-insight-rail,
+  body:not(.mobile-hud-v23).boss-active .right-roster-rail {
+    top: var(--desktop-side-top-v110);
+    bottom: var(--desktop-side-bottom-v110);
+    gap: 5px;
+  }
+
+  body:not(.mobile-hud-v23) .left-insight-rail {
+    left: calc(10px + var(--safe-left));
+    width: clamp(162px, 13.2vw, 198px);
+  }
+
+  body:not(.mobile-hud-v23) .right-roster-rail {
+    right: calc(10px + var(--safe-right));
+    width: clamp(148px, 12vw, 184px);
+  }
+
+  body:not(.mobile-hud-v23) .left-insight-rail .wave-trial { order: 1; }
+  body:not(.mobile-hud-v23) .left-insight-rail .synergy-panel { order: 2; }
+  body:not(.mobile-hud-v23) .left-insight-rail .first-mission-panel { order: 3; margin-top: auto; }
+
+  body:not(.mobile-hud-v23) .boss-health,
+  body:not(.mobile-hud-v23).boss-active .boss-health {
+    top: calc(118px + var(--safe-top));
+    width: min(46vw, 500px);
+    z-index: 38;
+  }
+
+  body:not(.mobile-hud-v23).boss-active .left-insight-rail,
+  body:not(.mobile-hud-v23).boss-active .right-roster-rail {
+    top: calc(174px + var(--safe-top));
+  }
+
+  body:not(.mobile-hud-v23) .left-ui-toggle {
+    top: var(--desktop-side-top-v110) !important;
+    transform: translateX(clamp(162px, 13.2vw, 198px)) !important;
+  }
+
+  body:not(.mobile-hud-v23) .boss-banner,
+  body:not(.mobile-hud-v23) .toast { top: calc(194px + var(--safe-top)); }
+
+  body:not(.mobile-hud-v23) .mission-banner { top: 37%; }
+}
+
+@media (min-width: 901px) and (max-width: 1180px) and (orientation: landscape) {
+  body:not(.mobile-hud-v23) .top-context-rail { width: min(27vw, 300px); grid-template-columns: .76fr .72fr 1fr; }
+  body:not(.mobile-hud-v23) .center-meter-rail { width: min(38vw, 392px); }
+  body:not(.mobile-hud-v23) .top-status-rail { width: min(23vw, 242px); }
+  body:not(.mobile-hud-v23) .top-context-rail em,
+  body:not(.mobile-hud-v23) .top-status-rail em { display: none; }
+  body:not(.mobile-hud-v23) .left-insight-rail { width: 160px; }
+  body:not(.mobile-hud-v23) .right-roster-rail { width: 148px; }
+  body:not(.mobile-hud-v23) .left-ui-toggle { transform: translateX(160px) !important; }
+}
+
+@media (max-width: 900px), (pointer: coarse) and (max-width: 1180px) {
+  body.mobile-hud-v23 .top-context-rail { display: none !important; }
+}

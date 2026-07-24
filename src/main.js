@@ -65,7 +65,7 @@ import AutomationDirectorV22 from './runtime/automation-director-v22.js';
 import CoreFoundationDirectorV101 from './runtime/core-foundation-director-v101.js';
 import AppStateMachineV103 from './runtime/app-state-machine-v103.js';
 import FirstPresentationDirectorV107 from './runtime/first-presentation-director-v107.js';
-import CombatArtSkinV109 from './runtime/combat-art-skin-v109.js';
+import CombatVisualDirectorV110 from './runtime/combat-visual-director-v110.js';
 // CameraDirector v14/v15 lineage is preserved by CameraDirectorV16.
 
 const $ = (selector) => document.querySelector(selector);
@@ -127,7 +127,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '1.0.9';
+const GAME_VERSION = '1.0.10';
 // const GAME_VERSION = '23.1.0'; historical lineage marker for pre-normalization contracts.
 if (GAME_VERSION !== PUBLIC_GAME_VERSION) throw new Error('Public version policy mismatch');
 function runtimeSpriteMarkup(path, alt = '', className = '') {
@@ -562,7 +562,7 @@ class DokkaebiLuckDefense {
     this.setLoadingProgress(100, '준비 완료', readyDetail);
     ui.loading.classList.remove('visible');
     const loadedModels = CHARACTER_ASSET_IDS.filter((id) => this.assetPipeline.get(id)?.scene).length;
-    const combatArt = this.combatArtV109?.diagnostics || { loaded: 0, expected: 21 };
+    const combatArt = this.combatVisualV110?.diagnostics || { loaded: 0, expected: 21 };
     ui.qualityBadge.textContent = `전투 아트 ${combatArt.loaded}/${combatArt.expected} · GLB ${loadedModels}/${CHARACTER_ASSET_IDS.length}`;
     ui.qualityBadge.classList.remove('hidden');
     this.scheduleUi(() => ui.qualityBadge.classList.add('hidden'), 2200, { key: 'quality-badge-hide' });
@@ -578,7 +578,7 @@ class DokkaebiLuckDefense {
       textureBudgetMB: this.engine.textureBudgetMB,
       lowPower: this.lowPower
     });
-    this.combatArtV109 = new CombatArtSkinV109({ assetPipeline: this.assetPipeline, lowPower: this.lowPower });
+    this.combatVisualV110 = new CombatVisualDirectorV110({ assetPipeline: this.assetPipeline, lowPower: this.lowPower });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
     this.scene = new THREE.Scene();
@@ -650,7 +650,7 @@ class DokkaebiLuckDefense {
         drawCalls: this.renderer.info?.render?.calls || 0,
         triangles: this.renderer.info?.render?.triangles || 0,
         assets: this.assetPipeline?.diagnostics || {},
-        combatArt: this.combatArtV109?.diagnostics || {},
+        combatArt: this.combatVisualV110?.diagnostics || {},
         encounter: this.encounterDirector?.diagnostics || {},
         combat: this.combatTelemetry?.snapshot || {},
         statusEffects: this.statusEffects?.diagnostics || {},
@@ -2124,7 +2124,7 @@ class DokkaebiLuckDefense {
   }
 
   attachUnitImpostor(unit) {
-    if (unit.group?.userData?.combatArtSpriteV109) return;
+    if (unit.group?.userData?.combatVisualSpriteV110) return;
     if (unit.type !== 'ember') return;
     const impostor = this.createDirectionalImpostor('ember', 2.85, 1.46);
     if (!impostor) return;
@@ -2160,7 +2160,7 @@ class DokkaebiLuckDefense {
   }
 
   attachEnemyImpostor(group, type) {
-    if (group?.userData?.combatArtSpriteV109) return;
+    if (group?.userData?.combatVisualSpriteV110) return;
     if (type !== 'imp') return;
     const scale = Math.max(.82, group.userData.scale || .9);
     const impostor = this.createDirectionalImpostor('imp', 2.5 * scale, 1.25 * scale);
@@ -2206,7 +2206,7 @@ class DokkaebiLuckDefense {
         if (eliteAura) eliteAura.visible = false;
         group.userData.lodState = 'high';
         (group.userData.lodHigh || []).forEach((object) => { object.visible = true; });
-        this.combatArtV109?.restoreVisibility(group);
+        this.combatVisualV110?.restoreVisibility(group);
         const impostor = group.userData.impostor;
         if (impostor) {
           impostor.active = false;
@@ -2224,7 +2224,7 @@ class DokkaebiLuckDefense {
     const group = this.getEnemyPool(type).acquire();
     if (!group) return null;
     group.visible = true;
-    this.combatArtV109?.restoreVisibility(group);
+    this.combatVisualV110?.restoreVisibility(group);
     this.dynamicRoot.add(group);
     return group;
   }
@@ -2242,8 +2242,8 @@ class DokkaebiLuckDefense {
   }
 
   updateEnemyLOD(enemy, distanceToCamera) {
-    if (enemy.group?.userData?.combatArtSpriteV109) {
-      this.combatArtV109?.restoreVisibility(enemy.group);
+    if (enemy.group?.userData?.combatVisualSpriteV110) {
+      this.combatVisualV110?.restoreVisibility(enemy.group);
       return;
     }
     if (enemy.boss) return;
@@ -2294,9 +2294,15 @@ class DokkaebiLuckDefense {
     this.worldReady = false;
     this.cancelAutoWaveCountdown();
     this.combatPresentation?.clear();
-    this.units.forEach((unit) => this.animations.remove(unit?.animation));
+    this.combatVisualV110?.clearTransient();
+    this.units.forEach((unit) => {
+      this.animations.remove(unit?.animation);
+      this.combatVisualV110?.detach(unit?.group);
+    });
     this.enemies.forEach((enemy) => this.animations.remove(enemy?.animation));
     this.animations.remove(this.player?.animation);
+    this.combatVisualV110?.detach(this.player?.group);
+    this.combatVisualV110?.detach(this.core);
     this.releaseAllEnemyModels();
     this.units.length = 0;
     this.projectilePools && Object.values(this.projectilePools).forEach((pool) => pool.releaseAll());
@@ -2857,6 +2863,10 @@ class DokkaebiLuckDefense {
       }));
     });
     this.worldRoot.add(premium);
+    this.combatVisualV110?.attachCitadel(premium, {
+      getHp: () => this.coreHp,
+      getMaxHp: () => this.coreMaxHp
+    });
     return premium;
   }
 
@@ -2912,17 +2922,24 @@ class DokkaebiLuckDefense {
       ? prepareImportedGuardian(imported, heroClass.id, 3, { color: heroClass.color }, RANKS[2], { lowPower: this.lowPower })
       : fallback();
     applyHeroClassVisuals(group, heroClass.id);
-    this.combatArtV109?.attachHero(group, heroClass.id);
     const flame = group.userData.parts?.signature || group.getObjectByName('signature') || group;
     group.traverse((object) => { if (object.isMesh) object.userData.baseY = object.position.y; });
     this.dynamicRoot.add(group);
+    const animation = this.animations.createController(group, group.userData.animations || [], { procedural: !(group.userData.animations?.length) });
+    const player = {
+      group, flame, classConfig: heroClass, attackCooldown: 0, dashCooldown: 0, skillCooldown: 0, dashTimer: 0, stunTimer: 0,
+      hp: 100, maxHp: 100,
+      facing: new THREE.Vector3(0,0,-1), attackFacing: new THREE.Vector3(0,0,-1), attackFacingLock: 0,
+      animation
+    };
+    this.combatVisualV110?.attachHero(group, heroClass.id, {
+      getHp: () => player.hp,
+      getMaxHp: () => player.maxHp
+    });
+    this.combatVisualV110?.bindActor(group, { animation, getHp: () => player.hp, getMaxHp: () => player.maxHp });
     this.engine.geometryBudget.inspect('hero', group, 'unitTriangles');
     this.renderAssetDiagnostics();
-    return {
-      group, flame, classConfig: heroClass, attackCooldown: 0, dashCooldown: 0, skillCooldown: 0, dashTimer: 0, stunTimer: 0,
-      facing: new THREE.Vector3(0,0,-1), attackFacing: new THREE.Vector3(0,0,-1), attackFacingLock: 0,
-      animation: this.animations.createController(group, group.userData.animations || [], { procedural: !(group.userData.animations?.length) })
-    };
+    return player;
   }
 
   createWisp() {
@@ -3782,14 +3799,17 @@ class DokkaebiLuckDefense {
     model.rotation.y = -Math.atan2(pad.position.z, pad.position.x) + Math.PI / 2;
     this.dynamicRoot.add(model);
     this.setUnitPadVisual(pad, true, RANKS[rank - 1].color);
+    const animation = this.animations.createController(model, model.userData.animations || [], { procedural: !(model.userData.animations?.length) });
     const unit = {
       id: crypto.randomUUID?.() || `${Date.now()}-${this.random()}`,
       type, rank, pad, group: model, cooldown: this.random() * .5, createdAt: this.elapsed,
       showcase, shotCount: 0, streakTarget: null, streak: 0,
+      hp: 100 + rank * 25, maxHp: 100 + rank * 25,
       commandTimer: 0, baseScale: model.scale.x,
       ultimateCooldown: rank === 5 ? 1.8 + this.random() * 1.3 : Infinity,
-      animation: this.animations.createController(model, model.userData.animations || [], { procedural: !(model.userData.animations?.length) })
+      animation
     };
+    this.combatVisualV110?.bindActor(model, { animation, getHp: () => unit.hp, getMaxHp: () => unit.maxHp });
     this.attachUnitImpostor(unit);
     this.units.push(unit);
     this.engine.geometryBudget.inspect(`unit:${type}:rank${rank}`, model, 'unitTriangles');
@@ -3805,7 +3825,7 @@ class DokkaebiLuckDefense {
       ? prepareImportedGuardian(root, type, rank, config, rankConfig, { lowPower: this.lowPower })
       : createPremiumGuardian(type, rank, config, rankConfig, { lowPower: this.lowPower });
     if (!root) this.assetPipeline.recordFallback(assetId || `guardian-${type}`);
-    this.combatArtV109?.attachGuardian(model, type, rank);
+    this.combatVisualV110?.attachGuardian(model, type, rank);
     return model;
   }
 
@@ -3845,6 +3865,7 @@ class DokkaebiLuckDefense {
     if (index >= 0) this.units.splice(index, 1);
     this.setUnitPadVisual(unit.pad, false);
     this.animations.remove(unit.animation);
+    this.combatVisualV110?.detach(unit.group);
     if (unit.impostor) {
       unit.group.remove(unit.impostor.plane);
       this.disposeDirectionalImpostor(unit.impostor);
@@ -4067,7 +4088,8 @@ class DokkaebiLuckDefense {
     const damage = config.damage * (1 + (this.currentWave - 1) * .1) * (omen.enemyDamage || 1) * mode.enemyDamage * (this.dailyEdict?.enemyDamage || 1) * (elite?.damage || 1) * (encounter.damageMultiplier || 1) * (campaign.enemyDamage || 1);
     this.applyEliteVisual(group, elite);
     if (elite) this.showCombatText(group.position.clone().add(new THREE.Vector3(0, 2.15, 0)), elite.name, { label: `${elite.icon} 정예` });
-    return {
+    const animation = this.animations.createController(group, group.userData.animations || [], { procedural: !(group.userData.animations?.length) });
+    const enemy = {
       id: ++this.enemySerial,
       type, group, hp, maxHp: hp, speed,
       damage, reward: config.reward, elite, eliteShield: elite?.shield ? hp * elite.shield : 0,
@@ -4075,8 +4097,10 @@ class DokkaebiLuckDefense {
       boss: !!config.boss, bossPhase: 1, specialIndex: 0, specialTimer: config.boss ? 4.5 : 0, intentDuration: config.boss ? 4.5 : 0, flash: 0, shieldFlash: 0,
       abilityTimer: type === 'runner' ? rand(2.2, 3.6) : type === 'shaman' ? rand(2.8, 4.2) : 0,
       abilityState: 'move', abilityTime: 0, telegraphMesh: null, chargeDirection: new THREE.Vector3(), chargeHitPlayer: false,
-      animation: this.animations.createController(group, group.userData.animations || [], { procedural: !(group.userData.animations?.length) })
+      animation
     };
+    this.combatVisualV110?.bindActor(group, { animation, getHp: () => enemy.hp, getMaxHp: () => enemy.maxHp });
+    return enemy;
   }
 
   showMoonOmen() {
@@ -4125,7 +4149,7 @@ class DokkaebiLuckDefense {
       : createPremiumEnemy(type, config, { lowPower: this.lowPower });
     if (!root && assetId) this.assetPipeline.recordFallback(assetId);
     applyEnemyCandidateVisuals(model, type);
-    this.combatArtV109?.attachEnemy(model, type, config);
+    this.combatVisualV110?.attachEnemy(model, type, config);
     this.attachEnemyImpostor(model, type);
     return model;
   }
@@ -4136,7 +4160,7 @@ class DokkaebiLuckDefense {
       lineageVersion: LEGACY_LINEAGE_VERSION,
       buildId: BUILD_ID,
       foundation: this.coreFoundation?.diagnostics || {},
-      combatArt: this.combatArtV109?.diagnostics || {},
+      combatArt: this.combatVisualV110?.diagnostics || {},
       state: this.state,
       wave: this.currentWave || 0,
       fps: this.engine?.monitor?.lastFps || 0,
@@ -4162,7 +4186,7 @@ class DokkaebiLuckDefense {
       buildId: BUILD_ID,
       cacheRevision: CACHE_REVISION,
       coreFoundation: this.coreFoundation?.diagnostics || {},
-      combatArt: this.combatArtV109?.diagnostics || {},
+      combatArt: this.combatVisualV110?.diagnostics || {},
       engineVersion: ENGINE_VERSION,
       saveSchemaVersion: SAVE_SCHEMA_VERSION,
       state: this.state,
@@ -4877,6 +4901,7 @@ class DokkaebiLuckDefense {
     const living = this.enemies.filter((enemy) => !enemy.dead);
     const runId = this.runId;
     if (!living.length) return false;
+    this.animations.trigger(unit.animation, 'skill', .58);
     let affected = 0;
 
     if (unit.type === 'ember') {
@@ -5223,6 +5248,7 @@ class DokkaebiLuckDefense {
     if (enemy.abilityTimer <= 0 && distance > 7) {
       enemy.abilityState = 'windup';
       enemy.abilityTime = .82;
+      this.animations.trigger(enemy.animation, 'skill', .82);
       enemy.chargeDirection.copy(enemy.group.position).multiplyScalar(-1).normalize();
       this.createChargeTelegraph(enemy);
       if (!this.warningFlags.has('runner')) {
@@ -5265,6 +5291,7 @@ class DokkaebiLuckDefense {
       this.createCurseZone(target);
       enemy.abilityState = 'casting';
       enemy.abilityTime = .72;
+      this.animations.trigger(enemy.animation, 'skill', .72);
       enemy.abilityTimer = rand(5.6, 7.4);
       if (!this.warningFlags.has('curse')) {
         this.warningFlags.add('curse');
@@ -5476,6 +5503,7 @@ class DokkaebiLuckDefense {
 
   triggerBossSpecial(enemy) {
     if (!enemy || enemy.dead) return;
+    this.animations.trigger(enemy.animation, 'skill', .64);
     const index = enemy.specialIndex || 0;
     if (enemy.type === 'tiger') {
       if (enemy.bossPhase >= 2 && index % 2 === 0) this.bossPounce(enemy, { radius: 3.3, warning: .92, color: 0xff5b47 });
@@ -5851,6 +5879,7 @@ class DokkaebiLuckDefense {
     const index=this.enemies.indexOf(enemy);
     if (index>=0) this.enemies.splice(index,1);
     this.animations.trigger(enemy.animation, 'death', .28);
+    this.combatVisualV110?.playDeathEcho(enemy.group, this.effectRoot, { duration: enemy.boss ? .52 : .36, state: 'death' });
     this.animations.remove(enemy.animation);
     this.releaseEnemyModel(enemy);
     const color=ENEMY_TYPES[enemy.type].color;
@@ -6767,6 +6796,7 @@ class DokkaebiLuckDefense {
       this.browserReliability,
       this.combatReadability,
       this.combatPresentation,
+      this.combatVisualV110,
       this.productionConsole,
       this.renderStatsHud,
       this.blobShadows,
@@ -6844,6 +6874,8 @@ class DokkaebiLuckDefense {
     } else {
       this.runSafe('modal-particles', () => this.updateParticles(dt));
     }
+
+    this.runSafe('combat-visual-v110', () => this.combatVisualV110?.update(this.state === 'playing' ? gameDt : dt, this.camera, this.elapsed, { showHealth: this.state === 'playing' }));
 
     if (this.player?.group && this.worldReady && this.frameScheduler.shouldRun('chunks', this.engine.qualityProfile?.chunkHz || 15)) {
       this.runSafe('world-chunks', () => this.engine.worldChunks.update(this.player.group.position));
