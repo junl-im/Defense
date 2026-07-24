@@ -1,7 +1,7 @@
-# PROJECT HANDOFF — CURRENT v23.0.0
+# PROJECT HANDOFF — CURRENT v23.0.1
 
-- Project: `DokkaebiLuckDefense3D_FULL_v23.0.0`
-- Game: `23.0.0`
+- Project: `DokkaebiLuckDefense3D_FULL_v23.0.1`
+- Game: `23.0.1`
 - Engine: `20.0.0`
 - Save schema: `21`
 - Patch: `Quiet Screen`

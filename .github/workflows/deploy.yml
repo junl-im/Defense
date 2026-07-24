@@ -63,6 +63,9 @@ jobs:
         env:
           VITE_BASE_PATH: /Defense/
 
+      - name: Verify self-contained production bundle
+        run: node scripts/verify-production-bundle-v2301.mjs
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 

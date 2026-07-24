@@ -1,8 +1,10 @@
+> v23.0.1 Boot Recovery: 시작 버튼 무반응, 정적 CDN 의존, 타이틀 에셋 캐시 문제를 수정했습니다.
+
 # Dokkaebi Luck Defense 3D
 
-## v23.0.0 Quiet Screen
+## v23.0.1 Quiet Screen
 
-- 게임 버전: **23.0.0**
+- 게임 버전: **23.0.1**
 - 엔진 버전: **20.0.0**
 - 세이브 스키마: **21**
 - 기준 패치: **v22.0.0 Autonomous Moonfront**
@@ -31,10 +33,10 @@ node scripts/verify-static-dist.mjs
 
 ### 운영 문서
 
-- `docs/QUIET_SCREEN_v23.0.0.md`
-- `docs/MOBILE_UI_SIMULATION_v23.0.0.json`
-- `docs/PATCH_NOTES_v23.0.0.md`
-- `docs/PATCH_APPLY_v23.0.0.md`
+- `docs/QUIET_SCREEN_v23.0.1.md`
+- `docs/MOBILE_UI_SIMULATION_v23.0.1.json`
+- `docs/PATCH_NOTES_v23.0.1.md`
+- `docs/PATCH_APPLY_v23.0.1.md`
 - `docs/NEXT_PATCH_LINEUP_v23.x.md`
 
 ## 제작 상태

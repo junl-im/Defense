@@ -6,10 +6,10 @@ const html = read('index.html');
 const pkg = JSON.parse(read('package.json'));
 const checks = [
   ['package version remains v22 or later', Number(pkg.version.split('.')[0]) >= 22],
-  ['runtime retains v22 lineage', /GAME_VERSION = '(?:2[2-9]|[3-9]\d)\.0\.0'/.test(main)],
-  ['engine remains 19.0.0 or later', /ENGINE_VERSION = '(?:19|[2-9]\d)\.0\.0'/.test(read('src/engine/engine-config.js'))],
+  ['runtime retains v22 lineage', /GAME_VERSION = '(?:2[2-9]|[3-9]\d)\.\d+\.\d+'/.test(main)],
+  ['engine remains 19.0.0 or later', /ENGINE_VERSION = '(?:19|[2-9]\d)\.\d+\.\d+'/.test(read('src/engine/engine-config.js'))],
   ['save schema remains 20 or later', Number(read('src/runtime/save-schema.js').match(/SAVE_SCHEMA_VERSION = (\d+)/)?.[1] || 0) >= 20],
-  ['service worker remains v22 or later', /VERSION = '(?:2[2-9]|[3-9]\d)\.0\.0'/.test(read('public/sw.js'))],
+  ['service worker remains v22 or later', /VERSION = '(?:2[2-9]|[3-9]\d)\.\d+\.\d+'/.test(read('public/sw.js'))],
   ['guardian targeting director wired', main.includes('new GuardianTargetingDirectorV22') && fs.existsSync('src/combat/guardian-targeting-director-v22.js')],
   ['tower extended acquisition and sticky target', read('src/combat/guardian-targeting-director-v22.js').includes('getAcquisitionRange') && read('src/combat/guardian-targeting-director-v22.js').includes('autoTarget')],
   ['shaman range capped', main.includes('distance <= 12.5') && main.includes('distanceTo(this.player.group.position) <= 10.5')],

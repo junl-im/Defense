@@ -2678,7 +2678,7 @@ body[data-camera-profile="scenic"] #game-canvas { filter:saturate(1.035) brightn
   background:
     linear-gradient(90deg, rgba(5,11,33,.18) 0%, rgba(5,9,27,.08) 44%, rgba(5,7,22,.64) 78%, rgba(5,6,18,.84) 100%),
     linear-gradient(180deg, rgba(5,11,31,.04), rgba(3,6,20,.42)),
-    url('./assets/title-v17/title-bg-desktop-v17.webp') center 56% / cover no-repeat;
+    url('./assets/title-v17/title-bg-desktop-v17.webp?rev=boot-recovery-v2301') center 56% / cover no-repeat;
 }
 .title-scene-v17 {
   position: relative;
@@ -2758,7 +2758,7 @@ body[data-camera-profile="scenic"] #game-canvas { filter:saturate(1.035) brightn
   #title-screen.title-screen-v17::before {
     background:
       linear-gradient(180deg, rgba(5,10,31,.12) 0%, rgba(5,9,28,.03) 44%, rgba(4,7,23,.42) 70%, rgba(4,5,18,.88) 100%),
-      url('./assets/title-v17/title-bg-mobile-v17.webp') center 55% / cover no-repeat;
+      url('./assets/title-v17/title-bg-mobile-v17.webp?rev=boot-recovery-v2301') center 55% / cover no-repeat;
   }
   .title-scene-v17 {
     grid-template-columns: 1fr;
@@ -2854,20 +2854,20 @@ body.webgl-context-lost::after {
   background-image:
     linear-gradient(90deg,rgba(4,8,28,.08) 0%,rgba(4,8,25,.04) 48%,rgba(4,5,20,.58) 82%,rgba(3,4,16,.78) 100%),
     linear-gradient(180deg,rgba(8,18,50,.02),rgba(3,5,18,.38)),
-    url('./assets/title-v17/title-bg-desktop-v17.webp?v=22.0.0');
+    url('./assets/title-v17/title-bg-desktop-v17.webp?rev=boot-recovery-v2301');
 }
 .title-mascot-stage { z-index: 2; opacity: 1 !important; visibility: visible !important; }
 .title-mascot-v17 { opacity: 1 !important; filter: saturate(1.08) contrast(1.04) drop-shadow(0 18px 28px rgba(0,0,0,.48)); }
 .title-panel-v17 { border-width: 2px; box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px rgba(255,255,255,.15), 0 0 0 1px rgba(89,190,255,.16); }
 .title-panel-v17::before { content:''; display:block; width:54px; height:4px; margin:0 auto 10px; border-radius:9px; background:linear-gradient(90deg,#7be7ff,#ffe39b); }
-body.title-mascot-fallback .title-mascot-stage { background:url('./assets/title-v17/title-mascot-v17.webp?v=22.0.0') center bottom/contain no-repeat; }
+body.title-mascot-fallback .title-mascot-stage { background:url('./assets/title-v17/title-mascot-v17.webp?rev=boot-recovery-v2301') center bottom/contain no-repeat; }
 
 .enemy-healthbar, .enemy-hp, .boss-healthbar { filter: drop-shadow(0 2px 2px rgba(0,0,0,.9)); }
 .damage-number, .combat-text { text-shadow:0 2px 3px #000,0 0 8px currentColor; font-weight:900; }
 
 @media (max-width:900px), (orientation:portrait) {
   #title-screen.title-screen-v17::before {
-    background-image:linear-gradient(180deg,rgba(4,9,28,.03),rgba(4,7,23,.35) 66%,rgba(3,4,17,.86)),url('./assets/title-v17/title-bg-mobile-v17.webp?v=22.0.0');
+    background-image:linear-gradient(180deg,rgba(4,9,28,.03),rgba(4,7,23,.35) 66%,rgba(3,4,17,.86)),url('./assets/title-v17/title-bg-mobile-v17.webp?rev=boot-recovery-v2301');
   }
 }
 
@@ -3233,3 +3233,9 @@ body.mobile-hud-v23-emergency #boss-health .boss-break,
 body.mobile-hud-v23-emergency #first-mission-panel,
 body.mobile-hud-v23-emergency #kill-chain,
 body.mobile-hud-v23-emergency #jackpot-rush { display:none!important; }
+
+
+/* v23.0.1 Boot Recovery hotfix */
+#start-btn[aria-busy="true"] { opacity: .76; cursor: progress; filter: saturate(.72); }
+#start-btn[aria-busy="true"]::after { content: ""; display: inline-block; width: 12px; height: 12px; margin-left: 8px; border: 2px solid rgba(255,255,255,.32); border-top-color: currentColor; border-radius: 50%; animation: boot-spin-v2301 .8s linear infinite; vertical-align: -2px; }
+@keyframes boot-spin-v2301 { to { transform: rotate(360deg); } }

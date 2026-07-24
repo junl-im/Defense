@@ -1,0 +1,47 @@
+{
+  "version": "23.0.1",
+  "patch": "Boot Recovery",
+  "baseVersion": "23.0.0",
+  "rootCauses": [
+    {
+      "id": "single-cdn-static-engine",
+      "severity": "critical",
+      "finding": "The static fallback hardcoded Three.js and addons to one jsDelivr import map. When that module graph was unavailable, main.js never executed, leaving the start button without a listener and preventing all runtime assets from loading."
+    },
+    {
+      "id": "mutable-source-immutable-cache",
+      "severity": "high",
+      "finding": "Firebase marked unhashed /src JavaScript and CSS as one-year immutable content, allowing old UI and asset paths to remain mixed with a newer index.html."
+    },
+    {
+      "id": "false-ready-start-control",
+      "severity": "medium",
+      "finding": "The start button appeared actionable before the game-ready event, so a module-load failure looked like an unresponsive game rather than a boot failure."
+    }
+  ],
+  "fixes": [
+    "Added src/bootstrap.js as the Vite entry and surfaced dynamic import failures.",
+    "Disabled the start button until dokkaebi:boot-ready and restored it only after initialization.",
+    "Added local Three.js vendor detection plus jsDelivr, unpkg and esm.sh recovery for static builds.",
+    "Changed service worker handling of code and title art to network-first exact-request caching.",
+    "Removed ignoreSearch cache matching for revised title assets.",
+    "Changed Firebase cache headers so /src, sw.js and static-bootstrap.js are never immutable.",
+    "Added a CI post-build check that rejects production bundles with external Three.js CDN references."
+  ],
+  "verification": {
+    "fullRegression": "PASS",
+    "v22AutomationSimulation": "PASS",
+    "v23MobileLayoutSimulation": "PASS 7/7",
+    "staticBuild": "PASS",
+    "staticDistributionVerification": "PASS",
+    "productionViteBuildLocal": "NOT_RUN: package registry returned HTTP 503 in the container",
+    "productionViteBuildCI": "GUARDED: verify-production-bundle-v2301.mjs added after npm run build",
+    "chromiumWebGLRun": "NOT_RUN: container Chromium DBus/GPU startup did not return a DOM"
+  },
+  "artStatus": {
+    "runtimeAtlasFrames": 154,
+    "combatGlbFiles": 19,
+    "productionArtApproved": 0,
+    "massProductionUnlocked": false
+  }
+}

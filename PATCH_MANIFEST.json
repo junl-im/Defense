@@ -1,206 +1,90 @@
 {
-  "patchName": "Quiet Screen",
-  "version": "23.0.0",
-  "baseVersion": "22.0.0",
-  "newFiles": 8,
-  "modifiedFiles": 28,
+  "patch": "Boot Recovery v23.0.1",
+  "baseVersion": "23.0.0",
+  "targetVersion": "23.0.1",
+  "newFiles": 10,
+  "modifiedFiles": 27,
   "deletedFiles": 0,
-  "changedFiles": 36,
-  "files": [
-    {
-      "path": "docs/MOBILE_UI_SIMULATION_v23.0.0.json",
-      "kind": "new",
-      "sha256": "78ea6207e5be91a016a02debd4090a3ed63b2d7b9c78d079daf8836431f14f5e"
-    },
-    {
-      "path": "docs/NEXT_PATCH_LINEUP_v23.x.md",
-      "kind": "new",
-      "sha256": "75c74d4208ce568652ff8e6eddec28f965a833c25285c1c3f745a953a4ece681"
-    },
-    {
-      "path": "docs/PATCH_APPLY_v23.0.0.md",
-      "kind": "new",
-      "sha256": "3fff1517d92241e15ccbc136cd3af2e2380762c7dbcd0a6ad0a2e5a73b3c8988"
-    },
-    {
-      "path": "docs/PATCH_NOTES_v23.0.0.md",
-      "kind": "new",
-      "sha256": "b67226410212fbe52f608b1b8af01bd78aa44d84e6879923fa494804df66bb8c"
-    },
-    {
-      "path": "docs/QUIET_SCREEN_v23.0.0.md",
-      "kind": "new",
-      "sha256": "66d42bd1ed9db3d9456e0db148afbdc05e0624d8785f6768a17da1d9fa354201"
-    },
-    {
-      "path": "scripts/simulate-mobile-hud-v23.mjs",
-      "kind": "new",
-      "sha256": "b4eada8e8f62f983f8b35d2ed7a425c1864217cf48b05a7813268dd8a07e1345"
-    },
-    {
-      "path": "scripts/verify-v2300.mjs",
-      "kind": "new",
-      "sha256": "06232e3333e61b18408a97ea1b3513167920423d162fe2371012eee40782786e"
-    },
-    {
-      "path": "src/runtime/mobile-hud-director-v23.js",
-      "kind": "new",
-      "sha256": "010567e8644d45d10f03b2425e8dca5867919b0839a3180092f21af5ac7dbf8f"
-    },
-    {
-      "path": "PROJECT_HANDOFF.md",
-      "kind": "modified",
-      "sha256": "810afa54e62fe75b600281de6025d21f8e3e9cefedfbdf02bca173c13fa9d016"
-    },
-    {
-      "path": "README.md",
-      "kind": "modified",
-      "sha256": "832b210a956e905f173d368d810ae30f6309e9dddc82e32504540c4747579068"
-    },
-    {
-      "path": "docs/ASSET_PRESENCE_AUDIT_v21.0.0.json",
-      "kind": "modified",
-      "sha256": "2606468fd9882fdde567aefc495b4b4046563691cd4395b1de131f5eb35d234c"
-    },
-    {
-      "path": "index.html",
-      "kind": "modified",
-      "sha256": "a8bc08c5eb59a0ab99bd338655f0d66787ab146dd4d7f252137e9369207e5793"
-    },
-    {
-      "path": "package-lock.json",
-      "kind": "modified",
-      "sha256": "06948a120b3ecb89c2c106611736a58f895791d927405aa509317c7bd322565f"
-    },
-    {
-      "path": "package.json",
-      "kind": "modified",
-      "sha256": "1cdca1b53ceee3cd954b12ef8212bc5860878383208cb096c07778c43b1a3e84"
-    },
-    {
-      "path": "public/sw.js",
-      "kind": "modified",
-      "sha256": "b88596a924281a20e207dc2ff3eee8989f7f32624ad092036bde3108d2d3ac64"
-    },
-    {
-      "path": "scripts/audit-asset-presence-v21.mjs",
-      "kind": "modified",
-      "sha256": "cea7bb64dadc129cb7e1b8fe1a2a9c1506407ae6ae3f18fe048665e951dbda31"
-    },
-    {
-      "path": "scripts/verify-project.mjs",
-      "kind": "modified",
-      "sha256": "0c8054dff8ec3f4265f50826650ce239dd67da362c5b10a65deea4d9fce6a662"
-    },
-    {
-      "path": "scripts/verify-static-dist.mjs",
-      "kind": "modified",
-      "sha256": "778945676ac45fe29ed32566ceefa6c8eca180970a05768fd40c6c9bebdf1f50"
-    },
-    {
-      "path": "scripts/verify-v1000.mjs",
-      "kind": "modified",
-      "sha256": "87a03dc291e02c99629ceb2f20d23080fa4c5cb963fe329193529e6574025977"
-    },
-    {
-      "path": "scripts/verify-v1500.mjs",
-      "kind": "modified",
-      "sha256": "266b4e1bb0042a7b02c4d7558034440394e91da6e7a2e75ec4eead44523c7627"
-    },
-    {
-      "path": "scripts/verify-v1600.mjs",
-      "kind": "modified",
-      "sha256": "7aca07c790be3d2698d1a7b21b1888826552aa77ab2684e02caeb04b16f5977f"
-    },
-    {
-      "path": "scripts/verify-v1700.mjs",
-      "kind": "modified",
-      "sha256": "953ad470aa8edb40792866227dd31a5431d75be1e48db99dd94cf3cf583835c8"
-    },
-    {
-      "path": "scripts/verify-v1800.mjs",
-      "kind": "modified",
-      "sha256": "5f7d7022f6cb2b67694876f0b40bed4d7458009ecde40a2cf0dd060fb56f6e38"
-    },
-    {
-      "path": "scripts/verify-v1900.mjs",
-      "kind": "modified",
-      "sha256": "f8fcfd4761bf47b1d757bfe9389fef28436e6bec58f9864068ea87e1d5e2685c"
-    },
-    {
-      "path": "scripts/verify-v2000.mjs",
-      "kind": "modified",
-      "sha256": "52bacfa24d54138b89832c0c1570a3805172088d2cd39f7afe629fca369fc48d"
-    },
-    {
-      "path": "scripts/verify-v2100.mjs",
-      "kind": "modified",
-      "sha256": "de211cf449d230fad198ed116140963e54be21968c3e71ed7b463c74e8866ba4"
-    },
-    {
-      "path": "scripts/verify-v2200.mjs",
-      "kind": "modified",
-      "sha256": "34e5a7c50c804f1e64354150cf26143488ff9ecc46e5f1821d76f49fb7463993"
-    },
-    {
-      "path": "src/engine/asset-catalog.js",
-      "kind": "modified",
-      "sha256": "de9d72db02c003069551e3cfa131f02099716440361443e2a280ac4bd3eaf7ac"
-    },
-    {
-      "path": "src/engine/camera-profile.js",
-      "kind": "modified",
-      "sha256": "92b5135f33be679c9a59ac073db46f29941efc551b7cee5f06462d57bb22c050"
-    },
-    {
-      "path": "src/engine/engine-config.js",
-      "kind": "modified",
-      "sha256": "bfc34d48c3b18bfe16f78378547c7b9e8d50ad863072bcce9d9ebeca4d6bea83"
-    },
-    {
-      "path": "src/main.js",
-      "kind": "modified",
-      "sha256": "829f87a9f47981e5ca9b9fc34bc00444dd59dd9c2467a946a93987c98e4582b8"
-    },
-    {
-      "path": "src/production-console.js",
-      "kind": "modified",
-      "sha256": "f636c5959041703fe7d36e32386408892f036207022349a2a99f7d891d5d2f70"
-    },
-    {
-      "path": "src/runtime/korean-language-guard.js",
-      "kind": "modified",
-      "sha256": "436364a05646fa9b8ce43cde59f50f4c8faad83b46307ff3610da84ad65b3392"
-    },
-    {
-      "path": "src/runtime/save-schema.js",
-      "kind": "modified",
-      "sha256": "dad0222aa855e5938a0c66898095e9d8b684bf80f40604bb7e88bdda3451c6eb"
-    },
-    {
-      "path": "src/runtime/visual-integration-director.js",
-      "kind": "modified",
-      "sha256": "5e770903c5ff34bbd79c529236680fa2a8cb4be950f58474f84d779c186e186a"
-    },
-    {
-      "path": "src/style.css",
-      "kind": "modified",
-      "sha256": "646e497d625c2bcc4abaecb1d5c0bccca9e120ec88b2e9c67b194c780808c6ef"
-    }
+  "changedFiles": 37,
+  "new": [
+    "RUN_LOCAL_MAC_LINUX.sh",
+    "RUN_LOCAL_WINDOWS.bat",
+    "docs/BOOT_RECOVERY_AUDIT_v23.0.1.json",
+    "docs/BOOT_RECOVERY_v23.0.1.md",
+    "docs/PATCH_APPLY_v23.0.1.md",
+    "docs/PATCH_NOTES_v23.0.1.md",
+    "public/static-bootstrap.js",
+    "scripts/verify-production-bundle-v2301.mjs",
+    "scripts/verify-v2301.mjs",
+    "src/bootstrap.js"
   ],
-  "delete": [],
-  "contracts": {
-    "zoomButtonsRemoved": true,
-    "wheelZoomRetained": true,
-    "pinchZoomRetained": true,
-    "mobileProfiles": 7,
-    "contextPriority": [
-      "recovery",
-      "wave",
-      "interact",
-      "danger"
-    ],
-    "production3DApproved": 0,
-    "massProductionUnlocked": false
+  "modified": [
+    ".github/workflows/deploy.yml",
+    "PROJECT_HANDOFF.md",
+    "README.md",
+    "docs/ASSET_PRESENCE_AUDIT_v21.0.0.json",
+    "firebase.json",
+    "index.html",
+    "package-lock.json",
+    "package.json",
+    "public/sw.js",
+    "scripts/build-static-fallback.mjs",
+    "scripts/verify-static-dist.mjs",
+    "scripts/verify-v1000.mjs",
+    "scripts/verify-v1100.mjs",
+    "scripts/verify-v1200.mjs",
+    "scripts/verify-v1500.mjs",
+    "scripts/verify-v1600.mjs",
+    "scripts/verify-v1700.mjs",
+    "scripts/verify-v1800.mjs",
+    "scripts/verify-v1900.mjs",
+    "scripts/verify-v2000.mjs",
+    "scripts/verify-v2100.mjs",
+    "scripts/verify-v2200.mjs",
+    "scripts/verify-v2300.mjs",
+    "src/engine/asset-catalog.js",
+    "src/main.js",
+    "src/runtime/visual-integration-director.js",
+    "src/style.css"
+  ],
+  "deleted": [],
+  "sha256": {
+    "RUN_LOCAL_MAC_LINUX.sh": "b33400f0f0ed9ae2faf17f21d3cdc9a97a10d1092553c11530c284bd84ae41b9",
+    "RUN_LOCAL_WINDOWS.bat": "2d38d466cf2b387da5f85b84653ec0db917cc5aa3e658181853b64864346a6d1",
+    "docs/BOOT_RECOVERY_AUDIT_v23.0.1.json": "89afb66c9aa7f2266bcb93f5a36754541907f6b2fab91c9858e440f6a2429f9c",
+    "docs/BOOT_RECOVERY_v23.0.1.md": "8780a9937c03524f03778ee477e7990389bd0f40d891d74349d06fd9f43f65a1",
+    "docs/PATCH_APPLY_v23.0.1.md": "df229e4eb62d7cbe34cf29df44945c489dfc9f0ef0fbd10da210e4c50f6c520e",
+    "docs/PATCH_NOTES_v23.0.1.md": "ca80babfcd5d5d53c822facc0ce500e440af1a935bccb5516f67a62e5fef59fe",
+    "public/static-bootstrap.js": "2c15491fd80427e3c2e2b94e089672f843225acf93cb34d11ec30463b527fbe9",
+    "scripts/verify-production-bundle-v2301.mjs": "cf57b4c1e2fc8eda0dc87de36259d474d97582d6d8471c00927d65a84e05ec9f",
+    "scripts/verify-v2301.mjs": "8e01ac0fe4828b7fc9c173ae2656057c9da3dcf5951a3b5a2268cb9eee282c6a",
+    "src/bootstrap.js": "8fbcc7c5be24c1d8ffe42f8e0190502d46ab0c32d53ad510ac5f91597bcda298",
+    ".github/workflows/deploy.yml": "e4d85233898ea72c5a4e5f02f16430203ed6bc672dfc3b1a50ef25e874b69334",
+    "PROJECT_HANDOFF.md": "13d4f6acff573f399898b1b98a4039a141f9b94c9cd0ac51897c7d7bcbc29216",
+    "README.md": "6431ca3baeecc0675fdb127e08030c259ae31301a6e09ca3b042ac224eda71a7",
+    "docs/ASSET_PRESENCE_AUDIT_v21.0.0.json": "03ddfaa074c7e2cc05be9bce32236dee9fb8ae8338c6a58d0c5223a97bf7706e",
+    "firebase.json": "2cb7a62488c8361e1e3fbf30119f22efd095e7e968b3b93e94088e9c90289845",
+    "index.html": "6aff0743bded7bc431c38d786e8a22a06d730668e0aeec952f41da0bbde7b488",
+    "package-lock.json": "537d8a8de6cd0f0ef7b94c9ff16751d5300cdcfb1b06dc014150818b3da06d6a",
+    "package.json": "04dc8e9354a63190ffa4ffe43e3007f5ecde6974fe6d204b11677ea1f24fcb5c",
+    "public/sw.js": "3338d43ab31130ce50530e8da607ce79897d07da409f20a3f3f885f0aa77071a",
+    "scripts/build-static-fallback.mjs": "c4031252ec8668df02ef4e92346e23c5baaa1e42c67872367afb88f9fa14e9a1",
+    "scripts/verify-static-dist.mjs": "ca1633e4f1a70b3ebd0a35420cc1c8655895515d6fafa330ddd8f2b6924ac701",
+    "scripts/verify-v1000.mjs": "400c92da685cb3f162acf77e6555e0f730ed73cd39cb1cfe1cbb3d324052696f",
+    "scripts/verify-v1100.mjs": "aef0dfc4c568fd26a00b3e29e150e639e69f57f94d08e6b8e0a4b0231e02b2b5",
+    "scripts/verify-v1200.mjs": "59f846302b3a5765cfa5837a7390de04742fda99f02024fe00d6728db062fb04",
+    "scripts/verify-v1500.mjs": "7c433c28ac753fc3154a7ee93b871f07658c274f5b8db1e8c02204df5947f0e4",
+    "scripts/verify-v1600.mjs": "5a617a7c34aae7a38a2f79beae83df150aa14886b07e260db3f8a245972e5928",
+    "scripts/verify-v1700.mjs": "61e79731061f03967725afefd7aec97a94cbef34104df71d1db06a72796d4895",
+    "scripts/verify-v1800.mjs": "3b8f92f586a8166b93f555cf48289622fe74da4782d9b6e839423a28b2a2896a",
+    "scripts/verify-v1900.mjs": "f0f3e8b0ee4b8762b4504305e2e8b67d334672a59b6d2762b84432d858eb15f5",
+    "scripts/verify-v2000.mjs": "d009551709e87d5289333fd070dbdfedd2a8d9b9185fec86c5e49c6ed42611e5",
+    "scripts/verify-v2100.mjs": "c2003c52b06e2d53391717b2a17082ec4c520dfb3d8fda2636f66e6f2ab829e0",
+    "scripts/verify-v2200.mjs": "968fc46b1f3a102d5ab03c94db59d39298c08f15dbbf7e513b5b97ed12b3b64e",
+    "scripts/verify-v2300.mjs": "008265828bfec9d66e85a0a447f7eed0f9d9955407e0bb60dbb84250c5ff5d11",
+    "src/engine/asset-catalog.js": "9fb1d2fa403e57c9d8d73850a95c283eafc7fbd41f028406a845b4e730e16003",
+    "src/main.js": "ed189fa840b28f8c4a9bf0222dd2b7b1f55f8d23093cffe4e67c8bec07e778d1",
+    "src/runtime/visual-integration-director.js": "4271942c24cb170db29611c66f4b2cb0eab8c87a173a4f192fd0ac8fab759458",
+    "src/style.css": "2f8ce6d12e7e8359f35f6d82e76047b25e8d3cdd737cffa86d62d42fc3076985"
   }
 }

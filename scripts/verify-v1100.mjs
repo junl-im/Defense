@@ -26,10 +26,10 @@ const catalog = read('src/engine/asset-catalog.js');
 const approval = json('docs/ART_ASSET_APPROVAL_REGISTRY_v11.0.0.json');
 
 check(Number(pkg.version.split('.')[0]) >= 11, 'package version remains v11 or later');
-const runtimeVersion = Number(main.match(/const GAME_VERSION = '(\d+)\.0\.0'/)?.[1] || 0);
+const runtimeVersion = Number(main.match(/const GAME_VERSION = '(\d+)\.\d+\.\d+'/)?.[1] || 0);
 check(runtimeVersion >= 11, 'runtime game version remains v11 or later');
 check(Number(ENGINE_VERSION.split('.')[0]) >= 9, 'engine version remains 9.0.0 or later');
-const assetRevision = Number(catalog.match(/ASSET_REVISION = '(\d+)\.0\.0'/)?.[1] || 0);
+const assetRevision = Number(catalog.match(/ASSET_REVISION = '(\d+)\.\d+\.\d+'/)?.[1] || 0);
 check(assetRevision >= 11, 'asset revision remains v11 or later');
 check(SAVE_SCHEMA_VERSION >= 9, 'save schema remains v9 or later');
 

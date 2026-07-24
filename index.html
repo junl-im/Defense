@@ -12,9 +12,9 @@
     <link rel="icon" href="./icon-192.png" type="image/png" />
     <link rel="apple-touch-icon" href="./icon-192.png" />
     <title>도깨비 운빨 수호대 3D</title>
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-desktop-v17.webp?rev=quiet-screen-v23" media="(min-width: 721px) and (orientation: landscape)" />
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-mobile-v17.webp?rev=quiet-screen-v23" media="(max-width: 720px), (orientation: portrait)" />
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-mascot-v17.webp?rev=quiet-screen-v23" />
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-desktop-v17.webp?rev=boot-recovery-v2301" media="(min-width: 721px) and (orientation: landscape)" />
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-mobile-v17.webp?rev=boot-recovery-v2301" media="(max-width: 720px), (orientation: portrait)" />
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-mascot-v17.webp?rev=boot-recovery-v2301" />
     <!-- active lineage v22.0.0 · BROWSER RELIABILITY LAB -->
   </head>
   <body>
@@ -52,8 +52,8 @@
       <section id="title-screen" class="screen title-screen-v17">
         <div class="title-scene-v17">
           <picture class="title-mascot-stage">
-            <source media="(max-width: 720px), (orientation: portrait)" srcset="./src/assets/title-v17/title-mascot-v17.webp?rev=quiet-screen-v23" />
-            <img class="title-mascot title-mascot-v17" src="./src/assets/title-v17/title-mascot-v17.webp?rev=quiet-screen-v23" alt="푸른 도깨비불과 곤봉을 든 도깨비 수호대 마스코트" fetchpriority="high" decoding="async" />
+            <source media="(max-width: 720px), (orientation: portrait)" srcset="./src/assets/title-v17/title-mascot-v17.webp?rev=boot-recovery-v2301" />
+            <img class="title-mascot title-mascot-v17" src="./src/assets/title-v17/title-mascot-v17.webp?rev=boot-recovery-v2301" alt="푸른 도깨비불과 곤봉을 든 도깨비 수호대 마스코트" fetchpriority="high" decoding="async" />
           </picture>
           <div class="title-panel title-panel-simple title-panel-v17">
             <p class="kicker">KOREAN FANTASY DEFENSE</p>
@@ -62,7 +62,7 @@
             <div class="title-feature-ribbon-v21" aria-label="게임 핵심 특징"><span>10웨이브 수호전</span><span>5직업 대장</span><span>모바일 전투 최적화</span></div>
             <div class="title-ready-v21"><i aria-hidden="true"></i><b>달빛 장터 수호 준비 완료</b><small>최근 원정 설정으로 즉시 출전</small></div>
             <div id="title-loadout-summary" class="title-loadout-summary" aria-live="polite"></div>
-            <button id="start-btn" class="btn primary huge">수호 시작</button>
+            <button id="start-btn" class="btn primary huge" disabled aria-busy="true">엔진 연결 중...</button>
             <div class="title-primary-actions">
               <button id="title-setup-btn" class="btn ghost">원정 설정</button>
               <button id="title-vault-btn" class="btn ghost">보관함</button>
@@ -553,10 +553,18 @@
     </div>
     <script>
       (() => {
-        const VERSION = '23.0.0';
+        const VERSION = '23.0.1';
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
         const retryButton = document.getElementById('boot-retry-btn');
+        const startButton = document.getElementById('start-btn');
+        const setStartReady = (ready) => {
+          if (!startButton) return;
+          startButton.disabled = !ready;
+          startButton.setAttribute('aria-busy', String(!ready));
+          startButton.textContent = ready ? '수호 시작' : '엔진 연결 중...';
+        };
+        setStartReady(false);
         const diagnostics = window.__DOKKAEBI_BOOT_DIAGNOSTICS__ = {
           version: VERSION,
           startedAt: Date.now(),
@@ -635,16 +643,30 @@
         window.addEventListener('dokkaebi:boot-ready', () => {
           diagnostics.bootReadyAt = Date.now();
           window.clearTimeout(bootTimer);
+          setStartReady(true);
+          errorScreen?.classList.remove('visible');
         }, { once: true });
+        window.addEventListener('error', (event) => {
+          if (window.__DOKKAEBI_BOOT_OK__) return;
+          const isScript = event.target instanceof HTMLScriptElement;
+          if (!isScript && !event.error) return;
+          const reason = event.error?.message || event.target?.src || '알 수 없는 모듈 오류';
+          window.__DOKKAEBI_SHOW_BOOT_ERROR__?.(`게임 모듈 로딩 오류: ${reason}`);
+        }, true);
+        window.addEventListener('unhandledrejection', (event) => {
+          if (window.__DOKKAEBI_BOOT_OK__) return;
+          const reason = event.reason instanceof Error ? event.reason.message : String(event.reason || '알 수 없는 비동기 오류');
+          window.__DOKKAEBI_SHOW_BOOT_ERROR__?.(`게임 초기화 오류: ${reason}`);
+        });
         bootTimer = window.setTimeout(() => {
           if (!window.__DOKKAEBI_BOOT_OK__) {
             window.__DOKKAEBI_SHOW_BOOT_ERROR__('게임 모듈이 시작되지 않았습니다. 캐시 복구 후 다시 시도해 주세요.');
           }
-        }, 18000);
+        }, 22000);
 
         registerServiceWorker();
       })();
     </script>
-    <script type="module" src="/src/main.js"></script>
+    <script type="module" src="/src/bootstrap.js"></script>
   </body>
 </html>

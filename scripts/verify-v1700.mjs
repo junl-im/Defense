@@ -16,7 +16,7 @@ let failures = 0;
 const check = (condition, message) => condition ? console.log(`PASS ${message}`) : (failures += 1, console.error(`FAIL ${message}`));
 
 check(Number(pkg.version.split('.')[0]) >= 17, 'package version remains v17 or later');
-check(/const GAME_VERSION = '(?:17|18|19|20|21|22|23)\.0\.0'/.test(main), 'runtime game version remains v17 or later');
+check(/const GAME_VERSION = '(?:17|18|19|20|21|22|23)\.\d+\.\d+'/.test(main), 'runtime game version remains v17 or later');
 check(Number(ENGINE_VERSION.split('.')[0]) >= 14, 'engine version remains 14.0.0 or later');
 check(SAVE_SCHEMA_VERSION >= 15, 'save schema remains 15 or later');
 check(WAVE_FLOW_GUARD_VERSION === '17.0.0', 'wave flow guard version 17.0.0');

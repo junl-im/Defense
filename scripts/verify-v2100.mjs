@@ -6,10 +6,10 @@ const html = read('index.html');
 const pkg = JSON.parse(read('package.json'));
 const checks = [
   ['package version remains v21 or later', Number(pkg.version.split('.')[0]) >= 21],
-  ['game version remains v21 or later', /GAME_VERSION = '(?:21|22|23)\.0\.0'/.test(main)],
-  ['engine version remains 18 or later', /ENGINE_VERSION = '(?:18|19|20)\.0\.0'/.test(read('src/engine/engine-config.js'))],
+  ['game version remains v21 or later', /GAME_VERSION = '(?:21|22|23)\.\d+\.\d+'/.test(main)],
+  ['engine version remains 18 or later', /ENGINE_VERSION = '(?:18|19|20)\.\d+\.\d+'/.test(read('src/engine/engine-config.js'))],
   ['save schema remains 19 or later', /SAVE_SCHEMA_VERSION = (?:19|20|21)/.test(read('src/runtime/save-schema.js'))],
-  ['service worker remains v21 or later', /VERSION = '(?:21|22|23)\.0\.0'/.test(read('public/sw.js'))],
+  ['service worker remains v21 or later', /VERSION = '(?:21|22|23)\.\d+\.\d+'/.test(read('public/sw.js'))],
   ['asset presence module wired', main.includes('new AssetPresenceEnforcer') && fs.existsSync('src/runtime/asset-presence-enforcer.js')],
   ['mobile HUD v21 lineage retained', (main.includes('MobileHudDirectorV21') || main.includes('MobileHudDirectorV22') || main.includes('MobileHudDirectorV23')) && (css.includes('mobile-hud-v21-emergency') || css.includes('mobile-hud-v22-emergency') || css.includes('mobile-hud-v23-emergency'))],
   ['combat readability wired', main.includes('new CombatReadabilityDirectorV21') && main.includes('spawnThreatTracer(enemy.group.position, target')],

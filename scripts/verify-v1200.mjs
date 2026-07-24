@@ -42,10 +42,10 @@ const registry = json('docs/ART_ASSET_APPROVAL_REGISTRY_v12.0.0.json');
 const certificate = json('docs/GOLDEN_SLICE_RUNTIME_CERTIFICATION_v12.0.0.json');
 
 check(Number(pkg.version.split('.')[0]) >= 12, 'package version v12 or later');
-const runtimeVersion = Number(main.match(/const GAME_VERSION = '(\d+)\.0\.0'/)?.[1] || 0);
+const runtimeVersion = Number(main.match(/const GAME_VERSION = '(\d+)\.\d+\.\d+'/)?.[1] || 0);
 check(runtimeVersion >= 12, 'runtime game version v12 or later');
 check(Number(ENGINE_VERSION.split('.')[0]) >= 10, 'engine version remains 10.0.0 or later');
-const assetRevision = Number(catalog.match(/ASSET_REVISION = '(\d+)\.0\.0'/)?.[1] || 0);
+const assetRevision = Number(catalog.match(/ASSET_REVISION = '(\d+)\.\d+\.\d+'/)?.[1] || 0);
 check(assetRevision >= 12, 'asset revision v12 or later');
 check(SAVE_SCHEMA_VERSION >= 10, 'save schema version 10 or later');
 

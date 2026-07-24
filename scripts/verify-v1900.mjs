@@ -19,7 +19,7 @@ let failures = 0;
 const check = (condition, message) => condition ? console.log(`PASS ${message}`) : (failures += 1, console.error(`FAIL ${message}`));
 
 check(Number(pkg.version.split('.')[0]) >= 19, 'package version 19.0.0 or later');
-check(/const GAME_VERSION = '(?:19|20|21|22|23)\.0\.0'/.test(main), 'runtime game version 19.0.0 or later');
+check(/const GAME_VERSION = '(?:19|20|21|22|23)\.\d+\.\d+'/.test(main), 'runtime game version 19.0.0 or later');
 check(Number(ENGINE_VERSION.split('.')[0]) >= 16, 'engine version 16.0.0 or later');
 check(SAVE_SCHEMA_VERSION >= 17, 'save schema version 17 or later');
 check(BROWSER_RELIABILITY_VERSION === '19.0.0', 'browser reliability version 19.0.0');
@@ -34,13 +34,13 @@ lab.persist();
 check(lab.diagnostics.samples >= 1 && lab.diagnostics.unhandledErrors === 0, 'browser lab samples runtime health without browser globals');
 check(storage.has(BROWSER_RELIABILITY_STORAGE_KEY), 'browser lab persists a diagnostic report');
 
-check(/const VERSION = '(?:19|20|21|22|23)\.0\.0'/.test(sw), 'service worker version 19.0.0 or later');
+check(/const VERSION = '(?:19|20|21|22|23)\.\d+\.\d+'/.test(sw), 'service worker version 19.0.0 or later');
 check(sw.includes("const CACHE_NAME = `${CACHE_PREFIX}v${VERSION}`"), 'service worker uses a versioned shell cache');
 check(sw.includes('DOKKAEBI_GET_VERSION') && sw.includes('DOKKAEBI_PURGE'), 'service worker exposes version and repair messages');
-check(sw.includes("request.mode === 'navigate'") && sw.includes('ignoreSearch: true'), 'service worker has navigation and immutable asset recovery paths');
+check(sw.includes("request.mode === 'navigate'") && sw.includes('const immutable') && (sw.includes('ignoreSearch: true') || sw.includes('isTitleAsset')), 'service worker has navigation and immutable asset recovery paths');
 check(!sw.includes('client.navigate(') && !sw.includes('registration.unregister()'), 'service worker no longer forces reload or unregister loops');
 
-check(/const VERSION = '(?:19|20|21|22|23)\.0\.0'/.test(html), 'boot coordinator version 19.0.0 or later');
+check(/const VERSION = '(?:19|20|21|22|23)\.\d+\.\d+'/.test(html), 'boot coordinator version 19.0.0 or later');
 check(html.includes('navigator.serviceWorker.register') && html.includes('updateViaCache'), 'boot coordinator registers and actively updates the service worker');
 check(html.includes('__DOKKAEBI_BOOT_DIAGNOSTICS__'), 'boot coordinator publishes cache diagnostics');
 check(!html.includes("if ('serviceWorker' in navigator || 'caches' in window) clearLegacyCaches()"), 'normal boot does not wipe all caches');

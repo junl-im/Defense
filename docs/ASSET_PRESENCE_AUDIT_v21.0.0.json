@@ -44,8 +44,8 @@
     "pass": true
   },
   "titlePresentation": {
-    "cacheRevision": true,
-    "mascotMarkup": true,
+    "cacheRevision": false,
+    "mascotMarkup": false,
     "featureRibbon": true
   }
 }

@@ -8,26 +8,27 @@ const pass = (message) => console.log(`PASS ${message}`);
 const fail = (message) => { throw new Error(message); };
 
 const html = await readFile(path.join(dist, 'index.html'), 'utf8');
-if (!html.includes('type="importmap"')) fail('static import map missing');
-if (!html.includes('three@0.185.1/build/three.module.js')) fail('pinned Three.js import missing');
-if (!html.includes('three@0.185.1/examples/jsm/')) fail('pinned Three.js addons import missing');
-if (!html.includes('href="./src/style.css"')) fail('static stylesheet missing');
-if (!html.includes('src="./src/main.js"')) fail('relative main module missing');
-if (html.includes('src="/src/main.js"')) fail('root-only module path remains');
-pass('static entrypoint and pinned import map');
+if (!html.includes('src="./static-bootstrap.js?v=23.0.1"')) fail('resilient static bootstrap missing');
+if (html.includes('type="importmap"')) fail('single-CDN import map should not be hardcoded in static HTML');
+if (!html.includes('href="./src/style.css?v=23.0.1"')) fail('versioned static stylesheet missing');
+if (html.includes('src="/src/bootstrap.js"') || html.includes('src="/src/main.js"')) fail('root-only module path remains');
+await access(path.join(dist, 'static-bootstrap.js'));
+const staticBootstrap = await readFile(path.join(dist, 'static-bootstrap.js'), 'utf8');
+if (!['local-vendor','jsdelivr','unpkg','esm-sh'].every((id) => staticBootstrap.includes(id))) fail('multi-source Three.js recovery missing');
+pass('resilient static entrypoint and multi-source engine recovery');
 
 const main = await readFile(path.join(dist, 'src/main.js'), 'utf8');
 const style = await readFile(path.join(dist, 'src/style.css'), 'utf8');
 if (main.includes("import './style.css'")) fail('CSS module import remains in static build');
-if (!main.includes("const GAME_VERSION = '23.0.0'")) fail('static main version mismatch');
+if (!main.includes("const GAME_VERSION = '23.0.1'")) fail('static main version mismatch');
 if (!main.includes('renderAssetDiagnostics()')) fail('asset diagnostics missing from static build');
 if (!main.includes('force3DModels')) fail('force 3D model mode missing from static build');
 pass('static game module asset diagnostics');
 
 const catalog = await readFile(path.join(dist, 'src/engine/asset-catalog.js'), 'utf8');
-if (!catalog.includes("const ASSET_REVISION = '23.0.0'")) fail('asset cache revision missing');
+if (!catalog.includes("const ASSET_REVISION = '23.0.1'")) fail('asset cache revision missing');
 if (!catalog.includes('?v=${ASSET_REVISION}')) fail('asset cache-busting URL missing');
-pass('v23.0.0 asset cache revision');
+pass('v23.0.1 asset cache revision');
 
 const modelDir = path.join(dist, 'assets/models');
 const models = (await readdir(modelDir)).filter((name) => name.endsWith('.glb'));
@@ -112,14 +113,14 @@ const browserLab = await readFile(path.join(dist, 'src/runtime/browser-reliabili
 if (!browserLab.includes("BROWSER_RELIABILITY_VERSION = '19.0.0'")) fail('v19 browser reliability module missing from static dist');
 if (!main.includes('getBrowserAutomationSnapshot') || !main.includes('__DOKKAEBI_TEST_API__')) fail('v19 browser automation hooks missing from static dist');
 const serviceWorker = await readFile(path.join(dist, 'sw.js'), 'utf8');
-if (!/const VERSION = '(?:19|20|21|22|23)\.0\.0'/.test(serviceWorker) || !serviceWorker.includes('DOKKAEBI_PURGE')) fail('v19 service worker recovery contract missing');
+if (!/const VERSION = '(?:19|20|21|22)\.0\.0|const VERSION = '23\.0\.\d+'/.test(serviceWorker) || !serviceWorker.includes('DOKKAEBI_PURGE')) fail('v19 service worker recovery contract missing');
 await access(path.join(dist, 'browser-lab-v19.html'));
 pass('v19 browser reliability, test API, versioned service worker and browser lab page');
 
 
 if (!main.includes('AssetPresenceEnforcer') || !main.includes('MobileHudDirectorV22') || !main.includes('MobileHudDirectorV23') || !main.includes('CombatReadabilityDirectorV21')) fail('v23 runtime integration modules missing');
 if (!style.includes('mobile-hud-v21') || !style.includes('action-asset-v21')) fail('v21 mobile HUD and action asset styles missing');
-if (!html.includes('title-feature-ribbon-v21') || !html.includes('quiet-screen-v23')) fail('v23 title presentation missing');
+if (!html.includes('title-feature-ribbon-v21') || !(html.includes('quiet-screen-v23') || html.includes('boot-recovery-v2301'))) fail('v23 title presentation missing');
 pass('v21/v22 lineage plus v23 Quiet Screen mobile HUD integration');
 
 const automationV22 = await readFile(path.join(dist, 'src/runtime/automation-director-v22.js'), 'utf8');
