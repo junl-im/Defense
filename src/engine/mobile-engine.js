@@ -103,6 +103,25 @@ export class MobileGameEngine {
     this.renderer.setPixelRatio(this.pixelRatio());
   }
 
+  applyPresentationSafeMode({ reason = 'first-presentation-timeout' } = {}) {
+    if (!this.renderer) return { applied: false, reason: 'renderer-missing' };
+    const previousScale = this.qualityScale;
+    const safeScale = Math.min(previousScale, this.device.mobile ? 0.68 : 0.78);
+    this.qualityScale = safeScale;
+    this.effectBudgetScale = Math.min(this.effectBudgetScale, 0.62);
+    if (this.renderer.shadowMap) this.renderer.shadowMap.enabled = false;
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1) * safeScale);
+    this.rendererFallback = `${this.rendererFallback || 'preferred'}+presentation-safe`;
+    this.presentationSafeMode = {
+      active: true,
+      reason,
+      previousScale,
+      scale: safeScale,
+      appliedAt: Date.now()
+    };
+    return { applied: true, reason, previousScale, scale: safeScale, shadows: false };
+  }
+
   updateAdaptiveQuality(dt) {
     const sample = this.monitor.sample(dt, this.qualityScale);
     if (!sample) return null;
@@ -131,6 +150,7 @@ export class MobileGameEngine {
       assetQualityTier: this.assetQualityTier,
       textureBudgetMB: this.textureBudgetMB,
       rendererFallback: this.rendererFallback || 'none',
+      presentationSafeMode: this.presentationSafeMode || null,
       performance: this.monitor.snapshot,
       rendererInfo: this.renderer?.info || null
     };

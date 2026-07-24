@@ -64,6 +64,7 @@ import GuardianTargetingDirectorV22 from './combat/guardian-targeting-director-v
 import AutomationDirectorV22 from './runtime/automation-director-v22.js';
 import CoreFoundationDirectorV101 from './runtime/core-foundation-director-v101.js';
 import AppStateMachineV103 from './runtime/app-state-machine-v103.js';
+import FirstPresentationDirectorV107 from './runtime/first-presentation-director-v107.js';
 // CameraDirector v14/v15 lineage is preserved by CameraDirectorV16.
 
 const $ = (selector) => document.querySelector(selector);
@@ -125,7 +126,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '1.0.6';
+const GAME_VERSION = '1.0.7';
 // const GAME_VERSION = '23.1.0'; historical lineage marker for pre-normalization contracts.
 if (GAME_VERSION !== PUBLIC_GAME_VERSION) throw new Error('Public version policy mismatch');
 function runtimeSpriteMarkup(path, alt = '', className = '') {
@@ -212,6 +213,8 @@ class DokkaebiLuckDefense {
     this.animationFrameId = 0;
     this.renderedFrameSerial = 0;
     this.renderFrameWaiters = [];
+    this.firstPresentation = null;
+    this.firstPresentationReport = null;
     this.startRunPending = false;
     this.elapsed = 0;
     this.shake = 0;
@@ -364,6 +367,15 @@ class DokkaebiLuckDefense {
     this.assetPresence.install();
     this.applyViewportUiProfile();
     this.initThree();
+    this.firstPresentation = new FirstPresentationDirectorV107({
+      titleRoot: ui.title,
+      canvas: ui.canvas,
+      schedule: (callback, delay) => this.scheduleUi(callback, delay),
+      cancel: (token) => this.lifecycle.ui.cancel(token),
+      waitForFrames: (count, timeout) => this.waitForRenderedFrames(count, timeout),
+      applyFallback: (context) => this.applyFirstPresentationFallback(context),
+      updateLoading: (status, detail) => this.setLoadingProgress(94, status, detail)
+    });
     this.browserReliability.mount({
       canvas: ui.canvas,
       getRuntimeSnapshot: () => this.getBrowserReliabilitySnapshot()
@@ -432,19 +444,10 @@ class DokkaebiLuckDefense {
     ui.loadingProgress.parentElement?.setAttribute('aria-valuenow', String(value));
     if (status) ui.loadingStatus.textContent = status;
     if (detail) ui.loadingDetail.textContent = detail;
-  }
-
-  settlePresentationTask(task, timeoutMs = 2200) {
-    return new Promise((resolve) => {
-      let settled = false;
-      const finish = (value = false) => {
-        if (settled) return;
-        settled = true;
-        this.lifecycle.ui.cancel(timer);
-        resolve(value);
-      };
-      const timer = this.scheduleUi(() => finish(false), timeoutMs);
-      Promise.resolve(task).then(() => finish(true), () => finish(false));
+    window.__DOKKAEBI_UPDATE_BOOT_GATE__?.({
+      status: status || ui.loadingStatus?.textContent || '',
+      detail: detail || ui.loadingDetail?.textContent || '',
+      mode: value >= 90 ? 'presentation' : 'loading'
     });
   }
 
@@ -473,27 +476,35 @@ class DokkaebiLuckDefense {
     this.renderFrameWaiters = pending;
   }
 
+  applyFirstPresentationFallback({ reason = 'frame-timeout' } = {}) {
+    const result = this.engine.applyPresentationSafeMode?.({ reason }) || { applied: false };
+    this.lowPower = true;
+    document.documentElement.dataset.presentationFallback = result.applied ? 'active' : 'requested';
+    document.body.classList.add('presentation-safe-mode');
+    this.renderer?.setSize?.(window.innerWidth, window.innerHeight, false);
+    this.camera?.updateProjectionMatrix?.();
+    this.browserReliability?.noteMilestone('first-presentation-fallback', { reason, ...result });
+    return result.applied;
+  }
+
   async prepareFirstPresentation() {
-    const titleImages = [...ui.title.querySelectorAll('img')];
-    const imageTasks = titleImages.map((image) => {
-      if (image.complete && image.naturalWidth > 0) return Promise.resolve();
-      if (typeof image.decode === 'function') return image.decode();
-      return Promise.resolve();
-    });
-    const backgroundLink = [...document.querySelectorAll('link[rel="preload"][as="image"][media]')]
-      .find((link) => !link.media || window.matchMedia(link.media).matches);
-    if (backgroundLink?.href) {
-      const image = new Image();
-      image.src = backgroundLink.href;
-      imageTasks.push(typeof image.decode === 'function' ? image.decode() : Promise.resolve());
+    try {
+      this.firstPresentationReport = await this.firstPresentation.prepare();
+    } catch (error) {
+      this.recordRuntimeError(error, 'first-presentation');
+      this.applyFirstPresentationFallback({ reason: 'presentation-director-error' });
+      document.documentElement.dataset.presentationGate = 'released-safe';
+      document.documentElement.dataset.presentationQuality = 'safe';
+      this.firstPresentationReport = Object.freeze({
+        status: 'ready',
+        stableFrames: false,
+        fallbackApplied: true,
+        failOpen: true,
+        degraded: true,
+        error: error instanceof Error ? error.message : String(error)
+      });
     }
-    const fontsReady = document.fonts?.ready || Promise.resolve();
-    await Promise.all([
-      this.settlePresentationTask(Promise.allSettled(imageTasks), 2600),
-      this.settlePresentationTask(fontsReady, 1600)
-    ]);
-    await this.waitForRenderedFrames(2, 2800);
-    document.documentElement.dataset.presentationGate = 'ready';
+    return this.firstPresentationReport;
   }
 
   async initializeGame() {
@@ -520,8 +531,11 @@ class DokkaebiLuckDefense {
     this.state = 'title';
     ui.title.classList.add('visible');
     this.setLoadingProgress(94, '첫 장면을 다듬는 중...', '타이틀 아트와 첫 렌더 프레임을 동기화하고 있습니다.');
-    await this.prepareFirstPresentation();
-    this.setLoadingProgress(100, '준비 완료', `${this.engine.assetQualityTier.toUpperCase()} 에셋 품질 · 절차형 모델 대체 준비 완료`);
+    const presentation = await this.prepareFirstPresentation();
+    const readyDetail = presentation.fallbackApplied
+      ? '안전 그래픽 모드 · 완성 프레임 확인 완료'
+      : `${this.engine.assetQualityTier.toUpperCase()} 에셋 품질 · 완성 프레임 확인 완료`;
+    this.setLoadingProgress(100, '준비 완료', readyDetail);
     ui.loading.classList.remove('visible');
     const loadedModels = CHARACTER_ASSET_IDS.filter((id) => this.assetPipeline.get(id)?.scene).length;
     ui.qualityBadge.textContent = `전투 GLB ${loadedModels}/${CHARACTER_ASSET_IDS.length} · ${this.engine.assetQualityTier.toUpperCase()}`;
@@ -739,6 +753,17 @@ class DokkaebiLuckDefense {
     const on = (target, type, handler, options = {}, key = '') => this.listen(target, type, handler, options, key);
 
     on(ui.start, 'click', () => this.startRunFromTitle({ reuseSeed: false }), {}, 'start-run');
+    on(ui.title, 'pointerup', (event) => {
+      if (this.state !== 'title' || ui.start?.disabled || this.startRunPending) return;
+      if (event.target.closest('button, a, input, select, textarea, [role="button"]')) return;
+      this.startRunFromTitle({ reuseSeed: false });
+    }, { passive: true }, 'title-touch-anywhere');
+    on(window, 'keydown', (event) => {
+      if (this.state !== 'title' || ui.start?.disabled || this.startRunPending || this.isTypingTarget(event.target)) return;
+      if (!['Enter', ' '].includes(event.key)) return;
+      event.preventDefault();
+      this.startRunFromTitle({ reuseSeed: false });
+    }, { passive: false }, 'title-key-start');
     on(ui.titleSetup, 'click', () => this.showModal(ui.titleSetupModal, { trigger: ui.titleSetup }), {}, 'open-title-setup');
     on(ui.titleVault, 'click', () => this.showModal(ui.titleVaultModal, { trigger: ui.titleVault }), {}, 'open-title-vault');
     on(ui.how, 'click', () => this.showModal(ui.howModal, { parent: ui.titleVaultModal, trigger: ui.how }), {}, 'open-how');
@@ -3367,6 +3392,7 @@ class DokkaebiLuckDefense {
     if (ui.start) {
       ui.start.disabled = true;
       ui.start.setAttribute('aria-busy', 'true');
+      ui.start.dataset.ready = 'false';
       const startLabel = document.getElementById('title-start-label');
       if (startLabel) startLabel.textContent = '수호대 출전 준비 중...';
       ui.start.setAttribute('aria-label', '수호대 출전 준비 중...');
@@ -3395,8 +3421,9 @@ class DokkaebiLuckDefense {
         ui.start.disabled = false;
         ui.start.setAttribute('aria-busy', 'false');
         const startLabel = document.getElementById('title-start-label');
-        if (startLabel) startLabel.textContent = '달빛 장터 수호 준비 완료';
-        ui.start.setAttribute('aria-label', '수호 시작');
+        if (startLabel) startLabel.textContent = 'TOUCH TO START';
+        ui.start.dataset.ready = 'true';
+        ui.start.setAttribute('aria-label', 'TOUCH TO START');
       }
     }
   }
@@ -6672,6 +6699,7 @@ class DokkaebiLuckDefense {
       this.lifecycle.ui.cancel(waiter.timer);
       waiter.resolve(false);
     }
+    this.firstPresentation?.dispose?.();
     this.lifecycle?.dispose();
     const disposables = [
       this.mobileHudV23,
@@ -6836,7 +6864,7 @@ try {
       },
       foundationReport: () => game.coreFoundation?.report || {},
       dispose: () => game.dispose(),
-      reliabilityReport: () => ({ foundation: game.coreFoundation?.report || {}, wave: game.waveReliability?.report || {}, browser: game.browserReliability?.report || {}, automation: game.automationV22?.report || {}, targeting: game.guardianTargetingV22?.report || {}, mobileHud: game.mobileHudV23?.report || {} })
+      reliabilityReport: () => ({ foundation: game.coreFoundation?.report || {}, wave: game.waveReliability?.report || {}, browser: game.browserReliability?.report || {}, firstPresentation: game.firstPresentationReport || game.firstPresentation?.report || {}, automation: game.automationV22?.report || {}, targeting: game.guardianTargetingV22?.report || {}, mobileHud: game.mobileHudV23?.report || {} })
     });
     game.browserReliability?.noteMilestone('game-ready', { state: game.state });
     window.dispatchEvent(new Event('dokkaebi:boot-ready'));

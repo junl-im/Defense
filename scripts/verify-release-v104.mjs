@@ -39,7 +39,7 @@ const checks = [
   ['static bootstrap has pinned redundant engine endpoints', ['local-vendor', 'fastly-jsdelivr', 'jsdelivr-npm', 'jsdelivr-github', 'unpkg', 'esm-sh'].every((id) => staticBootstrap.includes(`id: '${id}'`)) && !staticBootstrap.includes("id: 'threejs-org'")],
   ['static loader reports failures instead of leaving a dead button', staticBootstrap.includes('window.__DOKKAEBI_SHOW_BOOT_ERROR__') && staticBootstrap.includes('3D 엔진 파일을 불러오지 못했습니다')],
   ['start button uses guarded title entry path', main.includes("on(ui.start, 'click', () => this.startRunFromTitle") && main.includes('startRunFromTitle({ reuseSeed = false } = {})')],
-  ['start entry catches runtime failures and restores title controls', main.includes("this.recordRuntimeError(error, 'title-start-run')") && main.includes('전투 진입 중 오류가 발생했습니다') && main.includes("startLabel.textContent = '달빛 장터 수호 준비 완료'")],
+  ['start entry catches runtime failures and restores title controls', main.includes("this.recordRuntimeError(error, 'title-start-run')") && main.includes('전투 진입 중 오류가 발생했습니다') && (main.includes("startLabel.textContent = '달빛 장터 수호 준비 완료'") || main.includes("startLabel.textContent = 'TOUCH TO START'"))],
   ['static build emits the resilient bootstrap contract', buildStatic.includes('data-entry="./src/bootstrap.js"') && buildStatic.includes('data-vendor-base="./vendor/three/"') && (!hasDist || (distHtml.includes('data-entry="./src/bootstrap.js"') && distHtml.includes('data-vendor-base="./vendor/three/"')))],
   ['dist bootstrap matches public bootstrap', !hasDist || hash('public/static-bootstrap.js') === hash('dist/static-bootstrap.js')],
   ['absolute art bible tokens are unchanged', artBibleUnchanged],

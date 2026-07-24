@@ -1,5 +1,5 @@
-const RELEASE_VERSION = '1.0.6';
-const BUILD_ID = 'b24.6';
+const RELEASE_VERSION = '1.0.7';
+const BUILD_ID = 'b24.7';
 // const VERSION = '23.1.0'; historical lineage marker.
 const CACHE_PREFIX = 'dokkaebi-shell-';
 const CACHE_NAME = `${CACHE_PREFIX}${BUILD_ID}`;
@@ -7,10 +7,10 @@ const SHELL_ASSETS = [
   './', './index.html', './manifest.webmanifest', './version.json', './browser-lab-v19.html',
   './icon-192.png', './icon-512.png', './icon-maskable-512.png',
   './static-bootstrap.js', './src/bootstrap.js', './src/style.css', './src/main.js',
+  './src/runtime/first-presentation-director-v107.js',
   './src/assets/title-v17/title-bg-desktop-v17.webp',
   './src/assets/title-v17/title-bg-mobile-v17.webp',
-  './src/assets/title-v17/title-mascot-v17.webp',
-  './assets/ip-v10/presentation/ui/button_start.png'
+  './src/assets/title-v17/title-mascot-v17.webp'
 ];
 const isLocal = (request) => new URL(request.url).origin === self.location.origin;
 const isTitleAsset = (pathname) => pathname.includes('/src/assets/title-v17/');

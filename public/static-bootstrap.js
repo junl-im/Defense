@@ -1,6 +1,6 @@
 (() => {
-  const RELEASE_VERSION = '1.0.6';
-  const BUILD_ID = 'b24.6';
+  const RELEASE_VERSION = '1.0.7';
+  const BUILD_ID = 'b24.7';
   const VERSION = `${RELEASE_VERSION}-${BUILD_ID}`;
   const script = document.currentScript;
   const entryPath = script?.dataset.entry || './src/bootstrap.js';
@@ -18,7 +18,7 @@
       id: 'local-vendor',
       three: `${vendorBase}three.module.js`,
       addons: `${vendorBase}addons/`,
-      timeout: 1400
+      timeout: 2200
     },
     {
       id: 'fastly-jsdelivr',
@@ -87,8 +87,18 @@
   };
 
   const selectCandidate = async () => {
+    window.__DOKKAEBI_UPDATE_BOOT_GATE__?.({
+      status: '로컬 3D 엔진을 확인하는 중...',
+      detail: '인터넷 연결 없이 시작할 수 있는 경로를 먼저 확인합니다.',
+      mode: 'engine-local'
+    });
     const local = await probe(candidates[0]);
     if (local) return local;
+    window.__DOKKAEBI_UPDATE_BOOT_GATE__?.({
+      status: '복구 엔진 경로를 확인하는 중...',
+      detail: '고정 버전의 안전한 엔진 후보를 확인합니다.',
+      mode: 'engine-recovery'
+    });
     const remoteResults = await Promise.all(candidates.slice(1).map(probe));
     return remoteResults.find(Boolean) || null;
   };
@@ -104,6 +114,11 @@
       return;
     }
     status.source = selected.id;
+    window.__DOKKAEBI_UPDATE_BOOT_GATE__?.({
+      status: selected.id === 'local-vendor' ? '로컬 3D 엔진 준비 완료' : '3D 엔진 연결 완료',
+      detail: selected.id === 'local-vendor' ? '오프라인 실행 경로로 게임을 시작합니다.' : '게임 모듈과 첫 장면을 불러오고 있습니다.',
+      mode: selected.id === 'local-vendor' ? 'engine-local-ready' : 'engine-ready'
+    });
     const map = document.createElement('script');
     map.type = 'importmap';
     map.textContent = JSON.stringify({ imports: { 'three': selected.three, 'three/addons/': selected.addons } });

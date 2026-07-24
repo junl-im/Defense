@@ -13,53 +13,77 @@
     <link rel="apple-touch-icon" href="./icon-192.png" />
     <title>도깨비 운빨 수호대 3D</title>
     <style id="dokkaebi-critical-boot">
-      html.boot-gate-active, html.boot-gate-active body { background: #030916; }
+      html.boot-gate-active, html.boot-gate-active body { background: #020713; }
       html.boot-gate-active body { margin: 0; overflow: hidden; }
       html.boot-gate-active #app { opacity: 0; visibility: hidden; }
       #boot-gate {
         position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center;
-        padding: 24px; color: #fff3cf; background:
-          radial-gradient(circle at 50% 28%, rgba(46, 118, 186, .22), transparent 27%),
-          radial-gradient(circle at 50% 68%, rgba(104, 50, 151, .2), transparent 34%),
-          linear-gradient(180deg, #07101f 0%, #030916 58%, #02050d 100%);
-        opacity: 1; visibility: visible; transition: opacity .24s ease, visibility .24s ease;
+        padding: 24px; overflow: hidden; color: #fff3cf; background:
+          radial-gradient(circle at 50% 20%, rgba(78, 162, 238, .22), transparent 27%),
+          radial-gradient(circle at 50% 70%, rgba(76, 32, 142, .28), transparent 40%),
+          linear-gradient(180deg, #071121 0%, #030916 58%, #01040b 100%);
+        opacity: 1; visibility: visible; transition: opacity .28s ease, visibility .28s ease;
         font-family: Pretendard, Inter, "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
       }
-      .boot-gate-content { width: min(84vw, 390px); text-align: center; }
-      .boot-gate-mark {
-        width: 72px; height: 72px; margin: 0 auto 20px; border: 1px solid rgba(147, 225, 255, .42);
-        border-radius: 50%; background: radial-gradient(circle at 44% 36%, #d8fbff 0 7%, #69d8ff 18%, #2554a7 55%, #13143c 78%);
-        box-shadow: 0 0 0 8px rgba(79, 181, 255, .06), 0 0 38px rgba(65, 187, 255, .34);
-        animation: boot-gate-pulse 1.7s ease-in-out infinite alternate;
+      #boot-gate::before, #boot-gate::after { content: ""; position: absolute; pointer-events: none; border-radius: 50%; filter: blur(1px); }
+      #boot-gate::before { width: min(86vw, 520px); aspect-ratio: 1; top: -34%; background: radial-gradient(circle, rgba(111, 203, 255, .18), rgba(41, 98, 171, .04) 50%, transparent 72%); }
+      #boot-gate::after { width: min(115vw, 760px); height: 36%; bottom: -20%; background: radial-gradient(ellipse, rgba(54, 123, 205, .18), transparent 68%); }
+      .boot-gate-content { position: relative; z-index: 1; width: min(88vw, 430px); text-align: center; }
+      .boot-gate-art {
+        position: relative; width: min(45vw, 184px); aspect-ratio: 1; margin: 0 auto 4px;
+        display: grid; place-items: end center;
       }
-      .boot-gate-kicker { margin: 0 0 7px; color: #8bdcff; font-size: 10px; font-weight: 800; letter-spacing: .24em; }
-      .boot-gate-title { display: block; margin: 0; font-size: clamp(30px, 8vw, 44px); line-height: 1; letter-spacing: -.06em; }
-      .boot-gate-copy { display: block; margin-top: 13px; color: rgba(225, 235, 247, .72); font-size: 12px; }
-      .boot-gate-line { width: min(58vw, 220px); height: 4px; margin: 20px auto 0; overflow: hidden; border-radius: 99px; background: rgba(255,255,255,.08); }
+      .boot-gate-art::before {
+        content: ""; position: absolute; width: 74%; aspect-ratio: 1; left: 13%; bottom: 2%; border-radius: 50%;
+        background: radial-gradient(circle, rgba(112, 223, 255, .35), rgba(44, 101, 213, .12) 52%, transparent 73%);
+        box-shadow: 0 0 48px rgba(65, 174, 255, .28);
+        animation: boot-gate-aura 1.8s ease-in-out infinite alternate;
+      }
+      .boot-gate-art img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 18px 24px rgba(0,0,0,.46)); }
+      .boot-gate-kicker { margin: 0 0 7px; color: #82dcff; font-size: 10px; font-weight: 800; letter-spacing: .24em; }
+      .boot-gate-title { display: block; margin: 0; font-size: clamp(31px, 8vw, 46px); line-height: 1; letter-spacing: -.065em; text-shadow: 0 5px 18px rgba(0,0,0,.66); }
+      .boot-gate-status { display: block; margin-top: 15px; color: #ffe0a0; font-size: 13px; font-weight: 800; }
+      .boot-gate-copy { display: block; min-height: 18px; margin-top: 6px; color: rgba(225, 235, 247, .72); font-size: 11px; line-height: 1.45; }
+      .boot-gate-line { width: min(58vw, 230px); height: 4px; margin: 19px auto 0; overflow: hidden; border-radius: 99px; background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 1px rgba(255,255,255,.03); }
       .boot-gate-line::after { content: ""; display: block; width: 42%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #4aa5ff, #ffe18e, #6ceaff); animation: boot-gate-scan 1.1s ease-in-out infinite alternate; }
-      html.boot-gate-ready #app { opacity: 1; visibility: visible; transition: opacity .18s ease; }
+      html[data-presentation-mode="recovering"] .boot-gate-line::after { background: linear-gradient(90deg, #ffbf68, #fff1a6, #70cfff); }
+      html[data-presentation-mode="safe"] .boot-gate-status { color: #9fe7ff; }
+      html.boot-gate-ready #app { opacity: 1; visibility: visible; transition: opacity .2s ease; }
       html.boot-gate-ready #boot-gate { opacity: 0; visibility: hidden; pointer-events: none; }
-      @keyframes boot-gate-pulse { from { transform: scale(.97); filter: brightness(.92); } to { transform: scale(1.03); filter: brightness(1.08); } }
-      @keyframes boot-gate-scan { from { transform: translateX(-10%); } to { transform: translateX(148%); } }
-      @media (prefers-reduced-motion: reduce) { .boot-gate-mark, .boot-gate-line::after { animation: none; } }
+      @keyframes boot-gate-aura { from { transform: scale(.94); opacity: .72; } to { transform: scale(1.06); opacity: 1; } }
+      @keyframes boot-gate-scan { from { transform: translateX(-12%); } to { transform: translateX(150%); } }
+      @media (max-height: 620px) { .boot-gate-art { width: min(29vh, 150px); } .boot-gate-title { font-size: 32px; } }
+      @media (prefers-reduced-motion: reduce) { .boot-gate-art::before, .boot-gate-line::after { animation: none; } }
     </style>
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-desktop-v17.webp?rev=release-v105-b24-5" media="(min-width: 721px) and (orientation: landscape)" />
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-mobile-v17.webp?rev=release-v105-b24-5" media="(max-width: 720px), (orientation: portrait)" />
-    <link rel="preload" as="image" href="./assets/ip-v10/presentation/ui/button_start.png" />
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-mascot-v17.webp?rev=release-v105-b24-5" />
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-desktop-v17.webp?rev=release-v107-b24-7" media="(min-width: 721px) and (orientation: landscape)" />
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-mobile-v17.webp?rev=release-v107-b24-7" media="(max-width: 720px), (orientation: portrait)" />
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-mascot-v17.webp?rev=release-v107-b24-7" />
     <!-- active lineage v22.0.0 · BROWSER RELIABILITY LAB -->
   </head>
   <body>
     <div id="boot-gate" role="status" aria-live="polite" aria-label="도깨비 디펜스 화면을 준비하는 중">
       <div class="boot-gate-content">
-        <div class="boot-gate-mark" aria-hidden="true"></div>
+        <div class="boot-gate-art" aria-hidden="true">
+          <img src="./src/assets/title-v17/title-mascot-v17.webp?rev=release-v107-b24-7" alt="" fetchpriority="high" decoding="async" />
+        </div>
         <p class="boot-gate-kicker">MOON MARKET AWAKENING</p>
         <strong class="boot-gate-title">도깨비 디펜스</strong>
-        <small class="boot-gate-copy">첫 장면을 안전하게 준비하는 중...</small>
+        <b id="boot-gate-status" class="boot-gate-status">달빛 장터를 깨우는 중...</b>
+        <small id="boot-gate-detail" class="boot-gate-copy">완성된 첫 장면이 준비될 때까지 화면을 보호합니다.</small>
         <div class="boot-gate-line" aria-hidden="true"></div>
       </div>
     </div>
     <script>
+      window.__DOKKAEBI_BOOT_PROGRESS_AT__ = Date.now();
+      window.__DOKKAEBI_UPDATE_BOOT_GATE__ = ({ status = '', detail = '', mode = '' } = {}) => {
+        window.__DOKKAEBI_BOOT_PROGRESS_AT__ = Date.now();
+        const root = document.documentElement;
+        if (mode) root.dataset.presentationMode = mode;
+        const statusNode = document.getElementById('boot-gate-status');
+        const detailNode = document.getElementById('boot-gate-detail');
+        if (status && statusNode) statusNode.textContent = status;
+        if (detail && detailNode) detailNode.textContent = detail;
+      };
       window.__DOKKAEBI_RELEASE_BOOT_GATE__ = ({ immediate = false } = {}) => {
         const root = document.documentElement;
         if (!root.classList.contains('boot-gate-active')) return;
@@ -72,7 +96,7 @@
         window.setTimeout(() => {
           document.getElementById('boot-gate')?.remove();
           root.classList.remove('boot-gate-active', 'boot-gate-ready');
-        }, 360);
+        }, 420);
       };
     </script>
     <div id="app">
@@ -97,7 +121,7 @@
 
       <section id="boot-error" class="screen boot-error" aria-live="assertive">
         <div class="boot-error-card">
-          <div class="moon-logo small"><span>🌙</span></div>
+          <div class="boot-error-emblem" aria-hidden="true"><img src="./src/assets/title-v17/title-mascot-v17.webp?rev=release-v107-b24-7" alt="" decoding="async" /></div>
           <p class="kicker">BOOT RECOVERY</p>
           <h2>달빛 장터를 깨우지 못했습니다</h2>
           <p id="boot-error-message">이전 버전 캐시 또는 WebGL 초기화 문제를 감지했습니다.</p>
@@ -108,20 +132,25 @@
 
       <section id="title-screen" class="screen title-screen-v17 title-screen-v105">
         <div class="title-scene-v17 title-scene-v105">
-          <div class="title-brand-v105" aria-label="도깨비 디펜스 운빨 수호대">
-            <small>KOREAN FANTASY DEFENSE</small>
-            <h1><span>도깨비</span><strong>디펜스</strong></h1>
-            <em>운빨 수호대</em>
-            <b aria-hidden="true">수호전설</b>
+          <div class="title-brand-v105 title-brand-v107" aria-label="도깨비 디펜스 운빨 수호대">
+            <small class="title-kicker-v107">MOONLIGHT GUARDIANS</small>
+            <h1 class="title-wordmark-v107">
+              <span class="title-word-dokkaebi-v107" data-text="도깨비">도깨비</span>
+              <strong class="title-word-defense-v107" data-text="디펜스">디펜스</strong>
+            </h1>
+            <em class="title-subtitle-v107">운빨 수호대</em>
+            <b class="title-seal-v107" aria-hidden="true">수호전설</b>
           </div>
           <picture class="title-mascot-stage title-mascot-stage-v105">
-            <source media="(max-width: 720px), (orientation: portrait)" srcset="./src/assets/title-v17/title-mascot-v17.webp?rev=release-v105-b24-5" />
-            <img class="title-mascot title-mascot-v17 title-mascot-v105" src="./src/assets/title-v17/title-mascot-v17.webp?rev=release-v105-b24-5" alt="푸른 도깨비불과 곤봉을 든 도깨비 수호대 마스코트" fetchpriority="high" decoding="async" />
+            <source media="(max-width: 720px), (orientation: portrait)" srcset="./src/assets/title-v17/title-mascot-v17.webp?rev=release-v107-b24-7" />
+            <img class="title-mascot title-mascot-v17 title-mascot-v105" src="./src/assets/title-v17/title-mascot-v17.webp?rev=release-v107-b24-7" alt="푸른 도깨비불과 곤봉을 든 도깨비 수호대 마스코트" fetchpriority="high" decoding="async" />
           </picture>
-          <div class="title-panel title-panel-simple title-panel-v17 title-panel-v105">
-            <div class="title-start-status-v105" aria-live="polite"><i aria-hidden="true"></i><span id="title-start-label">게임 준비 중...</span></div>
-            <button id="start-btn" class="title-start-button-v105" disabled aria-busy="true" aria-label="게임 준비 중...">
-              <img src="./assets/ip-v10/presentation/ui/button_start.png" alt="" aria-hidden="true" decoding="async" />
+          <div class="title-panel title-panel-simple title-panel-v17 title-panel-v105 title-panel-v107">
+            <button id="start-btn" class="title-touch-start-v107" disabled aria-busy="true" aria-label="게임 준비 중...">
+              <span class="title-touch-line-v107" aria-hidden="true"></span>
+              <span id="title-start-label" class="title-touch-copy-v107">게임 준비 중...</span>
+              <small class="title-touch-guide-v107">화면을 눌러 수호 시작</small>
+              <span class="title-touch-line-v107" aria-hidden="true"></span>
             </button>
             <div id="title-loadout-summary" class="title-loadout-summary" aria-live="polite"></div>
             <div class="title-primary-actions title-primary-actions-v105">
@@ -614,8 +643,8 @@
     </div>
     <script>
       (() => {
-        const RELEASE_VERSION = '1.0.6';
-        const BUILD_ID = 'b24.6';
+        const RELEASE_VERSION = '1.0.7';
+        const BUILD_ID = 'b24.7';
         const VERSION = `${RELEASE_VERSION}-${BUILD_ID}`;
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
@@ -626,8 +655,9 @@
           if (!startButton) return;
           startButton.disabled = !ready;
           startButton.setAttribute('aria-busy', String(!ready));
-          const label = ready ? '수호 시작' : '게임 준비 중...';
-          if (startLabel) startLabel.textContent = ready ? '달빛 장터 수호 준비 완료' : label;
+          const label = ready ? 'TOUCH TO START' : '게임 준비 중...';
+          if (startLabel) startLabel.textContent = label;
+          startButton.dataset.ready = ready ? 'true' : 'false';
           startButton.setAttribute('aria-label', label);
         };
         setStartReady(false);
@@ -642,6 +672,8 @@
           registrationError: ''
         };
         let bootTimer = 0;
+        const BOOT_STALL_LIMIT_MS = 30000;
+        const BOOT_WATCH_INTERVAL_MS = 8000;
 
         const clearLegacyCaches = async () => {
           try {
@@ -727,15 +759,23 @@
           const reason = event.reason instanceof Error ? event.reason.message : String(event.reason || '알 수 없는 비동기 오류');
           window.__DOKKAEBI_SHOW_BOOT_ERROR__?.(`게임 초기화 오류: ${reason}`);
         });
-        bootTimer = window.setTimeout(() => {
-          if (!window.__DOKKAEBI_BOOT_OK__) {
-            window.__DOKKAEBI_SHOW_BOOT_ERROR__('게임 모듈이 시작되지 않았습니다. 캐시 복구 후 다시 시도해 주세요.');
+        const watchBootProgress = () => {
+          if (window.__DOKKAEBI_BOOT_OK__) return;
+          const lastProgressAt = Number(window.__DOKKAEBI_BOOT_PROGRESS_AT__ || diagnostics.startedAt);
+          const stalledFor = Date.now() - lastProgressAt;
+          diagnostics.lastProgressAt = lastProgressAt;
+          diagnostics.stalledFor = stalledFor;
+          if (stalledFor >= BOOT_STALL_LIMIT_MS) {
+            window.__DOKKAEBI_SHOW_BOOT_ERROR__('게임 준비 진행이 오래 멈췄습니다. 캐시 정리 후 다시 시작해 주세요.');
+            return;
           }
-        }, 22000);
+          bootTimer = window.setTimeout(watchBootProgress, BOOT_WATCH_INTERVAL_MS);
+        };
+        bootTimer = window.setTimeout(watchBootProgress, BOOT_WATCH_INTERVAL_MS);
 
         registerServiceWorker();
       })();
     </script>
-    <script type="module" src="./src/bootstrap.js?v=1.0.6-b24.6"></script>
+    <script type="module" src="./src/bootstrap.js?v=1.0.7-b24.7"></script>
   </body>
 </html>
