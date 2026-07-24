@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { generatedOutput } from './output-paths.mjs';
 import GuardianTargetingDirectorV22 from '../src/combat/guardian-targeting-director-v22.js';
 import AutomationDirectorV22 from '../src/runtime/automation-director-v22.js';
 
@@ -32,6 +33,7 @@ const result={
   automation:{action,report:automation.report},
   scenarios:['boss threat priority','sticky target retention','10 second reward auto choice','click-to-skip wave counter','wave-end loot vacuum accounting']
 };
-fs.writeFileSync('docs/AUTONOMOUS_MOONFRONT_SIMULATION_v22.0.0.json',JSON.stringify(result,null,2)+'\n');
-console.log('PASS v22 autonomous moonfront simulation');
+const output = generatedOutput({ category: 'simulations', filename: 'AUTONOMOUS_MOONFRONT_SIMULATION_v22.latest.json', baseline: 'docs/AUTONOMOUS_MOONFRONT_SIMULATION_v22.0.0.json' });
+fs.writeFileSync(output,JSON.stringify(result,null,2)+'\n');
+console.log(`PASS v22 autonomous moonfront simulation -> ${output}`);
 console.log(JSON.stringify(result,null,2));

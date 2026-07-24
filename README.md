@@ -1,26 +1,51 @@
-> v23.0.1 Boot Recovery: 시작 버튼 무반응, 정적 CDN 의존, 타이틀 에셋 캐시 문제를 수정했습니다.
+> v23.0.2 Clean Foundation: 프로젝트 루트와 생성 산출물 규칙을 영구 고정했습니다.
 
 # Dokkaebi Luck Defense 3D
 
-## v23.0.1 Quiet Screen
+## 현재 버전
 
-- 게임 버전: **23.0.1**
-- 엔진 버전: **20.0.0**
+- 게임: **23.0.2**
+- 엔진: **20.0.0**
 - 세이브 스키마: **21**
-- 기준 패치: **v22.0.0 Autonomous Moonfront**
+- 기준 버전: **v23.0.1 Boot Recovery**
+- 구조 계약: **Project Structure Rules v1.0**
 
-### 핵심 업데이트
+## 프로젝트 기본 골격
 
-- 화면 `+ / −` 카메라 줌 버튼을 DOM과 이벤트 코드에서 완전히 제거했습니다.
-- 카메라 줌은 마우스 휠과 모바일 두 손가락 핀치만 유지합니다.
-- 모바일 HUD를 상단 정보, 하단 조작, 중앙 컨텍스트의 세 개 예약 영역으로 분리했습니다.
-- 진행 복구, 다음 웨이브, 상호작용, 위험 경고는 하나의 컨텍스트 슬롯을 우선순위로 공유합니다.
-- 320·360·390·430px, 와이드 모바일, 가로 화면 전용 프로필을 추가했습니다.
-- 실제 DOM 겹침 검사와 비상 축소 레이아웃을 강화했습니다.
-- 전투 중 임무·인연·유물·보조 정보는 모바일에서 자동으로 접습니다.
-- 보스 HUD는 모바일에서 핵심 체력·BREAK 정보만 우선 표시합니다.
+```text
+/
+├─ src/          게임 소스
+├─ public/       공개 런타임 에셋과 서비스 워커
+├─ production/   제작 데이터와 마스터 목록
+├─ scripts/      생성·검증·패키징 스크립트
+├─ docs/         정식 문서와 승인된 기준선
+├─ logs/         검증·빌드·시뮬레이션·감사 생성 결과
+├─ dist/         정적 배포 결과
+├─ README.md
+└─ PROJECT_HANDOFF.md
+```
 
-### 검증
+### 영구 규칙
+
+- 루트에 임의의 로그, 감사 JSON, 시뮬레이션 JSON, 미리보기 이미지, ZIP을 만들지 않습니다.
+- 검증과 빌드 결과는 `logs/verify/`, `logs/build/`에 기록합니다.
+- 시뮬레이션과 자동 감사는 `logs/simulations/`, `logs/audits/`에 기록합니다.
+- 패치 관리 파일은 `logs/patch/<version>/`에만 둡니다.
+- `docs/` 기준선은 `--refresh-baseline`을 명시한 경우에만 갱신합니다.
+- 새 루트 파일이나 디렉터리가 생기면 `npm run hygiene:check`가 실패합니다.
+
+상세 규칙: `docs/PROJECT_STRUCTURE_RULES_v1.0.md`
+
+## 자주 사용하는 명령
+
+```bash
+npm run hygiene:check
+npm run hygiene:organize
+npm run verify:logged
+npm run build:logged
+```
+
+일반 검증:
 
 ```bash
 npm run verify
@@ -31,17 +56,18 @@ npm run build:static
 node scripts/verify-static-dist.mjs
 ```
 
-### 운영 문서
+시뮬레이션 기준선을 의도적으로 갱신할 때만:
 
-- `docs/QUIET_SCREEN_v23.0.1.md`
-- `docs/MOBILE_UI_SIMULATION_v23.0.1.json`
-- `docs/PATCH_NOTES_v23.0.1.md`
-- `docs/PATCH_APPLY_v23.0.1.md`
-- `docs/NEXT_PATCH_LINEUP_v23.x.md`
+```bash
+node scripts/simulate-mobile-hud-v23.mjs --refresh-baseline
+node scripts/simulate-autonomous-moonfront-v22.mjs --refresh-baseline
+node scripts/simulate-ten-wave-run-v18.mjs --refresh-baseline
+```
 
-## 제작 상태
+## 현재 제작 상태
 
 - 런타임 수직 슬라이스: **6/6**
+- 10웨이브 상태 시뮬레이션: **10/10**
 - 전투 GLB: **19종**
 - v13 개별 스프라이트: **415개**
 - v15 런타임 아틀라스: **154프레임**

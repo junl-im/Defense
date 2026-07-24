@@ -103,12 +103,14 @@ const packageJson = JSON.parse(read('package.json'));
 const cleanCommand = packageJson.scripts?.['clean:obsolete'];
 const preverifyCommand = packageJson.scripts?.preverify;
 const prebuildCommand = packageJson.scripts?.prebuild;
+const preverifyHasCleanup = preverifyCommand?.startsWith('npm run clean:obsolete') && preverifyCommand.includes('hygiene:check');
+const prebuildHasCleanup = prebuildCommand?.startsWith('npm run clean:obsolete') && prebuildCommand.includes('hygiene:check');
 if (cleanCommand === 'node scripts/clean-obsolete-assets.mjs'
-  && preverifyCommand === 'npm run clean:obsolete'
-  && prebuildCommand === 'npm run clean:obsolete') {
-  pass('검증·빌드 전 구버전 번들 자동 정리');
+  && preverifyHasCleanup
+  && prebuildHasCleanup) {
+  pass('검증·빌드 전 구버전 번들 정리와 루트 위생 검사');
 } else {
-  fail('preverify/prebuild 정리 스크립트 연결 누락');
+  fail('preverify/prebuild 정리·위생 검사 연결 누락');
 }
 if (main.includes("from './runtime-lifecycle.js'") && main.includes('this.lifecycle.beginRun()') && main.includes('this.lifecycle.endRun()')) pass('런 수명 토큰과 작업 취소 연결');
 else fail('런 수명 관리 연결 누락');

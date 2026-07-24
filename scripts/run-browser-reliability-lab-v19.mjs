@@ -6,7 +6,7 @@ import { extname, join, normalize, resolve } from 'node:path';
 const root = resolve(import.meta.dirname, '..');
 const currentVersion = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).version;
 const dist = join(root, 'dist');
-const outputPath = join(root, 'docs/BROWSER_RELIABILITY_LAB_v19.0.0.json');
+const outputPath = generatedOutput({ category: 'audits', filename: 'BROWSER_RELIABILITY_LAB.latest.json', baseline: 'docs/BROWSER_RELIABILITY_LAB_v19.0.0.json' });
 const chromium = process.env.CHROMIUM_PATH || '/usr/bin/chromium';
 const port = Number(process.env.BROWSER_LAB_PORT || 4190);
 const mime = { '.html':'text/html; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.css':'text/css; charset=utf-8', '.json':'application/json; charset=utf-8', '.webp':'image/webp', '.png':'image/png', '.glb':'model/gltf-binary', '.webmanifest':'application/manifest+json' };

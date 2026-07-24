@@ -1,13 +1,16 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve, basename } from 'node:path';
+import { generatedOutput } from './output-paths.mjs';
 import { CURRENT_ASSET_APPROVAL } from '../src/engine/asset-quality.js';
 import { ART_STYLE_LOCK_ID } from '../src/art-style-tokens.js';
 
 const root = resolve(import.meta.dirname, '..');
 const LEGACY_TECHNICAL_STYLE_LOCK_ID = 'DD-AAA-CASUAL-SD-PBR-3.0';
 const checkOnly = process.argv.includes('--check');
-const jsonOutput = resolve(root, 'docs/CURRENT_ASSET_AUDIT.json');
-const mdOutput = resolve(root, 'docs/CURRENT_ASSET_AUDIT.md');
+const jsonBaseline = 'docs/CURRENT_ASSET_AUDIT.json';
+const mdBaseline = 'docs/CURRENT_ASSET_AUDIT.md';
+const jsonOutput = checkOnly ? resolve(root, jsonBaseline) : generatedOutput({ category: 'audits', filename: 'CURRENT_ASSET_AUDIT.latest.json', baseline: jsonBaseline });
+const mdOutput = checkOnly ? resolve(root, mdBaseline) : generatedOutput({ category: 'audits', filename: 'CURRENT_ASSET_AUDIT.latest.md', baseline: mdBaseline });
 
 const modelPaths = Object.keys(CURRENT_ASSET_APPROVAL).map((id) => {
   const file = id.startsWith('player-') ? `${id}.glb` : `${id}.glb`;

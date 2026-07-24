@@ -1,5 +1,5 @@
 (() => {
-  const VERSION = '23.0.1';
+  const VERSION = '23.0.2';
   const status = window.__DOKKAEBI_STATIC_BOOTSTRAP__ = {
     version: VERSION,
     startedAt: Date.now(),

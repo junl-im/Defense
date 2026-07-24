@@ -11,8 +11,8 @@ const check = (condition, message) => condition ? console.log(`PASS ${message}`)
 check(verifyProject.includes('VERIFY FAILURE DIGEST'), 'project verifier prints final failure digest');
 check(verifyProject.includes('::error title=Project verification failed::'), 'project verifier emits GitHub annotations');
 check(!verifyProject.includes("console.error(`\\n검증 실패 ${failures.length}건`);"), 'project verifier has no early hidden exit');
-check(workflow.includes('npm run verify 2>&1 | tee verify.log'), 'workflow preserves full verification log');
-check(workflow.includes("grep -nE '^(FAIL|::error)|VERIFY FAILURE DIGEST|검증 실패' verify.log"), 'workflow repeats failure digest at step end');
+check(workflow.includes('npm run verify 2>&1 | tee logs/verify/ci-verify.log'), 'workflow preserves full verification log under logs/verify');
+check(workflow.includes("grep -nE '^(FAIL|::error)|VERIFY FAILURE DIGEST|검증 실패' logs/verify/ci-verify.log"), 'workflow repeats failure digest from logs/verify at step end');
 check(verifyProject.includes('추가 루트 Markdown은 빌드를 차단하지 않음'), 'non-runtime Markdown cannot block deployment');
 check(verifyProject.includes('scanSvgPolicy(root)') && read('scripts/svg-policy.mjs').includes("const RUNTIME_ROOTS = ['index.html', 'src', 'public', 'dist', 'dist-pages']"), 'SVG policy scans runtime and deployment asset directories');
 check(read('package.json').includes('verify-no-svg.mjs') && read('package.json').includes('verify-svg-policy.mjs'), 'SVG policy runs before project verification and includes regression coverage');

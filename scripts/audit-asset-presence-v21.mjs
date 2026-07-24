@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import crypto from 'node:crypto';
+import { generatedOutput } from './output-paths.mjs';
 
 const read = (path) => fs.readFileSync(path, 'utf8');
 const sha256 = (path) => crypto.createHash('sha256').update(fs.readFileSync(path)).digest('hex');
@@ -54,7 +55,8 @@ const report = {
   }
 };
 const output = `${JSON.stringify(report, null, 2)}\n`;
-const path = 'docs/ASSET_PRESENCE_AUDIT_v21.0.0.json';
+const baselinePath = 'docs/ASSET_PRESENCE_AUDIT_v21.0.0.json';
+const path = process.argv.includes('--check') ? baselinePath : generatedOutput({ category: 'audits', filename: 'ASSET_PRESENCE_AUDIT_v21.latest.json', baseline: baselinePath });
 if (process.argv.includes('--check')) {
   if (!fs.existsSync(path) || fs.readFileSync(path, 'utf8') !== output) {
     console.error(`FAIL ${path} is missing or stale`);

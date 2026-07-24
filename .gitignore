@@ -4,3 +4,7 @@ dist/
 .firebase/
 *.log
 .DS_Store
+
+# Generated verification/build/audit output
+logs/*
+!logs/README.md

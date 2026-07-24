@@ -50,21 +50,29 @@ jobs:
         run: |
           set -o pipefail
           status=0
-          npm run verify 2>&1 | tee verify.log || status=$?
+          mkdir -p logs/verify
+          npm run verify 2>&1 | tee logs/verify/ci-verify.log || status=$?
           if [ "$status" -ne 0 ]; then
             echo "::group::Verification failure digest"
-            grep -nE '^(FAIL|::error)|VERIFY FAILURE DIGEST|검증 실패' verify.log || true
+            grep -nE '^(FAIL|::error)|VERIFY FAILURE DIGEST|검증 실패' logs/verify/ci-verify.log || true
             echo "::endgroup::"
             exit "$status"
           fi
 
       - name: Build
-        run: npm run build
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p logs/build
+          npm run build 2>&1 | tee logs/build/ci-build.log
         env:
           VITE_BASE_PATH: /Defense/
 
       - name: Verify self-contained production bundle
-        run: node scripts/verify-production-bundle-v2301.mjs
+        run: node scripts/verify-production-bundle-v2302.mjs
+
+      - name: Final root hygiene check
+        run: npm run hygiene:check
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

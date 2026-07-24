@@ -6,7 +6,7 @@ await import('./clean-obsolete-assets.mjs');
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dist = path.join(root, 'dist');
-const version = '23.0.1';
+const version = '23.0.2';
 
 await rm(dist, { recursive: true, force: true });
 await mkdir(dist, { recursive: true });
@@ -28,10 +28,10 @@ try {
 }
 
 let html = await readFile(path.join(root, 'index.html'), 'utf8');
-html = html.replace('    <title>', '    <link rel="stylesheet" href="./src/style.css?v=23.0.1" />\n    <title>');
+html = html.replace('    <title>', '    <link rel="stylesheet" href="./src/style.css?v=23.0.2" />\n    <title>');
 html = html.replace(
   '<script type="module" src="/src/bootstrap.js"></script>',
-  '<script src="./static-bootstrap.js?v=23.0.1"></script>'
+  '<script src="./static-bootstrap.js?v=23.0.2"></script>'
 );
 await writeFile(path.join(dist, 'index.html'), html);
 

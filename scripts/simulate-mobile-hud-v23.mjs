@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { generatedOutput } from './output-paths.mjs';
 
 const profiles = [
   { name: 'mobile-320', width: 320, height: 568, safeTop: 20, safeBottom: 16 },
@@ -74,7 +75,8 @@ const report = {
     contextLaneModes: ['recovery', 'wave', 'interact', 'danger']
   }
 };
-fs.writeFileSync('docs/MOBILE_UI_SIMULATION_v23.0.0.json', `${JSON.stringify(report, null, 2)}\n`);
+const output = generatedOutput({ category: 'simulations', filename: 'MOBILE_UI_SIMULATION_v23.latest.json', baseline: 'docs/MOBILE_UI_SIMULATION_v23.0.0.json' });
+fs.writeFileSync(output, `${JSON.stringify(report, null, 2)}\n`);
 for (const result of results) console.log(`${result.pass ? 'PASS' : 'FAIL'} ${result.name} overlaps=${result.criticalOverlaps.join(',') || 'none'}`);
 if (report.summary.failedProfiles) process.exit(1);
-console.log(`\nv23.0.0 mobile UI simulation passed ${report.summary.passedProfiles}/${report.summary.testedProfiles}`);
+console.log(`\nv23.0.0 mobile UI simulation passed ${report.summary.passedProfiles}/${report.summary.testedProfiles} -> ${output}`);
