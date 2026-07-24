@@ -1,7 +1,6 @@
 // legacy lineage: BATTLEFRONT v6 · MYTHIC CONVERGENCE v7 diagnostics preserved
 // GOLDEN DOMINION v12 · TRANSPARENT ARSENAL v13 · ATLAS DOMINION v14 · LIVING BATTLEFIELD v15 · CLEAR HORIZON v16 · MOON GATE REBORN v17 · TEN-WAVE RELIABILITY v18 lineage retained
 import { CHARACTER_DNA_SUMMARY } from './character-dna.js';
-import { IP_ASSET_LIBRARY_V14 } from './ip-asset-library-v14.js';
 import { IP_ASSET_LIBRARY_V15, IP_ASSET_ATLAS_URL } from './ip-asset-library-v15.js';
 import { HERO_ARCHETYPE_SUMMARY } from './hero-archetype-system.js';
 import { GUARDIAN_COUNCIL_SUMMARY } from './guardian-council-system.js';
@@ -38,6 +37,8 @@ export class ProductionConsole {
 
   render() {
     const data = this.getDiagnostics() || {};
+    const versionPolicy = data.versionPolicy || {};
+    const coreFoundation = data.coreFoundation || {};
     const perf = data.performance || {};
     const assets = data.assets || {};
     const quality = data.quality || {};
@@ -63,7 +64,7 @@ export class ProductionConsole {
     const reliability = data.reliability || {};
     const browserReliability = data.browserReliability || {};
     const assetPresence = data.assetPresence || {};
-    const mobileHud = data.mobileHudV23 || data.mobileHudV22 || data.mobileHudV21 || {};
+    const mobileHud = data.mobileHudV23 || {};
     const combatReadability = data.combatReadability || {};
     const runtimeErrors = data.runtimeErrors || {};
     const approved = Number(this.artSummary.approved || 0);
@@ -71,8 +72,10 @@ export class ProductionConsole {
     const progress = total ? Math.round((approved / total) * 100) : 0;
     const milestoneHtml = this.milestones.slice(0, 4).map((item) => `<li><span>${item.status === 'done' ? 'DONE' : item.status === 'active' ? 'NOW' : 'NEXT'}</span>${item.label}</li>`).join('');
     this.element.innerHTML = `
-      <header><div><small>DD PRODUCTION OS</small><b>QUIET SCREEN v23 · ASSET PRESENCE · MOBILE HUD</b></div><button type="button" data-close-console aria-label="제작 콘솔 닫기">×</button></header>
+      <header><div><small>DD PRODUCTION OS</small><b>RELEASE FOUNDATION 1.0.2 · CORE HEALTH · CLEAN SHELL</b></div><button type="button" data-close-console aria-label="제작 콘솔 닫기">×</button></header>
       <section class="production-console-grid">
+        <article><small>RELEASE</small><b>v${versionPolicy.releaseVersion || '1.0.2'} · ${versionPolicy.buildId || 'b24.2'}</b><span>Legacy ${versionPolicy.lineageVersion || '23.1.0'} · ${versionPolicy.id || 'version policy'}</span></article>
+        <article><small>CORE HEALTH</small><b>${String(coreFoundation.health || 'healthy').toUpperCase()}</b><span>P95 ${coreFoundation.p95FrameMs || 0}ms · Pressure ${Math.round((coreFoundation.pressure || 0) * 100)}% · State ${coreFoundation.state || 'boot'}</span></article>
         <article><small>ART LOCK</small><b>${this.artSummary.styleLockId || 'UNKNOWN'}</b><span>Production art ${approved}/${total} · ${progress}%</span></article>
         <article><small>RUNTIME SLICE</small><b>${goldenSlice.runtimeCertified || 0}/${goldenSlice.total || 6} PASS</b><span>${goldenSlice.runtimePassed ? 'Hero · Enemy · Boss · Map · HUD · VFX' : 'Evidence incomplete'}</span></article>
         <article><small>CAMERA</small><b>${String(camera.label || camera.profile || 'SCENIC').toUpperCase()}</b><span>Distance ${camera.distance || 0} · Spread +${cameraDirector.spreadBonus || 0} · Pressure ${Math.round((cameraDirector.pressure || 0) * 100)}%</span></article>

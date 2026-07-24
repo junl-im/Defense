@@ -17,7 +17,7 @@ const failures = [];
 const pass = (message) => console.log(`PASS ${message}`);
 const check = (condition, message) => condition ? pass(message) : failures.push(message);
 
-check(Number(pkg.version.split('.')[0]) >= 7, 'package version remains v7 or later');
+check(Number((pkg.dokkaebi?.lineageVersion || pkg.version).split('.')[0]) >= 7, 'package version remains v7 or later');
 check(Number(ENGINE_VERSION.split('.')[0]) >= 6, 'engine version remains 6.0.0 or later');
 check(Number(ART_PRODUCTION_GATE_VERSION.split('.')[0]) >= 7, 'art gate version remains v7 or later');
 check(SAVE_SCHEMA_VERSION >= 7, 'save schema remains v7 or later');

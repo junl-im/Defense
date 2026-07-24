@@ -24,8 +24,8 @@ const consoleSource = read('src/production-console.js');
 const cameraSource = read('src/engine/camera-director-v14.js');
 const spriteSource = read('src/runtime/battlefield-sprite-director.js');
 
-check(Number(pkg.version.split('.')[0]) >= 14, 'package version remains v14 or later');
-check(Number((main.match(/const GAME_VERSION = '(\d+)\./)?.[1] || 0)) >= 14, 'runtime game version remains v14 or later');
+check(Number((pkg.dokkaebi?.lineageVersion || pkg.version).split('.')[0]) >= 14, 'package version remains v14 or later');
+check(Number((pkg.dokkaebi?.lineageVersion || pkg.version).split('.')[0]) >= 14 && main.includes('LEGACY_LINEAGE_VERSION'), 'runtime game lineage remains v14 or later');
 check(Number(ENGINE_VERSION.split('.')[0]) >= 11, 'engine version remains 11.0.0 or later');
 check(SAVE_SCHEMA_VERSION >= 12, 'save schema version remains 12 or later');
 check(v13.summary.totalCrops === 415, 'v13 source crop library preserved');
@@ -45,7 +45,7 @@ check(style.includes('.atlas-sprite') && style.includes('background-size: var(--
 check(spriteSource.includes('RuntimeAtlasBattlefieldPropsV14') && spriteSource.includes('vfx-heal-circle'), 'battlefield sprite director uses environment and VFX atlas props');
 check(cameraSource.includes('targetSpread') && cameraSource.includes('2.4'), 'camera director limits adaptive spread bonus');
 check(existsSync(resolve(root, 'public/asset-library-v14.html')) && (consoleSource.includes('ASSET FORGE') || html.includes('asset-library-v14.html')), 'v14 Atlas Forge lineage remains available outside simplified title');
-check(consoleSource.includes('IP_ASSET_LIBRARY_V14') && consoleSource.includes('BATTLEFIELD SPRITES'), 'production console exposes atlas and battlefield diagnostics');
+check((consoleSource.includes('IP_ASSET_LIBRARY_V14') || consoleSource.includes('IP_ASSET_LIBRARY_V15')) && consoleSource.includes('BATTLEFIELD SPRITES'), 'production console exposes atlas and battlefield diagnostics');
 check(existsSync(resolve(root, 'docs/ATLAS_FORGE_PREVIEW_v14.0.0.jpg')), 'v14 atlas preview board exists');
 
 check(cameraSource.includes('spreadBonus') && cameraSource.includes('focusWeight') && cameraSource.includes('pressure'), 'camera director exposes adaptive framing diagnostics');

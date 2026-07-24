@@ -20,8 +20,8 @@ const audit = read('src/runtime/runtime-visual-audit.js');
 const consoleSource = read('src/production-console.js');
 const titleBlock = html.slice(html.indexOf('<section id="title-screen"'), html.indexOf('<header id="hud"'));
 
-check(Number(pkg.version.split('.')[0]) >= 16, 'package version remains v16 or later');
-check(/const GAME_VERSION = '(?:16|17|18|19|20|21|22|23)\.\d+\.\d+'/.test(main), 'runtime game version remains v16 or later');
+check(Number((pkg.dokkaebi?.lineageVersion || pkg.version).split('.')[0]) >= 16, 'package version remains v16 or later');
+check(Number((pkg.dokkaebi?.lineageVersion || pkg.version).split('.')[0]) >= 16 && main.includes('LEGACY_LINEAGE_VERSION'), 'runtime game lineage remains v16 or later');
 check(Number(ENGINE_VERSION.split('.')[0]) >= 13, 'engine version remains 13.0.0 or later');
 check(SAVE_SCHEMA_VERSION >= 14, 'save schema version remains 14 or later');
 
@@ -42,7 +42,7 @@ check(sprites.includes("RuntimeAtlasBattlefieldPropsV16") && sprites.includes("p
 check(html.includes('id="hero-hud-portrait"') && main.includes('updateHeroHudPortrait'), 'selected atlas hero is visible in combat HUD');
 check(audit.includes('core-collision-guard') && audit.includes('title-simplified') && main.includes('runRuntimeVisualAudit'), 'runtime visual self-audit integrated');
 check(consoleSource.includes('VISUAL AUDIT') && (consoleSource.includes('CLEAR HORIZON v16') || (consoleSource.includes('MOON GATE REBORN v17') || consoleSource.includes('TEN-WAVE RELIABILITY v18'))), 'production console reports visual audit without cluttering title');
-check(html.includes(`const VERSION = '${pkg.version}'`), 'boot cache reset uses current version');
+check(html.includes(`const RELEASE_VERSION = '${pkg.dokkaebi?.releaseVersion || pkg.version}'`) && html.includes(`const BUILD_ID = '${pkg.dokkaebi?.buildId}'`), 'boot cache reset uses current release and build identity');
 check(['docs/CLEAR_HORIZON_v16.0.0.md', 'docs/RUNTIME_VISUAL_AUDIT_v16.0.0.json', 'docs/PATCH_NOTES_v16.0.0.md', 'docs/PATCH_APPLY_v16.0.0.md', 'docs/NEXT_PATCH_LINEUP_v16.x.md'].every((path) => existsSync(resolve(root, path))), 'v16 operating and audit documents exist');
 
 if (failures) {

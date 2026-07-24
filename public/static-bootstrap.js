@@ -1,7 +1,10 @@
 (() => {
-  const VERSION = '23.1.0';
+  const RELEASE_VERSION = '1.0.2';
+  const BUILD_ID = 'b24.2';
+  const VERSION = `${RELEASE_VERSION}-${BUILD_ID}`;
   const status = window.__DOKKAEBI_STATIC_BOOTSTRAP__ = {
-    version: VERSION,
+    version: RELEASE_VERSION,
+    buildId: BUILD_ID,
     startedAt: Date.now(),
     source: '',
     attempts: [],

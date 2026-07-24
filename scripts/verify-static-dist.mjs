@@ -8,9 +8,9 @@ const pass = (message) => console.log(`PASS ${message}`);
 const fail = (message) => { throw new Error(message); };
 
 const html = await readFile(path.join(dist, 'index.html'), 'utf8');
-if (!html.includes('src="./static-bootstrap.js?v=23.1.0"')) fail('resilient static bootstrap missing');
+if (!html.includes('src="./static-bootstrap.js?v=1.0.2-b24.2"')) fail('resilient static bootstrap missing');
 if (html.includes('type="importmap"')) fail('single-CDN import map should not be hardcoded in static HTML');
-if (!html.includes('href="./src/style.css?v=23.1.0"')) fail('versioned static stylesheet missing');
+if (!html.includes('href="./src/style.css?v=1.0.2-b24.2"')) fail('versioned static stylesheet missing');
 if (html.includes('src="/src/bootstrap.js"') || html.includes('src="/src/main.js"')) fail('root-only module path remains');
 await access(path.join(dist, 'static-bootstrap.js'));
 const staticBootstrap = await readFile(path.join(dist, 'static-bootstrap.js'), 'utf8');
@@ -20,15 +20,16 @@ pass('resilient static entrypoint and multi-source engine recovery');
 const main = await readFile(path.join(dist, 'src/main.js'), 'utf8');
 const style = await readFile(path.join(dist, 'src/style.css'), 'utf8');
 if (main.includes("import './style.css'")) fail('CSS module import remains in static build');
-if (!main.includes("const GAME_VERSION = '23.1.0'")) fail('static main version mismatch');
+if (!main.includes("const GAME_VERSION = '1.0.2'")) fail('static main version mismatch');
 if (!main.includes('renderAssetDiagnostics()')) fail('asset diagnostics missing from static build');
 if (!main.includes('force3DModels')) fail('force 3D model mode missing from static build');
 pass('static game module asset diagnostics');
 
 const catalog = await readFile(path.join(dist, 'src/engine/asset-catalog.js'), 'utf8');
-if (!catalog.includes("const ASSET_REVISION = '23.1.0'")) fail('asset cache revision missing');
+if (!catalog.includes("const ASSET_REVISION = CACHE_REVISION")) fail('asset cache revision missing');
 if (!catalog.includes('?v=${ASSET_REVISION}')) fail('asset cache-busting URL missing');
-pass('v23.1.0 asset cache revision');
+if (!catalog.includes("CACHE_REVISION")) fail('central asset cache revision import missing');
+pass('v1.0.2 build-generation asset cache revision');
 
 const modelDir = path.join(dist, 'assets/models');
 const models = (await readdir(modelDir)).filter((name) => name.endsWith('.glb'));
@@ -118,9 +119,9 @@ await access(path.join(dist, 'browser-lab-v19.html'));
 pass('v19 browser reliability, test API, versioned service worker and browser lab page');
 
 
-if (!main.includes('AssetPresenceEnforcer') || !main.includes('MobileHudDirectorV22') || !main.includes('MobileHudDirectorV23') || !main.includes('CombatReadabilityDirectorV21')) fail('v23 runtime integration modules missing');
-if (!style.includes('mobile-hud-v21') || !style.includes('action-asset-v21')) fail('v21 mobile HUD and action asset styles missing');
-if (!html.includes('title-feature-ribbon-v21') || !(html.includes('quiet-screen-v23') || html.includes('boot-recovery-v2301') || html.includes('clean-foundation-v2302') || html.includes('native-input-v2310'))) fail('v23 title presentation missing');
+if (!main.includes('AssetPresenceEnforcer') || !main.includes('MobileHudDirectorV23') || !main.includes('CombatReadabilityDirectorV21') || main.includes('new MobileHudDirectorV22')) fail('v23 runtime integration modules missing or obsolete v22 runtime remains');
+if (!style.includes('action-asset-v21') || style.includes('body.mobile-hud-v21 ') || style.includes('body.mobile-hud-v22 ')) fail('active action assets missing or obsolete mobile HUD CSS remains');
+if (!html.includes('title-feature-ribbon-v21') || !(html.includes('quiet-screen-v23') || html.includes('boot-recovery-v2301') || html.includes('clean-foundation-v2302') || (html.includes('native-input-v2310') || html.includes('release-v102-b24-2')))) fail('v23 title presentation missing');
 pass('v21/v22 lineage plus v23 Quiet Screen mobile HUD integration');
 
 const automationV22 = await readFile(path.join(dist, 'src/runtime/automation-director-v22.js'), 'utf8');

@@ -25,6 +25,7 @@ const sw = read('public/sw.js');
 const vite = read('vite.config.js');
 const pkg = JSON.parse(read('package.json'));
 const manifest = JSON.parse(read('public/manifest.webmanifest'));
+const versionPolicy = read('src/version-policy.js');
 
 const htmlIds = new Set([...html.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]));
 const queriedIds = [...main.matchAll(/\$\('#([^']+)'\)/g)].map((match) => match[1]);
@@ -52,7 +53,7 @@ if (extraRootMarkdown.length) console.log(`INFO 추가 루트 Markdown은 빌드
 if (manifest.start_url === './') pass('PWA 상대 경로 start_url');
 else fail(`PWA start_url 확인 필요: ${manifest.start_url}`);
 
-if (main.includes(`const GAME_VERSION = '${expectedGameVersion}'`)) pass(`런타임 version ${expectedGameVersion}`);
+if (main.includes(`const GAME_VERSION = '${expectedGameVersion}'`) && versionPolicy.includes(`PUBLIC_GAME_VERSION = '${expectedGameVersion}'`)) pass(`런타임 version ${expectedGameVersion}`);
 else fail(`런타임 version 불일치: package=${expectedGameVersion}`);
 
 for (const feature of ['offerContract', 'resolveActiveContract', 'checkBossPhase', 'kingNightMarch', 'bossPounce']) {
@@ -164,7 +165,7 @@ if (titleBlock.includes('id="start-btn"') && titleBlock.includes('id="title-setu
 else fail('타이틀 패치 설명 제거 필요');
 if (main.includes('this.modalStack = []') && main.includes('modalParents') && main.includes('modal-obscured') && style.includes('--modal-layer') && style.includes('#controls-modal { z-index: var(--modal-layer, 154); }')) pass('일시정지 위 카메라 설정 모달 스택');
 else fail('중첩 모달 레이어 수정 누락');
-if (assetSpecs.includes('directions: AUTHORED_VIEW_STANDARD.runtimeDirections') && assetSpecs.includes('authoredDirections: AUTHORED_VIEW_STANDARD.authoredDirections') && artTokens.includes('targetHeadsTall: 2.3') && existsSync(resolve(root, 'docs/ASSET_BIBLE.md')) && existsSync(resolve(root, 'docs/AI_ASSET_PROMPTS.md')) && existsSync(resolve(root, 'docs/BLENDER_EXPORT_GUIDE.md'))) pass('AAA SD PBR 아트 바이블과 5방향+미러링 제작 규격');
+if (assetSpecs.includes('directions: AUTHORED_VIEW_STANDARD.runtimeDirections') && assetSpecs.includes('authoredDirections: AUTHORED_VIEW_STANDARD.authoredDirections') && artTokens.includes('targetHeadsTall: 2.3') && existsSync(resolve(root, 'docs/ABSOLUTE_ART_BIBLE_v2.0.md')) && existsSync(resolve(root, 'docs/AI_ASSET_PROMPTS.md')) && existsSync(resolve(root, 'docs/BLENDER_EXPORT_GUIDE.md'))) pass('AAA SD PBR 아트 바이블과 5방향+미러링 제작 규격');
 else fail('SD 아트 바이블 또는 방향 제작 규격 누락');
 
 

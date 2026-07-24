@@ -25,9 +25,8 @@ const consoleSource = read('src/production-console.js');
 const catalog = read('src/engine/asset-catalog.js');
 const approval = json('docs/ART_ASSET_APPROVAL_REGISTRY_v11.0.0.json');
 
-check(Number(pkg.version.split('.')[0]) >= 11, 'package version remains v11 or later');
-const runtimeVersion = Number(main.match(/const GAME_VERSION = '(\d+)\.\d+\.\d+'/)?.[1] || 0);
-check(runtimeVersion >= 11, 'runtime game version remains v11 or later');
+check(Number((pkg.dokkaebi?.lineageVersion || pkg.version).split('.')[0]) >= 11, 'package version remains v11 or later');
+check(Number((pkg.dokkaebi?.lineageVersion || pkg.version).split('.')[0]) >= 11 && main.includes('LEGACY_LINEAGE_VERSION'), 'runtime game lineage remains v11 or later');
 check(Number(ENGINE_VERSION.split('.')[0]) >= 9, 'engine version remains 9.0.0 or later');
 const assetRevision = Number(catalog.match(/ASSET_REVISION = '(\d+)\.\d+\.\d+'/)?.[1] || 0);
 check(assetRevision >= 11, 'asset revision remains v11 or later');

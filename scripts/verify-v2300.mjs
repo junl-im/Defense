@@ -6,8 +6,8 @@ const html = read('index.html');
 const pkg = JSON.parse(read('package.json'));
 const mobile = read('src/runtime/mobile-hud-director-v23.js');
 const checks = [
-  ['package version remains v23', /^23\.\d+\.\d+$/.test(pkg.version)],
-  ['game version remains v23', /GAME_VERSION = '23\.\d+\.\d+'/.test(main)],
+  ['package lineage remains v23', /^23\.\d+\.\d+$/.test(pkg.dokkaebi?.lineageVersion || pkg.version)],
+  ['game lineage remains v23', /^23\.\d+\.\d+$/.test(pkg.dokkaebi?.lineageVersion || pkg.version) && main.includes('LEGACY_LINEAGE_VERSION')],
   ['engine version 20.0.0', /ENGINE_VERSION = '(?:2[0-9]|[3-9][0-9])\.\d+\.\d+'/.test(read('src/engine/engine-config.js'))],
   ['save schema 21', read('src/runtime/save-schema.js').includes('SAVE_SCHEMA_VERSION = 21')],
   ['service worker remains v23', /VERSION = '23\.\d+\.\d+'/.test(read('public/sw.js'))],
@@ -20,7 +20,7 @@ const checks = [
   ['compact micro landscape profiles', css.includes('mobile-hud-v23-compact') && css.includes('mobile-hud-v23-micro') && css.includes('mobile-hud-v23-landscape')],
   ['runtime overlap protection', mobile.includes('overlapPairs') && mobile.includes('mobile-hud-v23-emergency') && mobile.includes('ResizeObserver')],
   ['nonessential mobile panels folded', css.includes('body.mobile-hud-v23 #first-mission-panel') && css.includes('body.mobile-hud-v23 #synergy-panel')],
-  ['title art cache revision updated', html.includes('quiet-screen-v23') || html.includes('boot-recovery-v2301') || html.includes('clean-foundation-v2302') || html.includes('native-input-v2310')],
+  ['title art cache revision updated', html.includes('quiet-screen-v23') || html.includes('boot-recovery-v2301') || html.includes('clean-foundation-v2302') || (html.includes('native-input-v2310') || html.includes('release-v102-b24-2'))],
   ['v23 operating docs exist', ['docs/QUIET_SCREEN_v23.0.0.md','docs/PATCH_NOTES_v23.0.0.md','docs/PATCH_APPLY_v23.0.0.md','docs/NEXT_PATCH_LINEUP_v23.x.md','docs/MOBILE_UI_SIMULATION_v23.0.0.json'].every(fs.existsSync)]
 ];
 let failed = 0;

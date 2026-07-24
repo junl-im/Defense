@@ -12,9 +12,9 @@
     <link rel="icon" href="./icon-192.png" type="image/png" />
     <link rel="apple-touch-icon" href="./icon-192.png" />
     <title>도깨비 운빨 수호대 3D</title>
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-desktop-v17.webp?rev=native-input-v2310" media="(min-width: 721px) and (orientation: landscape)" />
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-mobile-v17.webp?rev=native-input-v2310" media="(max-width: 720px), (orientation: portrait)" />
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-mascot-v17.webp?rev=native-input-v2310" />
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-desktop-v17.webp?rev=release-v102-b24-2" media="(min-width: 721px) and (orientation: landscape)" />
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-mobile-v17.webp?rev=release-v102-b24-2" media="(max-width: 720px), (orientation: portrait)" />
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-mascot-v17.webp?rev=release-v102-b24-2" />
     <!-- active lineage v22.0.0 · BROWSER RELIABILITY LAB -->
   </head>
   <body>
@@ -52,8 +52,8 @@
       <section id="title-screen" class="screen title-screen-v17">
         <div class="title-scene-v17">
           <picture class="title-mascot-stage">
-            <source media="(max-width: 720px), (orientation: portrait)" srcset="./src/assets/title-v17/title-mascot-v17.webp?rev=native-input-v2310" />
-            <img class="title-mascot title-mascot-v17" src="./src/assets/title-v17/title-mascot-v17.webp?rev=native-input-v2310" alt="푸른 도깨비불과 곤봉을 든 도깨비 수호대 마스코트" fetchpriority="high" decoding="async" />
+            <source media="(max-width: 720px), (orientation: portrait)" srcset="./src/assets/title-v17/title-mascot-v17.webp?rev=release-v102-b24-2" />
+            <img class="title-mascot title-mascot-v17" src="./src/assets/title-v17/title-mascot-v17.webp?rev=release-v102-b24-2" alt="푸른 도깨비불과 곤봉을 든 도깨비 수호대 마스코트" fetchpriority="high" decoding="async" />
           </picture>
           <div class="title-panel title-panel-simple title-panel-v17">
             <p class="kicker">KOREAN FANTASY DEFENSE</p>
@@ -553,7 +553,9 @@
     </div>
     <script>
       (() => {
-        const VERSION = '23.1.0';
+        const RELEASE_VERSION = '1.0.2';
+        const BUILD_ID = 'b24.2';
+        const VERSION = `${RELEASE_VERSION}-${BUILD_ID}`;
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
         const retryButton = document.getElementById('boot-retry-btn');
@@ -566,7 +568,8 @@
         };
         setStartReady(false);
         const diagnostics = window.__DOKKAEBI_BOOT_DIAGNOSTICS__ = {
-          version: VERSION,
+          version: RELEASE_VERSION,
+          buildId: BUILD_ID,
           startedAt: Date.now(),
           serviceWorkerVersion: '',
           serviceWorkerControlled: false,
@@ -614,7 +617,7 @@
             const worker = registration.active || registration.waiting || registration.installing || navigator.serviceWorker.controller;
             const result = await messageWorker(worker, { type: 'DOKKAEBI_GET_VERSION' });
             if (result?.version) diagnostics.serviceWorkerVersion = result.version;
-            if (result?.version && result.version !== VERSION) {
+            if ((result?.version && result.version !== RELEASE_VERSION) || (result?.buildId && result.buildId !== BUILD_ID)) {
               const purged = await messageWorker(worker, { type: 'DOKKAEBI_PURGE', targetVersion: VERSION }, 3500);
               diagnostics.purgeCount += Array.isArray(purged?.removed) ? purged.removed.length : 0;
             }

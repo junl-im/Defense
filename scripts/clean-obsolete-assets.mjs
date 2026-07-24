@@ -1,8 +1,10 @@
 import { existsSync, readdirSync, rmSync } from 'node:fs';
 import { basename, relative, resolve } from 'node:path';
 import { normalizeWebManifestFile } from './manifest-policy.mjs';
+import { organizeLegacyRootOutput } from './root-output-policy.mjs';
 
 const root = resolve(import.meta.dirname, '..');
+organizeLegacyRootOutput({ root });
 const fixedObsolete = [
   'public/icon.svg',
   'public/cover.svg',
@@ -17,7 +19,8 @@ const fixedObsolete = [
   'public/assets/models/monster-imp-nextgen.glb',
   'dist/assets/models/boss-tiger-nextgen.glb',
   'dist/assets/models/guardian-ember-nextgen.glb',
-  'dist/assets/models/monster-imp-nextgen.glb'
+  'dist/assets/models/monster-imp-nextgen.glb',
+  'docs/ASSET_BIBLE.md'
 ];
 
 const removed = [];

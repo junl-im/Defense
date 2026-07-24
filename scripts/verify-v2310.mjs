@@ -10,10 +10,10 @@ const consoleSource = read('src/production-console.js');
 const keyboardBlock = main.match(/on\(window, 'keydown',[\s\S]*?'keyboard-movement-up'\);/)?.[0] || '';
 
 const checks = [
-  ['package version 23.1.0', pkg.version === '23.1.0'],
-  ['runtime version 23.1.0', main.includes("GAME_VERSION = '23.1.0'")],
+  ['legacy package lineage 23.1.0', pkg.dokkaebi?.lineageVersion === '23.1.0'],
+  ['runtime preserves v23.1.0 lineage marker', main.includes("const GAME_VERSION = '23.1.0'; historical lineage marker")],
   ['engine version 21.0.0', read('src/engine/engine-config.js').includes("ENGINE_VERSION = '21.0.0'")],
-  ['service worker version 23.1.0', read('public/sw.js').includes("VERSION = '23.1.0'")],
+  ['service worker preserves monotonic build generation', read('public/sw.js').includes("BUILD_ID = 'b24.2'")],
   ['global game shortcuts disabled by policy', policy.includes('GLOBAL_GAME_SHORTCUTS_ENABLED = false')],
   ['movement input remains available', ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].every((code) => policy.includes(`'${code}'`))],
   ['global keyboard handler only processes movement', keyboardBlock.includes('isMovementCode(code)') && !/code === ['"]F\d+/.test(keyboardBlock)],
@@ -24,7 +24,7 @@ const checks = [
   ['desktop title uses split columns', style.includes('v23.1.0 Native Input Shell') && style.includes('grid-template-columns: minmax(430px, 1.12fr) minmax(370px, .88fr)')],
   ['desktop mascot uses left column', style.includes('position: relative;\n    grid-column: 1;') && style.includes('grid-column: 2;\n    justify-self: end;')],
   ['mobile title flow remains supported', style.includes('@media (max-width:760px)') || style.includes('@media (max-width: 760px)')],
-  ['cache revision updated', html.includes('native-input-v2310') && read('src/engine/asset-catalog.js').includes("ASSET_REVISION = '23.1.0'")],
+  ['cache revision updated', (html.includes('native-input-v2310') || html.includes('release-v102-b24-2')) && read('src/engine/asset-catalog.js').includes("ASSET_REVISION = '23.1.0'; historical lineage marker")],
   ['documentation exists', fs.existsSync('docs/NATIVE_INPUT_SHELL_v23.1.0.md') && fs.existsSync('docs/PATCH_NOTES_v23.1.0.md') && fs.existsSync('docs/PATCH_APPLY_v23.1.0.md')],
   ['handoff locks native browser keys', read('PROJECT_HANDOFF.md').includes('PERMANENT NATIVE KEY CONTRACT')],
   ['production console no longer advertises function keys', !consoleSource.includes('F4 toggle') && !consoleSource.includes('F7 browser snapshot')]

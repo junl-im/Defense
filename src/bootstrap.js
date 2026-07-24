@@ -1,6 +1,9 @@
-const BOOTSTRAP_VERSION = '23.1.0';
+import { PUBLIC_GAME_VERSION, LEGACY_LINEAGE_VERSION, BUILD_ID } from './version-policy.js';
+const BOOTSTRAP_VERSION = PUBLIC_GAME_VERSION;
 window.__DOKKAEBI_ENTRY_DIAGNOSTICS__ = {
   version: BOOTSTRAP_VERSION,
+  lineageVersion: LEGACY_LINEAGE_VERSION,
+  buildId: BUILD_ID,
   loadedAt: Date.now(),
   mode: 'bundled-entry'
 };

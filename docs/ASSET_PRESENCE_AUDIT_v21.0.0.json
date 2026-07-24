@@ -36,7 +36,7 @@
     "combatReadability": true,
     "shamanThreatTracer": true,
     "enemyMarkers": true,
-    "mobileEmergencyLayout": true
+    "mobileEmergencyLayout": false
   },
   "languageAudit": {
     "documentLanguage": true,

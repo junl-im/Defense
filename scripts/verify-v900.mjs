@@ -19,8 +19,8 @@ const gate = read('src/art-production-gate.js');
 const html = read('index.html');
 const libraryHtml = read('public/asset-library-v9.html');
 
-check(Number(pkg.version.split('.')[0]) >= 9, 'package retains v9+ asset foundation');
-check(/const GAME_VERSION = '(?:9|[1-9][0-9]+)\./.test(main), 'runtime retains v9+ game lineage');
+check(Number((pkg.dokkaebi?.lineageVersion || pkg.version).split('.')[0]) >= 9, 'package retains v9+ asset foundation');
+check(Number((pkg.dokkaebi?.lineageVersion || pkg.version).split('.')[0]) >= 9 && main.includes('LEGACY_LINEAGE_VERSION'), 'runtime retains v9+ game lineage');
 check(/ENGINE_VERSION = '(?:7|[89]|[1-9][0-9]+)\./.test(engine), 'engine retains v7+ lineage');
 check(/ASSET_REVISION = '(?:9|[1-9][0-9]+)\./.test(catalog), 'asset cache retains v9+ lineage');
 check(registry.summary.totalFiles === 970, '970 source files audited');

@@ -10,8 +10,8 @@ const simulations = [
   read('scripts/simulate-mobile-hud-v23.mjs')
 ];
 const checks = [
-  ['package retains v23.0.2 or later lineage', /^23\.(?:0\.[2-9]|[1-9]\.\d+)$/.test(pkg.version)],
-  ['runtime retains v23.0.2 or later lineage', /GAME_VERSION = '23\.(?:0\.[2-9]|[1-9]\.\d+)'/.test(read('src/main.js'))],
+  ['package retains v23.0.2 or later lineage', /^23\.(?:0\.[2-9]|[1-9]\.\d+)$/.test(pkg.dokkaebi?.lineageVersion || pkg.version)],
+  ['runtime retains v23.0.2 or later lineage', /^23\.(?:0\.[2-9]|[1-9]\.\d+)$/.test(pkg.dokkaebi?.lineageVersion || pkg.version) && read('src/main.js').includes('LEGACY_LINEAGE_VERSION')],
   ['service worker retains v23.0.2 or later lineage', /VERSION = '23\.(?:0\.[2-9]|[1-9]\.\d+)'/.test(read('public/sw.js'))],
   ['root hygiene verifier exists', fs.existsSync('scripts/verify-root-hygiene.mjs')],
   ['root organizer exists', fs.existsSync('scripts/organize-root-output.mjs')],

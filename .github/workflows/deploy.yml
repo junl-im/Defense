@@ -69,7 +69,7 @@ jobs:
           VITE_BASE_PATH: /Defense/
 
       - name: Verify self-contained production bundle
-        run: node scripts/verify-production-bundle-v2310.mjs
+        run: node scripts/verify-production-bundle-v101.mjs
 
       - name: Final root hygiene check
         run: npm run hygiene:check

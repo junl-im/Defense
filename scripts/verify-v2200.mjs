@@ -5,8 +5,8 @@ const css = read('src/style.css');
 const html = read('index.html');
 const pkg = JSON.parse(read('package.json'));
 const checks = [
-  ['package version remains v22 or later', Number(pkg.version.split('.')[0]) >= 22],
-  ['runtime retains v22 lineage', /GAME_VERSION = '(?:2[2-9]|[3-9]\d)\.\d+\.\d+'/.test(main)],
+  ['package version remains v22 or later', Number((pkg.dokkaebi?.lineageVersion || pkg.version).split('.')[0]) >= 22],
+  ['runtime retains v22 lineage', Number((pkg.dokkaebi?.lineageVersion || pkg.version).split('.')[0]) >= 22 && main.includes('LEGACY_LINEAGE_VERSION')],
   ['engine remains 19.0.0 or later', /ENGINE_VERSION = '(?:19|[2-9]\d)\.\d+\.\d+'/.test(read('src/engine/engine-config.js'))],
   ['save schema remains 20 or later', Number(read('src/runtime/save-schema.js').match(/SAVE_SCHEMA_VERSION = (\d+)/)?.[1] || 0) >= 20],
   ['service worker remains v22 or later', /VERSION = '(?:2[2-9]|[3-9]\d)\.\d+\.\d+'/.test(read('public/sw.js'))],
@@ -15,7 +15,7 @@ const checks = [
   ['shaman range capped', main.includes('distance <= 12.5') && main.includes('distanceTo(this.player.group.position) <= 10.5')],
   ['global wheel and pinch zoom retained without forced buttons', main.includes('camera-wheel-global') && main.includes('pinchSensitivity') && !html.includes('zoom-in-btn') && !html.includes('zoom-out-btn')],
   ['centered title layout', css.includes(".title-scene-v17 { display:grid; grid-template-columns:1fr; place-items:center")],
-  ['mobile HUD v22 wired', main.includes('new MobileHudDirectorV22') && css.includes('mobile-hud-v22-emergency')],
+  ['mobile HUD v22 lineage superseded by v23', fs.existsSync('src/runtime/mobile-hud-director-v22.js') && main.includes('new MobileHudDirectorV23') && css.includes('mobile-hud-v23-emergency') && !main.includes('new MobileHudDirectorV22')],
   ['treasure prompts localized', read('src/runtime/battlefield-prop-system.js').includes("prompt: '상자 열기'")],
   ['auto wave panel clickable', html.includes('id="auto-wave-panel"') && html.includes('role="button"') && main.includes('auto-wave-panel-click')],
   ['reward countdown 10 seconds', html.includes('blessing-auto-seconds') && html.includes('relic-auto-seconds') && html.includes('contract-auto-seconds') && main.includes("startRewardAutoChoice('blessing', 10)") && main.includes("startRewardAutoChoice('relic', 10)")],

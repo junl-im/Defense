@@ -1,22 +1,21 @@
-> v23.1.0 Native Input Shell: 브라우저 기본 키를 보존하고 PC 타이틀을 좌우 분리했습니다.
-
 # Dokkaebi Luck Defense 3D
 
-## v23.1.0 입력·타이틀 원칙
+## 현재 공개 버전
 
-- F1~F12 브라우저 기본 동작 보존
-- 게임 전역 액션 단축키 없음
-- PC 키보드 이동은 WASD·방향키만 지원
-- PC 타이틀: 마스코트 좌측, 접속 패널 우측
-- 모바일 타이틀: 중앙형 흐름 유지
-
-## 현재 버전
-
-- 게임: **23.1.0**
+- 게임: **1.0.2**
+- 내부 개발 계보: **23.1.0**
+- 빌드 ID: **b24.2**
 - 엔진: **21.0.0**
 - 세이브 스키마: **21**
-- 기준 버전: **v23.0.1 Boot Recovery**
-- 구조 계약: **Project Structure Rules v1.0**
+- 패치: **Code Health Foundation**
+
+## 버전 순서
+
+- 일반 개선: `1.0.1 → 1.0.2 → ... → 1.0.99`
+- 초대규모 개편: `1.1.0 → 1.2.0`
+- 캐시와 배포 순서는 별도 빌드 ID로 관리
+
+상세 정책: `docs/VERSION_POLICY_v1.0.md`
 
 ## 프로젝트 기본 골격
 
@@ -33,43 +32,37 @@
 └─ PROJECT_HANDOFF.md
 ```
 
-### 영구 규칙
+## 코드 건강 규칙
 
-- 루트에 임의의 로그, 감사 JSON, 시뮬레이션 JSON, 미리보기 이미지, ZIP을 만들지 않습니다.
-- 검증과 빌드 결과는 `logs/verify/`, `logs/build/`에 기록합니다.
-- 시뮬레이션과 자동 감사는 `logs/simulations/`, `logs/audits/`에 기록합니다.
-- 패치 관리 파일은 `logs/patch/<version>/`에만 둡니다.
-- `docs/` 기준선은 `--refresh-baseline`을 명시한 경우에만 갱신합니다.
-- 새 루트 파일이나 디렉터리가 생기면 `npm run hygiene:check`가 실패합니다.
+- 사용하지 않는 import를 남기지 않습니다.
+- 최신 구현이 대체한 런타임 인스턴스와 CSS는 제거합니다.
+- 과거 회귀 증거는 삭제하지 않고 명시적 허용 목록으로 관리합니다.
+- 동일한 정식 문서는 하나의 정본만 유지합니다.
+- 패키지 명령이 존재하지 않는 파일을 가리키면 검증이 실패합니다.
 
-상세 규칙: `docs/PROJECT_STRUCTURE_RULES_v1.0.md`
-
-## 자주 사용하는 명령
+코드 감사:
 
 ```bash
-npm run hygiene:check
-npm run hygiene:organize
-npm run verify:logged
-npm run build:logged
+npm run audit:code:v102
 ```
 
-일반 검증:
+결과는 `logs/audits/CODE_HEALTH_AUDIT_v1.0.2.json`에 생성됩니다.
+
+## 루트 위생 규칙
+
+- 루트에 로그, 감사 JSON, 시뮬레이션 결과, 미리보기, ZIP을 만들지 않습니다.
+- 과거 패치 파일은 `npm run clean:obsolete`가 `logs/legacy-root-output/`으로 이동합니다.
+- 패치 관리 파일은 `logs/patch/<version>/` 아래에만 둡니다.
+
+## 검증 명령
 
 ```bash
+npm run clean:obsolete
+npm run hygiene:check
+npm run audit:code:v102
 npm run verify
-npm run simulate:v2300
-npm run simulate:v2200
-npm run simulate:v1800
 npm run build:static
 node scripts/verify-static-dist.mjs
-```
-
-시뮬레이션 기준선을 의도적으로 갱신할 때만:
-
-```bash
-node scripts/simulate-mobile-hud-v23.mjs --refresh-baseline
-node scripts/simulate-autonomous-moonfront-v22.mjs --refresh-baseline
-node scripts/simulate-ten-wave-run-v18.mjs --refresh-baseline
 ```
 
 ## 현재 제작 상태
@@ -81,5 +74,3 @@ node scripts/simulate-ten-wave-run-v18.mjs --refresh-baseline
 - v15 런타임 아틀라스: **154프레임**
 - 최종 제작 아트: **0/6**
 - 1,130개 대량 생산: **잠금 유지**
-
-Absolute Art Bible v2.0과 Character DNA v3.0은 최상위 제작 계약입니다. 기존 후보 GLB와 자동 처리 2D 자산은 최종 제작 아트로 승인하지 않습니다.

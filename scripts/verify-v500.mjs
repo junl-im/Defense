@@ -27,7 +27,7 @@ const failures = [];
 const pass = (message) => console.log(`PASS ${message}`);
 const check = (condition, message) => condition ? pass(message) : failures.push(message);
 
-check(Number(pkg.version.split('.')[0]) >= 5, 'package version remains v5 or later');
+check(Number((pkg.dokkaebi?.lineageVersion || pkg.version).split('.')[0]) >= 5, 'package version remains v5 or later');
 check(Number(ENGINE_VERSION.split('.')[0]) >= 4, 'engine version remains 4.0.0 or later');
 check(Number(ART_PRODUCTION_GATE_VERSION.split('.')[0]) >= 5, 'art production gate remains v5 or later');
 check(CHARACTER_DNA_VERSION === '3.0.0', 'character DNA version 3.0.0');

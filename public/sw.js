@@ -1,8 +1,10 @@
-const VERSION = '23.1.0';
+const RELEASE_VERSION = '1.0.2';
+const BUILD_ID = 'b24.2';
+// const VERSION = '23.1.0'; historical lineage marker.
 const CACHE_PREFIX = 'dokkaebi-shell-';
-const CACHE_NAME = `${CACHE_PREFIX}v${VERSION}`;
+const CACHE_NAME = `${CACHE_PREFIX}${BUILD_ID}`;
 const SHELL_ASSETS = [
-  './', './index.html', './manifest.webmanifest', './browser-lab-v19.html',
+  './', './index.html', './manifest.webmanifest', './version.json', './browser-lab-v19.html',
   './icon-192.png', './icon-512.png', './icon-maskable-512.png',
   './static-bootstrap.js', './src/bootstrap.js', './src/style.css', './src/main.js',
   './src/assets/title-v17/title-bg-desktop-v17.webp',
@@ -31,14 +33,14 @@ self.addEventListener('activate', (event) => event.waitUntil((async () => { awai
 self.addEventListener('message', (event) => {
   const data = event.data || {};
   if (data.type === 'DOKKAEBI_GET_VERSION') {
-    event.ports?.[0]?.postMessage({ type: 'DOKKAEBI_VERSION', version: VERSION, cacheName: CACHE_NAME });
+    event.ports?.[0]?.postMessage({ type: 'DOKKAEBI_VERSION', version: RELEASE_VERSION, buildId: BUILD_ID, cacheName: CACHE_NAME });
     return;
   }
   if (data.type === 'DOKKAEBI_PURGE') {
     event.waitUntil((async () => {
       const removed = await removeOldCaches({ includeCurrent: true });
       await precache();
-      event.ports?.[0]?.postMessage({ type: 'DOKKAEBI_PURGED', version: VERSION, removed });
+      event.ports?.[0]?.postMessage({ type: 'DOKKAEBI_PURGED', version: RELEASE_VERSION, buildId: BUILD_ID, removed });
     })());
   }
 });

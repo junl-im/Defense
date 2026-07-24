@@ -9,6 +9,7 @@ const js = assets.filter((name) => name.endsWith('.js'));
 if (!js.length) throw new Error('Vite JavaScript bundle is missing');
 if (!html.includes('type="module"') || !html.includes('/assets/')) throw new Error('Vite module entry is missing from production HTML');
 await access(path.join(dist, 'sw.js'));
+await access(path.join(dist, 'version.json'));
 const sw = await readFile(path.join(dist, 'sw.js'), 'utf8');
 if (!sw.includes("RELEASE_VERSION = '1.0.2'") || !sw.includes("BUILD_ID = 'b24.2'")) throw new Error('service worker release/build identity is missing');
-console.log(`PASS production bundle is self-contained (${js.length} JavaScript assets)`);
+console.log(`PASS v1.0.2 production bundle is self-contained (${js.length} JavaScript assets)`);

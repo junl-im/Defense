@@ -1,12 +1,13 @@
 import * as THREE from 'three';
 import './style.css';
 import { isFirebaseEnabled, loadOnlineScores, submitOnlineScore } from './firebase.js';
+import { PUBLIC_GAME_VERSION, LEGACY_LINEAGE_VERSION, BUILD_ID, CACHE_REVISION, VERSION_POLICY } from './version-policy.js';
 import SoundEngine from './sound-engine.js';
 import { RANKS, UNIT_TYPES, UNIT_KEYS, ENEMY_TYPES, SYNERGIES, BLESSINGS, CONTRACTS } from './game-data.js';
 import { selectMoonOmen, rollEliteAffix } from './run-director.js';
-import { RUN_MODES, RELICS, RELIC_SET_BONUSES, getRunMode, getRelicById, selectRelicOptions, getRelicSetProgress, activateRelicSetBonuses, rollWaveTrial, getWaveTrialProgress, getWaveTrialReward, formatTrialProgress } from './expedition-director.js';
-import { RUN_SEED_MODES, createSeededRandom, createDailySeed, createRandomSeed, getDailyEdict, formatRunSeed } from './daily-expedition.js';
-import { BOSS_PROFILES, getBossWave, getBossTypeForWave, getBossSpawnCount, isBossWave } from './boss-director.js';
+import { RUN_MODES, RELICS, getRunMode, getRelicById, selectRelicOptions, getRelicSetProgress, activateRelicSetBonuses, rollWaveTrial, getWaveTrialProgress, getWaveTrialReward, formatTrialProgress } from './expedition-director.js';
+import { RUN_SEED_MODES, createSeededRandom, createDailySeed, createRandomSeed, getDailyEdict } from './daily-expedition.js';
+import { BOSS_PROFILES, getBossTypeForWave, getBossSpawnCount, isBossWave } from './boss-director.js';
 import { getBattlefieldTheme } from './battlefield-themes.js';
 import { CODEX_SECTION_META, CODEX_SECTION_ORDER, getCodexEntries, getCodexTotals } from './codex-data.js';
 import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, ObjectPool, RenderStatsHUD, AssetPipeline, AnimationStateSystem, FrameBudgetScheduler } from './engine/index.js';
@@ -15,7 +16,6 @@ import { DEFAULT_CAMERA_PROFILE_ID, getCameraProfile, sanitizeCameraProfileId, c
 import { CORE_ASSET_CATALOG, PLAYER_ASSET_ID, GUARDIAN_ASSET_IDS, MONSTER_ASSET_IDS, BOSS_ASSET_IDS } from './engine/asset-catalog.js';
 import { HERO_CLASSES, HERO_CLASS_ORDER, HERO_CLASS_ASSET_IDS, getHeroClass } from './hero-classes.js';
 import { applyHeroArchetypeModifiers, getHeroArchetypePassive, HERO_ARCHETYPE_SUMMARY } from './hero-archetype-system.js';
-import { IP_ASSET_LIBRARY_V13 } from './ip-asset-library-v13.js';
 import { IP_ASSET_LIBRARY_V15, atlasSpriteMarkup } from './ip-asset-library-v15.js';
 import { applyHeroClassVisuals, applyRelicVisuals } from './hero-visual-loadout.js';
 import { applyEnemyCandidateVisuals } from './enemy-candidate-visuals.js';
@@ -58,11 +58,11 @@ import BrowserReliabilityLab from './runtime/browser-reliability-lab.js';
 import { installKoreanLanguageGuard } from './runtime/korean-language-guard.js';
 import VisualIntegrationDirector from './runtime/visual-integration-director.js';
 import AssetPresenceEnforcer from './runtime/asset-presence-enforcer.js';
-import MobileHudDirectorV22 from './runtime/mobile-hud-director-v22.js';
 import MobileHudDirectorV23 from './runtime/mobile-hud-director-v23.js';
 import CombatReadabilityDirectorV21 from './combat/combat-readability-director-v21.js';
 import GuardianTargetingDirectorV22 from './combat/guardian-targeting-director-v22.js';
 import AutomationDirectorV22 from './runtime/automation-director-v22.js';
+import CoreFoundationDirectorV101 from './runtime/core-foundation-director-v101.js';
 // CameraDirector v14/v15 lineage is preserved by CameraDirectorV16.
 
 const $ = (selector) => document.querySelector(selector);
@@ -124,7 +124,9 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '23.1.0';
+const GAME_VERSION = '1.0.2';
+// const GAME_VERSION = '23.1.0'; historical lineage marker for pre-normalization contracts.
+if (GAME_VERSION !== PUBLIC_GAME_VERSION) throw new Error('Public version policy mismatch');
 function runtimeSpriteMarkup(path, alt = '', className = '') {
   if (!path) return '';
   const atlas = atlasSpriteMarkup(path, alt, className);
@@ -303,6 +305,7 @@ class DokkaebiLuckDefense {
     this.uiBound = false;
     this.hudLayout = null;
     this.frameScheduler = new FrameBudgetScheduler();
+    this.coreFoundation = new CoreFoundationDirectorV101({ versionPolicy: VERSION_POLICY, lowPower: this.lowPower });
     this.encounterDirector = new EncounterDirector({ random: () => this.random() });
     this.statusEffects = new StatusEffectSystem({ random: () => this.random() });
     this.combatTelemetry = new CombatTelemetry();
@@ -318,7 +321,6 @@ class DokkaebiLuckDefense {
     this.waveReliability = new WaveReliabilityDirector();
     this.browserReliability = new BrowserReliabilityLab({ version: GAME_VERSION });
     this.assetPresence = new AssetPresenceEnforcer({ version: GAME_VERSION });
-    this.mobileHudV22 = new MobileHudDirectorV22(); // v22 lineage retained for regression inspection.
     this.mobileHudV23 = new MobileHudDirectorV23();
     this.guardianTargetingV22 = new GuardianTargetingDirectorV22();
     this.automationV22 = new AutomationDirectorV22();
@@ -516,6 +518,8 @@ class DokkaebiLuckDefense {
       artSummary: ART_PRODUCTION_SUMMARY,
       milestones: MASSIVE_UPDATE_MILESTONES,
       getDiagnostics: () => ({
+        versionPolicy: VERSION_POLICY,
+        coreFoundation: this.coreFoundation?.diagnostics || {},
         performance: this.engine.monitor.snapshot,
         quality: this.engine.qualityGovernor?.diagnostics || {},
         qualityScale: this.engine.qualityScale,
@@ -544,7 +548,6 @@ class DokkaebiLuckDefense {
         waveReliability: this.waveReliability?.report || {},
         browserReliability: this.browserReliability?.diagnostics || {},
         assetPresence: this.assetPresence?.report || {},
-        mobileHudV22: this.mobileHudV22?.report || {},
         mobileHudV23: this.mobileHudV23?.report || {},
         combatReadability: this.combatReadability?.snapshot || {},
         runtimeErrors: { count: this.runtimeErrors.length, last: this.runtimeErrors.at(-1) || null },
@@ -3924,6 +3927,10 @@ class DokkaebiLuckDefense {
 
   getBrowserReliabilitySnapshot() {
     return {
+      releaseVersion: GAME_VERSION,
+      lineageVersion: LEGACY_LINEAGE_VERSION,
+      buildId: BUILD_ID,
+      foundation: this.coreFoundation?.diagnostics || {},
       state: this.state,
       wave: this.currentWave || 0,
       fps: this.engine?.monitor?.lastFps || 0,
@@ -3944,6 +3951,11 @@ class DokkaebiLuckDefense {
   getBrowserAutomationSnapshot() {
     return Object.freeze({
       version: GAME_VERSION,
+      releaseVersion: GAME_VERSION,
+      lineageVersion: LEGACY_LINEAGE_VERSION,
+      buildId: BUILD_ID,
+      cacheRevision: CACHE_REVISION,
+      coreFoundation: this.coreFoundation?.diagnostics || {},
       engineVersion: ENGINE_VERSION,
       saveSchemaVersion: SAVE_SCHEMA_VERSION,
       state: this.state,
@@ -6274,7 +6286,11 @@ class DokkaebiLuckDefense {
     const payload = {
       exportedAt: new Date().toISOString(),
       gameVersion: GAME_VERSION,
+      lineageVersion: LEGACY_LINEAGE_VERSION,
+      buildId: BUILD_ID,
+      cacheRevision: CACHE_REVISION,
       engineVersion: ENGINE_VERSION,
+      coreFoundation: this.coreFoundation?.diagnostics || {},
       run: {
         seed: this.runSeed || '',
         seedMode: this.selectedSeedModeId,
@@ -6533,6 +6549,7 @@ class DokkaebiLuckDefense {
     requestAnimationFrame(() => this.animate());
     const dt = Math.min(.033, this.clock.getDelta());
     this.frameScheduler.tick(dt);
+    this.coreFoundation.sampleFrame(dt, { state: this.state, hidden: document.hidden });
     this.runSafe('combat-presentation', () => this.combatPresentation?.update(dt));
     const impactScale = this.combatPresentation?.timeScale ?? 1;
     const gameDt = (this.cinematic ? dt * .42 : dt) * impactScale;
@@ -6543,8 +6560,8 @@ class DokkaebiLuckDefense {
     this.runSafe('battlefield-props', () => this.updateBattlefieldProps(dt));
     this.runSafe('wave-flow-guard', () => this.updateWaveFlowGuard(dt));
     this.runSafe('wave-reliability', () => this.updateWaveReliability(dt));
-    this.runSafe('browser-reliability', () => this.browserReliability?.update(dt, this.getBrowserReliabilitySnapshot()));
-    this.runSafe('asset-presence-v21', () => this.assetPresence?.update(dt, {
+    if (this.frameScheduler.shouldRun('browser-reliability', this.coreFoundation.cadence('browser-reliability', 4, { minHz: 1.5 }))) this.runSafe('browser-reliability', () => this.browserReliability?.update(dt, this.getBrowserReliabilitySnapshot()));
+    if (this.frameScheduler.shouldRun('asset-presence-v21', this.coreFoundation.cadence('asset-presence-v21', 4, { minHz: 1.5 }))) this.runSafe('asset-presence-v21', () => this.assetPresence?.update(dt, {
       heroes: this.player ? 1 : 0,
       monsters: this.enemies.filter((enemy) => !enemy.dead && !enemy.boss).length,
       bosses: this.enemies.filter((enemy) => !enemy.dead && enemy.boss).length,
@@ -6552,7 +6569,7 @@ class DokkaebiLuckDefense {
       hazards: this.hazards.length,
       battlefieldSprites: this.battlefieldSprites?.diagnostics?.activeSprites || 0
     }));
-    this.runSafe('mobile-hud-v23', () => this.mobileHudV23?.update(dt));
+    if (this.frameScheduler.shouldRun('mobile-hud-v23', this.coreFoundation.cadence('mobile-hud-v23', 24, { minHz: 12, criticalScale: .65 }))) this.runSafe('mobile-hud-v23', () => this.mobileHudV23?.update(dt));
     this.runSafe('automation-v22', () => this.updateAutomationV22(dt));
     this.runSafe('combat-readability-v21', () => this.combatReadability?.update(dt, { enemies: this.enemies, state: this.state }));
 
@@ -6592,8 +6609,12 @@ class DokkaebiLuckDefense {
     if (this.frameScheduler.shouldRun('shadows', this.engine.qualityProfile?.shadowHz || 18)) this.runSafe('blob-shadows', () => this.updateBlobShadows());
     this.runSafe('camera', () => this.updateCamera(dt));
     this.runSafe('renderer', () => this.renderer.render(this.scene, this.camera));
-    this.runSafe('production-console', () => this.productionConsole?.update(dt));
-    this.runSafe('render-stats', () => this.renderStatsHud?.update(dt, {
+    if (this.frameScheduler.shouldRun('production-console', this.coreFoundation.cadence('production-console', 8, { minHz: 2 }))) this.runSafe('production-console', () => this.productionConsole?.update(dt));
+    if (this.frameScheduler.shouldRun('render-stats', this.coreFoundation.cadence('render-stats', 8, { minHz: 2 }))) this.runSafe('render-stats', () => this.renderStatsHud?.update(dt, {
+      releaseVersion: GAME_VERSION,
+      lineageVersion: LEGACY_LINEAGE_VERSION,
+      buildId: BUILD_ID,
+      coreFoundation: this.coreFoundation?.diagnostics || {},
       engineVersion: ENGINE_VERSION,
       fps: this.engine.monitor.lastFps,
       performance: this.engine.monitor.snapshot,
@@ -6624,6 +6645,7 @@ class DokkaebiLuckDefense {
 
 }
 
+window.__DOKKAEBI_VERSION_POLICY__ = VERSION_POLICY;
 installKoreanLanguageGuard();
 const visualIntegration = new VisualIntegrationDirector().install();
 
@@ -6634,6 +6656,8 @@ try {
     window.__DOKKAEBI_BOOT_OK__ = true;
     window.__DOKKAEBI_TEST_API__ = Object.freeze({
       version: GAME_VERSION,
+      lineageVersion: LEGACY_LINEAGE_VERSION,
+      buildId: BUILD_ID,
       snapshot: () => game.getBrowserAutomationSnapshot(),
       startRun: () => {
         if (game.state === 'title') game.startRun();
@@ -6649,7 +6673,8 @@ try {
         else if (game.state === 'contract') game.skipContract();
         return game.getBrowserAutomationSnapshot();
       },
-      reliabilityReport: () => ({ wave: game.waveReliability?.report || {}, browser: game.browserReliability?.report || {}, automation: game.automationV22?.report || {}, targeting: game.guardianTargetingV22?.report || {}, mobileHud: game.mobileHudV23?.report || {} })
+      foundationReport: () => game.coreFoundation?.report || {},
+      reliabilityReport: () => ({ foundation: game.coreFoundation?.report || {}, wave: game.waveReliability?.report || {}, browser: game.browserReliability?.report || {}, automation: game.automationV22?.report || {}, targeting: game.guardianTargetingV22?.report || {}, mobileHud: game.mobileHudV23?.report || {} })
     });
     game.browserReliability?.noteMilestone('game-ready', { state: game.state });
     window.dispatchEvent(new Event('dokkaebi:boot-ready'));

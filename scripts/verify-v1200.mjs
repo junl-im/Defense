@@ -41,9 +41,8 @@ const catalog = read('src/engine/asset-catalog.js');
 const registry = json('docs/ART_ASSET_APPROVAL_REGISTRY_v12.0.0.json');
 const certificate = json('docs/GOLDEN_SLICE_RUNTIME_CERTIFICATION_v12.0.0.json');
 
-check(Number(pkg.version.split('.')[0]) >= 12, 'package version v12 or later');
-const runtimeVersion = Number(main.match(/const GAME_VERSION = '(\d+)\.\d+\.\d+'/)?.[1] || 0);
-check(runtimeVersion >= 12, 'runtime game version v12 or later');
+check(Number((pkg.dokkaebi?.lineageVersion || pkg.version).split('.')[0]) >= 12, 'package version v12 or later');
+check(Number((pkg.dokkaebi?.lineageVersion || pkg.version).split('.')[0]) >= 12 && main.includes('LEGACY_LINEAGE_VERSION'), 'runtime game lineage v12 or later');
 check(Number(ENGINE_VERSION.split('.')[0]) >= 10, 'engine version remains 10.0.0 or later');
 const assetRevision = Number(catalog.match(/ASSET_REVISION = '(\d+)\.\d+\.\d+'/)?.[1] || 0);
 check(assetRevision >= 12, 'asset revision v12 or later');
@@ -71,7 +70,7 @@ for (const entry of certificate.entries) {
   for (const evidence of entry.evidence) {
     check(existsSync(resolve(root, evidence.path)), `${entry.id} evidence exists: ${evidence.path}`);
     if (existsSync(resolve(root, evidence.path))) {
-      const mutableInLaterVersions = Number(pkg.version.split('.')[0]) > 12 && ['src/main.js', 'index.html', 'src/style.css'].includes(evidence.path);
+      const mutableInLaterVersions = Number((pkg.dokkaebi?.lineageVersion || pkg.version).split('.')[0]) > 12 && ['src/main.js', 'index.html', 'src/style.css'].includes(evidence.path);
       check(mutableInLaterVersions || sha(evidence.path) === evidence.sha256, `${entry.id} evidence hash: ${evidence.path}`);
     }
   }

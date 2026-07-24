@@ -20,8 +20,8 @@ const main=read('src/main.js');
 const codex=read('src/codex-data.js');
 const consoleSource=read('src/production-console.js');
 
-check(Number(pkg.version.split('.')[0])>=13,'package version remains v13 or later');
-check(Number((main.match(/const GAME_VERSION = '(\d+)\./)?.[1] || 0)) >= 13,'runtime retains v13 lineage');
+check(Number((pkg.dokkaebi?.lineageVersion || pkg.version).split('.')[0])>=13,'package version remains v13 or later');
+check(Number((pkg.dokkaebi?.lineageVersion || pkg.version).split('.')[0]) >= 13 && main.includes('LEGACY_LINEAGE_VERSION'),'runtime retains v13 lineage');
 check(SAVE_SCHEMA_VERSION>=11,'save schema remains v11 or later');
 check(IP_ASSET_LIBRARY_V13.totalCrops===415 && manifest.summary.totalCrops===415,'415 cropped sprite assets');
 check(manifest.summary.sourceSheets===10,'10 source sheets registered');

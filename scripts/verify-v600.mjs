@@ -16,7 +16,7 @@ const failures = [];
 const pass = (message) => console.log(`PASS ${message}`);
 const check = (condition, message) => condition ? pass(message) : failures.push(message);
 
-check(Number(pkg.version.split('.')[0]) >= 6, 'package version remains v6 or later');
+check(Number((pkg.dokkaebi?.lineageVersion || pkg.version).split('.')[0]) >= 6, 'package version remains v6 or later');
 check(Number(ENGINE_VERSION.split('.')[0]) >= 5, 'engine version remains 5.0.0 or later');
 check(Number(ART_PRODUCTION_GATE_VERSION.split('.')[0]) >= 6, 'art production gate remains v6 or later');
 check(ENCOUNTER_DIRECTOR_VERSION === '1.0.0', 'encounter director version 1.0.0');

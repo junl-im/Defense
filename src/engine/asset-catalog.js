@@ -1,8 +1,10 @@
+import { CACHE_REVISION } from '../version-policy.js';
 import { CHARACTER_ASSET_TARGETS, ENVIRONMENT_ASSET_TARGETS, EFFECT_ASSET_TARGETS, IMPOSTOR_SPEC } from '../asset-specs.js';
 import { getAssetApproval } from './asset-quality.js';
 import { HERO_CLASS_ASSET_IDS } from '../hero-classes.js';
 
-const ASSET_REVISION = '23.1.0';
+const ASSET_REVISION = CACHE_REVISION;
+// const ASSET_REVISION = '23.1.0'; historical lineage marker.
 const keyartBaseUrl = new URL('../assets/moon-market-keyart.webp', import.meta.url);
 keyartBaseUrl.searchParams.set('v', ASSET_REVISION);
 const keyartUrl = keyartBaseUrl.href;

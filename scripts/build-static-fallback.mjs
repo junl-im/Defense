@@ -6,7 +6,9 @@ await import('./clean-obsolete-assets.mjs');
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dist = path.join(root, 'dist');
-const version = '23.1.0';
+const version = '1.0.2';
+const buildId = 'b24.2';
+const revision = `${version}-${buildId}`;
 
 await rm(dist, { recursive: true, force: true });
 await mkdir(dist, { recursive: true });
@@ -28,10 +30,10 @@ try {
 }
 
 let html = await readFile(path.join(root, 'index.html'), 'utf8');
-html = html.replace('    <title>', '    <link rel="stylesheet" href="./src/style.css?v=23.1.0" />\n    <title>');
+html = html.replace('    <title>', `    <link rel="stylesheet" href="./src/style.css?v=${revision}" />\n    <title>`);
 html = html.replace(
   '<script type="module" src="/src/bootstrap.js"></script>',
-  '<script src="./static-bootstrap.js?v=23.1.0"></script>'
+  `<script src="./static-bootstrap.js?v=${revision}"></script>`
 );
 await writeFile(path.join(dist, 'index.html'), html);
 
@@ -41,7 +43,7 @@ main = main.replace("import './style.css';\n", '');
 await writeFile(mainPath, main);
 
 await writeFile(path.join(dist, 'STATIC_BUILD_NOTICE.txt'), [
-  `DokkaebiLuckDefense3D v${version} resilient static deployment`,
+  `DokkaebiLuckDefense3D v${version} (${buildId}) resilient static deployment`,
   localThreeVendored
     ? 'Three.js 0.185.1 was copied into dist/vendor/three and will load locally.'
     : 'Local Three.js was unavailable during packaging. The runtime will probe local vendor, jsDelivr, unpkg, then esm.sh and show a Korean recovery error instead of leaving a dead start button.',

@@ -28,7 +28,7 @@ assert(new Set(frames).size === 11, '카메라 360도에서 11개 프레임 선�
 const selector = new DirectionalImpostorSelector({ directions: 11 });
 assert(selector.update(0, 0) === 0, '임포스터 선택기 초기 프레임');
 
-const bible = readFileSync(resolve(root, 'docs/ASSET_BIBLE.md'), 'utf8');
+const bible = readFileSync(resolve(root, 'docs/ABSOLUTE_ART_BIBLE_v2.0.md'), 'utf8');
 const manifest = JSON.parse(readFileSync(resolve(root, 'docs/ASSET_MANIFEST.json'), 'utf8'));
 assert(bible.includes('ABSOLUTE LOCKED') && bible.includes('42/18/15/25') && bible.includes('MASTER STYLE LOCK PROMPT') && bible.includes('좌우 반전'), 'Absolute Art Bible v2.0 핵심 규격');
 assert(manifest.impostorDirections === 11 && manifest.characters.guardians.length === 6, '에셋 납품 매니페스트');

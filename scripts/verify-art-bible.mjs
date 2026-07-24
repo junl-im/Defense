@@ -107,7 +107,6 @@ const requiredFiles = [
   'docs/ABSOLUTE_ART_BIBLE_v2.0.sha256',
   'docs/ART_BIBLE_MACHINE_SPEC_v2.0.json',
   'docs/ART_REVIEW_CHECKLIST_v2.0.md',
-  'docs/ASSET_BIBLE.md',
   'production/DokkaebiDefense/01_ArtBible/ABSOLUTE_ART_BIBLE_v2.0.md',
   'production/DokkaebiDefense/01_ArtBible/ART_BIBLE_MACHINE_SPEC_v2.0.json',
   'production/DokkaebiDefense/01_ArtBible/CHARACTER_DNA_v3.0_DRAFT.md'
