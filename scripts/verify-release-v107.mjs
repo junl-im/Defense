@@ -18,12 +18,14 @@ const buildStatic = read('scripts/build-static-fallback.mjs');
 const hasDist = fs.existsSync('dist/index.html') && fs.existsSync('dist/src/main.js');
 const distHtml = hasDist ? read('dist/index.html') : '';
 const distMain = hasDist ? read('dist/src/main.js') : '';
-const currentDist = hasDist && distHtml.includes('1.0.7-b24.7');
+const currentDist = hasDist && /1\.0\.(?:7|8)-b24\.(?:7|8)/.test(distHtml);
 const distDirector = currentDist && fs.existsSync('dist/src/runtime/first-presentation-director-v107.js')
   ? read('dist/src/runtime/first-presentation-director-v107.js')
   : '';
 
 const version = pkg.dokkaebi?.releaseVersion;
+const release = String(pkg.version || '0.0.0').split('.').map(Number);
+const is107OrLater = release[0] === 1 && release[1] === 0 && release[2] >= 7;
 const buildId = pkg.dokkaebi?.buildId;
 const buildRevision = pkg.dokkaebi?.buildRevision;
 const protectedFiles = ['src/art-style-tokens.js', 'docs/ABSOLUTE_ART_BIBLE_v2.0.md'];
@@ -33,10 +35,10 @@ const assetsUnchanged = Object.entries(baseline.files || {})
   .every(([file, meta]) => fs.existsSync(file) && meta.sha256 === hash(file));
 
 const checks = [
-  ['release identity is v1.0.7 / b24.7', pkg.version === '1.0.7' && version === '1.0.7' && buildId === 'b24.7' && Number(buildRevision) === 7],
+  ['release preserves the v1.0.7 line or later', is107OrLater && version === pkg.version && Number(buildRevision) >= 7],
   ['package lock release is synchronized', lock.version === pkg.version && lock.packages?.['']?.version === pkg.version],
-  ['runtime and cache identities match', policy.includes("PUBLIC_GAME_VERSION = '1.0.7'") && policy.includes('BUILD_REVISION = 7') && main.includes("const GAME_VERSION = '1.0.7'") && sw.includes("RELEASE_VERSION = '1.0.7'") && sw.includes("BUILD_ID = 'b24.7'") && staticBootstrap.includes("RELEASE_VERSION = '1.0.7'")],
-  ['art bible boot gate uses approved raster art', html.includes('class="boot-gate-art"') && html.includes('title-mascot-v17.webp?rev=release-v107-b24-7') && html.includes('id="boot-gate-status"') && html.includes('id="boot-gate-detail"') && !html.includes('<svg')],
+  ['runtime and cache identities match', policy.includes(`PUBLIC_GAME_VERSION = '${version}'`) && policy.includes(`BUILD_REVISION = ${buildRevision}`) && main.includes(`const GAME_VERSION = '${version}'`) && sw.includes(`RELEASE_VERSION = '${version}'`) && sw.includes(`BUILD_ID = '${buildId}'`) && staticBootstrap.includes(`RELEASE_VERSION = '${version}'`)],
+  ['art bible boot gate uses approved raster art', html.includes('class="boot-gate-art"') && /title-mascot-v17\.webp\?rev=release-v10[78]-b24-[78]/.test(html) && html.includes('id="boot-gate-status"') && html.includes('id="boot-gate-detail"') && !html.includes('<svg')],
   ['boot gate status channel is available before application startup', html.indexOf('__DOKKAEBI_UPDATE_BOOT_GATE__') < html.indexOf('id="app"') && html.includes('__DOKKAEBI_BOOT_PROGRESS_AT__') && html.includes('BOOT_STALL_LIMIT_MS')],
   ['title uses art-bible wordmark and touch-start instead of start image button', html.includes('title-wordmark-v107') && html.includes('title-word-dokkaebi-v107') && html.includes('title-touch-start-v107') && html.includes('TOUCH TO START') && !html.includes('button_start.png') && css.includes('title-wordmark-v107') && css.includes('title-touch-pulse-v107')],
   ['title supports direct scene touch and keyboard entry', main.includes("'title-touch-anywhere'") && main.includes("'title-key-start'") && main.includes("event.target.closest('button, a, input, select, textarea, [role=\"button\"]')")],
@@ -47,7 +49,7 @@ const checks = [
   ['WebGL context loss remains hidden behind the presentation shell', director.includes("addEventListener('webglcontextlost'") && director.includes("addEventListener('webglcontextrestored'") && director.includes("'recovering'")],
   ['boot watchdog is progress-based rather than an absolute startup cutoff', main.includes('__DOKKAEBI_UPDATE_BOOT_GATE__') && html.includes('lastProgressAt') && html.includes('stalledFor >= BOOT_STALL_LIMIT_MS') && !html.includes('}, 32000);')],
   ['static bootstrap probes local engine before recovery endpoints', staticBootstrap.indexOf("id: 'local-vendor'") < staticBootstrap.indexOf("id: 'fastly-jsdelivr'") && staticBootstrap.includes('로컬 3D 엔진을 확인하는 중') && staticBootstrap.includes("selected.id === 'local-vendor'")],
-  ['static builder can vendor checked-in or installed Three runtime', buildStatic.includes("id: 'checked-in-public-vendor'") && buildStatic.includes("id: 'installed-node-module'") && buildStatic.includes('loaders/GLTFLoader.js') && buildStatic.includes("const version = '1.0.7'")],
+  ['static builder can vendor checked-in or installed Three runtime', buildStatic.includes("id: 'checked-in-public-vendor'") && buildStatic.includes("id: 'installed-node-module'") && buildStatic.includes('loaders/GLTFLoader.js') && buildStatic.includes(`const version = '${version}'`)],
   ['service worker precaches the presentation director without obsolete start art', sw.includes('./src/runtime/first-presentation-director-v107.js') && !sw.includes('button_start.png')],
   ['dist preserves the presentation contract when present', !currentDist || (distHtml.includes('title-touch-start-v107') && distHtml.includes('BOOT_STALL_LIMIT_MS') && distMain.includes('FirstPresentationDirectorV107') && distDirector.includes("status: 'ready'"))],
   ['absolute art bible files are unchanged', artBibleUnchanged],

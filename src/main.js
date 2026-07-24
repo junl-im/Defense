@@ -126,7 +126,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '1.0.7';
+const GAME_VERSION = '1.0.8';
 // const GAME_VERSION = '23.1.0'; historical lineage marker for pre-normalization contracts.
 if (GAME_VERSION !== PUBLIC_GAME_VERSION) throw new Error('Public version policy mismatch');
 function runtimeSpriteMarkup(path, alt = '', className = '') {
@@ -448,6 +448,29 @@ class DokkaebiLuckDefense {
       status: status || ui.loadingStatus?.textContent || '',
       detail: detail || ui.loadingDetail?.textContent || '',
       mode: value >= 90 ? 'presentation' : 'loading'
+    });
+  }
+
+  waitForUiPaint(frames = 2, timeoutMs = 900) {
+    const targetFrames = Math.max(1, Number(frames) || 1);
+    return new Promise((resolve) => {
+      let remaining = targetFrames;
+      let settled = false;
+      let timeoutToken = 0;
+      const finish = (value) => {
+        if (settled) return;
+        settled = true;
+        this.lifecycle.ui.cancel(timeoutToken);
+        resolve(value);
+      };
+      const step = () => {
+        if (settled) return;
+        remaining -= 1;
+        if (remaining <= 0) finish(true);
+        else window.requestAnimationFrame(step);
+      };
+      timeoutToken = this.scheduleUi(() => finish(false), Math.max(120, Number(timeoutMs) || 900));
+      window.requestAnimationFrame(step);
     });
   }
 
@@ -3386,23 +3409,34 @@ class DokkaebiLuckDefense {
     if (ui.autoWavePanelProgress) ui.autoWavePanelProgress.style.width = `${Math.round(progress * 100)}%`;
   }
 
-  startRunFromTitle({ reuseSeed = false } = {}) {
+  async startRunFromTitle({ reuseSeed = false } = {}) {
     if (this.startRunPending || this.state !== 'title') return false;
     this.startRunPending = true;
+    const entryStartedAt = performance.now();
     if (ui.start) {
       ui.start.disabled = true;
       ui.start.setAttribute('aria-busy', 'true');
       ui.start.dataset.ready = 'false';
       const startLabel = document.getElementById('title-start-label');
-      if (startLabel) startLabel.textContent = '수호대 출전 준비 중...';
-      ui.start.setAttribute('aria-label', '수호대 출전 준비 중...');
+      if (startLabel) startLabel.textContent = '월문을 여는 중...';
+      ui.start.setAttribute('aria-label', '월문을 여는 중...');
     }
+    ui.title?.classList.remove('visible');
+    ui.title?.setAttribute('aria-hidden', 'true');
+    if (ui.loadingStatus) ui.loadingStatus.textContent = '수호대를 전장으로 부르는 중...';
+    if (ui.loadingDetail) ui.loadingDetail.textContent = '달빛 장터와 전투 UI를 안전하게 전환하고 있습니다.';
+    ui.loading?.classList.add('visible', 'run-entry-loading-v108');
+    await this.waitForUiPaint(2, 900);
     try {
       this.sound.unlock();
       this.sound.ui();
       this.startRun({ reuseSeed });
       if (this.state !== 'playing') throw new Error(`전투 상태 전환 실패: ${this.state}`);
-      this.browserReliability?.noteMilestone('start-run-entered', { runId: this.runId, seed: this.runSeed });
+      this.browserReliability?.noteMilestone('start-run-entered', {
+        runId: this.runId,
+        seed: this.runSeed,
+        transitionMs: Math.round(performance.now() - entryStartedAt)
+      });
       return true;
     } catch (error) {
       this.recordRuntimeError(error, 'title-start-run');
@@ -3412,11 +3446,13 @@ class DokkaebiLuckDefense {
       try { this.showGameUI(false); } catch { /* UI recovery is best effort */ }
       try { this.createWorld(true); } catch { /* world recovery is best effort */ }
       ui.title?.classList.add('visible');
+      ui.title?.setAttribute('aria-hidden', 'false');
       const reason = error instanceof Error ? error.message : String(error);
       window.__DOKKAEBI_SHOW_BOOT_ERROR__?.(`전투 진입 중 오류가 발생했습니다: ${reason}`);
       return false;
     } finally {
       this.startRunPending = false;
+      ui.loading?.classList.remove('visible', 'run-entry-loading-v108');
       if (ui.start && this.state === 'title') {
         ui.start.disabled = false;
         ui.start.setAttribute('aria-busy', 'false');
@@ -3424,6 +3460,10 @@ class DokkaebiLuckDefense {
         if (startLabel) startLabel.textContent = 'TOUCH TO START';
         ui.start.dataset.ready = 'true';
         ui.start.setAttribute('aria-label', 'TOUCH TO START');
+      }
+      if (this.state === 'playing') {
+        ui.title?.classList.remove('visible');
+        ui.title?.setAttribute('aria-hidden', 'true');
       }
     }
   }
@@ -6848,8 +6888,8 @@ try {
       buildId: BUILD_ID,
       snapshot: () => game.getBrowserAutomationSnapshot(),
       stateMachine: () => game.appState?.diagnostics || {},
-      startRun: () => {
-        if (game.state === 'title') game.startRunFromTitle();
+      startRun: async () => {
+        if (game.state === 'title') await game.startRunFromTitle();
         return game.getBrowserAutomationSnapshot();
       },
       startWave: () => {

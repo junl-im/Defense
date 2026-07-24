@@ -24,7 +24,7 @@ const checks = [
   ['desktop title uses split columns', style.includes('v23.1.0 Native Input Shell') && style.includes('grid-template-columns: minmax(430px, 1.12fr) minmax(370px, .88fr)')],
   ['desktop mascot uses left column', style.includes('position: relative;\n    grid-column: 1;') && style.includes('grid-column: 2;\n    justify-self: end;')],
   ['mobile title flow remains supported', style.includes('@media (max-width:760px)') || style.includes('@media (max-width: 760px)')],
-  ['cache revision updated', (html.includes('native-input-v2310') || html.includes('release-v102-b24-2') || html.includes('release-v105-b24-5') || html.includes('release-v107-b24-7')) && read('src/engine/asset-catalog.js').includes("ASSET_REVISION = '23.1.0'; historical lineage marker")],
+  ['cache revision updated', (html.includes('native-input-v2310') || html.includes('release-v102-b24-2') || html.includes('release-v105-b24-5') || html.includes('release-v107-b24-7') || html.includes('release-v108-b24-8')) && read('src/engine/asset-catalog.js').includes("ASSET_REVISION = '23.1.0'; historical lineage marker")],
   ['documentation exists', fs.existsSync('docs/NATIVE_INPUT_SHELL_v23.1.0.md') && fs.existsSync('docs/PATCH_NOTES_v23.1.0.md') && fs.existsSync('docs/PATCH_APPLY_v23.1.0.md')],
   ['handoff locks native browser keys', read('PROJECT_HANDOFF.md').includes('PERMANENT NATIVE KEY CONTRACT')],
   ['production console no longer advertises function keys', !consoleSource.includes('F4 toggle') && !consoleSource.includes('F7 browser snapshot')]

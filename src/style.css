@@ -3797,3 +3797,30 @@ body.presentation-safe-mode #vignette { opacity: .42; }
 @media (prefers-reduced-motion: reduce) {
   .title-touch-start-v107[data-ready="true"] { animation: none; opacity: 1; }
 }
+
+
+/* v1.0.8 — title exit recovery and desktop combat UI vertical balance. */
+#title-screen.title-screen-v17:not(.visible),
+#title-screen.title-screen-v105:not(.visible) {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+#title-screen.title-screen-v17.visible,
+#title-screen.title-screen-v105.visible { display: grid !important; visibility: visible; }
+
+@media (min-width: 821px) {
+  :root { --desktop-combat-ui-drop-v108: 12px; }
+  body:not(.mobile-hud-v23) #hud { top: var(--desktop-combat-ui-drop-v108); }
+  body:not(.mobile-hud-v23) .top-status-rail { top: calc(66px + var(--safe-top) + var(--desktop-combat-ui-drop-v108)); }
+  body:not(.mobile-hud-v23) .center-meter-rail { top: calc(121px + var(--safe-top) + var(--desktop-combat-ui-drop-v108)); }
+  body:not(.mobile-hud-v23) .left-insight-rail,
+  body:not(.mobile-hud-v23) .right-roster-rail { top: calc(162px + var(--safe-top) + var(--desktop-combat-ui-drop-v108)); }
+  body:not(.mobile-hud-v23).boss-active .left-insight-rail,
+  body:not(.mobile-hud-v23).boss-active .right-roster-rail { top: calc(225px + var(--safe-top) + var(--desktop-combat-ui-drop-v108)); }
+  body:not(.mobile-hud-v23) .left-ui-toggle { top: calc(165px + var(--safe-top) + var(--desktop-combat-ui-drop-v108)) !important; }
+  body:not(.mobile-hud-v23) .boss-health,
+  body:not(.mobile-hud-v23).boss-active .boss-health { top: calc(163px + var(--safe-top) + var(--desktop-combat-ui-drop-v108)); }
+  body:not(.mobile-hud-v23) .boss-banner { top: calc(225px + var(--safe-top) + var(--desktop-combat-ui-drop-v108)); }
+  body:not(.mobile-hud-v23) .toast { top: calc(174px + var(--safe-top) + var(--desktop-combat-ui-drop-v108)); }
+}

@@ -23,7 +23,7 @@ const checks = [
   ['static build uses recovery loader', staticBuilder.includes('static-bootstrap.js?v=${revision}') && staticBuilder.includes('node_modules/three')],
   ['service worker treats code and title art as network first', sw.includes('isMutableCode') && sw.includes('isTitleAsset') && !sw.includes('ignoreSearch: true')],
   ['mutable Firebase paths are not immutable cached', firebase.includes('no-cache,no-store,must-revalidate') && !firebase.includes('**/*.@(js|css)')],
-  ['title art has hotfix cache revision', (html.includes('boot-recovery-v2301') || html.includes('clean-foundation-v2302') || (html.includes('native-input-v2310') || html.includes('release-v102-b24-2') || html.includes('release-v105-b24-5') || html.includes('release-v107-b24-7')))],
+  ['title art has hotfix cache revision', (html.includes('boot-recovery-v2301') || html.includes('clean-foundation-v2302') || (html.includes('native-input-v2310') || html.includes('release-v102-b24-2') || html.includes('release-v105-b24-5') || html.includes('release-v107-b24-7') || html.includes('release-v108-b24-8')))],
   ['CI verifies self-contained Vite output', (workflow.includes('verify-production-bundle-v2301.mjs') || workflow.includes('verify-production-bundle-v2302.mjs') || workflow.includes('verify-production-bundle-v2310.mjs') || workflow.includes('verify-production-bundle-v101.mjs')) && fs.existsSync('scripts/verify-production-bundle-v2301.mjs')],
   ['boot hotfix documentation exists', fs.existsSync('docs/BOOT_RECOVERY_v23.0.1.md') && fs.existsSync('docs/PATCH_NOTES_v23.0.1.md') && fs.existsSync('docs/PATCH_APPLY_v23.0.1.md')]
 ];
