@@ -99,7 +99,7 @@
     "verify:patch:v111": "node scripts/verify-patch-v111.mjs",
     "generate:visual-polish:v112": "python scripts/generate-visual-polish-assets-v112.py",
     "generate:p0-directional:v112": "python scripts/generate-p0-directional-atlases-v112.py",
-    "verify:release:v112": "python scripts/generate-visual-polish-assets-v112.py --check && python scripts/generate-p0-directional-atlases-v112.py --check && node --check src/runtime/combat-visual-director-v112.js && node --check src/runtime/cross-platform-shell-v112.js && node scripts/verify-release-v112.mjs",
+    "verify:release:v112": "python -S scripts/generate-visual-polish-assets-v112.py --check && python -S scripts/generate-p0-directional-atlases-v112.py --check && node --check src/runtime/combat-visual-director-v112.js && node --check src/runtime/cross-platform-shell-v112.js && node scripts/verify-release-v112.mjs",
     "create:patch:v112": "node scripts/create-patch-v112.mjs",
     "verify:patch:v112": "node scripts/verify-patch-v112.mjs"
   },

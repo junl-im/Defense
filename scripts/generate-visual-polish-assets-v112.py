@@ -7,7 +7,41 @@ import json
 import math
 from pathlib import Path
 
-from PIL import Image, ImageChops, ImageDraw, ImageEnhance, ImageFilter, ImageFont
+# Pillow is optional for CI verification. It is loaded only when assets are regenerated.
+Image = None
+ImageChops = None
+ImageDraw = None
+ImageEnhance = None
+ImageFilter = None
+ImageFont = None
+
+
+def require_image_dependencies() -> None:
+    """Load Pillow only for deterministic asset regeneration, never for --check."""
+    global Image, ImageChops, ImageDraw, ImageEnhance, ImageFilter, ImageFont
+    if Image is not None:
+        return
+    try:
+        from PIL import (
+            Image as PILImage,
+            ImageChops as PILImageChops,
+            ImageDraw as PILImageDraw,
+            ImageEnhance as PILImageEnhance,
+            ImageFilter as PILImageFilter,
+            ImageFont as PILImageFont,
+        )
+    except ModuleNotFoundError as exc:
+        raise SystemExit(
+            "Visual asset regeneration requires Pillow. "
+            "Install the optional tooling with: "
+            "python -m pip install -r requirements-atlas.txt"
+        ) from exc
+    Image = PILImage
+    ImageChops = PILImageChops
+    ImageDraw = PILImageDraw
+    ImageEnhance = PILImageEnhance
+    ImageFilter = PILImageFilter
+    ImageFont = PILImageFont
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_ROOT = ROOT / 'src/assets/title-v17'
@@ -30,6 +64,53 @@ ASSETS = {
 
 def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def probe_webp(path: Path) -> tuple[int, int, str]:
+    """Read WebP dimensions and alpha mode using only the Python standard library."""
+    data = path.read_bytes()
+    if len(data) < 12 or data[:4] != b'RIFF' or data[8:12] != b'WEBP':
+        raise ValueError('not a WebP RIFF file')
+
+    chunks: list[tuple[bytes, bytes]] = []
+    offset = 12
+    while offset + 8 <= len(data):
+        fourcc = data[offset:offset + 4]
+        size = int.from_bytes(data[offset + 4:offset + 8], 'little')
+        start = offset + 8
+        end = start + size
+        if end > len(data):
+            raise ValueError(f'truncated WebP chunk {fourcc!r}')
+        chunks.append((fourcc, data[start:end]))
+        offset = end + (size & 1)
+
+    has_alpha = any(fourcc == b'ALPH' for fourcc, _ in chunks)
+    for fourcc, payload in chunks:
+        if fourcc == b'VP8X':
+            if len(payload) < 10:
+                raise ValueError('invalid VP8X header')
+            has_alpha = has_alpha or bool(payload[0] & 0x10)
+            width = 1 + int.from_bytes(payload[4:7], 'little')
+            height = 1 + int.from_bytes(payload[7:10], 'little')
+            return width, height, 'RGBA' if has_alpha else 'RGB'
+
+    for fourcc, payload in chunks:
+        if fourcc == b'VP8L':
+            if len(payload) < 5 or payload[0] != 0x2F:
+                raise ValueError('invalid VP8L header')
+            bits = int.from_bytes(payload[1:5], 'little')
+            width = 1 + (bits & 0x3FFF)
+            height = 1 + ((bits >> 14) & 0x3FFF)
+            has_alpha = has_alpha or bool((bits >> 28) & 1)
+            return width, height, 'RGBA' if has_alpha else 'RGB'
+        if fourcc == b'VP8 ':
+            if len(payload) < 10 or payload[3:6] != b'\x9d\x01\x2a':
+                raise ValueError('invalid VP8 frame header')
+            width = int.from_bytes(payload[6:8], 'little') & 0x3FFF
+            height = int.from_bytes(payload[8:10], 'little') & 0x3FFF
+            return width, height, 'RGBA' if has_alpha else 'RGB'
+
+    raise ValueError('WebP image chunk not found')
 
 
 def cover_resize(image: Image.Image, size: tuple[int, int], anchor: tuple[float, float] = (.5, .5)) -> Image.Image:
@@ -179,6 +260,7 @@ def save_webp(image: Image.Image, path: Path, quality: int, *, lossless=False) -
 
 
 def generate() -> dict:
+    require_image_dependencies()
     desktop = grade_background(SOURCE_ROOT / 'title-bg-desktop-v17.webp', (1920, 1080), anchor=(.5, .54))
     mobile = grade_background(SOURCE_ROOT / 'title-bg-mobile-v17.webp', (900, 1600), anchor=(.5, .47), mobile=True)
     mascot = grade_mascot(SOURCE_ROOT / 'title-mascot-v17.webp', (720, 907))
@@ -235,9 +317,18 @@ def check() -> int:
             failures.append(f"size mismatch {item['path']}")
         if sha256(path) != item['sha256']:
             failures.append(f"hash mismatch {item['path']}")
-        with Image.open(path) as image:
-            if image.size != (item['width'], item['height']):
-                failures.append(f"dimension mismatch {item['path']}")
+        try:
+            width, height, mode = probe_webp(path)
+        except (OSError, ValueError) as exc:
+            failures.append(f"invalid WebP {item['path']}: {exc}")
+            continue
+        if (width, height) != (item['width'], item['height']):
+            failures.append(
+                f"dimension mismatch {item['path']}: "
+                f"{width}x{height} != {item['width']}x{item['height']}"
+            )
+        if mode != item.get('mode'):
+            failures.append(f"mode mismatch {item['path']}: {mode} != {item.get('mode')}")
     if failures:
         for failure in failures:
             print(f'FAIL {failure}')

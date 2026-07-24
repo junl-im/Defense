@@ -9,9 +9,46 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
 
-import numpy as np
-import trimesh
-from PIL import Image, ImageChops, ImageDraw, ImageEnhance, ImageFilter
+# Heavy render dependencies are optional for CI verification. They are loaded
+# only when atlases are regenerated, never for --check.
+np = None
+trimesh = None
+Image = None
+ImageChops = None
+ImageDraw = None
+ImageEnhance = None
+ImageFilter = None
+
+
+def require_render_dependencies() -> None:
+    """Load NumPy, trimesh and Pillow only for atlas regeneration."""
+    global np, trimesh, Image, ImageChops, ImageDraw, ImageEnhance, ImageFilter
+    if np is not None and trimesh is not None and Image is not None:
+        return
+    try:
+        import numpy as numpy_module
+        import trimesh as trimesh_module
+        from PIL import (
+            Image as PILImage,
+            ImageChops as PILImageChops,
+            ImageDraw as PILImageDraw,
+            ImageEnhance as PILImageEnhance,
+            ImageFilter as PILImageFilter,
+        )
+    except ModuleNotFoundError as exc:
+        missing = exc.name or 'render dependency'
+        raise SystemExit(
+            f"P0 atlas regeneration requires {missing}. "
+            "Install the optional tooling with: "
+            "python -m pip install -r requirements-atlas.txt"
+        ) from exc
+    np = numpy_module
+    trimesh = trimesh_module
+    Image = PILImage
+    ImageChops = PILImageChops
+    ImageDraw = PILImageDraw
+    ImageEnhance = PILImageEnhance
+    ImageFilter = PILImageFilter
 
 DIRECTIONS = 11
 STATES = ("idle", "move", "attack", "skill", "hit", "death")
@@ -29,6 +66,54 @@ ASSET_JOBS = (
 
 def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def probe_webp(path: Path) -> tuple[int, int, str]:
+    """Read WebP dimensions and alpha mode using only the Python standard library."""
+    data = path.read_bytes()
+    if len(data) < 12 or data[:4] != b'RIFF' or data[8:12] != b'WEBP':
+        raise ValueError('not a WebP RIFF file')
+
+    chunks: list[tuple[bytes, bytes]] = []
+    offset = 12
+    while offset + 8 <= len(data):
+        fourcc = data[offset:offset + 4]
+        size = int.from_bytes(data[offset + 4:offset + 8], 'little')
+        start = offset + 8
+        end = start + size
+        if end > len(data):
+            raise ValueError(f'truncated WebP chunk {fourcc!r}')
+        chunks.append((fourcc, data[start:end]))
+        offset = end + (size & 1)
+
+    has_alpha = any(fourcc == b'ALPH' for fourcc, _ in chunks)
+    for fourcc, payload in chunks:
+        if fourcc == b'VP8X':
+            if len(payload) < 10:
+                raise ValueError('invalid VP8X header')
+            has_alpha = has_alpha or bool(payload[0] & 0x10)
+            width = 1 + int.from_bytes(payload[4:7], 'little')
+            height = 1 + int.from_bytes(payload[7:10], 'little')
+            return width, height, 'RGBA' if has_alpha else 'RGB'
+
+    for fourcc, payload in chunks:
+        if fourcc == b'VP8L':
+            if len(payload) < 5 or payload[0] != 0x2F:
+                raise ValueError('invalid VP8L header')
+            bits = int.from_bytes(payload[1:5], 'little')
+            width = 1 + (bits & 0x3FFF)
+            height = 1 + ((bits >> 14) & 0x3FFF)
+            has_alpha = has_alpha or bool((bits >> 28) & 1)
+            return width, height, 'RGBA' if has_alpha else 'RGB'
+        if fourcc == b'VP8 ':
+            if len(payload) < 10 or payload[3:6] != b'\x9d\x01\x2a':
+                raise ValueError('invalid VP8 frame header')
+            width = int.from_bytes(payload[6:8], 'little') & 0x3FFF
+            height = int.from_bytes(payload[8:10], 'little') & 0x3FFF
+            return width, height, 'RGBA' if has_alpha else 'RGB'
+
+    raise ValueError('WebP image chunk not found')
+
 
 @dataclass
 class Part:
@@ -391,6 +476,7 @@ def compute_projection(parts: list[Part], actor: str, cell: int) -> dict:
 
 
 def build_atlas(model: Path, actor: str, out: Path, cell: int=160) -> dict:
+    require_render_dependencies()
     parts,metrics=load_parts(model)
     if hasattr(metrics.get("bounds"), "tolist"):
         metrics["bounds"] = metrics["bounds"].tolist()
@@ -499,11 +585,15 @@ def check_all() -> int:
         if item.get("bytes") != path.stat().st_size:
             failures.append(f"size mismatch {job['id']}")
         expected = (int(job["cell"]) * DIRECTIONS, int(job["cell"]) * len(STATES))
-        with Image.open(path) as image:
-            if image.size != expected:
-                failures.append(f"dimension mismatch {job['id']}: {image.size} != {expected}")
-            if image.mode != "RGBA":
-                failures.append(f"alpha mode mismatch {job['id']}: {image.mode}")
+        try:
+            width, height, mode = probe_webp(path)
+        except (OSError, ValueError) as exc:
+            failures.append(f"invalid atlas {job['id']}: {exc}")
+        else:
+            if (width, height) != expected:
+                failures.append(f"dimension mismatch {job['id']}: {(width, height)} != {expected}")
+            if mode != "RGBA":
+                failures.append(f"alpha mode mismatch {job['id']}: {mode}")
         variants = item.get("variants", {})
         expected_cells = {"high": int(job["cell"]), "medium": 144 if job["id"] == "boss-tiger" else 128, "low": 68 if job["id"] == "boss-tiger" else 60}
         for tier, cell in expected_cells.items():
@@ -517,10 +607,19 @@ def check_all() -> int:
                 continue
             if variant.get("sha256") != sha256(variant_path) or variant.get("bytes") != variant_path.stat().st_size:
                 failures.append(f"{tier} hash/size mismatch {job['id']}")
-            with Image.open(variant_path) as variant_image:
-                variant_expected = (cell * DIRECTIONS, cell * len(STATES))
-                if variant_image.size != variant_expected:
-                    failures.append(f"{tier} dimension mismatch {job['id']}: {variant_image.size} != {variant_expected}")
+            variant_expected = (cell * DIRECTIONS, cell * len(STATES))
+            try:
+                width, height, mode = probe_webp(variant_path)
+            except (OSError, ValueError) as exc:
+                failures.append(f"invalid {tier} atlas {job['id']}: {exc}")
+            else:
+                if (width, height) != variant_expected:
+                    failures.append(
+                        f"{tier} dimension mismatch {job['id']}: "
+                        f"{(width, height)} != {variant_expected}"
+                    )
+                if mode != "RGBA":
+                    failures.append(f"{tier} alpha mode mismatch {job['id']}: {mode}")
         if item.get("frames") != DIRECTIONS * len(STATES):
             failures.append(f"frame count mismatch {job['id']}")
         if item.get("authoredDirections") is not True or item.get("mirroringAllowed") is not False:
