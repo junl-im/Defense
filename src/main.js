@@ -125,7 +125,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '1.0.5';
+const GAME_VERSION = '1.0.6';
 // const GAME_VERSION = '23.1.0'; historical lineage marker for pre-normalization contracts.
 if (GAME_VERSION !== PUBLIC_GAME_VERSION) throw new Error('Public version policy mismatch');
 function runtimeSpriteMarkup(path, alt = '', className = '') {
@@ -210,6 +210,8 @@ class DokkaebiLuckDefense {
     });
     this.disposed = false;
     this.animationFrameId = 0;
+    this.renderedFrameSerial = 0;
+    this.renderFrameWaiters = [];
     this.startRunPending = false;
     this.elapsed = 0;
     this.shake = 0;
@@ -432,6 +434,68 @@ class DokkaebiLuckDefense {
     if (detail) ui.loadingDetail.textContent = detail;
   }
 
+  settlePresentationTask(task, timeoutMs = 2200) {
+    return new Promise((resolve) => {
+      let settled = false;
+      const finish = (value = false) => {
+        if (settled) return;
+        settled = true;
+        this.lifecycle.ui.cancel(timer);
+        resolve(value);
+      };
+      const timer = this.scheduleUi(() => finish(false), timeoutMs);
+      Promise.resolve(task).then(() => finish(true), () => finish(false));
+    });
+  }
+
+  waitForRenderedFrames(count = 2, timeoutMs = 2600) {
+    const target = this.renderedFrameSerial + Math.max(1, Number(count) || 1);
+    return new Promise((resolve) => {
+      const waiter = { target, resolve, timer: 0 };
+      waiter.timer = this.scheduleUi(() => {
+        this.renderFrameWaiters = this.renderFrameWaiters.filter((entry) => entry !== waiter);
+        resolve(false);
+      }, timeoutMs);
+      this.renderFrameWaiters.push(waiter);
+      this.flushRenderedFrameWaiters();
+    });
+  }
+
+  flushRenderedFrameWaiters() {
+    if (!this.renderFrameWaiters.length) return;
+    const pending = [];
+    for (const waiter of this.renderFrameWaiters) {
+      if (waiter.target <= this.renderedFrameSerial) {
+        this.lifecycle.ui.cancel(waiter.timer);
+        waiter.resolve(true);
+      } else pending.push(waiter);
+    }
+    this.renderFrameWaiters = pending;
+  }
+
+  async prepareFirstPresentation() {
+    const titleImages = [...ui.title.querySelectorAll('img')];
+    const imageTasks = titleImages.map((image) => {
+      if (image.complete && image.naturalWidth > 0) return Promise.resolve();
+      if (typeof image.decode === 'function') return image.decode();
+      return Promise.resolve();
+    });
+    const backgroundLink = [...document.querySelectorAll('link[rel="preload"][as="image"][media]')]
+      .find((link) => !link.media || window.matchMedia(link.media).matches);
+    if (backgroundLink?.href) {
+      const image = new Image();
+      image.src = backgroundLink.href;
+      imageTasks.push(typeof image.decode === 'function' ? image.decode() : Promise.resolve());
+    }
+    const fontsReady = document.fonts?.ready || Promise.resolve();
+    await Promise.all([
+      this.settlePresentationTask(Promise.allSettled(imageTasks), 2600),
+      this.settlePresentationTask(fontsReady, 1600)
+    ]);
+    await this.waitForRenderedFrames(2, 2800);
+    document.documentElement.dataset.presentationGate = 'ready';
+  }
+
   async initializeGame() {
     this.setLoadingProgress(8, '그래픽 엔진을 준비하는 중...', `에셋 품질 ${this.engine.assetQualityTier.toUpperCase()} · 텍스처 예산 ${this.engine.textureBudgetMB}MB`);
     const decoderState = await this.assetPipeline.warmDecoders(CORE_ASSET_CATALOG);
@@ -453,11 +517,12 @@ class DokkaebiLuckDefense {
     this.setLoadingProgress(72, '달빛 장터를 배치하는 중...', `텍스처 ${report.textureMemoryMB.toFixed(1)}MB / ${report.textureBudgetMB}MB`);
     this.createWorld(true);
     this.runRuntimeVisualAudit();
-    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     this.state = 'title';
+    ui.title.classList.add('visible');
+    this.setLoadingProgress(94, '첫 장면을 다듬는 중...', '타이틀 아트와 첫 렌더 프레임을 동기화하고 있습니다.');
+    await this.prepareFirstPresentation();
     this.setLoadingProgress(100, '준비 완료', `${this.engine.assetQualityTier.toUpperCase()} 에셋 품질 · 절차형 모델 대체 준비 완료`);
     ui.loading.classList.remove('visible');
-    ui.title.classList.add('visible');
     const loadedModels = CHARACTER_ASSET_IDS.filter((id) => this.assetPipeline.get(id)?.scene).length;
     ui.qualityBadge.textContent = `전투 GLB ${loadedModels}/${CHARACTER_ASSET_IDS.length} · ${this.engine.assetQualityTier.toUpperCase()}`;
     ui.qualityBadge.classList.remove('hidden');
@@ -6603,6 +6668,10 @@ class DokkaebiLuckDefense {
     this.disposed = true;
     if (this.animationFrameId) cancelAnimationFrame(this.animationFrameId);
     this.animationFrameId = 0;
+    for (const waiter of this.renderFrameWaiters.splice(0)) {
+      this.lifecycle.ui.cancel(waiter.timer);
+      waiter.resolve(false);
+    }
     this.lifecycle?.dispose();
     const disposables = [
       this.mobileHudV23,
@@ -6694,7 +6763,11 @@ class DokkaebiLuckDefense {
     }
     if (this.frameScheduler.shouldRun('shadows', this.engine.qualityProfile?.shadowHz || 18)) this.runSafe('blob-shadows', () => this.updateBlobShadows());
     this.runSafe('camera', () => this.updateCamera(dt));
-    this.runSafe('renderer', () => this.renderer.render(this.scene, this.camera));
+    this.runSafe('renderer', () => {
+      this.renderer.render(this.scene, this.camera);
+      this.renderedFrameSerial += 1;
+      this.flushRenderedFrameWaiters();
+    });
     if (this.frameScheduler.shouldRun('production-console', this.coreFoundation.cadence('production-console', 8, { minHz: 2 }))) this.runSafe('production-console', () => this.productionConsole?.update(dt));
     if (this.frameScheduler.shouldRun('render-stats', this.coreFoundation.cadence('render-stats', 8, { minHz: 2 }))) this.runSafe('render-stats', () => this.renderStatsHud?.update(dt, {
       releaseVersion: GAME_VERSION,

@@ -44,7 +44,7 @@ const report = {
     mobileEmergencyLayout: css.includes('mobile-hud-v21-emergency')
   },
   languageAudit: {
-    documentLanguage: html.includes('<html lang="ko-KR">'),
+    documentLanguage: /<html\s+[^>]*lang="ko-KR"[^>]*>/.test(html),
     isolatedHanInStaticHtml: isolatedHan,
     pass: isolatedHan.length === 0
   },

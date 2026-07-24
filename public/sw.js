@@ -1,5 +1,5 @@
-const RELEASE_VERSION = '1.0.5';
-const BUILD_ID = 'b24.5';
+const RELEASE_VERSION = '1.0.6';
+const BUILD_ID = 'b24.6';
 // const VERSION = '23.1.0'; historical lineage marker.
 const CACHE_PREFIX = 'dokkaebi-shell-';
 const CACHE_NAME = `${CACHE_PREFIX}${BUILD_ID}`;

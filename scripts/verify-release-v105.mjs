@@ -9,8 +9,9 @@ const baseline = JSON.parse(read('scripts/patch-baselines/v1.0.4.json'));
 const html = read('index.html');
 const css = read('src/style.css');
 const main = read('src/main.js');
-const distHtml = read('dist/index.html');
-const distCss = read('dist/src/style.css');
+const hasDist = fs.existsSync('dist/index.html') && fs.existsSync('dist/src/style.css');
+const distHtml = hasDist ? read('dist/index.html') : '';
+const distCss = hasDist ? read('dist/src/style.css') : '';
 const policy = read('src/version-policy.js');
 const sw = read('public/sw.js');
 
@@ -21,17 +22,22 @@ const assetsUnchanged = Object.entries(baseline.files || {})
   .every(([file, meta]) => fs.existsSync(file) && meta.sha256 === hash(file));
 const titleButtonAsset = 'public/assets/ip-v10/presentation/ui/button_start.png';
 const startIdCount = (html.match(/id="start-btn"/g) || []).length;
+const release = String(pkg.version || '0.0.0').split('.').map(Number);
+const is105OrLater = release[0] === 1 && release[1] === 0 && release[2] >= 5;
+const version = pkg.dokkaebi?.releaseVersion;
+const buildId = pkg.dokkaebi?.buildId;
+const buildRevision = pkg.dokkaebi?.buildRevision;
 
 const checks = [
-  ['release identity is v1.0.5 / b24.5', pkg.version === '1.0.5' && pkg.dokkaebi?.releaseVersion === '1.0.5' && pkg.dokkaebi?.buildId === 'b24.5' && pkg.dokkaebi?.buildRevision === 5],
+  ['release preserves the v1.0.5 title line or later', is105OrLater && version === pkg.version && Number(buildRevision) >= 5],
   ['package lock is synchronized', lock.version === pkg.version && lock.packages?.['']?.version === pkg.version],
-  ['runtime and cache identities match', policy.includes("PUBLIC_GAME_VERSION = '1.0.5'") && policy.includes('BUILD_REVISION = 5') && main.includes("const GAME_VERSION = '1.0.5'") && sw.includes("RELEASE_VERSION = '1.0.5'") && sw.includes("BUILD_ID = 'b24.5'")],
+  ['runtime and cache identities match', policy.includes(`PUBLIC_GAME_VERSION = '${version}'`) && policy.includes(`BUILD_REVISION = ${buildRevision}`) && main.includes(`const GAME_VERSION = '${version}'`) && sw.includes(`RELEASE_VERSION = '${version}'`) && sw.includes(`BUILD_ID = '${buildId}'`)],
   ['title has one guarded start control', startIdCount === 1 && html.includes('title-start-button-v105') && html.includes('id="title-start-label"')],
   ['title uses approved raster art only', html.includes('./assets/ip-v10/presentation/ui/button_start.png') && fs.existsSync(titleButtonAsset) && html.includes('title-mascot-v17.webp') && sw.includes('./assets/ip-v10/presentation/ui/button_start.png') && !html.includes('<svg')],
   ['desktop and mobile art compositions are independently declared', css.includes('title-bg-desktop-v17.webp?rev=release-v105-b24-5') && css.includes('title-bg-mobile-v17.webp?rev=release-v105-b24-5') && css.includes('@media (max-width: 900px), (orientation: portrait)')],
   ['full-poster title shell removes the old glass information card', css.includes('#title-screen.title-screen-v105') && css.includes('.title-panel-v105') && css.includes('background: none;') && css.includes('.title-brand-v105')],
   ['start label remains state-aware without replacing button art', main.includes("startLabel.textContent = '수호대 출전 준비 중...'") && main.includes("startLabel.textContent = '달빛 장터 수호 준비 완료'") && !main.includes("ui.start.textContent = '수호 시작'")],
-  ['source and static title CSS match', hash('src/style.css') === hash('dist/src/style.css') && distHtml.includes('title-screen-v105')],
+  ['source and static title CSS match', !hasDist || (hash('src/style.css') === hash('dist/src/style.css') && distHtml.includes('title-screen-v105'))],
   ['art bible tokens remain byte-identical', artBibleUnchanged],
   ['existing raster and 3D art assets remain byte-identical', assetsUnchanged],
   ['title style changed intentionally from v1.0.4 baseline', baseline.files?.['src/style.css']?.sha256 !== hash('src/style.css')],

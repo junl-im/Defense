@@ -67,7 +67,7 @@ check(!/^(from PIL|import cv2|import numpy)/m.test(atlasV15Generator), 'v15 atla
 check(atlasV14Generator.includes('if not check:\n        require_image_dependencies()'), 'v14 loads image tooling only for regeneration');
 check(atlasV15Generator.includes('if not check:\n        require_image_dependencies()'), 'v15 loads image tooling only for regeneration');
 check(existsSync(resolve(root, 'requirements-atlas.txt')), 'optional atlas regeneration requirements are documented');
-check(deployWorkflow.includes('actions/setup-python@v5') && deployWorkflow.includes('python -S scripts/generate-runtime-atlases-v14.py --check'), 'CI pins Python and proves dependency-free atlas checks');
+check(deployWorkflow.includes('actions/setup-python@v7') && deployWorkflow.includes('python -S scripts/generate-runtime-atlases-v14.py --check'), 'CI pins Python and proves dependency-free atlas checks');
 check(pkg.scripts['setup:atlas-python']?.includes('requirements-atlas.txt'), 'optional atlas dependency setup command exists');
 
 if (failures) {

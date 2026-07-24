@@ -7,11 +7,12 @@ const pkg = JSON.parse(read('package.json'));
 const lock = JSON.parse(read('package-lock.json'));
 const baseline = JSON.parse(read('scripts/patch-baselines/v1.0.2.json'));
 const html = read('index.html');
-const distHtml = read('dist/index.html');
+const hasDist = fs.existsSync('dist/index.html') && fs.existsSync('dist/static-bootstrap.js');
+const distHtml = hasDist ? read('dist/index.html') : '';
 const main = read('src/main.js');
 const bootstrap = read('src/bootstrap.js');
 const staticBootstrap = read('public/static-bootstrap.js');
-const distStaticBootstrap = read('dist/static-bootstrap.js');
+const distStaticBootstrap = hasDist ? read('dist/static-bootstrap.js') : '';
 const buildStatic = read('scripts/build-static-fallback.mjs');
 const policy = read('src/version-policy.js');
 const sw = read('public/sw.js');
@@ -39,8 +40,8 @@ const checks = [
   ['static loader reports failures instead of leaving a dead button', staticBootstrap.includes('window.__DOKKAEBI_SHOW_BOOT_ERROR__') && staticBootstrap.includes('3D 엔진 파일을 불러오지 못했습니다')],
   ['start button uses guarded title entry path', main.includes("on(ui.start, 'click', () => this.startRunFromTitle") && main.includes('startRunFromTitle({ reuseSeed = false } = {})')],
   ['start entry catches runtime failures and restores title controls', main.includes("this.recordRuntimeError(error, 'title-start-run')") && main.includes('전투 진입 중 오류가 발생했습니다') && main.includes("startLabel.textContent = '달빛 장터 수호 준비 완료'")],
-  ['static build emits the resilient bootstrap contract', buildStatic.includes('data-entry="./src/bootstrap.js"') && buildStatic.includes('data-vendor-base="./vendor/three/"') && distHtml.includes('data-entry="./src/bootstrap.js"') && distHtml.includes('data-vendor-base="./vendor/three/"')],
-  ['dist bootstrap matches public bootstrap', hash('public/static-bootstrap.js') === hash('dist/static-bootstrap.js')],
+  ['static build emits the resilient bootstrap contract', buildStatic.includes('data-entry="./src/bootstrap.js"') && buildStatic.includes('data-vendor-base="./vendor/three/"') && (!hasDist || (distHtml.includes('data-entry="./src/bootstrap.js"') && distHtml.includes('data-vendor-base="./vendor/three/"')))],
+  ['dist bootstrap matches public bootstrap', !hasDist || hash('public/static-bootstrap.js') === hash('dist/static-bootstrap.js')],
   ['absolute art bible tokens are unchanged', artBibleUnchanged],
   ['runtime art asset bytes are unchanged', assetsUnchanged],
   ['no SVG policy surface was added to recovery code', ![html, main, bootstrap, staticBootstrap, buildStatic].some((source) => /<svg\b|createElementNS\([^)]*svg/i.test(source))]

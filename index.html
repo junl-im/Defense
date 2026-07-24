@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko-KR">
+<html lang="ko-KR" class="boot-gate-active">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
@@ -12,6 +12,37 @@
     <link rel="icon" href="./icon-192.png" type="image/png" />
     <link rel="apple-touch-icon" href="./icon-192.png" />
     <title>도깨비 운빨 수호대 3D</title>
+    <style id="dokkaebi-critical-boot">
+      html.boot-gate-active, html.boot-gate-active body { background: #030916; }
+      html.boot-gate-active body { margin: 0; overflow: hidden; }
+      html.boot-gate-active #app { opacity: 0; visibility: hidden; }
+      #boot-gate {
+        position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center;
+        padding: 24px; color: #fff3cf; background:
+          radial-gradient(circle at 50% 28%, rgba(46, 118, 186, .22), transparent 27%),
+          radial-gradient(circle at 50% 68%, rgba(104, 50, 151, .2), transparent 34%),
+          linear-gradient(180deg, #07101f 0%, #030916 58%, #02050d 100%);
+        opacity: 1; visibility: visible; transition: opacity .24s ease, visibility .24s ease;
+        font-family: Pretendard, Inter, "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
+      }
+      .boot-gate-content { width: min(84vw, 390px); text-align: center; }
+      .boot-gate-mark {
+        width: 72px; height: 72px; margin: 0 auto 20px; border: 1px solid rgba(147, 225, 255, .42);
+        border-radius: 50%; background: radial-gradient(circle at 44% 36%, #d8fbff 0 7%, #69d8ff 18%, #2554a7 55%, #13143c 78%);
+        box-shadow: 0 0 0 8px rgba(79, 181, 255, .06), 0 0 38px rgba(65, 187, 255, .34);
+        animation: boot-gate-pulse 1.7s ease-in-out infinite alternate;
+      }
+      .boot-gate-kicker { margin: 0 0 7px; color: #8bdcff; font-size: 10px; font-weight: 800; letter-spacing: .24em; }
+      .boot-gate-title { display: block; margin: 0; font-size: clamp(30px, 8vw, 44px); line-height: 1; letter-spacing: -.06em; }
+      .boot-gate-copy { display: block; margin-top: 13px; color: rgba(225, 235, 247, .72); font-size: 12px; }
+      .boot-gate-line { width: min(58vw, 220px); height: 4px; margin: 20px auto 0; overflow: hidden; border-radius: 99px; background: rgba(255,255,255,.08); }
+      .boot-gate-line::after { content: ""; display: block; width: 42%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #4aa5ff, #ffe18e, #6ceaff); animation: boot-gate-scan 1.1s ease-in-out infinite alternate; }
+      html.boot-gate-ready #app { opacity: 1; visibility: visible; transition: opacity .18s ease; }
+      html.boot-gate-ready #boot-gate { opacity: 0; visibility: hidden; pointer-events: none; }
+      @keyframes boot-gate-pulse { from { transform: scale(.97); filter: brightness(.92); } to { transform: scale(1.03); filter: brightness(1.08); } }
+      @keyframes boot-gate-scan { from { transform: translateX(-10%); } to { transform: translateX(148%); } }
+      @media (prefers-reduced-motion: reduce) { .boot-gate-mark, .boot-gate-line::after { animation: none; } }
+    </style>
     <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-desktop-v17.webp?rev=release-v105-b24-5" media="(min-width: 721px) and (orientation: landscape)" />
     <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-mobile-v17.webp?rev=release-v105-b24-5" media="(max-width: 720px), (orientation: portrait)" />
     <link rel="preload" as="image" href="./assets/ip-v10/presentation/ui/button_start.png" />
@@ -19,6 +50,31 @@
     <!-- active lineage v22.0.0 · BROWSER RELIABILITY LAB -->
   </head>
   <body>
+    <div id="boot-gate" role="status" aria-live="polite" aria-label="도깨비 디펜스 화면을 준비하는 중">
+      <div class="boot-gate-content">
+        <div class="boot-gate-mark" aria-hidden="true"></div>
+        <p class="boot-gate-kicker">MOON MARKET AWAKENING</p>
+        <strong class="boot-gate-title">도깨비 디펜스</strong>
+        <small class="boot-gate-copy">첫 장면을 안전하게 준비하는 중...</small>
+        <div class="boot-gate-line" aria-hidden="true"></div>
+      </div>
+    </div>
+    <script>
+      window.__DOKKAEBI_RELEASE_BOOT_GATE__ = ({ immediate = false } = {}) => {
+        const root = document.documentElement;
+        if (!root.classList.contains('boot-gate-active')) return;
+        if (immediate) {
+          document.getElementById('boot-gate')?.remove();
+          root.classList.remove('boot-gate-active', 'boot-gate-ready');
+          return;
+        }
+        root.classList.add('boot-gate-ready');
+        window.setTimeout(() => {
+          document.getElementById('boot-gate')?.remove();
+          root.classList.remove('boot-gate-active', 'boot-gate-ready');
+        }, 360);
+      };
+    </script>
     <div id="app">
       <canvas id="game-canvas" aria-label="도깨비 운빨 수호대 3D 게임 화면"></canvas>
       <div id="vignette" aria-hidden="true"></div>
@@ -558,8 +614,8 @@
     </div>
     <script>
       (() => {
-        const RELEASE_VERSION = '1.0.5';
-        const BUILD_ID = 'b24.5';
+        const RELEASE_VERSION = '1.0.6';
+        const BUILD_ID = 'b24.6';
         const VERSION = `${RELEASE_VERSION}-${BUILD_ID}`;
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
@@ -640,6 +696,7 @@
           document.getElementById('loading')?.classList.remove('visible');
           if (errorMessage && message) errorMessage.textContent = message;
           errorScreen?.classList.add('visible');
+          window.__DOKKAEBI_RELEASE_BOOT_GATE__?.({ immediate: true });
         };
 
         retryButton?.addEventListener('click', async () => {
@@ -656,6 +713,7 @@
           window.clearTimeout(bootTimer);
           setStartReady(true);
           errorScreen?.classList.remove('visible');
+          requestAnimationFrame(() => window.__DOKKAEBI_RELEASE_BOOT_GATE__?.());
         }, { once: true });
         window.addEventListener('error', (event) => {
           if (window.__DOKKAEBI_BOOT_OK__) return;
@@ -678,6 +736,6 @@
         registerServiceWorker();
       })();
     </script>
-    <script type="module" src="./src/bootstrap.js?v=1.0.5-b24.5"></script>
+    <script type="module" src="./src/bootstrap.js?v=1.0.6-b24.6"></script>
   </body>
 </html>
