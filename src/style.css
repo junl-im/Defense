@@ -4087,3 +4087,277 @@ body.presentation-safe-mode #vignette { opacity: .42; }
 @media (max-width: 900px), (pointer: coarse) and (max-width: 1180px) {
   body.mobile-hud-v23 .top-context-rail { display: none !important; }
 }
+
+/* ========================================================================== */
+/* v1.0.12 Cross-platform Visual Polish                                        */
+/* PC and mobile are authored as independent HUD shells, not scaled copies.    */
+/* ========================================================================== */
+
+:root {
+  --dd-v112-gold: #f5c76b;
+  --dd-v112-gold-soft: rgba(245, 199, 107, .42);
+  --dd-v112-blue: #77d8ff;
+  --dd-v112-purple: #9d68ff;
+  --dd-v112-panel: rgba(7, 12, 28, .79);
+  --dd-v112-panel-deep: rgba(4, 7, 18, .91);
+  --dd-v112-border: rgba(255, 221, 148, .34);
+  --dd-v112-shadow: 0 16px 42px rgba(0, 0, 0, .42), inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+.title-screen-v112 {
+  background:
+    radial-gradient(circle at 51% 39%, rgba(104, 193, 255, .12), transparent 27%),
+    linear-gradient(180deg, rgba(3, 7, 20, .02), rgba(3, 5, 18, .24) 57%, rgba(2, 4, 13, .82) 100%),
+    url('./assets/title-v112/title-bg-desktop-v112.webp?rev=release-v112-b24-12') center 53% / cover no-repeat !important;
+}
+
+.title-screen-v112::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background:
+    radial-gradient(ellipse at 50% 95%, rgba(67, 151, 255, .18), transparent 46%),
+    linear-gradient(90deg, rgba(0, 0, 0, .22), transparent 21%, transparent 79%, rgba(0, 0, 0, .22));
+}
+
+.title-scene-v112 { isolation: isolate; }
+.title-brand-v112 { z-index: 5 !important; filter: drop-shadow(0 11px 23px rgba(0,0,0,.62)); }
+.title-mascot-stage-v112 {
+  z-index: 3 !important;
+  width: min(62vw, 760px) !important;
+  height: min(82vh, 790px) !important;
+  bottom: 1.5vh !important;
+  opacity: 1 !important;
+  pointer-events: none;
+}
+.title-mascot-v112 {
+  height: min(80vh, 770px) !important;
+  object-position: center bottom;
+  filter: saturate(1.08) contrast(1.035) drop-shadow(0 24px 34px rgba(0,0,0,.54)) drop-shadow(0 0 28px rgba(76,177,255,.14)) !important;
+}
+.title-panel-v112 {
+  z-index: 6 !important;
+  border-color: rgba(255, 218, 139, .28) !important;
+  background: linear-gradient(180deg, rgba(9, 16, 35, .48), rgba(4, 8, 21, .76)) !important;
+  box-shadow: 0 20px 44px rgba(0,0,0,.36), inset 0 1px 0 rgba(255,255,255,.06) !important;
+  backdrop-filter: blur(12px) saturate(1.15);
+}
+.title-help-v112 { display: flex !important; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.title-help-v112 b {
+  display: inline-flex;
+  padding: 2px 7px;
+  border: 1px solid rgba(119, 216, 255, .27);
+  border-radius: 999px;
+  color: #a9e8ff;
+  font-size: .72em;
+  letter-spacing: .08em;
+  background: rgba(33, 112, 175, .14);
+}
+
+/* Shared premium panel material only. Geometry and placement stay shell-specific. */
+body:is(.dd-shell-pc-v112,.dd-shell-tablet-v112,.dd-shell-mobile-v112) :is(
+  .hud, .boss-health, .top-context-rail > *, .top-status-rail > *, .center-meter-rail > *,
+  .left-insight-rail > *, .right-roster-rail > *, .action-dock > button
+) {
+  border-color: var(--dd-v112-border);
+  box-shadow: var(--dd-v112-shadow);
+}
+body:is(.dd-shell-pc-v112,.dd-shell-tablet-v112,.dd-shell-mobile-v112) .hud {
+  background: linear-gradient(180deg, rgba(7,13,30,.86), rgba(4,8,20,.68));
+  border-bottom: 1px solid rgba(255,220,145,.24);
+  backdrop-filter: blur(12px) saturate(1.12);
+}
+body:is(.dd-shell-pc-v112,.dd-shell-tablet-v112,.dd-shell-mobile-v112) .action-dock > button {
+  background-image: linear-gradient(180deg, rgba(28,36,63,.94), rgba(6,10,24,.96));
+  backdrop-filter: blur(10px);
+}
+
+/* Desktop shell: low-density tactical bar + centered action rack. */
+body.dd-shell-pc-v112 .hud {
+  top: calc(8px + var(--safe-top));
+  left: 50%;
+  right: auto;
+  width: min(calc(100vw - 28px - var(--safe-left) - var(--safe-right)), 1320px);
+  min-height: 56px;
+  padding: 7px 10px;
+  transform: translateX(-50%);
+  border: 1px solid rgba(255,220,145,.24);
+  border-radius: 16px;
+  grid-template-columns: minmax(220px, 1fr) minmax(260px, 390px) minmax(220px, 1fr);
+  align-items: center;
+}
+body.dd-shell-pc-v112 .hud-left,
+body.dd-shell-pc-v112 .hud-right { align-items: center; }
+body.dd-shell-pc-v112 .hud .core-pill,
+body.dd-shell-pc-v112 .hud .currency-pill { min-height: 40px; }
+body.dd-shell-pc-v112 .hud .round-btn { width: 40px; height: 40px; }
+body.dd-shell-pc-v112 .wave-hud { align-self: center; padding: 6px 14px; }
+body.dd-shell-pc-v112 .joystick-zone { display: none !important; }
+body.dd-shell-pc-v112 .look-zone { inset: 0; }
+body.dd-shell-pc-v112 .action-dock {
+  left: 50% !important;
+  right: auto !important;
+  bottom: calc(14px + var(--safe-bottom)) !important;
+  width: min(620px, 48vw);
+  transform: translateX(-50%) !important;
+  grid-template-columns: 76px 88px 82px minmax(126px, 1.32fr) 88px !important;
+  gap: 8px;
+  padding: 7px;
+  border: 1px solid rgba(255,220,145,.22);
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(8,15,34,.78), rgba(3,7,18,.88));
+  box-shadow: 0 18px 42px rgba(0,0,0,.43), inset 0 1px 0 rgba(255,255,255,.06);
+  backdrop-filter: blur(14px);
+}
+body.dd-shell-pc-v112 .action-dock > button { min-height: 64px; border-radius: 13px; }
+body.dd-shell-pc-v112 .top-context-rail,
+body.dd-shell-pc-v112 .top-status-rail,
+body.dd-shell-pc-v112 .center-meter-rail { top: calc(78px + var(--safe-top)) !important; }
+body.dd-shell-pc-v112 .top-context-rail { width: min(29vw, 380px) !important; }
+body.dd-shell-pc-v112 .top-status-rail { width: min(24vw, 315px) !important; }
+body.dd-shell-pc-v112 .center-meter-rail { width: min(38vw, 500px) !important; }
+body.dd-shell-pc-v112 .top-context-rail em,
+body.dd-shell-pc-v112 .top-status-rail em { display: none; }
+body.dd-shell-pc-v112 .left-insight-rail,
+body.dd-shell-pc-v112 .right-roster-rail { top: calc(136px + var(--safe-top)) !important; bottom: calc(98px + var(--safe-bottom)) !important; }
+body.dd-shell-pc-v112 .left-insight-rail { width: clamp(168px, 13vw, 204px) !important; }
+body.dd-shell-pc-v112 .right-roster-rail { width: clamp(154px, 12vw, 190px) !important; }
+body.dd-shell-pc-v112 .boss-health {
+  top: calc(140px + var(--safe-top)) !important;
+  width: min(46vw, 560px) !important;
+}
+body.dd-shell-pc-v112.boss-active .left-insight-rail,
+body.dd-shell-pc-v112.boss-active .right-roster-rail { top: calc(208px + var(--safe-top)) !important; }
+body.dd-shell-pc-v112 .unit-strip { scrollbar-gutter: stable; }
+
+/* Tablet shell: compact top bar, centered actions, side information trimmed. */
+body.dd-shell-tablet-v112 .hud {
+  top: calc(6px + var(--safe-top));
+  padding: 6px 8px;
+  grid-template-columns: minmax(180px, 1fr) minmax(210px, 300px) minmax(170px, 1fr);
+  border-bottom: 1px solid rgba(255,220,145,.22);
+}
+body.dd-shell-tablet-v112:not(.mobile-hud-v23) .joystick-zone { display: none; }
+body.dd-shell-tablet-v112 .action-dock {
+  left: 50%; right: auto; transform: translateX(-50%);
+  width: min(570px, 68vw);
+  grid-template-columns: 68px 78px 70px minmax(112px, 1.25fr) 78px;
+}
+body.dd-shell-tablet-v112 .left-insight-rail { width: 158px !important; }
+body.dd-shell-tablet-v112 .right-roster-rail { width: 148px !important; }
+body.dd-shell-tablet-v112 .top-context-rail em,
+body.dd-shell-tablet-v112 .top-status-rail em,
+body.dd-shell-tablet-v112 .first-mission-panel small { display: none; }
+
+/* Mobile portrait shell: thumb zones and readable combat viewport are reserved independently. */
+body.dd-shell-mobile-v112.dd-shell-portrait-v112 .hud {
+  top: 0;
+  min-height: 58px;
+  padding: calc(6px + var(--safe-top)) calc(7px + var(--safe-right)) 6px calc(7px + var(--safe-left));
+  grid-template-columns: minmax(92px, .9fr) minmax(118px, 1.25fr) minmax(92px, .9fr);
+  gap: 4px;
+  border-radius: 0 0 15px 15px;
+}
+body.dd-shell-mobile-v112.dd-shell-portrait-v112 .hud-right { gap: 3px; }
+body.dd-shell-mobile-v112.dd-shell-portrait-v112 .hud .round-btn { width: 35px; height: 35px; }
+body.dd-shell-mobile-v112.dd-shell-portrait-v112 .top-context-rail { display: none !important; }
+body.dd-shell-mobile-v112.dd-shell-portrait-v112 .top-status-rail { top: calc(64px + var(--safe-top)) !important; right: calc(7px + var(--safe-right)) !important; width: min(42vw, 178px) !important; }
+body.dd-shell-mobile-v112.dd-shell-portrait-v112 .center-meter-rail { top: calc(64px + var(--safe-top)) !important; left: calc(7px + var(--safe-left)) !important; right: auto !important; transform: none !important; width: min(51vw, 222px) !important; }
+body.dd-shell-mobile-v112.dd-shell-portrait-v112 .boss-health { top: calc(112px + var(--safe-top)) !important; width: calc(100vw - 18px - var(--safe-left) - var(--safe-right)) !important; }
+body.dd-shell-mobile-v112.dd-shell-portrait-v112 .left-insight-rail { top: calc(112px + var(--safe-top)) !important; bottom: calc(150px + var(--safe-bottom)) !important; left: calc(7px + var(--safe-left)) !important; width: min(42vw, 166px) !important; }
+body.dd-shell-mobile-v112.dd-shell-portrait-v112 .right-roster-rail { top: calc(112px + var(--safe-top)) !important; bottom: calc(154px + var(--safe-bottom)) !important; right: calc(7px + var(--safe-right)) !important; width: min(36vw, 146px) !important; }
+body.dd-shell-mobile-v112.dd-shell-portrait-v112 .joystick-zone {
+  display: block;
+  left: calc(10px + var(--safe-left)) !important;
+  bottom: calc(10px + var(--safe-bottom)) !important;
+  width: 126px !important;
+  height: 126px !important;
+}
+body.dd-shell-mobile-v112.dd-shell-portrait-v112 .action-dock {
+  left: auto !important;
+  right: calc(7px + var(--safe-right)) !important;
+  bottom: calc(8px + var(--safe-bottom)) !important;
+  width: min(63vw, 278px) !important;
+  transform: none !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  grid-template-areas: 'dash skill burst' 'summon summon wave' !important;
+  gap: 5px !important;
+}
+body.dd-shell-mobile-v112.dd-shell-portrait-v112 .action-dock > button { min-height: 53px; border-radius: 12px; }
+body.dd-shell-mobile-v112.dd-shell-portrait-v112 .action-dock .summon-btn { min-height: 61px; }
+
+/* Mobile landscape shell: side controls preserve a wide central combat lane. */
+body.dd-shell-mobile-v112.dd-shell-landscape-v112 .hud {
+  min-height: 49px;
+  padding: calc(4px + var(--safe-top)) calc(6px + var(--safe-right)) 4px calc(6px + var(--safe-left));
+  grid-template-columns: minmax(148px, .85fr) minmax(180px, 1.15fr) minmax(148px, .85fr);
+}
+body.dd-shell-mobile-v112.dd-shell-landscape-v112 .top-context-rail,
+body.dd-shell-mobile-v112.dd-shell-landscape-v112 .top-status-rail { display: none !important; }
+body.dd-shell-mobile-v112.dd-shell-landscape-v112 .center-meter-rail {
+  top: calc(53px + var(--safe-top)) !important;
+  width: min(46vw, 330px) !important;
+}
+body.dd-shell-mobile-v112.dd-shell-landscape-v112 .boss-health { top: calc(91px + var(--safe-top)) !important; width: min(52vw, 430px) !important; }
+body.dd-shell-mobile-v112.dd-shell-landscape-v112 .left-insight-rail,
+body.dd-shell-mobile-v112.dd-shell-landscape-v112 .right-roster-rail { display: none !important; }
+body.dd-shell-mobile-v112.dd-shell-landscape-v112 .joystick-zone {
+  left: calc(8px + var(--safe-left)) !important;
+  bottom: calc(7px + var(--safe-bottom)) !important;
+  width: 108px !important;
+  height: 108px !important;
+}
+body.dd-shell-mobile-v112.dd-shell-landscape-v112 .action-dock {
+  right: calc(7px + var(--safe-right)) !important;
+  bottom: calc(7px + var(--safe-bottom)) !important;
+  width: min(47vw, 388px) !important;
+  grid-template-columns: 58px 66px 60px minmax(95px, 1.25fr) 66px !important;
+  gap: 4px !important;
+}
+body.dd-shell-mobile-v112.dd-shell-landscape-v112 .action-dock > button { min-height: 50px; }
+
+body.dd-shell-overlap-safe-v112 .left-insight-rail .first-mission-panel,
+body.dd-shell-overlap-safe-v112 .right-roster-rail .relic-panel,
+body.dd-shell-overlap-safe-v112 .top-context-rail em,
+body.dd-shell-overlap-safe-v112 .top-status-rail em { display: none !important; }
+body.dd-shell-overlap-safe-v112 .action-dock { transform-origin: bottom center; scale: .92; }
+
+@media (max-width: 720px), (orientation: portrait) {
+  .title-screen-v112 {
+    background:
+      radial-gradient(circle at 50% 35%, rgba(95, 188, 255, .13), transparent 29%),
+      linear-gradient(180deg, rgba(3,7,20,.02), rgba(3,5,18,.24) 56%, rgba(2,4,13,.88) 100%),
+      url('./assets/title-v112/title-bg-mobile-v112.webp?rev=release-v112-b24-12') center 48% / cover no-repeat !important;
+  }
+  .title-mascot-stage-v112 {
+    width: min(92vw, 560px) !important;
+    height: min(61vh, 650px) !important;
+    bottom: 17vh !important;
+  }
+  .title-mascot-v112 { height: min(59vh, 630px) !important; }
+  .title-brand-v112 { top: calc(5.4vh + var(--safe-top)) !important; }
+  .title-panel-v112 { bottom: calc(10px + var(--safe-bottom)) !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .title-mascot-v112 { animation: none !important; }
+}
+.title-vault-actions .title-p0-lab-v112 { display:flex; align-items:center; justify-content:center; text-decoration:none; }
+
+/* v1.0.12 title-art lifecycle: low-memory and data-saver devices bind the lite pair. */
+body.title-art-lite-v112 .title-screen-v112 {
+  background:
+    radial-gradient(circle at 49% 47%, rgba(95, 188, 255, .13), transparent 26%),
+    linear-gradient(180deg, rgba(3,7,20,.02), rgba(3,5,18,.26) 58%, rgba(2,4,13,.9) 100%),
+    url('./assets/title-v112/title-bg-desktop-lite-v112.webp?rev=release-v112-b24-12') center 53% / cover no-repeat !important;
+}
+@media (max-width: 720px), (orientation: portrait) {
+  body.title-art-lite-v112 .title-screen-v112 {
+    background:
+      radial-gradient(circle at 50% 35%, rgba(95, 188, 255, .13), transparent 29%),
+      linear-gradient(180deg, rgba(3,7,20,.02), rgba(3,5,18,.24) 56%, rgba(2,4,13,.88) 100%),
+      url('./assets/title-v112/title-bg-mobile-lite-v112.webp?rev=release-v112-b24-12') center 48% / cover no-repeat !important;
+  }
+}

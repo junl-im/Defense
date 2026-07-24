@@ -1,0 +1,347 @@
+{
+  "schema": "DD-P0-DIRECTIONAL-ATLAS-MANIFEST-1.0",
+  "releaseVersion": "1.0.12",
+  "buildId": "b24.12",
+  "directionCount": 11,
+  "stateCount": 6,
+  "states": [
+    "idle",
+    "move",
+    "attack",
+    "skill",
+    "hit",
+    "death"
+  ],
+  "authoredDirections": true,
+  "mirroringAllowed": false,
+  "atlasCount": 4,
+  "frameCount": 264,
+  "runtimeApproved": true,
+  "productionArtApproved": false,
+  "files": [
+    {
+      "actor": "hero-warrior",
+      "model": "player-dokkaebi-warrior-golden-v1.glb",
+      "cell": 160,
+      "columns": 11,
+      "rows": 6,
+      "width": 1760,
+      "height": 960,
+      "states": [
+        "idle",
+        "move",
+        "attack",
+        "skill",
+        "hit",
+        "death"
+      ],
+      "metrics": {
+        "bounds": [
+          [
+            -1.0985404253005981,
+            0.0,
+            -1.0213997960090637
+          ],
+          [
+            1.0985404253005981,
+            3.15123725135345,
+            1.0213997960090637
+          ]
+        ],
+        "height": 3.15123725135345,
+        "width": 2.1970808506011963,
+        "depth": 2.0427995920181274
+      },
+      "projection": {
+        "scale": 20.322688129527194,
+        "ox": 80.49051948116823,
+        "oy": 114.53684666435932,
+        "bounds": [
+          -2.858407269300536,
+          -0.8986583477165999,
+          2.81013417884696,
+          3.4553935584977413
+        ]
+      },
+      "bytes": 645796,
+      "id": "hero-warrior",
+      "path": "public/assets/visual-v112/directional/hero-warrior-atlas-v112.webp",
+      "modelPath": "public/assets/models/player-dokkaebi-warrior-golden-v1.glb",
+      "sha256": "03fa9887297cd1140663c87436d39c592404accd6cb30f152cf39b629e496112",
+      "frames": 66,
+      "authoredDirections": true,
+      "mirroringAllowed": false,
+      "runtimeApproved": true,
+      "productionArtApproved": false,
+      "variants": {
+        "high": {
+          "path": "public/assets/visual-v112/directional/hero-warrior-atlas-v112.webp",
+          "cell": 160,
+          "width": 1760,
+          "height": 960,
+          "bytes": 645796,
+          "sha256": "03fa9887297cd1140663c87436d39c592404accd6cb30f152cf39b629e496112"
+        },
+        "medium": {
+          "path": "public/assets/visual-v112/directional/hero-warrior-atlas-medium-v112.webp",
+          "cell": 128,
+          "width": 1408,
+          "height": 768,
+          "bytes": 481094,
+          "sha256": "a49ca25142a11a03e7cf0cde66e644305452e15ec913e2bdec594936b6d72703"
+        },
+        "low": {
+          "path": "public/assets/visual-v112/directional/hero-warrior-atlas-low-v112.webp",
+          "cell": 60,
+          "width": 660,
+          "height": 360,
+          "bytes": 150782,
+          "sha256": "4c26f91e19a02e98a9988183b1414859c8c5634004b3a391a724e07483df2ee7"
+        }
+      }
+    },
+    {
+      "actor": "guardian-ember",
+      "model": "guardian-ember-sd-toon.glb",
+      "cell": 160,
+      "columns": 11,
+      "rows": 6,
+      "width": 1760,
+      "height": 960,
+      "states": [
+        "idle",
+        "move",
+        "attack",
+        "skill",
+        "hit",
+        "death"
+      ],
+      "metrics": {
+        "bounds": [
+          [
+            -1.2216846201694251,
+            0.0,
+            -1.1925000154972076
+          ],
+          [
+            1.2216846201694251,
+            2.6163947079283028,
+            1.1925000154972076
+          ]
+        ],
+        "height": 2.6163947079283028,
+        "width": 2.4433692403388503,
+        "depth": 2.3850000309944153
+      },
+      "projection": {
+        "scale": 24.164490556949307,
+        "ox": 81.03246552428624,
+        "oy": 108.6767391911402,
+        "bounds": [
+          -2.4263894736826765,
+          -0.9982937878209199,
+          2.3409363562786085,
+          2.934008990286161
+        ]
+      },
+      "bytes": 716690,
+      "id": "guardian-ember",
+      "path": "public/assets/visual-v112/directional/guardian-ember-atlas-v112.webp",
+      "modelPath": "public/assets/models/guardian-ember-sd-toon.glb",
+      "sha256": "f9f4cceb2455ad8cc9bbbc1b4f7d4d4c0f406a52222fd70322a878754c5916f8",
+      "frames": 66,
+      "authoredDirections": true,
+      "mirroringAllowed": false,
+      "runtimeApproved": true,
+      "productionArtApproved": false,
+      "variants": {
+        "high": {
+          "path": "public/assets/visual-v112/directional/guardian-ember-atlas-v112.webp",
+          "cell": 160,
+          "width": 1760,
+          "height": 960,
+          "bytes": 716690,
+          "sha256": "f9f4cceb2455ad8cc9bbbc1b4f7d4d4c0f406a52222fd70322a878754c5916f8"
+        },
+        "medium": {
+          "path": "public/assets/visual-v112/directional/guardian-ember-atlas-medium-v112.webp",
+          "cell": 128,
+          "width": 1408,
+          "height": 768,
+          "bytes": 532430,
+          "sha256": "6f6828a6efaa3adfbe0e2a38172bee5ae5302d002d45a1d053724bd9e1d93bd6"
+        },
+        "low": {
+          "path": "public/assets/visual-v112/directional/guardian-ember-atlas-low-v112.webp",
+          "cell": 60,
+          "width": 660,
+          "height": 360,
+          "bytes": 159714,
+          "sha256": "3c9ca8690ab9f4616ba30d99c189aa53c272534e2b3ceb5cf81a9d4c015d9857"
+        }
+      }
+    },
+    {
+      "actor": "monster-imp",
+      "model": "monster-imp-sd-toon.glb",
+      "cell": 160,
+      "columns": 11,
+      "rows": 6,
+      "width": 1760,
+      "height": 960,
+      "states": [
+        "idle",
+        "move",
+        "attack",
+        "skill",
+        "hit",
+        "death"
+      ],
+      "metrics": {
+        "bounds": [
+          [
+            -1.0477193254085406,
+            0.0,
+            -0.8142884246893844
+          ],
+          [
+            1.0477193254085406,
+            2.5949452577388894,
+            0.8142884246893844
+          ]
+        ],
+        "height": 2.5949452577388894,
+        "width": 2.0954386508170812,
+        "depth": 1.628576849378769
+      },
+      "projection": {
+        "scale": 24.709658553435307,
+        "ox": 81.14971850496713,
+        "oy": 112.43077045615952,
+        "bounds": [
+          -2.377601389267248,
+          -0.8243428171939909,
+          2.284543162462468,
+          2.879594569053355
+        ]
+      },
+      "bytes": 611536,
+      "id": "monster-imp",
+      "path": "public/assets/visual-v112/directional/monster-imp-atlas-v112.webp",
+      "modelPath": "public/assets/models/monster-imp-sd-toon.glb",
+      "sha256": "331bec720ddbbf64273db869ffc8a1f5bb9e71217aefed658daf77a1747cabb5",
+      "frames": 66,
+      "authoredDirections": true,
+      "mirroringAllowed": false,
+      "runtimeApproved": true,
+      "productionArtApproved": false,
+      "variants": {
+        "high": {
+          "path": "public/assets/visual-v112/directional/monster-imp-atlas-v112.webp",
+          "cell": 160,
+          "width": 1760,
+          "height": 960,
+          "bytes": 611536,
+          "sha256": "331bec720ddbbf64273db869ffc8a1f5bb9e71217aefed658daf77a1747cabb5"
+        },
+        "medium": {
+          "path": "public/assets/visual-v112/directional/monster-imp-atlas-medium-v112.webp",
+          "cell": 128,
+          "width": 1408,
+          "height": 768,
+          "bytes": 465190,
+          "sha256": "b3eff1c74a8ebdbfae937ab9f97ed520c7b32e0a0ca78438f6d798b71dabc8b6"
+        },
+        "low": {
+          "path": "public/assets/visual-v112/directional/monster-imp-atlas-low-v112.webp",
+          "cell": 60,
+          "width": 660,
+          "height": 360,
+          "bytes": 144322,
+          "sha256": "a2866c4b170be4ba29f9d3baffce6aefc7d2bd03453af0f82ba681294ec6eb80"
+        }
+      }
+    },
+    {
+      "actor": "boss-tiger",
+      "model": "boss-tiger-sd-toon.glb",
+      "cell": 184,
+      "columns": 11,
+      "rows": 6,
+      "width": 2024,
+      "height": 1104,
+      "states": [
+        "idle",
+        "move",
+        "attack",
+        "skill",
+        "hit",
+        "death"
+      ],
+      "metrics": {
+        "bounds": [
+          [
+            -1.284999966621399,
+            0.0,
+            -2.1044697125232994
+          ],
+          [
+            1.284999966621399,
+            2.756956176757812,
+            2.1044697125232994
+          ]
+        ],
+        "height": 2.756956176757812,
+        "width": 2.569999933242798,
+        "depth": 4.208939425046599
+      },
+      "projection": {
+        "scale": 27.520998843548888,
+        "ox": 92.96754375296385,
+        "oy": 128.06281066992835,
+        "bounds": [
+          -2.6426200650058047,
+          -0.8959409311501588,
+          2.57230693731272,
+          2.995427552871399
+        ]
+      },
+      "bytes": 699592,
+      "id": "boss-tiger",
+      "path": "public/assets/visual-v112/directional/boss-tiger-atlas-v112.webp",
+      "modelPath": "public/assets/models/boss-tiger-sd-toon.glb",
+      "sha256": "df41ae10b0b8a71a821d40277065f1a421ab0169363bb03896603590b91cefad",
+      "frames": 66,
+      "authoredDirections": true,
+      "mirroringAllowed": false,
+      "runtimeApproved": true,
+      "productionArtApproved": false,
+      "variants": {
+        "high": {
+          "path": "public/assets/visual-v112/directional/boss-tiger-atlas-v112.webp",
+          "cell": 184,
+          "width": 2024,
+          "height": 1104,
+          "bytes": 699592,
+          "sha256": "df41ae10b0b8a71a821d40277065f1a421ab0169363bb03896603590b91cefad"
+        },
+        "medium": {
+          "path": "public/assets/visual-v112/directional/boss-tiger-atlas-medium-v112.webp",
+          "cell": 144,
+          "width": 1584,
+          "height": 864,
+          "bytes": 652948,
+          "sha256": "2ead4c134a8ed473a1a643f1838c14004d2d413e14a75549ed9b9df332a43429"
+        },
+        "low": {
+          "path": "public/assets/visual-v112/directional/boss-tiger-atlas-low-v112.webp",
+          "cell": 68,
+          "width": 748,
+          "height": 408,
+          "bytes": 211492,
+          "sha256": "ae773dcc4479760af4f40949b5656b5d191f48e43b681303834a5f28f5c6a0fb"
+        }
+      }
+    }
+  ]
+}

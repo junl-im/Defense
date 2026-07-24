@@ -97,13 +97,15 @@ pass('v15 living battlefield atlas, review OS, 1x/2x pages and mastered sprites'
 
 
 
-await access(path.join(dist, 'src/assets/title-v17/title-bg-desktop-v17.webp'));
-await access(path.join(dist, 'src/assets/title-v17/title-bg-mobile-v17.webp'));
-await access(path.join(dist, 'src/assets/title-v17/title-mascot-v17.webp'));
+await access(path.join(dist, 'src/assets/title-v112/title-bg-desktop-v112.webp'));
+await access(path.join(dist, 'src/assets/title-v112/title-bg-mobile-v112.webp'));
+await access(path.join(dist, 'src/assets/title-v112/title-mascot-v112.webp'));
+const titleManifestV112 = JSON.parse(await readFile(path.join(dist, 'src/assets/title-v112/visual-polish-manifest-v112.json'), 'utf8'));
+if (titleManifestV112.releaseVersion !== releaseVersion || titleManifestV112.buildId !== buildId) fail('v112 title manifest version mismatch');
 const waveGuard = await readFile(path.join(dist, 'src/runtime/wave-flow-guard.js'), 'utf8');
 if (!waveGuard.includes("WAVE_FLOW_GUARD_VERSION = '17.0.0'")) fail('v17 wave flow guard missing from static dist');
-if (!html.includes('title-mascot-v17.webp') || !html.includes('title-panel-v17')) fail('v17 title presentation missing from static entrypoint');
-pass('v17 responsive title artwork and wave flow guard');
+if (!html.includes('title-mascot-v112.webp') || !html.includes('title-panel-v112')) fail('v112 title presentation missing from static entrypoint');
+pass('v112 responsive visual polish artwork and v17 wave flow guard lineage');
 
 const reliability = await readFile(path.join(dist, 'src/runtime/wave-reliability-director.js'), 'utf8');
 if (!reliability.includes("WAVE_RELIABILITY_VERSION = '18.0.0'")) fail('v18 reliability director missing from static dist');
@@ -123,9 +125,9 @@ await access(path.join(dist, 'browser-lab-v19.html'));
 pass('v19 browser reliability, test API, versioned service worker and browser lab page');
 
 
-if (!main.includes('AssetPresenceEnforcer') || !main.includes('MobileHudDirectorV23') || !main.includes('CombatReadabilityDirectorV21') || main.includes('new MobileHudDirectorV22')) fail('v23 runtime integration modules missing or obsolete v22 runtime remains');
+if (!main.includes('AssetPresenceEnforcer') || !main.includes('MobileHudDirectorV23') || !main.includes('CombatReadabilityDirectorV21') || !main.includes('CombatVisualDirectorV112') || !main.includes('CrossPlatformShellV112') || main.includes('new MobileHudDirectorV22')) fail('v112 cross-platform runtime integration modules missing or obsolete v22 runtime remains');
 if (!style.includes('action-asset-v21') || style.includes('body.mobile-hud-v21 ') || style.includes('body.mobile-hud-v22 ')) fail('active action assets missing or obsolete mobile HUD CSS remains');
-if (!(html.includes('title-feature-ribbon-v21') || html.includes('title-brand-v105')) || !(html.includes('quiet-screen-v23') || html.includes('boot-recovery-v2301') || html.includes('clean-foundation-v2302') || html.includes('native-input-v2310') || html.includes('release-v102-b24-2') || html.includes('release-v105-b24-5') || html.includes('release-v107-b24-7') || html.includes('release-v108-b24-8'))) fail('v23 title presentation missing');
+if (!(html.includes('title-feature-ribbon-v21') || html.includes('title-brand-v105') || html.includes('title-brand-v112')) || !(html.includes('title-screen-v112') || html.includes('quiet-screen-v23') || html.includes('boot-recovery-v2301') || html.includes('clean-foundation-v2302') || html.includes('native-input-v2310') || html.includes('release-v102-b24-2') || html.includes('release-v105-b24-5') || html.includes('release-v107-b24-7') || html.includes('release-v108-b24-8'))) fail('v112 title presentation missing');
 pass('v21/v22 lineage plus v23 Quiet Screen mobile HUD integration');
 
 const automationV22 = await readFile(path.join(dist, 'src/runtime/automation-director-v22.js'), 'utf8');
@@ -164,5 +166,34 @@ for (const asset of [
   './assets/ip-mega-v4/reference/art-production-board-v4.webp'
 ]) if (!serviceWorker.includes(`'${asset}'`)) fail(`v4 service worker precache missing: ${asset}`);
 pass('v4 IP Knowledge Megabase viewer, 147232 records, 11 directions and reference art in static dist');
+
+
+const p0ManifestV112 = JSON.parse(await readFile(path.join(dist, 'assets/visual-v112/directional/p0-directional-manifest-v112.json'), 'utf8'));
+if (p0ManifestV112.releaseVersion !== releaseVersion || p0ManifestV112.buildId !== buildId) fail('v112 P0 directional manifest version mismatch');
+if (p0ManifestV112.directionCount !== 11 || p0ManifestV112.stateCount !== 6 || p0ManifestV112.atlasCount !== 4 || p0ManifestV112.frameCount !== 264) fail('v112 P0 directional atlas counts mismatch');
+if (!p0ManifestV112.authoredDirections || p0ManifestV112.mirroringAllowed !== false || p0ManifestV112.runtimeApproved !== true || p0ManifestV112.productionArtApproved !== false) fail('v112 P0 authored-direction approval policy mismatch');
+for (const entry of p0ManifestV112.files) {
+  for (const variant of Object.values(entry.variants || {})) {
+    const relative = String(variant.path || '').replace(/^public\//, '');
+    await access(path.join(dist, relative));
+  }
+}
+const visualDirectorV112 = await readFile(path.join(dist, 'src/runtime/combat-visual-director-v112.js'), 'utf8');
+const shellDirectorV112 = await readFile(path.join(dist, 'src/runtime/cross-platform-shell-v112.js'), 'utf8');
+const p0ViewerV112 = await readFile(path.join(dist, 'p0-directional-library-v112.html'), 'utf8');
+if (!visualDirectorV112.includes('P0_DIRECTIONAL_ATLAS_SPEC_V112') || !visualDirectorV112.includes('mirroringAllowed: false')) fail('v112 combat visual authored atlas contract missing');
+if (!shellDirectorV112.includes("CROSS_PLATFORM_SHELL_V112_VERSION = '1.0.12'") || !shellDirectorV112.includes('shellSeparated: true')) fail('v112 cross-platform shell contract missing');
+if (!style.includes('dd-shell-pc-v112') || !style.includes('dd-shell-mobile-v112') || !style.includes('dd-shell-tablet-v112')) fail('v112 independent shell CSS missing');
+if (!p0ViewerV112.includes('11방향') || !p0ViewerV112.includes('productionArtApproved')) fail('v112 P0 directional review page contract missing');
+for (const asset of [
+  './src/runtime/combat-visual-director-v112.js',
+  './src/runtime/cross-platform-shell-v112.js',
+  './p0-directional-library-v112.html',
+  './assets/visual-v112/directional/p0-directional-manifest-v112.json',
+  './src/assets/title-v112/title-bg-desktop-v112.webp',
+  './src/assets/title-v112/title-bg-mobile-v112.webp',
+  './src/assets/title-v112/title-mascot-v112.webp'
+]) if (!serviceWorker.includes(`'${asset}'`)) fail(`v112 service worker precache missing: ${asset}`);
+pass('v112 PC/mobile shell separation, refined title art, 4 P0 authored 11-direction atlases and integrated world status bars');
 
 console.log('Static deployment verification passed.');

@@ -60,6 +60,24 @@ export const COMBAT_ART_TEXTURE_IDS = Object.freeze({
 
 
 
+export const P0_DIRECTIONAL_ATLAS_IDS = Object.freeze({
+  heroes: Object.freeze({ warrior: 'p0-directional-hero-warrior-v112' }),
+  guardians: Object.freeze({ ember: 'p0-directional-guardian-ember-v112' }),
+  monsters: Object.freeze({ imp: 'p0-directional-monster-imp-v112' }),
+  bosses: Object.freeze({ tiger: 'p0-directional-boss-tiger-v112' })
+});
+
+export const P0_DIRECTIONAL_ATLAS_SPEC_V112 = Object.freeze({
+  directions: 11,
+  states: Object.freeze(['idle', 'move', 'attack', 'skill', 'hit', 'death']),
+  columns: 11,
+  rows: 6,
+  authoredDirections: true,
+  mirroringAllowed: false,
+  atlasCount: 4,
+  frameCount: 264
+});
+
 export const GUARDIAN_CITADEL_TEXTURE_ID = 'guardian-citadel-art-v110';
 
 const combatArtTextureUrls = Object.freeze({
@@ -87,6 +105,29 @@ const combatArtTextureUrls = Object.freeze({
 });
 
 
+
+const p0DirectionalAtlasUrls = Object.freeze({
+  [P0_DIRECTIONAL_ATLAS_IDS.heroes.warrior]: Object.freeze({
+    low: publicAsset('visual-v112/directional/hero-warrior-atlas-low-v112.webp'),
+    medium: publicAsset('visual-v112/directional/hero-warrior-atlas-medium-v112.webp'),
+    high: publicAsset('visual-v112/directional/hero-warrior-atlas-v112.webp')
+  }),
+  [P0_DIRECTIONAL_ATLAS_IDS.guardians.ember]: Object.freeze({
+    low: publicAsset('visual-v112/directional/guardian-ember-atlas-low-v112.webp'),
+    medium: publicAsset('visual-v112/directional/guardian-ember-atlas-medium-v112.webp'),
+    high: publicAsset('visual-v112/directional/guardian-ember-atlas-v112.webp')
+  }),
+  [P0_DIRECTIONAL_ATLAS_IDS.monsters.imp]: Object.freeze({
+    low: publicAsset('visual-v112/directional/monster-imp-atlas-low-v112.webp'),
+    medium: publicAsset('visual-v112/directional/monster-imp-atlas-medium-v112.webp'),
+    high: publicAsset('visual-v112/directional/monster-imp-atlas-v112.webp')
+  }),
+  [P0_DIRECTIONAL_ATLAS_IDS.bosses.tiger]: Object.freeze({
+    low: publicAsset('visual-v112/directional/boss-tiger-atlas-low-v112.webp'),
+    medium: publicAsset('visual-v112/directional/boss-tiger-atlas-medium-v112.webp'),
+    high: publicAsset('visual-v112/directional/boss-tiger-atlas-v112.webp')
+  })
+});
 
 const guardianCitadelTextureUrl = publicAsset('ip-v10/presentation/objects/object_dokkaebi_shrine.png');
 
@@ -127,6 +168,13 @@ export const CORE_ASSET_CATALOG = Object.freeze([
     id: `${key}-impostor-v2`, kind: 'texture', required: false, retain: true, color: true,
     variants: { low: url, medium: url, high: url },
     sourceWidth: 768, sourceHeight: 576, estimatedBytes: 768 * 576 * 4 * 1.333
+  })),
+  ...Object.entries(p0DirectionalAtlasUrls).map(([id, variants]) => ({
+    id, kind: 'texture', required: false, retain: true, color: true, role: 'p0-directional-v112',
+    variants,
+    atlas: P0_DIRECTIONAL_ATLAS_SPEC_V112,
+    productionArtApproved: false,
+    runtimeApproved: true
   })),
   ...Object.entries(combatArtTextureUrls).map(([id, url]) => ({
     id, kind: 'texture', required: false, retain: true, color: true, role: 'combat-art',

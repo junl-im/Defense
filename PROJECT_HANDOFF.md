@@ -1,29 +1,50 @@
-# PROJECT HANDOFF — RELEASE 1.0.11
+# PROJECT HANDOFF — RELEASE 1.0.12
 
-- Project: `DokkaebiLuckDefense3D_FULL_v1.0.11_IP_MEGABASE_v4`
-- Public game version: `1.0.11`
+- Project: `DokkaebiLuckDefense3D_FULL_v1.0.12_CROSS_PLATFORM_VISUAL_POLISH`
+- Public game version: `1.0.12`
 - Legacy development lineage: `23.1.0`
-- Build ID: `b24.11`
+- Build ID: `b24.12`
 - Engine: `21.0.0`
 - Save schema: `21`
-- Patch: `IP Knowledge Megaforge v4`
-- Base: `1.0.10 Directional Combat, World HP, Citadel and Desktop HUD`
+- Patch: `Cross-Platform Visual Polish`
+- Base: `1.0.11 IP Knowledge Megaforge v4`
 - Art lock: `DD-ABSOLUTE-ART-BIBLE-2.0`
 
 ## RELEASE DELIVERABLE
 
-v1.0.11 adds a deterministic IP production megabase and an integrated browser review library.
+v1.0.12 converts the visual concept direction into a real P0 runtime slice while keeping production approval honest.
 
-| Deliverable | Count |
+| Deliverable | Result |
 |---|---:|
-| Base IP assets | 8,192 |
-| Directional motion contracts | 89,232 |
-| Guardian/tower state-actions | 10,560 |
-| PC/mobile HUD contracts | 480 |
-| Ten-wave visual QA scenarios | 5,040 |
-| Performance regression profiles | 960 |
-| Knowledge graph relations | 32,768 |
-| **Total knowledge records** | **147,232** |
+| Refined title/cover assets | 7 files |
+| P0 authored actors | 4 |
+| Directions per actor | 11 |
+| Combat states per actor | 6 |
+| P0 authored frames | 264 |
+| Runtime quality atlas files | 12 |
+| Independent shells | PC / Tablet / Mobile |
+| IP knowledge records retained | 147,232 |
+| Final P0 production-art approvals | 0 |
+
+## P0 VISUAL CONTRACT
+
+1. `hero-warrior`, `guardian-ember`, `monster-imp`, `boss-tiger` use 11-column authored directional atlases.
+2. P0 atlases must not use left/right mirroring.
+3. The six state rows are idle, move, attack, skill, hit and death.
+4. High, Medium and Low variants keep the same 11×6 UV grid.
+5. Runtime integration approval and final production-art approval remain separate.
+6. Non-P0 actors preserve their existing high-quality sprite fallback until authored replacements are ready.
+7. World HP presentation integrates HP, shield, break and status pips without obscuring the actor silhouette.
+
+## CROSS-PLATFORM SHELL CONTRACT
+
+1. PC, tablet and mobile use independent layout rules rather than a shared scaled shell.
+2. PC hides the joystick and reduces tactical chrome to preserve battlefield width.
+3. Mobile portrait reserves separate top information lanes and bottom thumb zones.
+4. Mobile landscape prioritizes central combat visibility and compact control height.
+5. Visible HUD rectangles are audited at runtime.
+6. Unexpected overlaps trigger `dd-shell-overlap-safe-v112`.
+7. Runtime diagnostics must report `shellSeparated: true` and `sharedScaleOnly: false`.
 
 ## PERMANENT VERSION CONTRACT
 
@@ -76,10 +97,12 @@ v1.0.11 adds a deterministic IP production megabase and an integrated browser re
 - 전투 GLB 19종
 - v13 개별 스프라이트 415개
 - v15 런타임 아틀라스 154프레임
+- v112 P0 방향·액션 아틀라스 264프레임
+- PC·태블릿·모바일 독립 셸
 - 런타임 수직 슬라이스 6/6
 - 10웨이브 상태 시뮬레이션 10/10
 - IP 지식 메가베이스 147,232 레코드
-- 최종 제작 아트 승인 0
+- 최종 P0 제작 아트 승인 0
 
 ## Required verification
 
@@ -87,20 +110,19 @@ v1.0.11 adds a deterministic IP production megabase and an integrated browser re
 npm ci
 npm run clean:obsolete
 npm run hygiene:check
-npm run generate:ip-mega:v4
 npm run verify:ip-mega:v4
-npm run verify:release:v110
-npm run verify:release:v111
+npm run verify:release:v112
 npm run build:static
 node scripts/verify-static-dist.mjs
-npm run create:patch:v111
-npm run verify:patch:v111
+npm run create:patch:v112
+npm run verify:patch:v112
 npm run hygiene:check
 ```
 
 ## Known limitations
 
-- 이 릴리스는 초대규모 제작 지식과 참고 이미지를 제공하지만, 8,192개 최종 원화·스프라이트·GLB를 모두 제작한 릴리스는 아니다.
-- 컨테이너 Chromium GPU 제한으로 실제 WebGL 장시간 플레이는 수행하지 못할 수 있다.
-- 실제 스마트폰 주소창·접근성 글꼴·폴더블 화면 QA가 남아 있다.
-- 최종 아트는 P0 골든 세트부터 단계적으로 승인해야 한다.
+- 컨셉 키 비주얼 수준을 전 캐릭터·전 모션에 완성한 릴리스는 아니다. 이번 범위는 네 개 대표 개체의 P0 런타임 수직 슬라이스다.
+- P0 아틀라스는 기존 GLB 형상·재질 기반의 결정적 제작본이며 손·무기·표정·궁극기 프레임은 후속 수작업 폴리시 대상이다.
+- 컨테이너에 로컬 Three.js 번들이 없으면 정적 빌드는 고정 버전 CDN 복구 경로를 사용한다.
+- 실제 스마트폰 주소창, 접근성 글꼴, 폴더블 화면, 장시간 실제 WebGL GPU 테스트는 실기기 QA가 필요하다.
+- 다음 패치는 P0 대상 확대와 클래스별 공격 타이밍·VFX 소켓의 수작업 폴리시가 우선이다.

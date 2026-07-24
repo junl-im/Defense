@@ -1,5 +1,5 @@
-const RELEASE_VERSION = '1.0.11';
-const BUILD_ID = 'b24.11';
+const RELEASE_VERSION = '1.0.12';
+const BUILD_ID = 'b24.12';
 // const VERSION = '23.1.0'; historical lineage marker.
 const CACHE_PREFIX = 'dokkaebi-shell-';
 const CACHE_NAME = `${CACHE_PREFIX}${BUILD_ID}`;
@@ -13,14 +13,33 @@ const SHELL_ASSETS = [
   './assets/ip-mega-v4/reference/gameplay-key-visual-v4.webp',
   './assets/ip-mega-v4/reference/art-production-board-v4.webp',
   './src/runtime/first-presentation-director-v107.js',
-  './src/runtime/combat-visual-director-v110.js',
+  './src/runtime/combat-visual-director-v112.js',
+  './src/runtime/cross-platform-shell-v112.js',
+  './p0-directional-library-v112.html',
+  './assets/visual-v112/directional/p0-directional-manifest-v112.json',
+  './assets/visual-v112/directional/hero-warrior-atlas-v112.webp',
+  './assets/visual-v112/directional/hero-warrior-atlas-medium-v112.webp',
+  './assets/visual-v112/directional/hero-warrior-atlas-low-v112.webp',
+  './assets/visual-v112/directional/guardian-ember-atlas-v112.webp',
+  './assets/visual-v112/directional/guardian-ember-atlas-medium-v112.webp',
+  './assets/visual-v112/directional/guardian-ember-atlas-low-v112.webp',
+  './assets/visual-v112/directional/monster-imp-atlas-v112.webp',
+  './assets/visual-v112/directional/monster-imp-atlas-medium-v112.webp',
+  './assets/visual-v112/directional/monster-imp-atlas-low-v112.webp',
+  './assets/visual-v112/directional/boss-tiger-atlas-v112.webp',
+  './assets/visual-v112/directional/boss-tiger-atlas-medium-v112.webp',
+  './assets/visual-v112/directional/boss-tiger-atlas-low-v112.webp',
   './assets/ip-v10/presentation/objects/object_dokkaebi_shrine.png',
-  './src/assets/title-v17/title-bg-desktop-v17.webp',
-  './src/assets/title-v17/title-bg-mobile-v17.webp',
-  './src/assets/title-v17/title-mascot-v17.webp'
+  './src/assets/title-v112/title-bg-desktop-v112.webp',
+  './src/assets/title-v112/title-bg-desktop-lite-v112.webp',
+  './src/assets/title-v112/title-bg-mobile-v112.webp',
+  './src/assets/title-v112/title-bg-mobile-lite-v112.webp',
+  './src/assets/title-v112/title-mascot-v112.webp',
+  './src/assets/title-v112/title-mascot-lite-v112.webp',
+  './src/assets/title-v112/visual-polish-manifest-v112.json'
 ];
 const isLocal = (request) => new URL(request.url).origin === self.location.origin;
-const isTitleAsset = (pathname) => pathname.includes('/src/assets/title-v17/');
+const isTitleAsset = (pathname) => pathname.includes('/src/assets/title-v112/');
 const isMutableCode = (pathname) => /\.(?:js|css|json)$/i.test(pathname) || pathname.endsWith('/static-bootstrap.js');
 
 async function precache() {

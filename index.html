@@ -55,16 +55,16 @@
       @media (max-height: 620px) { .boot-gate-art { width: min(29vh, 150px); } .boot-gate-title { font-size: 32px; } }
       @media (prefers-reduced-motion: reduce) { .boot-gate-art::before, .boot-gate-line::after { animation: none; } }
     </style>
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-desktop-v17.webp?rev=release-v108-b24-8" media="(min-width: 721px) and (orientation: landscape)" />
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-mobile-v17.webp?rev=release-v108-b24-8" media="(max-width: 720px), (orientation: portrait)" />
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-mascot-v17.webp?rev=release-v108-b24-8" />
+    <link rel="preload" as="image" href="./src/assets/title-v112/title-bg-desktop-v112.webp?rev=release-v112-b24-12" media="(min-width: 721px) and (orientation: landscape)" />
+    <link rel="preload" as="image" href="./src/assets/title-v112/title-bg-mobile-v112.webp?rev=release-v112-b24-12" media="(max-width: 720px), (orientation: portrait)" />
+    <link rel="preload" as="image" href="./src/assets/title-v112/title-mascot-v112.webp?rev=release-v112-b24-12" />
     <!-- active lineage v22.0.0 · BROWSER RELIABILITY LAB -->
   </head>
   <body>
     <div id="boot-gate" role="status" aria-live="polite" aria-label="도깨비 디펜스 화면을 준비하는 중">
       <div class="boot-gate-content">
         <div class="boot-gate-art" aria-hidden="true">
-          <img src="./src/assets/title-v17/title-mascot-v17.webp?rev=release-v108-b24-8" alt="" fetchpriority="high" decoding="async" />
+          <img src="./src/assets/title-v112/title-mascot-v112.webp?rev=release-v112-b24-12" alt="" fetchpriority="high" decoding="async" />
         </div>
         <p class="boot-gate-kicker">MOON MARKET AWAKENING</p>
         <strong class="boot-gate-title">도깨비 디펜스</strong>
@@ -121,7 +121,7 @@
 
       <section id="boot-error" class="screen boot-error" aria-live="assertive">
         <div class="boot-error-card">
-          <div class="boot-error-emblem" aria-hidden="true"><img src="./src/assets/title-v17/title-mascot-v17.webp?rev=release-v108-b24-8" alt="" decoding="async" /></div>
+          <div class="boot-error-emblem" aria-hidden="true"><img src="./src/assets/title-v112/title-mascot-v112.webp?rev=release-v112-b24-12" alt="" decoding="async" /></div>
           <p class="kicker">BOOT RECOVERY</p>
           <h2>달빛 장터를 깨우지 못했습니다</h2>
           <p id="boot-error-message">이전 버전 캐시 또는 WebGL 초기화 문제를 감지했습니다.</p>
@@ -130,9 +130,9 @@
         </div>
       </section>
 
-      <section id="title-screen" class="screen title-screen-v17 title-screen-v105">
-        <div class="title-scene-v17 title-scene-v105">
-          <div class="title-brand-v105 title-brand-v107" aria-label="도깨비 디펜스 운빨 수호대">
+      <section id="title-screen" class="screen title-screen-v17 title-screen-v105 title-screen-v112">
+        <div class="title-scene-v17 title-scene-v105 title-scene-v112">
+          <div class="title-brand-v105 title-brand-v107 title-brand-v112" aria-label="도깨비 디펜스 운빨 수호대">
             <small class="title-kicker-v107">MOONLIGHT GUARDIANS</small>
             <h1 class="title-wordmark-v107">
               <span class="title-word-dokkaebi-v107" data-text="도깨비">도깨비</span>
@@ -141,11 +141,11 @@
             <em class="title-subtitle-v107">운빨 수호대</em>
             <b class="title-seal-v107" aria-hidden="true">수호전설</b>
           </div>
-          <picture class="title-mascot-stage title-mascot-stage-v105">
-            <source media="(max-width: 720px), (orientation: portrait)" srcset="./src/assets/title-v17/title-mascot-v17.webp?rev=release-v108-b24-8" />
-            <img class="title-mascot title-mascot-v17 title-mascot-v105" src="./src/assets/title-v17/title-mascot-v17.webp?rev=release-v108-b24-8" alt="푸른 도깨비불과 곤봉을 든 도깨비 수호대 마스코트" fetchpriority="high" decoding="async" />
+          <picture class="title-mascot-stage title-mascot-stage-v105 title-mascot-stage-v112">
+            <source media="(max-width: 720px), (orientation: portrait)" srcset="./src/assets/title-v112/title-mascot-v112.webp?rev=release-v112-b24-12" />
+            <img class="title-mascot title-mascot-v17 title-mascot-v105 title-mascot-v112" src="./src/assets/title-v112/title-mascot-v112.webp?rev=release-v112-b24-12" alt="푸른 도깨비불과 곤봉을 든 도깨비 수호대 마스코트" fetchpriority="high" decoding="async" />
           </picture>
-          <div class="title-panel title-panel-simple title-panel-v17 title-panel-v105 title-panel-v107">
+          <div class="title-panel title-panel-simple title-panel-v17 title-panel-v105 title-panel-v107 title-panel-v112">
             <button id="start-btn" class="title-touch-start-v107" disabled aria-busy="true" aria-label="게임 준비 중...">
               <span class="title-touch-line-v107" aria-hidden="true"></span>
               <span id="title-start-label" class="title-touch-copy-v107">게임 준비 중...</span>
@@ -158,7 +158,7 @@
               <button id="title-vault-btn" class="btn ghost">보관함</button>
               <button id="controls-btn" class="btn ghost">설정</button>
             </div>
-            <small class="title-help">달빛 장터의 월문을 지킬 수호대를 준비하세요.</small>
+            <small class="title-help title-help-v112">달빛 장터의 월문을 지킬 수호대를 준비하세요.<b>PC · MOBILE VISUAL POLISH</b></small>
           </div>
         </div>
       </section>
@@ -366,6 +366,7 @@
             <button id="equipment-btn" class="btn ghost">장비 가방</button>
             <button id="meta-btn" class="btn ghost meta-entry"><span>혼불 <b id="title-shards">0</b></span>수호자 성장</button>
             <button id="how-btn" class="btn ghost">조작법</button>
+            <a class="btn ghost title-p0-lab-v112" href="./p0-directional-library-v112.html" target="_blank" rel="noopener">11방향 제작실</a>
           </div>
         </div>
       </section>
@@ -647,8 +648,8 @@
     </div>
     <script>
       (() => {
-        const RELEASE_VERSION = '1.0.11';
-        const BUILD_ID = 'b24.11';
+        const RELEASE_VERSION = '1.0.12';
+        const BUILD_ID = 'b24.12';
         const VERSION = `${RELEASE_VERSION}-${BUILD_ID}`;
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
@@ -780,6 +781,6 @@
         registerServiceWorker();
       })();
     </script>
-    <script type="module" src="./src/bootstrap.js?v=1.0.11-b24.11"></script>
+    <script type="module" src="./src/bootstrap.js?v=1.0.12-b24.12"></script>
   </body>
 </html>

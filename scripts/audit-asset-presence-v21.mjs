@@ -22,9 +22,9 @@ const report = {
   production3DApproved: 0,
   massProductionUnlocked: false,
   titleAssets: [
-    fileInfo('src/assets/title-v17/title-bg-desktop-v17.webp'),
-    fileInfo('src/assets/title-v17/title-bg-mobile-v17.webp'),
-    fileInfo('src/assets/title-v17/title-mascot-v17.webp')
+    fileInfo('src/assets/title-v112/title-bg-desktop-v112.webp'),
+    fileInfo('src/assets/title-v112/title-bg-mobile-v112.webp'),
+    fileInfo('src/assets/title-v112/title-mascot-v112.webp')
   ],
   atlas: {
     runtimeFrames: 154,
@@ -49,8 +49,8 @@ const report = {
     pass: isolatedHan.length === 0
   },
   titlePresentation: {
-    cacheRevision: /(?:presence-v21|automation-v22|quiet-screen-v23|release-v105-b24-5|release-v107-b24-7|release-v108-b24-8)/.test(html),
-    mascotMarkup: /title-mascot-v17\.webp\?rev=(?:presence-v21|automation-v22|quiet-screen-v23|release-v105-b24-5|release-v107-b24-7|release-v108-b24-8)/.test(html),
+    cacheRevision: /(?:presence-v21|automation-v22|quiet-screen-v23|release-v105-b24-5|release-v107-b24-7|release-v108-b24-8|release-v112-b24-12)/.test(html),
+    mascotMarkup: /title-mascot-(?:v17|v112)\.webp\?rev=(?:presence-v21|automation-v22|quiet-screen-v23|release-v105-b24-5|release-v107-b24-7|release-v108-b24-8|release-v112-b24-12)/.test(html),
     featureRibbon: html.includes('title-feature-ribbon-v21') || html.includes('title-brand-v105')
   }
 };

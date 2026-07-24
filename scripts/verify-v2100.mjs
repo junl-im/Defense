@@ -15,7 +15,7 @@ const checks = [
   ['combat readability wired', main.includes('new CombatReadabilityDirectorV21') && main.includes('spawnThreatTracer(enemy.group.position, target')],
   ['atlas markup carries presence metadata', read('src/ip-asset-library-v15.js').includes('data-asset-key') && read('src/ip-asset-library-v15.js').includes('data-asset-category')],
   ['six action assets contract', read('src/runtime/asset-presence-enforcer.js').includes("'interact-btn'") && read('src/runtime/asset-presence-enforcer.js').includes("'burst-btn'")],
-  ['title cache revision remains versioned', html.includes('title-mascot-v17.webp?rev=') && html.includes('title-bg-desktop-v17.webp?rev=')],
+  ['title cache revision remains versioned', (html.includes('title-mascot-v112.webp?rev=') && html.includes('title-bg-desktop-v112.webp?rev=')) || (html.includes('title-mascot-v17.webp?rev=') && html.includes('title-bg-desktop-v17.webp?rev='))],
   ['title presentation polish', (html.includes('title-feature-ribbon-v21') && css.includes('.title-ready-v21')) || (html.includes('title-brand-v105') && css.includes('.title-start-button-v105'))],
   ['static HTML isolated Han removed', !/>[\u3400-\u9fff]</u.test(html)],
   ['stronger enemy telegraphs', main.includes('opacity:.62') && main.includes('new THREE.BoxGeometry(1.08,.04,distance)')],

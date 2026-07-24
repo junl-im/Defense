@@ -6,19 +6,19 @@
   "massProductionUnlocked": false,
   "titleAssets": [
     {
-      "path": "src/assets/title-v17/title-bg-desktop-v17.webp",
-      "bytes": 119708,
-      "sha256": "b09bbaf419866a86a6b6712c3a663365d41b1f35f95a68208c82a84414711d38"
+      "path": "src/assets/title-v112/title-bg-desktop-v112.webp",
+      "bytes": 281508,
+      "sha256": "10e6fafb3bd3f746ed54d9e4cf436ed4e74b96fff56f72fba6dcec36f778bd20"
     },
     {
-      "path": "src/assets/title-v17/title-bg-mobile-v17.webp",
-      "bytes": 111516,
-      "sha256": "53db2cbce89cb5b5f62cc026b6fe3c0321561921295e5b2863c7eba1aa6b11d1"
+      "path": "src/assets/title-v112/title-bg-mobile-v112.webp",
+      "bytes": 265490,
+      "sha256": "84a7c62e60f5e4a3cb46c400cf3853e55e95d26d873d0ccaba916dfc9cc58e55"
     },
     {
-      "path": "src/assets/title-v17/title-mascot-v17.webp",
-      "bytes": 99686,
-      "sha256": "78023b651ff87d301dbcb9c2c89b188936148d1f9e7959fdedca294544baf187"
+      "path": "src/assets/title-v112/title-mascot-v112.webp",
+      "bytes": 192296,
+      "sha256": "ef4d4b6a741918318812cf516477d6fa9471b8c2e25bd969384bd745cd8a7a8e"
     }
   ],
   "atlas": {

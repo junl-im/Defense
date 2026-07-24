@@ -14,7 +14,8 @@ const legacyBridge = fs.existsSync('src/runtime/combat-art-skin-v109.js') ? read
 const currentVersion = String(pkg.version || '0.0.0').split('.').map(Number);
 const isV109OrLater = currentVersion[0] > 1 || (currentVersion[0] === 1 && (currentVersion[1] > 0 || currentVersion[2] >= 9));
 const hasV110 = fs.existsSync('src/runtime/combat-visual-director-v110.js');
-const currentVisual = hasV110 ? read('src/runtime/combat-visual-director-v110.js') : legacyBridge;
+const hasV112 = fs.existsSync('src/runtime/combat-visual-director-v112.js');
+const currentVisual = hasV112 ? read('src/runtime/combat-visual-director-v112.js') : hasV110 ? read('src/runtime/combat-visual-director-v110.js') : legacyBridge;
 const hasDist = fs.existsSync('dist/index.html') && fs.existsSync('dist/src/main.js');
 const distMain = hasDist ? read('dist/src/main.js') : '';
 const hasCurrentDist = hasDist && distMain.includes(`const GAME_VERSION = '${pkg.version}'`);
@@ -28,10 +29,10 @@ const checks = [
   ['public release preserves v1.0.9 combat-art foundation or later', isV109OrLater],
   ['package lock release is synchronized', lock.version === pkg.version && lock.packages?.['']?.version === pkg.version],
   ['21 approved v1.0.9 raster slots remain catalogued', new Set(catalog.match(/combat-art-(?:hero|guardian|monster|boss)-[a-z]+-v109/g) || []).size === 21],
-  ['v1.0.9 bridge remains available or is superseded by v1.0.10 visual director', (legacyBridge.includes("art-bible-billboard-v109") && main.includes('CombatArtSkinV109')) || (hasV110 && main.includes('CombatVisualDirectorV110'))],
-  ['heroes guardians monsters and bosses retain approved combat-art attachment path', hasV110 ? ['attachHero','attachGuardian','attachEnemy'].every((name) => currentVisual.includes(`${name}(`)) : ['attachHero','attachGuardian','attachEnemy'].every((name) => legacyBridge.includes(`${name}(`))],
+  ['v1.0.9 bridge remains available or is superseded by a later visual director', (legacyBridge.includes("art-bible-billboard-v109") && main.includes('CombatArtSkinV109')) || (hasV112 && main.includes('CombatVisualDirectorV112')) || (hasV110 && main.includes('CombatVisualDirectorV110'))],
+  ['heroes guardians monsters and bosses retain approved combat-art attachment path', (hasV112 || hasV110) ? ['attachHero','attachGuardian','attachEnemy'].every((name) => currentVisual.includes(`${name}(`)) : ['attachHero','attachGuardian','attachEnemy'].every((name) => legacyBridge.includes(`${name}(`))],
   ['desktop HUD separated-lane contract remains present', css.includes('--desktop-upper-lane-v109') && layout.includes("left-insight-rail") && layout.includes("right-roster-rail")],
-  ['dist preserves current combat visual implementation when present', !hasCurrentDist || (hasV110 ? distMain.includes('CombatVisualDirectorV110') : distMain.includes('CombatArtSkinV109'))],
+  ['dist preserves current combat visual implementation when present', !hasCurrentDist || (hasV112 ? distMain.includes('CombatVisualDirectorV112') : hasV110 ? distMain.includes('CombatVisualDirectorV110') : distMain.includes('CombatArtSkinV109'))],
   ['absolute art bible files are unchanged', artBibleUnchanged],
   ['pre-v1.0.9 runtime raster and 3D art bytes are unchanged', existingAssetsUnchanged],
   ['no SVG file or runtime SVG construction was introduced', !/<svg\b|createElementNS\([^)]*svg/i.test(combined)]

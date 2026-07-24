@@ -1,0 +1,96 @@
+{
+  "schema": "DD-VISUAL-POLISH-ASSET-MANIFEST-1.0",
+  "releaseVersion": "1.0.12",
+  "buildId": "b24.12",
+  "source": "title-v17 curated runtime art",
+  "policy": {
+    "runtimeReady": true,
+    "generatedWith": "Pillow deterministic color/edge refinement",
+    "desktopSafeZone": {
+      "x": [
+        0.24,
+        0.76
+      ],
+      "y": [
+        0.18,
+        0.82
+      ]
+    },
+    "mobileSafeZone": {
+      "x": [
+        0.1,
+        0.9
+      ],
+      "y": [
+        0.16,
+        0.84
+      ]
+    },
+    "noSvg": true
+  },
+  "files": [
+    {
+      "id": "desktop_hq",
+      "path": "src/assets/title-v112/title-bg-desktop-v112.webp",
+      "width": 1920,
+      "height": 1080,
+      "mode": "RGB",
+      "bytes": 281508,
+      "sha256": "10e6fafb3bd3f746ed54d9e4cf436ed4e74b96fff56f72fba6dcec36f778bd20"
+    },
+    {
+      "id": "desktop_lite",
+      "path": "src/assets/title-v112/title-bg-desktop-lite-v112.webp",
+      "width": 1280,
+      "height": 720,
+      "mode": "RGB",
+      "bytes": 132052,
+      "sha256": "9f2f5fc1a16b2e5b21891ceee943c7229c85517b5a73c025655b56a45303685f"
+    },
+    {
+      "id": "mobile_hq",
+      "path": "src/assets/title-v112/title-bg-mobile-v112.webp",
+      "width": 900,
+      "height": 1600,
+      "mode": "RGB",
+      "bytes": 265490,
+      "sha256": "84a7c62e60f5e4a3cb46c400cf3853e55e95d26d873d0ccaba916dfc9cc58e55"
+    },
+    {
+      "id": "mobile_lite",
+      "path": "src/assets/title-v112/title-bg-mobile-lite-v112.webp",
+      "width": 600,
+      "height": 1067,
+      "mode": "RGB",
+      "bytes": 125048,
+      "sha256": "07034c483a3f2f760a2227b0d58d5e1c9a395d924ab104b9d1c5f7949e46fa31"
+    },
+    {
+      "id": "mascot_hq",
+      "path": "src/assets/title-v112/title-mascot-v112.webp",
+      "width": 720,
+      "height": 907,
+      "mode": "RGBA",
+      "bytes": 192296,
+      "sha256": "ef4d4b6a741918318812cf516477d6fa9471b8c2e25bd969384bd745cd8a7a8e"
+    },
+    {
+      "id": "mascot_lite",
+      "path": "src/assets/title-v112/title-mascot-lite-v112.webp",
+      "width": 520,
+      "height": 655,
+      "mode": "RGBA",
+      "bytes": 102878,
+      "sha256": "7b0bf53e62a21ecdfa928ef73241f5650efd747d5417096f85e8bd118ebb9fc9"
+    },
+    {
+      "id": "cover",
+      "path": "public/cover.webp",
+      "width": 1200,
+      "height": 630,
+      "mode": "RGB",
+      "bytes": 173902,
+      "sha256": "2856ba9f3e4284a0549ea2a09402600433b422675c3e929cfe7232eb7f2cc2c5"
+    }
+  ]
+}

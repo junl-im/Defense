@@ -58,6 +58,7 @@ const verificationOnlyAllowlist = new Set([
   'src/ip-production-spec.js',
   'src/rigged-enemy-candidate-spec.js',
   'src/runtime/combat-art-skin-v109.js',
+  'src/runtime/combat-visual-director-v110.js',
   'src/runtime/battlefield-sprite-director.js',
   'src/runtime/battlefield-sprite-director-v15.js',
   'src/runtime/mobile-hud-director-v21.js',

@@ -2,16 +2,46 @@
 
 ## 현재 공개 버전
 
-- 게임: **1.0.11**
+- 게임: **1.0.12**
 - 내부 개발 계보: **23.1.0**
-- 빌드 ID: **b24.11**
+- 빌드 ID: **b24.12**
 - 엔진: **21.0.0**
 - 세이브 스키마: **21**
-- 패치: **IP Knowledge Megaforge v4**
+- 패치: **Cross-Platform Visual Polish**
 
-## 이번 업데이트
+## v1.0.12 핵심 업데이트
 
-도깨비 디펜스의 실제 그래픽 제작을 단계적으로 확대할 수 있도록 초초대규모 IP 지식 자산 메가베이스를 추가했습니다.
+컨셉 보드를 곧바로 전 자산의 최종 완성본이라고 처리하지 않고, 실제 게임에서 검증할 수 있는 P0 그래픽 수직 슬라이스부터 적용했습니다.
+
+- 데스크톱·모바일 별도 타이틀 배경 및 투명 마스코트 재보정
+- 스토어/공유 커버 이미지 재제작
+- 영웅·수호대·몬스터·보스 대표 4개체의 11방향 × 6상태 아틀라스
+- 총 **264 P0 방향·액션 프레임**
+- High·Medium·Low 품질 변형 12장
+- P0 개체 좌우 반전 금지
+- 보호막·브레이크·상태 이상 통합 월드 HP 바
+- PC·태블릿·모바일 독립 HUD 셸
+- 실제 화면 사각형 기반 HUD 겹침 감지와 안전 레이아웃
+- 브라우저 11방향 검토 페이지
+
+브라우저 검토 화면:
+
+```text
+public/p0-directional-library-v112.html
+public/ip-mega-library-v4.html
+```
+
+상세 문서:
+
+```text
+docs/PATCH_NOTES_v1.0.12.md
+docs/CROSS_PLATFORM_VISUAL_POLISH_v1.0.12.md
+docs/P0_DIRECTIONAL_ATLAS_v1.0.12.md
+```
+
+## IP 지식 메가베이스
+
+v1.0.11에서 추가한 제작 지식은 그대로 유지됩니다.
 
 - 베이스 IP 자산: **8,192개**
 - 11방향 액션 레코드: **89,232개**
@@ -22,18 +52,38 @@
 - IP 관계 그래프: **32,768개**
 - **총 지식 레코드: 147,232개**
 
-브라우저 검토 화면: `public/ip-mega-library-v4.html`
-
-상세 제작 규격: `docs/IP_KNOWLEDGE_MEGAFORGE_v4.0.0.md`
-
 ## 상태 구분
 
-이번 업데이트는 제작용 지식, 프롬프트, 기술 계약을 생성했습니다. 최종 원화·스프라이트·GLB가 자동 승인된 것은 아닙니다.
+이번 패치의 264프레임은 실제 런타임에서 사용하는 P0 제작본입니다. 그러나 모든 캐릭터와 모션의 최종 상업 원화 승인을 의미하지는 않습니다.
 
-- 지식 상태: `generated`
-- 최종 아트 상태: `planned`
-- 최종 제작 승인: `false`
-- 최종 아트 승인: **0**
+- P0 런타임 적용: `true`
+- P0 최종 제작 아트 승인: `false`
+- 전체 최종 아트: 단계적 교체 중
+- 자동 생성물의 무조건 승인: 없음
+
+## 주요 명령
+
+```bash
+npm ci
+npm run generate:visual-polish:v112
+npm run generate:p0-directional:v112
+npm run verify:release:v112
+npm run build:static
+node scripts/verify-static-dist.mjs
+```
+
+전체 회귀 검증:
+
+```bash
+npm run verify
+```
+
+v1.0.11 기준 증분 패치:
+
+```bash
+npm run create:patch:v112
+npm run verify:patch:v112
+```
 
 ## 버전 순서
 
@@ -47,9 +97,9 @@
 
 ```text
 /
-├─ src/          게임 소스와 런타임 계약
-├─ public/       공개 런타임 에셋, IP 라이브러리, 서비스 워커
-├─ production/   제작 데이터, IP 메가베이스, 마스터 목록
+├─ src/          게임 소스, 런타임 계약, 타이틀 이미지
+├─ public/       공개 런타임 에셋, 11방향 아틀라스, 서비스 워커
+├─ production/   제작 데이터와 IP 지식 메가베이스
 ├─ scripts/      생성·검증·패키징 스크립트
 ├─ docs/         정식 문서와 그래픽 기준선
 ├─ logs/         검증·빌드·시뮬레이션·패치 결과
@@ -57,38 +107,3 @@
 ├─ README.md
 └─ PROJECT_HANDOFF.md
 ```
-
-## 주요 명령
-
-```bash
-npm ci
-npm run generate:ip-mega:v4
-npm run verify:ip-mega:v4
-npm run verify:release:v111
-npm run build:static
-node scripts/verify-static-dist.mjs
-```
-
-전체 회귀 검증:
-
-```bash
-npm run verify
-```
-
-v1.0.10 기준 증분 패치:
-
-```bash
-npm run create:patch:v111
-npm run verify:patch:v111
-```
-
-## 현재 제작 상태
-
-- 런타임 수직 슬라이스: **6/6**
-- 10웨이브 상태 시뮬레이션: **10/10**
-- 전투 GLB: **19종**
-- v13 개별 스프라이트: **415개**
-- v15 런타임 아틀라스: **154프레임**
-- IP 지식 메가베이스: **147,232 레코드**
-- 최종 제작 아트 승인: **0**
-- 대량 최종 아트 생산: **P0 골든 세트부터 단계적 진행**
