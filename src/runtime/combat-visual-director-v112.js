@@ -1,11 +1,13 @@
 import * as THREE from 'three';
 import { DirectionalImpostorSelector } from '../engine/directional-impostor.js';
 import { COMBAT_ART_TEXTURE_IDS, GUARDIAN_CITADEL_TEXTURE_ID, P0_DIRECTIONAL_ATLAS_IDS, P0_DIRECTIONAL_ATLAS_SPEC_V112 } from '../engine/asset-catalog.js';
+import { COMBAT_ART_RUNTIME_POLICY_V113, canUseP0DirectionalAtlasV113 } from './combat-art-runtime-policy-v113.js';
 
 const DIRECTIONS = P0_DIRECTIONAL_ATLAS_SPEC_V112.directions;
 const STATES = P0_DIRECTIONAL_ATLAS_SPEC_V112.states;
 const ATLAS_COLUMNS = P0_DIRECTIONAL_ATLAS_SPEC_V112.columns;
 const ATLAS_ROWS = P0_DIRECTIONAL_ATLAS_SPEC_V112.rows;
+export const COMBAT_VISUAL_HARDENING_V113_VERSION = '1.0.13';
 const P0_ATLAS_IDS = Object.freeze([
   ...Object.values(P0_DIRECTIONAL_ATLAS_IDS.heroes),
   ...Object.values(P0_DIRECTIONAL_ATLAS_IDS.guardians),
@@ -15,6 +17,7 @@ const P0_ATLAS_IDS = Object.freeze([
 const STATUS_COLORS = Object.freeze({ shield: 0x63d8ff, break: 0xffc65b, stun: 0xffe67a, poison: 0x82ef72, burn: 0xff754d, frost: 0x84ddff, freeze: 0x84ddff, mark: 0x91f0b0, fracture: 0xe0b073, resonance: 0xd987ff, shock: 0xcaa6ff, curse: 0xd172ff });
 const STATE_ROWS = Object.freeze(Object.fromEntries(STATES.map((state, index) => [state, index])));
 const PRESERVE_NAME = /(aura|rankbead|shadow|telegraph|target|ring|marker|health|intent|phase|break|citadel)/i;
+const LEGACY_RUNTIME_LAYER_NAME = /^(?:combatDirectionalVisual:|combatActionAuraV|worldHealthBarV|guardianCitadelV)/i;
 const tempWorld = new THREE.Vector3();
 const tempScale = new THREE.Vector3();
 const tempParentQuaternion = new THREE.Quaternion();
@@ -142,10 +145,74 @@ export default class CombatVisualDirectorV112 {
     this.stateChanges = 0;
     this.citadelAttached = false;
     this.byCategory = { hero: 0, guardian: 0, monster: 0, boss: 0, core: 0 };
+    this.legacyLayersRemoved = 0;
+    this.coreMeshesHidden = 0;
+    this.quarantinedPrototypeSelections = 0;
   }
 
   getTexture(assetId) {
     return this.assetPipeline?.get?.(assetId)?.texture || null;
+  }
+
+
+  disposeRuntimeLayer(root) {
+    root?.traverse?.((object) => {
+      const materials = object.material ? (Array.isArray(object.material) ? object.material : [object.material]) : [];
+      for (const material of materials) {
+        if (material?.userData?.disposeMap || object.userData?.disposeMap) material.map?.dispose?.();
+        material?.dispose?.();
+      }
+    });
+  }
+
+  clearLegacyRuntimeLayers(group, { citadelOnly = false } = {}) {
+    if (!group) return 0;
+    const removals = [];
+    group.traverse?.((object) => {
+      if (object === group) return;
+      const name = String(object.name || '');
+      const isCitadel = /^guardianCitadelV/i.test(name) || object.userData?.guardianCitadelLayer;
+      const isHealth = /^worldHealthBarV/i.test(name) || object.userData?.worldHealthBarV110 || object.userData?.worldHealthBarV112 || object.userData?.worldHealthBarV113;
+      const isCombat = /^combatDirectionalVisual:/i.test(name) || /^combatActionAuraV/i.test(name) || object.userData?.combatVisualV110 || object.userData?.combatVisualV112 || object.userData?.combatVisualV113;
+      if ((citadelOnly && (isCitadel || isHealth)) || (!citadelOnly && (LEGACY_RUNTIME_LAYER_NAME.test(name) || isCitadel || isHealth || isCombat))) removals.push(object);
+    });
+    const roots = removals.filter((object) => !removals.includes(object.parent));
+    for (const object of roots) {
+      object.parent?.remove(object);
+      this.disposeRuntimeLayer(object);
+    }
+    this.legacyLayersRemoved += roots.length;
+    return roots.length;
+  }
+
+  clearCombatAliases(group) {
+    if (!group?.userData) return;
+    for (const key of [
+      'combatVisualSpriteV110', 'combatVisualRecordV110',
+      'combatVisualSpriteV112', 'combatVisualRecordV112',
+      'combatVisualSpriteV113', 'combatVisualRecordV113',
+      'guardianCitadelV110', 'guardianCitadelV112', 'guardianCitadelV113'
+    ]) delete group.userData[key];
+  }
+
+  hideLegacyCoreGeometry(core) {
+    let hidden = 0;
+    core?.traverse?.((object) => {
+      if (object === core || !object.isMesh || object.userData?.combatVisualV113) return;
+      if (object.userData.guardianCitadelPreviousVisibleV113 === undefined) object.userData.guardianCitadelPreviousVisibleV113 = object.visible;
+      if (object.visible) hidden += 1;
+      object.visible = false;
+      object.userData.guardianCitadelHiddenV113 = true;
+    });
+    this.coreMeshesHidden += hidden;
+    return hidden;
+  }
+
+  resolveCuratedAsset(fallbackAssetId, p0AssetId = '') {
+    const p0Loaded = Boolean(p0AssetId && this.getTexture(p0AssetId));
+    const p0Allowed = p0Loaded && canUseP0DirectionalAtlasV113({ productionArtApproved: false });
+    if (p0Loaded && !p0Allowed) this.quarantinedPrototypeSelections += 1;
+    return { assetId: fallbackAssetId, authoredAtlas: false, p0Loaded, p0Allowed };
   }
 
   hidePrototypeVisuals(group) {
@@ -155,7 +222,7 @@ export default class CombatVisualDirectorV112 {
     [data.parts?.rankBeads, data.parts?.halo].forEach((object) => addTreeToSet(object, preserved));
 
     group?.traverse?.((object) => {
-      if (!object.isMesh || object.userData?.combatVisualV112) return;
+      if (!object.isMesh || object.userData?.combatVisualV112 || object.userData?.combatVisualV113) return;
       if (preserved.has(object) || PRESERVE_NAME.test(object.name || '')) return;
       object.userData.combatVisualPreviousVisibleV112 = object.visible;
       object.visible = false;
@@ -194,6 +261,7 @@ export default class CombatVisualDirectorV112 {
     sprite.renderOrder = category === 'boss' ? 12 : category === 'hero' ? 10 : 8;
     sprite.frustumCulled = true;
     sprite.userData.combatVisualV112 = true;
+    sprite.userData.combatVisualV113 = true;
     sprite.userData.assetSourceId = assetId;
     sprite.userData.authoredDirectionalAtlasV112 = authoredAtlas;
     sprite.userData.disposeMap = true;
@@ -219,6 +287,7 @@ export default class CombatVisualDirectorV112 {
     sprite.renderOrder = category === 'boss' ? 11 : 7;
     sprite.visible = false;
     sprite.userData.combatVisualV112 = true;
+    sprite.userData.combatVisualV113 = true;
     return sprite;
   }
 
@@ -249,6 +318,8 @@ export default class CombatVisualDirectorV112 {
       if (typeof getStatuses === 'function') existing.getStatuses = getStatuses;
       return true;
     }
+    this.clearLegacyRuntimeLayers(group);
+    this.clearCombatAliases(group);
     const texture = this.getTexture(assetId);
     if (!texture) return false;
 
@@ -297,6 +368,8 @@ export default class CombatVisualDirectorV112 {
     this.recordByGroup.set(group, record);
     group.userData.combatVisualSpriteV112 = sprite;
     group.userData.combatVisualRecordV112 = record;
+    group.userData.combatVisualSpriteV113 = sprite;
+    group.userData.combatVisualRecordV113 = record;
     // Compatibility aliases for systems that still read the v110 field names.
     group.userData.combatVisualSpriteV110 = sprite;
     group.userData.combatVisualRecordV110 = record;
@@ -307,17 +380,15 @@ export default class CombatVisualDirectorV112 {
   }
 
   attachHero(group, classId = 'warrior', options = {}) {
+    const fallbackAssetId = COMBAT_ART_TEXTURE_IDS.heroes[classId] || COMBAT_ART_TEXTURE_IDS.heroes.warrior;
     const p0AssetId = classId === 'warrior' ? P0_DIRECTIONAL_ATLAS_IDS.heroes.warrior : '';
-    const authoredAtlas = Boolean(p0AssetId && this.getTexture(p0AssetId));
-    const assetId = authoredAtlas
-      ? p0AssetId
-      : (COMBAT_ART_TEXTURE_IDS.heroes[classId] || COMBAT_ART_TEXTURE_IDS.heroes.warrior);
+    const { assetId, authoredAtlas } = this.resolveCuratedAsset(fallbackAssetId, p0AssetId);
     const rootScale = Math.max(.05, finite(group?.scale?.x, 1));
     return this.attach(group, assetId, {
       category: 'hero',
-      scale: 2.82 / rootScale,
-      y: .12 / rootScale,
-      healthY: 3.02 / rootScale,
+      scale: 2.72 / rootScale,
+      y: .08 / rootScale,
+      healthY: 2.92 / rootScale,
       healthWidth: 1.45,
       authoredAtlas,
       ...options
@@ -325,17 +396,15 @@ export default class CombatVisualDirectorV112 {
   }
 
   attachGuardian(group, type = 'ember', rank = 1, options = {}) {
+    const fallbackAssetId = COMBAT_ART_TEXTURE_IDS.guardians[type] || COMBAT_ART_TEXTURE_IDS.guardians.ember;
     const p0AssetId = type === 'ember' ? P0_DIRECTIONAL_ATLAS_IDS.guardians.ember : '';
-    const authoredAtlas = Boolean(p0AssetId && this.getTexture(p0AssetId));
-    const assetId = authoredAtlas
-      ? p0AssetId
-      : (COMBAT_ART_TEXTURE_IDS.guardians[type] || COMBAT_ART_TEXTURE_IDS.guardians.ember);
+    const { assetId, authoredAtlas } = this.resolveCuratedAsset(fallbackAssetId, p0AssetId);
     const rankBoost = 1 + Math.max(0, rank - 1) * .035;
     return this.attach(group, assetId, {
       category: 'guardian',
-      scale: 2.2 * rankBoost,
-      y: .105,
-      healthY: 2.48 * rankBoost,
+      scale: 2.12 * rankBoost,
+      y: .07,
+      healthY: 2.40 * rankBoost,
       healthWidth: 1.28 * rankBoost,
       authoredAtlas,
       ...options
@@ -344,19 +413,18 @@ export default class CombatVisualDirectorV112 {
 
   attachEnemy(group, type = 'imp', config = {}, options = {}) {
     const boss = Boolean(config.boss);
+    const table = boss ? COMBAT_ART_TEXTURE_IDS.bosses : COMBAT_ART_TEXTURE_IDS.monsters;
+    const fallbackAssetId = table[type] || (boss ? COMBAT_ART_TEXTURE_IDS.bosses.tiger : COMBAT_ART_TEXTURE_IDS.monsters.imp);
     const p0AssetId = boss && type === 'tiger'
       ? P0_DIRECTIONAL_ATLAS_IDS.bosses.tiger
       : (!boss && type === 'imp' ? P0_DIRECTIONAL_ATLAS_IDS.monsters.imp : '');
-    const authoredAtlas = Boolean(p0AssetId && this.getTexture(p0AssetId));
-    const table = boss ? COMBAT_ART_TEXTURE_IDS.bosses : COMBAT_ART_TEXTURE_IDS.monsters;
-    const fallback = boss ? COMBAT_ART_TEXTURE_IDS.bosses.tiger : COMBAT_ART_TEXTURE_IDS.monsters.imp;
-    const assetId = authoredAtlas ? p0AssetId : (table[type] || fallback);
+    const { assetId, authoredAtlas } = this.resolveCuratedAsset(fallbackAssetId, p0AssetId);
     const authoredScale = Math.max(.5, finite(config.scale, 1));
-    const scale = boss ? 3.9 + Math.max(0, authoredScale - 2) * .82 : Math.max(1.74, authoredScale * 1.7);
+    const scale = boss ? 3.72 + Math.max(0, authoredScale - 2) * .78 : Math.max(1.68, authoredScale * 1.64);
     return this.attach(group, assetId, {
       category: boss ? 'boss' : 'monster',
       scale,
-      y: boss ? .18 : .085,
+      y: boss ? .12 : .055,
       healthY: boss ? scale * 1.02 : scale * .96,
       healthWidth: boss ? 2.18 : 1.14,
       authoredAtlas,
@@ -365,7 +433,14 @@ export default class CombatVisualDirectorV112 {
   }
 
   attachCitadel(core, options = {}) {
-    if (!core || core.userData?.guardianCitadelV112) return Boolean(core?.userData?.guardianCitadelV112);
+    if (!core) return false;
+    const current = this.recordByGroup.get(core);
+    if (current?.citadel && current.sprite?.parent === core) return true;
+
+    this.clearLegacyRuntimeLayers(core, { citadelOnly: true });
+    this.clearCombatAliases(core);
+    this.hideLegacyCoreGeometry(core);
+
     const texture = this.getTexture(GUARDIAN_CITADEL_TEXTURE_ID);
     if (!texture) return false;
     const rootScale = Math.max(.05, finite(core.scale?.x, 1));
@@ -373,26 +448,30 @@ export default class CombatVisualDirectorV112 {
       map: texture,
       color: 0xffffff,
       transparent: true,
-      opacity: .98,
-      alphaTest: .035,
+      opacity: 1,
+      alphaTest: .04,
       depthTest: true,
       depthWrite: false,
       toneMapped: false
     });
     material.userData.disposeMap = false;
     const sprite = new THREE.Sprite(material);
-    sprite.name = 'guardianCitadelV112';
-    sprite.center.set(.5, .075);
-    sprite.scale.set(5.5 / rootScale, 5.5 / rootScale, 1);
-    sprite.position.set(0, .02 / rootScale, .12 / rootScale);
+    sprite.name = 'guardianCitadelV113';
+    sprite.center.set(.5, .045);
+    sprite.scale.set(5.18 / rootScale, 5.18 / rootScale, 1);
+    sprite.position.set(0, .025 / rootScale, .12 / rootScale);
     sprite.renderOrder = 5;
+    sprite.frustumCulled = true;
     sprite.userData.combatVisualV112 = true;
+    sprite.userData.combatVisualV113 = true;
+    sprite.userData.guardianCitadelLayer = true;
     sprite.userData.disposeMap = false;
     core.add(sprite);
-    core.userData.guardianCitadelV112 = sprite;
 
-    const bar = createHealthBar({ width: 2.45, height: .19, renderOrder: 54 });
-    bar.position.set(0, 5.7 / rootScale, 0);
+    const bar = createHealthBar({ width: 2.35, height: .18, renderOrder: 54 });
+    bar.name = 'worldHealthBarV113';
+    bar.userData.worldHealthBarV113 = true;
+    bar.position.set(0, 5.28 / rootScale, 0);
     core.add(bar);
     const record = {
       group: core,
@@ -401,7 +480,7 @@ export default class CombatVisualDirectorV112 {
       sprite,
       aura: null,
       healthBar: bar,
-      healthY: 5.7 / rootScale,
+      healthY: 5.28 / rootScale,
       getHp: options.getHp || (() => 1),
       getMaxHp: options.getMaxHp || (() => 1),
       getShield: options.getShield || (() => 0),
@@ -413,16 +492,24 @@ export default class CombatVisualDirectorV112 {
       selector: null,
       state: 'idle',
       frame: 0,
-      baseScale: 5.5 / rootScale,
-      baseY: .02 / rootScale,
+      baseScale: 5.18 / rootScale,
+      baseY: .025 / rootScale,
       phase: Math.random() * Math.PI * 2,
       disposed: false,
       citadel: true
     };
     this.records.add(record);
     this.recordByGroup.set(core, record);
+    core.userData.guardianCitadelV110 = sprite;
+    core.userData.guardianCitadelV112 = sprite;
+    core.userData.guardianCitadelV113 = sprite;
+    core.userData.combatVisualSpriteV110 = sprite;
+    core.userData.combatVisualSpriteV112 = sprite;
+    core.userData.combatVisualSpriteV113 = sprite;
     core.userData.combatVisualRecordV110 = record;
-    core.userData.combatVisualMode = 'guardian-citadel-v112';
+    core.userData.combatVisualRecordV112 = record;
+    core.userData.combatVisualRecordV113 = record;
+    core.userData.combatVisualMode = 'single-guardian-citadel-v113';
     this.citadelAttached = true;
     this.attachments += 1;
     this.healthBars += 1;
@@ -451,7 +538,7 @@ export default class CombatVisualDirectorV112 {
     const record = this.recordByGroup.get(group);
     if (!record) return false;
     group.traverse?.((object) => {
-      if (object.userData?.combatVisualHiddenV112) object.visible = false;
+      if (object.userData?.combatVisualHiddenV112 || object.userData?.combatVisualHiddenV113) object.visible = false;
     });
     record.sprite.visible = true;
     if (record.healthBar) record.healthBar.visible = true;
@@ -598,8 +685,8 @@ export default class CombatVisualDirectorV112 {
 
     const directionTurn = finite(record.directionTurn, 0);
     const directionSide = finite(record.directionSide, 0);
-    const perspectiveX = record.authoredAtlas ? 1 : 1 - directionTurn * .30;
-    const rearShade = record.authoredAtlas ? 1 : 1 - directionTurn * .22;
+    const perspectiveX = record.authoredAtlas ? 1 : 1 - directionTurn * .08;
+    const rearShade = record.authoredAtlas ? 1 : 1 - directionTurn * .06;
     record.sprite.position.x = record.authoredAtlas ? 0 : directionSide * directionTurn * record.baseScale * .045;
     record.sprite.position.y = y;
     record.sprite.scale.set(record.baseScale * scaleX * perspectiveX, record.baseScale * scaleY, 1);
@@ -696,6 +783,11 @@ export default class CombatVisualDirectorV112 {
     delete group.userData.combatVisualRecordV112;
     delete group.userData.combatVisualSpriteV110;
     delete group.userData.combatVisualRecordV110;
+    delete group.userData.combatVisualSpriteV113;
+    delete group.userData.combatVisualRecordV113;
+    delete group.userData.guardianCitadelV110;
+    delete group.userData.guardianCitadelV112;
+    delete group.userData.guardianCitadelV113;
     return true;
   }
 
@@ -718,7 +810,9 @@ export default class CombatVisualDirectorV112 {
     const authoredLoaded = P0_ATLAS_IDS.filter((id) => Boolean(this.getTexture(id))).length;
     const authoredActive = [...this.records].filter((record) => record.authoredAtlas).length;
     return Object.freeze({
-      mode: 'authored-directional-atlas-v112',
+      mode: 'curated-combat-art-v113',
+      hardeningVersion: COMBAT_VISUAL_HARDENING_V113_VERSION,
+      runtimePolicyId: COMBAT_ART_RUNTIME_POLICY_V113.id,
       directions: DIRECTIONS,
       states: STATES.length,
       loaded,
@@ -729,6 +823,10 @@ export default class CombatVisualDirectorV112 {
       authoredActive,
       mirroringAllowed: false,
       productionArtApproved: false,
+      p0PrototypeRuntimeEnabled: COMBAT_ART_RUNTIME_POLICY_V113.p0PrototypeRuntimeEnabled,
+      quarantinedPrototypeSelections: this.quarantinedPrototypeSelections,
+      legacyLayersRemoved: this.legacyLayersRemoved,
+      coreMeshesHidden: this.coreMeshesHidden,
       attachments: this.attachments,
       activeRecords: this.records.size,
       healthBars: this.healthBars,

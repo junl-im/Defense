@@ -3,8 +3,8 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 
 const root = path.resolve(import.meta.dirname, '..');
-const expectedVersion = '1.0.12';
-const expectedBuildId = 'b24.12';
+const foundationVersion = '1.0.12';
+const foundationBuildId = 'b24.12';
 const failures = [];
 const passes = [];
 const read = (file) => readFileSync(path.join(root, file));
@@ -58,27 +58,28 @@ const staticBootstrap = text('public/static-bootstrap.js');
 const staticBuilder = text('scripts/build-static-fallback.mjs');
 const productionConsole = text('src/production-console.js');
 
-check(pkg.version === expectedVersion, 'package version mismatch');
-check(pkg.dokkaebi?.releaseVersion === expectedVersion, 'package releaseVersion mismatch');
-check(pkg.dokkaebi?.buildRevision === 12, 'package buildRevision mismatch');
-check(pkg.dokkaebi?.buildId === expectedBuildId, 'package buildId mismatch');
-check(lock.version === expectedVersion && lock.packages?.['']?.version === expectedVersion, 'package-lock version mismatch');
-check(lock.packages?.['']?.dokkaebi?.releaseVersion === expectedVersion, 'package-lock releaseVersion mismatch');
-check(lock.packages?.['']?.dokkaebi?.buildId === expectedBuildId, 'package-lock buildId mismatch');
-check(publicVersion.releaseVersion === expectedVersion && publicVersion.buildId === expectedBuildId, 'public version identity mismatch');
-check(publicVersion.cacheRevision === `${expectedVersion}-${expectedBuildId}`, 'public cache revision mismatch');
-check(policy.includes(`PUBLIC_GAME_VERSION = '${expectedVersion}'`) && policy.includes('BUILD_REVISION = 12'), 'version policy identity mismatch');
-check(index.includes(`const RELEASE_VERSION = '${expectedVersion}'`) && index.includes(`const BUILD_ID = '${expectedBuildId}'`), 'index boot identity mismatch');
-check(index.includes(`./src/bootstrap.js?v=${expectedVersion}-${expectedBuildId}`), 'index bootstrap revision mismatch');
-check(main.includes(`const GAME_VERSION = '${expectedVersion}'`), 'main game version mismatch');
-check(serviceWorker.includes(`const RELEASE_VERSION = '${expectedVersion}'`) && serviceWorker.includes(`const BUILD_ID = '${expectedBuildId}'`), 'service worker identity mismatch');
-check(staticBootstrap.includes(`RELEASE_VERSION = '${expectedVersion}'`) && staticBootstrap.includes(`BUILD_ID = '${expectedBuildId}'`), 'static bootstrap identity mismatch');
-check(staticBuilder.includes(`const version = '${expectedVersion}'`) && staticBuilder.includes(`const buildId = '${expectedBuildId}'`), 'static builder identity mismatch');
+const currentVersion = pkg.version;
+const currentBuildId = pkg.dokkaebi?.buildId;
+const currentPatch = Number(String(currentVersion).split('.')[2] || 0);
+check(currentPatch >= 12, 'current package predates the v1.0.12 foundation');
+check(pkg.dokkaebi?.releaseVersion === currentVersion, 'package releaseVersion mismatch');
+check(lock.version === currentVersion && lock.packages?.['']?.version === currentVersion, 'package-lock version mismatch');
+check(lock.packages?.['']?.dokkaebi?.releaseVersion === currentVersion, 'package-lock releaseVersion mismatch');
+check(lock.packages?.['']?.dokkaebi?.buildId === currentBuildId, 'package-lock buildId mismatch');
+check(publicVersion.releaseVersion === currentVersion && publicVersion.buildId === currentBuildId, 'public version identity mismatch');
+check(publicVersion.cacheRevision === `${currentVersion}-${currentBuildId}`, 'public cache revision mismatch');
+check(policy.includes(`PUBLIC_GAME_VERSION = '${currentVersion}'`) && policy.includes(`BUILD_REVISION = ${pkg.dokkaebi?.buildRevision}`), 'version policy identity mismatch');
+check(index.includes(`const RELEASE_VERSION = '${currentVersion}'`) && index.includes(`const BUILD_ID = '${currentBuildId}'`), 'index boot identity mismatch');
+check(index.includes(`./src/bootstrap.js?v=${currentVersion}-${currentBuildId}`), 'index bootstrap revision mismatch');
+check(main.includes(`const GAME_VERSION = '${currentVersion}'`), 'main game version mismatch');
+check(serviceWorker.includes(`const RELEASE_VERSION = '${currentVersion}'`) && serviceWorker.includes(`const BUILD_ID = '${currentBuildId}'`), 'service worker identity mismatch');
+check(staticBootstrap.includes(`RELEASE_VERSION = '${currentVersion}'`) && staticBootstrap.includes(`BUILD_ID = '${currentBuildId}'`), 'static bootstrap identity mismatch');
+check(staticBuilder.includes(`const version = '${currentVersion}'`) && staticBuilder.includes(`const buildId = '${currentBuildId}'`), 'static builder identity mismatch');
 check(productionConsole.includes('VISUAL POLISH 1.0.12'), 'production console release label mismatch');
-if (!failures.length) pass(`${expectedVersion} / ${expectedBuildId} identity is synchronized`);
+if (!failures.length) pass(`v1.0.12 foundation preserved under current release ${currentVersion} / ${currentBuildId}`);
 
 const titleManifest = json('src/assets/title-v112/visual-polish-manifest-v112.json');
-check(titleManifest.releaseVersion === expectedVersion && titleManifest.buildId === expectedBuildId, 'title manifest identity mismatch');
+check(titleManifest.releaseVersion === foundationVersion && titleManifest.buildId === foundationBuildId, 'title manifest identity mismatch');
 check(titleManifest.policy?.runtimeReady === true && titleManifest.policy?.noSvg === true, 'title manifest runtime policy mismatch');
 check(Array.isArray(titleManifest.files) && titleManifest.files.length === 7, 'title manifest must contain 7 files');
 for (const entry of titleManifest.files || []) {
@@ -110,7 +111,7 @@ for (const [profile, backgroundId, mascotId] of [
 if (!failures.length) pass('responsive title art stays within the independent 16MB boot/title lifecycle budget');
 
 const p0 = json('public/assets/visual-v112/directional/p0-directional-manifest-v112.json');
-check(p0.releaseVersion === expectedVersion && p0.buildId === expectedBuildId, 'P0 manifest identity mismatch');
+check(p0.releaseVersion === foundationVersion && p0.buildId === foundationBuildId, 'P0 manifest identity mismatch');
 check(p0.directionCount === 11 && p0.stateCount === 6, 'P0 direction/state counts mismatch');
 check(p0.atlasCount === 4 && p0.frameCount === 264, 'P0 atlas/frame counts mismatch');
 check(p0.authoredDirections === true && p0.mirroringAllowed === false, 'P0 authored direction policy mismatch');

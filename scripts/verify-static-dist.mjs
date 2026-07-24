@@ -101,7 +101,7 @@ await access(path.join(dist, 'src/assets/title-v112/title-bg-desktop-v112.webp')
 await access(path.join(dist, 'src/assets/title-v112/title-bg-mobile-v112.webp'));
 await access(path.join(dist, 'src/assets/title-v112/title-mascot-v112.webp'));
 const titleManifestV112 = JSON.parse(await readFile(path.join(dist, 'src/assets/title-v112/visual-polish-manifest-v112.json'), 'utf8'));
-if (titleManifestV112.releaseVersion !== releaseVersion || titleManifestV112.buildId !== buildId) fail('v112 title manifest version mismatch');
+if (titleManifestV112.releaseVersion !== '1.0.12' || titleManifestV112.buildId !== 'b24.12') fail('v112 title manifest foundation mismatch');
 const waveGuard = await readFile(path.join(dist, 'src/runtime/wave-flow-guard.js'), 'utf8');
 if (!waveGuard.includes("WAVE_FLOW_GUARD_VERSION = '17.0.0'")) fail('v17 wave flow guard missing from static dist');
 if (!html.includes('title-mascot-v112.webp') || !html.includes('title-panel-v112')) fail('v112 title presentation missing from static entrypoint');
@@ -169,7 +169,7 @@ pass('v4 IP Knowledge Megabase viewer, 147232 records, 11 directions and referen
 
 
 const p0ManifestV112 = JSON.parse(await readFile(path.join(dist, 'assets/visual-v112/directional/p0-directional-manifest-v112.json'), 'utf8'));
-if (p0ManifestV112.releaseVersion !== releaseVersion || p0ManifestV112.buildId !== buildId) fail('v112 P0 directional manifest version mismatch');
+if (p0ManifestV112.releaseVersion !== '1.0.12' || p0ManifestV112.buildId !== 'b24.12') fail('v112 P0 directional manifest foundation mismatch');
 if (p0ManifestV112.directionCount !== 11 || p0ManifestV112.stateCount !== 6 || p0ManifestV112.atlasCount !== 4 || p0ManifestV112.frameCount !== 264) fail('v112 P0 directional atlas counts mismatch');
 if (!p0ManifestV112.authoredDirections || p0ManifestV112.mirroringAllowed !== false || p0ManifestV112.runtimeApproved !== true || p0ManifestV112.productionArtApproved !== false) fail('v112 P0 authored-direction approval policy mismatch');
 for (const entry of p0ManifestV112.files) {

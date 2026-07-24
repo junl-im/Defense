@@ -1,3 +1,5 @@
+> 현재 안정화 패치: **v1.0.13 / b24.13** — 수호성 단일 레이어 및 캐릭터 P0 프로토타입 런타임 격리
+
 # PROJECT HANDOFF — RELEASE 1.0.12
 
 - Project: `DokkaebiLuckDefense3D_FULL_v1.0.12_CROSS_PLATFORM_VISUAL_POLISH`

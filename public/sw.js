@@ -1,5 +1,5 @@
-const RELEASE_VERSION = '1.0.12';
-const BUILD_ID = 'b24.12';
+const RELEASE_VERSION = '1.0.13';
+const BUILD_ID = 'b24.13';
 // const VERSION = '23.1.0'; historical lineage marker.
 const CACHE_PREFIX = 'dokkaebi-shell-';
 const CACHE_NAME = `${CACHE_PREFIX}${BUILD_ID}`;
@@ -14,6 +14,7 @@ const SHELL_ASSETS = [
   './assets/ip-mega-v4/reference/art-production-board-v4.webp',
   './src/runtime/first-presentation-director-v107.js',
   './src/runtime/combat-visual-director-v112.js',
+  './src/runtime/combat-art-runtime-policy-v113.js',
   './src/runtime/cross-platform-shell-v112.js',
   './p0-directional-library-v112.html',
   './assets/visual-v112/directional/p0-directional-manifest-v112.json',
