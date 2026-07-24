@@ -21,6 +21,9 @@ function walk(directory) {
   // v112 ships three quality tiers. The 64 MB gate represents the low-power profile,
   // so medium/high P0 atlases are verified separately by the release manifest.
   if (rel === 'public/assets/visual-v112/directional' || rel.startsWith('public/assets/visual-v112/directional/')) return;
+  // v114 also ships three quality tiers. Only the 192px low-power combat set
+  // is resident on the 64 MB mobile profile; medium/high are release-gated separately.
+  if (rel === 'public/assets/visual-v114' || rel.startsWith('public/assets/visual-v114/')) return;
   // Responsive v112 title art belongs to the boot/title lifecycle, not the resident combat set.
   // Per-screen decoded memory is independently gated in verify-release-v112.mjs.
   if (rel === 'src/assets/title-v112' || rel.startsWith('src/assets/title-v112/')) return;
@@ -85,11 +88,15 @@ for (const directory of roots) walk(directory);
 for (const atlas of [
   'public/assets/ip-v15/atlas/runtime-atlas-v15-p01-1x.webp',
   'public/assets/ip-v15/atlas/runtime-atlas-v15-p02-1x.webp',
-  // P0 low variants are the only v112 directional atlases resident on the 64 MB profile.
-  'public/assets/visual-v112/directional/hero-warrior-atlas-low-v112.webp',
-  'public/assets/visual-v112/directional/guardian-ember-atlas-low-v112.webp',
-  'public/assets/visual-v112/directional/monster-imp-atlas-low-v112.webp',
-  'public/assets/visual-v112/directional/boss-tiger-atlas-low-v112.webp'
+  // v1.0.14 disables the old P0 prototype directional sheets at runtime.
+  // The 192px polished set is the resident low-power combat profile.
+  ...[
+    'hero-warrior','hero-archer','hero-mage','hero-shaman','hero-taoist',
+    'guardian-ember','guardian-frost','guardian-wind','guardian-stone','guardian-bell','guardian-thunder',
+    'monster-imp','monster-runner','monster-brute','monster-shaman','monster-ghost','monster-skeleton','monster-crow',
+    'boss-tiger','boss-serpent','boss-king'
+  ].map((id) => `public/assets/visual-v114/characters/${id}-low-v114.webp`),
+  ...['stable','shielded','cracked','critical'].map((state) => `public/assets/visual-v114/citadel/guardian-citadel-${state}-low-v114.webp`)
 ]) {
   const path = resolve(root, atlas);
   if (!files.includes(path)) files.push(path);

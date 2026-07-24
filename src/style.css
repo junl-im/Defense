@@ -4361,3 +4361,93 @@ body.title-art-lite-v112 .title-screen-v112 {
       url('./assets/title-v112/title-bg-mobile-lite-v112.webp?rev=release-v112-b24-12') center 48% / cover no-repeat !important;
   }
 }
+
+/* ========================================================================== */
+/* v1.0.14 Mega Art Polish: cross-platform combat readability                 */
+/* ========================================================================== */
+:root {
+  --dd-v114-panel-bg: linear-gradient(180deg, rgba(8, 16, 35, .82), rgba(3, 7, 18, .72));
+  --dd-v114-panel-edge: rgba(255, 218, 135, .24);
+  --dd-v114-cyan-edge: rgba(111, 218, 255, .28);
+  --dd-v114-text-shadow: 0 2px 4px rgba(0, 0, 0, .82);
+}
+
+body:is(.dd-shell-pc-v112,.dd-shell-tablet-v112,.dd-shell-mobile-v112) :is(
+  .hud, .boss-health, .top-context-rail > *, .top-status-rail > *,
+  .center-meter-rail > *, .left-insight-rail > *, .right-roster-rail > *
+) {
+  background: var(--dd-v114-panel-bg);
+  border-color: var(--dd-v114-panel-edge);
+  text-shadow: var(--dd-v114-text-shadow);
+}
+
+body:is(.dd-shell-pc-v112,.dd-shell-tablet-v112,.dd-shell-mobile-v112) :is(
+  .hud, .boss-health, .top-context-rail, .top-status-rail, .center-meter-rail,
+  .left-insight-rail, .right-roster-rail, .action-dock
+) {
+  contain: layout style;
+}
+
+body:is(.dd-shell-pc-v112,.dd-shell-tablet-v112,.dd-shell-mobile-v112) .boss-health {
+  border: 1px solid rgba(255, 113, 91, .34);
+  box-shadow: 0 15px 36px rgba(0, 0, 0, .42), inset 0 1px 0 rgba(255, 255, 255, .065);
+}
+body:is(.dd-shell-pc-v112,.dd-shell-tablet-v112,.dd-shell-mobile-v112) .boss-health .bar-fill {
+  filter: saturate(1.12) brightness(1.04);
+}
+
+body.dd-shell-pc-v112 .left-insight-rail,
+body.dd-shell-pc-v112 .right-roster-rail {
+  opacity: .92;
+  transition: opacity .18s ease, transform .18s ease;
+}
+body.dd-shell-pc-v112 .left-insight-rail:hover,
+body.dd-shell-pc-v112 .right-roster-rail:hover,
+body.dd-shell-pc-v112 .left-insight-rail:focus-within,
+body.dd-shell-pc-v112 .right-roster-rail:focus-within { opacity: 1; }
+body.dd-shell-pc-v112 .action-dock {
+  width: min(590px, 46vw);
+  padding: 6px;
+  background: linear-gradient(180deg, rgba(8, 16, 35, .84), rgba(3, 7, 18, .90));
+}
+body.dd-shell-pc-v112 .action-dock > button {
+  min-height: 60px;
+  overflow: hidden;
+}
+body.dd-shell-pc-v112 .top-context-rail,
+body.dd-shell-pc-v112 .top-status-rail,
+body.dd-shell-pc-v112 .center-meter-rail { pointer-events: none; }
+
+body.dd-shell-tablet-v112 :is(.left-insight-rail,.right-roster-rail) {
+  font-size: clamp(10px, 1.04vw, 13px);
+}
+body.dd-shell-tablet-v112 .action-dock { width: min(540px, 65vw); }
+
+body.dd-shell-mobile-v112 .hud :is(.label,.caption,small) {
+  max-width: 11ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+body.dd-shell-mobile-v112 .action-dock > button {
+  isolation: isolate;
+  box-shadow: 0 9px 20px rgba(0, 0, 0, .34), inset 0 1px 0 rgba(255, 255, 255, .07);
+}
+body.dd-shell-mobile-v112 .action-dock > button:active {
+  transform: translateY(1px) scale(.975);
+}
+body.dd-shell-mobile-v112.dd-shell-portrait-v112 .right-roster-rail {
+  opacity: .90;
+}
+body.dd-shell-mobile-v112.dd-shell-portrait-v112.dd-shell-compact-height-v112 :is(
+  .left-insight-rail, .right-roster-rail
+) { display: none !important; }
+body.dd-shell-mobile-v112.dd-shell-landscape-v112 .center-meter-rail {
+  max-height: 38px;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.dd-shell-pc-v112 :is(.left-insight-rail,.right-roster-rail),
+  body.dd-shell-mobile-v112 .action-dock > button { transition: none !important; }
+}

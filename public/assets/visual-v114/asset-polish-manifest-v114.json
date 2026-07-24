@@ -1,0 +1,861 @@
+{
+  "version": "1.0.14",
+  "build": "b24.14",
+  "id": "DD-MEGA-ART-POLISH-V114",
+  "description": "Approved static combat art normalization, grounding, silhouette and guardian citadel state set.",
+  "directionsPolicy": "Approved static art remains unmirrored until independently authored directional production sheets pass review.",
+  "entries": [
+    {
+      "id": "hero-warrior",
+      "kind": "character",
+      "category": "hero",
+      "actionProfile": "melee",
+      "source": "public/assets/ip-v13/crops/heroes/heroes-r01-c01.png",
+      "palette": "warm",
+      "anchor": [
+        0.5,
+        0.08
+      ],
+      "outputs": {
+        "low": {
+          "path": "public/assets/visual-v114/characters/hero-warrior-low-v114.webp",
+          "size": 192,
+          "bytes": 15900,
+          "sha256": "d7aaed4abf8a801f3666c34596a5e9407f2c367d8a2eed5e4b45621cfb984d5f"
+        },
+        "medium": {
+          "path": "public/assets/visual-v114/characters/hero-warrior-medium-v114.webp",
+          "size": 320,
+          "bytes": 32658,
+          "sha256": "b361f86473e7cca9a64bc5494c51213d94021968ebf6d534ac21acabe3164621"
+        },
+        "high": {
+          "path": "public/assets/visual-v114/characters/hero-warrior-high-v114.webp",
+          "size": 512,
+          "bytes": 70814,
+          "sha256": "bb1988a2f2409b702459f6ed82a85680962bd5ec8d97e6471eabe9716c0737c2"
+        }
+      },
+      "productionApproved": true,
+      "runtimeApproved": true
+    },
+    {
+      "id": "hero-archer",
+      "kind": "character",
+      "category": "hero",
+      "actionProfile": "ranged",
+      "source": "public/assets/ip-v13/crops/heroes/heroes-r01-c02.png",
+      "palette": "warm",
+      "anchor": [
+        0.5,
+        0.08
+      ],
+      "outputs": {
+        "low": {
+          "path": "public/assets/visual-v114/characters/hero-archer-low-v114.webp",
+          "size": 192,
+          "bytes": 15934,
+          "sha256": "d31517afd997c535cae040082fcb025cd8c215048698bb63394d9dc9c2402f6e"
+        },
+        "medium": {
+          "path": "public/assets/visual-v114/characters/hero-archer-medium-v114.webp",
+          "size": 320,
+          "bytes": 33666,
+          "sha256": "136aa82e018be4e89f0e53d3845f49562e37ef6d8a05c8fa3a896ece5ce194fb"
+        },
+        "high": {
+          "path": "public/assets/visual-v114/characters/hero-archer-high-v114.webp",
+          "size": 512,
+          "bytes": 73314,
+          "sha256": "e71a20e3e9cf1cd77f463cce2b67495ed189f21a56d118aef1d984c6d98947c7"
+        }
+      },
+      "productionApproved": true,
+      "runtimeApproved": true
+    },
+    {
+      "id": "hero-mage",
+      "kind": "character",
+      "category": "hero",
+      "actionProfile": "caster",
+      "source": "public/assets/ip-v13/crops/heroes/heroes-r01-c03.png",
+      "palette": "cool",
+      "anchor": [
+        0.5,
+        0.08
+      ],
+      "outputs": {
+        "low": {
+          "path": "public/assets/visual-v114/characters/hero-mage-low-v114.webp",
+          "size": 192,
+          "bytes": 16286,
+          "sha256": "34aa6173bff4fa90ce1233943c537bfaa97d9bce88b77167d7d2d62d8158aed3"
+        },
+        "medium": {
+          "path": "public/assets/visual-v114/characters/hero-mage-medium-v114.webp",
+          "size": 320,
+          "bytes": 34030,
+          "sha256": "d180c7c0d9c24365b4d70b2ca94984fa71b6635e1dadd2e9cfd947f1645b368c"
+        },
+        "high": {
+          "path": "public/assets/visual-v114/characters/hero-mage-high-v114.webp",
+          "size": 512,
+          "bytes": 74692,
+          "sha256": "ef27c47ad1780be79c30aa4617817e0815f3f8dd8839747f00372775d93d0e17"
+        }
+      },
+      "productionApproved": true,
+      "runtimeApproved": true
+    },
+    {
+      "id": "hero-shaman",
+      "kind": "character",
+      "category": "hero",
+      "actionProfile": "support",
+      "source": "public/assets/ip-v13/crops/heroes/heroes-r01-c04.png",
+      "palette": "gold",
+      "anchor": [
+        0.5,
+        0.08
+      ],
+      "outputs": {
+        "low": {
+          "path": "public/assets/visual-v114/characters/hero-shaman-low-v114.webp",
+          "size": 192,
+          "bytes": 15548,
+          "sha256": "6186efb3480058611b195b8cc6a259eac0a872d4c016e0eee5f06e77e5c967cb"
+        },
+        "medium": {
+          "path": "public/assets/visual-v114/characters/hero-shaman-medium-v114.webp",
+          "size": 320,
+          "bytes": 32380,
+          "sha256": "8ad406e74d3edd0341970467749a33a95300a5ad1f6c2b8cf9816a7de4d4d3ad"
+        },
+        "high": {
+          "path": "public/assets/visual-v114/characters/hero-shaman-high-v114.webp",
+          "size": 512,
+          "bytes": 70244,
+          "sha256": "92e4e7c7c0eeff972f6fbe388dca781c596f5e0353571307dc1df9de57ca43f4"
+        }
+      },
+      "productionApproved": true,
+      "runtimeApproved": true
+    },
+    {
+      "id": "hero-taoist",
+      "kind": "character",
+      "category": "hero",
+      "actionProfile": "controller",
+      "source": "public/assets/ip-v13/crops/heroes/heroes-r01-c05.png",
+      "palette": "spirit",
+      "anchor": [
+        0.5,
+        0.08
+      ],
+      "outputs": {
+        "low": {
+          "path": "public/assets/visual-v114/characters/hero-taoist-low-v114.webp",
+          "size": 192,
+          "bytes": 12852,
+          "sha256": "bcad0aa186d4ca328019ff5d88fa935f53594e001493a714840df7e481d0dfac"
+        },
+        "medium": {
+          "path": "public/assets/visual-v114/characters/hero-taoist-medium-v114.webp",
+          "size": 320,
+          "bytes": 26366,
+          "sha256": "a1049c8e5256f1e2bc346cfedbe349c87133227adb154797289e27f3c2f6e008"
+        },
+        "high": {
+          "path": "public/assets/visual-v114/characters/hero-taoist-high-v114.webp",
+          "size": 512,
+          "bytes": 57364,
+          "sha256": "18ee106478bdfb6c095fb2621c87f94d150dbee5eb900ad9a4b1fa9a32ff6cb7"
+        }
+      },
+      "productionApproved": true,
+      "runtimeApproved": true
+    },
+    {
+      "id": "guardian-ember",
+      "kind": "character",
+      "category": "guardian",
+      "actionProfile": "caster",
+      "source": "public/assets/ip-v13/crops/heroes/heroes-r04-c06.png",
+      "palette": "fire",
+      "anchor": [
+        0.5,
+        0.08
+      ],
+      "outputs": {
+        "low": {
+          "path": "public/assets/visual-v114/characters/guardian-ember-low-v114.webp",
+          "size": 192,
+          "bytes": 19868,
+          "sha256": "a7d64005932ee96bf70cf4e64d16dc2174e1f14ad6898363df3cb18d6c8dbed4"
+        },
+        "medium": {
+          "path": "public/assets/visual-v114/characters/guardian-ember-medium-v114.webp",
+          "size": 320,
+          "bytes": 41860,
+          "sha256": "fb08a0c9cec7dfd011e9f87e91a3d8d767b250d4280515c197640c0298a0a16b"
+        },
+        "high": {
+          "path": "public/assets/visual-v114/characters/guardian-ember-high-v114.webp",
+          "size": 512,
+          "bytes": 90036,
+          "sha256": "5bd5e9d0742b4301116636e19da3066b62306725ba8aef18bc3cc0cefa47ef11"
+        }
+      },
+      "productionApproved": true,
+      "runtimeApproved": true
+    },
+    {
+      "id": "guardian-frost",
+      "kind": "character",
+      "category": "guardian",
+      "actionProfile": "caster",
+      "source": "public/assets/ip-v13/crops/heroes/heroes-r05-c04.png",
+      "palette": "ice",
+      "anchor": [
+        0.5,
+        0.08
+      ],
+      "outputs": {
+        "low": {
+          "path": "public/assets/visual-v114/characters/guardian-frost-low-v114.webp",
+          "size": 192,
+          "bytes": 21332,
+          "sha256": "52c2c3b270ba8ace67b41c50972f2e967706c9e4f2f8897df80cfdfce5911b97"
+        },
+        "medium": {
+          "path": "public/assets/visual-v114/characters/guardian-frost-medium-v114.webp",
+          "size": 320,
+          "bytes": 44378,
+          "sha256": "cc548b224f966fe93d12d948f2dc7f6d77c98e1f587f05f26d11844d6ecadc02"
+        },
+        "high": {
+          "path": "public/assets/visual-v114/characters/guardian-frost-high-v114.webp",
+          "size": 512,
+          "bytes": 97358,
+          "sha256": "9c3abeec1d99c80fac3ac5dd1dca0852e68804fea36f2773744bb6e788f51729"
+        }
+      },
+      "productionApproved": true,
+      "runtimeApproved": true
+    },
+    {
+      "id": "guardian-wind",
+      "kind": "character",
+      "category": "guardian",
+      "actionProfile": "ranged",
+      "source": "public/assets/ip-v13/crops/heroes/heroes-r05-c01.png",
+      "palette": "wind",
+      "anchor": [
+        0.5,
+        0.08
+      ],
+      "outputs": {
+        "low": {
+          "path": "public/assets/visual-v114/characters/guardian-wind-low-v114.webp",
+          "size": 192,
+          "bytes": 15060,
+          "sha256": "ed4ceca9264a30ddbb8fc2dbf52643d1e50492d88a2dd4c63082ff7497d1d63c"
+        },
+        "medium": {
+          "path": "public/assets/visual-v114/characters/guardian-wind-medium-v114.webp",
+          "size": 320,
+          "bytes": 30494,
+          "sha256": "dd5daabe05bfb66ce0d812bfc17aca383093966131311f8a708960b61842cf9e"
+        },
+        "high": {
+          "path": "public/assets/visual-v114/characters/guardian-wind-high-v114.webp",
+          "size": 512,
+          "bytes": 66874,
+          "sha256": "312b4db02d404cc7ba46167d93296e184d8f8f29a20f62507903b5bc561def6c"
+        }
+      },
+      "productionApproved": true,
+      "runtimeApproved": true
+    },
+    {
+      "id": "guardian-stone",
+      "kind": "character",
+      "category": "guardian",
+      "actionProfile": "tank",
+      "source": "public/assets/ip-v13/crops/heroes/heroes-r06-c05.png",
+      "palette": "earth",
+      "anchor": [
+        0.5,
+        0.08
+      ],
+      "outputs": {
+        "low": {
+          "path": "public/assets/visual-v114/characters/guardian-stone-low-v114.webp",
+          "size": 192,
+          "bytes": 12814,
+          "sha256": "7e35495fc37517b2324a92e11d78871237c3b0221f4f15df3325a60a76039fc7"
+        },
+        "medium": {
+          "path": "public/assets/visual-v114/characters/guardian-stone-medium-v114.webp",
+          "size": 320,
+          "bytes": 26062,
+          "sha256": "409d216a74fd97a127860218dc3e0df02df9aa84befe1ae5387681e860f8a123"
+        },
+        "high": {
+          "path": "public/assets/visual-v114/characters/guardian-stone-high-v114.webp",
+          "size": 512,
+          "bytes": 55712,
+          "sha256": "7b27ae9b836d18f0a4330b466b1c8b139ed85f9f2307eb320bb945084f526d78"
+        }
+      },
+      "productionApproved": true,
+      "runtimeApproved": true
+    },
+    {
+      "id": "guardian-bell",
+      "kind": "character",
+      "category": "guardian",
+      "actionProfile": "support",
+      "source": "public/assets/ip-v13/crops/heroes/heroes-r06-c03.png",
+      "palette": "gold",
+      "anchor": [
+        0.5,
+        0.08
+      ],
+      "outputs": {
+        "low": {
+          "path": "public/assets/visual-v114/characters/guardian-bell-low-v114.webp",
+          "size": 192,
+          "bytes": 20154,
+          "sha256": "0de6abea8a4751ab34ac225094822cba3dd472e8b5a87cc07fce4ea145bea8f6"
+        },
+        "medium": {
+          "path": "public/assets/visual-v114/characters/guardian-bell-medium-v114.webp",
+          "size": 320,
+          "bytes": 43148,
+          "sha256": "3ab10e138979fac98d0c04557ccd6a31373fedd22075dc63575278d5622beb3e"
+        },
+        "high": {
+          "path": "public/assets/visual-v114/characters/guardian-bell-high-v114.webp",
+          "size": 512,
+          "bytes": 92682,
+          "sha256": "8413db168b1f3eb34675fe24684c14ddfef07acb85dc156cc7a77a4e21fee4b8"
+        }
+      },
+      "productionApproved": true,
+      "runtimeApproved": true
+    },
+    {
+      "id": "guardian-thunder",
+      "kind": "character",
+      "category": "guardian",
+      "actionProfile": "melee",
+      "source": "public/assets/ip-v13/crops/heroes/heroes-r03-c04.png",
+      "palette": "lightning",
+      "anchor": [
+        0.5,
+        0.08
+      ],
+      "outputs": {
+        "low": {
+          "path": "public/assets/visual-v114/characters/guardian-thunder-low-v114.webp",
+          "size": 192,
+          "bytes": 18362,
+          "sha256": "90255d656044b1f88a1b7fbca9cc7d83618792c10400c08eb8ed36bd0fc586c1"
+        },
+        "medium": {
+          "path": "public/assets/visual-v114/characters/guardian-thunder-medium-v114.webp",
+          "size": 320,
+          "bytes": 37528,
+          "sha256": "84e2c79a394d257180be76753fe7f5da7cbbf3136faa1218afbf440872649827"
+        },
+        "high": {
+          "path": "public/assets/visual-v114/characters/guardian-thunder-high-v114.webp",
+          "size": 512,
+          "bytes": 81096,
+          "sha256": "f0362f39cc7e3b8c99750aa3f25a20bf82bc3c47d22f09698d55347612625bf2"
+        }
+      },
+      "productionApproved": true,
+      "runtimeApproved": true
+    },
+    {
+      "id": "monster-imp",
+      "kind": "character",
+      "category": "monster",
+      "actionProfile": "ranged",
+      "source": "public/assets/ip-v13/crops/monsters/monsters-r01-c01.png",
+      "palette": "poison",
+      "anchor": [
+        0.5,
+        0.08
+      ],
+      "outputs": {
+        "low": {
+          "path": "public/assets/visual-v114/characters/monster-imp-low-v114.webp",
+          "size": 192,
+          "bytes": 11988,
+          "sha256": "face1f73ddcc2825566732a673feb4fa7e3367abb6fd208e2b1ae657eaba3839"
+        },
+        "medium": {
+          "path": "public/assets/visual-v114/characters/monster-imp-medium-v114.webp",
+          "size": 320,
+          "bytes": 24242,
+          "sha256": "032d79cff9019fe09a64ca8e75d533911d52cbc1e4c320b22fb7e13e3f33b58b"
+        },
+        "high": {
+          "path": "public/assets/visual-v114/characters/monster-imp-high-v114.webp",
+          "size": 512,
+          "bytes": 53836,
+          "sha256": "d2e923e0710c623734000155544df5ce39bd5c88223e9e3b81321fc47a38b4fd"
+        }
+      },
+      "productionApproved": true,
+      "runtimeApproved": true
+    },
+    {
+      "id": "monster-runner",
+      "kind": "character",
+      "category": "monster",
+      "actionProfile": "melee",
+      "source": "public/assets/ip-v13/crops/monsters/monsters-r03-c06.png",
+      "palette": "shadow",
+      "anchor": [
+        0.5,
+        0.08
+      ],
+      "outputs": {
+        "low": {
+          "path": "public/assets/visual-v114/characters/monster-runner-low-v114.webp",
+          "size": 192,
+          "bytes": 11250,
+          "sha256": "e290abf44845798ea2e9be61635d60f37cb06513b0706cce27ec922c779a5989"
+        },
+        "medium": {
+          "path": "public/assets/visual-v114/characters/monster-runner-medium-v114.webp",
+          "size": 320,
+          "bytes": 21306,
+          "sha256": "a014f5cb8542b78f19a87599d6590b1b7defb2d4f9043acd93c0be073f2ef4db"
+        },
+        "high": {
+          "path": "public/assets/visual-v114/characters/monster-runner-high-v114.webp",
+          "size": 512,
+          "bytes": 46456,
+          "sha256": "829368a30087ecd4e6fd0f91fb8298c0fccc2d7096edb0455b0bf4e49bdf6785"
+        }
+      },
+      "productionApproved": true,
+      "runtimeApproved": true
+    },
+    {
+      "id": "monster-brute",
+      "kind": "character",
+      "category": "monster",
+      "actionProfile": "tank",
+      "source": "public/assets/ip-v13/crops/monsters/monsters-r04-c03.png",
+      "palette": "earth",
+      "anchor": [
+        0.5,
+        0.08
+      ],
+      "outputs": {
+        "low": {
+          "path": "public/assets/visual-v114/characters/monster-brute-low-v114.webp",
+          "size": 192,
+          "bytes": 15018,
+          "sha256": "a097a2a3e07a3d1e49d5538bbd87b2156a1083e59db0fb774fa53ede94803e32"
+        },
+        "medium": {
+          "path": "public/assets/visual-v114/characters/monster-brute-medium-v114.webp",
+          "size": 320,
+          "bytes": 29184,
+          "sha256": "554fdfeb6f041f0970457b2b7a9d23bdaf823c58bef17724c5a9b2df396d66c4"
+        },
+        "high": {
+          "path": "public/assets/visual-v114/characters/monster-brute-high-v114.webp",
+          "size": 512,
+          "bytes": 62692,
+          "sha256": "4b1a6c937a80ac91b05581b08e85454194aff8cfa251a0bb04a16252c82b62c7"
+        }
+      },
+      "productionApproved": true,
+      "runtimeApproved": true
+    },
+    {
+      "id": "monster-shaman",
+      "kind": "character",
+      "category": "monster",
+      "actionProfile": "caster",
+      "source": "public/assets/ip-v13/crops/monsters/monsters-r02-c03.png",
+      "palette": "spirit",
+      "anchor": [
+        0.5,
+        0.08
+      ],
+      "outputs": {
+        "low": {
+          "path": "public/assets/visual-v114/characters/monster-shaman-low-v114.webp",
+          "size": 192,
+          "bytes": 14264,
+          "sha256": "4879cf85db7134133de5c610ad92bbeaf49d4a94e2357257a1483999dc740cf7"
+        },
+        "medium": {
+          "path": "public/assets/visual-v114/characters/monster-shaman-medium-v114.webp",
+          "size": 320,
+          "bytes": 29154,
+          "sha256": "1f36192164bc45b8ff280608b9d6dce0f14580a41eb18a3d162261ef63ca6a06"
+        },
+        "high": {
+          "path": "public/assets/visual-v114/characters/monster-shaman-high-v114.webp",
+          "size": 512,
+          "bytes": 63022,
+          "sha256": "a44edd3db4526a7ba79fac7aed414ec7a3bf2c16fca02feb0b79953633fb8a92"
+        }
+      },
+      "productionApproved": true,
+      "runtimeApproved": true
+    },
+    {
+      "id": "monster-ghost",
+      "kind": "character",
+      "category": "monster",
+      "actionProfile": "caster",
+      "source": "public/assets/ip-v13/crops/monsters/monsters-r01-c07.png",
+      "palette": "ice",
+      "anchor": [
+        0.5,
+        0.08
+      ],
+      "outputs": {
+        "low": {
+          "path": "public/assets/visual-v114/characters/monster-ghost-low-v114.webp",
+          "size": 192,
+          "bytes": 9510,
+          "sha256": "0866f0bdbbed6c303f19e364067f65393698dc265892c5a627f968c7fd1362dd"
+        },
+        "medium": {
+          "path": "public/assets/visual-v114/characters/monster-ghost-medium-v114.webp",
+          "size": 320,
+          "bytes": 17268,
+          "sha256": "9e3f3834867a0b793157632777e2409c1f0c097d55353449e1f574a7fb24d171"
+        },
+        "high": {
+          "path": "public/assets/visual-v114/characters/monster-ghost-high-v114.webp",
+          "size": 512,
+          "bytes": 37918,
+          "sha256": "4ca80df7c3d57d31bd17161a125dbfa95a5c6f97283ef853aec2925e8618d920"
+        }
+      },
+      "productionApproved": true,
+      "runtimeApproved": true
+    },
+    {
+      "id": "monster-skeleton",
+      "kind": "character",
+      "category": "monster",
+      "actionProfile": "melee",
+      "source": "public/assets/ip-v13/crops/monsters/monsters-r02-c02.png",
+      "palette": "bone",
+      "anchor": [
+        0.5,
+        0.08
+      ],
+      "outputs": {
+        "low": {
+          "path": "public/assets/visual-v114/characters/monster-skeleton-low-v114.webp",
+          "size": 192,
+          "bytes": 12412,
+          "sha256": "f9506889230af222994ccc7f1208b7f1d763694f10fbf93d57d7762fcb62c25f"
+        },
+        "medium": {
+          "path": "public/assets/visual-v114/characters/monster-skeleton-medium-v114.webp",
+          "size": 320,
+          "bytes": 24460,
+          "sha256": "612bec963955266681b75bc63494a2839dc8442d4ca4be6a31d07926a80ef077"
+        },
+        "high": {
+          "path": "public/assets/visual-v114/characters/monster-skeleton-high-v114.webp",
+          "size": 512,
+          "bytes": 53872,
+          "sha256": "4b665c7c485488cde3e131b20999fe2c473d68719dff88b1bf82bfb6242aba5d"
+        }
+      },
+      "productionApproved": true,
+      "runtimeApproved": true
+    },
+    {
+      "id": "monster-crow",
+      "kind": "character",
+      "category": "monster",
+      "actionProfile": "ranged",
+      "source": "public/assets/ip-v13/crops/monsters/monsters-r04-c06.png",
+      "palette": "shadow",
+      "anchor": [
+        0.5,
+        0.08
+      ],
+      "outputs": {
+        "low": {
+          "path": "public/assets/visual-v114/characters/monster-crow-low-v114.webp",
+          "size": 192,
+          "bytes": 12640,
+          "sha256": "9ab1b49e1510c9e84901c0a3df1135765389bd449cc5784021b9c5277cfd575a"
+        },
+        "medium": {
+          "path": "public/assets/visual-v114/characters/monster-crow-medium-v114.webp",
+          "size": 320,
+          "bytes": 25296,
+          "sha256": "028de0349c8f28c8bb18443f286145865c631d21ae2f1efe738e9be657b29d6a"
+        },
+        "high": {
+          "path": "public/assets/visual-v114/characters/monster-crow-high-v114.webp",
+          "size": 512,
+          "bytes": 55544,
+          "sha256": "4d2dfdae8d6ee18af68bf9974fbdfb49161b624e2c67b8d88f89ecd0ed55b40f"
+        }
+      },
+      "productionApproved": true,
+      "runtimeApproved": true
+    },
+    {
+      "id": "boss-tiger",
+      "kind": "character",
+      "category": "boss",
+      "actionProfile": "roar",
+      "source": "public/assets/ip-v13/crops/bosses/bosses-r05-c01.png",
+      "palette": "lightning",
+      "anchor": [
+        0.5,
+        0.08
+      ],
+      "outputs": {
+        "low": {
+          "path": "public/assets/visual-v114/characters/boss-tiger-low-v114.webp",
+          "size": 192,
+          "bytes": 19664,
+          "sha256": "1281f8ab915f3bce7366aa805608820927db21d1571abe71a17547962d6bb40a"
+        },
+        "medium": {
+          "path": "public/assets/visual-v114/characters/boss-tiger-medium-v114.webp",
+          "size": 320,
+          "bytes": 41274,
+          "sha256": "f0de8bd18da892495aeef39d343b520ef6ccfe61507502bcd765c06e7789ad8e"
+        },
+        "high": {
+          "path": "public/assets/visual-v114/characters/boss-tiger-high-v114.webp",
+          "size": 512,
+          "bytes": 90228,
+          "sha256": "18dae95afb227dcc573a07d0afb72f260005ee1d7ad182c6d8183070ce8f5d00"
+        }
+      },
+      "productionApproved": true,
+      "runtimeApproved": true
+    },
+    {
+      "id": "boss-serpent",
+      "kind": "character",
+      "category": "boss",
+      "actionProfile": "caster",
+      "source": "public/assets/ip-v13/crops/bosses/bosses-r05-c03.png",
+      "palette": "spirit",
+      "anchor": [
+        0.5,
+        0.08
+      ],
+      "outputs": {
+        "low": {
+          "path": "public/assets/visual-v114/characters/boss-serpent-low-v114.webp",
+          "size": 192,
+          "bytes": 18194,
+          "sha256": "8590cc7c20e18d98408d65592af183c8419e6fb9f621af8bd816e36c9f3fd18c"
+        },
+        "medium": {
+          "path": "public/assets/visual-v114/characters/boss-serpent-medium-v114.webp",
+          "size": 320,
+          "bytes": 39032,
+          "sha256": "4852d7c222bd4fda464f2e30ed8ebfe657f8c175f448b539644a76becd32acbf"
+        },
+        "high": {
+          "path": "public/assets/visual-v114/characters/boss-serpent-high-v114.webp",
+          "size": 512,
+          "bytes": 85522,
+          "sha256": "81239154c28d70b89c5bfc18494e8ac7eb7b910a895d41ab9527a15fd3188875"
+        }
+      },
+      "productionApproved": true,
+      "runtimeApproved": true
+    },
+    {
+      "id": "boss-king",
+      "kind": "character",
+      "category": "boss",
+      "actionProfile": "controller",
+      "source": "public/assets/ip-v13/crops/bosses/bosses-r05-c04.png",
+      "palette": "shadow",
+      "anchor": [
+        0.5,
+        0.08
+      ],
+      "outputs": {
+        "low": {
+          "path": "public/assets/visual-v114/characters/boss-king-low-v114.webp",
+          "size": 192,
+          "bytes": 18392,
+          "sha256": "bde926ecf497be9536a8c17e6895923f83742f4002cc05d6033d473e4d472496"
+        },
+        "medium": {
+          "path": "public/assets/visual-v114/characters/boss-king-medium-v114.webp",
+          "size": 320,
+          "bytes": 39528,
+          "sha256": "6af056c8964166d376b166f2d7b42959f25d9bfa053fe1e81948ac21d6775004"
+        },
+        "high": {
+          "path": "public/assets/visual-v114/characters/boss-king-high-v114.webp",
+          "size": 512,
+          "bytes": 85058,
+          "sha256": "cf2186e00ee81a533429be3d1ff5a8f5a0c72e9ea6500f50bc76e60158482ccb"
+        }
+      },
+      "productionApproved": true,
+      "runtimeApproved": true
+    },
+    {
+      "id": "guardian-citadel-stable",
+      "kind": "citadel",
+      "state": "stable",
+      "source": "public/assets/ip-v10/presentation/objects/object_dokkaebi_shrine.png",
+      "anchor": [
+        0.5,
+        0.06
+      ],
+      "outputs": {
+        "low": {
+          "path": "public/assets/visual-v114/citadel/guardian-citadel-stable-low-v114.webp",
+          "size": 192,
+          "bytes": 12870,
+          "sha256": "c367ffa90dd0193a761542c27cedf95ed1f2d3e9edb6fa674839a665c26713de"
+        },
+        "medium": {
+          "path": "public/assets/visual-v114/citadel/guardian-citadel-stable-medium-v114.webp",
+          "size": 320,
+          "bytes": 26500,
+          "sha256": "5a4d76ef0d408323f42bd64bf1957435bce1e13f951a536e7e9526b616856089"
+        },
+        "high": {
+          "path": "public/assets/visual-v114/citadel/guardian-citadel-stable-high-v114.webp",
+          "size": 512,
+          "bytes": 61854,
+          "sha256": "db8bf027cf1f7de615b7c6b5b864f226855ccbae8cd3a8c908da9e73169d39b7"
+        }
+      },
+      "productionApproved": true,
+      "runtimeApproved": true
+    },
+    {
+      "id": "guardian-citadel-shielded",
+      "kind": "citadel",
+      "state": "shielded",
+      "source": "public/assets/ip-v10/presentation/objects/object_dokkaebi_shrine.png",
+      "anchor": [
+        0.5,
+        0.06
+      ],
+      "outputs": {
+        "low": {
+          "path": "public/assets/visual-v114/citadel/guardian-citadel-shielded-low-v114.webp",
+          "size": 192,
+          "bytes": 14130,
+          "sha256": "b0bb4223dcab9f285d29e6d4a84cccf90900c00cf8d7f21d590fc6d3ca20c5e7"
+        },
+        "medium": {
+          "path": "public/assets/visual-v114/citadel/guardian-citadel-shielded-medium-v114.webp",
+          "size": 320,
+          "bytes": 30682,
+          "sha256": "bf0ef61cbe2ec747bc5e97dc3d679b71c14b7fdd8d0279ae2cb482c471c417cf"
+        },
+        "high": {
+          "path": "public/assets/visual-v114/citadel/guardian-citadel-shielded-high-v114.webp",
+          "size": 512,
+          "bytes": 69442,
+          "sha256": "ce6c206f18b9ed9c0fc83ade3754e462dc96fb184cc0c5afa73894f5f86096dd"
+        }
+      },
+      "productionApproved": true,
+      "runtimeApproved": true
+    },
+    {
+      "id": "guardian-citadel-cracked",
+      "kind": "citadel",
+      "state": "cracked",
+      "source": "public/assets/ip-v10/presentation/objects/object_dokkaebi_shrine.png",
+      "anchor": [
+        0.5,
+        0.06
+      ],
+      "outputs": {
+        "low": {
+          "path": "public/assets/visual-v114/citadel/guardian-citadel-cracked-low-v114.webp",
+          "size": 192,
+          "bytes": 13080,
+          "sha256": "4e307a49ea993a3f8e3f66523191d19155628305840c2415d7ba9c5696787a92"
+        },
+        "medium": {
+          "path": "public/assets/visual-v114/citadel/guardian-citadel-cracked-medium-v114.webp",
+          "size": 320,
+          "bytes": 26838,
+          "sha256": "97652bdb2b74b6e828558021d5ec499555be9e0315c2d479fff91b76f906cdaa"
+        },
+        "high": {
+          "path": "public/assets/visual-v114/citadel/guardian-citadel-cracked-high-v114.webp",
+          "size": 512,
+          "bytes": 63548,
+          "sha256": "c2110acc93a10c23a801212fc094f5944428054d504fa9402506492b4fd50784"
+        }
+      },
+      "productionApproved": true,
+      "runtimeApproved": true
+    },
+    {
+      "id": "guardian-citadel-critical",
+      "kind": "citadel",
+      "state": "critical",
+      "source": "public/assets/ip-v10/presentation/objects/object_dokkaebi_shrine.png",
+      "anchor": [
+        0.5,
+        0.06
+      ],
+      "outputs": {
+        "low": {
+          "path": "public/assets/visual-v114/citadel/guardian-citadel-critical-low-v114.webp",
+          "size": 192,
+          "bytes": 12608,
+          "sha256": "ae274da14dc1fb5aec271b760a1d007cbd5ad643285c2202c1fa3ad6c87291e7"
+        },
+        "medium": {
+          "path": "public/assets/visual-v114/citadel/guardian-citadel-critical-medium-v114.webp",
+          "size": 320,
+          "bytes": 26098,
+          "sha256": "7de998015d6d6493938416f8a8c438f80f0010a767227f3304121a7b48fadd7c"
+        },
+        "high": {
+          "path": "public/assets/visual-v114/citadel/guardian-citadel-critical-high-v114.webp",
+          "size": 512,
+          "bytes": 61280,
+          "sha256": "b06e758606906b7c3dac57bb2d0c0644c44ef6f4c7eb26ebf3640de0903781c6"
+        }
+      },
+      "productionApproved": true,
+      "runtimeApproved": true
+    }
+  ],
+  "summary": {
+    "characters": 21,
+    "citadelStates": 4,
+    "tierFiles": 75,
+    "tiers": [
+      "low",
+      "medium",
+      "high"
+    ]
+  }
+}

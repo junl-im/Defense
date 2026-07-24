@@ -65,7 +65,7 @@ import AutomationDirectorV22 from './runtime/automation-director-v22.js';
 import CoreFoundationDirectorV101 from './runtime/core-foundation-director-v101.js';
 import AppStateMachineV103 from './runtime/app-state-machine-v103.js';
 import FirstPresentationDirectorV107 from './runtime/first-presentation-director-v107.js';
-import CombatVisualDirectorV112 from './runtime/combat-visual-director-v112.js';
+import CombatArtPolishDirectorV114 from './runtime/combat-art-polish-director-v114.js';
 import CrossPlatformShellV112 from './runtime/cross-platform-shell-v112.js';
 // CameraDirector v14/v15 lineage is preserved by CameraDirectorV16.
 
@@ -128,7 +128,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '1.0.13';
+const GAME_VERSION = '1.0.14';
 // const GAME_VERSION = '23.1.0'; historical lineage marker for pre-normalization contracts.
 if (GAME_VERSION !== PUBLIC_GAME_VERSION) throw new Error('Public version policy mismatch');
 function runtimeSpriteMarkup(path, alt = '', className = '') {
@@ -581,7 +581,7 @@ class DokkaebiLuckDefense {
       textureBudgetMB: this.engine.textureBudgetMB,
       lowPower: this.lowPower
     });
-    this.combatVisualV112 = new CombatVisualDirectorV112({ assetPipeline: this.assetPipeline, lowPower: this.lowPower });
+    this.combatVisualV112 = new CombatArtPolishDirectorV114({ assetPipeline: this.assetPipeline, lowPower: this.lowPower });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
     this.scene = new THREE.Scene();
@@ -6892,7 +6892,7 @@ class DokkaebiLuckDefense {
       this.runSafe('modal-particles', () => this.updateParticles(dt));
     }
 
-    this.runSafe('combat-visual-v112', () => this.combatVisualV112?.update(this.state === 'playing' ? gameDt : dt, this.camera, this.elapsed, { showHealth: this.state === 'playing' }));
+    this.runSafe('combat-art-polish-v114', () => this.combatVisualV112?.update(this.state === 'playing' ? gameDt : dt, this.camera, this.elapsed, { showHealth: this.state === 'playing' }));
 
     if (this.player?.group && this.worldReady && this.frameScheduler.shouldRun('chunks', this.engine.qualityProfile?.chunkHz || 15)) {
       this.runSafe('world-chunks', () => this.engine.worldChunks.update(this.player.group.position));

@@ -125,7 +125,7 @@ await access(path.join(dist, 'browser-lab-v19.html'));
 pass('v19 browser reliability, test API, versioned service worker and browser lab page');
 
 
-if (!main.includes('AssetPresenceEnforcer') || !main.includes('MobileHudDirectorV23') || !main.includes('CombatReadabilityDirectorV21') || !main.includes('CombatVisualDirectorV112') || !main.includes('CrossPlatformShellV112') || main.includes('new MobileHudDirectorV22')) fail('v112 cross-platform runtime integration modules missing or obsolete v22 runtime remains');
+if (!main.includes('AssetPresenceEnforcer') || !main.includes('MobileHudDirectorV23') || !main.includes('CombatReadabilityDirectorV21') || !(main.includes('CombatVisualDirectorV112') || main.includes('CombatArtPolishDirectorV114')) || !main.includes('CrossPlatformShellV112') || main.includes('new MobileHudDirectorV22')) fail('v112 cross-platform runtime integration modules missing or obsolete v22 runtime remains');
 if (!style.includes('action-asset-v21') || style.includes('body.mobile-hud-v21 ') || style.includes('body.mobile-hud-v22 ')) fail('active action assets missing or obsolete mobile HUD CSS remains');
 if (!(html.includes('title-feature-ribbon-v21') || html.includes('title-brand-v105') || html.includes('title-brand-v112')) || !(html.includes('title-screen-v112') || html.includes('quiet-screen-v23') || html.includes('boot-recovery-v2301') || html.includes('clean-foundation-v2302') || html.includes('native-input-v2310') || html.includes('release-v102-b24-2') || html.includes('release-v105-b24-5') || html.includes('release-v107-b24-7') || html.includes('release-v108-b24-8'))) fail('v112 title presentation missing');
 pass('v21/v22 lineage plus v23 Quiet Screen mobile HUD integration');

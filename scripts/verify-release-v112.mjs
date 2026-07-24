@@ -162,7 +162,7 @@ for (const id of ['hero-warrior','guardian-ember','monster-imp','boss-tiger']) c
 check(visual.includes('ATLAS_COLUMNS = P0_DIRECTIONAL_ATLAS_SPEC_V112.columns'), 'combat visual atlas column contract missing');
 check(visual.includes('authoredDirectionalAtlasV112') && visual.includes('mirroringAllowed: false'), 'combat visual no-mirror diagnostics missing');
 check(visual.includes('shieldFill') && visual.includes('breakFill') && visual.includes('statusPips'), 'integrated world HP status bar missing');
-check(main.includes("import CombatVisualDirectorV112 from './runtime/combat-visual-director-v112.js'"), 'main CombatVisualDirectorV112 import missing');
+check(main.includes("import CombatVisualDirectorV112 from './runtime/combat-visual-director-v112.js'") || main.includes("import CombatArtPolishDirectorV114 from './runtime/combat-art-polish-director-v114.js'"), 'main v112-compatible combat visual director import missing');
 check(main.includes("import CrossPlatformShellV112 from './runtime/cross-platform-shell-v112.js'"), 'main CrossPlatformShellV112 import missing');
 check(!main.includes('new CombatVisualDirectorV110'), 'obsolete v110 visual director is still instantiated');
 check(shell.includes("CROSS_PLATFORM_SHELL_V112_VERSION = '1.0.12'"), 'cross-platform shell version mismatch');

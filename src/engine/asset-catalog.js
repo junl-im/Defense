@@ -79,31 +79,49 @@ export const P0_DIRECTIONAL_ATLAS_SPEC_V112 = Object.freeze({
 });
 
 export const GUARDIAN_CITADEL_TEXTURE_ID = 'guardian-citadel-art-v110';
-
-const combatArtTextureUrls = Object.freeze({
-  [COMBAT_ART_TEXTURE_IDS.heroes.warrior]: publicAsset('ip-v13/crops/heroes/heroes-r01-c01.png'),
-  [COMBAT_ART_TEXTURE_IDS.heroes.archer]: publicAsset('ip-v13/crops/heroes/heroes-r01-c02.png'),
-  [COMBAT_ART_TEXTURE_IDS.heroes.mage]: publicAsset('ip-v13/crops/heroes/heroes-r01-c03.png'),
-  [COMBAT_ART_TEXTURE_IDS.heroes.shaman]: publicAsset('ip-v13/crops/heroes/heroes-r01-c04.png'),
-  [COMBAT_ART_TEXTURE_IDS.heroes.taoist]: publicAsset('ip-v13/crops/heroes/heroes-r01-c05.png'),
-  [COMBAT_ART_TEXTURE_IDS.guardians.ember]: publicAsset('ip-v13/crops/heroes/heroes-r04-c06.png'),
-  [COMBAT_ART_TEXTURE_IDS.guardians.frost]: publicAsset('ip-v13/crops/heroes/heroes-r05-c04.png'),
-  [COMBAT_ART_TEXTURE_IDS.guardians.wind]: publicAsset('ip-v13/crops/heroes/heroes-r05-c01.png'),
-  [COMBAT_ART_TEXTURE_IDS.guardians.stone]: publicAsset('ip-v13/crops/heroes/heroes-r06-c05.png'),
-  [COMBAT_ART_TEXTURE_IDS.guardians.bell]: publicAsset('ip-v13/crops/heroes/heroes-r06-c03.png'),
-  [COMBAT_ART_TEXTURE_IDS.guardians.thunder]: publicAsset('ip-v13/crops/heroes/heroes-r03-c04.png'),
-  [COMBAT_ART_TEXTURE_IDS.monsters.imp]: publicAsset('ip-v13/crops/monsters/monsters-r01-c01.png'),
-  [COMBAT_ART_TEXTURE_IDS.monsters.runner]: publicAsset('ip-v13/crops/monsters/monsters-r03-c06.png'),
-  [COMBAT_ART_TEXTURE_IDS.monsters.brute]: publicAsset('ip-v13/crops/monsters/monsters-r04-c03.png'),
-  [COMBAT_ART_TEXTURE_IDS.monsters.shaman]: publicAsset('ip-v13/crops/monsters/monsters-r02-c03.png'),
-  [COMBAT_ART_TEXTURE_IDS.monsters.ghost]: publicAsset('ip-v13/crops/monsters/monsters-r01-c07.png'),
-  [COMBAT_ART_TEXTURE_IDS.monsters.skeleton]: publicAsset('ip-v13/crops/monsters/monsters-r02-c02.png'),
-  [COMBAT_ART_TEXTURE_IDS.monsters.crow]: publicAsset('ip-v13/crops/monsters/monsters-r04-c06.png'),
-  [COMBAT_ART_TEXTURE_IDS.bosses.tiger]: publicAsset('ip-v13/crops/bosses/bosses-r05-c01.png'),
-  [COMBAT_ART_TEXTURE_IDS.bosses.serpent]: publicAsset('ip-v13/crops/bosses/bosses-r05-c03.png'),
-  [COMBAT_ART_TEXTURE_IDS.bosses.king]: publicAsset('ip-v13/crops/bosses/bosses-r05-c04.png')
+export const GUARDIAN_CITADEL_STATE_TEXTURE_IDS_V114 = Object.freeze({
+  stable: GUARDIAN_CITADEL_TEXTURE_ID,
+  shielded: 'guardian-citadel-shielded-v114',
+  cracked: 'guardian-citadel-cracked-v114',
+  critical: 'guardian-citadel-critical-v114'
 });
 
+const polishedVariantsV114 = (folder, slug) => Object.freeze({
+  low: publicAsset(`visual-v114/${folder}/${slug}-low-v114.webp`),
+  medium: publicAsset(`visual-v114/${folder}/${slug}-medium-v114.webp`),
+  high: publicAsset(`visual-v114/${folder}/${slug}-high-v114.webp`)
+});
+
+const combatArtTextureVariantsV114 = Object.freeze({
+  [COMBAT_ART_TEXTURE_IDS.heroes.warrior]: polishedVariantsV114('characters', 'hero-warrior'),
+  [COMBAT_ART_TEXTURE_IDS.heroes.archer]: polishedVariantsV114('characters', 'hero-archer'),
+  [COMBAT_ART_TEXTURE_IDS.heroes.mage]: polishedVariantsV114('characters', 'hero-mage'),
+  [COMBAT_ART_TEXTURE_IDS.heroes.shaman]: polishedVariantsV114('characters', 'hero-shaman'),
+  [COMBAT_ART_TEXTURE_IDS.heroes.taoist]: polishedVariantsV114('characters', 'hero-taoist'),
+  [COMBAT_ART_TEXTURE_IDS.guardians.ember]: polishedVariantsV114('characters', 'guardian-ember'),
+  [COMBAT_ART_TEXTURE_IDS.guardians.frost]: polishedVariantsV114('characters', 'guardian-frost'),
+  [COMBAT_ART_TEXTURE_IDS.guardians.wind]: polishedVariantsV114('characters', 'guardian-wind'),
+  [COMBAT_ART_TEXTURE_IDS.guardians.stone]: polishedVariantsV114('characters', 'guardian-stone'),
+  [COMBAT_ART_TEXTURE_IDS.guardians.bell]: polishedVariantsV114('characters', 'guardian-bell'),
+  [COMBAT_ART_TEXTURE_IDS.guardians.thunder]: polishedVariantsV114('characters', 'guardian-thunder'),
+  [COMBAT_ART_TEXTURE_IDS.monsters.imp]: polishedVariantsV114('characters', 'monster-imp'),
+  [COMBAT_ART_TEXTURE_IDS.monsters.runner]: polishedVariantsV114('characters', 'monster-runner'),
+  [COMBAT_ART_TEXTURE_IDS.monsters.brute]: polishedVariantsV114('characters', 'monster-brute'),
+  [COMBAT_ART_TEXTURE_IDS.monsters.shaman]: polishedVariantsV114('characters', 'monster-shaman'),
+  [COMBAT_ART_TEXTURE_IDS.monsters.ghost]: polishedVariantsV114('characters', 'monster-ghost'),
+  [COMBAT_ART_TEXTURE_IDS.monsters.skeleton]: polishedVariantsV114('characters', 'monster-skeleton'),
+  [COMBAT_ART_TEXTURE_IDS.monsters.crow]: polishedVariantsV114('characters', 'monster-crow'),
+  [COMBAT_ART_TEXTURE_IDS.bosses.tiger]: polishedVariantsV114('characters', 'boss-tiger'),
+  [COMBAT_ART_TEXTURE_IDS.bosses.serpent]: polishedVariantsV114('characters', 'boss-serpent'),
+  [COMBAT_ART_TEXTURE_IDS.bosses.king]: polishedVariantsV114('characters', 'boss-king')
+});
+
+const guardianCitadelStateTextureVariantsV114 = Object.freeze({
+  [GUARDIAN_CITADEL_STATE_TEXTURE_IDS_V114.stable]: polishedVariantsV114('citadel', 'guardian-citadel-stable'),
+  [GUARDIAN_CITADEL_STATE_TEXTURE_IDS_V114.shielded]: polishedVariantsV114('citadel', 'guardian-citadel-shielded'),
+  [GUARDIAN_CITADEL_STATE_TEXTURE_IDS_V114.cracked]: polishedVariantsV114('citadel', 'guardian-citadel-cracked'),
+  [GUARDIAN_CITADEL_STATE_TEXTURE_IDS_V114.critical]: polishedVariantsV114('citadel', 'guardian-citadel-critical')
+});
 
 
 const p0DirectionalAtlasUrls = Object.freeze({
@@ -128,8 +146,6 @@ const p0DirectionalAtlasUrls = Object.freeze({
     high: publicAsset('visual-v112/directional/boss-tiger-atlas-v112.webp')
   })
 });
-
-const guardianCitadelTextureUrl = publicAsset('ip-v10/presentation/objects/object_dokkaebi_shrine.png');
 
 const sdToonModelUrls = Object.freeze({
   ...Object.fromEntries(Object.values(HERO_CLASS_ASSET_IDS).map((id) => [id, publicAsset(`models/${id}.glb`)])),
@@ -169,23 +185,20 @@ export const CORE_ASSET_CATALOG = Object.freeze([
     variants: { low: url, medium: url, high: url },
     sourceWidth: 768, sourceHeight: 576, estimatedBytes: 768 * 576 * 4 * 1.333
   })),
-  ...Object.entries(p0DirectionalAtlasUrls).map(([id, variants]) => ({
-    id, kind: 'texture', required: false, retain: true, color: true, role: 'p0-directional-v112',
+  // P0 directional atlases remain in the review library but are intentionally
+  // excluded from runtime preload until independent production approval.
+  ...Object.entries(combatArtTextureVariantsV114).map(([id, variants]) => ({
+    id, kind: 'texture', required: false, retain: true, color: true, role: 'combat-art-polished-v114',
     variants,
-    atlas: P0_DIRECTIONAL_ATLAS_SPEC_V112,
-    productionArtApproved: false,
-    runtimeApproved: true
+    sourceWidth: 512, sourceHeight: 512,
+    productionArtApproved: true, runtimeApproved: true
   })),
-  ...Object.entries(combatArtTextureUrls).map(([id, url]) => ({
-    id, kind: 'texture', required: false, retain: true, color: true, role: 'combat-art',
-    variants: { low: url, medium: url, high: url },
-    sourceWidth: 256, sourceHeight: 256, estimatedBytes: 256 * 256 * 4 * 1.333
+  ...Object.entries(guardianCitadelStateTextureVariantsV114).map(([id, variants]) => ({
+    id, kind: 'texture', required: false, retain: true, color: true, role: 'guardian-citadel-state-v114',
+    variants,
+    sourceWidth: 512, sourceHeight: 512,
+    productionArtApproved: true, runtimeApproved: true
   })),
-  {
-    id: GUARDIAN_CITADEL_TEXTURE_ID, kind: 'texture', required: false, retain: true, color: true, role: 'guardian-citadel-v110',
-    variants: { low: guardianCitadelTextureUrl, medium: guardianCitadelTextureUrl, high: guardianCitadelTextureUrl },
-    sourceWidth: 512, sourceHeight: 512, estimatedBytes: 512 * 512 * 4 * 1.333
-  },
   ...Object.entries(sdToonModelUrls).map(([id, url]) => ({
     id, kind: 'model', required: false, retain: true,
     variants: { low: url, medium: url, high: url },

@@ -19,13 +19,17 @@ const visual = text('src/runtime/combat-visual-director-v112.js');
 const sw = text('public/sw.js');
 const index = text('index.html');
 
-check(pkg.version === '1.0.13', 'package version is not 1.0.13');
-check(pkg.dokkaebi?.releaseVersion === '1.0.13' && pkg.dokkaebi?.buildId === 'b24.13', 'package release metadata mismatch');
-check(lock.version === pkg.version && lock.packages?.['']?.version === pkg.version, 'package-lock identity mismatch');
-check(version.releaseVersion === '1.0.13' && version.buildId === 'b24.13', 'public version identity mismatch');
-check(main.includes("const GAME_VERSION = '1.0.13'"), 'main release identity mismatch');
-check(index.includes("RELEASE_VERSION = '1.0.13'") && index.includes("BUILD_ID = 'b24.13'"), 'index boot identity mismatch');
-if (!failures.length) pass('v1.0.13 / b24.13 release identity is synchronized');
+const currentVersion = pkg.version;
+const currentBuildId = pkg.dokkaebi?.buildId;
+const currentPatch = Number(String(currentVersion).split('.')[2] || 0);
+check(currentPatch >= 13, 'current package predates the v1.0.13 foundation');
+check(pkg.dokkaebi?.releaseVersion === currentVersion && /^b\d+\.\d+$/.test(currentBuildId || ''), 'package release metadata mismatch');
+check(lock.version === currentVersion && lock.packages?.['']?.version === currentVersion, 'package-lock identity mismatch');
+check(lock.packages?.['']?.dokkaebi?.releaseVersion === currentVersion && lock.packages?.['']?.dokkaebi?.buildId === currentBuildId, 'package-lock release metadata mismatch');
+check(version.releaseVersion === currentVersion && version.buildId === currentBuildId, 'public version identity mismatch');
+check(main.includes(`const GAME_VERSION = '${currentVersion}'`), 'main release identity mismatch');
+check(index.includes(`RELEASE_VERSION = '${currentVersion}'`) && index.includes(`BUILD_ID = '${currentBuildId}'`), 'index boot identity mismatch');
+if (!failures.length) pass(`v1.0.13 foundation preserved under current release ${currentVersion} / ${currentBuildId}`);
 
 check(policy.includes("p0PrototypeRuntimeEnabled: false"), 'P0 prototype runtime quarantine is disabled');
 check(policy.includes('productionArtRequiredForDirectionalAtlas: true'), 'production-art approval gate missing');
@@ -43,7 +47,7 @@ check(visual.includes("this.clearLegacyRuntimeLayers(core, { citadelOnly: true }
 check(visual.includes('object.visible = false') && visual.includes('guardianCitadelHiddenV113'), 'old sacred-tree geometry is not hidden');
 if (!failures.length) pass('guardian citadel is constrained to one art layer and one world HP bar');
 
-check(sw.includes("RELEASE_VERSION = '1.0.13'") && sw.includes("BUILD_ID = 'b24.13'"), 'service worker identity mismatch');
+check(sw.includes(`RELEASE_VERSION = '${currentVersion}'`) && sw.includes(`BUILD_ID = '${currentBuildId}'`), 'service worker identity mismatch');
 check(sw.includes("'./src/runtime/combat-art-runtime-policy-v113.js'"), 'v113 runtime policy is not precached');
 check(existsSync(path.join(root, 'docs/PATCH_NOTES_v1.0.13.md')), 'v1.0.13 patch notes missing');
 check(pkg.scripts?.verify?.includes('verify:release:v113'), 'full verify chain does not include v113');
