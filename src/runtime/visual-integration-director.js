@@ -1,4 +1,4 @@
-export const VISUAL_INTEGRATION_VERSION = '23.0.2';
+export const VISUAL_INTEGRATION_VERSION = '23.1.0';
 
 export default class VisualIntegrationDirector {
   constructor() {

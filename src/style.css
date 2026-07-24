@@ -2821,11 +2821,7 @@ body[data-camera-profile="scenic"] #game-canvas { filter:saturate(1.035) brightn
 
 
 /* v18.0.0 Ten-Wave Reliability · background-safe combat and diagnostic polish */
-#pause-modal #performance-export-btn::after {
-  content: ' · F6';
-  color: rgba(186, 228, 255, .72);
-  font-size: 10px;
-}
+#pause-modal #performance-export-btn::after { content: ''; display: none; }
 body.background-recovering #wave-recovery {
   border-color: rgba(255, 225, 139, .72);
 }
@@ -3239,3 +3235,46 @@ body.mobile-hud-v23-emergency #jackpot-rush { display:none!important; }
 #start-btn[aria-busy="true"] { opacity: .76; cursor: progress; filter: saturate(.72); }
 #start-btn[aria-busy="true"]::after { content: ""; display: inline-block; width: 12px; height: 12px; margin-left: 8px; border: 2px solid rgba(255,255,255,.32); border-top-color: currentColor; border-radius: 50%; animation: boot-spin-v2301 .8s linear infinite; vertical-align: -2px; }
 @keyframes boot-spin-v2301 { to { transform: rotate(360deg); } }
+
+
+/* v23.1.0 Native Input Shell · desktop title split and browser-native keys */
+@media (min-width: 901px) and (orientation: landscape) {
+  #title-screen.title-screen-v17 { display: grid; place-items: center; }
+  .title-scene-v17 {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(430px, 1.12fr) minmax(370px, .88fr);
+    align-items: center;
+    justify-items: stretch;
+    column-gap: clamp(40px, 5vw, 92px);
+    width: min(1280px, calc(100vw - 64px));
+    height: min(900px, calc(100dvh - var(--safe-top) - var(--safe-bottom) - 24px));
+  }
+  .title-mascot-stage {
+    position: relative;
+    grid-column: 1;
+    left: auto;
+    bottom: auto;
+    transform: none;
+    justify-self: center;
+    align-self: end;
+    width: min(54vw, 690px);
+    height: min(91vh, 860px);
+    opacity: 1;
+  }
+  .title-mascot-v17 { height: min(87vh, 830px); object-position: center bottom; }
+  .title-panel-v17 {
+    position: relative;
+    grid-column: 2;
+    justify-self: end;
+    align-self: center;
+    margin: 0;
+    width: min(430px, 100%);
+  }
+}
+@media (min-width: 901px) and (max-width: 1120px) and (orientation: landscape) {
+  .title-scene-v17 { grid-template-columns: minmax(360px, 1fr) minmax(350px, .88fr); column-gap: 30px; width: calc(100vw - 36px); }
+  .title-mascot-stage { width: 50vw; height: 84vh; }
+  .title-mascot-v17 { height: 81vh; }
+  .title-panel-v17 { width: min(400px, 100%); }
+}

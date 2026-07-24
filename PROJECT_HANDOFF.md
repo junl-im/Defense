@@ -1,12 +1,24 @@
-# PROJECT HANDOFF — CURRENT v23.0.2
+# PROJECT HANDOFF — CURRENT v23.1.0
 
-- Project: `DokkaebiLuckDefense3D_FULL_v23.0.2`
-- Game: `23.0.2`
-- Engine: `20.0.0`
+- Project: `DokkaebiLuckDefense3D_FULL_v23.1.0`
+- Game: `23.1.0`
+- Engine: `21.0.0`
 - Save schema: `21`
-- Patch: `Clean Foundation`
+- Patch: `Native Input Shell`
 - Base: `v23.0.1 Boot Recovery`
 - Art lock: `DD-ABSOLUTE-ART-BIBLE-2.0`
+
+
+
+## PERMANENT NATIVE KEY CONTRACT
+
+1. F1~F12를 게임 기능에 연결하거나 `preventDefault()`로 차단하지 않는다.
+2. 게임 전역 액션 단축키를 추가하지 않는다.
+3. 키보드 전역 입력은 WASD·방향키 이동에만 사용한다.
+4. 스킬·소환·상호작용·진단·일시정지는 화면 버튼으로 실행한다.
+5. 포커스된 버튼의 Enter·Space는 접근성 표준 동작이므로 유지한다.
+6. 새 전역 키 단축키가 발견되면 `verify:v2310`이 실패해야 한다.
+7. PC 타이틀은 마스코트와 접속 패널을 서로 다른 열에 배치한다.
 
 ## PERMANENT ROOT HYGIENE CONTRACT
 

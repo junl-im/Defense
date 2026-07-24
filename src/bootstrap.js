@@ -1,4 +1,4 @@
-const BOOTSTRAP_VERSION = '23.0.2';
+const BOOTSTRAP_VERSION = '23.1.0';
 window.__DOKKAEBI_ENTRY_DIAGNOSTICS__ = {
   version: BOOTSTRAP_VERSION,
   loadedAt: Date.now(),

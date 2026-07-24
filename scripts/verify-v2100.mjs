@@ -7,7 +7,7 @@ const pkg = JSON.parse(read('package.json'));
 const checks = [
   ['package version remains v21 or later', Number(pkg.version.split('.')[0]) >= 21],
   ['game version remains v21 or later', /GAME_VERSION = '(?:21|22|23)\.\d+\.\d+'/.test(main)],
-  ['engine version remains 18 or later', /ENGINE_VERSION = '(?:18|19|20)\.\d+\.\d+'/.test(read('src/engine/engine-config.js'))],
+  ['engine version remains 18 or later', /ENGINE_VERSION = '(?:18|19|2[0-9]|[3-9][0-9])\.\d+\.\d+'/.test(read('src/engine/engine-config.js'))],
   ['save schema remains 19 or later', /SAVE_SCHEMA_VERSION = (?:19|20|21)/.test(read('src/runtime/save-schema.js'))],
   ['service worker remains v21 or later', /VERSION = '(?:21|22|23)\.\d+\.\d+'/.test(read('public/sw.js'))],
   ['asset presence module wired', main.includes('new AssetPresenceEnforcer') && fs.existsSync('src/runtime/asset-presence-enforcer.js')],

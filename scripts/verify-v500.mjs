@@ -84,7 +84,7 @@ const pipeline = read('src/engine/asset-pipeline.js');
 const monitor = read('src/engine/performance-monitor.js');
 const mobileEngine = read('src/engine/mobile-engine.js');
 check(main.includes('FrameBudgetScheduler') && main.includes("shouldRun('hud'") && main.includes("shouldRun('shadows'"), 'runtime frame budget scheduling integrated');
-check(main.includes('ProductionConsole') && main.includes("code === 'F4'"), 'F4 production console integrated');
+check(main.includes('ProductionConsole') && main.includes("on(ui.productionConsole, 'click'"), 'production console remains available through its UI button');
 check(main.includes('CHARACTER_DNA_SUMMARY') && main.includes('qualityGovernor'), 'performance export includes DNA and quality governor');
 check(pipeline.includes('applyRuntimeArtHarmonization') && pipeline.includes("role: entry.role || entry.category || 'default'"), 'asset pipeline runtime art harmonizer integrated');
 check(mobileEngine.includes('AdaptiveQualityGovernor') && mobileEngine.includes('qualityProfile'), 'mobile engine adaptive quality governor integrated');

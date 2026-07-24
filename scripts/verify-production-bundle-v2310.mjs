@@ -1,0 +1,14 @@
+import { access, readFile, readdir } from 'node:fs/promises';
+import path from 'node:path';
+const root = path.resolve(import.meta.dirname, '..');
+const dist = path.join(root, 'dist');
+const html = await readFile(path.join(dist, 'index.html'), 'utf8');
+if (/cdn\.jsdelivr\.net\/npm\/three|unpkg\.com\/three|esm\.sh\/three/.test(html)) throw new Error('production bundle still depends on an external Three.js CDN');
+const assets = await readdir(path.join(dist, 'assets'));
+const js = assets.filter((name) => name.endsWith('.js'));
+if (!js.length) throw new Error('Vite JavaScript bundle is missing');
+if (!html.includes('type="module"') || !html.includes('/assets/')) throw new Error('Vite module entry is missing from production HTML');
+await access(path.join(dist, 'sw.js'));
+const sw = await readFile(path.join(dist, 'sw.js'), 'utf8');
+if (!sw.includes("VERSION = '23.1.0'")) throw new Error('service worker v23.1.0 version is missing');
+console.log(`PASS production bundle is self-contained (${js.length} JavaScript assets)`);

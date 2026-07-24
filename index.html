@@ -12,9 +12,9 @@
     <link rel="icon" href="./icon-192.png" type="image/png" />
     <link rel="apple-touch-icon" href="./icon-192.png" />
     <title>도깨비 운빨 수호대 3D</title>
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-desktop-v17.webp?rev=clean-foundation-v2302" media="(min-width: 721px) and (orientation: landscape)" />
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-mobile-v17.webp?rev=clean-foundation-v2302" media="(max-width: 720px), (orientation: portrait)" />
-    <link rel="preload" as="image" href="./src/assets/title-v17/title-mascot-v17.webp?rev=clean-foundation-v2302" />
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-desktop-v17.webp?rev=native-input-v2310" media="(min-width: 721px) and (orientation: landscape)" />
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-bg-mobile-v17.webp?rev=native-input-v2310" media="(max-width: 720px), (orientation: portrait)" />
+    <link rel="preload" as="image" href="./src/assets/title-v17/title-mascot-v17.webp?rev=native-input-v2310" />
     <!-- active lineage v22.0.0 · BROWSER RELIABILITY LAB -->
   </head>
   <body>
@@ -52,8 +52,8 @@
       <section id="title-screen" class="screen title-screen-v17">
         <div class="title-scene-v17">
           <picture class="title-mascot-stage">
-            <source media="(max-width: 720px), (orientation: portrait)" srcset="./src/assets/title-v17/title-mascot-v17.webp?rev=clean-foundation-v2302" />
-            <img class="title-mascot title-mascot-v17" src="./src/assets/title-v17/title-mascot-v17.webp?rev=clean-foundation-v2302" alt="푸른 도깨비불과 곤봉을 든 도깨비 수호대 마스코트" fetchpriority="high" decoding="async" />
+            <source media="(max-width: 720px), (orientation: portrait)" srcset="./src/assets/title-v17/title-mascot-v17.webp?rev=native-input-v2310" />
+            <img class="title-mascot title-mascot-v17" src="./src/assets/title-v17/title-mascot-v17.webp?rev=native-input-v2310" alt="푸른 도깨비불과 곤봉을 든 도깨비 수호대 마스코트" fetchpriority="high" decoding="async" />
           </picture>
           <div class="title-panel title-panel-simple title-panel-v17">
             <p class="kicker">KOREAN FANTASY DEFENSE</p>
@@ -429,7 +429,7 @@
           <button class="modal-x" data-close="controls-modal">×</button>
           <p class="kicker">CAMERA & TOUCH</p>
           <h2 id="controls-title">카메라·조작 설정</h2>
-          <p>기본 시야는 전장 조망으로 확장되었습니다. F5로 시야 프리셋을 빠르게 전환할 수 있습니다.</p>
+          <p>브라우저 기능키는 기본 동작을 유지합니다. 카메라 시야는 설정 화면에서 조절할 수 있습니다.</p>
           <div class="camera-preset-selector" aria-label="카메라 시야 프리셋">
             <div><b>기본 시야 프리셋</b><small>전장 조망이 기본값이며 웨이브와 보스전에서 자동으로 조금 더 넓어집니다.</small></div>
             <div class="camera-preset-options">
@@ -492,7 +492,7 @@
             </div>
             <div class="production-os-card">
               <div><b>Battlefront Production OS</b><small>아트 잠금 · 전투 교리 · 상태이상 · 성능 · 에셋 현황</small></div>
-              <button id="production-console-btn" type="button">F4 제작 콘솔</button>
+              <button id="production-console-btn" type="button">제작 콘솔</button>
             </div>
             <div id="asset-diagnostics-list" class="asset-diagnostics-list" aria-live="polite"></div>
           </section>
@@ -553,7 +553,7 @@
     </div>
     <script>
       (() => {
-        const VERSION = '23.0.2';
+        const VERSION = '23.1.0';
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
         const retryButton = document.getElementById('boot-retry-btn');

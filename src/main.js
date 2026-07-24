@@ -10,6 +10,7 @@ import { BOSS_PROFILES, getBossWave, getBossTypeForWave, getBossSpawnCount, isBo
 import { getBattlefieldTheme } from './battlefield-themes.js';
 import { CODEX_SECTION_META, CODEX_SECTION_ORDER, getCodexEntries, getCodexTotals } from './codex-data.js';
 import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, ObjectPool, RenderStatsHUD, AssetPipeline, AnimationStateSystem, FrameBudgetScheduler } from './engine/index.js';
+import { isMovementCode } from './runtime/native-input-policy-v231.js';
 import { DEFAULT_CAMERA_PROFILE_ID, getCameraProfile, sanitizeCameraProfileId, cycleCameraProfile, resolveCameraDistance } from './engine/camera-profile.js';
 import { CORE_ASSET_CATALOG, PLAYER_ASSET_ID, GUARDIAN_ASSET_IDS, MONSTER_ASSET_IDS, BOSS_ASSET_IDS } from './engine/asset-catalog.js';
 import { HERO_CLASSES, HERO_CLASS_ORDER, HERO_CLASS_ASSET_IDS, getHeroClass } from './hero-classes.js';
@@ -123,7 +124,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '23.0.2';
+const GAME_VERSION = '23.1.0';
 function runtimeSpriteMarkup(path, alt = '', className = '') {
   if (!path) return '';
   const atlas = atlasSpriteMarkup(path, alt, className);
@@ -805,58 +806,15 @@ class DokkaebiLuckDefense {
     on(window, 'keydown', (event) => {
       if (this.isTypingTarget(event.target)) return;
       const code = this.normalizeInputCode(event);
-      const movementCodes = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
-      if (movementCodes.includes(code)) {
-        event.preventDefault();
-        this.input.keys.add(code);
-        this.cancelMoveTarget();
-      }
-      if (event.repeat) return;
-      if (code === 'F7') {
-        event.preventDefault();
-        this.browserReliability?.sample('manual', this.getBrowserReliabilitySnapshot());
-        this.browserReliability?.persist();
-        this.showToast('브라우저 안정성 스냅샷을 저장했습니다.');
-        return;
-      }
-      if (code === 'F6') {
-        event.preventDefault();
-        this.exportPerformanceLog();
-        return;
-      }
-      if (code === 'F5') {
-        event.preventDefault();
-        this.cycleCameraView();
-        return;
-      }
-      if (code === 'F4') {
-        event.preventDefault();
-        const enabled = this.productionConsole?.toggle();
-        this.showToast(enabled ? '제작 디렉터 콘솔 ON' : '제작 디렉터 콘솔 OFF');
-        return;
-      }
-      if (code === 'F3') {
-        event.preventDefault();
-        const enabled = this.renderStatsHud?.toggle();
-        this.showToast(enabled ? '엔진 통계를 표시합니다.' : '엔진 통계를 숨깁니다.');
-        return;
-      }
-      if (['Space', 'KeyQ', 'KeyE', 'KeyR', 'KeyF', 'KeyG', 'Enter', 'Escape'].includes(code)) event.preventDefault();
-      if (code === 'Space') this.useDash();
-      if (code === 'KeyQ') this.useHeroSkill();
-      if (code === 'KeyE') this.summonUnit();
-      if (code === 'KeyR') this.useBestUnitCommand();
-      if (code === 'KeyF') this.activateGuardianBurst();
-      if (code === 'KeyG') this.interactWithBattlefieldProp();
-      if (code === 'Enter' && this.state === 'playing' && !this.waveActive) this.startWave();
-      if (code === 'Escape') {
-        const topModal = this.modalStack[this.modalStack.length - 1];
-        if (topModal && topModal !== ui.pauseModal) this.hideModal(topModal);
-        else if (topModal === ui.pauseModal || this.state === 'paused') this.resumeGame();
-        else this.pauseGame();
-      }
-    }, { passive: false }, 'keyboard-down');
-    on(window, 'keyup', (event) => this.input.keys.delete(this.normalizeInputCode(event)), {}, 'keyboard-up');
+      if (!isMovementCode(code)) return;
+      event.preventDefault();
+      this.input.keys.add(code);
+      this.cancelMoveTarget();
+    }, { passive: false }, 'keyboard-movement-down');
+    on(window, 'keyup', (event) => {
+      const code = this.normalizeInputCode(event);
+      if (isMovementCode(code)) this.input.keys.delete(code);
+    }, {}, 'keyboard-movement-up');
     on(window, 'blur', () => this.resetMovementInput(), {}, 'window-blur');
     on(document, 'visibilitychange', () => this.handleVisibilityChange(document.hidden), {}, 'visibility-change');
     on(window, 'pageshow', (event) => {

@@ -106,7 +106,7 @@ export class ProductionConsole {
         <article><small>BOSS RAGE</small><b>${bossEscalation.enrages || 0} ENRAGE</b><span>페이즈 ${bossEscalation.phaseTransitions || 0} · 활성 ${bossEscalation.active?.length || 0}</span></article>
       </section>
       <ol>${milestoneHtml}</ol>
-      <footer><button type="button" data-open-ip-library>OPEN ASSET REVIEW OS</button> · F4 toggle · F7 browser snapshot · save schema ${data.saveSchemaVersion || 0}</footer>`;
+      <footer><button type="button" data-open-ip-library>OPEN ASSET REVIEW OS</button> · 화면 버튼 전용 · save schema ${data.saveSchemaVersion || 0}</footer>`;
     this.element.querySelector('[data-close-console]')?.addEventListener('click', () => this.toggle(false), { once: true });
     this.element.querySelector('[data-open-ip-library]')?.addEventListener('click', () => window.open(IP_ASSET_ATLAS_URL, '_blank', 'noopener'), { once: true });
   }

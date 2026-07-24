@@ -54,7 +54,7 @@ check(DEFAULT_CAMERA_PROFILE_ID === 'scenic' && Object.keys(CAMERA_PROFILES).len
 check(scenic.distance === 19.5 && scenic.pitch >= 0.73 && scenic.pitch <= 0.9 && scenic.fov === 52, 'scenic camera distance, pitch and FOV contract');
 check(resolveCameraDistance('scenic', { waveActive: true, bossActive: true }) > scenic.distance, 'combat auto framing expands scenic distance');
 check(MOBILE_ENGINE_CONFIG.world.visibleChunkRadius === 2, 'desktop scenic chunk radius 2');
-check(main.includes("code === 'F5'") && main.includes('cycleCameraView()') && main.includes('resolveCameraDistance'), 'F5 camera cycle and dynamic framing integrated');
+check(main.includes('cycleCameraView()') && main.includes('resolveCameraDistance') && !main.includes("code === 'F5'"), 'camera profiles and dynamic framing retained without overriding browser refresh');
 check(html.includes('data-camera-preset="scenic"') && html.includes('전장 조망') && html.includes('max="300"'), 'camera preset UI and extended zoom range');
 check(style.includes('GOLDEN DOMINION v12.0.0') && style.includes('.camera-preset-options'), 'camera preset responsive styling');
 

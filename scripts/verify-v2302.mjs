@@ -10,9 +10,9 @@ const simulations = [
   read('scripts/simulate-mobile-hud-v23.mjs')
 ];
 const checks = [
-  ['package version 23.0.2', pkg.version === '23.0.2'],
-  ['runtime version 23.0.2', read('src/main.js').includes("GAME_VERSION = '23.0.2'")],
-  ['service worker version 23.0.2', read('public/sw.js').includes("VERSION = '23.0.2'")],
+  ['package retains v23.0.2 or later lineage', /^23\.(?:0\.[2-9]|[1-9]\.\d+)$/.test(pkg.version)],
+  ['runtime retains v23.0.2 or later lineage', /GAME_VERSION = '23\.(?:0\.[2-9]|[1-9]\.\d+)'/.test(read('src/main.js'))],
+  ['service worker retains v23.0.2 or later lineage', /VERSION = '23\.(?:0\.[2-9]|[1-9]\.\d+)'/.test(read('public/sw.js'))],
   ['root hygiene verifier exists', fs.existsSync('scripts/verify-root-hygiene.mjs')],
   ['root organizer exists', fs.existsSync('scripts/organize-root-output.mjs')],
   ['central output path utility exists', fs.existsSync('scripts/output-paths.mjs')],
