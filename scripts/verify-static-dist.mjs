@@ -141,4 +141,28 @@ if (html.includes('camera-zoom-controls') || html.includes('zoom-in-btn') || htm
 if (!style.includes('--v23-context-bottom') || !style.includes('mobile-context-suppressed-v23')) fail('v23 reserved context lane missing');
 pass('v23 mobile reserved lanes, overlap protection and button-free zoom');
 
+
+const megaIndex = JSON.parse(await readFile(path.join(dist, 'assets/ip-mega-v4/data/ip-mega-index-v4.json'), 'utf8'));
+const megaSample = JSON.parse(await readFile(path.join(dist, 'assets/ip-mega-v4/data/ip-mega-sample-v4.json'), 'utf8'));
+const megaViewer = await readFile(path.join(dist, 'ip-mega-library-v4.html'), 'utf8');
+const megaSource = await readFile(path.join(dist, 'src/ip-knowledge-megabase-v4.js'), 'utf8');
+await access(path.join(dist, 'assets/ip-mega-v4/reference/gameplay-key-visual-v4.webp'));
+await access(path.join(dist, 'assets/ip-mega-v4/reference/art-production-board-v4.webp'));
+if (megaIndex.megabaseVersion !== '4.0.0') fail('v4 megabase version mismatch');
+if (megaIndex.counts?.records?.baseAssets !== 8192 || megaIndex.counts?.records?.total !== 147232) fail('v4 megabase count mismatch');
+if (megaIndex.authoredDirectionPolicy?.directions !== 11 || megaIndex.authoredDirectionPolicy?.mirrored !== false || megaIndex.authoredDirectionPolicy?.authored !== true) fail('v4 authored direction policy mismatch');
+if (megaIndex.finalArtStatus?.approved !== 0 || megaIndex.finalArtStatus?.status !== 'planned') fail('v4 final-art status must remain planned and unapproved');
+if (megaSample.count !== 128 || megaSample.rows?.length !== 128) fail('v4 public sample count mismatch');
+if (!megaViewer.includes('IP KNOWLEDGE MEGAFORGE v4.0.0') || !megaViewer.includes('AUTHORED 11 / MIRROR 0') || !megaViewer.includes('ip-mega-index-v4.json') || !megaViewer.includes('ip-mega-sample-v4.json')) fail('v4 megabase viewer contract missing');
+if (!megaSource.includes('total: 147232') || !megaSource.includes('baseAssets: 8192') || !megaSource.includes('finalArtApproved: 0')) fail('v4 megabase runtime summary mismatch');
+for (const asset of [
+  './src/ip-knowledge-megabase-v4.js',
+  './ip-mega-library-v4.html',
+  './assets/ip-mega-v4/data/ip-mega-index-v4.json',
+  './assets/ip-mega-v4/data/ip-mega-sample-v4.json',
+  './assets/ip-mega-v4/reference/gameplay-key-visual-v4.webp',
+  './assets/ip-mega-v4/reference/art-production-board-v4.webp'
+]) if (!serviceWorker.includes(`'${asset}'`)) fail(`v4 service worker precache missing: ${asset}`);
+pass('v4 IP Knowledge Megabase viewer, 147232 records, 11 directions and reference art in static dist');
+
 console.log('Static deployment verification passed.');

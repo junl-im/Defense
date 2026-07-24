@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 4,
+  "megabaseVersion": "4.0.0",
+  "generatedAt": "2026-07-24T08:40:00.000Z",
+  "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+  "counts": {
+    "base": {
+      "heroes": 176,
+      "guardians": 88,
+      "monsters": 352,
+      "bosses": 64,
+      "towers": 176,
+      "weapons": 512,
+      "skills": 1024,
+      "vfx": 2048,
+      "ui": 1024,
+      "environment": 2048,
+      "audio": 680
+    },
+    "records": {
+      "baseAssets": 8192,
+      "directionalMotion": 89232,
+      "towerStateActions": 10560,
+      "hudContracts": 480,
+      "visualQaScenarios": 5040,
+      "performanceProfiles": 960,
+      "knowledgeRelations": 32768,
+      "total": 147232
+    }
+  },
+  "authoredDirectionPolicy": {
+    "directions": 11,
+    "mirrored": false,
+    "authored": true
+  },
+  "actionPolicy": {
+    "heroActions": 14,
+    "monsterActions": 10
+  },
+  "finalArtStatus": {
+    "approved": 0,
+    "status": "planned"
+  },
+  "referenceImages": [
+    "../reference/gameplay-key-visual-v4.webp",
+    "../reference/art-production-board-v4.webp"
+  ]
+}

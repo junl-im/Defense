@@ -1,0 +1,4297 @@
+{
+  "schemaVersion": 4,
+  "megabaseVersion": "4.0.0",
+  "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+  "category": "bosses",
+  "count": 64,
+  "rows": [
+    {
+      "id": "BOSS-V4-0001",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "blue-ogre-king",
+      "nameKo": "화염 청귀 도깨비왕",
+      "nameEn": "Flame Blue Ogre King",
+      "role": "melee",
+      "element": "fire",
+      "stage": null,
+      "rarity": "common",
+      "priority": "P0",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/blue-ogre-king/flame_blue-ogre-king_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 화염 청귀 도깨비왕 / Flame Blue Ogre King. CATEGORY: bosses. ROLE: melee. Korean folklore fantasy, readable in 0.3 seconds, palette #ff744f #ffc95f #4a1831, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "mace",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "blue-ogre-king",
+        "fire",
+        "melee",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0002",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "plague-taoist",
+      "nameKo": "화염 역병 도사",
+      "nameEn": "Flame Plague Taoist",
+      "role": "magic",
+      "element": "fire",
+      "stage": null,
+      "rarity": "common",
+      "priority": "P0",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/plague-taoist/flame_plague-taoist_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 화염 역병 도사 / Flame Plague Taoist. CATEGORY: bosses. ROLE: magic. Korean folklore fantasy, readable in 0.3 seconds, palette #ff744f #ffc95f #4a1831, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "talisman",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "plague-taoist",
+        "fire",
+        "magic",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0003",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "twin-dragon",
+      "nameKo": "화염 쌍룡",
+      "nameEn": "Flame Twin Dragon",
+      "role": "ultimate",
+      "element": "fire",
+      "stage": null,
+      "rarity": "common",
+      "priority": "P0",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/twin-dragon/flame_twin-dragon_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 화염 쌍룡 / Flame Twin Dragon. CATEGORY: bosses. ROLE: ultimate. Korean folklore fantasy, readable in 0.3 seconds, palette #ff744f #ffc95f #4a1831, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "breath",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "twin-dragon",
+        "fire",
+        "ultimate",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0004",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "stone-colossus",
+      "nameKo": "화염 암석 거인",
+      "nameEn": "Flame Stone Colossus",
+      "role": "tank",
+      "element": "fire",
+      "stage": null,
+      "rarity": "common",
+      "priority": "P0",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/stone-colossus/flame_stone-colossus_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 화염 암석 거인 / Flame Stone Colossus. CATEGORY: bosses. ROLE: tank. Korean folklore fantasy, readable in 0.3 seconds, palette #ff744f #ffc95f #4a1831, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "fist",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "stone-colossus",
+        "fire",
+        "tank",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0005",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "nine-tail-empress",
+      "nameKo": "화염 구미호 여제",
+      "nameEn": "Flame Nine Tail Empress",
+      "role": "magic",
+      "element": "fire",
+      "stage": null,
+      "rarity": "common",
+      "priority": "P0",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/nine-tail-empress/flame_nine-tail-empress_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 화염 구미호 여제 / Flame Nine Tail Empress. CATEGORY: bosses. ROLE: magic. Korean folklore fantasy, readable in 0.3 seconds, palette #ff744f #ffc95f #4a1831, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "orb",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "nine-tail-empress",
+        "fire",
+        "magic",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0006",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "underworld-king",
+      "nameKo": "화염 저승대왕",
+      "nameEn": "Flame Underworld King",
+      "role": "execute",
+      "element": "fire",
+      "stage": null,
+      "rarity": "common",
+      "priority": "P0",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/underworld-king/flame_underworld-king_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 화염 저승대왕 / Flame Underworld King. CATEGORY: bosses. ROLE: execute. Korean folklore fantasy, readable in 0.3 seconds, palette #ff744f #ffc95f #4a1831, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "blade",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "underworld-king",
+        "fire",
+        "execute",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0007",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "serpent-lord",
+      "nameKo": "화염 이무기 군주",
+      "nameEn": "Flame Serpent Lord",
+      "role": "control",
+      "element": "fire",
+      "stage": null,
+      "rarity": "common",
+      "priority": "P1",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/serpent-lord/flame_serpent-lord_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 화염 이무기 군주 / Flame Serpent Lord. CATEGORY: bosses. ROLE: control. Korean folklore fantasy, readable in 0.3 seconds, palette #ff744f #ffc95f #4a1831, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "breath",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "serpent-lord",
+        "fire",
+        "control",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0008",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "thunder-general",
+      "nameKo": "화염 뇌정 장군",
+      "nameEn": "Flame Thunder General",
+      "role": "ranged",
+      "element": "fire",
+      "stage": null,
+      "rarity": "common",
+      "priority": "P1",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/thunder-general/flame_thunder-general_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 화염 뇌정 장군 / Flame Thunder General. CATEGORY: bosses. ROLE: ranged. Korean folklore fantasy, readable in 0.3 seconds, palette #ff744f #ffc95f #4a1831, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "spear",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "thunder-general",
+        "fire",
+        "ranged",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0009",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "blue-ogre-king",
+      "nameKo": "빙결 청귀 도깨비왕",
+      "nameEn": "Frost Blue Ogre King",
+      "role": "melee",
+      "element": "frost",
+      "stage": null,
+      "rarity": "common",
+      "priority": "P1",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/blue-ogre-king/frost_blue-ogre-king_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 빙결 청귀 도깨비왕 / Frost Blue Ogre King. CATEGORY: bosses. ROLE: melee. Korean folklore fantasy, readable in 0.3 seconds, palette #78cfff #dff9ff #233a6f, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "mace",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "blue-ogre-king",
+        "frost",
+        "melee",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0010",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "plague-taoist",
+      "nameKo": "빙결 역병 도사",
+      "nameEn": "Frost Plague Taoist",
+      "role": "magic",
+      "element": "frost",
+      "stage": null,
+      "rarity": "common",
+      "priority": "P1",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/plague-taoist/frost_plague-taoist_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 빙결 역병 도사 / Frost Plague Taoist. CATEGORY: bosses. ROLE: magic. Korean folklore fantasy, readable in 0.3 seconds, palette #78cfff #dff9ff #233a6f, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "talisman",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "plague-taoist",
+        "frost",
+        "magic",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0011",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "twin-dragon",
+      "nameKo": "빙결 쌍룡",
+      "nameEn": "Frost Twin Dragon",
+      "role": "ultimate",
+      "element": "frost",
+      "stage": null,
+      "rarity": "rare",
+      "priority": "P1",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/twin-dragon/frost_twin-dragon_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 빙결 쌍룡 / Frost Twin Dragon. CATEGORY: bosses. ROLE: ultimate. Korean folklore fantasy, readable in 0.3 seconds, palette #78cfff #dff9ff #233a6f, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "breath",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "twin-dragon",
+        "frost",
+        "ultimate",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0012",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "stone-colossus",
+      "nameKo": "빙결 암석 거인",
+      "nameEn": "Frost Stone Colossus",
+      "role": "tank",
+      "element": "frost",
+      "stage": null,
+      "rarity": "rare",
+      "priority": "P1",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/stone-colossus/frost_stone-colossus_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 빙결 암석 거인 / Frost Stone Colossus. CATEGORY: bosses. ROLE: tank. Korean folklore fantasy, readable in 0.3 seconds, palette #78cfff #dff9ff #233a6f, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "fist",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "stone-colossus",
+        "frost",
+        "tank",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0013",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "nine-tail-empress",
+      "nameKo": "빙결 구미호 여제",
+      "nameEn": "Frost Nine Tail Empress",
+      "role": "magic",
+      "element": "frost",
+      "stage": null,
+      "rarity": "rare",
+      "priority": "P1",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/nine-tail-empress/frost_nine-tail-empress_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 빙결 구미호 여제 / Frost Nine Tail Empress. CATEGORY: bosses. ROLE: magic. Korean folklore fantasy, readable in 0.3 seconds, palette #78cfff #dff9ff #233a6f, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "orb",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "nine-tail-empress",
+        "frost",
+        "magic",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0014",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "underworld-king",
+      "nameKo": "빙결 저승대왕",
+      "nameEn": "Frost Underworld King",
+      "role": "execute",
+      "element": "frost",
+      "stage": null,
+      "rarity": "rare",
+      "priority": "P1",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/underworld-king/frost_underworld-king_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 빙결 저승대왕 / Frost Underworld King. CATEGORY: bosses. ROLE: execute. Korean folklore fantasy, readable in 0.3 seconds, palette #78cfff #dff9ff #233a6f, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "blade",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "underworld-king",
+        "frost",
+        "execute",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0015",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "serpent-lord",
+      "nameKo": "빙결 이무기 군주",
+      "nameEn": "Frost Serpent Lord",
+      "role": "control",
+      "element": "frost",
+      "stage": null,
+      "rarity": "rare",
+      "priority": "P1",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/serpent-lord/frost_serpent-lord_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 빙결 이무기 군주 / Frost Serpent Lord. CATEGORY: bosses. ROLE: control. Korean folklore fantasy, readable in 0.3 seconds, palette #78cfff #dff9ff #233a6f, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "breath",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "serpent-lord",
+        "frost",
+        "control",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0016",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "thunder-general",
+      "nameKo": "빙결 뇌정 장군",
+      "nameEn": "Frost Thunder General",
+      "role": "ranged",
+      "element": "frost",
+      "stage": null,
+      "rarity": "rare",
+      "priority": "P1",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/thunder-general/frost_thunder-general_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 빙결 뇌정 장군 / Frost Thunder General. CATEGORY: bosses. ROLE: ranged. Korean folklore fantasy, readable in 0.3 seconds, palette #78cfff #dff9ff #233a6f, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "spear",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "thunder-general",
+        "frost",
+        "ranged",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0017",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "blue-ogre-king",
+      "nameKo": "바람 청귀 도깨비왕",
+      "nameEn": "Wind Blue Ogre King",
+      "role": "melee",
+      "element": "wind",
+      "stage": null,
+      "rarity": "rare",
+      "priority": "P1",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/blue-ogre-king/wind_blue-ogre-king_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 바람 청귀 도깨비왕 / Wind Blue Ogre King. CATEGORY: bosses. ROLE: melee. Korean folklore fantasy, readable in 0.3 seconds, palette #73efb5 #d9ffcd #255b4d, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "mace",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "blue-ogre-king",
+        "wind",
+        "melee",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0018",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "plague-taoist",
+      "nameKo": "바람 역병 도사",
+      "nameEn": "Wind Plague Taoist",
+      "role": "magic",
+      "element": "wind",
+      "stage": null,
+      "rarity": "rare",
+      "priority": "P1",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/plague-taoist/wind_plague-taoist_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 바람 역병 도사 / Wind Plague Taoist. CATEGORY: bosses. ROLE: magic. Korean folklore fantasy, readable in 0.3 seconds, palette #73efb5 #d9ffcd #255b4d, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "talisman",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "plague-taoist",
+        "wind",
+        "magic",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0019",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "twin-dragon",
+      "nameKo": "바람 쌍룡",
+      "nameEn": "Wind Twin Dragon",
+      "role": "ultimate",
+      "element": "wind",
+      "stage": null,
+      "rarity": "rare",
+      "priority": "P2",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/twin-dragon/wind_twin-dragon_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 바람 쌍룡 / Wind Twin Dragon. CATEGORY: bosses. ROLE: ultimate. Korean folklore fantasy, readable in 0.3 seconds, palette #73efb5 #d9ffcd #255b4d, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "breath",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "twin-dragon",
+        "wind",
+        "ultimate",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0020",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "stone-colossus",
+      "nameKo": "바람 암석 거인",
+      "nameEn": "Wind Stone Colossus",
+      "role": "tank",
+      "element": "wind",
+      "stage": null,
+      "rarity": "rare",
+      "priority": "P2",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/stone-colossus/wind_stone-colossus_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 바람 암석 거인 / Wind Stone Colossus. CATEGORY: bosses. ROLE: tank. Korean folklore fantasy, readable in 0.3 seconds, palette #73efb5 #d9ffcd #255b4d, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "fist",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "stone-colossus",
+        "wind",
+        "tank",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0021",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "nine-tail-empress",
+      "nameKo": "바람 구미호 여제",
+      "nameEn": "Wind Nine Tail Empress",
+      "role": "magic",
+      "element": "wind",
+      "stage": null,
+      "rarity": "epic",
+      "priority": "P2",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/nine-tail-empress/wind_nine-tail-empress_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 바람 구미호 여제 / Wind Nine Tail Empress. CATEGORY: bosses. ROLE: magic. Korean folklore fantasy, readable in 0.3 seconds, palette #73efb5 #d9ffcd #255b4d, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "orb",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "nine-tail-empress",
+        "wind",
+        "magic",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0022",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "underworld-king",
+      "nameKo": "바람 저승대왕",
+      "nameEn": "Wind Underworld King",
+      "role": "execute",
+      "element": "wind",
+      "stage": null,
+      "rarity": "epic",
+      "priority": "P2",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/underworld-king/wind_underworld-king_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 바람 저승대왕 / Wind Underworld King. CATEGORY: bosses. ROLE: execute. Korean folklore fantasy, readable in 0.3 seconds, palette #73efb5 #d9ffcd #255b4d, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "blade",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "underworld-king",
+        "wind",
+        "execute",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0023",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "serpent-lord",
+      "nameKo": "바람 이무기 군주",
+      "nameEn": "Wind Serpent Lord",
+      "role": "control",
+      "element": "wind",
+      "stage": null,
+      "rarity": "epic",
+      "priority": "P2",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/serpent-lord/wind_serpent-lord_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 바람 이무기 군주 / Wind Serpent Lord. CATEGORY: bosses. ROLE: control. Korean folklore fantasy, readable in 0.3 seconds, palette #73efb5 #d9ffcd #255b4d, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "breath",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "serpent-lord",
+        "wind",
+        "control",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0024",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "thunder-general",
+      "nameKo": "바람 뇌정 장군",
+      "nameEn": "Wind Thunder General",
+      "role": "ranged",
+      "element": "wind",
+      "stage": null,
+      "rarity": "epic",
+      "priority": "P2",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/thunder-general/wind_thunder-general_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 바람 뇌정 장군 / Wind Thunder General. CATEGORY: bosses. ROLE: ranged. Korean folklore fantasy, readable in 0.3 seconds, palette #73efb5 #d9ffcd #255b4d, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "spear",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "thunder-general",
+        "wind",
+        "ranged",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0025",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "blue-ogre-king",
+      "nameKo": "대지 청귀 도깨비왕",
+      "nameEn": "Earth Blue Ogre King",
+      "role": "melee",
+      "element": "earth",
+      "stage": null,
+      "rarity": "epic",
+      "priority": "P2",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/blue-ogre-king/earth_blue-ogre-king_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 대지 청귀 도깨비왕 / Earth Blue Ogre King. CATEGORY: bosses. ROLE: melee. Korean folklore fantasy, readable in 0.3 seconds, palette #cf9c68 #f1d29a #5c3d2a, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "mace",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "blue-ogre-king",
+        "earth",
+        "melee",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0026",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "plague-taoist",
+      "nameKo": "대지 역병 도사",
+      "nameEn": "Earth Plague Taoist",
+      "role": "magic",
+      "element": "earth",
+      "stage": null,
+      "rarity": "epic",
+      "priority": "P2",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/plague-taoist/earth_plague-taoist_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 대지 역병 도사 / Earth Plague Taoist. CATEGORY: bosses. ROLE: magic. Korean folklore fantasy, readable in 0.3 seconds, palette #cf9c68 #f1d29a #5c3d2a, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "talisman",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "plague-taoist",
+        "earth",
+        "magic",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0027",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "twin-dragon",
+      "nameKo": "대지 쌍룡",
+      "nameEn": "Earth Twin Dragon",
+      "role": "ultimate",
+      "element": "earth",
+      "stage": null,
+      "rarity": "epic",
+      "priority": "P2",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/twin-dragon/earth_twin-dragon_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 대지 쌍룡 / Earth Twin Dragon. CATEGORY: bosses. ROLE: ultimate. Korean folklore fantasy, readable in 0.3 seconds, palette #cf9c68 #f1d29a #5c3d2a, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "breath",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "twin-dragon",
+        "earth",
+        "ultimate",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0028",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "stone-colossus",
+      "nameKo": "대지 암석 거인",
+      "nameEn": "Earth Stone Colossus",
+      "role": "tank",
+      "element": "earth",
+      "stage": null,
+      "rarity": "epic",
+      "priority": "P2",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/stone-colossus/earth_stone-colossus_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 대지 암석 거인 / Earth Stone Colossus. CATEGORY: bosses. ROLE: tank. Korean folklore fantasy, readable in 0.3 seconds, palette #cf9c68 #f1d29a #5c3d2a, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "fist",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "stone-colossus",
+        "earth",
+        "tank",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0029",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "nine-tail-empress",
+      "nameKo": "대지 구미호 여제",
+      "nameEn": "Earth Nine Tail Empress",
+      "role": "magic",
+      "element": "earth",
+      "stage": null,
+      "rarity": "epic",
+      "priority": "P2",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/nine-tail-empress/earth_nine-tail-empress_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 대지 구미호 여제 / Earth Nine Tail Empress. CATEGORY: bosses. ROLE: magic. Korean folklore fantasy, readable in 0.3 seconds, palette #cf9c68 #f1d29a #5c3d2a, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "orb",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "nine-tail-empress",
+        "earth",
+        "magic",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0030",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "underworld-king",
+      "nameKo": "대지 저승대왕",
+      "nameEn": "Earth Underworld King",
+      "role": "execute",
+      "element": "earth",
+      "stage": null,
+      "rarity": "epic",
+      "priority": "P2",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/underworld-king/earth_underworld-king_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 대지 저승대왕 / Earth Underworld King. CATEGORY: bosses. ROLE: execute. Korean folklore fantasy, readable in 0.3 seconds, palette #cf9c68 #f1d29a #5c3d2a, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "blade",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "underworld-king",
+        "earth",
+        "execute",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0031",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "serpent-lord",
+      "nameKo": "대지 이무기 군주",
+      "nameEn": "Earth Serpent Lord",
+      "role": "control",
+      "element": "earth",
+      "stage": null,
+      "rarity": "legend",
+      "priority": "P2",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/serpent-lord/earth_serpent-lord_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 대지 이무기 군주 / Earth Serpent Lord. CATEGORY: bosses. ROLE: control. Korean folklore fantasy, readable in 0.3 seconds, palette #cf9c68 #f1d29a #5c3d2a, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "breath",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "serpent-lord",
+        "earth",
+        "control",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0032",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "thunder-general",
+      "nameKo": "대지 뇌정 장군",
+      "nameEn": "Earth Thunder General",
+      "role": "ranged",
+      "element": "earth",
+      "stage": null,
+      "rarity": "legend",
+      "priority": "P2",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/thunder-general/earth_thunder-general_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 대지 뇌정 장군 / Earth Thunder General. CATEGORY: bosses. ROLE: ranged. Korean folklore fantasy, readable in 0.3 seconds, palette #cf9c68 #f1d29a #5c3d2a, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "spear",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "thunder-general",
+        "earth",
+        "ranged",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0033",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "blue-ogre-king",
+      "nameKo": "혼령 청귀 도깨비왕",
+      "nameEn": "Spirit Blue Ogre King",
+      "role": "melee",
+      "element": "spirit",
+      "stage": null,
+      "rarity": "legend",
+      "priority": "P2",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/blue-ogre-king/spirit_blue-ogre-king_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 혼령 청귀 도깨비왕 / Spirit Blue Ogre King. CATEGORY: bosses. ROLE: melee. Korean folklore fantasy, readable in 0.3 seconds, palette #c17aff #ffb4f7 #47245e, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "mace",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "blue-ogre-king",
+        "spirit",
+        "melee",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0034",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "plague-taoist",
+      "nameKo": "혼령 역병 도사",
+      "nameEn": "Spirit Plague Taoist",
+      "role": "magic",
+      "element": "spirit",
+      "stage": null,
+      "rarity": "legend",
+      "priority": "P2",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/plague-taoist/spirit_plague-taoist_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 혼령 역병 도사 / Spirit Plague Taoist. CATEGORY: bosses. ROLE: magic. Korean folklore fantasy, readable in 0.3 seconds, palette #c17aff #ffb4f7 #47245e, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "talisman",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "plague-taoist",
+        "spirit",
+        "magic",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0035",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "twin-dragon",
+      "nameKo": "혼령 쌍룡",
+      "nameEn": "Spirit Twin Dragon",
+      "role": "ultimate",
+      "element": "spirit",
+      "stage": null,
+      "rarity": "legend",
+      "priority": "P2",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/twin-dragon/spirit_twin-dragon_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 혼령 쌍룡 / Spirit Twin Dragon. CATEGORY: bosses. ROLE: ultimate. Korean folklore fantasy, readable in 0.3 seconds, palette #c17aff #ffb4f7 #47245e, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "breath",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "twin-dragon",
+        "spirit",
+        "ultimate",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0036",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "stone-colossus",
+      "nameKo": "혼령 암석 거인",
+      "nameEn": "Spirit Stone Colossus",
+      "role": "tank",
+      "element": "spirit",
+      "stage": null,
+      "rarity": "legend",
+      "priority": "P2",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/stone-colossus/spirit_stone-colossus_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 혼령 암석 거인 / Spirit Stone Colossus. CATEGORY: bosses. ROLE: tank. Korean folklore fantasy, readable in 0.3 seconds, palette #c17aff #ffb4f7 #47245e, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "fist",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "stone-colossus",
+        "spirit",
+        "tank",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0037",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "nine-tail-empress",
+      "nameKo": "혼령 구미호 여제",
+      "nameEn": "Spirit Nine Tail Empress",
+      "role": "magic",
+      "element": "spirit",
+      "stage": null,
+      "rarity": "legend",
+      "priority": "P2",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/nine-tail-empress/spirit_nine-tail-empress_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 혼령 구미호 여제 / Spirit Nine Tail Empress. CATEGORY: bosses. ROLE: magic. Korean folklore fantasy, readable in 0.3 seconds, palette #c17aff #ffb4f7 #47245e, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "orb",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "nine-tail-empress",
+        "spirit",
+        "magic",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0038",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "underworld-king",
+      "nameKo": "혼령 저승대왕",
+      "nameEn": "Spirit Underworld King",
+      "role": "execute",
+      "element": "spirit",
+      "stage": null,
+      "rarity": "legend",
+      "priority": "P2",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/underworld-king/spirit_underworld-king_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 혼령 저승대왕 / Spirit Underworld King. CATEGORY: bosses. ROLE: execute. Korean folklore fantasy, readable in 0.3 seconds, palette #c17aff #ffb4f7 #47245e, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "blade",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "underworld-king",
+        "spirit",
+        "execute",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0039",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "serpent-lord",
+      "nameKo": "혼령 이무기 군주",
+      "nameEn": "Spirit Serpent Lord",
+      "role": "control",
+      "element": "spirit",
+      "stage": null,
+      "rarity": "legend",
+      "priority": "P2",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/serpent-lord/spirit_serpent-lord_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 혼령 이무기 군주 / Spirit Serpent Lord. CATEGORY: bosses. ROLE: control. Korean folklore fantasy, readable in 0.3 seconds, palette #c17aff #ffb4f7 #47245e, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "breath",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "serpent-lord",
+        "spirit",
+        "control",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0040",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "thunder-general",
+      "nameKo": "혼령 뇌정 장군",
+      "nameEn": "Spirit Thunder General",
+      "role": "ranged",
+      "element": "spirit",
+      "stage": null,
+      "rarity": "legend",
+      "priority": "P2",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/thunder-general/spirit_thunder-general_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 혼령 뇌정 장군 / Spirit Thunder General. CATEGORY: bosses. ROLE: ranged. Korean folklore fantasy, readable in 0.3 seconds, palette #c17aff #ffb4f7 #47245e, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "spear",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "thunder-general",
+        "spirit",
+        "ranged",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0041",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "blue-ogre-king",
+      "nameKo": "천둥 청귀 도깨비왕",
+      "nameEn": "Thunder Blue Ogre King",
+      "role": "melee",
+      "element": "thunder",
+      "stage": null,
+      "rarity": "mythic",
+      "priority": "P2",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/blue-ogre-king/thunder_blue-ogre-king_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 천둥 청귀 도깨비왕 / Thunder Blue Ogre King. CATEGORY: bosses. ROLE: melee. Korean folklore fantasy, readable in 0.3 seconds, palette #ffe76f #fff8c1 #5d4b1e, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "mace",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "blue-ogre-king",
+        "thunder",
+        "melee",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0042",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "plague-taoist",
+      "nameKo": "천둥 역병 도사",
+      "nameEn": "Thunder Plague Taoist",
+      "role": "magic",
+      "element": "thunder",
+      "stage": null,
+      "rarity": "mythic",
+      "priority": "P3",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/plague-taoist/thunder_plague-taoist_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 천둥 역병 도사 / Thunder Plague Taoist. CATEGORY: bosses. ROLE: magic. Korean folklore fantasy, readable in 0.3 seconds, palette #ffe76f #fff8c1 #5d4b1e, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "talisman",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "plague-taoist",
+        "thunder",
+        "magic",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0043",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "twin-dragon",
+      "nameKo": "천둥 쌍룡",
+      "nameEn": "Thunder Twin Dragon",
+      "role": "ultimate",
+      "element": "thunder",
+      "stage": null,
+      "rarity": "mythic",
+      "priority": "P3",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/twin-dragon/thunder_twin-dragon_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 천둥 쌍룡 / Thunder Twin Dragon. CATEGORY: bosses. ROLE: ultimate. Korean folklore fantasy, readable in 0.3 seconds, palette #ffe76f #fff8c1 #5d4b1e, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "breath",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "twin-dragon",
+        "thunder",
+        "ultimate",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0044",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "stone-colossus",
+      "nameKo": "천둥 암석 거인",
+      "nameEn": "Thunder Stone Colossus",
+      "role": "tank",
+      "element": "thunder",
+      "stage": null,
+      "rarity": "mythic",
+      "priority": "P3",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/stone-colossus/thunder_stone-colossus_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 천둥 암석 거인 / Thunder Stone Colossus. CATEGORY: bosses. ROLE: tank. Korean folklore fantasy, readable in 0.3 seconds, palette #ffe76f #fff8c1 #5d4b1e, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "fist",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "stone-colossus",
+        "thunder",
+        "tank",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0045",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "nine-tail-empress",
+      "nameKo": "천둥 구미호 여제",
+      "nameEn": "Thunder Nine Tail Empress",
+      "role": "magic",
+      "element": "thunder",
+      "stage": null,
+      "rarity": "mythic",
+      "priority": "P3",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/nine-tail-empress/thunder_nine-tail-empress_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 천둥 구미호 여제 / Thunder Nine Tail Empress. CATEGORY: bosses. ROLE: magic. Korean folklore fantasy, readable in 0.3 seconds, palette #ffe76f #fff8c1 #5d4b1e, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "orb",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "nine-tail-empress",
+        "thunder",
+        "magic",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0046",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "underworld-king",
+      "nameKo": "천둥 저승대왕",
+      "nameEn": "Thunder Underworld King",
+      "role": "execute",
+      "element": "thunder",
+      "stage": null,
+      "rarity": "mythic",
+      "priority": "P3",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/underworld-king/thunder_underworld-king_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 천둥 저승대왕 / Thunder Underworld King. CATEGORY: bosses. ROLE: execute. Korean folklore fantasy, readable in 0.3 seconds, palette #ffe76f #fff8c1 #5d4b1e, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "blade",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "underworld-king",
+        "thunder",
+        "execute",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0047",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "serpent-lord",
+      "nameKo": "천둥 이무기 군주",
+      "nameEn": "Thunder Serpent Lord",
+      "role": "control",
+      "element": "thunder",
+      "stage": null,
+      "rarity": "mythic",
+      "priority": "P3",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/serpent-lord/thunder_serpent-lord_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 천둥 이무기 군주 / Thunder Serpent Lord. CATEGORY: bosses. ROLE: control. Korean folklore fantasy, readable in 0.3 seconds, palette #ffe76f #fff8c1 #5d4b1e, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "breath",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "serpent-lord",
+        "thunder",
+        "control",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0048",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "thunder-general",
+      "nameKo": "천둥 뇌정 장군",
+      "nameEn": "Thunder Thunder General",
+      "role": "ranged",
+      "element": "thunder",
+      "stage": null,
+      "rarity": "mythic",
+      "priority": "P3",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/thunder-general/thunder_thunder-general_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 천둥 뇌정 장군 / Thunder Thunder General. CATEGORY: bosses. ROLE: ranged. Korean folklore fantasy, readable in 0.3 seconds, palette #ffe76f #fff8c1 #5d4b1e, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "spear",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "thunder-general",
+        "thunder",
+        "ranged",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0049",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "blue-ogre-king",
+      "nameKo": "달빛 청귀 도깨비왕",
+      "nameEn": "Moon Blue Ogre King",
+      "role": "melee",
+      "element": "moon",
+      "stage": null,
+      "rarity": "mythic",
+      "priority": "P3",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/blue-ogre-king/moon_blue-ogre-king_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 달빛 청귀 도깨비왕 / Moon Blue Ogre King. CATEGORY: bosses. ROLE: melee. Korean folklore fantasy, readable in 0.3 seconds, palette #9bb8ff #f3efff #30395f, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "mace",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "blue-ogre-king",
+        "moon",
+        "melee",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0050",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "plague-taoist",
+      "nameKo": "달빛 역병 도사",
+      "nameEn": "Moon Plague Taoist",
+      "role": "magic",
+      "element": "moon",
+      "stage": null,
+      "rarity": "mythic",
+      "priority": "P3",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/plague-taoist/moon_plague-taoist_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 달빛 역병 도사 / Moon Plague Taoist. CATEGORY: bosses. ROLE: magic. Korean folklore fantasy, readable in 0.3 seconds, palette #9bb8ff #f3efff #30395f, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "talisman",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "plague-taoist",
+        "moon",
+        "magic",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0051",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "twin-dragon",
+      "nameKo": "달빛 쌍룡",
+      "nameEn": "Moon Twin Dragon",
+      "role": "ultimate",
+      "element": "moon",
+      "stage": null,
+      "rarity": "immortal",
+      "priority": "P3",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/twin-dragon/moon_twin-dragon_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 달빛 쌍룡 / Moon Twin Dragon. CATEGORY: bosses. ROLE: ultimate. Korean folklore fantasy, readable in 0.3 seconds, palette #9bb8ff #f3efff #30395f, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "breath",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "twin-dragon",
+        "moon",
+        "ultimate",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0052",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "stone-colossus",
+      "nameKo": "달빛 암석 거인",
+      "nameEn": "Moon Stone Colossus",
+      "role": "tank",
+      "element": "moon",
+      "stage": null,
+      "rarity": "immortal",
+      "priority": "P3",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/stone-colossus/moon_stone-colossus_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 달빛 암석 거인 / Moon Stone Colossus. CATEGORY: bosses. ROLE: tank. Korean folklore fantasy, readable in 0.3 seconds, palette #9bb8ff #f3efff #30395f, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "fist",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "stone-colossus",
+        "moon",
+        "tank",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0053",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "nine-tail-empress",
+      "nameKo": "달빛 구미호 여제",
+      "nameEn": "Moon Nine Tail Empress",
+      "role": "magic",
+      "element": "moon",
+      "stage": null,
+      "rarity": "immortal",
+      "priority": "P3",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/nine-tail-empress/moon_nine-tail-empress_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 달빛 구미호 여제 / Moon Nine Tail Empress. CATEGORY: bosses. ROLE: magic. Korean folklore fantasy, readable in 0.3 seconds, palette #9bb8ff #f3efff #30395f, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "orb",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "nine-tail-empress",
+        "moon",
+        "magic",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0054",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "underworld-king",
+      "nameKo": "달빛 저승대왕",
+      "nameEn": "Moon Underworld King",
+      "role": "execute",
+      "element": "moon",
+      "stage": null,
+      "rarity": "immortal",
+      "priority": "P3",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/underworld-king/moon_underworld-king_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 달빛 저승대왕 / Moon Underworld King. CATEGORY: bosses. ROLE: execute. Korean folklore fantasy, readable in 0.3 seconds, palette #9bb8ff #f3efff #30395f, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "blade",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "underworld-king",
+        "moon",
+        "execute",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0055",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "serpent-lord",
+      "nameKo": "달빛 이무기 군주",
+      "nameEn": "Moon Serpent Lord",
+      "role": "control",
+      "element": "moon",
+      "stage": null,
+      "rarity": "immortal",
+      "priority": "P3",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/serpent-lord/moon_serpent-lord_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 달빛 이무기 군주 / Moon Serpent Lord. CATEGORY: bosses. ROLE: control. Korean folklore fantasy, readable in 0.3 seconds, palette #9bb8ff #f3efff #30395f, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "breath",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "serpent-lord",
+        "moon",
+        "control",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0056",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "thunder-general",
+      "nameKo": "달빛 뇌정 장군",
+      "nameEn": "Moon Thunder General",
+      "role": "ranged",
+      "element": "moon",
+      "stage": null,
+      "rarity": "immortal",
+      "priority": "P3",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/thunder-general/moon_thunder-general_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 달빛 뇌정 장군 / Moon Thunder General. CATEGORY: bosses. ROLE: ranged. Korean folklore fantasy, readable in 0.3 seconds, palette #9bb8ff #f3efff #30395f, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "spear",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "thunder-general",
+        "moon",
+        "ranged",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0057",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "blue-ogre-king",
+      "nameKo": "성광 청귀 도깨비왕",
+      "nameEn": "Holy Blue Ogre King",
+      "role": "melee",
+      "element": "holy",
+      "stage": null,
+      "rarity": "immortal",
+      "priority": "P3",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/blue-ogre-king/holy_blue-ogre-king_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 성광 청귀 도깨비왕 / Holy Blue Ogre King. CATEGORY: bosses. ROLE: melee. Korean folklore fantasy, readable in 0.3 seconds, palette #ffd879 #fff6d4 #6c5130, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "mace",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "blue-ogre-king",
+        "holy",
+        "melee",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0058",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "plague-taoist",
+      "nameKo": "성광 역병 도사",
+      "nameEn": "Holy Plague Taoist",
+      "role": "magic",
+      "element": "holy",
+      "stage": null,
+      "rarity": "immortal",
+      "priority": "P3",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/plague-taoist/holy_plague-taoist_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 성광 역병 도사 / Holy Plague Taoist. CATEGORY: bosses. ROLE: magic. Korean folklore fantasy, readable in 0.3 seconds, palette #ffd879 #fff6d4 #6c5130, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "talisman",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "plague-taoist",
+        "holy",
+        "magic",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0059",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "twin-dragon",
+      "nameKo": "성광 쌍룡",
+      "nameEn": "Holy Twin Dragon",
+      "role": "ultimate",
+      "element": "holy",
+      "stage": null,
+      "rarity": "immortal",
+      "priority": "P3",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/twin-dragon/holy_twin-dragon_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 성광 쌍룡 / Holy Twin Dragon. CATEGORY: bosses. ROLE: ultimate. Korean folklore fantasy, readable in 0.3 seconds, palette #ffd879 #fff6d4 #6c5130, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "breath",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "twin-dragon",
+        "holy",
+        "ultimate",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0060",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "stone-colossus",
+      "nameKo": "성광 암석 거인",
+      "nameEn": "Holy Stone Colossus",
+      "role": "tank",
+      "element": "holy",
+      "stage": null,
+      "rarity": "immortal",
+      "priority": "P3",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/stone-colossus/holy_stone-colossus_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 성광 암석 거인 / Holy Stone Colossus. CATEGORY: bosses. ROLE: tank. Korean folklore fantasy, readable in 0.3 seconds, palette #ffd879 #fff6d4 #6c5130, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "fist",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "stone-colossus",
+        "holy",
+        "tank",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0061",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "nine-tail-empress",
+      "nameKo": "성광 구미호 여제",
+      "nameEn": "Holy Nine Tail Empress",
+      "role": "magic",
+      "element": "holy",
+      "stage": null,
+      "rarity": "god",
+      "priority": "P3",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/nine-tail-empress/holy_nine-tail-empress_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 성광 구미호 여제 / Holy Nine Tail Empress. CATEGORY: bosses. ROLE: magic. Korean folklore fantasy, readable in 0.3 seconds, palette #ffd879 #fff6d4 #6c5130, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "orb",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "nine-tail-empress",
+        "holy",
+        "magic",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0062",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "underworld-king",
+      "nameKo": "성광 저승대왕",
+      "nameEn": "Holy Underworld King",
+      "role": "execute",
+      "element": "holy",
+      "stage": null,
+      "rarity": "god",
+      "priority": "P3",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/underworld-king/holy_underworld-king_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 성광 저승대왕 / Holy Underworld King. CATEGORY: bosses. ROLE: execute. Korean folklore fantasy, readable in 0.3 seconds, palette #ffd879 #fff6d4 #6c5130, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "blade",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "underworld-king",
+        "holy",
+        "execute",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0063",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "serpent-lord",
+      "nameKo": "성광 이무기 군주",
+      "nameEn": "Holy Serpent Lord",
+      "role": "control",
+      "element": "holy",
+      "stage": null,
+      "rarity": "god",
+      "priority": "P3",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/serpent-lord/holy_serpent-lord_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 성광 이무기 군주 / Holy Serpent Lord. CATEGORY: bosses. ROLE: control. Korean folklore fantasy, readable in 0.3 seconds, palette #ffd879 #fff6d4 #6c5130, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "breath",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "serpent-lord",
+        "holy",
+        "control",
+        "11-direction-authored"
+      ]
+    },
+    {
+      "id": "BOSS-V4-0064",
+      "schemaVersion": 4,
+      "megabaseVersion": "4.0.0",
+      "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+      "category": "bosses",
+      "family": "thunder-general",
+      "nameKo": "성광 뇌정 장군",
+      "nameEn": "Holy Thunder General",
+      "role": "ranged",
+      "element": "holy",
+      "stage": null,
+      "rarity": "god",
+      "priority": "P3",
+      "knowledgeStatus": "generated",
+      "artStatus": "planned",
+      "productionApproved": false,
+      "authoredDirections": 11,
+      "mirroringAllowed": false,
+      "delivery": {
+        "path": "04_Boss/thunder-general/holy_thunder-general_11dir.png",
+        "format": "png",
+        "sourceLayersRequired": true,
+        "transparentBackground": true
+      },
+      "promptPack": {
+        "positive": "MASTER STYLE LOCK — Dokkaebi Defense\n\nAAA Korean Mobile Defense Game Asset, Premium Stylized 3D, Cute Chibi Character (2.3 heads proportion), Korean Folklore Fantasy, Highly Readable Silhouette, Large Expressive Eyes, Rounded Face, Tiny Body, Oversized Weapon, Hand-Painted Stylized PBR, Smooth Materials, Soft Ambient Occlusion, Warm Key Light, Cool Blue Rim Light, High Color Saturation, Bright Value Range, Rounded Beveled Shapes, Mobile Game Ready, Low Poly (6000–10000 triangles), Clean Topology, Orthographic Character Turnaround, White Background, Consistent Art Direction, Cute 70% + Cool 30%, No Photorealism, No Anime Illustration, No Realistic Skin, No Dark Mood, No Gore, No Horror, No Thin Limbs, No Long Neck, No Sharp Edges, No Overly Complex Details.\nASSET: 성광 뇌정 장군 / Holy Thunder General. CATEGORY: bosses. ROLE: ranged. Korean folklore fantasy, readable in 0.3 seconds, palette #ffd879 #fff6d4 #6c5130, independent authored directions when required, feet-center anchor, separated action and VFX sockets, game-ready silhouette.",
+        "negative": "realistic skin texture, skin pores, wrinkles, excessive muscles, long legs, long neck, small eyes, photorealism, excessive ornament, complex armor, low saturation, dark lighting, pure black shadow, excessive texture noise, gore, blood, dismemberment, organs, horror mood, thin limbs, sharp edges, anime illustration, mirrored duplicate direction, floating feet, unreadable role, baked UI text"
+      },
+      "technical": {
+        "anchor": "feet-center",
+        "colorSpace": "sRGB",
+        "mobileReadable": true,
+        "authoredDirections": 11,
+        "actions": 14,
+        "sheet": {
+          "directions": 11,
+          "cell": [
+            512,
+            512
+          ],
+          "fpsRange": [
+            8,
+            24
+          ]
+        },
+        "tool": "spear",
+        "hitPoints": [
+          "head",
+          "chest",
+          "weapon",
+          "feet"
+        ],
+        "gpu": {
+          "atlasGroup": "bosses",
+          "targetTextureMB": 20,
+          "batchable": false
+        }
+      },
+      "tags": [
+        "bosse",
+        "thunder-general",
+        "holy",
+        "ranged",
+        "11-direction-authored"
+      ]
+    }
+  ]
+}

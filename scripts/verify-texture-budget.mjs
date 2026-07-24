@@ -16,6 +16,8 @@ function walk(directory) {
   if (rel === 'public/assets/ip-v13' || rel.startsWith('public/assets/ip-v13/')) return;
   if (rel === 'public/assets/ip-v14' || rel.startsWith('public/assets/ip-v14/')) return;
   if (rel === 'public/assets/ip-v15' || rel.startsWith('public/assets/ip-v15/')) return;
+  // IP Megabase reference boards are review-library documentation, not gameplay GPU textures.
+  if (rel === 'public/assets/ip-mega-v4/reference' || rel.startsWith('public/assets/ip-mega-v4/reference/')) return;
   for (const entry of readdirSync(directory, { withFileTypes: true })) {
     const path = resolve(directory, entry.name);
     if (entry.isDirectory()) walk(path);

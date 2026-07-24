@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 4,
+  "megabaseVersion": "4.0.0",
+  "directionCount": 11,
+  "mirroringAllowed": false,
+  "directions": [
+    {
+      "index": 0,
+      "id": "d00",
+      "degrees": 0,
+      "label": "정면",
+      "authored": true,
+      "mirroringAllowed": false
+    },
+    {
+      "index": 1,
+      "id": "d01",
+      "degrees": 32.727,
+      "label": "우전방 1",
+      "authored": true,
+      "mirroringAllowed": false
+    },
+    {
+      "index": 2,
+      "id": "d02",
+      "degrees": 65.455,
+      "label": "우전방 2",
+      "authored": true,
+      "mirroringAllowed": false
+    },
+    {
+      "index": 3,
+      "id": "d03",
+      "degrees": 98.182,
+      "label": "우측",
+      "authored": true,
+      "mirroringAllowed": false
+    },
+    {
+      "index": 4,
+      "id": "d04",
+      "degrees": 130.909,
+      "label": "우후방 1",
+      "authored": true,
+      "mirroringAllowed": false
+    },
+    {
+      "index": 5,
+      "id": "d05",
+      "degrees": 163.636,
+      "label": "우후방 2",
+      "authored": true,
+      "mirroringAllowed": false
+    },
+    {
+      "index": 6,
+      "id": "d06",
+      "degrees": 196.364,
+      "label": "후면",
+      "authored": true,
+      "mirroringAllowed": false
+    },
+    {
+      "index": 7,
+      "id": "d07",
+      "degrees": 229.091,
+      "label": "좌후방 2",
+      "authored": true,
+      "mirroringAllowed": false
+    },
+    {
+      "index": 8,
+      "id": "d08",
+      "degrees": 261.818,
+      "label": "좌후방 1",
+      "authored": true,
+      "mirroringAllowed": false
+    },
+    {
+      "index": 9,
+      "id": "d09",
+      "degrees": 294.545,
+      "label": "좌측",
+      "authored": true,
+      "mirroringAllowed": false
+    },
+    {
+      "index": 10,
+      "id": "d10",
+      "degrees": 327.273,
+      "label": "좌전방",
+      "authored": true,
+      "mirroringAllowed": false
+    }
+  ]
+}

@@ -2,6 +2,7 @@
 // GOLDEN DOMINION v12 · TRANSPARENT ARSENAL v13 · ATLAS DOMINION v14 · LIVING BATTLEFIELD v15 · CLEAR HORIZON v16 · MOON GATE REBORN v17 · TEN-WAVE RELIABILITY v18 lineage retained
 import { CHARACTER_DNA_SUMMARY } from './character-dna.js';
 import { IP_ASSET_LIBRARY_V15, IP_ASSET_ATLAS_URL } from './ip-asset-library-v15.js';
+import { IP_KNOWLEDGE_LIBRARY_URL, IP_KNOWLEDGE_MEGABASE_SUMMARY } from './ip-knowledge-megabase-v4.js';
 import { HERO_ARCHETYPE_SUMMARY } from './hero-archetype-system.js';
 import { GUARDIAN_COUNCIL_SUMMARY } from './guardian-council-system.js';
 
@@ -72,9 +73,9 @@ export class ProductionConsole {
     const progress = total ? Math.round((approved / total) * 100) : 0;
     const milestoneHtml = this.milestones.slice(0, 4).map((item) => `<li><span>${item.status === 'done' ? 'DONE' : item.status === 'active' ? 'NOW' : 'NEXT'}</span>${item.label}</li>`).join('');
     this.element.innerHTML = `
-      <header><div><small>DD PRODUCTION OS</small><b>RELEASE FOUNDATION 1.0.3 · CORE HEALTH · CLEAN SHELL</b></div><button type="button" data-close-console aria-label="제작 콘솔 닫기">×</button></header>
+      <header><div><small>DD PRODUCTION OS</small><b>IP MEGAFORGE 1.0.11 · 147,232 KNOWLEDGE RECORDS</b></div><button type="button" data-close-console aria-label="제작 콘솔 닫기">×</button></header>
       <section class="production-console-grid">
-        <article><small>RELEASE</small><b>v${versionPolicy.releaseVersion || '1.0.3'} · ${versionPolicy.buildId || 'b24.3'}</b><span>Legacy ${versionPolicy.lineageVersion || '23.1.0'} · ${versionPolicy.id || 'version policy'}</span></article>
+        <article><small>RELEASE</small><b>v${versionPolicy.releaseVersion || '1.0.11'} · ${versionPolicy.buildId || 'b24.11'}</b><span>Legacy ${versionPolicy.lineageVersion || '23.1.0'} · ${versionPolicy.id || 'version policy'}</span></article>
         <article><small>CORE HEALTH</small><b>${String(coreFoundation.health || 'healthy').toUpperCase()}</b><span>P95 ${coreFoundation.p95FrameMs || 0}ms · Pressure ${Math.round((coreFoundation.pressure || 0) * 100)}% · State ${coreFoundation.state || 'boot'}</span></article>
         <article><small>ART LOCK</small><b>${this.artSummary.styleLockId || 'UNKNOWN'}</b><span>Production art ${approved}/${total} · ${progress}%</span></article>
         <article><small>RUNTIME SLICE</small><b>${goldenSlice.runtimeCertified || 0}/${goldenSlice.total || 6} PASS</b><span>${goldenSlice.runtimePassed ? 'Hero · Enemy · Boss · Map · HUD · VFX' : 'Evidence incomplete'}</span></article>
@@ -85,6 +86,7 @@ export class ProductionConsole {
         <article><small>RENDER</small><b>${Number(data.drawCalls || 0)} CALLS</b><span>${Number(data.triangles || 0).toLocaleString()} tri</span></article>
         <article><small>ASSETS</small><b>${assets.cachedAssets || 0} READY</b><span>${assets.textureMemoryMB || 0}/${assets.textureBudgetMB || 0}MB</span></article>
         <article><small>ASSET REVIEW</small><b>${IP_ASSET_LIBRARY_V15.totalFrames} ATLAS</b><span>Pages ${IP_ASSET_LIBRARY_V15.atlasPages} · 1x/2x · Mastered ${IP_ASSET_LIBRARY_V15.edgeMasterPass} · 3D approved ${IP_ASSET_LIBRARY_V15.production3DApproved}</span></article>
+        <article><small>IP MEGABASE</small><b>${IP_KNOWLEDGE_MEGABASE_SUMMARY.totalRecords.toLocaleString()} RECORDS</b><span>${IP_KNOWLEDGE_MEGABASE_SUMMARY.baseAssets.toLocaleString()} base · ${IP_KNOWLEDGE_MEGABASE_SUMMARY.authoredDirections} authored directions · final art ${IP_KNOWLEDGE_MEGABASE_SUMMARY.finalArtApproved} · <a href="${IP_KNOWLEDGE_LIBRARY_URL}" target="_blank" rel="noopener">OPEN LIBRARY</a></span></article>
         <article><small>HERO ROSTER</small><b>${HERO_ARCHETYPE_SUMMARY.playableClasses} CLASSES</b><span>Passive ${HERO_ARCHETYPE_SUMMARY.passiveIds.length} · Runtime models 3 · Review art 5</span></article>
         <article><small>GUARDIAN COUNCIL</small><b>${council.bond?.name || 'STANDBY'}</b><span>${council.support?.name || 'No support'} · ${GUARDIAN_COUNCIL_SUMMARY.bondCount} bonds</span></article>
         <article><small>CAMPAIGN ACT</small><b>${campaign.current?.name || '달문 전초'}</b><span>ACT ${campaign.current?.index || 1}/4 · 전환 ${campaign.transitions || 0}</span></article>
@@ -109,9 +111,10 @@ export class ProductionConsole {
         <article><small>BOSS RAGE</small><b>${bossEscalation.enrages || 0} ENRAGE</b><span>페이즈 ${bossEscalation.phaseTransitions || 0} · 활성 ${bossEscalation.active?.length || 0}</span></article>
       </section>
       <ol>${milestoneHtml}</ol>
-      <footer><button type="button" data-open-ip-library>OPEN ASSET REVIEW OS</button> · 화면 버튼 전용 · save schema ${data.saveSchemaVersion || 0}</footer>`;
+      <footer><button type="button" data-open-ip-library>OPEN ASSET REVIEW OS</button> · <button type="button" data-open-ip-mega-library>OPEN IP MEGABASE</button> · 화면 버튼 전용 · save schema ${data.saveSchemaVersion || 0}</footer>`;
     this.element.querySelector('[data-close-console]')?.addEventListener('click', () => this.toggle(false), { once: true });
     this.element.querySelector('[data-open-ip-library]')?.addEventListener('click', () => window.open(IP_ASSET_ATLAS_URL, '_blank', 'noopener'), { once: true });
+    this.element.querySelector('[data-open-ip-mega-library]')?.addEventListener('click', () => window.open(IP_KNOWLEDGE_LIBRARY_URL, '_blank', 'noopener'), { once: true });
   }
 
   dispose() {

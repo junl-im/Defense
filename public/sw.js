@@ -1,5 +1,5 @@
-const RELEASE_VERSION = '1.0.10';
-const BUILD_ID = 'b24.10';
+const RELEASE_VERSION = '1.0.11';
+const BUILD_ID = 'b24.11';
 // const VERSION = '23.1.0'; historical lineage marker.
 const CACHE_PREFIX = 'dokkaebi-shell-';
 const CACHE_NAME = `${CACHE_PREFIX}${BUILD_ID}`;
@@ -7,6 +7,11 @@ const SHELL_ASSETS = [
   './', './index.html', './manifest.webmanifest', './version.json', './browser-lab-v19.html',
   './icon-192.png', './icon-512.png', './icon-maskable-512.png',
   './static-bootstrap.js', './src/bootstrap.js', './src/style.css', './src/main.js',
+  './src/ip-knowledge-megabase-v4.js', './ip-mega-library-v4.html',
+  './assets/ip-mega-v4/data/ip-mega-index-v4.json',
+  './assets/ip-mega-v4/data/ip-mega-sample-v4.json',
+  './assets/ip-mega-v4/reference/gameplay-key-visual-v4.webp',
+  './assets/ip-mega-v4/reference/art-production-board-v4.webp',
   './src/runtime/first-presentation-director-v107.js',
   './src/runtime/combat-visual-director-v110.js',
   './assets/ip-v10/presentation/objects/object_dokkaebi_shrine.png',

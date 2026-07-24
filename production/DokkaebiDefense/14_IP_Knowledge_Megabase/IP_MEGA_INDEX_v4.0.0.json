@@ -1,0 +1,571 @@
+{
+  "schemaVersion": 4,
+  "megabaseVersion": "4.0.0",
+  "generatedAt": "2026-07-24T08:40:00.000Z",
+  "styleLockId": "DD-ABSOLUTE-ART-BIBLE-2.0",
+  "title": "Dokkaebi Defense IP Knowledge Megabase",
+  "authoredDirectionPolicy": {
+    "directions": 11,
+    "mirrored": false,
+    "authored": true
+  },
+  "counts": {
+    "base": {
+      "heroes": 176,
+      "guardians": 88,
+      "monsters": 352,
+      "bosses": 64,
+      "towers": 176,
+      "weapons": 512,
+      "skills": 1024,
+      "vfx": 2048,
+      "ui": 1024,
+      "environment": 2048,
+      "audio": 680
+    },
+    "records": {
+      "baseAssets": 8192,
+      "directionalMotion": 89232,
+      "towerStateActions": 10560,
+      "hudContracts": 480,
+      "visualQaScenarios": 5040,
+      "performanceProfiles": 960,
+      "knowledgeRelations": 32768,
+      "total": 147232
+    }
+  },
+  "motionInventory": [
+    {
+      "group": "hero",
+      "count": 27104,
+      "shards": [
+        {
+          "path": "motion/hero-motion-001.json",
+          "count": 4096,
+          "firstId": "MOT-HERO-0001-d00-idle",
+          "lastId": "MOT-HERO-0027-d06-ultimate"
+        },
+        {
+          "path": "motion/hero-motion-002.json",
+          "count": 4096,
+          "firstId": "MOT-HERO-0027-d06-hit-light",
+          "lastId": "MOT-HERO-0054-d02-walk"
+        },
+        {
+          "path": "motion/hero-motion-003.json",
+          "count": 4096,
+          "firstId": "MOT-HERO-0054-d02-run",
+          "lastId": "MOT-HERO-0080-d08-hit-heavy"
+        },
+        {
+          "path": "motion/hero-motion-004.json",
+          "count": 4096,
+          "firstId": "MOT-HERO-0080-d08-guard-break",
+          "lastId": "MOT-HERO-0107-d04-attack-primary"
+        },
+        {
+          "path": "motion/hero-motion-005.json",
+          "count": 4096,
+          "firstId": "MOT-HERO-0107-d04-attack-secondary",
+          "lastId": "MOT-HERO-0133-d10-death"
+        },
+        {
+          "path": "motion/hero-motion-006.json",
+          "count": 4096,
+          "firstId": "MOT-HERO-0133-d10-victory",
+          "lastId": "MOT-HERO-0160-d06-skill-1"
+        },
+        {
+          "path": "motion/hero-motion-007.json",
+          "count": 2528,
+          "firstId": "MOT-HERO-0160-d06-skill-2",
+          "lastId": "MOT-HERO-0176-d10-spawn"
+        }
+      ]
+    },
+    {
+      "group": "guardian",
+      "count": 13552,
+      "shards": [
+        {
+          "path": "motion/guardian-motion-001.json",
+          "count": 4096,
+          "firstId": "MOT-GUARDIAN-0001-d00-idle",
+          "lastId": "MOT-GUARDIAN-0027-d06-ultimate"
+        },
+        {
+          "path": "motion/guardian-motion-002.json",
+          "count": 4096,
+          "firstId": "MOT-GUARDIAN-0027-d06-hit-light",
+          "lastId": "MOT-GUARDIAN-0054-d02-walk"
+        },
+        {
+          "path": "motion/guardian-motion-003.json",
+          "count": 4096,
+          "firstId": "MOT-GUARDIAN-0054-d02-run",
+          "lastId": "MOT-GUARDIAN-0080-d08-hit-heavy"
+        },
+        {
+          "path": "motion/guardian-motion-004.json",
+          "count": 1264,
+          "firstId": "MOT-GUARDIAN-0080-d08-guard-break",
+          "lastId": "MOT-GUARDIAN-0088-d10-spawn"
+        }
+      ]
+    },
+    {
+      "group": "monster",
+      "count": 38720,
+      "shards": [
+        {
+          "path": "motion/monster-motion-001.json",
+          "count": 4096,
+          "firstId": "MOT-MONSTER-0001-d00-idle",
+          "lastId": "MOT-MONSTER-0038-d02-roar"
+        },
+        {
+          "path": "motion/monster-motion-002.json",
+          "count": 4096,
+          "firstId": "MOT-MONSTER-0038-d02-hit",
+          "lastId": "MOT-MONSTER-0075-d05-walk"
+        },
+        {
+          "path": "motion/monster-motion-003.json",
+          "count": 4096,
+          "firstId": "MOT-MONSTER-0075-d05-run",
+          "lastId": "MOT-MONSTER-0112-d07-break"
+        },
+        {
+          "path": "motion/monster-motion-004.json",
+          "count": 4096,
+          "firstId": "MOT-MONSTER-0112-d07-death",
+          "lastId": "MOT-MONSTER-0149-d10-attack"
+        },
+        {
+          "path": "motion/monster-motion-005.json",
+          "count": 4096,
+          "firstId": "MOT-MONSTER-0149-d10-special",
+          "lastId": "MOT-MONSTER-0187-d01-spawn"
+        },
+        {
+          "path": "motion/monster-motion-006.json",
+          "count": 4096,
+          "firstId": "MOT-MONSTER-0187-d02-idle",
+          "lastId": "MOT-MONSTER-0224-d04-roar"
+        },
+        {
+          "path": "motion/monster-motion-007.json",
+          "count": 4096,
+          "firstId": "MOT-MONSTER-0224-d04-hit",
+          "lastId": "MOT-MONSTER-0261-d07-walk"
+        },
+        {
+          "path": "motion/monster-motion-008.json",
+          "count": 4096,
+          "firstId": "MOT-MONSTER-0261-d07-run",
+          "lastId": "MOT-MONSTER-0298-d09-break"
+        },
+        {
+          "path": "motion/monster-motion-009.json",
+          "count": 4096,
+          "firstId": "MOT-MONSTER-0298-d09-death",
+          "lastId": "MOT-MONSTER-0336-d01-attack"
+        },
+        {
+          "path": "motion/monster-motion-010.json",
+          "count": 1856,
+          "firstId": "MOT-MONSTER-0336-d01-special",
+          "lastId": "MOT-MONSTER-0352-d10-spawn"
+        }
+      ]
+    },
+    {
+      "group": "boss",
+      "count": 9856,
+      "shards": [
+        {
+          "path": "motion/boss-motion-001.json",
+          "count": 4096,
+          "firstId": "MOT-BOSS-0001-d00-idle",
+          "lastId": "MOT-BOSS-0027-d06-ultimate"
+        },
+        {
+          "path": "motion/boss-motion-002.json",
+          "count": 4096,
+          "firstId": "MOT-BOSS-0027-d06-hit-light",
+          "lastId": "MOT-BOSS-0054-d02-walk"
+        },
+        {
+          "path": "motion/boss-motion-003.json",
+          "count": 1664,
+          "firstId": "MOT-BOSS-0054-d02-run",
+          "lastId": "MOT-BOSS-0064-d10-spawn"
+        }
+      ]
+    }
+  ],
+  "towerInventory": [
+    {
+      "path": "tower/tower-state-actions-001.json",
+      "count": 4096,
+      "firstId": "TSTATE-0001-seed-normal-idle-pulse",
+      "lastId": "TSTATE-0069-awakened-hit-crack-idle-pulse"
+    },
+    {
+      "path": "tower/tower-state-actions-002.json",
+      "count": 4096,
+      "firstId": "TSTATE-0069-awakened-hit-crack-defense-cast",
+      "lastId": "TSTATE-0137-fortified-critical-defense-cast"
+    },
+    {
+      "path": "tower/tower-state-actions-003.json",
+      "count": 2368,
+      "firstId": "TSTATE-0137-fortified-critical-emergency-burst",
+      "lastId": "TSTATE-0176-sovereign-broken-emergency-burst"
+    }
+  ],
+  "hudInventory": {
+    "path": "hud/HUD_CONTRACTS_v4.0.0.json",
+    "count": 480
+  },
+  "qaInventory": [
+    {
+      "path": "qa/visual-qa-001.json",
+      "count": 4096,
+      "firstId": "QA-W01-dokkaebi-village-desktop-1080p-low-normal",
+      "lastId": "QA-W09-dokkaebi-village-foldable-medium-normal"
+    },
+    {
+      "path": "qa/visual-qa-002.json",
+      "count": 944,
+      "firstId": "QA-W09-dokkaebi-village-foldable-medium-overlap",
+      "lastId": "QA-W10-celestial-realm-foldable-extreme-vfx-saturation"
+    }
+  ],
+  "performanceInventory": {
+    "path": "performance/PERFORMANCE_REGRESSION_PROFILES_v4.0.0.json",
+    "count": 960
+  },
+  "relationInventory": [
+    {
+      "path": "relations/knowledge-relations-001.json",
+      "count": 4096,
+      "firstId": "REL-00001-1",
+      "lastId": "REL-01024-4"
+    },
+    {
+      "path": "relations/knowledge-relations-002.json",
+      "count": 4096,
+      "firstId": "REL-01025-1",
+      "lastId": "REL-02048-4"
+    },
+    {
+      "path": "relations/knowledge-relations-003.json",
+      "count": 4096,
+      "firstId": "REL-02049-1",
+      "lastId": "REL-03072-4"
+    },
+    {
+      "path": "relations/knowledge-relations-004.json",
+      "count": 4096,
+      "firstId": "REL-03073-1",
+      "lastId": "REL-04096-4"
+    },
+    {
+      "path": "relations/knowledge-relations-005.json",
+      "count": 4096,
+      "firstId": "REL-04097-1",
+      "lastId": "REL-05120-4"
+    },
+    {
+      "path": "relations/knowledge-relations-006.json",
+      "count": 4096,
+      "firstId": "REL-05121-1",
+      "lastId": "REL-06144-4"
+    },
+    {
+      "path": "relations/knowledge-relations-007.json",
+      "count": 4096,
+      "firstId": "REL-06145-1",
+      "lastId": "REL-07168-4"
+    },
+    {
+      "path": "relations/knowledge-relations-008.json",
+      "count": 4096,
+      "firstId": "REL-07169-1",
+      "lastId": "REL-08192-4"
+    }
+  ],
+  "finalArtStatus": {
+    "approved": 0,
+    "planned": 8192,
+    "note": "Knowledge contracts generated; final authored art approval remains separate."
+  },
+  "files": [
+    {
+      "path": "catalogs/AUDIO_CATALOG_v4.0.0.json",
+      "bytes": 1905441,
+      "sha256": "d65aa79145de1b19c6b5d50294254569102b46e1358ad2576d9587c4997d67b9"
+    },
+    {
+      "path": "catalogs/BOSSES_CATALOG_v4.0.0.json",
+      "bytes": 197292,
+      "sha256": "d53d052db14a985d2fa93e594174b060af047ebcb0723658d1c6fbe505b839ab"
+    },
+    {
+      "path": "catalogs/ENVIRONMENT_CATALOG_v4.0.0.json",
+      "bytes": 5773465,
+      "sha256": "0e6328d45208291e58d1e2c79a3aa860b6f8b78132b412915beef78e12d01337"
+    },
+    {
+      "path": "catalogs/GUARDIANS_CATALOG_v4.0.0.json",
+      "bytes": 273738,
+      "sha256": "13fcfeba89c39dc828f7d92b57d37c719498b33f6de5eea88f2308be6cf3ad01"
+    },
+    {
+      "path": "catalogs/HEROES_CATALOG_v4.0.0.json",
+      "bytes": 540100,
+      "sha256": "457c8cc3fd37992d1a03f66d9a2d4bd4ad0fd69db896860dd952d9ee62c50f6a"
+    },
+    {
+      "path": "catalogs/MONSTERS_CATALOG_v4.0.0.json",
+      "bytes": 1087211,
+      "sha256": "87eed39ee1da27fba60a0efe7dbd5ae2874486913797ecf229330fad19ea4094"
+    },
+    {
+      "path": "catalogs/SKILLS_CATALOG_v4.0.0.json",
+      "bytes": 2826554,
+      "sha256": "a70668f049c636af8b92da89b78432641d23078edaea68ea96244d5b39751325"
+    },
+    {
+      "path": "catalogs/TOWERS_CATALOG_v4.0.0.json",
+      "bytes": 514494,
+      "sha256": "2f6aebdabd2cac445ab1f7913c8fc8aef056905dbe5627f4db41a3d9b8281d7b"
+    },
+    {
+      "path": "catalogs/UI_CATALOG_v4.0.0.json",
+      "bytes": 2828090,
+      "sha256": "c8d7aa003d9bdb183626ca20278ad119094555f8635688354a5fd22720b22f53"
+    },
+    {
+      "path": "catalogs/VFX_CATALOG_v4.0.0.json",
+      "bytes": 5645153,
+      "sha256": "48d97406d72a1571d2973553336a7117496be23abcc88a60b4bc21eec5b4cbe9"
+    },
+    {
+      "path": "catalogs/WEAPONS_CATALOG_v4.0.0.json",
+      "bytes": 1423496,
+      "sha256": "bb2d11ea9cf986ef98ebcb37307e3aadeba4542a7f8644e7fc3ac66e8fff4f2e"
+    },
+    {
+      "path": "hud/HUD_CONTRACTS_v4.0.0.json",
+      "bytes": 330487,
+      "sha256": "7d93c2c84963195f91544c1ec13675637f358e3d5bce5a11bc3ca8eb399d58a4"
+    },
+    {
+      "path": "motion/boss-motion-001.json",
+      "bytes": 3443761,
+      "sha256": "82d03da9ff285e228364c1695ebbc6e0ba97d4cdfb079f2e6d241a349181319c"
+    },
+    {
+      "path": "motion/boss-motion-002.json",
+      "bytes": 3443685,
+      "sha256": "7b23d31c1463119b87491f4ced3274551558bf955692cd012e8d34faf6fce6c6"
+    },
+    {
+      "path": "motion/boss-motion-003.json",
+      "bytes": 1399335,
+      "sha256": "7b88aada56ef909b00aa9663b8be52d0e86840872273c8af230ff6eb0ecfb81a"
+    },
+    {
+      "path": "motion/guardian-motion-001.json",
+      "bytes": 3468272,
+      "sha256": "c60c3dd03388ceb32b8b517f4adeded16232e94dcdebdf545e2e78d56926e808"
+    },
+    {
+      "path": "motion/guardian-motion-002.json",
+      "bytes": 3468342,
+      "sha256": "b92588ca20412be50eb8e84bb0f7010976c5baadbb74bb16fc4ee9dd6d4879ec"
+    },
+    {
+      "path": "motion/guardian-motion-003.json",
+      "bytes": 3468476,
+      "sha256": "669e2f840c80dc1573823c8c1fc94a5ce858817004ca7ef7589ae61c3c98f467"
+    },
+    {
+      "path": "motion/guardian-motion-004.json",
+      "bytes": 1070393,
+      "sha256": "50be8c78e3ea65b497a24635dba89878860ce6c354bc30eaf0751ae3c2d53e44"
+    },
+    {
+      "path": "motion/hero-motion-001.json",
+      "bytes": 3443785,
+      "sha256": "2c9724d59b7752935707c36a55df0c5cdaaef1f10f114ebdd3f8693bde6221a6"
+    },
+    {
+      "path": "motion/hero-motion-002.json",
+      "bytes": 3443581,
+      "sha256": "4bb455c5083e80f87499ea4c6a629282812598864e1a6fc4faa72e208fe89e2e"
+    },
+    {
+      "path": "motion/hero-motion-003.json",
+      "bytes": 3443950,
+      "sha256": "c4fa86737f585a1227f3b1db03ebe8d7352ea12c263cce15070506ca865345e3"
+    },
+    {
+      "path": "motion/hero-motion-004.json",
+      "bytes": 3443543,
+      "sha256": "6f5de1c29c06e75b38995d0de64e9d95b62cd5f9a16c73b0819dafd127315d7d"
+    },
+    {
+      "path": "motion/hero-motion-005.json",
+      "bytes": 3443849,
+      "sha256": "36a3165d2678f159c9105dae597bd2582af27aeab068bb3b978c92eacf7f0e43"
+    },
+    {
+      "path": "motion/hero-motion-006.json",
+      "bytes": 3443764,
+      "sha256": "55fc8b61c1f7e4c05119aa9b5225eb23834b72f9cb87e3aefaf5b060a0eab3ba"
+    },
+    {
+      "path": "motion/hero-motion-007.json",
+      "bytes": 2125466,
+      "sha256": "de9ad6b883763ae8f1987837ca091b08e5a7662179d2d55b38995071d226f991"
+    },
+    {
+      "path": "motion/monster-motion-001.json",
+      "bytes": 3399650,
+      "sha256": "cd28e4a17953b44d7c541b90369533bbe60998b1b39755239ba9bcc404fbe28a"
+    },
+    {
+      "path": "motion/monster-motion-002.json",
+      "bytes": 3399677,
+      "sha256": "8fa3941fb068b9718cb3093eb92dcde83a516e0f1a0363fa35254f292dc4c576"
+    },
+    {
+      "path": "motion/monster-motion-003.json",
+      "bytes": 3399795,
+      "sha256": "ee332e798eb76535daef530c65c53faba2b10787450910c7fa1eb0a666bd0a34"
+    },
+    {
+      "path": "motion/monster-motion-004.json",
+      "bytes": 3399653,
+      "sha256": "fd9f81c327de46b9305e54ff8eab92e19c1c6417dab4ca589a9e3b4e6dc94c8c"
+    },
+    {
+      "path": "motion/monster-motion-005.json",
+      "bytes": 3399590,
+      "sha256": "642dcc15ef3d0a7b7aec5d5a77e751317ffb49d0f4efc3a4e941562c7ad3601d"
+    },
+    {
+      "path": "motion/monster-motion-006.json",
+      "bytes": 3399698,
+      "sha256": "b4e372fca2209e1adb7029ca501e94152ebccdb1c3d33c3a7651e276d05ecfef"
+    },
+    {
+      "path": "motion/monster-motion-007.json",
+      "bytes": 3399696,
+      "sha256": "1d78e1cba29b5280e6a5af261839ab03c4a5b7a538f3a20eb50cc7ef9781c4f0"
+    },
+    {
+      "path": "motion/monster-motion-008.json",
+      "bytes": 3399801,
+      "sha256": "b7db404487d1aef4921ed030d30d4463bf90d093b698f87970d0d5157b661587"
+    },
+    {
+      "path": "motion/monster-motion-009.json",
+      "bytes": 3399579,
+      "sha256": "cc81dd3db01fce73bff8883c5c64d6f12bcce26dd4557d9e1a4a786a05db6512"
+    },
+    {
+      "path": "motion/monster-motion-010.json",
+      "bytes": 1540618,
+      "sha256": "a0563556c2f5d9f28825d0e7ea5ae2f3aec429efcb95ef18ed2b6c9e761566f6"
+    },
+    {
+      "path": "performance/PERFORMANCE_REGRESSION_PROFILES_v4.0.0.json",
+      "bytes": 529559,
+      "sha256": "1658408909ed6ab7c965db4672f50246cb52c59597b25f29ecc0e9b9735d3531"
+    },
+    {
+      "path": "qa/visual-qa-001.json",
+      "bytes": 3291949,
+      "sha256": "816632efd867312cf24922c99755ed59ae756b3dbbc893aa1ccebf3a71c01300"
+    },
+    {
+      "path": "qa/visual-qa-002.json",
+      "bytes": 758839,
+      "sha256": "d5f31aab4b69bfe07cbc0d711a163018e51e1869e7d621e5d7a560100d0750d3"
+    },
+    {
+      "path": "relations/knowledge-relations-001.json",
+      "bytes": 877005,
+      "sha256": "ab49d129f29f770ee1845fdbad143d4940d7fb7575951e2ecd8224298d2e4fc9"
+    },
+    {
+      "path": "relations/knowledge-relations-002.json",
+      "bytes": 849073,
+      "sha256": "b4383fe57f571ec4d10e01af90859a3ccbed502868ded3cf889b609737827022"
+    },
+    {
+      "path": "relations/knowledge-relations-003.json",
+      "bytes": 846088,
+      "sha256": "256bb149510e38f3b2b7e29ef09ab1650e39332cbd0138eb193619fdc886492a"
+    },
+    {
+      "path": "relations/knowledge-relations-004.json",
+      "bytes": 845389,
+      "sha256": "3583ae87407903ebe756df073098ad40fcc17bbad83095c06931c350b4bdade2"
+    },
+    {
+      "path": "relations/knowledge-relations-005.json",
+      "bytes": 840829,
+      "sha256": "206268ac49e54d54107714c5204a31630ed1b5ea926058c2fb952823963fa74d"
+    },
+    {
+      "path": "relations/knowledge-relations-006.json",
+      "bytes": 857862,
+      "sha256": "6d21f0979945d31b868a9d242d71387e131f078af119703fa0a2f0906a15805c"
+    },
+    {
+      "path": "relations/knowledge-relations-007.json",
+      "bytes": 867665,
+      "sha256": "d45276ce307d2b2330790a26747c933ea31b5cbd76ea866ba7326e93ed19c26e"
+    },
+    {
+      "path": "relations/knowledge-relations-008.json",
+      "bytes": 856856,
+      "sha256": "5b2f653550aa6518c647a2daabc5a738fe08372d63d6ce620042f27538d58175"
+    },
+    {
+      "path": "spec/ACTION_TIMING_LIBRARY_v4.0.0.json",
+      "bytes": 1183,
+      "sha256": "720c299d5bee3f5d97ccc056b055f1f45c92a82baa985878888a90aa48a98c24"
+    },
+    {
+      "path": "spec/DIRECTION_LIBRARY_v4.0.0.json",
+      "bytes": 1882,
+      "sha256": "4be9c10799edfc8711392dc5e840affecc52f7c87d9c72bb2dd042cb3185764c"
+    },
+    {
+      "path": "spec/WORLD_HP_STATUS_LIBRARY_v4.0.0.json",
+      "bytes": 1090,
+      "sha256": "f710485bb9a2a9bf9d6a791a887a76436100338a9dba8850360a4f943c9545be"
+    },
+    {
+      "path": "tower/tower-state-actions-001.json",
+      "bytes": 1962514,
+      "sha256": "65a8b795a69cfcaa8195223d8f18d439e8b4d84c23ab77ee2d223ad877eee059"
+    },
+    {
+      "path": "tower/tower-state-actions-002.json",
+      "bytes": 1962666,
+      "sha256": "4c0efdbb070fb7adc27bac451035c927a6c70bd9d791c75328566fd47474149d"
+    },
+    {
+      "path": "tower/tower-state-actions-003.json",
+      "bytes": 1134751,
+      "sha256": "60142f7d2cced60c5e175022afc9f7175ba6b00d033c999aba9f7d9a07ac789f"
+    }
+  ]
+}

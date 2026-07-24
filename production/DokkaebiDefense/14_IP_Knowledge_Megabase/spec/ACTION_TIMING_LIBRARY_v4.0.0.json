@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 4,
+  "megabaseVersion": "4.0.0",
+  "presets": {
+    "melee": {
+      "windup": 0.18,
+      "active": 0.1,
+      "recovery": 0.26,
+      "impactNormalized": 0.39,
+      "cancelAfterNormalized": 0.62
+    },
+    "ranged": {
+      "windup": 0.24,
+      "active": 0.06,
+      "recovery": 0.22,
+      "projectileNormalized": 0.42,
+      "cancelAfterNormalized": 0.68
+    },
+    "magic": {
+      "windup": 0.34,
+      "active": 0.14,
+      "recovery": 0.31,
+      "castNormalized": 0.44,
+      "impactNormalized": 0.66
+    },
+    "roar": {
+      "windup": 0.38,
+      "active": 0.22,
+      "recovery": 0.36,
+      "shockwaveNormalized": 0.56
+    },
+    "tower": {
+      "windup": 0.2,
+      "active": 0.08,
+      "recovery": 0.3,
+      "muzzleNormalized": 0.46
+    }
+  },
+  "heroActions": [
+    "idle",
+    "walk",
+    "run",
+    "attack-primary",
+    "attack-secondary",
+    "skill-1",
+    "skill-2",
+    "ultimate",
+    "hit-light",
+    "hit-heavy",
+    "guard-break",
+    "death",
+    "victory",
+    "spawn"
+  ],
+  "monsterActions": [
+    "idle",
+    "walk",
+    "run",
+    "attack",
+    "special",
+    "roar",
+    "hit",
+    "break",
+    "death",
+    "spawn"
+  ]
+}

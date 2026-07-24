@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 4,
+  "megabaseVersion": "4.0.0",
+  "statuses": [
+    {
+      "id": "shield",
+      "label": "보호막",
+      "lane": "overlay",
+      "priority": 1
+    },
+    {
+      "id": "break",
+      "label": "브레이크",
+      "lane": "secondary",
+      "priority": 2
+    },
+    {
+      "id": "stun",
+      "label": "기절",
+      "lane": "status",
+      "priority": 3
+    },
+    {
+      "id": "poison",
+      "label": "중독",
+      "lane": "status",
+      "priority": 4
+    },
+    {
+      "id": "burn",
+      "label": "화상",
+      "lane": "status",
+      "priority": 5
+    },
+    {
+      "id": "freeze",
+      "label": "빙결",
+      "lane": "status",
+      "priority": 6
+    },
+    {
+      "id": "shock",
+      "label": "감전",
+      "lane": "status",
+      "priority": 7
+    },
+    {
+      "id": "curse",
+      "label": "저주",
+      "lane": "status",
+      "priority": 8
+    }
+  ],
+  "contract": {
+    "shield": "overlay",
+    "break": "secondary-gauge",
+    "status": "priority-icons",
+    "maxVisibleStatusIcons": 5,
+    "overflow": "ellipsis-counter"
+  }
+}

@@ -2176,7 +2176,7 @@ body.reduced-motion .auto-wave-panel.imminent { animation:none; }
 .kicker { color: #bdeaff; text-shadow: 0 0 12px rgba(120,207,255,.45); }
 
 .btn, .round-btn, .skill-btn, .summon-btn, .wave-btn, .unit-chip, .title-settings-btn,
-.golden-sample-scorecard button, .production-os-card button {
+.golden-sample-scorecard button, .production-os-card button, .production-os-card a {
   border-color: rgba(255,211,107,.66);
   box-shadow: 0 6px 0 rgba(80,43,85,.42), 0 10px 22px rgba(49,27,68,.28), inset 0 1px rgba(255,255,255,.22), 0 0 15px rgba(120,207,255,.12);
   transition: transform .14s ease, filter .14s ease, box-shadow .14s ease;
@@ -2194,11 +2194,11 @@ body.reduced-motion .auto-wave-panel.imminent { animation:none; }
 @media (hover:hover) and (pointer:fine) {
   .btn:hover, .round-btn:hover, .skill-btn:hover, .summon-btn:hover, .wave-btn:hover,
   .unit-chip:hover, .title-settings-btn:hover, .golden-sample-scorecard button:hover,
-  .production-os-card button:hover { transform: scale(1.05); filter: brightness(1.1) saturate(1.08); z-index: 2; }
+  .production-os-card button:hover, .production-os-card a:hover { transform: scale(1.05); filter: brightness(1.1) saturate(1.08); z-index: 2; }
 }
 .btn:active, .round-btn:active, .skill-btn:active, .summon-btn:active, .wave-btn:active,
 .unit-chip:active, .title-settings-btn:active, .golden-sample-scorecard button:active,
-.production-os-card button:active { transform: scale(.95); }
+.production-os-card button:active, .production-os-card a:active { transform: scale(.95); }
 
 .hud .round-btn, .core-pill, .currency-pill, .wave-hud, .luck-meter, .unit-chip,
 .synergy-panel, .boss-health, .auto-wave-panel {
@@ -2224,7 +2224,7 @@ body.reduced-motion .auto-wave-panel.imminent { animation:none; }
 .production-os-card b, .production-os-card small { display: block; }
 .production-os-card b { font-size: 12px; }
 .production-os-card small { color: #d8cbe1; margin-top: 3px; font-size: 9px; }
-.production-os-card button { flex: 0 0 auto; min-height: 34px; border-radius: 11px; padding: 0 11px; color: #392047; font-weight: 950; font-size: 9px; background: linear-gradient(180deg,#dff7ff,#78cfff); }
+.production-os-card button, .production-os-card a { flex: 0 0 auto; min-height: 34px; border-radius: 11px; padding: 0 11px; color: #392047; font-weight: 950; font-size: 9px; background: linear-gradient(180deg,#dff7ff,#78cfff); display:inline-flex; align-items:center; justify-content:center; text-decoration:none; border:1px solid rgba(255,211,107,.66); }
 
 .production-console {
   position: fixed; z-index: 260; left: calc(12px + var(--safe-left)); bottom: calc(12px + var(--safe-bottom));
