@@ -1,5 +1,5 @@
-const RELEASE_VERSION = '1.0.8';
-const BUILD_ID = 'b24.8';
+const RELEASE_VERSION = '1.0.9';
+const BUILD_ID = 'b24.9';
 // const VERSION = '23.1.0'; historical lineage marker.
 const CACHE_PREFIX = 'dokkaebi-shell-';
 const CACHE_NAME = `${CACHE_PREFIX}${BUILD_ID}`;
@@ -8,6 +8,7 @@ const SHELL_ASSETS = [
   './icon-192.png', './icon-512.png', './icon-maskable-512.png',
   './static-bootstrap.js', './src/bootstrap.js', './src/style.css', './src/main.js',
   './src/runtime/first-presentation-director-v107.js',
+  './src/runtime/combat-art-skin-v109.js',
   './src/assets/title-v17/title-bg-desktop-v17.webp',
   './src/assets/title-v17/title-bg-mobile-v17.webp',
   './src/assets/title-v17/title-mascot-v17.webp'

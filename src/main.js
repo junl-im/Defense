@@ -65,6 +65,7 @@ import AutomationDirectorV22 from './runtime/automation-director-v22.js';
 import CoreFoundationDirectorV101 from './runtime/core-foundation-director-v101.js';
 import AppStateMachineV103 from './runtime/app-state-machine-v103.js';
 import FirstPresentationDirectorV107 from './runtime/first-presentation-director-v107.js';
+import CombatArtSkinV109 from './runtime/combat-art-skin-v109.js';
 // CameraDirector v14/v15 lineage is preserved by CameraDirectorV16.
 
 const $ = (selector) => document.querySelector(selector);
@@ -126,7 +127,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '1.0.8';
+const GAME_VERSION = '1.0.9';
 // const GAME_VERSION = '23.1.0'; historical lineage marker for pre-normalization contracts.
 if (GAME_VERSION !== PUBLIC_GAME_VERSION) throw new Error('Public version policy mismatch');
 function runtimeSpriteMarkup(path, alt = '', className = '') {
@@ -561,7 +562,8 @@ class DokkaebiLuckDefense {
     this.setLoadingProgress(100, '준비 완료', readyDetail);
     ui.loading.classList.remove('visible');
     const loadedModels = CHARACTER_ASSET_IDS.filter((id) => this.assetPipeline.get(id)?.scene).length;
-    ui.qualityBadge.textContent = `전투 GLB ${loadedModels}/${CHARACTER_ASSET_IDS.length} · ${this.engine.assetQualityTier.toUpperCase()}`;
+    const combatArt = this.combatArtV109?.diagnostics || { loaded: 0, expected: 21 };
+    ui.qualityBadge.textContent = `전투 아트 ${combatArt.loaded}/${combatArt.expected} · GLB ${loadedModels}/${CHARACTER_ASSET_IDS.length}`;
     ui.qualityBadge.classList.remove('hidden');
     this.scheduleUi(() => ui.qualityBadge.classList.add('hidden'), 2200, { key: 'quality-badge-hide' });
     return this;
@@ -576,6 +578,7 @@ class DokkaebiLuckDefense {
       textureBudgetMB: this.engine.textureBudgetMB,
       lowPower: this.lowPower
     });
+    this.combatArtV109 = new CombatArtSkinV109({ assetPipeline: this.assetPipeline, lowPower: this.lowPower });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
     this.scene = new THREE.Scene();
@@ -647,6 +650,7 @@ class DokkaebiLuckDefense {
         drawCalls: this.renderer.info?.render?.calls || 0,
         triangles: this.renderer.info?.render?.triangles || 0,
         assets: this.assetPipeline?.diagnostics || {},
+        combatArt: this.combatArtV109?.diagnostics || {},
         encounter: this.encounterDirector?.diagnostics || {},
         combat: this.combatTelemetry?.snapshot || {},
         statusEffects: this.statusEffects?.diagnostics || {},
@@ -2120,6 +2124,7 @@ class DokkaebiLuckDefense {
   }
 
   attachUnitImpostor(unit) {
+    if (unit.group?.userData?.combatArtSpriteV109) return;
     if (unit.type !== 'ember') return;
     const impostor = this.createDirectionalImpostor('ember', 2.85, 1.46);
     if (!impostor) return;
@@ -2155,6 +2160,7 @@ class DokkaebiLuckDefense {
   }
 
   attachEnemyImpostor(group, type) {
+    if (group?.userData?.combatArtSpriteV109) return;
     if (type !== 'imp') return;
     const scale = Math.max(.82, group.userData.scale || .9);
     const impostor = this.createDirectionalImpostor('imp', 2.5 * scale, 1.25 * scale);
@@ -2200,6 +2206,7 @@ class DokkaebiLuckDefense {
         if (eliteAura) eliteAura.visible = false;
         group.userData.lodState = 'high';
         (group.userData.lodHigh || []).forEach((object) => { object.visible = true; });
+        this.combatArtV109?.restoreVisibility(group);
         const impostor = group.userData.impostor;
         if (impostor) {
           impostor.active = false;
@@ -2217,6 +2224,7 @@ class DokkaebiLuckDefense {
     const group = this.getEnemyPool(type).acquire();
     if (!group) return null;
     group.visible = true;
+    this.combatArtV109?.restoreVisibility(group);
     this.dynamicRoot.add(group);
     return group;
   }
@@ -2234,6 +2242,10 @@ class DokkaebiLuckDefense {
   }
 
   updateEnemyLOD(enemy, distanceToCamera) {
+    if (enemy.group?.userData?.combatArtSpriteV109) {
+      this.combatArtV109?.restoreVisibility(enemy.group);
+      return;
+    }
     if (enemy.boss) return;
     const impostor = enemy.group.userData.impostor;
     if (impostor) {
@@ -2900,6 +2912,7 @@ class DokkaebiLuckDefense {
       ? prepareImportedGuardian(imported, heroClass.id, 3, { color: heroClass.color }, RANKS[2], { lowPower: this.lowPower })
       : fallback();
     applyHeroClassVisuals(group, heroClass.id);
+    this.combatArtV109?.attachHero(group, heroClass.id);
     const flame = group.userData.parts?.signature || group.getObjectByName('signature') || group;
     group.traverse((object) => { if (object.isMesh) object.userData.baseY = object.position.y; });
     this.dynamicRoot.add(group);
@@ -3788,9 +3801,12 @@ class DokkaebiLuckDefense {
     const rankConfig = RANKS[rank - 1];
     const assetId = GUARDIAN_ASSET_IDS[type];
     const root = assetId ? this.assetPipeline.instantiateModel(assetId) : null;
-    if (root) return prepareImportedGuardian(root, type, rank, config, rankConfig, { lowPower: this.lowPower });
-    this.assetPipeline.recordFallback(assetId || `guardian-${type}`);
-    return createPremiumGuardian(type, rank, config, rankConfig, { lowPower: this.lowPower });
+    const model = root
+      ? prepareImportedGuardian(root, type, rank, config, rankConfig, { lowPower: this.lowPower })
+      : createPremiumGuardian(type, rank, config, rankConfig, { lowPower: this.lowPower });
+    if (!root) this.assetPipeline.recordFallback(assetId || `guardian-${type}`);
+    this.combatArtV109?.attachGuardian(model, type, rank);
+    return model;
   }
 
   autoMerge(type, rank) {
@@ -4109,6 +4125,7 @@ class DokkaebiLuckDefense {
       : createPremiumEnemy(type, config, { lowPower: this.lowPower });
     if (!root && assetId) this.assetPipeline.recordFallback(assetId);
     applyEnemyCandidateVisuals(model, type);
+    this.combatArtV109?.attachEnemy(model, type, config);
     this.attachEnemyImpostor(model, type);
     return model;
   }
@@ -4119,6 +4136,7 @@ class DokkaebiLuckDefense {
       lineageVersion: LEGACY_LINEAGE_VERSION,
       buildId: BUILD_ID,
       foundation: this.coreFoundation?.diagnostics || {},
+      combatArt: this.combatArtV109?.diagnostics || {},
       state: this.state,
       wave: this.currentWave || 0,
       fps: this.engine?.monitor?.lastFps || 0,
@@ -4144,6 +4162,7 @@ class DokkaebiLuckDefense {
       buildId: BUILD_ID,
       cacheRevision: CACHE_REVISION,
       coreFoundation: this.coreFoundation?.diagnostics || {},
+      combatArt: this.combatArtV109?.diagnostics || {},
       engineVersion: ENGINE_VERSION,
       saveSchemaVersion: SAVE_SCHEMA_VERSION,
       state: this.state,

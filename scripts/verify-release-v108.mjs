@@ -20,6 +20,9 @@ const distCss = hasDist ? read('dist/src/style.css') : '';
 const version = pkg.dokkaebi?.releaseVersion;
 const buildId = pkg.dokkaebi?.buildId;
 const buildRevision = pkg.dokkaebi?.buildRevision;
+const release = String(pkg.version || '0.0.0').split('.').map(Number);
+const is108OrLater = release[0] === 1 && release[1] === 0 && release[2] >= 8;
+const currentDist = hasDist && distHtml.includes(`${version}-${buildId}`);
 
 const protectedFiles = ['src/art-style-tokens.js', 'docs/ABSOLUTE_ART_BIBLE_v2.0.md'];
 const artBibleUnchanged = protectedFiles.every((file) => baseline.files?.[file]?.sha256 === hash(file));
@@ -35,17 +38,17 @@ const unconditionalTitleDisplayIndex = Math.max(
 );
 
 const checks = [
-  ['release identity is v1.0.8 / b24.8', pkg.version === '1.0.8' && version === '1.0.8' && buildId === 'b24.8' && Number(buildRevision) === 8],
-  ['package lock identity and metadata are synchronized', lock.version === pkg.version && lock.packages?.['']?.version === pkg.version && lock.packages?.['']?.dokkaebi?.releaseVersion === pkg.version && Number(lock.packages?.['']?.dokkaebi?.buildRevision) === 8],
-  ['runtime and cache identities match', policy.includes("PUBLIC_GAME_VERSION = '1.0.8'") && policy.includes('BUILD_REVISION = 8') && main.includes("const GAME_VERSION = '1.0.8'") && html.includes("RELEASE_VERSION = '1.0.8'") && sw.includes("RELEASE_VERSION = '1.0.8'") && sw.includes("BUILD_ID = 'b24.8'") && staticBootstrap.includes("RELEASE_VERSION = '1.0.8'")],
+  ['release preserves the v1.0.8 line or later', is108OrLater && version === pkg.version && Number(buildRevision) >= 8],
+  ['package lock identity and metadata are synchronized', lock.version === pkg.version && lock.packages?.['']?.version === pkg.version && lock.packages?.['']?.dokkaebi?.releaseVersion === pkg.version && Number(lock.packages?.['']?.dokkaebi?.buildRevision) >= 8],
+  ['runtime and cache identities match', policy.includes(`PUBLIC_GAME_VERSION = '${version}'`) && policy.includes(`BUILD_REVISION = ${buildRevision}`) && main.includes(`const GAME_VERSION = '${version}'`) && html.includes(`RELEASE_VERSION = '${version}'`) && sw.includes(`RELEASE_VERSION = '${version}'`) && sw.includes(`BUILD_ID = '${buildId}'`) && staticBootstrap.includes(`RELEASE_VERSION = '${version}'`)],
   ['title screen is forcibly removed when visible state is absent', hiddenContractIndex >= 0 && css.includes('display: none !important;') && css.includes('#title-screen.title-screen-v105:not(.visible)') && css.includes('#title-screen.title-screen-v17.visible') && hiddenContractIndex > unconditionalTitleDisplayIndex],
   ['title start transition yields a painted loading shell before world rebuild', main.includes('async startRunFromTitle') && main.includes("ui.loading?.classList.add('visible', 'run-entry-loading-v108')") && main.includes('await this.waitForUiPaint(2, 900)') && main.indexOf('await this.waitForUiPaint(2, 900)') < main.indexOf('this.startRun({ reuseSeed });')],
   ['stuck title copy is removed and transition copy is user-facing', !main.includes('수호대 출전 준비 중...') && main.includes('월문을 여는 중...') && main.includes('수호대를 전장으로 부르는 중...')],
   ['successful entry keeps the title hidden and failed entry restores it', main.includes("if (this.state === 'playing')") && main.includes("ui.title?.setAttribute('aria-hidden', 'true')") && main.includes("ui.title?.setAttribute('aria-hidden', 'false')")],
   ['browser automation awaits asynchronous title entry', main.includes('startRun: async () =>') && main.includes('await game.startRunFromTitle()')],
   ['desktop combat UI is lowered without changing mobile HUD coordinates', css.includes('--desktop-combat-ui-drop-v108: 12px') && css.includes('@media (min-width: 821px)') && css.includes('body:not(.mobile-hud-v23) #hud') && css.includes('body:not(.mobile-hud-v23) .top-status-rail') && css.includes('body:not(.mobile-hud-v23) .left-insight-rail')],
-  ['static builder emits current entry identity', buildStatic.includes("const version = '1.0.8'") && buildStatic.includes("const buildId = 'b24.8'") && buildStatic.includes('src="./src/bootstrap.js?v=1.0.8-b24.8"')],
-  ['dist preserves entry recovery and desktop placement when present', !hasDist || (distHtml.includes('1.0.8-b24.8') && distMain.includes('run-entry-loading-v108') && distCss.includes(hiddenSelector) && distCss.includes('--desktop-combat-ui-drop-v108'))],
+  ['static builder emits current entry identity', buildStatic.includes(`const version = '${version}'`) && buildStatic.includes(`const buildId = '${buildId}'`) && buildStatic.includes(`src="./src/bootstrap.js?v=${version}-${buildId}"`)],
+  ['dist preserves entry recovery and desktop placement when present', !currentDist || (distHtml.includes(`${version}-${buildId}`) && distMain.includes('run-entry-loading-v108') && distCss.includes(hiddenSelector) && distCss.includes('--desktop-combat-ui-drop-v108'))],
   ['absolute art bible files are unchanged', artBibleUnchanged],
   ['runtime raster and 3D art bytes are unchanged', assetsUnchanged],
   ['no SVG file or runtime SVG construction was introduced', ![html, css, main, staticBootstrap, buildStatic].some((source) => /<svg\b|createElementNS\([^)]*svg/i.test(source))]

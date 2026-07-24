@@ -6,8 +6,8 @@ await import('./clean-obsolete-assets.mjs');
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dist = path.join(root, 'dist');
-const version = '1.0.8';
-const buildId = 'b24.8';
+const version = '1.0.9';
+const buildId = 'b24.9';
 const revision = `${version}-${buildId}`;
 
 await rm(dist, { recursive: true, force: true });
@@ -51,7 +51,7 @@ for (const candidate of vendorCandidates) {
 let html = await readFile(path.join(root, 'index.html'), 'utf8');
 html = html.replace('    <title>', `    <link rel="stylesheet" href="./src/style.css?v=${revision}" />\n    <title>`);
 html = html.replace(
-  '<script type="module" src="./src/bootstrap.js?v=1.0.8-b24.8"></script>',
+  '<script type="module" src="./src/bootstrap.js?v=1.0.9-b24.9"></script>',
   `<script src="./static-bootstrap.js?v=${revision}" data-entry="./src/bootstrap.js" data-vendor-base="./vendor/three/"></script>`
 );
 await writeFile(path.join(dist, 'index.html'), html);

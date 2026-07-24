@@ -1,7 +1,7 @@
-export const PUBLIC_GAME_VERSION = '1.0.8';
+export const PUBLIC_GAME_VERSION = '1.0.9';
 export const LEGACY_LINEAGE_VERSION = '23.1.0';
 export const BUILD_EPOCH = 24;
-export const BUILD_REVISION = 8;
+export const BUILD_REVISION = 9;
 export const BUILD_ID = `b${BUILD_EPOCH}.${BUILD_REVISION}`;
 export const CACHE_REVISION = `${PUBLIC_GAME_VERSION}-${BUILD_ID}`;
 export const VERSION_POLICY_ID = 'DD-VERSION-POLICY-1.0';

@@ -1199,8 +1199,8 @@ body.ui-ultra-compact .wave-trial { width: 142px; bottom: calc(174px + var(--saf
 body.ui-ultra-compact .first-mission-panel { width: 124px; }
 
 body.ui-compact.boss-active .synergy-panel,
-body.ui-compact.boss-active .unit-strip { top: calc(246px + var(--safe-top)); }
-body.ui-compact.boss-active .kill-chain { top: calc(246px + var(--safe-top)); }
+body.ui-compact.boss-active .unit-strip { top: calc(260px + var(--safe-top)); }
+body.ui-compact.boss-active .kill-chain { top: calc(260px + var(--safe-top)); }
 body.ui-ultra-compact.boss-active .synergy-panel,
 body.ui-ultra-compact.boss-active .unit-strip { top: calc(229px + var(--safe-top)); }
 body.ui-ultra-compact.boss-active .kill-chain { top: calc(229px + var(--safe-top)); }
@@ -3823,4 +3823,139 @@ body.presentation-safe-mode #vignette { opacity: .42; }
   body:not(.mobile-hud-v23).boss-active .boss-health { top: calc(163px + var(--safe-top) + var(--desktop-combat-ui-drop-v108)); }
   body:not(.mobile-hud-v23) .boss-banner { top: calc(225px + var(--safe-top) + var(--desktop-combat-ui-drop-v108)); }
   body:not(.mobile-hud-v23) .toast { top: calc(174px + var(--safe-top) + var(--desktop-combat-ui-drop-v108)); }
+}
+
+/* v1.0.9 — desktop combat shell: dedicated lanes, no stacked fixed-card collisions. */
+@media (min-width: 901px) and (orientation: landscape) {
+  :root {
+    --desktop-hud-top-v109: calc(12px + var(--safe-top));
+    --desktop-upper-lane-v109: calc(82px + var(--safe-top));
+    --desktop-side-lane-v109: calc(148px + var(--safe-top));
+  }
+
+  body:not(.mobile-hud-v23) #hud {
+    top: 0;
+    padding-top: var(--desktop-hud-top-v109);
+  }
+
+  body:not(.mobile-hud-v23) .top-status-rail {
+    top: var(--desktop-upper-lane-v109);
+    left: auto;
+    right: calc(10px + var(--safe-right));
+    width: min(28vw, 360px);
+    min-height: 44px;
+    transform: none;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 6px;
+  }
+
+  body:not(.mobile-hud-v23) .top-status-rail > * {
+    min-height: 44px;
+    max-height: 56px;
+  }
+
+  body:not(.mobile-hud-v23) .top-status-rail .moon-omen {
+    grid-template-columns: 30px minmax(0, 1fr);
+    padding: 6px 8px;
+  }
+
+  body:not(.mobile-hud-v23) .top-status-rail .moon-ward {
+    min-width: 88px;
+    padding: 6px 8px;
+  }
+
+  body:not(.mobile-hud-v23) .center-meter-rail {
+    top: var(--desktop-upper-lane-v109);
+    width: min(40vw, 520px);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  body:not(.mobile-hud-v23) .center-meter-rail > * {
+    min-height: 44px;
+    max-height: 56px;
+    padding: 6px 8px;
+    overflow: hidden;
+  }
+
+  body:not(.mobile-hud-v23) .left-insight-rail,
+  body:not(.mobile-hud-v23) .right-roster-rail,
+  body:not(.mobile-hud-v23).boss-active .left-insight-rail,
+  body:not(.mobile-hud-v23).boss-active .right-roster-rail {
+    top: var(--desktop-side-lane-v109);
+    bottom: calc(118px + var(--safe-bottom));
+    gap: 6px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: none;
+    overscroll-behavior: contain;
+  }
+
+  body:not(.mobile-hud-v23) .left-insight-rail::-webkit-scrollbar,
+  body:not(.mobile-hud-v23) .right-roster-rail::-webkit-scrollbar { display: none; }
+
+  body:not(.mobile-hud-v23) .left-insight-rail {
+    left: calc(10px + var(--safe-left));
+    width: clamp(176px, 15vw, 218px);
+  }
+
+  body:not(.mobile-hud-v23) .right-roster-rail {
+    right: calc(10px + var(--safe-right));
+    width: clamp(154px, 13vw, 190px);
+  }
+
+  body:not(.mobile-hud-v23) .left-insight-rail .run-seed-chip { order: 1; }
+  body:not(.mobile-hud-v23) .left-insight-rail .stage-chip { order: 2; }
+  body:not(.mobile-hud-v23) .left-insight-rail .council-chip { order: 3; }
+  body:not(.mobile-hud-v23) .left-insight-rail .wave-trial { order: 4; }
+  body:not(.mobile-hud-v23) .left-insight-rail .synergy-panel { order: 5; }
+  body:not(.mobile-hud-v23) .left-insight-rail .first-mission-panel { order: 6; margin-top: 0; }
+
+  body:not(.mobile-hud-v23) .left-insight-rail .run-seed-chip,
+  body:not(.mobile-hud-v23) .left-insight-rail .stage-chip,
+  body:not(.mobile-hud-v23) .left-insight-rail .council-chip {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    min-width: 0;
+    max-width: none;
+    transform: none !important;
+  }
+
+  body:not(.mobile-hud-v23) .left-insight-rail .council-chip {
+    display: grid;
+    padding: 6px 8px;
+  }
+
+  body:not(.mobile-hud-v23) .left-ui-toggle {
+    top: var(--desktop-side-lane-v109) !important;
+    left: calc(5px + var(--safe-left)) !important;
+    transform: translateX(clamp(176px, 15vw, 218px)) !important;
+  }
+
+  body:not(.mobile-hud-v23).left-ui-collapsed .left-ui-toggle { transform: translateX(0) !important; }
+
+  body:not(.mobile-hud-v23) .boss-health,
+  body:not(.mobile-hud-v23).boss-active .boss-health {
+    top: calc(138px + var(--safe-top));
+    width: min(50vw, 540px);
+  }
+
+  body:not(.mobile-hud-v23) .boss-banner { top: calc(258px + var(--safe-top)); }
+  body:not(.mobile-hud-v23) .toast { top: calc(260px + var(--safe-top)); }
+  body:not(.mobile-hud-v23) .mission-banner { top: 35%; }
+}
+
+@media (min-width: 901px) and (max-width: 1180px) and (orientation: landscape) {
+  body:not(.mobile-hud-v23) .hud { grid-template-columns: 1fr minmax(138px, 190px) 1fr; }
+  body:not(.mobile-hud-v23) .hud-left,
+  body:not(.mobile-hud-v23) .hud-right { gap: 4px; }
+  body:not(.mobile-hud-v23) .currency-pill { padding-inline: 8px; }
+  body:not(.mobile-hud-v23) .top-status-rail em,
+  body:not(.mobile-hud-v23) .left-insight-rail .run-seed-chip em,
+  body:not(.mobile-hud-v23) .left-insight-rail .stage-chip em,
+  body:not(.mobile-hud-v23) .left-insight-rail .council-chip em { display: none; }
+  body:not(.mobile-hud-v23) .left-insight-rail { width: 184px; }
+  body:not(.mobile-hud-v23) .right-roster-rail { width: 158px; }
+  body:not(.mobile-hud-v23) .left-ui-toggle { transform: translateX(184px) !important; }
 }

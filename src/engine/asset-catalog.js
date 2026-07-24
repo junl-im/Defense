@@ -26,6 +26,62 @@ export const BOSS_ASSET_IDS = Object.freeze({
   tiger: 'boss-tiger-sd-toon', serpent: 'boss-serpent-sd-toon', king: 'boss-king-sd-toon'
 });
 
+export const COMBAT_ART_TEXTURE_IDS = Object.freeze({
+  heroes: Object.freeze({
+    warrior: 'combat-art-hero-warrior-v109',
+    archer: 'combat-art-hero-archer-v109',
+    mage: 'combat-art-hero-mage-v109',
+    shaman: 'combat-art-hero-shaman-v109',
+    taoist: 'combat-art-hero-taoist-v109'
+  }),
+  guardians: Object.freeze({
+    ember: 'combat-art-guardian-ember-v109',
+    frost: 'combat-art-guardian-frost-v109',
+    wind: 'combat-art-guardian-wind-v109',
+    stone: 'combat-art-guardian-stone-v109',
+    bell: 'combat-art-guardian-bell-v109',
+    thunder: 'combat-art-guardian-thunder-v109'
+  }),
+  monsters: Object.freeze({
+    imp: 'combat-art-monster-imp-v109',
+    runner: 'combat-art-monster-runner-v109',
+    brute: 'combat-art-monster-brute-v109',
+    shaman: 'combat-art-monster-shaman-v109',
+    ghost: 'combat-art-monster-ghost-v109',
+    skeleton: 'combat-art-monster-skeleton-v109',
+    crow: 'combat-art-monster-crow-v109'
+  }),
+  bosses: Object.freeze({
+    tiger: 'combat-art-boss-tiger-v109',
+    serpent: 'combat-art-boss-serpent-v109',
+    king: 'combat-art-boss-king-v109'
+  })
+});
+
+const combatArtTextureUrls = Object.freeze({
+  [COMBAT_ART_TEXTURE_IDS.heroes.warrior]: publicAsset('ip-v13/crops/heroes/heroes-r01-c01.png'),
+  [COMBAT_ART_TEXTURE_IDS.heroes.archer]: publicAsset('ip-v13/crops/heroes/heroes-r01-c02.png'),
+  [COMBAT_ART_TEXTURE_IDS.heroes.mage]: publicAsset('ip-v13/crops/heroes/heroes-r01-c03.png'),
+  [COMBAT_ART_TEXTURE_IDS.heroes.shaman]: publicAsset('ip-v13/crops/heroes/heroes-r01-c04.png'),
+  [COMBAT_ART_TEXTURE_IDS.heroes.taoist]: publicAsset('ip-v13/crops/heroes/heroes-r01-c05.png'),
+  [COMBAT_ART_TEXTURE_IDS.guardians.ember]: publicAsset('ip-v13/crops/heroes/heroes-r04-c06.png'),
+  [COMBAT_ART_TEXTURE_IDS.guardians.frost]: publicAsset('ip-v13/crops/heroes/heroes-r05-c04.png'),
+  [COMBAT_ART_TEXTURE_IDS.guardians.wind]: publicAsset('ip-v13/crops/heroes/heroes-r05-c01.png'),
+  [COMBAT_ART_TEXTURE_IDS.guardians.stone]: publicAsset('ip-v13/crops/heroes/heroes-r06-c05.png'),
+  [COMBAT_ART_TEXTURE_IDS.guardians.bell]: publicAsset('ip-v13/crops/heroes/heroes-r06-c03.png'),
+  [COMBAT_ART_TEXTURE_IDS.guardians.thunder]: publicAsset('ip-v13/crops/heroes/heroes-r03-c04.png'),
+  [COMBAT_ART_TEXTURE_IDS.monsters.imp]: publicAsset('ip-v13/crops/monsters/monsters-r01-c01.png'),
+  [COMBAT_ART_TEXTURE_IDS.monsters.runner]: publicAsset('ip-v13/crops/monsters/monsters-r03-c06.png'),
+  [COMBAT_ART_TEXTURE_IDS.monsters.brute]: publicAsset('ip-v13/crops/monsters/monsters-r04-c03.png'),
+  [COMBAT_ART_TEXTURE_IDS.monsters.shaman]: publicAsset('ip-v13/crops/monsters/monsters-r02-c03.png'),
+  [COMBAT_ART_TEXTURE_IDS.monsters.ghost]: publicAsset('ip-v13/crops/monsters/monsters-r01-c07.png'),
+  [COMBAT_ART_TEXTURE_IDS.monsters.skeleton]: publicAsset('ip-v13/crops/monsters/monsters-r02-c02.png'),
+  [COMBAT_ART_TEXTURE_IDS.monsters.crow]: publicAsset('ip-v13/crops/monsters/monsters-r04-c06.png'),
+  [COMBAT_ART_TEXTURE_IDS.bosses.tiger]: publicAsset('ip-v13/crops/bosses/bosses-r05-c01.png'),
+  [COMBAT_ART_TEXTURE_IDS.bosses.serpent]: publicAsset('ip-v13/crops/bosses/bosses-r05-c03.png'),
+  [COMBAT_ART_TEXTURE_IDS.bosses.king]: publicAsset('ip-v13/crops/bosses/bosses-r05-c04.png')
+});
+
 const sdToonModelUrls = Object.freeze({
   ...Object.fromEntries(Object.values(HERO_CLASS_ASSET_IDS).map((id) => [id, publicAsset(`models/${id}.glb`)])),
   ...Object.fromEntries(Object.values(GUARDIAN_ASSET_IDS).map((id) => [id, publicAsset(`models/${id}.glb`)])),
@@ -63,6 +119,11 @@ export const CORE_ASSET_CATALOG = Object.freeze([
     id: `${key}-impostor-v2`, kind: 'texture', required: false, retain: true, color: true,
     variants: { low: url, medium: url, high: url },
     sourceWidth: 768, sourceHeight: 576, estimatedBytes: 768 * 576 * 4 * 1.333
+  })),
+  ...Object.entries(combatArtTextureUrls).map(([id, url]) => ({
+    id, kind: 'texture', required: false, retain: true, color: true, role: 'combat-art',
+    variants: { low: url, medium: url, high: url },
+    sourceWidth: 256, sourceHeight: 256, estimatedBytes: 256 * 256 * 4 * 1.333
   })),
   ...Object.entries(sdToonModelUrls).map(([id, url]) => ({
     id, kind: 'model', required: false, retain: true,
