@@ -24,6 +24,7 @@ export class AdaptiveHudLayout {
     this.overlapPairs = [];
     this.rails = {};
     this.refreshQueued = false;
+    this.refreshFrame = 0;
     this.observer = null;
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
@@ -107,6 +108,9 @@ export class AdaptiveHudLayout {
   }
 
   dispose() {
+    if (this.refreshFrame) cancelAnimationFrame(this.refreshFrame);
+    this.refreshFrame = 0;
+    this.refreshQueued = false;
     this.observer?.disconnect();
     this.observer = null;
     this.resizeObserver?.disconnect();
@@ -134,7 +138,8 @@ export class AdaptiveHudLayout {
   scheduleRefresh() {
     if (this.refreshQueued) return;
     this.refreshQueued = true;
-    requestAnimationFrame(() => {
+    this.refreshFrame = requestAnimationFrame(() => {
+      this.refreshFrame = 0;
       this.refreshQueued = false;
       this.refresh();
     });

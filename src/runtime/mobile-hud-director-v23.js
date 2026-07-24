@@ -27,25 +27,30 @@ export default class MobileHudDirectorV23 {
     this.version = MOBILE_HUD_V23_VERSION;
     this.elapsed = 0;
     this.refreshQueued = false;
+    this.refreshFrame = 0;
+    this.queueHandler = null;
+    this.installed = false;
     this.mitigations = 0;
     this.stableFrames = 0;
     this.report = Object.freeze({ version: this.version, healthy: true, overlapCount: 0 });
   }
 
   install() {
+    if (this.installed) return this;
+    this.installed = true;
     document.body.dataset.mobileHudVersion = this.version;
-    const queue = () => this.queueRefresh();
-    window.addEventListener('resize', queue, { passive: true });
-    window.addEventListener('orientationchange', queue, { passive: true });
-    window.visualViewport?.addEventListener('resize', queue, { passive: true });
+    this.queueHandler = () => this.queueRefresh();
+    window.addEventListener('resize', this.queueHandler, { passive: true });
+    window.addEventListener('orientationchange', this.queueHandler, { passive: true });
+    window.visualViewport?.addEventListener('resize', this.queueHandler, { passive: true });
 
     this.contextElements = CONTEXT_TARGETS.map((entry) => ({ ...entry, element: document.getElementById(entry.id) }));
-    this.observer = new MutationObserver(queue);
+    this.observer = new MutationObserver(this.queueHandler);
     for (const { element } of this.contextElements) {
       if (element) this.observer.observe(element, { attributes: true, attributeFilter: ['class', 'style', 'aria-hidden'] });
     }
 
-    this.resizeObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(queue) : null;
+    this.resizeObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(this.queueHandler) : null;
     ['hud', 'boss-health', 'joystick-zone', 'action-dock', 'auto-wave-panel', 'interact-btn', 'danger-hint', 'wave-recovery']
       .map((id) => document.getElementById(id))
       .filter(Boolean)
@@ -59,9 +64,10 @@ export default class MobileHudDirectorV23 {
   queueRefresh() {
     if (this.refreshQueued) return;
     this.refreshQueued = true;
-    requestAnimationFrame(() => {
+    this.refreshFrame = requestAnimationFrame(() => {
+      this.refreshFrame = 0;
       this.refreshQueued = false;
-      this.refresh();
+      if (this.installed) this.refresh();
     });
   }
 
@@ -161,4 +167,39 @@ export default class MobileHudDirectorV23 {
     window.__DOKKAEBI_MOBILE_HUD_V23_REPORT__ = this.report;
     return this.report;
   }
+  dispose() {
+    if (!this.installed) return;
+    this.installed = false;
+    if (this.refreshFrame) cancelAnimationFrame(this.refreshFrame);
+    this.refreshFrame = 0;
+    this.refreshQueued = false;
+    if (this.queueHandler) {
+      window.removeEventListener('resize', this.queueHandler);
+      window.removeEventListener('orientationchange', this.queueHandler);
+      window.visualViewport?.removeEventListener('resize', this.queueHandler);
+    }
+    this.queueHandler = null;
+    this.observer?.disconnect();
+    this.observer = null;
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
+    for (const { element } of this.contextElements || []) element?.classList.remove('mobile-context-suppressed-v23');
+    this.contextElements = [];
+    const body = document.body;
+    body.classList.remove(
+      'mobile-hud-v23',
+      'mobile-hud-v23-compact',
+      'mobile-hud-v23-micro',
+      'mobile-hud-v23-short',
+      'mobile-hud-v23-landscape',
+      'mobile-hud-v23-emergency'
+    );
+    body.style.removeProperty('--mobile-hud-scale-v23');
+    body.style.removeProperty('--mobile-control-reserve-v23');
+    delete body.dataset.mobileHudVersion;
+    delete body.dataset.mobileContextV23;
+    if (window.__DOKKAEBI_MOBILE_HUD_V23__ === this) delete window.__DOKKAEBI_MOBILE_HUD_V23__;
+    delete window.__DOKKAEBI_MOBILE_HUD_V23_REPORT__;
+  }
+
 }

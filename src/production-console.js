@@ -72,9 +72,9 @@ export class ProductionConsole {
     const progress = total ? Math.round((approved / total) * 100) : 0;
     const milestoneHtml = this.milestones.slice(0, 4).map((item) => `<li><span>${item.status === 'done' ? 'DONE' : item.status === 'active' ? 'NOW' : 'NEXT'}</span>${item.label}</li>`).join('');
     this.element.innerHTML = `
-      <header><div><small>DD PRODUCTION OS</small><b>RELEASE FOUNDATION 1.0.2 · CORE HEALTH · CLEAN SHELL</b></div><button type="button" data-close-console aria-label="제작 콘솔 닫기">×</button></header>
+      <header><div><small>DD PRODUCTION OS</small><b>RELEASE FOUNDATION 1.0.3 · CORE HEALTH · CLEAN SHELL</b></div><button type="button" data-close-console aria-label="제작 콘솔 닫기">×</button></header>
       <section class="production-console-grid">
-        <article><small>RELEASE</small><b>v${versionPolicy.releaseVersion || '1.0.2'} · ${versionPolicy.buildId || 'b24.2'}</b><span>Legacy ${versionPolicy.lineageVersion || '23.1.0'} · ${versionPolicy.id || 'version policy'}</span></article>
+        <article><small>RELEASE</small><b>v${versionPolicy.releaseVersion || '1.0.3'} · ${versionPolicy.buildId || 'b24.3'}</b><span>Legacy ${versionPolicy.lineageVersion || '23.1.0'} · ${versionPolicy.id || 'version policy'}</span></article>
         <article><small>CORE HEALTH</small><b>${String(coreFoundation.health || 'healthy').toUpperCase()}</b><span>P95 ${coreFoundation.p95FrameMs || 0}ms · Pressure ${Math.round((coreFoundation.pressure || 0) * 100)}% · State ${coreFoundation.state || 'boot'}</span></article>
         <article><small>ART LOCK</small><b>${this.artSummary.styleLockId || 'UNKNOWN'}</b><span>Production art ${approved}/${total} · ${progress}%</span></article>
         <article><small>RUNTIME SLICE</small><b>${goldenSlice.runtimeCertified || 0}/${goldenSlice.total || 6} PASS</b><span>${goldenSlice.runtimePassed ? 'Hero · Enemy · Boss · Map · HUD · VFX' : 'Evidence incomplete'}</span></article>

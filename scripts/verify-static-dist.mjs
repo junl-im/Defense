@@ -4,13 +4,17 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dist = path.join(root, 'dist');
+const packageJson = JSON.parse(await readFile(path.join(root, 'package.json'), 'utf8'));
+const releaseVersion = packageJson.version;
+const buildId = packageJson.dokkaebi?.buildId || '';
+const revision = `${releaseVersion}-${buildId}`;
 const pass = (message) => console.log(`PASS ${message}`);
 const fail = (message) => { throw new Error(message); };
 
 const html = await readFile(path.join(dist, 'index.html'), 'utf8');
-if (!html.includes('src="./static-bootstrap.js?v=1.0.2-b24.2"')) fail('resilient static bootstrap missing');
+if (!html.includes(`src="./static-bootstrap.js?v=${revision}"`)) fail('resilient static bootstrap missing');
 if (html.includes('type="importmap"')) fail('single-CDN import map should not be hardcoded in static HTML');
-if (!html.includes('href="./src/style.css?v=1.0.2-b24.2"')) fail('versioned static stylesheet missing');
+if (!html.includes(`href="./src/style.css?v=${revision}"`)) fail('versioned static stylesheet missing');
 if (html.includes('src="/src/bootstrap.js"') || html.includes('src="/src/main.js"')) fail('root-only module path remains');
 await access(path.join(dist, 'static-bootstrap.js'));
 const staticBootstrap = await readFile(path.join(dist, 'static-bootstrap.js'), 'utf8');
@@ -20,7 +24,7 @@ pass('resilient static entrypoint and multi-source engine recovery');
 const main = await readFile(path.join(dist, 'src/main.js'), 'utf8');
 const style = await readFile(path.join(dist, 'src/style.css'), 'utf8');
 if (main.includes("import './style.css'")) fail('CSS module import remains in static build');
-if (!main.includes("const GAME_VERSION = '1.0.2'")) fail('static main version mismatch');
+if (!main.includes(`const GAME_VERSION = '${releaseVersion}'`)) fail('static main version mismatch');
 if (!main.includes('renderAssetDiagnostics()')) fail('asset diagnostics missing from static build');
 if (!main.includes('force3DModels')) fail('force 3D model mode missing from static build');
 pass('static game module asset diagnostics');
@@ -29,7 +33,7 @@ const catalog = await readFile(path.join(dist, 'src/engine/asset-catalog.js'), '
 if (!catalog.includes("const ASSET_REVISION = CACHE_REVISION")) fail('asset cache revision missing');
 if (!catalog.includes('?v=${ASSET_REVISION}')) fail('asset cache-busting URL missing');
 if (!catalog.includes("CACHE_REVISION")) fail('central asset cache revision import missing');
-pass('v1.0.2 build-generation asset cache revision');
+pass(`v${releaseVersion} build-generation asset cache revision`);
 
 const modelDir = path.join(dist, 'assets/models');
 const models = (await readdir(modelDir)).filter((name) => name.endsWith('.glb'));
@@ -114,7 +118,7 @@ const browserLab = await readFile(path.join(dist, 'src/runtime/browser-reliabili
 if (!browserLab.includes("BROWSER_RELIABILITY_VERSION = '19.0.0'")) fail('v19 browser reliability module missing from static dist');
 if (!main.includes('getBrowserAutomationSnapshot') || !main.includes('__DOKKAEBI_TEST_API__')) fail('v19 browser automation hooks missing from static dist');
 const serviceWorker = await readFile(path.join(dist, 'sw.js'), 'utf8');
-if (!/const VERSION = '(?:19|20|21|22)\.0\.0|const VERSION = '23\.\d+\.\d+'/.test(serviceWorker) || !serviceWorker.includes('DOKKAEBI_PURGE')) fail('v19 service worker recovery contract missing');
+if (!serviceWorker.includes(`const RELEASE_VERSION = '${releaseVersion}'`) || !/const BUILD_ID = 'b\d+\.\d+'/.test(serviceWorker) || !serviceWorker.includes('DOKKAEBI_PURGE')) fail('v19 service worker recovery contract missing');
 await access(path.join(dist, 'browser-lab-v19.html'));
 pass('v19 browser reliability, test API, versioned service worker and browser lab page');
 

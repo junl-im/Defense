@@ -2,6 +2,9 @@ import { access, readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 const root = path.resolve(import.meta.dirname, '..');
 const dist = path.join(root, 'dist');
+const packageJson = JSON.parse(await readFile(path.join(root, 'package.json'), 'utf8'));
+const releaseVersion = packageJson.version;
+const buildId = packageJson.dokkaebi?.buildId || '';
 const html = await readFile(path.join(dist, 'index.html'), 'utf8');
 if (/cdn\.jsdelivr\.net\/npm\/three|unpkg\.com\/three|esm\.sh\/three/.test(html)) throw new Error('production bundle still depends on an external Three.js CDN');
 const assets = await readdir(path.join(dist, 'assets'));
@@ -11,5 +14,5 @@ if (!html.includes('type="module"') || !html.includes('/assets/')) throw new Err
 await access(path.join(dist, 'sw.js'));
 await access(path.join(dist, 'version.json'));
 const sw = await readFile(path.join(dist, 'sw.js'), 'utf8');
-if (!sw.includes("RELEASE_VERSION = '1.0.2'") || !sw.includes("BUILD_ID = 'b24.2'")) throw new Error('service worker release/build identity is missing');
-console.log(`PASS v1.0.2 production bundle is self-contained (${js.length} JavaScript assets)`);
+if (!sw.includes(`RELEASE_VERSION = '${releaseVersion}'`) || !sw.includes(`BUILD_ID = '${buildId}'`)) throw new Error('service worker release/build identity is missing');
+console.log(`PASS v${releaseVersion} production bundle is self-contained (${js.length} JavaScript assets)`);

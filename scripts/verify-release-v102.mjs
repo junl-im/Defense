@@ -10,12 +10,12 @@ const sw = read('public/sw.js');
 const clean = read('scripts/clean-obsolete-assets.mjs');
 
 const checks = [
-  ['public release is 1.0.2', pkg.version === '1.0.2' && pkg.dokkaebi?.releaseVersion === '1.0.2'],
-  ['package lock release is synchronized', lock.version === '1.0.2' && lock.packages?.['']?.version === '1.0.2'],
+  ['public release preserves 1.0.2+ foundation', /^1\.0\.(?:[2-9]|[1-9]\d)$/.test(pkg.version) && pkg.dokkaebi?.releaseVersion === pkg.version],
+  ['package lock release is synchronized', lock.version === pkg.version && lock.packages?.['']?.version === pkg.version],
   ['legacy lineage remains 23.1.0', pkg.dokkaebi?.lineageVersion === '23.1.0'],
-  ['monotonic build id is b24.2', pkg.dokkaebi?.buildId === 'b24.2' && policy.includes('BUILD_REVISION = 2')],
-  ['runtime game version is 1.0.2', main.includes("const GAME_VERSION = '1.0.2'")],
-  ['service worker release/build match', sw.includes("RELEASE_VERSION = '1.0.2'") && sw.includes("BUILD_ID = 'b24.2'")],
+  ['monotonic build id preserves b24.2+ foundation', pkg.dokkaebi?.buildEpoch === 24 && Number(pkg.dokkaebi?.buildRevision) >= 2 && pkg.dokkaebi?.buildId === `b24.${pkg.dokkaebi?.buildRevision}`],
+  ['runtime game version matches package', main.includes(`const GAME_VERSION = '${pkg.version}'`)],
+  ['service worker release/build match', sw.includes(`RELEASE_VERSION = '${pkg.version}'`) && sw.includes(`BUILD_ID = '${pkg.dokkaebi?.buildId}'`)],
   ['unused main imports removed', !main.includes('RELIC_SET_BONUSES') && !main.includes('formatRunSeed') && !main.includes('getBossWave') && !main.includes('IP_ASSET_LIBRARY_V13')],
   ['obsolete mobile HUD runtime removed', !main.includes('MobileHudDirectorV22') && main.includes('MobileHudDirectorV23')],
   ['obsolete mobile HUD CSS removed', !css.includes('body.mobile-hud-v21 ') && !css.includes('body.mobile-hud-v22 ') && css.includes('body.mobile-hud-v23')],

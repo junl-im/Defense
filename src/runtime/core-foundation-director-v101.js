@@ -1,4 +1,4 @@
-export const CORE_FOUNDATION_VERSION = '1.0.2';
+export const CORE_FOUNDATION_VERSION = '1.0.3';
 
 const KNOWN_STATES = new Set([
   'loading', 'title', 'playing', 'paused', 'blessing', 'relic', 'contract',

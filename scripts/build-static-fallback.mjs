@@ -6,8 +6,8 @@ await import('./clean-obsolete-assets.mjs');
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dist = path.join(root, 'dist');
-const version = '1.0.2';
-const buildId = 'b24.2';
+const version = '1.0.3';
+const buildId = 'b24.3';
 const revision = `${version}-${buildId}`;
 
 await rm(dist, { recursive: true, force: true });

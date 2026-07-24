@@ -1,13 +1,13 @@
-# PROJECT HANDOFF — RELEASE 1.0.2
+# PROJECT HANDOFF — RELEASE 1.0.3
 
-- Project: `DokkaebiLuckDefense3D_FULL_v1.0.2`
-- Public game version: `1.0.2`
+- Project: `DokkaebiLuckDefense3D_FULL_v1.0.3`
+- Public game version: `1.0.3`
 - Legacy development lineage: `23.1.0`
-- Build ID: `b24.2`
+- Build ID: `b24.3`
 - Engine: `21.0.0`
 - Save schema: `21`
-- Patch: `Code Health Foundation`
-- Base: `1.0.1 Release Foundation`
+- Patch: `State and Lifecycle Foundation`
+- Base: `1.0.2 Code Health Foundation`
 - Art lock: `DD-ABSOLUTE-ART-BIBLE-2.0`
 
 ## PERMANENT VERSION CONTRACT
@@ -64,12 +64,15 @@
 npm run clean:obsolete
 npm run hygiene:check
 npm run audit:code:v102
+npm run verify:release:v103
 npm run verify
 npm run simulate:v2300
 npm run simulate:v2200
 npm run simulate:v1800
 npm run build:static
 node scripts/verify-static-dist.mjs
+npm run patch:prepare:v103
+npm run patch:verify:v103
 npm run hygiene:check
 ```
 

@@ -21,7 +21,7 @@ const checks = [
   ['version policy documentation exists', (() => {
     const release = policy.releaseVersion;
     const currentDocs = fs.existsSync(`docs/PATCH_NOTES_v${release}.md`) && fs.existsSync(`docs/PATCH_APPLY_v${release}.md`);
-    const foundationDocs = fs.existsSync('docs/PATCH_NOTES_v1.0.1.md') && fs.existsSync('docs/PATCH_APPLY_v1.0.1.md');
+    const foundationDocs = ['1.0.1', '1.0.2'].some((version) => fs.existsSync(`docs/PATCH_NOTES_v${version}.md`) && fs.existsSync(`docs/PATCH_APPLY_v${version}.md`));
     return fs.existsSync('docs/VERSION_POLICY_v1.0.md') && (currentDocs || foundationDocs);
   })()]
 ];

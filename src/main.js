@@ -63,6 +63,7 @@ import CombatReadabilityDirectorV21 from './combat/combat-readability-director-v
 import GuardianTargetingDirectorV22 from './combat/guardian-targeting-director-v22.js';
 import AutomationDirectorV22 from './runtime/automation-director-v22.js';
 import CoreFoundationDirectorV101 from './runtime/core-foundation-director-v101.js';
+import AppStateMachineV103 from './runtime/app-state-machine-v103.js';
 // CameraDirector v14/v15 lineage is preserved by CameraDirectorV16.
 
 const $ = (selector) => document.querySelector(selector);
@@ -124,7 +125,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '1.0.2';
+const GAME_VERSION = '1.0.3';
 // const GAME_VERSION = '23.1.0'; historical lineage marker for pre-normalization contracts.
 if (GAME_VERSION !== PUBLIC_GAME_VERSION) throw new Error('Public version policy mismatch');
 function runtimeSpriteMarkup(path, alt = '', className = '') {
@@ -195,8 +196,20 @@ class DokkaebiLuckDefense {
     this.engine = new MobileGameEngine();
     this.lifecycle = new RuntimeLifecycle();
     this.lowPower = this.engine.device.mobile || this.engine.device.lowEnd;
-    this.state = 'loading';
-    this.previousState = 'title';
+    this.appState = new AppStateMachineV103({
+      initial: 'loading',
+      onTransition: (entry) => {
+        if (!entry.valid) console.warn('[AppStateMachineV103] non-contract transition', entry);
+      }
+    });
+    Object.defineProperty(this, 'state', {
+      configurable: false,
+      enumerable: true,
+      get: () => this.appState.current,
+      set: (next) => this.transitionState(next, 'legacy-assignment')
+    });
+    this.disposed = false;
+    this.animationFrameId = 0;
     this.elapsed = 0;
     this.shake = 0;
     const initialCameraProfile = getCameraProfile(DEFAULT_CAMERA_PROFILE_ID);
@@ -251,7 +264,6 @@ class DokkaebiLuckDefense {
     this.controlSettings = this.loadControlSettings();
     this.mods = this.createDefaultMods();
     this.runRewarded = false;
-    this.progressRewarded = false;
     this.lastShardReward = 0;
     this.lastDangerKey = '';
     this.dangerHapticCooldown = 0;
@@ -360,6 +372,7 @@ class DokkaebiLuckDefense {
       reducedMotion: () => Boolean(this.controlSettings?.reducedMotion)
     });
     this.bindUI();
+    this.listen(window, 'pagehide', (event) => { if (!event.persisted) this.dispose(); }, {}, 'pagehide-dispose');
     this.populateCollection();
     this.renderMetaProgress();
     this.renderRunModeSelector();
@@ -373,6 +386,10 @@ class DokkaebiLuckDefense {
     this.ready = this.initializeGame();
 
     console.info(`[DokkaebiLuckDefense3D] game v${GAME_VERSION} / engine v${ENGINE_VERSION}`, this.engine.diagnostics);
+  }
+
+  transitionState(next, source = 'runtime', detail = null) {
+    return this.appState.transition(next, { source, detail });
   }
 
   listen(target, type, handler, options = {}, key = '') {
@@ -3289,7 +3306,6 @@ class DokkaebiLuckDefense {
     this.hideModal(ui.pauseModal);
     this.createWorld(false);
     this.state = 'playing';
-    this.previousState = 'playing';
     this.currentWave = 0;
     this.maxWaves = 10;
     this.activeRunMode = getRunMode(this.selectedRunModeId);
@@ -3502,7 +3518,6 @@ class DokkaebiLuckDefense {
   openChoiceSummon() {
     const pending = this.pendingSummon;
     if (!pending) return;
-    this.previousState = this.state;
     this.state = 'choice';
     const rankConfig = RANKS[pending.rank - 1];
     ui.choiceSummonOptions.innerHTML = pending.types.map((type) => {
@@ -4305,7 +4320,6 @@ class DokkaebiLuckDefense {
 
   offerContract() {
     if (this.state !== 'playing') return;
-    this.previousState = this.state;
     this.state = 'contract';
     const options = this.shuffled(CONTRACTS);
     ui.contractOptions.innerHTML = options.map((contract) => `
@@ -4389,7 +4403,6 @@ class DokkaebiLuckDefense {
 
   offerBlessing() {
     if (this.state !== 'playing') return;
-    this.previousState = this.state;
     this.state = 'blessing';
     const available = BLESSINGS.filter((item) => !this.blessingHistory.includes(item.id));
     const pool = available.length >= 3 ? available : BLESSINGS;
@@ -6370,7 +6383,6 @@ class DokkaebiLuckDefense {
 
   pauseGame({ automatic = false } = {}) {
     if (this.state !== 'playing') return;
-    this.previousState = this.state;
     this.state = 'paused';
     this.autoPausedByVisibility = Boolean(automatic);
     if (!automatic) this.showModal(ui.pauseModal);
@@ -6545,8 +6557,41 @@ class DokkaebiLuckDefense {
     this.applyViewportUiProfile();
   }
 
+  dispose() {
+    if (this.disposed) return;
+    this.disposed = true;
+    if (this.animationFrameId) cancelAnimationFrame(this.animationFrameId);
+    this.animationFrameId = 0;
+    this.lifecycle?.dispose();
+    const disposables = [
+      this.mobileHudV23,
+      this.hudLayout,
+      this.assetPresence,
+      this.browserReliability,
+      this.combatReadability,
+      this.combatPresentation,
+      this.productionConsole,
+      this.renderStatsHud,
+      this.blobShadows,
+      this.assetPipeline,
+      this.codexViewer
+    ];
+    for (const disposable of disposables) {
+      try { disposable?.dispose?.(); } catch (error) { console.warn('[DokkaebiLuckDefense3D] dispose warning', error); }
+    }
+    for (const geometry of this.geometryCache?.values?.() || []) {
+      try { geometry?.dispose?.(); } catch {}
+    }
+    this.geometryCache?.clear?.();
+    this.particleGeometry?.dispose?.();
+    this.renderer?.renderLists?.dispose?.();
+    this.renderer?.dispose?.();
+    if (window.__DOKKAEBI_GAME__ === this) delete window.__DOKKAEBI_GAME__;
+  }
+
   animate() {
-    requestAnimationFrame(() => this.animate());
+    if (this.disposed) return;
+    this.animationFrameId = requestAnimationFrame(() => this.animate());
     const dt = Math.min(.033, this.clock.getDelta());
     this.frameScheduler.tick(dt);
     this.coreFoundation.sampleFrame(dt, { state: this.state, hidden: document.hidden });
@@ -6614,6 +6659,7 @@ class DokkaebiLuckDefense {
       releaseVersion: GAME_VERSION,
       lineageVersion: LEGACY_LINEAGE_VERSION,
       buildId: BUILD_ID,
+      appState: this.appState?.diagnostics || {},
       coreFoundation: this.coreFoundation?.diagnostics || {},
       engineVersion: ENGINE_VERSION,
       fps: this.engine.monitor.lastFps,
@@ -6659,6 +6705,7 @@ try {
       lineageVersion: LEGACY_LINEAGE_VERSION,
       buildId: BUILD_ID,
       snapshot: () => game.getBrowserAutomationSnapshot(),
+      stateMachine: () => game.appState?.diagnostics || {},
       startRun: () => {
         if (game.state === 'title') game.startRun();
         return game.getBrowserAutomationSnapshot();
@@ -6674,6 +6721,7 @@ try {
         return game.getBrowserAutomationSnapshot();
       },
       foundationReport: () => game.coreFoundation?.report || {},
+      dispose: () => game.dispose(),
       reliabilityReport: () => ({ foundation: game.coreFoundation?.report || {}, wave: game.waveReliability?.report || {}, browser: game.browserReliability?.report || {}, automation: game.automationV22?.report || {}, targeting: game.guardianTargetingV22?.report || {}, mobileHud: game.mobileHudV23?.report || {} })
     });
     game.browserReliability?.noteMilestone('game-ready', { state: game.state });

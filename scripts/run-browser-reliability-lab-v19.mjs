@@ -2,6 +2,7 @@ import { createServer, get as httpGet } from 'node:http';
 import { spawn } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { extname, join, normalize, resolve } from 'node:path';
+import { generatedOutput } from './output-paths.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const currentVersion = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).version;
@@ -89,7 +90,7 @@ async function runHttpProbe() {
     lineage: index.includes(`active lineage v${currentVersion}`) || /active lineage v(?:19|20|21|22)\.0\.0/.test(index),
     style: style.includes('mobile-hud-v21') || style.includes('v19.0.0 Browser Reliability Lab'),
     testApi: main.includes('__DOKKAEBI_TEST_API__'),
-    serviceWorker: sw.includes(`const VERSION = '${currentVersion}'`) && sw.includes('DOKKAEBI_PURGE')
+    serviceWorker: sw.includes(`const RELEASE_VERSION = '${currentVersion}'`) && /const BUILD_ID = 'b\d+\.\d+'/.test(sw) && sw.includes('DOKKAEBI_PURGE')
   };
   return { passed: checks.every((item) => item.passed) && Object.values(contracts).every(Boolean), checks, contracts };
 }
