@@ -6,8 +6,9 @@ await import('./clean-obsolete-assets.mjs');
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dist = path.join(root, 'dist');
-const version = '1.0.17';
-const buildId = 'b24.17';
+const packageJson = JSON.parse(await readFile(path.join(root, 'package.json'), 'utf8'));
+const version = packageJson.version;
+const buildId = packageJson.dokkaebi?.buildId || '';
 const revision = `${version}-${buildId}`;
 
 await rm(dist, { recursive: true, force: true });
@@ -51,7 +52,7 @@ for (const candidate of vendorCandidates) {
 let html = await readFile(path.join(root, 'index.html'), 'utf8');
 html = html.replace('    <title>', `    <link rel="stylesheet" href="./src/style.css?v=${revision}" />\n    <title>`);
 html = html.replace(
-  '<script type="module" src="./src/bootstrap.js?v=1.0.17-b24.17"></script>',
+  /<script type="module" src="\.\/src\/bootstrap\.js\?v=[^"]+"><\/script>/,
   `<script src="./static-bootstrap.js?v=${revision}" data-entry="./src/bootstrap.js" data-vendor-base="./vendor/three/"></script>`
 );
 await writeFile(path.join(dist, 'index.html'), html);

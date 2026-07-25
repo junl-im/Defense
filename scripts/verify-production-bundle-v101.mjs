@@ -11,6 +11,16 @@ const assets = await readdir(path.join(dist, 'assets'));
 const js = assets.filter((name) => name.endsWith('.js'));
 if (!js.length) throw new Error('Vite JavaScript bundle is missing');
 if (!html.includes('type="module"') || !html.includes('/assets/')) throw new Error('Vite module entry is missing from production HTML');
+const bundleSource = (await Promise.all(js.map((name) => readFile(path.join(dist, 'assets', name), 'utf8')))).join('\n');
+if (!bundleSource.includes('DD-ASSET-APPROVAL-V117') && !bundleSource.includes('createAssetApprovalReportV117')) throw new Error('v1.0.17 approval runtime is missing from Vite bundle');
+if (!bundleSource.includes('DD-STATIC-DEPLOYMENT-GATE-V118') && !bundleSource.includes('createStaticDeploymentGateReportV118')) throw new Error('v1.0.18 deployment gate is missing from Vite bundle');
+for (const relative of [
+  'asset-approval-v117.html',
+  'assets/visual-v117/asset-approval-manifest-v117.json',
+  'assets/visual-v117/asset-approval-registry-v117.json',
+  'assets/visual-v117/directional/guardian-ember-pupu-atlas-low-v117.webp',
+  'assets/visual-v117/citadel/guardian-citadel-critical-low-v117.webp'
+]) await access(path.join(dist, relative));
 await access(path.join(dist, 'sw.js'));
 await access(path.join(dist, 'version.json'));
 const sw = await readFile(path.join(dist, 'sw.js'), 'utf8');

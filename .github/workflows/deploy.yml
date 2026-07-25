@@ -70,6 +70,12 @@ jobs:
         env:
           VITE_BASE_PATH: /Defense/
 
+
+      - name: Verify approved asset static deployment
+        run: |
+          npm run verify:dist:v117
+          npm run verify:dist:v118
+
       - name: Verify self-contained production bundle
         run: node scripts/verify-production-bundle-v101.mjs
 

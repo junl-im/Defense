@@ -74,7 +74,7 @@ check(index.includes(`./src/bootstrap.js?v=${currentVersion}-${currentBuildId}`)
 check(main.includes(`const GAME_VERSION = '${currentVersion}'`), 'main game version mismatch');
 check(serviceWorker.includes(`const RELEASE_VERSION = '${currentVersion}'`) && serviceWorker.includes(`const BUILD_ID = '${currentBuildId}'`), 'service worker identity mismatch');
 check(staticBootstrap.includes(`RELEASE_VERSION = '${currentVersion}'`) && staticBootstrap.includes(`BUILD_ID = '${currentBuildId}'`), 'static bootstrap identity mismatch');
-check(staticBuilder.includes(`const version = '${currentVersion}'`) && staticBuilder.includes(`const buildId = '${currentBuildId}'`), 'static builder identity mismatch');
+check((staticBuilder.includes(`const version = '${currentVersion}'`) && staticBuilder.includes(`const buildId = '${currentBuildId}'`)) || (staticBuilder.includes("const packageJson = JSON.parse") && staticBuilder.includes("const version = packageJson.version") && staticBuilder.includes("const buildId = packageJson.dokkaebi?.buildId || ''")), 'static builder identity mismatch');
 check(productionConsole.includes('VISUAL POLISH 1.0.12'), 'production console release label mismatch');
 if (!failures.length) pass(`v1.0.12 foundation preserved under current release ${currentVersion} / ${currentBuildId}`);
 

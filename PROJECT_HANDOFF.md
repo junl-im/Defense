@@ -1,14 +1,14 @@
-> 현재 개선 패치: **v1.0.17 / b24.17** — 모바일 좌측 맵 터치 이동 복구, 전체 지형 입력 범위 검증
+> 현재 개선 패치: **v1.0.18 / b24.18** — 승인 자산 CI 배포 검증 게이트 및 빌드 순서 수정
 
-# PROJECT HANDOFF — RELEASE 1.0.17
+# PROJECT HANDOFF — RELEASE 1.0.18
 
-- Project: `DokkaebiLuckDefense3D_FULL_v1.0.17_TOUCH_MAP_FIX`
-- Public game version: `1.0.17`
+- Project: `DokkaebiLuckDefense3D_FULL_v1.0.18_CI_APPROVAL_GATE`
+- Public game version: `1.0.18`
 - Legacy development lineage: `23.1.0`
-- Build ID: `b24.17`
+- Build ID: `b24.18`
 - Engine: `21.0.0`
 - Save schema: `21`
-- Patch: `Full-Map Touch Navigation`
+- Patch: `CI Approval Deployment Gate`
 - Base: `1.0.11 IP Knowledge Megaforge v4`
 - Art lock: `DD-ABSOLUTE-ART-BIBLE-2.0`
 
@@ -91,6 +91,14 @@ v1.0.12 converts the visual concept direction into a real P0 runtime slice while
 4. 시뮬레이션·자동 감사는 `logs/simulations/`, `logs/audits/`에 생성한다.
 5. 패치 관리 파일은 `logs/patch/<version>/` 아래에만 둔다.
 6. 전체 ZIP에는 생성 로그를 넣지 않고 `logs/README.md`만 유지한다.
+
+## v1.0.18 CI APPROVAL DEPLOYMENT CONTRACT
+
+1. `npm run verify`는 빌드 전 소스 계약만 검사하며 `dist` 존재를 요구하지 않는다.
+2. 승인 자산의 실제 배포 여부는 Vite Build 이후 `verify:dist:v117`, `verify:dist:v118`에서 검사한다.
+3. GitHub Pages 작업 순서는 `소스 검증 → Build → 승인 자산 dist 검증 → 프로덕션 번들 검증`으로 고정한다.
+4. v1.0.17 푸푸도깨비 11방향과 수호성 4상태 승인 경계는 변경하지 않는다.
+5. 새 후보 자산은 품질 검수 전까지 런타임 적용과 최종 승인 수치에 포함하지 않는다.
 
 ## Current runtime
 

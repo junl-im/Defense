@@ -43,7 +43,7 @@ const checks = [
   ['loading screen is removed only after presentation preparation', main.indexOf('await this.prepareFirstPresentation();') < main.indexOf("ui.loading.classList.remove('visible');")],
   ['release verifiers are source-safe before dist exists', verify104.includes("const hasDist = fs.existsSync('dist/index.html')") && verify104.includes('!hasDist ||') && verify105.includes("const hasDist = fs.existsSync('dist/index.html')") && verify105.includes('!hasDist ||')],
   ['GitHub Python action uses a Node 24 compatible major', workflow.includes('uses: actions/setup-python@v7') && !workflow.includes('actions/setup-python@v5')],
-  ['static fallback builder emits the current boot entry', buildStatic.includes(`const version = '${version}'`) && buildStatic.includes(`const buildId = '${buildId}'`) && buildStatic.includes(`src="./src/bootstrap.js?v=${version}-${buildId}"`)],
+  ['static fallback builder emits the current boot entry', (buildStatic.includes(`const version = '${version}'`) && buildStatic.includes(`const buildId = '${buildId}'`) && buildStatic.includes(`src=\"./src/bootstrap.js?v=${version}-${buildId}\"`)) || (buildStatic.includes("const packageJson = JSON.parse") && buildStatic.includes("const version = packageJson.version") && buildStatic.includes("const buildId = packageJson.dokkaebi?.buildId || ''") && buildStatic.includes('static-bootstrap.js?v=${revision}'))],
   ['dist preserves the boot gate and first-frame contract when present', !hasDist || (distHtml.includes('id="boot-gate"') && distMain.includes('prepareFirstPresentation()'))],
   ['absolute art bible files are unchanged', artBibleUnchanged],
   ['runtime art asset bytes are unchanged', assetsUnchanged],

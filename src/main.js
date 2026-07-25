@@ -14,6 +14,7 @@ import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, Obje
 import { isMovementCode } from './runtime/native-input-policy-v231.js';
 import { createArtApprovalReportV115 } from './runtime/art-approval-pipeline-v115.js';
 import { createAssetApprovalReportV117 } from './runtime/asset-approval-pipeline-v117.js';
+import { createStaticDeploymentGateReportV118 } from './runtime/static-deployment-gate-v118.js';
 import { DEFAULT_CAMERA_PROFILE_ID, getCameraProfile, sanitizeCameraProfileId, cycleCameraProfile, resolveCameraDistance } from './engine/camera-profile.js';
 import { BOOT_ASSET_CATALOG, DEFERRED_ASSET_CATALOG, ASSET_LOADING_PLAN_V115, PLAYER_ASSET_ID, GUARDIAN_ASSET_IDS, MONSTER_ASSET_IDS, BOSS_ASSET_IDS } from './engine/asset-catalog.js';
 import { HERO_CLASSES, HERO_CLASS_ORDER, HERO_CLASS_ASSET_IDS, getHeroClass } from './hero-classes.js';
@@ -130,7 +131,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '1.0.17';
+const GAME_VERSION = '1.0.18';
 // const GAME_VERSION = '23.1.0'; historical lineage marker for pre-normalization contracts.
 if (GAME_VERSION !== PUBLIC_GAME_VERSION) throw new Error('Public version policy mismatch');
 function runtimeSpriteMarkup(path, alt = '', className = '') {
@@ -227,6 +228,8 @@ class DokkaebiLuckDefense {
     this.artApprovalReportV115 = createArtApprovalReportV115();
     this.artApprovalReportV117 = createAssetApprovalReportV117();
     window.__DOKKAEBI_ART_APPROVAL_V117__ = this.artApprovalReportV117;
+    this.staticDeploymentGateV118 = createStaticDeploymentGateReportV118();
+    window.__DOKKAEBI_STATIC_DEPLOYMENT_V118__ = this.staticDeploymentGateV118;
     this.elapsed = 0;
     this.shake = 0;
     const initialCameraProfile = getCameraProfile(DEFAULT_CAMERA_PROFILE_ID);
@@ -242,7 +245,7 @@ class DokkaebiLuckDefense {
     this.lookPointers = new Map();
     this.pinchState = null;
     this.mapTouchDiagnosticsV116 = {
-      version: '1.0.17', accepted: 0, rejected: 0, cancelled: 0,
+      version: '1.0.18', accepted: 0, rejected: 0, cancelled: 0,
       bands: { left: 0, center: 0, right: 0 }, lastBand: '', lastNdc: null
     };
     window.__DOKKAEBI_MAP_TOUCH_V116__ = this.mapTouchDiagnosticsV116;

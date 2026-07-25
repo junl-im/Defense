@@ -1,0 +1,223 @@
+{
+  "patchVersion": "1.0.18",
+  "sourceVersion": "1.0.17",
+  "sourceBuild": "b24.17",
+  "targetVersion": "1.0.18",
+  "targetBuild": "b24.18",
+  "title": "CI Approval Deployment Gate",
+  "changedFiles": 34,
+  "deletedFiles": 0,
+  "artApproval": {
+    "newFinalApprovals": 0,
+    "inheritedDirectionalEntities": 1,
+    "inheritedDirectionViews": 11,
+    "inheritedCitadelStates": 4,
+    "candidateRuntimeApplied": false
+  },
+  "files": [
+    {
+      "path": ".github/workflows/deploy.yml",
+      "bytes": 2704,
+      "sha256": "aeeee16b055a0d8c43ed2bd2ab3c2c81154a14da6274b03b663de06ddd58624e",
+      "operation": "replace"
+    },
+    {
+      "path": "PROJECT_HANDOFF.md",
+      "bytes": 7098,
+      "sha256": "a071e8b8d2d4c8fb1caa7011a9dc138477626a3cf704ca2dbab3fdea46ab58c3",
+      "operation": "replace"
+    },
+    {
+      "path": "README.md",
+      "bytes": 3721,
+      "sha256": "5fc7af1df4e4b3d1319eae22aa6f02809d516728b7882717a71114c2e8ad4b24",
+      "operation": "replace"
+    },
+    {
+      "path": "dist/STATIC_BUILD_NOTICE.txt",
+      "bytes": 443,
+      "sha256": "e4a8d85950ab36b5167864537141aa4333aade222fac06c81359ba4658b4a051",
+      "operation": "replace"
+    },
+    {
+      "path": "dist/index.html",
+      "bytes": 53682,
+      "sha256": "f1ef29c3d097cbc293b4ad1dad4d02ca68b2becf2e4cbd738f7f270b1595e4d6",
+      "operation": "replace"
+    },
+    {
+      "path": "dist/src/main.js",
+      "bytes": 374717,
+      "sha256": "4f5e7e1e942790cc63d1b31c4222cef5dc1fad2edfb28e06fcc96899c9cc660e",
+      "operation": "replace"
+    },
+    {
+      "path": "dist/src/runtime/static-deployment-gate-v118.js",
+      "bytes": 887,
+      "sha256": "2f6123c25e0bc3ff6c32c7d6164396016aaef79798c1cd3b5b9a6e9f26cacc31",
+      "operation": "add"
+    },
+    {
+      "path": "dist/src/version-policy.js",
+      "bytes": 1739,
+      "sha256": "b6d6f3d8e7df9e6e1d164e43b0c3608b0516b4420c7be384058702d71fc309c0",
+      "operation": "replace"
+    },
+    {
+      "path": "dist/static-bootstrap.js",
+      "bytes": 5426,
+      "sha256": "df2f2506e770ba504dbeeb143fee61d0cb184dd3a4b86f84bffc9573a2480d38",
+      "operation": "replace"
+    },
+    {
+      "path": "dist/sw.js",
+      "bytes": 13567,
+      "sha256": "d1deecad12169187379f0becbd4f75c0a7dc3426e8b62712a3e4d4b02c5b645f",
+      "operation": "replace"
+    },
+    {
+      "path": "dist/version.json",
+      "bytes": 209,
+      "sha256": "0794215db554ef696d7d646fda78511c151d03d831a3baeb8c6186cf3ebbe642",
+      "operation": "replace"
+    },
+    {
+      "path": "docs/CI_STATIC_DEPLOYMENT_FIX_v1.0.18.md",
+      "bytes": 801,
+      "sha256": "f7bab996f96dabcff9c48ee2a7b59b347b8b8535896368ff13a98f214d611fd8",
+      "operation": "add"
+    },
+    {
+      "path": "docs/PATCH_APPLY_v1.0.18.md",
+      "bytes": 517,
+      "sha256": "386553e0a08b913ae1473656130faa94a31b388737d7fbffec1c3767956b3bde",
+      "operation": "add"
+    },
+    {
+      "path": "docs/PATCH_NOTES_v1.0.18.md",
+      "bytes": 1228,
+      "sha256": "b29a14dae2fa16b80a54eaa6c03dbaf31aa412a459b0650446d7af95dd04e03a",
+      "operation": "add"
+    },
+    {
+      "path": "index.html",
+      "bytes": 53557,
+      "sha256": "59ca9151c5bba4d0b4dcc60cdd35841230e6fa2bb1eb63dab14a81ac6f71fdc7",
+      "operation": "replace"
+    },
+    {
+      "path": "package-lock.json",
+      "bytes": 28902,
+      "sha256": "8dca93e2fa09cce6efb1f5020f4be1c78e20b724e5c625b1e18666d42f4cd261",
+      "operation": "replace"
+    },
+    {
+      "path": "package.json",
+      "bytes": 17151,
+      "sha256": "d5cffa34cfda3b002cae9a7ea4f31d90f9c74c896fe6743b5a9a598ce4230c46",
+      "operation": "replace"
+    },
+    {
+      "path": "public/static-bootstrap.js",
+      "bytes": 5426,
+      "sha256": "df2f2506e770ba504dbeeb143fee61d0cb184dd3a4b86f84bffc9573a2480d38",
+      "operation": "replace"
+    },
+    {
+      "path": "public/sw.js",
+      "bytes": 13567,
+      "sha256": "d1deecad12169187379f0becbd4f75c0a7dc3426e8b62712a3e4d4b02c5b645f",
+      "operation": "replace"
+    },
+    {
+      "path": "public/version.json",
+      "bytes": 209,
+      "sha256": "0794215db554ef696d7d646fda78511c151d03d831a3baeb8c6186cf3ebbe642",
+      "operation": "replace"
+    },
+    {
+      "path": "scripts/build-static-fallback.mjs",
+      "bytes": 3428,
+      "sha256": "66f65fa1467ac68ee6dd1b6f1f4bea2cbedc05e2d253a8f1a20b0b7d10f31dd1",
+      "operation": "replace"
+    },
+    {
+      "path": "scripts/verify-dist-v117.mjs",
+      "bytes": 2098,
+      "sha256": "e89ad5a2864358821818b4b5b50f31138c65dc3d83eccfd16ced23e51f090ae1",
+      "operation": "add"
+    },
+    {
+      "path": "scripts/verify-dist-v118.mjs",
+      "bytes": 1832,
+      "sha256": "a7a8ec993e54a4163f5064bb159f7484cbaeb5fb5ce7341cb46ec9a96278c51c",
+      "operation": "add"
+    },
+    {
+      "path": "scripts/verify-production-bundle-v101.mjs",
+      "bytes": 2220,
+      "sha256": "938313f9f5b42bf9a40884ea1181bed9cda96b5265dc3150fd4e825618e020e1",
+      "operation": "replace"
+    },
+    {
+      "path": "scripts/verify-release-v106.mjs",
+      "bytes": 5781,
+      "sha256": "e43710b0609f034947873207b926567bbbb3f5fae64b1c700135ddf28352f5b9",
+      "operation": "replace"
+    },
+    {
+      "path": "scripts/verify-release-v107.mjs",
+      "bytes": 7377,
+      "sha256": "87fabad8b072e7ad5e033bb38dcd344060f39fc8ad439a77954a176116d00b34",
+      "operation": "replace"
+    },
+    {
+      "path": "scripts/verify-release-v108.mjs",
+      "bytes": 5893,
+      "sha256": "563c939ed7473d193a397ebc184e0811991029e7511e2e19e5148e3809261685",
+      "operation": "replace"
+    },
+    {
+      "path": "scripts/verify-release-v110.mjs",
+      "bytes": 7240,
+      "sha256": "45fd068de438445fd6f32a5fdc602f9bf54f224d390a8eb01e6083dabf9bd65f",
+      "operation": "replace"
+    },
+    {
+      "path": "scripts/verify-release-v112.mjs",
+      "bytes": 15707,
+      "sha256": "7de8409c7097fe026402417859cefdcc1d4dd1ca618a319370bb7e8f291e732b",
+      "operation": "replace"
+    },
+    {
+      "path": "scripts/verify-release-v117.mjs",
+      "bytes": 6284,
+      "sha256": "3ca52eeaf5042d32e85deeceda6f1cca5fa4968dc41d1cafe228f09c1a43a038",
+      "operation": "replace"
+    },
+    {
+      "path": "scripts/verify-release-v118.mjs",
+      "bytes": 3923,
+      "sha256": "5d0de3ddfd22cc3d12730de332a85b96ef9e8ba41c9eb2b1c28f889c9306e8ef",
+      "operation": "add"
+    },
+    {
+      "path": "src/main.js",
+      "bytes": 374739,
+      "sha256": "a427e48b585329763ff5301bf200fd9c6d981ee8eca4f07f3eb25cb5e82e3a2a",
+      "operation": "replace"
+    },
+    {
+      "path": "src/runtime/static-deployment-gate-v118.js",
+      "bytes": 887,
+      "sha256": "2f6123c25e0bc3ff6c32c7d6164396016aaef79798c1cd3b5b9a6e9f26cacc31",
+      "operation": "add"
+    },
+    {
+      "path": "src/version-policy.js",
+      "bytes": 1739,
+      "sha256": "b6d6f3d8e7df9e6e1d164e43b0c3608b0516b4420c7be384058702d71fc309c0",
+      "operation": "replace"
+    }
+  ]
+}

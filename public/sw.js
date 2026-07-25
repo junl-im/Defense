@@ -1,5 +1,5 @@
-const RELEASE_VERSION = '1.0.17';
-const BUILD_ID = 'b24.17';
+const RELEASE_VERSION = '1.0.18';
+const BUILD_ID = 'b24.18';
 // const VERSION = '23.1.0'; historical lineage marker.
 const CACHE_PREFIX = 'dokkaebi-shell-';
 const CACHE_NAME = `${CACHE_PREFIX}${BUILD_ID}`;
@@ -11,6 +11,7 @@ const SHELL_ASSETS = [
   './src/runtime/visual-integration-director.js',
   './src/runtime/art-approval-pipeline-v115.js',
   './src/runtime/asset-approval-pipeline-v117.js',
+  './src/runtime/static-deployment-gate-v118.js',
   './src/assets/title-v112/title-bg-desktop-lite-v112.webp',
   './src/assets/title-v112/title-bg-mobile-lite-v112.webp',
   './src/assets/title-v112/title-mascot-lite-v112.webp'
@@ -32,6 +33,7 @@ const OPTIONAL_WARM_ASSETS = [
   './src/runtime/combat-art-polish-policy-v114.js',
   './src/runtime/combat-art-polish-director-v114.js',
   './src/runtime/asset-approval-pipeline-v117.js',
+  './src/runtime/static-deployment-gate-v118.js',
   './asset-approval-v117.html',
   './assets/visual-v117/asset-approval-manifest-v117.json',
   './assets/visual-v117/asset-approval-registry-v117.json',
