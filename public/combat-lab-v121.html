@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>v1.0.21 실전 전투 검수실</title>
+  <style>
+    :root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color-scheme:dark;background:#090b15;color:#eef3ff}
+    body{margin:0;padding:24px;background:radial-gradient(circle at top,#241a43,#090b15 62%)}
+    main{max-width:1080px;margin:auto}
+    h1{margin:0 0 8px;font-size:clamp(28px,5vw,52px)}
+    p{color:#b7c0d8;line-height:1.6}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:24px}
+    section{padding:18px;border:1px solid #574d78;border-radius:16px;background:linear-gradient(180deg,#171a2b,#0c0e18);box-shadow:0 15px 32px #0007}
+    h2{margin:0 0 10px;font-size:18px;color:#ffd989}.ok{color:#6ff0a8}.warn{color:#ffc861}code{color:#8adfff}
+    ul{padding-left:20px;line-height:1.8}.tag{display:inline-block;padding:4px 9px;border-radius:999px;background:#202640;color:#9ed9ff;margin:3px}
+  </style>
+</head>
+<body><main>
+  <h1>실전 전투 검수실 <small>v1.0.21</small></h1>
+  <p>PC·태블릿·모바일의 실제 전투 화면에서 캐릭터 밀집도, 월드 HP 바, 상단 HUD, 보스 UI, 프레임 압력을 함께 검수하기 위한 릴리스 계약입니다.</p>
+  <div class="grid">
+    <section><h2>전투 밀집도</h2><span class="tag">calm</span><span class="tag">active</span><span class="tag">crowded</span><span class="tag">extreme</span><p>적·보스·투사체·파티클·위험 지형 수를 조합해 자동 분류합니다.</p></section>
+    <section><h2>월드 HP 바</h2><ul><li class="ok">지연 피해 잔상</li><li class="ok">위기 점멸</li><li class="ok">보호막·브레이크·상태 통합</li><li class="ok">혼잡 시 우선순위 표시</li></ul></section>
+    <section><h2>HUD 안전 영역</h2><ul><li>실제 HUD 하단을 측정</li><li>보스 HP 바 자동 하강</li><li>모바일 2행·PC 3레인 유지</li><li>노치·안전 영역 반영</li></ul></section>
+    <section><h2>성능 압력</h2><p><code>p95 ≥ 31ms</code>, 심각 프레임 비율 또는 FPS 하락을 감지해 장식 효과와 부가 정보를 줄입니다.</p></section>
+    <section><h2>브라우저 진단</h2><p>실행 중 콘솔에서 <code>window.__DOKKAEBI_LIVE_COMBAT_V121__</code>을 확인합니다.</p></section>
+    <section><h2>승인 기준</h2><p class="warn">기능 수량이 아니라 실제 10웨이브에서 겹침·가독성·프레임 안정성을 통과한 상태만 승인합니다.</p></section>
+  </div>
+</main></body></html>

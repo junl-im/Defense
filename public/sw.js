@@ -1,5 +1,5 @@
-const RELEASE_VERSION = '1.0.20';
-const BUILD_ID = 'b24.20';
+const RELEASE_VERSION = '1.0.22';
+const BUILD_ID = 'b24.22';
 // const VERSION = '23.1.0'; historical lineage marker.
 const CACHE_PREFIX = 'dokkaebi-shell-';
 const CACHE_NAME = `${CACHE_PREFIX}${BUILD_ID}`;
@@ -13,6 +13,8 @@ const SHELL_ASSETS = [
   './src/runtime/asset-approval-pipeline-v117.js',
   './src/runtime/static-deployment-gate-v118.js',
   './src/runtime/bundle-marker-gate-v119.js',
+  './src/runtime/live-combat-director-v121.js',
+  './src/runtime/battlefield-clarity-director-v122.js',
   './src/assets/title-v112/title-bg-desktop-lite-v112.webp',
   './src/assets/title-v112/title-bg-mobile-lite-v112.webp',
   './src/assets/title-v112/title-mascot-lite-v112.webp',
@@ -37,6 +39,8 @@ const OPTIONAL_WARM_ASSETS = [
   './src/runtime/asset-approval-pipeline-v117.js',
   './src/runtime/static-deployment-gate-v118.js',
   './src/runtime/bundle-marker-gate-v119.js',
+  './src/runtime/live-combat-director-v121.js',
+  './src/runtime/battlefield-clarity-director-v122.js',
   './asset-approval-v117.html',
   './assets/visual-v117/asset-approval-manifest-v117.json',
   './assets/visual-v117/asset-approval-registry-v117.json',
@@ -152,10 +156,10 @@ const OPTIONAL_WARM_ASSETS = [
   './src/assets/title-v112/title-bg-mobile-v112.webp',
   './src/assets/title-v112/title-bg-mobile-lite-v112.webp',
   './src/assets/title-v112/title-mascot-v112.webp',
-  './src/assets/title-v112/title-mascot-lite-v112.webp',,
-  './src/assets/title-v120/title-mascot-v120.webp'
+  './src/assets/title-v112/title-mascot-lite-v112.webp',
+  './src/assets/title-v120/title-mascot-v120.webp',
   './src/assets/title-v112/visual-polish-manifest-v112.json'
-];;
+];
 const isLocal = (request) => new URL(request.url).origin === self.location.origin;
 const isTitleAsset = (pathname) => pathname.includes('/src/assets/title-v112/');
 const isMutableCode = (pathname) => /\.(?:js|css|json)$/i.test(pathname) || pathname.endsWith('/static-bootstrap.js');

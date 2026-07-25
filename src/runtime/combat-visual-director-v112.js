@@ -23,6 +23,8 @@ const tempWorld = new THREE.Vector3();
 const tempScale = new THREE.Vector3();
 const tempParentQuaternion = new THREE.Quaternion();
 const tempCameraQuaternion = new THREE.Quaternion();
+const tempHealthWorldV122 = new THREE.Vector3();
+const HEALTH_LANE_PATTERN_V122 = Object.freeze([0, -1, 1, -2, 2]);
 
 const clamp01 = (value) => Math.max(0, Math.min(1, Number(value) || 0));
 const finite = (value, fallback = 1) => Number.isFinite(value) ? value : fallback;
@@ -100,46 +102,60 @@ function createHealthBar({ width = 1.55, height = .13, renderOrder = 40 } = {}) 
   back.scale.set(width, height * .68, 1);
   back.position.set(0, .002, .006);
 
-  const fill = makeBarSprite(0x55e58a, renderOrder + 4);
+  const damageGhost = makeBarSprite(0xffd36a, renderOrder + 4);
+  damageGhost.center.set(0, .5);
+  damageGhost.scale.set(width, height * .54, 1);
+  damageGhost.position.set(-width * .5, .002, .007);
+  damageGhost.material.opacity = .72;
+
+  const fill = makeBarSprite(0x55e58a, renderOrder + 5);
   fill.center.set(0, .5);
   fill.scale.set(width, height * .52, 1);
-  fill.position.set(-width * .5, .002, .008);
+  fill.position.set(-width * .5, .002, .009);
 
-  const shieldFill = makeBarSprite(0x65d9ff, renderOrder + 5);
+  const shieldFill = makeBarSprite(0x65d9ff, renderOrder + 6);
   shieldFill.center.set(0, .5);
   shieldFill.scale.set(.001, height * .22, 1);
   shieldFill.position.set(-width * .5, height * .29, .010);
   shieldFill.visible = false;
 
-  const breakBack = makeBarSprite(0x211913, renderOrder + 5);
+  const breakBack = makeBarSprite(0x211913, renderOrder + 7);
   breakBack.scale.set(width, height * .12, 1);
   breakBack.position.set(0, -height * .51, .010);
   breakBack.visible = false;
 
-  const breakFill = makeBarSprite(0xffc85f, renderOrder + 6);
+  const breakFill = makeBarSprite(0xffc85f, renderOrder + 8);
   breakFill.center.set(0, .5);
   breakFill.scale.set(.001, height * .10, 1);
   breakFill.position.set(-width * .5, -height * .51, .012);
   breakFill.visible = false;
 
-  const shine = makeBarSprite(0xffffff, renderOrder + 7);
+  const shine = makeBarSprite(0xffffff, renderOrder + 9);
   shine.center.set(0, .5);
   shine.scale.set(width, height * .10, 1);
   shine.position.set(-width * .5, height * .13, .014);
   shine.material.opacity = .26;
 
   const statusPips = Array.from({ length: 4 }, (_, index) => {
-    const pip = makeBarSprite(0xffffff, renderOrder + 8 + index);
+    const pip = makeBarSprite(0xffffff, renderOrder + 11 + index);
     pip.scale.set(height * .38, height * .38, 1);
     pip.position.set(width * .5 - height * (.22 + index * .46), height * .78, .016 + index * .001);
     pip.visible = false;
     return pip;
   });
 
-  root.add(shadow, rim, shell, back, fill, shieldFill, breakBack, breakFill, shine, ...statusPips);
-  root.userData.parts = { shadow, rim, shell, back, fill, shieldFill, breakBack, breakFill, shine, statusPips };
+  const dangerGlow = makeBarSprite(0xff5577, renderOrder + 10);
+  dangerGlow.scale.set(width + .20, height + .14, 1);
+  dangerGlow.position.z = .015;
+  dangerGlow.material.opacity = 0;
+  dangerGlow.visible = false;
+
+  root.add(shadow, rim, shell, back, damageGhost, fill, shieldFill, breakBack, breakFill, shine, dangerGlow, ...statusPips);
+  root.userData.parts = { shadow, rim, shell, back, damageGhost, fill, shieldFill, breakBack, breakFill, shine, dangerGlow, statusPips };
   root.userData.width = width;
   root.userData.height = height;
+  root.userData.ghostRatioV121 = 1;
+  root.userData.liveCombatV121 = true;
   return root;
 }
 
@@ -161,6 +177,23 @@ export default class CombatVisualDirectorV112 {
     this.coreMeshesHidden = 0;
     this.quarantinedPrototypeSelections = 0;
     this.approvedDirectionalSelectionsV117 = 0;
+    this.liveCombatPolicyV121 = { densityMode: 'calm', pressure: false, bossActive: false, focusGroup: null };
+    this.healthBarsSuppressedV121 = 0;
+    this.healthBarsPrioritizedV121 = 0;
+    this.battlefieldClarityPolicyV122 = { sustainedPressure: false, density: 'calm', directionHoldScale: 1, healthLaneSpacing: 1, suppressMonsterAura: false };
+    this.directionSwitchesDeferredV122 = 0;
+    this.healthLaneAssignmentsV122 = 0;
+    this.healthOverlapClustersV122 = 0;
+  }
+
+  setLiveCombatPolicyV121(policy = {}) {
+    this.liveCombatPolicyV121 = { ...this.liveCombatPolicyV121, ...policy };
+    return this.liveCombatPolicyV121;
+  }
+
+  setBattlefieldClarityPolicyV122(policy = {}) {
+    this.battlefieldClarityPolicyV122 = { ...this.battlefieldClarityPolicyV122, ...policy };
+    return this.battlefieldClarityPolicyV122;
   }
 
   getTexture(assetId) {
@@ -383,7 +416,12 @@ export default class CombatVisualDirectorV112 {
       baseScale: scale,
       baseY: y,
       phase: Math.random() * Math.PI * 2,
-      disposed: false
+      disposed: false,
+      directionCandidateV122: -1,
+      directionCandidateAgeV122: 0,
+      directionLockV122: 0,
+      healthLaneV122: 0,
+      healthScreenV122: null
     };
     this.records.add(record);
     this.recordByGroup.set(group, record);
@@ -575,6 +613,71 @@ export default class CombatVisualDirectorV112 {
     return true;
   }
 
+  stabilizeDirectionalFrameV122(record, candidate, dt, state) {
+    if (!Number.isFinite(record.frame) || record.frame < 0) return candidate;
+    record.directionLockV122 = Math.max(0, finite(record.directionLockV122, 0) - Math.max(0, dt));
+    if (candidate === record.frame) {
+      record.directionCandidateV122 = candidate;
+      record.directionCandidateAgeV122 = 0;
+      return record.frame;
+    }
+    if (record.directionLockV122 > 0) {
+      this.directionSwitchesDeferredV122 += 1;
+      return record.frame;
+    }
+    if (record.directionCandidateV122 !== candidate) {
+      record.directionCandidateV122 = candidate;
+      record.directionCandidateAgeV122 = 0;
+      this.directionSwitchesDeferredV122 += 1;
+      return record.frame;
+    }
+    record.directionCandidateAgeV122 += Math.max(0, dt);
+    const policy = this.battlefieldClarityPolicyV122 || {};
+    const holdScale = Math.max(.75, finite(policy.directionHoldScale, 1));
+    const wrappedDelta = Math.min(Math.abs(candidate - record.frame), DIRECTIONS - Math.abs(candidate - record.frame));
+    const baseHold = state === 'move' ? .062 : (state === 'attack' || state === 'skill' || state === 'hit') ? .028 : .110;
+    const required = wrappedDelta >= 3 ? Math.min(.034, baseHold) : baseHold * holdScale;
+    if (record.directionCandidateAgeV122 < required) {
+      this.directionSwitchesDeferredV122 += 1;
+      return record.frame;
+    }
+    record.directionCandidateAgeV122 = 0;
+    if (state === 'attack' || state === 'skill' || state === 'hit') record.directionLockV122 = .15;
+    return candidate;
+  }
+
+  assignHealthLanesV122(camera) {
+    if (!camera) return;
+    const buckets = new Map();
+    const visible = [...this.records].filter((record) => record?.healthBar && record.group?.parent && record.group.visible !== false && !record.citadel);
+    for (const record of visible) {
+      record.group.getWorldPosition(tempHealthWorldV122);
+      tempHealthWorldV122.y += finite(record.healthY, 2);
+      tempHealthWorldV122.project(camera);
+      if (!Number.isFinite(tempHealthWorldV122.x) || !Number.isFinite(tempHealthWorldV122.y) || tempHealthWorldV122.z < -1 || tempHealthWorldV122.z > 1) {
+        record.healthLaneV122 = 0;
+        continue;
+      }
+      const xBucket = Math.round(tempHealthWorldV122.x / .085);
+      const yBucket = Math.round(tempHealthWorldV122.y / .052);
+      const key = `${xBucket}:${yBucket}`;
+      if (!buckets.has(key)) buckets.set(key, []);
+      buckets.get(key).push(record);
+      record.healthScreenV122 = { x: tempHealthWorldV122.x, y: tempHealthWorldV122.y };
+    }
+    for (const records of buckets.values()) {
+      records.sort((a, b) => {
+        const priority = (record) => record.category === 'boss' ? 5 : record.category === 'hero' ? 4 : record.category === 'guardian' ? 3 : record.group.userData?.elite ? 2 : 1;
+        return priority(b) - priority(a) || a.phase - b.phase;
+      });
+      if (records.length > 1) this.healthOverlapClustersV122 += 1;
+      records.forEach((record, index) => {
+        record.healthLaneV122 = HEALTH_LANE_PATTERN_V122[index % HEALTH_LANE_PATTERN_V122.length];
+        if (index > 0) this.healthLaneAssignmentsV122 += 1;
+      });
+    }
+  }
+
   setDirectionalState(record, frame, state) {
     if (record.frame === frame && record.state === state) return;
     if (record.state !== state) this.stateChanges += 1;
@@ -606,8 +709,13 @@ export default class CombatVisualDirectorV112 {
     const maxHp = Math.max(.0001, finite(record.getMaxHp?.(), 1));
     const hp = Math.max(0, finite(record.getHp?.(), maxHp));
     const ratio = clamp01(hp / maxHp);
-    const { fill, shieldFill, breakBack, breakFill, shine, statusPips } = bar.userData.parts;
+    const { damageGhost, fill, shieldFill, breakBack, breakFill, shine, dangerGlow, statusPips } = bar.userData.parts;
     const width = bar.userData.width;
+    const previousGhost = Number.isFinite(bar.userData.ghostRatioV121) ? bar.userData.ghostRatioV121 : ratio;
+    const ghostSpeed = ratio < previousGhost ? .075 : .32;
+    bar.userData.ghostRatioV121 = THREE.MathUtils.lerp(previousGhost, ratio, ghostSpeed);
+    damageGhost.scale.x = Math.max(.001, width * bar.userData.ghostRatioV121);
+    damageGhost.material.opacity = bar.userData.ghostRatioV121 > ratio + .012 ? .68 : .10;
     fill.scale.x = Math.max(.001, width * ratio);
     shine.scale.x = Math.max(.001, width * ratio);
     if (ratio > .58) fill.material.color.setHex(0x55e58a);
@@ -633,6 +741,10 @@ export default class CombatVisualDirectorV112 {
       pip.visible = Boolean(status) && hp > 0;
       if (status) pip.material.color.setHex(STATUS_COLORS[status] || 0xffffff);
     });
+    const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+    const criticalPulse = ratio <= .28 ? .28 + (.5 + .5 * Math.sin(now * .008 + record.phase)) * .34 : 0;
+    dangerGlow.visible = criticalPulse > 0 && hp > 0;
+    dangerGlow.material.opacity = criticalPulse;
 
     record.group.getWorldPosition(tempWorld);
     record.group.getWorldScale(tempScale);
@@ -645,7 +757,29 @@ export default class CombatVisualDirectorV112 {
       bar.quaternion.copy(tempParentQuaternion).invert().multiply(tempCameraQuaternion);
     }
     bar.scale.setScalar(screenCompensation / inheritedScale);
-    bar.visible = Boolean(showHealth) && record.group.visible && hp > 0 && record.state !== 'death';
+
+    const policy = this.liveCombatPolicyV121 || {};
+    const density = policy.densityMode || 'calm';
+    const priority = record.category === 'hero' || record.category === 'guardian' || record.category === 'boss' || record.category === 'core';
+    const focused = policy.focusGroup === record.group || Boolean(record.group.userData?.targeted || record.group.userData?.elite);
+    const damaged = ratio < (density === 'active' ? .985 : .90);
+    const urgent = record.state === 'hit' || statuses.length > 0 || ratio <= .35;
+    let densityVisible = true;
+    if (record.category === 'monster' && density === 'crowded') densityVisible = focused || damaged || urgent;
+    if (record.category === 'monster' && density === 'extreme') densityVisible = focused || urgent || ratio <= .70;
+    if (!densityVisible) this.healthBarsSuppressedV121 += 1;
+    if (priority || focused) this.healthBarsPrioritizedV121 += 1;
+    const clarity = this.battlefieldClarityPolicyV122 || {};
+    const laneStrength = record.category === 'monster' && (density === 'crowded' || density === 'extreme')
+      ? (density === 'extreme' ? .12 : .085) * Math.max(.8, finite(clarity.healthLaneSpacing, 1))
+      : .055;
+    const laneIndex = finite(record.healthLaneV122, 0);
+    const laneOffset = laneIndex * laneStrength;
+    bar.position.x = laneOffset;
+    bar.position.y = record.healthY + Math.abs(laneIndex) * .045;
+    shine.visible = !(clarity.sustainedPressure && record.category === 'monster');
+    statusPips.forEach((pip, index) => { if (clarity.sustainedPressure && record.category === 'monster' && index > 1) pip.visible = false; });
+    bar.visible = Boolean(showHealth) && densityVisible && record.group.visible && hp > 0 && record.state !== 'death';
   }
 
   updateRecord(record, dt, camera, elapsed, showHealth = true) {
@@ -660,7 +794,8 @@ export default class CombatVisualDirectorV112 {
     const state = normalizeState(controller?.state || 'idle');
     record.group.getWorldPosition(tempWorld);
     const cameraYaw = camera ? Math.atan2(camera.position.x - tempWorld.x, camera.position.z - tempWorld.z) : 0;
-    const frame = record.selector.update(record.group.rotation.y, cameraYaw);
+    const candidateFrame = record.selector.update(record.group.rotation.y, cameraYaw);
+    const frame = this.stabilizeDirectionalFrameV122(record, candidateFrame, dt, state);
     this.setDirectionalState(record, frame, state);
 
     const t = finite(controller?.stateTime, elapsed + record.phase);
@@ -727,7 +862,9 @@ export default class CombatVisualDirectorV112 {
     record.sprite.visible = record.group.visible && opacity > .03;
 
     if (record.aura) {
-      record.aura.visible = auraOpacity > .02 && record.group.visible;
+      const clarity = this.battlefieldClarityPolicyV122 || {};
+      const suppressAura = clarity.suppressMonsterAura && (record.category === 'monster' || record.category === 'boss') && state !== 'skill';
+      record.aura.visible = !suppressAura && auraOpacity > .02 && record.group.visible;
       record.aura.material.opacity = auraOpacity;
       record.aura.scale.set(record.baseScale * 1.36 * auraScale, record.baseScale * 1.36 * auraScale, 1);
       record.aura.material.rotation = -elapsed * (state === 'skill' ? 2.8 : 1.4);
@@ -784,6 +921,7 @@ export default class CombatVisualDirectorV112 {
   }
 
   update(dt, camera, elapsed = 0, { showHealth = true } = {}) {
+    this.assignHealthLanesV122(camera);
     for (const record of [...this.records]) {
       if (record.disposed || !record.group) {
         this.records.delete(record);
@@ -862,6 +1000,13 @@ export default class CombatVisualDirectorV112 {
       p0PrototypeRuntimeEnabled: COMBAT_ART_RUNTIME_POLICY_V113.p0PrototypeRuntimeEnabled,
       quarantinedPrototypeSelections: this.quarantinedPrototypeSelections,
       approvedDirectionalSelectionsV117: this.approvedDirectionalSelectionsV117,
+      liveCombatPolicyV121: { ...this.liveCombatPolicyV121, focusGroup: Boolean(this.liveCombatPolicyV121?.focusGroup) },
+      healthBarsSuppressedV121: this.healthBarsSuppressedV121,
+      healthBarsPrioritizedV121: this.healthBarsPrioritizedV121,
+      battlefieldClarityPolicyV122: { ...this.battlefieldClarityPolicyV122 },
+      directionSwitchesDeferredV122: this.directionSwitchesDeferredV122,
+      healthLaneAssignmentsV122: this.healthLaneAssignmentsV122,
+      healthOverlapClustersV122: this.healthOverlapClustersV122,
       legacyLayersRemoved: this.legacyLayersRemoved,
       coreMeshesHidden: this.coreMeshesHidden,
       attachments: this.attachments,

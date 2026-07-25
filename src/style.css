@@ -4108,7 +4108,7 @@ body.presentation-safe-mode #vignette { opacity: .42; }
   background:
     radial-gradient(circle at 51% 39%, rgba(104, 193, 255, .12), transparent 27%),
     linear-gradient(180deg, rgba(3, 7, 20, .02), rgba(3, 5, 18, .24) 57%, rgba(2, 4, 13, .82) 100%),
-    url('./assets/title-v112/title-bg-desktop-v112.webp?rev=release-v120-b24-20') center 53% / cover no-repeat !important;
+    url('./assets/title-v112/title-bg-desktop-v112.webp?rev=release-v121-b24-21') center 53% / cover no-repeat !important;
 }
 
 .title-screen-v112::before {
@@ -4329,7 +4329,7 @@ body.dd-shell-overlap-safe-v112 .action-dock { transform-origin: bottom center; 
     background:
       radial-gradient(circle at 50% 35%, rgba(95, 188, 255, .13), transparent 29%),
       linear-gradient(180deg, rgba(3,7,20,.02), rgba(3,5,18,.24) 56%, rgba(2,4,13,.88) 100%),
-      url('./assets/title-v112/title-bg-mobile-v112.webp?rev=release-v120-b24-20') center 48% / cover no-repeat !important;
+      url('./assets/title-v112/title-bg-mobile-v112.webp?rev=release-v121-b24-21') center 48% / cover no-repeat !important;
   }
   .title-mascot-stage-v112 {
     width: min(92vw, 560px) !important;
@@ -4351,14 +4351,14 @@ body.title-art-lite-v112 .title-screen-v112 {
   background:
     radial-gradient(circle at 49% 47%, rgba(95, 188, 255, .13), transparent 26%),
     linear-gradient(180deg, rgba(3,7,20,.02), rgba(3,5,18,.26) 58%, rgba(2,4,13,.9) 100%),
-    url('./assets/title-v112/title-bg-desktop-lite-v112.webp?rev=release-v120-b24-20') center 53% / cover no-repeat !important;
+    url('./assets/title-v112/title-bg-desktop-lite-v112.webp?rev=release-v121-b24-21') center 53% / cover no-repeat !important;
 }
 @media (max-width: 720px), (orientation: portrait) {
   body.title-art-lite-v112 .title-screen-v112 {
     background:
       radial-gradient(circle at 50% 35%, rgba(95, 188, 255, .13), transparent 29%),
       linear-gradient(180deg, rgba(3,7,20,.02), rgba(3,5,18,.24) 56%, rgba(2,4,13,.88) 100%),
-      url('./assets/title-v112/title-bg-mobile-lite-v112.webp?rev=release-v120-b24-20') center 48% / cover no-repeat !important;
+      url('./assets/title-v112/title-bg-mobile-lite-v112.webp?rev=release-v121-b24-21') center 48% / cover no-repeat !important;
   }
 }
 
@@ -4459,7 +4459,7 @@ body.dd-shell-mobile-v112.dd-shell-landscape-v112 .center-meter-rail {
 .title-mascot-stage-v112[role="img"] { color: transparent; font-size: 0; line-height: 0; }
 .title-mascot-v112[hidden] { display: none !important; }
 body.title-mascot-fallback .title-mascot-stage-v112 {
-  background: url('./assets/title-v120/title-mascot-lite-v120.webp?rev=release-v120-b24-20') center bottom / contain no-repeat;
+  background: url('./assets/title-v120/title-mascot-lite-v120.webp?rev=release-v121-b24-21') center bottom / contain no-repeat;
 }
 html[data-presentation-mode="loading"] .boot-gate-line::after { animation-duration: .82s; }
 
@@ -4578,4 +4578,185 @@ body.playing:not(.modal-open) .look-zone { pointer-events: auto; }
   }
   .wave-hud { position: static !important; transform: none !important; width: auto !important; }
   .boss-health { top: calc(58px + var(--safe-top)) !important; }
+}
+
+/* ========================================================================== */
+/* v1.0.21 Live Combat Ascension                                              */
+/* ========================================================================== */
+:root {
+  --v121-boss-top: calc(112px + var(--safe-top));
+  --v121-secondary-top: calc(190px + var(--safe-top));
+  --v121-hp-detail-opacity: 1;
+}
+
+body.live-combat-v121 .hud {
+  width: min(calc(100vw - var(--safe-left) - var(--safe-right) - 18px), 1540px);
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  padding-inline: clamp(7px, 1.1vw, 16px);
+  border-radius: 0 0 18px 18px;
+  background: linear-gradient(180deg, rgba(5,9,22,.80), rgba(5,9,22,.18) 72%, transparent);
+}
+body.live-combat-v121 .hud-left,
+body.live-combat-v121 .hud-right { max-width: min(39vw, 520px); }
+body.live-combat-v121 .wave-hud { z-index: 2; }
+
+body.live-combat-v121 .boss-health,
+body.live-combat-v121.boss-active .boss-health,
+body.live-combat-v121.combat-boss-active-v121 .boss-health {
+  top: var(--v121-boss-top) !important;
+  width: min(72vw, 560px);
+  border: 1px solid rgba(250,213,132,.44);
+  background:
+    linear-gradient(180deg, rgba(32,17,40,.96), rgba(9,8,20,.94)),
+    radial-gradient(circle at 50% 0%, rgba(255,142,89,.16), transparent 62%);
+  box-shadow: 0 14px 34px rgba(0,0,0,.48), inset 0 1px rgba(255,255,255,.09), inset 0 -1px rgba(255,174,92,.15);
+}
+body.live-combat-v121 .boss-health-track {
+  height: 9px;
+  border: 1px solid rgba(255,255,255,.07);
+  background: rgba(0,0,0,.52);
+  box-shadow: inset 0 2px 5px rgba(0,0,0,.65);
+}
+body.live-combat-v121 .boss-health-track span {
+  background: linear-gradient(90deg, #ff466f 0%, #ff7e58 48%, #ffd36a 100%);
+  box-shadow: 0 0 16px rgba(255,87,93,.54), inset 0 1px rgba(255,255,255,.28);
+}
+
+body.live-combat-v121 :is(.luck-meter,.synergy-panel,.unit-strip) {
+  top: var(--v121-secondary-top) !important;
+}
+body.live-combat-v121[data-combat-density-v121="crowded"] :is(.synergy-panel,.moon-omen,.run-seed-chip),
+body.live-combat-v121[data-combat-density-v121="extreme"] :is(.synergy-panel,.moon-omen,.run-seed-chip,.stage-chip) {
+  opacity: var(--v121-hp-detail-opacity);
+}
+body.live-combat-v121[data-combat-density-v121="extreme"] .combat-text:not(.critical) {
+  opacity: .72;
+  transform: scale(.94);
+}
+body.live-combat-v121.combat-pressure-v121 .combat-ground-glow,
+body.live-combat-v121.combat-pressure-v121 .ambient-particle {
+  opacity: .72 !important;
+}
+
+body.live-combat-v121 .core-pill {
+  border-color: rgba(107,220,255,.42);
+  background: linear-gradient(180deg, rgba(20,32,60,.96), rgba(5,10,25,.94));
+}
+body.live-combat-v121 .core-hp-track-v120 {
+  height: 5px;
+  background: rgba(0,0,0,.68);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.07), 0 1px 4px rgba(0,0,0,.36);
+}
+body.live-combat-v121 .core-hp-track-v120 > u {
+  background: linear-gradient(90deg, #35d985 0%, #72e8a2 48%, #d6f48d 100%);
+  box-shadow: 0 0 12px rgba(72,226,145,.48), inset 0 1px rgba(255,255,255,.34);
+}
+
+@media (max-width: 720px) {
+  body.live-combat-v121 .hud {
+    width: calc(100vw - var(--safe-left) - var(--safe-right) - 8px);
+    padding-inline: 4px;
+    border-radius: 0 0 13px 13px;
+  }
+  body.live-combat-v121 .hud-left,
+  body.live-combat-v121 .hud-right { max-width: none; }
+  body.live-combat-v121 .boss-health {
+    width: calc(100vw - var(--safe-left) - var(--safe-right) - 14px) !important;
+    padding: 6px 8px 8px;
+  }
+  body.live-combat-v121[data-combat-density-v121="crowded"] .boss-intent-copy small,
+  body.live-combat-v121[data-combat-density-v121="extreme"] .boss-intent-copy {
+    display: none;
+  }
+}
+
+@media (max-height: 570px) and (orientation: landscape) {
+  body.live-combat-v121 .hud { padding-top: calc(3px + var(--safe-top)); }
+  body.live-combat-v121 .boss-health { max-height: 70px; overflow: hidden; }
+  body.live-combat-v121 .boss-break em { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.live-combat-v121 .boss-health-track span,
+  body.live-combat-v121 .core-hp-track-v120 > u { transition: none !important; }
+}
+
+/* ========================================================================== */
+/* v1.0.22 Battlefield Clarity & Direction Lock                               */
+/* ========================================================================== */
+:root {
+  --v122-hud-bottom: calc(76px + var(--safe-top));
+  --v122-boss-top: calc(112px + var(--safe-top));
+  --v122-secondary-top: calc(190px + var(--safe-top));
+}
+
+body.battlefield-clarity-v122 .hud {
+  contain: layout paint;
+  isolation: isolate;
+  max-height: min(116px, calc(34vh + var(--safe-top)));
+  overflow: visible;
+}
+body.battlefield-clarity-v122 .boss-health,
+body.battlefield-clarity-v122.boss-active .boss-health,
+body.battlefield-clarity-v122.combat-boss-active-v121 .boss-health {
+  top: var(--v122-boss-top) !important;
+  z-index: 48;
+  backdrop-filter: blur(10px) saturate(1.12);
+}
+body.battlefield-clarity-v122 :is(.luck-meter,.synergy-panel,.unit-strip) {
+  top: var(--v122-secondary-top) !important;
+}
+body.battlefield-clarity-v122 .boss-health-track,
+body.battlefield-clarity-v122 .core-hp-track-v120 {
+  border-radius: 999px;
+  overflow: hidden;
+}
+body.battlefield-clarity-v122 .boss-health-track span,
+body.battlefield-clarity-v122 .core-hp-track-v120 > u {
+  border-radius: inherit;
+}
+body.battlefield-clarity-v122.battlefield-compact-v122 :is(.moon-omen,.run-seed-chip,.stage-chip) {
+  opacity: .68;
+}
+body.battlefield-clarity-v122.battlefield-compact-v122 .boss-intent-copy small,
+body.battlefield-clarity-v122.battlefield-compact-v122 .boss-break em {
+  display: none !important;
+}
+body.battlefield-clarity-v122.battlefield-pressure-v122 :is(.ambient-particle,.combat-ground-glow,.weather-particle) {
+  opacity: .58 !important;
+}
+body.battlefield-clarity-v122.battlefield-pressure-v122 .combat-text:not(.critical) {
+  filter: none;
+  text-shadow: 0 1px 3px rgba(0,0,0,.86);
+}
+body.battlefield-clarity-v122[data-battlefield-density-v122="extreme"] :is(.synergy-panel,.moon-omen,.run-seed-chip,.stage-chip) {
+  visibility: hidden;
+}
+
+@media (max-width: 720px) {
+  body.battlefield-clarity-v122 .hud {
+    max-height: min(102px, calc(29vh + var(--safe-top)));
+    row-gap: 3px;
+  }
+  body.battlefield-clarity-v122 .boss-health {
+    top: var(--v122-boss-top) !important;
+    width: calc(100vw - var(--safe-left) - var(--safe-right) - 12px) !important;
+  }
+  body.battlefield-clarity-v122 :is(.luck-meter,.synergy-panel,.unit-strip) {
+    top: var(--v122-secondary-top) !important;
+  }
+}
+
+@media (max-height: 570px) and (orientation: landscape) {
+  body.battlefield-clarity-v122 .hud { max-height: calc(82px + var(--safe-top)); }
+  body.battlefield-clarity-v122 .boss-health { max-height: 62px; overflow: hidden; }
+  body.battlefield-clarity-v122 .boss-intent { display: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.battlefield-clarity-v122 .boss-health,
+  body.battlefield-clarity-v122 .boss-health-track span,
+  body.battlefield-clarity-v122 .core-hp-track-v120 > u { transition: none !important; }
 }

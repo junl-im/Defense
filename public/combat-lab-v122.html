@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="ko-KR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>v1.0.22 전투 가독성 진단</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;padding:22px;color:#ecf7ff;background:linear-gradient(180deg,#091326,#040713);font-family:system-ui,sans-serif}main{max-width:920px;margin:auto}h1{font-size:24px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.card{padding:16px;border:1px solid #304a72;border-radius:14px;background:#0d1930}.ok{color:#78edb0}.warn{color:#ffd071}code{word-break:break-all;color:#8de1ff}button{min-height:44px;padding:0 16px;border:1px solid #6fcfff;border-radius:10px;color:white;background:#14355b;font-weight:800}</style>
+</head>
+<body><main>
+<h1>v1.0.22 Battlefield Clarity</h1>
+<p>게임 탭에서 실행 중인 진단 객체를 확인하고, 상단 HUD·방향 전환·HP 바 분산 정책을 점검합니다.</p>
+<div class="grid">
+  <section class="card"><b>런타임 마커</b><p class="ok">DD-BATTLEFIELD-CLARITY-V122</p></section>
+  <section class="card"><b>방향 안정화</b><p>대기 110ms · 이동 62ms · 전투 28ms · 액션 잠금 150ms</p></section>
+  <section class="card"><b>HP 겹침 분산</b><p>화면 투영 버킷과 5개 레인으로 월드 HP 바를 분산합니다.</p></section>
+  <section class="card"><b>성능 보호</b><p>지속 압력 감지 시 비핵심 오라와 몬스터 장식을 줄입니다.</p></section>
+</div>
+<p><button id="copy">진단 명령 복사</button></p>
+<code id="cmd">window.__DOKKAEBI_BATTLEFIELD_CLARITY_V122__</code>
+<script>document.getElementById('copy').onclick=async()=>{await navigator.clipboard?.writeText(document.getElementById('cmd').textContent);document.getElementById('copy').textContent='복사됨';};</script>
+</main></body></html>

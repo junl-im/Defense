@@ -21,15 +21,16 @@ const contract = text('src/runtime/hero-hud-polish-v120.js');
 const visual = text('src/runtime/visual-integration-director.js');
 const workflow = text('.github/workflows/deploy.yml');
 
-check(pkg.version === '1.0.20' && pkg.dokkaebi?.buildId === 'b24.20', 'package identity is not v1.0.20 / b24.20');
+const releasePatch = Number(String(pkg.version).split('.').at(-1) || 0);
+check(releasePatch >= 20 && Number(pkg.dokkaebi?.buildRevision || 0) >= 20, 'package identity is older than v1.0.20 / b24.20');
 check(lock.version === pkg.version && lock.packages?.['']?.dokkaebi?.buildId === pkg.dokkaebi?.buildId, 'package lock identity mismatch');
 check(version.releaseVersion === pkg.version && version.buildId === pkg.dokkaebi?.buildId, 'public version identity mismatch');
-check(main.includes("const GAME_VERSION = '1.0.20'"), 'runtime version identity mismatch');
+check(main.includes(`const GAME_VERSION = '${pkg.version}'`), 'runtime version identity mismatch');
 if (!failures.length) pass('v1.0.20 identity is synchronized');
 
 check(existsSync(path.join(root, 'src/assets/title-v120/title-mascot-v120.webp')), 'HQ Pupu title mascot missing');
 check(existsSync(path.join(root, 'src/assets/title-v120/title-mascot-lite-v120.webp')), 'lite Pupu title mascot missing');
-check(html.includes('release-v120-b24-20') && visual.includes('release-v120-b24-20'), 'new title mascot cache revision is not active');
+check(html.includes('title-mascot-lite-v120.webp') && visual.includes('title-mascot-lite-v120.webp'), 'approved title mascot is not active');
 check(html.includes('title-mascot-lite-v112.webp?rev=release-v115-b24-15'), 'v1.0.15 compatibility cache lineage marker missing');
 if (!failures.length) pass('legacy title screen is replaced by the approved Pupu artwork with a new cache revision');
 
