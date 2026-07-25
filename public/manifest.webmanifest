@@ -1,12 +1,14 @@
 {
-  "name": "도깨비 운빨 수호대 3D",
-  "short_name": "깨비수호대",
-  "description": "직접 뛰어다니며 엽전을 줍고 랜덤 도깨비를 소환·합성하는 모바일 3D 운빨 디펜스",
+  "id": "./",
+  "name": "도깨비 럭 디펜스 3D",
+  "short_name": "도깨비 디펜스",
+  "description": "푸른 도깨비 수호대와 함께 달빛 장터를 지키는 3D 액션 디펜스",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#0b0716",
-  "theme_color": "#120b24",
-  "orientation": "landscape-primary",
+  "background_color": "#050914",
+  "theme_color": "#0b1530",
+  "orientation": "any",
   "icons": [
     {
       "src": "./icon-192.png",

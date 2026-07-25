@@ -1,8 +1,8 @@
 import fs from 'node:fs'; import path from 'node:path';
 const root=process.cwd(); const read=p=>fs.readFileSync(path.join(root,p),'utf8'); const pkg=JSON.parse(read('package.json')); const index=read('index.html'); const main=read('src/main.js'); const vi=read('src/runtime/visual-integration-director.js'); const sw=read('public/sw.js'); let f=[]; const c=(x,m)=>{if(!x){console.error('FAIL',m);f.push(m)}else console.log('PASS',m)};
-c(pkg.version==='1.0.23'&&pkg.dokkaebi?.buildId==='b24.23','v1.0.23 identity synchronized');
+const [maj,min,patch]=pkg.version.split('.').map(Number); c(maj>1||(maj===1&&(min>0||patch>=23)),'v1.0.23 foundation preserved under current release');
 c(!index.includes('도깨비 운빨 수호대')&&!index.includes('<em class="title-subtitle-v107">운빨 수호대</em>'),'legacy connection title removed');
-c(index.includes('도깨비 럭 디펜스 3D')&&index.includes('럭 디펜스 3D'),'current title branding installed');
+c(index.includes('도깨비 럭 디펜스 3D')&&(index.includes('럭 디펜스 3D')||index.includes('data-text="럭 디펜스"')),'current title branding installed');
 c(index.includes('title-v112/title-mascot-v112.webp')&&index.includes('title-v112/title-mascot-lite-v112.webp'),'original mascot restored in boot and title screens');
 c(!index.includes('title-v120/title-mascot')&&!vi.includes('title-v120/title-mascot')&&!sw.includes('title-v120/title-mascot'),'replacement mascot removed from active boot paths');
 c(main.includes('installTitlePresentationGuardV123')&&fs.existsSync(path.join(root,'src/runtime/title-presentation-guard-v123.js')),'legacy title runtime guard installed');

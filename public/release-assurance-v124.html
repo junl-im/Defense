@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ko-KR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>도깨비 럭 디펜스 3D · v1.0.24 실전 검수</title>
+  <style>
+    :root{color-scheme:dark;font-family:Pretendard,system-ui,sans-serif;background:#050914;color:#eef6ff}
+    body{margin:0;padding:24px;background:radial-gradient(circle at 50% 0,#173064 0,transparent 36%),#050914}
+    main{max-width:980px;margin:auto}.head{display:flex;gap:18px;align-items:center;padding:22px;border:1px solid #4675a8;border-radius:20px;background:#091329dd}
+    .mark{width:72px;height:72px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(145deg,#2c7fe8,#16224b);font-size:34px;box-shadow:0 0 28px #45a5ff55}
+    h1{margin:0 0 6px;font-size:28px}.sub{margin:0;color:#9fc8ed}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:16px}
+    article{padding:16px;border:1px solid #263e61;border-radius:16px;background:#09101f}.ok{color:#70efa7}.wait{color:#ffd77d}.bad{color:#ff8797}b{display:block;margin-bottom:8px}small{color:#9eb0c8;line-height:1.6}
+    code{display:block;margin-top:18px;padding:15px;overflow:auto;border-radius:14px;background:#02050b;color:#9ae0ff}
+  </style>
+</head>
+<body><main>
+  <section class="head"><div class="mark">鬼</div><div><h1>v1.0.24 실전 검수</h1><p class="sub">원조 마스코트 · 11방향 주인공 · 액션 매핑 · HUD · 캐시 상태</p></div></section>
+  <section class="grid">
+    <article><b class="ok">브랜드 잠금</b><small>게임명과 PWA 설치명이 도깨비 럭 디펜스 3D로 통일됩니다.</small></article>
+    <article><b class="ok">11방향 승인</b><small>주인공 방향 원화 11종은 최종 승인 상태를 유지합니다.</small></article>
+    <article><b class="ok">액션 매핑 승인</b><small>idle/move/attack/skill/hit/death 런타임 행 연결을 검증합니다.</small></article>
+    <article><b class="wait">액션 원화 임시 승인</b><small>공격·스킬·피격·사망 원화는 파생 행이며 독립 원화 교체 대기입니다.</small></article>
+    <article><b class="ok">HUD 충돌 감시</b><small>상단 HUD·보스 HP·보조 정보의 실측 겹침을 자동 보정합니다.</small></article>
+    <article><b class="ok">구형 캐시 제거</b><small>과거 dokkaebi-shell 캐시와 현재 이전 빌드 캐시를 함께 삭제합니다.</small></article>
+  </section>
+  <code>게임 실행 후 콘솔: window.__DOKKAEBI_RELEASE_ASSURANCE_V124__</code>
+</main></body></html>

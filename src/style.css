@@ -4459,7 +4459,7 @@ body.dd-shell-mobile-v112.dd-shell-landscape-v112 .center-meter-rail {
 .title-mascot-stage-v112[role="img"] { color: transparent; font-size: 0; line-height: 0; }
 .title-mascot-v112[hidden] { display: none !important; }
 body.title-mascot-fallback .title-mascot-stage-v112 {
-  background: url('./assets/title-v112/title-mascot-lite-v112.webp?rev=release-v123-b24-23') center bottom / contain no-repeat;
+  background: url('./assets/title-v112/title-mascot-lite-v112.webp?rev=release-v124-b24-24') center bottom / contain no-repeat;
 }
 html[data-presentation-mode="loading"] .boot-gate-line::after { animation-duration: .82s; }
 
@@ -4766,3 +4766,74 @@ body.battlefield-clarity-v122[data-battlefield-density-v122="extreme"] :is(.syne
 .loading-wrap .kicker{letter-spacing:.18em}
 .loading-wrap h1 em,.title-subtitle-v107{font-style:normal}
 html[data-dd-title-v123="ready"] .loading-mascot{filter:drop-shadow(0 16px 22px rgba(0,0,0,.42))}
+
+
+/* v1.0.24 Identity Lock, Direction QA & HUD Collision Assurance */
+:root {
+  --v124-boss-top: var(--v122-boss-top, calc(112px + var(--safe-top)));
+  --v124-secondary-top: var(--v122-secondary-top, calc(190px + var(--safe-top)));
+}
+.title-screen-v124 .title-brand-v124 {
+  width: min(46vw, 700px);
+  padding: clamp(14px, 1.7vw, 24px) clamp(18px, 2.4vw, 36px);
+  border: 1px solid rgba(255,223,148,.32);
+  border-radius: 22px;
+  background: linear-gradient(135deg, rgba(4,10,26,.86), rgba(15,18,48,.54) 68%, rgba(24,50,91,.28));
+  box-shadow: 0 24px 62px rgba(0,0,0,.36), inset 0 1px rgba(255,255,255,.08);
+  backdrop-filter: blur(12px) saturate(1.1);
+}
+.title-screen-v124 .title-wordmark-v107 { gap: .22em; align-items: baseline; }
+.title-screen-v124 .title-word-defense-v107 { white-space: nowrap; }
+.title-screen-v124 .title-subtitle-v107 {
+  display: inline-grid;
+  place-items: center;
+  min-width: 2.8em;
+  margin-top: .24em;
+  padding: .18em .55em;
+  border-radius: 999px;
+  color: #dff5ff;
+  background: linear-gradient(90deg, rgba(35,105,197,.78), rgba(73,41,133,.78));
+  border: 1px solid rgba(153,220,255,.46);
+  letter-spacing: .16em;
+  box-shadow: 0 7px 20px rgba(16,55,130,.32);
+}
+.title-screen-v124 .title-mascot-stage-v112 {
+  filter: drop-shadow(0 30px 30px rgba(0,0,0,.48));
+}
+.title-screen-v124 .title-panel-v124 {
+  border-color: rgba(121,208,255,.34);
+  box-shadow: 0 22px 52px rgba(0,0,0,.38), inset 0 1px rgba(255,255,255,.08);
+}
+body.release-assurance-v124 .boss-health,
+body.release-assurance-v124.boss-active .boss-health,
+body.release-assurance-v124.combat-boss-active-v121 .boss-health {
+  top: var(--v124-boss-top) !important;
+}
+body.release-assurance-v124 :is(.luck-meter,.synergy-panel,.unit-strip) {
+  top: var(--v124-secondary-top) !important;
+}
+body.release-assurance-v124.hud-collision-guard-v124 .boss-health {
+  transform: translateY(4px);
+}
+body.release-assurance-v124.hud-collision-guard-v124 :is(.luck-meter,.synergy-panel,.unit-strip) {
+  transform: translateY(8px);
+}
+body.release-assurance-v124.protagonist-direction-fallback-v124 #quality-badge::after {
+  content: ' · 11방향 폴백 점검';
+  color: #ffd479;
+}
+@media (max-width: 720px), (orientation: portrait) {
+  .title-screen-v124 .title-brand-v124 { width: min(88vw, 560px); padding: 13px 18px; border-radius: 18px; }
+  .title-screen-v124 .title-wordmark-v107 { gap: .12em; }
+  .title-screen-v124 .title-subtitle-v107 { margin-top: .12em; }
+  body.release-assurance-v124 .boss-health { top: var(--v124-boss-top) !important; }
+  body.release-assurance-v124 :is(.luck-meter,.synergy-panel,.unit-strip) { top: var(--v124-secondary-top) !important; }
+}
+@media (max-height: 600px) and (orientation: landscape) {
+  .title-screen-v124 .title-brand-v124 { width: min(42vw, 600px); padding: 10px 16px; }
+  .title-screen-v124 .title-subtitle-v107 { font-size: 11px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.release-assurance-v124 .boss-health,
+  body.release-assurance-v124 :is(.luck-meter,.synergy-panel,.unit-strip) { transition: none !important; }
+}

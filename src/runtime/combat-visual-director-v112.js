@@ -184,6 +184,10 @@ export default class CombatVisualDirectorV112 {
     this.directionSwitchesDeferredV122 = 0;
     this.healthLaneAssignmentsV122 = 0;
     this.healthOverlapClustersV122 = 0;
+    this.protagonistDirectionHitsV124 = Array.from({ length: DIRECTIONS }, () => 0);
+    this.protagonistStateHitsV124 = Object.fromEntries(STATES.map((state) => [state, 0]));
+    this.approvedProtagonistRecordsV124 = 0;
+    this.protagonistFallbackSelectionsV124 = 0;
   }
 
   setLiveCombatPolicyV121(policy = {}) {
@@ -421,7 +425,9 @@ export default class CombatVisualDirectorV112 {
       directionCandidateAgeV122: 0,
       directionLockV122: 0,
       healthLaneV122: 0,
-      healthScreenV122: null
+      healthScreenV122: null,
+      protagonistV124: category === 'hero',
+      actionRuntimeMappedV124: authoredAtlas && approvedDirectionalV117
     };
     this.records.add(record);
     this.recordByGroup.set(group, record);
@@ -435,6 +441,10 @@ export default class CombatVisualDirectorV112 {
     group.userData.combatVisualMode = approvedDirectionalV117 ? 'approved-directional-v117-action-provisional' : (authoredAtlas ? 'authored-directional-atlas-v112' : 'directional-art-fallback-v112');
     group.userData.directionArtApprovedV117 = Boolean(approvedDirectionalV117);
     group.userData.actionArtApprovedV117 = false;
+    group.userData.actionRuntimeMappedV124 = Boolean(record.actionRuntimeMappedV124);
+    group.userData.actionArtStatusV124 = record.actionRuntimeMappedV124 ? 'derived-provisional' : 'static-fallback';
+    if (record.protagonistV124 && approvedDirectionalV117) this.approvedProtagonistRecordsV124 += 1;
+    if (record.protagonistV124 && !approvedDirectionalV117) this.protagonistFallbackSelectionsV124 += 1;
     this.attachments += 1;
     this.byCategory[category] = (this.byCategory[category] || 0) + 1;
     return true;
@@ -684,6 +694,10 @@ export default class CombatVisualDirectorV112 {
     if (record.frame !== frame) this.directionUpdates += 1;
     record.frame = frame;
     record.state = state;
+    if (record.protagonistV124) {
+      if (Number.isInteger(frame) && frame >= 0 && frame < DIRECTIONS) this.protagonistDirectionHitsV124[frame] += 1;
+      if (Object.hasOwn(this.protagonistStateHitsV124, state)) this.protagonistStateHitsV124[state] += 1;
+    }
     const signed = frame <= 5 ? frame : frame - DIRECTIONS;
     const side = signed === 0 ? 0 : Math.sign(signed);
     const turn = Math.min(1, Math.abs(signed) / 5);
@@ -1007,6 +1021,12 @@ export default class CombatVisualDirectorV112 {
       directionSwitchesDeferredV122: this.directionSwitchesDeferredV122,
       healthLaneAssignmentsV122: this.healthLaneAssignmentsV122,
       healthOverlapClustersV122: this.healthOverlapClustersV122,
+      approvedProtagonistRecordsV124: this.approvedProtagonistRecordsV124,
+      protagonistFallbackSelectionsV124: this.protagonistFallbackSelectionsV124,
+      protagonistDirectionHitsV124: [...this.protagonistDirectionHitsV124],
+      protagonistStateHitsV124: { ...this.protagonistStateHitsV124 },
+      actionRuntimeMappingApprovedV124: true,
+      actionArtStatusV124: 'derived-provisional',
       legacyLayersRemoved: this.legacyLayersRemoved,
       coreMeshesHidden: this.coreMeshesHidden,
       attachments: this.attachments,

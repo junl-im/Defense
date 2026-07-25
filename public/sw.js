@@ -1,7 +1,8 @@
-const RELEASE_VERSION = '1.0.23';
-const BUILD_ID = 'b24.23';
+const RELEASE_VERSION = '1.0.24';
+const BUILD_ID = 'b24.24';
 // const VERSION = '23.1.0'; historical lineage marker.
-const CACHE_PREFIX = 'dokkaebi-shell-';
+const CACHE_PREFIX = 'dokkaebi-luck-defense-shell-';
+const LEGACY_CACHE_PREFIXES = ['dokkaebi-shell-', 'dokkaebi-luck-defense-shell-'];
 const CACHE_NAME = `${CACHE_PREFIX}${BUILD_ID}`;
 const SHELL_ASSETS = [
   './', './index.html', './manifest.webmanifest', './version.json',
@@ -15,9 +16,10 @@ const SHELL_ASSETS = [
   './src/runtime/bundle-marker-gate-v119.js',
   './src/runtime/live-combat-director-v121.js',
   './src/runtime/battlefield-clarity-director-v122.js',
+  './src/runtime/release-assurance-director-v124.js',
+  './src/runtime/title-presentation-guard-v123.js',
   './src/assets/title-v112/title-bg-desktop-lite-v112.webp',
   './src/assets/title-v112/title-bg-mobile-lite-v112.webp',
-  './src/assets/title-v112/title-mascot-lite-v112.webp',
   './src/assets/title-v112/title-mascot-lite-v112.webp'
 ];
 // Retained for explicit offline warming and historical release verification.
@@ -41,6 +43,9 @@ const OPTIONAL_WARM_ASSETS = [
   './src/runtime/bundle-marker-gate-v119.js',
   './src/runtime/live-combat-director-v121.js',
   './src/runtime/battlefield-clarity-director-v122.js',
+  './src/runtime/release-assurance-director-v124.js',
+  './src/runtime/title-presentation-guard-v123.js',
+  './release-assurance-v124.html',
   './asset-approval-v117.html',
   './assets/visual-v117/asset-approval-manifest-v117.json',
   './assets/visual-v117/asset-approval-registry-v117.json',
@@ -173,7 +178,7 @@ async function precache() {
 }
 async function removeOldCaches({ includeCurrent = false } = {}) {
   const keys = await caches.keys();
-  const targets = keys.filter((key) => key.startsWith(CACHE_PREFIX) && (includeCurrent || key !== CACHE_NAME));
+  const targets = keys.filter((key) => LEGACY_CACHE_PREFIXES.some((prefix) => key.startsWith(prefix)) && (includeCurrent || key !== CACHE_NAME));
   await Promise.all(targets.map((key) => caches.delete(key)));
   return targets;
 }
