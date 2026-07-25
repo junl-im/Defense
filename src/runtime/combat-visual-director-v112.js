@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import { DirectionalImpostorSelector } from '../engine/directional-impostor.js';
-import { COMBAT_ART_TEXTURE_IDS, GUARDIAN_CITADEL_TEXTURE_ID, P0_DIRECTIONAL_ATLAS_IDS, P0_DIRECTIONAL_ATLAS_SPEC_V112 } from '../engine/asset-catalog.js';
+import { COMBAT_ART_TEXTURE_IDS, GUARDIAN_CITADEL_TEXTURE_ID, GUARDIAN_CITADEL_STATE_TEXTURE_IDS_V117, P0_DIRECTIONAL_ATLAS_IDS, P0_DIRECTIONAL_ATLAS_SPEC_V112, APPROVED_DIRECTIONAL_ATLAS_IDS_V117 } from '../engine/asset-catalog.js';
 import { COMBAT_ART_RUNTIME_POLICY_V113, canUseP0DirectionalAtlasV113 } from './combat-art-runtime-policy-v113.js';
+import { isApprovedDirectionalAtlasV117 } from './asset-approval-pipeline-v117.js';
 
 const DIRECTIONS = P0_DIRECTIONAL_ATLAS_SPEC_V112.directions;
 const STATES = P0_DIRECTIONAL_ATLAS_SPEC_V112.states;
@@ -148,6 +149,7 @@ export default class CombatVisualDirectorV112 {
     this.legacyLayersRemoved = 0;
     this.coreMeshesHidden = 0;
     this.quarantinedPrototypeSelections = 0;
+    this.approvedDirectionalSelectionsV117 = 0;
   }
 
   getTexture(assetId) {
@@ -208,11 +210,17 @@ export default class CombatVisualDirectorV112 {
     return hidden;
   }
 
-  resolveCuratedAsset(fallbackAssetId, p0AssetId = '') {
+  resolveCuratedAsset(fallbackAssetId, p0AssetId = '', approvedAssetId = '') {
+    const approvedLoaded = Boolean(approvedAssetId && this.getTexture(approvedAssetId));
+    const approvedAllowed = approvedLoaded && isApprovedDirectionalAtlasV117(approvedAssetId);
+    if (approvedAllowed) {
+      this.approvedDirectionalSelectionsV117 += 1;
+      return { assetId: approvedAssetId, authoredAtlas: true, approvedDirectionalV117: true, p0Loaded: false, p0Allowed: false };
+    }
     const p0Loaded = Boolean(p0AssetId && this.getTexture(p0AssetId));
     const p0Allowed = p0Loaded && canUseP0DirectionalAtlasV113({ productionArtApproved: false });
     if (p0Loaded && !p0Allowed) this.quarantinedPrototypeSelections += 1;
-    return { assetId: fallbackAssetId, authoredAtlas: false, p0Loaded, p0Allowed };
+    return { assetId: fallbackAssetId, authoredAtlas: false, approvedDirectionalV117: false, p0Loaded, p0Allowed };
   }
 
   hidePrototypeVisuals(group) {
@@ -304,7 +312,8 @@ export default class CombatVisualDirectorV112 {
     getMaxShield = null,
     getBreak = null,
     getStatuses = null,
-    authoredAtlas = false
+    authoredAtlas = false,
+    approvedDirectionalV117 = false
   } = {}) {
     if (!group) return false;
     const existing = this.recordByGroup.get(group);
@@ -355,6 +364,7 @@ export default class CombatVisualDirectorV112 {
       getBreak: getBreak || (() => finite(group.userData?.worldBreakRatio, 0)),
       getStatuses: getStatuses || (() => group.userData?.worldStatuses || []),
       authoredAtlas,
+      approvedDirectionalV117,
       animation: null,
       selector: new DirectionalImpostorSelector({ directions: DIRECTIONS, hysteresis: .055 }),
       state: 'idle',
@@ -373,7 +383,9 @@ export default class CombatVisualDirectorV112 {
     // Compatibility aliases for systems that still read the v110 field names.
     group.userData.combatVisualSpriteV110 = sprite;
     group.userData.combatVisualRecordV110 = record;
-    group.userData.combatVisualMode = authoredAtlas ? 'authored-directional-atlas-v112' : 'directional-art-fallback-v112';
+    group.userData.combatVisualMode = approvedDirectionalV117 ? 'approved-directional-v117-action-provisional' : (authoredAtlas ? 'authored-directional-atlas-v112' : 'directional-art-fallback-v112');
+    group.userData.directionArtApprovedV117 = Boolean(approvedDirectionalV117);
+    group.userData.actionArtApprovedV117 = false;
     this.attachments += 1;
     this.byCategory[category] = (this.byCategory[category] || 0) + 1;
     return true;
@@ -398,7 +410,8 @@ export default class CombatVisualDirectorV112 {
   attachGuardian(group, type = 'ember', rank = 1, options = {}) {
     const fallbackAssetId = COMBAT_ART_TEXTURE_IDS.guardians[type] || COMBAT_ART_TEXTURE_IDS.guardians.ember;
     const p0AssetId = type === 'ember' ? P0_DIRECTIONAL_ATLAS_IDS.guardians.ember : '';
-    const { assetId, authoredAtlas } = this.resolveCuratedAsset(fallbackAssetId, p0AssetId);
+    const approvedAssetId = type === 'ember' ? APPROVED_DIRECTIONAL_ATLAS_IDS_V117.guardians.ember : '';
+    const { assetId, authoredAtlas, approvedDirectionalV117 } = this.resolveCuratedAsset(fallbackAssetId, p0AssetId, approvedAssetId);
     const rankBoost = 1 + Math.max(0, rank - 1) * .035;
     return this.attach(group, assetId, {
       category: 'guardian',
@@ -407,6 +420,7 @@ export default class CombatVisualDirectorV112 {
       healthY: 2.40 * rankBoost,
       healthWidth: 1.28 * rankBoost,
       authoredAtlas,
+      approvedDirectionalV117,
       ...options
     });
   }
@@ -441,7 +455,8 @@ export default class CombatVisualDirectorV112 {
     this.clearCombatAliases(core);
     this.hideLegacyCoreGeometry(core);
 
-    const texture = this.getTexture(GUARDIAN_CITADEL_TEXTURE_ID);
+    const v117CitadelId = GUARDIAN_CITADEL_STATE_TEXTURE_IDS_V117.stable;
+    const texture = this.getTexture(v117CitadelId) || this.getTexture(GUARDIAN_CITADEL_TEXTURE_ID);
     if (!texture) return false;
     const rootScale = Math.max(.05, finite(core.scale?.x, 1));
     const material = new THREE.SpriteMaterial({
@@ -476,7 +491,7 @@ export default class CombatVisualDirectorV112 {
     const record = {
       group: core,
       category: 'core',
-      assetId: GUARDIAN_CITADEL_TEXTURE_ID,
+      assetId: this.getTexture(v117CitadelId) ? v117CitadelId : GUARDIAN_CITADEL_TEXTURE_ID,
       sprite,
       aura: null,
       healthBar: bar,
@@ -805,9 +820,11 @@ export default class CombatVisualDirectorV112 {
       ...Object.values(COMBAT_ART_TEXTURE_IDS.monsters),
       ...Object.values(COMBAT_ART_TEXTURE_IDS.bosses)
     ];
-    const ids = [...P0_ATLAS_IDS, ...fallbackIds];
+    const approvedDirectionalIdsV117 = [...Object.values(APPROVED_DIRECTIONAL_ATLAS_IDS_V117.guardians)];
+    const ids = [...P0_ATLAS_IDS, ...approvedDirectionalIdsV117, ...fallbackIds];
     const loaded = ids.filter((id) => Boolean(this.getTexture(id))).length;
     const authoredLoaded = P0_ATLAS_IDS.filter((id) => Boolean(this.getTexture(id))).length;
+    const approvedDirectionalLoadedV117 = approvedDirectionalIdsV117.filter((id) => Boolean(this.getTexture(id))).length;
     const authoredActive = [...this.records].filter((record) => record.authoredAtlas).length;
     return Object.freeze({
       mode: 'curated-combat-art-v113',
@@ -821,10 +838,15 @@ export default class CombatVisualDirectorV112 {
       authoredAtlasesExpected: P0_ATLAS_IDS.length,
       authoredFrames: authoredLoaded * DIRECTIONS * STATES.length,
       authoredActive,
+      approvedDirectionalLoadedV117,
+      approvedDirectionalExpectedV117: approvedDirectionalIdsV117.length,
+      approvedDirectionalProductionArtV117: approvedDirectionalLoadedV117 > 0,
+      provisionalActionArtV117: true,
       mirroringAllowed: false,
       productionArtApproved: false,
       p0PrototypeRuntimeEnabled: COMBAT_ART_RUNTIME_POLICY_V113.p0PrototypeRuntimeEnabled,
       quarantinedPrototypeSelections: this.quarantinedPrototypeSelections,
+      approvedDirectionalSelectionsV117: this.approvedDirectionalSelectionsV117,
       legacyLayersRemoved: this.legacyLayersRemoved,
       coreMeshesHidden: this.coreMeshesHidden,
       attachments: this.attachments,

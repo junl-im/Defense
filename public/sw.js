@@ -1,5 +1,5 @@
-const RELEASE_VERSION = '1.0.15';
-const BUILD_ID = 'b24.15';
+const RELEASE_VERSION = '1.0.17';
+const BUILD_ID = 'b24.17';
 // const VERSION = '23.1.0'; historical lineage marker.
 const CACHE_PREFIX = 'dokkaebi-shell-';
 const CACHE_NAME = `${CACHE_PREFIX}${BUILD_ID}`;
@@ -10,6 +10,7 @@ const SHELL_ASSETS = [
   './src/runtime/first-presentation-director-v107.js',
   './src/runtime/visual-integration-director.js',
   './src/runtime/art-approval-pipeline-v115.js',
+  './src/runtime/asset-approval-pipeline-v117.js',
   './src/assets/title-v112/title-bg-desktop-lite-v112.webp',
   './src/assets/title-v112/title-bg-mobile-lite-v112.webp',
   './src/assets/title-v112/title-mascot-lite-v112.webp'
@@ -30,6 +31,26 @@ const OPTIONAL_WARM_ASSETS = [
   './src/runtime/combat-art-runtime-policy-v113.js',
   './src/runtime/combat-art-polish-policy-v114.js',
   './src/runtime/combat-art-polish-director-v114.js',
+  './src/runtime/asset-approval-pipeline-v117.js',
+  './asset-approval-v117.html',
+  './assets/visual-v117/asset-approval-manifest-v117.json',
+  './assets/visual-v117/asset-approval-registry-v117.json',
+  './assets/visual-v117/directional/guardian-ember-pupu-turntable-v117.webp',
+  './assets/visual-v117/directional/guardian-ember-pupu-atlas-low-v117.webp',
+  './assets/visual-v117/directional/guardian-ember-pupu-atlas-medium-v117.webp',
+  './assets/visual-v117/directional/guardian-ember-pupu-atlas-high-v117.webp',
+  './assets/visual-v117/citadel/guardian-citadel-stable-low-v117.webp',
+  './assets/visual-v117/citadel/guardian-citadel-stable-medium-v117.webp',
+  './assets/visual-v117/citadel/guardian-citadel-stable-high-v117.webp',
+  './assets/visual-v117/citadel/guardian-citadel-shielded-low-v117.webp',
+  './assets/visual-v117/citadel/guardian-citadel-shielded-medium-v117.webp',
+  './assets/visual-v117/citadel/guardian-citadel-shielded-high-v117.webp',
+  './assets/visual-v117/citadel/guardian-citadel-cracked-low-v117.webp',
+  './assets/visual-v117/citadel/guardian-citadel-cracked-medium-v117.webp',
+  './assets/visual-v117/citadel/guardian-citadel-cracked-high-v117.webp',
+  './assets/visual-v117/citadel/guardian-citadel-critical-low-v117.webp',
+  './assets/visual-v117/citadel/guardian-citadel-critical-medium-v117.webp',
+  './assets/visual-v117/citadel/guardian-citadel-critical-high-v117.webp',
   './src/runtime/cross-platform-shell-v112.js',
   './p0-directional-library-v112.html',
   './assets/visual-v112/directional/p0-directional-manifest-v112.json',

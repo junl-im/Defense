@@ -13,6 +13,7 @@ import { CODEX_SECTION_META, CODEX_SECTION_ORDER, getCodexEntries, getCodexTotal
 import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, ObjectPool, RenderStatsHUD, AssetPipeline, AnimationStateSystem, FrameBudgetScheduler } from './engine/index.js';
 import { isMovementCode } from './runtime/native-input-policy-v231.js';
 import { createArtApprovalReportV115 } from './runtime/art-approval-pipeline-v115.js';
+import { createAssetApprovalReportV117 } from './runtime/asset-approval-pipeline-v117.js';
 import { DEFAULT_CAMERA_PROFILE_ID, getCameraProfile, sanitizeCameraProfileId, cycleCameraProfile, resolveCameraDistance } from './engine/camera-profile.js';
 import { BOOT_ASSET_CATALOG, DEFERRED_ASSET_CATALOG, ASSET_LOADING_PLAN_V115, PLAYER_ASSET_ID, GUARDIAN_ASSET_IDS, MONSTER_ASSET_IDS, BOSS_ASSET_IDS } from './engine/asset-catalog.js';
 import { HERO_CLASSES, HERO_CLASS_ORDER, HERO_CLASS_ASSET_IDS, getHeroClass } from './hero-classes.js';
@@ -90,7 +91,7 @@ const ui = {
   rotateSensitivity: $('#rotate-sensitivity'), rotateSensitivityValue: $('#rotate-sensitivity-value'), pinchSensitivity: $('#pinch-sensitivity'), pinchSensitivityValue: $('#pinch-sensitivity-value'),
   wheelSensitivity: $('#wheel-sensitivity'), wheelSensitivityValue: $('#wheel-sensitivity-value'), minimumZoom: $('#minimum-zoom'), minimumZoomValue: $('#minimum-zoom-value'), maximumZoom: $('#maximum-zoom'), maximumZoomValue: $('#maximum-zoom-value'),
   shakeIntensity: $('#shake-intensity'), shakeIntensityValue: $('#shake-intensity-value'), flashIntensity: $('#flash-intensity'), flashIntensityValue: $('#flash-intensity-value'), performanceExport: $('#performance-export-btn'),
-  assetDiagnosticsSummary: $('#asset-diagnostics-summary'), assetDiagnosticsCount: $('#asset-diagnostics-count'), assetDiagnosticsList: $('#asset-diagnostics-list'), goldenSamplePreview: $('#golden-sample-preview-btn'), productionConsole: $('#production-console-btn'),
+  assetDiagnosticsSummary: $('#asset-diagnostics-summary'), assetDiagnosticsCount: $('#asset-diagnostics-count'), assetDiagnosticsList: $('#asset-diagnostics-list'), goldenSamplePreview: $('#golden-sample-preview-btn'), productionConsole: $('#production-console-btn'), assetApprovalV117: $('#asset-approval-v117-btn'),
   contractModal: $('#contract-modal'), contractOptions: $('#contract-options'), contractSkip: $('#contract-skip-btn'), metaModal: $('#meta-modal'), metaShards: $('#meta-shards'), metaTraitList: $('#meta-trait-list'),
   equipmentModal: $('#equipment-modal'), equipmentSlots: $('#equipment-slots'), equipmentList: $('#equipment-list'), equipmentEssence: $('#equipment-essence'), equipmentBonus: $('#equipment-bonus'), equipmentMastery: $('#equipment-mastery'),
   hud: $('#hud'), hudLayout: $('#hud-layout-btn'), heroHudPortrait: $('#hero-hud-portrait'), hp: $('#hp-value'), gold: $('#gold-value'), waveLabel: $('#wave-label'), waveProgress: $('#wave-progress'),
@@ -129,7 +130,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '1.0.15';
+const GAME_VERSION = '1.0.17';
 // const GAME_VERSION = '23.1.0'; historical lineage marker for pre-normalization contracts.
 if (GAME_VERSION !== PUBLIC_GAME_VERSION) throw new Error('Public version policy mismatch');
 function runtimeSpriteMarkup(path, alt = '', className = '') {
@@ -224,6 +225,8 @@ class DokkaebiLuckDefense {
     this.deferredAssetReport = null;
     this.assetLoadingPlanV115 = ASSET_LOADING_PLAN_V115;
     this.artApprovalReportV115 = createArtApprovalReportV115();
+    this.artApprovalReportV117 = createAssetApprovalReportV117();
+    window.__DOKKAEBI_ART_APPROVAL_V117__ = this.artApprovalReportV117;
     this.elapsed = 0;
     this.shake = 0;
     const initialCameraProfile = getCameraProfile(DEFAULT_CAMERA_PROFILE_ID);
@@ -238,6 +241,11 @@ class DokkaebiLuckDefense {
     this.lookPointer = null;
     this.lookPointers = new Map();
     this.pinchState = null;
+    this.mapTouchDiagnosticsV116 = {
+      version: '1.0.17', accepted: 0, rejected: 0, cancelled: 0,
+      bands: { left: 0, center: 0, right: 0 }, lastBand: '', lastNdc: null
+    };
+    window.__DOKKAEBI_MAP_TOUCH_V116__ = this.mapTouchDiagnosticsV116;
     this.cinematic = null;
     this.input = { x: 0, y: 0, keys: new Set() };
     this.moveTarget = null;
@@ -934,6 +942,10 @@ class DokkaebiLuckDefense {
       const enabled = this.productionConsole?.toggle();
       this.showToast(enabled ? '제작 디렉터 콘솔을 표시합니다.' : '제작 디렉터 콘솔을 숨깁니다.');
     }, {}, 'production-console');
+    on(ui.assetApprovalV117, 'click', () => {
+      const opened = window.open('./asset-approval-v117.html', 'dokkaebi-asset-approval-v117', 'noopener,noreferrer');
+      if (!opened) this.showToast('팝업이 차단되었습니다. asset-approval-v117.html을 직접 열어 주세요.');
+    }, {}, 'asset-approval-v117');
     on(ui.saveScore, 'click', () => this.saveScore(), {}, 'save-score');
     on(ui.summon, 'click', () => this.summonUnit(), {}, 'summon');
     on(ui.wave, 'click', () => { if (this.autoWaveCountdown > 0) this.automationV22.noteWaveSkip(); this.startWave({ manual: true }); }, {}, 'wave');
@@ -1358,8 +1370,9 @@ class DokkaebiLuckDefense {
     this.listen(ui.lookZone, 'pointerdown', (event) => {
       if (this.state !== 'playing') return;
       if (event.pointerType === 'mouse' && event.button !== 0) return;
+      event.preventDefault();
       this.lookPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
-      ui.lookZone.setPointerCapture(event.pointerId);
+      try { ui.lookZone.setPointerCapture(event.pointerId); } catch {}
       if (this.lookPointers.size >= 2) {
         beginPinch();
         return;
@@ -1396,7 +1409,7 @@ class DokkaebiLuckDefense {
       this.lookPointer.x = event.clientX;
       this.lookPointer.y = event.clientY;
     }, {}, 'look-move');
-    const end = (event) => {
+    const end = (event, cancelled = false) => {
       const wasPinching = Boolean(this.pinchState);
       const pointer = this.lookPointer;
       this.lookPointers.delete(event.pointerId);
@@ -1406,17 +1419,23 @@ class DokkaebiLuckDefense {
           this.pinchState = null;
           this.lookPointer = null;
         }
+        if (cancelled) this.mapTouchDiagnosticsV116.cancelled += 1;
         return;
       }
       if (!pointer || pointer.id !== event.pointerId) return;
       this.lookPointer = null;
+      if (cancelled) {
+        this.mapTouchDiagnosticsV116.cancelled += 1;
+        return;
+      }
       const duration = performance.now() - pointer.startedAt;
       if (!pointer.dragging && duration <= tapDuration && this.state === 'playing') {
         this.setMoveTargetFromScreen(event.clientX, event.clientY);
       }
     };
-    this.listen(ui.lookZone, 'pointerup', end, {}, 'look-up');
-    this.listen(ui.lookZone, 'pointercancel', end, {}, 'look-cancel');
+    this.listen(ui.lookZone, 'pointerup', (event) => end(event, false), {}, 'look-up');
+    this.listen(ui.lookZone, 'pointercancel', (event) => end(event, true), {}, 'look-cancel');
+    this.listen(ui.lookZone, 'lostpointercapture', (event) => end(event, true), {}, 'look-lost-capture-v116');
     this.listen(window, 'wheel', (event) => {
       if (this.state !== 'playing' || this.isTypingTarget(event.target) || event.target?.closest?.('button, input, select, textarea, .modal-card')) return;
       event.preventDefault();
@@ -1427,17 +1446,30 @@ class DokkaebiLuckDefense {
   }
 
   setMoveTargetFromScreen(clientX, clientY) {
-    if (!this.player || this.state !== 'playing') return false;
+    if (!this.player || this.state !== 'playing') {
+      this.mapTouchDiagnosticsV116.rejected += 1;
+      return false;
+    }
     const rect = ui.canvas.getBoundingClientRect();
-    if (!rect.width || !rect.height) return false;
-    this.pointer.set(
-      ((clientX - rect.left) / rect.width) * 2 - 1,
-      -((clientY - rect.top) / rect.height) * 2 + 1
-    );
+    if (!rect.width || !rect.height || clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) {
+      this.mapTouchDiagnosticsV116.rejected += 1;
+      return false;
+    }
+    const ratioX = clamp((clientX - rect.left) / rect.width, 0, 1);
+    const ratioY = clamp((clientY - rect.top) / rect.height, 0, 1);
+    const band = ratioX < 1 / 3 ? 'left' : ratioX < 2 / 3 ? 'center' : 'right';
+    this.pointer.set(ratioX * 2 - 1, -(ratioY * 2) + 1);
     this.raycaster.setFromCamera(this.pointer, this.camera);
     const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
     const rawPoint = new THREE.Vector3();
-    if (!this.raycaster.ray.intersectPlane(groundPlane, rawPoint)) return false;
+    if (!this.raycaster.ray.intersectPlane(groundPlane, rawPoint)) {
+      this.mapTouchDiagnosticsV116.rejected += 1;
+      return false;
+    }
+    this.mapTouchDiagnosticsV116.accepted += 1;
+    this.mapTouchDiagnosticsV116.bands[band] += 1;
+    this.mapTouchDiagnosticsV116.lastBand = band;
+    this.mapTouchDiagnosticsV116.lastNdc = { x: this.pointer.x, y: this.pointer.y };
     rawPoint.y = 0;
     const resolved = this.resolveNavigationPoint(rawPoint.clone());
     this.moveTargetRaw = rawPoint.clone();
@@ -7039,7 +7071,7 @@ try {
       },
       foundationReport: () => game.coreFoundation?.report || {},
       dispose: () => game.dispose(),
-      reliabilityReport: () => ({ foundation: game.coreFoundation?.report || {}, wave: game.waveReliability?.report || {}, browser: game.browserReliability?.report || {}, firstPresentation: game.firstPresentationReport || game.firstPresentation?.report || {}, automation: game.automationV22?.report || {}, targeting: game.guardianTargetingV22?.report || {}, mobileHud: game.mobileHudV23?.report || {}, crossPlatformShell: game.crossPlatformShellV112?.report || {}, combatVisual: game.combatVisualV112?.diagnostics || {}, artApprovalV115: game.artApprovalReportV115 || {}, assetLoadingV115: { plan: game.assetLoadingPlanV115, ready: game.deferredAssetsReady, report: game.deferredAssetReport } })
+      reliabilityReport: () => ({ foundation: game.coreFoundation?.report || {}, wave: game.waveReliability?.report || {}, browser: game.browserReliability?.report || {}, firstPresentation: game.firstPresentationReport || game.firstPresentation?.report || {}, automation: game.automationV22?.report || {}, targeting: game.guardianTargetingV22?.report || {}, mobileHud: game.mobileHudV23?.report || {}, crossPlatformShell: game.crossPlatformShellV112?.report || {}, combatVisual: game.combatVisualV112?.diagnostics || {}, artApprovalV115: game.artApprovalReportV115 || {}, artApprovalV117: game.artApprovalReportV117 || {}, assetLoadingV115: { plan: game.assetLoadingPlanV115, ready: game.deferredAssetsReady, report: game.deferredAssetReport } })
     });
     game.browserReliability?.noteMilestone('game-ready', { state: game.state });
     window.dispatchEvent(new Event('dokkaebi:boot-ready'));

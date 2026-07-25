@@ -2876,7 +2876,7 @@ body.title-mascot-fallback .title-mascot-stage { background:url('./assets/title-
   #unit-strip { max-width:58vw; gap:3px; }
   #action-dock { right:max(6px,var(--safe-right)); bottom:calc(8px + var(--safe-bottom)); gap:5px; transform:scale(.88); transform-origin:right bottom; }
   #joystick-zone { left:max(8px,var(--safe-left)); bottom:calc(10px + var(--safe-bottom)); transform:scale(.86); transform-origin:left bottom; }
-  #look-zone { inset:22% 0 22% 34%; }
+  #look-zone { inset: calc(58px + var(--safe-top)) 0 0 0; }
   .boss-hud { top:calc(48px + var(--safe-top)); width:min(88vw,430px); }
   .wave-recovery { top:calc(52px + var(--safe-top)); }
 }
@@ -4462,3 +4462,24 @@ body.title-mascot-fallback .title-mascot-stage-v112 {
   background: url('./assets/title-v112/title-mascot-lite-v112.webp?rev=release-v115-b24-15') center bottom / contain no-repeat;
 }
 html[data-presentation-mode="loading"] .boot-gate-line::after { animation-duration: .82s; }
+
+
+/* v1.0.16 Full-Map Touch Navigation ========================================
+   The former mobile rule excluded the left 34% of the battlefield. The map
+   input surface now spans every visible ground lane; higher-z HUD controls
+   continue to receive their own pointer events without leaking move orders. */
+body.dd-shell-pc-v112 .look-zone { inset: 0 !important; left: 0 !important; right: 0 !important; width: auto !important; }
+body.dd-shell-tablet-v112 .look-zone {
+  inset: calc(58px + var(--safe-top)) 0 0 0 !important;
+  left: 0 !important; right: 0 !important; width: auto !important;
+}
+body.dd-shell-mobile-v112.dd-shell-portrait-v112 .look-zone {
+  inset: calc(58px + var(--safe-top)) 0 0 0 !important;
+  left: 0 !important; right: 0 !important; width: auto !important;
+}
+body.dd-shell-mobile-v112.dd-shell-landscape-v112 .look-zone {
+  inset: calc(49px + var(--safe-top)) 0 0 0 !important;
+  left: 0 !important; right: 0 !important; width: auto !important;
+}
+body.modal-open .look-zone, body:not(.playing) .look-zone { pointer-events: none; }
+body.playing:not(.modal-open) .look-zone { pointer-events: auto; }

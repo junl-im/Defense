@@ -1,14 +1,14 @@
-> 현재 개선 패치: **v1.0.15 / b24.15** — 시작 화면 문구 노출 제거, 필수 자산 우선 로딩, 승인형 아트 파이프라인
+> 현재 개선 패치: **v1.0.17 / b24.17** — 모바일 좌측 맵 터치 이동 복구, 전체 지형 입력 범위 검증
 
-# PROJECT HANDOFF — RELEASE 1.0.12
+# PROJECT HANDOFF — RELEASE 1.0.17
 
-- Project: `DokkaebiLuckDefense3D_FULL_v1.0.12_CROSS_PLATFORM_VISUAL_POLISH`
-- Public game version: `1.0.12`
+- Project: `DokkaebiLuckDefense3D_FULL_v1.0.17_TOUCH_MAP_FIX`
+- Public game version: `1.0.17`
 - Legacy development lineage: `23.1.0`
-- Build ID: `b24.12`
+- Build ID: `b24.17`
 - Engine: `21.0.0`
 - Save schema: `21`
-- Patch: `Cross-Platform Visual Polish`
+- Patch: `Full-Map Touch Navigation`
 - Base: `1.0.11 IP Knowledge Megaforge v4`
 - Art lock: `DD-ABSOLUTE-ART-BIBLE-2.0`
 

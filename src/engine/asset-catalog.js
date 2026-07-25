@@ -78,12 +78,32 @@ export const P0_DIRECTIONAL_ATLAS_SPEC_V112 = Object.freeze({
   frameCount: 264
 });
 
+
+export const APPROVED_DIRECTIONAL_ATLAS_IDS_V117 = Object.freeze({
+  guardians: Object.freeze({ ember: 'approved-directional-guardian-ember-pupu-v117' })
+});
+
+export const APPROVED_DIRECTIONAL_ATLAS_SPEC_V117 = Object.freeze({
+  version: '1.0.17', build: 'b24.17', directions: 11, states: 6,
+  columns: 11, rows: 6, directionArtApproved: true,
+  actionArtApproved: false, actionRowsDerivedProvisional: 5,
+  mirroringAllowed: false, runtimeEntitiesApproved: 1
+});
+
 export const GUARDIAN_CITADEL_TEXTURE_ID = 'guardian-citadel-art-v110';
 export const GUARDIAN_CITADEL_STATE_TEXTURE_IDS_V114 = Object.freeze({
   stable: GUARDIAN_CITADEL_TEXTURE_ID,
   shielded: 'guardian-citadel-shielded-v114',
   cracked: 'guardian-citadel-cracked-v114',
   critical: 'guardian-citadel-critical-v114'
+});
+
+
+export const GUARDIAN_CITADEL_STATE_TEXTURE_IDS_V117 = Object.freeze({
+  stable: 'guardian-citadel-stable-v117',
+  shielded: 'guardian-citadel-shielded-v117',
+  cracked: 'guardian-citadel-cracked-v117',
+  critical: 'guardian-citadel-critical-v117'
 });
 
 const polishedVariantsV114 = (folder, slug) => Object.freeze({
@@ -121,6 +141,38 @@ const guardianCitadelStateTextureVariantsV114 = Object.freeze({
   [GUARDIAN_CITADEL_STATE_TEXTURE_IDS_V114.shielded]: polishedVariantsV114('citadel', 'guardian-citadel-shielded'),
   [GUARDIAN_CITADEL_STATE_TEXTURE_IDS_V114.cracked]: polishedVariantsV114('citadel', 'guardian-citadel-cracked'),
   [GUARDIAN_CITADEL_STATE_TEXTURE_IDS_V114.critical]: polishedVariantsV114('citadel', 'guardian-citadel-critical')
+});
+
+
+const approvedDirectionalAtlasVariantsV117 = Object.freeze({
+  [APPROVED_DIRECTIONAL_ATLAS_IDS_V117.guardians.ember]: Object.freeze({
+    low: publicAsset('visual-v117/directional/guardian-ember-pupu-atlas-low-v117.webp'),
+    medium: publicAsset('visual-v117/directional/guardian-ember-pupu-atlas-medium-v117.webp'),
+    high: publicAsset('visual-v117/directional/guardian-ember-pupu-atlas-high-v117.webp')
+  })
+});
+
+const guardianCitadelStateTextureVariantsV117 = Object.freeze({
+  [GUARDIAN_CITADEL_STATE_TEXTURE_IDS_V117.stable]: Object.freeze({
+    low: publicAsset('visual-v117/citadel/guardian-citadel-stable-low-v117.webp'),
+    medium: publicAsset('visual-v117/citadel/guardian-citadel-stable-medium-v117.webp'),
+    high: publicAsset('visual-v117/citadel/guardian-citadel-stable-high-v117.webp')
+  }),
+  [GUARDIAN_CITADEL_STATE_TEXTURE_IDS_V117.shielded]: Object.freeze({
+    low: publicAsset('visual-v117/citadel/guardian-citadel-shielded-low-v117.webp'),
+    medium: publicAsset('visual-v117/citadel/guardian-citadel-shielded-medium-v117.webp'),
+    high: publicAsset('visual-v117/citadel/guardian-citadel-shielded-high-v117.webp')
+  }),
+  [GUARDIAN_CITADEL_STATE_TEXTURE_IDS_V117.cracked]: Object.freeze({
+    low: publicAsset('visual-v117/citadel/guardian-citadel-cracked-low-v117.webp'),
+    medium: publicAsset('visual-v117/citadel/guardian-citadel-cracked-medium-v117.webp'),
+    high: publicAsset('visual-v117/citadel/guardian-citadel-cracked-high-v117.webp')
+  }),
+  [GUARDIAN_CITADEL_STATE_TEXTURE_IDS_V117.critical]: Object.freeze({
+    low: publicAsset('visual-v117/citadel/guardian-citadel-critical-low-v117.webp'),
+    medium: publicAsset('visual-v117/citadel/guardian-citadel-critical-medium-v117.webp'),
+    high: publicAsset('visual-v117/citadel/guardian-citadel-critical-high-v117.webp')
+  })
 });
 
 
@@ -187,13 +239,30 @@ export const CORE_ASSET_CATALOG = Object.freeze([
   })),
   // P0 directional atlases remain in the review library but are intentionally
   // excluded from runtime preload until independent production approval.
-  ...Object.entries(combatArtTextureVariantsV114).map(([id, variants]) => ({
+  ...Object.entries(approvedDirectionalAtlasVariantsV117).map(([id, variants]) => ({
+    id, kind: 'texture', required: false, retain: true, color: true,
+    role: 'approved-directional-guardian-v117', variants,
+    sourceWidth: 2024, sourceHeight: 1104,
+    productionArtApproved: true, runtimeApproved: true,
+    directionArtApproved: true, actionArtApproved: false
+  })),
+  ...Object.entries(guardianCitadelStateTextureVariantsV117).map(([id, variants]) => ({
+    id, kind: 'texture', required: false, retain: true, color: true,
+    role: 'guardian-citadel-state-v117', variants,
+    sourceWidth: 512, sourceHeight: 512,
+    productionArtApproved: true, runtimeApproved: true
+  })),
+  ...Object.entries(combatArtTextureVariantsV114)
+    .filter(([id]) => id !== COMBAT_ART_TEXTURE_IDS.guardians.ember)
+    .map(([id, variants]) => ({
     id, kind: 'texture', required: false, retain: true, color: true, role: 'combat-art-polished-v114',
     variants,
     sourceWidth: 512, sourceHeight: 512,
     productionArtApproved: true, runtimeApproved: true
   })),
-  ...Object.entries(guardianCitadelStateTextureVariantsV114).map(([id, variants]) => ({
+  ...Object.entries(guardianCitadelStateTextureVariantsV114)
+    .filter(() => false) // superseded by the approved v117 citadel state set
+    .map(([id, variants]) => ({
     id, kind: 'texture', required: false, retain: true, color: true, role: 'guardian-citadel-state-v114',
     variants,
     sourceWidth: 512, sourceHeight: 512,

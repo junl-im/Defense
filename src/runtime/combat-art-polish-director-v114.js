@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import CombatVisualDirectorV112 from './combat-visual-director-v112.js';
-import { GUARDIAN_CITADEL_STATE_TEXTURE_IDS_V114 } from '../engine/asset-catalog.js';
+import { GUARDIAN_CITADEL_STATE_TEXTURE_IDS_V114, GUARDIAN_CITADEL_STATE_TEXTURE_IDS_V117 } from '../engine/asset-catalog.js';
 import {
   CATEGORY_ACCENTS_V114,
   COMBAT_ART_POLISH_POLICY_V114,
@@ -160,10 +160,15 @@ export default class CombatArtPolishDirectorV114 extends CombatVisualDirectorV11
     record.baseScale = record.sprite.scale.x;
     record.baseY = .018 / Math.max(.05, finite(core.scale?.x, 1));
     record.citadelTexturesV114 = Object.fromEntries(
-      Object.entries(GUARDIAN_CITADEL_STATE_TEXTURE_IDS_V114)
-        .map(([state, id]) => [state, this.getTexture(id)])
+      Object.keys(GUARDIAN_CITADEL_STATE_TEXTURE_IDS_V117)
+        .map((state) => [state,
+          this.getTexture(GUARDIAN_CITADEL_STATE_TEXTURE_IDS_V117[state]) ||
+          this.getTexture(GUARDIAN_CITADEL_STATE_TEXTURE_IDS_V114[state])
+        ])
         .filter(([, texture]) => Boolean(texture))
     );
+    record.citadelArtVersion = record.citadelTexturesV114?.stable === this.getTexture(GUARDIAN_CITADEL_STATE_TEXTURE_IDS_V117.stable)
+      ? 'v117-approved' : 'v114-fallback';
     const profile = Object.freeze({ action: 'core', accent: CATEGORY_ACCENTS_V114.core, centerY: .06 });
     this.decorateRecord(core, profile);
     record.polishV114.ring.scale.setScalar(record.baseScale * .72);
@@ -298,7 +303,8 @@ export default class CombatArtPolishDirectorV114 extends CombatVisualDirectorV11
       unmirroredFallbackUpdates: this.unmirroredFallbackUpdates,
       actionProfileUpdates: this.actionProfileUpdates,
       citadelStateChanges: this.citadelStateChanges,
-      citadelStatesVisited: [...this.citadelStatesVisited]
+      citadelStatesVisited: [...this.citadelStatesVisited],
+      approvedCitadelArtV117: [...this.records].filter((record) => record.citadelArtVersion === 'v117-approved').length
     });
   }
 }

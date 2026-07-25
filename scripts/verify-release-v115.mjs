@@ -20,12 +20,13 @@ const visual=text('src/runtime/visual-integration-director.js');
 const approval=text('src/runtime/art-approval-pipeline-v115.js');
 const sw=text('public/sw.js');
 
-check(pkg.version==='1.0.15' && pkg.dokkaebi?.buildId==='b24.15','release identity mismatch');
-check(lock.version===pkg.version && lock.packages?.['']?.dokkaebi?.buildId==='b24.15','lock identity mismatch');
-check(version.releaseVersion==='1.0.15' && version.buildId==='b24.15','public identity mismatch');
-check(main.includes("const GAME_VERSION = '1.0.15'"),'runtime identity mismatch');
-check(index.includes("RELEASE_VERSION = '1.0.15'") && index.includes("BUILD_ID = 'b24.15'"),'boot identity mismatch');
-if(!failures.length) pass('v1.0.15 / b24.15 identity is synchronized');
+const currentPatch=Number(String(pkg.version).split('.')[2]||0);
+check(currentPatch>=15 && pkg.version===pkg.dokkaebi?.releaseVersion,'current release predates v1.0.15 or metadata mismatch');
+check(lock.version===pkg.version && lock.packages?.['']?.dokkaebi?.buildId===pkg.dokkaebi?.buildId,'lock identity mismatch');
+check(version.releaseVersion===pkg.version && version.buildId===pkg.dokkaebi?.buildId,'public identity mismatch');
+check(main.includes(`const GAME_VERSION = '${pkg.version}'`),'runtime identity mismatch');
+check(index.includes(`RELEASE_VERSION = '${pkg.version}'`) && index.includes(`BUILD_ID = '${pkg.dokkaebi?.buildId}'`),'boot identity mismatch');
+if(!failures.length) pass(`v1.0.15 foundation is preserved under current release ${pkg.version} / ${pkg.dokkaebi?.buildId}`);
 
 check(!index.includes('alt="푸른 도깨비불과 곤봉을 든 도깨비 수호대 마스코트"'),'floating mascot alt copy remains');
 check(index.includes('role="img" aria-label="푸른 도깨비 수호대 마스코트"'),'accessible mascot label missing');

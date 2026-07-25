@@ -1,0 +1,202 @@
+{
+  "version": "1.0.17",
+  "build": "b24.17",
+  "policyId": "DD-ASSET-APPROVAL-V117",
+  "summary": {
+    "directionalEntitiesApproved": 1,
+    "directionViewsApproved": 11,
+    "actionRowsProvisional": 5,
+    "citadelStatesApproved": 4,
+    "oldPrototypeAtlasesQuarantined": 4
+  },
+  "directional": {
+    "assetId": "approved-directional-guardian-ember-pupu-v117",
+    "columns": 11,
+    "rows": 6,
+    "directions": [
+      "front",
+      "front-30",
+      "side",
+      "back-45",
+      "back",
+      "back-opposite-45",
+      "opposite-side",
+      "opposite-30",
+      "low-45",
+      "high-45",
+      "special-front"
+    ],
+    "states": [
+      "idle",
+      "move",
+      "attack",
+      "skill",
+      "hit",
+      "death"
+    ],
+    "directionArt": "approved",
+    "actionArt": "derived-provisional",
+    "mirroringAllowed": false
+  },
+  "citadel": {
+    "assetIds": {
+      "stable": "guardian-citadel-stable-v117",
+      "shielded": "guardian-citadel-shielded-v117",
+      "cracked": "guardian-citadel-cracked-v117",
+      "critical": "guardian-citadel-critical-v117"
+    },
+    "states": [
+      "stable",
+      "shielded",
+      "cracked",
+      "critical"
+    ],
+    "productionApproved": true
+  },
+  "files": [
+    {
+      "path": "public/assets/visual-v117/directional/guardian-ember-pupu-atlas-low-v117.webp",
+      "bytes": 196084,
+      "sha256": "bcc6f55936a6421ba8c34af84e36b4b2ae955529e04037a7fabd6572c5417e0a",
+      "dimensions": [
+        704,
+        384
+      ]
+    },
+    {
+      "path": "public/assets/visual-v117/directional/guardian-ember-pupu-atlas-medium-v117.webp",
+      "bytes": 755166,
+      "sha256": "8a6bc13d6f3745c3e2f875c899bcd192e486108ff2ae9f2fd5d6f192d2a276a6",
+      "dimensions": [
+        1584,
+        864
+      ]
+    },
+    {
+      "path": "public/assets/visual-v117/directional/guardian-ember-pupu-atlas-high-v117.webp",
+      "bytes": 1195686,
+      "sha256": "954a3a7f2b380a0f7d785313075c7107d03699ff45dabce6d590f95d40ee318f",
+      "dimensions": [
+        2024,
+        1104
+      ]
+    },
+    {
+      "path": "public/assets/visual-v117/citadel/guardian-citadel-stable-low-v117.webp",
+      "bytes": 19060,
+      "sha256": "3bdfa6d9a3f93ccc981901c853f4bfda0a0c2c2a1da340284f12937476de05b9",
+      "dimensions": [
+        192,
+        192
+      ]
+    },
+    {
+      "path": "public/assets/visual-v117/citadel/guardian-citadel-stable-medium-v117.webp",
+      "bytes": 54004,
+      "sha256": "17a0bc04941eb6823325763eb0c4c20105155567cd5eda4d880fe78399f909f1",
+      "dimensions": [
+        384,
+        384
+      ]
+    },
+    {
+      "path": "public/assets/visual-v117/citadel/guardian-citadel-stable-high-v117.webp",
+      "bytes": 95044,
+      "sha256": "495d63c196acc8ca000f8b218deffcfe5882cd8039eaaec3b674bdd9e2606e66",
+      "dimensions": [
+        512,
+        512
+      ]
+    },
+    {
+      "path": "public/assets/visual-v117/citadel/guardian-citadel-shielded-low-v117.webp",
+      "bytes": 18808,
+      "sha256": "d691edfbd9b831e0dcbadc19e088d12a5305f0fe53b8512e7153fb66f6cc0b4b",
+      "dimensions": [
+        192,
+        192
+      ]
+    },
+    {
+      "path": "public/assets/visual-v117/citadel/guardian-citadel-shielded-medium-v117.webp",
+      "bytes": 52998,
+      "sha256": "d969ddc0181b912256264ebd9df9bf651024f71952269b8b364db783ffdee6e3",
+      "dimensions": [
+        384,
+        384
+      ]
+    },
+    {
+      "path": "public/assets/visual-v117/citadel/guardian-citadel-shielded-high-v117.webp",
+      "bytes": 95112,
+      "sha256": "f1cf14e2d374649a0d49f0476ca585f2e8288affd88ae5b3c7d202d7caa11d36",
+      "dimensions": [
+        512,
+        512
+      ]
+    },
+    {
+      "path": "public/assets/visual-v117/citadel/guardian-citadel-cracked-low-v117.webp",
+      "bytes": 20764,
+      "sha256": "7863fdcf2c78b9bb0dca5359741453e5c2b9dfe7b0f87803331b17b2b76da706",
+      "dimensions": [
+        192,
+        192
+      ]
+    },
+    {
+      "path": "public/assets/visual-v117/citadel/guardian-citadel-cracked-medium-v117.webp",
+      "bytes": 58020,
+      "sha256": "593db5bad396d8712d4c22ef381edb1e2dbda8f13f91a56e3300d8de0269b07d",
+      "dimensions": [
+        384,
+        384
+      ]
+    },
+    {
+      "path": "public/assets/visual-v117/citadel/guardian-citadel-cracked-high-v117.webp",
+      "bytes": 101702,
+      "sha256": "fae2ddeb76564ee5ff116d25494689cd40243199487406139a4cd4f8eedc80bd",
+      "dimensions": [
+        512,
+        512
+      ]
+    },
+    {
+      "path": "public/assets/visual-v117/citadel/guardian-citadel-critical-low-v117.webp",
+      "bytes": 21526,
+      "sha256": "4fc23be2a30da59a16f8226fbe273eb2f600058b5acf1f3c2d229ab90955799a",
+      "dimensions": [
+        192,
+        192
+      ]
+    },
+    {
+      "path": "public/assets/visual-v117/citadel/guardian-citadel-critical-medium-v117.webp",
+      "bytes": 60704,
+      "sha256": "809ba6840cc59a471f2ef29e2c84881e764f21af897172190a6b608cdeb73db6",
+      "dimensions": [
+        384,
+        384
+      ]
+    },
+    {
+      "path": "public/assets/visual-v117/citadel/guardian-citadel-critical-high-v117.webp",
+      "bytes": 105712,
+      "sha256": "7424379e983c0f84f0b06dba179ed21382c27f6700319c35495fceb8febfd70c",
+      "dimensions": [
+        512,
+        512
+      ]
+    },
+    {
+      "path": "public/assets/visual-v117/directional/guardian-ember-pupu-turntable-v117.webp",
+      "bytes": 70924,
+      "sha256": "b84b0164b95678a2059592c58770a239445be720ddedafde573653dc850011ce",
+      "dimensions": [
+        1408,
+        128
+      ]
+    }
+  ]
+}

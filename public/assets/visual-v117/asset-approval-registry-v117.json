@@ -1,0 +1,217 @@
+{
+  "version": "1.0.17",
+  "build": "b24.17",
+  "policyId": "DD-ASSET-APPROVAL-PIPELINE-V117",
+  "summary": {
+    "approved": 4,
+    "directionApprovedActionProvisional": 1,
+    "replacementPendingDirectional": 20,
+    "quarantined": 4,
+    "runtimeApplied": 25
+  },
+  "entries": [
+    {
+      "id": "approved-directional-guardian-ember-pupu-v117",
+      "category": "guardian",
+      "status": "direction-approved-action-provisional",
+      "runtimeApplied": true,
+      "notes": "11방향 원화 승인. 5개 액션 행은 파생 연출이며 독립 액션 원화 교체 대기."
+    },
+    {
+      "id": "combat-art-hero-warrior-v109",
+      "category": "hero",
+      "status": "replacement-pending-directional",
+      "runtimeApplied": true,
+      "notes": "승인 정적 원화 유지. 독립 11방향 제작 대기."
+    },
+    {
+      "id": "combat-art-hero-archer-v109",
+      "category": "hero",
+      "status": "replacement-pending-directional",
+      "runtimeApplied": true,
+      "notes": "승인 정적 원화 유지. 독립 11방향 제작 대기."
+    },
+    {
+      "id": "combat-art-hero-mage-v109",
+      "category": "hero",
+      "status": "replacement-pending-directional",
+      "runtimeApplied": true,
+      "notes": "승인 정적 원화 유지. 독립 11방향 제작 대기."
+    },
+    {
+      "id": "combat-art-hero-shaman-v109",
+      "category": "hero",
+      "status": "replacement-pending-directional",
+      "runtimeApplied": true,
+      "notes": "승인 정적 원화 유지. 독립 11방향 제작 대기."
+    },
+    {
+      "id": "combat-art-hero-taoist-v109",
+      "category": "hero",
+      "status": "replacement-pending-directional",
+      "runtimeApplied": true,
+      "notes": "승인 정적 원화 유지. 독립 11방향 제작 대기."
+    },
+    {
+      "id": "combat-art-guardian-frost-v109",
+      "category": "guardian",
+      "status": "replacement-pending-directional",
+      "runtimeApplied": true,
+      "notes": "승인 정적 원화 유지. 독립 11방향 제작 대기."
+    },
+    {
+      "id": "combat-art-guardian-wind-v109",
+      "category": "guardian",
+      "status": "replacement-pending-directional",
+      "runtimeApplied": true,
+      "notes": "승인 정적 원화 유지. 독립 11방향 제작 대기."
+    },
+    {
+      "id": "combat-art-guardian-stone-v109",
+      "category": "guardian",
+      "status": "replacement-pending-directional",
+      "runtimeApplied": true,
+      "notes": "승인 정적 원화 유지. 독립 11방향 제작 대기."
+    },
+    {
+      "id": "combat-art-guardian-bell-v109",
+      "category": "guardian",
+      "status": "replacement-pending-directional",
+      "runtimeApplied": true,
+      "notes": "승인 정적 원화 유지. 독립 11방향 제작 대기."
+    },
+    {
+      "id": "combat-art-guardian-thunder-v109",
+      "category": "guardian",
+      "status": "replacement-pending-directional",
+      "runtimeApplied": true,
+      "notes": "승인 정적 원화 유지. 독립 11방향 제작 대기."
+    },
+    {
+      "id": "combat-art-monster-imp-v109",
+      "category": "monster",
+      "status": "replacement-pending-directional",
+      "runtimeApplied": true,
+      "notes": "승인 정적 원화 유지. 독립 11방향 제작 대기."
+    },
+    {
+      "id": "combat-art-monster-runner-v109",
+      "category": "monster",
+      "status": "replacement-pending-directional",
+      "runtimeApplied": true,
+      "notes": "승인 정적 원화 유지. 독립 11방향 제작 대기."
+    },
+    {
+      "id": "combat-art-monster-brute-v109",
+      "category": "monster",
+      "status": "replacement-pending-directional",
+      "runtimeApplied": true,
+      "notes": "승인 정적 원화 유지. 독립 11방향 제작 대기."
+    },
+    {
+      "id": "combat-art-monster-shaman-v109",
+      "category": "monster",
+      "status": "replacement-pending-directional",
+      "runtimeApplied": true,
+      "notes": "승인 정적 원화 유지. 독립 11방향 제작 대기."
+    },
+    {
+      "id": "combat-art-monster-ghost-v109",
+      "category": "monster",
+      "status": "replacement-pending-directional",
+      "runtimeApplied": true,
+      "notes": "승인 정적 원화 유지. 독립 11방향 제작 대기."
+    },
+    {
+      "id": "combat-art-monster-skeleton-v109",
+      "category": "monster",
+      "status": "replacement-pending-directional",
+      "runtimeApplied": true,
+      "notes": "승인 정적 원화 유지. 독립 11방향 제작 대기."
+    },
+    {
+      "id": "combat-art-monster-crow-v109",
+      "category": "monster",
+      "status": "replacement-pending-directional",
+      "runtimeApplied": true,
+      "notes": "승인 정적 원화 유지. 독립 11방향 제작 대기."
+    },
+    {
+      "id": "combat-art-boss-tiger-v109",
+      "category": "boss",
+      "status": "replacement-pending-directional",
+      "runtimeApplied": true,
+      "notes": "승인 정적 원화 유지. 독립 11방향 제작 대기."
+    },
+    {
+      "id": "combat-art-boss-serpent-v109",
+      "category": "boss",
+      "status": "replacement-pending-directional",
+      "runtimeApplied": true,
+      "notes": "승인 정적 원화 유지. 독립 11방향 제작 대기."
+    },
+    {
+      "id": "combat-art-boss-king-v109",
+      "category": "boss",
+      "status": "replacement-pending-directional",
+      "runtimeApplied": true,
+      "notes": "승인 정적 원화 유지. 독립 11방향 제작 대기."
+    },
+    {
+      "id": "guardian-citadel-stable-v117",
+      "category": "citadel",
+      "status": "approved",
+      "runtimeApplied": true,
+      "notes": "수호성 상태 원화 승인 및 런타임 적용."
+    },
+    {
+      "id": "guardian-citadel-shielded-v117",
+      "category": "citadel",
+      "status": "approved",
+      "runtimeApplied": true,
+      "notes": "수호성 상태 원화 승인 및 런타임 적용."
+    },
+    {
+      "id": "guardian-citadel-cracked-v117",
+      "category": "citadel",
+      "status": "approved",
+      "runtimeApplied": true,
+      "notes": "수호성 상태 원화 승인 및 런타임 적용."
+    },
+    {
+      "id": "guardian-citadel-critical-v117",
+      "category": "citadel",
+      "status": "approved",
+      "runtimeApplied": true,
+      "notes": "수호성 상태 원화 승인 및 런타임 적용."
+    },
+    {
+      "id": "p0-directional-hero-warrior-v112",
+      "category": "prototype",
+      "status": "quarantined",
+      "runtimeApplied": false,
+      "notes": "구형 자동 생성 시트. 런타임 로딩 및 승인 수량에서 제외."
+    },
+    {
+      "id": "p0-directional-guardian-ember-v112",
+      "category": "prototype",
+      "status": "quarantined",
+      "runtimeApplied": false,
+      "notes": "구형 자동 생성 시트. 런타임 로딩 및 승인 수량에서 제외."
+    },
+    {
+      "id": "p0-directional-monster-imp-v112",
+      "category": "prototype",
+      "status": "quarantined",
+      "runtimeApplied": false,
+      "notes": "구형 자동 생성 시트. 런타임 로딩 및 승인 수량에서 제외."
+    },
+    {
+      "id": "p0-directional-boss-tiger-v112",
+      "category": "prototype",
+      "status": "quarantined",
+      "runtimeApplied": false,
+      "notes": "구형 자동 생성 시트. 런타임 로딩 및 승인 수량에서 제외."
+    }
+  ]
+}

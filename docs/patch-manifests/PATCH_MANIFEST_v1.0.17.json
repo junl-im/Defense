@@ -1,0 +1,480 @@
+{
+  "schema": "dokkaebi-patch-manifest-v1",
+  "baseVersion": "1.0.16",
+  "baseBuild": "b24.16",
+  "targetVersion": "1.0.17",
+  "targetBuild": "b24.17",
+  "patchId": "DD-ART-APPROVAL-DIRECTIONAL-V117",
+  "generatedAtUtc": "2026-07-25T01:01:32.853175+00:00",
+  "fileCount": 77,
+  "payloadFileCount": 76,
+  "deletedFiles": [],
+  "files": [
+    {
+      "path": "PROJECT_HANDOFF.md",
+      "size": 6480,
+      "sha256": "d93846801041786e211bfdcdcce53a61c21bbd1d0f34be95ad32624f9f3da319",
+      "change": "modified"
+    },
+    {
+      "path": "README.md",
+      "size": 3311,
+      "sha256": "af2ce40919cd4d474a649fbaf14d550c0ed879e486ece7c7df197971ba26de9c",
+      "change": "modified"
+    },
+    {
+      "path": "dist/STATIC_BUILD_NOTICE.txt",
+      "size": 443,
+      "sha256": "d9fd14f5a2c68bf643e676e4885a6b1b6573f6160e9b609222fe8df2260e6ce1",
+      "change": "modified"
+    },
+    {
+      "path": "dist/asset-approval-v117.html",
+      "size": 5024,
+      "sha256": "d1db4a4ba1e9556e520d1fff2213455e53574d976396c1be1a5420b1e62f1b89",
+      "change": "new"
+    },
+    {
+      "path": "dist/assets/visual-v117/asset-approval-manifest-v117.json",
+      "size": 5508,
+      "sha256": "d2ad07105ede317b6918dfb7d75a496e266e7e86919d26fd98071b6020681a73",
+      "change": "new"
+    },
+    {
+      "path": "dist/assets/visual-v117/asset-approval-registry-v117.json",
+      "size": 7319,
+      "sha256": "0b767fc5ad8ddd342443139fd5bbf40e31a7a351e623da4c276bdfb34b284602",
+      "change": "new"
+    },
+    {
+      "path": "dist/assets/visual-v117/citadel/guardian-citadel-cracked-high-v117.webp",
+      "size": 101702,
+      "sha256": "fae2ddeb76564ee5ff116d25494689cd40243199487406139a4cd4f8eedc80bd",
+      "change": "new"
+    },
+    {
+      "path": "dist/assets/visual-v117/citadel/guardian-citadel-cracked-low-v117.webp",
+      "size": 20764,
+      "sha256": "7863fdcf2c78b9bb0dca5359741453e5c2b9dfe7b0f87803331b17b2b76da706",
+      "change": "new"
+    },
+    {
+      "path": "dist/assets/visual-v117/citadel/guardian-citadel-cracked-medium-v117.webp",
+      "size": 58020,
+      "sha256": "593db5bad396d8712d4c22ef381edb1e2dbda8f13f91a56e3300d8de0269b07d",
+      "change": "new"
+    },
+    {
+      "path": "dist/assets/visual-v117/citadel/guardian-citadel-critical-high-v117.webp",
+      "size": 105712,
+      "sha256": "7424379e983c0f84f0b06dba179ed21382c27f6700319c35495fceb8febfd70c",
+      "change": "new"
+    },
+    {
+      "path": "dist/assets/visual-v117/citadel/guardian-citadel-critical-low-v117.webp",
+      "size": 21526,
+      "sha256": "4fc23be2a30da59a16f8226fbe273eb2f600058b5acf1f3c2d229ab90955799a",
+      "change": "new"
+    },
+    {
+      "path": "dist/assets/visual-v117/citadel/guardian-citadel-critical-medium-v117.webp",
+      "size": 60704,
+      "sha256": "809ba6840cc59a471f2ef29e2c84881e764f21af897172190a6b608cdeb73db6",
+      "change": "new"
+    },
+    {
+      "path": "dist/assets/visual-v117/citadel/guardian-citadel-shielded-high-v117.webp",
+      "size": 95112,
+      "sha256": "f1cf14e2d374649a0d49f0476ca585f2e8288affd88ae5b3c7d202d7caa11d36",
+      "change": "new"
+    },
+    {
+      "path": "dist/assets/visual-v117/citadel/guardian-citadel-shielded-low-v117.webp",
+      "size": 18808,
+      "sha256": "d691edfbd9b831e0dcbadc19e088d12a5305f0fe53b8512e7153fb66f6cc0b4b",
+      "change": "new"
+    },
+    {
+      "path": "dist/assets/visual-v117/citadel/guardian-citadel-shielded-medium-v117.webp",
+      "size": 52998,
+      "sha256": "d969ddc0181b912256264ebd9df9bf651024f71952269b8b364db783ffdee6e3",
+      "change": "new"
+    },
+    {
+      "path": "dist/assets/visual-v117/citadel/guardian-citadel-stable-high-v117.webp",
+      "size": 95044,
+      "sha256": "495d63c196acc8ca000f8b218deffcfe5882cd8039eaaec3b674bdd9e2606e66",
+      "change": "new"
+    },
+    {
+      "path": "dist/assets/visual-v117/citadel/guardian-citadel-stable-low-v117.webp",
+      "size": 19060,
+      "sha256": "3bdfa6d9a3f93ccc981901c853f4bfda0a0c2c2a1da340284f12937476de05b9",
+      "change": "new"
+    },
+    {
+      "path": "dist/assets/visual-v117/citadel/guardian-citadel-stable-medium-v117.webp",
+      "size": 54004,
+      "sha256": "17a0bc04941eb6823325763eb0c4c20105155567cd5eda4d880fe78399f909f1",
+      "change": "new"
+    },
+    {
+      "path": "dist/assets/visual-v117/directional/guardian-ember-pupu-atlas-high-v117.webp",
+      "size": 1195686,
+      "sha256": "954a3a7f2b380a0f7d785313075c7107d03699ff45dabce6d590f95d40ee318f",
+      "change": "new"
+    },
+    {
+      "path": "dist/assets/visual-v117/directional/guardian-ember-pupu-atlas-low-v117.webp",
+      "size": 196084,
+      "sha256": "bcc6f55936a6421ba8c34af84e36b4b2ae955529e04037a7fabd6572c5417e0a",
+      "change": "new"
+    },
+    {
+      "path": "dist/assets/visual-v117/directional/guardian-ember-pupu-atlas-medium-v117.webp",
+      "size": 755166,
+      "sha256": "8a6bc13d6f3745c3e2f875c899bcd192e486108ff2ae9f2fd5d6f192d2a276a6",
+      "change": "new"
+    },
+    {
+      "path": "dist/assets/visual-v117/directional/guardian-ember-pupu-turntable-v117.webp",
+      "size": 70924,
+      "sha256": "b84b0164b95678a2059592c58770a239445be720ddedafde573653dc850011ce",
+      "change": "new"
+    },
+    {
+      "path": "dist/index.html",
+      "size": 53682,
+      "sha256": "0974cff9430b9ca6937c31acd5b4cc8f451015d1824eece136e64db2c4f35256",
+      "change": "modified"
+    },
+    {
+      "path": "dist/src/engine/asset-catalog.js",
+      "size": 19933,
+      "sha256": "b6c597c7a3586554f5e1a896f1e94b3dc6b79af71f800a7b7e281ae2ec6ff2b3",
+      "change": "modified"
+    },
+    {
+      "path": "dist/src/main.js",
+      "size": 374464,
+      "sha256": "475890ee520762b6d00c7020cbdd195caf2056873258bd8b64148429ea640362",
+      "change": "modified"
+    },
+    {
+      "path": "dist/src/runtime/asset-approval-pipeline-v117.js",
+      "size": 2670,
+      "sha256": "d465300881030b6701e01cf372a69111355c0469e1640130db4b1072785d1376",
+      "change": "new"
+    },
+    {
+      "path": "dist/src/runtime/combat-art-polish-director-v114.js",
+      "size": 13793,
+      "sha256": "3fa0aee1f654eda6c90c3833a886713f3713413e841dc2fcf56304168d0c27bb",
+      "change": "modified"
+    },
+    {
+      "path": "dist/src/runtime/combat-visual-director-v112.js",
+      "size": 36025,
+      "sha256": "dd236588d9a74e23dfdc2cb9e3ea210831a82d8bbbf5b593aa6e19a14b770552",
+      "change": "modified"
+    },
+    {
+      "path": "dist/src/version-policy.js",
+      "size": 1739,
+      "sha256": "057c4ad677f974be2d9ea0bb4ca2e45cba9b3ed21e01c29f3d1a046e647aa69e",
+      "change": "modified"
+    },
+    {
+      "path": "dist/static-bootstrap.js",
+      "size": 5426,
+      "sha256": "cc08faddf2ef2b7dcc60b25c544e053245b470a36584e7b50b32f7bea14228de",
+      "change": "modified"
+    },
+    {
+      "path": "dist/sw.js",
+      "size": 13467,
+      "sha256": "949cce54c0b70341710ea762d085f864f711f5fe1055a4998e0597466e64942f",
+      "change": "modified"
+    },
+    {
+      "path": "dist/version.json",
+      "size": 209,
+      "sha256": "c43d344b8a28f7e048b90a26ec5952b2da6221e622f5763af5d4cc1dd9f22cea",
+      "change": "modified"
+    },
+    {
+      "path": "docs/ART_APPROVAL_BOARD_v1.0.17.png",
+      "size": 787208,
+      "sha256": "5403e544684df460ccd4885b3d93c3434f63162917083cd70d61b601090624ac",
+      "change": "new"
+    },
+    {
+      "path": "docs/ART_APPROVAL_REPORT_v1.0.17.md",
+      "size": 1371,
+      "sha256": "a0e577a02bc8a974199e12ec5db12c990b8d1ca39139ef6070e4769649b20942",
+      "change": "new"
+    },
+    {
+      "path": "docs/PATCH_APPLY_v1.0.17.md",
+      "size": 638,
+      "sha256": "700dc6651a23e015a6f3531a8120306a6334011dd2fd07d5295651ed49c29a5c",
+      "change": "new"
+    },
+    {
+      "path": "docs/PATCH_NOTES_v1.0.17.md",
+      "size": 1586,
+      "sha256": "b83c0560725870bd42b05af838ca18510b86abf88919b43c417f0af5275ac4ed",
+      "change": "new"
+    },
+    {
+      "path": "index.html",
+      "size": 53557,
+      "sha256": "6ada7f9b983810c6ae1edc67d06a8cddb8983dd7d36ae8c4ebc7d7ed5ef7061c",
+      "change": "modified"
+    },
+    {
+      "path": "package-lock.json",
+      "size": 28902,
+      "sha256": "1dbe30ba9d7733179e92c140de3821699a02f9ed7c17b095347603f1c397609b",
+      "change": "modified"
+    },
+    {
+      "path": "package.json",
+      "size": 16872,
+      "sha256": "e2305d14ed606b3b688a22b7c95a76446d0c695da02b13f6adc104e89e820226",
+      "change": "modified"
+    },
+    {
+      "path": "production/approval-v117/asset-approval-manifest-v117.json",
+      "size": 5508,
+      "sha256": "d2ad07105ede317b6918dfb7d75a496e266e7e86919d26fd98071b6020681a73",
+      "change": "new"
+    },
+    {
+      "path": "production/approval-v117/asset-approval-registry-v117.json",
+      "size": 7319,
+      "sha256": "0b767fc5ad8ddd342443139fd5bbf40e31a7a351e623da4c276bdfb34b284602",
+      "change": "new"
+    },
+    {
+      "path": "production/reference-v117/guardian-citadel-concept-v117.png",
+      "size": 2186353,
+      "sha256": "6e13a46a29fff97e3d27b410e9a49575e827d3b7a04fda85c733cda23cf79471",
+      "change": "new"
+    },
+    {
+      "path": "production/reference-v117/pupu-guardian-concept-v117.png",
+      "size": 2360767,
+      "sha256": "4dc16b5bfcce27ed44ba228c9168410ecfe67803f5f4155c1a7147b9b628a5a8",
+      "change": "new"
+    },
+    {
+      "path": "public/asset-approval-v117.html",
+      "size": 5024,
+      "sha256": "d1db4a4ba1e9556e520d1fff2213455e53574d976396c1be1a5420b1e62f1b89",
+      "change": "new"
+    },
+    {
+      "path": "public/assets/visual-v117/asset-approval-manifest-v117.json",
+      "size": 5508,
+      "sha256": "d2ad07105ede317b6918dfb7d75a496e266e7e86919d26fd98071b6020681a73",
+      "change": "new"
+    },
+    {
+      "path": "public/assets/visual-v117/asset-approval-registry-v117.json",
+      "size": 7319,
+      "sha256": "0b767fc5ad8ddd342443139fd5bbf40e31a7a351e623da4c276bdfb34b284602",
+      "change": "new"
+    },
+    {
+      "path": "public/assets/visual-v117/citadel/guardian-citadel-cracked-high-v117.webp",
+      "size": 101702,
+      "sha256": "fae2ddeb76564ee5ff116d25494689cd40243199487406139a4cd4f8eedc80bd",
+      "change": "new"
+    },
+    {
+      "path": "public/assets/visual-v117/citadel/guardian-citadel-cracked-low-v117.webp",
+      "size": 20764,
+      "sha256": "7863fdcf2c78b9bb0dca5359741453e5c2b9dfe7b0f87803331b17b2b76da706",
+      "change": "new"
+    },
+    {
+      "path": "public/assets/visual-v117/citadel/guardian-citadel-cracked-medium-v117.webp",
+      "size": 58020,
+      "sha256": "593db5bad396d8712d4c22ef381edb1e2dbda8f13f91a56e3300d8de0269b07d",
+      "change": "new"
+    },
+    {
+      "path": "public/assets/visual-v117/citadel/guardian-citadel-critical-high-v117.webp",
+      "size": 105712,
+      "sha256": "7424379e983c0f84f0b06dba179ed21382c27f6700319c35495fceb8febfd70c",
+      "change": "new"
+    },
+    {
+      "path": "public/assets/visual-v117/citadel/guardian-citadel-critical-low-v117.webp",
+      "size": 21526,
+      "sha256": "4fc23be2a30da59a16f8226fbe273eb2f600058b5acf1f3c2d229ab90955799a",
+      "change": "new"
+    },
+    {
+      "path": "public/assets/visual-v117/citadel/guardian-citadel-critical-medium-v117.webp",
+      "size": 60704,
+      "sha256": "809ba6840cc59a471f2ef29e2c84881e764f21af897172190a6b608cdeb73db6",
+      "change": "new"
+    },
+    {
+      "path": "public/assets/visual-v117/citadel/guardian-citadel-shielded-high-v117.webp",
+      "size": 95112,
+      "sha256": "f1cf14e2d374649a0d49f0476ca585f2e8288affd88ae5b3c7d202d7caa11d36",
+      "change": "new"
+    },
+    {
+      "path": "public/assets/visual-v117/citadel/guardian-citadel-shielded-low-v117.webp",
+      "size": 18808,
+      "sha256": "d691edfbd9b831e0dcbadc19e088d12a5305f0fe53b8512e7153fb66f6cc0b4b",
+      "change": "new"
+    },
+    {
+      "path": "public/assets/visual-v117/citadel/guardian-citadel-shielded-medium-v117.webp",
+      "size": 52998,
+      "sha256": "d969ddc0181b912256264ebd9df9bf651024f71952269b8b364db783ffdee6e3",
+      "change": "new"
+    },
+    {
+      "path": "public/assets/visual-v117/citadel/guardian-citadel-stable-high-v117.webp",
+      "size": 95044,
+      "sha256": "495d63c196acc8ca000f8b218deffcfe5882cd8039eaaec3b674bdd9e2606e66",
+      "change": "new"
+    },
+    {
+      "path": "public/assets/visual-v117/citadel/guardian-citadel-stable-low-v117.webp",
+      "size": 19060,
+      "sha256": "3bdfa6d9a3f93ccc981901c853f4bfda0a0c2c2a1da340284f12937476de05b9",
+      "change": "new"
+    },
+    {
+      "path": "public/assets/visual-v117/citadel/guardian-citadel-stable-medium-v117.webp",
+      "size": 54004,
+      "sha256": "17a0bc04941eb6823325763eb0c4c20105155567cd5eda4d880fe78399f909f1",
+      "change": "new"
+    },
+    {
+      "path": "public/assets/visual-v117/directional/guardian-ember-pupu-atlas-high-v117.webp",
+      "size": 1195686,
+      "sha256": "954a3a7f2b380a0f7d785313075c7107d03699ff45dabce6d590f95d40ee318f",
+      "change": "new"
+    },
+    {
+      "path": "public/assets/visual-v117/directional/guardian-ember-pupu-atlas-low-v117.webp",
+      "size": 196084,
+      "sha256": "bcc6f55936a6421ba8c34af84e36b4b2ae955529e04037a7fabd6572c5417e0a",
+      "change": "new"
+    },
+    {
+      "path": "public/assets/visual-v117/directional/guardian-ember-pupu-atlas-medium-v117.webp",
+      "size": 755166,
+      "sha256": "8a6bc13d6f3745c3e2f875c899bcd192e486108ff2ae9f2fd5d6f192d2a276a6",
+      "change": "new"
+    },
+    {
+      "path": "public/assets/visual-v117/directional/guardian-ember-pupu-turntable-v117.webp",
+      "size": 70924,
+      "sha256": "b84b0164b95678a2059592c58770a239445be720ddedafde573653dc850011ce",
+      "change": "new"
+    },
+    {
+      "path": "public/static-bootstrap.js",
+      "size": 5426,
+      "sha256": "cc08faddf2ef2b7dcc60b25c544e053245b470a36584e7b50b32f7bea14228de",
+      "change": "modified"
+    },
+    {
+      "path": "public/sw.js",
+      "size": 13467,
+      "sha256": "949cce54c0b70341710ea762d085f864f711f5fe1055a4998e0597466e64942f",
+      "change": "modified"
+    },
+    {
+      "path": "public/version.json",
+      "size": 209,
+      "sha256": "c43d344b8a28f7e048b90a26ec5952b2da6221e622f5763af5d4cc1dd9f22cea",
+      "change": "modified"
+    },
+    {
+      "path": "scripts/build-static-fallback.mjs",
+      "size": 3303,
+      "sha256": "343d7337ddc63cf51f7525a6206f0e93e2b30014a3cb3949a50752afba2800a9",
+      "change": "modified"
+    },
+    {
+      "path": "scripts/generate-approved-assets-v117.py",
+      "size": 11419,
+      "sha256": "dca1b9ee0f7b98782543907ac64dd327fc154b73579fb2471a6cbe8aac5d9f86",
+      "change": "new"
+    },
+    {
+      "path": "scripts/verify-release-v116.mjs",
+      "size": 3621,
+      "sha256": "4d367bef1dc40d8a5502945b6eb901e1fb919f056ab6ebbb74a97a51b18abf07",
+      "change": "modified"
+    },
+    {
+      "path": "scripts/verify-release-v117.mjs",
+      "size": 6605,
+      "sha256": "f1f7f4ca3a9b31369c1483620a2785995fc79636a44678ae69c1eaa86b00a12a",
+      "change": "new"
+    },
+    {
+      "path": "scripts/verify-texture-budget.mjs",
+      "size": 7040,
+      "sha256": "9389e8ce4ac47cac4bd6a8031bda09b8f403b8657e2c18161b6bfebdea7fe070",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/asset-catalog.js",
+      "size": 19933,
+      "sha256": "b6c597c7a3586554f5e1a896f1e94b3dc6b79af71f800a7b7e281ae2ec6ff2b3",
+      "change": "modified"
+    },
+    {
+      "path": "src/main.js",
+      "size": 374486,
+      "sha256": "1ff493847f818b20b729fbddef32b6b596a73d0e45b8d0a21aaa2f16e53ea127",
+      "change": "modified"
+    },
+    {
+      "path": "src/runtime/asset-approval-pipeline-v117.js",
+      "size": 2670,
+      "sha256": "d465300881030b6701e01cf372a69111355c0469e1640130db4b1072785d1376",
+      "change": "new"
+    },
+    {
+      "path": "src/runtime/combat-art-polish-director-v114.js",
+      "size": 13793,
+      "sha256": "3fa0aee1f654eda6c90c3833a886713f3713413e841dc2fcf56304168d0c27bb",
+      "change": "modified"
+    },
+    {
+      "path": "src/runtime/combat-visual-director-v112.js",
+      "size": 36025,
+      "sha256": "dd236588d9a74e23dfdc2cb9e3ea210831a82d8bbbf5b593aa6e19a14b770552",
+      "change": "modified"
+    },
+    {
+      "path": "src/version-policy.js",
+      "size": 1739,
+      "sha256": "057c4ad677f974be2d9ea0bb4ca2e45cba9b3ed21e01c29f3d1a046e647aa69e",
+      "change": "modified"
+    }
+  ],
+  "approvalSummary": {
+    "directionApprovedEntities": 1,
+    "approvedDirectionalViews": 11,
+    "provisionalDerivedActionRows": 5,
+    "approvedCitadelStates": 4,
+    "replacementPendingDirectionalEntities": 20,
+    "quarantinedPrototypeAtlases": 4,
+    "runtimeAppliedAssets": 25
+  },
+  "qualityBoundary": "Pupu 11-direction art and citadel 4-state art are approved. Derived action rows remain provisional and are not final independent action approvals."
+}
