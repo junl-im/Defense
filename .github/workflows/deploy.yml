@@ -75,6 +75,7 @@ jobs:
         run: |
           npm run verify:dist:v117
           npm run verify:dist:v118
+          npm run verify:dist:v119
 
       - name: Verify self-contained production bundle
         run: node scripts/verify-production-bundle-v101.mjs

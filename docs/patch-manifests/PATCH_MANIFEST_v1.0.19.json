@@ -1,0 +1,176 @@
+{
+  "patch": "1.0.18-to-1.0.19",
+  "releaseVersion": "1.0.19",
+  "buildId": "b24.19",
+  "title": "Bundle Marker and Recursive Vite Verification Fix",
+  "baseVersion": "1.0.18",
+  "changedFiles": 33,
+  "deletedFiles": 0,
+  "entries": [
+    {
+      "path": ".github/workflows/deploy.yml",
+      "size": 2739,
+      "sha256": "8498cb66e95662e8df3a49962ef6531b83942cece40e5007e7550c95ede01e04"
+    },
+    {
+      "path": "PROJECT_HANDOFF.md",
+      "size": 7098,
+      "sha256": "482a6c65307703973254403eb5527f631f6008a7ba55a8b1bec91ceb819c2232"
+    },
+    {
+      "path": "README.md",
+      "size": 3721,
+      "sha256": "06c90cb783d921a74ff4f182d26ba25c4ce423651ecf0e545ab3b8c591bba6b7"
+    },
+    {
+      "path": "dist/STATIC_BUILD_NOTICE.txt",
+      "size": 443,
+      "sha256": "ae59a542f3333217b0aa1be0c084eef4a5971a4c0aa6fd25df4d8ef21038ee3e"
+    },
+    {
+      "path": "dist/index.html",
+      "size": 53682,
+      "sha256": "85b9853b53c0303ea9d692df526bb652e6538e0d4007b7b147327c5b33605966"
+    },
+    {
+      "path": "dist/src/main.js",
+      "size": 374946,
+      "sha256": "ac3ba5612ad1f15f9f68df1845ea552a98ec7b1d8e381b5783862d845374a381"
+    },
+    {
+      "path": "dist/src/runtime/asset-approval-pipeline-v117.js",
+      "size": 2863,
+      "sha256": "ebb49bbc22fa55575e560e8f31a5d3a10fcb642089375ca3dbc48198e31702f7"
+    },
+    {
+      "path": "dist/src/runtime/bundle-marker-gate-v119.js",
+      "size": 477,
+      "sha256": "821a08ad8db99bd626f4fd770e69803f30eca3143eae6a80958373960d715f20"
+    },
+    {
+      "path": "dist/src/version-policy.js",
+      "size": 1739,
+      "sha256": "3fc029ceb0af28a16435a960c5f519dfb081a73014cfc515da360d5fbe7d6f69"
+    },
+    {
+      "path": "dist/static-bootstrap.js",
+      "size": 5426,
+      "sha256": "aeb290780a414f42e86e972456997ac839c6a44c09fbac69e397315dbc2883f1"
+    },
+    {
+      "path": "dist/sw.js",
+      "size": 13659,
+      "sha256": "a21bd4269ac1f5f339e895e8ffbfa308d5fe7b1e8127c0471eb57d2ed25ccc7b"
+    },
+    {
+      "path": "dist/version.json",
+      "size": 209,
+      "sha256": "43f9fd5eb919f3eb79c8d00cecb4f1cf7271cfe1871b2a1f42a1d5cf40a534ca"
+    },
+    {
+      "path": "docs/CI_BUNDLE_MARKER_FIX_v1.0.19.md",
+      "size": 528,
+      "sha256": "4abe96ac7bd688cfadf6b4cae20662aef113c6f570e869ecd8b60c151cab92ed"
+    },
+    {
+      "path": "docs/PATCH_APPLY_v1.0.19.md",
+      "size": 197,
+      "sha256": "3b62dc13f6dea822cc6f1c93fc66c197495cb6a92925cb53f4ffc7ca23ac6a5a"
+    },
+    {
+      "path": "docs/PATCH_NOTES_v1.0.19.md",
+      "size": 610,
+      "sha256": "de5123aeace9fe96b5779ffd66cd9eef75b091b0a500573ae2181586a969ae42"
+    },
+    {
+      "path": "index.html",
+      "size": 53557,
+      "sha256": "ec5bbcd89736f84cc8132ed0567150c3f25f8f204c516a6702a2061997cdaf0b"
+    },
+    {
+      "path": "package-lock.json",
+      "size": 28944,
+      "sha256": "edc2c9ef5c3913a306fbea5d1bbbce3e608d65d9bdef3e58470534a94ac4f63d"
+    },
+    {
+      "path": "package.json",
+      "size": 17448,
+      "sha256": "d975c047c33b2d98a852b4916600f632a6d6f17deff7d4616e13dbaa2245611c"
+    },
+    {
+      "path": "public/static-bootstrap.js",
+      "size": 5426,
+      "sha256": "aeb290780a414f42e86e972456997ac839c6a44c09fbac69e397315dbc2883f1"
+    },
+    {
+      "path": "public/sw.js",
+      "size": 13659,
+      "sha256": "a21bd4269ac1f5f339e895e8ffbfa308d5fe7b1e8127c0471eb57d2ed25ccc7b"
+    },
+    {
+      "path": "public/version.json",
+      "size": 209,
+      "sha256": "43f9fd5eb919f3eb79c8d00cecb4f1cf7271cfe1871b2a1f42a1d5cf40a534ca"
+    },
+    {
+      "path": "scripts/bundle-scan-v119.mjs",
+      "size": 995,
+      "sha256": "424999c0c81cd6c880e284cc939f487cd49916b23aef429671cb416f9dadb685"
+    },
+    {
+      "path": "scripts/verify-dist-v117.mjs",
+      "size": 2069,
+      "sha256": "7c5b0082c8949a55f7c614472cfbb02a758f856c163049fa441bc8f95b8969e4"
+    },
+    {
+      "path": "scripts/verify-dist-v118.mjs",
+      "size": 1449,
+      "sha256": "6dd82d5e108bc0028813f55d041ce33dd2a49c8ef39bc89faf9f30495c7cdf5e"
+    },
+    {
+      "path": "scripts/verify-dist-v119.mjs",
+      "size": 1222,
+      "sha256": "2d15e5fdba5ec129d4ef7b15122438eb0ab5f8b18988779a81e8d818357a1abc"
+    },
+    {
+      "path": "scripts/verify-production-bundle-v101.mjs",
+      "size": 2222,
+      "sha256": "f96db03d11451ccaf8ec0cddfa0b4f3fe4a5a394a25016d766ca4f9b55de1a97"
+    },
+    {
+      "path": "scripts/verify-release-v118.mjs",
+      "size": 1970,
+      "sha256": "ac52483050b2017326c0caf651582dda84932e97fb5872e5b5ec0ee5544a0c3a"
+    },
+    {
+      "path": "scripts/verify-release-v119.mjs",
+      "size": 2301,
+      "sha256": "a79fd697fa9d3950fe7bcf7fc8e76cfcb56da63aa58998326e5cd626401be7ce"
+    },
+    {
+      "path": "src/main.js",
+      "size": 374968,
+      "sha256": "d874501c3f5a15949206fd32eebf166a5f8f55ed6f11744ba2519d0eac292982"
+    },
+    {
+      "path": "src/runtime/asset-approval-pipeline-v117.js",
+      "size": 2863,
+      "sha256": "ebb49bbc22fa55575e560e8f31a5d3a10fcb642089375ca3dbc48198e31702f7"
+    },
+    {
+      "path": "src/runtime/bundle-marker-gate-v119.js",
+      "size": 477,
+      "sha256": "821a08ad8db99bd626f4fd770e69803f30eca3143eae6a80958373960d715f20"
+    },
+    {
+      "path": "src/version-policy.js",
+      "size": 1739,
+      "sha256": "3fc029ceb0af28a16435a960c5f519dfb081a73014cfc515da360d5fbe7d6f69"
+    }
+  ],
+  "notes": [
+    "Adds a stable minifier-safe v1.0.17 approval runtime marker.",
+    "Scans JavaScript bundles recursively including dist/assets/chunks.",
+    "Preserves existing approved art totals; no new final art approval is claimed."
+  ]
+}

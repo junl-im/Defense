@@ -1,0 +1,28 @@
+import { readFileSync, existsSync } from 'node:fs';
+import path from 'node:path';
+const root = process.cwd();
+const text = (file) => readFileSync(path.join(root, file), 'utf8');
+const json = (file) => JSON.parse(text(file));
+const failures = [];
+const check = (value, message) => { if (!value) failures.push(message); };
+const pkg = json('package.json');
+const lock = json('package-lock.json');
+const version = json('public/version.json');
+const approval = text('src/runtime/asset-approval-pipeline-v117.js');
+const main = text('src/main.js');
+const distVerifier = text('scripts/verify-dist-v117.mjs');
+const productionVerifier = text('scripts/verify-production-bundle-v101.mjs');
+const workflow = text('.github/workflows/deploy.yml');
+check(pkg.version === '1.0.19' && pkg.dokkaebi?.buildId === 'b24.19', 'package identity mismatch');
+check(lock.version === pkg.version && lock.packages?.['']?.version === pkg.version, 'package lock identity mismatch');
+check(version.releaseVersion === pkg.version && version.buildId === pkg.dokkaebi.buildId, 'public version mismatch');
+check(approval.includes('DD-ASSET-APPROVAL-RUNTIME-V117') && approval.includes('runtimeMarker'), 'stable v117 runtime marker missing');
+check(main.includes('createBundleMarkerGateReportV119') && main.includes('__DOKKAEBI_BUNDLE_MARKER_V119__'), 'v1.0.19 runtime gate missing');
+check(distVerifier.includes('readJavaScriptBundleRecursive') && distVerifier.includes('hasApprovalRuntimeMarkerV117'), 'v117 dist verifier is not recursive/minifier-safe');
+check(productionVerifier.includes('DD-BUNDLE-MARKER-GATE-V119') && productionVerifier.includes('readJavaScriptBundleRecursive'), 'production verifier is not v119-safe');
+check(workflow.includes('npm run verify:dist:v119'), 'workflow omits v119 post-build verification');
+for (const file of ['src/runtime/bundle-marker-gate-v119.js','scripts/bundle-scan-v119.mjs','scripts/verify-dist-v119.mjs']) check(existsSync(path.join(root,file)), `missing ${file}`);
+if (failures.length) { failures.forEach((f) => console.error(`FAIL ${f}`)); process.exit(1); }
+console.log('PASS v1.0.19 identity and stable approval runtime marker');
+console.log('PASS recursive Vite chunk scanning and minifier-safe verification');
+console.log('PASS GitHub Pages post-build v1.0.19 gate is installed');

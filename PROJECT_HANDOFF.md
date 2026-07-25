@@ -1,11 +1,11 @@
-> 현재 개선 패치: **v1.0.18 / b24.18** — 승인 자산 CI 배포 검증 게이트 및 빌드 순서 수정
+> 현재 개선 패치: **v1.0.19 / b24.19** — 승인 자산 CI 배포 검증 게이트 및 빌드 순서 수정
 
-# PROJECT HANDOFF — RELEASE 1.0.18
+# PROJECT HANDOFF — RELEASE 1.0.19
 
-- Project: `DokkaebiLuckDefense3D_FULL_v1.0.18_CI_APPROVAL_GATE`
-- Public game version: `1.0.18`
+- Project: `DokkaebiLuckDefense3D_FULL_v1.0.19_CI_APPROVAL_GATE`
+- Public game version: `1.0.19`
 - Legacy development lineage: `23.1.0`
-- Build ID: `b24.18`
+- Build ID: `b24.19`
 - Engine: `21.0.0`
 - Save schema: `21`
 - Patch: `CI Approval Deployment Gate`
@@ -92,7 +92,7 @@ v1.0.12 converts the visual concept direction into a real P0 runtime slice while
 5. 패치 관리 파일은 `logs/patch/<version>/` 아래에만 둔다.
 6. 전체 ZIP에는 생성 로그를 넣지 않고 `logs/README.md`만 유지한다.
 
-## v1.0.18 CI APPROVAL DEPLOYMENT CONTRACT
+## v1.0.19 CI APPROVAL DEPLOYMENT CONTRACT
 
 1. `npm run verify`는 빌드 전 소스 계약만 검사하며 `dist` 존재를 요구하지 않는다.
 2. 승인 자산의 실제 배포 여부는 Vite Build 이후 `verify:dist:v117`, `verify:dist:v118`에서 검사한다.

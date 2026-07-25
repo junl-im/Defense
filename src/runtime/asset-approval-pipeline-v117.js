@@ -6,6 +6,8 @@ import {
   P0_DIRECTIONAL_ATLAS_IDS
 } from '../engine/asset-catalog.js';
 
+export const ASSET_APPROVAL_RUNTIME_MARKER_V117 = 'DD-ASSET-APPROVAL-RUNTIME-V117';
+
 const approvedDirectional = Object.freeze([
   ...Object.values(APPROVED_DIRECTIONAL_ATLAS_IDS_V117.guardians)
 ]);
@@ -27,6 +29,7 @@ export const ASSET_APPROVAL_PIPELINE_V117 = Object.freeze({
   version: '1.0.17',
   build: 'b24.17',
   id: 'DD-ASSET-APPROVAL-PIPELINE-V117',
+  runtimeMarker: ASSET_APPROVAL_RUNTIME_MARKER_V117,
   statuses: Object.freeze(['approved', 'direction-approved-action-provisional', 'revise', 'quarantined', 'replacement-pending']),
   gates: Object.freeze([
     'pc-mobile-scale', 'ground-contact', 'silhouette', 'alpha-edge',
@@ -56,6 +59,7 @@ export function createAssetApprovalReportV117() {
   return Object.freeze({
     version: ASSET_APPROVAL_PIPELINE_V117.version,
     build: ASSET_APPROVAL_PIPELINE_V117.build,
+    runtimeMarker: ASSET_APPROVAL_RUNTIME_MARKER_V117,
     finalApprovedStatic: approvedStatic.length,
     approvedDirectionalEntities: approvedDirectional.length,
     approvedDirectionalViews: APPROVED_DIRECTIONAL_ATLAS_SPEC_V117.directions,

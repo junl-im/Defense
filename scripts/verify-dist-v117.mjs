@@ -1,5 +1,6 @@
-import { access, readFile, readdir } from 'node:fs/promises';
+import { access, readFile } from 'node:fs/promises';
 import path from 'node:path';
+import { hasApprovalRuntimeMarkerV117, readJavaScriptBundleRecursive } from './bundle-scan-v119.mjs';
 
 const root = path.resolve(import.meta.dirname, '..');
 const dist = path.join(root, 'dist');
@@ -22,13 +23,11 @@ if (manifest.summary?.directionalEntitiesApproved !== 1 || manifest.summary?.dir
 let runtimeFound = false;
 try {
   const source = await readFile(path.join(dist, 'src/runtime/asset-approval-pipeline-v117.js'), 'utf8');
-  runtimeFound = source.includes('DD-ASSET-APPROVAL-V117') || source.includes('createAssetApprovalReportV117');
+  runtimeFound = hasApprovalRuntimeMarkerV117(source) || source.includes('createAssetApprovalReportV117');
 } catch {
-  const assetDir = path.join(dist, 'assets');
-  const files = await readdir(assetDir);
-  const jsFiles = files.filter((name) => name.endsWith('.js'));
-  const bundle = (await Promise.all(jsFiles.map((name) => readFile(path.join(assetDir, name), 'utf8')))).join('\n');
-  runtimeFound = bundle.includes('DD-ASSET-APPROVAL-V117') || bundle.includes('createAssetApprovalReportV117');
+  const bundle = await readJavaScriptBundleRecursive(path.join(dist, 'assets'));
+  if (!bundle.files.length) throw new Error('Vite JavaScript bundle is missing');
+  runtimeFound = hasApprovalRuntimeMarkerV117(bundle.source);
 }
-if (!runtimeFound) throw new Error('v1.0.17 approval runtime is missing from static source or Vite bundle');
-console.log(`PASS v1.0.17 approved asset static deployment (${requiredPublic.length} public files + runtime)`);
+if (!runtimeFound) throw new Error('v1.0.17 approval runtime marker is missing from static source or recursive Vite bundle');
+console.log(`PASS v1.0.17 approved asset static deployment (${requiredPublic.length} public files + minifier-safe runtime marker)`);
