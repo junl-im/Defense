@@ -29,7 +29,7 @@ check(index.includes(`RELEASE_VERSION = '${pkg.version}'`) && index.includes(`BU
 if(!failures.length) pass(`v1.0.15 foundation is preserved under current release ${pkg.version} / ${pkg.dokkaebi?.buildId}`);
 
 check(!index.includes('alt="푸른 도깨비불과 곤봉을 든 도깨비 수호대 마스코트"'),'floating mascot alt copy remains');
-check(index.includes('role="img" aria-label="푸른 도깨비 수호대 마스코트"'),'accessible mascot label missing');
+check(index.includes('role="img" aria-label="푸른 도깨비 수호대 마스코트"') || index.includes('role="img" aria-label="원조 푸른 도깨비 마스코트"'),'accessible mascot label missing');
 check(index.includes('title-mascot-lite-v112.webp?rev=release-v115-b24-15'),'lite mascot is not first paint');
 check(visual.includes("image.alt = ''") && visual.includes('mascot.hidden = true'),'broken image text fail-safe missing');
 if(!failures.length) pass('title mascot never exposes floating alternative text and keeps an accessible parent label');

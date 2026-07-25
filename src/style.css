@@ -4459,7 +4459,7 @@ body.dd-shell-mobile-v112.dd-shell-landscape-v112 .center-meter-rail {
 .title-mascot-stage-v112[role="img"] { color: transparent; font-size: 0; line-height: 0; }
 .title-mascot-v112[hidden] { display: none !important; }
 body.title-mascot-fallback .title-mascot-stage-v112 {
-  background: url('./assets/title-v120/title-mascot-lite-v120.webp?rev=release-v121-b24-21') center bottom / contain no-repeat;
+  background: url('./assets/title-v112/title-mascot-lite-v112.webp?rev=release-v123-b24-23') center bottom / contain no-repeat;
 }
 html[data-presentation-mode="loading"] .boot-gate-line::after { animation-duration: .82s; }
 
@@ -4760,3 +4760,9 @@ body.battlefield-clarity-v122[data-battlefield-density-v122="extreme"] :is(.syne
   body.battlefield-clarity-v122 .boss-health-track span,
   body.battlefield-clarity-v122 .core-hp-track-v120 > u { transition: none !important; }
 }
+
+
+/* v1.0.23 Legacy title removal & original mascot restoration */
+.loading-wrap .kicker{letter-spacing:.18em}
+.loading-wrap h1 em,.title-subtitle-v107{font-style:normal}
+html[data-dd-title-v123="ready"] .loading-mascot{filter:drop-shadow(0 16px 22px rgba(0,0,0,.42))}

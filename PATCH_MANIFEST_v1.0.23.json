@@ -1,0 +1,163 @@
+{
+  "from": "1.0.22",
+  "to": "1.0.23",
+  "build": "b24.23",
+  "delete": [],
+  "files": [
+    {
+      "path": ".github/workflows/deploy.yml",
+      "size": 2879,
+      "sha256": "e8db9a7c30ed8f2d805b8288a3c0dd61ecb51a8f9ba68797d07358d8e04746b4"
+    },
+    {
+      "path": "dist/STATIC_BUILD_NOTICE.txt",
+      "size": 443,
+      "sha256": "60971ce756f5daf0092c26881574fd481949d245f051ccc1f4ab487ac7bd063d"
+    },
+    {
+      "path": "dist/index.html",
+      "size": 53976,
+      "sha256": "3512e7aeafd6e9ef0ce6cf4594236d374d2216659bbaeb28ca2dba0b1fe62983"
+    },
+    {
+      "path": "dist/src/main.js",
+      "size": 377630,
+      "sha256": "47963a40b6b3057c4123349b37a34809263d6a45cf9e47c36146148dd79d6d4a"
+    },
+    {
+      "path": "dist/src/runtime/title-presentation-guard-v123.js",
+      "size": 1039,
+      "sha256": "59cdd6c7e03ffef3a09ff0fe5c71806e5b6045c61af337f9fd815cd3fd0802e6"
+    },
+    {
+      "path": "dist/src/runtime/visual-integration-director.js",
+      "size": 5082,
+      "sha256": "71a6e83e30579fae16cf7a52aa9f3ee4af9d2fd1480d6822df551f676cc021bc"
+    },
+    {
+      "path": "dist/src/style.css",
+      "size": 263303,
+      "sha256": "db65dfd4adb264635502a3fbd142a45f76fe6e0050c0ace5f662e6491a2d9ce2"
+    },
+    {
+      "path": "dist/src/version-policy.js",
+      "size": 1739,
+      "sha256": "5ea81093cbc48207fc0831d5951e9974ae3e340d14d94821d58a891ad2e664b6"
+    },
+    {
+      "path": "dist/static-bootstrap.js",
+      "size": 5426,
+      "sha256": "b1f3639c373e4121a1483047a0fa596171097a1f3714df3e2f9a53a23afbdba6"
+    },
+    {
+      "path": "dist/sw.js",
+      "size": 13975,
+      "sha256": "2374f6e638a5bf8e97c2855f7eacb91ff48fba9418c8beabf3016d8d0e37ab27"
+    },
+    {
+      "path": "dist/version.json",
+      "size": 209,
+      "sha256": "25b242dd7d9e16391d3fef4c9171a392f6d8841cb07c03e5ea9466b1020c5e34"
+    },
+    {
+      "path": "docs/NEXT_UPDATE_v1.0.24.md",
+      "size": 412,
+      "sha256": "2f0eef74997f859be82ec764016de645df17a5c2531110c7e5f97dc07ea0affc"
+    },
+    {
+      "path": "docs/PATCH_APPLY_v1.0.23.md",
+      "size": 292,
+      "sha256": "51572836dfba53bf064bb2b953c59a6211ad5fbd0697ea61334f42a190b457ae"
+    },
+    {
+      "path": "docs/PATCH_NOTES_v1.0.23.md",
+      "size": 613,
+      "sha256": "9cce34a0f094a5460bfb42c6fde4ee0677fafc8cfdafad0e3d17745aa1887d2e"
+    },
+    {
+      "path": "index.html",
+      "size": 53851,
+      "sha256": "96a493f0750d44bdd58c8ab3308c03329a11b875061d5fa77e55388750beb6c0"
+    },
+    {
+      "path": "logs/audits/CODE_HEALTH_AUDIT_v1.0.2.json",
+      "size": 2130,
+      "sha256": "dcb5d682b072d50ff7c00b99bd6c9b3f8c477ae071e1baa6689db55b212c4199"
+    },
+    {
+      "path": "package-lock.json",
+      "size": 28944,
+      "sha256": "5cf696c81a36e0e8fc3a78db040c7c1bbb86bacbfce7192c8b3cb13e29478b74"
+    },
+    {
+      "path": "package.json",
+      "size": 18496,
+      "sha256": "73aef3b8e7d3e074ef977d4a97ed3274eba5bbe7718e9774cbdd27c396b1bd77"
+    },
+    {
+      "path": "public/static-bootstrap.js",
+      "size": 5426,
+      "sha256": "b1f3639c373e4121a1483047a0fa596171097a1f3714df3e2f9a53a23afbdba6"
+    },
+    {
+      "path": "public/sw.js",
+      "size": 13975,
+      "sha256": "2374f6e638a5bf8e97c2855f7eacb91ff48fba9418c8beabf3016d8d0e37ab27"
+    },
+    {
+      "path": "public/version.json",
+      "size": 209,
+      "sha256": "25b242dd7d9e16391d3fef4c9171a392f6d8841cb07c03e5ea9466b1020c5e34"
+    },
+    {
+      "path": "scripts/verify-dist-v123.mjs",
+      "size": 686,
+      "sha256": "9a3edf0cb290451f22155d69fd4b8cb0a3e051b3fc3124c05e638929fd7f9300"
+    },
+    {
+      "path": "scripts/verify-release-v115.mjs",
+      "size": 4082,
+      "sha256": "a9dd3dede6a96aa4b408051031e2a4861f193c8e6a3952de4f21d355265574cf"
+    },
+    {
+      "path": "scripts/verify-release-v120.mjs",
+      "size": 5634,
+      "sha256": "1a56ff653631f6f5a702117d906635c3912713d4c3187db84d68ee9e8e8af3dd"
+    },
+    {
+      "path": "scripts/verify-release-v122.mjs",
+      "size": 4341,
+      "sha256": "3697b785e666af07d24dbd0bcd54cc0cbb43e78490fae56d13460d1ff40d8911"
+    },
+    {
+      "path": "scripts/verify-release-v123.mjs",
+      "size": 1671,
+      "sha256": "fa078943f682ae87faac8f2ebdf4d176e53ce022428ca41d2de6f4d6670fe2c9"
+    },
+    {
+      "path": "src/main.js",
+      "size": 377652,
+      "sha256": "42ecee09faa6cb01ca43565ccc443ca574cc7545e8531b65623fa5742d7a9085"
+    },
+    {
+      "path": "src/runtime/title-presentation-guard-v123.js",
+      "size": 1039,
+      "sha256": "59cdd6c7e03ffef3a09ff0fe5c71806e5b6045c61af337f9fd815cd3fd0802e6"
+    },
+    {
+      "path": "src/runtime/visual-integration-director.js",
+      "size": 5082,
+      "sha256": "71a6e83e30579fae16cf7a52aa9f3ee4af9d2fd1480d6822df551f676cc021bc"
+    },
+    {
+      "path": "src/style.css",
+      "size": 263303,
+      "sha256": "db65dfd4adb264635502a3fbd142a45f76fe6e0050c0ace5f662e6491a2d9ce2"
+    },
+    {
+      "path": "src/version-policy.js",
+      "size": 1739,
+      "sha256": "4b8edc003379e8c43c0374d1f83eae5dc34401a311353492e63a99fa3d3f67fe"
+    }
+  ]
+}

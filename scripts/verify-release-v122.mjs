@@ -18,10 +18,11 @@ const css = text('src/style.css');
 const sw = text('public/sw.js');
 const workflow = text('.github/workflows/deploy.yml');
 
-check(pkg.version === '1.0.22' && pkg.dokkaebi?.buildId === 'b24.22', 'package identity is not v1.0.22 / b24.22');
+const [maj,min,patch] = pkg.version.split('.').map(Number);
+check(maj > 1 || (maj === 1 && (min > 0 || patch >= 22)), 'package identity is earlier than v1.0.22');
 check(lock.version === pkg.version && lock.packages?.['']?.dokkaebi?.buildId === pkg.dokkaebi?.buildId, 'package lock identity mismatch');
 check(version.releaseVersion === pkg.version && version.buildId === pkg.dokkaebi?.buildId, 'public version identity mismatch');
-check(main.includes("const GAME_VERSION = '1.0.22'"), 'runtime version identity mismatch');
+check(main.includes(`const GAME_VERSION = '${pkg.version}'`), 'runtime version identity mismatch');
 if (!failures.length) pass('v1.0.22 identity is synchronized');
 
 check(runtime.includes('DD-BATTLEFIELD-CLARITY-V122'), 'battlefield clarity runtime marker missing');

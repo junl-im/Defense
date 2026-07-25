@@ -30,7 +30,7 @@ if (!failures.length) pass('v1.0.20 identity is synchronized');
 
 check(existsSync(path.join(root, 'src/assets/title-v120/title-mascot-v120.webp')), 'HQ Pupu title mascot missing');
 check(existsSync(path.join(root, 'src/assets/title-v120/title-mascot-lite-v120.webp')), 'lite Pupu title mascot missing');
-check(html.includes('title-mascot-lite-v120.webp') && visual.includes('title-mascot-lite-v120.webp'), 'approved title mascot is not active');
+check((html.includes('title-mascot-lite-v120.webp') && visual.includes('title-mascot-lite-v120.webp')) || (releasePatch >= 23 && html.includes('title-v112/title-mascot-lite-v112.webp') && visual.includes('title-v112/title-mascot-lite-v112.webp')), 'approved or restored title mascot is not active');
 check(html.includes('title-mascot-lite-v112.webp?rev=release-v115-b24-15'), 'v1.0.15 compatibility cache lineage marker missing');
 if (!failures.length) pass('legacy title screen is replaced by the approved Pupu artwork with a new cache revision');
 
