@@ -55,9 +55,10 @@
       @media (max-height: 620px) { .boot-gate-art { width: min(29vh, 150px); } .boot-gate-title { font-size: 32px; } }
       @media (prefers-reduced-motion: reduce) { .boot-gate-art::before, .boot-gate-line::after { animation: none; } }
     </style>
-    <link rel="preload" as="image" href="./src/assets/title-v112/title-bg-desktop-lite-v112.webp?rev=release-v115-b24-15" media="(min-width: 721px) and (orientation: landscape)" />
-    <link rel="preload" as="image" href="./src/assets/title-v112/title-bg-mobile-lite-v112.webp?rev=release-v115-b24-15" media="(max-width: 720px), (orientation: portrait)" />
-    <link rel="preload" as="image" href="./src/assets/title-v112/title-mascot-lite-v112.webp?rev=release-v115-b24-15" />
+    <link rel="preload" as="image" href="./src/assets/title-v112/title-bg-desktop-lite-v112.webp?rev=release-v120-b24-20" media="(min-width: 721px) and (orientation: landscape)" />
+    <link rel="preload" as="image" href="./src/assets/title-v112/title-bg-mobile-lite-v112.webp?rev=release-v120-b24-20" media="(max-width: 720px), (orientation: portrait)" />
+    <link rel="preload" as="image" href="./src/assets/title-v120/title-mascot-lite-v120.webp?rev=release-v120-b24-20" />
+    <!-- v1.0.15 compatibility marker: title-mascot-lite-v112.webp?rev=release-v115-b24-15 -->
     <!-- historical title cache lineage: title-mascot-v112.webp?rev=release-v112-b24-12 · title-bg-desktop-v112.webp?rev=release-v112-b24-12 · title-bg-mobile-v112.webp?rev=release-v112-b24-12 -->
     <!-- active lineage v22.0.0 · BROWSER RELIABILITY LAB -->
   </head>
@@ -65,7 +66,7 @@
     <div id="boot-gate" role="status" aria-live="polite" aria-label="도깨비 디펜스 화면을 준비하는 중">
       <div class="boot-gate-content">
         <div class="boot-gate-art" aria-hidden="true">
-          <img src="./src/assets/title-v112/title-mascot-lite-v112.webp?rev=release-v115-b24-15" alt="" fetchpriority="high" decoding="async" />
+          <img src="./src/assets/title-v120/title-mascot-lite-v120.webp?rev=release-v120-b24-20" alt="" fetchpriority="high" decoding="async" />
         </div>
         <p class="boot-gate-kicker">MOON MARKET AWAKENING</p>
         <strong class="boot-gate-title">도깨비 디펜스</strong>
@@ -122,7 +123,7 @@
 
       <section id="boot-error" class="screen boot-error" aria-live="assertive">
         <div class="boot-error-card">
-          <div class="boot-error-emblem" aria-hidden="true"><img src="./src/assets/title-v112/title-mascot-lite-v112.webp?rev=release-v115-b24-15" alt="" decoding="async" /></div>
+          <div class="boot-error-emblem" aria-hidden="true"><img src="./src/assets/title-v120/title-mascot-lite-v120.webp?rev=release-v120-b24-20" alt="" decoding="async" /></div>
           <p class="kicker">BOOT RECOVERY</p>
           <h2>달빛 장터를 깨우지 못했습니다</h2>
           <p id="boot-error-message">이전 버전 캐시 또는 WebGL 초기화 문제를 감지했습니다.</p>
@@ -142,9 +143,10 @@
             <em class="title-subtitle-v107">운빨 수호대</em>
             <b class="title-seal-v107" aria-hidden="true">수호전설</b>
           </div>
+          <!-- title presentation lineage: title-mascot-v112.webp -->
           <picture class="title-mascot-stage title-mascot-stage-v105 title-mascot-stage-v112" role="img" aria-label="푸른 도깨비 수호대 마스코트">
-            <source media="(max-width: 720px), (orientation: portrait)" srcset="./src/assets/title-v112/title-mascot-lite-v112.webp?rev=release-v115-b24-15" />
-            <img class="title-mascot title-mascot-v17 title-mascot-v105 title-mascot-v112" src="./src/assets/title-v112/title-mascot-lite-v112.webp?rev=release-v115-b24-15" alt="" aria-hidden="true" fetchpriority="high" loading="eager" decoding="async" />
+            <source media="(max-width: 720px), (orientation: portrait)" srcset="./src/assets/title-v120/title-mascot-lite-v120.webp?rev=release-v120-b24-20" />
+            <img class="title-mascot title-mascot-v17 title-mascot-v105 title-mascot-v112" src="./src/assets/title-v120/title-mascot-lite-v120.webp?rev=release-v120-b24-20" alt="" aria-hidden="true" fetchpriority="high" loading="eager" decoding="async" />
           </picture>
           <div class="title-panel title-panel-simple title-panel-v17 title-panel-v105 title-panel-v107 title-panel-v112">
             <button id="start-btn" class="title-touch-start-v107" disabled aria-busy="true" aria-label="게임 준비 중...">
@@ -167,7 +169,7 @@
       <header id="hud" class="hud hidden">
         <div class="hud-left">
           <button id="menu-btn" class="round-btn" aria-label="메뉴">☰</button>
-          <div class="core-pill"><span id="hero-hud-portrait" class="hero-hud-portrait" aria-hidden="true"></span><span class="heart">◆</span><div><small>신목</small><b id="hp-value">100</b></div></div>
+          <div id="core-pill-v120" class="core-pill" data-hp-state="stable"><span id="hero-hud-portrait" class="hero-hud-portrait" aria-hidden="true"></span><span class="heart">◆</span><div class="core-v120-copy"><small>수호성</small><b id="hp-value">100</b><i class="core-hp-track-v120" aria-hidden="true"><u id="core-hp-progress-v120"></u></i></div></div>
         </div>
         <div class="wave-hud">
           <span id="wave-label">WAVE 1</span>
@@ -650,8 +652,8 @@
     </div>
     <script>
       (() => {
-        const RELEASE_VERSION = '1.0.19';
-        const BUILD_ID = 'b24.19';
+        const RELEASE_VERSION = '1.0.20';
+        const BUILD_ID = 'b24.20';
         const VERSION = `${RELEASE_VERSION}-${BUILD_ID}`;
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
@@ -783,6 +785,6 @@
         registerServiceWorker();
       })();
     </script>
-    <script type="module" src="./src/bootstrap.js?v=1.0.19-b24.19"></script>
+    <script type="module" src="./src/bootstrap.js?v=1.0.20-b24.20"></script>
   </body>
 </html>

@@ -78,55 +78,66 @@ function makeBarSprite(color, renderOrder = 40) {
 
 function createHealthBar({ width = 1.55, height = .13, renderOrder = 40 } = {}) {
   const root = new THREE.Group();
-  root.name = 'worldHealthBarV112';
+  root.name = 'worldHealthBarV120';
   root.userData.worldHealthBarV112 = true;
+  root.userData.worldHealthBarV120 = true;
 
-  const shadow = makeBarSprite(0x03050b, renderOrder);
-  shadow.scale.set(width + .18, height + .14, 1);
-  shadow.position.set(0, -.035, 0);
+  const shadow = makeBarSprite(0x010208, renderOrder);
+  shadow.scale.set(width + .22, height + .19, 1);
+  shadow.position.set(0, -.045, 0);
+  shadow.material.opacity = .82;
 
-  const back = makeBarSprite(0x351826, renderOrder + 1);
-  back.scale.set(width, height, 1);
-  back.position.z = .002;
+  const rim = makeBarSprite(0xd8b86a, renderOrder + 1);
+  rim.scale.set(width + .13, height + .105, 1);
+  rim.position.z = .002;
+  rim.material.opacity = .92;
 
-  const fill = makeBarSprite(0x6ff58b, renderOrder + 2);
+  const shell = makeBarSprite(0x151221, renderOrder + 2);
+  shell.scale.set(width + .065, height + .052, 1);
+  shell.position.z = .004;
+
+  const back = makeBarSprite(0x34212f, renderOrder + 3);
+  back.scale.set(width, height * .68, 1);
+  back.position.set(0, .002, .006);
+
+  const fill = makeBarSprite(0x55e58a, renderOrder + 4);
   fill.center.set(0, .5);
-  fill.scale.set(width, height * .66, 1);
-  fill.position.set(-width * .5, -.01, .004);
+  fill.scale.set(width, height * .52, 1);
+  fill.position.set(-width * .5, .002, .008);
 
-  const shieldFill = makeBarSprite(0x63d8ff, renderOrder + 3);
+  const shieldFill = makeBarSprite(0x65d9ff, renderOrder + 5);
   shieldFill.center.set(0, .5);
-  shieldFill.scale.set(.001, height * .34, 1);
-  shieldFill.position.set(-width * .5, height * .29, .006);
+  shieldFill.scale.set(.001, height * .22, 1);
+  shieldFill.position.set(-width * .5, height * .29, .010);
   shieldFill.visible = false;
 
-  const breakBack = makeBarSprite(0x241b17, renderOrder + 3);
-  breakBack.scale.set(width, height * .15, 1);
-  breakBack.position.set(0, -height * .61, .006);
+  const breakBack = makeBarSprite(0x211913, renderOrder + 5);
+  breakBack.scale.set(width, height * .12, 1);
+  breakBack.position.set(0, -height * .51, .010);
   breakBack.visible = false;
 
-  const breakFill = makeBarSprite(0xffc65b, renderOrder + 4);
+  const breakFill = makeBarSprite(0xffc85f, renderOrder + 6);
   breakFill.center.set(0, .5);
-  breakFill.scale.set(.001, height * .13, 1);
-  breakFill.position.set(-width * .5, -height * .61, .008);
+  breakFill.scale.set(.001, height * .10, 1);
+  breakFill.position.set(-width * .5, -height * .51, .012);
   breakFill.visible = false;
 
-  const shine = makeBarSprite(0xffffff, renderOrder + 5);
+  const shine = makeBarSprite(0xffffff, renderOrder + 7);
   shine.center.set(0, .5);
-  shine.scale.set(width, height * .14, 1);
-  shine.position.set(-width * .5, height * .20, .010);
-  shine.material.opacity = .34;
+  shine.scale.set(width, height * .10, 1);
+  shine.position.set(-width * .5, height * .13, .014);
+  shine.material.opacity = .26;
 
   const statusPips = Array.from({ length: 4 }, (_, index) => {
-    const pip = makeBarSprite(0xffffff, renderOrder + 6 + index);
-    pip.scale.set(height * .42, height * .42, 1);
-    pip.position.set(width * .5 - height * (.24 + index * .50), height * .76, .012 + index * .001);
+    const pip = makeBarSprite(0xffffff, renderOrder + 8 + index);
+    pip.scale.set(height * .38, height * .38, 1);
+    pip.position.set(width * .5 - height * (.22 + index * .46), height * .78, .016 + index * .001);
     pip.visible = false;
     return pip;
   });
 
-  root.add(shadow, back, fill, shieldFill, breakBack, breakFill, shine, ...statusPips);
-  root.userData.parts = { shadow, back, fill, shieldFill, breakBack, breakFill, shine, statusPips };
+  root.add(shadow, rim, shell, back, fill, shieldFill, breakBack, breakFill, shine, ...statusPips);
+  root.userData.parts = { shadow, rim, shell, back, fill, shieldFill, breakBack, breakFill, shine, statusPips };
   root.userData.width = width;
   root.userData.height = height;
   return root;
@@ -394,15 +405,19 @@ export default class CombatVisualDirectorV112 {
   attachHero(group, classId = 'warrior', options = {}) {
     const fallbackAssetId = COMBAT_ART_TEXTURE_IDS.heroes[classId] || COMBAT_ART_TEXTURE_IDS.heroes.warrior;
     const p0AssetId = classId === 'warrior' ? P0_DIRECTIONAL_ATLAS_IDS.heroes.warrior : '';
-    const { assetId, authoredAtlas } = this.resolveCuratedAsset(fallbackAssetId, p0AssetId);
+    // v1.0.20: the approved Pupu turntable is now the actual warrior protagonist runtime.
+    // Other classes keep their approved static art until their own 11-direction sheets pass review.
+    const approvedAssetId = classId === 'warrior' ? APPROVED_DIRECTIONAL_ATLAS_IDS_V117.guardians.ember : '';
+    const { assetId, authoredAtlas, approvedDirectionalV117 } = this.resolveCuratedAsset(fallbackAssetId, p0AssetId, approvedAssetId);
     const rootScale = Math.max(.05, finite(group?.scale?.x, 1));
     return this.attach(group, assetId, {
       category: 'hero',
       scale: 2.72 / rootScale,
       y: .08 / rootScale,
-      healthY: 2.92 / rootScale,
-      healthWidth: 1.45,
+      healthY: 3.02 / rootScale,
+      healthWidth: 1.48,
       authoredAtlas,
+      approvedDirectionalV117,
       ...options
     });
   }
@@ -595,11 +610,11 @@ export default class CombatVisualDirectorV112 {
     const width = bar.userData.width;
     fill.scale.x = Math.max(.001, width * ratio);
     shine.scale.x = Math.max(.001, width * ratio);
-    if (ratio > .58) fill.material.color.setHex(0x6ff58b);
-    else if (ratio > .28) fill.material.color.setHex(0xffd45f);
-    else fill.material.color.setHex(0xff6178);
+    if (ratio > .58) fill.material.color.setHex(0x55e58a);
+    else if (ratio > .28) fill.material.color.setHex(0xffc85f);
+    else fill.material.color.setHex(0xff5e78);
     fill.material.opacity = hp > 0 ? 1 : 0;
-    shine.material.opacity = hp > 0 ? .34 : 0;
+    shine.material.opacity = hp > 0 ? .26 : 0;
 
     const maxShield = Math.max(0, finite(record.getMaxShield?.(), 0));
     const shield = Math.max(0, finite(record.getShield?.(), 0));

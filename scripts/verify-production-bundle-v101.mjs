@@ -14,6 +14,7 @@ if (!html.includes('type="module"') || !html.includes('/assets/')) throw new Err
 if (!hasApprovalRuntimeMarkerV117(bundle.source)) throw new Error('v1.0.17 minifier-safe approval runtime marker is missing from recursive Vite bundle');
 if (!bundle.source.includes('DD-STATIC-DEPLOYMENT-GATE-V118')) throw new Error('v1.0.18 deployment gate is missing from Vite bundle');
 if (!bundle.source.includes('DD-BUNDLE-MARKER-GATE-V119')) throw new Error('v1.0.19 bundle marker gate is missing from Vite bundle');
+if (!bundle.source.includes('DD-HERO-HUD-POLISH-V120')) throw new Error('v1.0.20 hero/HUD polish marker is missing from Vite bundle');
 for (const relative of [
   'asset-approval-v117.html',
   'assets/visual-v117/asset-approval-manifest-v117.json',

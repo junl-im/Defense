@@ -146,7 +146,7 @@ const guardianCitadelStateTextureVariantsV114 = Object.freeze({
 
 const approvedDirectionalAtlasVariantsV117 = Object.freeze({
   [APPROVED_DIRECTIONAL_ATLAS_IDS_V117.guardians.ember]: Object.freeze({
-    low: publicAsset('visual-v117/directional/guardian-ember-pupu-atlas-low-v117.webp'),
+    low: publicAsset('visual-v120/directional/hero-pupu-atlas-low-v120.webp'),
     medium: publicAsset('visual-v117/directional/guardian-ember-pupu-atlas-medium-v117.webp'),
     high: publicAsset('visual-v117/directional/guardian-ember-pupu-atlas-high-v117.webp')
   })
@@ -278,8 +278,10 @@ export const CORE_ASSET_CATALOG = Object.freeze([
 
 
 const BOOT_ASSET_ID_SET_V115 = new Set([
-  ...Object.values(COMBAT_ART_TEXTURE_IDS.heroes),
-  ...Object.values(COMBAT_ART_TEXTURE_IDS.guardians),
+  ...Object.entries(COMBAT_ART_TEXTURE_IDS.heroes).filter(([key]) => key !== 'warrior').map(([, id]) => id),
+  ...Object.entries(COMBAT_ART_TEXTURE_IDS.guardians).filter(([key]) => key !== 'ember').map(([, id]) => id),
+  // v1.0.20: one approved atlas replaces both duplicate warrior and ember boot textures.
+  APPROVED_DIRECTIONAL_ATLAS_IDS_V117.guardians.ember,
   GUARDIAN_CITADEL_STATE_TEXTURE_IDS_V114.stable
 ]);
 

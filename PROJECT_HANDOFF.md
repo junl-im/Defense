@@ -1,3 +1,12 @@
+> 현재 개선 패치: **v1.0.20 / b24.20** — HERO DIRECTIONAL & HUD POLISH
+
+# PROJECT HANDOFF — RELEASE 1.0.20
+
+- Project: `DokkaebiLuckDefense3D_FULL_v1.0.20_HERO_HUD_POLISH`
+- Public game version: `1.0.20`
+- Build ID: `b24.20`
+- Main runtime contract: `DD-HERO-HUD-POLISH-V120`
+
 > 현재 개선 패치: **v1.0.19 / b24.19** — 승인 자산 CI 배포 검증 게이트 및 빌드 순서 수정
 
 # PROJECT HANDOFF — RELEASE 1.0.19

@@ -4108,7 +4108,7 @@ body.presentation-safe-mode #vignette { opacity: .42; }
   background:
     radial-gradient(circle at 51% 39%, rgba(104, 193, 255, .12), transparent 27%),
     linear-gradient(180deg, rgba(3, 7, 20, .02), rgba(3, 5, 18, .24) 57%, rgba(2, 4, 13, .82) 100%),
-    url('./assets/title-v112/title-bg-desktop-v112.webp?rev=release-v115-b24-15') center 53% / cover no-repeat !important;
+    url('./assets/title-v112/title-bg-desktop-v112.webp?rev=release-v120-b24-20') center 53% / cover no-repeat !important;
 }
 
 .title-screen-v112::before {
@@ -4329,7 +4329,7 @@ body.dd-shell-overlap-safe-v112 .action-dock { transform-origin: bottom center; 
     background:
       radial-gradient(circle at 50% 35%, rgba(95, 188, 255, .13), transparent 29%),
       linear-gradient(180deg, rgba(3,7,20,.02), rgba(3,5,18,.24) 56%, rgba(2,4,13,.88) 100%),
-      url('./assets/title-v112/title-bg-mobile-v112.webp?rev=release-v115-b24-15') center 48% / cover no-repeat !important;
+      url('./assets/title-v112/title-bg-mobile-v112.webp?rev=release-v120-b24-20') center 48% / cover no-repeat !important;
   }
   .title-mascot-stage-v112 {
     width: min(92vw, 560px) !important;
@@ -4351,14 +4351,14 @@ body.title-art-lite-v112 .title-screen-v112 {
   background:
     radial-gradient(circle at 49% 47%, rgba(95, 188, 255, .13), transparent 26%),
     linear-gradient(180deg, rgba(3,7,20,.02), rgba(3,5,18,.26) 58%, rgba(2,4,13,.9) 100%),
-    url('./assets/title-v112/title-bg-desktop-lite-v112.webp?rev=release-v115-b24-15') center 53% / cover no-repeat !important;
+    url('./assets/title-v112/title-bg-desktop-lite-v112.webp?rev=release-v120-b24-20') center 53% / cover no-repeat !important;
 }
 @media (max-width: 720px), (orientation: portrait) {
   body.title-art-lite-v112 .title-screen-v112 {
     background:
       radial-gradient(circle at 50% 35%, rgba(95, 188, 255, .13), transparent 29%),
       linear-gradient(180deg, rgba(3,7,20,.02), rgba(3,5,18,.24) 56%, rgba(2,4,13,.88) 100%),
-      url('./assets/title-v112/title-bg-mobile-lite-v112.webp?rev=release-v115-b24-15') center 48% / cover no-repeat !important;
+      url('./assets/title-v112/title-bg-mobile-lite-v112.webp?rev=release-v120-b24-20') center 48% / cover no-repeat !important;
   }
 }
 
@@ -4459,7 +4459,7 @@ body.dd-shell-mobile-v112.dd-shell-landscape-v112 .center-meter-rail {
 .title-mascot-stage-v112[role="img"] { color: transparent; font-size: 0; line-height: 0; }
 .title-mascot-v112[hidden] { display: none !important; }
 body.title-mascot-fallback .title-mascot-stage-v112 {
-  background: url('./assets/title-v112/title-mascot-lite-v112.webp?rev=release-v115-b24-15') center bottom / contain no-repeat;
+  background: url('./assets/title-v120/title-mascot-lite-v120.webp?rev=release-v120-b24-20') center bottom / contain no-repeat;
 }
 html[data-presentation-mode="loading"] .boot-gate-line::after { animation-duration: .82s; }
 
@@ -4483,3 +4483,99 @@ body.dd-shell-mobile-v112.dd-shell-landscape-v112 .look-zone {
 }
 body.modal-open .look-zone, body:not(.playing) .look-zone { pointer-events: none; }
 body.playing:not(.modal-open) .look-zone { pointer-events: auto; }
+
+/* ========================================================================== */
+/* v1.0.20 Protagonist 11-Way, Premium HP Bar & Top HUD Overlap Guard          */
+/* ========================================================================== */
+.hud {
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 260px) minmax(0, 1fr);
+  grid-template-areas: "hud-left hud-wave hud-right";
+  align-items: start;
+  column-gap: clamp(8px, 1.2vw, 18px);
+  isolation: isolate;
+}
+.hud-left { grid-area: hud-left; min-width: 0; justify-self: start; }
+.wave-hud { grid-area: hud-wave; min-width: 0; justify-self: center; }
+.hud-right { grid-area: hud-right; min-width: 0; justify-self: end; }
+.hud-left, .hud-right { flex-wrap: nowrap; }
+.hud .round-btn, .hud .core-pill, .hud .currency-pill, .hud .wave-hud {
+  background: linear-gradient(180deg, rgba(18,24,48,.91), rgba(5,9,22,.91));
+  border-color: rgba(235,203,126,.32);
+  box-shadow: 0 9px 26px rgba(0,0,0,.34), inset 0 1px rgba(255,255,255,.08), inset 0 -1px rgba(224,174,83,.12);
+}
+.core-pill { min-width: 132px; }
+.core-v120-copy { min-width: 64px; flex: 1 1 auto; }
+.core-hp-track-v120 {
+  display: block;
+  width: 100%;
+  height: 4px;
+  margin-top: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(1,4,11,.72);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+}
+.core-hp-track-v120 > u {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #55e58a 0%, #b9ed78 58%, #ffe185 100%);
+  box-shadow: 0 0 9px rgba(85,229,138,.44);
+  transition: width .16s linear, background .16s ease;
+  text-decoration: none;
+}
+.core-pill[data-hp-state="warning"] .core-hp-track-v120 > u { background: linear-gradient(90deg,#ffae4f,#ffe185); }
+.core-pill[data-hp-state="critical"] .core-hp-track-v120 > u { background: linear-gradient(90deg,#ff4f70,#ff9b69); }
+.wave-hud { width: min(100%, 260px); }
+.wave-track { height: 4px; background: rgba(2,5,14,.78); box-shadow: inset 0 0 0 1px rgba(255,255,255,.05); }
+.wave-track span { background: linear-gradient(90deg,#5fd8ff,#8b7dff,#e4a8ff); }
+
+@media (max-width: 720px) {
+  .hud {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "hud-left hud-right"
+      "hud-wave hud-wave";
+    row-gap: 5px;
+    padding-top: calc(6px + var(--safe-top));
+  }
+  .hud-left { width: 100%; }
+  .hud-right { width: 100%; }
+  .wave-hud {
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: min(62vw, 252px) !important;
+    padding: 5px 12px 6px;
+  }
+  .core-pill { min-width: 106px; max-width: 46vw; }
+  .currency-pill { min-width: 58px; }
+  .boss-health { top: calc(112px + var(--safe-top)) !important; }
+  .luck-meter { top: calc(112px + var(--safe-top)) !important; }
+  .synergy-panel { top: calc(112px + var(--safe-top)) !important; }
+  .unit-strip { top: calc(112px + var(--safe-top)) !important; }
+}
+
+@media (max-width: 430px) and (orientation: portrait) {
+  .hud { column-gap: 4px; row-gap: 4px; padding-inline: calc(5px + var(--safe-left)) calc(5px + var(--safe-right)); }
+  .hud-left, .hud-right { gap: 4px; }
+  .hud-right .round-btn { min-width: 32px; width: 32px; padding-inline: 0; }
+  .core-pill { min-width: 96px; padding-inline: 6px; }
+  .hero-hud-portrait { width: 28px; height: 28px; }
+  .currency-pill { padding-inline: 7px; }
+  .wave-hud { width: min(66vw, 220px) !important; }
+  .boss-health { top: calc(106px + var(--safe-top)) !important; width: min(88vw, 370px); }
+  .luck-meter, .synergy-panel, .unit-strip { top: calc(106px + var(--safe-top)) !important; }
+}
+
+@media (max-height: 570px) and (orientation: landscape) {
+  .hud {
+    grid-template-columns: minmax(0,1fr) minmax(155px,225px) minmax(0,1fr);
+    grid-template-areas: "hud-left hud-wave hud-right";
+    row-gap: 0;
+  }
+  .wave-hud { position: static !important; transform: none !important; width: auto !important; }
+  .boss-health { top: calc(58px + var(--safe-top)) !important; }
+}

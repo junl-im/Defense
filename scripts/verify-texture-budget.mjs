@@ -27,9 +27,10 @@ function walk(directory) {
   // v117 adds three quality tiers for one approved directional golden sample
   // and four citadel states. Only low-tier files are resident on the mobile profile.
   if (rel === 'public/assets/visual-v117' || rel.startsWith('public/assets/visual-v117/')) return;
-  // Responsive v112 title art belongs to the boot/title lifecycle, not the resident combat set.
-  // Per-screen decoded memory is independently gated in verify-release-v112.mjs.
+  // Responsive title art and its v17 production sources belong to the boot/title lifecycle,
+  // not the resident combat set. Per-screen decoded memory is independently gated.
   if (rel === 'src/assets/title-v112' || rel.startsWith('src/assets/title-v112/')) return;
+  if (rel === 'src/assets/title-v17' || rel.startsWith('src/assets/title-v17/')) return;
   for (const entry of readdirSync(directory, { withFileTypes: true })) {
     const path = resolve(directory, entry.name);
     if (entry.isDirectory()) walk(path);
@@ -94,14 +95,15 @@ for (const atlas of [
   // v1.0.14 disables the old P0 prototype directional sheets at runtime.
   // The 192px polished set is the resident low-power combat profile.
   ...[
-    'hero-warrior','hero-archer','hero-mage','hero-shaman','hero-taoist',
+    'hero-archer','hero-mage','hero-shaman','hero-taoist',
     'guardian-frost','guardian-wind','guardian-stone','guardian-bell','guardian-thunder',
     'monster-imp','monster-runner','monster-brute','monster-shaman','monster-ghost','monster-skeleton','monster-crow',
     'boss-tiger','boss-serpent','boss-king'
   ].map((id) => `public/assets/visual-v114/characters/${id}-low-v114.webp`),
   // guardian-ember and all four citadel states are superseded by v117 and are
   // no longer resident in the runtime catalog.
-  'public/assets/visual-v117/directional/guardian-ember-pupu-atlas-low-v117.webp',
+  // v1.0.20 low-power protagonist/ember share one compact approved atlas.
+  'public/assets/visual-v120/directional/hero-pupu-atlas-low-v120.webp',
   ...['stable','shielded','cracked','critical'].map((state) => `public/assets/visual-v117/citadel/guardian-citadel-${state}-low-v117.webp`)
 ]) {
   const path = resolve(root, atlas);

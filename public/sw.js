@@ -1,5 +1,5 @@
-const RELEASE_VERSION = '1.0.19';
-const BUILD_ID = 'b24.19';
+const RELEASE_VERSION = '1.0.20';
+const BUILD_ID = 'b24.20';
 // const VERSION = '23.1.0'; historical lineage marker.
 const CACHE_PREFIX = 'dokkaebi-shell-';
 const CACHE_NAME = `${CACHE_PREFIX}${BUILD_ID}`;
@@ -15,7 +15,8 @@ const SHELL_ASSETS = [
   './src/runtime/bundle-marker-gate-v119.js',
   './src/assets/title-v112/title-bg-desktop-lite-v112.webp',
   './src/assets/title-v112/title-bg-mobile-lite-v112.webp',
-  './src/assets/title-v112/title-mascot-lite-v112.webp'
+  './src/assets/title-v112/title-mascot-lite-v112.webp',
+  './src/assets/title-v120/title-mascot-lite-v120.webp'
 ];
 // Retained for explicit offline warming and historical release verification.
 // These files are no longer fetched during service-worker installation.
@@ -151,7 +152,8 @@ const OPTIONAL_WARM_ASSETS = [
   './src/assets/title-v112/title-bg-mobile-v112.webp',
   './src/assets/title-v112/title-bg-mobile-lite-v112.webp',
   './src/assets/title-v112/title-mascot-v112.webp',
-  './src/assets/title-v112/title-mascot-lite-v112.webp',
+  './src/assets/title-v112/title-mascot-lite-v112.webp',,
+  './src/assets/title-v120/title-mascot-v120.webp'
   './src/assets/title-v112/visual-polish-manifest-v112.json'
 ];;
 const isLocal = (request) => new URL(request.url).origin === self.location.origin;

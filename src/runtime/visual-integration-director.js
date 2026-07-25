@@ -1,12 +1,12 @@
 export const VISUAL_INTEGRATION_VERSION = '1.1.5';
 
 const TITLE_ASSETS_V112 = Object.freeze({
-  desktop: './src/assets/title-v112/title-bg-desktop-v112.webp?rev=release-v115-b24-15',
-  desktopLite: './src/assets/title-v112/title-bg-desktop-lite-v112.webp?rev=release-v115-b24-15',
-  mobile: './src/assets/title-v112/title-bg-mobile-v112.webp?rev=release-v115-b24-15',
-  mobileLite: './src/assets/title-v112/title-bg-mobile-lite-v112.webp?rev=release-v115-b24-15',
-  mascot: './src/assets/title-v112/title-mascot-v112.webp?rev=release-v115-b24-15',
-  mascotLite: './src/assets/title-v112/title-mascot-lite-v112.webp?rev=release-v115-b24-15'
+  desktop: './src/assets/title-v112/title-bg-desktop-v112.webp?rev=release-v120-b24-20',
+  desktopLite: './src/assets/title-v112/title-bg-desktop-lite-v112.webp?rev=release-v120-b24-20',
+  mobile: './src/assets/title-v112/title-bg-mobile-v112.webp?rev=release-v120-b24-20',
+  mobileLite: './src/assets/title-v112/title-bg-mobile-lite-v112.webp?rev=release-v120-b24-20',
+  mascot: './src/assets/title-v120/title-mascot-v120.webp?rev=release-v120-b24-20',
+  mascotLite: './src/assets/title-v120/title-mascot-lite-v120.webp?rev=release-v120-b24-20'
 });
 
 function titleProfile() {

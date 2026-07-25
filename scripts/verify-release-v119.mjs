@@ -13,7 +13,9 @@ const main = text('src/main.js');
 const distVerifier = text('scripts/verify-dist-v117.mjs');
 const productionVerifier = text('scripts/verify-production-bundle-v101.mjs');
 const workflow = text('.github/workflows/deploy.yml');
-check(pkg.version === '1.0.19' && pkg.dokkaebi?.buildId === 'b24.19', 'package identity mismatch');
+const versionParts = String(pkg.version || '').split('.').map(Number);
+const releaseAtLeast119 = versionParts.length === 3 && (versionParts[0] > 1 || (versionParts[0] === 1 && (versionParts[1] > 0 || (versionParts[1] === 0 && versionParts[2] >= 19))));
+check(releaseAtLeast119 && /^b24\.\d+$/.test(String(pkg.dokkaebi?.buildId || '')), 'package identity mismatch');
 check(lock.version === pkg.version && lock.packages?.['']?.version === pkg.version, 'package lock identity mismatch');
 check(version.releaseVersion === pkg.version && version.buildId === pkg.dokkaebi.buildId, 'public version mismatch');
 check(approval.includes('DD-ASSET-APPROVAL-RUNTIME-V117') && approval.includes('runtimeMarker'), 'stable v117 runtime marker missing');
@@ -23,6 +25,7 @@ check(productionVerifier.includes('DD-BUNDLE-MARKER-GATE-V119') && productionVer
 check(workflow.includes('npm run verify:dist:v119'), 'workflow omits v119 post-build verification');
 for (const file of ['src/runtime/bundle-marker-gate-v119.js','scripts/bundle-scan-v119.mjs','scripts/verify-dist-v119.mjs']) check(existsSync(path.join(root,file)), `missing ${file}`);
 if (failures.length) { failures.forEach((f) => console.error(`FAIL ${f}`)); process.exit(1); }
-console.log('PASS v1.0.19 identity and stable approval runtime marker');
+console.log(`PASS v1.0.19 foundation preserved under current release ${pkg.version} / ${pkg.dokkaebi.buildId}`);
+console.log('PASS stable approval runtime marker remains installed');
 console.log('PASS recursive Vite chunk scanning and minifier-safe verification');
 console.log('PASS GitHub Pages post-build v1.0.19 gate is installed');
