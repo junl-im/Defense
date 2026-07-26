@@ -20,7 +20,9 @@ const fixedObsolete = [
   'dist/assets/models/boss-tiger-nextgen.glb',
   'dist/assets/models/guardian-ember-nextgen.glb',
   'dist/assets/models/monster-imp-nextgen.glb',
-  'docs/ASSET_BIBLE.md'
+  'docs/ASSET_BIBLE.md',
+  'COMPACT_PACKAGE_NOTE.txt',
+  'REBUILD_DIST_WINDOWS.bat'
 ];
 
 const removed = [];
