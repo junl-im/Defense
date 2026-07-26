@@ -1,0 +1,14 @@
+{
+  "id": "DD-ACTION-ASSET-MANIFEST-V125",
+  "release": "1.0.25",
+  "build": "b24.25",
+  "runtime": "./src/runtime/action-asset-assurance-director-v125.js",
+  "lab": "./action-asset-lab-v125.html",
+  "registry": "./assets/visual-v125/action-asset-registry-v125.json",
+  "approvalPolicy": {
+    "directionArt": "approved",
+    "actionRuntime": "approved",
+    "actionArt": "derived-provisional",
+    "bombImp": "quarantined"
+  }
+}

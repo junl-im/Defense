@@ -1,0 +1,42 @@
+{
+  "schema": "DD-BOSS-ENCOUNTER-REGISTRY-V126",
+  "releaseVersion": "1.0.26",
+  "buildId": "b24.26",
+  "entries": [
+    {
+      "id": "boss-hud-damage-trail-v126",
+      "category": "runtime-ui",
+      "approval": "approved-runtime",
+      "runtime": "active",
+      "notes": "보스 즉시 체력과 지연 피해 잔상을 분리 표시"
+    },
+    {
+      "id": "hazard-telegraph-contrast-v126",
+      "category": "runtime-vfx",
+      "approval": "approved-runtime",
+      "runtime": "active",
+      "notes": "외곽 대비 링, 중앙 기준점, 경고 진행도 기반 명도 변화"
+    },
+    {
+      "id": "hero-pupu-independent-action-art-v126",
+      "category": "character-action-art",
+      "approval": "derived-provisional",
+      "runtime": "fallback-active",
+      "notes": "11방향 런타임은 유지하며 독립 공격·기술·피격 원화는 최종 승인하지 않음"
+    },
+    {
+      "id": "monster-bomb-imp-directional-candidate-v126",
+      "category": "character-directional-art",
+      "approval": "replacement-pending",
+      "runtime": "quarantined",
+      "notes": "셀 단위 실루엣·무기 크기·접지점 검수 전 런타임 사용 금지"
+    }
+  ],
+  "summary": {
+    "approvedRuntimeSystems": 2,
+    "newFinalCharacterArt": 0,
+    "provisionalCharacterArt": 1,
+    "quarantinedCharacterCandidates": 1,
+    "waveStressTarget": 20
+  }
+}

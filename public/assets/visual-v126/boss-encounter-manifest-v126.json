@@ -1,0 +1,9 @@
+{
+  "id": "DD-BOSS-ENCOUNTER-MANIFEST-V126",
+  "releaseVersion": "1.0.26",
+  "buildId": "b24.26",
+  "registry": "./boss-encounter-registry-v126.json",
+  "runtime": "../../../src/runtime/boss-encounter-assurance-director-v126.js",
+  "lab": "../../../boss-encounter-lab-v126.html",
+  "approvalRule": "캐릭터 독립 원화는 셀 단위 검수 전 최종 승인 금지"
+}

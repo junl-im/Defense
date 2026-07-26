@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>v1.0.25 액션·자산 승인 실험실</title>
+  <style>
+    :root{color-scheme:dark;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#050914;color:#eef7ff}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 14% 0%,#173d72 0,transparent 34%),radial-gradient(circle at 90% 10%,#48296f 0,transparent 32%),#050914}
+    main{width:min(1180px,calc(100% - 24px));margin:0 auto;padding:28px 0 54px}.hero{padding:24px;border:1px solid #528fc966;border-radius:22px;background:#0a1326dc;box-shadow:0 24px 70px #0008}.kicker{letter-spacing:.18em;color:#8edcff;font-size:12px}.hero h1{margin:.35em 0 .25em;font-size:clamp(26px,5vw,48px)}.hero p{color:#c4d6ea;max-width:820px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-top:18px}.card{padding:18px;border:1px solid #7bbfff35;border-radius:18px;background:linear-gradient(145deg,#172745b8,#0a1024e8)}.card h2{margin:0 0 12px;font-size:18px}.status{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #ffffff12}.status:last-child{border-bottom:0}.status b{color:#9be6ff}.status .pending{color:#ffd482}.status .blocked{color:#ff9baf}
+    .directions{display:grid;grid-template-columns:repeat(11,1fr);gap:5px}.directions i{aspect-ratio:1;border-radius:8px;background:#204778;border:1px solid #79c7ff44;display:grid;place-items:center;font-style:normal;font-size:11px}.matrix{display:grid;grid-template-columns:92px repeat(11,minmax(22px,1fr));gap:4px;align-items:center;overflow:auto}.matrix b{font-size:12px;color:#d7eaff}.matrix span{height:24px;border-radius:6px;background:#1c385f;border:1px solid #78c7ff33}.matrix span[data-on="true"]{background:linear-gradient(135deg,#4e9de8,#8f66d2)}
+    .viewport{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.viewport div{padding:12px;border-radius:12px;background:#0b1a34;border:1px solid #6ebfff2b}.viewport strong{display:block;color:#ffe4a8;margin-bottom:4px}.foot{margin-top:18px;color:#9fb6ce;font-size:13px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.toolbar button{border:1px solid #72c8ff55;border-radius:12px;padding:10px 14px;background:#14294b;color:#eff9ff;cursor:pointer}.toolbar button:hover{background:#1d3d6b}
+    @media(max-width:720px){main{width:min(100% - 12px,1180px);padding-top:8px}.hero{padding:16px}.directions{grid-template-columns:repeat(6,1fr)}.matrix{grid-template-columns:72px repeat(11,26px)}.viewport{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<main>
+  <section class="hero">
+    <div class="kicker">DD-ACTION-ASSET-ASSURANCE-V125</div>
+    <h1>v1.0.25 액션·자산 승인 실험실</h1>
+    <p>주인공 11방향과 6개 액션 상태의 실제 사용 범위, HUD 해상도 프로필, 10웨이브 자원 회수 상태를 한 화면에서 점검합니다. 장난 요괴 폭탄병 후보는 승인 전까지 런타임 격리를 유지합니다.</p>
+    <div class="toolbar"><button id="refresh">진단 다시 읽기</button><button id="simulate">샘플 표시</button></div>
+  </section>
+  <section class="grid">
+    <article class="card"><h2>승인 경계</h2><div class="status"><span>주인공 방향 원화</span><b>최종 승인</b></div><div class="status"><span>액션 런타임 매핑</span><b>승인</b></div><div class="status"><span>독립 액션 원화</span><b class="pending">파생 임시 승인</b></div><div class="status"><span>장난 요괴 폭탄병</span><b class="blocked">런타임 격리</b></div></article>
+    <article class="card"><h2>11방향</h2><div class="directions" id="directions"></div><p class="foot" id="direction-copy">관찰된 방향 0 / 11</p></article>
+    <article class="card"><h2>해상도 프로필</h2><div class="viewport"><div><strong>모바일 세로</strong>≤720px</div><div><strong>모바일 가로</strong>≤960px</div><div><strong>PC 컴팩트</strong>≤1440px</div><div><strong>PC 와이드</strong>1441px 이상</div></div><p class="foot" id="viewport-copy">현재 프로필 확인 중</p></article>
+    <article class="card"><h2>10웨이브 회수 검사</h2><div class="status"><span>웨이브 샘플</span><b id="wave-samples">0</b></div><div class="status"><span>10웨이브 도달</span><b id="wave-target">대기</b></div><div class="status"><span>자원 회수</span><b id="lifecycle">정상</b></div><div class="status"><span>최대 파티클</span><b id="peak-particles">0</b></div></article>
+  </section>
+  <section class="card" style="margin-top:14px"><h2>방향 × 액션 사용 행렬</h2><div id="matrix" class="matrix"></div></section>
+</main>
+<script>
+  const states=['idle','move','attack','skill','hit','death'];
+  const labels={idle:'대기',move:'이동',attack:'공격',skill:'기술',hit:'피격',death:'사망'};
+  const directions=document.getElementById('directions');
+  const matrix=document.getElementById('matrix');
+  const read=()=>window.opener?.__DOKKAEBI_ACTION_ASSET_ASSURANCE_V125__||window.__DOKKAEBI_ACTION_ASSET_ASSURANCE_V125__||{};
+  const render=(sample=false)=>{
+    const report=read();
+    const observed=sample?11:Number(report.protagonistDirectionsObserved||0);
+    directions.innerHTML=Array.from({length:11},(_,i)=>`<i>${i+1}</i>`).join('');
+    document.getElementById('direction-copy').textContent=`관찰된 방향 ${observed} / 11`;
+    document.getElementById('viewport-copy').textContent=`현재 프로필: ${report.viewportProfile||'독립 검사 페이지'}`;
+    document.getElementById('wave-samples').textContent=sample?10:Number(report.waveSamples||0);
+    document.getElementById('wave-target').textContent=(sample||report.tenWaveTargetReached)?'완료':'대기';
+    document.getElementById('lifecycle').textContent=report.lifecycleHealthy===false?'점검 필요':'정상';
+    document.getElementById('peak-particles').textContent=sample?128:Number(report.peakParticles||0);
+    matrix.innerHTML='';
+    states.forEach((state,row)=>{
+      const head=document.createElement('b');head.textContent=labels[state];matrix.append(head);
+      for(let i=0;i<11;i++){const cell=document.createElement('span');cell.dataset.on=String(sample?(i<Math.max(2,11-row)):false);matrix.append(cell);}
+    });
+  };
+  document.getElementById('refresh').onclick=()=>render(false);
+  document.getElementById('simulate').onclick=()=>render(true);
+  render(false);
+</script>
+</body>
+</html>

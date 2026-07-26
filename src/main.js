@@ -22,6 +22,9 @@ import { createHeroHudPolishReportV120 } from './runtime/hero-hud-polish-v120.js
 import LiveCombatDirectorV121 from './runtime/live-combat-director-v121.js';
 import BattlefieldClarityDirectorV122 from './runtime/battlefield-clarity-director-v122.js';
 import ReleaseAssuranceDirectorV124 from './runtime/release-assurance-director-v124.js';
+import ActionAssetAssuranceDirectorV125 from './runtime/action-asset-assurance-director-v125.js';
+import BossEncounterAssuranceDirectorV126 from './runtime/boss-encounter-assurance-director-v126.js';
+import BossTacticalAssuranceDirectorV127 from './runtime/boss-tactical-assurance-director-v127.js';
 import { DEFAULT_CAMERA_PROFILE_ID, getCameraProfile, sanitizeCameraProfileId, cycleCameraProfile, resolveCameraDistance } from './engine/camera-profile.js';
 import { BOOT_ASSET_CATALOG, DEFERRED_ASSET_CATALOG, ASSET_LOADING_PLAN_V115, PLAYER_ASSET_ID, GUARDIAN_ASSET_IDS, MONSTER_ASSET_IDS, BOSS_ASSET_IDS } from './engine/asset-catalog.js';
 import { HERO_CLASSES, HERO_CLASS_ORDER, HERO_CLASS_ASSET_IDS, getHeroClass } from './hero-classes.js';
@@ -114,7 +117,7 @@ const ui = {
   toast: $('#toast'), combo: $('#combo-banner'), comboText: $('#combo-text'), boss: $('#boss-banner'), bossName: $('#boss-name'),
   mission: $('#mission-banner'), missionKicker: $('#mission-kicker'), missionTitle: $('#mission-title'), missionCopy: $('#mission-copy'),
   evolution: $('#evolution-banner'), evolutionSymbol: $('#evolution-symbol'), evolutionName: $('#evolution-name'), evolutionUltimate: $('#evolution-ultimate'),
-  bossHealth: $('#boss-health'), bossHealthName: $('#boss-health-name'), bossHealthValue: $('#boss-health-value'), bossHealthProgress: $('#boss-health-progress'), bossBreak: $('#boss-break'), bossBreakValue: $('#boss-break-value'), bossBreakProgress: $('#boss-break-progress'), bossBreakState: $('#boss-break-state'),
+  bossHealth: $('#boss-health'), bossHealthName: $('#boss-health-name'), bossHealthValue: $('#boss-health-value'), bossHealthDamage: $('#boss-health-damage'), bossHealthProgress: $('#boss-health-progress'), bossBreak: $('#boss-break'), bossBreakValue: $('#boss-break-value'), bossBreakProgress: $('#boss-break-progress'), bossBreakState: $('#boss-break-state'),
   bossIntent: $('#boss-intent'), bossIntentIcon: $('#boss-intent-icon'), bossIntentType: $('#boss-intent-type'), bossIntentProgress: $('#boss-intent-progress'), bossPhase: $('#boss-phase'), bossIntentLabel: $('#boss-intent-label'), bossIntentTime: $('#boss-intent-time'), bossDangerFrame: $('#boss-danger-frame'),
   killChain: $('#kill-chain'), killChainValue: $('#kill-chain-value'), killChainBonus: $('#kill-chain-bonus'),
   moonOmen: $('#moon-omen'), moonOmenIcon: $('#moon-omen-icon'), moonOmenName: $('#moon-omen-name'), moonOmenEffect: $('#moon-omen-effect'),
@@ -138,7 +141,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '1.0.24';
+const GAME_VERSION = '1.0.27';
 // const GAME_VERSION = '23.1.0'; historical lineage marker for pre-normalization contracts.
 if (GAME_VERSION !== PUBLIC_GAME_VERSION) throw new Error('Public version policy mismatch');
 function runtimeSpriteMarkup(path, alt = '', className = '') {
@@ -244,6 +247,9 @@ class DokkaebiLuckDefense {
     this.liveCombatV121 = null;
     this.battlefieldClarityV122 = null;
     this.releaseAssuranceV124 = null;
+    this.actionAssetAssuranceV125 = null;
+    this.bossEncounterAssuranceV126 = null;
+    this.bossTacticalAssuranceV127 = null;
     this.elapsed = 0;
     this.shake = 0;
     const initialCameraProfile = getCameraProfile(DEFAULT_CAMERA_PROFILE_ID);
@@ -692,6 +698,32 @@ class DokkaebiLuckDefense {
       bossHealth: ui.bossHealth
     });
     this.releaseAssuranceV124.install();
+    this.actionAssetAssuranceV125 = new ActionAssetAssuranceDirectorV125({
+      combatVisual: this.combatVisualV112,
+      hud: ui.hud,
+      bossHealth: ui.bossHealth,
+      resultModal: ui.resultModal,
+      collectionModal: ui.collectionModal
+    });
+    this.actionAssetAssuranceV125.install();
+    this.bossEncounterAssuranceV126 = new BossEncounterAssuranceDirectorV126({
+      combatVisual: this.combatVisualV112,
+      hud: ui.hud,
+      bossHealth: ui.bossHealth,
+      bossHealthProgress: ui.bossHealthProgress,
+      bossHealthDamage: ui.bossHealthDamage,
+      bossIntent: ui.bossIntent,
+      dangerHint: ui.dangerHint,
+      mission: ui.mission,
+      bossBanner: ui.boss
+    });
+    this.bossEncounterAssuranceV126.install();
+    this.bossTacticalAssuranceV127 = new BossTacticalAssuranceDirectorV127({
+      hud: ui.hud,
+      bossHealth: ui.bossHealth,
+      combatVisual: this.combatVisualV112
+    });
+    this.bossTacticalAssuranceV127.install();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
     this.scene = new THREE.Scene();
@@ -5466,13 +5498,20 @@ class DokkaebiLuckDefense {
   createHazard({ type, position, radius, color, warning, duration, onTrigger }) {
     const group = new THREE.Group();
     group.position.set(position.x,.065,position.z);
-    const fill = this.mesh(new THREE.CircleGeometry(radius,40),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.13,side:THREE.DoubleSide,depthWrite:false}),0,0,0,false,false);
+    const warningDuration = Math.max(.05, Number(warning) || .05);
+    const fill = this.mesh(new THREE.CircleGeometry(radius,40),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.1,side:THREE.DoubleSide,depthWrite:false}),0,0,0,false,false);
     fill.rotation.x=-Math.PI/2;
-    const ring = this.mesh(new THREE.RingGeometry(radius*.78,radius,44),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.86,side:THREE.DoubleSide,depthWrite:false,blending:THREE.AdditiveBlending}),0,.015,0,false,false);
+    const outline = this.mesh(new THREE.RingGeometry(radius*.96,radius*1.075,48),new THREE.MeshBasicMaterial({color:0x120b1b,transparent:true,opacity:.64,side:THREE.DoubleSide,depthWrite:false}),0,.009,0,false,false);
+    outline.rotation.x=-Math.PI/2;
+    const ring = this.mesh(new THREE.RingGeometry(radius*.78,radius,44),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.86,side:THREE.DoubleSide,depthWrite:false,blending:THREE.AdditiveBlending}),0,.018,0,false,false);
     ring.rotation.x=-Math.PI/2;
-    group.add(fill,ring);
+    const core = this.mesh(new THREE.RingGeometry(radius*.09,radius*.17,24),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.68,side:THREE.DoubleSide,depthWrite:false,blending:THREE.AdditiveBlending}),0,.026,0,false,false);
+    core.rotation.x=-Math.PI/2;
+    group.add(fill,outline,ring,core);
+    group.userData.hazardTypeV126 = type;
+    group.userData.warningDurationV126 = warningDuration;
     this.effectRoot.add(group);
-    this.hazards.push({id:++this.hazardSerial,type,position:position.clone(),radius,color,warning,life:duration,phase:'warning',group,fill,ring,onTrigger});
+    this.hazards.push({id:++this.hazardSerial,type,position:position.clone(),radius,color,warning:warningDuration,initialWarning:warningDuration,warningProgress:0,life:duration,phase:'warning',group,fill,outline,ring,core,onTrigger});
   }
 
   updateHazards(dt) {
@@ -5480,21 +5519,37 @@ class DokkaebiLuckDefense {
       const hazard=this.hazards[i];
       if (hazard.phase==='warning') {
         hazard.warning-=dt;
-        const pulse=.92+Math.sin(this.elapsed*18)*.07;
+        hazard.warningProgress=clamp(1-hazard.warning/Math.max(.05,hazard.initialWarning||.05),0,1);
+        const urgency=hazard.warningProgress;
+        const pulse=.96+Math.sin(this.elapsed*(14+urgency*10))*(.025+urgency*.035);
         hazard.group.scale.setScalar(pulse);
-        hazard.ring.material.opacity=.46+Math.sin(this.elapsed*20)*.18;
+        hazard.ring.material.opacity=.48+urgency*.4+Math.sin(this.elapsed*20)*.08;
+        hazard.outline.material.opacity=.56+urgency*.26;
+        hazard.fill.material.opacity=.07+urgency*.16;
+        hazard.core.material.opacity=.35+urgency*.55;
+        hazard.core.scale.setScalar(.72+urgency*.82);
+        hazard.ring.rotation.z+=dt*(.22+urgency*.58);
+        hazard.group.userData.warningProgressV126=hazard.warningProgress;
         if (hazard.warning<=0) {
           hazard.phase='active';
           hazard.group.scale.setScalar(1);
-          hazard.fill.material.opacity=hazard.type==='curse'?.16:.08;
-          hazard.ring.material.opacity=hazard.type==='curse'?.52:.72;
+          hazard.fill.material.opacity=hazard.type==='curse'?.16:.09;
+          hazard.ring.material.opacity=hazard.type==='curse'?.52:.78;
+          hazard.outline.material.opacity=.78;
+          hazard.core.material.opacity=.92;
+          hazard.core.scale.setScalar(1.65);
           hazard.onTrigger?.(hazard);
         }
       } else {
         hazard.life-=dt;
+        hazard.core.material.opacity=Math.max(0,hazard.core.material.opacity-dt*2.8);
+        hazard.outline.material.opacity=Math.max(.34,hazard.outline.material.opacity-dt*.7);
         if (hazard.type==='curse') {
           hazard.ring.rotation.z+=dt*.7;
           hazard.fill.material.opacity=.11+Math.sin(this.elapsed*4)*.04;
+        } else {
+          hazard.fill.material.opacity=Math.max(.025,hazard.fill.material.opacity-dt*.24);
+          hazard.ring.material.opacity=Math.max(.24,hazard.ring.material.opacity-dt*.72);
         }
       }
       if (hazard.life<=0) {
@@ -6395,14 +6450,22 @@ class DokkaebiLuckDefense {
         corePosition: this.core?.position || tempV.set(0, 0, 0),
         dt
       });
-      const framedDistance = resolveCameraDistance(profile.id, { waveActive: this.waveActive, bossActive, manualDistance: this.cameraDistance }) + cameraDirective.spreadBonus;
-      const desiredFov = profile.fov + cameraDirective.fovBonus;
+      const tacticalDirectiveV127 = this.bossTacticalAssuranceV127?.getCameraDirective?.() || null;
+      const tacticalDistanceBonusV127 = tacticalDirectiveV127?.active ? tacticalDirectiveV127.distanceBonus : 0;
+      const tacticalFovBonusV127 = tacticalDirectiveV127?.active ? tacticalDirectiveV127.fovBonus : 0;
+      const framedDistance = resolveCameraDistance(profile.id, { waveActive: this.waveActive, bossActive, manualDistance: this.cameraDistance }) + cameraDirective.spreadBonus + tacticalDistanceBonusV127;
+      const desiredFov = profile.fov + cameraDirective.fovBonus + tacticalFovBonusV127;
       if (Math.abs(this.camera.fov - desiredFov) > .01) {
         this.camera.fov = lerp(this.camera.fov, desiredFov, 1 - Math.pow(.02, dt));
         this.camera.updateProjectionMatrix();
       }
       target=this.player.group.position.clone().add(new THREE.Vector3(0,profile.targetHeight,0));
       if (cameraDirective.focusWeight > .001) target.lerp(this.cameraDirectorV16.focusPoint, cameraDirective.focusWeight);
+      if (tacticalDirectiveV127?.active && tacticalDirectiveV127.focus && typeof tacticalDirectiveV127.focus.x === 'number') {
+        tempV2.set(tacticalDirectiveV127.focus.x, tacticalDirectiveV127.focus.y || 0, tacticalDirectiveV127.focus.z);
+        tempV2.y += .8;
+        target.lerp(tempV2, tacticalDirectiveV127.focusWeight);
+      }
       const safeDistance = this.resolveCameraCollisionDistance(target, framedDistance, profile.id);
       const collisionBlend = safeDistance < this.cameraCollisionDistance ? 1 - Math.pow(.000001, dt) : 1 - Math.pow(.02, dt);
       this.cameraCollisionDistance = lerp(this.cameraCollisionDistance, safeDistance, collisionBlend);
@@ -6945,6 +7008,9 @@ class DokkaebiLuckDefense {
     this.lifecycle?.dispose();
     const disposables = [
       this.releaseAssuranceV124,
+      this.actionAssetAssuranceV125,
+      this.bossEncounterAssuranceV126,
+      this.bossTacticalAssuranceV127,
       this.battlefieldClarityV122,
       this.liveCombatV121,
       this.crossPlatformShellV112,
@@ -7022,6 +7088,60 @@ class DokkaebiLuckDefense {
       state: this.state,
       performance: this.engine.monitor.snapshot
     }));
+    if (this.frameScheduler.shouldRun('action-asset-assurance-v125', this.coreFoundation.cadence('action-asset-assurance-v125', 4, { minHz: 2, criticalScale: .7 }))) this.runSafe('action-asset-assurance-v125', () => this.actionAssetAssuranceV125?.update(dt, {
+      state: this.state,
+      wave: this.currentWave,
+      enemies: this.enemies.filter((enemy) => !enemy.dead).length,
+      units: this.units.length + (this.player ? 1 : 0),
+      particles: this.particles.length,
+      projectiles: this.projectiles.length,
+      performance: this.engine.monitor.snapshot
+    }));
+    if (this.frameScheduler.shouldRun('boss-encounter-assurance-v126', this.coreFoundation.cadence('boss-encounter-assurance-v126', 5, { minHz: 2.5, criticalScale: .78 }))) this.runSafe('boss-encounter-assurance-v126', () => {
+      const bossV126 = this.enemies.find((enemy) => enemy.boss && !enemy.dead) || null;
+      const intentV126 = bossV126 ? getBossHudState(bossV126, this.getBossIntentName(bossV126)) : null;
+      this.bossEncounterAssuranceV126?.update(dt, {
+        state: this.state,
+        wave: this.currentWave,
+        boss: bossV126 ? {
+          hp: bossV126.hp,
+          maxHp: bossV126.maxHp,
+          phase: bossV126.bossPhase,
+          intentUrgency: intentV126?.urgency || 'stable',
+          intentRemaining: intentV126?.timer || 0
+        } : null,
+        hazards: this.hazards,
+        enemies: this.enemies.filter((enemy) => !enemy.dead).length,
+        units: this.units.length + (this.player ? 1 : 0),
+        particles: this.particles.length,
+        projectiles: this.projectiles.length,
+        performance: this.engine.monitor.snapshot
+      });
+    });
+    if (this.frameScheduler.shouldRun('boss-tactical-assurance-v127', this.coreFoundation.cadence('boss-tactical-assurance-v127', 10, { minHz: 5, criticalScale: .82 }))) this.runSafe('boss-tactical-assurance-v127', () => {
+      const bossV127 = this.enemies.find((enemy) => enemy.boss && !enemy.dead) || null;
+      const intentV127 = bossV127 ? getBossHudState(bossV127, this.getBossIntentName(bossV127)) : null;
+      this.bossTacticalAssuranceV127?.update(dt, {
+        state: this.state,
+        wave: this.currentWave,
+        camera: this.camera,
+        player: this.player?.group || null,
+        boss: bossV127 ? {
+          hp: bossV127.hp,
+          maxHp: bossV127.maxHp,
+          phase: bossV127.bossPhase,
+          intentUrgency: intentV127?.urgency || 'stable',
+          intentRemaining: intentV127?.timer || 0,
+          position: bossV127.group?.position || bossV127.position || null
+        } : null,
+        hazards: this.hazards,
+        enemies: this.enemies.filter((enemy) => !enemy.dead).length,
+        units: this.units.length + (this.player ? 1 : 0),
+        particles: this.particles.length,
+        projectiles: this.projectiles.length,
+        performance: this.engine.monitor.snapshot
+      });
+    });
 
     if (this.state === 'playing') {
       this.runSafe('auto-wave', () => this.updateAutoWaveCountdown(dt));
@@ -7133,7 +7253,7 @@ try {
       },
       foundationReport: () => game.coreFoundation?.report || {},
       dispose: () => game.dispose(),
-      reliabilityReport: () => ({ foundation: game.coreFoundation?.report || {}, wave: game.waveReliability?.report || {}, browser: game.browserReliability?.report || {}, firstPresentation: game.firstPresentationReport || game.firstPresentation?.report || {}, automation: game.automationV22?.report || {}, targeting: game.guardianTargetingV22?.report || {}, mobileHud: game.mobileHudV23?.report || {}, crossPlatformShell: game.crossPlatformShellV112?.report || {}, combatVisual: game.combatVisualV112?.diagnostics || {}, artApprovalV115: game.artApprovalReportV115 || {}, artApprovalV117: game.artApprovalReportV117 || {}, assetLoadingV115: { plan: game.assetLoadingPlanV115, ready: game.deferredAssetsReady, report: game.deferredAssetReport }, heroHudPolishV120: game.heroHudPolishV120 || {}, liveCombatV121: game.liveCombatV121?.report || {}, battlefieldClarityV122: game.battlefieldClarityV122?.report || {}, releaseAssuranceV124: game.releaseAssuranceV124?.report || {} })
+      reliabilityReport: () => ({ foundation: game.coreFoundation?.report || {}, wave: game.waveReliability?.report || {}, browser: game.browserReliability?.report || {}, firstPresentation: game.firstPresentationReport || game.firstPresentation?.report || {}, automation: game.automationV22?.report || {}, targeting: game.guardianTargetingV22?.report || {}, mobileHud: game.mobileHudV23?.report || {}, crossPlatformShell: game.crossPlatformShellV112?.report || {}, combatVisual: game.combatVisualV112?.diagnostics || {}, artApprovalV115: game.artApprovalReportV115 || {}, artApprovalV117: game.artApprovalReportV117 || {}, assetLoadingV115: { plan: game.assetLoadingPlanV115, ready: game.deferredAssetsReady, report: game.deferredAssetReport }, heroHudPolishV120: game.heroHudPolishV120 || {}, liveCombatV121: game.liveCombatV121?.report || {}, battlefieldClarityV122: game.battlefieldClarityV122?.report || {}, releaseAssuranceV124: game.releaseAssuranceV124?.report || {}, actionAssetAssuranceV125: game.actionAssetAssuranceV125?.report || {}, bossEncounterAssuranceV126: game.bossEncounterAssuranceV126?.report || {}, bossTacticalAssuranceV127: game.bossTacticalAssuranceV127?.report || {} })
     });
     game.browserReliability?.noteMilestone('game-ready', { state: game.state });
     window.dispatchEvent(new Event('dokkaebi:boot-ready'));

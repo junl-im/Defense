@@ -1,0 +1,14 @@
+{
+  "id": "DD-BOSS-TACTICAL-MANIFEST-V127",
+  "version": "1.0.27",
+  "build": "b24.27",
+  "registry": "./boss-tactical-registry-v127.json",
+  "runtime": "../../../src/runtime/boss-tactical-assurance-director-v127.js",
+  "lab": "../../../boss-tactical-lab-v127.html",
+  "waveTarget": 30,
+  "approvalBoundary": {
+    "directionalHero": "approved",
+    "independentActionArt": "derived-provisional",
+    "bombImpCandidate": "quarantined"
+  }
+}

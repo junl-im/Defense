@@ -1,5 +1,5 @@
-const RELEASE_VERSION = '1.0.24';
-const BUILD_ID = 'b24.24';
+const RELEASE_VERSION = '1.0.27';
+const BUILD_ID = 'b24.27';
 // const VERSION = '23.1.0'; historical lineage marker.
 const CACHE_PREFIX = 'dokkaebi-luck-defense-shell-';
 const LEGACY_CACHE_PREFIXES = ['dokkaebi-shell-', 'dokkaebi-luck-defense-shell-'];
@@ -17,6 +17,9 @@ const SHELL_ASSETS = [
   './src/runtime/live-combat-director-v121.js',
   './src/runtime/battlefield-clarity-director-v122.js',
   './src/runtime/release-assurance-director-v124.js',
+  './src/runtime/action-asset-assurance-director-v125.js',
+  './src/runtime/boss-encounter-assurance-director-v126.js',
+  './src/runtime/boss-tactical-assurance-director-v127.js',
   './src/runtime/title-presentation-guard-v123.js',
   './src/assets/title-v112/title-bg-desktop-lite-v112.webp',
   './src/assets/title-v112/title-bg-mobile-lite-v112.webp',
@@ -44,8 +47,20 @@ const OPTIONAL_WARM_ASSETS = [
   './src/runtime/live-combat-director-v121.js',
   './src/runtime/battlefield-clarity-director-v122.js',
   './src/runtime/release-assurance-director-v124.js',
+  './src/runtime/action-asset-assurance-director-v125.js',
+  './src/runtime/boss-encounter-assurance-director-v126.js',
+  './src/runtime/boss-tactical-assurance-director-v127.js',
   './src/runtime/title-presentation-guard-v123.js',
   './release-assurance-v124.html',
+  './action-asset-lab-v125.html',
+  './boss-encounter-lab-v126.html',
+  './assets/visual-v126/boss-encounter-manifest-v126.json',
+  './assets/visual-v126/boss-encounter-registry-v126.json',
+  './boss-tactical-lab-v127.html',
+  './assets/visual-v127/boss-tactical-manifest-v127.json',
+  './assets/visual-v127/boss-tactical-registry-v127.json',
+  './assets/visual-v125/action-asset-manifest-v125.json',
+  './assets/visual-v125/action-asset-registry-v125.json',
   './asset-approval-v117.html',
   './assets/visual-v117/asset-approval-manifest-v117.json',
   './assets/visual-v117/asset-approval-registry-v117.json',

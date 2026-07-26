@@ -1,0 +1,49 @@
+{
+  "schema": "DD-BOSS-TACTICAL-REGISTRY-V127",
+  "version": "1.0.27",
+  "build": "b24.27",
+  "entries": [
+    {
+      "id": "offscreen-hazard-radar-v127",
+      "category": "combat-ui",
+      "approval": "approved-runtime",
+      "runtime": "active",
+      "notes": "화면 밖 경고 장판을 가장자리 방향·남은 시간으로 표시"
+    },
+    {
+      "id": "boss-camera-assist-v127",
+      "category": "camera",
+      "approval": "approved-runtime",
+      "runtime": "active",
+      "notes": "긴급 화면 밖 위험과 보스 치명 공격에 한정된 약한 자동 프레이밍"
+    },
+    {
+      "id": "mobile-landscape-boss-hud-v127",
+      "category": "hud",
+      "approval": "approved-runtime",
+      "runtime": "active",
+      "notes": "짧은 모바일 가로 화면 보스 HUD 축약 모드"
+    },
+    {
+      "id": "hero-pupu-independent-action-art-v127",
+      "category": "character-action-art",
+      "approval": "derived-provisional",
+      "runtime": "fallback-approved",
+      "notes": "11방향 원화는 최종 승인, 독립 공격·기술·피격 원화는 추가 검수 대기"
+    },
+    {
+      "id": "monster-bomb-imp-directional-candidate-v127",
+      "category": "character-directional-art",
+      "approval": "replacement-pending",
+      "runtime": "quarantined",
+      "notes": "접지점·폭탄 크기·방향 중복 셀 검수 전 런타임 금지"
+    }
+  ],
+  "summary": {
+    "approvedRuntimeSystems": 3,
+    "newFinalCharacterArt": 0,
+    "provisionalActionArt": 1,
+    "quarantinedCandidates": 1,
+    "waveTarget": 30
+  }
+}

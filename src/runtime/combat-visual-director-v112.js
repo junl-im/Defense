@@ -17,6 +17,7 @@ const P0_ATLAS_IDS = Object.freeze([
 ]);
 const STATUS_COLORS = Object.freeze({ shield: 0x63d8ff, break: 0xffc65b, stun: 0xffe67a, poison: 0x82ef72, burn: 0xff754d, frost: 0x84ddff, freeze: 0x84ddff, mark: 0x91f0b0, fracture: 0xe0b073, resonance: 0xd987ff, shock: 0xcaa6ff, curse: 0xd172ff });
 const STATE_ROWS = Object.freeze(Object.fromEntries(STATES.map((state, index) => [state, index])));
+const ACTION_HOLD_V125 = Object.freeze({ idle: .055, move: .035, attack: .13, skill: .24, hit: .11, death: .48 });
 const PRESERVE_NAME = /(aura|rankbead|shadow|telegraph|target|ring|marker|health|intent|phase|break|citadel)/i;
 const LEGACY_RUNTIME_LAYER_NAME = /^(?:combatDirectionalVisual:|combatActionAuraV|worldHealthBarV|guardianCitadelV)/i;
 const tempWorld = new THREE.Vector3();
@@ -188,6 +189,13 @@ export default class CombatVisualDirectorV112 {
     this.protagonistStateHitsV124 = Object.fromEntries(STATES.map((state) => [state, 0]));
     this.approvedProtagonistRecordsV124 = 0;
     this.protagonistFallbackSelectionsV124 = 0;
+    this.protagonistDirectionStateCoverageV125 = Object.fromEntries(STATES.map((state) => [state, Array.from({ length: DIRECTIONS }, () => 0)]));
+    this.protagonistActionTransitionsV125 = 0;
+    this.protagonistActionLocksAppliedV125 = 0;
+    this.protagonistActionStateRejectsV125 = 0;
+    this.releasedRecordsV125 = 0;
+    this.peakActiveRecordsV125 = 0;
+    this.peakEchoesV125 = 0;
   }
 
   setLiveCombatPolicyV121(policy = {}) {
@@ -427,7 +435,10 @@ export default class CombatVisualDirectorV112 {
       healthLaneV122: 0,
       healthScreenV122: null,
       protagonistV124: category === 'hero',
-      actionRuntimeMappedV124: authoredAtlas && approvedDirectionalV117
+      actionRuntimeMappedV124: authoredAtlas && approvedDirectionalV117,
+      actionStateV125: 'idle',
+      actionRequestedV125: 'idle',
+      actionLockV125: 0
     };
     this.records.add(record);
     this.recordByGroup.set(group, record);
@@ -688,6 +699,37 @@ export default class CombatVisualDirectorV112 {
     }
   }
 
+  stabilizeActionStateV125(record, requestedState, dt) {
+    const requested = normalizeState(requestedState);
+    const current = normalizeState(record.actionStateV125 || record.state || 'idle');
+    record.actionLockV125 = Math.max(0, finite(record.actionLockV125, 0) - Math.max(0, dt));
+    record.actionRequestedV125 = requested;
+    if (current === 'death') return current;
+    if (requested === 'death') {
+      record.actionStateV125 = 'death';
+      record.actionLockV125 = ACTION_HOLD_V125.death;
+      return 'death';
+    }
+    if (requested !== current && record.actionLockV125 > 0) {
+      const interrupt = requested === 'hit' || requested === 'skill';
+      if (!interrupt) {
+        if (record.protagonistV124) this.protagonistActionStateRejectsV125 += 1;
+        return current;
+      }
+    }
+    if (requested !== current) {
+      record.actionStateV125 = requested;
+      record.actionLockV125 = ACTION_HOLD_V125[requested] || .04;
+      if (record.protagonistV124) {
+        this.protagonistActionTransitionsV125 += 1;
+        if (record.actionLockV125 > 0) this.protagonistActionLocksAppliedV125 += 1;
+      }
+    } else if (record.actionLockV125 <= 0 && (requested === 'attack' || requested === 'skill' || requested === 'hit')) {
+      record.actionLockV125 = ACTION_HOLD_V125[requested] || .04;
+    }
+    return normalizeState(record.actionStateV125 || requested);
+  }
+
   setDirectionalState(record, frame, state) {
     if (record.frame === frame && record.state === state) return;
     if (record.state !== state) this.stateChanges += 1;
@@ -697,6 +739,9 @@ export default class CombatVisualDirectorV112 {
     if (record.protagonistV124) {
       if (Number.isInteger(frame) && frame >= 0 && frame < DIRECTIONS) this.protagonistDirectionHitsV124[frame] += 1;
       if (Object.hasOwn(this.protagonistStateHitsV124, state)) this.protagonistStateHitsV124[state] += 1;
+      if (Object.hasOwn(this.protagonistDirectionStateCoverageV125, state) && Number.isInteger(frame) && frame >= 0 && frame < DIRECTIONS) {
+        this.protagonistDirectionStateCoverageV125[state][frame] += 1;
+      }
     }
     const signed = frame <= 5 ? frame : frame - DIRECTIONS;
     const side = signed === 0 ? 0 : Math.sign(signed);
@@ -805,7 +850,8 @@ export default class CombatVisualDirectorV112 {
     }
 
     const controller = record.animation;
-    const state = normalizeState(controller?.state || 'idle');
+    const requestedState = normalizeState(controller?.state || 'idle');
+    const state = this.stabilizeActionStateV125(record, requestedState, dt);
     record.group.getWorldPosition(tempWorld);
     const cameraYaw = camera ? Math.atan2(camera.position.x - tempWorld.x, camera.position.z - tempWorld.z) : 0;
     const candidateFrame = record.selector.update(record.group.rotation.y, cameraYaw);
@@ -935,6 +981,8 @@ export default class CombatVisualDirectorV112 {
   }
 
   update(dt, camera, elapsed = 0, { showHealth = true } = {}) {
+    this.peakActiveRecordsV125 = Math.max(this.peakActiveRecordsV125, this.records.size);
+    this.peakEchoesV125 = Math.max(this.peakEchoesV125, this.echoes.length);
     this.assignHealthLanesV122(camera);
     for (const record of [...this.records]) {
       if (record.disposed || !record.group) {
@@ -951,6 +999,7 @@ export default class CombatVisualDirectorV112 {
     if (!record) return false;
     record.disposed = true;
     this.records.delete(record);
+    this.releasedRecordsV125 += 1;
     this.recordByGroup.delete(group);
     group.remove(record.sprite);
     if (record.aura) group.remove(record.aura);
@@ -1027,6 +1076,14 @@ export default class CombatVisualDirectorV112 {
       protagonistStateHitsV124: { ...this.protagonistStateHitsV124 },
       actionRuntimeMappingApprovedV124: true,
       actionArtStatusV124: 'derived-provisional',
+      protagonistDirectionStateCoverageV125: Object.fromEntries(Object.entries(this.protagonistDirectionStateCoverageV125).map(([state, row]) => [state, [...row]])),
+      protagonistActionTransitionsV125: this.protagonistActionTransitionsV125,
+      protagonistActionLocksAppliedV125: this.protagonistActionLocksAppliedV125,
+      protagonistActionStateRejectsV125: this.protagonistActionStateRejectsV125,
+      releasedRecordsV125: this.releasedRecordsV125,
+      peakActiveRecordsV125: this.peakActiveRecordsV125,
+      peakEchoesV125: this.peakEchoesV125,
+      echoesV125: this.echoes.length,
       legacyLayersRemoved: this.legacyLayersRemoved,
       coreMeshesHidden: this.coreMeshesHidden,
       attachments: this.attachments,

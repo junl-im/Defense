@@ -14,11 +14,15 @@ for (const file of required) {
   if (!fs.existsSync(path.join(dist, file))) throw new Error(`v1.0.24 static deployment missing dist/${file}`);
 }
 const index = fs.readFileSync(path.join(dist, 'index.html'), 'utf8');
+const currentVersion = JSON.parse(fs.readFileSync(path.join(dist, 'version.json'), 'utf8'));
+const patchVersion = Number(String(currentVersion.releaseVersion || '').split('.')[2] || 0);
+if (patchVersion < 24) throw new Error('v1.0.24 deployment foundation is not preserved');
+const currentRevision = `release-v1${String(patchVersion).padStart(2, '0')}-b24-${patchVersion}`;
 const manifest = JSON.parse(fs.readFileSync(path.join(dist, 'manifest.webmanifest'), 'utf8'));
 const sw = fs.readFileSync(path.join(dist, 'sw.js'), 'utf8');
 if (manifest.name !== '도깨비 럭 디펜스 3D') throw new Error('v1.0.24 canonical PWA name missing from dist');
 if (JSON.stringify(manifest).includes('도깨비 운빨 수호대')) throw new Error('legacy PWA branding remains in dist');
-if (!index.includes('release-v124-b24-24')) throw new Error('v1.0.24 title cache revision missing from dist');
+if (!index.includes(currentRevision)) throw new Error('current title cache revision missing from dist');
 if (!index.includes('title-v112/title-mascot-v112.webp')) throw new Error('original mascot missing from v1.0.24 dist');
 if (index.includes('title-v120/title-mascot')) throw new Error('replacement mascot active in v1.0.24 dist');
 if (!sw.includes('dokkaebi-luck-defense-shell-') || !sw.includes("'dokkaebi-shell-'")) throw new Error('v1.0.24 cache migration missing from dist');

@@ -1,29 +1,39 @@
-> 현재 개선 패치: **v1.0.22 / b24.22** — BATTLEFIELD CLARITY
+> 현재 개선 패치: **v1.0.27 / b24.27** — BOSS TACTICAL ASSURANCE
 
-# PROJECT HANDOFF — RELEASE 1.0.22
+# PROJECT HANDOFF — RELEASE 1.0.27
 
-- Project: `DokkaebiLuckDefense3D_FULL_v1.0.22_BATTLEFIELD_CLARITY`
-- Public game version: `1.0.22`
-- Build ID: `b24.22`
-- Base: `v1.0.21 / b24.21`
+- Project: `DokkaebiLuckDefense3D_FULL_v1.0.27_BOSS_TACTICAL_ASSURANCE`
+- Public game version: `1.0.27`
+- Build ID: `b24.27`
+- Base: `v1.0.26 / b24.26`
 
-## 승인 경계
+## 현재 승인 상태
 
-푸푸도깨비 11방향 원화 승인은 유지합니다. 이번 패치는 신규 원화 승인보다 방향 전환 안정화, HP 바 겹침 분산, HUD 안전영역, 장시간 성능 보호를 강화합니다.
+- 푸푸도깨비 11방향: 최종 승인 유지
+- 독립 공격·기술·피격 원화: 파생 임시 승인
+- 장난 요괴 폭탄병 후보: 교체 대기, 런타임 격리
+- 화면 밖 위험 레이더·보스 카메라 보조·모바일 가로 HUD: 런타임 승인
+
+## 검증 명령
+
+```bash
+npm run verify
+npm run build:static
+npm run verify:dist:v127
+```
 
 ## PERMANENT ROOT HYGIENE CONTRACT
 
-- 패치 생성물과 임시 비교 파일은 프로젝트 루트에 두지 않는다.
-- 패치 로그와 검증 결과는 `logs/patch/<version>/` 아래에 저장한다.
-- 배포 ZIP, 체크섬, 적용 안내서는 프로젝트 외부 산출물 폴더에서 생성한다.
-- `npm run hygiene:check`를 패치 전후에 모두 통과해야 한다.
+- 생성 로그·검증 결과·패치 메타데이터는 프로젝트 루트에 두지 않는다.
+- 패치 산출물 메타데이터는 `logs/patch/<version>/` 아래에 기록한다.
+- 작성 문서는 `docs/`, 실행 로그는 `logs/`, 배포 결과는 `dist/`에만 둔다.
 
 ## PERMANENT NATIVE KEY CONTRACT
 
-- 브라우저 기본 기능키와 시스템 단축키를 전역으로 가로채지 않는다.
-- 게임 전역 키 입력은 이동 입력만 허용하며, 액션 기능은 화면 버튼과 터치 UI를 사용한다.
-- 개발 콘솔과 진단 화면은 사용자에게 보이는 버튼을 통해 연다.
+- 브라우저 F1~F12, 새로고침, 개발자 도구 등 기본 단축키를 게임이 가로채지 않는다.
+- 전역 키보드 입력은 이동키만 처리한다.
+- 공격·기술·일시정지·제작 콘솔은 화면 버튼과 명시적 UI를 사용한다.
 
-## PRESERVED RELEASE LINEAGE
+## 보존된 릴리스 기반
 
-v1.0.12 비주얼 폴리시 기반과 이후 승인 자산을 보존한다. v1.0.17 방향 승인, v1.0.20 주인공 적용, v1.0.21 실전 전투 계약 위에 v1.0.22를 적용한다.
+v1.0.12 크로스 플랫폼 비주얼 기반, v1.0.17 승인 자산 경계, v1.0.20 주인공 11방향 적용, v1.0.26 보스전 검증을 유지한다.

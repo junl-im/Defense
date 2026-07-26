@@ -1,0 +1,43 @@
+{
+  "schema": "DD-ACTION-ASSET-REGISTRY-V125",
+  "release": "1.0.25",
+  "build": "b24.25",
+  "entries": [
+    {
+      "id": "hero-pupu-directional-v117",
+      "type": "directional-atlas",
+      "owner": "protagonist",
+      "directionCount": 11,
+      "actionRows": 6,
+      "artApproval": "approved-directional",
+      "actionArtApproval": "derived-provisional",
+      "runtime": "active",
+      "mirroring": false
+    },
+    {
+      "id": "hero-pupu-action-runtime-v125",
+      "type": "runtime-action-mapping",
+      "owner": "protagonist",
+      "states": ["idle", "move", "attack", "skill", "hit", "death"],
+      "approval": "approved-runtime",
+      "independentActionArt": false,
+      "runtime": "active"
+    },
+    {
+      "id": "monster-bomb-imp-directional-candidate-v125",
+      "type": "directional-candidate",
+      "owner": "monster",
+      "directionCount": 11,
+      "artApproval": "replacement-pending",
+      "runtime": "quarantined",
+      "reason": "셀 단위 외형·무기·접지점 일관성 재검수 필요"
+    }
+  ],
+  "summary": {
+    "approvedRuntime": 2,
+    "provisionalArt": 1,
+    "replacementPending": 1,
+    "quarantined": 1,
+    "newFinalCharacterArt": 0
+  }
+}

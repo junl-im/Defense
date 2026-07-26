@@ -4459,7 +4459,7 @@ body.dd-shell-mobile-v112.dd-shell-landscape-v112 .center-meter-rail {
 .title-mascot-stage-v112[role="img"] { color: transparent; font-size: 0; line-height: 0; }
 .title-mascot-v112[hidden] { display: none !important; }
 body.title-mascot-fallback .title-mascot-stage-v112 {
-  background: url('./assets/title-v112/title-mascot-lite-v112.webp?rev=release-v124-b24-24') center bottom / contain no-repeat;
+  background: url('./assets/title-v112/title-mascot-lite-v112.webp?rev=release-v126-b24-26') center bottom / contain no-repeat;
 }
 html[data-presentation-mode="loading"] .boot-gate-line::after { animation-duration: .82s; }
 
@@ -4836,4 +4836,393 @@ body.release-assurance-v124.protagonist-direction-fallback-v124 #quality-badge::
 @media (prefers-reduced-motion: reduce) {
   body.release-assurance-v124 .boss-health,
   body.release-assurance-v124 :is(.luck-meter,.synergy-panel,.unit-strip) { transition: none !important; }
+}
+
+/* ========================================================================== */
+/* v1.0.25 Action Asset Assurance, Result & Codex Presentation                */
+/* ========================================================================== */
+body.action-asset-assurance-v125 .result-card,
+body.action-asset-assurance-v125 .collection-card,
+body.action-asset-assurance-v125 .codex-preview-card {
+  border: 1px solid rgba(145, 213, 255, .34);
+  background:
+    radial-gradient(circle at 12% 0%, rgba(57, 126, 222, .22), transparent 34%),
+    radial-gradient(circle at 92% 8%, rgba(130, 78, 196, .20), transparent 36%),
+    linear-gradient(145deg, rgba(5, 10, 25, .97), rgba(17, 19, 48, .96) 58%, rgba(14, 32, 58, .94));
+  box-shadow: 0 34px 90px rgba(0, 0, 0, .56), inset 0 1px rgba(255,255,255,.09);
+  backdrop-filter: blur(18px) saturate(1.12);
+}
+body.action-asset-assurance-v125 .result-card {
+  width: min(94vw, 720px);
+  max-height: min(92vh, 920px);
+  overflow: auto;
+  padding: clamp(22px, 3vw, 38px);
+  scrollbar-width: thin;
+}
+body.action-asset-assurance-v125 .result-card > .kicker,
+body.action-asset-assurance-v125 .collection-card > .kicker,
+body.action-asset-assurance-v125 .codex-preview-copy > .kicker {
+  color: #92dfff;
+  letter-spacing: .18em;
+  text-shadow: 0 0 18px rgba(82, 183, 255, .35);
+}
+body.action-asset-assurance-v125 .result-card > h2,
+body.action-asset-assurance-v125 .collection-card > h2,
+body.action-asset-assurance-v125 .codex-preview-copy > h2 {
+  color: #fff5d5;
+  text-shadow: 0 3px 16px rgba(0,0,0,.65), 0 0 22px rgba(255, 205, 103, .15);
+}
+body.action-asset-assurance-v125 .result-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 18px 0;
+}
+body.action-asset-assurance-v125 .result-stats > div {
+  position: relative;
+  min-height: 82px;
+  padding: 14px 12px;
+  border: 1px solid rgba(129, 198, 255, .25);
+  border-radius: 16px;
+  background: linear-gradient(160deg, rgba(36, 76, 132, .44), rgba(15, 20, 48, .74));
+  overflow: hidden;
+}
+body.action-asset-assurance-v125 .result-stats > div::after {
+  content: '';
+  position: absolute;
+  inset: auto -20% -65% 20%;
+  height: 90%;
+  background: radial-gradient(circle, rgba(78, 194, 255, .2), transparent 68%);
+  pointer-events: none;
+}
+body.action-asset-assurance-v125 .result-stats span { color: rgba(221, 239, 255, .72); }
+body.action-asset-assurance-v125 .result-stats b { color: #ffffff; font-size: clamp(21px, 3vw, 32px); }
+body.action-asset-assurance-v125 .result-units,
+body.action-asset-assurance-v125 .result-analysis,
+body.action-asset-assurance-v125 .result-progression,
+body.action-asset-assurance-v125 .result-shards {
+  border-radius: 17px;
+  border: 1px solid rgba(129, 198, 255, .18);
+  background: rgba(8, 14, 34, .55);
+  box-shadow: inset 0 1px rgba(255,255,255,.04);
+}
+body.action-asset-assurance-v125 .result-progression article {
+  border-color: rgba(255, 215, 125, .2);
+  background: linear-gradient(135deg, rgba(53, 42, 79, .55), rgba(15, 28, 54, .6));
+}
+body.action-asset-assurance-v125 .result-shards {
+  background: linear-gradient(135deg, rgba(69, 45, 99, .72), rgba(18, 50, 79, .72));
+}
+body.action-asset-assurance-v125 .result-card > .btn {
+  min-height: 46px;
+  border-radius: 14px;
+}
+body.action-asset-assurance-v125 .collection-card {
+  width: min(96vw, 1120px);
+  max-height: min(92vh, 940px);
+  overflow: auto;
+  padding: clamp(20px, 2.8vw, 36px);
+}
+body.action-asset-assurance-v125 .collection-summary {
+  border: 1px solid rgba(120, 204, 255, .22);
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(25, 52, 92, .58), rgba(42, 28, 72, .58));
+}
+body.action-asset-assurance-v125 .collection-tabs {
+  position: sticky;
+  top: -1px;
+  z-index: 3;
+  padding: 8px;
+  border-radius: 16px;
+  background: rgba(7, 12, 29, .90);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 12px 24px rgba(0,0,0,.22);
+}
+body.action-asset-assurance-v125 .collection-tabs button {
+  border-radius: 12px;
+  border-color: rgba(131, 207, 255, .2);
+}
+body.action-asset-assurance-v125 .collection-tabs button[aria-selected="true"] {
+  color: #081425;
+  background: linear-gradient(135deg, #8fe3ff, #d5c5ff);
+  box-shadow: 0 8px 22px rgba(89, 182, 255, .22);
+}
+body.action-asset-assurance-v125 .codex-grid > article,
+body.action-asset-assurance-v125 .codex-grid > button,
+body.action-asset-assurance-v125 .codex-card {
+  border-color: rgba(128, 199, 255, .2);
+  background: linear-gradient(155deg, rgba(31, 51, 91, .58), rgba(15, 18, 42, .84));
+  box-shadow: 0 16px 30px rgba(0,0,0,.2), inset 0 1px rgba(255,255,255,.05);
+}
+body.action-asset-assurance-v125 .codex-preview-layout {
+  gap: clamp(16px, 2.4vw, 30px);
+}
+body.action-asset-assurance-v125 .codex-canvas-shell {
+  border-color: rgba(129, 204, 255, .28);
+  background:
+    radial-gradient(circle at 50% 35%, rgba(75, 141, 211, .22), transparent 43%),
+    linear-gradient(180deg, rgba(7, 14, 33, .86), rgba(18, 19, 45, .94));
+  box-shadow: inset 0 1px rgba(255,255,255,.05), 0 18px 40px rgba(0,0,0,.25);
+}
+body.action-asset-assurance-v125 .codex-preview-controls {
+  border: 1px solid rgba(123, 195, 255, .2);
+  border-radius: 18px;
+  background: rgba(7, 13, 31, .58);
+}
+body.action-asset-assurance-v125.hud-collision-guard-v125 .boss-health {
+  transform: translateY(8px) !important;
+}
+body.action-asset-assurance-v125.hud-collision-guard-v125 :is(.luck-meter,.synergy-panel,.unit-strip) {
+  transform: translateY(14px) !important;
+}
+body.action-asset-assurance-v125.lifecycle-pressure-v125 :is(.ambient-particle,.weather-particle,.combat-ground-glow) {
+  opacity: .42 !important;
+}
+html[data-v125-viewport="mobile-landscape"] body.action-asset-assurance-v125 .hud {
+  max-height: calc(78px + var(--safe-top));
+}
+html[data-v125-viewport="mobile-landscape"] body.action-asset-assurance-v125 .boss-health {
+  max-height: 64px;
+  overflow: hidden;
+}
+html[data-v125-viewport="mobile-portrait"] body.action-asset-assurance-v125 .result-card,
+html[data-v125-viewport="mobile-portrait"] body.action-asset-assurance-v125 .collection-card {
+  width: calc(100vw - var(--safe-left) - var(--safe-right) - 10px);
+  max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - 10px);
+  border-radius: 20px;
+}
+@media (max-width: 720px) {
+  body.action-asset-assurance-v125 .result-stats { gap: 6px; }
+  body.action-asset-assurance-v125 .result-stats > div { min-height: 70px; padding: 11px 8px; border-radius: 13px; }
+  body.action-asset-assurance-v125 .result-stats b { font-size: clamp(18px, 6vw, 25px); }
+  body.action-asset-assurance-v125 .collection-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  body.action-asset-assurance-v125 .collection-tabs button { min-width: 0; padding-inline: 7px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.action-asset-assurance-v125 .result-card,
+  body.action-asset-assurance-v125 .collection-card,
+  body.action-asset-assurance-v125 .boss-health { transition: none !important; }
+}
+
+/* ========================================================================== */
+/* v1.0.26 Boss Encounter Assurance, Telegraph Contrast & 20-Wave QA         */
+/* ========================================================================== */
+body.boss-encounter-assurance-v126 .boss-health {
+  top: calc(var(--boss-safe-top-v126, 118px) + 6px) !important;
+  width: min(82vw, 560px);
+  border-color: rgba(255, 126, 154, .42);
+  background:
+    radial-gradient(circle at 14% 0%, rgba(255, 104, 145, .16), transparent 35%),
+    linear-gradient(165deg, rgba(42, 12, 39, .94), rgba(18, 10, 31, .94));
+  box-shadow: 0 16px 42px rgba(0,0,0,.42), inset 0 1px rgba(255,255,255,.08), 0 0 24px rgba(255,87,126,.12);
+  transition: top .18s ease, transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+body.boss-encounter-assurance-v126 .boss-health-track {
+  position: relative;
+  isolation: isolate;
+  height: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.08);
+  background: linear-gradient(180deg, rgba(4,5,13,.82), rgba(35,15,31,.74));
+  box-shadow: inset 0 2px 4px rgba(0,0,0,.62);
+}
+body.boss-encounter-assurance-v126 .boss-health-track > span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  display: block;
+  height: 100%;
+}
+body.boss-encounter-assurance-v126 .boss-health-track .boss-health-damage {
+  z-index: 0;
+  width: 100%;
+  background: linear-gradient(90deg, #ffe36f, #ff9c64);
+  box-shadow: 0 0 14px rgba(255,190,83,.48);
+  transition: width .08s linear;
+}
+body.boss-encounter-assurance-v126 #boss-health-progress {
+  z-index: 1;
+  background: linear-gradient(90deg, #e92f64 0%, #ff5f7d 52%, #ff9b72 100%);
+  box-shadow: inset 0 1px rgba(255,255,255,.34), 0 0 15px rgba(255,73,120,.58);
+}
+body.boss-encounter-assurance-v126 .boss-health[data-boss-phase="2"] #boss-health-progress {
+  background: linear-gradient(90deg, #b832e6, #ff4f8f 58%, #ffbc65);
+}
+body.boss-encounter-assurance-v126 .boss-health[data-boss-phase="3"] #boss-health-progress {
+  background: linear-gradient(90deg, #7344ff, #ef3fff 48%, #ff696f);
+}
+body.boss-encounter-assurance-v126 .boss-health[data-hazard-pressure="crowded"],
+body.boss-encounter-assurance-v126 .boss-health[data-hazard-pressure="extreme"] {
+  border-color: rgba(255, 185, 85, .62);
+  box-shadow: 0 16px 42px rgba(0,0,0,.46), inset 0 1px rgba(255,255,255,.09), 0 0 30px rgba(255,155,73,.22);
+}
+body.boss-encounter-assurance-v126.boss-critical-v126 .boss-health {
+  border-color: rgba(255, 87, 112, .82);
+  animation: boss-panel-critical-v126 .46s ease-in-out infinite alternate;
+}
+body.boss-encounter-assurance-v126.boss-critical-v126 #boss-intent[data-v126-critical="true"] {
+  filter: brightness(1.16) saturate(1.16);
+}
+body.boss-encounter-assurance-v126.boss-layout-collision-v126 .boss-health {
+  transform: translate(-50%, 14px) !important;
+}
+body.boss-encounter-assurance-v126.boss-cinematic-stack-v126 .mission-banner.show {
+  top: min(48%, calc(var(--boss-safe-top-v126, 118px) + 170px));
+}
+@keyframes boss-panel-critical-v126 {
+  from { box-shadow: 0 16px 42px rgba(0,0,0,.46), 0 0 20px rgba(255,68,98,.18); }
+  to { box-shadow: 0 16px 42px rgba(0,0,0,.5), 0 0 38px rgba(255,68,98,.42); }
+}
+body.boss-encounter-assurance-v126 .danger-hint.visible {
+  border-width: 2px;
+  box-shadow: 0 15px 42px rgba(0,0,0,.48), inset 0 1px rgba(255,255,255,.08), 0 0 22px color-mix(in srgb, var(--danger-color) 22%, transparent);
+}
+body.boss-encounter-assurance-v126.boss-hazard-pressure-v126 .danger-hint.visible {
+  max-width: min(84vw, 360px);
+}
+body.boss-encounter-assurance-v126 .result-card,
+body.boss-encounter-assurance-v126 .collection-card {
+  overscroll-behavior: contain;
+  scroll-padding-block: 18px calc(24px + var(--safe-bottom));
+}
+@media (max-width: 720px) {
+  body.boss-encounter-assurance-v126 .boss-health {
+    width: calc(100vw - var(--safe-left) - var(--safe-right) - 18px);
+    max-width: 520px;
+    padding: 7px 9px 8px;
+  }
+  body.boss-encounter-assurance-v126 .boss-health-head { min-height: 18px; }
+  body.boss-encounter-assurance-v126 .result-card :is(.btn, button),
+  body.boss-encounter-assurance-v126 .collection-card :is(.btn, button) {
+    min-height: 46px;
+    touch-action: manipulation;
+  }
+  body.boss-encounter-assurance-v126 .collection-tabs button { min-height: 44px; }
+}
+@media (max-height: 570px) and (orientation: landscape) {
+  body.boss-encounter-assurance-v126 .boss-health {
+    top: calc(var(--boss-safe-top-v126, 54px) + 2px) !important;
+    width: min(58vw, 500px);
+  }
+  body.boss-encounter-assurance-v126 .boss-health-head,
+  body.boss-encounter-assurance-v126 .boss-break em { font-size: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.boss-encounter-assurance-v126.boss-critical-v126 .boss-health { animation: none !important; }
+  body.boss-encounter-assurance-v126 .boss-health,
+  body.boss-encounter-assurance-v126 .boss-health-track > span { transition: none !important; }
+}
+
+/* ========================================================================== */
+/* v1.0.27 Boss Tactical Radar, Camera Assist & 30-Wave Assurance             */
+/* ========================================================================== */
+body.boss-tactical-assurance-v127 .offscreen-hazard-radar-v127 {
+  position: fixed;
+  inset: 0;
+  z-index: 125;
+  pointer-events: none;
+  overflow: hidden;
+  contain: layout paint style;
+}
+body.boss-tactical-assurance-v127 .offscreen-hazard-indicator-v127 {
+  position: absolute;
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 5px;
+  min-width: 64px;
+  min-height: 34px;
+  padding: 5px 8px 5px 6px;
+  border: 1px solid rgba(255, 207, 112, .58);
+  border-radius: 999px;
+  color: #fff8df;
+  background: linear-gradient(135deg, rgba(70, 18, 30, .94), rgba(24, 10, 27, .9));
+  box-shadow: 0 8px 24px rgba(0,0,0,.46), inset 0 1px rgba(255,255,255,.12), 0 0 20px rgba(255,105,78,.18);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(.82);
+  transition: opacity .12s ease, transform .12s ease, border-color .12s ease;
+  will-change: left, top, transform, opacity;
+}
+body.boss-tactical-assurance-v127 .offscreen-hazard-indicator-v127.visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+body.boss-tactical-assurance-v127 .offscreen-hazard-indicator-v127.critical {
+  border-color: rgba(255, 83, 103, .9);
+  background: linear-gradient(135deg, rgba(112, 13, 35, .97), rgba(31, 7, 20, .95));
+  box-shadow: 0 8px 28px rgba(0,0,0,.5), inset 0 1px rgba(255,255,255,.14), 0 0 28px rgba(255,56,86,.42);
+  animation: offscreen-danger-pulse-v127 .42s ease-in-out infinite alternate;
+}
+body.boss-tactical-assurance-v127 .offscreen-hazard-arrow-v127 {
+  grid-row: 1 / span 2;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  color: #ffd56a;
+  font-size: 16px;
+  line-height: 1;
+  transform: rotate(var(--hazard-angle-v127, 0rad));
+  filter: drop-shadow(0 0 5px rgba(255,148,75,.72));
+}
+body.boss-tactical-assurance-v127 .offscreen-hazard-indicator-v127 b {
+  font-size: 10px;
+  letter-spacing: .08em;
+  line-height: 1.05;
+}
+body.boss-tactical-assurance-v127 .offscreen-hazard-indicator-v127 small {
+  color: rgba(255,239,210,.78);
+  font-size: 9px;
+  line-height: 1.05;
+}
+body.boss-tactical-assurance-v127.boss-camera-assist-v127 .boss-health {
+  border-color: rgba(255, 194, 101, .66);
+  box-shadow: 0 16px 46px rgba(0,0,0,.48), inset 0 1px rgba(255,255,255,.1), 0 0 32px rgba(255,145,74,.22);
+}
+body.boss-tactical-assurance-v127.boss-camera-assist-v127 .danger-hint.visible::after {
+  content: '화면 밖 위험 추적 중';
+  display: block;
+  margin-top: 4px;
+  color: rgba(255,229,185,.78);
+  font-size: 9px;
+  letter-spacing: .04em;
+}
+@keyframes offscreen-danger-pulse-v127 {
+  from { transform: translate(-50%, -50%) scale(.96); filter: brightness(.94); }
+  to { transform: translate(-50%, -50%) scale(1.06); filter: brightness(1.16); }
+}
+@media (max-height: 560px) and (orientation: landscape) {
+  body.boss-tactical-assurance-v127.boss-hud-compact-v127 .boss-health {
+    top: calc(var(--boss-safe-top-v126, 50px) + 1px) !important;
+    width: min(56vw, 460px);
+    padding: 5px 8px 6px;
+    border-radius: 13px;
+  }
+  body.boss-tactical-assurance-v127.boss-hud-compact-v127 .boss-health-head {
+    min-height: 15px;
+    gap: 5px;
+  }
+  body.boss-tactical-assurance-v127.boss-hud-compact-v127 .boss-health-head small,
+  body.boss-tactical-assurance-v127.boss-hud-compact-v127 .boss-break em,
+  body.boss-tactical-assurance-v127.boss-hud-compact-v127 #boss-intent-label {
+    display: none !important;
+  }
+  body.boss-tactical-assurance-v127.boss-hud-compact-v127 .boss-health-track { height: 8px; }
+  body.boss-tactical-assurance-v127.boss-hud-compact-v127 .boss-intent { min-height: 18px; }
+  body.boss-tactical-assurance-v127 .offscreen-hazard-indicator-v127 {
+    min-width: 52px;
+    min-height: 28px;
+    padding: 3px 6px 3px 4px;
+  }
+  body.boss-tactical-assurance-v127 .offscreen-hazard-arrow-v127 { width: 18px; height: 18px; font-size: 13px; }
+  body.boss-tactical-assurance-v127 .offscreen-hazard-indicator-v127 b { font-size: 9px; }
+  body.boss-tactical-assurance-v127 .offscreen-hazard-indicator-v127 small { font-size: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.boss-tactical-assurance-v127 .offscreen-hazard-indicator-v127,
+  body.boss-tactical-assurance-v127 .offscreen-hazard-indicator-v127.critical,
+  body.boss-tactical-assurance-v127 .boss-health {
+    animation: none !important;
+    transition: none !important;
+  }
 }

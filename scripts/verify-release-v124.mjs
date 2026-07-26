@@ -23,19 +23,21 @@ const workflow = text('.github/workflows/deploy.yml');
 const rootPolicy = text('scripts/root-output-policy.mjs');
 const obsoleteCleaner = text('scripts/clean-obsolete-assets.mjs');
 
-check(pkg.version === '1.0.24' && pkg.dokkaebi?.buildId === 'b24.24', 'package identity mismatch');
+const [major, minor, patchVersion] = pkg.version.split('.').map(Number);
+check(major === 1 && minor === 0 && patchVersion >= 24, 'v1.0.24 foundation is not preserved');
+check(/^b24\.\d+$/.test(pkg.dokkaebi?.buildId || ''), 'current build identity mismatch');
 check(lock.version === pkg.version && lock.packages?.['']?.version === pkg.version, 'package-lock version mismatch');
-check(lock.packages?.['']?.dokkaebi?.buildId === 'b24.24', 'package-lock build identity mismatch');
-check(version.releaseVersion === pkg.version && version.buildId === 'b24.24', 'public version identity mismatch');
-check(main.includes("const GAME_VERSION = '1.0.24'"), 'runtime version identity mismatch');
-if (!failures.length) pass('v1.0.24 / b24.24 identity is synchronized');
+check(lock.packages?.['']?.dokkaebi?.buildId === pkg.dokkaebi?.buildId, 'package-lock build identity mismatch');
+check(version.releaseVersion === pkg.version && version.buildId === pkg.dokkaebi?.buildId, 'public version identity mismatch');
+check(main.includes(`const GAME_VERSION = '${pkg.version}'`), 'runtime version identity mismatch');
+if (!failures.length) pass(`v1.0.24 identity foundation is preserved under current release ${pkg.version} / ${pkg.dokkaebi?.buildId}`);
 
 check(manifest.name === '도깨비 럭 디펜스 3D', 'PWA manifest canonical name missing');
 check(manifest.short_name === '도깨비 디펜스', 'PWA manifest short name mismatch');
 check(!JSON.stringify(manifest).includes('도깨비 운빨 수호대') && !JSON.stringify(manifest).includes('깨비수호대'), 'legacy PWA branding remains');
-check(index.includes('manifest.webmanifest?rev=release-v124-b24-24'), 'versioned PWA manifest link missing');
+check(index.includes(`manifest.webmanifest?rev=release-v1${String(patchVersion).padStart(2, '0')}-b24-${patchVersion}`), 'versioned PWA manifest link missing');
 check(index.includes('data-text="럭 디펜스"') && index.includes('<em class="title-subtitle-v107">3D</em>'), 'v1.0.24 title wordmark structure missing');
-check(index.includes('title-v112/title-mascot-v112.webp?rev=release-v124-b24-24'), 'original mascot is not active with current cache revision');
+check(index.includes(`title-v112/title-mascot-v112.webp?rev=release-v1${String(patchVersion).padStart(2, '0')}-b24-${patchVersion}`), 'original mascot is not active with current cache revision');
 check(!index.includes('title-v120/title-mascot'), 'replacement mascot returned to title path');
 if (!failures.length) pass('canonical branding and original mascot are locked across browser and PWA entrypoints');
 
