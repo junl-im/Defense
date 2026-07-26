@@ -1,0 +1,18 @@
+{
+  "schema": "DD-ASSET-LINEAGE-REGISTRY-V131",
+  "version": "1.0.31",
+  "summary": {
+    "auditedAssets": 10,
+    "auditedFiles": 30,
+    "exactDuplicateGroups": 0,
+    "newFinalCharacterArt": 0,
+    "waveTarget": 70
+  },
+  "approvals": {
+    "pupuDirectional": "final-approved-retained",
+    "pupuIndependentActions": "derived-provisional",
+    "bombImpDirectional": "replacement-pending",
+    "bombImpRuntime": "quarantined",
+    "bossMonsterRuntimeArt": "existing-runtime-audited"
+  }
+}

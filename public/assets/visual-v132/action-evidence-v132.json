@@ -1,0 +1,933 @@
+{
+  "schema": "DD-ACTION-EVIDENCE-V132",
+  "version": "1.0.32",
+  "build": "b24.32",
+  "sourceAtlas": "assets/visual-v129/directional/guardian-ember-pupu-atlas-low-v129.webp",
+  "sourceSha256": "453b09758c3b73d9371bc825a9731d091c9b81480cffaaf69b34e1beb4991196",
+  "actions": [
+    "idle",
+    "move",
+    "attack",
+    "skill",
+    "hit",
+    "death"
+  ],
+  "directions": [
+    "front",
+    "front-left",
+    "left",
+    "back-left",
+    "back",
+    "back-right",
+    "right",
+    "front-right",
+    "high-left",
+    "high-right",
+    "combat-forward"
+  ],
+  "summary": {
+    "cells": 66,
+    "comparisons": 55,
+    "exactRgbaMatchesAgainstIdle": 0,
+    "exactAlphaMatchesAgainstIdle": 0,
+    "minimumMeanRgbaDelta": 0.100739,
+    "distinctRuntimeFrames": true,
+    "independentOriginalArtApproved": false,
+    "approval": "derived-provisional"
+  },
+  "cells": [
+    {
+      "action": "idle",
+      "direction": "front",
+      "rgbaSha256": "f10b62b4a4e17d1832dfe524f6b32870a60639f8643ffb7b0bc425dd1008b552",
+      "alphaSha256": "12ebe2e3efbdbb9fe2c4a0f78717535244960c0cc572366f927a3e7690f25c33"
+    },
+    {
+      "action": "idle",
+      "direction": "front-left",
+      "rgbaSha256": "18b0d1ecbc641fd98b05c657ff9893eec9cae837e538da06f5d98183a6e9cd25",
+      "alphaSha256": "92444f1af9fa2cbc92db5585a2625aceec8cb66b129aa6c3d7bbc74c249886e5"
+    },
+    {
+      "action": "idle",
+      "direction": "left",
+      "rgbaSha256": "5036f738f548f03dbebd13b361d1973643a23c99c0ca4be39112395ad2f9ac82",
+      "alphaSha256": "0b028198e7835423a493b98c8ff1fbf27ee8bd08ca4bea9a84ecf4caf6b6b5ca"
+    },
+    {
+      "action": "idle",
+      "direction": "back-left",
+      "rgbaSha256": "b1ffb025a6a814b550d6253cc84eb749220b6e1b1859383b85c59bb1e4ea700b",
+      "alphaSha256": "fb55b2572d5319fc99e53f967136f56b92c26cb21fb8cbdacbdcabee622166f7"
+    },
+    {
+      "action": "idle",
+      "direction": "back",
+      "rgbaSha256": "9797448397b4040e45a41e2d48d2d5c355b2fb9aa4e1b960f14836a5db7d050a",
+      "alphaSha256": "d5ab1562fed28f68b54f1ea2888e3806f101659d5c3e5e628a65c2d3826e2932"
+    },
+    {
+      "action": "idle",
+      "direction": "back-right",
+      "rgbaSha256": "81b6f2c66f26647f68d4325dc53b09407fa076be5ee21e3d0aa2682f7e9ccc36",
+      "alphaSha256": "d0b902977c0b779a61ef031695c22a5475baa828e68222f66c47b60a53865775"
+    },
+    {
+      "action": "idle",
+      "direction": "right",
+      "rgbaSha256": "4dd9785994aa88ded01e537e2d0c214414c0fe8c7c4800b4ecfffa3112f69f9f",
+      "alphaSha256": "54c9a6c5de1d7bcaf41ecd9f01656dc196844b3d3e3a247844a96c8d0d42278b"
+    },
+    {
+      "action": "idle",
+      "direction": "front-right",
+      "rgbaSha256": "7062b5dbbc743f886e814eec05e0e8b088b8a1f1f5c6f9284ea2b62b4aa19b7a",
+      "alphaSha256": "a28f9870ed8006886336b9680d85d56103f0288d177eb06e2927224b34c268fc"
+    },
+    {
+      "action": "idle",
+      "direction": "high-left",
+      "rgbaSha256": "5c734ba9fe4d15c4b3b7d27f3667546b59e62b0653f7110032f793390656d2e6",
+      "alphaSha256": "4b90be4ccb5c6eaedbbde00a9b3a5fafc3309badc3cdc4030968744633f9b3e2"
+    },
+    {
+      "action": "idle",
+      "direction": "high-right",
+      "rgbaSha256": "478ab0bef5e1956f3adbcd4ee2789cc794f6ce694a27d8dab036d125c732bf70",
+      "alphaSha256": "0e83507c45dd59f591933ed400f655331cde672666ec97f56ff8497299603b5b"
+    },
+    {
+      "action": "idle",
+      "direction": "combat-forward",
+      "rgbaSha256": "c91a3b23309cdf0e37ff3aa68912de4fb1ebdb265bb7c0c26dad9cd5debc1cba",
+      "alphaSha256": "75c7355b37ab52cbffe9e21ec2dd3a964d1945912d9d4bce2c96987f25b6a318"
+    },
+    {
+      "action": "move",
+      "direction": "front",
+      "rgbaSha256": "955d19d4e3bd1100ca55c43a46dd5151708f5d77210baa5ab87944c42f452c9a",
+      "alphaSha256": "81af80f4d181f4dcca3dcc3b133d35ebcc81ee89d5558bf03fd3743618916807"
+    },
+    {
+      "action": "move",
+      "direction": "front-left",
+      "rgbaSha256": "c2e468382ebcfbe94b3f0a9647dceccb90a8cd370d54523991e193bd695f5c37",
+      "alphaSha256": "97e814ffebccc3b3b7ae73eb8664ca4a6460f302ea4ae8e1bab1082216159975"
+    },
+    {
+      "action": "move",
+      "direction": "left",
+      "rgbaSha256": "828f0944afa463ed35443f313820ddc4f80e8488a41e144d70e435253e0badcd",
+      "alphaSha256": "5c45eb7e6f3097bd7f9cf3b256638aeb15c93d7ecbfeddfac1ad66af1278e2da"
+    },
+    {
+      "action": "move",
+      "direction": "back-left",
+      "rgbaSha256": "cdde1b376a7fc5bc4c3c25070a92681f03e8b164a932b941ba9f4f067e16d98d",
+      "alphaSha256": "ddd3fd0aaa6373701e83f0e9fc4cfc2d4c2eeef4088bc89fc73c033eeaaebf47"
+    },
+    {
+      "action": "move",
+      "direction": "back",
+      "rgbaSha256": "0b3961dd75437e8b28148919b293899c8ccf8fe777b447ad0fdc9fac028b2c85",
+      "alphaSha256": "328a22ef2019dabd56978eb8b350ea6911b398e0c58ae7eb3f67557137507632"
+    },
+    {
+      "action": "move",
+      "direction": "back-right",
+      "rgbaSha256": "8027f36c459320ff97087e1aefd004ce325e40ce8adca468e366bbf469679be4",
+      "alphaSha256": "7c12cf596a527c177e10b4a3b0a29728f64bb90ee44cf1d2c3ed2cb6c743afa5"
+    },
+    {
+      "action": "move",
+      "direction": "right",
+      "rgbaSha256": "9028c1731b66f7ef6d6cf741926427df9c0c1819d07c6118306cdc7752a1c28e",
+      "alphaSha256": "e3923dd303833f7a7b928a378d4714070d2021673a5fcf46e4b74fa66fb66c52"
+    },
+    {
+      "action": "move",
+      "direction": "front-right",
+      "rgbaSha256": "2e3f2de711fcd53f29b160ee784e75d40504bd58ce49fa89245b7daf598f6da9",
+      "alphaSha256": "6ace4bf2aa95f4d62313c2e525d0ab2d9d79caf45829d94e3a443353264130a5"
+    },
+    {
+      "action": "move",
+      "direction": "high-left",
+      "rgbaSha256": "693617b476a8d23ce2e8950016b93159ffbe39e25875e7c259c34d4d4654984a",
+      "alphaSha256": "f140eaaf77350c43d10a6ba5c763922611caf0db41fcb19bca80e088f0ab86a3"
+    },
+    {
+      "action": "move",
+      "direction": "high-right",
+      "rgbaSha256": "d933a45ef875a53042825d5a15717c5f2da56af2c19c7d4439bee320205cd756",
+      "alphaSha256": "76e0a8eaeeef4605f0f860de80422ca9bd45d15f0114a054ccf9c1ffb9b85b40"
+    },
+    {
+      "action": "move",
+      "direction": "combat-forward",
+      "rgbaSha256": "e9d5e34159cf0af2f1e60550a3ace8f1d759fd64cb1ac5f7a79b153f36ec3821",
+      "alphaSha256": "16664e67e5ffb85c61e25da502c8eee7f032eddc245b49b83b80e65a7d42076e"
+    },
+    {
+      "action": "attack",
+      "direction": "front",
+      "rgbaSha256": "9e81b79ef9ac565b6ea87efb72fe889fab52942fecffc4a36176a402525b337d",
+      "alphaSha256": "acf61a6e6fad31efed8cd7328b12308a464a9242ec93d1de4ccfea1eb233a219"
+    },
+    {
+      "action": "attack",
+      "direction": "front-left",
+      "rgbaSha256": "8e88909de28582600e99753df8c2b602dedce1ed95dbc588bd036091b7f754d4",
+      "alphaSha256": "9a9e3fee1db3309f91b0045e96f4e1c67854411a1f7c3909d6230ba0014d7e33"
+    },
+    {
+      "action": "attack",
+      "direction": "left",
+      "rgbaSha256": "c533af1a55e4986dbca8e707e93313ce292dfd4b4eccf11e26756cef141a15ac",
+      "alphaSha256": "ae4e92f299edded86dfe5a0c2e8b717a25ef3e57165148b7b335a64dd83c5350"
+    },
+    {
+      "action": "attack",
+      "direction": "back-left",
+      "rgbaSha256": "22c40dcd7dcc10f20966bc28457479816b0ad7fddfccfa185e3e2bff76dba578",
+      "alphaSha256": "6aca99274888b31ae80ec04908651005c3e71d68035ab032a589f35237f33c59"
+    },
+    {
+      "action": "attack",
+      "direction": "back",
+      "rgbaSha256": "d74fad14f2c08333788a51c6a25b4b165ec13df8a2d1308780c58b3d355b74be",
+      "alphaSha256": "8046f6ea970f25eb962960d1b1b319ee200a17d7f9989bc2a833ae0e5df5fbbb"
+    },
+    {
+      "action": "attack",
+      "direction": "back-right",
+      "rgbaSha256": "fdf941c6ce9cd21293d4c230f64f4fb88eda44daa60f8a6c1ab10763db3aa876",
+      "alphaSha256": "0d2c112480e9347e5bb8ffd61c4ec4e545e2a27247c1d20b344d684071c253ac"
+    },
+    {
+      "action": "attack",
+      "direction": "right",
+      "rgbaSha256": "4b776003022757672f284cb719cd45c2366698efc7b213025cdb077f4deae511",
+      "alphaSha256": "b9facd7dd4ac3542186b7df10b2fdf3e48e1f2def96c6bfa7270acf4178924d0"
+    },
+    {
+      "action": "attack",
+      "direction": "front-right",
+      "rgbaSha256": "ccb941ee2cd38bf9cd8a5b681d98aef399956559e4652a8972ccc3f857fb2d38",
+      "alphaSha256": "b488808e1ae5a8c11ee6aecf8016a3e77b0911c56db0b47c675a377927ab17d6"
+    },
+    {
+      "action": "attack",
+      "direction": "high-left",
+      "rgbaSha256": "06029e1ce55238596f7ad9de379f1b35993a94e56e054b1c49ee99cf9a85de8a",
+      "alphaSha256": "191e04ce851cc51d47ebfade42f8cd770bdc164e465260849328cb19fa04a446"
+    },
+    {
+      "action": "attack",
+      "direction": "high-right",
+      "rgbaSha256": "0fafaf6a423a2b463e65e01fa8bc766206b2511bfabbafcfc561dd09b8ee5b9e",
+      "alphaSha256": "d0dc8bebc11647a1860da0e57fd14a1f1ca6b9d03fa71d7c9082865c8678f3af"
+    },
+    {
+      "action": "attack",
+      "direction": "combat-forward",
+      "rgbaSha256": "8aef431007d6cb78f8bcae33670fe2530ffdc8fa560b6ccd71ae14db20dec54d",
+      "alphaSha256": "8de69b28a29940072cefaf475f75bb07f670a50c870b2acf24741b6964cf5a3f"
+    },
+    {
+      "action": "skill",
+      "direction": "front",
+      "rgbaSha256": "01817bf79f2d426686bea8da3cb544bcf532ab89d7500208b6645391c62f0c8a",
+      "alphaSha256": "e0ae67f58dbb9efcab36fa116c2d30352cd0476ceaafbace4f10ed78afd5b271"
+    },
+    {
+      "action": "skill",
+      "direction": "front-left",
+      "rgbaSha256": "dc9abe8bb05c9dac3fe4d707849f341f588d7a260403f4e5bea794adb4ade368",
+      "alphaSha256": "c839af018e11877dcd7549c484ad517a3aae8f046c4fcbf8b050ccda5776699c"
+    },
+    {
+      "action": "skill",
+      "direction": "left",
+      "rgbaSha256": "ec001b8dd8dbb2a64401225e5c427a8c9a407ff4b20e22645776400674332233",
+      "alphaSha256": "2f349dee2b2ed6fbc2d6d4ddad3784ceda6d1d12eff84b422d45c34e1400c259"
+    },
+    {
+      "action": "skill",
+      "direction": "back-left",
+      "rgbaSha256": "a48e3cf38f2d2b3dfab9b9677f96e00165dd5f2be82cd20065b9550aa520bfb5",
+      "alphaSha256": "28662b34f85cf4d0de8a6b967b8795913fe522dff4fc60279b8460b194d72f85"
+    },
+    {
+      "action": "skill",
+      "direction": "back",
+      "rgbaSha256": "1a54f7a194e98dc5372d63f28f4583249fdce34d200d150b40f3b30709f4c151",
+      "alphaSha256": "8df59f5a5b688cef43e98da45c43fa10d43fb91550e98e3a3138e6788664546f"
+    },
+    {
+      "action": "skill",
+      "direction": "back-right",
+      "rgbaSha256": "116b391c13303064559b8cb3a176e4d41eb4609812cb278f1c97ce6f86c045b9",
+      "alphaSha256": "2e332bb489090563aa1758316e0f0681fd5e2e8027fdacfaa9f794f4c45321f1"
+    },
+    {
+      "action": "skill",
+      "direction": "right",
+      "rgbaSha256": "4bbd39e633219c5b86524f0debb9faa4f44695d7bef2e6ebf2c205095d8209ce",
+      "alphaSha256": "698f7f95c3fc9021c2abee2b92ca443413fb49e5f2b3b3131c25c060bf13e958"
+    },
+    {
+      "action": "skill",
+      "direction": "front-right",
+      "rgbaSha256": "a566b28ff3db3102f502534c9fbb270b8f058551ae7400fe574ca4f21253fdb3",
+      "alphaSha256": "1d6132df6d79f259a11c8b3853136a4c87bd20d0631f52211b24f4959222583f"
+    },
+    {
+      "action": "skill",
+      "direction": "high-left",
+      "rgbaSha256": "20135dac53967691e12920be6b5edae2b819eee8044f42e70bdfdbb99edef01b",
+      "alphaSha256": "a47f5b6561c6d80cfe1e324c93f4c974cc7b9377db2b3331130568ac02a28a71"
+    },
+    {
+      "action": "skill",
+      "direction": "high-right",
+      "rgbaSha256": "2a0110b47b022139ecfcc416e6a5aaf5305c28e23dbb5ef7f4557ac8d839f401",
+      "alphaSha256": "94a260445484db25baf612d0d99265e36202868a0694e05c166c4c9e3f1c7a43"
+    },
+    {
+      "action": "skill",
+      "direction": "combat-forward",
+      "rgbaSha256": "e93e7da4ac5e917e4411bbf53c89542262be4fa318949d670506f7ebcb82eda6",
+      "alphaSha256": "5f745fb48280643bf59da8b929035cd9846cf5a30463d9d441c41ab759487c1d"
+    },
+    {
+      "action": "hit",
+      "direction": "front",
+      "rgbaSha256": "e72efa65a619330be28c65ccdd3c9455bed4385e38c811ab1659517b158cb1ef",
+      "alphaSha256": "d0f9eac29db2693e51dccf8f546896c2f8f8ee085e8ef030190ca22620f16526"
+    },
+    {
+      "action": "hit",
+      "direction": "front-left",
+      "rgbaSha256": "1d3c9114ab728ff6e30545fcb9de201ef63befab67a4646c433a57e2add5819b",
+      "alphaSha256": "8e099b992dc671fe53a5a2bdfc655d3da5ea678742dd3a0fbd3f316a78f80254"
+    },
+    {
+      "action": "hit",
+      "direction": "left",
+      "rgbaSha256": "cc0bc272b68f9a835eb4e391a4284bd2c4c30b1a8443b916b891e1ddc9a8a289",
+      "alphaSha256": "5e5819e465650a87419a191d2326bf18fbe48b171791ac3031a8abefe63ec69b"
+    },
+    {
+      "action": "hit",
+      "direction": "back-left",
+      "rgbaSha256": "06d71299365bb8bd16f28f70bd96f0c15caa0f222ecefb16fb9028f8b143ec83",
+      "alphaSha256": "1af1c2fa064c166f2776784f369d55d3e91196cf788e39ce4aff0ea768d0bdcd"
+    },
+    {
+      "action": "hit",
+      "direction": "back",
+      "rgbaSha256": "3fc582f58bcd629b95130175deeaf54d3aca82e2985b48ff5e21af34a6c4e524",
+      "alphaSha256": "1266f665de89488ee73cc98460003d3ce3c0fd8934af4eac167f26a8e06170f6"
+    },
+    {
+      "action": "hit",
+      "direction": "back-right",
+      "rgbaSha256": "56f19db03fe831cb169b8324dbc31690f95af9985ab0c7d26bc24f3bb83885f1",
+      "alphaSha256": "009e321d85ddb5c9a84a4262abb7f0c600a517fb95049f6c3a33e7b4dd6277f7"
+    },
+    {
+      "action": "hit",
+      "direction": "right",
+      "rgbaSha256": "6f2704946c77655589393decbd36c80d7efc1a18a5feeacc7179b43b039c2196",
+      "alphaSha256": "e5e2b73bea94041833e787d1f05115081ea59717c34147ce82b6761d2d2777c1"
+    },
+    {
+      "action": "hit",
+      "direction": "front-right",
+      "rgbaSha256": "13eea6507909d8926753a59eab578a8fe2b2e6de06b4af399dc4a2f1ecb5ed2e",
+      "alphaSha256": "5d34bf810320131cf9b969bf3c83211cf1498f4fc0c1d2cf3964eee76c049153"
+    },
+    {
+      "action": "hit",
+      "direction": "high-left",
+      "rgbaSha256": "e0a3316e94d304202340b58adabe6cc1b24457b73f5e7d4dc115f6d1f4ea0f4e",
+      "alphaSha256": "26e98a0365e740503d11aeca274a795b2b15764dd339456762216096b6a77eca"
+    },
+    {
+      "action": "hit",
+      "direction": "high-right",
+      "rgbaSha256": "72722eb1deb49841cdbcaa7c73edb52c3b5f6e237885486485aa456e58e461b4",
+      "alphaSha256": "a00616567138dd779fb3576debeec23492f9db895036df8c1b5a0599a1121d41"
+    },
+    {
+      "action": "hit",
+      "direction": "combat-forward",
+      "rgbaSha256": "daca06bf04d80483ac62b6f55eec5400d4fd75e482447995846d97c24a571059",
+      "alphaSha256": "f817d66a497c3d9013c079c16c520f1443223161a572814ccc0d046c01012eee"
+    },
+    {
+      "action": "death",
+      "direction": "front",
+      "rgbaSha256": "fb52ee1bcef893aabf6f1defa1863b9f52fc2ab720492157c632eda913f4b02c",
+      "alphaSha256": "bdd17bc326be97acdc700c8a64f87037516431a7f4baef2335f878b8c74ae325"
+    },
+    {
+      "action": "death",
+      "direction": "front-left",
+      "rgbaSha256": "a0d146b0ef50846e53ff51678bb33095776fd0a1310edd663f3c9276f32f5f59",
+      "alphaSha256": "f17d989aded4c0f2650916bc002f71168890aaa1f62571ebad1630697e9b0eb5"
+    },
+    {
+      "action": "death",
+      "direction": "left",
+      "rgbaSha256": "b6408082c1c53a86e5ef6033e7a2c28ca57541cfdb6496410c8bdab8fcd7137e",
+      "alphaSha256": "cb832cc377f9ec64a1eb09838e71efb72c925753da84f30c89b85fb6df231fd8"
+    },
+    {
+      "action": "death",
+      "direction": "back-left",
+      "rgbaSha256": "800e8004a01b89ee725c18cfced56bf4b0ba520d19628a80731ebcddb86bfcc7",
+      "alphaSha256": "f5c31cc5d33ca54df96374cfdcf213d88fa66b79bfcd141d7b19cb8cbacbffa7"
+    },
+    {
+      "action": "death",
+      "direction": "back",
+      "rgbaSha256": "4d1863dad7b2de4c5cb50632b2a79e4b8b1a6e537388a3350cfb7f4b72c16537",
+      "alphaSha256": "48f4e97124eaff455fbf0651a2d6b699033e91b99140f11896a781f1e097ad84"
+    },
+    {
+      "action": "death",
+      "direction": "back-right",
+      "rgbaSha256": "55f4b13398f0a995a08efd86c27b2acbc105b41a6b6fd766f216b546be29f1e5",
+      "alphaSha256": "f805b2777979294a34dde4fab378b66cb9160a0ea3d65e6ad5ed3cbebb72389b"
+    },
+    {
+      "action": "death",
+      "direction": "right",
+      "rgbaSha256": "933707ba63ebc87d6a2db7a27daefd7392de49f9b12cdd34e10bc27451d63d41",
+      "alphaSha256": "521a1b91c1b93a21952cfbd57380a2a51b732c6ad08527aa0cef08bd920c2197"
+    },
+    {
+      "action": "death",
+      "direction": "front-right",
+      "rgbaSha256": "ba9f6bbddff1b669b622c2cac945054f35232bd25983f876d4b63a0b30dfa3c8",
+      "alphaSha256": "b9cdab8f8d7cb0f99e0e6004277dff16f24d424ba66fbece2e80112b21841f45"
+    },
+    {
+      "action": "death",
+      "direction": "high-left",
+      "rgbaSha256": "5d9b6407802626c6f2a7abd453b07b2916d0340ecb188f9fec765503e3d1ebfd",
+      "alphaSha256": "67e9520d3db68788f40375d1de5b3c8e512d55fcb75f55b95c6ff6b49dad23e2"
+    },
+    {
+      "action": "death",
+      "direction": "high-right",
+      "rgbaSha256": "29fb803a95f30ff108973cdeda4b85ddb34edea658aa0f9e0107225fe4d910a1",
+      "alphaSha256": "27d1785945008b88869799dfa96cf4107da2c83d406963ce1c92ff23da85e3e5"
+    },
+    {
+      "action": "death",
+      "direction": "combat-forward",
+      "rgbaSha256": "416f388bf5eb6c2db8a95562d68e0c6c9943d9022e34ffb7774c48ac2a2a04ff",
+      "alphaSha256": "e063f27ce6bac4ca1b8f5709eb0ba5882a7d42798b52b10c847b6dde578f90b9"
+    }
+  ],
+  "comparisons": [
+    {
+      "direction": "front",
+      "baseline": "idle",
+      "action": "move",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.131983,
+      "alphaIou": 0.903384
+    },
+    {
+      "direction": "front",
+      "baseline": "idle",
+      "action": "attack",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.227145,
+      "alphaIou": 0.694133
+    },
+    {
+      "direction": "front",
+      "baseline": "idle",
+      "action": "skill",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.157528,
+      "alphaIou": 0.719644
+    },
+    {
+      "direction": "front",
+      "baseline": "idle",
+      "action": "hit",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.120975,
+      "alphaIou": 0.884896
+    },
+    {
+      "direction": "front",
+      "baseline": "idle",
+      "action": "death",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.360741,
+      "alphaIou": 0.284801
+    },
+    {
+      "direction": "front-left",
+      "baseline": "idle",
+      "action": "move",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.116159,
+      "alphaIou": 0.919338
+    },
+    {
+      "direction": "front-left",
+      "baseline": "idle",
+      "action": "attack",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.197505,
+      "alphaIou": 0.743418
+    },
+    {
+      "direction": "front-left",
+      "baseline": "idle",
+      "action": "skill",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.148259,
+      "alphaIou": 0.738487
+    },
+    {
+      "direction": "front-left",
+      "baseline": "idle",
+      "action": "hit",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.108847,
+      "alphaIou": 0.906631
+    },
+    {
+      "direction": "front-left",
+      "baseline": "idle",
+      "action": "death",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.342449,
+      "alphaIou": 0.25814
+    },
+    {
+      "direction": "left",
+      "baseline": "idle",
+      "action": "move",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.114911,
+      "alphaIou": 0.918584
+    },
+    {
+      "direction": "left",
+      "baseline": "idle",
+      "action": "attack",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.214895,
+      "alphaIou": 0.700052
+    },
+    {
+      "direction": "left",
+      "baseline": "idle",
+      "action": "skill",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.155725,
+      "alphaIou": 0.718447
+    },
+    {
+      "direction": "left",
+      "baseline": "idle",
+      "action": "hit",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.110403,
+      "alphaIou": 0.89866
+    },
+    {
+      "direction": "left",
+      "baseline": "idle",
+      "action": "death",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.358696,
+      "alphaIou": 0.195696
+    },
+    {
+      "direction": "back-left",
+      "baseline": "idle",
+      "action": "move",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.106833,
+      "alphaIou": 0.926505
+    },
+    {
+      "direction": "back-left",
+      "baseline": "idle",
+      "action": "attack",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.173997,
+      "alphaIou": 0.747921
+    },
+    {
+      "direction": "back-left",
+      "baseline": "idle",
+      "action": "skill",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.134719,
+      "alphaIou": 0.738434
+    },
+    {
+      "direction": "back-left",
+      "baseline": "idle",
+      "action": "hit",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.104921,
+      "alphaIou": 0.915947
+    },
+    {
+      "direction": "back-left",
+      "baseline": "idle",
+      "action": "death",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.325104,
+      "alphaIou": 0.196458
+    },
+    {
+      "direction": "back",
+      "baseline": "idle",
+      "action": "move",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.116526,
+      "alphaIou": 0.916064
+    },
+    {
+      "direction": "back",
+      "baseline": "idle",
+      "action": "attack",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.190853,
+      "alphaIou": 0.728763
+    },
+    {
+      "direction": "back",
+      "baseline": "idle",
+      "action": "skill",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.149394,
+      "alphaIou": 0.731832
+    },
+    {
+      "direction": "back",
+      "baseline": "idle",
+      "action": "hit",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.112873,
+      "alphaIou": 0.904525
+    },
+    {
+      "direction": "back",
+      "baseline": "idle",
+      "action": "death",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.340656,
+      "alphaIou": 0.252267
+    },
+    {
+      "direction": "back-right",
+      "baseline": "idle",
+      "action": "move",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.117999,
+      "alphaIou": 0.911588
+    },
+    {
+      "direction": "back-right",
+      "baseline": "idle",
+      "action": "attack",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.20583,
+      "alphaIou": 0.723433
+    },
+    {
+      "direction": "back-right",
+      "baseline": "idle",
+      "action": "skill",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.152839,
+      "alphaIou": 0.72904
+    },
+    {
+      "direction": "back-right",
+      "baseline": "idle",
+      "action": "hit",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.117329,
+      "alphaIou": 0.89881
+    },
+    {
+      "direction": "back-right",
+      "baseline": "idle",
+      "action": "death",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.346834,
+      "alphaIou": 0.296554
+    },
+    {
+      "direction": "right",
+      "baseline": "idle",
+      "action": "move",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.130475,
+      "alphaIou": 0.891878
+    },
+    {
+      "direction": "right",
+      "baseline": "idle",
+      "action": "attack",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.214166,
+      "alphaIou": 0.706576
+    },
+    {
+      "direction": "right",
+      "baseline": "idle",
+      "action": "skill",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.161339,
+      "alphaIou": 0.726246
+    },
+    {
+      "direction": "right",
+      "baseline": "idle",
+      "action": "hit",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.122465,
+      "alphaIou": 0.890909
+    },
+    {
+      "direction": "right",
+      "baseline": "idle",
+      "action": "death",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.352293,
+      "alphaIou": 0.212895
+    },
+    {
+      "direction": "front-right",
+      "baseline": "idle",
+      "action": "move",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.128921,
+      "alphaIou": 0.906532
+    },
+    {
+      "direction": "front-right",
+      "baseline": "idle",
+      "action": "attack",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.193111,
+      "alphaIou": 0.728571
+    },
+    {
+      "direction": "front-right",
+      "baseline": "idle",
+      "action": "skill",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.152688,
+      "alphaIou": 0.73426
+    },
+    {
+      "direction": "front-right",
+      "baseline": "idle",
+      "action": "hit",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.11133,
+      "alphaIou": 0.905191
+    },
+    {
+      "direction": "front-right",
+      "baseline": "idle",
+      "action": "death",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.336646,
+      "alphaIou": 0.232704
+    },
+    {
+      "direction": "high-left",
+      "baseline": "idle",
+      "action": "move",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.14035,
+      "alphaIou": 0.899775
+    },
+    {
+      "direction": "high-left",
+      "baseline": "idle",
+      "action": "attack",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.224203,
+      "alphaIou": 0.690967
+    },
+    {
+      "direction": "high-left",
+      "baseline": "idle",
+      "action": "skill",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.156296,
+      "alphaIou": 0.710924
+    },
+    {
+      "direction": "high-left",
+      "baseline": "idle",
+      "action": "hit",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.127513,
+      "alphaIou": 0.895749
+    },
+    {
+      "direction": "high-left",
+      "baseline": "idle",
+      "action": "death",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.349809,
+      "alphaIou": 0.378818
+    },
+    {
+      "direction": "high-right",
+      "baseline": "idle",
+      "action": "move",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.134031,
+      "alphaIou": 0.893917
+    },
+    {
+      "direction": "high-right",
+      "baseline": "idle",
+      "action": "attack",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.21975,
+      "alphaIou": 0.71777
+    },
+    {
+      "direction": "high-right",
+      "baseline": "idle",
+      "action": "skill",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.160774,
+      "alphaIou": 0.731014
+    },
+    {
+      "direction": "high-right",
+      "baseline": "idle",
+      "action": "hit",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.12073,
+      "alphaIou": 0.900097
+    },
+    {
+      "direction": "high-right",
+      "baseline": "idle",
+      "action": "death",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.351189,
+      "alphaIou": 0.321212
+    },
+    {
+      "direction": "combat-forward",
+      "baseline": "idle",
+      "action": "move",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.11412,
+      "alphaIou": 0.887952
+    },
+    {
+      "direction": "combat-forward",
+      "baseline": "idle",
+      "action": "attack",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.168183,
+      "alphaIou": 0.725501
+    },
+    {
+      "direction": "combat-forward",
+      "baseline": "idle",
+      "action": "skill",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.135224,
+      "alphaIou": 0.716106
+    },
+    {
+      "direction": "combat-forward",
+      "baseline": "idle",
+      "action": "hit",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.100739,
+      "alphaIou": 0.892557
+    },
+    {
+      "direction": "combat-forward",
+      "baseline": "idle",
+      "action": "death",
+      "exactRgba": false,
+      "exactAlpha": false,
+      "meanRgbaDelta": 0.290874,
+      "alphaIou": 0.389848
+    }
+  ]
+}

@@ -5226,3 +5226,137 @@ body.boss-tactical-assurance-v127.boss-camera-assist-v127 .danger-hint.visible::
     transition: none !important;
   }
 }
+
+
+/* ========================================================================== */
+/* v1.0.28 Battlefield Visibility, Portrait Radar & 40-Wave Assurance         */
+/* ========================================================================== */
+body.battlefield-visibility-assurance-v128 .offscreen-hazard-indicator-v127.occluded-v128 {
+  border-color: rgba(116, 226, 255, .88);
+  background: linear-gradient(135deg, rgba(19, 72, 92, .96), rgba(15, 19, 42, .94));
+  box-shadow: 0 8px 28px rgba(0,0,0,.52), inset 0 1px rgba(255,255,255,.16), 0 0 26px rgba(72,207,255,.34);
+}
+body.battlefield-visibility-assurance-v128 .offscreen-hazard-indicator-v127.occluded-v128 b::after {
+  content: ' · 가림';
+  color: #8cecff;
+  font-size: .84em;
+}
+body.battlefield-visibility-assurance-v128 .offscreen-hazard-indicator-v127.v128-suppressed {
+  display: none !important;
+}
+body.battlefield-visibility-assurance-v128 .hazard-density-summary-v128 {
+  position: fixed;
+  left: 50%;
+  top: calc(env(safe-area-inset-top, 0px) + var(--hud-safe-top-v121, 68px) + 8px);
+  min-width: 70px;
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 114, 124, .7);
+  border-radius: 999px;
+  color: #fff4df;
+  background: rgba(72, 12, 30, .92);
+  box-shadow: 0 10px 28px rgba(0,0,0,.42), 0 0 22px rgba(255,75,105,.24);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .06em;
+  text-align: center;
+  opacity: 0;
+  transform: translate(-50%, -8px) scale(.92);
+  transition: opacity .14s ease, transform .14s ease;
+  pointer-events: none;
+}
+body.battlefield-visibility-assurance-v128 .hazard-density-summary-v128.visible {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
+}
+@media (max-width: 720px) and (orientation: portrait) {
+  body.battlefield-visibility-assurance-v128 .offscreen-hazard-indicator-v127 {
+    min-width: 54px;
+    min-height: 30px;
+    padding: 4px 6px 4px 5px;
+  }
+  body.battlefield-visibility-assurance-v128.hazard-radar-dense-v128 .offscreen-hazard-indicator-v127 {
+    transform: translate(-50%, -50%) scale(.9);
+  }
+  body.battlefield-visibility-assurance-v128 .hazard-density-summary-v128 {
+    top: calc(env(safe-area-inset-top, 0px) + 112px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.battlefield-visibility-assurance-v128 .hazard-density-summary-v128,
+  body.battlefield-visibility-assurance-v128 .offscreen-hazard-indicator-v127 {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+
+/* v1.0.29 Asset Refinement Assurance */
+.asset-refinement-assurance-v129 .offscreen-hazard-indicator-v127 { contain: layout paint; }
+.asset-refinement-assurance-v129.hazard-radar-dense-v128 .offscreen-hazard-indicator-v127 { backdrop-filter: blur(8px); }
+@media (max-width: 720px) and (orientation: portrait) {
+  .asset-refinement-assurance-v129 #offscreen-hazard-radar-v127 { gap: 6px; }
+  .asset-refinement-assurance-v129 .offscreen-hazard-indicator-v127 { min-width: 54px; }
+}
+
+/* v1.0.31 asset lineage assurance */
+.asset-lineage-assurance-v131 .boss-danger-summary { max-width: min(86vw, 28rem); }
+@media (max-width: 430px) {
+  .asset-lineage-assurance-v131 .danger-hint,
+  .asset-lineage-assurance-v131 #danger-hint { inset-inline: max(8px, env(safe-area-inset-left)) max(8px, env(safe-area-inset-right)); }
+  .asset-lineage-assurance-v131 .boss-danger-summary { max-width: calc(100vw - max(24px, env(safe-area-inset-left) + env(safe-area-inset-right))); }
+}
+
+/* v1.0.32 silhouette assurance, compact mobile danger sectors */
+.silhouette-assurance-v132 .danger-sector-summary-v132 {
+  position: fixed;
+  z-index: 89;
+  display: flex;
+  gap: 5px;
+  left: 50%;
+  top: calc(env(safe-area-inset-top, 0px) + 138px);
+  max-width: calc(100vw - max(24px, env(safe-area-inset-left) + env(safe-area-inset-right)));
+  padding: 5px;
+  border: 1px solid rgba(120, 205, 255, .32);
+  border-radius: 999px;
+  background: rgba(6, 13, 29, .78);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .38), inset 0 1px rgba(255, 255, 255, .08);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  transform: translate(-50%, -6px) scale(.96);
+  transition: opacity .14s ease, transform .14s ease;
+  pointer-events: none;
+}
+.silhouette-assurance-v132 .danger-sector-summary-v132.visible {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
+}
+.silhouette-assurance-v132 .danger-sector-v132 {
+  min-width: 42px;
+  padding: 5px 8px;
+  border: 1px solid rgba(134, 220, 255, .36);
+  border-radius: 999px;
+  color: #eaf9ff;
+  background: rgba(15, 43, 69, .88);
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+}
+.silhouette-assurance-v132 .danger-sector-v132.occluded { border-style: dashed; color: #a8efff; }
+.silhouette-assurance-v132 .danger-sector-v132.urgent {
+  border-color: rgba(255, 111, 126, .88);
+  color: #fff4e8;
+  background: rgba(95, 18, 38, .94);
+  box-shadow: 0 0 18px rgba(255, 77, 107, .28);
+}
+@media (min-width: 721px) and (min-height: 561px) {
+  .silhouette-assurance-v132 .danger-sector-summary-v132 { display: none !important; }
+}
+@media (max-width: 430px) and (orientation: portrait) {
+  .silhouette-assurance-v132 .danger-sector-summary-v132 { top: calc(env(safe-area-inset-top, 0px) + 126px); }
+  .silhouette-assurance-v132 .danger-sector-v132 { min-width: 38px; padding-inline: 7px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .silhouette-assurance-v132 .danger-sector-summary-v132 { transition: none !important; }
+}

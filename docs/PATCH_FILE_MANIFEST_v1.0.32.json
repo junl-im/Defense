@@ -1,0 +1,214 @@
+{
+  "schema": "DD-UNIFIED-PATCH-MANIFEST-V132",
+  "from": "1.0.31",
+  "to": "1.0.32",
+  "build": "b24.32",
+  "files": [
+    {
+      "path": "package.json",
+      "bytes": 20782,
+      "sha256": "c9d4f3905dd4f45d7f8683d1c8c8e95d2e3e5d87031229a0f6074b1ab2fb4f4c"
+    },
+    {
+      "path": "package-lock.json",
+      "bytes": 28944,
+      "sha256": "520d2317485cc73ae9a241ee47d14454c22c09b4b9b2a52bce70aa5de8f6f4da"
+    },
+    {
+      "path": "index.html",
+      "bytes": 54041,
+      "sha256": "251a92a58367717b87518fa2b16f81374a54f00373af76886ae0870e217f5e86"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1581,
+      "sha256": "e54796aa3d35f888a5456ad217b927160637f29c9d97efba95ad21d769f1e25c"
+    },
+    {
+      "path": "PROJECT_HANDOFF.md",
+      "bytes": 2012,
+      "sha256": "a3025c5d21f772ff0c57f4487136d2fa9f8fce6cb514ec58852b63b35cb5bab0"
+    },
+    {
+      "path": "src/version-policy.js",
+      "bytes": 1739,
+      "sha256": "8777fe7679e504d0b473c736b537cc1129324444a3373d972bf0b3ba64ade422"
+    },
+    {
+      "path": "src/main.js",
+      "bytes": 389810,
+      "sha256": "c350cad9f58facb1c32e58017dc6a8de8310b666da70f39a567ae120f94e0663"
+    },
+    {
+      "path": "src/style.css",
+      "bytes": 288244,
+      "sha256": "2bed4f56284181d73d3c9d834dc9df8e2ddfe409491362428f4ff34d012fcf30"
+    },
+    {
+      "path": "docs/NEXT_UPDATE_v1.0.33.md",
+      "bytes": 462,
+      "sha256": "e3070c55b591d404f1a59cddc5629720af5ebfbaaed89bc969bf67f3066bf259"
+    },
+    {
+      "path": "docs/SILHOUETTE_ASSURANCE_v1.0.32.md",
+      "bytes": 610,
+      "sha256": "feb3c273dac0f8e6038ff2df835883fabe8a7b33603d6caa5f0222b47fa3efaf"
+    },
+    {
+      "path": "docs/PATCH_NOTES_v1.0.32.md",
+      "bytes": 521,
+      "sha256": "39e667249fd5dcb81e9c1004034ba2048b6942a561f55968196d22332d0790d3"
+    },
+    {
+      "path": "docs/PATCH_APPLY_v1.0.32.md",
+      "bytes": 304,
+      "sha256": "e1c9cee802833e042783acb836513d2e4dae3fe53f9369b5e6db2531cae1e0f7"
+    },
+    {
+      "path": "scripts/verify-release-v131.mjs",
+      "bytes": 3229,
+      "sha256": "7c2ccf7f1e95cbdc579b27622112fe110cfb799339feed9ef64341974430e8fc"
+    },
+    {
+      "path": "scripts/verify-dist-v132.mjs",
+      "bytes": 2072,
+      "sha256": "3112d8892d0e277097bbcc1aa1aaa0a44990e2cc84395d33c71429c7e5184a1b"
+    },
+    {
+      "path": "scripts/verify-dist-v131.mjs",
+      "bytes": 1548,
+      "sha256": "20ba2e6c9c4097c931c332265689cacbb4d21bc65e23c81efec6b0e76842753d"
+    },
+    {
+      "path": "scripts/generate-silhouette-audit-v132.py",
+      "bytes": 11027,
+      "sha256": "c98b724b51994c1be32e1c254ab5c50b78353d060d2922b1b6851a3988fb7d8b"
+    },
+    {
+      "path": "scripts/verify-release-v132.mjs",
+      "bytes": 5528,
+      "sha256": "9c51624d3c109b00ce4659ee95e18ae08cf8c89bb12bce0435afa5d945f4096a"
+    },
+    {
+      "path": "dist/version.json",
+      "bytes": 209,
+      "sha256": "b353ac9d3be88f960558a6e28226657f19a2edf58974f683cfcff35260d2452e"
+    },
+    {
+      "path": "dist/sw.js",
+      "bytes": 16565,
+      "sha256": "d2fd03f6f0f779b712abaf94b761f4c868ff2500533fc39fff4ea98c9334cbb3"
+    },
+    {
+      "path": "dist/static-bootstrap.js",
+      "bytes": 5426,
+      "sha256": "65c44f53005fc3063edbf49cd9f70c911966ac19b727e03b3aeb3a986ce75ff4"
+    },
+    {
+      "path": "dist/silhouette-assurance-lab-v132.html",
+      "bytes": 2845,
+      "sha256": "d358c8eb4919397075890d6d4856a0e756d4db339ba5115b27bbc244c5020e9c"
+    },
+    {
+      "path": "dist/STATIC_BUILD_NOTICE.txt",
+      "bytes": 443,
+      "sha256": "76d1d44ea0ff360b4f93bc6169c3589624590874b771c7cbeccdaa5095cfa049"
+    },
+    {
+      "path": "dist/index.html",
+      "bytes": 54166,
+      "sha256": "a80a4e8cf59b28f93c0e3edcc6efc7370c01f1c6a9b147bd97654dc60d9fde38"
+    },
+    {
+      "path": "public/version.json",
+      "bytes": 209,
+      "sha256": "b353ac9d3be88f960558a6e28226657f19a2edf58974f683cfcff35260d2452e"
+    },
+    {
+      "path": "public/sw.js",
+      "bytes": 16565,
+      "sha256": "d2fd03f6f0f779b712abaf94b761f4c868ff2500533fc39fff4ea98c9334cbb3"
+    },
+    {
+      "path": "public/static-bootstrap.js",
+      "bytes": 5426,
+      "sha256": "65c44f53005fc3063edbf49cd9f70c911966ac19b727e03b3aeb3a986ce75ff4"
+    },
+    {
+      "path": "public/silhouette-assurance-lab-v132.html",
+      "bytes": 2845,
+      "sha256": "d358c8eb4919397075890d6d4856a0e756d4db339ba5115b27bbc244c5020e9c"
+    },
+    {
+      "path": "public/assets/visual-v132/silhouette-assurance-registry-v132.json",
+      "bytes": 591,
+      "sha256": "eb0bed25279948f7e4c10f22143f456b2c0e3bd29d7b4c5fe6ef39231234a5eb"
+    },
+    {
+      "path": "public/assets/visual-v132/silhouette-audit-v132.json",
+      "bytes": 23864,
+      "sha256": "0f1962013a4339f6844ad431953495fee07b0fb1633fd09af08cad6c09998974"
+    },
+    {
+      "path": "public/assets/visual-v132/silhouette-assurance-manifest-v132.json",
+      "bytes": 670,
+      "sha256": "872467ee79032d626e200d0a557165d644d9f609e64e927828a3dffc2a638373"
+    },
+    {
+      "path": "public/assets/visual-v132/action-evidence-v132.json",
+      "bytes": 28467,
+      "sha256": "6980c36b524a20923d6ffea96daa0a4d77339cb622e965902d815337abbfe33d"
+    },
+    {
+      "path": "dist/src/version-policy.js",
+      "bytes": 1739,
+      "sha256": "8777fe7679e504d0b473c736b537cc1129324444a3373d972bf0b3ba64ade422"
+    },
+    {
+      "path": "dist/src/main.js",
+      "bytes": 389788,
+      "sha256": "913843090956ed96befe4bed3bbe183807cd040198804d5c5300c5228124d6b1"
+    },
+    {
+      "path": "dist/src/style.css",
+      "bytes": 288244,
+      "sha256": "2bed4f56284181d73d3c9d834dc9df8e2ddfe409491362428f4ff34d012fcf30"
+    },
+    {
+      "path": "dist/assets/visual-v132/silhouette-assurance-registry-v132.json",
+      "bytes": 591,
+      "sha256": "eb0bed25279948f7e4c10f22143f456b2c0e3bd29d7b4c5fe6ef39231234a5eb"
+    },
+    {
+      "path": "dist/assets/visual-v132/silhouette-audit-v132.json",
+      "bytes": 23864,
+      "sha256": "0f1962013a4339f6844ad431953495fee07b0fb1633fd09af08cad6c09998974"
+    },
+    {
+      "path": "dist/assets/visual-v132/silhouette-assurance-manifest-v132.json",
+      "bytes": 670,
+      "sha256": "872467ee79032d626e200d0a557165d644d9f609e64e927828a3dffc2a638373"
+    },
+    {
+      "path": "dist/assets/visual-v132/action-evidence-v132.json",
+      "bytes": 28467,
+      "sha256": "6980c36b524a20923d6ffea96daa0a4d77339cb622e965902d815337abbfe33d"
+    },
+    {
+      "path": "dist/src/runtime/silhouette-assurance-director-v132.js",
+      "bytes": 11265,
+      "sha256": "abd4bdbc2fc3342412ed54ffa85f2a8d8af04b146786f6e4254b55b963cde0b0"
+    },
+    {
+      "path": ".github/workflows/deploy.yml",
+      "bytes": 3159,
+      "sha256": "06a910292759f849cb159796108cffa7f5bb85660c2fc29f3093d2b7bf4ec8db"
+    },
+    {
+      "path": "src/runtime/silhouette-assurance-director-v132.js",
+      "bytes": 11265,
+      "sha256": "abd4bdbc2fc3342412ed54ffa85f2a8d8af04b146786f6e4254b55b963cde0b0"
+    }
+  ],
+  "deleted": []
+}

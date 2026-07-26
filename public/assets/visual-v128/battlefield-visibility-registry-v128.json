@@ -1,0 +1,55 @@
+{
+  "schema": "DD-BATTLEFIELD-VISIBILITY-REGISTRY-V128",
+  "version": "1.0.28",
+  "build": "b24.28",
+  "entries": [
+    {
+      "id": "occluded-hazard-visibility-v128",
+      "category": "combat-visibility",
+      "approval": "approved-runtime",
+      "runtime": "active",
+      "notes": "장애물 뒤 경고 장판의 depthTest 보정과 가림 경고 표시"
+    },
+    {
+      "id": "portrait-radar-density-v128",
+      "category": "combat-ui",
+      "approval": "approved-runtime",
+      "runtime": "active",
+      "notes": "모바일 세로 화면 최대 3개 경고와 초과 위험 요약"
+    },
+    {
+      "id": "forty-wave-lifecycle-v128",
+      "category": "performance",
+      "approval": "approved-verification",
+      "runtime": "active",
+      "notes": "40웨이브 FPS·메모리·파티클·비주얼 레코드 증가 추세 검사"
+    },
+    {
+      "id": "hero-pupu-independent-action-art-v128",
+      "category": "character-action-art",
+      "approval": "derived-provisional",
+      "runtime": "fallback-approved",
+      "notes": "11방향 런타임 승인 유지, 독립 액션 원화는 셀별 최종 승인 대기"
+    },
+    {
+      "id": "monster-bomb-imp-directional-candidate-v128",
+      "category": "character-directional-art",
+      "approval": "replacement-pending",
+      "runtime": "quarantined",
+      "audit": {
+        "requiredCells": 11,
+        "groundRangeMax": 0.08,
+        "weaponScaleRangeMax": 0.16,
+        "duplicateDirectionsMax": 0
+      },
+      "notes": "승인 가능한 11셀 원본이 없어 런타임 격리 유지"
+    }
+  ],
+  "summary": {
+    "approvedRuntimeSystems": 3,
+    "newFinalCharacterArt": 0,
+    "provisionalActionArt": 1,
+    "quarantinedCandidates": 1,
+    "waveTarget": 40
+  }
+}

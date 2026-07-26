@@ -27,6 +27,8 @@ function walk(directory) {
   // v117 adds three quality tiers for one approved directional golden sample
   // and four citadel states. Only low-tier files are resident on the mobile profile.
   if (rel === 'public/assets/visual-v117' || rel.startsWith('public/assets/visual-v117/')) return;
+  // v129 ships three refined quality tiers. Only the low tier is resident on mobile.
+  if (rel === 'public/assets/visual-v129' || rel.startsWith('public/assets/visual-v129/')) return;
   // Responsive title art and its v17 production sources belong to the boot/title lifecycle,
   // not the resident combat set. Per-screen decoded memory is independently gated.
   if (rel === 'src/assets/title-v112' || rel.startsWith('src/assets/title-v112/')) return;

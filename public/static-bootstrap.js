@@ -1,6 +1,6 @@
 (() => {
-  const RELEASE_VERSION = '1.0.27';
-  const BUILD_ID = 'b24.27';
+  const RELEASE_VERSION = '1.0.32';
+  const BUILD_ID = 'b24.32';
   const VERSION = `${RELEASE_VERSION}-${BUILD_ID}`;
   const script = document.currentScript;
   const entryPath = script?.dataset.entry || './src/bootstrap.js';

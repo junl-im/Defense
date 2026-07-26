@@ -1,0 +1,590 @@
+{
+  "schema": "DD-ASSET-LINEAGE-AUDIT-V131",
+  "version": "1.0.31",
+  "build": "b24.31",
+  "scope": {
+    "bosses": 3,
+    "monsters": 7,
+    "variantsPerAsset": 3,
+    "files": 30
+  },
+  "policy": {
+    "exactDuplicateFilesAllowed": false,
+    "newFinalCharacterArt": 0,
+    "bombImpRuntime": "quarantined",
+    "waveTarget": 70
+  },
+  "exactDuplicateGroups": [],
+  "assets": [
+    {
+      "id": "monster-imp",
+      "kind": "monster",
+      "variants": [
+        {
+          "quality": "low",
+          "path": "assets/visual-v114/characters/monster-imp-low-v114.webp",
+          "width": 192,
+          "height": 192,
+          "bytes": 11988,
+          "sha256": "face1f73ddcc2825566732a673feb4fa7e3367abb6fd208e2b1ae657eaba3839",
+          "alphaCoverage": 0.28144,
+          "centerX": 0.5,
+          "groundY": 0.95312,
+          "margins": {
+            "left": 0.18229,
+            "top": 0.125,
+            "right": 0.18229,
+            "bottom": 0.04688
+          }
+        },
+        {
+          "quality": "medium",
+          "path": "assets/visual-v114/characters/monster-imp-medium-v114.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 24242,
+          "sha256": "032d79cff9019fe09a64ca8e75d533911d52cbc1e4c320b22fb7e13e3f33b58b",
+          "alphaCoverage": 0.2817,
+          "centerX": 0.5,
+          "groundY": 0.95937,
+          "margins": {
+            "left": 0.1875,
+            "top": 0.13125,
+            "right": 0.1875,
+            "bottom": 0.04063
+          }
+        },
+        {
+          "quality": "high",
+          "path": "assets/visual-v114/characters/monster-imp-high-v114.webp",
+          "width": 512,
+          "height": 512,
+          "bytes": 53836,
+          "sha256": "d2e923e0710c623734000155544df5ce39bd5c88223e9e3b81321fc47a38b4fd",
+          "alphaCoverage": 0.2828,
+          "centerX": 0.49902,
+          "groundY": 0.95703,
+          "margins": {
+            "left": 0.18164,
+            "top": 0.12695,
+            "right": 0.18359,
+            "bottom": 0.04297
+          }
+        }
+      ]
+    },
+    {
+      "id": "monster-runner",
+      "kind": "monster",
+      "variants": [
+        {
+          "quality": "low",
+          "path": "assets/visual-v114/characters/monster-runner-low-v114.webp",
+          "width": 192,
+          "height": 192,
+          "bytes": 11250,
+          "sha256": "e290abf44845798ea2e9be61635d60f37cb06513b0706cce27ec922c779a5989",
+          "alphaCoverage": 0.33358,
+          "centerX": 0.4974,
+          "groundY": 0.95312,
+          "margins": {
+            "left": 0.18229,
+            "top": 0.125,
+            "right": 0.1875,
+            "bottom": 0.04688
+          }
+        },
+        {
+          "quality": "medium",
+          "path": "assets/visual-v114/characters/monster-runner-medium-v114.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 21306,
+          "sha256": "a014f5cb8542b78f19a87599d6590b1b7defb2d4f9043acd93c0be073f2ef4db",
+          "alphaCoverage": 0.33434,
+          "centerX": 0.5,
+          "groundY": 0.95937,
+          "margins": {
+            "left": 0.19062,
+            "top": 0.13125,
+            "right": 0.19062,
+            "bottom": 0.04063
+          }
+        },
+        {
+          "quality": "high",
+          "path": "assets/visual-v114/characters/monster-runner-high-v114.webp",
+          "width": 512,
+          "height": 512,
+          "bytes": 46456,
+          "sha256": "829368a30087ecd4e6fd0f91fb8298c0fccc2d7096edb0455b0bf4e49bdf6785",
+          "alphaCoverage": 0.33452,
+          "centerX": 0.49902,
+          "groundY": 0.95703,
+          "margins": {
+            "left": 0.18555,
+            "top": 0.12695,
+            "right": 0.1875,
+            "bottom": 0.04297
+          }
+        }
+      ]
+    },
+    {
+      "id": "monster-brute",
+      "kind": "monster",
+      "variants": [
+        {
+          "quality": "low",
+          "path": "assets/visual-v114/characters/monster-brute-low-v114.webp",
+          "width": 192,
+          "height": 192,
+          "bytes": 15018,
+          "sha256": "a097a2a3e07a3d1e49d5538bbd87b2156a1083e59db0fb774fa53ede94803e32",
+          "alphaCoverage": 0.3894,
+          "centerX": 0.4974,
+          "groundY": 0.95312,
+          "margins": {
+            "left": 0.10938,
+            "top": 0.125,
+            "right": 0.11458,
+            "bottom": 0.04688
+          }
+        },
+        {
+          "quality": "medium",
+          "path": "assets/visual-v114/characters/monster-brute-medium-v114.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 29184,
+          "sha256": "554fdfeb6f041f0970457b2b7a9d23bdaf823c58bef17724c5a9b2df396d66c4",
+          "alphaCoverage": 0.3868,
+          "centerX": 0.49844,
+          "groundY": 0.95937,
+          "margins": {
+            "left": 0.12187,
+            "top": 0.13125,
+            "right": 0.125,
+            "bottom": 0.04063
+          }
+        },
+        {
+          "quality": "high",
+          "path": "assets/visual-v114/characters/monster-brute-high-v114.webp",
+          "width": 512,
+          "height": 512,
+          "bytes": 62692,
+          "sha256": "4b1a6c937a80ac91b05581b08e85454194aff8cfa251a0bb04a16252c82b62c7",
+          "alphaCoverage": 0.38789,
+          "centerX": 0.49902,
+          "groundY": 0.95703,
+          "margins": {
+            "left": 0.11914,
+            "top": 0.12891,
+            "right": 0.12109,
+            "bottom": 0.04297
+          }
+        }
+      ]
+    },
+    {
+      "id": "monster-shaman",
+      "kind": "monster",
+      "variants": [
+        {
+          "quality": "low",
+          "path": "assets/visual-v114/characters/monster-shaman-low-v114.webp",
+          "width": 192,
+          "height": 192,
+          "bytes": 14264,
+          "sha256": "4879cf85db7134133de5c610ad92bbeaf49d4a94e2357257a1483999dc740cf7",
+          "alphaCoverage": 0.36583,
+          "centerX": 0.49479,
+          "groundY": 0.95312,
+          "margins": {
+            "left": 0.11458,
+            "top": 0.125,
+            "right": 0.125,
+            "bottom": 0.04688
+          }
+        },
+        {
+          "quality": "medium",
+          "path": "assets/visual-v114/characters/monster-shaman-medium-v114.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 29154,
+          "sha256": "1f36192164bc45b8ff280608b9d6dce0f14580a41eb18a3d162261ef63ca6a06",
+          "alphaCoverage": 0.36418,
+          "centerX": 0.49688,
+          "groundY": 0.95937,
+          "margins": {
+            "left": 0.125,
+            "top": 0.13125,
+            "right": 0.13125,
+            "bottom": 0.04063
+          }
+        },
+        {
+          "quality": "high",
+          "path": "assets/visual-v114/characters/monster-shaman-high-v114.webp",
+          "width": 512,
+          "height": 512,
+          "bytes": 63022,
+          "sha256": "a44edd3db4526a7ba79fac7aed414ec7a3bf2c16fca02feb0b79953633fb8a92",
+          "alphaCoverage": 0.36488,
+          "centerX": 0.49902,
+          "groundY": 0.95703,
+          "margins": {
+            "left": 0.125,
+            "top": 0.12695,
+            "right": 0.12695,
+            "bottom": 0.04297
+          }
+        }
+      ]
+    },
+    {
+      "id": "monster-ghost",
+      "kind": "monster",
+      "variants": [
+        {
+          "quality": "low",
+          "path": "assets/visual-v114/characters/monster-ghost-low-v114.webp",
+          "width": 192,
+          "height": 192,
+          "bytes": 9510,
+          "sha256": "0866f0bdbbed6c303f19e364067f65393698dc265892c5a627f968c7fd1362dd",
+          "alphaCoverage": 0.36702,
+          "centerX": 0.5,
+          "groundY": 0.95312,
+          "margins": {
+            "left": 0.14062,
+            "top": 0.125,
+            "right": 0.14062,
+            "bottom": 0.04688
+          }
+        },
+        {
+          "quality": "medium",
+          "path": "assets/visual-v114/characters/monster-ghost-medium-v114.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 17268,
+          "sha256": "9e3f3834867a0b793157632777e2409c1f0c097d55353449e1f574a7fb24d171",
+          "alphaCoverage": 0.36812,
+          "centerX": 0.5,
+          "groundY": 0.95937,
+          "margins": {
+            "left": 0.14688,
+            "top": 0.13125,
+            "right": 0.14688,
+            "bottom": 0.04063
+          }
+        },
+        {
+          "quality": "high",
+          "path": "assets/visual-v114/characters/monster-ghost-high-v114.webp",
+          "width": 512,
+          "height": 512,
+          "bytes": 37918,
+          "sha256": "4ca80df7c3d57d31bd17161a125dbfa95a5c6f97283ef853aec2925e8618d920",
+          "alphaCoverage": 0.36716,
+          "centerX": 0.5,
+          "groundY": 0.95703,
+          "margins": {
+            "left": 0.14453,
+            "top": 0.12891,
+            "right": 0.14453,
+            "bottom": 0.04297
+          }
+        }
+      ]
+    },
+    {
+      "id": "monster-skeleton",
+      "kind": "monster",
+      "variants": [
+        {
+          "quality": "low",
+          "path": "assets/visual-v114/characters/monster-skeleton-low-v114.webp",
+          "width": 192,
+          "height": 192,
+          "bytes": 12412,
+          "sha256": "f9506889230af222994ccc7f1208b7f1d763694f10fbf93d57d7762fcb62c25f",
+          "alphaCoverage": 0.30569,
+          "centerX": 0.5,
+          "groundY": 0.95312,
+          "margins": {
+            "left": 0.15625,
+            "top": 0.125,
+            "right": 0.15625,
+            "bottom": 0.04688
+          }
+        },
+        {
+          "quality": "medium",
+          "path": "assets/visual-v114/characters/monster-skeleton-medium-v114.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 24460,
+          "sha256": "612bec963955266681b75bc63494a2839dc8442d4ca4be6a31d07926a80ef077",
+          "alphaCoverage": 0.30703,
+          "centerX": 0.49844,
+          "groundY": 0.95937,
+          "margins": {
+            "left": 0.1625,
+            "top": 0.13125,
+            "right": 0.16562,
+            "bottom": 0.04063
+          }
+        },
+        {
+          "quality": "high",
+          "path": "assets/visual-v114/characters/monster-skeleton-high-v114.webp",
+          "width": 512,
+          "height": 512,
+          "bytes": 53872,
+          "sha256": "4b665c7c485488cde3e131b20999fe2c473d68719dff88b1bf82bfb6242aba5d",
+          "alphaCoverage": 0.30709,
+          "centerX": 0.5,
+          "groundY": 0.95703,
+          "margins": {
+            "left": 0.16016,
+            "top": 0.12891,
+            "right": 0.16016,
+            "bottom": 0.04297
+          }
+        }
+      ]
+    },
+    {
+      "id": "monster-crow",
+      "kind": "monster",
+      "variants": [
+        {
+          "quality": "low",
+          "path": "assets/visual-v114/characters/monster-crow-low-v114.webp",
+          "width": 192,
+          "height": 192,
+          "bytes": 12640,
+          "sha256": "9ab1b49e1510c9e84901c0a3df1135765389bd449cc5784021b9c5277cfd575a",
+          "alphaCoverage": 0.29631,
+          "centerX": 0.4974,
+          "groundY": 0.95312,
+          "margins": {
+            "left": 0.16667,
+            "top": 0.125,
+            "right": 0.17188,
+            "bottom": 0.04688
+          }
+        },
+        {
+          "quality": "medium",
+          "path": "assets/visual-v114/characters/monster-crow-medium-v114.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 25296,
+          "sha256": "028de0349c8f28c8bb18443f286145865c631d21ae2f1efe738e9be657b29d6a",
+          "alphaCoverage": 0.29362,
+          "centerX": 0.5,
+          "groundY": 0.95937,
+          "margins": {
+            "left": 0.17813,
+            "top": 0.13125,
+            "right": 0.17813,
+            "bottom": 0.04063
+          }
+        },
+        {
+          "quality": "high",
+          "path": "assets/visual-v114/characters/monster-crow-high-v114.webp",
+          "width": 512,
+          "height": 512,
+          "bytes": 55544,
+          "sha256": "4d2dfdae8d6ee18af68bf9974fbdfb49161b624e2c67b8d88f89ecd0ed55b40f",
+          "alphaCoverage": 0.29477,
+          "centerX": 0.49902,
+          "groundY": 0.95703,
+          "margins": {
+            "left": 0.17383,
+            "top": 0.12695,
+            "right": 0.17578,
+            "bottom": 0.04297
+          }
+        }
+      ]
+    },
+    {
+      "id": "boss-tiger",
+      "kind": "boss",
+      "variants": [
+        {
+          "quality": "low",
+          "path": "assets/visual-v114/characters/boss-tiger-low-v114.webp",
+          "width": 192,
+          "height": 192,
+          "bytes": 19664,
+          "sha256": "1281f8ab915f3bce7366aa805608820927db21d1571abe71a17547962d6bb40a",
+          "alphaCoverage": 0.46503,
+          "centerX": 0.5,
+          "groundY": 0.97396,
+          "margins": {
+            "left": 0.09896,
+            "top": 0.06771,
+            "right": 0.09896,
+            "bottom": 0.02604
+          }
+        },
+        {
+          "quality": "medium",
+          "path": "assets/visual-v114/characters/boss-tiger-medium-v114.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 41274,
+          "sha256": "f0de8bd18da892495aeef39d343b520ef6ccfe61507502bcd765c06e7789ad8e",
+          "alphaCoverage": 0.45909,
+          "centerX": 0.49844,
+          "groundY": 0.98125,
+          "margins": {
+            "left": 0.10625,
+            "top": 0.07187,
+            "right": 0.10938,
+            "bottom": 0.01875
+          }
+        },
+        {
+          "quality": "high",
+          "path": "assets/visual-v114/characters/boss-tiger-high-v114.webp",
+          "width": 512,
+          "height": 512,
+          "bytes": 90228,
+          "sha256": "18dae95afb227dcc573a07d0afb72f260005ee1d7ad182c6d8183070ce8f5d00",
+          "alphaCoverage": 0.46177,
+          "centerX": 0.49902,
+          "groundY": 0.97656,
+          "margins": {
+            "left": 0.10352,
+            "top": 0.07031,
+            "right": 0.10547,
+            "bottom": 0.02344
+          }
+        }
+      ]
+    },
+    {
+      "id": "boss-serpent",
+      "kind": "boss",
+      "variants": [
+        {
+          "quality": "low",
+          "path": "assets/visual-v114/characters/boss-serpent-low-v114.webp",
+          "width": 192,
+          "height": 192,
+          "bytes": 18194,
+          "sha256": "8590cc7c20e18d98408d65592af183c8419e6fb9f621af8bd816e36c9f3fd18c",
+          "alphaCoverage": 0.477,
+          "centerX": 0.5,
+          "groundY": 0.97396,
+          "margins": {
+            "left": 0.08854,
+            "top": 0.06771,
+            "right": 0.08854,
+            "bottom": 0.02604
+          }
+        },
+        {
+          "quality": "medium",
+          "path": "assets/visual-v114/characters/boss-serpent-medium-v114.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 39032,
+          "sha256": "4852d7c222bd4fda464f2e30ed8ebfe657f8c175f448b539644a76becd32acbf",
+          "alphaCoverage": 0.46932,
+          "centerX": 0.49844,
+          "groundY": 0.98125,
+          "margins": {
+            "left": 0.09688,
+            "top": 0.07187,
+            "right": 0.1,
+            "bottom": 0.01875
+          }
+        },
+        {
+          "quality": "high",
+          "path": "assets/visual-v114/characters/boss-serpent-high-v114.webp",
+          "width": 512,
+          "height": 512,
+          "bytes": 85522,
+          "sha256": "81239154c28d70b89c5bfc18494e8ac7eb7b910a895d41ab9527a15fd3188875",
+          "alphaCoverage": 0.47194,
+          "centerX": 0.49902,
+          "groundY": 0.97656,
+          "margins": {
+            "left": 0.09375,
+            "top": 0.07031,
+            "right": 0.0957,
+            "bottom": 0.02344
+          }
+        }
+      ]
+    },
+    {
+      "id": "boss-king",
+      "kind": "boss",
+      "variants": [
+        {
+          "quality": "low",
+          "path": "assets/visual-v114/characters/boss-king-low-v114.webp",
+          "width": 192,
+          "height": 192,
+          "bytes": 18392,
+          "sha256": "bde926ecf497be9536a8c17e6895923f83742f4002cc05d6033d473e4d472496",
+          "alphaCoverage": 0.49938,
+          "centerX": 0.4974,
+          "groundY": 0.97396,
+          "margins": {
+            "left": 0.09375,
+            "top": 0.06771,
+            "right": 0.09896,
+            "bottom": 0.02604
+          }
+        },
+        {
+          "quality": "medium",
+          "path": "assets/visual-v114/characters/boss-king-medium-v114.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 39528,
+          "sha256": "6af056c8964166d376b166f2d7b42959f25d9bfa053fe1e81948ac21d6775004",
+          "alphaCoverage": 0.49385,
+          "centerX": 0.5,
+          "groundY": 0.98125,
+          "margins": {
+            "left": 0.10625,
+            "top": 0.07187,
+            "right": 0.10625,
+            "bottom": 0.01875
+          }
+        },
+        {
+          "quality": "high",
+          "path": "assets/visual-v114/characters/boss-king-high-v114.webp",
+          "width": 512,
+          "height": 512,
+          "bytes": 85058,
+          "sha256": "cf2186e00ee81a533429be3d1ff5a8f5a0c72e9ea6500f50bc76e60158482ccb",
+          "alphaCoverage": 0.49577,
+          "centerX": 0.49902,
+          "groundY": 0.97656,
+          "margins": {
+            "left": 0.10156,
+            "top": 0.07031,
+            "right": 0.10352,
+            "bottom": 0.02344
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "schema": "DD-ASSET-REFINEMENT-MANIFEST-V129",
+  "version": "1.0.29",
+  "build": "b24.29",
+  "files": [
+    {
+      "path": "assets/visual-v129/asset-refinement-profile-v129.json",
+      "bytes": 80120,
+      "sha256": "0947d8d34828c876068c2f6c6853a024dc5c75b5fc716c4a8eb26a24beee6d51"
+    },
+    {
+      "path": "assets/visual-v129/asset-refinement-registry-v129.json",
+      "bytes": 912,
+      "sha256": "cff3b2a4267b534b402056f47968034f54ec18f170cd62ed0be19dafc04b1eef"
+    },
+    {
+      "path": "assets/visual-v129/directional/guardian-ember-pupu-atlas-high-v129.webp",
+      "bytes": 2900310,
+      "sha256": "4356bf03e57cef65a190ca41d055d879c5a5a715d2ccb113aae66656ad7f58d2"
+    },
+    {
+      "path": "assets/visual-v129/directional/guardian-ember-pupu-atlas-low-v129.webp",
+      "bytes": 448394,
+      "sha256": "453b09758c3b73d9371bc825a9731d091c9b81480cffaaf69b34e1beb4991196"
+    },
+    {
+      "path": "assets/visual-v129/directional/guardian-ember-pupu-atlas-medium-v129.webp",
+      "bytes": 1944620,
+      "sha256": "86181cd8cfb3703228601a60e319dea615ce08d6f3e6cecbd98c85f2590e9142"
+    }
+  ]
+}

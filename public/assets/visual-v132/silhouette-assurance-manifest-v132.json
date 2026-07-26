@@ -1,0 +1,22 @@
+{
+  "schema": "DD-SILHOUETTE-ASSURANCE-MANIFEST-V132",
+  "version": "1.0.32",
+  "build": "b24.32",
+  "files": [
+    {
+      "path": "assets/visual-v132/silhouette-audit-v132.json",
+      "bytes": 23864,
+      "sha256": "0f1962013a4339f6844ad431953495fee07b0fb1633fd09af08cad6c09998974"
+    },
+    {
+      "path": "assets/visual-v132/action-evidence-v132.json",
+      "bytes": 28467,
+      "sha256": "6980c36b524a20923d6ffea96daa0a4d77339cb622e965902d815337abbfe33d"
+    },
+    {
+      "path": "assets/visual-v132/silhouette-assurance-registry-v132.json",
+      "bytes": 591,
+      "sha256": "eb0bed25279948f7e4c10f22143f456b2c0e3bd29d7b4c5fe6ef39231234a5eb"
+    }
+  ]
+}

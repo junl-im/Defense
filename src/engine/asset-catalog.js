@@ -147,8 +147,8 @@ const guardianCitadelStateTextureVariantsV114 = Object.freeze({
 const approvedDirectionalAtlasVariantsV117 = Object.freeze({
   [APPROVED_DIRECTIONAL_ATLAS_IDS_V117.guardians.ember]: Object.freeze({
     low: publicAsset('visual-v120/directional/hero-pupu-atlas-low-v120.webp'),
-    medium: publicAsset('visual-v117/directional/guardian-ember-pupu-atlas-medium-v117.webp'),
-    high: publicAsset('visual-v117/directional/guardian-ember-pupu-atlas-high-v117.webp')
+    medium: publicAsset('visual-v129/directional/guardian-ember-pupu-atlas-medium-v129.webp'),
+    high: publicAsset('visual-v129/directional/guardian-ember-pupu-atlas-high-v129.webp')
   })
 });
 
@@ -241,7 +241,8 @@ export const CORE_ASSET_CATALOG = Object.freeze([
   // excluded from runtime preload until independent production approval.
   ...Object.entries(approvedDirectionalAtlasVariantsV117).map(([id, variants]) => ({
     id, kind: 'texture', required: false, retain: true, color: true,
-    role: 'approved-directional-guardian-v117', variants,
+    role: 'approved-directional-guardian-v117',
+    runtimeDerivative: 'v129-refined', variants,
     sourceWidth: 2024, sourceHeight: 1104,
     productionArtApproved: true, runtimeApproved: true,
     directionArtApproved: true, actionArtApproved: false

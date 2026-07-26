@@ -1,0 +1,14 @@
+{
+  "id": "DD-BATTLEFIELD-VISIBILITY-MANIFEST-V128",
+  "version": "1.0.28",
+  "build": "b24.28",
+  "registry": "./battlefield-visibility-registry-v128.json",
+  "runtime": "../../../src/runtime/battlefield-visibility-assurance-director-v128.js",
+  "lab": "../../../battlefield-visibility-lab-v128.html",
+  "waveTarget": 40,
+  "approvalBoundary": {
+    "directionalHero": "approved",
+    "independentActionArt": "derived-provisional",
+    "bombImpCandidate": "quarantined"
+  }
+}

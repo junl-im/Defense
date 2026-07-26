@@ -1,25 +1,26 @@
-> 현재 개선 패치: **v1.0.27 / b24.27** — BOSS TACTICAL ASSURANCE
+> 현재 개선 패치: **v1.0.29 / b24.29** — ASSET REFINEMENT ASSURANCE
 
-# PROJECT HANDOFF — RELEASE 1.0.27
+# PROJECT HANDOFF — RELEASE 1.0.29
 
-- Project: `DokkaebiLuckDefense3D_FULL_v1.0.27_BOSS_TACTICAL_ASSURANCE`
-- Public game version: `1.0.27`
-- Build ID: `b24.27`
-- Base: `v1.0.26 / b24.26`
+- Project: `DokkaebiLuckDefense3D_FULL_v1.0.29_ASSET_REFINEMENT_ASSURANCE`
+- Public game version: `1.0.29`
+- Build ID: `b24.29`
+- Base: `v1.0.28 / b24.28`
 
 ## 현재 승인 상태
 
-- 푸푸도깨비 11방향: 최종 승인 유지
+- 푸푸도깨비 11방향 원본: 최종 승인 유지
+- v1.0.29 파생 아틀라스: 런타임 파생 승인
 - 독립 공격·기술·피격 원화: 파생 임시 승인
 - 장난 요괴 폭탄병 후보: 교체 대기, 런타임 격리
-- 화면 밖 위험 레이더·보스 카메라 보조·모바일 가로 HUD: 런타임 승인
+- 신규 최종 캐릭터 원화 승인: 0종
 
 ## 검증 명령
 
 ```bash
 npm run verify
 npm run build:static
-npm run verify:dist:v127
+npm run verify:dist:v129
 ```
 
 ## PERMANENT ROOT HYGIENE CONTRACT
@@ -36,4 +37,17 @@ npm run verify:dist:v127
 
 ## 보존된 릴리스 기반
 
-v1.0.12 크로스 플랫폼 비주얼 기반, v1.0.17 승인 자산 경계, v1.0.20 주인공 11방향 적용, v1.0.26 보스전 검증을 유지한다.
+v1.0.12 크로스 플랫폼 기반, v1.0.17 승인 경계, v1.0.20 주인공 11방향 적용, v1.0.28 전장 가시성 계약을 유지한다.
+
+
+## v1.0.31 Asset Lineage Assurance
+- Cumulative from v1.0.29, including missing v1.0.30 audit scope.
+- 10 runtime characters / 30 texture files audited.
+- 70-wave lifecycle diagnostics.
+
+## v1.0.32 Silhouette Assurance
+
+- `DD-SILHOUETTE-ASSURANCE-V132` 런타임 마커를 유지한다.
+- 실루엣 근접 중복은 0쌍이며 이무기/왕 유사 쌍은 사람 검토 대상으로 남긴다.
+- 독립 액션은 `derived-provisional`, 폭탄병은 `quarantined` 상태를 유지한다.
+- 다음 예정 문서는 `docs/NEXT_UPDATE_v1.0.33.md`이다.

@@ -17,12 +17,20 @@ if (!bundle.source.includes('DD-BUNDLE-MARKER-GATE-V119')) throw new Error('v1.0
 if (!bundle.source.includes('DD-HERO-HUD-POLISH-V120')) throw new Error('v1.0.20 hero/HUD polish marker is missing from Vite bundle');
 if (!bundle.source.includes('DD-LIVE-COMBAT-V121')) throw new Error('v1.0.21 live combat marker is missing from Vite bundle');
 if (!bundle.source.includes('DD-BATTLEFIELD-CLARITY-V122')) throw new Error('v1.0.22 battlefield clarity marker is missing from Vite bundle');
+if (!bundle.source.includes('DD-RELEASE-ASSURANCE-V124')) throw new Error('v1.0.24 release assurance marker is missing from Vite bundle');
+if (!bundle.source.includes('DD-ACTION-ASSET-ASSURANCE-V125')) throw new Error('v1.0.25 action asset assurance marker is missing from Vite bundle');
+if (!bundle.source.includes('DD-BOSS-ENCOUNTER-ASSURANCE-V126')) throw new Error('v1.0.26 boss encounter marker is missing from Vite bundle');
+if (!bundle.source.includes('DD-BOSS-TACTICAL-ASSURANCE-V127')) throw new Error('v1.0.27 boss tactical marker is missing from Vite bundle');
+if (!bundle.source.includes('DD-BATTLEFIELD-VISIBILITY-ASSURANCE-V128')) throw new Error('v1.0.28 battlefield visibility marker is missing from Vite bundle');
+if (!bundle.source.includes('DD-ASSET-REFINEMENT-ASSURANCE-V129')) throw new Error('v1.0.29 asset refinement marker is missing from Vite bundle');
 for (const relative of [
   'asset-approval-v117.html',
   'assets/visual-v117/asset-approval-manifest-v117.json',
   'assets/visual-v117/asset-approval-registry-v117.json',
   'assets/visual-v117/directional/guardian-ember-pupu-atlas-low-v117.webp',
-  'assets/visual-v117/citadel/guardian-citadel-critical-low-v117.webp'
+  'assets/visual-v117/citadel/guardian-citadel-critical-low-v117.webp',
+  'assets/visual-v129/asset-refinement-profile-v129.json',
+  'assets/visual-v129/directional/guardian-ember-pupu-atlas-low-v129.webp'
 ]) await access(path.join(dist, relative));
 await access(path.join(dist, 'sw.js'));
 await access(path.join(dist, 'version.json'));

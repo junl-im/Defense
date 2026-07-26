@@ -21,8 +21,8 @@ const index = read('index.html');
 const version = JSON.parse(read('version.json'));
 const sw = read('sw.js');
 const registry = JSON.parse(read('assets/visual-v127/boss-tactical-registry-v127.json'));
-if (version.releaseVersion !== '1.0.27' || version.buildId !== 'b24.27') throw new Error('v1.0.27 dist identity mismatch');
-if (!index.includes('release-v127-b24-27')) throw new Error('v1.0.27 title revision missing from dist');
+if (Number(String(version.releaseVersion).split('.').at(-1)) < 27 || Number(version.buildRevision) < 27) throw new Error('dist identity is older than v1.0.27');
+if (!index.includes(`release-v${Number(version.buildRevision) + 100}-b24-${version.buildRevision}`) && !index.includes('release-v127-b24-27')) throw new Error('current title revision missing from dist');
 if (!sw.includes('boss-tactical-assurance-director-v127.js') || !sw.includes('boss-tactical-lab-v127.html')) throw new Error('v1.0.27 service-worker entries missing');
 if (!registry.entries?.some((entry) => entry.id === 'monster-bomb-imp-directional-candidate-v127' && entry.runtime === 'quarantined')) throw new Error('v1.0.27 quarantined candidate registry missing from dist');
 

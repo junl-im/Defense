@@ -1,0 +1,37 @@
+{
+  "schema": "DD-ASSET-REFINEMENT-REGISTRY-V129",
+  "version": "1.0.29",
+  "build": "b24.29",
+  "summary": {
+    "approvedSourceEntities": 1,
+    "directionCells": 11,
+    "actionRows": 6,
+    "profileCells": 66,
+    "newFinalCharacterArt": 0,
+    "waveTarget": 50
+  },
+  "entries": [
+    {
+      "id": "guardian-ember-pupu-source-v117",
+      "status": "final-approved-source",
+      "runtime": "superseded-by-derived-v129"
+    },
+    {
+      "id": "guardian-ember-pupu-derived-v129",
+      "status": "runtime-derived-approved",
+      "runtime": "active",
+      "visiblePixelsChanged": false,
+      "alphaChanged": false
+    },
+    {
+      "id": "hero-pupu-independent-actions-v129",
+      "status": "derived-provisional",
+      "runtime": "active-derived"
+    },
+    {
+      "id": "monster-bomb-imp-directional-candidate-v129",
+      "status": "replacement-pending",
+      "runtime": "quarantined"
+    }
+  ]
+}

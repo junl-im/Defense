@@ -25,6 +25,10 @@ import ReleaseAssuranceDirectorV124 from './runtime/release-assurance-director-v
 import ActionAssetAssuranceDirectorV125 from './runtime/action-asset-assurance-director-v125.js';
 import BossEncounterAssuranceDirectorV126 from './runtime/boss-encounter-assurance-director-v126.js';
 import BossTacticalAssuranceDirectorV127 from './runtime/boss-tactical-assurance-director-v127.js';
+import BattlefieldVisibilityAssuranceDirectorV128 from './runtime/battlefield-visibility-assurance-director-v128.js';
+import AssetRefinementAssuranceDirectorV129 from './runtime/asset-refinement-assurance-director-v129.js';
+import AssetLineageAssuranceDirectorV131 from './runtime/asset-lineage-assurance-director-v131.js';
+import SilhouetteAssuranceDirectorV132 from './runtime/silhouette-assurance-director-v132.js';
 import { DEFAULT_CAMERA_PROFILE_ID, getCameraProfile, sanitizeCameraProfileId, cycleCameraProfile, resolveCameraDistance } from './engine/camera-profile.js';
 import { BOOT_ASSET_CATALOG, DEFERRED_ASSET_CATALOG, ASSET_LOADING_PLAN_V115, PLAYER_ASSET_ID, GUARDIAN_ASSET_IDS, MONSTER_ASSET_IDS, BOSS_ASSET_IDS } from './engine/asset-catalog.js';
 import { HERO_CLASSES, HERO_CLASS_ORDER, HERO_CLASS_ASSET_IDS, getHeroClass } from './hero-classes.js';
@@ -141,7 +145,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '1.0.27';
+const GAME_VERSION = '1.0.32';
 // const GAME_VERSION = '23.1.0'; historical lineage marker for pre-normalization contracts.
 if (GAME_VERSION !== PUBLIC_GAME_VERSION) throw new Error('Public version policy mismatch');
 function runtimeSpriteMarkup(path, alt = '', className = '') {
@@ -250,6 +254,10 @@ class DokkaebiLuckDefense {
     this.actionAssetAssuranceV125 = null;
     this.bossEncounterAssuranceV126 = null;
     this.bossTacticalAssuranceV127 = null;
+    this.battlefieldVisibilityV128 = null;
+    this.assetRefinementV129 = null;
+    this.assetLineageV131 = null;
+    this.silhouetteAssuranceV132 = null;
     this.elapsed = 0;
     this.shake = 0;
     const initialCameraProfile = getCameraProfile(DEFAULT_CAMERA_PROFILE_ID);
@@ -724,6 +732,24 @@ class DokkaebiLuckDefense {
       combatVisual: this.combatVisualV112
     });
     this.bossTacticalAssuranceV127.install();
+    this.battlefieldVisibilityV128 = new BattlefieldVisibilityAssuranceDirectorV128({
+      tacticalDirector: this.bossTacticalAssuranceV127,
+      combatVisual: this.combatVisualV112
+    });
+    this.battlefieldVisibilityV128.install();
+    this.assetRefinementV129 = new AssetRefinementAssuranceDirectorV129({
+      visibilityDirector: this.battlefieldVisibilityV128,
+      tacticalDirector: this.bossTacticalAssuranceV127,
+      combatVisual: this.combatVisualV112
+    });
+    this.assetRefinementV129.install();
+    this.assetLineageV131 = new AssetLineageAssuranceDirectorV131({ combatVisual: this.combatVisualV112 });
+    this.assetLineageV131.install();
+    this.silhouetteAssuranceV132 = new SilhouetteAssuranceDirectorV132({
+      combatVisual: this.combatVisualV112,
+      refinementDirector: this.assetRefinementV129
+    });
+    this.silhouetteAssuranceV132.install();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
     this.scene = new THREE.Scene();
@@ -7010,6 +7036,8 @@ class DokkaebiLuckDefense {
       this.releaseAssuranceV124,
       this.actionAssetAssuranceV125,
       this.bossEncounterAssuranceV126,
+      this.assetRefinementV129,
+      this.battlefieldVisibilityV128,
       this.bossTacticalAssuranceV127,
       this.battlefieldClarityV122,
       this.liveCombatV121,
@@ -7142,6 +7170,55 @@ class DokkaebiLuckDefense {
         performance: this.engine.monitor.snapshot
       });
     });
+    if (this.frameScheduler.shouldRun('battlefield-visibility-v128', this.coreFoundation.cadence('battlefield-visibility-v128', 10, { minHz: 5, criticalScale: .82 }))) this.runSafe('battlefield-visibility-v128', () => {
+      const occludersV128 = (this.battlefieldProps?.props || []).map((entry) => ({
+        id: entry.definition?.id || 'prop',
+        position: entry.sprite?.position || null,
+        radius: Math.max(.8, Number(entry.definition?.scale || 1) * .52)
+      }));
+      this.battlefieldVisibilityV128?.update(dt, {
+        state: this.state,
+        wave: this.currentWave,
+        camera: this.camera,
+        hazards: this.hazards,
+        occluders: occludersV128,
+        particles: this.particles.length,
+        projectiles: this.projectiles.length,
+        fps: this.engine.monitor.lastFps,
+        performance: this.engine.monitor.snapshot
+      });
+    });
+    if (this.frameScheduler.shouldRun('asset-refinement-v129', this.coreFoundation.cadence('asset-refinement-v129', 4, { minHz: 2, criticalScale: .72 }))) this.runSafe('asset-refinement-v129', () => {
+      this.assetRefinementV129?.update({
+        state: this.state,
+        wave: this.currentWave,
+        hazards: this.hazards,
+        particles: this.particles.length,
+        projectiles: this.projectiles.length,
+        fps: this.engine.monitor.lastFps,
+        performance: this.engine.monitor.snapshot
+      });
+    });
+    if (this.frameScheduler.shouldRun('asset-lineage-v131', this.coreFoundation.cadence('asset-lineage-v131', 5, { minHz: 1, criticalScale: .62 }))) this.runSafe('asset-lineage-v131', () => {
+      this.assetLineageV131?.update({
+        wave: this.currentWave,
+        hazards: this.hazards,
+        particles: this.particles.length,
+        projectiles: this.projectiles.length,
+        fps: this.engine.monitor.lastFps
+      });
+    });
+    if (this.frameScheduler.shouldRun('silhouette-assurance-v132', this.coreFoundation.cadence('silhouette-assurance-v132', 5, { minHz: 1, criticalScale: .6 }))) this.runSafe('silhouette-assurance-v132', () => {
+      this.silhouetteAssuranceV132?.update({
+        wave: this.currentWave,
+        hazards: this.hazards,
+        directionGroups: this.assetRefinementV129?.directionGroups || [],
+        particles: this.particles.length,
+        projectiles: this.projectiles.length,
+        fps: this.engine.monitor.lastFps
+      });
+    });
+
 
     if (this.state === 'playing') {
       this.runSafe('auto-wave', () => this.updateAutoWaveCountdown(dt));
@@ -7253,7 +7330,7 @@ try {
       },
       foundationReport: () => game.coreFoundation?.report || {},
       dispose: () => game.dispose(),
-      reliabilityReport: () => ({ foundation: game.coreFoundation?.report || {}, wave: game.waveReliability?.report || {}, browser: game.browserReliability?.report || {}, firstPresentation: game.firstPresentationReport || game.firstPresentation?.report || {}, automation: game.automationV22?.report || {}, targeting: game.guardianTargetingV22?.report || {}, mobileHud: game.mobileHudV23?.report || {}, crossPlatformShell: game.crossPlatformShellV112?.report || {}, combatVisual: game.combatVisualV112?.diagnostics || {}, artApprovalV115: game.artApprovalReportV115 || {}, artApprovalV117: game.artApprovalReportV117 || {}, assetLoadingV115: { plan: game.assetLoadingPlanV115, ready: game.deferredAssetsReady, report: game.deferredAssetReport }, heroHudPolishV120: game.heroHudPolishV120 || {}, liveCombatV121: game.liveCombatV121?.report || {}, battlefieldClarityV122: game.battlefieldClarityV122?.report || {}, releaseAssuranceV124: game.releaseAssuranceV124?.report || {}, actionAssetAssuranceV125: game.actionAssetAssuranceV125?.report || {}, bossEncounterAssuranceV126: game.bossEncounterAssuranceV126?.report || {}, bossTacticalAssuranceV127: game.bossTacticalAssuranceV127?.report || {} })
+      reliabilityReport: () => ({ foundation: game.coreFoundation?.report || {}, wave: game.waveReliability?.report || {}, browser: game.browserReliability?.report || {}, firstPresentation: game.firstPresentationReport || game.firstPresentation?.report || {}, automation: game.automationV22?.report || {}, targeting: game.guardianTargetingV22?.report || {}, mobileHud: game.mobileHudV23?.report || {}, crossPlatformShell: game.crossPlatformShellV112?.report || {}, combatVisual: game.combatVisualV112?.diagnostics || {}, artApprovalV115: game.artApprovalReportV115 || {}, artApprovalV117: game.artApprovalReportV117 || {}, assetLoadingV115: { plan: game.assetLoadingPlanV115, ready: game.deferredAssetsReady, report: game.deferredAssetReport }, heroHudPolishV120: game.heroHudPolishV120 || {}, liveCombatV121: game.liveCombatV121?.report || {}, battlefieldClarityV122: game.battlefieldClarityV122?.report || {}, releaseAssuranceV124: game.releaseAssuranceV124?.report || {}, actionAssetAssuranceV125: game.actionAssetAssuranceV125?.report || {}, bossEncounterAssuranceV126: game.bossEncounterAssuranceV126?.report || {}, bossTacticalAssuranceV127: game.bossTacticalAssuranceV127?.report || {}, battlefieldVisibilityV128: game.battlefieldVisibilityV128?.report || {}, assetRefinementV129: game.assetRefinementV129?.report || {}, assetLineageV131: game.assetLineageV131?.report || {}, silhouetteAssuranceV132: game.silhouetteAssuranceV132?.report || {} })
     });
     game.browserReliability?.noteMilestone('game-ready', { state: game.state });
     window.dispatchEvent(new Event('dokkaebi:boot-ready'));

@@ -22,14 +22,14 @@ const css = text('src/style.css');
 const sw = text('public/sw.js');
 const workflow = text('.github/workflows/deploy.yml');
 
-check(pkg.version === '1.0.27', 'package version is not 1.0.27');
-check(pkg.dokkaebi?.buildId === 'b24.27' && pkg.dokkaebi?.buildRevision === 27, 'package build identity mismatch');
+check(Number(pkg.version.split('.').at(-1)) >= 27, 'package version is older than 1.0.27');
+check(pkg.dokkaebi?.buildRevision >= 27, 'package build identity is older than b24.27');
 check(lock.version === pkg.version && lock.packages?.['']?.version === pkg.version, 'package-lock version mismatch');
 check(lock.packages?.['']?.dokkaebi?.buildId === pkg.dokkaebi?.buildId, 'package-lock build identity mismatch');
 check(version.releaseVersion === pkg.version && version.buildId === pkg.dokkaebi?.buildId, 'public version identity mismatch');
-check(main.includes("const GAME_VERSION = '1.0.27'"), 'runtime version identity mismatch');
-check(index.includes("const RELEASE_VERSION = '1.0.27'") && index.includes("const BUILD_ID = 'b24.27'"), 'HTML boot identity mismatch');
-check(index.includes('release-v127-b24-27'), 'title cache revision mismatch');
+check(main.includes(`const GAME_VERSION = '${pkg.version}'`), 'runtime version identity mismatch');
+check(index.includes(`const RELEASE_VERSION = '${pkg.version}'`) && index.includes(`const BUILD_ID = '${pkg.dokkaebi.buildId}'`), 'HTML boot identity mismatch');
+check(index.includes(`release-v${pkg.dokkaebi.buildRevision + 100}-b24-${pkg.dokkaebi.buildRevision}`) || index.includes('release-v127-b24-27'), 'title cache revision mismatch');
 if (!failures.length) pass('v1.0.27 / b24.27 identity is synchronized');
 
 check(BOSS_TACTICAL_ASSURANCE_V127_ID === 'DD-BOSS-TACTICAL-ASSURANCE-V127', 'runtime marker export mismatch');

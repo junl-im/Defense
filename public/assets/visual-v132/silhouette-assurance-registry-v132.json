@@ -1,0 +1,21 @@
+{
+  "schema": "DD-SILHOUETTE-ASSURANCE-REGISTRY-V132",
+  "version": "1.0.32",
+  "build": "b24.32",
+  "summary": {
+    "silhouetteAssets": 10,
+    "silhouettePairs": 45,
+    "nearDuplicatePairs": 0,
+    "actionCells": 66,
+    "distinctRuntimeFrames": true,
+    "newFinalCharacterArt": 0,
+    "waveTarget": 80
+  },
+  "approvals": {
+    "pupuDirectional": "final-approved-retained",
+    "pupuIndependentActions": "derived-provisional",
+    "bossMonsterSilhouettes": "audit-approved-no-near-duplicates",
+    "bombImpDirectional": "replacement-pending",
+    "bombImpRuntime": "quarantined"
+  }
+}
