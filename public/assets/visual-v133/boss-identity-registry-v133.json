@@ -1,0 +1,25 @@
+{
+  "schema": "DD-BOSS-IDENTITY-REGISTRY-V133",
+  "version": "1.0.33",
+  "build": "b24.33",
+  "summary": {
+    "bossProfiles": 3,
+    "reviewPairs": 1,
+    "runtimeIdentityApproved": true,
+    "newFinalCharacterArt": 0,
+    "waveTarget": 90
+  },
+  "approvals": {
+    "bossIdentityProfiles": "runtime-approved",
+    "serpentKingSilhouetteReview": "human-review-retained-runtime-distinction-approved",
+    "pupuDirectional": "final-approved-retained",
+    "pupuIndependentActions": "derived-provisional",
+    "bombImpDirectional": "replacement-pending",
+    "bombImpRuntime": "quarantined"
+  },
+  "files": [
+    "assets/visual-v133/boss-identity-audit-v133.json",
+    "boss-identity-lab-v133.html",
+    "src/runtime/boss-identity-assurance-director-v133.js"
+  ]
+}

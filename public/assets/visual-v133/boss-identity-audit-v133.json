@@ -1,0 +1,66 @@
+{
+  "schema": "DD-BOSS-IDENTITY-AUDIT-V133",
+  "version": "1.0.33",
+  "build": "b24.33",
+  "waveTarget": 90,
+  "sourceSilhouetteAudit": "assets/visual-v132/silhouette-audit-v132.json",
+  "reviewPair": {
+    "a": "boss-serpent",
+    "b": "boss-king",
+    "silhouetteScore": 0.76924,
+    "humanReviewRetained": true,
+    "nearDuplicate": false,
+    "accentDistance": 258,
+    "secondaryDistance": 266
+  },
+  "profiles": {
+    "tiger": {
+      "name": "저승 호랑이",
+      "sigil": "虎",
+      "accent": "#ff5b47",
+      "secondary": "#ffd06a",
+      "weapon": "발톱·도약",
+      "telegraph": "주황 원형 충격파"
+    },
+    "serpent": {
+      "name": "청월 이무기",
+      "sigil": "龍",
+      "accent": "#39f4d4",
+      "secondary": "#0a728c",
+      "weapon": "독월 고리·혼령 덫",
+      "telegraph": "청록 동심원 장판"
+    },
+    "king": {
+      "name": "백귀 야행왕",
+      "sigil": "王",
+      "accent": "#ff4fd8",
+      "secondary": "#ffd36a",
+      "weapon": "왕가면·처형 도약",
+      "telegraph": "자주·금색 행진 장판"
+    }
+  },
+  "combatTelegraphs": {
+    "serpent": {
+      "rings": "#55efc3",
+      "snare": "#4be6c5",
+      "shape": "concentric-circular"
+    },
+    "king": {
+      "marchPrimary": "#ff4fd8",
+      "marchSecondary": "#ffc85a",
+      "shockwave": "#ffc85a",
+      "shape": "alternating-line-and-impact"
+    }
+  },
+  "mobile": {
+    "sectorLimit": 3,
+    "narrowWidth": 390,
+    "notchSafeArea": true
+  },
+  "approvals": {
+    "runtimeIdentity": "approved",
+    "newFinalCharacterArt": 0,
+    "pupuIndependentActions": "derived-provisional",
+    "bombImpRuntime": "quarantined"
+  }
+}

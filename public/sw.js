@@ -1,5 +1,5 @@
-const RELEASE_VERSION = '1.0.32';
-const BUILD_ID = 'b24.32';
+const RELEASE_VERSION = '1.0.33';
+const BUILD_ID = 'b24.33';
 // const VERSION = '23.1.0'; historical lineage marker.
 const CACHE_PREFIX = 'dokkaebi-luck-defense-shell-';
 const LEGACY_CACHE_PREFIXES = ['dokkaebi-shell-', 'dokkaebi-luck-defense-shell-'];
@@ -24,6 +24,7 @@ const SHELL_ASSETS = [
   './src/runtime/asset-refinement-assurance-director-v129.js',
   './src/runtime/asset-lineage-assurance-director-v131.js',
   './src/runtime/silhouette-assurance-director-v132.js',
+  './src/runtime/boss-identity-assurance-director-v133.js',
   './src/runtime/title-presentation-guard-v123.js',
   './src/assets/title-v112/title-bg-desktop-lite-v112.webp',
   './src/assets/title-v112/title-bg-mobile-lite-v112.webp',
@@ -71,6 +72,10 @@ const OPTIONAL_WARM_ASSETS = [
   './assets/visual-v131/asset-lineage-audit-v131.json',
   './assets/visual-v131/asset-lineage-registry-v131.json',
   './silhouette-assurance-lab-v132.html',
+  './boss-identity-lab-v133.html',
+  './assets/visual-v133/boss-identity-audit-v133.json',
+  './assets/visual-v133/boss-identity-registry-v133.json',
+  './assets/visual-v133/boss-identity-manifest-v133.json',
   './assets/visual-v132/silhouette-audit-v132.json',
   './assets/visual-v132/action-evidence-v132.json',
   './assets/visual-v132/silhouette-assurance-registry-v132.json',

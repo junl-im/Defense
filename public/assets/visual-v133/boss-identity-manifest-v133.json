@@ -1,0 +1,22 @@
+{
+  "schema": "DD-BOSS-IDENTITY-MANIFEST-V133",
+  "version": "1.0.33",
+  "build": "b24.33",
+  "files": [
+    {
+      "path": "assets/visual-v133/boss-identity-audit-v133.json",
+      "bytes": 1667,
+      "sha256": "01f1f50a6d4cb8d8ef8f020e1a96465d1ed322bfab0b7b463f29adff250ff1fc"
+    },
+    {
+      "path": "assets/visual-v133/boss-identity-registry-v133.json",
+      "bytes": 762,
+      "sha256": "7437688135f94cb2e5e18fe804de6b79ebdca63f8ce230bac2122d9d43e70ea5"
+    },
+    {
+      "path": "src/runtime/boss-identity-assurance-director-v133.js",
+      "bytes": 11009,
+      "sha256": "8e8b75b13680053e7167cd3cc9c2d8ac2e8f5b85ee8c3c8a5818c61fa58fdde7"
+    }
+  ]
+}

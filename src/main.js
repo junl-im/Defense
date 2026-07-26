@@ -29,6 +29,7 @@ import BattlefieldVisibilityAssuranceDirectorV128 from './runtime/battlefield-vi
 import AssetRefinementAssuranceDirectorV129 from './runtime/asset-refinement-assurance-director-v129.js';
 import AssetLineageAssuranceDirectorV131 from './runtime/asset-lineage-assurance-director-v131.js';
 import SilhouetteAssuranceDirectorV132 from './runtime/silhouette-assurance-director-v132.js';
+import BossIdentityAssuranceDirectorV133 from './runtime/boss-identity-assurance-director-v133.js';
 import { DEFAULT_CAMERA_PROFILE_ID, getCameraProfile, sanitizeCameraProfileId, cycleCameraProfile, resolveCameraDistance } from './engine/camera-profile.js';
 import { BOOT_ASSET_CATALOG, DEFERRED_ASSET_CATALOG, ASSET_LOADING_PLAN_V115, PLAYER_ASSET_ID, GUARDIAN_ASSET_IDS, MONSTER_ASSET_IDS, BOSS_ASSET_IDS } from './engine/asset-catalog.js';
 import { HERO_CLASSES, HERO_CLASS_ORDER, HERO_CLASS_ASSET_IDS, getHeroClass } from './hero-classes.js';
@@ -145,7 +146,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '1.0.32';
+const GAME_VERSION = '1.0.33';
 // const GAME_VERSION = '23.1.0'; historical lineage marker for pre-normalization contracts.
 if (GAME_VERSION !== PUBLIC_GAME_VERSION) throw new Error('Public version policy mismatch');
 function runtimeSpriteMarkup(path, alt = '', className = '') {
@@ -258,6 +259,7 @@ class DokkaebiLuckDefense {
     this.assetRefinementV129 = null;
     this.assetLineageV131 = null;
     this.silhouetteAssuranceV132 = null;
+    this.bossIdentityAssuranceV133 = null;
     this.elapsed = 0;
     this.shake = 0;
     const initialCameraProfile = getCameraProfile(DEFAULT_CAMERA_PROFILE_ID);
@@ -750,6 +752,11 @@ class DokkaebiLuckDefense {
       refinementDirector: this.assetRefinementV129
     });
     this.silhouetteAssuranceV132.install();
+    this.bossIdentityAssuranceV133 = new BossIdentityAssuranceDirectorV133({
+      bossHealth: ui.bossHealth,
+      combatVisual: this.combatVisualV112
+    });
+    this.bossIdentityAssuranceV133.install();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
     this.scene = new THREE.Scene();
@@ -5747,13 +5754,13 @@ class DokkaebiLuckDefense {
     } else if (enemy.bossPhase >= 3) {
       const mode = index % 3;
       if (mode === 0) this.kingNightMarch(enemy);
-      else if (mode === 1) this.bossPounce(enemy, { radius: 3.7, warning: .82, color: 0x9b5cff });
-      else this.bossRoar(enemy, { radius: 7.1, warning: .9 });
+      else if (mode === 1) this.bossPounce(enemy, { radius: 3.7, warning: .82, color: 0xff4fd8 });
+      else this.bossRoar(enemy, { radius: 7.1, warning: .9, color: 0xffc85a });
     } else if (enemy.bossPhase >= 2) {
       if (index % 2 === 0) this.spawnBossAdds(enemy, 4);
-      else this.bossRoar(enemy, { radius: 6.3, warning: .98 });
+      else this.bossRoar(enemy, { radius: 6.3, warning: .98, color: 0xffc85a });
     } else {
-      this.bossRoar(enemy);
+      this.bossRoar(enemy, { color: 0xffc85a });
     }
     enemy.specialIndex = index + 1;
     enemy.specialTimer = this.getBossSpecialDelay(enemy);
@@ -5926,10 +5933,11 @@ class DokkaebiLuckDefense {
     const side = new THREE.Vector3(-forward.z, 0, forward.x);
     const positions = [origin, origin.clone().addScaledVector(side, 3.6), origin.clone().addScaledVector(side, -3.6)];
     positions.forEach((position, index) => {
+      const color = index === 1 ? 0xffc85a : 0xff4fd8;
       this.createHazard({
-        type: 'nightMarch', position, radius: 2.75, color: 0xd84dff, warning: .72 + index * .22, duration: .14,
+        type: 'nightMarch', position, radius: 2.75, color, warning: .72 + index * .22, duration: .14,
         onTrigger: (hazard) => {
-          this.spawnParticles(hazard.position.clone().add(new THREE.Vector3(0, .6, 0)), 0xd84dff, 18, 4.8);
+          this.spawnParticles(hazard.position.clone().add(new THREE.Vector3(0, .6, 0)), color, 18, 4.8);
           if (hazard.position.distanceTo(this.player.group.position) < hazard.radius) {
             this.player.stunTimer = Math.max(this.player.stunTimer, .7);
             this.player.skillCooldown += 1;
@@ -7219,6 +7227,23 @@ class DokkaebiLuckDefense {
       });
     });
 
+    if (this.frameScheduler.shouldRun('boss-identity-assurance-v133', this.coreFoundation.cadence('boss-identity-assurance-v133', 5, { minHz: 1, criticalScale: .58 }))) this.runSafe('boss-identity-assurance-v133', () => {
+      const bossV133 = this.enemies.find((enemy) => enemy?.boss && !enemy.dead) || null;
+      this.bossIdentityAssuranceV133?.update({
+        wave: this.currentWave,
+        boss: bossV133 ? {
+          type: bossV133.type,
+          phase: bossV133.bossPhase || 1,
+          intent: this.getBossIntentName(bossV133)
+        } : null,
+        hazards: this.hazards,
+        directionGroups: this.assetRefinementV129?.directionGroups || [],
+        particles: this.particles.length,
+        projectiles: this.projectiles.length,
+        fps: this.engine.monitor.lastFps
+      });
+    });
+
 
     if (this.state === 'playing') {
       this.runSafe('auto-wave', () => this.updateAutoWaveCountdown(dt));
@@ -7330,7 +7355,7 @@ try {
       },
       foundationReport: () => game.coreFoundation?.report || {},
       dispose: () => game.dispose(),
-      reliabilityReport: () => ({ foundation: game.coreFoundation?.report || {}, wave: game.waveReliability?.report || {}, browser: game.browserReliability?.report || {}, firstPresentation: game.firstPresentationReport || game.firstPresentation?.report || {}, automation: game.automationV22?.report || {}, targeting: game.guardianTargetingV22?.report || {}, mobileHud: game.mobileHudV23?.report || {}, crossPlatformShell: game.crossPlatformShellV112?.report || {}, combatVisual: game.combatVisualV112?.diagnostics || {}, artApprovalV115: game.artApprovalReportV115 || {}, artApprovalV117: game.artApprovalReportV117 || {}, assetLoadingV115: { plan: game.assetLoadingPlanV115, ready: game.deferredAssetsReady, report: game.deferredAssetReport }, heroHudPolishV120: game.heroHudPolishV120 || {}, liveCombatV121: game.liveCombatV121?.report || {}, battlefieldClarityV122: game.battlefieldClarityV122?.report || {}, releaseAssuranceV124: game.releaseAssuranceV124?.report || {}, actionAssetAssuranceV125: game.actionAssetAssuranceV125?.report || {}, bossEncounterAssuranceV126: game.bossEncounterAssuranceV126?.report || {}, bossTacticalAssuranceV127: game.bossTacticalAssuranceV127?.report || {}, battlefieldVisibilityV128: game.battlefieldVisibilityV128?.report || {}, assetRefinementV129: game.assetRefinementV129?.report || {}, assetLineageV131: game.assetLineageV131?.report || {}, silhouetteAssuranceV132: game.silhouetteAssuranceV132?.report || {} })
+      reliabilityReport: () => ({ foundation: game.coreFoundation?.report || {}, wave: game.waveReliability?.report || {}, browser: game.browserReliability?.report || {}, firstPresentation: game.firstPresentationReport || game.firstPresentation?.report || {}, automation: game.automationV22?.report || {}, targeting: game.guardianTargetingV22?.report || {}, mobileHud: game.mobileHudV23?.report || {}, crossPlatformShell: game.crossPlatformShellV112?.report || {}, combatVisual: game.combatVisualV112?.diagnostics || {}, artApprovalV115: game.artApprovalReportV115 || {}, artApprovalV117: game.artApprovalReportV117 || {}, assetLoadingV115: { plan: game.assetLoadingPlanV115, ready: game.deferredAssetsReady, report: game.deferredAssetReport }, heroHudPolishV120: game.heroHudPolishV120 || {}, liveCombatV121: game.liveCombatV121?.report || {}, battlefieldClarityV122: game.battlefieldClarityV122?.report || {}, releaseAssuranceV124: game.releaseAssuranceV124?.report || {}, actionAssetAssuranceV125: game.actionAssetAssuranceV125?.report || {}, bossEncounterAssuranceV126: game.bossEncounterAssuranceV126?.report || {}, bossTacticalAssuranceV127: game.bossTacticalAssuranceV127?.report || {}, battlefieldVisibilityV128: game.battlefieldVisibilityV128?.report || {}, assetRefinementV129: game.assetRefinementV129?.report || {}, assetLineageV131: game.assetLineageV131?.report || {}, silhouetteAssuranceV132: game.silhouetteAssuranceV132?.report || {}, bossIdentityAssuranceV133: game.bossIdentityAssuranceV133?.report || {} })
     });
     game.browserReliability?.noteMilestone('game-ready', { state: game.state });
     window.dispatchEvent(new Event('dokkaebi:boot-ready'));

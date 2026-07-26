@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="description" content="푸른 도깨비 수호대와 함께 달빛 장터를 지키는 3D 액션 디펜스" />
-    <link rel="manifest" href="./manifest.webmanifest?rev=release-v132-b24-32" />
+    <link rel="manifest" href="./manifest.webmanifest?rev=release-v133-b24-33" />
     <link rel="icon" href="./icon-192.png" type="image/png" />
     <link rel="apple-touch-icon" href="./icon-192.png" />
     <title>도깨비 럭 디펜스 3D</title>
@@ -55,9 +55,9 @@
       @media (max-height: 620px) { .boot-gate-art { width: min(29vh, 150px); } .boot-gate-title { font-size: 32px; } }
       @media (prefers-reduced-motion: reduce) { .boot-gate-art::before, .boot-gate-line::after { animation: none; } }
     </style>
-    <link rel="preload" as="image" href="./src/assets/title-v112/title-bg-desktop-lite-v112.webp?rev=release-v132-b24-32" media="(min-width: 721px) and (orientation: landscape)" />
-    <link rel="preload" as="image" href="./src/assets/title-v112/title-bg-mobile-lite-v112.webp?rev=release-v132-b24-32" media="(max-width: 720px), (orientation: portrait)" />
-    <link rel="preload" as="image" href="./src/assets/title-v112/title-mascot-lite-v112.webp?rev=release-v132-b24-32" />
+    <link rel="preload" as="image" href="./src/assets/title-v112/title-bg-desktop-lite-v112.webp?rev=release-v133-b24-33" media="(min-width: 721px) and (orientation: landscape)" />
+    <link rel="preload" as="image" href="./src/assets/title-v112/title-bg-mobile-lite-v112.webp?rev=release-v133-b24-33" media="(max-width: 720px), (orientation: portrait)" />
+    <link rel="preload" as="image" href="./src/assets/title-v112/title-mascot-lite-v112.webp?rev=release-v133-b24-33" />
     <!-- v1.0.15 compatibility marker: title-mascot-lite-v112.webp?rev=release-v115-b24-15 -->
     <!-- historical title cache lineage: title-mascot-v112.webp?rev=release-v112-b24-12 · title-bg-desktop-v112.webp?rev=release-v112-b24-12 · title-bg-mobile-v112.webp?rev=release-v112-b24-12 -->
     <!-- active lineage v22.0.0 · BROWSER RELIABILITY LAB -->
@@ -66,7 +66,7 @@
     <div id="boot-gate" role="status" aria-live="polite" aria-label="도깨비 럭 디펜스 3D 화면을 준비하는 중">
       <div class="boot-gate-content">
         <div class="boot-gate-art" aria-hidden="true">
-          <img src="./src/assets/title-v112/title-mascot-lite-v112.webp?rev=release-v132-b24-32" alt="" fetchpriority="high" decoding="async" />
+          <img src="./src/assets/title-v112/title-mascot-lite-v112.webp?rev=release-v133-b24-33" alt="" fetchpriority="high" decoding="async" />
         </div>
         <p class="boot-gate-kicker">ORIGINAL MOON GUARDIAN</p>
         <strong class="boot-gate-title">도깨비 럭 디펜스 3D</strong>
@@ -123,7 +123,7 @@
 
       <section id="boot-error" class="screen boot-error" aria-live="assertive">
         <div class="boot-error-card">
-          <div class="boot-error-emblem" aria-hidden="true"><img src="./src/assets/title-v112/title-mascot-lite-v112.webp?rev=release-v132-b24-32" alt="" decoding="async" /></div>
+          <div class="boot-error-emblem" aria-hidden="true"><img src="./src/assets/title-v112/title-mascot-lite-v112.webp?rev=release-v133-b24-33" alt="" decoding="async" /></div>
           <p class="kicker">BOOT RECOVERY</p>
           <h2>달빛 장터를 깨우지 못했습니다</h2>
           <p id="boot-error-message">이전 버전 캐시 또는 WebGL 초기화 문제를 감지했습니다.</p>
@@ -145,8 +145,8 @@
           </div>
           <!-- title presentation lineage: title-mascot-v112.webp -->
           <picture class="title-mascot-stage title-mascot-stage-v105 title-mascot-stage-v112" role="img" aria-label="원조 푸른 도깨비 마스코트">
-            <source media="(max-width: 720px), (orientation: portrait)" srcset="./src/assets/title-v112/title-mascot-lite-v112.webp?rev=release-v132-b24-32" />
-            <img class="title-mascot title-mascot-v17 title-mascot-v105 title-mascot-v112" src="./src/assets/title-v112/title-mascot-v112.webp?rev=release-v132-b24-32" alt="" aria-hidden="true" fetchpriority="high" loading="eager" decoding="async" />
+            <source media="(max-width: 720px), (orientation: portrait)" srcset="./src/assets/title-v112/title-mascot-lite-v112.webp?rev=release-v133-b24-33" />
+            <img class="title-mascot title-mascot-v17 title-mascot-v105 title-mascot-v112" src="./src/assets/title-v112/title-mascot-v112.webp?rev=release-v133-b24-33" alt="" aria-hidden="true" fetchpriority="high" loading="eager" decoding="async" />
           </picture>
           <div class="title-panel title-panel-simple title-panel-v17 title-panel-v105 title-panel-v107 title-panel-v112 title-panel-v124">
             <button id="start-btn" class="title-touch-start-v107" disabled aria-busy="true" aria-label="게임 준비 중...">
@@ -652,8 +652,8 @@
     </div>
     <script>
       (() => {
-        const RELEASE_VERSION = '1.0.32';
-        const BUILD_ID = 'b24.32';
+        const RELEASE_VERSION = '1.0.33';
+        const BUILD_ID = 'b24.33';
         const VERSION = `${RELEASE_VERSION}-${BUILD_ID}`;
         const errorScreen = document.getElementById('boot-error');
         const errorMessage = document.getElementById('boot-error-message');
@@ -785,6 +785,6 @@
         registerServiceWorker();
       })();
     </script>
-    <script type="module" src="./src/bootstrap.js?v=1.0.32-b24.32"></script>
+    <script type="module" src="./src/bootstrap.js?v=1.0.33-b24.33"></script>
   </body>
 </html>

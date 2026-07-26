@@ -1,9 +1,9 @@
 {
-  "releaseVersion": "1.0.32",
+  "releaseVersion": "1.0.33",
   "lineageVersion": "23.1.0",
   "buildEpoch": 24,
-  "buildRevision": 32,
-  "buildId": "b24.32",
+  "buildRevision": 33,
+  "buildId": "b24.33",
   "versionPolicy": "DD-VERSION-POLICY-1.0",
-  "cacheRevision": "1.0.32-b24.32"
+  "cacheRevision": "1.0.33-b24.33"
 }

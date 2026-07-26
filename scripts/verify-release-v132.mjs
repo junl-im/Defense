@@ -29,10 +29,12 @@ const sw = text('public/sw.js');
 const workflow = text('.github/workflows/deploy.yml');
 const index = text('index.html');
 
-check(pkg.version === '1.0.32' && pkg.dokkaebi?.buildId === 'b24.32' && pkg.dokkaebi?.buildRevision === 32, 'package identity');
+const currentPatch = Number(String(pkg.version).split('.')[2]);
+const currentBuild = Number(pkg.dokkaebi?.buildRevision);
+check(pkg.version.startsWith('1.0.') && currentPatch >= 32 && pkg.dokkaebi?.buildId === `b24.${currentBuild}` && currentBuild >= 32, 'package identity');
 check(lock.version === pkg.version && lock.packages?.['']?.version === pkg.version, 'lock identity');
-check(version.releaseVersion === pkg.version && version.buildId === 'b24.32', 'public version identity');
-check(main.includes("const GAME_VERSION = '1.0.32'") && index.includes('release-v132-b24-32'), 'runtime identity');
+check(version.releaseVersion === pkg.version && version.buildId === pkg.dokkaebi?.buildId, 'public version identity');
+check(main.includes(`const GAME_VERSION = '${pkg.version}'`) && index.includes(`release-v1${String(currentPatch).padStart(2, '0')}-b24-${currentBuild}`), 'runtime identity');
 check(SILHOUETTE_ASSURANCE_V132_ID === 'DD-SILHOUETTE-ASSURANCE-V132' && SILHOUETTE_ASSURANCE_POLICY_V132.waveTarget === 80, 'policy identity');
 
 const silhouetteResult = validateSilhouetteAuditV132(silhouette);
