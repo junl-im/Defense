@@ -19,7 +19,12 @@ const artBibleFiles = ['src/art-style-tokens.js', 'docs/ABSOLUTE_ART_BIBLE_v2.0.
 const artBibleUnchanged = artBibleFiles.every((file) => baseline.files?.[file]?.sha256 === hash(file));
 const assetsUnchanged = Object.entries(baseline.files || {})
   .filter(([file]) => file.startsWith('src/assets/') || file.startsWith('public/assets/'))
-  .every(([file, meta]) => fs.existsSync(file) && meta.sha256 === hash(file));
+  .every(([file, meta]) => {
+    const currentFile = file.startsWith('public/assets/ip-v13/sheets/')
+      ? file.replace('public/assets/ip-v13/sheets/', 'production/DokkaebiDefense/15_Source_Archives/ip-v13/sheets/')
+      : file;
+    return fs.existsSync(currentFile) && meta.sha256 === hash(currentFile);
+  });
 const titleButtonAsset = 'public/assets/ip-v10/presentation/ui/button_start.png';
 const startIdCount = (html.match(/id="start-btn"/g) || []).length;
 const release = String(pkg.version || '0.0.0').split('.').map(Number);

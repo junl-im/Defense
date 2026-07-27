@@ -73,28 +73,30 @@ jobs:
 
       - name: Verify approved asset static deployment
         run: |
-          npm run verify:dist:v117
-          npm run verify:dist:v118
-          npm run verify:dist:v119
-          npm run verify:dist:v120
-          npm run verify:dist:v121
-          npm run verify:dist:v122
-          npm run verify:dist:v123
-          npm run verify:dist:v124
-          npm run verify:dist:v125
-          npm run verify:dist:v126
-          npm run verify:dist:v127
-          npm run verify:dist:v128
-          npm run verify:dist:v129
-          npm run verify:dist:v131
-          npm run verify:dist:v132
-          npm run verify:dist:v133
-          npm run verify:dist:v134
-          npm run verify:dist:v135
-          npm run verify:dist:v136
-          npm run verify:dist:v137
-          npm run verify:dist:v138
-          npm run verify:dist:v139
+          # npm run verify:dist:v117
+          # npm run verify:dist:v118
+          # npm run verify:dist:v119
+          # npm run verify:dist:v120
+          # npm run verify:dist:v121
+          # npm run verify:dist:v122
+          # npm run verify:dist:v123
+          # npm run verify:dist:v124
+          # npm run verify:dist:v125
+          # npm run verify:dist:v126
+          # npm run verify:dist:v127
+          # npm run verify:dist:v128
+          # npm run verify:dist:v129
+          # npm run verify:dist:v131
+          # npm run verify:dist:v132
+          # npm run verify:dist:v133
+          # npm run verify:dist:v134
+          # npm run verify:dist:v135
+          # npm run verify:dist:v136
+          # npm run verify:dist:v137
+          # npm run verify:dist:v138
+          # npm run verify:dist:v139
+          # npm run verify:dist:v140
+          npm run verify:dist:all
 
       - name: Verify self-contained production bundle
         run: node scripts/verify-production-bundle-v101.mjs

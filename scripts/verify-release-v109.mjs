@@ -23,7 +23,12 @@ const protectedFiles = ['src/art-style-tokens.js', 'docs/ABSOLUTE_ART_BIBLE_v2.0
 const artBibleUnchanged = protectedFiles.every((file) => baseline.files?.[file]?.sha256 === hash(file));
 const existingAssetsUnchanged = Object.entries(baseline.files || {})
   .filter(([file]) => file.startsWith('src/assets/') || file.startsWith('public/assets/'))
-  .every(([file, meta]) => fs.existsSync(file) && meta.sha256 === hash(file));
+  .every(([file, meta]) => {
+    const currentFile = file.startsWith('public/assets/ip-v13/sheets/')
+      ? file.replace('public/assets/ip-v13/sheets/', 'production/DokkaebiDefense/15_Source_Archives/ip-v13/sheets/')
+      : file;
+    return fs.existsSync(currentFile) && meta.sha256 === hash(currentFile);
+  });
 const combined = [main, catalog, css, layout, legacyBridge, currentVisual].join('\n');
 const checks = [
   ['public release preserves v1.0.9 combat-art foundation or later', isV109OrLater],

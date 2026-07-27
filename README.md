@@ -1,53 +1,31 @@
-> Current improvement patch: **v1.0.39 / b24.39** - Vite dist portability hotfix
+> Current improvement patch: **v1.0.40 / b24.40** - Audit asset deployment boundary hotfix
 
 # Dokkaebi Luck Defense 3D
 
-## v1.0.39 key changes
+## v1.0.40 key changes
 
-- Fixed the GitHub Actions failure in `verify:dist:v134`.
-- The v1.0.34 verifier no longer requires source-tree files such as `dist/src/main.js` after a Vite production build.
-- A shared dual-mode verifier now supports both static fallback output and Vite emitted bundles.
-- The Vite path validates mobile HUD runtime markers from emitted JavaScript and accessibility markers from emitted CSS.
-- Added a source audit covering every remaining legacy verifier that still mentions `dist/src` and confirms it has an `dist/assets` fallback.
-- Added a regression fixture with no `dist/src` directory; the v1.0.34 foundation gate must still pass.
-- Updated v1.0.38 release and dist gates to remain forward-compatible with later patch releases.
-- The clean package rule remains: `dist`, `node_modules`, and generated logs are excluded from the full source ZIP.
+- Fixed the GitHub Actions failure in `verify:dist:v135`.
+- Ten full-resolution v13 source sheets are production/audit inputs, not runtime files.
+- The sheets moved from `public/assets/ip-v13/sheets/` to `production/DokkaebiDefense/15_Source_Archives/ip-v13/sheets/`.
+- All 415 runtime crops remain under `public/assets/ip-v13/crops/`.
+- `clean:obsolete` removes stale public copies left by paste-overwrite patches before verification and build.
+- Source-sheet hashes remain tied to `asset-manifest-v13.json`.
+- `npm run verify:dist:all` runs the complete v117-v140 deployment chain.
 - The mandatory handoff history rule remains enforced.
 
 ## Commands
 
 ```bash
-npm run verify:release:v139
+npm run verify:release:v140
 npm run build
-npm run verify:dist:v117
-npm run verify:dist:v118
-npm run verify:dist:v119
-npm run verify:dist:v120
-npm run verify:dist:v121
-npm run verify:dist:v122
-npm run verify:dist:v123
-npm run verify:dist:v124
-npm run verify:dist:v125
-npm run verify:dist:v126
-npm run verify:dist:v127
-npm run verify:dist:v128
-npm run verify:dist:v129
-npm run verify:dist:v131
-npm run verify:dist:v132
-npm run verify:dist:v133
-npm run verify:dist:v134
-npm run verify:dist:v135
-npm run verify:dist:v136
-npm run verify:dist:v137
-npm run verify:dist:v138
-npm run verify:dist:v139
-npm run stage:package:v139
-npm run verify:package:v139
-npm run create:patch:v139
-npm run verify:patch:v139
+npm run verify:dist:all
+npm run stage:package:v140
+npm run verify:package:v140
+npm run create:patch:v140
+npm run verify:patch:v140
 ```
 
-For environments without installed Vite dependencies, `npm run build:static` remains available. The current dist gates accept both Vite and static fallback layouts.
+For environments without installed Vite dependencies, `npm run build:static` remains available. The dist gates accept both Vite and static fallback layouts.
 
 ## Preserved release foundations
 
@@ -61,5 +39,5 @@ For environments without installed Vite dependencies, `npm run build:static` rem
 - v1.0.34 mobile HUD recovery
 - v1.0.35 runtime lifecycle, offline shell, accessibility, and 100-wave checks
 - v1.0.36 clean source packaging and generated-output exclusion
-- v1.0.37 Vite/static emitted-asset verification compatibility
-- v1.0.38 active presentation-surface verification
+- v1.0.37-v1.0.39 Vite/static deployment portability
+- v1.0.40 audit source-sheet deployment boundary

@@ -163,3 +163,13 @@ npm run hygiene:check
 ## 보존된 릴리스 기반
 
 v1.0.12 크로스 플랫폼 기반, v1.0.17 승인 경계, v1.0.20 주인공 11방향 적용, v1.0.29 파생 아틀라스, v1.0.31 에셋 계보 감사, v1.0.32 실루엣 검증, v1.0.33 보스 식별 검증, v1.0.34 모바일 HUD 복구를 유지한다.
+
+### 2026-07-27 — v1.0.40 / b24.40
+
+- 작업 목표: 실제 Vite 빌드가 `public/assets/ip-v13/sheets`의 감사 전용 원본 10개를 `dist`로 복사해 `verify:dist:v135`가 실패한 문제를 근본 수정한다.
+- 주요 변경 파일: `scripts/generate-asset-sheets-v13.py`, `scripts/clean-obsolete-assets.mjs`, `scripts/verify-v1300.mjs`, `scripts/verify-audit-asset-boundary-v140.mjs`, `scripts/verify-release-v140.mjs`, `scripts/verify-dist-v140.mjs`, `scripts/verify-dist-chain-v140.mjs`, 버전 파일, CI 워크플로, README와 v1.0.40 문서.
+- 수정 내용: 원본 시트 10개를 `production/DokkaebiDefense/15_Source_Archives/ip-v13/sheets`로 이동했다. 런타임 크롭 415개는 기존 공개 경로에 유지한다. 붙여넣기 패치 후 남은 구 공개 폴더는 `preverify`·`prebuild`의 `clean:obsolete`가 자동 삭제한다.
+- 검증 결과: 전체 누적 `npm run verify`, 모바일 HUD 14/14, 원본 시트 10개와 매니페스트 SHA-256, 크롭 415개, 루트 위생 검사를 통과했다. 정적 배포에서 v117~v140 총 23개 게이트가 연속 통과했다. 깨끗한 v1.0.39 복제본에 48개 파일을 루트 직접 덮어쓴 뒤 `clean:obsolete`가 구 `public/assets/ip-v13/sheets`를 삭제했으며, 런타임 셸·v140 릴리스·정적 빌드·전체 dist 체인을 재통과했다.
+- 예외사항: 직접 파일 붙여넣기만 하고 npm 명령을 한 번도 실행하지 않으면 이전 공개 시트 폴더가 디스크에 남을 수 있다. CI·검증·빌드는 시작 전에 자동 제거한다.
+- 잔여 위험: 다른 제작 원본이 `public` 아래에 남아 있을 가능성은 v1.0.41 도달성 감사에서 분류한다.
+- 다음 예정: `docs/NEXT_UPDATE_v1.0.41.md`.

@@ -12,6 +12,7 @@ const fixedObsolete = [
   'dist/cover.svg',
   'dist-pages/icon.svg',
   'dist-pages/cover.svg',
+  'public/assets/ip-v13/sheets',
   'public/assets/models/player-moon-captain-sd-toon.glb',
   'dist/assets/models/player-moon-captain-sd-toon.glb',
   'public/assets/models/boss-tiger-nextgen.glb',

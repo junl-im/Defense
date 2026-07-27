@@ -7,7 +7,7 @@ import numpy as np
 import cv2
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / 'public/assets/ip-v13/sheets'
+SOURCE = ROOT / 'production/DokkaebiDefense/15_Source_Archives/ip-v13/sheets'
 OUTPUT = ROOT / 'public/assets/ip-v13/crops'
 MANIFEST = ROOT / 'public/assets/ip-v13/asset-manifest-v13.json'
 

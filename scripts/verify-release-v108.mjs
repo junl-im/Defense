@@ -28,7 +28,12 @@ const protectedFiles = ['src/art-style-tokens.js', 'docs/ABSOLUTE_ART_BIBLE_v2.0
 const artBibleUnchanged = protectedFiles.every((file) => baseline.files?.[file]?.sha256 === hash(file));
 const assetsUnchanged = Object.entries(baseline.files || {})
   .filter(([file]) => file.startsWith('src/assets/') || file.startsWith('public/assets/'))
-  .every(([file, meta]) => fs.existsSync(file) && meta.sha256 === hash(file));
+  .every(([file, meta]) => {
+    const currentFile = file.startsWith('public/assets/ip-v13/sheets/')
+      ? file.replace('public/assets/ip-v13/sheets/', 'production/DokkaebiDefense/15_Source_Archives/ip-v13/sheets/')
+      : file;
+    return fs.existsSync(currentFile) && meta.sha256 === hash(currentFile);
+  });
 
 const hiddenSelector = '#title-screen.title-screen-v17:not(.visible)';
 const hiddenContractIndex = css.lastIndexOf(hiddenSelector);

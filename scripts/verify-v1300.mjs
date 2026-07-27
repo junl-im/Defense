@@ -15,6 +15,7 @@ const check=(value,message)=>value?console.log(`PASS ${message}`):(failures++,co
 
 const pkg=json('package.json');
 const manifest=json('public/assets/ip-v13/asset-manifest-v13.json');
+const sheetSourceRoot='production/DokkaebiDefense/15_Source_Archives/ip-v13/sheets';
 const html=read('index.html');
 const main=read('src/main.js');
 const codex=read('src/codex-data.js');
@@ -25,6 +26,9 @@ check(Number((pkg.dokkaebi?.lineageVersion || pkg.version).split('.')[0]) >= 13 
 check(SAVE_SCHEMA_VERSION>=11,'save schema remains v11 or later');
 check(IP_ASSET_LIBRARY_V13.totalCrops===415 && manifest.summary.totalCrops===415,'415 cropped sprite assets');
 check(manifest.summary.sourceSheets===10,'10 source sheets registered');
+check(!existsSync(resolve(root,'public/assets/ip-v13/sheets')),'audit source sheets stay outside public runtime root');
+check(manifest.sheets.every(sheet=>existsSync(resolve(root,sheetSourceRoot,sheet.file))),'all 10 source sheets preserved in production archive');
+check(manifest.sheets.every(sheet=>hash(resolve(sheetSourceRoot,sheet.file))===sheet.sha256),'source sheet hashes match manifest');
 check(manifest.assets.length===415,'manifest contains 415 entries');
 check(manifest.summary.production3DApproved===0 && IP_ASSET_LIBRARY_V13.production3DApproved===0,'2D crop import does not grant 3D production approval');
 check(manifest.assets.every(a=>existsSync(resolve(root,'public',a.path))),'all crop files exist');
