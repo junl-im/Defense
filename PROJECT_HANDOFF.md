@@ -1,12 +1,12 @@
-> 현재 개선 패치: **v1.0.35 / b24.35** — RUNTIME STABILITY & RELEASE INTEGRITY
+> Current improvement patch: **v1.0.36 / b24.36** - STORAGE HYGIENE & CLEAN SOURCE PACKAGING
 
-# PROJECT HANDOFF — RELEASE 1.0.35
+# PROJECT HANDOFF - RELEASE 1.0.36
 
-- Project: `DokkaebiLuckDefense3D_FULL_v1.0.35_RUNTIME_STABILITY_VERIFIED`
-- Public game version: `1.0.35`
-- Lineage version: `23.3.0`
-- Build ID: `b24.35`
-- Base: `v1.0.34 / b24.34`
+- Project: `DokkaebiLuckDefense3D_FULL_v1.0.36_STORAGE_HYGIENE_VERIFIED`
+- Public game version: `1.0.36`
+- Lineage version: `23.4.0`
+- Build ID: `b24.36`
+- Base: `v1.0.35 / b24.35`
 
 ## 절대 규칙
 
@@ -31,13 +31,15 @@
 ## 검증 명령
 
 ```bash
-npm run audit:toolchain:v135
+npm run audit:storage:v136
 npm run verify
-npm run verify:release:v135
+npm run verify:release:v136
+npm run stage:package:v136
+npm run verify:package:v136
 npm run build:static
-npm run verify:dist:v135
-npm run create:patch:v135
-npm run verify:patch:v135
+npm run verify:dist:v136
+npm run create:patch:v136
+npm run verify:patch:v136
 npm run hygiene:check
 ```
 
@@ -55,6 +57,15 @@ npm run hygiene:check
 - 전역 키보드 입력은 이동키만 처리한다.
 - 공격·기술·일시정지·제작 콘솔은 화면 버튼과 명시적 UI를 사용한다.
 
+## v1.0.36 Storage Hygiene & Clean Source Packaging
+
+- Measure exact path-and-hash duplicates between `public/` and generated `dist/`.
+- Exclude `dist/`, `node_modules/`, and generated logs from the full source ZIP.
+- Preserve runtime assets, production knowledge data, source code, documentation, and release history.
+- Stage and verify the clean source package before compression.
+- Delete generated `dist/` during patch cleanup instead of shipping another duplicate asset tree.
+- Keep the mandatory handoff history rule as a release gate.
+
 ## v1.0.35 Runtime Stability & Release Integrity
 
 - `FrameScope`로 전투 이펙트 RAF를 런타임 수명주기에 편입한다.
@@ -67,6 +78,18 @@ npm run hygiene:check
 - 100웨이브 자원 상한과 에셋 승인·격리 경계를 자동 검증한다.
 
 ## 인수인계 내역
+
+### 2026-07-27 — v1.0.36 / b24.36
+
+- 작업 목표: 통파일 용량 증가 원인을 파일·폴더·해시 단위로 확인하고, 실제 실행 원본은 보존하면서 재생성 가능한 중복 산출물만 제거한다.
+- 주요 변경 파일: `package.json`, `package-lock.json`, `README.md`, `PROJECT_HANDOFF.md`, 버전 파일 6종, `scripts/*v136*`, `docs/*v1.0.36*`, `.github/workflows/deploy.yml`.
+- 정리 대상: `dist/` 생성 배포본, 로컬 `node_modules/`, `logs/README.md`를 제외한 생성 로그. 전체 통파일 패키징 단계에서 자동 제외한다.
+- 보존 대상: `public/` 런타임 에셋, `production/` 제작·지식 데이터, `src/`, `scripts/`, `docs/`, 기존 승인·계보·패치 기준.
+- 검증 명령: `npm run audit:storage:v136`, `npm run verify:release:v136`, `npm run stage:package:v136`, `npm run verify:package:v136`, `npm run build:static`, `npm run verify:dist:v136`, `npm run create:patch:v136`, `npm run verify:patch:v136`, `npm run hygiene:check`.
+- 검증 결과: `public`→`dist` 경로·크기·SHA-256 일치 중복 1,965개 / 116,196,506바이트를 확인했다. 누적 릴리스 v1.0.12~v1.0.36, 모바일 UI 14/14, 100웨이브, 에셋 1,961개, 정적 배포, 루트 위생 검증을 통과했다. 정리 패키지는 288,905,605바이트로 스테이징되었고, 패치는 25개 변경·1개 생성 경로(`dist/`) 삭제로 검증됐다. 깨끗한 v1.0.35 복제본에 패치를 실제 적용한 뒤 릴리스·정적 빌드·dist·정리 패키지 검증을 모두 재통과했다.
+- 예외사항: `dist/`는 배포가 필요할 때 다시 생성하므로 통파일에는 포함하지 않는다. `production/`은 게임 런타임 직접 참조 여부와 별개로 제작·검증 이력에 사용되므로 이번 정리에서 삭제하지 않는다.
+- 잔여 위험: 구버전 원화·아틀라스의 동적 경로 참조는 단순 문자열 검색만으로 완전히 판정할 수 없어, 다음 업데이트에서 매니페스트 인식형 도달성 감사를 진행한다.
+- 다음 예정: `docs/NEXT_UPDATE_v1.0.37.md`.
 
 ### 2026-07-27 — v1.0.35 / b24.35
 
