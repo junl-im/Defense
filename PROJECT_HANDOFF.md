@@ -1,12 +1,12 @@
-> Current improvement patch: **v1.0.36 / b24.36** - STORAGE HYGIENE & CLEAN SOURCE PACKAGING
+> Current improvement patch: **v1.0.37 / b24.37** - CI DIST ARTIFACT VERIFICATION HOTFIX
 
-# PROJECT HANDOFF - RELEASE 1.0.36
+# PROJECT HANDOFF - RELEASE 1.0.37
 
-- Project: `DokkaebiLuckDefense3D_FULL_v1.0.36_STORAGE_HYGIENE_VERIFIED`
-- Public game version: `1.0.36`
-- Lineage version: `23.4.0`
-- Build ID: `b24.36`
-- Base: `v1.0.35 / b24.35`
+- Project: `DokkaebiLuckDefense3D_FULL_v1.0.37_CI_DIST_HOTFIX_VERIFIED`
+- Public game version: `1.0.37`
+- Lineage version: `23.5.0`
+- Build ID: `b24.37`
+- Base: `v1.0.36 / b24.36`
 
 ## 절대 규칙
 
@@ -31,15 +31,18 @@
 ## 검증 명령
 
 ```bash
-npm run audit:storage:v136
 npm run verify
-npm run verify:release:v136
-npm run stage:package:v136
-npm run verify:package:v136
-npm run build:static
+npm run verify:release:v137
+npm run build
+npm run verify:dist:v123
+npm run verify:dist:v124
+npm run verify:dist:v135
 npm run verify:dist:v136
-npm run create:patch:v136
-npm run verify:patch:v136
+npm run verify:dist:v137
+npm run stage:package:v137
+npm run verify:package:v137
+npm run create:patch:v137
+npm run verify:patch:v137
 npm run hygiene:check
 ```
 
@@ -78,6 +81,18 @@ npm run hygiene:check
 - 100웨이브 자원 상한과 에셋 승인·격리 경계를 자동 검증한다.
 
 ## 인수인계 내역
+
+### 2026-07-27 — v1.0.37 / b24.37
+
+- 작업 목표: GitHub Actions의 실제 Vite 빌드는 성공했지만 `verify:dist:v123`이 소스 원본 경로를 `dist/index.html`에서 요구해 실패한 오탐을 수정하고, 뒤이어 실패할 동일 계열 검증을 선제 보완한다.
+- 주요 변경 파일: `scripts/lib/verify-dist-asset-reference.mjs`, `scripts/verify-dist-v123.mjs`, `scripts/verify-dist-v124.mjs`, `scripts/verify-dist-v135.mjs`, `scripts/verify-dist-v136.mjs`, `scripts/verify-release-v137.mjs`, `scripts/verify-dist-v137.mjs`, 패키징·패치 스크립트, 버전 파일, CI 워크플로, README와 v1.0.37 문서.
+- 수정 내용: 원본 마스코트와 배포 마스코트를 바이트 크기와 SHA-256으로 대조하고 실제 emitted 경로가 활성 HTML/CSS/JS에서 참조되는지 검사한다. 정적 fallback의 `dist/src/...`와 Vite의 `dist/assets/...`를 모두 허용한다.
+- 검증 명령: `npm run verify:release:v137`, `npm run build:static`, `npm run verify:dist:v123`, `npm run verify:dist:v124`, `npm run verify:dist:v135`, `npm run verify:dist:v136`, `npm run verify:dist:v137`, `npm run stage:package:v137`, `npm run verify:package:v137`, `npm run create:patch:v137`, `npm run verify:patch:v137`, `npm run hygiene:check`.
+- 검증 결과: 전체 누적 `npm run verify`와 루트 위생 검사를 통과했다. 정적 fallback 구조와 합성 Vite emitted 구조 모두에서 v1.0.23/v1.0.24 마스코트 해시·참조 검사, v1.0.35/v1.0.36 이중 배포 모드, v1.0.37 최종 배포 계약을 통과했다. 깨끗한 v1.0.36 통파일 복제본에 27개 변경 파일을 실제 덮어쓰고 기존 `dist/`를 삭제한 뒤 릴리스·정적 빌드·대상 dist 검증 5종·루트 위생 검사를 재통과했다. 정리 패키지는 288,934,890바이트로 스테이징됐다.
+- 예외사항: 현재 작업 환경에는 npm 패키지 캐시가 없어 실제 `npm ci && npm run build`를 로컬 재현하지 못했다. 제공된 GitHub Actions 로그와 Vite 설정에 맞춰 emitted 경로 계약을 구현했고, CI에서 실제 Vite 결과를 `verify:dist:v137`로 재검증한다.
+- 잔여 위험: 다른 과거 검증 스크립트가 미래 번들 구조 변경에 민감할 수 있으므로 신규 검증은 원본 URL 문자열 대신 파일 해시·마커·실제 참조를 사용해야 한다.
+- 다음 예정: `docs/NEXT_UPDATE_v1.0.38.md`.
+
 
 ### 2026-07-27 — v1.0.36 / b24.36
 

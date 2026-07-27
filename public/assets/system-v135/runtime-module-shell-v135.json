@@ -1,9 +1,9 @@
 {
   "schema": "DD-RUNTIME-MODULE-SHELL-1.0",
   "id": "DD-RELEASE-INTEGRITY-V135",
-  "releaseVersion": "1.0.36",
-  "buildId": "b24.36",
-  "cacheRevision": "1.0.36-b24.36",
+  "releaseVersion": "1.0.37",
+  "buildId": "b24.37",
+  "cacheRevision": "1.0.37-b24.37",
   "entry": "src/bootstrap.js",
   "moduleCount": 110,
   "totalBytes": 1447463,
@@ -311,7 +311,7 @@
     {
       "path": "src/main.js",
       "bytes": 394919,
-      "sha256": "024d212285d83626a9fed1395964cdcd1159a65a6fbf3a1762a768d591fff452"
+      "sha256": "2ea9fbfc5fc5594be884d5e7e1fb7a753dce6369e175c1675dc970ecab81ee32"
     },
     {
       "path": "src/premium-assets.js",
@@ -556,7 +556,7 @@
     {
       "path": "src/version-policy.js",
       "bytes": 1739,
-      "sha256": "f524443c1743ed5c9019ddef540247b63f2250d1cf861ec55b4726afc18b671e"
+      "sha256": "3adf842f1ee35388c9ac0518dc372eeaa9cc6b40af7ef21bfac59b68377eeb40"
     }
   ]
 }

@@ -1,9 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
+import { readDistText, verifyDeployedAssetReference } from './lib/verify-dist-asset-reference.mjs';
 
 const root = process.cwd();
-const dist = path.join(root, 'dist');
+const dist = process.env.DIST_DIR ? path.resolve(process.env.DIST_DIR) : path.join(root, 'dist');
 const required = [
   'index.html',
   'manifest.webmanifest',
@@ -23,8 +24,13 @@ const sw = fs.readFileSync(path.join(dist, 'sw.js'), 'utf8');
 if (manifest.name !== '도깨비 럭 디펜스 3D') throw new Error('v1.0.24 canonical PWA name missing from dist');
 if (JSON.stringify(manifest).includes('도깨비 운빨 수호대')) throw new Error('legacy PWA branding remains in dist');
 if (!index.includes(currentRevision)) throw new Error('current title cache revision missing from dist');
-if (!index.includes('title-v112/title-mascot-v112.webp')) throw new Error('original mascot missing from v1.0.24 dist');
-if (index.includes('title-v120/title-mascot')) throw new Error('replacement mascot active in v1.0.24 dist');
+const mascot = verifyDeployedAssetReference({
+  root,
+  dist,
+  sourceRelative: 'src/assets/title-v112/title-mascot-v112.webp',
+  label: 'v1.0.24 original title mascot'
+});
+if (readDistText(dist).includes('title-v120/title-mascot')) throw new Error('replacement mascot active in v1.0.24 dist');
 if (!sw.includes('dokkaebi-luck-defense-shell-') || !sw.includes("'dokkaebi-shell-'")) throw new Error('v1.0.24 cache migration missing from dist');
 
 const staticRuntime = path.join(dist, 'src/runtime/release-assurance-director-v124.js');
@@ -42,4 +48,4 @@ if (!runtimeFound) {
   }
 }
 if (!runtimeFound) throw new Error('v1.0.24 release assurance runtime missing from static source or Vite bundle');
-console.log('PASS v1.0.24 canonical identity, cache migration and runtime assurance deployment');
+console.log(`PASS v1.0.24 canonical identity, cache migration and runtime assurance deployment (${mascot.emittedRelative})`);
