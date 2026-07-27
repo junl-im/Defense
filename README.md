@@ -1,34 +1,36 @@
-> Current improvement patch: **v1.0.37 / b24.37** - CI dist artifact verification hotfix
+> Current improvement patch: **v1.0.38 / b24.38** - active presentation scope CI hotfix
 
 # Dokkaebi Luck Defense 3D
 
-## v1.0.37 key changes
+## v1.0.38 key changes
 
-- Fixed the GitHub Actions failure in `verify:dist:v123` after a successful Vite build.
-- Asset deployment checks now compare source and emitted files by byte size and SHA-256 instead of requiring the original `src/assets/...` URL inside `dist/index.html`.
-- Updated the matching v1.0.24 mascot check before it could fail on the next CI step.
-- Updated v1.0.35 and v1.0.36 deployment gates to support both Vite bundles and the resilient static fallback layout.
-- Active HTML, runtime bundles, CSS, and service-worker files are checked without treating historical documents or quarantined registries as active references.
+- Fixed the second GitHub Actions failure in `verify:dist:v123`.
+- The legacy Korean title literals inside `title-presentation-guard-v123.js` are correction data, not visible branding.
+- Branding checks now inspect only active presentation surfaces: `dist/index.html` and `dist/manifest.webmanifest`.
+- Runtime JS bundles may retain legacy literals when they are required to replace old DOM text at runtime.
+- Added a regression fixture that proves a bundle may contain the correction literals while active HTML and PWA metadata remain canonical.
+- Updated the v1.0.37 deployment gate to remain forward-compatible with later patch releases.
 - The clean package rule remains: `dist`, `node_modules`, and generated logs are excluded from the full source ZIP.
 - The mandatory handoff history rule remains enforced.
 
 ## Commands
 
 ```bash
-npm run verify:release:v137
+npm run verify:release:v138
 npm run build
 npm run verify:dist:v123
 npm run verify:dist:v124
 npm run verify:dist:v135
 npm run verify:dist:v136
 npm run verify:dist:v137
-npm run stage:package:v137
-npm run verify:package:v137
-npm run create:patch:v137
-npm run verify:patch:v137
+npm run verify:dist:v138
+npm run stage:package:v138
+npm run verify:package:v138
+npm run create:patch:v138
+npm run verify:patch:v138
 ```
 
-For environments without installed Vite dependencies, `npm run build:static` remains available. The same v1.0.37 dist gates accept both layouts.
+For environments without installed Vite dependencies, `npm run build:static` remains available. The v1.0.38 dist gates accept both Vite and static fallback layouts.
 
 ## Preserved release foundations
 
@@ -42,3 +44,4 @@ For environments without installed Vite dependencies, `npm run build:static` rem
 - v1.0.34 mobile HUD recovery
 - v1.0.35 runtime lifecycle, offline shell, accessibility, and 100-wave checks
 - v1.0.36 clean source packaging and generated-output exclusion
+- v1.0.37 Vite/static emitted-asset verification compatibility

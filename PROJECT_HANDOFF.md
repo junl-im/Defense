@@ -1,12 +1,12 @@
-> Current improvement patch: **v1.0.37 / b24.37** - CI DIST ARTIFACT VERIFICATION HOTFIX
+> Current improvement patch: **v1.0.38 / b24.38** - ACTIVE PRESENTATION SCOPE CI HOTFIX
 
-# PROJECT HANDOFF - RELEASE 1.0.37
+# PROJECT HANDOFF - RELEASE 1.0.38
 
-- Project: `DokkaebiLuckDefense3D_FULL_v1.0.37_CI_DIST_HOTFIX_VERIFIED`
-- Public game version: `1.0.37`
-- Lineage version: `23.5.0`
-- Build ID: `b24.37`
-- Base: `v1.0.36 / b24.36`
+- Project: `DokkaebiLuckDefense3D_FULL_v1.0.38_CI_PRESENTATION_SCOPE_VERIFIED`
+- Public game version: `1.0.38`
+- Lineage version: `23.6.0`
+- Build ID: `b24.38`
+- Base: `v1.0.37 / b24.37`
 
 ## 절대 규칙
 
@@ -32,17 +32,18 @@
 
 ```bash
 npm run verify
-npm run verify:release:v137
+npm run verify:release:v138
 npm run build
 npm run verify:dist:v123
 npm run verify:dist:v124
 npm run verify:dist:v135
 npm run verify:dist:v136
 npm run verify:dist:v137
-npm run stage:package:v137
-npm run verify:package:v137
-npm run create:patch:v137
-npm run verify:patch:v137
+npm run verify:dist:v138
+npm run stage:package:v138
+npm run verify:package:v138
+npm run create:patch:v138
+npm run verify:patch:v138
 npm run hygiene:check
 ```
 
@@ -81,6 +82,18 @@ npm run hygiene:check
 - 100웨이브 자원 상한과 에셋 승인·격리 경계를 자동 검증한다.
 
 ## 인수인계 내역
+
+### 2026-07-27 — v1.0.38 / b24.38
+
+- 작업 목표: 실제 Vite 빌드 뒤 `verify:dist:v123`이 제목 교정 런타임에 정상적으로 포함된 구 제목 문자열을 현재 노출 브랜딩으로 오인해 실패한 CI 오탐을 수정한다.
+- 주요 변경 파일: `scripts/lib/verify-dist-presentation-surface.mjs`, `scripts/verify-dist-v123.mjs`, `scripts/verify-release-v137.mjs`, `scripts/verify-dist-v137.mjs`, `scripts/verify-release-v138.mjs`, `scripts/verify-dist-v138.mjs`, 버전·패키징·패치 스크립트, CI 워크플로, README와 v1.0.38 문서.
+- 수정 내용: 구 제목 금지 검사를 전체 JS 번들이 아니라 실제 표시 표면인 `dist/index.html`과 `dist/manifest.webmanifest`로 제한한다. `DD-TITLE-PRESENTATION-V123` 교정 런타임은 구 문자열을 치환 키로 보존하며, 합성 회귀 픽스처에서 번들 내 구 문자열은 허용하고 HTML 노출은 거부한다.
+- 검증 명령: `npm run verify:release:v137`, `npm run verify:release:v138`, `npm run build:static`, `npm run verify:dist:v123`, `npm run verify:dist:v124`, `npm run verify:dist:v135`, `npm run verify:dist:v136`, `npm run verify:dist:v137`, `npm run verify:dist:v138`, `npm run stage:package:v138`, `npm run verify:package:v138`, `npm run create:patch:v138`, `npm run verify:patch:v138`, `npm run hygiene:check`.
+- 검증 결과: 전체 누적 `npm run verify`가 통과했고 모바일 HUD 14/14와 루트 위생 계약을 유지했다. 정적 fallback 배포에서 v1.0.17~v1.0.38 연속 검증을 진행하며 발견된 `v133` 고정 버전 오탐도 전진 호환 방식으로 수정했다. Vite 형태의 합성 `assets/game.js`에 `도깨비 운빨 수호대` 교정 문자열을 포함한 상태에서 `verify:dist:v123`, `v137`, `v138`이 모두 통과했다. 깨끗한 v1.0.37 전체본에 27개 파일의 직접 덮어쓰기 패치를 적용하고 기존 `dist/`를 삭제한 뒤 릴리스·정적 빌드·v123/v124/v133~v138·루트 위생 검사를 재통과했다. 정리 패키지는 288,957,049바이트로 스테이징됐다.
+- 예외사항: 현재 작업 환경에는 설치된 Vite 실행 의존성이 없어 실제 GitHub-hosted Vite 빌드를 로컬에서 재실행하지 못한다. 제공된 CI 로그의 정확한 실패 조건을 합성 픽스처로 재현했으며, GitHub Actions에서 실제 `npm ci && npm run build` 결과를 `verify:dist:v138`까지 연속 검증한다.
+- 잔여 위험: 과거 dist 검증기 중 전체 번들 문자열을 현재 UI 상태로 간주하는 스크립트가 더 있을 수 있어 v1.0.39에서 전수 감사한다.
+- 다음 예정: `docs/NEXT_UPDATE_v1.0.39.md`.
+
 
 ### 2026-07-27 — v1.0.37 / b24.37
 
