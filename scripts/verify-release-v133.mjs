@@ -32,11 +32,22 @@ const workflow = text('.github/workflows/deploy.yml');
 const index = text('index.html');
 const versionPolicy = text('src/version-policy.js');
 
-check(pkg.version === '1.0.33' && pkg.dokkaebi?.buildId === 'b24.33' && pkg.dokkaebi?.buildRevision === 33, 'package identity');
-check(lock.version === pkg.version && lock.packages?.['']?.version === pkg.version, 'lock identity');
-check(version.releaseVersion === pkg.version && version.buildId === 'b24.33' && version.buildRevision === 33, 'public version identity');
-check(main.includes("const GAME_VERSION = '1.0.33'") && index.includes('release-v133-b24-33'), 'runtime identity');
-check(versionPolicy.includes('BUILD_REVISION = 33') && versionPolicy.includes("PUBLIC_GAME_VERSION = '1.0.33'"), 'version policy identity');
+const releaseParts = String(pkg.version || '').split('.').map(Number);
+const releaseAtLeastV133 = releaseParts.length === 3
+  && releaseParts.every(Number.isFinite)
+  && (releaseParts[0] > 1 || (releaseParts[0] === 1 && (releaseParts[1] > 0 || releaseParts[2] >= 33)));
+const currentRevision = Number(pkg.dokkaebi?.buildRevision || 0);
+const currentBuildId = String(pkg.dokkaebi?.buildId || '');
+const currentCacheRevision = String(pkg.dokkaebi?.cacheRevision || '');
+const currentReleaseTag = releaseParts[0] === 1 && releaseParts[1] === 0
+  ? `release-v1${releaseParts[2]}-b${pkg.dokkaebi?.buildEpoch}-${currentRevision}`
+  : currentCacheRevision;
+
+check(releaseAtLeastV133 && pkg.dokkaebi?.buildEpoch === 24 && currentRevision >= 33 && currentBuildId === `b24.${currentRevision}`, 'package identity');
+check(lock.version === pkg.version && lock.packages?.['']?.version === pkg.version && lock.packages?.['']?.dokkaebi?.buildId === currentBuildId, 'lock identity');
+check(version.releaseVersion === pkg.version && version.buildId === currentBuildId && version.buildRevision === currentRevision, 'public version identity');
+check(main.includes(`const GAME_VERSION = '${pkg.version}'`) && index.includes(currentReleaseTag) && index.includes(currentCacheRevision), 'runtime identity');
+check(versionPolicy.includes(`BUILD_REVISION = ${currentRevision}`) && versionPolicy.includes(`PUBLIC_GAME_VERSION = '${pkg.version}'`), 'version policy identity');
 check(BOSS_IDENTITY_ASSURANCE_V133_ID === 'DD-BOSS-IDENTITY-ASSURANCE-V133' && BOSS_IDENTITY_ASSURANCE_POLICY_V133.waveTarget === 90, 'policy identity');
 
 const profileResult = validateBossIdentityProfilesV133(BOSS_IDENTITY_PROFILES_V133);
@@ -96,4 +107,4 @@ if (failures.length) {
   failures.forEach((item) => console.error(`FAIL ${item}`));
   process.exit(1);
 }
-console.log('PASS v1.0.33 boss identity, root hygiene hotfix, mobile safety, and 90-wave assurance verified');
+console.log(`PASS v1.0.33 boss identity foundation preserved under current release ${pkg.version} / ${currentBuildId}`);

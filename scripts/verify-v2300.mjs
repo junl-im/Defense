@@ -20,7 +20,7 @@ const checks = [
   ['compact micro landscape profiles', css.includes('mobile-hud-v23-compact') && css.includes('mobile-hud-v23-micro') && css.includes('mobile-hud-v23-landscape')],
   ['runtime overlap protection', mobile.includes('overlapPairs') && mobile.includes('mobile-hud-v23-emergency') && mobile.includes('ResizeObserver')],
   ['nonessential mobile panels folded', css.includes('body.mobile-hud-v23 #first-mission-panel') && css.includes('body.mobile-hud-v23 #synergy-panel')],
-  ['title art cache revision updated', html.includes('quiet-screen-v23') || html.includes('boot-recovery-v2301') || html.includes('clean-foundation-v2302') || (html.includes('native-input-v2310') || html.includes('release-v102-b24-2') || html.includes('release-v105-b24-5') || html.includes('release-v107-b24-7') || html.includes('release-v108-b24-8') || html.includes('release-v112-b24-12'))],
+  ['title art cache revision updated', html.includes('quiet-screen-v23') || html.includes('boot-recovery-v2301') || html.includes('clean-foundation-v2302') || (html.includes('native-input-v2310') || html.includes('release-v102-b24-2') || html.includes('release-v105-b24-5') || html.includes('release-v107-b24-7') || html.includes('release-v108-b24-8') || html.includes('release-v112-b24-12') || html.includes('release-v134-b24-34'))],
   ['v23 operating docs exist', ['docs/QUIET_SCREEN_v23.0.0.md','docs/PATCH_NOTES_v23.0.0.md','docs/PATCH_APPLY_v23.0.0.md','docs/NEXT_PATCH_LINEUP_v23.x.md','docs/MOBILE_UI_SIMULATION_v23.0.0.json'].every(fs.existsSync)]
 ];
 let failed = 0;

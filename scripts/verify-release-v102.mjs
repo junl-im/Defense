@@ -8,11 +8,13 @@ const css = read('src/style.css');
 const policy = read('src/version-policy.js');
 const sw = read('public/sw.js');
 const clean = read('scripts/clean-obsolete-assets.mjs');
+const lineageParts = String(pkg.dokkaebi?.lineageVersion || '').split('.').map(Number);
+const lineageAtLeast231 = lineageParts.length === 3 && (lineageParts[0] > 23 || (lineageParts[0] === 23 && lineageParts[1] >= 1));
 
 const checks = [
   ['public release preserves 1.0.2+ foundation', /^1\.0\.(?:[2-9]|[1-9]\d)$/.test(pkg.version) && pkg.dokkaebi?.releaseVersion === pkg.version],
   ['package lock release is synchronized', lock.version === pkg.version && lock.packages?.['']?.version === pkg.version],
-  ['legacy lineage remains 23.1.0', pkg.dokkaebi?.lineageVersion === '23.1.0'],
+  ['legacy lineage remains 23.1.0 or later', lineageAtLeast231],
   ['monotonic build id preserves b24.2+ foundation', pkg.dokkaebi?.buildEpoch === 24 && Number(pkg.dokkaebi?.buildRevision) >= 2 && pkg.dokkaebi?.buildId === `b24.${pkg.dokkaebi?.buildRevision}`],
   ['runtime game version matches package', main.includes(`const GAME_VERSION = '${pkg.version}'`)],
   ['service worker release/build match', sw.includes(`RELEASE_VERSION = '${pkg.version}'`) && sw.includes(`BUILD_ID = '${pkg.dokkaebi?.buildId}'`)],

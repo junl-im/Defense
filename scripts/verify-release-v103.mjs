@@ -47,7 +47,7 @@ const checks = [
   ['write-only previousState flag removed', !main.includes('previousState')],
   ['constructor reward flag is initialized once', (constructorBlock.match(/this\.progressRewarded\s*=\s*false/g) || []).length === 1],
   ['top-level animation and runtime disposal exists', main.includes('if (this.disposed) return;') && main.includes('cancelAnimationFrame(this.animationFrameId)') && main.includes('this.lifecycle?.dispose()')],
-  ['mobile HUD listener and observer disposal exists', mobileHud.includes("removeEventListener('resize', this.queueHandler)") && mobileHud.includes('this.observer?.disconnect()') && mobileHud.includes('this.resizeObserver?.disconnect()')],
+  ['mobile HUD listener and observer disposal exists', mobileHud.includes("removeEventListener('resize', this.queueHandler)") && (mobileHud.includes('this.observer?.disconnect()') || (mobileHud.includes('this.targetObserver?.disconnect()') && mobileHud.includes('this.domObserver?.disconnect()'))) && mobileHud.includes('this.resizeObserver?.disconnect()')],
   ['adaptive HUD queued frame disposal exists', adaptiveHud.includes('cancelAnimationFrame(this.refreshFrame)') && adaptiveHud.includes('this.refreshQueued = false')],
   ['browser reliability runner imports generated output', browserLab.includes("import { generatedOutput } from './output-paths.mjs';")],
   ['browser reliability runner uses current service worker identity', browserLab.includes("const RELEASE_VERSION = '${currentVersion}'") && browserLab.includes("const BUILD_ID = 'b\\d+\\.\\d+'")],

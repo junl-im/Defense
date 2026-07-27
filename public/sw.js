@@ -1,6 +1,6 @@
-const RELEASE_VERSION = '1.0.33';
-const BUILD_ID = 'b24.33';
-// const VERSION = '23.1.0'; historical lineage marker.
+const RELEASE_VERSION = '1.0.34';
+const BUILD_ID = 'b24.34';
+// const VERSION = '23.2.0'; historical lineage marker.
 const CACHE_PREFIX = 'dokkaebi-luck-defense-shell-';
 const LEGACY_CACHE_PREFIXES = ['dokkaebi-shell-', 'dokkaebi-luck-defense-shell-'];
 const CACHE_NAME = `${CACHE_PREFIX}${BUILD_ID}`;

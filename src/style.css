@@ -2948,9 +2948,10 @@ body.title-mascot-fallback .title-mascot-stage { background:url('./assets/title-
   body.mobile-hud-v23 {
     --v23-top-hud-height: 43px;
     --v23-wave-top: calc(var(--safe-top) + 50px);
-    --v23-boss-top: calc(var(--safe-top) + 82px);
-    --v23-control-bottom: calc(var(--safe-bottom) + 8px);
-    --v23-context-bottom: calc(var(--safe-bottom) + var(--mobile-control-reserve-v23) + 8px);
+    --v23-boss-top: calc(var(--safe-top) + 88px);
+    --v23-control-bottom: calc(var(--safe-bottom) + 12px);
+    --v23-context-bottom: calc(var(--safe-bottom) + var(--mobile-control-reserve-v23) + 14px);
+    --touch-joystick-travel: 33px;
   }
   body.mobile-hud-v23 #hud {
     top:calc(4px + var(--safe-top));
@@ -2999,32 +3000,45 @@ body.title-mascot-fallback .title-mascot-stage { background:url('./assets/title-
   body.mobile-hud-v23 .wave-hud small { margin-top:2px; font-size:8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   body.mobile-hud-v23 #boss-health {
     top:var(--v23-boss-top);
-    width:min(88vw,390px);
-    max-height:86px;
+    width:min(92vw,420px);
+    max-height:none;
     overflow:hidden;
+    padding:9px 11px 11px;
+    border-radius:18px;
+    border:1px solid rgba(255,188,138,.28);
+    background:linear-gradient(180deg, rgba(13,19,39,.92), rgba(38,16,32,.84));
+    box-shadow:0 18px 40px rgba(0,0,0,.36), inset 0 1px rgba(255,255,255,.08);
+    backdrop-filter:blur(12px);
   }
+  body.mobile-hud-v23 #boss-health .boss-health-head { align-items:center; gap:8px; font-size:11px; }
+  body.mobile-hud-v23 #boss-health .boss-health-head span { font-size:12px; letter-spacing:.04em; }
+  body.mobile-hud-v23 #boss-health .boss-health-head b { font-size:13px; padding:2px 8px; border-radius:999px; background:rgba(255,126,162,.14); }
+  body.mobile-hud-v23 #boss-health .boss-health-track { position:relative; height:12px; margin-top:8px; overflow:hidden; border-radius:999px; border:1px solid rgba(255,255,255,.08); background:linear-gradient(180deg, rgba(4,5,13,.88), rgba(35,15,31,.76)); box-shadow:inset 0 2px 5px rgba(0,0,0,.55); }
+  body.mobile-hud-v23 #boss-health .boss-health-track::after { content:""; position:absolute; inset:1px 42% 54% 1px; border-radius:999px; background:linear-gradient(180deg, rgba(255,255,255,.28), rgba(255,255,255,0)); opacity:.55; pointer-events:none; }
+  body.mobile-hud-v23 #boss-health #boss-health-progress { background:linear-gradient(90deg, #ff4d72 0%, #ff7d69 48%, #ffc06d 100%); box-shadow:inset 0 1px rgba(255,255,255,.34), 0 0 18px rgba(255,106,104,.42); }
+  body.mobile-hud-v23 #boss-health .boss-health-damage { background:linear-gradient(90deg, #ffe58a, #ffb769); box-shadow:0 0 14px rgba(255,204,112,.3); }
   body.mobile-hud-v23 #boss-health .boss-intent { display:none!important; }
   body.mobile-hud-v23 #boss-health .boss-break em { display:none!important; }
 
   body.mobile-hud-v23 #joystick-zone {
-    left:calc(8px + var(--safe-left));
+    left:calc(10px + var(--safe-left));
     bottom:var(--v23-control-bottom);
-    width:88px!important;
-    height:88px!important;
+    width:118px!important;
+    height:118px!important;
     transform:scale(var(--mobile-hud-scale-v23))!important;
     transform-origin:left bottom!important;
   }
   body.mobile-hud-v23 #action-dock {
-    right:calc(7px + var(--safe-right));
+    right:calc(9px + var(--safe-right));
     bottom:var(--v23-control-bottom);
-    width:154px!important;
+    width:168px!important;
     min-width:0!important;
     transform:scale(var(--mobile-hud-scale-v23))!important;
     transform-origin:right bottom!important;
-    grid-template-columns:43px 46px 57px!important;
-    grid-template-rows:43px 35px!important;
+    grid-template-columns:47px 50px 63px!important;
+    grid-template-rows:47px 39px!important;
     grid-template-areas:'dash skill summon' 'burst wave summon'!important;
-    gap:4px!important;
+    gap:5px!important;
   }
   body.mobile-hud-v23 #action-dock #dash-btn { grid-area:dash; }
   body.mobile-hud-v23 #action-dock #skill-btn { grid-area:skill; }
@@ -3032,13 +3046,13 @@ body.title-mascot-fallback .title-mascot-stage { background:url('./assets/title-
   body.mobile-hud-v23 #action-dock #wave-btn { grid-area:wave; height:35px!important; }
   body.mobile-hud-v23 #action-dock #summon-btn { grid-area:summon; height:82px!important; }
   body.mobile-hud-v23 #action-dock button { min-width:0; padding-inline:3px; }
-  body.mobile-hud-v23 #action-dock .action-glyph { width:22px; height:22px; }
+  body.mobile-hud-v23 #action-dock .action-glyph { width:24px; height:24px; }
   body.mobile-hud-v23 #action-dock .skill-btn span,
   body.mobile-hud-v23 #action-dock .wave-btn small,
   body.mobile-hud-v23 #action-dock .summon-btn small { font-size:8px; }
   body.mobile-hud-v23 #action-dock .skill-btn b,
   body.mobile-hud-v23 #action-dock .wave-btn b,
-  body.mobile-hud-v23 #action-dock .summon-btn b { font-size:8px; }
+  body.mobile-hud-v23 #action-dock .summon-btn b { font-size:9px; }
 
   body.mobile-hud-v23 .center-meter-rail,
   body.mobile-hud-v23 .left-insight-rail,
@@ -3094,17 +3108,18 @@ body.title-mascot-fallback .title-mascot-stage { background:url('./assets/title-
   body.mobile-hud-v23-compact #action-dock .skill-btn span,
   body.mobile-hud-v23-compact #action-dock .summon-btn small { display:none; }
   body.mobile-hud-v23-compact #action-dock .action-glyph { width:25px; height:25px; }
-  body.mobile-hud-v23-compact #boss-health { width:94vw; }
+  body.mobile-hud-v23-compact #boss-health { width:95vw; }
 }
 
 @media (max-width:360px) {
   body.mobile-hud-v23-micro .hero-hud-portrait,
   body.mobile-hud-v23-micro .core-pill .heart { display:none!important; }
   body.mobile-hud-v23-micro .core-pill { min-width:58px; }
-  body.mobile-hud-v23-micro #joystick-zone { width:78px!important; height:78px!important; }
-  body.mobile-hud-v23-micro #action-dock { width:140px!important; grid-template-columns:39px 42px 51px!important; grid-template-rows:39px 32px!important; }
-  body.mobile-hud-v23-micro #action-dock #summon-btn { height:75px!important; }
-  body.mobile-hud-v23-micro #action-dock #wave-btn { height:32px!important; }
+  body.mobile-hud-v23-micro { --touch-joystick-travel: 29px; }
+  body.mobile-hud-v23-micro #joystick-zone { width:102px!important; height:102px!important; }
+  body.mobile-hud-v23-micro #action-dock { width:152px!important; grid-template-columns:42px 46px 56px!important; grid-template-rows:42px 35px!important; }
+  body.mobile-hud-v23-micro #action-dock #summon-btn { height:82px!important; }
+  body.mobile-hud-v23-micro #action-dock #wave-btn { height:35px!important; }
   body.mobile-hud-v23-micro #auto-wave-panel,
   body.mobile-hud-v23-micro #interact-btn,
   body.mobile-hud-v23-micro #danger-hint,
@@ -3119,18 +3134,19 @@ body.title-mascot-fallback .title-mascot-stage { background:url('./assets/title-
 @media (max-height:560px) and (orientation:landscape) {
   body.mobile-hud-v23-landscape {
     --v23-wave-top: calc(var(--safe-top) + 45px);
-    --v23-boss-top: calc(var(--safe-top) + 72px);
-    --v23-context-bottom: calc(var(--safe-bottom) + 52px);
+    --v23-boss-top: calc(var(--safe-top) + 76px);
+    --v23-context-bottom: calc(var(--safe-bottom) + 58px);
+    --touch-joystick-travel: 26px;
   }
-  body.mobile-hud-v23-landscape #joystick-zone { width:72px!important; height:72px!important; }
+  body.mobile-hud-v23-landscape #joystick-zone { width:92px!important; height:92px!important; }
   body.mobile-hud-v23-landscape #action-dock {
-    width:218px!important;
-    grid-template-columns:repeat(5,40px)!important;
-    grid-template-rows:40px!important;
+    width:238px!important;
+    grid-template-columns:repeat(5,44px)!important;
+    grid-template-rows:44px!important;
     grid-template-areas:'dash skill burst summon wave'!important;
   }
   body.mobile-hud-v23-landscape #action-dock #summon-btn,
-  body.mobile-hud-v23-landscape #action-dock #wave-btn { height:40px!important; }
+  body.mobile-hud-v23-landscape #action-dock #wave-btn { height:44px!important; }
   body.mobile-hud-v23-landscape #action-dock .skill-btn span,
   body.mobile-hud-v23-landscape #action-dock .skill-btn b,
   body.mobile-hud-v23-landscape #action-dock .summon-btn small,
@@ -5477,4 +5493,72 @@ body.battlefield-visibility-assurance-v128 .hazard-density-summary-v128.visible 
   .boss-identity-assurance-v133 .boss-health,
   .boss-identity-assurance-v133 .boss-identity-badge-v133,
   .boss-identity-assurance-v133 .danger-hint { transition: none !important; animation: none !important; }
+}
+
+/* ========================================================================== */
+/* v1.0.34 Mobile HUD Resilience — visual viewport, touch targets, hysteresis */
+/* ========================================================================== */
+@media (max-width: 820px) {
+  body.mobile-hud-v23 {
+    --v23-wave-top: calc(var(--safe-top) + var(--mobile-visual-top-v23, 0px) + 50px);
+    --v23-boss-top: calc(var(--safe-top) + var(--mobile-visual-top-v23, 0px) + 88px);
+    --v23-control-bottom: calc(var(--safe-bottom) + var(--mobile-visual-bottom-v23, 0px) + 12px);
+    --v23-context-bottom: calc(var(--safe-bottom) + var(--mobile-visual-bottom-v23, 0px) + var(--mobile-control-reserve-v23) + 14px);
+  }
+  body.mobile-hud-v23 #hud {
+    left: calc(5px + var(--safe-left) + var(--mobile-visual-left-v23, 0px));
+    right: calc(5px + var(--safe-right) + var(--mobile-visual-right-v23, 0px));
+  }
+  body.mobile-hud-v23 #joystick-zone {
+    left: calc(10px + var(--safe-left) + var(--mobile-visual-left-v23, 0px));
+  }
+  body.mobile-hud-v23 #action-dock {
+    right: calc(9px + var(--safe-right) + var(--mobile-visual-right-v23, 0px));
+    grid-template-rows: 47px 44px !important;
+  }
+  body.mobile-hud-v23 #action-dock #wave-btn { height: 44px !important; }
+  body.mobile-hud-v23 #action-dock #summon-btn { height: 96px !important; }
+  body.mobile-hud-v23 #wave-recovery,
+  body.mobile-hud-v23 #auto-wave-panel,
+  body.mobile-hud-v23 #interact-btn,
+  body.mobile-hud-v23 #danger-hint {
+    left: calc(50% + var(--mobile-visual-center-shift-v23, 0px)) !important;
+  }
+  body.mobile-hud-v23 #action-dock button,
+  body.mobile-hud-v23 #interact-btn,
+  body.mobile-hud-v23 #wave-recovery {
+    touch-action: manipulation;
+  }
+  body.mobile-hud-v23 #action-dock button { min-height: 44px; }
+  body.mobile-hud-v23 #action-dock button:focus-visible,
+  body.mobile-hud-v23 #menu-btn:focus-visible,
+  body.mobile-hud-v23 #hud-equipment-btn:focus-visible,
+  body.mobile-hud-v23 #interact-btn:focus-visible,
+  body.mobile-hud-v23 #wave-recovery:focus-visible {
+    outline: 3px solid rgba(142, 229, 255, .96);
+    outline-offset: 3px;
+  }
+  body.mobile-hud-v23-keyboard #boss-health .boss-intent,
+  body.mobile-hud-v23-keyboard #boss-health .boss-break,
+  body.mobile-hud-v23-keyboard .danger-sector-summary-v132 { display: none !important; }
+}
+
+@media (max-width: 360px) {
+  body.mobile-hud-v23-micro #action-dock {
+    grid-template-rows: 44px 44px !important;
+  }
+  body.mobile-hud-v23-micro #action-dock #summon-btn { height: 93px !important; }
+  body.mobile-hud-v23-micro #action-dock #wave-btn { height: 44px !important; }
+}
+
+@media (max-height: 560px) and (orientation: landscape) {
+  body.mobile-hud-v23-landscape {
+    --v23-wave-top: calc(var(--safe-top) + var(--mobile-visual-top-v23, 0px) + 45px);
+    --v23-boss-top: calc(var(--safe-top) + var(--mobile-visual-top-v23, 0px) + 76px);
+    --v23-context-bottom: calc(var(--safe-bottom) + var(--mobile-visual-bottom-v23, 0px) + 60px);
+  }
+}
+
+@media (pointer: coarse) and (max-width: 820px) {
+  body.mobile-hud-v23 button { -webkit-tap-highlight-color: transparent; }
 }

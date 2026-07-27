@@ -146,7 +146,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '1.0.33';
+const GAME_VERSION = '1.0.34';
 // const GAME_VERSION = '23.1.0'; historical lineage marker for pre-normalization contracts.
 if (GAME_VERSION !== PUBLIC_GAME_VERSION) throw new Error('Public version policy mismatch');
 function runtimeSpriteMarkup(path, alt = '', className = '') {
@@ -1328,14 +1328,19 @@ class DokkaebiLuckDefense {
 
   setupJoystick() {
     let pointerId = null;
+    const getTravelRadius = (rect) => {
+      const raw = Number.parseFloat(getComputedStyle(document.body).getPropertyValue('--touch-joystick-travel'));
+      return Number.isFinite(raw) && raw > 12 ? raw : rect.width * .31;
+    };
     const move = (event) => {
       if (event.pointerId !== pointerId) return;
+      event.preventDefault?.();
       const rect = ui.joystick.getBoundingClientRect();
       const cx = rect.left + rect.width / 2;
       const cy = rect.top + rect.height / 2;
       let x = event.clientX - cx;
       let y = event.clientY - cy;
-      const max = rect.width * .29;
+      const max = getTravelRadius(rect);
       const length = Math.hypot(x, y) || 1;
       if (length > max) { x = x / length * max; y = y / length * max; }
       this.input.x = x / max;
@@ -1345,17 +1350,21 @@ class DokkaebiLuckDefense {
     };
     const end = (event) => {
       if (event.pointerId !== pointerId) return;
+      try { ui.joystick.releasePointerCapture(event.pointerId); } catch {}
       pointerId = null;
       this.input.x = 0;
       this.input.y = 0;
       ui.joystickKnob.style.transform = 'translate(-50%, -50%)';
     };
     this.listen(ui.joystick, 'pointerdown', (event) => {
+      if (this.state !== 'playing') return;
+      if (event.pointerType === 'mouse' && event.button !== 0) return;
+      event.preventDefault();
       pointerId = event.pointerId;
-      ui.joystick.setPointerCapture(pointerId);
+      try { ui.joystick.setPointerCapture(pointerId); } catch {}
       move(event);
-    }, {}, 'joystick-down');
-    this.listen(ui.joystick, 'pointermove', move, {}, 'joystick-move');
+    }, { passive: false }, 'joystick-down');
+    this.listen(ui.joystick, 'pointermove', move, { passive: false }, 'joystick-move');
     this.listen(ui.joystick, 'pointerup', end, {}, 'joystick-up');
     this.listen(ui.joystick, 'pointercancel', end, {}, 'joystick-cancel');
     this.listen(window, 'pointerup', end, {}, 'joystick-window-up');
@@ -1458,8 +1467,11 @@ class DokkaebiLuckDefense {
   }
 
   setupLookControls() {
-    const dragThreshold = 11;
-    const tapDuration = 620;
+    const getTapProfile = (pointerType = 'touch') => {
+      if (pointerType === 'mouse') return { dragThreshold: 8, tapDuration: 420 };
+      if (pointerType === 'pen') return { dragThreshold: 14, tapDuration: 720 };
+      return { dragThreshold: 20, tapDuration: 900 };
+    };
     const pointerDistance = () => {
       const points = [...this.lookPointers.values()];
       return points.length >= 2 ? Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y) : 0;
@@ -1479,6 +1491,7 @@ class DokkaebiLuckDefense {
         beginPinch();
         return;
       }
+      const profile = getTapProfile(event.pointerType);
       this.lookPointer = {
         id: event.pointerId,
         x: event.clientX,
@@ -1486,7 +1499,10 @@ class DokkaebiLuckDefense {
         startX: event.clientX,
         startY: event.clientY,
         startedAt: performance.now(),
-        dragging: false
+        dragging: false,
+        dragThreshold: profile.dragThreshold,
+        tapDuration: profile.tapDuration,
+        pointerType: event.pointerType || 'touch'
       };
     }, {}, 'look-down');
     this.listen(ui.lookZone, 'pointermove', (event) => {
@@ -1501,7 +1517,7 @@ class DokkaebiLuckDefense {
       }
       if (!this.lookPointer || this.lookPointer.id !== event.pointerId) return;
       const totalDistance = Math.hypot(event.clientX - this.lookPointer.startX, event.clientY - this.lookPointer.startY);
-      if (!this.lookPointer.dragging && totalDistance >= dragThreshold) this.lookPointer.dragging = true;
+      if (!this.lookPointer.dragging && totalDistance >= this.lookPointer.dragThreshold) this.lookPointer.dragging = true;
       if (!this.lookPointer.dragging) return;
       const dx = event.clientX - this.lookPointer.x;
       const dy = event.clientY - this.lookPointer.y;
@@ -1531,8 +1547,11 @@ class DokkaebiLuckDefense {
         return;
       }
       const duration = performance.now() - pointer.startedAt;
-      if (!pointer.dragging && duration <= tapDuration && this.state === 'playing') {
-        this.setMoveTargetFromScreen(event.clientX, event.clientY);
+      const endX = Number.isFinite(event.clientX) ? event.clientX : pointer.x;
+      const endY = Number.isFinite(event.clientY) ? event.clientY : pointer.y;
+      const travel = Math.hypot(endX - pointer.startX, endY - pointer.startY);
+      if (!pointer.dragging && travel <= pointer.dragThreshold * 1.2 && duration <= pointer.tapDuration && this.state === 'playing') {
+        this.setMoveTargetFromScreen(endX, endY);
       }
     };
     this.listen(ui.lookZone, 'pointerup', (event) => end(event, false), {}, 'look-up');

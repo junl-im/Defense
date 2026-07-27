@@ -7,9 +7,11 @@ const main = read('src/main.js');
 const versionSource = read('src/version-policy.js');
 const foundation = read('src/runtime/core-foundation-director-v101.js');
 const sw = read('public/sw.js');
+const lineageParts = String(policy.lineageVersion || '').split('.').map(Number);
+const lineageAtLeast231 = lineageParts.length === 3 && (lineageParts[0] > 23 || (lineageParts[0] === 23 && lineageParts[1] >= 1));
 const checks = [
   ['public package remains 1.0 patch line', /^1\.0\.(?:[1-9]|[1-9]\d)$/.test(pkg.version) && policy.releaseVersion === pkg.version],
-  ['legacy lineage is preserved', policy.lineageVersion === '23.1.0' && lineageMajor(pkg) >= 23],
+  ['legacy lineage is preserved', lineageAtLeast231 && lineageMajor(pkg) >= 23],
   ['patch range policy supports 0 through 99', isReleaseSequenceValid(policy.releaseVersion) && versionSource.includes("max: 99")],
   ['monotonic build generation exists', policy.buildEpoch === 24 && policy.buildRevision >= 1 && policy.buildId === `b24.${policy.buildRevision}`],
   ['runtime imports central version policy', main.includes("from './version-policy.js'") && main.includes('PUBLIC_GAME_VERSION') && main.includes('VERSION_POLICY')],

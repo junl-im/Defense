@@ -8,9 +8,11 @@ const style = read('src/style.css');
 const policy = read('src/runtime/native-input-policy-v231.js');
 const consoleSource = read('src/production-console.js');
 const keyboardBlock = main.match(/on\(window, 'keydown',[\s\S]*?'keyboard-movement-up'\);/)?.[0] || '';
+const lineageParts = String(pkg.dokkaebi?.lineageVersion || '').split('.').map(Number);
+const lineageAtLeast231 = lineageParts.length === 3 && (lineageParts[0] > 23 || (lineageParts[0] === 23 && lineageParts[1] >= 1));
 
 const checks = [
-  ['legacy package lineage 23.1.0', pkg.dokkaebi?.lineageVersion === '23.1.0'],
+  ['legacy package lineage 23.1.0 or later', lineageAtLeast231],
   ['runtime preserves v23.1.0 lineage marker', main.includes("const GAME_VERSION = '23.1.0'; historical lineage marker")],
   ['engine version 21.0.0', read('src/engine/engine-config.js').includes("ENGINE_VERSION = '21.0.0'")],
   ['service worker preserves monotonic build generation', read('public/sw.js').includes(`BUILD_ID = '${pkg.dokkaebi?.buildId}'`) && Number(pkg.dokkaebi?.buildRevision || 0) >= 3],
