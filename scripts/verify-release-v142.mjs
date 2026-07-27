@@ -1,0 +1,13 @@
+import fs from 'node:fs'; import path from 'node:path'; import { spawnSync } from 'node:child_process';
+const root=path.resolve(import.meta.dirname,'..'),read=(p)=>fs.readFileSync(path.join(root,p),'utf8'),json=(p)=>JSON.parse(read(p));const failures=[];const check=(x,m)=>{if(!x)failures.push(m)};
+const pkg=json('package.json'),lock=json('package-lock.json'),version=json('public/version.json'),sw=read('public/sw.js'),bootstrap=read('public/static-bootstrap.js'),handoff=read('PROJECT_HANDOFF.md');
+const patch=Number(pkg.version.split('.')[2]);check(pkg.version.startsWith('1.0.')&&patch>=42&&pkg.dokkaebi?.buildId===`b24.${patch}`,'v142+ package identity');
+check(lock.version===pkg.version&&lock.packages?.['']?.version===pkg.version&&lock.packages?.['']?.dokkaebi?.buildId===pkg.dokkaebi?.buildId,'lock identity');
+check(version.releaseVersion===pkg.version&&version.buildId===pkg.dokkaebi?.buildId&&version.lineageVersion===pkg.dokkaebi?.lineageVersion,'public identity');
+check(sw.includes(`const RELEASE_VERSION = '${pkg.version}';`)&&sw.includes(`const BUILD_ID = '${pkg.dokkaebi?.buildId}';`)&&sw.includes('random-summon-emblem-v142.png'),'service worker revision and asset');
+check(bootstrap.includes(`const RELEASE_VERSION = '${pkg.version}';`)&&bootstrap.includes(`const BUILD_ID = '${pkg.dokkaebi?.buildId}';`),'static bootstrap identity');
+check(pkg.scripts?.['verify:summon:v142']&&pkg.scripts?.['verify:release:v142']&&pkg.scripts?.['verify:dist:v142']&&pkg.scripts?.['create:patch:v142'],'v142 scripts');
+check(handoff.includes('인수인계 내역 작성 필수')&&handoff.includes('2026-07-27 — v1.0.42 / b24.42'),'mandatory v142 handoff');
+for(const doc of ['docs/RANDOM_SUMMON_PRESENTATION_v1.0.42.md','docs/PATCH_NOTES_v1.0.42.md','docs/PATCH_APPLY_v1.0.42.md','docs/NEXT_UPDATE_v1.0.43.md'])check(fs.existsSync(path.join(root,doc)),`document ${doc}`);
+const run=spawnSync(process.execPath,[path.join(root,'scripts/verify-summon-button-v142.mjs')],{cwd:root,encoding:'utf8'});process.stdout.write(run.stdout||'');process.stderr.write(run.stderr||'');check(run.status===0,'summon presentation verifier');
+if(failures.length){failures.forEach((x)=>console.error('FAIL '+x));process.exit(1)}console.log(`PASS v1.0.42+ summon visibility, authored edge-safe asset, and state feedback under ${pkg.version}`);

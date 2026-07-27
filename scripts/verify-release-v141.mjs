@@ -2,16 +2,16 @@ import fs from 'node:fs'; import path from 'node:path';
 import { syncAppStateSurfaceV141, APP_STATE_SURFACE_V141_ID } from '../src/runtime/app-state-surface-v141.js';
 const root=process.cwd(), read=(p)=>fs.readFileSync(path.join(root,p),'utf8'), json=(p)=>JSON.parse(read(p)); const failures=[]; const check=(x,m)=>{if(!x)failures.push(m)};
 const pkg=json('package.json'), lock=json('package-lock.json'), version=json('public/version.json'), index=read('index.html'), main=read('src/main.js'), css=read('src/style.css'), sw=read('public/sw.js'), handoff=read('PROJECT_HANDOFF.md');
-check(pkg.version==='1.0.41'&&pkg.dokkaebi?.buildId==='b24.41'&&pkg.dokkaebi?.lineageVersion==='23.9.0','package identity');
-check(lock.version===pkg.version&&lock.packages?.['']?.version===pkg.version&&lock.packages?.['']?.dokkaebi?.buildId==='b24.41','lock identity');
-check(version.releaseVersion==='1.0.41'&&version.buildId==='b24.41'&&version.lineageVersion==='23.9.0','public identity');
+const patch=Number(pkg.version.split('.')[2]); check(pkg.version.startsWith('1.0.')&&patch>=41&&pkg.dokkaebi?.buildId===`b24.${patch}`,'v141+ package identity');
+check(lock.version===pkg.version&&lock.packages?.['']?.version===pkg.version&&lock.packages?.['']?.dokkaebi?.buildId===pkg.dokkaebi?.buildId,'lock identity');
+check(version.releaseVersion===pkg.version&&version.buildId===pkg.dokkaebi?.buildId,'public identity');
 check(index.includes('legacy-loading-retired-v141')&&index.includes('id="loading"')&&index.includes('hidden aria-hidden="true"'),'legacy loading surface retired');
 const loading=(index.match(/<section id="loading"[\s\S]*?<\/section>/)||[''])[0];
 check(!loading.includes('loading-wrap')&&!loading.includes('loading-mascot')&&!loading.includes('<h1>'),'old loading artwork removed');
 check(!main.includes("ui.loading?.classList.add('visible'")&&!main.includes('수호대를 전장으로 부르는 중...'),'old run-entry overlay removed');
 check(main.includes("syncAppStateSurfaceV141(document.body, entry.to)")&&main.includes('look-window-up-v141'),'state/input runtime wired');
 check(css.includes('data-map-touch-ready-v141')&&css.includes('.legacy-loading-retired-v141'),'state-backed touch CSS and retirement CSS');
-check(sw.includes("const RELEASE_VERSION = '1.0.41';")&&sw.includes("const BUILD_ID = 'b24.41';"),'service worker cache revision');
+check(sw.includes(`const RELEASE_VERSION = '${pkg.version}';`)&&sw.includes(`const BUILD_ID = '${pkg.dokkaebi?.buildId}';`),'service worker cache revision');
 const classes=new Set(); const body={dataset:{},classList:{toggle:(n,v)=>v?classes.add(n):classes.delete(n),remove:(n)=>classes.delete(n)}};
 const playing=syncAppStateSurfaceV141(body,'playing'); check(playing.id===APP_STATE_SURFACE_V141_ID&&playing.interactive&&classes.has('playing')&&body.dataset.mapTouchReadyV141==='true','playing enables map input');
 const paused=syncAppStateSurfaceV141(body,'paused'); check(!paused.interactive&&!classes.has('playing')&&body.dataset.mapTouchReadyV141==='false','non-playing disables map input');
@@ -19,4 +19,4 @@ check(pkg.scripts?.['verify:release:v141']&&pkg.scripts?.['verify:dist:v141']&&p
 check(handoff.includes('인수인계 내역 작성 필수')&&handoff.includes('2026-07-27 — v1.0.41 / b24.41'),'mandatory v141 handoff');
 for(const doc of ['docs/TOUCH_NAVIGATION_AND_LOADING_RETIREMENT_v1.0.41.md','docs/PATCH_NOTES_v1.0.41.md','docs/PATCH_APPLY_v1.0.41.md','docs/NEXT_UPDATE_v1.0.42.md'])check(fs.existsSync(path.join(root,doc)),`document ${doc}`);
 if(failures.length){failures.forEach((x)=>console.error('FAIL '+x));process.exit(1)}
-console.log('PASS v1.0.41 full-map touch state sync and legacy loading retirement');
+console.log(`PASS v1.0.41+ full-map touch state sync and legacy loading retirement under ${pkg.version}`);

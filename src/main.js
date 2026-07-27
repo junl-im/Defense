@@ -1,5 +1,7 @@
 import { installTitlePresentationGuardV123 } from './runtime/title-presentation-guard-v123.js';
 import { syncAppStateSurfaceV141 } from './runtime/app-state-surface-v141.js';
+import MobileInputRecoveryV143 from './runtime/mobile-input-recovery-v143.js';
+import { syncSummonButtonPresentationV142, triggerSummonButtonCastV142 } from './runtime/summon-button-presentation-v142.js';
 installTitlePresentationGuardV123();
 import * as THREE from 'three';
 import './style.css';
@@ -147,7 +149,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '1.0.41';
+const GAME_VERSION = '1.0.43';
 // const GAME_VERSION = '23.1.0'; historical lineage marker for pre-normalization contracts.
 if (GAME_VERSION !== PUBLIC_GAME_VERSION) throw new Error('Public version policy mismatch');
 function runtimeSpriteMarkup(path, alt = '', className = '') {
@@ -391,6 +393,9 @@ class DokkaebiLuckDefense {
     this.waveFlowGuard = new WaveFlowGuard();
     this.waveReliability = new WaveReliabilityDirector();
     this.browserReliability = new BrowserReliabilityLab({ version: GAME_VERSION });
+    this.mobileInputRecoveryV143 = new MobileInputRecoveryV143({
+      onReset: (reason, detail) => this.resetMobilePointerStateV143(reason, detail)
+    });
     this.assetPresence = new AssetPresenceEnforcer({ version: GAME_VERSION });
     this.mobileHudV23 = new MobileHudDirectorV23();
     this.crossPlatformShellV112 = new CrossPlatformShellV112();
@@ -442,6 +447,7 @@ class DokkaebiLuckDefense {
       reducedMotion: () => Boolean(this.controlSettings?.reducedMotion)
     });
     this.bindUI();
+    this.mobileInputRecoveryV143.mount();
     this.listen(window, 'pagehide', (event) => { if (!event.persisted) this.dispose(); }, {}, 'pagehide-dispose');
     this.populateCollection();
     this.renderMetaProgress();
@@ -1090,7 +1096,7 @@ class DokkaebiLuckDefense {
       if (!opened) this.showToast('팝업이 차단되었습니다. asset-approval-v117.html을 직접 열어 주세요.');
     }, {}, 'asset-approval-v117');
     on(ui.saveScore, 'click', () => this.saveScore(), {}, 'save-score');
-    on(ui.summon, 'click', () => this.summonUnit(), {}, 'summon');
+    on(ui.summon, 'click', () => { triggerSummonButtonCastV142(ui.summon, (callback, delay) => this.scheduleUi(callback, delay, { key: 'summon-cast-v142' })); this.summonUnit(); }, {}, 'summon');
     on(ui.wave, 'click', () => { if (this.autoWaveCountdown > 0) this.automationV22.noteWaveSkip(); this.startWave({ manual: true }); }, {}, 'wave');
     on(ui.autoWavePanel, 'click', () => { if (this.state === 'playing' && !this.waveActive) { this.automationV22.noteWaveSkip(); this.startWave({ manual: true }); } }, {}, 'auto-wave-panel-click');
     on(ui.autoWavePanel, 'keydown', (event) => { if ((event.key === 'Enter' || event.key === ' ') && this.state === 'playing' && !this.waveActive) { event.preventDefault(); this.automationV22.noteWaveSkip(); this.startWave({ manual: true }); } }, {}, 'auto-wave-panel-key');
@@ -1389,13 +1395,21 @@ class DokkaebiLuckDefense {
       if (Math.hypot(this.input.x, this.input.y) > .08) this.cancelMoveTarget();
       ui.joystickKnob.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
     };
-    const end = (event) => {
-      if (event.pointerId !== pointerId) return;
-      try { ui.joystick.releasePointerCapture(event.pointerId); } catch {}
+    const forceReset = (reason = 'manual') => {
+      const activePointerId = pointerId;
+      if (activePointerId !== null) {
+        try { ui.joystick.releasePointerCapture(activePointerId); } catch {}
+      }
       pointerId = null;
       this.input.x = 0;
       this.input.y = 0;
       ui.joystickKnob.style.transform = 'translate(-50%, -50%)';
+      return { reason, pointerId: activePointerId };
+    };
+    this.resetJoystickGestureV143 = forceReset;
+    const end = (event) => {
+      if (event.pointerId !== pointerId) return;
+      forceReset('pointer-end');
     };
     this.listen(ui.joystick, 'pointerdown', (event) => {
       if (this.state !== 'playing') return;
@@ -1429,6 +1443,29 @@ class DokkaebiLuckDefense {
     this.input.y = 0;
     this.cancelMoveTarget();
     ui.joystickKnob.style.transform = 'translate(-50%, -50%)';
+  }
+
+  resetMobilePointerStateV143(reason = 'manual', detail = {}) {
+    const pointerIds = [...this.lookPointers.keys()];
+    for (const pointerId of pointerIds) {
+      try { if (ui.lookZone.hasPointerCapture?.(pointerId)) ui.lookZone.releasePointerCapture(pointerId); } catch {}
+    }
+    this.lookPointers.clear();
+    this.lookPointer = null;
+    this.pinchState = null;
+    this.resetJoystickGestureV143?.(reason);
+    this.resetMovementInput();
+    if (pointerIds.length > 0) this.mapTouchDiagnosticsV116.cancelled += pointerIds.length;
+    const report = {
+      reason,
+      releasedPointers: pointerIds.length,
+      state: this.state,
+      detail,
+      timestamp: Date.now()
+    };
+    this.lastMobileInputRecoveryV143 = report;
+    this.browserReliability?.noteMilestone?.('mobile-input-recovery-v143', report);
+    return report;
   }
 
   setLeftMobileUiCollapsed(collapsed) {
@@ -6813,12 +6850,13 @@ class DokkaebiLuckDefense {
     ui.enemyCount.textContent=this.waveActive?`남은 요괴 ${this.spawnRemaining+alive}${eliteAlive ? ` · 정예 ${eliteAlive}` : ''}`:`${this.currentWave+1}번째 습격 준비`;
     ui.luckValue.textContent=`${Math.floor(this.luck)}%`;
     ui.luckProgress.style.width=`${clamp(this.luck,0,100)}%`;
-    ui.summonCost.textContent=this.getSummonCost();
+    const summonCost = this.getSummonCost();
+    ui.summonCost.textContent=summonCost;
     ui.summonTicket.textContent=`선택권 ×${this.choiceTickets||0}`;
     ui.summonTicket.classList.toggle('hidden',!(this.choiceTickets>0));
     const summonLocked = this.waveActive && this.activeContract?.id === 'summonSeal';
-    ui.summon.disabled=this.gold<this.getSummonCost() || summonLocked;
-    ui.summon.title = summonLocked ? '강림 봉인 계약 중' : '';
+    const summonPresentation = syncSummonButtonPresentationV142(ui.summon, { gold: this.gold, cost: summonCost, locked: summonLocked, tickets: this.choiceTickets || 0 });
+    ui.summon.disabled=summonPresentation.disabled;
     ui.dashCooldown.textContent=this.player?.dashCooldown>0?`${this.player.dashCooldown.toFixed(1)}s`:'준비';
     ui.skillCooldown.textContent=this.player?.skillCooldown>0?`${this.player.skillCooldown.toFixed(1)}s`:'준비';
     ui.dash.classList.toggle('cooling',this.player?.dashCooldown>0);
@@ -7156,6 +7194,7 @@ class DokkaebiLuckDefense {
       this.mobileHudV23,
       this.hudLayout,
       this.assetPresence,
+      this.mobileInputRecoveryV143,
       this.browserReliability,
       this.combatReadability,
       this.combatPresentation,
@@ -7458,7 +7497,7 @@ try {
       },
       foundationReport: () => game.coreFoundation?.report || {},
       dispose: () => game.dispose(),
-      reliabilityReport: () => ({ foundation: game.coreFoundation?.report || {}, wave: game.waveReliability?.report || {}, browser: game.browserReliability?.report || {}, firstPresentation: game.firstPresentationReport || game.firstPresentation?.report || {}, automation: game.automationV22?.report || {}, targeting: game.guardianTargetingV22?.report || {}, mobileHud: game.mobileHudV23?.report || {}, crossPlatformShell: game.crossPlatformShellV112?.report || {}, combatVisual: game.combatVisualV112?.diagnostics || {}, artApprovalV115: game.artApprovalReportV115 || {}, artApprovalV117: game.artApprovalReportV117 || {}, assetLoadingV115: { plan: game.assetLoadingPlanV115, ready: game.deferredAssetsReady, report: game.deferredAssetReport }, heroHudPolishV120: game.heroHudPolishV120 || {}, liveCombatV121: game.liveCombatV121?.report || {}, battlefieldClarityV122: game.battlefieldClarityV122?.report || {}, releaseAssuranceV124: game.releaseAssuranceV124?.report || {}, actionAssetAssuranceV125: game.actionAssetAssuranceV125?.report || {}, bossEncounterAssuranceV126: game.bossEncounterAssuranceV126?.report || {}, bossTacticalAssuranceV127: game.bossTacticalAssuranceV127?.report || {}, battlefieldVisibilityV128: game.battlefieldVisibilityV128?.report || {}, assetRefinementV129: game.assetRefinementV129?.report || {}, assetLineageV131: game.assetLineageV131?.report || {}, silhouetteAssuranceV132: game.silhouetteAssuranceV132?.report || {}, bossIdentityAssuranceV133: game.bossIdentityAssuranceV133?.report || {} })
+      reliabilityReport: () => ({ foundation: game.coreFoundation?.report || {}, wave: game.waveReliability?.report || {}, browser: game.browserReliability?.report || {}, firstPresentation: game.firstPresentationReport || game.firstPresentation?.report || {}, automation: game.automationV22?.report || {}, targeting: game.guardianTargetingV22?.report || {}, mobileHud: game.mobileHudV23?.report || {}, mobileInputRecoveryV143: game.mobileInputRecoveryV143?.report || {}, crossPlatformShell: game.crossPlatformShellV112?.report || {}, combatVisual: game.combatVisualV112?.diagnostics || {}, artApprovalV115: game.artApprovalReportV115 || {}, artApprovalV117: game.artApprovalReportV117 || {}, assetLoadingV115: { plan: game.assetLoadingPlanV115, ready: game.deferredAssetsReady, report: game.deferredAssetReport }, heroHudPolishV120: game.heroHudPolishV120 || {}, liveCombatV121: game.liveCombatV121?.report || {}, battlefieldClarityV122: game.battlefieldClarityV122?.report || {}, releaseAssuranceV124: game.releaseAssuranceV124?.report || {}, actionAssetAssuranceV125: game.actionAssetAssuranceV125?.report || {}, bossEncounterAssuranceV126: game.bossEncounterAssuranceV126?.report || {}, bossTacticalAssuranceV127: game.bossTacticalAssuranceV127?.report || {}, battlefieldVisibilityV128: game.battlefieldVisibilityV128?.report || {}, assetRefinementV129: game.assetRefinementV129?.report || {}, assetLineageV131: game.assetLineageV131?.report || {}, silhouetteAssuranceV132: game.silhouetteAssuranceV132?.report || {}, bossIdentityAssuranceV133: game.bossIdentityAssuranceV133?.report || {} })
     });
     game.browserReliability?.noteMilestone('game-ready', { state: game.state });
     window.dispatchEvent(new Event('dokkaebi:boot-ready'));

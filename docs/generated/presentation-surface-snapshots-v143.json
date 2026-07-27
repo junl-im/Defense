@@ -1,0 +1,22 @@
+{
+  "id": "DD-PRESENTATION-SNAPSHOTS-V143",
+  "surfaces": {
+    "loading": {
+      "sha256": "ff6efdfdd6e60b2dceef99fa4c70f9b122d9983ccb95eb85cbe656660d9f487b",
+      "bytes": 424,
+      "hidden": true,
+      "legacyArtwork": false
+    },
+    "title": {
+      "sha256": "aa31fd256feeb98b034ec4d20a9ab397afa44e456f9c7bc8bda04db511906836",
+      "bytes": 2339,
+      "hasCurrentTitle": true
+    },
+    "combatDock": {
+      "sha256": "44d0da0343f5287801088a8e838016697407ea1f5c83fa32614f2e598bd90bd2",
+      "bytes": 1479,
+      "hasSummonV143": true,
+      "hasWaveButton": true
+    }
+  }
+}

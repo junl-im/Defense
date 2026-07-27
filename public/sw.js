@@ -1,5 +1,5 @@
-const RELEASE_VERSION = '1.0.41';
-const BUILD_ID = 'b24.41';
+const RELEASE_VERSION = '1.0.43';
+const BUILD_ID = 'b24.43';
 // const VERSION = '23.2.0'; historical lineage marker.
 const CACHE_PREFIX = 'dokkaebi-luck-defense-shell-';
 const LEGACY_CACHE_PREFIXES = ['dokkaebi-shell-', 'dokkaebi-luck-defense-shell-'];
@@ -101,12 +101,14 @@ const GENERATED_MODULE_SHELL_V135 = Object.freeze([
   './src/runtime/korean-language-guard.js',
   './src/runtime/live-combat-director-v121.js',
   './src/runtime/mobile-hud-director-v23.js',
+  './src/runtime/mobile-input-recovery-v143.js',
   './src/runtime/native-input-policy-v231.js',
   './src/runtime/release-assurance-director-v124.js',
   './src/runtime/runtime-visual-audit.js',
   './src/runtime/save-schema.js',
   './src/runtime/silhouette-assurance-director-v132.js',
   './src/runtime/static-deployment-gate-v118.js',
+  './src/runtime/summon-button-presentation-v142.js',
   './src/runtime/title-presentation-guard-v123.js',
   './src/runtime/visual-integration-director.js',
   './src/runtime/wave-flow-guard.js',
@@ -322,6 +324,7 @@ const OPTIONAL_WARM_ASSETS = [
   './src/assets/title-v112/title-bg-mobile-lite-v112.webp',
   './src/assets/title-v112/title-mascot-v112.webp',
   './src/assets/title-v112/title-mascot-lite-v112.webp',
+  './src/assets/ui-v142/random-summon-emblem-v142.png',
   './src/assets/title-v112/title-mascot-v112.webp',
   './src/assets/title-v112/visual-polish-manifest-v112.json'
 ];

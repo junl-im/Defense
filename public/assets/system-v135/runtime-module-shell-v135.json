@@ -1,12 +1,12 @@
 {
   "schema": "DD-RUNTIME-MODULE-SHELL-1.0",
   "id": "DD-RELEASE-INTEGRITY-V135",
-  "releaseVersion": "1.0.41",
-  "buildId": "b24.41",
-  "cacheRevision": "1.0.41-b24.41",
+  "releaseVersion": "1.0.43",
+  "buildId": "b24.43",
+  "cacheRevision": "1.0.43-b24.43",
   "entry": "src/bootstrap.js",
-  "moduleCount": 111,
-  "totalBytes": 1449073,
+  "moduleCount": 113,
+  "totalBytes": 1467733,
   "files": [
     {
       "path": "src/art-production-gate.js",
@@ -310,8 +310,8 @@
     },
     {
       "path": "src/main.js",
-      "bytes": 395298,
-      "sha256": "c81fbd2e29034c2a335e036176e48cee4a8448d2c9d78dc164d9da1bb311c7e5"
+      "bytes": 397177,
+      "sha256": "8d0f2ec0abb6595cfbb86000ecc4f512f05a7a32515c407757258ccedf4df17c"
     },
     {
       "path": "src/premium-assets.js",
@@ -484,6 +484,11 @@
       "sha256": "474903e3b857ba17820cdb673e9e28c2478bb3dfe6b77cf6af82b7dd8b23b8b1"
     },
     {
+      "path": "src/runtime/mobile-input-recovery-v143.js",
+      "bytes": 5915,
+      "sha256": "2f5f10bc7584c8ca9011be66327caf3a45439770a589dadfafe9522e5ff46555"
+    },
+    {
       "path": "src/runtime/native-input-policy-v231.js",
       "bytes": 349,
       "sha256": "0a6794c7529befff23022abba0106a72ac9552b4609b1853bc32b8a8cd530d6e"
@@ -512,6 +517,11 @@
       "path": "src/runtime/static-deployment-gate-v118.js",
       "bytes": 887,
       "sha256": "2f6123c25e0bc3ff6c32c7d6164396016aaef79798c1cd3b5b9a6e9f26cacc31"
+    },
+    {
+      "path": "src/runtime/summon-button-presentation-v142.js",
+      "bytes": 1889,
+      "sha256": "d17abccf8362a4520d05fefe9b33b62c92d3d208a7fe837c17505628f2464099"
     },
     {
       "path": "src/runtime/title-presentation-guard-v123.js",
@@ -545,8 +555,8 @@
     },
     {
       "path": "src/style.css",
-      "bytes": 298770,
-      "sha256": "1dbc76e7a9e56f02c0e836ab49e5facf60aaad6a861dbdf6216261ec62b57114"
+      "bytes": 307746,
+      "sha256": "113685b20ff1fe88f9b389c347717ee5815ada652282d4c4aa79d97a5c0edcaf"
     },
     {
       "path": "src/ui-layout-contract.js",
@@ -560,8 +570,8 @@
     },
     {
       "path": "src/version-policy.js",
-      "bytes": 1739,
-      "sha256": "97504131328c68ad4574a3edb7b965af3665f628a680c388ead30bb85d48d3c3"
+      "bytes": 1740,
+      "sha256": "1fa5c2f8413b93fafc1822ef757c824dc4ab8571b377f4ccc72f16fea0efdd3c"
     }
   ]
 }

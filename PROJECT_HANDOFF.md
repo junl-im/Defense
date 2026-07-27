@@ -1,12 +1,12 @@
-> Current improvement patch: **v1.0.41 / b24.41** - FULL-MAP TOUCH & LOADING RETIREMENT
+> Current improvement patch: **v1.0.43 / b24.43** - MOBILE INPUT RECOVERY & BROWSER GATE
 
-# PROJECT HANDOFF - RELEASE 1.0.41
+# PROJECT HANDOFF - RELEASE 1.0.43
 
-- Project: `DokkaebiLuckDefense3D_FULL_v1.0.41_TOUCH_LOADING_FIX_VERIFIED`
-- Public game version: `1.0.41`
-- Lineage version: `23.9.0`
-- Build ID: `b24.41`
-- Base: `v1.0.40 / b24.40`
+- Project: `DokkaebiLuckDefense3D_FULL_v1.0.43_MOBILE_INPUT_RECOVERY_VERIFIED`
+- Public game version: `1.0.43`
+- Lineage version: `23.11.0`
+- Build ID: `b24.43`
+- Base: `v1.0.42 / b24.42`
 
 ## 절대 규칙
 
@@ -31,20 +31,18 @@
 ## 검증 명령
 
 ```bash
+npm run verify:mobile-input:v143
+npm run verify:browser:v143
+npm run verify:reachability:v143
+npm run verify:presentation:v143
+npm run verify:release:v143
 npm run verify
-npm run verify:release:v139
 npm run build
-npm run verify:dist:v123
-npm run verify:dist:v124
-npm run verify:dist:v135
-npm run verify:dist:v136
-npm run verify:dist:v137
-npm run verify:dist:v138
-npm run verify:dist:v139
-npm run stage:package:v139
-npm run verify:package:v139
-npm run create:patch:v139
-npm run verify:patch:v139
+npm run verify:dist:all
+npm run stage:package:v143
+npm run verify:package:v143
+npm run create:patch:v143
+npm run verify:patch:v143
 npm run hygiene:check
 ```
 
@@ -83,6 +81,29 @@ npm run hygiene:check
 - 100웨이브 자원 상한과 에셋 승인·격리 경계를 자동 검증한다.
 
 ## 인수인계 내역
+
+### 2026-07-27 — v1.0.43 / b24.43
+
+- 작업 목표: 모바일 백그라운드 복귀·페이지 복원·화면 회전·가상 키보드·핀치 줌 뒤 남은 포인터 캡처가 바닥 터치 이동을 막지 않도록 입력 수명주기를 복구하고, 랜덤 소환 버튼의 밝은 화면·손가락 가림·왼손 배치 시인성을 보강한다.
+- 주요 변경 파일: `src/runtime/mobile-input-recovery-v143.js`, `src/main.js`, `src/style.css`, `index.html`, 브라우저 회귀 픽스처와 실행기, 프레젠테이션 스냅샷 생성기, 런타임 에셋 도달성 생성기, v143 릴리스·배포·패키지·패치 검증기, 버전 파일, README와 v1.0.43 문서.
+- 수정 내용: visibility/page/orientation/visualViewport 이벤트에서 활성 맵 포인터·핀치·조이스틱 상태를 해제한다. 작은 주소창 변화는 무시하고 키보드·확대·오프셋·회전 수준의 변화만 리셋한다. 소환 버튼에는 상단 `소환` 비콘, 고대비·forced-colors, 왼손 티켓 반전, 좁은 가로 화면 배치를 추가했다. 부트·타이틀·전투 도크 DOM 해시와 동적 JSON 카탈로그를 포함한 보수적 에셋 도달성 보고서를 생성한다.
+- 검증 명령: `npm run verify:mobile-input:v143`, `npm run verify:browser:v143`, `npm run verify:reachability:v143`, `npm run verify:presentation:v143`, `npm run verify:release:v143`, `npm run verify`, `npm run build:static`, `npm run verify:dist:all`, `npm run stage:package:v143`, `npm run verify:package:v143`, `npm run create:patch:v143`, `npm run verify:patch:v143`, `npm run hygiene:check`.
+- 검증 결과: 전체 누적 `npm run verify`와 모바일 HUD 14/14가 통과했다. 결정론적 입력 복구 계약에서 주소창 소폭 변화는 유지하고 키보드 높이 변화·핀치 배율·회전·백그라운드 전환은 포인터를 정리했다. 런타임 에셋 1,951개 중 1,927개를 직접 도달 가능으로 분류했고 런타임 미해결 리터럴 참조는 0개였다. 24개 항목은 자동 삭제하지 않는 수동 검토 후보로 남겼다. 정적 배포에서 v117~v143 총 26개 게이트가 연속 통과했다. 35개 파일의 루트 직접 덮어쓰기 패치를 깨끗한 v1.0.42 복제본에 적용한 뒤 v143 릴리스·정적 빌드·전체 dist 체인·루트 위생을 재통과했다. 설치된 Chromium은 현재 컨테이너에서 headless 시작이 시간 초과되어 실브라우저 픽스처는 건너뛰었고 결정론적 계약과 기존 100웨이브 상한 검증을 필수 게이트로 유지한다.
+- 예외사항: 브라우저 실행기가 Chrome/Chromium을 정상 시작할 수 있는 CI·개발 환경에서는 실제 PointerEvent와 WebGL 100회 생성·삭제 픽스처를 실행한다. 브라우저 자체가 시작되지 않는 환경에서는 명확한 SKIP을 기록하며 브라우저 성공으로 보고하지 않는다. 현재 컨테이너에서는 `npm ci` 실행도 도구 계층 오류로 완료되지 않아 실제 Vite 번들은 재생성하지 못했고, 정적 fallback과 GitHub Actions의 `npm ci && npm run build` 게이트를 유지한다.
+- 잔여 위험: 실제 iOS Safari 독립 PWA와 Android 제조사별 키보드의 visualViewport 시퀀스는 실기기 확인이 계속 필요하다. 에셋 검토 후보는 동적 명명·제작 계보 승인 전까지 삭제하지 않는다.
+- 다음 예정: `docs/NEXT_UPDATE_v1.0.44.md`.
+
+
+### 2026-07-27 — v1.0.42 / b24.42
+
+- 작업 목표: 랜덤 소환 버튼이 다른 액션 버튼에 묻혀 보이지 않는 문제를 개선하고, 전용 에셋의 모서리·끝부분 잘림과 상태 표현을 정리한다.
+- 주요 변경 파일: `src/assets/ui-v142/random-summon-emblem-v142.png`, `src/runtime/summon-button-presentation-v142.js`, `src/main.js`, `src/style.css`, `index.html`, 서비스워커·버전 파일, `scripts/verify-summon-button-v142.mjs`, v1.0.42 릴리스·배포·패키징·패치 스크립트, README와 v1.0.42 문서.
+- 수정 내용: 도깨비 얼굴·강림 원형·주사위 표식을 결합한 256×256 전용 문양을 추가했다. 외곽 2픽셀은 완전 투명하며 버튼 내부에는 금색 베벨, 청록 발광, 보라색 깊이, 눌림 피드백을 적용했다. 엽전 충분·부족·강림 봉인·선택권 상태를 색과 ARIA 문구로 구분하고 PC는 가로형, 모바일은 세로형 레이아웃을 사용한다.
+- 검증 명령: `npm run verify:summon:v142`, `npm run verify:release:v142`, `npm run verify`, `npm run build:static`, `npm run verify:dist:all`, `npm run stage:package:v142`, `npm run verify:package:v142`, `npm run create:patch:v142`, `npm run verify:patch:v142`, `npm run hygiene:check`.
+- 검증 결과: 전용 PNG의 크기·RGBA·외곽 알파 0·가시 영역 51,626픽셀·89,727바이트 용량 예산을 검사하고 ready/short/sealed 상태와 ARIA 동기화를 통과했다. 전체 누적 `npm run verify`, 모바일 HUD 14/14, 정적 배포 v117~v142 25개 게이트, 정리 패키지, 루트 직접 덮어쓰기 패치 검증을 통과했다. 깨끗한 v1.0.41 전체본에 33개 파일을 그대로 붙여넣은 뒤 v1.0.42 릴리스·정적 빌드·전체 dist 체인·루트 위생을 재통과했다.
+- 예외사항: 이미지 생성 도구 대신 기존 승인 마스코트 원본을 기반으로 프로젝트 내 생성 스크립트에서 합성·다운샘플링했으며 신규 캐릭터 원화 승인으로 간주하지 않는다.
+- 잔여 위험: 실제 기기에서 밝은 야외 화면과 손가락 가림 상황의 체감 시인성은 다음 실기기 회귀에서 추가 확인한다.
+- 다음 예정: `docs/NEXT_UPDATE_v1.0.43.md`.
 
 
 ### 2026-07-27 — v1.0.41 / b24.41

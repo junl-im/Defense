@@ -58,3 +58,8 @@ if (failures.length) {
   process.exit(1);
 }
 console.log('PASS mobile safe-area, viewport bounds, and five-button compact control layout budget');
+
+for (const marker of ['summon-emblem-v142','data-summon-state-v142','summon-ready-v142','random-summon-emblem-v142.png']) {
+  if (!`${html}
+${css}`.includes(marker)) throw new Error(`v1.0.42 summon presentation marker missing: ${marker}`);
+}

@@ -11,10 +11,10 @@ const firebase = read('firebase.json');
 const catalog = read('src/engine/asset-catalog.js');
 const workflow = read('.github/workflows/deploy.yml');
 const checks = [
-  ['package retains v23 boot recovery lineage', /^23\.(?:0\.[12]|[1-9]\.\d+)$/.test(pkg.dokkaebi?.lineageVersion || pkg.version)],
-  ['game retains v23 boot recovery lineage', /^23\.(?:0\.[12]|[1-9]\.\d+)$/.test(pkg.dokkaebi?.lineageVersion || pkg.version) && main.includes('LEGACY_LINEAGE_VERSION')],
-  ['asset revision retains boot recovery lineage', /ASSET_REVISION = '23\.(?:0\.[12]|[1-9]\.\d+)'/.test(catalog)],
-  ['service worker retains boot recovery lineage', /VERSION = '23\.(?:0\.[12]|[1-9]\.\d+)'/.test(sw)],
+  ['package retains v23 boot recovery lineage', /^23\.(?:0\.[12]|[1-9]\d*\.\d+)$/.test(pkg.dokkaebi?.lineageVersion || pkg.version)],
+  ['game retains v23 boot recovery lineage', /^23\.(?:0\.[12]|[1-9]\d*\.\d+)$/.test(pkg.dokkaebi?.lineageVersion || pkg.version) && main.includes('LEGACY_LINEAGE_VERSION')],
+  ['asset revision retains boot recovery lineage', /ASSET_REVISION = '23\.(?:0\.[12]|[1-9]\d*\.\d+)'/.test(catalog)],
+  ['service worker retains boot recovery lineage', /VERSION = '23\.(?:0\.[12]|[1-9]\d*\.\d+)'/.test(sw)],
   ['Vite entry uses relative bootstrap module', (html.includes('src="./src/bootstrap.js') || html.includes('src="/src/bootstrap.js')) && !html.includes('src="/src/main.js"') && !html.includes('src="./src/main.js"')],
   ['start button waits for boot readiness', html.includes('disabled aria-busy="true"') && html.includes('setStartReady(true)')],
   ['entry import failure is surfaced', bootstrap.includes("import('./main.js').catch") && bootstrap.includes('__DOKKAEBI_SHOW_BOOT_ERROR__')],

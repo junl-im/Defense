@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><title>v143 browser recovery fixture</title></head>
+<body data-v143-result="pending"><div id="zone"></div><pre id="report"></pre>
+<script type="module">
+import MobileInputRecoveryV143, { compareViewportSnapshotsV143 } from '../../src/runtime/mobile-input-recovery-v143.js';
+const report = { pointer: false, viewport: false, orientation: false, loading: false, webgl: false, errors: [] };
+const active = new Map(); let resetCount = 0; let released = 0;
+const zone = document.querySelector('#zone');
+zone.setPointerCapture = () => {}; zone.releasePointerCapture = () => { released += 1; };
+zone.addEventListener('pointerdown', (event) => active.set(event.pointerId, { x:event.clientX, y:event.clientY }));
+const reset = () => { for (const id of active.keys()) { try { zone.releasePointerCapture(id); } catch {} } active.clear(); resetCount += 1; };
+const recovery = new MobileInputRecoveryV143({ onReset: reset, now: (()=>{let t=100;return()=>t+=100;})() }).mount({ windowObject:window, documentObject:document, visualViewport:window.visualViewport });
+try {
+  zone.dispatchEvent(new PointerEvent('pointerdown', { pointerId:7, pointerType:'touch', clientX:100, clientY:200, bubbles:true }));
+  recovery.forceReset('lost-pointer-capture', { pointerId:7 });
+  report.pointer = active.size === 0 && released === 1 && resetCount === 1;
+  const comparison = compareViewportSnapshotsV143({ width:390,height:780,offsetLeft:0,offsetTop:0,scale:1 }, { width:390,height:470,offsetLeft:0,offsetTop:0,scale:1 });
+  recovery.handleViewportSnapshot({ width:390,height:470,offsetLeft:0,offsetTop:0,scale:1 });
+  report.viewport = comparison.reset && comparison.reason === 'viewport-height' && recovery.report.viewportResets >= 1;
+  const beforeOrientation = recovery.report.orientationResets;
+  window.dispatchEvent(new Event('orientationchange'));
+  report.orientation = recovery.report.orientationResets === beforeOrientation + 1;
+  const index = await (await fetch('/index.html', { cache:'no-store' })).text();
+  report.loading = !index.includes('수호대를 전장으로 부르는 중...') && !index.includes('loading-wrap') && index.includes('legacy-loading-retired-v141');
+  const canvas = document.createElement('canvas');
+  const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+  if (gl) {
+    let activeBuffers=0, activeTextures=0;
+    for (let wave=1; wave<=100; wave+=1) {
+      const buffer=gl.createBuffer(); const texture=gl.createTexture();
+      if (buffer) activeBuffers+=1; if (texture) activeTextures+=1;
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([wave,0,1]), gl.STATIC_DRAW);
+      gl.bindTexture(gl.TEXTURE_2D, texture); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array([wave%255,90,180,255]));
+      gl.deleteBuffer(buffer); gl.deleteTexture(texture); activeBuffers-=1; activeTextures-=1;
+    }
+    report.webgl = activeBuffers === 0 && activeTextures === 0 && gl.getError() === gl.NO_ERROR;
+  } else report.errors.push('WebGL unavailable');
+} catch (error) { report.errors.push(String(error?.stack || error)); }
+recovery.dispose();
+const pass = report.pointer && report.viewport && report.orientation && report.loading && report.webgl && report.errors.length === 0;
+document.body.dataset.v143Result = pass ? 'pass' : 'fail';
+document.querySelector('#report').textContent = JSON.stringify({ ...report, recovery: recovery.report }, null, 2);
+</script></body></html>

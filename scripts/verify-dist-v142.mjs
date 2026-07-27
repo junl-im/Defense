@@ -1,0 +1,10 @@
+import fs from 'node:fs'; import path from 'node:path'; import { createHash } from 'node:crypto';
+const root=process.cwd(),dist=process.env.DIST_DIR?path.resolve(process.env.DIST_DIR):path.join(root,'dist');
+const collect=(dir,exts,out=[])=>{if(!fs.existsSync(dir))return out;for(const n of fs.readdirSync(dir)){const p=path.join(dir,n),s=fs.statSync(p);if(s.isDirectory())collect(p,exts,out);else if(exts.some(e=>n.endsWith(e)))out.push(p)}return out};
+const version=JSON.parse(fs.readFileSync(path.join(dist,'version.json'),'utf8'));const patch=Number(String(version.releaseVersion).split('.')[2]);if(!version.releaseVersion.startsWith('1.0.')||patch<42||version.buildId!==`b24.${patch}`)throw new Error('v1.0.42+ dist identity mismatch');
+const js=collect(dist,['.js']).map(p=>fs.readFileSync(p,'utf8')).join('\n'),css=collect(dist,['.css']).map(p=>fs.readFileSync(p,'utf8')).join('\n'),index=fs.readFileSync(path.join(dist,'index.html'),'utf8');
+if(!js.includes('DD-SUMMON-BUTTON-PRESENTATION-V142')||!js.includes('summonStateV142'))throw new Error('v142 summon runtime missing');
+if(!css.includes('summon-emblem-v142')||!css.includes('summon-ready-v142')||!css.includes('summon-cast-v142'))throw new Error('v142 summon CSS missing');
+if(!index.includes('summon-emblem-v142')||!index.includes('data-summon-state-v142'))throw new Error('v142 summon markup missing');
+const source=fs.readFileSync(path.join(root,'src/assets/ui-v142/random-summon-emblem-v142.png')),hash=b=>createHash('sha256').update(b).digest('hex'),wanted=hash(source);const images=collect(dist,['.png']);if(!images.some(p=>hash(fs.readFileSync(p))===wanted))throw new Error('v142 authored summon emblem missing from dist');
+console.log(`PASS v1.0.42+ dist contains high-visibility random summon control and authored emblem under ${version.releaseVersion}`);

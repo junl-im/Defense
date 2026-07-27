@@ -1,0 +1,26 @@
+import MobileInputRecoveryV143, { MOBILE_INPUT_RECOVERY_V143_ID, compareViewportSnapshotsV143, normalizeViewportSnapshotV143 } from '../src/runtime/mobile-input-recovery-v143.js';
+const failures=[]; const check=(value,message)=>{if(!value)failures.push(message)};
+const normalized=normalizeViewportSnapshotV143({width:'390',height:'780',offsetLeft:'3',offsetTop:'4',scale:'1.5'});
+check(normalized.width===390&&normalized.height===780&&normalized.scale===1.5,'viewport normalization');
+const keyboard=compareViewportSnapshotsV143({width:390,height:780,offsetLeft:0,offsetTop:0,scale:1},{width:390,height:470,offsetLeft:0,offsetTop:0,scale:1});
+check(keyboard.reset&&keyboard.reason==='viewport-height','keyboard viewport reset');
+const addressBar=compareViewportSnapshotsV143({width:390,height:720,offsetLeft:0,offsetTop:0,scale:1},{width:390,height:678,offsetLeft:0,offsetTop:0,scale:1});
+check(!addressBar.reset,'small browser chrome movement is not over-reset');
+const pinch=compareViewportSnapshotsV143({width:390,height:780,offsetLeft:0,offsetTop:0,scale:1},{width:260,height:520,offsetLeft:20,offsetTop:10,scale:1.5});
+check(pinch.reset&&pinch.reason==='viewport-scale','pinch scale reset priority');
+let now=0; const events=[];
+const target=()=>{const listeners=new Map();return {addEventListener:(type,fn)=>{const list=listeners.get(type)||[];list.push(fn);listeners.set(type,list)},removeEventListener:(type,fn)=>listeners.set(type,(listeners.get(type)||[]).filter((item)=>item!==fn)),dispatch:(type,event={})=>(listeners.get(type)||[]).forEach((fn)=>fn(event))}};
+const windowObject=target();windowObject.innerWidth=390;windowObject.innerHeight=780;
+const documentObject=target();documentObject.hidden=false;
+const visualViewport=target();Object.assign(visualViewport,{width:390,height:780,offsetLeft:0,offsetTop:0,scale:1});windowObject.visualViewport=visualViewport;
+const recovery=new MobileInputRecoveryV143({now:()=>now+=100,onReset:(reason,detail)=>events.push({reason,detail})}).mount({windowObject,documentObject,visualViewport});
+visualViewport.height=470;visualViewport.dispatch('resize');
+windowObject.dispatch('orientationchange');
+documentObject.hidden=true;documentObject.dispatch('visibilitychange');
+check(events.some((event)=>event.reason==='viewport-height'),'viewport event wired');
+check(events.some((event)=>event.reason==='orientation-change'),'orientation event wired');
+check(events.some((event)=>event.reason==='visibility-hidden'),'visibility event wired');
+check(recovery.report.id===MOBILE_INPUT_RECOVERY_V143_ID&&recovery.report.resets>=3,'recovery diagnostics');
+recovery.dispose();check(recovery.report.disposed,'recovery dispose');
+if(failures.length){failures.forEach((failure)=>console.error('FAIL '+failure));process.exit(1)}
+console.log('PASS v1.0.43 deterministic pointer/viewport/orientation/background recovery contract');
