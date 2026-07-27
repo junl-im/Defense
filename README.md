@@ -1,45 +1,33 @@
-> 현재 개선 패치: **v1.0.34 / b24.34** — 모바일 HUD 동적 복구, 가상 뷰포트·키보드 대응, 터치 접근성 강화
+> 현재 개선 패치: **v1.0.35 / b24.35** — 런타임 수명주기, 오프라인 모듈 캐시, 보스 접근성, 모바일 줌·주소창 안정성 강화
 
-# 도깨비 럭 디펜스 3D
+# Dokkaebi Luck Defense 3D
 
-## v1.0.34 핵심 변경
+## v1.0.35 핵심 변경
 
-- 모바일 HUD 런타임을 `23.2.0`으로 갱신
-- 늦게 생성되거나 교체되는 HUD DOM을 자동 재탐색하고 관찰 대상을 복구
-- `visualViewport`의 좌우·상하 오프셋과 가상 키보드 영역을 CSS 변수로 반영
-- 비상 축소 모드가 한 프레임마다 켜졌다 꺼지는 현상을 막는 3프레임 해제 히스테리시스 추가
-- 문맥 패널 우선순위 숨김 시 `aria-hidden`을 함께 관리하고 원래 값을 복원
-- 주요 전투 버튼의 최소 터치 높이 44px 및 키보드 포커스 표시 보강
-- 모바일·노치·가상 키보드·가로 오프셋 10개 화면 프로필 시뮬레이션 통과
-- 인수인계 절대 규칙과 버전별 인수인계 내역 작성 의무를 문서·검증에 추가
+- 모바일 HUD 런타임 `23.3.0`: iOS/Android 브라우저 주소창과 가상 키보드 오인 방지
+- 150% 핀치 줌에서 조이스틱·액션 도크 충돌 방지
+- 전투 이펙트 RAF를 엔진 수명주기 범위로 편입해 종료·런 전환 시 정리
+- 보스 식별 배지의 오래된 ARIA 상태 제거 및 체력·파훼 진행률 의미 보강
+- 실제 `src/bootstrap.js` import 그래프 110개를 서비스워커 핵심 캐시와 자동 동기화
+- 모바일 UI 겹침 시뮬레이션 14개 프로필 및 100웨이브 자원 상한 시뮬레이션
+- 에셋 0바이트·SVG·승인 경계·폭탄병 격리 상태 자동 검증
+- 인수인계 내역 작성 필수 계약 유지
+- 불완전한 로컬 Vite 설치를 자동 감지하고 CI 재설치 빌드 게이트와 분리
 
 ## 검증
 
 ```bash
-npm run verify
+npm run audit:toolchain:v135
+npm run verify:release:v135
 npm run build:static
-npm run verify:dist:v134
-npm run create:patch:v134
-npm run verify:patch:v134
+npm run verify:dist:v135
+npm run create:patch:v135
+npm run verify:patch:v135
 ```
 
-`dist/`가 없는 컴팩트 통파일에서는 Windows 기준으로 다음 파일을 실행할 수 있습니다.
+상세 진단은 `docs/SYSTEM_AUDIT_v1.0.35.md`, `docs/RUNTIME_STABILITY_ASSURANCE_v1.0.35.md`, `docs/BUILD_TOOLCHAIN_EXCEPTION_v1.0.35.md`를 확인합니다.
 
-```text
-scripts/REBUILD_DIST_WINDOWS.bat
-```
-
-상세 내용은 `docs/MOBILE_HUD_RESILIENCE_v1.0.34.md`와 `docs/HANDOFF_CONTRACT_v1.0.34.md`를 확인합니다.
-
-## 승인 경계
-
-- 푸푸도깨비 11방향 원본: 최종 승인 유지
-- 푸푸도깨비 독립 공격·기술·피격 원화: 파생 임시 승인
-- 보스 식별 프로필: 런타임 승인 유지
-- 장난 요괴 폭탄병 후보: 교체 대기, 런타임 격리
-- 신규 최종 캐릭터 원화 승인: 0종
-
-## 보존된 기반
+## 보존된 릴리스 기반
 
 - v1.0.12 크로스 플랫폼 비주얼 기반
 - v1.0.17 승인 자산 경계
@@ -48,3 +36,4 @@ scripts/REBUILD_DIST_WINDOWS.bat
 - v1.0.31 보스·몬스터 에셋 계보 감사
 - v1.0.32 실루엣 지문·80웨이브 검증
 - v1.0.33 보스 식별·90웨이브 안정성 검증
+- v1.0.34 모바일 HUD 복구·가상 뷰포트 검증

@@ -127,8 +127,14 @@ export default class BossIdentityAssuranceDirectorV133 {
       this.badge = document.getElementById('boss-identity-badge-v133') || document.createElement('div');
       this.badge.id = 'boss-identity-badge-v133';
       this.badge.className = 'boss-identity-badge-v133';
+      this.badge.setAttribute('role', 'status');
       this.badge.setAttribute('aria-live', 'polite');
-      if (!this.badge.parentNode) parent.appendChild(this.badge);
+      this.badge.setAttribute('aria-atomic', 'true');
+      this.badge.setAttribute('aria-hidden', 'true');
+      this.badge.hidden = true;
+      const heading = parent.querySelector?.('.boss-health-head');
+      const anchor = heading?.nextSibling || parent.firstChild;
+      if (this.badge.parentNode !== parent || this.badge !== anchor) parent.insertBefore(this.badge, anchor);
     }
     this.publish();
     return this.report;
@@ -154,7 +160,12 @@ export default class BossIdentityAssuranceDirectorV133 {
     if (!this.badge) return;
     this.badge.classList.toggle('visible', Boolean(identity));
     this.badge.replaceChildren();
-    if (!identity) return;
+    this.badge.hidden = !identity;
+    this.badge.setAttribute('aria-hidden', identity ? 'false' : 'true');
+    if (!identity) {
+      this.badge.removeAttribute('aria-label');
+      return;
+    }
     const sigil = document.createElement('strong');
     sigil.textContent = identity.sigil;
     const copy = document.createElement('span');

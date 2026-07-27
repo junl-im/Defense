@@ -1,12 +1,12 @@
-> 현재 개선 패치: **v1.0.34 / b24.34** — MOBILE HUD RESILIENCE & HANDOFF CONTRACT
+> 현재 개선 패치: **v1.0.35 / b24.35** — RUNTIME STABILITY & RELEASE INTEGRITY
 
-# PROJECT HANDOFF — RELEASE 1.0.34
+# PROJECT HANDOFF — RELEASE 1.0.35
 
-- Project: `DokkaebiLuckDefense3D_FULL_v1.0.34_MOBILE_HUD_RESILIENCE_VERIFIED`
-- Public game version: `1.0.34`
-- Lineage version: `23.2.0`
-- Build ID: `b24.34`
-- Base: `v1.0.33 / b24.33`
+- Project: `DokkaebiLuckDefense3D_FULL_v1.0.35_RUNTIME_STABILITY_VERIFIED`
+- Public game version: `1.0.35`
+- Lineage version: `23.3.0`
+- Build ID: `b24.35`
+- Base: `v1.0.34 / b24.34`
 
 ## 절대 규칙
 
@@ -31,11 +31,14 @@
 ## 검증 명령
 
 ```bash
+npm run audit:toolchain:v135
 npm run verify
+npm run verify:release:v135
 npm run build:static
-npm run verify:dist:v134
-npm run create:patch:v134
-npm run verify:patch:v134
+npm run verify:dist:v135
+npm run create:patch:v135
+npm run verify:patch:v135
+npm run hygiene:check
 ```
 
 ## PERMANENT ROOT HYGIENE CONTRACT
@@ -52,33 +55,47 @@ npm run verify:patch:v134
 - 전역 키보드 입력은 이동키만 처리한다.
 - 공격·기술·일시정지·제작 콘솔은 화면 버튼과 명시적 UI를 사용한다.
 
-## v1.0.34 Mobile HUD Resilience
+## v1.0.35 Runtime Stability & Release Integrity
 
-- `DD-MOBILE-HUD-RESILIENCE-V134` 런타임 마커를 추가한다.
-- 모바일 HUD 동적 DOM 재탐색과 관찰 대상 재연결을 지원한다.
-- 가상 뷰포트 오프셋·가상 키보드 영역을 컨트롤 및 문맥 레인 위치에 반영한다.
-- 비상 레이아웃 해제에 3프레임 안정 구간을 요구한다.
-- 문맥 패널 숨김 상태의 접근성 속성을 원복 가능하게 관리한다.
-- 주요 전투 버튼의 터치 높이와 포커스 표시를 보강한다.
+- `FrameScope`로 전투 이펙트 RAF를 런타임 수명주기에 편입한다.
+- 링·소환 빔·번개 이펙트를 런 전환·폐기 시 즉시 정리한다.
+- 모바일 HUD `23.3.0`에서 주소창·키보드·핀치 줌을 구분한다.
+- 14개 UI 프로필에서 겹침·클리핑·판정 기대값을 검사한다.
+- 보스 배지를 헤더 직후 읽기 순서로 배치하고 비활성 ARIA 상태를 제거한다.
+- 보스 체력과 파훼 게이지에 실시간 progressbar 값을 제공한다.
+- `src/bootstrap.js` 도달 가능 import 그래프를 서비스워커 핵심 캐시와 자동 동기화한다.
+- 100웨이브 자원 상한과 에셋 승인·격리 경계를 자동 검증한다.
 
 ## 인수인계 내역
+
+### 2026-07-27 — v1.0.35 / b24.35
+
+- 작업 목표: 시스템·성능·기술·기능·엔진·오류·예외·에셋·UI 겹침을 항목별 감사하고 실제 재현 결함을 수정한다.
+- 주요 변경 파일:
+  - `src/runtime-lifecycle.js`, `src/main.js`
+  - `src/runtime/mobile-hud-director-v23.js`
+  - `src/runtime/boss-identity-assurance-director-v133.js`
+  - `src/style.css`, `index.html`
+  - `public/sw.js`, `public/assets/system-v135/runtime-module-shell-v135.json`
+  - `scripts/generate-runtime-shell-v135.mjs`, `scripts/simulate-mobile-hud-v23.mjs`
+  - `scripts/audit-build-toolchain-v135.mjs`, `scripts/verify-release-v133.mjs`
+  - `scripts/verify-release-v135.mjs`, `scripts/verify-dist-v135.mjs`
+  - `scripts/create-patch-v135.mjs`, `scripts/verify-patch-v135.mjs`
+  - `README.md`, `PROJECT_HANDOFF.md`, `docs/*v1.0.35*`, `docs/NEXT_UPDATE_v1.0.36.md`
+  - `.github/workflows/deploy.yml`의 v1.0.34·v1.0.35 정적 배포 게이트
+- 검증 명령: `npm run audit:toolchain:v135`, `npm run verify`, `npm run verify:release:v135`, `npm run build:static`, `npm run verify:dist:v134`, `npm run verify:dist:v135`, `npm run create:patch:v135`, `npm run verify:patch:v135`, `npm run hygiene:check`.
+- 검증 결과: 누적 검증 v1.0.12~v1.0.35 통과, 모바일 UI 14/14, 100웨이브 자원 상한, 런타임 모듈 110개 해시, 에셋 1,961개 무결성·SVG·승인 경계, v1.0.34 호환, 정적 배포 v1.0.34·v1.0.35, 루트 위생 검증 통과. 패치 44개 변경·삭제 0개이며, 깨끗한 v1.0.34 복제본에 실제 덮어쓴 뒤 동일 릴리스·빌드·배포 검증을 재통과했다.
+- 예외사항: 전달된 `node_modules/vite`는 필수 파일이 없는 불완전 설치다. 로컬 정적 배포 검증은 통과했으며, GitHub Actions에서는 `npm ci` 후 실제 Vite 빌드와 프로덕션 번들 검증을 강제한다.
+- 잔여 위험: 실제 브라우저의 GPU 메모리 수치와 iOS Safari 장시간 백그라운드 복귀는 정적·합성 검사만으로 완전 재현할 수 없어 실기기 자동화가 계속 필요하다.
+- 다음 예정: `docs/NEXT_UPDATE_v1.0.36.md`.
 
 ### 2026-07-27 — v1.0.34 / b24.34
 
 - 작업 목표: v1.0.33 터치 HUD 핫픽스를 정식 인수인계 상태로 승격하고 동적 마운트·가상 키보드·노치·터치 접근성 회귀를 차단한다.
-- 주요 변경 파일:
-  - `src/runtime/mobile-hud-director-v23.js`
-  - `src/style.css`
-  - `scripts/simulate-mobile-hud-v23.mjs`
-  - `scripts/verify-release-v134.mjs`
-  - `scripts/verify-dist-v134.mjs`
-  - `scripts/create-patch-v134.mjs`
-  - `scripts/verify-patch-v134.mjs`
-  - `README.md`, `PROJECT_HANDOFF.md`, `docs/*v1.0.34*`, `docs/NEXT_UPDATE_v1.0.35.md`
-- 검증 결과: 모바일 화면 프로필 10/10 통과. 전체 검증 체인은 실행 제한을 피하기 위해 동일 구성 명령을 구간별로 실행했으며 모든 구간 통과. `build:static`, `verify:dist:v134`, `create:patch:v134`, `verify:patch:v134`, `hygiene:check` 통과. v1.0.33 복제본에 패치 덮어쓰기 후 v1.0.34 릴리스·dist·위생 검증 통과.
-- 잔여 위험: 실제 iOS Safari/Android Chrome 실기기의 브라우저별 `visualViewport` 고정 위치 차이는 실기기 회귀 검사가 계속 필요하다.
+- 검증 결과: 모바일 화면 프로필 10/10, 릴리스·정적 배포·패치·위생 검증 통과.
+- 잔여 위험: 실제 iOS Safari/Android Chrome의 `visualViewport` 차이.
 - 다음 예정: `docs/NEXT_UPDATE_v1.0.35.md`.
 
 ## 보존된 릴리스 기반
 
-v1.0.12 크로스 플랫폼 기반, v1.0.17 승인 경계, v1.0.20 주인공 11방향 적용, v1.0.29 파생 아틀라스, v1.0.31 에셋 계보 감사, v1.0.32 실루엣 검증, v1.0.33 보스 식별 검증을 유지한다.
+v1.0.12 크로스 플랫폼 기반, v1.0.17 승인 경계, v1.0.20 주인공 11방향 적용, v1.0.29 파생 아틀라스, v1.0.31 에셋 계보 감사, v1.0.32 실루엣 검증, v1.0.33 보스 식별 검증, v1.0.34 모바일 HUD 복구를 유지한다.

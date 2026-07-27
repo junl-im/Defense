@@ -1,0 +1,562 @@
+{
+  "schema": "DD-RUNTIME-MODULE-SHELL-1.0",
+  "id": "DD-RELEASE-INTEGRITY-V135",
+  "releaseVersion": "1.0.35",
+  "buildId": "b24.35",
+  "cacheRevision": "1.0.35-b24.35",
+  "entry": "src/bootstrap.js",
+  "moduleCount": 110,
+  "totalBytes": 1447463,
+  "files": [
+    {
+      "path": "src/art-production-gate.js",
+      "bytes": 5386,
+      "sha256": "1abc337d2230cd88a2119e982164c18af9bc1b2c4da6794dcdacf9cff9898354"
+    },
+    {
+      "path": "src/art-style-tokens.js",
+      "bytes": 9280,
+      "sha256": "b0be6575a7acb5c4399e6404a31da5df14ce99f2f87eafafd20d1160b9b0065f"
+    },
+    {
+      "path": "src/asset-diagnostics.js",
+      "bytes": 2030,
+      "sha256": "335a9692ca0c393135ac48927903078b4391e45112a916176418e6bbf8ec7665"
+    },
+    {
+      "path": "src/asset-specs.js",
+      "bytes": 5434,
+      "sha256": "b8b53f1b4f14ba69ca127bd9e106ed9040a256b467daa166921377e7af29d252"
+    },
+    {
+      "path": "src/battlefield-themes.js",
+      "bytes": 2414,
+      "sha256": "a9ada81207525110240725f81b6ebf790543cdf9a07ff3eabbfc771e52239055"
+    },
+    {
+      "path": "src/bootstrap.js",
+      "bytes": 624,
+      "sha256": "46aea8b474f360fd04307816f299fb033fc997c70677324cc5bcbb168c909646"
+    },
+    {
+      "path": "src/boss-director.js",
+      "bytes": 1048,
+      "sha256": "8af417197662efc2dda057680c3c26efd2d8b6cbd6e7f6119e8956283473f976"
+    },
+    {
+      "path": "src/boss-hud-contract.js",
+      "bytes": 1144,
+      "sha256": "463979d0d42926baffde1a6748c119b2869b0cbe67a62af1cf3cc311df5f060d"
+    },
+    {
+      "path": "src/character-dna.js",
+      "bytes": 6386,
+      "sha256": "a27ad9004e2a859d10450499eb834e429a4e2355291f0d2634e7c97f1cf75103"
+    },
+    {
+      "path": "src/codex-data.js",
+      "bytes": 11755,
+      "sha256": "39661a8f9958d60aeeaad91567bc5074c93043e70512e184ffba59bae6e07340"
+    },
+    {
+      "path": "src/codex-progression.js",
+      "bytes": 11669,
+      "sha256": "9f2fc40ed53808c12a1045134b0ad8635223e8452ddea4fcdad0a75510afd295"
+    },
+    {
+      "path": "src/codex-viewer.js",
+      "bytes": 12894,
+      "sha256": "9a626c077d3da651ec117ce1a4d25369e070e151419e724cb62596fecd8b644a"
+    },
+    {
+      "path": "src/combat-presentation.js",
+      "bytes": 14042,
+      "sha256": "02ada279c23a335491c86c4909308594212d5b0fce6a4307e10be9f019038f49"
+    },
+    {
+      "path": "src/combat/battle-momentum-system.js",
+      "bytes": 2445,
+      "sha256": "acdad740c8ef3e04fbadec684e6e5fa43b6a45175d1354f4e618cfed3b468e60"
+    },
+    {
+      "path": "src/combat/battlefield-event-director.js",
+      "bytes": 2687,
+      "sha256": "bf99883d4174f92a249cf2a584eca210f1d623a461ba207cfbbcf9c60d3b2142"
+    },
+    {
+      "path": "src/combat/boss-break-system.js",
+      "bytes": 2949,
+      "sha256": "8dc7081b3421b88f7ce0fe105bb7eb941aaaaa684c1fc36558ba05c8fa3eff21"
+    },
+    {
+      "path": "src/combat/boss-escalation-director.js",
+      "bytes": 2506,
+      "sha256": "34aa622d1ff039f09f376c9605c1125a8df758a10b206b435faa6c6d2b2e8af1"
+    },
+    {
+      "path": "src/combat/combat-readability-director-v21.js",
+      "bytes": 4831,
+      "sha256": "2481dc9914610f76f7f3ad8c5ef5a80a72a7368b3c5d887e0e5f4e2e58b0fbe4"
+    },
+    {
+      "path": "src/combat/combat-telemetry.js",
+      "bytes": 2878,
+      "sha256": "85ffcc76d5d82061a77c2ffc313e0bec2a7e471883a433103c8a633aa354aeae"
+    },
+    {
+      "path": "src/combat/elemental-reaction-system.js",
+      "bytes": 3768,
+      "sha256": "637151040be2237fe2ab1a56a9a648231f8d95240c1706d1ff77cf435b758a4f"
+    },
+    {
+      "path": "src/combat/encounter-director.js",
+      "bytes": 6944,
+      "sha256": "4007ae741c285b9322667b4bf356c88ef5fcbc0cff7be88a393c41514ab513cc"
+    },
+    {
+      "path": "src/combat/guardian-targeting-director-v22.js",
+      "bytes": 2961,
+      "sha256": "172831214944f228b003d8b981ece40481df332be40d81c6732197148b3831fd"
+    },
+    {
+      "path": "src/combat/moonfront-campaign-director.js",
+      "bytes": 2837,
+      "sha256": "375f9bc14e4578afa93c44879212ff9a1967d6243fc20f2c28585db9453eaa6b"
+    },
+    {
+      "path": "src/combat/status-effect-system.js",
+      "bytes": 5973,
+      "sha256": "b8a40e08428cc177fdc794e6dd5f56365803a252fd84b08d8f5ff1c79a75201e"
+    },
+    {
+      "path": "src/daily-expedition.js",
+      "bytes": 3702,
+      "sha256": "df908b7f8c797de3a618c3e9731beb39f26031134a34db4ce2ff665584904cab"
+    },
+    {
+      "path": "src/enemy-candidate-visuals.js",
+      "bytes": 3378,
+      "sha256": "a3415224bb58bf96d02b489d7ba17d65a9ba1bd4cc86bf013dd49736f8dda142"
+    },
+    {
+      "path": "src/engine/animation-state-system.js",
+      "bytes": 9391,
+      "sha256": "75a1211e063d88eb78247a9ec77a483d3e7e0adfc3b2edfd70b323da950dd737"
+    },
+    {
+      "path": "src/engine/asset-catalog.js",
+      "bytes": 20221,
+      "sha256": "9c238094e5c3728200adcf4aa00565f2fab8ec738945d1afbc31d10241df33fd"
+    },
+    {
+      "path": "src/engine/asset-pipeline.js",
+      "bytes": 13443,
+      "sha256": "733b35f7925c1112abdf8adf899df08a0e82b1d183b6290d0f27a1702a9f66cd"
+    },
+    {
+      "path": "src/engine/asset-quality.js",
+      "bytes": 4135,
+      "sha256": "45eecd6b511ffd7f5fb1c778318cc1a3c2865a93b48d855057da06859d47d5b7"
+    },
+    {
+      "path": "src/engine/blob-shadow-system.js",
+      "bytes": 1271,
+      "sha256": "5477b5df3e66c8653bdf8e24bfc77929fc64fc3d2bce663445413be35722ad11"
+    },
+    {
+      "path": "src/engine/camera-director-v16.js",
+      "bytes": 4815,
+      "sha256": "08c5569b8ecc5fce606993562ffa6a8e8e49ea4117f53bc8ef103f2540381c76"
+    },
+    {
+      "path": "src/engine/camera-profile.js",
+      "bytes": 2012,
+      "sha256": "92b5135f33be679c9a59ac073db46f29941efc551b7cee5f06462d57bb22c050"
+    },
+    {
+      "path": "src/engine/directional-impostor.js",
+      "bytes": 2288,
+      "sha256": "37646d22f94385c2f22ee2b607cc054d5439af62e1d8ec4469c6cd2e35186803"
+    },
+    {
+      "path": "src/engine/engine-config.js",
+      "bytes": 1629,
+      "sha256": "9e75055eb7fd29f14af25945949c70b1a69188c824066e2eef5cefe9eadf1986"
+    },
+    {
+      "path": "src/engine/frame-budget-scheduler.js",
+      "bytes": 1255,
+      "sha256": "379a6e3cf244b64287ea7744d0830d5eaf2d745afff794f57b6ac7c45da24787"
+    },
+    {
+      "path": "src/engine/geometry-budget.js",
+      "bytes": 1120,
+      "sha256": "21284f9ed1802396b9768b9ba5feaafa104a6e85b12ffd7efc05c3cf88baba88"
+    },
+    {
+      "path": "src/engine/index.js",
+      "bytes": 1436,
+      "sha256": "4548477dfc245922fe2553ac93301343d2f3b4d21a693e25618d03a15bfb1f9b"
+    },
+    {
+      "path": "src/engine/instance-batch.js",
+      "bytes": 2203,
+      "sha256": "d8e67242d6d2e97de8f00a315bbd95f008eab4a27aeab84e85a8a655ea0fffe8"
+    },
+    {
+      "path": "src/engine/mobile-engine.js",
+      "bytes": 7117,
+      "sha256": "6a54c749d4dcdf95dff34d737e7e0be242d4632a5b83a4f084c8b60f3c0684db"
+    },
+    {
+      "path": "src/engine/object-pool.js",
+      "bytes": 927,
+      "sha256": "5cf1d2b5b33df428e4bfa2264dd38534581b822c81168ba9491dee06993743aa"
+    },
+    {
+      "path": "src/engine/performance-monitor.js",
+      "bytes": 4792,
+      "sha256": "293ef3940c9a1a3fe718a3d4806a2ecbd1f6c1519513557e39d292f5fbc3c153"
+    },
+    {
+      "path": "src/engine/quality-governor.js",
+      "bytes": 3648,
+      "sha256": "aca8e2b11ec5c507200731d00028dbe871f7e643babac8d521dff60e0cf10931"
+    },
+    {
+      "path": "src/engine/render-stats-hud.js",
+      "bytes": 2811,
+      "sha256": "54ba31aa5c07e3411ae77805a3fef0bbd803bbeb18fda4de9f9a9e7b17dfc32c"
+    },
+    {
+      "path": "src/engine/runtime-budget-manager.js",
+      "bytes": 2202,
+      "sha256": "91fe79bb71f375b96c777d2d964bf12fc943a47ad83333bd826761ae92667a4a"
+    },
+    {
+      "path": "src/engine/texture-atlas.js",
+      "bytes": 1092,
+      "sha256": "10ebc36a897a8ff29858f5a04041c92c218f9c3179b057998190a1fb9e8899a1"
+    },
+    {
+      "path": "src/engine/world-chunk-manager.js",
+      "bytes": 1963,
+      "sha256": "01ce9e9dfc16d98175d7982147dbafc569ab5e6044474368fb9edebaf12b7801"
+    },
+    {
+      "path": "src/equipment-system.js",
+      "bytes": 9030,
+      "sha256": "061c6df5796ebb6da6a8274f35013dc95853ed276b92660f1c84a7b5a6abd23e"
+    },
+    {
+      "path": "src/expedition-director.js",
+      "bytes": 12534,
+      "sha256": "d2492698fbb66c3e313187ace589e405b0148c2193efeb9ffe1597952131fd8a"
+    },
+    {
+      "path": "src/firebase.js",
+      "bytes": 2556,
+      "sha256": "00205500e8513ebf3990dbfff356e86790f5e49fc00ef9bcdbfe7796a16fec7a"
+    },
+    {
+      "path": "src/game-data.js",
+      "bytes": 7104,
+      "sha256": "136c1f62815b1e3d7a6f6bb39f649561d072f8cec27143cd2f143c50104ba586"
+    },
+    {
+      "path": "src/golden-sample-spec.js",
+      "bytes": 856,
+      "sha256": "2ec6939c0502a718d09a39ca0cc33afd2b0f1e796ba5997bb6d850352b60cead"
+    },
+    {
+      "path": "src/golden-slice-certification.js",
+      "bytes": 3841,
+      "sha256": "e1eb3f7094fae93f359b6e6559a44bbcf4d39c6d8adf27cda015f8a4091c425a"
+    },
+    {
+      "path": "src/guardian-council-system.js",
+      "bytes": 6365,
+      "sha256": "8f2480a8a40fe7bf6b7505decfee895fa39662133ee8077e083d5e1ba096879c"
+    },
+    {
+      "path": "src/hero-archetype-system.js",
+      "bytes": 2170,
+      "sha256": "91e264ed0a598364a3ed91e6214e7f9a7a8fb94be0f0ae05e4827e7f7f6e1702"
+    },
+    {
+      "path": "src/hero-classes.js",
+      "bytes": 4855,
+      "sha256": "66e7a71c41ea70d61c6b857f8c1aa9e2d893e20b698d4ff2f00141b395139d30"
+    },
+    {
+      "path": "src/hero-mastery.js",
+      "bytes": 2535,
+      "sha256": "432bab1e095d25c64c8fdeae57a47709540818ea06dbc122bb206dbc7e3388ad"
+    },
+    {
+      "path": "src/hero-visual-loadout.js",
+      "bytes": 11118,
+      "sha256": "12fd42a595645a2459b50006a2b9e138ad011ebf47aad02013f3fe2849a15025"
+    },
+    {
+      "path": "src/ip-asset-library-v15.js",
+      "bytes": 97093,
+      "sha256": "862458d11b4b19d3dcee0a64600ba65aefdef549f83b85517e7398b0d12517d9"
+    },
+    {
+      "path": "src/ip-knowledge-megabase-v4.js",
+      "bytes": 4486,
+      "sha256": "44ddaea993d9ceebee904bea55a7514a9ffff86b7b06f1aeccdf934750f2eee4"
+    },
+    {
+      "path": "src/main.js",
+      "bytes": 394919,
+      "sha256": "29d9ad17e6e0f8aa7a7c2fd8445c64ba7bac1ed6fe1ca77b4c583ae156ef9118"
+    },
+    {
+      "path": "src/premium-assets.js",
+      "bytes": 34087,
+      "sha256": "35400631ae31d9698097a305f3b9ff5ad8f103f6497a20e10c297d8a63c179fb"
+    },
+    {
+      "path": "src/production-console.js",
+      "bytes": 12630,
+      "sha256": "64dd554b548264d4518ca45473e9a0a63076a2ccb4f9b21bd145e2365db45bfa"
+    },
+    {
+      "path": "src/run-director.js",
+      "bytes": 4454,
+      "sha256": "f0d6d7ea3d16e6b35f17b1a6be59578287e713cb5bde1c473a76fbd3faa7c757"
+    },
+    {
+      "path": "src/runtime-art-harmonizer.js",
+      "bytes": 2608,
+      "sha256": "62a73bf9367ef6f494667689f591f1bb52bf448d7475299564fc972dd019a074"
+    },
+    {
+      "path": "src/runtime-lifecycle.js",
+      "bytes": 5790,
+      "sha256": "94d1b0dd412e288e0caabf453dcda140f7c561a77c6752820247d40859b49201"
+    },
+    {
+      "path": "src/runtime/action-asset-assurance-director-v125.js",
+      "bytes": 11991,
+      "sha256": "2ffd123779952584cb55b5241de50cc9cc1b07f372198b382ac5cf9122ec818e"
+    },
+    {
+      "path": "src/runtime/app-state-machine-v103.js",
+      "bytes": 3055,
+      "sha256": "78475f2c0a7419bf2b7ce77907a50839523b156336cdf2f55cea7ed1bbe031e0"
+    },
+    {
+      "path": "src/runtime/art-approval-pipeline-v115.js",
+      "bytes": 1829,
+      "sha256": "f8b2d4f7f077eeec59f6b4387382da490159ed1e496e2ddf4150690808c90958"
+    },
+    {
+      "path": "src/runtime/asset-approval-pipeline-v117.js",
+      "bytes": 2863,
+      "sha256": "ebb49bbc22fa55575e560e8f31a5d3a10fcb642089375ca3dbc48198e31702f7"
+    },
+    {
+      "path": "src/runtime/asset-lineage-assurance-director-v131.js",
+      "bytes": 5456,
+      "sha256": "3c781e7c1eb89a9861fb5caf2ce3d8a7398853573202ee490cd6a8a1f9115d69"
+    },
+    {
+      "path": "src/runtime/asset-presence-enforcer.js",
+      "bytes": 6579,
+      "sha256": "6c56387457bcf0499f49aad29e77f63409f1858a8b637d351de692d4a0b7f159"
+    },
+    {
+      "path": "src/runtime/asset-refinement-assurance-director-v129.js",
+      "bytes": 8789,
+      "sha256": "dc20986ecb125625e57270542dfb7fe36f0ab47c0845948776e006a453e9dcc6"
+    },
+    {
+      "path": "src/runtime/automation-director-v22.js",
+      "bytes": 1627,
+      "sha256": "9db8dd45d4be72e4751cba94239cc65f65ea0fc64ff69e65d935021c55f23834"
+    },
+    {
+      "path": "src/runtime/battlefield-clarity-director-v122.js",
+      "bytes": 7120,
+      "sha256": "eb17f5552575d49d9aa71d35cb363328f1a5150acc2ed6eecd4ea54580a3d9a2"
+    },
+    {
+      "path": "src/runtime/battlefield-prop-system.js",
+      "bytes": 8233,
+      "sha256": "59cc3ef339f637fff5ff08a2e5471d5222cdabd54e64af549631fd25b3e5e9b8"
+    },
+    {
+      "path": "src/runtime/battlefield-sprite-director-v16.js",
+      "bytes": 6677,
+      "sha256": "68371aaef7c56bca327b34a92b993dbed4a4b2d1e9b15d52170f13a7bfb0c370"
+    },
+    {
+      "path": "src/runtime/battlefield-visibility-assurance-director-v128.js",
+      "bytes": 12473,
+      "sha256": "ab627c9f99f2c0e1e46df9b4a52f36a0a45d1d4ef59f53e81c9b852d6b5b3976"
+    },
+    {
+      "path": "src/runtime/boss-encounter-assurance-director-v126.js",
+      "bytes": 13754,
+      "sha256": "5528ea81f11addaa5a727ef8132cb43cf6448878734493806825c5c786cfb577"
+    },
+    {
+      "path": "src/runtime/boss-identity-assurance-director-v133.js",
+      "bytes": 11543,
+      "sha256": "673f92462565245e8a474b08e628d2065bd3804c738d306bea2a5fea77d1b977"
+    },
+    {
+      "path": "src/runtime/boss-tactical-assurance-director-v127.js",
+      "bytes": 14855,
+      "sha256": "9b8a3263f9ee809b6d9d609b8c069a14bcc857eb5cb4d3e70a0e0b559e576560"
+    },
+    {
+      "path": "src/runtime/browser-reliability-lab.js",
+      "bytes": 10066,
+      "sha256": "4f739f496533ac614612668459990b8655ba661a14123b382555ae045b9d7716"
+    },
+    {
+      "path": "src/runtime/bundle-marker-gate-v119.js",
+      "bytes": 477,
+      "sha256": "821a08ad8db99bd626f4fd770e69803f30eca3143eae6a80958373960d715f20"
+    },
+    {
+      "path": "src/runtime/combat-art-polish-director-v114.js",
+      "bytes": 13793,
+      "sha256": "3fa0aee1f654eda6c90c3833a886713f3713413e841dc2fcf56304168d0c27bb"
+    },
+    {
+      "path": "src/runtime/combat-art-polish-policy-v114.js",
+      "bytes": 4256,
+      "sha256": "9f47aef3d1d0e6cb671b5996d45baa631844811fda6c0bc7d3c68449a41b82c1"
+    },
+    {
+      "path": "src/runtime/combat-art-runtime-policy-v113.js",
+      "bytes": 662,
+      "sha256": "bc38124fd6c32c6cdae5a854e7b3061295088a0cc3ba12bd4ad10c0c47f6e949"
+    },
+    {
+      "path": "src/runtime/combat-visual-director-v112.js",
+      "bytes": 49524,
+      "sha256": "5c0108155e90c140205af168b75abcaf53ea3fa435492976cac01ea11a2e4126"
+    },
+    {
+      "path": "src/runtime/core-foundation-director-v101.js",
+      "bytes": 4192,
+      "sha256": "7b418eebdef189f1b29304d1b8c24941899c4611b276c7bd95e70876cf4ac102"
+    },
+    {
+      "path": "src/runtime/cross-platform-shell-v112.js",
+      "bytes": 8766,
+      "sha256": "d5b96b64aa7cef90203f7916c9788cd74013ff0453ac4be1989e7a0bc3788b0c"
+    },
+    {
+      "path": "src/runtime/first-presentation-director-v107.js",
+      "bytes": 6823,
+      "sha256": "db750e8a60563019117ea5ab97eb0eba6e7604dd85f01755cb54fddca96a80ae"
+    },
+    {
+      "path": "src/runtime/hero-hud-polish-v120.js",
+      "bytes": 578,
+      "sha256": "bf806d6100c09c3d4c222142675b103180369887e6f27efbea1c274db69aa447"
+    },
+    {
+      "path": "src/runtime/korean-language-guard.js",
+      "bytes": 2330,
+      "sha256": "436364a05646fa9b8ce43cde59f50f4c8faad83b46307ff3610da84ad65b3392"
+    },
+    {
+      "path": "src/runtime/live-combat-director-v121.js",
+      "bytes": 6838,
+      "sha256": "8521daa4ccad74ec1d2aaedd8b83af7ec089eb4b35d9f808e3518022aabd3acb"
+    },
+    {
+      "path": "src/runtime/mobile-hud-director-v23.js",
+      "bytes": 15313,
+      "sha256": "474903e3b857ba17820cdb673e9e28c2478bb3dfe6b77cf6af82b7dd8b23b8b1"
+    },
+    {
+      "path": "src/runtime/native-input-policy-v231.js",
+      "bytes": 349,
+      "sha256": "0a6794c7529befff23022abba0106a72ac9552b4609b1853bc32b8a8cd530d6e"
+    },
+    {
+      "path": "src/runtime/release-assurance-director-v124.js",
+      "bytes": 10741,
+      "sha256": "13ec0aa0f6393c6ad1676094ddbef7b035fc094a72692b69479ace690711b532"
+    },
+    {
+      "path": "src/runtime/runtime-visual-audit.js",
+      "bytes": 1951,
+      "sha256": "a1ffb32d52088452c49151dd0c45e85b1809b199ba365b351ad3afad155e4c7c"
+    },
+    {
+      "path": "src/runtime/save-schema.js",
+      "bytes": 1744,
+      "sha256": "dad0222aa855e5938a0c66898095e9d8b684bf80f40604bb7e88bdda3451c6eb"
+    },
+    {
+      "path": "src/runtime/silhouette-assurance-director-v132.js",
+      "bytes": 11265,
+      "sha256": "abd4bdbc2fc3342412ed54ffa85f2a8d8af04b146786f6e4254b55b963cde0b0"
+    },
+    {
+      "path": "src/runtime/static-deployment-gate-v118.js",
+      "bytes": 887,
+      "sha256": "2f6123c25e0bc3ff6c32c7d6164396016aaef79798c1cd3b5b9a6e9f26cacc31"
+    },
+    {
+      "path": "src/runtime/title-presentation-guard-v123.js",
+      "bytes": 1039,
+      "sha256": "59cdd6c7e03ffef3a09ff0fe5c71806e5b6045c61af337f9fd815cd3fd0802e6"
+    },
+    {
+      "path": "src/runtime/visual-integration-director.js",
+      "bytes": 5082,
+      "sha256": "c022684c0c884ba3be59bee1259e1df60b6eddda01998a50b5f145aa88a7e151"
+    },
+    {
+      "path": "src/runtime/wave-flow-guard.js",
+      "bytes": 4268,
+      "sha256": "da69e1823f74fbbea37529d1742573785793c07895ba9f2e3be4b4a3fdc88393"
+    },
+    {
+      "path": "src/runtime/wave-reliability-director.js",
+      "bytes": 10822,
+      "sha256": "b6be712f7af980635b797e7330b07f087c54792c1b5531712fc733035137f412"
+    },
+    {
+      "path": "src/sound-engine.js",
+      "bytes": 2311,
+      "sha256": "ce7fa43f573e0a2a9a45bb618eef352c8e5d4e508b1d44822aeb95009f689fa5"
+    },
+    {
+      "path": "src/stage-progression.js",
+      "bytes": 1740,
+      "sha256": "99e6e0f30abcf7cd10f9e1415a461a6408d86cfa35555539acefee5f23392fd3"
+    },
+    {
+      "path": "src/style.css",
+      "bytes": 298521,
+      "sha256": "475696b6e622d25cbb92d8332b32e89717f40e9acf797e75671422f35eb5f116"
+    },
+    {
+      "path": "src/ui-layout-contract.js",
+      "bytes": 3639,
+      "sha256": "d1beb1754aa00a4fe000c714a5fb9e4f6565c92ae651ceff5b4a34d70b935b72"
+    },
+    {
+      "path": "src/ui-layout-manager.js",
+      "bytes": 10136,
+      "sha256": "48637b1f2b34f3d74f2d66475136a13cc5c8e58a1bfb32f3e6c566897003e1b0"
+    },
+    {
+      "path": "src/version-policy.js",
+      "bytes": 1739,
+      "sha256": "6f30e779ccd4d500512e626ca509668cafde19276cdf19b50a98e4ef640be693"
+    }
+  ]
+}

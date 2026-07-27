@@ -1,5 +1,6 @@
-export const MOBILE_HUD_V23_VERSION = '23.2.0';
+export const MOBILE_HUD_V23_VERSION = '23.3.0';
 export const MOBILE_HUD_RESILIENCE_V134_ID = 'DD-MOBILE-HUD-RESILIENCE-V134';
+export const MOBILE_HUD_STABILITY_V135_ID = 'DD-MOBILE-HUD-STABILITY-V135';
 
 const CONTEXT_TARGETS = Object.freeze([
   Object.freeze({ id: 'wave-recovery', key: 'recovery', priority: 4 }),
@@ -53,13 +54,19 @@ export function resolveMobileViewportV23(metrics = {}) {
   const offsetTop = Math.max(0, finite(metrics.offsetTop, 0));
   const offsetRight = Math.max(0, layoutWidth - width - offsetLeft);
   const offsetBottom = Math.max(0, layoutHeight - height - offsetTop);
+  const heightLoss = Math.max(0, layoutHeight - height - offsetTop);
+  const visualScale = Math.max(0.1, finite(metrics.visualScale, 1));
   const phone = layoutWidth <= 820;
   const compact = layoutWidth <= 430;
   const micro = layoutWidth <= 360;
   const short = height <= 620;
   const landscape = phone && layoutWidth > layoutHeight;
-  const keyboard = phone && offsetBottom >= KEYBOARD_THRESHOLD_PX;
-  const scale = landscape ? 0.96 : compact ? 0.98 : 1;
+  const zoomed = visualScale > 1.05;
+  const editableFocused = Boolean(metrics.editableFocused || metrics.keyboardHint);
+  const severeViewportLoss = height / layoutHeight <= 0.68;
+  const keyboard = phone && !zoomed && heightLoss >= KEYBOARD_THRESHOLD_PX && (editableFocused || severeViewportLoss);
+  const browserChrome = phone && !keyboard && !zoomed && heightLoss >= 36;
+  const scale = zoomed ? Math.max(0.72, Math.min(0.9, 1 / visualScale)) : landscape ? 0.96 : compact ? 0.98 : 1;
   const controlReserve = landscape ? 98 : micro ? 120 : compact ? 128 : 138;
   return Object.freeze({
     width,
@@ -70,12 +77,17 @@ export function resolveMobileViewportV23(metrics = {}) {
     offsetTop,
     offsetRight,
     offsetBottom,
+    heightLoss,
+    visualScale,
     phone,
     compact,
     micro,
     short,
     landscape,
+    zoomed,
+    editableFocused,
     keyboard,
+    browserChrome,
     scale,
     controlReserve
   });
@@ -100,7 +112,7 @@ export function transitionEmergencyV23(previous = {}, overlapCount = 0) {
 export default class MobileHudDirectorV23 {
   constructor() {
     this.version = MOBILE_HUD_V23_VERSION;
-    this.id = MOBILE_HUD_RESILIENCE_V134_ID;
+    this.id = MOBILE_HUD_STABILITY_V135_ID;
     this.elapsed = 0;
     this.refreshQueued = false;
     this.refreshFrame = 0;
@@ -224,13 +236,17 @@ export default class MobileHudDirectorV23 {
 
   getViewportProfile() {
     const viewport = window.visualViewport;
+    const active = document.activeElement;
+    const editableFocused = Boolean(active?.matches?.('input, textarea, select, [contenteditable="true"], [contenteditable=""]'));
     return resolveMobileViewportV23({
       visualWidth: viewport?.width || window.innerWidth || 1,
       visualHeight: viewport?.height || window.innerHeight || 1,
       layoutWidth: window.innerWidth || viewport?.width || 1,
       layoutHeight: window.innerHeight || viewport?.height || 1,
       offsetLeft: viewport?.offsetLeft || 0,
-      offsetTop: viewport?.offsetTop || 0
+      offsetTop: viewport?.offsetTop || 0,
+      visualScale: viewport?.scale || 1,
+      editableFocused
     });
   }
 
@@ -244,6 +260,8 @@ export default class MobileHudDirectorV23 {
     body.classList.toggle('mobile-hud-v23-short', profile.phone && profile.short);
     body.classList.toggle('mobile-hud-v23-landscape', profile.landscape);
     body.classList.toggle('mobile-hud-v23-keyboard', profile.keyboard);
+    body.classList.toggle('mobile-hud-v23-browser-chrome', profile.browserChrome);
+    body.classList.toggle('mobile-hud-v23-zoomed', profile.zoomed);
     body.classList.remove('mobile-hud-v22', 'mobile-hud-v22-narrow', 'mobile-hud-v22-landscape', 'mobile-hud-v22-emergency');
 
     body.style.setProperty('--mobile-hud-scale-v23', String(profile.scale));
@@ -331,6 +349,8 @@ export default class MobileHudDirectorV23 {
       'mobile-hud-v23-short',
       'mobile-hud-v23-landscape',
       'mobile-hud-v23-keyboard',
+      'mobile-hud-v23-browser-chrome',
+      'mobile-hud-v23-zoomed',
       'mobile-hud-v23-emergency'
     );
     for (const property of [

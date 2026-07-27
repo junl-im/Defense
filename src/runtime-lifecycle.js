@@ -95,6 +95,53 @@ export class TaskScope {
   }
 }
 
+export class FrameScope {
+  constructor(name = 'frames') {
+    this.name = name;
+    this.generation = 0;
+    this.frames = new Map();
+    this.namedFrames = new Map();
+  }
+
+  request(callback, { key = '', guard = null } = {}) {
+    if (typeof callback !== 'function') throw new TypeError(`${this.name} frame requires a callback.`);
+    if (key) this.cancel(key);
+    const generation = this.generation;
+    let frame = 0;
+    frame = window.requestAnimationFrame((timestamp) => {
+      this.frames.delete(frame);
+      if (key && this.namedFrames.get(key) === frame) this.namedFrames.delete(key);
+      if (generation !== this.generation) return;
+      if (guard && !guard()) return;
+      callback(timestamp);
+    });
+    this.frames.set(frame, { key, generation });
+    if (key) this.namedFrames.set(key, frame);
+    return frame;
+  }
+
+  cancel(keyOrFrame) {
+    const frame = typeof keyOrFrame === 'string' ? this.namedFrames.get(keyOrFrame) : keyOrFrame;
+    if (!frame || !this.frames.has(frame)) return false;
+    const task = this.frames.get(frame);
+    window.cancelAnimationFrame(frame);
+    this.frames.delete(frame);
+    if (task.key && this.namedFrames.get(task.key) === frame) this.namedFrames.delete(task.key);
+    return true;
+  }
+
+  cancelAll() {
+    this.generation += 1;
+    for (const frame of this.frames.keys()) window.cancelAnimationFrame(frame);
+    this.frames.clear();
+    this.namedFrames.clear();
+  }
+
+  get diagnostics() {
+    return { name: this.name, generation: this.generation, pending: this.frames.size, named: this.namedFrames.size };
+  }
+}
+
 export class RuntimeLifecycle {
   constructor() {
     this.events = new EventRegistry('game');
@@ -102,16 +149,19 @@ export class RuntimeLifecycle {
     this.run = new TaskScope('run');
     this.effects = new TaskScope('effects');
     this.system = new TaskScope('system');
+    this.frames = new FrameScope('frames');
   }
 
   beginRun() {
     this.run.cancelAll();
     this.effects.cancelAll();
+    this.frames.cancelAll();
   }
 
   endRun() {
     this.run.cancelAll();
     this.effects.cancelAll();
+    this.frames.cancelAll();
   }
 
   dispose() {
@@ -120,6 +170,7 @@ export class RuntimeLifecycle {
     this.run.cancelAll();
     this.effects.cancelAll();
     this.system.cancelAll();
+    this.frames.cancelAll();
   }
 
   get diagnostics() {
@@ -128,7 +179,8 @@ export class RuntimeLifecycle {
       ui: this.ui.diagnostics,
       run: this.run.diagnostics,
       effects: this.effects.diagnostics,
-      system: this.system.diagnostics
+      system: this.system.diagnostics,
+      frames: this.frames.diagnostics
     };
   }
 }

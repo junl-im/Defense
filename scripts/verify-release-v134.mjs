@@ -24,25 +24,26 @@ const simulation = JSON.parse(read('logs/simulations/MOBILE_UI_SIMULATION_v23.la
 const failures = [];
 const check = (ok, label) => { if (!ok) failures.push(label); };
 
-check(pkg.version === '1.0.34', 'package version');
-check(pkg.dokkaebi?.releaseVersion === '1.0.34', 'package release version');
-check(pkg.dokkaebi?.lineageVersion === '23.2.0', 'package lineage version');
-check(pkg.dokkaebi?.buildId === 'b24.34' && pkg.dokkaebi?.cacheRevision === '1.0.34-b24.34', 'package build identity');
-check(publicVersion.releaseVersion === '1.0.34' && publicVersion.lineageVersion === '23.2.0' && publicVersion.buildId === 'b24.34', 'public version identity');
-check(versionPolicy.includes("PUBLIC_GAME_VERSION = '1.0.34'") && versionPolicy.includes("LEGACY_LINEAGE_VERSION = '23.2.0'") && versionPolicy.includes('BUILD_REVISION = 34'), 'version policy identity');
-check(main.includes("const GAME_VERSION = '1.0.34';"), 'main version');
-check(html.includes("const RELEASE_VERSION = '1.0.34';") && html.includes("const BUILD_ID = 'b24.34';") && html.includes('release-v134-b24-34'), 'index cache identity');
-check(sw.includes("const RELEASE_VERSION = '1.0.34';") && sw.includes("const BUILD_ID = 'b24.34';"), 'service worker identity');
-check(bootstrap.includes("const RELEASE_VERSION = '1.0.34';") && bootstrap.includes("const BUILD_ID = 'b24.34';"), 'static bootstrap identity');
+const releaseParts = String(pkg.version || '').split('.').map(Number);
+const releaseAtLeastV134 = releaseParts.length === 3 && releaseParts.every(Number.isFinite)
+  && (releaseParts[0] > 1 || (releaseParts[0] === 1 && (releaseParts[1] > 0 || releaseParts[2] >= 34)));
+const revision = Number(pkg.dokkaebi?.buildRevision || 0);
+check(releaseAtLeastV134 && pkg.dokkaebi?.buildEpoch === 24 && revision >= 34 && pkg.dokkaebi?.buildId === `b24.${revision}`, 'current package preserves v1.0.34 foundation');
+check(publicVersion.releaseVersion === pkg.version && publicVersion.lineageVersion === pkg.dokkaebi?.lineageVersion && publicVersion.buildId === pkg.dokkaebi?.buildId, 'current public version identity');
+check(versionPolicy.includes(`PUBLIC_GAME_VERSION = '${pkg.version}'`) && versionPolicy.includes(`LEGACY_LINEAGE_VERSION = '${pkg.dokkaebi?.lineageVersion}'`) && versionPolicy.includes(`BUILD_REVISION = ${revision}`), 'current version policy identity');
+check(main.includes(`const GAME_VERSION = '${pkg.version}';`), 'current main version');
+check(html.includes(`const RELEASE_VERSION = '${pkg.version}';`) && html.includes(`const BUILD_ID = '${pkg.dokkaebi?.buildId}';`), 'current index cache identity');
+check(sw.includes(`const RELEASE_VERSION = '${pkg.version}';`) && sw.includes(`const BUILD_ID = '${pkg.dokkaebi?.buildId}';`), 'current service worker identity');
+check(bootstrap.includes(`const RELEASE_VERSION = '${pkg.version}';`) && bootstrap.includes(`const BUILD_ID = '${pkg.dokkaebi?.buildId}';`), 'current static bootstrap identity');
 
 check(MOBILE_HUD_RESILIENCE_V134_ID === 'DD-MOBILE-HUD-RESILIENCE-V134', 'runtime marker export');
-check(MOBILE_HUD_V23_VERSION === '23.2.0', 'mobile HUD runtime version');
+check(Number(MOBILE_HUD_V23_VERSION.split('.')[1]) >= 2, 'mobile HUD runtime preserves v23.2 foundation');
 check(mobile.includes('syncTargets()') && mobile.includes('lateMountRecoveries') && mobile.includes("{ childList: true, subtree: true }"), 'dynamic mount recovery');
 check(mobile.includes("visualViewport?.addEventListener('scroll'") && mobile.includes('--mobile-visual-bottom-v23'), 'visual viewport tracking');
 check(mobile.includes('suppressedAria') && mobile.includes("setAttribute('aria-hidden', 'true')") && mobile.includes('restoreSuppressedAria'), 'context accessibility restoration');
 check(mobile.includes('transitionEmergencyV23') && mobile.includes('EMERGENCY_CLEAR_FRAMES = 3'), 'emergency hysteresis');
 
-const keyboardProfile = resolveMobileViewportV23({ visualWidth: 390, visualHeight: 520, layoutWidth: 390, layoutHeight: 844 });
+const keyboardProfile = resolveMobileViewportV23({ visualWidth: 390, visualHeight: 520, layoutWidth: 390, layoutHeight: 844, editableFocused: true });
 check(keyboardProfile.phone && keyboardProfile.keyboard && keyboardProfile.offsetBottom === 324, 'keyboard viewport classification');
 const offsetProfile = resolveMobileViewportV23({ visualWidth: 756, visualHeight: 390, layoutWidth: 800, layoutHeight: 390, offsetLeft: 22 });
 check(offsetProfile.offsetLeft === 22 && offsetProfile.offsetRight === 22 && offsetProfile.phone && offsetProfile.landscape, 'offset viewport classification');
@@ -58,8 +59,8 @@ check(!emergency.active, 'emergency clears after frame 3');
 check(css.includes('v1.0.34 Mobile HUD Resilience'), 'v1.0.34 CSS section');
 check(css.includes('min-height: 44px') && css.includes('touch-action: manipulation') && css.includes(':focus-visible'), 'touch and keyboard accessibility CSS');
 check(css.includes('--mobile-visual-left-v23') && css.includes('--mobile-visual-right-v23') && css.includes('--mobile-visual-bottom-v23'), 'visual viewport CSS variables');
-check(simulation.id === 'DD-MOBILE-HUD-RESILIENCE-V134' && simulation.version === '23.2.0', 'simulation identity');
-check(simulation.summary?.testedProfiles === 10 && simulation.summary?.passedProfiles === 10 && simulation.summary?.failedProfiles === 0, '10 profile simulation');
+check(['DD-MOBILE-HUD-RESILIENCE-V134', 'DD-MOBILE-HUD-STABILITY-V135'].includes(simulation.id), 'simulation identity');
+check(simulation.summary?.testedProfiles >= 10 && simulation.summary?.passedProfiles === simulation.summary?.testedProfiles && simulation.summary?.failedProfiles === 0, 'mobile profile simulation preserves v1.0.34 coverage');
 check(simulation.summary?.keyboardProfiles >= 2 && simulation.summary?.offsetProfiles >= 1, 'keyboard and offset simulation coverage');
 
 const requiredDocs = [
@@ -81,4 +82,4 @@ if (failures.length) {
   failures.forEach((label) => console.error(`FAIL ${label}`));
   process.exit(1);
 }
-console.log('PASS v1.0.34 mobile HUD resilience, accessibility, viewport coverage, and handoff contract verified');
+console.log(`PASS v1.0.34 mobile HUD resilience foundation preserved under current release ${pkg.version} / ${pkg.dokkaebi?.buildId}`);

@@ -146,7 +146,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '1.0.34';
+const GAME_VERSION = '1.0.35';
 // const GAME_VERSION = '23.1.0'; historical lineage marker for pre-normalization contracts.
 if (GAME_VERSION !== PUBLIC_GAME_VERSION) throw new Error('Public version policy mismatch');
 function runtimeSpriteMarkup(path, alt = '', className = '') {
@@ -231,6 +231,7 @@ class DokkaebiLuckDefense {
     });
     this.disposed = false;
     this.animationFrameId = 0;
+    this.transientVisuals = new Set();
     this.renderedFrameSerial = 0;
     this.renderFrameWaiters = [];
     this.firstPresentation = null;
@@ -482,6 +483,43 @@ class DokkaebiLuckDefense {
       ...options,
       guard: () => this.runId === runId && (!guard || guard())
     });
+  }
+
+  animateTransientVisual({ duration = 0.3, update, cleanup, guard = null } = {}) {
+    if (typeof update !== 'function' || typeof cleanup !== 'function') throw new TypeError('Transient visual requires update and cleanup callbacks.');
+    const runId = this.runId;
+    const startedAt = this.elapsed;
+    const entry = { frame: 0, finished: false, finish: null };
+    const finish = () => {
+      if (entry.finished) return;
+      entry.finished = true;
+      if (entry.frame) this.lifecycle.frames.cancel(entry.frame);
+      entry.frame = 0;
+      this.transientVisuals.delete(entry);
+      cleanup();
+    };
+    entry.finish = finish;
+    const step = () => {
+      if (this.disposed || this.runId !== runId || (guard && !guard())) {
+        finish();
+        return;
+      }
+      const progress = clamp((this.elapsed - startedAt) / Math.max(0.001, Number(duration) || 0.3), 0, 1);
+      update(progress);
+      if (progress >= 1) {
+        finish();
+        return;
+      }
+      entry.frame = this.lifecycle.frames.request(step, { guard: () => !this.disposed && this.runId === runId });
+    };
+    this.transientVisuals.add(entry);
+    step();
+    return finish;
+  }
+
+  clearTransientVisuals() {
+    for (const entry of [...this.transientVisuals]) entry.finish?.();
+    this.transientVisuals.clear();
   }
 
   assertRequiredUI() {
@@ -3871,6 +3909,7 @@ class DokkaebiLuckDefense {
   }
 
   resetTransientUi() {
+    this.clearTransientVisuals();
     this.lifecycle.ui.cancel('mission-hide');
     this.lifecycle.ui.cancel('mission-collapse');
     this.lifecycle.ui.cancel('evolution-hide');
@@ -6392,12 +6431,19 @@ class DokkaebiLuckDefense {
     const mesh=this.mesh(new THREE.RingGeometry(.5,.62,32),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.7,side:THREE.DoubleSide,depthWrite:false}),position.x,.09,position.z,false,false);
     mesh.rotation.x=-Math.PI/2;
     this.effectRoot.add(mesh);
-    const start=this.elapsed;
-    const animate=()=>{
-      const t=(this.elapsed-start)/.42;
-      if(t>=1){this.effectRoot.remove(mesh);mesh.geometry.dispose();mesh.material.dispose();return;}
-      mesh.scale.setScalar(lerp(.3,radius,t));mesh.material.opacity=(1-t)*.65;requestAnimationFrame(animate);
-    };animate();
+    this.animateTransientVisual({
+      duration: .42,
+      guard: () => Boolean(mesh.parent),
+      update: (t) => {
+        mesh.scale.setScalar(lerp(.3,radius,t));
+        mesh.material.opacity=(1-t)*.65;
+      },
+      cleanup: () => {
+        mesh.removeFromParent();
+        mesh.geometry.dispose();
+        mesh.material.dispose();
+      }
+    });
   }
 
   spawnSummonEffect(position,color,rank) {
@@ -6405,8 +6451,19 @@ class DokkaebiLuckDefense {
     this.spawnParticles(position.clone().add(new THREE.Vector3(0,1,0)),color,14+rank*4,3.5+rank*.45);
     const beam=this.mesh(new THREE.CylinderGeometry(.18,.55,5.5,12,1,true),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.32,side:THREE.DoubleSide,depthWrite:false}),position.x,2.8,position.z,false,false);
     this.effectRoot.add(beam);
-    const start=this.elapsed;
-    const animate=()=>{const t=(this.elapsed-start)/.45;if(t>=1){this.effectRoot.remove(beam);beam.geometry.dispose();beam.material.dispose();return;}beam.scale.x=beam.scale.z=1+t*.9;beam.material.opacity=(1-t)*.32;requestAnimationFrame(animate);};animate();
+    this.animateTransientVisual({
+      duration: .45,
+      guard: () => Boolean(beam.parent),
+      update: (t) => {
+        beam.scale.x=beam.scale.z=1+t*.9;
+        beam.material.opacity=(1-t)*.32;
+      },
+      cleanup: () => {
+        beam.removeFromParent();
+        beam.geometry.dispose();
+        beam.material.dispose();
+      }
+    });
   }
 
   spawnMergeEffect(position,color,rank) {
@@ -6433,8 +6490,16 @@ class DokkaebiLuckDefense {
     const geometry=new THREE.BufferGeometry().setFromPoints(points);
     const material=new THREE.LineBasicMaterial({color,transparent:true,opacity:.9});
     const line=new THREE.Line(geometry,material);this.effectRoot.add(line);
-    const born=this.elapsed;
-    const fade=()=>{const t=(this.elapsed-born)/.16;if(t>=1){this.effectRoot.remove(line);geometry.dispose();material.dispose();return;}material.opacity=1-t;requestAnimationFrame(fade);};fade();
+    this.animateTransientVisual({
+      duration: .16,
+      guard: () => Boolean(line.parent),
+      update: (t) => { material.opacity=1-t; },
+      cleanup: () => {
+        line.removeFromParent();
+        geometry.dispose();
+        material.dispose();
+      }
+    });
   }
 
   lerpAngle(a,b,t) { let diff=(b-a+Math.PI)%(Math.PI*2)-Math.PI;if(diff<-Math.PI)diff+=Math.PI*2;return a+diff*t; }
@@ -6674,6 +6739,10 @@ class DokkaebiLuckDefense {
       if (ui.bossBreakProgress) ui.bossBreakProgress.style.width = '0%';
       if (ui.bossBreakValue) ui.bossBreakValue.textContent = '0%';
       if (ui.bossBreakState) ui.bossBreakState.textContent = '원소 반응과 치명타로 파훼';
+      ui.bossHealth.querySelector('.boss-health-track')?.setAttribute('aria-valuenow', '0');
+      ui.bossHealth.querySelector('.boss-health-track')?.setAttribute('aria-valuetext', '보스 체력 0%');
+      ui.bossBreak?.setAttribute('aria-valuenow', '0');
+      ui.bossBreak?.setAttribute('aria-valuetext', '보스 파훼 0%');
       return;
     }
     const percent = clamp(boss.hp / boss.maxHp, 0, 1);
@@ -6681,14 +6750,20 @@ class DokkaebiLuckDefense {
     const breakGauge = clamp(breakState?.gauge || 0, 0, 100);
     ui.bossBreakProgress.style.width = `${breakState?.staggerRemaining > 0 ? 100 : breakGauge}%`;
     ui.bossBreakValue.textContent = breakState?.staggerRemaining > 0 ? `${breakState.staggerRemaining.toFixed(1)}s` : `${Math.round(breakGauge)}%`;
+    ui.bossBreak.setAttribute('aria-valuenow', String(Math.round(breakState?.staggerRemaining > 0 ? 100 : breakGauge)));
+    ui.bossBreak.setAttribute('aria-valuetext', breakState?.staggerRemaining > 0 ? `보스 파훼 완료, 경직 ${breakState.staggerRemaining.toFixed(1)}초` : `보스 파훼 ${Math.round(breakGauge)}%`);
     ui.bossBreakState.textContent = breakState?.staggerRemaining > 0 ? '균형 붕괴 · 받는 피해 +22%' : breakState?.immunityRemaining > 0 ? `재정비 ${breakState.immunityRemaining.toFixed(1)}s` : '원소 반응과 치명타로 파훼';
     ui.bossBreak.classList.toggle('staggered', breakState?.staggerRemaining > 0);
     ui.bossBreak.classList.toggle('immune', breakState?.immunityRemaining > 0 && breakState?.staggerRemaining <= 0);
     const intentName = this.getBossIntentName(boss);
     const hudState = getBossHudState(boss, intentName);
     ui.bossHealthName.textContent = ENEMY_TYPES[boss.type].name;
-    ui.bossHealthValue.textContent = `${Math.ceil(percent * 100)}%`;
+    const bossHealthPercent = Math.ceil(percent * 100);
+    ui.bossHealthValue.textContent = `${bossHealthPercent}%`;
     ui.bossHealthProgress.style.width = `${percent * 100}%`;
+    const bossHealthTrack = ui.bossHealth.querySelector('.boss-health-track');
+    bossHealthTrack?.setAttribute('aria-valuenow', String(bossHealthPercent));
+    bossHealthTrack?.setAttribute('aria-valuetext', `${ENEMY_TYPES[boss.type].name} 체력 ${bossHealthPercent}%`);
     ui.bossPhase.textContent = `PHASE ${hudState.phase}`;
     ui.bossIntentLabel.textContent = `다음 공격 · ${intentName}`;
     ui.bossIntentType.textContent = `${hudState.type.label} 패턴`;
@@ -7058,6 +7133,7 @@ class DokkaebiLuckDefense {
       waiter.resolve(false);
     }
     this.firstPresentation?.dispose?.();
+    this.clearTransientVisuals();
     this.lifecycle?.dispose();
     const disposables = [
       this.releaseAssuranceV124,

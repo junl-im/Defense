@@ -25,6 +25,9 @@ const version = json('public/version.json');
 const audit = json('public/assets/visual-v133/boss-identity-audit-v133.json');
 const registry = json('public/assets/visual-v133/boss-identity-registry-v133.json');
 const manifest = json('public/assets/visual-v133/boss-identity-manifest-v133.json');
+const currentModuleShell = existsSync(path.join(root, 'public/assets/system-v135/runtime-module-shell-v135.json'))
+  ? json('public/assets/system-v135/runtime-module-shell-v135.json')
+  : null;
 const main = text('src/main.js');
 const css = text('src/style.css');
 const sw = text('public/sw.js');
@@ -64,7 +67,13 @@ check(registry.summary?.bossProfiles === 3 && registry.summary?.newFinalCharacte
 for (const entry of manifest.files || []) {
   const relative = entry.path.startsWith('src/') ? entry.path : path.join('public', entry.path);
   check(existsSync(path.join(root, relative)), `manifest missing ${entry.path}`);
-  check(sha256(relative) === entry.sha256, `manifest hash ${entry.path}`);
+  const supersededRuntime = entry.path === 'src/runtime/boss-identity-assurance-director-v133.js' && pkg.version !== '1.0.33';
+  if (supersededRuntime) {
+    const currentEntry = currentModuleShell?.files?.find((file) => file.path === entry.path);
+    check(Boolean(currentEntry) && sha256(relative) === currentEntry.sha256, `current release hash ${entry.path}`);
+  } else {
+    check(sha256(relative) === entry.sha256, `manifest hash ${entry.path}`);
+  }
 }
 
 check(main.includes('BossIdentityAssuranceDirectorV133') && main.includes("'boss-identity-assurance-v133'") && main.includes('bossIdentityAssuranceV133: game.bossIdentityAssuranceV133?.report'), 'main integration');
