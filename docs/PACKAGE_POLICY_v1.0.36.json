@@ -1,0 +1,30 @@
+{
+  "schema": "DD-PACKAGE-POLICY-1.0",
+  "id": "DD-STORAGE-HYGIENE-V136",
+  "releaseVersion": "1.0.36",
+  "buildId": "b24.36",
+  "excludeFromFullSourceZip": [
+    "dist/",
+    "node_modules/",
+    "logs/* except logs/README.md",
+    ".git/",
+    "*.zip",
+    "*.zNN",
+    ".DS_Store",
+    "Thumbs.db"
+  ],
+  "preserve": [
+    "public/",
+    "production/",
+    "src/",
+    "scripts/",
+    "docs/",
+    ".github/",
+    "logs/README.md"
+  ],
+  "rationale": {
+    "dist/": "Generated static deployment output; duplicates public runtime assets and can be regenerated.",
+    "node_modules/": "Local dependency installation; not a source artifact.",
+    "logs/": "Generated verification, audit, package, and patch output; README contract is preserved."
+  }
+}
