@@ -1,12 +1,12 @@
-> Current improvement patch: **v1.0.38 / b24.38** - ACTIVE PRESENTATION SCOPE CI HOTFIX
+> Current improvement patch: **v1.0.39 / b24.39** - VITE DIST PORTABILITY HOTFIX
 
-# PROJECT HANDOFF - RELEASE 1.0.38
+# PROJECT HANDOFF - RELEASE 1.0.39
 
-- Project: `DokkaebiLuckDefense3D_FULL_v1.0.38_CI_PRESENTATION_SCOPE_VERIFIED`
-- Public game version: `1.0.38`
-- Lineage version: `23.6.0`
-- Build ID: `b24.38`
-- Base: `v1.0.37 / b24.37`
+- Project: `DokkaebiLuckDefense3D_FULL_v1.0.39_CI_PORTABILITY_VERIFIED`
+- Public game version: `1.0.39`
+- Lineage version: `23.7.0`
+- Build ID: `b24.39`
+- Base: `v1.0.38 / b24.38`
 
 ## 절대 규칙
 
@@ -32,7 +32,7 @@
 
 ```bash
 npm run verify
-npm run verify:release:v138
+npm run verify:release:v139
 npm run build
 npm run verify:dist:v123
 npm run verify:dist:v124
@@ -40,10 +40,11 @@ npm run verify:dist:v135
 npm run verify:dist:v136
 npm run verify:dist:v137
 npm run verify:dist:v138
-npm run stage:package:v138
-npm run verify:package:v138
-npm run create:patch:v138
-npm run verify:patch:v138
+npm run verify:dist:v139
+npm run stage:package:v139
+npm run verify:package:v139
+npm run create:patch:v139
+npm run verify:patch:v139
 npm run hygiene:check
 ```
 
@@ -82,6 +83,18 @@ npm run hygiene:check
 - 100웨이브 자원 상한과 에셋 승인·격리 경계를 자동 검증한다.
 
 ## 인수인계 내역
+
+### 2026-07-27 — v1.0.39 / b24.39
+
+- 작업 목표: 실제 Vite 빌드가 성공한 뒤 `verify:dist:v134`가 존재하지 않는 `dist/src/main.js`·`dist/src/style.css`를 강제해 실패한 CI 오탐을 수정하고, 남은 구형 dist 검증기의 소스 경로 의존성을 전수 확인한다.
+- 주요 변경 파일: `scripts/lib/verify-dist-v134-foundation.mjs`, `scripts/verify-dist-v134.mjs`, `scripts/verify-dist-v135.mjs`, `scripts/verify-dist-v136.mjs`, `scripts/audit-dist-verifier-portability-v139.mjs`, `scripts/verify-release-v138.mjs`, `scripts/verify-dist-v138.mjs`, `scripts/verify-release-v139.mjs`, `scripts/verify-dist-v139.mjs`, 버전 파일, CI 워크플로, README와 v1.0.39 문서.
+- 수정 내용: v1.0.34 배포 검증을 정적 fallback과 Vite emitted bundle 이중 모드로 분리했다. Vite 모드에서는 `dist/assets/**/*.js`와 `dist/assets/**/*.css`의 안정 마커·CSS 변수·터치 접근성 계약을 검사하며 `dist/src/**`를 요구하지 않는다. `DIST_DIR` 회귀 픽스처에는 소스 트리가 전혀 없으며 동일 검증을 통과해야 한다.
+- 검증 명령: `npm run audit:dist-portability:v139`, `npm run verify:release:v138`, `npm run verify:release:v139`, `npm run build:static`, `npm run verify:dist:v117`부터 `npm run verify:dist:v139`까지, `npm run hygiene:check`.
+- 검증 결과: 전체 누적 `npm run verify`와 모바일 HUD 14/14가 통과했다. 정적 fallback 배포와 `dist/src`가 전혀 없는 합성 Vite 배포 양쪽에서 v117~v139 전체 게이트가 연속 통과했다. 이 과정에서 v135·v136이 캐시 문자열 두 종류를 동시에 요구하던 추가 오탐도 발견해 단일 유효 표현만 있어도 통과하도록 수정했다. 깨끗한 v1.0.38 전체본에 29개 파일의 루트 직접 덮어쓰기 패치를 적용하고 기존 `dist/`를 삭제한 뒤 v139 릴리스·정적 빌드·v117~v139·루트 위생 검증을 재통과했다. 정리 패키지는 288,986,172바이트로 스테이징됐다.
+- 예외사항: 현재 작업 환경에는 설치된 Vite 실행 의존성이 없어 GitHub-hosted 실제 번들을 직접 재생성하지 못한다. 제공된 CI 실패 구조와 Vite emitted 구조를 동일하게 재현하는 픽스처로 검증하며, GitHub Actions는 `npm ci && npm run build` 결과에 v139 게이트를 실행한다.
+- 잔여 위험: 번들러 버전 변경으로 안정 문자열까지 제거되는 경우가 있으므로 신규 검증은 가능한 경우 파일 해시·공개 CSS 변수·실제 자산 참조를 우선 사용한다.
+- 다음 예정: `docs/NEXT_UPDATE_v1.0.40.md`.
+
 
 ### 2026-07-27 — v1.0.38 / b24.38
 

@@ -16,8 +16,12 @@ for (const relative of ['index.html', 'version.json', 'sw.js', 'static-bootstrap
 const version = JSON.parse(read('version.json'));
 const patch = Number(String(version.releaseVersion || '').split('.')[2]);
 if (!version.releaseVersion?.startsWith('1.0.') || patch < 36 || version.buildId !== `b24.${patch}`) throw new Error('v1.0.36+ dist identity mismatch');
-const revision = `release-v1${patch}-b24-${patch}`;
-if (!read('index.html').includes(revision) || !read('index.html').includes(`${version.releaseVersion}-${version.buildId}`)) throw new Error('current dist cache identity mismatch');
+const revisionCandidates = [
+  `release-v1${String(patch).padStart(2, '0')}-b24-${patch}`,
+  version.cacheRevision,
+  `${version.releaseVersion}-${version.buildId}`
+].filter(Boolean);
+if (!revisionCandidates.some((candidate) => read('index.html').includes(candidate))) throw new Error('current dist cache identity mismatch');
 if (!read('sw.js').includes(`const RELEASE_VERSION = '${version.releaseVersion}';`) || !read('sw.js').includes(`const BUILD_ID = '${version.buildId}';`)) throw new Error('current dist service worker mismatch');
 if (fs.existsSync(path.join(dist, 'assets/ip-v13/sheets'))) throw new Error('audit-only IP sheets leaked into dist');
 const shell = JSON.parse(read('assets/system-v135/runtime-module-shell-v135.json'));

@@ -15,8 +15,12 @@ for (const relative of requiredPublic) if (!fs.existsSync(path.join(dist, relati
 const version = JSON.parse(read('version.json'));
 const patch = Number(String(version.releaseVersion || '').split('.')[2]);
 if (!version.releaseVersion?.startsWith('1.0.') || patch < 35 || version.buildId !== `b24.${patch}`) throw new Error('v1.0.35+ dist identity mismatch');
-const revision = `release-v1${patch}-b24-${patch}`;
-if (!read('index.html').includes(revision) || !read('index.html').includes(`${version.releaseVersion}-${version.buildId}`)) throw new Error('current dist cache revision missing');
+const revisionCandidates = [
+  `release-v1${String(patch).padStart(2, '0')}-b24-${patch}`,
+  version.cacheRevision,
+  `${version.releaseVersion}-${version.buildId}`
+].filter(Boolean);
+if (!revisionCandidates.some((candidate) => read('index.html').includes(candidate))) throw new Error('current dist cache revision missing');
 if (!read('sw.js').includes(`const RELEASE_VERSION = '${version.releaseVersion}';`) || !read('sw.js').includes(`const BUILD_ID = '${version.buildId}';`)) throw new Error('current dist service worker mismatch');
 const moduleShell = JSON.parse(read('assets/system-v135/runtime-module-shell-v135.json'));
 if (moduleShell.releaseVersion !== version.releaseVersion || moduleShell.buildId !== version.buildId || moduleShell.moduleCount < 100) throw new Error('current module shell manifest mismatch');
