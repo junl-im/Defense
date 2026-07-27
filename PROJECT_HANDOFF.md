@@ -1,12 +1,12 @@
-> Current improvement patch: **v1.0.39 / b24.39** - VITE DIST PORTABILITY HOTFIX
+> Current improvement patch: **v1.0.41 / b24.41** - FULL-MAP TOUCH & LOADING RETIREMENT
 
-# PROJECT HANDOFF - RELEASE 1.0.39
+# PROJECT HANDOFF - RELEASE 1.0.41
 
-- Project: `DokkaebiLuckDefense3D_FULL_v1.0.39_CI_PORTABILITY_VERIFIED`
-- Public game version: `1.0.39`
-- Lineage version: `23.7.0`
-- Build ID: `b24.39`
-- Base: `v1.0.38 / b24.38`
+- Project: `DokkaebiLuckDefense3D_FULL_v1.0.41_TOUCH_LOADING_FIX_VERIFIED`
+- Public game version: `1.0.41`
+- Lineage version: `23.9.0`
+- Build ID: `b24.41`
+- Base: `v1.0.40 / b24.40`
 
 ## 절대 규칙
 
@@ -83,6 +83,18 @@ npm run hygiene:check
 - 100웨이브 자원 상한과 에셋 승인·격리 경계를 자동 검증한다.
 
 ## 인수인계 내역
+
+
+### 2026-07-27 — v1.0.41 / b24.41
+
+- 작업 목표: 바닥 터치 이동이 전투 중에도 비활성화되는 문제와 구형 보라색 로딩 화면이 초기 실행·전투 진입 때 반복 노출되는 문제를 수정한다.
+- 주요 변경 파일: `src/runtime/app-state-surface-v141.js`, `src/main.js`, `src/style.css`, `index.html`, `public/sw.js`, 버전 파일, `scripts/verify-release-v141.mjs`, `scripts/verify-dist-v141.mjs`, 패키징·패치 스크립트, README와 v1.0.41 문서.
+- 수정 내용: 앱 상태 전환을 `body.dataset.appState`, `data-map-touch-ready-v141`, 호환 `playing` 클래스에 동기화한다. 전투 상태에서만 전체 맵 `.look-zone` 입력을 활성화하고, 포인터 캡처가 손실되는 브라우저를 위해 window pointerup/pointercancel 복구를 추가한다. 구형 `#loading` 시각 구성과 전투 진입 오버레이를 제거하고 진단용 숨김 노드만 유지한다. 타이틀은 전투 준비가 끝날 때까지 표시한다. 서비스워커 캐시는 `1.0.41-b24.41`로 갱신한다.
+- 검증 명령: `npm run verify:release:v141`, `npm run verify`, `npm run build:static`, `npm run verify:dist:all`, `npm run stage:package:v141`, `npm run verify:package:v141`, `npm run create:patch:v141`, `npm run verify:patch:v141`, `npm run hygiene:check`.
+- 검증 결과: 상태 동기화 단위 회귀에서 playing은 맵 입력을 활성화하고 paused는 비활성화했다. 소스·배포본에서 구형 로딩 아트와 전투 진입 문구가 제거됐으며, v117~v141 전체 dist 체인과 모바일 HUD 14개 프로필을 통과했다. 깨끗한 v1.0.40 복제본에 루트 직접 덮어쓰기 패치를 적용한 뒤 릴리스·정적 빌드·dist 체인을 재통과했다.
+- 예외사항: 실제 모바일 브라우저의 손가락 입력은 정적 검사만으로 완전 재현할 수 없으므로, 다음 버전에서 Playwright/WebDriver 기반 실브라우저 탭 이동 회귀를 추가한다.
+- 잔여 위험: 사용자가 기존 탭을 계속 열어둔 경우 새 서비스워커가 활성화되기 전까지 구 HTML이 유지될 수 있다. 배포 후 새로고침 또는 탭 재실행으로 `b24.41` 셸이 적용된다.
+- 다음 예정: `docs/NEXT_UPDATE_v1.0.42.md`.
 
 ### 2026-07-27 — v1.0.39 / b24.39
 

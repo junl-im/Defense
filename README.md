@@ -1,31 +1,30 @@
-> Current improvement patch: **v1.0.40 / b24.40** - Audit asset deployment boundary hotfix
+> Current improvement patch: **v1.0.41 / b24.41** - Full-map touch navigation and legacy loading retirement
 
 # Dokkaebi Luck Defense 3D
 
-## v1.0.40 key changes
+## v1.0.41 key changes
 
-- Fixed the GitHub Actions failure in `verify:dist:v135`.
-- Ten full-resolution v13 source sheets are production/audit inputs, not runtime files.
-- The sheets moved from `public/assets/ip-v13/sheets/` to `production/DokkaebiDefense/15_Source_Archives/ip-v13/sheets/`.
-- All 415 runtime crops remain under `public/assets/ip-v13/crops/`.
-- `clean:obsolete` removes stale public copies left by paste-overwrite patches before verification and build.
-- Source-sheet hashes remain tied to `asset-manifest-v13.json`.
-- `npm run verify:dist:all` runs the complete v117-v140 deployment chain.
+- Restored floor tap movement by synchronizing app state to the body input contract.
+- Added global pointer-up/cancel recovery when pointer capture is lost.
+- Retired the obsolete purple logo loading presentation from boot and battle entry.
+- Kept the current boot gate and title visible until the battle is ready.
+- Advanced the service-worker cache to `1.0.41-b24.41`.
+- Added release and dist regression gates for touch readiness and loading retirement.
 - The mandatory handoff history rule remains enforced.
 
 ## Commands
 
 ```bash
-npm run verify:release:v140
+npm run verify:release:v141
 npm run build
 npm run verify:dist:all
-npm run stage:package:v140
-npm run verify:package:v140
-npm run create:patch:v140
-npm run verify:patch:v140
+npm run stage:package:v141
+npm run verify:package:v141
+npm run create:patch:v141
+npm run verify:patch:v141
 ```
 
-For environments without installed Vite dependencies, `npm run build:static` remains available. The dist gates accept both Vite and static fallback layouts.
+For environments without installed Vite dependencies, `npm run build:static` remains available.
 
 ## Preserved release foundations
 
@@ -41,3 +40,4 @@ For environments without installed Vite dependencies, `npm run build:static` rem
 - v1.0.36 clean source packaging and generated-output exclusion
 - v1.0.37-v1.0.39 Vite/static deployment portability
 - v1.0.40 audit source-sheet deployment boundary
+- v1.0.41 full-map touch input and legacy loading retirement

@@ -1,4 +1,5 @@
 import { installTitlePresentationGuardV123 } from './runtime/title-presentation-guard-v123.js';
+import { syncAppStateSurfaceV141 } from './runtime/app-state-surface-v141.js';
 installTitlePresentationGuardV123();
 import * as THREE from 'three';
 import './style.css';
@@ -146,7 +147,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '1.0.40';
+const GAME_VERSION = '1.0.41';
 // const GAME_VERSION = '23.1.0'; historical lineage marker for pre-normalization contracts.
 if (GAME_VERSION !== PUBLIC_GAME_VERSION) throw new Error('Public version policy mismatch');
 function runtimeSpriteMarkup(path, alt = '', className = '') {
@@ -220,9 +221,11 @@ class DokkaebiLuckDefense {
     this.appState = new AppStateMachineV103({
       initial: 'loading',
       onTransition: (entry) => {
+        syncAppStateSurfaceV141(document.body, entry.to);
         if (!entry.valid) console.warn('[AppStateMachineV103] non-contract transition', entry);
       }
     });
+    syncAppStateSurfaceV141(document.body, this.appState.current);
     Object.defineProperty(this, 'state', {
       configurable: false,
       enumerable: true,
@@ -1542,7 +1545,7 @@ class DokkaebiLuckDefense {
         tapDuration: profile.tapDuration,
         pointerType: event.pointerType || 'touch'
       };
-    }, {}, 'look-down');
+    }, { passive: false }, 'look-down');
     this.listen(ui.lookZone, 'pointermove', (event) => {
       if (!this.lookPointers.has(event.pointerId)) return;
       this.lookPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
@@ -1564,7 +1567,7 @@ class DokkaebiLuckDefense {
       this.cameraPitch = clamp(this.cameraPitch + dy * .004 * rotationScale, .38, .9);
       this.lookPointer.x = event.clientX;
       this.lookPointer.y = event.clientY;
-    }, {}, 'look-move');
+    }, { passive: false }, 'look-move');
     const end = (event, cancelled = false) => {
       const wasPinching = Boolean(this.pinchState);
       const pointer = this.lookPointer;
@@ -1592,9 +1595,17 @@ class DokkaebiLuckDefense {
         this.setMoveTargetFromScreen(endX, endY);
       }
     };
-    this.listen(ui.lookZone, 'pointerup', (event) => end(event, false), {}, 'look-up');
-    this.listen(ui.lookZone, 'pointercancel', (event) => end(event, true), {}, 'look-cancel');
-    this.listen(ui.lookZone, 'lostpointercapture', (event) => end(event, true), {}, 'look-lost-capture-v116');
+    this.listen(ui.lookZone, 'pointerup', (event) => end(event, false), { passive: false }, 'look-up');
+    this.listen(ui.lookZone, 'pointercancel', (event) => end(event, true), { passive: false }, 'look-cancel');
+    this.listen(ui.lookZone, 'lostpointercapture', (event) => {
+      if (this.lookPointers.has(event.pointerId)) end(event, true);
+    }, {}, 'look-lost-capture-v141');
+    this.listen(window, 'pointerup', (event) => {
+      if (this.lookPointers.has(event.pointerId)) end(event, false);
+    }, { capture: true, passive: false }, 'look-window-up-v141');
+    this.listen(window, 'pointercancel', (event) => {
+      if (this.lookPointers.has(event.pointerId)) end(event, true);
+    }, { capture: true, passive: false }, 'look-window-cancel-v141');
     this.listen(window, 'wheel', (event) => {
       if (this.state !== 'playing' || this.isTypingTarget(event.target) || event.target?.closest?.('button, input, select, textarea, .modal-card')) return;
       event.preventDefault();
@@ -3714,17 +3725,13 @@ class DokkaebiLuckDefense {
       if (startLabel) startLabel.textContent = '월문을 여는 중...';
       ui.start.setAttribute('aria-label', '월문을 여는 중...');
     }
-    ui.title?.classList.remove('visible');
-    ui.title?.setAttribute('aria-hidden', 'true');
-    if (ui.loadingStatus) ui.loadingStatus.textContent = '수호대를 전장으로 부르는 중...';
-    if (ui.loadingDetail) ui.loadingDetail.textContent = '달빛 장터와 전투 UI를 안전하게 전환하고 있습니다.';
-    ui.loading?.classList.add('visible', 'run-entry-loading-v108');
+    document.body.classList.add('run-entry-pending-v141');
     await this.waitForUiPaint(2, 900);
     try {
       this.sound.unlock();
       this.sound.ui();
       const deferredReady = await this.waitForDeferredAssets(this.lowPower ? 900 : 1200);
-      if (!deferredReady && ui.loadingDetail) ui.loadingDetail.textContent = '남은 에셋은 전투 중 안전하게 이어서 준비합니다.';
+      if (!deferredReady) this.browserReliability?.noteMilestone('run-entry-deferred-assets-v141', { ready: false });
       this.startRun({ reuseSeed });
       if (this.state !== 'playing') throw new Error(`전투 상태 전환 실패: ${this.state}`);
       this.browserReliability?.noteMilestone('start-run-entered', {
@@ -3747,7 +3754,7 @@ class DokkaebiLuckDefense {
       return false;
     } finally {
       this.startRunPending = false;
-      ui.loading?.classList.remove('visible', 'run-entry-loading-v108');
+      document.body.classList.remove('run-entry-pending-v141');
       if (ui.start && this.state === 'title') {
         ui.start.disabled = false;
         ui.start.setAttribute('aria-busy', 'false');
@@ -3769,11 +3776,12 @@ class DokkaebiLuckDefense {
     this.resetTransientUi();
     this.runId = (this.runId || 0) + 1;
     const activeRunId = this.runId;
-    ui.title.classList.remove('visible');
     this.hideModal(ui.resultModal);
     this.hideModal(ui.pauseModal);
     this.createWorld(false);
     this.state = 'playing';
+    ui.title.classList.remove('visible');
+    ui.title.setAttribute('aria-hidden', 'true');
     this.currentWave = 0;
     this.maxWaves = 10;
     this.activeRunMode = getRunMode(this.selectedRunModeId);

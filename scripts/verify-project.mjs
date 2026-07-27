@@ -158,7 +158,8 @@ if (htmlIds.has('codex-progress-readout') && htmlIds.has('codex-weakness-readout
 else fail('도감 연구 상세 UI 누락');
 if (main.includes('createMoonMarketModuleSet()') && main.includes("root.name = 'MoonMarketModuleSetV1'") && main.includes('applyPremiumBossPhase')) pass('야시장 환경 모듈과 보스 페이즈 비주얼');
 else fail('환경 모듈 또는 보스 페이즈 비주얼 누락');
-if (existsSync(resolve(root, 'src/assets/moon-mascot-expressions-v1.webp')) && html.includes('class="loading-mascot"') && style.includes('@keyframes mascot-load-frame')) pass('마스코트 4상태 로딩 에셋');
+const legacyLoadingRetired = html.includes('legacy-loading-retired-v141') && !html.includes('class="loading-mascot"');
+if (existsSync(resolve(root, 'src/assets/moon-mascot-expressions-v1.webp')) && ((html.includes('class="loading-mascot"') && style.includes('@keyframes mascot-load-frame')) || legacyLoadingRetired)) pass('마스코트 로딩 에셋 보존 또는 구형 화면 은퇴');
 else fail('마스코트 로딩 상태 에셋 누락');
 const titleBlock = html.slice(html.indexOf('<section id="title-screen"'), html.indexOf('<header id="hud"'));
 if (titleBlock.includes('id="start-btn"') && titleBlock.includes('id="title-setup-btn"') && !titleBlock.includes(expectedGameVersion) && !titleBlock.includes('ENGINE') && !titleBlock.includes('ATLAS FRAMES')) pass('타이틀 패치·버전 설명 제거');

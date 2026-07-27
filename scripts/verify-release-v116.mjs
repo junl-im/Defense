@@ -33,9 +33,9 @@ for(const token of [
   'v1.0.16 Full-Map Touch Navigation',
   'body.dd-shell-mobile-v112.dd-shell-portrait-v112 .look-zone',
   'body.dd-shell-mobile-v112.dd-shell-landscape-v112 .look-zone',
-  'left: 0 !important; right: 0 !important; width: auto !important;',
-  'body.playing:not(.modal-open) .look-zone { pointer-events: auto; }'
+  'left: 0 !important; right: 0 !important; width: auto !important;'
 ]) check(style.includes(token),`touch coverage style missing: ${token}`);
+check(style.includes('body.playing:not(.modal-open) .look-zone { pointer-events: auto; }') || style.includes('body[data-map-touch-ready-v141="true"]:not(.modal-open) .look-zone { pointer-events: auto; }'),'touch coverage active-state selector missing');
 if(!failures.length) pass('mobile portrait, mobile landscape, tablet and PC map touch layers cover the left, center and right battlefield lanes');
 
 for(const token of [

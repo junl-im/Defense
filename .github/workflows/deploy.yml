@@ -96,6 +96,7 @@ jobs:
           # npm run verify:dist:v138
           # npm run verify:dist:v139
           # npm run verify:dist:v140
+          # npm run verify:dist:v141
           npm run verify:dist:all
 
       - name: Verify self-contained production bundle

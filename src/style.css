@@ -4497,8 +4497,10 @@ body.dd-shell-mobile-v112.dd-shell-landscape-v112 .look-zone {
   inset: calc(49px + var(--safe-top)) 0 0 0 !important;
   left: 0 !important; right: 0 !important; width: auto !important;
 }
-body.modal-open .look-zone, body:not(.playing) .look-zone { pointer-events: none; }
-body.playing:not(.modal-open) .look-zone { pointer-events: auto; }
+body.modal-open .look-zone, body:not([data-map-touch-ready-v141="true"]) .look-zone { pointer-events: none; }
+body[data-map-touch-ready-v141="true"]:not(.modal-open) .look-zone { pointer-events: auto; }
+.legacy-loading-retired-v141 { display: none !important; visibility: hidden !important; pointer-events: none !important; }
+body.run-entry-pending-v141 .title-touch-start-v107 { cursor: progress; }
 
 /* ========================================================================== */
 /* v1.0.20 Protagonist 11-Way, Premium HP Bar & Top HUD Overlap Guard          */

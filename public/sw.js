@@ -1,5 +1,5 @@
-const RELEASE_VERSION = '1.0.40';
-const BUILD_ID = 'b24.40';
+const RELEASE_VERSION = '1.0.41';
+const BUILD_ID = 'b24.41';
 // const VERSION = '23.2.0'; historical lineage marker.
 const CACHE_PREFIX = 'dokkaebi-luck-defense-shell-';
 const LEGACY_CACHE_PREFIXES = ['dokkaebi-shell-', 'dokkaebi-luck-defense-shell-'];
@@ -74,6 +74,7 @@ const GENERATED_MODULE_SHELL_V135 = Object.freeze([
   './src/runtime-lifecycle.js',
   './src/runtime/action-asset-assurance-director-v125.js',
   './src/runtime/app-state-machine-v103.js',
+  './src/runtime/app-state-surface-v141.js',
   './src/runtime/art-approval-pipeline-v115.js',
   './src/runtime/asset-approval-pipeline-v117.js',
   './src/runtime/asset-lineage-assurance-director-v131.js',
