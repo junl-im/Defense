@@ -225,7 +225,7 @@
     "verify:asset-review:v144": "node scripts/generate-asset-review-v144.mjs --check",
     "verify:budget:v144": "node scripts/verify-dist-budget-v144.mjs",
     "verify:browser:v144": "node scripts/run-built-game-mobile-matrix-v144.mjs",
-    "verify:release:v144": "npm run verify:asset-review:v144 && node scripts/verify-release-v144.mjs",
+    "verify:release:v144": "npm run verify:asset-review:v144 && npm run verify:matrix-contract:v144 && node scripts/verify-release-v144.mjs",
     "verify:dist:v144": "node scripts/verify-dist-v144.mjs",
     "stage:package:v144": "node scripts/stage-clean-package-v144.mjs",
     "verify:package:v144": "node scripts/verify-clean-package-v144.mjs",
@@ -255,7 +255,8 @@
     "verify:patch:v146": "node scripts/verify-patch-v146.mjs",
     "sync:generated:ci": "npm run generate:residency:v145",
     "verify:ci": "npm run sync:generated:ci && npm run verify",
-    "verify:parser:v143": "node scripts/test-verify-dist-v143-css-parser.mjs"
+    "verify:parser:v143": "node scripts/test-verify-dist-v143-css-parser.mjs",
+    "verify:matrix-contract:v144": "node scripts/test-v144-mobile-matrix-contract.mjs"
   },
   "dependencies": {
     "three": "0.185.1"

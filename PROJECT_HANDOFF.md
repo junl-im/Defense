@@ -241,3 +241,11 @@ v1.0.12 크로스 플랫폼 기반, v1.0.17 승인 경계, v1.0.20 주인공 11�
 - Added two-cache service-worker upgrade simulation and activation evidence while preserving client save namespaces.
 - Added deterministic combat-load observation windows at waves 10, 25, 50, 75, and 100.
 - Added machine-readable first-regression digests and an honest provisional Vite dist measurement promotion boundary.
+
+## 2026-07-28 — v1.0.46 v144 모바일 매트릭스 핫픽스
+
+- 세로 HUD의 legacy 78px 소환 버튼 폭이 63px grid track을 넘던 문제를 `width:100%!important`로 수정했다.
+- cross-platform shell의 `!important` 우측 고정이 왼손 배치를 무효화하던 문제를 action dock/joystick 명시적 반전 규칙으로 수정했다.
+- Chromium mobile emulation에서 무시되던 150% page scale을 좁은 desktop page-scale + touch emulation으로 재현하도록 변경했다.
+- v144 실패 로그에 실패 체크명과 viewport/control geometry를 기록하고 `verify:matrix-contract:v144` 회귀 계약을 추가했다.
+- 런타임 shell v135 해시를 새 `src/style.css` 기준으로 재생성했으며 전체 `verify:ci`가 통과했다.

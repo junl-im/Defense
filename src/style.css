@@ -3045,7 +3045,8 @@ body.title-mascot-fallback .title-mascot-stage { background:url('./assets/title-
   body.mobile-hud-v23 #action-dock #burst-btn { grid-area:burst; }
   body.mobile-hud-v23 #action-dock #wave-btn { grid-area:wave; height:35px!important; }
   body.mobile-hud-v23 #action-dock #summon-btn { grid-area:summon; height:82px!important; }
-  body.mobile-hud-v23 #action-dock button { min-width:0; padding-inline:3px; }
+  /* v1.0.46 hotfix: fixed legacy button widths must not overflow the v23 grid tracks. */
+  body.mobile-hud-v23 #action-dock button { width:100%!important; min-width:0; padding-inline:3px; }
   body.mobile-hud-v23 #action-dock .action-glyph { width:24px; height:24px; }
   body.mobile-hud-v23 #action-dock .skill-btn span,
   body.mobile-hud-v23 #action-dock .wave-btn small,
@@ -5758,6 +5759,20 @@ body.dd-shell-pc-v112 #summon-btn b { grid-column: 2; align-self: start; justify
   #summon-btn, #summon-btn .summon-glow, #summon-btn .summon-emblem-v142 { animation: none !important; }
 }
 #summon-btn .summon-glyph { display: none !important; }
+
+
+
+/* v1.0.46 hotfix: shell-specific !important placement must still honor left-handed controls. */
+body.controls-left-handed.dd-shell-mobile-v112 #action-dock {
+  right: auto !important;
+  left: calc(9px + var(--safe-left) + var(--mobile-visual-left-v23, 0px)) !important;
+  transform-origin: left bottom !important;
+}
+body.controls-left-handed.dd-shell-mobile-v112 #joystick-zone {
+  left: auto !important;
+  right: calc(10px + var(--safe-right) + var(--mobile-visual-right-v23, 0px)) !important;
+  transform-origin: right bottom !important;
+}
 
 /* v1.0.43 summon visibility and finger-occlusion safety */
 #summon-btn[data-summon-visibility-v143="enhanced"] {

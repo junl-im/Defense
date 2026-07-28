@@ -168,7 +168,7 @@ const scenarioCatalog = [
   { id: 'portrait', width: 430, height: 932, scale: 1, handedness: 'right', orientation: { type: 'portraitPrimary', angle: 0 } },
   { id: 'landscape', width: 932, height: 430, scale: 1, handedness: 'right', orientation: { type: 'landscapePrimary', angle: 90 } },
   { id: 'left-handed', width: 430, height: 932, scale: 1, handedness: 'left', orientation: { type: 'portraitPrimary', angle: 0 } },
-  { id: 'zoom-150', width: 430, height: 932, scale: 1.5, handedness: 'right', orientation: { type: 'portraitPrimary', angle: 0 } }
+  { id: 'zoom-150', width: 430, height: 932, scale: 1.5, handedness: 'right', emulateMobile: false, orientation: { type: 'portraitPrimary', angle: 0 } }
 ];
 const scenarios = scenarioFilter.size ? scenarioCatalog.filter((scenario) => scenarioFilter.has(scenario.id)) : scenarioCatalog;
 if (!scenarios.length) failOrSkip(`no valid scenarios selected: ${[...scenarioFilter].join(', ')}`);
@@ -220,11 +220,10 @@ try {
         width: scenario.width,
         height: scenario.height,
         deviceScaleFactor: 2,
-        mobile: true,
+        mobile: scenario.emulateMobile !== false,
         screenOrientation: scenario.orientation
       });
       await client.send('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 5 });
-      if (scenario.scale !== 1) await client.send('Emulation.setPageScaleFactor', { pageScaleFactor: scenario.scale });
       const loaded = client.waitFor('Page.loadEventFired', Math.min(cdpTimeoutMs, 30000)).catch((error) => {
         diagnostics.loadEventError = error instanceof Error ? error.message : String(error);
         return null;
@@ -237,6 +236,21 @@ try {
         throw new Error(`Navigation failed: ${diagnostics.navigation.errorText}${policyHint}`);
       }
       if (!await loaded) throw new Error(diagnostics.loadEventError || 'Page load event unavailable');
+
+      if (scenario.scale !== 1) {
+        await evaluate(client, `(()=>{
+          const meta=document.querySelector('meta[name="viewport"]');
+          if(meta) meta.content='width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5, user-scalable=yes';
+          return meta?.content||'';
+        })()`);
+        await client.send('Emulation.setPageScaleFactor', { pageScaleFactor: scenario.scale });
+        const zoomState = await evaluate(client, `(async()=>{
+          const deadline=Date.now()+5000;
+          while((window.visualViewport?.scale||1)<${Math.max(1, scenario.scale - .05)}&&Date.now()<deadline) await new Promise(r=>setTimeout(r,50));
+          return {scale:window.visualViewport?.scale||1,width:window.visualViewport?.width||innerWidth,height:window.visualViewport?.height||innerHeight};
+        })()`);
+        diagnostics.zoom = zoomState;
+      }
 
       const boot = await evaluate(client, `(async()=>{
         const deadline=Date.now()+${bootTimeoutMs};
@@ -272,7 +286,7 @@ try {
         return {
           state:snapshot?.state||window.__DOKKAEBI_GAME__?.state||'',
           handedness:document.body.classList.contains('controls-left-handed')?'left':'right',
-          viewport:{width:innerWidth,height:innerHeight,scale:vv?.scale||1},
+          viewport:{width:innerWidth,height:innerHeight,visualWidth:vv?.width||innerWidth,visualHeight:vv?.height||innerHeight,offsetLeft:vv?.offsetLeft||0,offsetTop:vv?.offsetTop||0,scale:vv?.scale||1},
           loadingRetired:Boolean(loading?.hidden)&&!document.documentElement.innerHTML.includes('수호대를 전장으로 부르는 중...'),
           summon:{
             exists:Boolean(btn),
@@ -300,15 +314,20 @@ try {
         mapTouchReady: layout?.mapTouchReady === 'true',
         handedness: layout?.handedness === scenario.handedness,
         dockMirrored: scenario.handedness !== 'left' || (layout?.dock && layout.dock.left < layout.viewport.width / 2),
-        zoomApplied: scenario.scale === 1 || layout?.viewport?.scale >= 1.45
+        zoomApplied: scenario.scale === 1 || layout?.viewport?.scale >= Math.max(1, scenario.scale - .05)
       };
 
       const screenshot = await client.send('Page.captureScreenshot', { format: 'png', fromSurface: true, captureBeyondViewport: false });
       const screenshotPath = path.join(outputDir, `${scenario.id}.png`);
       fs.writeFileSync(screenshotPath, Buffer.from(screenshot.data, 'base64'));
-      const passed = Object.values(checks).every(Boolean);
-      results.push({ scenario, passed, checks, layout, diagnostics, screenshot: path.relative(root, screenshotPath) });
-      console.log(`${passed ? 'PASS' : 'FAIL'} v144 mobile matrix ${scenario.id}`);
+      const failedChecks = Object.entries(checks).filter(([, passed]) => !passed).map(([name]) => name);
+      const passed = failedChecks.length === 0;
+      results.push({ scenario, passed, failedChecks, checks, layout, diagnostics, screenshot: path.relative(root, screenshotPath) });
+      if (passed) console.log(`PASS v144 mobile matrix ${scenario.id}`);
+      else {
+        console.error(`FAIL v144 mobile matrix ${scenario.id}: ${failedChecks.join(', ')}`);
+        console.error(`DIAG v144 ${scenario.id} ${JSON.stringify({ viewport: layout.viewport, summon: layout.summon, dock: layout.dock, handedness: layout.handedness })}`);
+      }
     } catch (error) {
       if (client) {
         try {
