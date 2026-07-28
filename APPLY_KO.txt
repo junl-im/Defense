@@ -1,0 +1,18 @@
+Dokkaebi Luck Defense 3D v1.0.44 패치 적용 안내
+
+기준 버전: v1.0.43 / b24.43
+목표 버전: v1.0.44 / b24.44
+
+1. 기존 프로젝트를 백업합니다.
+2. 이 폴더의 파일과 폴더를 프로젝트 루트에 그대로 복사해 덮어씁니다.
+3. 기존 dist 폴더를 삭제합니다.
+4. 아래 명령을 실행합니다.
+
+   rm -rf dist
+   npm ci
+   npm run verify:release:v144
+   VITE_BASE_PATH=/Defense/ npm run build
+   REQUIRE_BROWSER_V144=1 npm run verify:dist:all
+
+PATCH_MANIFEST.json의 34개 파일 SHA-256이 패치 무결성 기준입니다.
+정적 fallback은 v1.0.44 정식 승인 대상이 아니며, 완성 Vite 번들이 필요합니다.

@@ -1,0 +1,17 @@
+{
+  "id": "DD-DIST-BUDGETS-V144",
+  "releaseVersion": "1.0.44",
+  "measurement": "Vite dist files; gzip level 9; initial graph from HTML and static imports; texture upload estimated as width x height x 4 bytes.",
+  "thresholds": {
+    "maxJsChunks": 16,
+    "maxInitialRequests": 20,
+    "maxInitialJsRawBytes": 3200000,
+    "maxInitialJsGzipBytes": 900000,
+    "maxInitialCssRawBytes": 420000,
+    "maxInitialCssGzipBytes": 100000,
+    "maxInitialTextureCount": 64,
+    "maxInitialTextureUploadBytes": 67108864,
+    "maxUnknownTextureDimensions": 0,
+    "maxSingleJsChunkRawBytes": 2800000
+  }
+}

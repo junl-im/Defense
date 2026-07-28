@@ -1,12 +1,12 @@
-> Current improvement patch: **v1.0.43 / b24.43** - MOBILE INPUT RECOVERY & BROWSER GATE
+> Current improvement patch: **v1.0.44 / b24.44** - COMPLETE BUILD RELEASE ASSURANCE
 
-# PROJECT HANDOFF - RELEASE 1.0.43
+# PROJECT HANDOFF - RELEASE 1.0.44
 
-- Project: `DokkaebiLuckDefense3D_FULL_v1.0.43_MOBILE_INPUT_RECOVERY_VERIFIED`
-- Public game version: `1.0.43`
+- Project: `DokkaebiLuckDefense3D_FULL_v1.0.44_RELEASE_ASSURANCE_VERIFIED`
+- Public game version: `1.0.44`
 - Lineage version: `23.11.0`
-- Build ID: `b24.43`
-- Base: `v1.0.42 / b24.42`
+- Build ID: `b24.44`
+- Base: `v1.0.43 / b24.43`
 
 ## 절대 규칙
 
@@ -31,18 +31,15 @@
 ## 검증 명령
 
 ```bash
-npm run verify:mobile-input:v143
-npm run verify:browser:v143
-npm run verify:reachability:v143
-npm run verify:presentation:v143
-npm run verify:release:v143
+npm run verify:asset-review:v144
+npm run verify:release:v144
 npm run verify
 npm run build
-npm run verify:dist:all
-npm run stage:package:v143
-npm run verify:package:v143
-npm run create:patch:v143
-npm run verify:patch:v143
+REQUIRE_BROWSER_V144=1 npm run verify:dist:all
+npm run stage:package:v144
+npm run verify:package:v144
+npm run create:patch:v144
+npm run verify:patch:v144
 npm run hygiene:check
 ```
 
@@ -81,6 +78,17 @@ npm run hygiene:check
 - 100웨이브 자원 상한과 에셋 승인·격리 경계를 자동 검증한다.
 
 ## 인수인계 내역
+
+### 2026-07-28 — v1.0.44 / b24.44
+
+- 작업 목표: v1.0.43 모바일 입력 복구와 소환 시인성 계약을 격리 HTML이 아니라 실제 Vite 완성 빌드에서 검증하고, 배포 용량·초기 텍스처 업로드 상한과 24개 에셋 검토 후보의 보존 결정을 CI 계약으로 고정한다.
+- 주요 변경 파일: `scripts/run-built-game-mobile-matrix-v144.mjs`, `scripts/verify-dist-budget-v144.mjs`, `scripts/generate-asset-review-v144.mjs`, v144 릴리스·배포·패키지·패치 검증기, `docs/DIST_BUDGETS_v1.0.44.json`, `docs/generated/asset-review-v144.*`, 버전·서비스워커·워크플로·README 및 v1.0.44 문서.
+- 수정 내용: Chromium DevTools Protocol로 완성 게임을 부팅하고 실제 전투 진입 후 세로·가로·왼손·150% 확대 화면을 캡처한다. 소환 버튼의 최소 44px 판정, 뷰포트 경계, 터치 액션, 라벨 비차단, 맵 터치 상태와 왼손 도크 반전을 검사한다. Vite JS 청크·초기 요청·JS/CSS gzip·초기 텍스처 RGBA 추정 업로드 예산을 추가했다. 24개 도달성 후보는 런타임 카탈로그 14, 제작 후보 UI 6, 승인 계보 2, 준비도 자산 1, 런타임 셸 1로 분류하고 삭제 승인을 0으로 고정했다. v143 CSS 배포 검증은 주석 문자열 대신 실제 선언을 확인하도록 수정했다.
+- 검증 명령: `npm run verify:asset-review:v144`, `npm run verify:release:v144`, `npm run verify`, `npm run build`, `REQUIRE_BROWSER_V144=1 npm run verify:dist:all`, `npm run stage:package:v144`, `npm run verify:package:v144`, `npm run create:patch:v144`, `npm run verify:patch:v144`, `npm run hygiene:check`.
+- 검증 결과: v144 신규 스크립트 전체 구문 검사, 24/24 에셋 검토 보고서 재생성·동일성 검사, v143 도달성 1,951개 중 1,927개 직접 도달 및 런타임 미해결 참조 0개를 확인했다. 기존 v143 CSS 오탐 조건은 주석 제거와 `transparent` 최소화 표현에 독립적인 선언 검사로 교체했다. 현재 작업 환경에는 Vite 패키지 본문이 없어 완성 번들을 재생성할 수 없으므로, 실제 네 장의 게임 스크린샷과 수치 예산은 GitHub Actions의 `npm ci && npm run build` 이후 `REQUIRE_BROWSER_V144=1` 게이트에서 필수 실행한다. 합성 완성 번들로 CDP 연결·탐색 실패 경로·프로필 정리를 실행해 보았고, 이 컨테이너의 Chromium 관리 정책 `URLBlocklist: ["*"]`가 loopback HTTP를 `net::ERR_BLOCKED_BY_ADMINISTRATOR`로 차단함을 확인했다. 실행기는 이를 즉시 명시하고 콘솔·네트워크·부트·탐색 진단을 보고서에 남기며, 종료 후 프로필 삭제 경쟁 조건을 재시도로 처리한다.
+- 예외사항: 정적 fallback은 복구 배포 수단으로 유지하지만 v144 완성 빌드 검증 대상으로 인정하지 않는다. 브라우저가 없는 개발 환경은 명확히 SKIP할 수 있으나 CI에서는 환경 변수로 SKIP을 실패 처리한다. 관리 브라우저 정책이 localhost를 차단하는 환경도 성공으로 간주하지 않고 구체적 정책 오류로 실패한다.
+- 잔여 위험: iOS Safari 독립 PWA 복원과 Android 제조사별 키보드·주소창 시퀀스는 실기기 데이터가 필요하다. 초기 텍스처 추정은 문자열 기반 도달성이라 실제 GPU residency와 차이가 있을 수 있다.
+- 다음 예정: `docs/NEXT_UPDATE_v1.0.45.md`.
 
 ### 2026-07-27 — v1.0.43 / b24.43
 

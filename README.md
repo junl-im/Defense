@@ -1,35 +1,32 @@
-> Current improvement patch: **v1.0.43 / b24.43** - Mobile Input Recovery & Browser Gate
+> Current improvement patch: **v1.0.44 / b24.44** - Complete Build Release Assurance
 
 # Dokkaebi Luck Defense 3D
 
-## v1.0.43 key changes
+## v1.0.44 key changes
 
-- Releases stale map pointers, pinch state, and joystick capture after backgrounding, page restore, rotation, and significant visual viewport changes.
-- Keeps small address-bar movements below the reset threshold while recovering from keyboard, zoom, and orientation geometry changes.
-- Adds a finger-occlusion-safe summon beacon, stronger contrast mode, forced-colors support, and left-handed ticket mirroring.
-- Adds deterministic input recovery verification and an optional Chrome/Chromium browser fixture with 100 WebGL resource create-delete cycles.
-- Adds hashed boot/title/combat presentation snapshots so the retired legacy loading screen cannot silently return.
-- Generates a conservative runtime asset reachability report: directly referenced assets are separated from manual review candidates without automatic deletion.
-- Advances the service-worker cache to `1.0.43-b24.43`.
-- The mandatory handoff history rule remains enforced.
+- Runs mobile layout QA against the complete Vite bundle after the real game boots and enters combat.
+- Captures portrait, landscape, left-handed, and 150% zoom screenshots through Chromium DevTools Protocol, with failure screenshots and console/network diagnostics.
+- Verifies the summon control remains visible, inside the viewport, at least 44px, touch-safe, and non-blocking in every matrix profile.
+- Adds measured JavaScript chunk, initial JS/CSS gzip, request-count, and initial texture upload budgets.
+- Reviews all 24 conservative v1.0.43 asset candidates and records zero deletion approvals.
+- Replaces the v1.0.43 deployment check that depended on a removable CSS comment with behavior-level CSS assertions.
+- Advances the service-worker cache to `1.0.44-b24.44`.
+- Keeps the mandatory handoff history rule enforced.
 
 ## Commands
 
 ```bash
-npm run verify:mobile-input:v143
-npm run verify:browser:v143
-npm run verify:reachability:v143
-npm run verify:presentation:v143
-npm run verify:release:v143
+npm run verify:asset-review:v144
+npm run verify:release:v144
 npm run build
-npm run verify:dist:all
-npm run stage:package:v143
-npm run verify:package:v143
-npm run create:patch:v143
-npm run verify:patch:v143
+REQUIRE_BROWSER_V144=1 npm run verify:dist:all
+npm run stage:package:v144
+npm run verify:package:v144
+npm run create:patch:v144
+npm run verify:patch:v144
 ```
 
-For environments without installed Vite dependencies, `npm run build:static` remains available.
+The browser matrix requires the complete Vite output (`dist/assets/game.js` and `dist/assets/game.css`). Results are written to `logs/qa/v144/mobile-matrix-report.json`; managed browser policies that block loopback HTTP are reported explicitly. `npm run build:static` remains a recovery deployment option but is intentionally not accepted as the v1.0.44 release-assurance target.
 
 ## Preserved release foundations
 
@@ -48,3 +45,4 @@ For environments without installed Vite dependencies, `npm run build:static` rem
 - v1.0.41 full-map touch input and legacy loading retirement
 - v1.0.42 random summon control and edge-safe authored UI asset
 - v1.0.43 mobile input recovery, presentation snapshots, and runtime asset reachability
+- v1.0.44 complete-build mobile matrix, measured dist budgets, and reviewed asset candidates

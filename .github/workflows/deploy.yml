@@ -72,6 +72,8 @@ jobs:
 
 
       - name: Verify approved asset static deployment
+        env:
+          REQUIRE_BROWSER_V144: 1
         run: |
           # npm run verify:dist:v117
           # npm run verify:dist:v118
@@ -99,6 +101,14 @@ jobs:
           # npm run verify:dist:v141
           # npm run verify:dist:v142
           npm run verify:dist:all
+
+      - name: Upload v1.0.44 mobile QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v1.0.44-mobile-qa
+          path: logs/qa/v144
+          if-no-files-found: warn
 
       - name: Verify self-contained production bundle
         run: node scripts/verify-production-bundle-v101.mjs

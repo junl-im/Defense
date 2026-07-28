@@ -1,0 +1,322 @@
+{
+  "id": "DD-ASSET-REVIEW-V144",
+  "releaseVersion": "1.0.44",
+  "sourceContract": "DD-RUNTIME-ASSET-REACHABILITY-V143",
+  "sourceCandidateCount": 24,
+  "reviewedCount": 24,
+  "reviewedBytes": 3205892,
+  "deleteApprovedCount": 0,
+  "policy": "No candidate may be quarantined or deleted until an explicit follow-up patch changes deleteApproved and provides replacement evidence.",
+  "dispositions": {
+    "retain-approval-lineage": {
+      "count": 2,
+      "bytes": 213070
+    },
+    "retain-asset-readiness": {
+      "count": 1,
+      "bytes": 74552
+    },
+    "retain-production-candidate": {
+      "count": 6,
+      "bytes": 269194
+    },
+    "retain-runtime-catalog": {
+      "count": 14,
+      "bytes": 2629836
+    },
+    "retain-runtime-contract": {
+      "count": 1,
+      "bytes": 19240
+    }
+  },
+  "reviews": [
+    {
+      "path": "public/assets/models/player-dokkaebi-archer-candidate-v1.glb",
+      "bytes": 390436,
+      "disposition": "retain-runtime-catalog",
+      "owner": "runtime-assets",
+      "evidence": [
+        "docs/RUNTIME_ASSET_INVENTORY_v4.0.0.json",
+        "docs/CURRENT_ASSET_AUDIT.json"
+      ],
+      "rationale": "Model filenames are selected through runtime catalogs and fallback loaders; literal reachability alone is insufficient.",
+      "deleteApproved": false
+    },
+    {
+      "path": "public/assets/models/player-dokkaebi-mage-candidate-v1.glb",
+      "bytes": 390404,
+      "disposition": "retain-runtime-catalog",
+      "owner": "runtime-assets",
+      "evidence": [
+        "docs/RUNTIME_ASSET_INVENTORY_v4.0.0.json",
+        "docs/CURRENT_ASSET_AUDIT.json"
+      ],
+      "rationale": "Model filenames are selected through runtime catalogs and fallback loaders; literal reachability alone is insufficient.",
+      "deleteApproved": false
+    },
+    {
+      "path": "public/assets/models/monster-brute-sd-toon.glb",
+      "bytes": 361924,
+      "disposition": "retain-runtime-catalog",
+      "owner": "runtime-assets",
+      "evidence": [
+        "docs/RUNTIME_ASSET_INVENTORY_v4.0.0.json",
+        "docs/CURRENT_ASSET_AUDIT.json"
+      ],
+      "rationale": "Model filenames are selected through runtime catalogs and fallback loaders; literal reachability alone is insufficient.",
+      "deleteApproved": false
+    },
+    {
+      "path": "public/assets/models/monster-ghost-candidate-v1.glb",
+      "bytes": 340608,
+      "disposition": "retain-runtime-catalog",
+      "owner": "runtime-assets",
+      "evidence": [
+        "docs/RUNTIME_ASSET_INVENTORY_v4.0.0.json",
+        "docs/CURRENT_ASSET_AUDIT.json"
+      ],
+      "rationale": "Model filenames are selected through runtime catalogs and fallback loaders; literal reachability alone is insufficient.",
+      "deleteApproved": false
+    },
+    {
+      "path": "public/assets/models/monster-crow-candidate-v1.glb",
+      "bytes": 340596,
+      "disposition": "retain-runtime-catalog",
+      "owner": "runtime-assets",
+      "evidence": [
+        "docs/RUNTIME_ASSET_INVENTORY_v4.0.0.json",
+        "docs/CURRENT_ASSET_AUDIT.json"
+      ],
+      "rationale": "Model filenames are selected through runtime catalogs and fallback loaders; literal reachability alone is insufficient.",
+      "deleteApproved": false
+    },
+    {
+      "path": "public/assets/models/monster-shaman-sd-toon.glb",
+      "bytes": 340500,
+      "disposition": "retain-runtime-catalog",
+      "owner": "runtime-assets",
+      "evidence": [
+        "docs/RUNTIME_ASSET_INVENTORY_v4.0.0.json",
+        "docs/CURRENT_ASSET_AUDIT.json"
+      ],
+      "rationale": "Model filenames are selected through runtime catalogs and fallback loaders; literal reachability alone is insufficient.",
+      "deleteApproved": false
+    },
+    {
+      "path": "src/assets/title-v120/title-mascot-v120.webp",
+      "bytes": 136250,
+      "disposition": "retain-approval-lineage",
+      "owner": "presentation",
+      "evidence": [
+        "scripts/verify-release-v120.mjs",
+        "docs/PATCH_NOTES_v1.0.20.md"
+      ],
+      "rationale": "The source asset is an explicit presentation approval boundary even when a later approved mascot is active.",
+      "deleteApproved": false
+    },
+    {
+      "path": "src/assets/title-v120/title-mascot-lite-v120.webp",
+      "bytes": 76820,
+      "disposition": "retain-approval-lineage",
+      "owner": "presentation",
+      "evidence": [
+        "scripts/verify-release-v120.mjs",
+        "docs/PATCH_NOTES_v1.0.20.md"
+      ],
+      "rationale": "The source asset is an explicit presentation approval boundary even when a later approved mascot is active.",
+      "deleteApproved": false
+    },
+    {
+      "path": "public/assets/models/boss-serpent-sd-toon.glb",
+      "bytes": 75576,
+      "disposition": "retain-runtime-catalog",
+      "owner": "runtime-assets",
+      "evidence": [
+        "docs/RUNTIME_ASSET_INVENTORY_v4.0.0.json",
+        "docs/CURRENT_ASSET_AUDIT.json"
+      ],
+      "rationale": "Model filenames are selected through runtime catalogs and fallback loaders; literal reachability alone is insufficient.",
+      "deleteApproved": false
+    },
+    {
+      "path": "src/assets/moon-mascot-v1.webp",
+      "bytes": 74552,
+      "disposition": "retain-asset-readiness",
+      "owner": "asset-assurance",
+      "evidence": [
+        "scripts/verify-asset-readiness.mjs",
+        "docs/ASSET_MANIFEST.json"
+      ],
+      "rationale": "The mascot is a mandatory readiness and source-manifest asset retained for fallback and audit coverage.",
+      "deleteApproved": false
+    },
+    {
+      "path": "public/assets/models/boss-king-sd-toon.glb",
+      "bytes": 65648,
+      "disposition": "retain-runtime-catalog",
+      "owner": "runtime-assets",
+      "evidence": [
+        "docs/RUNTIME_ASSET_INVENTORY_v4.0.0.json",
+        "docs/CURRENT_ASSET_AUDIT.json"
+      ],
+      "rationale": "Model filenames are selected through runtime catalogs and fallback loaders; literal reachability alone is insufficient.",
+      "deleteApproved": false
+    },
+    {
+      "path": "public/assets/models/guardian-bell-sd-toon.glb",
+      "bytes": 58912,
+      "disposition": "retain-runtime-catalog",
+      "owner": "runtime-assets",
+      "evidence": [
+        "docs/RUNTIME_ASSET_INVENTORY_v4.0.0.json",
+        "docs/CURRENT_ASSET_AUDIT.json"
+      ],
+      "rationale": "Model filenames are selected through runtime catalogs and fallback loaders; literal reachability alone is insufficient.",
+      "deleteApproved": false
+    },
+    {
+      "path": "public/assets/models/guardian-wind-sd-toon.glb",
+      "bytes": 58448,
+      "disposition": "retain-runtime-catalog",
+      "owner": "runtime-assets",
+      "evidence": [
+        "docs/RUNTIME_ASSET_INVENTORY_v4.0.0.json",
+        "docs/CURRENT_ASSET_AUDIT.json"
+      ],
+      "rationale": "Model filenames are selected through runtime catalogs and fallback loaders; literal reachability alone is insufficient.",
+      "deleteApproved": false
+    },
+    {
+      "path": "public/assets/models/guardian-frost-sd-toon.glb",
+      "bytes": 58224,
+      "disposition": "retain-runtime-catalog",
+      "owner": "runtime-assets",
+      "evidence": [
+        "docs/RUNTIME_ASSET_INVENTORY_v4.0.0.json",
+        "docs/CURRENT_ASSET_AUDIT.json"
+      ],
+      "rationale": "Model filenames are selected through runtime catalogs and fallback loaders; literal reachability alone is insufficient.",
+      "deleteApproved": false
+    },
+    {
+      "path": "public/assets/models/guardian-thunder-sd-toon.glb",
+      "bytes": 56196,
+      "disposition": "retain-runtime-catalog",
+      "owner": "runtime-assets",
+      "evidence": [
+        "docs/RUNTIME_ASSET_INVENTORY_v4.0.0.json",
+        "docs/CURRENT_ASSET_AUDIT.json"
+      ],
+      "rationale": "Model filenames are selected through runtime catalogs and fallback loaders; literal reachability alone is insufficient.",
+      "deleteApproved": false
+    },
+    {
+      "path": "public/assets/models/guardian-stone-sd-toon.glb",
+      "bytes": 53000,
+      "disposition": "retain-runtime-catalog",
+      "owner": "runtime-assets",
+      "evidence": [
+        "docs/RUNTIME_ASSET_INVENTORY_v4.0.0.json",
+        "docs/CURRENT_ASSET_AUDIT.json"
+      ],
+      "rationale": "Model filenames are selected through runtime catalogs and fallback loaders; literal reachability alone is insufficient.",
+      "deleteApproved": false
+    },
+    {
+      "path": "public/assets/ui/v390/class-archer.png",
+      "bytes": 50964,
+      "disposition": "retain-production-candidate",
+      "owner": "art-pipeline",
+      "evidence": [
+        "scripts/generate_v390_raster_icons.py",
+        "docs/PATCH_FILE_REPORT_v3.9.0.json"
+      ],
+      "rationale": "Approved raster candidate remains reproducible input and compatibility material for the v3.9 visual pipeline.",
+      "deleteApproved": false
+    },
+    {
+      "path": "public/assets/ui/v390/class-mage.png",
+      "bytes": 47059,
+      "disposition": "retain-production-candidate",
+      "owner": "art-pipeline",
+      "evidence": [
+        "scripts/generate_v390_raster_icons.py",
+        "docs/PATCH_FILE_REPORT_v3.9.0.json"
+      ],
+      "rationale": "Approved raster candidate remains reproducible input and compatibility material for the v3.9 visual pipeline.",
+      "deleteApproved": false
+    },
+    {
+      "path": "public/assets/ui/v390/enemy-crow.png",
+      "bytes": 46715,
+      "disposition": "retain-production-candidate",
+      "owner": "art-pipeline",
+      "evidence": [
+        "scripts/generate_v390_raster_icons.py",
+        "docs/PATCH_FILE_REPORT_v3.9.0.json"
+      ],
+      "rationale": "Approved raster candidate remains reproducible input and compatibility material for the v3.9 visual pipeline.",
+      "deleteApproved": false
+    },
+    {
+      "path": "public/assets/ui/v390/enemy-skeleton.png",
+      "bytes": 45005,
+      "disposition": "retain-production-candidate",
+      "owner": "art-pipeline",
+      "evidence": [
+        "scripts/generate_v390_raster_icons.py",
+        "docs/PATCH_FILE_REPORT_v3.9.0.json"
+      ],
+      "rationale": "Approved raster candidate remains reproducible input and compatibility material for the v3.9 visual pipeline.",
+      "deleteApproved": false
+    },
+    {
+      "path": "public/assets/ui/v390/enemy-ghost.png",
+      "bytes": 40895,
+      "disposition": "retain-production-candidate",
+      "owner": "art-pipeline",
+      "evidence": [
+        "scripts/generate_v390_raster_icons.py",
+        "docs/PATCH_FILE_REPORT_v3.9.0.json"
+      ],
+      "rationale": "Approved raster candidate remains reproducible input and compatibility material for the v3.9 visual pipeline.",
+      "deleteApproved": false
+    },
+    {
+      "path": "public/assets/models/monster-runner-sd-toon.glb",
+      "bytes": 39364,
+      "disposition": "retain-runtime-catalog",
+      "owner": "runtime-assets",
+      "evidence": [
+        "docs/RUNTIME_ASSET_INVENTORY_v4.0.0.json",
+        "docs/CURRENT_ASSET_AUDIT.json"
+      ],
+      "rationale": "Model filenames are selected through runtime catalogs and fallback loaders; literal reachability alone is insufficient.",
+      "deleteApproved": false
+    },
+    {
+      "path": "public/assets/ui/v390/class-warrior.png",
+      "bytes": 38556,
+      "disposition": "retain-production-candidate",
+      "owner": "art-pipeline",
+      "evidence": [
+        "scripts/generate_v390_raster_icons.py",
+        "docs/PATCH_FILE_REPORT_v3.9.0.json"
+      ],
+      "rationale": "Approved raster candidate remains reproducible input and compatibility material for the v3.9 visual pipeline.",
+      "deleteApproved": false
+    },
+    {
+      "path": "public/assets/system-v135/runtime-module-shell-v135.json",
+      "bytes": 19240,
+      "disposition": "retain-runtime-contract",
+      "owner": "release-engineering",
+      "evidence": [
+        "scripts/verify-dist-v135.mjs",
+        "scripts/generate-runtime-shell-v135.mjs"
+      ],
+      "rationale": "The generated module shell is a deployed service-worker and release-integrity contract.",
+      "deleteApproved": false
+    }
+  ]
+}
