@@ -215,7 +215,7 @@
     "verify:reachability:v143": "node scripts/generate-runtime-asset-reachability-v143.mjs --check",
     "generate:presentation:v143": "node scripts/generate-presentation-snapshots-v143.mjs",
     "verify:presentation:v143": "node scripts/generate-presentation-snapshots-v143.mjs --check",
-    "verify:release:v143": "npm run verify:mobile-input:v143 && npm run verify:browser:v143 && npm run verify:reachability:v143 && npm run verify:presentation:v143 && node scripts/verify-release-v143.mjs",
+    "verify:release:v143": "npm run verify:parser:v143 && npm run verify:mobile-input:v143 && npm run verify:browser:v143 && npm run verify:reachability:v143 && npm run verify:presentation:v143 && node scripts/verify-release-v143.mjs",
     "verify:dist:v143": "node scripts/verify-dist-v143.mjs",
     "stage:package:v143": "node scripts/stage-clean-package-v143.mjs",
     "verify:package:v143": "node scripts/verify-clean-package-v143.mjs",
@@ -252,7 +252,10 @@
     "stage:package:v146": "node scripts/stage-clean-package-v146.mjs",
     "verify:package:v146": "node scripts/verify-clean-package-v146.mjs",
     "create:patch:v146": "node scripts/create-patch-v146.mjs",
-    "verify:patch:v146": "node scripts/verify-patch-v146.mjs"
+    "verify:patch:v146": "node scripts/verify-patch-v146.mjs",
+    "sync:generated:ci": "npm run generate:residency:v145",
+    "verify:ci": "npm run sync:generated:ci && npm run verify",
+    "verify:parser:v143": "node scripts/test-verify-dist-v143-css-parser.mjs"
   },
   "dependencies": {
     "three": "0.185.1"

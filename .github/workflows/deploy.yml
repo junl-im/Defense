@@ -53,7 +53,7 @@ jobs:
           set -o pipefail
           status=0
           mkdir -p logs/verify
-          npm run verify 2>&1 | tee logs/verify/ci-verify.log || status=$?
+          npm run verify:ci 2>&1 | tee logs/verify/ci-verify.log || status=$?
           if [ "$status" -ne 0 ]; then
             echo "::group::Verification failure digest"
             grep -nE '^(FAIL|::error)|VERIFY FAILURE DIGEST|검증 실패' logs/verify/ci-verify.log || true

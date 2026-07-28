@@ -20,12 +20,26 @@ const normalizeCss = (value) => value
   .replace(/\s+/g, '')
   .toLowerCase();
 
-const extractRuleBody = (css, selector) => {
-  const start = css.indexOf(`${selector}{`);
-  if (start < 0) return null;
-  const bodyStart = start + selector.length + 1;
-  const bodyEnd = css.indexOf('}', bodyStart);
-  return bodyEnd < 0 ? null : css.slice(bodyStart, bodyEnd);
+const canonicalizeSelector = (selector) => selector
+  .trim()
+  .replace(/::(before|after)/g, ':$1');
+
+// Vite/esbuild may shorten ::before to :before, merge selectors that share a
+// declaration block, or emit the same selector in multiple media-query rules.
+// Collect every matching declaration block instead of relying on one exact
+// `selector{` byte sequence.
+const collectRuleBodies = (css, selector) => {
+  const target = canonicalizeSelector(selector);
+  const bodies = [];
+  const rulePattern = /([^{}]+)\{([^{}]*)\}/g;
+  let match;
+  while ((match = rulePattern.exec(css)) !== null) {
+    const selectors = match[1]
+      .split(',')
+      .map(canonicalizeSelector);
+    if (selectors.includes(target)) bodies.push(match[2]);
+  }
+  return bodies.length > 0 ? bodies.join(';') : null;
 };
 
 if (!fs.existsSync(path.join(dist, 'index.html'))) {
@@ -51,8 +65,8 @@ if (!js.includes('DD-MOBILE-INPUT-RECOVERY-V143') || !js.includes('mobile-input-
 // "finger-occlusion safety".
 const normalizedCss = normalizeCss(css);
 const summonSelector = '#summon-btn[data-summon-visibility-v143=enhanced]';
-const summonRule = extractRuleBody(normalizedCss, summonSelector);
-const summonLabelRule = extractRuleBody(normalizedCss, `${summonSelector}::before`);
+const summonRule = collectRuleBodies(normalizedCss, summonSelector);
+const summonLabelRule = collectRuleBodies(normalizedCss, `${summonSelector}:before`);
 const missingCssContracts = [];
 
 if (!summonRule) {

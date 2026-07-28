@@ -25,6 +25,7 @@ const files=[
   'public/sw.js',
   'public/version.json',
   'scripts/create-patch-v146.mjs',
+  'scripts/generate-asset-residency-v145.mjs',
   'scripts/run-release-assurance-v146.mjs',
   'scripts/stage-clean-package-v146.mjs',
   'scripts/verify-clean-package-v146.mjs',

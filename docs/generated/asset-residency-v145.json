@@ -20,7 +20,9 @@
     "duplicateIds": [],
     "unclassified": [],
     "overlap": [],
-    "allClassifiedOnce": true
+    "nonPortableUrls": [],
+    "allClassifiedOnce": true,
+    "portableUrls": true
   },
   "assets": [
     {
@@ -718,9 +720,9 @@
       "retain": false,
       "estimatedBytes": 7678080,
       "variants": {
-        "low": "file:///mnt/data/Defense_v146_work/DokkaebiLuckDefense3D_FULL_v1.0.45_LONG_SESSION_ASSURANCE_VERIFIED/src/assets/moon-market-keyart.webp?v={CACHE_REVISION}",
-        "medium": "file:///mnt/data/Defense_v146_work/DokkaebiLuckDefense3D_FULL_v1.0.45_LONG_SESSION_ASSURANCE_VERIFIED/src/assets/moon-market-keyart.webp?v={CACHE_REVISION}",
-        "high": "file:///mnt/data/Defense_v146_work/DokkaebiLuckDefense3D_FULL_v1.0.45_LONG_SESSION_ASSURANCE_VERIFIED/src/assets/moon-market-keyart.webp?v={CACHE_REVISION}"
+        "low": "src/assets/moon-market-keyart.webp?v={CACHE_REVISION}",
+        "medium": "src/assets/moon-market-keyart.webp?v={CACHE_REVISION}",
+        "high": "src/assets/moon-market-keyart.webp?v={CACHE_REVISION}"
       }
     },
     {
