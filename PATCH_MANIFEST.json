@@ -1,183 +1,47 @@
 {
-  "baseVersion": "1.0.43",
-  "targetVersion": "1.0.44",
-  "buildId": "b24.44",
-  "applyMode": "direct-overlay",
-  "counts": {
-    "changed": 34,
-    "deleted": 0
-  },
-  "deletedPaths": [],
+  "id": "DD-v1.0.46-CI-RESIDENCY-AUTOSYNC",
+  "baseVersion": "1.0.46",
   "files": [
     {
       "path": ".github/workflows/deploy.yml",
-      "bytes": 3862,
-      "sha256": "f50fe5250725998e3f41677246c80eefe58d582f3ed0e342d18c076848077f61"
+      "sha256": "632ba9ba710b9db389fcb8ed5007373b8430ea1651541d0a66c478d604ba8d40",
+      "bytes": 4411
     },
     {
-      "path": "README.md",
-      "bytes": 2488,
-      "sha256": "a93f7c2ccc3464a64f461656fdaf2a693a1adb9ac6dcb751bc851fdc9c9da2bb"
+      "path": "docs/CI_RESIDENCY_AUTOSYNC_HOTFIX_v1.0.46.md",
+      "sha256": "4f7ea141beffddfaf5750c58ac4c3d4a3c009d97afcb3944a3f7b064d5d4db6a",
+      "bytes": 738
     },
     {
-      "path": "PROJECT_HANDOFF.md",
-      "bytes": 29887,
-      "sha256": "d3c1afdd1d9cdc2b894aa846f148996844ab2eccd4cacbf25ba0c50997509cd0"
+      "path": "docs/generated/asset-residency-v145.json",
+      "sha256": "b729594d20df3dfebff51110f26738104a4be5cfccf900f4e0935ad7d02c3ea6",
+      "bytes": 40305
+    },
+    {
+      "path": "docs/generated/asset-residency-v145.md",
+      "sha256": "8d5f7ad15dfb09c19ca8404d787c5b98de484bd94639bde9ab95c3146fd6b80e",
+      "bytes": 3559
     },
     {
       "path": "package.json",
-      "bytes": 28030,
-      "sha256": "c772697b1fb06c6a20e3c9f33b00974492df8a9bb99c3595a8b142485bd190ee"
+      "sha256": "0dc8b4ad667aaf53f80af8a3caf73c46faae7287fbce3150f5b0a50fc63dbdbe",
+      "bytes": 29971
     },
     {
-      "path": "package-lock.json",
-      "bytes": 29140,
-      "sha256": "3a05444febb5cef06c50820ad6bee3870cc7e14dc05ee6fb3fa768da47be8b17"
+      "path": "scripts/generate-asset-residency-v145.mjs",
+      "sha256": "c4db1ab6f8e8126745ee30a21d324f157e237a8b13bda90749bd46d7989810dc",
+      "bytes": 6752
     },
     {
-      "path": "index.html",
-      "bytes": 54457,
-      "sha256": "617be5bf283ec15aa663587ad62f70aa3d47c5329e42069420f6bb9d0363ae57"
+      "path": "scripts/verify-ci-reporting.mjs",
+      "sha256": "a3c6b95b0327b15e54e6883ce0cf69bb21f203cba0ca774e654bc7dc57f9e3fa",
+      "bytes": 1942
     },
     {
-      "path": "src/main.js",
-      "bytes": 397177,
-      "sha256": "50caa58443231cf39da170bb3f5e0e7d20f564665c7eaf43d77f8ae59fb003c0"
-    },
-    {
-      "path": "src/version-policy.js",
-      "bytes": 1740,
-      "sha256": "a464bd3e0003ea30fbbe1bfb805ee7ff45228998cd3e3858a895d6290da15b91"
-    },
-    {
-      "path": "public/version.json",
-      "bytes": 210,
-      "sha256": "659b25148f04fbaa80ef656e0b3ab2becc4ae670860b201c7d547ebb245ee0ce"
-    },
-    {
-      "path": "public/sw.js",
-      "bytes": 21671,
-      "sha256": "d7d0942c1e63e120ec1a7b2187e34a03d0ff5ca01b6fee59a0f5df14ba4ee2e1"
-    },
-    {
-      "path": "public/static-bootstrap.js",
-      "bytes": 5426,
-      "sha256": "f4b3aad977f647d136f0ca67980523936a108e755fe17403f2447d28171b056b"
-    },
-    {
-      "path": "public/assets/system-v135/runtime-module-shell-v135.json",
-      "bytes": 19240,
-      "sha256": "2c948e8da8bcd043dbbb0e9594dacb3cca9e469066268bff5b96ceab244e4d96"
-    },
-    {
-      "path": "scripts/verify-release-v143.mjs",
-      "bytes": 4401,
-      "sha256": "b9095a7dd684f7410af776517beecfdc8f10a2b557b17ddf9ed86d623d2e9dd3"
-    },
-    {
-      "path": "scripts/verify-dist-v143.mjs",
-      "bytes": 3985,
-      "sha256": "5b39f08523e24cb6608a3faf60e1e638e7e5a584dd1bb2ffd2b6a61b1e6f232d"
-    },
-    {
-      "path": "scripts/verify-dist-chain-v140.mjs",
-      "bytes": 778,
-      "sha256": "3e5a2ed2d33d558bb57c3c31bb2a228305ba56a9376ada34ee775fa3df592c0b"
-    },
-    {
-      "path": "scripts/generate-asset-review-v144.mjs",
-      "bytes": 5151,
-      "sha256": "788a2561eb3d2c218f71c10d8c03452aad28d127aa89ea2e7840c9ca81ef7769"
-    },
-    {
-      "path": "scripts/verify-dist-budget-v144.mjs",
-      "bytes": 9257,
-      "sha256": "43f86f0195a9048f928e6e3bd35f6d39d826ac374938f1e94bf7841cae4a0d6c"
-    },
-    {
-      "path": "scripts/run-built-game-mobile-matrix-v144.mjs",
-      "bytes": 18995,
-      "sha256": "c3039ceb611c3523190ce3b7d67ba2e575091b58419bde354a46daa0a9bd07e2"
-    },
-    {
-      "path": "scripts/verify-release-v144.mjs",
-      "bytes": 4053,
-      "sha256": "414a8740d8d2dc65b3e07c81a6aa4bb1fa12e179fe752b0b13f5c6923a8c6ad7"
-    },
-    {
-      "path": "scripts/verify-dist-v144.mjs",
-      "bytes": 1630,
-      "sha256": "572b9d26520c3b2238e56b6a0cd7c3705dd02da5c948c39235d3280eec6e27a8"
-    },
-    {
-      "path": "scripts/stage-clean-package-v144.mjs",
-      "bytes": 917,
-      "sha256": "90aa30d994c25d48c293d2eb6da5e1b972600c370edfc35f36f14aed065f9681"
-    },
-    {
-      "path": "scripts/verify-clean-package-v144.mjs",
-      "bytes": 993,
-      "sha256": "2dfc3497587527390789a084f9cedad73cfaccff5a06f2417912ba0d55cbaf06"
-    },
-    {
-      "path": "scripts/create-patch-v144.mjs",
-      "bytes": 2383,
-      "sha256": "b4e10c52696afa6e51112d6b35662bcc0304a9aae08e27018f2ee484a9da5cf7"
-    },
-    {
-      "path": "scripts/verify-patch-v144.mjs",
-      "bytes": 1692,
-      "sha256": "7cae83e16eb0d6305ae92f9afb1bb460bf6eb8dcd4b8b1c9c3b07769ad902a38"
-    },
-    {
-      "path": "docs/DIST_BUDGETS_v1.0.44.json",
-      "bytes": 597,
-      "sha256": "3ff9bc23fd7cea2d53f8aca1276e7d26f10d6b93ef54c3aee40b5a6ae6189db1"
-    },
-    {
-      "path": "docs/RELEASE_ASSURANCE_v1.0.44.md",
-      "bytes": 3062,
-      "sha256": "ba5ef0fafda56bce584b048af5452219ef8041b43764bc7d4c6110191ad13c4a"
-    },
-    {
-      "path": "docs/PATCH_NOTES_v1.0.44.md",
-      "bytes": 1148,
-      "sha256": "3a67d433d1674c1231a3b1c382ec49300d20e6093ba9704d229a7216b9018761"
-    },
-    {
-      "path": "docs/PATCH_APPLY_v1.0.44.md",
-      "bytes": 1082,
-      "sha256": "3dc05fed8ef4ce05e949a8e2b7c129167263bb167d53d16b8f210c5f117989ce"
-    },
-    {
-      "path": "docs/NEXT_UPDATE_v1.0.45.md",
-      "bytes": 821,
-      "sha256": "46aa3ad0601479cf6ef449a78a88808ceca5beac49d3c7a84ee21f8fb94fc2da"
-    },
-    {
-      "path": "docs/generated/runtime-asset-reachability-v143.json",
-      "bytes": 716096,
-      "sha256": "303c80b895eb6b665873806cc3df05be1c5f0c5bfc416202fd058f43d2781f02"
-    },
-    {
-      "path": "docs/generated/runtime-asset-reachability-v143.md",
-      "bytes": 2157,
-      "sha256": "e48618cbbae1ddde31a8ac427e824e83a0d4805fd4c8744a11a6e0d5a7c17602"
-    },
-    {
-      "path": "docs/generated/presentation-surface-snapshots-v143.json",
-      "bytes": 590,
-      "sha256": "ae88ce973f8e6f10f156c57df9d550ea2d49411f49e459d2166de4e46f1ca84f"
-    },
-    {
-      "path": "docs/generated/asset-review-v144.json",
-      "bytes": 12012,
-      "sha256": "ccd4790606b5005df2729cee9d61b8ce9daa0957002feba4118080fbe506b5cd"
-    },
-    {
-      "path": "docs/generated/asset-review-v144.md",
-      "bytes": 5454,
-      "sha256": "0702986b34129cbc94c790e5699e5ae007f179f4e81a9e21f78cb3716e9433ab"
+      "path": "scripts/verify-release-v145.mjs",
+      "sha256": "9e4398fede4acb339de6028e4f3ddebd422b92c064c162e121854329c3c58776",
+      "bytes": 6560
     }
-  ]
+  ],
+  "fileCount": 8
 }
