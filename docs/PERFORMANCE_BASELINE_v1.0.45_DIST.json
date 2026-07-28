@@ -1,0 +1,10 @@
+{
+  "id": "DD-PERFORMANCE-BASELINE-V145-DIST",
+  "releaseVersion": "1.0.45",
+  "buildId": "b24.45",
+  "measurementStatus": "awaiting-first-approved-vite-artifact",
+  "comparisonPolicy": "Use exact approved Vite dist measurements when approvedMeasurements is populated. Until then, enforce the approved v1.0.44 absolute dist envelope and export the v1.0.45 measurement candidate as CI evidence without fabricating values.",
+  "maxRegressionPercent": 5,
+  "approvedMeasurements": null,
+  "provisionalEnvelopeSource": "docs/DIST_BUDGETS_v1.0.44.json"
+}

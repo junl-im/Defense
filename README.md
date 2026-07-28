@@ -1,32 +1,33 @@
-> Current improvement patch: **v1.0.44 / b24.44** - Complete Build Release Assurance
+> Current improvement patch: **v1.0.45 / b24.45** - Long-Session Stability Assurance
 
 # Dokkaebi Luck Defense 3D
 
-## v1.0.44 key changes
+## v1.0.45 key changes
 
-- Runs mobile layout QA against the complete Vite bundle after the real game boots and enters combat.
-- Captures portrait, landscape, left-handed, and 150% zoom screenshots through Chromium DevTools Protocol, with failure screenshots and console/network diagnostics.
-- Verifies the summon control remains visible, inside the viewport, at least 44px, touch-safe, and non-blocking in every matrix profile.
-- Adds measured JavaScript chunk, initial JS/CSS gzip, request-count, and initial texture upload budgets.
-- Reviews all 24 conservative v1.0.43 asset candidates and records zero deletion approvals.
-- Replaces the v1.0.43 deployment check that depended on a removable CSS comment with behavior-level CSS assertions.
-- Advances the service-worker cache to `1.0.44-b24.44`.
-- Keeps the mandatory handoff history rule enforced.
+- Advances the complete game through 100 deterministic wave lifecycles while preserving real wave, reward, UI, progression, and renderer code paths.
+- Samples frame p50/p95/max, JavaScript heap, Three.js textures/geometries, long tasks, draw calls, triangles, entity counts, and runtime errors every five waves.
+- Forces a WebGL context loss at wave 50 and requires a matched restore plus resumed rendering.
+- Rejects growth by both absolute delta and per-10-wave slope through a reusable runtime assurance model.
+- Compares current source raw/gzip measurements with the approved v1.0.44 package and fails unexplained growth above 5%.
+- Classifies all 53 runtime assets into 13 boot and 40 deferred assets with 74 explicit reachability edges.
+- Advances the service-worker cache to `1.0.45-b24.45` and keeps the v1.0.44 complete-build foundation forward-compatible.
 
 ## Commands
 
 ```bash
-npm run verify:asset-review:v144
-npm run verify:release:v144
+npm run verify:residency:v145
+npm run verify:trend:v145
+npm run verify:model:v145
+npm run verify:release:v145
 npm run build
-REQUIRE_BROWSER_V144=1 npm run verify:dist:all
-npm run stage:package:v144
-npm run verify:package:v144
-npm run create:patch:v144
-npm run verify:patch:v144
+REQUIRE_BROWSER_V144=1 REQUIRE_BROWSER_V145=1 npm run verify:dist:all
+npm run stage:package:v145
+npm run verify:package:v145
+npm run create:patch:v145
+npm run verify:patch:v145
 ```
 
-The browser matrix requires the complete Vite output (`dist/assets/game.js` and `dist/assets/game.css`). Results are written to `logs/qa/v144/mobile-matrix-report.json`; managed browser policies that block loopback HTTP are reported explicitly. `npm run build:static` remains a recovery deployment option but is intentionally not accepted as the v1.0.44 release-assurance target.
+The 100-wave browser harness requires the complete Vite output (`dist/assets/game.js` and `dist/assets/game.css`). Evidence is written to `logs/qa/v145/`; browser absence or loopback policy blocking is a hard failure when `REQUIRE_BROWSER_V145=1` is set. Static fallback remains recovery-only and is not accepted as the v1.0.45 target.
 
 ## Preserved release foundations
 
@@ -46,3 +47,6 @@ The browser matrix requires the complete Vite output (`dist/assets/game.js` and 
 - v1.0.42 random summon control and edge-safe authored UI asset
 - v1.0.43 mobile input recovery, presentation snapshots, and runtime asset reachability
 - v1.0.44 complete-build mobile matrix, measured dist budgets, and reviewed asset candidates
+- v1.0.45 100-wave runtime trends, WebGL recovery, 5% source regression gate, and explicit asset residency
+
+> Current release: **v1.0.46 / b24.46** — device trace, service-worker upgrade, and deterministic load assurance.

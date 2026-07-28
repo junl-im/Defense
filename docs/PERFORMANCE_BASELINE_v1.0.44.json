@@ -1,0 +1,27 @@
+{
+  "id": "DD-PERFORMANCE-BASELINE-V144",
+  "releaseVersion": "1.0.44",
+  "buildId": "b24.44",
+  "source": "logs/package/1.0.44/DokkaebiLuckDefense3D_FULL_v1.0.44_RELEASE_ASSURANCE_VERIFIED",
+  "comparisonPolicy": "Exact approved v1.0.44 source-package measurements; v1.0.45 fails unexplained raw or gzip growth above 5 percent.",
+  "maxRegressionPercent": 5,
+  "metrics": {
+    "mainJs": { "count": 1, "rawBytes": 397177, "gzipBytes": 99948 },
+    "styleCss": { "count": 1, "rawBytes": 307746, "gzipBytes": 59821 },
+    "allSourceJs": { "count": 128, "rawBytes": 1281575, "gzipBytes": 340957 },
+    "runtimeJs": { "count": 48, "rawBytes": 348807, "gzipBytes": 102797 },
+    "engineJs": { "count": 23, "rawBytes": 95756, "gzipBytes": 29343 }
+  },
+  "distEnvelope": {
+    "source": "docs/DIST_BUDGETS_v1.0.44.json",
+    "maxJsChunks": 16,
+    "maxInitialRequests": 20,
+    "maxInitialJsRawBytes": 3200000,
+    "maxInitialJsGzipBytes": 900000,
+    "maxInitialCssRawBytes": 420000,
+    "maxInitialCssGzipBytes": 100000,
+    "maxInitialTextureCount": 64,
+    "maxInitialTextureUploadBytes": 67108864,
+    "maxSingleJsChunkRawBytes": 2800000
+  }
+}

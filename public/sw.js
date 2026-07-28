@@ -1,9 +1,11 @@
-const RELEASE_VERSION = '1.0.44';
-const BUILD_ID = 'b24.44';
+const RELEASE_VERSION = '1.0.46';
+const BUILD_ID = 'b24.46';
 // const VERSION = '23.2.0'; historical lineage marker.
 const CACHE_PREFIX = 'dokkaebi-luck-defense-shell-';
 const LEGACY_CACHE_PREFIXES = ['dokkaebi-shell-', 'dokkaebi-luck-defense-shell-'];
 const CACHE_NAME = `${CACHE_PREFIX}${BUILD_ID}`;
+const UPGRADE_ASSURANCE_ID = 'DD-SW-UPGRADE-ASSURANCE-V146';
+const CLIENT_STORAGE_POLICY = 'preserve-client-storage';
 // BEGIN GENERATED RUNTIME MODULE SHELL V135
 const GENERATED_MODULE_SHELL_V135 = Object.freeze([
   './src/art-production-gate.js',
@@ -96,16 +98,20 @@ const GENERATED_MODULE_SHELL_V135 = Object.freeze([
   './src/runtime/combat-visual-director-v112.js',
   './src/runtime/core-foundation-director-v101.js',
   './src/runtime/cross-platform-shell-v112.js',
+  './src/runtime/device-trace-assurance-v146.js',
+  './src/runtime/failure-digest-v146.js',
   './src/runtime/first-presentation-director-v107.js',
   './src/runtime/hero-hud-polish-v120.js',
   './src/runtime/korean-language-guard.js',
   './src/runtime/live-combat-director-v121.js',
+  './src/runtime/long-session-assurance-v145.js',
   './src/runtime/mobile-hud-director-v23.js',
   './src/runtime/mobile-input-recovery-v143.js',
   './src/runtime/native-input-policy-v231.js',
   './src/runtime/release-assurance-director-v124.js',
   './src/runtime/runtime-visual-audit.js',
   './src/runtime/save-schema.js',
+  './src/runtime/service-worker-upgrade-assurance-v146.js',
   './src/runtime/silhouette-assurance-director-v132.js',
   './src/runtime/static-deployment-gate-v118.js',
   './src/runtime/summon-button-presentation-v142.js',
@@ -346,11 +352,24 @@ async function removeOldCaches({ includeCurrent = false } = {}) {
   return targets;
 }
 self.addEventListener('install', (event) => event.waitUntil((async () => { await precache(); await self.skipWaiting(); })()));
-self.addEventListener('activate', (event) => event.waitUntil((async () => { await removeOldCaches(); await self.clients.claim(); })()));
+self.addEventListener('activate', (event) => event.waitUntil((async () => {
+  const removedCaches = await removeOldCaches();
+  await self.clients.claim();
+  const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+  for (const client of clients) client.postMessage({
+    type: 'DOKKAEBI_SW_ACTIVATED',
+    version: RELEASE_VERSION,
+    buildId: BUILD_ID,
+    cacheName: CACHE_NAME,
+    removedCaches,
+    assuranceId: UPGRADE_ASSURANCE_ID,
+    storagePolicy: CLIENT_STORAGE_POLICY
+  });
+})()));
 self.addEventListener('message', (event) => {
   const data = event.data || {};
   if (data.type === 'DOKKAEBI_GET_VERSION') {
-    event.ports?.[0]?.postMessage({ type: 'DOKKAEBI_VERSION', version: RELEASE_VERSION, buildId: BUILD_ID, cacheName: CACHE_NAME });
+    event.ports?.[0]?.postMessage({ type: 'DOKKAEBI_VERSION', version: RELEASE_VERSION, buildId: BUILD_ID, cacheName: CACHE_NAME, assuranceId: UPGRADE_ASSURANCE_ID, storagePolicy: CLIENT_STORAGE_POLICY });
     return;
   }
   if (data.type === 'DOKKAEBI_PURGE') {

@@ -1,12 +1,12 @@
 {
   "schema": "DD-RUNTIME-MODULE-SHELL-1.0",
   "id": "DD-RELEASE-INTEGRITY-V135",
-  "releaseVersion": "1.0.44",
-  "buildId": "b24.44",
-  "cacheRevision": "1.0.44-b24.44",
+  "releaseVersion": "1.0.46",
+  "buildId": "b24.46",
+  "cacheRevision": "1.0.46-b24.46",
   "entry": "src/bootstrap.js",
-  "moduleCount": 113,
-  "totalBytes": 1467733,
+  "moduleCount": 117,
+  "totalBytes": 1501871,
   "files": [
     {
       "path": "src/art-production-gate.js",
@@ -310,8 +310,8 @@
     },
     {
       "path": "src/main.js",
-      "bytes": 397177,
-      "sha256": "50caa58443231cf39da170bb3f5e0e7d20f564665c7eaf43d77f8ae59fb003c0"
+      "bytes": 409673,
+      "sha256": "f53a81409c7b3d39e63d9eb75cafc8920126c8093f6977dfbdb07dff4ca0795c"
     },
     {
       "path": "src/premium-assets.js",
@@ -459,6 +459,16 @@
       "sha256": "d5b96b64aa7cef90203f7916c9788cd74013ff0453ac4be1989e7a0bc3788b0c"
     },
     {
+      "path": "src/runtime/device-trace-assurance-v146.js",
+      "bytes": 6259,
+      "sha256": "4e74c467ff171f54d46998f0452abf3b84ba6576e6f5e34d185909d9f783a1b1"
+    },
+    {
+      "path": "src/runtime/failure-digest-v146.js",
+      "bytes": 3718,
+      "sha256": "a7464e59189db310470a5ea1b9b412cc563a7e0f570d396349a01e1776cbf7b0"
+    },
+    {
       "path": "src/runtime/first-presentation-director-v107.js",
       "bytes": 6823,
       "sha256": "db750e8a60563019117ea5ab97eb0eba6e7604dd85f01755cb54fddca96a80ae"
@@ -477,6 +487,11 @@
       "path": "src/runtime/live-combat-director-v121.js",
       "bytes": 6838,
       "sha256": "8521daa4ccad74ec1d2aaedd8b83af7ec089eb4b35d9f808e3518022aabd3acb"
+    },
+    {
+      "path": "src/runtime/long-session-assurance-v145.js",
+      "bytes": 9160,
+      "sha256": "1142d23923a8c3c58ac10f6da77989d13dd327337b98cbece7f41bdfd7101e8e"
     },
     {
       "path": "src/runtime/mobile-hud-director-v23.js",
@@ -507,6 +522,11 @@
       "path": "src/runtime/save-schema.js",
       "bytes": 1744,
       "sha256": "dad0222aa855e5938a0c66898095e9d8b684bf80f40604bb7e88bdda3451c6eb"
+    },
+    {
+      "path": "src/runtime/service-worker-upgrade-assurance-v146.js",
+      "bytes": 2505,
+      "sha256": "a6f05c8698cb3ba1fafc2446eae0a5c87b54722520217ccd246e0a5ce869c15c"
     },
     {
       "path": "src/runtime/silhouette-assurance-director-v132.js",
@@ -571,7 +591,7 @@
     {
       "path": "src/version-policy.js",
       "bytes": 1740,
-      "sha256": "a464bd3e0003ea30fbbe1bfb805ee7ff45228998cd3e3858a895d6290da15b91"
+      "sha256": "79769cc0b1e3079c3a4627285053e85e95a004331a14b73114d26f8e6c47fed7"
     }
   ]
 }

@@ -76,6 +76,10 @@ import { auditRuntimeVisuals } from './runtime/runtime-visual-audit.js';
 import WaveFlowGuard from './runtime/wave-flow-guard.js';
 import WaveReliabilityDirector from './runtime/wave-reliability-director.js';
 import BrowserReliabilityLab from './runtime/browser-reliability-lab.js';
+import LongSessionAssuranceV145 from './runtime/long-session-assurance-v145.js';
+import { replayDeviceViewportTraceV146 } from './runtime/device-trace-assurance-v146.js';
+import { buildFailureDigestV146 } from './runtime/failure-digest-v146.js';
+import { simulateServiceWorkerUpgradeV146 } from './runtime/service-worker-upgrade-assurance-v146.js';
 import { installKoreanLanguageGuard } from './runtime/korean-language-guard.js';
 import VisualIntegrationDirector from './runtime/visual-integration-director.js';
 import AssetPresenceEnforcer from './runtime/asset-presence-enforcer.js';
@@ -149,7 +153,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '1.0.44';
+const GAME_VERSION = '1.0.46';
 // const GAME_VERSION = '23.1.0'; historical lineage marker for pre-normalization contracts.
 if (GAME_VERSION !== PUBLIC_GAME_VERSION) throw new Error('Public version policy mismatch');
 function runtimeSpriteMarkup(path, alt = '', className = '') {
@@ -393,6 +397,8 @@ class DokkaebiLuckDefense {
     this.waveFlowGuard = new WaveFlowGuard();
     this.waveReliability = new WaveReliabilityDirector();
     this.browserReliability = new BrowserReliabilityLab({ version: GAME_VERSION });
+    this.longSessionAssuranceV145 = new LongSessionAssuranceV145();
+    this.longSessionLoadPhasesV146 = [];
     this.mobileInputRecoveryV143 = new MobileInputRecoveryV143({
       onReset: (reason, detail) => this.resetMobilePointerStateV143(reason, detail)
     });
@@ -4523,6 +4529,250 @@ class DokkaebiLuckDefense {
     });
   }
 
+  getLongSessionSnapshotV145(frameWindow = {}) {
+    const memory = typeof performance !== 'undefined' ? performance.memory : null;
+    return {
+      wave: this.currentWave || 0,
+      state: this.state,
+      fps: this.engine?.monitor?.lastFps || 0,
+      frameWindow,
+      memory: {
+        supported: Boolean(memory),
+        usedJSHeapMB: memory ? memory.usedJSHeapSize / 1048576 : 0,
+        totalJSHeapMB: memory ? memory.totalJSHeapSize / 1048576 : 0,
+        heapLimitMB: memory ? memory.jsHeapSizeLimit / 1048576 : 0
+      },
+      renderer: {
+        drawCalls: this.renderer?.info?.render?.calls || 0,
+        triangles: this.renderer?.info?.render?.triangles || 0,
+        textures: this.renderer?.info?.memory?.textures || 0,
+        geometries: this.renderer?.info?.memory?.geometries || 0
+      },
+      counts: {
+        enemies: this.enemies?.length || 0,
+        units: this.units?.length || 0,
+        projectiles: this.projectiles?.length || 0,
+        particles: this.particles?.length || 0
+      },
+      browserReliability: this.browserReliability?.diagnostics || {},
+      runtimeErrors: this.runtimeErrors.length
+    };
+  }
+
+  async measureFrameWindowV145(frameCount = 8) {
+    const target = Math.max(3, Math.min(60, Math.round(Number(frameCount) || 8)));
+    const timestamps = [];
+    await new Promise((resolve) => {
+      let settled = false;
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        this.lifecycle.system.cancel('v145-frame-window-timeout');
+        this.lifecycle.frames.cancel('v145-frame-window');
+        resolve();
+      };
+      const step = (timestamp) => {
+        timestamps.push(timestamp);
+        if (timestamps.length >= target + 1) {
+          finish();
+          return;
+        }
+        this.lifecycle.frames.request(step, { key: 'v145-frame-window' });
+      };
+      this.lifecycle.system.schedule(finish, 5000, { key: 'v145-frame-window-timeout' });
+      this.lifecycle.frames.request(step, { key: 'v145-frame-window' });
+    });
+    const durations = timestamps.slice(1).map((value, index) => Math.max(0, value - timestamps[index])).filter(Number.isFinite);
+    const sorted = [...durations].sort((a, b) => a - b);
+    const percentile = (ratio) => sorted.length ? sorted[Math.min(sorted.length - 1, Math.max(0, Math.ceil(sorted.length * ratio) - 1))] : 0;
+    return Object.freeze({
+      samples: durations.length,
+      p50Ms: Math.round(percentile(.5) * 1000) / 1000,
+      p95Ms: Math.round(percentile(.95) * 1000) / 1000,
+      maxMs: Math.round((sorted.at(-1) || 0) * 1000) / 1000
+    });
+  }
+
+  resolveLongSessionRewardsV145() {
+    for (let attempt = 0; attempt < 24; attempt += 1) {
+      if (['blessing', 'relic', 'contract', 'choice'].includes(this.state)) {
+        this.selectRecommendedReward(this.state);
+        continue;
+      }
+      if (this.state === 'playing' && !this.waveActive && this.postWaveQueue.length > 0) {
+        this.advancePostWaveRewards();
+        continue;
+      }
+      break;
+    }
+    return this.getBrowserAutomationSnapshot();
+  }
+
+  async prepareLongSessionV145({ targetWaves = 100, seed = 'V145-LONG-SESSION' } = {}) {
+    const waves = Math.max(1, Math.min(250, Math.round(Number(targetWaves) || 100)));
+    if (this.state === 'title') {
+      this.selectedSeedModeId = 'random';
+      this.runSeed = String(seed);
+      const started = await this.startRunFromTitle({ reuseSeed: true });
+      if (!started) throw new Error('v145 long-session run could not start');
+    }
+    this.resolveLongSessionRewardsV145();
+    if (this.state !== 'playing') throw new Error(`v145 long-session requires playing state, received ${this.state}`);
+    this.lifecycle.run.cancel('auto-wave-start');
+    this.cancelAutoWaveCountdown();
+    this.maxWaves = waves;
+    this.runSeed = String(seed);
+    this.runRandom = createSeededRandom(this.runSeed);
+    this.waveReliability.resetRun({ seed: this.runSeed, mode: this.selectedRunModeId, hero: this.selectedHeroClassId, maxWaves: waves });
+    this.longSessionAssuranceV145.start({ seed: this.runSeed, targetWaves: waves });
+    this.longSessionLoadPhasesV146 = [];
+    const frameWindow = await this.measureFrameWindowV145(6);
+    this.longSessionAssuranceV145.record(this.getLongSessionSnapshotV145(frameWindow));
+    this.browserReliability?.noteMilestone('v145-long-session-start', { waves, seed: this.runSeed });
+    return this.longSessionAssuranceV145.report;
+  }
+
+  async advanceLongSessionWaveV145() {
+    this.resolveLongSessionRewardsV145();
+    if (this.state !== 'playing') throw new Error(`v145 cannot advance from ${this.state}`);
+    if (this.currentWave >= this.maxWaves) return this.getBrowserAutomationSnapshot();
+    this.cancelAutoWaveCountdown();
+    if (!this.waveActive) this.startWave({ manual: true });
+    if (!this.waveActive) throw new Error('v145 wave did not activate');
+    this.releaseAllEnemyModels();
+    this.spawnRemaining = 0;
+    this.spawnTotal = Math.max(1, this.spawnTotal || 1);
+    this.waveSpawned = this.spawnTotal;
+    this.coreHp = this.coreMaxHp;
+    this.waveStartHp = this.coreHp;
+    this.completeWave();
+    this.resolveLongSessionRewardsV145();
+    await this.waitForRenderedFrames(2, 1500).catch(() => false);
+    return this.getBrowserAutomationSnapshot();
+  }
+
+  recordLongSessionSampleV145(frameWindow = {}) {
+    const sample = this.longSessionAssuranceV145.record(this.getLongSessionSnapshotV145(frameWindow));
+    this.browserReliability?.sample(`v145-wave-${sample.wave}`, this.getBrowserReliabilitySnapshot());
+    return sample;
+  }
+
+  async exerciseWebGLRecoveryV145() {
+    const before = this.browserReliability?.diagnostics || {};
+    const context = this.renderer?.getContext?.();
+    const extension = context?.getExtension?.('WEBGL_lose_context');
+    if (!extension) {
+      const result = { supported: false, lost: false, restored: false, detail: 'WEBGL_lose_context unavailable' };
+      this.longSessionAssuranceV145.noteContextExercise(result);
+      return result;
+    }
+    const waitFor = async (predicate, timeoutMs = 5000) => {
+      const started = performance.now();
+      while (performance.now() - started < timeoutMs) {
+        if (predicate()) return true;
+        await new Promise((resolve) => this.lifecycle.system.schedule(resolve, 50, { key: 'v145-webgl-poll' }));
+      }
+      return false;
+    };
+    extension.loseContext();
+    const lost = await waitFor(() => (this.browserReliability?.diagnostics?.contextLosses || 0) > (before.contextLosses || 0));
+    extension.restoreContext();
+    const restored = await waitFor(() => (this.browserReliability?.diagnostics?.contextRestores || 0) > (before.contextRestores || 0));
+    await this.waitForRenderedFrames(2, 2500).catch(() => false);
+    const after = this.browserReliability?.diagnostics || {};
+    const result = {
+      supported: true,
+      lost,
+      restored,
+      lossDelta: Math.max(0, (after.contextLosses || 0) - (before.contextLosses || 0)),
+      restoreDelta: Math.max(0, (after.contextRestores || 0) - (before.contextRestores || 0)),
+      detail: restored ? 'context restored and rendering resumed' : 'context restoration timed out'
+    };
+    this.longSessionAssuranceV145.noteContextExercise(result);
+    return result;
+  }
+
+  finishLongSessionV145() {
+    const report = this.longSessionAssuranceV145.finish({ requireContextExercise: true });
+    this.browserReliability?.noteMilestone('v145-long-session-finish', { passed: report.passed, wave: report.metrics.lastWave });
+    return report;
+  }
+
+  replayDeviceViewportTraceV146(trace = {}) {
+    const report = replayDeviceViewportTraceV146(trace);
+    this.browserReliability?.noteMilestone('v146-device-trace', { traceId: report.traceId, passed: report.passed });
+    return report;
+  }
+
+  simulateServiceWorkerUpgradeV146(options = {}) {
+    const report = simulateServiceWorkerUpgradeV146(options);
+    this.browserReliability?.noteMilestone('v146-service-worker-upgrade', { passed: report.passed, removed: report.removed.length });
+    return report;
+  }
+
+  async advanceLongSessionWaveV146({ observationFrames = 18 } = {}) {
+    this.resolveLongSessionRewardsV145();
+    if (this.state !== 'playing') throw new Error(`v146 cannot advance from ${this.state}`);
+    if (this.currentWave >= this.maxWaves) return this.getBrowserAutomationSnapshot();
+    this.cancelAutoWaveCountdown();
+    if (!this.waveActive) this.startWave({ manual: true });
+    if (!this.waveActive) throw new Error('v146 wave did not activate');
+    const wave = this.currentWave;
+    const observed = [10, 25, 50, 75, 100].includes(wave);
+    let loadPhase = null;
+    if (observed) {
+      const bossType = getBossTypeForWave(wave);
+      if (bossType) this.spawnEnemy({ forceType: bossType, emergency: true });
+      while (this.enemies.length < 3 && this.spawnRemaining > 0) this.spawnEnemy({ forceType: 'imp', emergency: true });
+      this.spawnParticles(this.player.group.position.clone().add(new THREE.Vector3(0, .8, 0)), 0x8cecff, 24, 4.2);
+      const frameWindow = await this.measureFrameWindowV145(Math.max(8, Math.min(40, Number(observationFrames) || 18)));
+      const snapshot = this.getLongSessionSnapshotV145(frameWindow);
+      loadPhase = Object.freeze({
+        wave,
+        boss: Boolean(bossType),
+        observationFrames: frameWindow.samples,
+        frameP95Ms: frameWindow.p95Ms,
+        enemies: snapshot.counts.enemies,
+        units: snapshot.counts.units,
+        projectiles: snapshot.counts.projectiles,
+        particles: snapshot.counts.particles,
+        drawCalls: snapshot.renderer.drawCalls,
+        triangles: snapshot.renderer.triangles,
+        passed: snapshot.counts.enemies > 0 && snapshot.counts.particles > 0 && frameWindow.samples >= 6
+      });
+      this.longSessionLoadPhasesV146.push(loadPhase);
+      this.browserReliability?.noteMilestone(`v146-load-phase-${wave}`, loadPhase);
+    }
+    this.releaseAllEnemyModels();
+    this.spawnRemaining = 0;
+    this.spawnTotal = Math.max(1, this.spawnTotal || 1);
+    this.waveSpawned = this.spawnTotal;
+    this.coreHp = this.coreMaxHp;
+    this.waveStartHp = this.coreHp;
+    this.completeWave();
+    this.resolveLongSessionRewardsV145();
+    await this.waitForRenderedFrames(2, 1500).catch(() => false);
+    return Object.freeze({ ...this.getBrowserAutomationSnapshot(), loadPhase });
+  }
+
+  finishLongSessionV146() {
+    const report = this.finishLongSessionV145();
+    const loadChecks = Object.freeze({
+      expectedPhases: this.longSessionLoadPhasesV146.length === 5,
+      populatedPhases: this.longSessionLoadPhasesV146.every((phase) => phase.passed),
+      bossPhases: this.longSessionLoadPhasesV146.filter((phase) => phase.boss).length >= 3
+    });
+    const enhanced = Object.freeze({
+      ...report,
+      id: 'DD-LONG-SESSION-ASSURANCE-V146',
+      releaseVersion: '1.0.46',
+      loadPhases: Object.freeze([...this.longSessionLoadPhasesV146]),
+      loadChecks,
+      passed: report.passed && Object.values(loadChecks).every(Boolean)
+    });
+    return Object.freeze({ ...enhanced, failureDigest: buildFailureDigestV146(enhanced) });
+  }
+
   handleWebGLRecovery({ lost = false } = {}) {
     if (lost) {
       this.autoPausedByContextLoss = this.state === 'playing';
@@ -7493,8 +7743,19 @@ try {
         if (game.state === 'blessing') game.selectRecommendedReward('blessing');
         else if (game.state === 'relic') game.selectRecommendedReward('relic');
         else if (game.state === 'contract') game.skipContract();
+        else if (game.state === 'choice') game.selectRecommendedReward('choice');
         return game.getBrowserAutomationSnapshot();
       },
+      prepareLongSessionV145: (options) => game.prepareLongSessionV145(options),
+      advanceLongSessionWaveV145: () => game.advanceLongSessionWaveV145(),
+      measureFrameWindowV145: (frameCount) => game.measureFrameWindowV145(frameCount),
+      recordLongSessionSampleV145: (frameWindow) => game.recordLongSessionSampleV145(frameWindow),
+      exerciseWebGLRecoveryV145: () => game.exerciseWebGLRecoveryV145(),
+      finishLongSessionV145: () => game.finishLongSessionV145(),
+      replayDeviceViewportTraceV146: (trace) => game.replayDeviceViewportTraceV146(trace),
+      simulateServiceWorkerUpgradeV146: (options) => game.simulateServiceWorkerUpgradeV146(options),
+      advanceLongSessionWaveV146: (options) => game.advanceLongSessionWaveV146(options),
+      finishLongSessionV146: () => game.finishLongSessionV146(),
       foundationReport: () => game.coreFoundation?.report || {},
       dispose: () => game.dispose(),
       reliabilityReport: () => ({ foundation: game.coreFoundation?.report || {}, wave: game.waveReliability?.report || {}, browser: game.browserReliability?.report || {}, firstPresentation: game.firstPresentationReport || game.firstPresentation?.report || {}, automation: game.automationV22?.report || {}, targeting: game.guardianTargetingV22?.report || {}, mobileHud: game.mobileHudV23?.report || {}, mobileInputRecoveryV143: game.mobileInputRecoveryV143?.report || {}, crossPlatformShell: game.crossPlatformShellV112?.report || {}, combatVisual: game.combatVisualV112?.diagnostics || {}, artApprovalV115: game.artApprovalReportV115 || {}, artApprovalV117: game.artApprovalReportV117 || {}, assetLoadingV115: { plan: game.assetLoadingPlanV115, ready: game.deferredAssetsReady, report: game.deferredAssetReport }, heroHudPolishV120: game.heroHudPolishV120 || {}, liveCombatV121: game.liveCombatV121?.report || {}, battlefieldClarityV122: game.battlefieldClarityV122?.report || {}, releaseAssuranceV124: game.releaseAssuranceV124?.report || {}, actionAssetAssuranceV125: game.actionAssetAssuranceV125?.report || {}, bossEncounterAssuranceV126: game.bossEncounterAssuranceV126?.report || {}, bossTacticalAssuranceV127: game.bossTacticalAssuranceV127?.report || {}, battlefieldVisibilityV128: game.battlefieldVisibilityV128?.report || {}, assetRefinementV129: game.assetRefinementV129?.report || {}, assetLineageV131: game.assetLineageV131?.report || {}, silhouetteAssuranceV132: game.silhouetteAssuranceV132?.report || {}, bossIdentityAssuranceV133: game.bossIdentityAssuranceV133?.report || {} })

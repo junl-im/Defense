@@ -20,7 +20,7 @@ const GENERATED_EXTENSIONS = new Set([
 ]);
 
 const GENERATED_JSON = /(?:AUDIT|SIMULATION|REPORT|PACKAGE|MANIFEST|RESULT|DIAGNOSTIC).*\.json$/i;
-const LEGACY_PATCH_FILE = /^(?:APPLY_PATCH(?:_v[0-9.]+)?\.md|README_PATCH(?:_v[0-9.]+)?\.(?:md|txt)|PATCH_(?:APPLY|APPLIED|DELETE|FILES|MANIFEST|README|NOTES)(?:_v[0-9.]+)?\.(?:md|txt|json)|DELETE_FILES(?:_v[0-9.]+)?\.txt)$/i;
+const LEGACY_PATCH_FILE = /^(?:APPLY_PATCH(?:_v[0-9.]+)?\.md|APPLY_[A-Z]{2}(?:-[A-Z]{2})?\.txt|README_PATCH(?:_v[0-9.]+)?\.(?:md|txt)|PATCH_(?:APPLY|APPLIED|DELETE|FILES|MANIFEST|README|NOTES)(?:_v[0-9.]+)?\.(?:md|txt|json)|DELETE_FILES(?:_v[0-9.]+)?\.txt)$/i;
 const LEGACY_PATCH_DIRECTORY = /^_patch_info$/i;
 
 function nextAvailablePath(path) {

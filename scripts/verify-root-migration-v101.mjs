@@ -13,6 +13,7 @@ import { organizeLegacyRootOutput } from './root-output-policy.mjs';
 const fixture = mkdtempSync(resolve(tmpdir(), 'dokkaebi-root-migration-'));
 const staleFiles = [
   'APPLY_PATCH_v22.0.0.md',
+  'APPLY_KO.txt',
   'DELETE_FILES.txt',
   'DELETE_FILES_v22.0.0.txt',
   'PATCH_APPLY_v20.0.0.md',

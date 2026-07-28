@@ -1,12 +1,12 @@
-> Current improvement patch: **v1.0.44 / b24.44** - COMPLETE BUILD RELEASE ASSURANCE
+> Current improvement patch: **v1.0.45 / b24.45** - LONG-SESSION STABILITY ASSURANCE
 
-# PROJECT HANDOFF - RELEASE 1.0.44
+# PROJECT HANDOFF - RELEASE 1.0.45
 
-- Project: `DokkaebiLuckDefense3D_FULL_v1.0.44_RELEASE_ASSURANCE_VERIFIED`
-- Public game version: `1.0.44`
-- Lineage version: `23.11.0`
-- Build ID: `b24.44`
-- Base: `v1.0.43 / b24.43`
+- Project: `DokkaebiLuckDefense3D_FULL_v1.0.45_LONG_SESSION_ASSURANCE_VERIFIED`
+- Public game version: `1.0.45`
+- Lineage version: `23.12.0`
+- Build ID: `b24.45`
+- Base: `v1.0.44 / b24.44`
 
 ## 절대 규칙
 
@@ -31,15 +31,17 @@
 ## 검증 명령
 
 ```bash
-npm run verify:asset-review:v144
-npm run verify:release:v144
+npm run verify:residency:v145
+npm run verify:trend:v145
+npm run verify:model:v145
+npm run verify:release:v145
 npm run verify
 npm run build
-REQUIRE_BROWSER_V144=1 npm run verify:dist:all
-npm run stage:package:v144
-npm run verify:package:v144
-npm run create:patch:v144
-npm run verify:patch:v144
+REQUIRE_BROWSER_V144=1 REQUIRE_BROWSER_V145=1 npm run verify:dist:all
+npm run stage:package:v145
+npm run verify:package:v145
+npm run create:patch:v145
+npm run verify:patch:v145
 npm run hygiene:check
 ```
 
@@ -78,6 +80,17 @@ npm run hygiene:check
 - 100웨이브 자원 상한과 에셋 승인·격리 경계를 자동 검증한다.
 
 ## 인수인계 내역
+
+### 2026-07-28 — v1.0.45 / b24.45
+
+- 작업 목표: 실제 완성 게임의 웨이브·보상·UI·렌더러 경로를 100회 결정적으로 통과시키고, 프레임·heap·texture·geometry 추세와 WebGL 컨텍스트 복구를 CI 승인 계약으로 고정한다.
+- 주요 변경 파일: `src/runtime/long-session-assurance-v145.js`, `src/main.js`, `scripts/run-long-session-v145.mjs`, `scripts/verify-performance-trend-v145.mjs`, `scripts/generate-asset-residency-v145.mjs`, v145 릴리스·배포·패키지·패치 검증기, `docs/PERFORMANCE_BASELINE_v1.0.44.json`, `docs/generated/asset-residency-v145.*`, 버전·서비스워커·워크플로·README 및 v1.0.45 문서.
+- 수정 내용: QA 전용 API가 실제 `startWave`, `completeWave`, 보상 선택과 진행 시스템을 유지한 채 전투 대기 시간만 단축해 100웨이브를 실행한다. 5웨이브마다 10프레임 창과 heap·renderer·long-task·오류 상태를 기록하고 누적 증가량과 10웨이브당 기울기를 모두 판정한다. 50웨이브에서 `WEBGL_lose_context` 손실·복원·렌더 재개를 요구한다. 승인된 v1.0.44 정리 패키지의 main/style/source/runtime/engine raw·gzip 수치를 기준으로 5% 초과 증가를 차단한다. 53개 런타임 에셋은 13 boot / 40 deferred로 단일 분류하고 title·combat·hero·guardian·monster·boss 경로의 74개 명시적 edge를 생성한다.
+- 검증 명령: `npm run verify:residency:v145`, `npm run verify:trend:v145`, `npm run verify:model:v145`, `npm run verify:release:v145`, `npm run verify`, `npm run build`, `REQUIRE_BROWSER_V144=1 REQUIRE_BROWSER_V145=1 npm run verify:dist:all`, `npm run stage:package:v145`, `npm run verify:package:v145`, `npm run create:patch:v145`, `npm run verify:patch:v145`, `npm run hygiene:check`.
+- 검증 결과: 장시간 추세 모델의 정상·실패 픽스처가 통과했고, 현재 소스는 v1.0.44 기준 대비 main raw +1.98%, main gzip +1.97%, 전체 JS raw +1.33%, runtime JS raw +2.63%로 모두 5% 이내다. 에셋 residency 생성기는 53/53 단일 분류와 74개 edge 동일성 검사를 통과했다. v144 릴리스·dist 검증기는 고정 1.0.44 비교를 제거하고 1.0.44 이상 전진 호환 기반 계약으로 변경했다. 전체 누적 소스·정적 배포·패치 검증 결과는 최종 패키징 로그에 기록한다.
+- 예외사항: 현재 작업 환경의 npm 레지스트리는 Vite 패키지 요청에 HTTP 503을 반환하고 저장된 `node_modules`에는 실행 본문이 없어 실제 완성 Vite 번들을 재생성할 수 없다. 또한 관리 Chromium 정책이 loopback HTTP를 차단할 수 있다. 따라서 브라우저 100웨이브 성공은 GitHub Actions의 `npm ci → build → REQUIRE_BROWSER_V145=1`에서 필수 실행하며, 로컬 미실행을 성공으로 보고하지 않는다.
+- 잔여 위험: 빠른 100웨이브 경로는 시스템 수명주기·보상·렌더 프레임을 통과하지만 각 웨이브의 실제 적 전투 시간을 유지하지 않는다. v1.0.46에서 지정 웨이브에 실전 적·투사체·파티클·보스 텔레그래프 관찰 구간을 추가한다. iOS Safari 독립 PWA와 Android 제조사별 viewport trace도 실기기 수집이 필요하다.
+- 다음 예정: `docs/NEXT_UPDATE_v1.0.46.md`.
 
 ### 2026-07-28 — v1.0.44 / b24.44
 
@@ -214,3 +227,17 @@ v1.0.12 크로스 플랫폼 기반, v1.0.17 승인 경계, v1.0.20 주인공 11�
 - 예외사항: 직접 파일 붙여넣기만 하고 npm 명령을 한 번도 실행하지 않으면 이전 공개 시트 폴더가 디스크에 남을 수 있다. CI·검증·빌드는 시작 전에 자동 제거한다.
 - 잔여 위험: 다른 제작 원본이 `public` 아래에 남아 있을 가능성은 v1.0.41 도달성 감사에서 분류한다.
 - 다음 예정: `docs/NEXT_UPDATE_v1.0.41.md`.
+### 2026-07-28 — v1.0.45 CI patch-metadata hygiene hotfix
+- GitHub Actions failure reproduced: root `APPLY_KO.txt` survived the v1.0.44 overlay and failed `verify-root-hygiene.mjs`.
+- `root-output-policy.mjs` now migrates localized apply guides before hygiene; the v1.0.1 migration fixture covers `APPLY_KO.txt`.
+- v1.0.45 patch metadata is separated from `overlay/`, and `verify-patch-v145.mjs` rejects metadata leakage.
+- QA artifact uploads moved from `actions/upload-artifact@v4` to `@v7`; missing optional QA folders are ignored after earlier gate failures.
+
+
+
+## 2026-07-28 — v1.0.46 / b24.46
+
+- Added real-device viewport trace replay for iOS standalone resume, Android browser chrome collapse, and virtual keyboard cycles.
+- Added two-cache service-worker upgrade simulation and activation evidence while preserving client save namespaces.
+- Added deterministic combat-load observation windows at waves 10, 25, 50, 75, and 100.
+- Added machine-readable first-regression digests and an honest provisional Vite dist measurement promotion boundary.

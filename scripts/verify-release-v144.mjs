@@ -19,12 +19,13 @@ const v143Dist = read('scripts/verify-dist-v143.mjs');
 const browser = read('scripts/run-built-game-mobile-matrix-v144.mjs');
 const handoff = read('PROJECT_HANDOFF.md');
 
-check(pkg.version === '1.0.44' && pkg.dokkaebi?.buildId === 'b24.44' && pkg.dokkaebi?.releaseVersion === pkg.version, 'package identity');
-check(lock.version === pkg.version && lock.packages?.['']?.version === pkg.version && lock.packages?.['']?.dokkaebi?.buildId === 'b24.44', 'lock identity');
-check(version.releaseVersion === pkg.version && version.buildId === 'b24.44' && version.cacheRevision === '1.0.44-b24.44', 'public identity');
-check(shell.releaseVersion === pkg.version && shell.buildId === 'b24.44' && shell.cacheRevision === '1.0.44-b24.44', 'runtime shell identity');
+const versionParts = String(pkg.version || '').split('.').map(Number);
+check(versionParts.length === 3 && versionParts[0] === 1 && versionParts[1] === 0 && versionParts[2] >= 44 && pkg.dokkaebi?.releaseVersion === pkg.version, 'package identity');
+check(lock.version === pkg.version && lock.packages?.['']?.version === pkg.version && lock.packages?.['']?.dokkaebi?.buildId === pkg.dokkaebi?.buildId, 'lock identity');
+check(version.releaseVersion === pkg.version && version.buildId === pkg.dokkaebi?.buildId && version.cacheRevision === pkg.dokkaebi?.cacheRevision, 'public identity');
+check(shell.releaseVersion === pkg.version && shell.buildId === pkg.dokkaebi?.buildId && shell.cacheRevision === pkg.dokkaebi?.cacheRevision, 'runtime shell identity');
 check(review.id === 'DD-ASSET-REVIEW-V144' && review.reviewedCount === 24 && review.sourceCandidateCount === 24 && review.deleteApprovedCount === 0 && review.reviews?.every((item) => item.deleteApproved === false), '24-candidate asset review');
-check(budgets.id === 'DD-DIST-BUDGETS-V144' && budgets.releaseVersion === pkg.version && budgets.thresholds?.maxInitialJsGzipBytes > 0 && budgets.thresholds?.maxInitialTextureUploadBytes > 0, 'dist budget contract');
+check(budgets.id === 'DD-DIST-BUDGETS-V144' && budgets.releaseVersion === '1.0.44' && budgets.thresholds?.maxInitialJsGzipBytes > 0 && budgets.thresholds?.maxInitialTextureUploadBytes > 0, 'approved v1.0.44 dist budget contract');
 check(browser.includes('complete Vite bundle') && browser.includes('Page.captureScreenshot') && browser.includes('__DOKKAEBI_TEST_API__.startRun()') && browser.includes('--enable-unsafe-swiftshader') && browser.includes('Runtime.exceptionThrown') && browser.includes('Network.loadingFailed') && browser.includes('ERR_BLOCKED_BY_ADMINISTRATOR') && browser.includes('profile cleanup') && !browser.includes('mobile-browser-recovery-v143.html'), 'complete built-game browser matrix and diagnostics');
 check(!v143Dist.includes("css.includes('finger-occlusion safety')") && v143Dist.includes('missingCssContracts'), 'v143 minifier-safe CSS verification');
 check(workflow.includes('REQUIRE_BROWSER_V144: 1') && workflow.includes('logs/qa/v144') && workflow.includes('npm run verify:dist:all'), 'CI browser and QA artifact contract');
@@ -41,4 +42,4 @@ if (failures.length) {
   failures.forEach((failure) => console.error(`FAIL ${failure}`));
   process.exit(1);
 }
-console.log('PASS v1.0.44 complete-build mobile QA, measured dist budgets, reviewed asset candidates, and minifier-safe verification');
+console.log(`PASS v1.0.44 complete-build foundation preserved under current release ${pkg.version} / ${pkg.dokkaebi?.buildId}`);

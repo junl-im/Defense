@@ -1,0 +1,1215 @@
+{
+  "id": "DD-ASSET-RESIDENCY-V145",
+  "releaseVersion": "1.0.45",
+  "policy": "Only boot-classified assets contribute to initial residency. Every dynamic catalog reference is an explicit reachability edge.",
+  "totals": {
+    "all": {
+      "count": 53,
+      "estimatedBytes": 67116138
+    },
+    "boot": {
+      "count": 13,
+      "estimatedBytes": 37235262
+    },
+    "deferred": {
+      "count": 40,
+      "estimatedBytes": 29880876
+    }
+  },
+  "integrity": {
+    "duplicateIds": [],
+    "unclassified": [],
+    "overlap": [],
+    "allClassifiedOnce": true
+  },
+  "assets": [
+    {
+      "id": "approved-directional-guardian-ember-pupu-v117",
+      "stage": "boot",
+      "kind": "texture",
+      "role": "approved-directional-guardian-v117",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 8937984,
+      "variants": {
+        "low": "/assets/visual-v120/directional/hero-pupu-atlas-low-v120.webp?v={CACHE_REVISION}",
+        "medium": "/assets/visual-v129/directional/guardian-ember-pupu-atlas-medium-v129.webp?v={CACHE_REVISION}",
+        "high": "/assets/visual-v129/directional/guardian-ember-pupu-atlas-high-v129.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "boss-king-sd-toon",
+      "stage": "deferred",
+      "kind": "model",
+      "role": "",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 0,
+      "variants": {
+        "low": "/assets/models/boss-king-sd-toon.glb?v={CACHE_REVISION}",
+        "medium": "/assets/models/boss-king-sd-toon.glb?v={CACHE_REVISION}",
+        "high": "/assets/models/boss-king-sd-toon.glb?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "boss-serpent-sd-toon",
+      "stage": "deferred",
+      "kind": "model",
+      "role": "",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 0,
+      "variants": {
+        "low": "/assets/models/boss-serpent-sd-toon.glb?v={CACHE_REVISION}",
+        "medium": "/assets/models/boss-serpent-sd-toon.glb?v={CACHE_REVISION}",
+        "high": "/assets/models/boss-serpent-sd-toon.glb?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "boss-tiger-sd-toon",
+      "stage": "deferred",
+      "kind": "model",
+      "role": "",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 0,
+      "variants": {
+        "low": "/assets/models/boss-tiger-sd-toon.glb?v={CACHE_REVISION}",
+        "medium": "/assets/models/boss-tiger-sd-toon.glb?v={CACHE_REVISION}",
+        "high": "/assets/models/boss-tiger-sd-toon.glb?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "combat-art-boss-king-v109",
+      "stage": "deferred",
+      "kind": "texture",
+      "role": "combat-art-polished-v114",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 1048576,
+      "variants": {
+        "low": "/assets/visual-v114/characters/boss-king-low-v114.webp?v={CACHE_REVISION}",
+        "medium": "/assets/visual-v114/characters/boss-king-medium-v114.webp?v={CACHE_REVISION}",
+        "high": "/assets/visual-v114/characters/boss-king-high-v114.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "combat-art-boss-serpent-v109",
+      "stage": "deferred",
+      "kind": "texture",
+      "role": "combat-art-polished-v114",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 1048576,
+      "variants": {
+        "low": "/assets/visual-v114/characters/boss-serpent-low-v114.webp?v={CACHE_REVISION}",
+        "medium": "/assets/visual-v114/characters/boss-serpent-medium-v114.webp?v={CACHE_REVISION}",
+        "high": "/assets/visual-v114/characters/boss-serpent-high-v114.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "combat-art-boss-tiger-v109",
+      "stage": "deferred",
+      "kind": "texture",
+      "role": "combat-art-polished-v114",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 1048576,
+      "variants": {
+        "low": "/assets/visual-v114/characters/boss-tiger-low-v114.webp?v={CACHE_REVISION}",
+        "medium": "/assets/visual-v114/characters/boss-tiger-medium-v114.webp?v={CACHE_REVISION}",
+        "high": "/assets/visual-v114/characters/boss-tiger-high-v114.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "combat-art-guardian-bell-v109",
+      "stage": "boot",
+      "kind": "texture",
+      "role": "combat-art-polished-v114",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 1048576,
+      "variants": {
+        "low": "/assets/visual-v114/characters/guardian-bell-low-v114.webp?v={CACHE_REVISION}",
+        "medium": "/assets/visual-v114/characters/guardian-bell-medium-v114.webp?v={CACHE_REVISION}",
+        "high": "/assets/visual-v114/characters/guardian-bell-high-v114.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "combat-art-guardian-frost-v109",
+      "stage": "boot",
+      "kind": "texture",
+      "role": "combat-art-polished-v114",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 1048576,
+      "variants": {
+        "low": "/assets/visual-v114/characters/guardian-frost-low-v114.webp?v={CACHE_REVISION}",
+        "medium": "/assets/visual-v114/characters/guardian-frost-medium-v114.webp?v={CACHE_REVISION}",
+        "high": "/assets/visual-v114/characters/guardian-frost-high-v114.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "combat-art-guardian-stone-v109",
+      "stage": "boot",
+      "kind": "texture",
+      "role": "combat-art-polished-v114",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 1048576,
+      "variants": {
+        "low": "/assets/visual-v114/characters/guardian-stone-low-v114.webp?v={CACHE_REVISION}",
+        "medium": "/assets/visual-v114/characters/guardian-stone-medium-v114.webp?v={CACHE_REVISION}",
+        "high": "/assets/visual-v114/characters/guardian-stone-high-v114.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "combat-art-guardian-thunder-v109",
+      "stage": "boot",
+      "kind": "texture",
+      "role": "combat-art-polished-v114",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 1048576,
+      "variants": {
+        "low": "/assets/visual-v114/characters/guardian-thunder-low-v114.webp?v={CACHE_REVISION}",
+        "medium": "/assets/visual-v114/characters/guardian-thunder-medium-v114.webp?v={CACHE_REVISION}",
+        "high": "/assets/visual-v114/characters/guardian-thunder-high-v114.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "combat-art-guardian-wind-v109",
+      "stage": "boot",
+      "kind": "texture",
+      "role": "combat-art-polished-v114",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 1048576,
+      "variants": {
+        "low": "/assets/visual-v114/characters/guardian-wind-low-v114.webp?v={CACHE_REVISION}",
+        "medium": "/assets/visual-v114/characters/guardian-wind-medium-v114.webp?v={CACHE_REVISION}",
+        "high": "/assets/visual-v114/characters/guardian-wind-high-v114.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "combat-art-hero-archer-v109",
+      "stage": "boot",
+      "kind": "texture",
+      "role": "combat-art-polished-v114",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 1048576,
+      "variants": {
+        "low": "/assets/visual-v114/characters/hero-archer-low-v114.webp?v={CACHE_REVISION}",
+        "medium": "/assets/visual-v114/characters/hero-archer-medium-v114.webp?v={CACHE_REVISION}",
+        "high": "/assets/visual-v114/characters/hero-archer-high-v114.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "combat-art-hero-mage-v109",
+      "stage": "boot",
+      "kind": "texture",
+      "role": "combat-art-polished-v114",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 1048576,
+      "variants": {
+        "low": "/assets/visual-v114/characters/hero-mage-low-v114.webp?v={CACHE_REVISION}",
+        "medium": "/assets/visual-v114/characters/hero-mage-medium-v114.webp?v={CACHE_REVISION}",
+        "high": "/assets/visual-v114/characters/hero-mage-high-v114.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "combat-art-hero-shaman-v109",
+      "stage": "boot",
+      "kind": "texture",
+      "role": "combat-art-polished-v114",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 1048576,
+      "variants": {
+        "low": "/assets/visual-v114/characters/hero-shaman-low-v114.webp?v={CACHE_REVISION}",
+        "medium": "/assets/visual-v114/characters/hero-shaman-medium-v114.webp?v={CACHE_REVISION}",
+        "high": "/assets/visual-v114/characters/hero-shaman-high-v114.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "combat-art-hero-taoist-v109",
+      "stage": "boot",
+      "kind": "texture",
+      "role": "combat-art-polished-v114",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 1048576,
+      "variants": {
+        "low": "/assets/visual-v114/characters/hero-taoist-low-v114.webp?v={CACHE_REVISION}",
+        "medium": "/assets/visual-v114/characters/hero-taoist-medium-v114.webp?v={CACHE_REVISION}",
+        "high": "/assets/visual-v114/characters/hero-taoist-high-v114.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "combat-art-hero-warrior-v109",
+      "stage": "deferred",
+      "kind": "texture",
+      "role": "combat-art-polished-v114",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 1048576,
+      "variants": {
+        "low": "/assets/visual-v114/characters/hero-warrior-low-v114.webp?v={CACHE_REVISION}",
+        "medium": "/assets/visual-v114/characters/hero-warrior-medium-v114.webp?v={CACHE_REVISION}",
+        "high": "/assets/visual-v114/characters/hero-warrior-high-v114.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "combat-art-monster-brute-v109",
+      "stage": "deferred",
+      "kind": "texture",
+      "role": "combat-art-polished-v114",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 1048576,
+      "variants": {
+        "low": "/assets/visual-v114/characters/monster-brute-low-v114.webp?v={CACHE_REVISION}",
+        "medium": "/assets/visual-v114/characters/monster-brute-medium-v114.webp?v={CACHE_REVISION}",
+        "high": "/assets/visual-v114/characters/monster-brute-high-v114.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "combat-art-monster-crow-v109",
+      "stage": "deferred",
+      "kind": "texture",
+      "role": "combat-art-polished-v114",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 1048576,
+      "variants": {
+        "low": "/assets/visual-v114/characters/monster-crow-low-v114.webp?v={CACHE_REVISION}",
+        "medium": "/assets/visual-v114/characters/monster-crow-medium-v114.webp?v={CACHE_REVISION}",
+        "high": "/assets/visual-v114/characters/monster-crow-high-v114.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "combat-art-monster-ghost-v109",
+      "stage": "deferred",
+      "kind": "texture",
+      "role": "combat-art-polished-v114",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 1048576,
+      "variants": {
+        "low": "/assets/visual-v114/characters/monster-ghost-low-v114.webp?v={CACHE_REVISION}",
+        "medium": "/assets/visual-v114/characters/monster-ghost-medium-v114.webp?v={CACHE_REVISION}",
+        "high": "/assets/visual-v114/characters/monster-ghost-high-v114.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "combat-art-monster-imp-v109",
+      "stage": "deferred",
+      "kind": "texture",
+      "role": "combat-art-polished-v114",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 1048576,
+      "variants": {
+        "low": "/assets/visual-v114/characters/monster-imp-low-v114.webp?v={CACHE_REVISION}",
+        "medium": "/assets/visual-v114/characters/monster-imp-medium-v114.webp?v={CACHE_REVISION}",
+        "high": "/assets/visual-v114/characters/monster-imp-high-v114.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "combat-art-monster-runner-v109",
+      "stage": "deferred",
+      "kind": "texture",
+      "role": "combat-art-polished-v114",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 1048576,
+      "variants": {
+        "low": "/assets/visual-v114/characters/monster-runner-low-v114.webp?v={CACHE_REVISION}",
+        "medium": "/assets/visual-v114/characters/monster-runner-medium-v114.webp?v={CACHE_REVISION}",
+        "high": "/assets/visual-v114/characters/monster-runner-high-v114.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "combat-art-monster-shaman-v109",
+      "stage": "deferred",
+      "kind": "texture",
+      "role": "combat-art-polished-v114",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 1048576,
+      "variants": {
+        "low": "/assets/visual-v114/characters/monster-shaman-low-v114.webp?v={CACHE_REVISION}",
+        "medium": "/assets/visual-v114/characters/monster-shaman-medium-v114.webp?v={CACHE_REVISION}",
+        "high": "/assets/visual-v114/characters/monster-shaman-high-v114.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "combat-art-monster-skeleton-v109",
+      "stage": "deferred",
+      "kind": "texture",
+      "role": "combat-art-polished-v114",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 1048576,
+      "variants": {
+        "low": "/assets/visual-v114/characters/monster-skeleton-low-v114.webp?v={CACHE_REVISION}",
+        "medium": "/assets/visual-v114/characters/monster-skeleton-medium-v114.webp?v={CACHE_REVISION}",
+        "high": "/assets/visual-v114/characters/monster-skeleton-high-v114.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "ember-attack-impostor-v2",
+      "stage": "deferred",
+      "kind": "texture",
+      "role": "",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 2358706,
+      "variants": {
+        "low": "/assets/impostors/guardian/ember-attack-11.webp?v={CACHE_REVISION}",
+        "medium": "/assets/impostors/guardian/ember-attack-11.webp?v={CACHE_REVISION}",
+        "high": "/assets/impostors/guardian/ember-attack-11.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "ember-idle-impostor-v2",
+      "stage": "deferred",
+      "kind": "texture",
+      "role": "",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 2358706,
+      "variants": {
+        "low": "/assets/impostors/guardian/ember-idle-11.webp?v={CACHE_REVISION}",
+        "medium": "/assets/impostors/guardian/ember-idle-11.webp?v={CACHE_REVISION}",
+        "high": "/assets/impostors/guardian/ember-idle-11.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "ember-move-impostor-v2",
+      "stage": "deferred",
+      "kind": "texture",
+      "role": "",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 2358706,
+      "variants": {
+        "low": "/assets/impostors/guardian/ember-move-11.webp?v={CACHE_REVISION}",
+        "medium": "/assets/impostors/guardian/ember-move-11.webp?v={CACHE_REVISION}",
+        "high": "/assets/impostors/guardian/ember-move-11.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "guardian-bell-sd-toon",
+      "stage": "deferred",
+      "kind": "model",
+      "role": "",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 0,
+      "variants": {
+        "low": "/assets/models/guardian-bell-sd-toon.glb?v={CACHE_REVISION}",
+        "medium": "/assets/models/guardian-bell-sd-toon.glb?v={CACHE_REVISION}",
+        "high": "/assets/models/guardian-bell-sd-toon.glb?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "guardian-citadel-cracked-v117",
+      "stage": "deferred",
+      "kind": "texture",
+      "role": "guardian-citadel-state-v117",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 1048576,
+      "variants": {
+        "low": "/assets/visual-v117/citadel/guardian-citadel-cracked-low-v117.webp?v={CACHE_REVISION}",
+        "medium": "/assets/visual-v117/citadel/guardian-citadel-cracked-medium-v117.webp?v={CACHE_REVISION}",
+        "high": "/assets/visual-v117/citadel/guardian-citadel-cracked-high-v117.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "guardian-citadel-critical-v117",
+      "stage": "deferred",
+      "kind": "texture",
+      "role": "guardian-citadel-state-v117",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 1048576,
+      "variants": {
+        "low": "/assets/visual-v117/citadel/guardian-citadel-critical-low-v117.webp?v={CACHE_REVISION}",
+        "medium": "/assets/visual-v117/citadel/guardian-citadel-critical-medium-v117.webp?v={CACHE_REVISION}",
+        "high": "/assets/visual-v117/citadel/guardian-citadel-critical-high-v117.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "guardian-citadel-shielded-v117",
+      "stage": "deferred",
+      "kind": "texture",
+      "role": "guardian-citadel-state-v117",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 1048576,
+      "variants": {
+        "low": "/assets/visual-v117/citadel/guardian-citadel-shielded-low-v117.webp?v={CACHE_REVISION}",
+        "medium": "/assets/visual-v117/citadel/guardian-citadel-shielded-medium-v117.webp?v={CACHE_REVISION}",
+        "high": "/assets/visual-v117/citadel/guardian-citadel-shielded-high-v117.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "guardian-citadel-stable-v117",
+      "stage": "deferred",
+      "kind": "texture",
+      "role": "guardian-citadel-state-v117",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 1048576,
+      "variants": {
+        "low": "/assets/visual-v117/citadel/guardian-citadel-stable-low-v117.webp?v={CACHE_REVISION}",
+        "medium": "/assets/visual-v117/citadel/guardian-citadel-stable-medium-v117.webp?v={CACHE_REVISION}",
+        "high": "/assets/visual-v117/citadel/guardian-citadel-stable-high-v117.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "guardian-ember-sd-toon",
+      "stage": "deferred",
+      "kind": "model",
+      "role": "",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 0,
+      "variants": {
+        "low": "/assets/models/guardian-ember-sd-toon.glb?v={CACHE_REVISION}",
+        "medium": "/assets/models/guardian-ember-sd-toon.glb?v={CACHE_REVISION}",
+        "high": "/assets/models/guardian-ember-sd-toon.glb?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "guardian-frost-sd-toon",
+      "stage": "deferred",
+      "kind": "model",
+      "role": "",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 0,
+      "variants": {
+        "low": "/assets/models/guardian-frost-sd-toon.glb?v={CACHE_REVISION}",
+        "medium": "/assets/models/guardian-frost-sd-toon.glb?v={CACHE_REVISION}",
+        "high": "/assets/models/guardian-frost-sd-toon.glb?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "guardian-stone-sd-toon",
+      "stage": "deferred",
+      "kind": "model",
+      "role": "",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 0,
+      "variants": {
+        "low": "/assets/models/guardian-stone-sd-toon.glb?v={CACHE_REVISION}",
+        "medium": "/assets/models/guardian-stone-sd-toon.glb?v={CACHE_REVISION}",
+        "high": "/assets/models/guardian-stone-sd-toon.glb?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "guardian-thunder-sd-toon",
+      "stage": "deferred",
+      "kind": "model",
+      "role": "",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 0,
+      "variants": {
+        "low": "/assets/models/guardian-thunder-sd-toon.glb?v={CACHE_REVISION}",
+        "medium": "/assets/models/guardian-thunder-sd-toon.glb?v={CACHE_REVISION}",
+        "high": "/assets/models/guardian-thunder-sd-toon.glb?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "guardian-wind-sd-toon",
+      "stage": "deferred",
+      "kind": "model",
+      "role": "",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 0,
+      "variants": {
+        "low": "/assets/models/guardian-wind-sd-toon.glb?v={CACHE_REVISION}",
+        "medium": "/assets/models/guardian-wind-sd-toon.glb?v={CACHE_REVISION}",
+        "high": "/assets/models/guardian-wind-sd-toon.glb?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "imp-attack-impostor-v2",
+      "stage": "deferred",
+      "kind": "texture",
+      "role": "",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 2358706,
+      "variants": {
+        "low": "/assets/impostors/monster/imp-attack-11.webp?v={CACHE_REVISION}",
+        "medium": "/assets/impostors/monster/imp-attack-11.webp?v={CACHE_REVISION}",
+        "high": "/assets/impostors/monster/imp-attack-11.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "imp-idle-impostor-v2",
+      "stage": "deferred",
+      "kind": "texture",
+      "role": "",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 2358706,
+      "variants": {
+        "low": "/assets/impostors/monster/imp-idle-11.webp?v={CACHE_REVISION}",
+        "medium": "/assets/impostors/monster/imp-idle-11.webp?v={CACHE_REVISION}",
+        "high": "/assets/impostors/monster/imp-idle-11.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "imp-move-impostor-v2",
+      "stage": "deferred",
+      "kind": "texture",
+      "role": "",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 2358706,
+      "variants": {
+        "low": "/assets/impostors/monster/imp-move-11.webp?v={CACHE_REVISION}",
+        "medium": "/assets/impostors/monster/imp-move-11.webp?v={CACHE_REVISION}",
+        "high": "/assets/impostors/monster/imp-move-11.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "monster-brute-sd-toon",
+      "stage": "deferred",
+      "kind": "model",
+      "role": "",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 0,
+      "variants": {
+        "low": "/assets/models/monster-brute-sd-toon.glb?v={CACHE_REVISION}",
+        "medium": "/assets/models/monster-brute-sd-toon.glb?v={CACHE_REVISION}",
+        "high": "/assets/models/monster-brute-sd-toon.glb?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "monster-crow-candidate-v1",
+      "stage": "deferred",
+      "kind": "model",
+      "role": "",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 0,
+      "variants": {
+        "low": "/assets/models/monster-crow-candidate-v1.glb?v={CACHE_REVISION}",
+        "medium": "/assets/models/monster-crow-candidate-v1.glb?v={CACHE_REVISION}",
+        "high": "/assets/models/monster-crow-candidate-v1.glb?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "monster-ghost-candidate-v1",
+      "stage": "deferred",
+      "kind": "model",
+      "role": "",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 0,
+      "variants": {
+        "low": "/assets/models/monster-ghost-candidate-v1.glb?v={CACHE_REVISION}",
+        "medium": "/assets/models/monster-ghost-candidate-v1.glb?v={CACHE_REVISION}",
+        "high": "/assets/models/monster-ghost-candidate-v1.glb?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "monster-imp-sd-toon",
+      "stage": "deferred",
+      "kind": "model",
+      "role": "",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 0,
+      "variants": {
+        "low": "/assets/models/monster-imp-sd-toon.glb?v={CACHE_REVISION}",
+        "medium": "/assets/models/monster-imp-sd-toon.glb?v={CACHE_REVISION}",
+        "high": "/assets/models/monster-imp-sd-toon.glb?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "monster-runner-sd-toon",
+      "stage": "deferred",
+      "kind": "model",
+      "role": "",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 0,
+      "variants": {
+        "low": "/assets/models/monster-runner-sd-toon.glb?v={CACHE_REVISION}",
+        "medium": "/assets/models/monster-runner-sd-toon.glb?v={CACHE_REVISION}",
+        "high": "/assets/models/monster-runner-sd-toon.glb?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "monster-shaman-sd-toon",
+      "stage": "deferred",
+      "kind": "model",
+      "role": "",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 0,
+      "variants": {
+        "low": "/assets/models/monster-shaman-sd-toon.glb?v={CACHE_REVISION}",
+        "medium": "/assets/models/monster-shaman-sd-toon.glb?v={CACHE_REVISION}",
+        "high": "/assets/models/monster-shaman-sd-toon.glb?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "monster-skeleton-candidate-v1",
+      "stage": "deferred",
+      "kind": "model",
+      "role": "",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 0,
+      "variants": {
+        "low": "/assets/models/monster-skeleton-candidate-v1.glb?v={CACHE_REVISION}",
+        "medium": "/assets/models/monster-skeleton-candidate-v1.glb?v={CACHE_REVISION}",
+        "high": "/assets/models/monster-skeleton-candidate-v1.glb?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "moon-fx-atlas-v1",
+      "stage": "boot",
+      "kind": "texture",
+      "role": "",
+      "required": true,
+      "retain": true,
+      "estimatedBytes": 5591007,
+      "variants": {
+        "low": "/assets/effects/moon-fx-atlas-v1.webp?v={CACHE_REVISION}",
+        "medium": "/assets/effects/moon-fx-atlas-v1.webp?v={CACHE_REVISION}",
+        "high": "/assets/effects/moon-fx-atlas-v1.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "moon-market-ground-v1",
+      "stage": "boot",
+      "kind": "texture",
+      "role": "",
+      "required": true,
+      "retain": true,
+      "estimatedBytes": 5591007,
+      "variants": {
+        "low": "/assets/textures/moon-market-ground-v1.webp?v={CACHE_REVISION}",
+        "medium": "/assets/textures/moon-market-ground-v1.webp?v={CACHE_REVISION}",
+        "high": "/assets/textures/moon-market-ground-v1.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "moon-market-keyart",
+      "stage": "boot",
+      "kind": "texture",
+      "role": "",
+      "required": true,
+      "retain": false,
+      "estimatedBytes": 7678080,
+      "variants": {
+        "low": "file:///mnt/data/Defense_v146_work/DokkaebiLuckDefense3D_FULL_v1.0.45_LONG_SESSION_ASSURANCE_VERIFIED/src/assets/moon-market-keyart.webp?v={CACHE_REVISION}",
+        "medium": "file:///mnt/data/Defense_v146_work/DokkaebiLuckDefense3D_FULL_v1.0.45_LONG_SESSION_ASSURANCE_VERIFIED/src/assets/moon-market-keyart.webp?v={CACHE_REVISION}",
+        "high": "file:///mnt/data/Defense_v146_work/DokkaebiLuckDefense3D_FULL_v1.0.45_LONG_SESSION_ASSURANCE_VERIFIED/src/assets/moon-market-keyart.webp?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "player-dokkaebi-archer-candidate-v1",
+      "stage": "deferred",
+      "kind": "model",
+      "role": "",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 0,
+      "variants": {
+        "low": "/assets/models/player-dokkaebi-archer-candidate-v1.glb?v={CACHE_REVISION}",
+        "medium": "/assets/models/player-dokkaebi-archer-candidate-v1.glb?v={CACHE_REVISION}",
+        "high": "/assets/models/player-dokkaebi-archer-candidate-v1.glb?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "player-dokkaebi-mage-candidate-v1",
+      "stage": "deferred",
+      "kind": "model",
+      "role": "",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 0,
+      "variants": {
+        "low": "/assets/models/player-dokkaebi-mage-candidate-v1.glb?v={CACHE_REVISION}",
+        "medium": "/assets/models/player-dokkaebi-mage-candidate-v1.glb?v={CACHE_REVISION}",
+        "high": "/assets/models/player-dokkaebi-mage-candidate-v1.glb?v={CACHE_REVISION}"
+      }
+    },
+    {
+      "id": "player-dokkaebi-warrior-golden-v1",
+      "stage": "deferred",
+      "kind": "model",
+      "role": "",
+      "required": false,
+      "retain": true,
+      "estimatedBytes": 0,
+      "variants": {
+        "low": "/assets/models/player-dokkaebi-warrior-golden-v1.glb?v={CACHE_REVISION}",
+        "medium": "/assets/models/player-dokkaebi-warrior-golden-v1.glb?v={CACHE_REVISION}",
+        "high": "/assets/models/player-dokkaebi-warrior-golden-v1.glb?v={CACHE_REVISION}"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "catalog:boss:king",
+      "to": "asset:boss-king-sd-toon",
+      "trigger": "boss-wave",
+      "residency": "deferred"
+    },
+    {
+      "from": "catalog:boss:serpent",
+      "to": "asset:boss-serpent-sd-toon",
+      "trigger": "boss-wave",
+      "residency": "deferred"
+    },
+    {
+      "from": "catalog:boss:tiger",
+      "to": "asset:boss-tiger-sd-toon",
+      "trigger": "boss-wave",
+      "residency": "deferred"
+    },
+    {
+      "from": "catalog:guardian:bell",
+      "to": "asset:guardian-bell-sd-toon",
+      "trigger": "summon",
+      "residency": "deferred"
+    },
+    {
+      "from": "catalog:guardian:ember",
+      "to": "asset:guardian-ember-sd-toon",
+      "trigger": "summon",
+      "residency": "deferred"
+    },
+    {
+      "from": "catalog:guardian:frost",
+      "to": "asset:guardian-frost-sd-toon",
+      "trigger": "summon",
+      "residency": "deferred"
+    },
+    {
+      "from": "catalog:guardian:stone",
+      "to": "asset:guardian-stone-sd-toon",
+      "trigger": "summon",
+      "residency": "deferred"
+    },
+    {
+      "from": "catalog:guardian:thunder",
+      "to": "asset:guardian-thunder-sd-toon",
+      "trigger": "summon",
+      "residency": "deferred"
+    },
+    {
+      "from": "catalog:guardian:wind",
+      "to": "asset:guardian-wind-sd-toon",
+      "trigger": "summon",
+      "residency": "deferred"
+    },
+    {
+      "from": "catalog:hero:archer",
+      "to": "asset:player-dokkaebi-archer-candidate-v1",
+      "trigger": "hero-selection",
+      "residency": "deferred"
+    },
+    {
+      "from": "catalog:hero:mage",
+      "to": "asset:player-dokkaebi-mage-candidate-v1",
+      "trigger": "hero-selection",
+      "residency": "deferred"
+    },
+    {
+      "from": "catalog:hero:shaman",
+      "to": "asset:player-dokkaebi-mage-candidate-v1",
+      "trigger": "hero-selection",
+      "residency": "deferred"
+    },
+    {
+      "from": "catalog:hero:taoist",
+      "to": "asset:player-dokkaebi-mage-candidate-v1",
+      "trigger": "hero-selection",
+      "residency": "deferred"
+    },
+    {
+      "from": "catalog:hero:warrior",
+      "to": "asset:player-dokkaebi-warrior-golden-v1",
+      "trigger": "hero-selection",
+      "residency": "deferred"
+    },
+    {
+      "from": "catalog:monster:brute",
+      "to": "asset:monster-brute-sd-toon",
+      "trigger": "wave-spawn",
+      "residency": "deferred"
+    },
+    {
+      "from": "catalog:monster:crow",
+      "to": "asset:monster-crow-candidate-v1",
+      "trigger": "wave-spawn",
+      "residency": "deferred"
+    },
+    {
+      "from": "catalog:monster:ghost",
+      "to": "asset:monster-ghost-candidate-v1",
+      "trigger": "wave-spawn",
+      "residency": "deferred"
+    },
+    {
+      "from": "catalog:monster:imp",
+      "to": "asset:monster-imp-sd-toon",
+      "trigger": "wave-spawn",
+      "residency": "deferred"
+    },
+    {
+      "from": "catalog:monster:runner",
+      "to": "asset:monster-runner-sd-toon",
+      "trigger": "wave-spawn",
+      "residency": "deferred"
+    },
+    {
+      "from": "catalog:monster:shaman",
+      "to": "asset:monster-shaman-sd-toon",
+      "trigger": "wave-spawn",
+      "residency": "deferred"
+    },
+    {
+      "from": "catalog:monster:skeleton",
+      "to": "asset:monster-skeleton-candidate-v1",
+      "trigger": "wave-spawn",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:boss-king-sd-toon",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:boss-serpent-sd-toon",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:boss-tiger-sd-toon",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:combat-art-boss-king-v109",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:combat-art-boss-serpent-v109",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:combat-art-boss-tiger-v109",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:combat-art-hero-warrior-v109",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:combat-art-monster-brute-v109",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:combat-art-monster-crow-v109",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:combat-art-monster-ghost-v109",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:combat-art-monster-imp-v109",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:combat-art-monster-runner-v109",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:combat-art-monster-shaman-v109",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:combat-art-monster-skeleton-v109",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:ember-attack-impostor-v2",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:ember-idle-impostor-v2",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:ember-move-impostor-v2",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:guardian-bell-sd-toon",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:guardian-citadel-cracked-v117",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:guardian-citadel-critical-v117",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:guardian-citadel-shielded-v117",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:guardian-citadel-stable-v117",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:guardian-ember-sd-toon",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:guardian-frost-sd-toon",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:guardian-stone-sd-toon",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:guardian-thunder-sd-toon",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:guardian-wind-sd-toon",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:imp-attack-impostor-v2",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:imp-idle-impostor-v2",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:imp-move-impostor-v2",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:monster-brute-sd-toon",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:monster-crow-candidate-v1",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:monster-ghost-candidate-v1",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:monster-imp-sd-toon",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:monster-runner-sd-toon",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:monster-shaman-sd-toon",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:monster-skeleton-candidate-v1",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:player-dokkaebi-archer-candidate-v1",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:player-dokkaebi-mage-candidate-v1",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:combat-entry",
+      "to": "asset:player-dokkaebi-warrior-golden-v1",
+      "trigger": "idle-deferred-before-combat",
+      "residency": "deferred"
+    },
+    {
+      "from": "surface:title-first-frame",
+      "to": "asset:approved-directional-guardian-ember-pupu-v117",
+      "trigger": "boot-critical",
+      "residency": "initial"
+    },
+    {
+      "from": "surface:title-first-frame",
+      "to": "asset:combat-art-guardian-bell-v109",
+      "trigger": "boot-critical",
+      "residency": "initial"
+    },
+    {
+      "from": "surface:title-first-frame",
+      "to": "asset:combat-art-guardian-frost-v109",
+      "trigger": "boot-critical",
+      "residency": "initial"
+    },
+    {
+      "from": "surface:title-first-frame",
+      "to": "asset:combat-art-guardian-stone-v109",
+      "trigger": "boot-critical",
+      "residency": "initial"
+    },
+    {
+      "from": "surface:title-first-frame",
+      "to": "asset:combat-art-guardian-thunder-v109",
+      "trigger": "boot-critical",
+      "residency": "initial"
+    },
+    {
+      "from": "surface:title-first-frame",
+      "to": "asset:combat-art-guardian-wind-v109",
+      "trigger": "boot-critical",
+      "residency": "initial"
+    },
+    {
+      "from": "surface:title-first-frame",
+      "to": "asset:combat-art-hero-archer-v109",
+      "trigger": "boot-critical",
+      "residency": "initial"
+    },
+    {
+      "from": "surface:title-first-frame",
+      "to": "asset:combat-art-hero-mage-v109",
+      "trigger": "boot-critical",
+      "residency": "initial"
+    },
+    {
+      "from": "surface:title-first-frame",
+      "to": "asset:combat-art-hero-shaman-v109",
+      "trigger": "boot-critical",
+      "residency": "initial"
+    },
+    {
+      "from": "surface:title-first-frame",
+      "to": "asset:combat-art-hero-taoist-v109",
+      "trigger": "boot-critical",
+      "residency": "initial"
+    },
+    {
+      "from": "surface:title-first-frame",
+      "to": "asset:moon-fx-atlas-v1",
+      "trigger": "boot-critical",
+      "residency": "initial"
+    },
+    {
+      "from": "surface:title-first-frame",
+      "to": "asset:moon-market-ground-v1",
+      "trigger": "boot-critical",
+      "residency": "initial"
+    },
+    {
+      "from": "surface:title-first-frame",
+      "to": "asset:moon-market-keyart",
+      "trigger": "boot-critical",
+      "residency": "initial"
+    }
+  ]
+}

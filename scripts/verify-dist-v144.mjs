@@ -7,7 +7,9 @@ const dist = process.env.DIST_DIR ? path.resolve(process.env.DIST_DIR) : path.jo
 const versionPath = path.join(dist, 'version.json');
 if (!fs.existsSync(versionPath)) throw new Error('v144 dist/version.json missing');
 const version = JSON.parse(fs.readFileSync(versionPath, 'utf8'));
-if (version.releaseVersion !== '1.0.44' || version.buildId !== 'b24.44') throw new Error('v1.0.44 dist identity mismatch');
+const parts = String(version.releaseVersion || '').split('.').map(Number);
+if (parts.length !== 3 || parts.some((value) => !Number.isInteger(value)) || parts[0] !== 1 || parts[1] !== 0 || parts[2] < 44) throw new Error('v144 dist requires release >= 1.0.44');
+if (!/^b24\.\d+$/.test(String(version.buildId || ''))) throw new Error('v144 dist build identity mismatch');
 for (const required of ['index.html', 'assets/game.js', 'assets/game.css']) {
   if (!fs.existsSync(path.join(dist, required))) throw new Error(`v144 complete Vite dist missing: ${required}`);
 }
@@ -25,4 +27,4 @@ for (const script of ['scripts/verify-dist-budget-v144.mjs', 'scripts/run-built-
   process.stderr.write(run.stderr || '');
   if (run.error || run.status !== 0) throw new Error(`v144 dist sub-verifier failed: ${script} (${run.error?.code || run.status})`);
 }
-console.log('PASS v1.0.44 dist is a budgeted complete Vite build with four mobile QA screenshots');
+console.log(`PASS v1.0.44 complete-build foundation preserved under ${version.releaseVersion} / ${version.buildId}`);
