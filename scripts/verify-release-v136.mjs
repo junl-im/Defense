@@ -26,15 +26,30 @@ const lifecycle = read('src/runtime-lifecycle.js');
 const mobile = read('src/runtime/mobile-hud-director-v23.js');
 const boss = read('src/runtime/boss-identity-assurance-director-v133.js');
 
-check(pkg.version === '1.0.36' && pkg.dokkaebi?.releaseVersion === '1.0.36', 'package release identity');
-check(pkg.dokkaebi?.lineageVersion === '23.4.0' && pkg.dokkaebi?.buildId === 'b24.36' && pkg.dokkaebi?.cacheRevision === '1.0.36-b24.36', 'package build identity');
-check(lock.version === pkg.version && lock.packages?.['']?.version === pkg.version && lock.packages?.['']?.dokkaebi?.buildId === 'b24.36', 'lock identity');
-check(version.releaseVersion === '1.0.36' && version.lineageVersion === '23.4.0' && version.buildId === 'b24.36', 'public version identity');
-check(main.includes("const GAME_VERSION = '1.0.36';"), 'main version');
-check(versionPolicy.includes("PUBLIC_GAME_VERSION = '1.0.36'") && versionPolicy.includes("LEGACY_LINEAGE_VERSION = '23.4.0'"), 'version policy');
-check(html.includes("const RELEASE_VERSION = '1.0.36';") && html.includes("const BUILD_ID = 'b24.36';") && html.includes('release-v136-b24-36'), 'index identity');
-check(sw.includes("const RELEASE_VERSION = '1.0.36';") && sw.includes("const BUILD_ID = 'b24.36';"), 'service worker identity');
-check(bootstrap.includes("const RELEASE_VERSION = '1.0.36';") && bootstrap.includes("const BUILD_ID = 'b24.36';"), 'static bootstrap identity');
+const versionAtLeast = (current, minimum) => {
+  const left = String(current).split('.').map((value) => Number.parseInt(value, 10) || 0);
+  const right = String(minimum).split('.').map((value) => Number.parseInt(value, 10) || 0);
+  for (let index = 0; index < Math.max(left.length, right.length); index += 1) {
+    if ((left[index] || 0) > (right[index] || 0)) return true;
+    if ((left[index] || 0) < (right[index] || 0)) return false;
+  }
+  return true;
+};
+const currentBuildId = pkg.dokkaebi?.buildId;
+const currentLineage = pkg.dokkaebi?.lineageVersion;
+const currentCacheRevision = pkg.dokkaebi?.cacheRevision;
+const patch = String(pkg.version).split('.')[2] || '0';
+const cacheToken = `release-v1${patch}-${String(currentBuildId).replace('.', '-')}`;
+
+check(versionAtLeast(pkg.version, '1.0.36') && pkg.dokkaebi?.releaseVersion === pkg.version, 'package release identity');
+check(versionAtLeast(currentLineage, '23.4.0') && currentBuildId && currentCacheRevision === `${pkg.version}-${currentBuildId}`, 'package build identity');
+check(lock.version === pkg.version && lock.packages?.['']?.version === pkg.version && lock.packages?.['']?.dokkaebi?.buildId === currentBuildId, 'lock identity');
+check(version.releaseVersion === pkg.version && version.lineageVersion === currentLineage && version.buildId === currentBuildId, 'public version identity');
+check(main.includes(`const GAME_VERSION = '${pkg.version}';`), 'main version');
+check(versionPolicy.includes(`PUBLIC_GAME_VERSION = '${pkg.version}'`) && versionPolicy.includes(`LEGACY_LINEAGE_VERSION = '${currentLineage}'`), 'version policy');
+check(html.includes(`const RELEASE_VERSION = '${pkg.version}';`) && html.includes(`const BUILD_ID = '${currentBuildId}';`) && html.includes(cacheToken), 'index identity');
+check(sw.includes(`const RELEASE_VERSION = '${pkg.version}';`) && sw.includes(`const BUILD_ID = '${currentBuildId}';`), 'service worker identity');
+check(bootstrap.includes(`const RELEASE_VERSION = '${pkg.version}';`) && bootstrap.includes(`const BUILD_ID = '${currentBuildId}';`), 'static bootstrap identity');
 
 check(storage.id === 'DD-STORAGE-HYGIENE-V136' && storage.releaseVersion === '1.0.36' && storage.buildId === 'b24.36', 'storage audit identity');
 check(storage.cleanupPolicy?.excludeFromFullZip?.includes('dist') && storage.cleanupPolicy?.excludeFromFullZip?.includes('node_modules'), 'generated output exclusion policy');
@@ -47,7 +62,7 @@ check(main.includes('animateTransientVisual') && main.includes('clearTransientVi
 check(mobile.includes('DD-MOBILE-HUD-STABILITY-V135') && mobile.includes("MOBILE_HUD_V23_VERSION = '23.3.0'"), 'mobile HUD stability preserved');
 check(boss.includes("removeAttribute('aria-label')") && boss.includes("setAttribute('role', 'status')"), 'boss accessibility preserved');
 
-check(moduleShell.id === 'DD-RELEASE-INTEGRITY-V135' && moduleShell.releaseVersion === '1.0.36' && moduleShell.buildId === 'b24.36', 'runtime module shell current identity');
+check(moduleShell.id === 'DD-RELEASE-INTEGRITY-V135' && moduleShell.releaseVersion === pkg.version && moduleShell.buildId === currentBuildId, 'runtime module shell current identity');
 check(moduleShell.moduleCount === moduleShell.files?.length && moduleShell.moduleCount >= 100, 'runtime module shell coverage');
 for (const entry of moduleShell.files || []) {
   const absolute = path.join(root, entry.path);
@@ -87,7 +102,7 @@ const requiredDocs = [
 ];
 check(requiredDocs.every(exists), 'v1.0.36 operating docs');
 check(handoff.includes('인수인계 내역 작성 필수') && handoff.includes('2026-07-27 — v1.0.36 / b24.36'), 'mandatory v1.0.36 handoff history');
-check(readme.includes('v1.0.36') && readme.includes('dist') && readme.includes('node_modules'), 'README storage guidance');
+check(readme.includes('dist') && readme.includes('Vite') && readme.includes('Static fallback'), 'README storage guidance');
 check(pkg.scripts?.verify?.includes('verify:release:v136') && pkg.scripts?.['stage:package:v136'] && pkg.scripts?.['verify:package:v136'] && pkg.scripts?.['create:patch:v136'] && pkg.scripts?.['verify:patch:v136'], 'v1.0.36 package scripts');
 
 if (failures.length) {

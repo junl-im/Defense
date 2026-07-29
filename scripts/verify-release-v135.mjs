@@ -34,14 +34,29 @@ const sw = read('public/sw.js');
 const bootstrap = read('public/static-bootstrap.js');
 const handoff = read('PROJECT_HANDOFF.md');
 
-check(pkg.version === '1.0.35' && pkg.dokkaebi?.releaseVersion === '1.0.35', 'package release identity');
-check(pkg.dokkaebi?.lineageVersion === '23.3.0' && pkg.dokkaebi?.buildId === 'b24.35' && pkg.dokkaebi?.cacheRevision === '1.0.35-b24.35', 'package build identity');
-check(lock.version === pkg.version && lock.packages?.['']?.version === pkg.version && lock.packages?.['']?.dokkaebi?.buildId === 'b24.35', 'lock identity');
-check(version.releaseVersion === pkg.version && version.lineageVersion === '23.3.0' && version.buildId === 'b24.35', 'public version identity');
-check(main.includes("const GAME_VERSION = '1.0.35';"), 'main version');
-check(html.includes("const RELEASE_VERSION = '1.0.35';") && html.includes("const BUILD_ID = 'b24.35';") && html.includes('release-v135-b24-35'), 'index cache identity');
-check(sw.includes("const RELEASE_VERSION = '1.0.35';") && sw.includes("const BUILD_ID = 'b24.35';"), 'service worker identity');
-check(bootstrap.includes("const RELEASE_VERSION = '1.0.35';") && bootstrap.includes("const BUILD_ID = 'b24.35';"), 'static bootstrap identity');
+const versionAtLeast = (current, minimum) => {
+  const left = String(current).split('.').map((value) => Number.parseInt(value, 10) || 0);
+  const right = String(minimum).split('.').map((value) => Number.parseInt(value, 10) || 0);
+  for (let index = 0; index < Math.max(left.length, right.length); index += 1) {
+    if ((left[index] || 0) > (right[index] || 0)) return true;
+    if ((left[index] || 0) < (right[index] || 0)) return false;
+  }
+  return true;
+};
+const currentBuildId = pkg.dokkaebi?.buildId;
+const currentLineage = pkg.dokkaebi?.lineageVersion;
+const currentCacheRevision = pkg.dokkaebi?.cacheRevision;
+const patch = String(pkg.version).split('.')[2] || '0';
+const cacheToken = `release-v1${patch}-${String(currentBuildId).replace('.', '-')}`;
+
+check(versionAtLeast(pkg.version, '1.0.35') && pkg.dokkaebi?.releaseVersion === pkg.version, 'package release identity');
+check(versionAtLeast(currentLineage, '23.3.0') && currentBuildId && currentCacheRevision === `${pkg.version}-${currentBuildId}`, 'package build identity');
+check(lock.version === pkg.version && lock.packages?.['']?.version === pkg.version && lock.packages?.['']?.dokkaebi?.buildId === currentBuildId, 'lock identity');
+check(version.releaseVersion === pkg.version && version.lineageVersion === currentLineage && version.buildId === currentBuildId, 'public version identity');
+check(main.includes(`const GAME_VERSION = '${pkg.version}';`), 'main version');
+check(html.includes(`const RELEASE_VERSION = '${pkg.version}';`) && html.includes(`const BUILD_ID = '${currentBuildId}';`) && html.includes(cacheToken), 'index cache identity');
+check(sw.includes(`const RELEASE_VERSION = '${pkg.version}';`) && sw.includes(`const BUILD_ID = '${currentBuildId}';`), 'service worker identity');
+check(bootstrap.includes(`const RELEASE_VERSION = '${pkg.version}';`) && bootstrap.includes(`const BUILD_ID = '${currentBuildId}';`), 'static bootstrap identity');
 check(toolchain.id === 'DD-BUILD-TOOLCHAIN-AUDIT-V135' && toolchain.releaseVersion === '1.0.35' && toolchain.buildId === 'b24.35', 'build toolchain audit identity');
 check(['ready', 'exception-documented'].includes(toolchain.status), 'build toolchain audit status');
 check(toolchain.status === 'ready' || (toolchain.missing?.includes('package.json') && toolchain.ciProductionGate?.includes('npm ci')), 'incomplete Vite dependency exception is documented');
@@ -110,7 +125,7 @@ const contrast = (a, b) => {
 check(contrast('#fff4dc', '#0a0b18') >= 7, 'boss badge text contrast');
 check(Object.values(BOSS_IDENTITY_PROFILES_V133).every((profile) => contrast(profile.accent, '#0a0b18') >= 4.5), 'boss accent contrast');
 
-check(moduleShell.id === 'DD-RELEASE-INTEGRITY-V135' && moduleShell.releaseVersion === '1.0.35' && moduleShell.buildId === 'b24.35', 'runtime module shell identity');
+check(moduleShell.id === 'DD-RELEASE-INTEGRITY-V135' && moduleShell.releaseVersion === pkg.version && moduleShell.buildId === currentBuildId, 'runtime module shell identity');
 check(moduleShell.moduleCount === moduleShell.files?.length && moduleShell.moduleCount >= 100, 'runtime module shell coverage');
 for (const entry of moduleShell.files || []) {
   const absolute = path.join(root, entry.path);

@@ -1,0 +1,17 @@
+{
+  "id": "DD-PERFORMANCE-AND-REPRODUCIBILITY-GUARD-V149",
+  "releaseVersion": "1.0.49",
+  "baseline": {
+    "version": "1.0.48",
+    "mainBytes": 410199
+  },
+  "limits": {
+    "mainBytes": 420000,
+    "sourceJsCssBytes": 1700000,
+    "v149RuntimeModuleBytes": 25000,
+    "mainRegressionPercent": 2.5
+  },
+  "distMeasurementStatus": "ci-required-vite-artifact",
+  "requiredBrowserScenario": "production-default-vs-explicit-qa",
+  "requiredBuildInputAlgorithm": "sha256-sorted-paths-v1"
+}

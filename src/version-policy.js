@@ -1,9 +1,15 @@
-export const PUBLIC_GAME_VERSION = '1.0.48';
-export const LEGACY_LINEAGE_VERSION = '23.12.0';
-export const BUILD_EPOCH = 24;
-export const BUILD_REVISION = 48;
-export const BUILD_ID = `b${BUILD_EPOCH}.${BUILD_REVISION}`;
-export const CACHE_REVISION = `${PUBLIC_GAME_VERSION}-${BUILD_ID}`;
+// export const PUBLIC_GAME_VERSION = '1.0.49'; generated compatibility marker
+// export const LEGACY_LINEAGE_VERSION = '23.12.0'; generated compatibility marker
+// export const BUILD_EPOCH = 24; generated compatibility marker
+// export const BUILD_REVISION = 49; generated compatibility marker
+import { RELEASE_VERSION, LINEAGE_VERSION, BUILD_EPOCH as GENERATED_BUILD_EPOCH, BUILD_REVISION as GENERATED_BUILD_REVISION, BUILD_ID as GENERATED_BUILD_ID, CACHE_REVISION as GENERATED_CACHE_REVISION } from './release-identity.generated.js';
+
+export const PUBLIC_GAME_VERSION = RELEASE_VERSION;
+export const LEGACY_LINEAGE_VERSION = LINEAGE_VERSION;
+export const BUILD_EPOCH = GENERATED_BUILD_EPOCH;
+export const BUILD_REVISION = GENERATED_BUILD_REVISION;
+export const BUILD_ID = GENERATED_BUILD_ID;
+export const CACHE_REVISION = GENERATED_CACHE_REVISION;
 export const VERSION_POLICY_ID = 'DD-VERSION-POLICY-1.0';
 
 export const VERSION_POLICY = Object.freeze({

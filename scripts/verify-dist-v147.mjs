@@ -6,7 +6,9 @@ const dist = process.env.DIST_DIR ? path.resolve(process.env.DIST_DIR) : path.jo
 const versionPath = path.join(dist, 'version.json');
 if (!fs.existsSync(versionPath)) throw new Error('v147 dist/version.json missing');
 const version = JSON.parse(fs.readFileSync(versionPath, 'utf8'));
-if (version.releaseVersion !== '1.0.47' || version.buildId !== 'b24.47' || version.cacheRevision !== '1.0.47-b24.47') throw new Error('v1.0.47 dist identity mismatch');
+const patchRevision = Number(String(version.releaseVersion || '').split('.')[2]);
+const buildRevision = Number(String(version.buildId || '').split('.')[1]);
+if (!Number.isInteger(patchRevision) || patchRevision < 47 || !Number.isInteger(buildRevision) || buildRevision < 47 || version.cacheRevision !== `${version.releaseVersion}-${version.buildId}`) throw new Error('v1.0.47+ dist identity mismatch');
 for (const required of ['index.html','assets/game.js','assets/game.css','sw.js']) if (!fs.existsSync(path.join(dist, required))) throw new Error(`v147 complete Vite dist missing: ${required}`);
 if (fs.existsSync(path.join(dist, 'src')) || fs.existsSync(path.join(dist, 'STATIC_BUILD_NOTICE.txt'))) throw new Error('v147 requires bundled Vite output, not static fallback');
 const tasks = [

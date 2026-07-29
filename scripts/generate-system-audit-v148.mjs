@@ -64,8 +64,18 @@ const setIntervalCalls = (allSource.match(/\bsetInterval\s*\(/g) || []).length;
 const emptyCatchBlocks = (allSource.match(/catch\s*(?:\([^)]*\))?\s*\{\s*\}/g) || []).length;
 const runSafeCalls = (main.match(/this\.runSafe\(/g) || []).length;
 const hiddenGuardOrder = main.indexOf('this.runtimeHealthV148.noteFrame({ hidden, dt: rawDt })') >= 0 && main.indexOf('this.runtimeHealthV148.noteFrame({ hidden, dt: rawDt })') < main.indexOf("this.runSafe('world-effects'");
-const versionIdentity = pkg.version === '1.0.48' && pkg.dokkaebi?.buildId === 'b24.48' && pkg.dokkaebi?.cacheRevision === '1.0.48-b24.48';
-const serviceWorkerIdentity = sw.includes("const RELEASE_VERSION = '1.0.48'") && sw.includes("const BUILD_ID = 'b24.48'") && sw.includes('DD-SW-UPGRADE-ASSURANCE-V148');
+const versionParts = String(pkg.version || '').split('.').map(Number);
+const currentRevision = versionParts[2];
+const currentBuildId = `b24.${currentRevision}`;
+const currentCacheRevision = `${pkg.version}-${currentBuildId}`;
+const versionIdentity = versionParts[0] === 1 && versionParts[1] === 0 && currentRevision >= 48
+  && pkg.dokkaebi?.releaseVersion === pkg.version
+  && pkg.dokkaebi?.buildId === currentBuildId
+  && pkg.dokkaebi?.cacheRevision === currentCacheRevision;
+const serviceWorkerIdentity = sw.includes("importScripts('./release-identity.generated.js')")
+  && sw.includes('RELEASE_IDENTITY.releaseVersion')
+  && sw.includes('RELEASE_IDENTITY.buildId')
+  && sw.includes('DD-SW-UPGRADE-ASSURANCE-V148');
 const deliveryRule = fs.existsSync(path.join(root, 'docs/DELIVERY_RESULT_RULE.md'));
 const workflowContract = workflow.includes('logs/qa/v148') && workflow.includes('v1.0.48-system-integrity');
 const historicalReleaseGatesRestored = pkg.scripts?.verify?.includes('verify:release:v134 && npm run verify:release:v135 && npm run verify:release:v136 && npm run verify:release:v137');

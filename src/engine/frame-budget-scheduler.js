@@ -15,7 +15,7 @@ export class FrameBudgetScheduler {
     const state = this.channels.get(channel) || { elapsed: immediate ? interval : 0, runs: 0, skips: 0 };
     state.elapsed += Math.max(0, this.lastDt || 0);
     if (immediate || state.elapsed + 1e-6 >= interval) {
-      state.elapsed = interval === Infinity ? 0 : state.elapsed % interval;
+      state.elapsed = interval === Infinity || immediate ? 0 : Math.max(0, state.elapsed - interval);
       state.runs += 1;
       this.channels.set(channel, state);
       return true;

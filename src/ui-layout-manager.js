@@ -15,10 +15,11 @@ const overlaps = (a, b, gap = 3) => (
 );
 
 export class AdaptiveHudLayout {
-  constructor({ body = document.body, elements = {}, storageKey = 'dokkaebi-hud-density-v1' } = {}) {
+  constructor({ body = document.body, elements = {}, storageKey = 'dokkaebi-hud-density-v1', storage = null } = {}) {
     this.body = body;
     this.elements = elements;
     this.storageKey = storageKey;
+    this.storage = storage;
     this.mode = this.loadMode();
     this.profile = 'standard';
     this.overlapPairs = [];
@@ -34,7 +35,7 @@ export class AdaptiveHudLayout {
 
   loadMode() {
     try {
-      const stored = localStorage.getItem(this.storageKey);
+      const stored = this.storage?.get ? this.storage.get(this.storageKey) : localStorage.getItem(this.storageKey);
       return MODES.includes(stored) ? stored : DEFAULT_MODE;
     } catch {
       return DEFAULT_MODE;
@@ -42,7 +43,10 @@ export class AdaptiveHudLayout {
   }
 
   saveMode() {
-    try { localStorage.setItem(this.storageKey, this.mode); } catch {}
+    try {
+      if (this.storage?.set) this.storage.set(this.storageKey, this.mode);
+      else localStorage.setItem(this.storageKey, this.mode);
+    } catch {}
   }
 
   mount() {

@@ -1,6 +1,20 @@
-> Current improvement patch: **v1.0.45 / b24.45** - Long-Session Stability Assurance
-
 # Dokkaebi Luck Defense 3D
+
+> Current release: **v1.0.49 / b24.49** — reproducible runtime architecture, transactional persistence, generated release identity, recovery/diagnostic separation, and production QA exposure control.
+
+## v1.0.49 verification
+
+```bash
+node scripts/generate-release-identity-v149.mjs
+npm ci
+npm run verify:identity:v149
+npm run verify:ci
+VITE_BASE_PATH=/Defense/ npm run build
+REQUIRE_BROWSER_V144=1 REQUIRE_BROWSER_V145=1 REQUIRE_BROWSER_V146=1 REQUIRE_BROWSER_V147=1 REQUIRE_BROWSER_V149=1 npm run verify:dist:all
+```
+
+The direct patch is cumulative from v1.0.46+ and overwrites `package.json` and `package-lock.json`; a CI log that still reports `package=1.0.46` is running an unpatched commit.
+
 
 ## v1.0.45 key changes
 

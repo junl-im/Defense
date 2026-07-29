@@ -18,9 +18,11 @@ const record = (files) => ({
   rawBytes: files.reduce((sum, file) => sum + fs.statSync(file).size, 0),
   gzipBytes: files.reduce((sum, file) => sum + zlib.gzipSync(fs.readFileSync(file), { level: 9 }).length, 0)
 });
-const isV146Addition = (file) => /-v146\.js$/.test(file);
-const v145SourceFiles = walk(path.join(root, 'src')).filter((file) => file.endsWith('.js') && !isV146Addition(file));
-const v145RuntimeFiles = walk(path.join(root, 'src/runtime')).filter((file) => file.endsWith('.js') && !isV146Addition(file));
+const FORWARD_RELEASE_MODULE_TAGS = new Set(['146', '147', '148', '149']);
+const forwardReleaseTag = (file) => /-v(\d+)\.js$/.exec(path.basename(file))?.[1] || '';
+const isForwardReleaseAddition = (file) => FORWARD_RELEASE_MODULE_TAGS.has(forwardReleaseTag(file));
+const v145SourceFiles = walk(path.join(root, 'src')).filter((file) => file.endsWith('.js') && !isForwardReleaseAddition(file));
+const v145RuntimeFiles = walk(path.join(root, 'src/runtime')).filter((file) => file.endsWith('.js') && !isForwardReleaseAddition(file));
 const current = {
   mainJs: record([path.join(root, 'src/main.js')]),
   styleCss: record([path.join(root, 'src/style.css')]),
@@ -52,7 +54,7 @@ const report = {
   releaseVersion: '1.0.45',
   baseline: { id: baseline.id, releaseVersion: baseline.releaseVersion, buildId: baseline.buildId, maxRegressionPercent: percent },
   measurementScope: 'v1.0.45 source surface; later release modules are measured by their own release gate',
-  excludedForwardModules: walk(path.join(root, 'src')).filter((file) => file.endsWith('.js') && isV146Addition(file)).map((file) => path.relative(root, file).replaceAll('\\', '/')).sort(),
+  excludedForwardModules: walk(path.join(root, 'src')).filter((file) => file.endsWith('.js') && isForwardReleaseAddition(file)).map((file) => path.relative(root, file).replaceAll('\\', '/')).sort(),
   current,
   checks,
   passed: Object.values(checks).every((group) => Object.values(group).every((check) => check.pass))

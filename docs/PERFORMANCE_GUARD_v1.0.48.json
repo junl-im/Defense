@@ -1,0 +1,25 @@
+{
+  "id": "DD-PERFORMANCE-GUARD-V148",
+  "releaseVersion": "1.0.48",
+  "measurement": "source-tree-static-bytes",
+  "maxRegressionPercent": 5,
+  "baseline": {
+    "sourceBytes": 1324626,
+    "mainBytes": 410199,
+    "engineBytes": 96089,
+    "runtimeBytes": 378313
+  },
+  "maximum": {
+    "sourceBytes": 1390858,
+    "mainBytes": 430709,
+    "engineBytes": 100894,
+    "runtimeBytes": 397229
+  },
+  "runtimeRules": {
+    "setIntervalCalls": 0,
+    "hiddenFrameSuspensionBeforeHeavyWork": true,
+    "frameDeltaClampMs": 33,
+    "rendererPixelRatioCapsRequired": true,
+    "tenHzCadenceRunsPer120Frames": 20
+  }
+}

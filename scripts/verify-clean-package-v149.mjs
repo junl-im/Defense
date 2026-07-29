@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+import path from 'node:path';
+const root = path.resolve(import.meta.dirname, '..');
+const stage = path.join(root, 'logs/package/1.0.49/DokkaebiLuckDefense3D_FULL_v1.0.49_REPRODUCIBLE_RUNTIME_ARCHITECTURE_VERIFIED');
+if (!fs.existsSync(stage)) throw new Error('v149 staged package missing');
+for (const banned of ['dist','node_modules','.git']) if (fs.existsSync(path.join(stage, banned))) throw new Error(`v149 staged package contains ${banned}`);
+const pkg = JSON.parse(fs.readFileSync(path.join(stage, 'package.json'), 'utf8'));
+if (pkg.version !== '1.0.49' || pkg.dokkaebi?.buildId !== 'b24.49') throw new Error('v149 staged identity mismatch');
+for (const file of ['src/release-identity.generated.js','public/release-identity.generated.js','src/runtime/transactional-persistence-v149.js','src/runtime/recovery-state-v149.js','src/runtime/run-state-coordinator-v149.js','src/runtime/feature-exposure-policy-v149.js','src/runtime/result-presenter-v149.js','scripts/generate-release-identity-v149.mjs','scripts/generate-build-input-manifest-v149.mjs','scripts/verify-release-v149.mjs','docs/generated/build-input-manifest-v149.json','docs/DELIVERY_RESULT_RULE.md']) if (!fs.existsSync(path.join(stage, file))) throw new Error(`v149 staged contract missing ${file}`);
+console.log('PASS v1.0.49 clean source package staging');

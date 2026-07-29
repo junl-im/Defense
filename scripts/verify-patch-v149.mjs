@@ -1,0 +1,10 @@
+import { createHash } from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
+import { V149_PATCH_FILES } from './v149-patch-files.mjs';
+const root=path.resolve(import.meta.dirname,'..');const patchRoot=path.join(root,'logs/patch/1.0.49');const overlay=path.join(patchRoot,'overlay');const manifestPath=path.join(patchRoot,'PATCH_MANIFEST.json');
+if(!fs.existsSync(manifestPath))throw new Error('v149 patch manifest missing');const manifest=JSON.parse(fs.readFileSync(manifestPath,'utf8'));if(manifest.id!=='DD-DIRECT-OVERLAY-PATCH-V149'||manifest.baseVersion!=='1.0.48'||manifest.targetVersion!=='1.0.49'||manifest.buildId!=='b24.49'||manifest.applyMode!=='direct-root-overlay')throw new Error('v149 patch identity mismatch');
+const sha=(data)=>createHash('sha256').update(data).digest('hex');const paths=new Set();for(const entry of manifest.files){if(paths.has(entry.path))throw new Error(`duplicate patch path ${entry.path}`);paths.add(entry.path);const file=path.join(overlay,entry.path);if(!fs.existsSync(file))throw new Error(`patch file missing ${entry.path}`);const data=fs.readFileSync(file);if(data.length!==entry.bytes||sha(data)!==entry.sha256)throw new Error(`patch hash mismatch ${entry.path}`);if(entry.basePresent&&!/^[a-f0-9]{64}$/.test(entry.baseSha256||''))throw new Error(`base hash missing ${entry.path}`);}
+if(manifest.counts.changed!==manifest.files.length||manifest.counts.deleted!==0||manifest.deletedPaths.length!==0)throw new Error('v149 patch count mismatch');if(paths.size!==V149_PATCH_FILES.length||V149_PATCH_FILES.some((file)=>!paths.has(file)))throw new Error('v149 patch manifest differs from declared list');
+for(const required of ['package.json','src/release-identity.generated.js','public/release-identity.generated.js','src/runtime/transactional-persistence-v149.js','scripts/verify-release-v149.mjs','docs/NEXT_UPDATE_v1.0.50.md'])if(!paths.has(required))throw new Error(`v149 patch contract file missing ${required}`);
+console.log(`PASS v1.0.49 direct-root overlay patch with base/target hashes (${manifest.files.length} files)`);

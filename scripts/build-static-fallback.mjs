@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 await import('./clean-obsolete-assets.mjs');
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const dist = path.join(root, 'dist');
+const dist = process.env.DIST_DIR ? path.resolve(process.env.DIST_DIR) : path.join(root, 'dist');
 const packageJson = JSON.parse(await readFile(path.join(root, 'package.json'), 'utf8'));
 const version = packageJson.version;
 const buildId = packageJson.dokkaebi?.buildId || '';
@@ -52,7 +52,7 @@ for (const candidate of vendorCandidates) {
 let html = await readFile(path.join(root, 'index.html'), 'utf8');
 html = html.replace('    <title>', `    <link rel="stylesheet" href="./src/style.css?v=${revision}" />\n    <title>`);
 html = html.replace(
-  /<script type="module" src="\.\/src\/bootstrap\.js\?v=[^"]+"><\/script>/,
+  /<script type="module" src="\.\/src\/bootstrap\.js(?:\?v=[^"]+)?"><\/script>/,
   `<script src="./static-bootstrap.js?v=${revision}" data-entry="./src/bootstrap.js" data-vendor-base="./vendor/three/"></script>`
 );
 await writeFile(path.join(dist, 'index.html'), html);

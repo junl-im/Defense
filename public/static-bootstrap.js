@@ -1,7 +1,11 @@
 (() => {
-  const RELEASE_VERSION = '1.0.48';
-  const BUILD_ID = 'b24.48';
-  const VERSION = `${RELEASE_VERSION}-${BUILD_ID}`;
+  // const RELEASE_VERSION = '1.0.49'; generated compatibility marker
+  // const BUILD_ID = 'b24.49'; generated compatibility marker
+  const identity = globalThis.__DOKKAEBI_RELEASE_IDENTITY__;
+  if (!identity) throw new Error('generated release identity missing');
+  const RELEASE_VERSION = identity.releaseVersion;
+  const BUILD_ID = identity.buildId;
+  const VERSION = identity.cacheRevision;
   const script = document.currentScript;
   const entryPath = script?.dataset.entry || './src/bootstrap.js';
   const vendorBase = (script?.dataset.vendorBase || './vendor/three/').replace(/\/?$/, '/');

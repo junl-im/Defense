@@ -1,12 +1,12 @@
 {
   "schema": "DD-RUNTIME-MODULE-SHELL-1.0",
   "id": "DD-RELEASE-INTEGRITY-V135",
-  "releaseVersion": "1.0.48",
-  "buildId": "b24.48",
-  "cacheRevision": "1.0.48-b24.48",
+  "releaseVersion": "1.0.49",
+  "buildId": "b24.49",
+  "cacheRevision": "1.0.49-b24.49",
   "entry": "src/bootstrap.js",
-  "moduleCount": 119,
-  "totalBytes": 1511442,
+  "moduleCount": 125,
+  "totalBytes": 1530200,
   "files": [
     {
       "path": "src/art-production-gate.js",
@@ -310,8 +310,8 @@
     },
     {
       "path": "src/main.js",
-      "bytes": 410199,
-      "sha256": "7dfaccbbe6215aef92cc7dfcc9f7207970badb6039031fde05356cf66c360914"
+      "bytes": 410596,
+      "sha256": "bb4428a8276ef3d15ef43c34d7581cd0dbaf64554fcdf8af289f9726759dc17c"
     },
     {
       "path": "src/premium-assets.js",
@@ -322,6 +322,11 @@
       "path": "src/production-console.js",
       "bytes": 12630,
       "sha256": "64dd554b548264d4518ca45473e9a0a63076a2ccb4f9b21bd145e2365db45bfa"
+    },
+    {
+      "path": "src/release-identity.generated.js",
+      "bytes": 698,
+      "sha256": "5b55f89d6d65319c69814b14c2b3e8368b43e209b97a85f46a731e45008022c1"
     },
     {
       "path": "src/run-director.js",
@@ -469,6 +474,11 @@
       "sha256": "a7464e59189db310470a5ea1b9b412cc563a7e0f570d396349a01e1776cbf7b0"
     },
     {
+      "path": "src/runtime/feature-exposure-policy-v149.js",
+      "bytes": 923,
+      "sha256": "f5514779203b34deda2a2162846472b70c45bc62fd1bfbf74427105c6d9e0492"
+    },
+    {
       "path": "src/runtime/first-presentation-director-v107.js",
       "bytes": 6823,
       "sha256": "db750e8a60563019117ea5ab97eb0eba6e7604dd85f01755cb54fddca96a80ae"
@@ -509,9 +519,24 @@
       "sha256": "0a6794c7529befff23022abba0106a72ac9552b4609b1853bc32b8a8cd530d6e"
     },
     {
+      "path": "src/runtime/recovery-state-v149.js",
+      "bytes": 2768,
+      "sha256": "df0a0fe9c70c312746b9f245dfd243bd32f241a3654363b67417fec31bbbdf57"
+    },
+    {
       "path": "src/runtime/release-assurance-director-v124.js",
       "bytes": 10741,
       "sha256": "13ec0aa0f6393c6ad1676094ddbef7b035fc094a72692b69479ace690711b532"
+    },
+    {
+      "path": "src/runtime/result-presenter-v149.js",
+      "bytes": 4296,
+      "sha256": "ad5e53ab729acec5638b314847195beed0088062984266cd8aa286b3eda1caae"
+    },
+    {
+      "path": "src/runtime/run-state-coordinator-v149.js",
+      "bytes": 1757,
+      "sha256": "ab6db4b177b9723cfa39efeba8efd42252643409b73447e03c7fcc0c73db968d"
     },
     {
       "path": "src/runtime/runtime-health-assurance-v148.js",
@@ -559,6 +584,11 @@
       "sha256": "59cdd6c7e03ffef3a09ff0fe5c71806e5b6045c61af337f9fd815cd3fd0802e6"
     },
     {
+      "path": "src/runtime/transactional-persistence-v149.js",
+      "bytes": 7356,
+      "sha256": "0d2ccb95d9d79512694ede0394599d0eaefbb8636c069b06ca5feccbc29efcd6"
+    },
+    {
       "path": "src/runtime/visual-integration-director.js",
       "bytes": 5082,
       "sha256": "c022684c0c884ba3be59bee1259e1df60b6eddda01998a50b5f145aa88a7e151"
@@ -600,8 +630,8 @@
     },
     {
       "path": "src/version-policy.js",
-      "bytes": 1740,
-      "sha256": "3c72457e000bcaf7a6dc5aafb22f86d7e104525a4310e645e1159dac976e5073"
+      "bytes": 2303,
+      "sha256": "53d32dbf35b7712887fbf4b89f107285d35ac90a385c2c57b321a912c5be2c2f"
     }
   ]
 }

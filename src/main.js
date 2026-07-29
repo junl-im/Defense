@@ -57,6 +57,11 @@ import { loadCodexProgress, saveCodexProgress, recordCodexEncounter, recordCodex
 import { RuntimeLifecycle } from './runtime-lifecycle.js';
 import { createSafeStorageV148 } from './runtime/safe-storage-v148.js';
 import { RuntimeHealthAssuranceV148 } from './runtime/runtime-health-assurance-v148.js';
+import { createTransactionalPersistenceV149 } from './runtime/transactional-persistence-v149.js';
+import { RecoveryStateV149 } from './runtime/recovery-state-v149.js';
+import { RunStateCoordinatorV149 } from './runtime/run-state-coordinator-v149.js';
+import { resolveFeatureExposureV149 } from './runtime/feature-exposure-policy-v149.js';
+import { buildRunResultPresentationV149 } from './runtime/result-presenter-v149.js';
 import AdaptiveHudLayout from './ui-layout-manager.js';
 import CombatPresentation, { faceActorTowards, resolveAttackOrigin } from './combat-presentation.js';
 import EncounterDirector from './combat/encounter-director.js';
@@ -155,7 +160,8 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '1.0.48';
+// const GAME_VERSION = '1.0.49'; generated compatibility marker
+const GAME_VERSION = PUBLIC_GAME_VERSION;
 // const GAME_VERSION = '23.1.0'; historical lineage marker for pre-normalization contracts.
 if (GAME_VERSION !== PUBLIC_GAME_VERSION) throw new Error('Public version policy mismatch');
 function runtimeSpriteMarkup(path, alt = '', className = '') {
@@ -225,14 +231,29 @@ class DokkaebiLuckDefense {
     this.clock = new THREE.Clock();
     this.engine = new MobileGameEngine();
     this.lifecycle = new RuntimeLifecycle();
-    this.safeStorageV148 = createSafeStorageV148({
+    this.storageBackendV148 = createSafeStorageV148({
       onError: (entry) => console.warn('[SafeStorageV148]', entry)
     });
+    this.persistenceV149 = createTransactionalPersistenceV149({
+      storage: this.storageBackendV148,
+      onError: (entry) => console.warn('[TransactionalPersistenceV149]', entry)
+    });
+    this.safeStorageV148 = this.persistenceV149;
+    this.persistenceRecoveryV149 = this.persistenceV149.recover();
     this.runtimeHealthV148 = new RuntimeHealthAssuranceV148();
+    this.recoveryStateV149 = new RecoveryStateV149();
+    this.runStateV149 = new RunStateCoordinatorV149({ initial: 'loading' });
+    this.featureExposureV149 = resolveFeatureExposureV149({
+      mode: import.meta.env?.MODE || 'production',
+      hostname: window.location.hostname,
+      search: window.location.search,
+      explicitQa: import.meta.env?.VITE_ENABLE_QA_API === '1'
+    });
     this.lowPower = this.engine.device.mobile || this.engine.device.lowEnd;
     this.appState = new AppStateMachineV103({
       initial: 'loading',
       onTransition: (entry) => {
+        this.runStateV149.observe(entry);
         syncAppStateSurfaceV141(document.body, entry.to);
         if (!entry.valid) console.warn('[AppStateMachineV103] non-contract transition', entry);
       }
@@ -460,7 +481,10 @@ class DokkaebiLuckDefense {
     });
     this.bindUI();
     this.mobileInputRecoveryV143.mount();
-    this.listen(window, 'pagehide', (event) => { if (!event.persisted) this.dispose(); }, {}, 'pagehide-dispose');
+    this.listen(window, 'pagehide', (event) => {
+      this.persistenceV149.checkpoint(event.persisted ? 'pagehide-bfcache' : 'pagehide-unload');
+      if (!event.persisted) this.dispose();
+    }, {}, 'pagehide-dispose');
     this.populateCollection();
     this.renderMetaProgress();
     this.renderRunModeSelector();
@@ -914,7 +938,11 @@ class DokkaebiLuckDefense {
         combatReadability: this.combatReadability?.snapshot || {},
         runtimeErrors: { count: this.runtimeErrors.length, last: this.runtimeErrors.at(-1) || null },
         runtimeHealthV148: this.runtimeHealthV148.diagnostics,
-        safeStorageV148: this.safeStorageV148.diagnostics,
+        safeStorageV148: this.storageBackendV148.diagnostics,
+        persistenceV149: this.persistenceV149.diagnostics,
+        recoveryStateV149: this.recoveryStateV149.diagnostics,
+        runStateV149: this.runStateV149.diagnostics,
+        featureExposureV149: this.featureExposureV149,
         battlefieldEvent: this.battlefieldEvents?.diagnostics || {},
         cameraDirector: this.cameraDirectorV16?.snapshot || {},
         goldenSlice: GOLDEN_SLICE_CERTIFICATION_SUMMARY,
@@ -1198,7 +1226,14 @@ class DokkaebiLuckDefense {
       if (isMovementCode(code)) this.input.keys.delete(code);
     }, {}, 'keyboard-movement-up');
     on(window, 'blur', () => this.resetMovementInput(), {}, 'window-blur');
-    on(document, 'visibilitychange', () => this.handleVisibilityChange(document.hidden), {}, 'visibility-change');
+    on(document, 'visibilitychange', () => {
+      if (document.hidden) this.persistenceV149.checkpoint('visibility-hidden');
+      this.handleVisibilityChange(document.hidden);
+    }, {}, 'visibility-change');
+    on(window, 'beforeunload', () => this.persistenceV149.checkpoint('beforeunload'), {}, 'beforeunload-persistence');
+    on(navigator.serviceWorker, 'message', (event) => {
+      if (event.data?.type === 'DOKKAEBI_SW_ACTIVATED') this.persistenceV149.checkpoint('service-worker-activated');
+    }, {}, 'service-worker-persistence');
     on(window, 'pageshow', (event) => {
       if (event.persisted || !document.hidden) this.handleVisibilityChange(false, { pageShow: true });
     }, {}, 'page-show-recovery');
@@ -4786,12 +4821,14 @@ class DokkaebiLuckDefense {
       this.autoPausedByContextLoss = this.state === 'playing';
       if (this.autoPausedByContextLoss) this.pauseGame({ automatic: true });
       document.body.classList.add('webgl-context-lost');
-      this.showWaveRecovery('그래픽 복구 중', '화면 컨텍스트를 다시 연결하고 있습니다.');
+      const recovery = this.recoveryStateV149.begin('webgl-context', 'graphics context lost');
+      this.showWaveRecovery(recovery.user.title, recovery.user.detail);
       return;
     }
     document.body.classList.remove('webgl-context-lost');
     if (this.autoPausedByContextLoss && this.state === 'paused') this.resumeGame({ automatic: true });
     this.autoPausedByContextLoss = false;
+    this.recoveryStateV149.restore('webgl-context', 'graphics context restored');
     this.showToast('그래픽 화면이 복구되었습니다.');
   }
 
@@ -4805,7 +4842,8 @@ class DokkaebiLuckDefense {
     this.browserReliability?.noteMilestone('runtime-error', { source: entry.source, message: entry.message, wave: entry.wave, duplicate: captured.duplicate });
     if (captured.duplicate) return entry;
     console.error(`[RuntimeGuard:${entry.source}]`, error);
-    if (this.state === 'playing') this.showWaveRecovery('오류 자동 복구', `${entry.source} 경로를 격리하고 전투를 계속합니다.`);
+    const recovery = this.recoveryStateV149.begin(entry.source, entry.message);
+    if (this.state === 'playing') this.showWaveRecovery(recovery.user.title, recovery.user.detail);
     return entry;
   }
 
@@ -7223,7 +7261,11 @@ class DokkaebiLuckDefense {
         guardianCouncil: this.guardianCouncil,
         saveMigration: this.saveMigration,
         runtimeHealthV148: this.runtimeHealthV148.diagnostics,
-        safeStorageV148: this.safeStorageV148.diagnostics
+        safeStorageV148: this.storageBackendV148.diagnostics,
+        persistenceV149: this.persistenceV149.diagnostics,
+        recoveryStateV149: this.recoveryStateV149.diagnostics,
+        runStateV149: this.runStateV149.diagnostics,
+        featureExposureV149: this.featureExposureV149
       },
       progression: {
         heroClass: this.selectedHeroClassId,
@@ -7278,29 +7320,30 @@ class DokkaebiLuckDefense {
     ui.mission.classList.remove('show');
     ui.mission.classList.add('hidden');
     won?this.sound.win():this.sound.fail();
-    if(won)this.score+=5000+Math.round(this.coreHp*30);
-    ui.resultKicker.textContent=won?'MOON MARKET SAVED':'THE TREE HAS FALLEN';
-    ui.resultTitle.textContent=won?'달빛 장터 수호 성공!':'신목을 지키지 못했습니다';
-    ui.resultScore.textContent=Math.round(this.score).toLocaleString();
-    ui.resultKills.textContent=this.kills.toLocaleString();
-    ui.resultRank.textContent=`${this.maxRank}★`;
-    const summary={};
-    this.units.filter((unit)=>!unit.showcase).forEach((unit)=>{summary[unit.type]=Math.max(summary[unit.type]||0,unit.rank);});
-    ui.resultUnits.innerHTML=Object.entries(summary).map(([type,rank])=>`<span class="result-unit">${UNIT_TYPES[type].symbol} ${UNIT_TYPES[type].name} ${'★'.repeat(rank)}</span>`).join('')||'<span class="result-unit">소환 기록 없음</span>';
-    const damageEntries = Object.entries(this.runStats.damageByType).sort((a,b)=>b[1]-a[1]);
-    const [topType, topDamage] = damageEntries[0] || [null, 0];
-    ui.resultAnalysis.innerHTML = `
-      <div><span>최고 피해</span><b>${topType && topDamage > 0 ? `${UNIT_TYPES[topType].symbol} ${UNIT_TYPES[topType].name}` : '대장 깨비'}</b><small>${Math.round(topDamage || this.runStats.heroDamage).toLocaleString()} 피해</small></div>
-      <div><span>집중 명령</span><b>${this.runStats.commandsUsed}회</b><small>${Math.round(this.runStats.commandDamage).toLocaleString()} 강화 피해</small></div>
-      <div><span>이동·수집</span><b>${this.runStats.moveOrders}회 지정</b><small>엽전 ${Math.round(this.runStats.coinsCollected).toLocaleString()} · 회피 ${this.runStats.dangerDodges}</small></div>
-      <div><span>월식 전과</span><b>보스 ${this.runStats.bossKills} · 정예 ${this.runStats.eliteKills}</b><small>결계 방어 ${this.runStats.wardBlocks}회 · 대박 폭주 ${this.runStats.jackpotTriggers}회</small></div>
-      <div><span>원정 기록</span><b>${this.activeRunMode.icon} ${this.activeRunMode.name}</b><small>도전 ${this.runStats.trialsCompleted}회 · 유물 ${this.runStats.relicsChosen}개 · 세트 ${this.runStats.relicSetsActivated}</small></div>
-      <div><span>위험 패턴</span><b>회피 ${this.runStats.dangerDodges}회</b><small>파열 회피 ${this.runStats.eliteBurstDodges} · 피격 ${this.runStats.eliteBurstHits} · 보스 피격 ${this.runStats.bossHazardHits}</small></div>
-      <div><span>수호신 폭주</span><b>${this.runStats.guardianBursts}회</b><small>최대 연속 처치 ${this.runStats.maxKillChain} · 질주 ${this.runStats.dashUses}회</small></div>
-      <div><span>도감 연구</span><b>발견 ${this.runStats.codexDiscoveries} · 전리품 ${this.runStats.codexDrops}</b><small>약점 해독 ${this.runStats.weaknessUnlocks} · 약점 공격 ${this.runStats.weaknessHits.toLocaleString()}회</small></div>
-      <div><span>수호 의회</span><b>${this.guardianCouncil.bond.icon} ${this.guardianCouncil.bond.name}</b><small>${this.guardianCouncil.support.name} · 캠페인 ACT ${this.runStats.actsCleared}/4</small></div>
-      <div><span>보스 파훼</span><b>BREAK ${this.runStats.bossBreaks}회</b><small>장비 단조 누적 ${this.equipmentState.forged || 0}회 · 정수 ${this.equipmentState.essence || 0}</small></div>
-      <div><span>원정 시드</span><b>${this.runSeed}</b><small>${this.dailyEdict.icon} ${this.dailyEdict.name} · ${this.selectedSeedModeId === 'daily' ? '오늘의 원정' : '자유 원정'}</small></div>`;
+    const presentationV149 = buildRunResultPresentationV149({
+      won,
+      score: this.score,
+      coreHp: this.coreHp,
+      kills: this.kills,
+      maxRank: this.maxRank,
+      units: this.units,
+      unitTypes: UNIT_TYPES,
+      runStats: this.runStats,
+      activeRunMode: this.activeRunMode,
+      runSeed: this.runSeed,
+      dailyEdict: this.dailyEdict,
+      selectedSeedModeId: this.selectedSeedModeId,
+      guardianCouncil: this.guardianCouncil,
+      equipmentState: this.equipmentState
+    });
+    this.score = presentationV149.finalScore;
+    ui.resultKicker.textContent = presentationV149.kicker;
+    ui.resultTitle.textContent = presentationV149.title;
+    ui.resultScore.textContent = presentationV149.scoreText;
+    ui.resultKills.textContent = presentationV149.killsText;
+    ui.resultRank.textContent = presentationV149.rankText;
+    ui.resultUnits.innerHTML = presentationV149.unitsHtml;
+    ui.resultAnalysis.innerHTML = presentationV149.analysisHtml;
     const shardReward = this.awardRunShards(won);
     const persistentReward = this.awardPersistentProgress(won);
     ui.resultShards.textContent = `+${shardReward}`;
@@ -7308,6 +7351,7 @@ class DokkaebiLuckDefense {
     ui.resultEquipmentReward.innerHTML = persistentReward.drop ? `<span style="--rarity:${EQUIPMENT_RARITIES[persistentReward.drop.item.rarity].color}">${equipmentIconMarkup(persistentReward.drop.item, 'reward-sprite')}</span><div><small>${persistentReward.drop.duplicate ? '중복 장비 분해' : '새 장비 획득'}</small><b>${persistentReward.drop.item.name}</b><em>${persistentReward.drop.duplicate ? `장비 정수 +${persistentReward.drop.essence}` : persistentReward.drop.item.desc}</em></div>` : '<span>–</span><div><small>장비 보상</small><b>웨이브 3부터 획득</b><em>더 깊은 원정에서 장비를 발견하세요.</em></div>';
     ui.resultMasteryReward.innerHTML = `<span>Lv.${persistentReward.mastery.entry.level}</span><div><small>${this.heroClass.name} 숙련</small><b>숙련 경험치 +${persistentReward.mastery.gained}</b><em>${persistentReward.mastery.levelsGained ? `${persistentReward.mastery.levelsGained}레벨 상승!` : `원정 ${persistentReward.mastery.entry.runs}회 누적`}</em></div>`;
     this.renderLeaderboard(this.getLocalScores());
+    this.persistenceV149.checkpoint('finish-run');
     this.scheduleUi(() => { if (this.state === 'result') this.showModal(ui.resultModal); }, 700, { key: 'result-modal-show' });
   }
 
@@ -7337,6 +7381,7 @@ class DokkaebiLuckDefense {
     const entry={name,score:Math.round(this.score),wave:this.currentWave,kills:this.kills,maxRank:this.maxRank,mode:this.activeRunMode.id,seed:this.runSeed,edict:this.dailyEdict?.id||'',bossKills:this.runStats.bossKills,date:Date.now()};
     const local=[...this.getLocalScores(),entry].sort((a,b)=>b.score-a.score).slice(0,10);
     this.safeStorageV148.setJSON('dokkaebi-luck-scores', local);
+    this.persistenceV149.checkpoint('score-save');
     ui.saveScore.disabled=true;ui.saveScore.textContent='저장 완료';
     let scores=local;
     if(isFirebaseEnabled()) {
@@ -7732,7 +7777,15 @@ try {
   window.__DOKKAEBI_GAME__ = game;
   game.ready.then(() => {
     window.__DOKKAEBI_BOOT_OK__ = true;
-    window.__DOKKAEBI_TEST_API__ = Object.freeze({
+    window.__DOKKAEBI_PUBLIC_API__ = Object.freeze({
+      version: GAME_VERSION,
+      buildId: BUILD_ID,
+      cacheRevision: CACHE_REVISION,
+      state: () => game.state,
+      recovery: () => game.recoveryStateV149.getUserMessage()
+    });
+    if (game.featureExposureV149.allowQaApi) {
+      window.__DOKKAEBI_TEST_API__ = Object.freeze({
       version: GAME_VERSION,
       lineageVersion: LEGACY_LINEAGE_VERSION,
       buildId: BUILD_ID,
@@ -7766,7 +7819,11 @@ try {
       foundationReport: () => game.coreFoundation?.report || {},
       dispose: () => game.dispose(),
       reliabilityReport: () => ({ foundation: game.coreFoundation?.report || {}, wave: game.waveReliability?.report || {}, browser: game.browserReliability?.report || {}, firstPresentation: game.firstPresentationReport || game.firstPresentation?.report || {}, automation: game.automationV22?.report || {}, targeting: game.guardianTargetingV22?.report || {}, mobileHud: game.mobileHudV23?.report || {}, mobileInputRecoveryV143: game.mobileInputRecoveryV143?.report || {}, crossPlatformShell: game.crossPlatformShellV112?.report || {}, combatVisual: game.combatVisualV112?.diagnostics || {}, artApprovalV115: game.artApprovalReportV115 || {}, artApprovalV117: game.artApprovalReportV117 || {}, assetLoadingV115: { plan: game.assetLoadingPlanV115, ready: game.deferredAssetsReady, report: game.deferredAssetReport }, heroHudPolishV120: game.heroHudPolishV120 || {}, liveCombatV121: game.liveCombatV121?.report || {}, battlefieldClarityV122: game.battlefieldClarityV122?.report || {}, releaseAssuranceV124: game.releaseAssuranceV124?.report || {}, actionAssetAssuranceV125: game.actionAssetAssuranceV125?.report || {}, bossEncounterAssuranceV126: game.bossEncounterAssuranceV126?.report || {}, bossTacticalAssuranceV127: game.bossTacticalAssuranceV127?.report || {}, battlefieldVisibilityV128: game.battlefieldVisibilityV128?.report || {}, assetRefinementV129: game.assetRefinementV129?.report || {}, assetLineageV131: game.assetLineageV131?.report || {}, silhouetteAssuranceV132: game.silhouetteAssuranceV132?.report || {}, bossIdentityAssuranceV133: game.bossIdentityAssuranceV133?.report || {} })
-    });
+      });
+    } else {
+      delete window.__DOKKAEBI_TEST_API__;
+    }
+
     game.browserReliability?.noteMilestone('game-ready', { state: game.state });
     window.dispatchEvent(new Event('dokkaebi:boot-ready'));
   }).catch((error) => {

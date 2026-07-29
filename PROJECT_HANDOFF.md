@@ -274,3 +274,14 @@ v1.0.12 크로스 플랫폼 기반, v1.0.17 승인 경계, v1.0.20 주인공 11�
 - 부분 적용으로 package/runtime 버전이 갈라지는 문제를 차단합니다.
 - `npm run verify:identity:v148`가 package, lock, main, policy, HTML, service worker, public version을 비교합니다.
 - `preverify`와 `prebuild`에서 본 검증보다 먼저 실행됩니다.
+
+
+## 2026-07-29 — v1.0.49 / b24.49
+
+- 작업 목표: 버전 식별자를 package 단일 기준으로 생성하고, 저장·복구·결과·QA 노출 책임을 `src/main.js`에서 분리하며, 부분 패치와 빌드 입력 차이를 해시로 차단한다.
+- 주요 변경: generated release identity, transactional persistence queue/journal, user recovery state, run-state coordinator, pure result presenter, production QA exposure policy, sorted build-input SHA-256 manifest.
+- 누적 결함 수정: v1.0.45 성능 범위의 forward-module 오판, package-lock top-level metadata 미갱신, v1.0.48 감사기의 고정 버전/SW 문자열 의존을 수정했다.
+- 부분 적용 대응: v1.0.46 이상 혼합 상태에 직접 덮어쓸 cumulative patch를 제공하며, CI는 npm 설치 전에 identity generator를 실행한다. generator는 package가 1.0.49가 아니면 적용 누락을 명확히 실패시킨다.
+- 검증: 전체 누적 소스 체인(도구 시간 상한 이후 후반 게이트 연속 완료), 모바일 HUD 14/14, 600-case 저장 퍼징, v1.0.45~v1.0.49 릴리스 계약, clean package staging, patch hash/application 검증.
+- 예외사항: 현재 실행 환경에는 Vite 8.1.5가 없어 실제 Vite dist와 Chromium feature-exposure 시나리오는 GitHub Actions 필수 게이트로 남긴다.
+- 다음 예정: `docs/NEXT_UPDATE_v1.0.50.md`.

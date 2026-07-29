@@ -1,0 +1,10 @@
+import { resolveFeatureExposureV149 } from '../src/runtime/feature-exposure-policy-v149.js';
+const assert = (value, message) => { if (!value) throw new Error(message); };
+const production = resolveFeatureExposureV149({ mode: 'production', hostname: 'game.example', search: '' });
+const qa = resolveFeatureExposureV149({ mode: 'production', hostname: 'game.example', search: '?qa=v149' });
+const local = resolveFeatureExposureV149({ mode: 'production', hostname: '127.0.0.1', search: '' });
+const development = resolveFeatureExposureV149({ mode: 'development', hostname: 'game.example', search: '' });
+assert(!production.allowQaApi && production.exposePublicRuntimeInfo, 'production must hide QA API while preserving public runtime info');
+assert(qa.allowQaApi && qa.qaToken === 'v149', 'QA query must explicitly enable test API');
+assert(local.allowQaApi && development.allowQaApi, 'local and development modes must enable QA API');
+console.log('PASS v1.0.49 production QA exposure is opt-in while public runtime identity remains available');

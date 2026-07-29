@@ -1,10 +1,13 @@
 export class RenderStatsHUD {
-  constructor(renderer, { storageKey = 'dokkaebi-render-stats' } = {}) {
+  constructor(renderer, { storageKey = 'dokkaebi-render-stats', storage = null } = {}) {
     this.renderer = renderer;
     this.storageKey = storageKey;
+    this.storage = storage;
     this.elapsed = 0;
     const queryEnabled = new URLSearchParams(window.location.search).get('stats') === '1';
-    this.enabled = queryEnabled || localStorage.getItem(this.storageKey) === '1';
+    let storedEnabled = false;
+    try { storedEnabled = (this.storage?.get ? this.storage.get(this.storageKey) : localStorage.getItem(this.storageKey)) === '1'; } catch {}
+    this.enabled = queryEnabled || storedEnabled;
     this.element = document.createElement('aside');
     this.element.className = 'render-stats-hud';
     this.element.setAttribute('aria-live', 'polite');
@@ -15,7 +18,10 @@ export class RenderStatsHUD {
   toggle(force) {
     this.enabled = typeof force === 'boolean' ? force : !this.enabled;
     this.element.hidden = !this.enabled;
-    localStorage.setItem(this.storageKey, this.enabled ? '1' : '0');
+    try {
+      if (this.storage?.set) this.storage.set(this.storageKey, this.enabled ? '1' : '0');
+      else localStorage.setItem(this.storageKey, this.enabled ? '1' : '0');
+    } catch {}
     return this.enabled;
   }
 

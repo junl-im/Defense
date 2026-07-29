@@ -1,10 +1,15 @@
-const RELEASE_VERSION = '1.0.48';
-const BUILD_ID = 'b24.48';
+// const RELEASE_VERSION = '1.0.49'; generated compatibility marker
+// const BUILD_ID = 'b24.49'; generated compatibility marker
+importScripts('./release-identity.generated.js');
+const RELEASE_IDENTITY = self.__DOKKAEBI_RELEASE_IDENTITY__;
+if (!RELEASE_IDENTITY) throw new Error('generated release identity missing');
+const RELEASE_VERSION = RELEASE_IDENTITY.releaseVersion;
+const BUILD_ID = RELEASE_IDENTITY.buildId;
 // const VERSION = '23.2.0'; historical lineage marker.
 const CACHE_PREFIX = 'dokkaebi-luck-defense-shell-';
 const LEGACY_CACHE_PREFIXES = ['dokkaebi-shell-', 'dokkaebi-luck-defense-shell-'];
 const CACHE_NAME = `${CACHE_PREFIX}${BUILD_ID}`;
-const UPGRADE_ASSURANCE_LINEAGE = Object.freeze(['DD-SW-UPGRADE-ASSURANCE-V146', 'DD-SW-UPGRADE-ASSURANCE-V147', 'DD-SW-UPGRADE-ASSURANCE-V148']);
+const UPGRADE_ASSURANCE_LINEAGE = Object.freeze(['DD-SW-UPGRADE-ASSURANCE-V146', 'DD-SW-UPGRADE-ASSURANCE-V147', 'DD-SW-UPGRADE-ASSURANCE-V148', 'DD-SW-UPGRADE-ASSURANCE-V149']);
 const UPGRADE_ASSURANCE_ID = UPGRADE_ASSURANCE_LINEAGE.at(-1);
 const CLIENT_STORAGE_POLICY = 'preserve-client-storage';
 // BEGIN GENERATED RUNTIME MODULE SHELL V135
@@ -72,6 +77,7 @@ const GENERATED_MODULE_SHELL_V135 = Object.freeze([
   './src/main.js',
   './src/premium-assets.js',
   './src/production-console.js',
+  './src/release-identity.generated.js',
   './src/run-director.js',
   './src/runtime-art-harmonizer.js',
   './src/runtime-lifecycle.js',
@@ -101,6 +107,7 @@ const GENERATED_MODULE_SHELL_V135 = Object.freeze([
   './src/runtime/cross-platform-shell-v112.js',
   './src/runtime/device-trace-assurance-v146.js',
   './src/runtime/failure-digest-v146.js',
+  './src/runtime/feature-exposure-policy-v149.js',
   './src/runtime/first-presentation-director-v107.js',
   './src/runtime/hero-hud-polish-v120.js',
   './src/runtime/korean-language-guard.js',
@@ -109,7 +116,10 @@ const GENERATED_MODULE_SHELL_V135 = Object.freeze([
   './src/runtime/mobile-hud-director-v23.js',
   './src/runtime/mobile-input-recovery-v143.js',
   './src/runtime/native-input-policy-v231.js',
+  './src/runtime/recovery-state-v149.js',
   './src/runtime/release-assurance-director-v124.js',
+  './src/runtime/result-presenter-v149.js',
+  './src/runtime/run-state-coordinator-v149.js',
   './src/runtime/runtime-health-assurance-v148.js',
   './src/runtime/runtime-visual-audit.js',
   './src/runtime/safe-storage-v148.js',
@@ -119,6 +129,7 @@ const GENERATED_MODULE_SHELL_V135 = Object.freeze([
   './src/runtime/static-deployment-gate-v118.js',
   './src/runtime/summon-button-presentation-v142.js',
   './src/runtime/title-presentation-guard-v123.js',
+  './src/runtime/transactional-persistence-v149.js',
   './src/runtime/visual-integration-director.js',
   './src/runtime/wave-flow-guard.js',
   './src/runtime/wave-reliability-director.js',
@@ -132,7 +143,7 @@ const GENERATED_MODULE_SHELL_V135 = Object.freeze([
 // END GENERATED RUNTIME MODULE SHELL V135
 const SHELL_ASSETS = [
   ...GENERATED_MODULE_SHELL_V135,
-  './', './index.html', './manifest.webmanifest', './version.json',
+  './', './index.html', './manifest.webmanifest', './version.json', './release-identity.generated.js',
   './icon-192.png', './icon-512.png', './icon-maskable-512.png',
   './static-bootstrap.js', './src/bootstrap.js', './src/style.css', './src/main.js',
   './src/runtime/first-presentation-director-v107.js',
