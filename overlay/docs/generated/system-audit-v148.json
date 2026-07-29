@@ -1,0 +1,174 @@
+{
+  "id": "DD-COMPREHENSIVE-SYSTEM-AUDIT-V148",
+  "releaseVersion": "1.0.49",
+  "buildId": "b24.49",
+  "scope": [
+    "system",
+    "performance",
+    "technology",
+    "feature",
+    "engine",
+    "problems",
+    "improvements",
+    "errors",
+    "bugs",
+    "exceptions",
+    "delivery-rule"
+  ],
+  "checks": {
+    "identitySynchronized": true,
+    "serviceWorkerSynchronized": true,
+    "importGraphComplete": true,
+    "packageScriptTargetsComplete": true,
+    "safeStorageIntegrated": true,
+    "runtimeHealthIntegrated": true,
+    "hiddenFrameSuspensionBeforeHeavyWork": true,
+    "unboundedIntervalsAbsent": true,
+    "deliveryResultRulePersisted": true,
+    "ciEvidenceContractInstalled": true,
+    "historicalReleaseGatesRestored": true
+  },
+  "metrics": {
+    "sourceModules": 140,
+    "sourceBytes": 1349813,
+    "runtimeModules": 59,
+    "runtimeBytes": 397119,
+    "engineModules": 23,
+    "engineBytes": 96089,
+    "combatModules": 11,
+    "combatBytes": 40779,
+    "scriptFiles": 336,
+    "scriptBytes": 1525584,
+    "mainLines": 7918,
+    "mainBytes": 415319,
+    "runSafeCalls": 51,
+    "directMainStorage": 0,
+    "setIntervalCalls": 0,
+    "emptyCatchBlocks": 19,
+    "brokenImports": 0,
+    "missingScriptTargets": 0
+  },
+  "findings": [
+    {
+      "id": "V148-BUG-001",
+      "category": "error",
+      "severity": "high",
+      "status": "fixed",
+      "title": "점수 저장이 localStorage SecurityError/QuotaExceededError로 중단될 수 있음",
+      "resolution": "SafeStorageV148 영속 저장 실패 시 제한된 메모리 fallback으로 전환"
+    },
+    {
+      "id": "V148-BUG-002",
+      "category": "feature",
+      "severity": "medium",
+      "status": "fixed",
+      "title": "렌더 통계 HUD와 HUD 밀도 설정이 저장소 차단 환경에서 초기화 실패 가능",
+      "resolution": "공통 안전 저장 계층 주입 및 읽기/쓰기 예외 격리"
+    },
+    {
+      "id": "V148-BUG-003",
+      "category": "system",
+      "severity": "medium",
+      "status": "fixed",
+      "title": "런타임 오류 지문 Set이 장시간 실행에서 무제한 증가",
+      "resolution": "LRU 방식 최대 96개 지문과 최대 40개 오류 기록으로 제한"
+    },
+    {
+      "id": "V148-BUG-004",
+      "category": "privacy",
+      "severity": "medium",
+      "status": "fixed",
+      "title": "오류 메시지에 URL, 로컬 경로, 이메일, 장기 토큰이 포함될 수 있음",
+      "resolution": "RuntimeHealthAssuranceV148에서 진단 기록 전 비식별화"
+    },
+    {
+      "id": "V148-PERF-001",
+      "category": "performance",
+      "severity": "medium",
+      "status": "fixed",
+      "title": "백그라운드 탭에서도 전체 전투/렌더 업데이트 경로가 순회됨",
+      "resolution": "가시성 숨김 프레임은 핵심 계측 후 무거운 업데이트 전에 조기 종료"
+    },
+    {
+      "id": "V148-ENGINE-001",
+      "category": "engine",
+      "severity": "high",
+      "status": "fixed",
+      "title": "10Hz 프레임 스케줄러가 부동소수점 경계에서 약 2배 실행됨",
+      "resolution": "모듈로 연산 대신 interval 차감 방식으로 잔여 시간을 안정화"
+    },
+    {
+      "id": "V148-PROC-001",
+      "category": "process",
+      "severity": "high",
+      "status": "fixed",
+      "title": "결과 전달 형식이 패치마다 달라질 수 있음",
+      "resolution": "작업 내역 → 전체 ZIP/패치 ZIP → 다음 예정 내역 순서를 프로젝트 규칙으로 고정"
+    },
+    {
+      "id": "V148-CI-001",
+      "category": "ci",
+      "severity": "high",
+      "status": "fixed",
+      "title": "누적 verify 체인에서 v1.0.35와 v1.0.36 릴리스 게이트가 누락됨",
+      "resolution": "v134와 v137 사이에 v135·v136을 복원해 매 릴리스에서 실행"
+    },
+    {
+      "id": "V148-CI-002",
+      "category": "ci",
+      "severity": "high",
+      "status": "fixed",
+      "title": "v1.0.35 검증기가 1.0.35 고정 식별자만 허용해 최신 릴리스에서 실패",
+      "resolution": "최소 버전과 현재 동기화 식별자를 함께 검사하는 전진 호환 계약으로 교체"
+    },
+    {
+      "id": "V148-CI-003",
+      "category": "ci",
+      "severity": "high",
+      "status": "fixed",
+      "title": "v1.0.36 검증기가 1.0.36 고정 식별자만 허용해 최신 릴리스에서 실패",
+      "resolution": "현재 package·lock·public·SW·runtime shell 식별자 동기화를 검사하도록 교체"
+    },
+    {
+      "id": "V148-CI-004",
+      "category": "ci",
+      "severity": "high",
+      "status": "fixed",
+      "title": "부분 패치 적용 시 package와 런타임 식별자가 서로 다른 버전으로 남을 수 있음",
+      "resolution": "verify/build 사전 단계에서 package·lock·main·policy·HTML·SW·public 식별자를 표 형태로 전수 비교"
+    }
+  ],
+  "openRisks": [
+    {
+      "id": "V148-RISK-001",
+      "category": "architecture",
+      "severity": "medium",
+      "title": "src/main.js가 여전히 대형 단일 모듈",
+      "next": "v1.0.49에서 상태·저장·진단 경계를 별도 모듈로 단계적 추출"
+    },
+    {
+      "id": "V148-RISK-002",
+      "category": "build",
+      "severity": "medium",
+      "title": "현재 작업 환경에서 Vite 패키지 복원이 불안정할 수 있음",
+      "next": "GitHub Actions의 npm ci + 실제 Vite dist 게이트를 최종 승인 근거로 사용"
+    },
+    {
+      "id": "V148-RISK-003",
+      "category": "performance",
+      "severity": "low",
+      "title": "정확한 v1.0.45 승인 Vite 기준선이 아직 후보 대기 상태일 수 있음",
+      "next": "승인 아티팩트 확보 후 5% 추세 기준선으로 승격"
+    }
+  ],
+  "diagnostics": {
+    "brokenImports": [],
+    "missingScriptTargets": []
+  },
+  "summary": {
+    "passed": true,
+    "blockers": [],
+    "fixed": 11,
+    "openRisks": 3
+  }
+}
