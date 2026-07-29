@@ -1,0 +1,14 @@
+{
+  "id": "DD-DIST-BASELINE-PROMOTION-V147",
+  "targetBaseline": "docs/PERFORMANCE_BASELINE_v1.0.45_DIST.json",
+  "requiredCandidate": {
+    "id": "DD-DIST-BUDGET-V144",
+    "releaseVersion": "1.0.45",
+    "buildId": "b24.45",
+    "buildKind": "vite",
+    "allChecksMustPass": true
+  },
+  "status": "pending-candidate-artifact",
+  "approvedMeasurements": null,
+  "note": "The exact v1.0.45 Vite candidate was not present in the supplied source packages. Promotion tooling is ready; numeric values must not be copied from another release."
+}

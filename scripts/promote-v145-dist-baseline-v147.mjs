@@ -1,0 +1,13 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { buildApprovedBaselineV147 } from './dist-baseline-promotion-v147.mjs';
+const root = path.resolve(import.meta.dirname, '..');
+const args = process.argv.slice(2);
+const value = (flag) => { const index=args.indexOf(flag); return index >= 0 ? args[index+1] : ''; };
+const candidatePath = value('--candidate');
+if (!candidatePath) throw new Error('usage: node scripts/promote-v145-dist-baseline-v147.mjs --candidate logs/qa/v144/dist-budget-report.json --approver NAME --ticket QA-123 --approved-at 2026-07-28T00:00:00Z');
+const candidate = JSON.parse(fs.readFileSync(path.resolve(candidatePath), 'utf8'));
+const baseline = buildApprovedBaselineV147({ candidate, approver:value('--approver'), approvalTicket:value('--ticket'), approvedAt:value('--approved-at') });
+const output = path.join(root, 'docs/PERFORMANCE_BASELINE_v1.0.45_DIST.json');
+fs.writeFileSync(output, `${JSON.stringify(baseline, null, 2)}\n`);
+console.log(`PASS v1.0.47 promoted exact v1.0.45 dist baseline (${baseline.approval.candidateSha256})`);

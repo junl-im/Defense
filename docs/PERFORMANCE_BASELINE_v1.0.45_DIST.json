@@ -3,8 +3,10 @@
   "releaseVersion": "1.0.45",
   "buildId": "b24.45",
   "measurementStatus": "awaiting-first-approved-vite-artifact",
-  "comparisonPolicy": "Use exact approved Vite dist measurements when approvedMeasurements is populated. Until then, enforce the approved v1.0.44 absolute dist envelope and export the v1.0.45 measurement candidate as CI evidence without fabricating values.",
+  "comparisonPolicy": "Promote only an exact DD-DIST-BUDGET-V144 report from release 1.0.45 / b24.45. Until that artifact is approved, enforce the approved v1.0.44 absolute dist envelope and never infer values from a later release.",
   "maxRegressionPercent": 5,
   "approvedMeasurements": null,
+  "promotionTool": "scripts/promote-v145-dist-baseline-v147.mjs",
+  "approvalTemplate": "docs/qa/v145-dist-baseline-approval-v147.json",
   "provisionalEnvelopeSource": "docs/DIST_BUDGETS_v1.0.44.json"
 }

@@ -32,9 +32,20 @@ check(/body\.mobile-hud-v23\s+#action-dock\s+button\s*\{[^}]*width\s*:\s*100%\s*
 check(/body\.controls-left-handed\.dd-shell-mobile-v112\s+#action-dock\s*\{[^}]*right\s*:\s*auto\s*!important[^}]*left\s*:/is.test(style), 'left-handed shell override');
 check(!v143Dist.includes("css.includes('finger-occlusion safety')") && v143Dist.includes('missingCssContracts'), 'v143 minifier-safe CSS verification');
 check(workflow.includes('REQUIRE_BROWSER_V144: 1') && workflow.includes('logs/qa/v144') && workflow.includes('npm run verify:dist:all'), 'CI browser and QA artifact contract');
-for (const name of ['generate:asset-review:v144', 'verify:asset-review:v144', 'verify:matrix-contract:v144', 'verify:budget:v144', 'verify:browser:v144', 'verify:release:v144', 'verify:dist:v144', 'create:patch:v144', 'verify:patch:v144']) check(Boolean(pkg.scripts?.[name]), `package script ${name}`);
+for (const name of ['generate:asset-review:v144', 'verify:asset-review:v144', 'verify:budget:v144', 'verify:browser:v144', 'verify:release:v144', 'verify:dist:v144', 'create:patch:v144', 'verify:patch:v144']) check(Boolean(pkg.scripts?.[name]), `package script ${name}`);
+const matrixScript = pkg.scripts?.['verify:matrix-contract:v144'];
+check(matrixScript === undefined || matrixScript === 'node scripts/test-v144-mobile-matrix-contract.mjs', 'package script verify:matrix-contract:v144 command');
 check(handoff.includes('인수인계 내역 작성 필수') && handoff.includes('2026-07-28 — v1.0.44 / b24.44'), 'mandatory v144 handoff');
 for (const doc of ['docs/RELEASE_ASSURANCE_v1.0.44.md', 'docs/PATCH_NOTES_v1.0.44.md', 'docs/PATCH_APPLY_v1.0.44.md', 'docs/NEXT_UPDATE_v1.0.45.md', 'docs/generated/asset-review-v144.json', 'docs/generated/asset-review-v144.md']) check(fs.existsSync(path.join(root, doc)), `document ${doc}`);
+
+const matrixContractPath = path.join(root, 'scripts/test-v144-mobile-matrix-contract.mjs');
+check(fs.existsSync(matrixContractPath), 'v144 mobile matrix contract verifier');
+if (fs.existsSync(matrixContractPath)) {
+  const matrixRun = spawnSync(process.execPath, [matrixContractPath], { cwd: root, encoding: 'utf8' });
+  process.stdout.write(matrixRun.stdout || '');
+  process.stderr.write(matrixRun.stderr || '');
+  check(matrixRun.status === 0, 'v144 mobile matrix contract check');
+}
 
 const reviewRun = spawnSync(process.execPath, [path.join(root, 'scripts/generate-asset-review-v144.mjs'), '--check'], { cwd: root, encoding: 'utf8' });
 process.stdout.write(reviewRun.stdout || '');

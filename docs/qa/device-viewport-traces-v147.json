@@ -1,0 +1,173 @@
+{
+  "id": "DD-DEVICE-TRACE-INGESTION-V147",
+  "releaseVersion": "1.0.47",
+  "provenance": {
+    "sourceType": "sanitized-v146-import",
+    "captureTool": "device-trace-assurance-v146",
+    "capturedDate": "2026-07-28",
+    "approvalTicket": "QA-V147-MIGRATION-001",
+    "consent": "qa-authorized",
+    "sourceSha256": "8bdac41c1c7849e43dadfcb3ed1d1dc67b1f3bfc97c80eba8bdd993bee747f8c",
+    "sanitizer": "DD-DEVICE-TRACE-INGESTION-V147",
+    "removedIdentifierCount": 0
+  },
+  "traces": [
+    {
+      "id": "ios-safari-standalone-resume",
+      "platform": "iOS Safari standalone PWA",
+      "requireResume": true,
+      "events": [
+        {
+          "atMs": 0,
+          "event": "pageshow",
+          "visibility": "visible",
+          "standalone": true,
+          "layoutWidth": 390,
+          "layoutHeight": 844,
+          "visualWidth": 390,
+          "visualHeight": 844,
+          "expected": {
+            "phone": true,
+            "keyboard": false,
+            "browserChrome": false
+          }
+        },
+        {
+          "atMs": 920,
+          "event": "visibilitychange",
+          "visibility": "hidden",
+          "standalone": true,
+          "layoutWidth": 390,
+          "layoutHeight": 844,
+          "visualWidth": 390,
+          "visualHeight": 844
+        },
+        {
+          "atMs": 4380,
+          "event": "visibilitychange",
+          "visibility": "visible",
+          "standalone": true,
+          "layoutWidth": 390,
+          "layoutHeight": 844,
+          "visualWidth": 390,
+          "visualHeight": 814,
+          "offsetTop": 0,
+          "expected": {
+            "phone": true,
+            "keyboard": false
+          }
+        },
+        {
+          "atMs": 4460,
+          "event": "pageshow",
+          "visibility": "visible",
+          "standalone": true,
+          "layoutWidth": 390,
+          "layoutHeight": 844,
+          "visualWidth": 390,
+          "visualHeight": 844,
+          "expected": {
+            "phone": true,
+            "keyboard": false,
+            "browserChrome": false,
+            "minHeight": 800
+          }
+        }
+      ]
+    },
+    {
+      "id": "android-chrome-address-bar-collapse",
+      "platform": "Android Chrome",
+      "requireBrowserChrome": true,
+      "events": [
+        {
+          "atMs": 0,
+          "event": "pageshow",
+          "layoutWidth": 412,
+          "layoutHeight": 915,
+          "visualWidth": 412,
+          "visualHeight": 823,
+          "expected": {
+            "phone": true,
+            "browserChrome": true,
+            "keyboard": false
+          }
+        },
+        {
+          "atMs": 180,
+          "event": "scroll",
+          "layoutWidth": 412,
+          "layoutHeight": 915,
+          "visualWidth": 412,
+          "visualHeight": 872,
+          "expected": {
+            "phone": true,
+            "browserChrome": true,
+            "keyboard": false
+          }
+        },
+        {
+          "atMs": 360,
+          "event": "resize",
+          "layoutWidth": 412,
+          "layoutHeight": 915,
+          "visualWidth": 412,
+          "visualHeight": 915,
+          "expected": {
+            "phone": true,
+            "browserChrome": false,
+            "keyboard": false,
+            "minHeight": 900
+          }
+        }
+      ]
+    },
+    {
+      "id": "android-virtual-keyboard-cycle",
+      "platform": "Android Chrome virtual keyboard",
+      "requireKeyboard": true,
+      "events": [
+        {
+          "atMs": 0,
+          "event": "focus",
+          "layoutWidth": 412,
+          "layoutHeight": 915,
+          "visualWidth": 412,
+          "visualHeight": 915,
+          "editableFocused": true,
+          "expected": {
+            "keyboard": false
+          }
+        },
+        {
+          "atMs": 120,
+          "event": "resize",
+          "layoutWidth": 412,
+          "layoutHeight": 915,
+          "visualWidth": 412,
+          "visualHeight": 536,
+          "editableFocused": true,
+          "expected": {
+            "keyboard": true,
+            "browserChrome": false,
+            "maxHeight": 560
+          }
+        },
+        {
+          "atMs": 740,
+          "event": "blur",
+          "layoutWidth": 412,
+          "layoutHeight": 915,
+          "visualWidth": 412,
+          "visualHeight": 915,
+          "editableFocused": false,
+          "expected": {
+            "keyboard": false,
+            "browserChrome": false,
+            "minHeight": 900
+          }
+        }
+      ]
+    }
+  ]
+}

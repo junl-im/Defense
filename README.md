@@ -49,4 +49,4 @@ The 100-wave browser harness requires the complete Vite output (`dist/assets/gam
 - v1.0.44 complete-build mobile matrix, measured dist budgets, and reviewed asset candidates
 - v1.0.45 100-wave runtime trends, WebGL recovery, 5% source regression gate, and explicit asset residency
 
-> Current release: **v1.0.46 / b24.46** — device trace, service-worker upgrade, and deterministic load assurance.
+> Current release: **v1.0.47 / b24.47** — offline/reconnect, save-schema fuzz, trace provenance, and compact evidence assurance.

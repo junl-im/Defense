@@ -1,0 +1,14 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { ingestDeviceTraceV147 } from './device-trace-ingestion-v147.mjs';
+const args = process.argv.slice(2);
+const inputArg = args[args.indexOf('--input') + 1];
+const outputArg = args[args.indexOf('--output') + 1];
+if (!inputArg || !outputArg) throw new Error('usage: node scripts/ingest-device-trace-v147.mjs --input raw.json --output sanitized.json');
+const input = path.resolve(inputArg);
+const output = path.resolve(outputArg);
+const report = ingestDeviceTraceV147(JSON.parse(fs.readFileSync(input, 'utf8')));
+if (!report.passed) throw new Error(`trace ingestion rejected: ${report.failures.join(', ')}`);
+fs.mkdirSync(path.dirname(output), { recursive: true });
+fs.writeFileSync(output, `${JSON.stringify(report.output, null, 2)}\n`);
+console.log(`PASS v1.0.47 trace ingestion (${report.output.traces.length} traces, ${report.removed.length} identifiers removed)`);

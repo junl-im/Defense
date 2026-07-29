@@ -249,3 +249,13 @@ v1.0.12 크로스 플랫폼 기반, v1.0.17 승인 경계, v1.0.20 주인공 11�
 - Chromium mobile emulation에서 무시되던 150% page scale을 좁은 desktop page-scale + touch emulation으로 재현하도록 변경했다.
 - v144 실패 로그에 실패 체크명과 viewport/control geometry를 기록하고 `verify:matrix-contract:v144` 회귀 계약을 추가했다.
 - 런타임 shell v135 해시를 새 `src/style.css` 기준으로 재생성했으며 전체 `verify:ci`가 통과했다.
+
+
+## 2026-07-29 — v1.0.47 / b24.47
+
+- Added controlled offline launch and mid-wave reconnect browser scenarios.
+- Added 600-case save-schema byte-preservation fuzzing across v1.0.42–v1.0.46.
+- Added identifier-stripping trace ingestion with source digest and approval provenance.
+- Added compact pass evidence and full failed-report retention.
+- Added exact v1.0.45 Vite baseline promotion tooling; the supplied packages did not contain the candidate artifact, so the approved v1.0.44 envelope remains active without fabricated values.
+- Next: `docs/NEXT_UPDATE_v1.0.48.md`.

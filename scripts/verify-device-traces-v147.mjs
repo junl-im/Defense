@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { replayDeviceTraceSuiteV146 } from '../src/runtime/device-trace-assurance-v146.js';
+import { validateCommittedTraceFixtureV147 } from './device-trace-ingestion-v147.mjs';
+const root = path.resolve(import.meta.dirname, '..');
+const fixture = JSON.parse(fs.readFileSync(path.join(root, 'docs/qa/device-viewport-traces-v147.json'), 'utf8'));
+const provenance = validateCommittedTraceFixtureV147(fixture);
+assert.equal(provenance.passed, true, provenance.failures.join(','));
+const replay = replayDeviceTraceSuiteV146({ traces: fixture.traces });
+assert.equal(replay.passed, true, JSON.stringify(replay.failedTraceIds));
+assert.equal(replay.traceCount, 3);
+console.log('PASS v1.0.47 provenance-validated real-device traces replayed deterministically');

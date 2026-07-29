@@ -76,6 +76,7 @@ jobs:
           REQUIRE_BROWSER_V144: 1
           REQUIRE_BROWSER_V145: 1
           REQUIRE_BROWSER_V146: 1
+          REQUIRE_BROWSER_V147: 1
         run: |
           # npm run verify:dist:v117
           # npm run verify:dist:v118
@@ -126,6 +127,14 @@ jobs:
         with:
           name: v1.0.46-release-assurance
           path: logs/qa/v146
+          if-no-files-found: ignore
+
+      - name: Upload v1.0.47 offline and compact evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: v1.0.47-offline-evidence
+          path: logs/qa/v147
           if-no-files-found: ignore
 
       - name: Verify self-contained production bundle

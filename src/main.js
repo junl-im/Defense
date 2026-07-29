@@ -153,7 +153,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '1.0.46';
+const GAME_VERSION = '1.0.47';
 // const GAME_VERSION = '23.1.0'; historical lineage marker for pre-normalization contracts.
 if (GAME_VERSION !== PUBLIC_GAME_VERSION) throw new Error('Public version policy mismatch');
 function runtimeSpriteMarkup(path, alt = '', className = '') {
@@ -4765,7 +4765,7 @@ class DokkaebiLuckDefense {
     const enhanced = Object.freeze({
       ...report,
       id: 'DD-LONG-SESSION-ASSURANCE-V146',
-      releaseVersion: '1.0.46',
+      releaseVersion: '1.0.47',
       loadPhases: Object.freeze([...this.longSessionLoadPhasesV146]),
       loadChecks,
       passed: report.passed && Object.values(loadChecks).every(Boolean)
