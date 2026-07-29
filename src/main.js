@@ -55,6 +55,8 @@ import { ProductionConsole } from './production-console.js';
 import { GOLDEN_SAMPLE_CLIPS, GOLDEN_SAMPLE_SOCKETS, GOLDEN_SAMPLE_TEXTURE_MAPS } from './golden-sample-spec.js';
 import { loadCodexProgress, saveCodexProgress, recordCodexEncounter, recordCodexDefeat, recordGuardianUse, getCodexKnowledge, getCodexProgressSummary, getWeaknessDamageBonus, getWeaknessLabel } from './codex-progression.js';
 import { RuntimeLifecycle } from './runtime-lifecycle.js';
+import { createSafeStorageV148 } from './runtime/safe-storage-v148.js';
+import { RuntimeHealthAssuranceV148 } from './runtime/runtime-health-assurance-v148.js';
 import AdaptiveHudLayout from './ui-layout-manager.js';
 import CombatPresentation, { faceActorTowards, resolveAttackOrigin } from './combat-presentation.js';
 import EncounterDirector from './combat/encounter-director.js';
@@ -153,7 +155,7 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-const GAME_VERSION = '1.0.47';
+const GAME_VERSION = '1.0.48';
 // const GAME_VERSION = '23.1.0'; historical lineage marker for pre-normalization contracts.
 if (GAME_VERSION !== PUBLIC_GAME_VERSION) throw new Error('Public version policy mismatch');
 function runtimeSpriteMarkup(path, alt = '', className = '') {
@@ -223,6 +225,10 @@ class DokkaebiLuckDefense {
     this.clock = new THREE.Clock();
     this.engine = new MobileGameEngine();
     this.lifecycle = new RuntimeLifecycle();
+    this.safeStorageV148 = createSafeStorageV148({
+      onError: (entry) => console.warn('[SafeStorageV148]', entry)
+    });
+    this.runtimeHealthV148 = new RuntimeHealthAssuranceV148();
     this.lowPower = this.engine.device.mobile || this.engine.device.lowEnd;
     this.appState = new AppStateMachineV103({
       initial: 'loading',
@@ -410,8 +416,7 @@ class DokkaebiLuckDefense {
     this.autoPausedByVisibility = false;
     this.autoPausedByContextLoss = false;
     this.lastVisibilityResumeSeconds = 0;
-    this.runtimeErrors = [];
-    this.runtimeErrorKeys = new Set();
+    this.runtimeErrors = this.runtimeHealthV148.errors;
     this.saveMigration = migrateSaveSchema();
     this.activeEncounterPlan = null;
     this.lastEncounterResult = null;
@@ -425,7 +430,8 @@ class DokkaebiLuckDefense {
         synergyPanel: ui.synergyPanel, firstMission: ui.firstMissionPanel, killChain: ui.killChain,
         relicPanel: ui.relicPanel, unitStrip: ui.unitStrip, bossHealth: ui.bossHealth,
         joystick: ui.joystick, actionDock: ui.actionDock
-      }
+      },
+      storage: this.safeStorageV148
     });
     this.hudLayout.mount();
     this.mobileHudV23.install();
@@ -867,7 +873,7 @@ class DokkaebiLuckDefense {
       }
     });
     this.initReusablePools();
-    this.renderStatsHud = new RenderStatsHUD(this.renderer);
+    this.renderStatsHud = new RenderStatsHUD(this.renderer, { storage: this.safeStorageV148 });
     this.productionConsole = new ProductionConsole({
       artSummary: ART_PRODUCTION_SUMMARY,
       milestones: MASSIVE_UPDATE_MILESTONES,
@@ -907,6 +913,8 @@ class DokkaebiLuckDefense {
         crossPlatformShellV112: this.crossPlatformShellV112?.report || {},
         combatReadability: this.combatReadability?.snapshot || {},
         runtimeErrors: { count: this.runtimeErrors.length, last: this.runtimeErrors.at(-1) || null },
+        runtimeHealthV148: this.runtimeHealthV148.diagnostics,
+        safeStorageV148: this.safeStorageV148.diagnostics,
         battlefieldEvent: this.battlefieldEvents?.diagnostics || {},
         cameraDirector: this.cameraDirectorV16?.snapshot || {},
         goldenSlice: GOLDEN_SLICE_CERTIFICATION_SUMMARY,
@@ -1111,7 +1119,7 @@ class DokkaebiLuckDefense {
     on(ui.burst, 'click', () => this.activateGuardianBurst(), {}, 'burst');
     on(ui.synergyToggle, 'click', () => ui.synergyPanel.classList.toggle('collapsed'), {}, 'synergy-toggle');
     on(ui.leftUiToggle, 'click', () => this.toggleLeftMobileUi(), {}, 'left-ui-toggle');
-    try { this.setLeftMobileUiCollapsed(localStorage.getItem('dokkaebi-left-ui-collapsed') === '1'); } catch { this.setLeftMobileUiCollapsed(false); }
+    try { this.setLeftMobileUiCollapsed(this.safeStorageV148.get('dokkaebi-left-ui-collapsed') === '1'); } catch { this.setLeftMobileUiCollapsed(false); }
     on(ui.contractSkip, 'click', () => this.skipContract(), {}, 'contract-skip');
     on(ui.blessingRecommend, 'click', () => this.selectRecommendedReward('blessing'), {}, 'blessing-recommend');
     on(ui.relicRecommend, 'click', () => this.selectRecommendedReward('relic'), {}, 'relic-recommend');
@@ -1202,7 +1210,7 @@ class DokkaebiLuckDefense {
   loadControlSettings() {
     const fallback = { ...DEFAULT_CONTROL_SETTINGS };
     try {
-      const stored = JSON.parse(localStorage.getItem(CONTROL_STORAGE_KEY) || 'null');
+      const stored = this.safeStorageV148.getJSON(CONTROL_STORAGE_KEY, null);
       if (!stored || typeof stored !== 'object') return fallback;
       const settings = {
         cameraProfile: sanitizeCameraProfileId(stored.cameraProfile || fallback.cameraProfile),
@@ -1227,7 +1235,7 @@ class DokkaebiLuckDefense {
   }
 
   saveControlSettings() {
-    try { localStorage.setItem(CONTROL_STORAGE_KEY, JSON.stringify(this.controlSettings)); } catch {}
+    try { this.safeStorageV148.setJSON(CONTROL_STORAGE_KEY, this.controlSettings); } catch {}
   }
 
   getCameraZoomBounds() {
@@ -1484,7 +1492,7 @@ class DokkaebiLuckDefense {
   toggleLeftMobileUi() {
     const collapsed = !document.body.classList.contains('left-ui-collapsed');
     this.setLeftMobileUiCollapsed(collapsed);
-    try { localStorage.setItem('dokkaebi-left-ui-collapsed', collapsed ? '1' : '0'); } catch {}
+    try { this.safeStorageV148.set('dokkaebi-left-ui-collapsed', collapsed ? '1' : '0'); } catch {}
   }
 
   adjustCameraZoom(delta) {
@@ -1918,7 +1926,7 @@ class DokkaebiLuckDefense {
   loadMetaProgress() {
     const fallback = { shards: 0, traits: Object.fromEntries(Object.keys(META_TRAITS).map((id) => [id, 0])) };
     try {
-      const stored = JSON.parse(localStorage.getItem(META_STORAGE_KEY) || 'null');
+      const stored = this.safeStorageV148.getJSON(META_STORAGE_KEY, null);
       if (!stored || typeof stored !== 'object') return fallback;
       const traits = {};
       Object.keys(META_TRAITS).forEach((id) => { traits[id] = clamp(Number(stored.traits?.[id]) || 0, 0, 5); });
@@ -1929,7 +1937,7 @@ class DokkaebiLuckDefense {
   }
 
   saveMetaProgress() {
-    try { localStorage.setItem(META_STORAGE_KEY, JSON.stringify(this.metaProgress)); } catch {}
+    try { this.safeStorageV148.setJSON(META_STORAGE_KEY, this.metaProgress); } catch {}
   }
 
   renderMetaProgress() {
@@ -2082,7 +2090,7 @@ class DokkaebiLuckDefense {
     }
     if (this.firstMissionIndex >= FIRST_MISSIONS.length) {
       this.firstMissionActive = false;
-      try { localStorage.setItem('dokkaebi-first-missions-complete', '1'); } catch {}
+      try { this.safeStorageV148.set('dokkaebi-first-missions-complete', '1'); } catch {}
       this.showMission('초행 수호 임무 완수', '이제 진짜 운빨 수호대의 밤이 시작됩니다.', 'FIRST NIGHT COMPLETE', 1900);
       this.scheduleRun(() => ui.firstMissionPanel.classList.add('hidden'), 900, { key: 'first-mission-hide' });
     }
@@ -3333,7 +3341,7 @@ class DokkaebiLuckDefense {
   }
 
   loadHeroClass() {
-    try { return HERO_CLASSES[localStorage.getItem('dokkaebi-hero-class-v1')] ? localStorage.getItem('dokkaebi-hero-class-v1') : 'warrior'; }
+    try { return HERO_CLASSES[this.safeStorageV148.get('dokkaebi-hero-class-v1')] ? this.safeStorageV148.get('dokkaebi-hero-class-v1') : 'warrior'; }
     catch { return 'warrior'; }
   }
 
@@ -3341,7 +3349,7 @@ class DokkaebiLuckDefense {
     const selected = getHeroClass(id);
     this.selectedHeroClassId = selected.id;
     this.heroClass = selected;
-    try { localStorage.setItem('dokkaebi-hero-class-v1', selected.id); } catch {}
+    try { this.safeStorageV148.set('dokkaebi-hero-class-v1', selected.id); } catch {}
     this.renderHeroClassSelector();
     this.renderCouncilSelector();
     this.updateTitleLoadoutSummary();
@@ -3365,14 +3373,14 @@ class DokkaebiLuckDefense {
   }
 
   loadCouncilSupport() {
-    try { return sanitizeCouncilSupportId(localStorage.getItem(GUARDIAN_COUNCIL_STORAGE_KEY)); }
+    try { return sanitizeCouncilSupportId(this.safeStorageV148.get(GUARDIAN_COUNCIL_STORAGE_KEY)); }
     catch { return 'shaman'; }
   }
 
   selectCouncilSupport(id) {
     this.selectedCouncilSupportId = sanitizeCouncilSupportId(id);
     this.guardianCouncil = resolveGuardianCouncil(this.selectedHeroClassId, this.selectedCouncilSupportId);
-    try { localStorage.setItem(GUARDIAN_COUNCIL_STORAGE_KEY, this.selectedCouncilSupportId); } catch {}
+    try { this.safeStorageV148.set(GUARDIAN_COUNCIL_STORAGE_KEY, this.selectedCouncilSupportId); } catch {}
     this.renderCouncilSelector();
     this.updateTitleLoadoutSummary();
     this.renderRunPreview();
@@ -3481,13 +3489,13 @@ class DokkaebiLuckDefense {
   }
 
   loadSeedMode() {
-    try { return localStorage.getItem('dokkaebi-seed-mode-v1') === 'random' ? 'random' : 'daily'; }
+    try { return this.safeStorageV148.get('dokkaebi-seed-mode-v1') === 'random' ? 'random' : 'daily'; }
     catch { return 'daily'; }
   }
 
   selectSeedMode(id) {
     this.selectedSeedModeId = id === 'random' ? 'random' : 'daily';
-    try { localStorage.setItem('dokkaebi-seed-mode-v1', this.selectedSeedModeId); } catch {}
+    try { this.safeStorageV148.set('dokkaebi-seed-mode-v1', this.selectedSeedModeId); } catch {}
     this.dailyEdict = getDailyEdict(createDailySeed());
     this.renderSeedModeSelector();
     this.updateTitleLoadoutSummary();
@@ -3524,14 +3532,14 @@ class DokkaebiLuckDefense {
   }
 
   loadRunMode() {
-    try { return getRunMode(localStorage.getItem('dokkaebi-run-mode-v1')).id; }
+    try { return getRunMode(this.safeStorageV148.get('dokkaebi-run-mode-v1')).id; }
     catch { return 'guardian'; }
   }
 
   selectRunMode(id) {
     this.selectedRunModeId = getRunMode(id).id;
     this.activeRunMode = getRunMode(this.selectedRunModeId);
-    try { localStorage.setItem('dokkaebi-run-mode-v1', this.selectedRunModeId); } catch {}
+    try { this.safeStorageV148.set('dokkaebi-run-mode-v1', this.selectedRunModeId); } catch {}
     this.renderRunModeSelector();
     this.updateTitleLoadoutSummary();
     this.renderRunPreview();
@@ -3895,7 +3903,7 @@ class DokkaebiLuckDefense {
     ui.evolution.classList.remove('show');
     ui.evolution.classList.add('hidden');
     this.warningFlags.clear();
-    try { this.firstMissionActive = localStorage.getItem('dokkaebi-first-missions-complete') !== '1'; }
+    try { this.firstMissionActive = this.safeStorageV148.get('dokkaebi-first-missions-complete') !== '1'; }
     catch { this.firstMissionActive = true; }
     this.firstMissionIndex = 0;
     this.firstMissionStats = { summons: 0, merges: 0, bosses: 0 };
@@ -4765,7 +4773,7 @@ class DokkaebiLuckDefense {
     const enhanced = Object.freeze({
       ...report,
       id: 'DD-LONG-SESSION-ASSURANCE-V146',
-      releaseVersion: '1.0.47',
+      releaseVersion: GAME_VERSION,
       loadPhases: Object.freeze([...this.longSessionLoadPhasesV146]),
       loadChecks,
       passed: report.passed && Object.values(loadChecks).every(Boolean)
@@ -4788,22 +4796,16 @@ class DokkaebiLuckDefense {
   }
 
   recordRuntimeError(error, source = 'runtime') {
-    const message = error instanceof Error ? error.message : String(error || 'unknown runtime error');
-    const key = `${source}:${message}`.slice(0, 220);
-    const entry = Object.freeze({
-      at: new Date().toISOString(),
+    const captured = this.runtimeHealthV148.capture(error, {
       source,
-      message: message.slice(0, 240),
       state: this.state,
       wave: this.currentWave || 0
     });
-    this.runtimeErrors.push(entry);
-    if (this.runtimeErrors.length > 30) this.runtimeErrors.shift();
-    this.browserReliability?.noteMilestone('runtime-error', { source, message: entry.message, wave: entry.wave });
-    if (this.runtimeErrorKeys.has(key)) return entry;
-    this.runtimeErrorKeys.add(key);
-    console.error(`[RuntimeGuard:${source}]`, error);
-    if (this.state === 'playing') this.showWaveRecovery('오류 자동 복구', `${source} 경로를 격리하고 전투를 계속합니다.`);
+    const entry = captured.entry;
+    this.browserReliability?.noteMilestone('runtime-error', { source: entry.source, message: entry.message, wave: entry.wave, duplicate: captured.duplicate });
+    if (captured.duplicate) return entry;
+    console.error(`[RuntimeGuard:${entry.source}]`, error);
+    if (this.state === 'playing') this.showWaveRecovery('오류 자동 복구', `${entry.source} 경로를 격리하고 전투를 계속합니다.`);
     return entry;
   }
 
@@ -7219,7 +7221,9 @@ class DokkaebiLuckDefense {
         bossBreak: this.bossBreak?.diagnostics,
         campaign: this.campaign?.diagnostics,
         guardianCouncil: this.guardianCouncil,
-        saveMigration: this.saveMigration
+        saveMigration: this.saveMigration,
+        runtimeHealthV148: this.runtimeHealthV148.diagnostics,
+        safeStorageV148: this.safeStorageV148.diagnostics
       },
       progression: {
         heroClass: this.selectedHeroClassId,
@@ -7325,14 +7329,14 @@ class DokkaebiLuckDefense {
   }
 
   getLocalScores() {
-    try{return JSON.parse(localStorage.getItem('dokkaebi-luck-scores')||'[]');}catch{return[];}
+    try{return this.safeStorageV148.getJSON('dokkaebi-luck-scores', []);}catch{return[];}
   }
 
   async saveScore() {
     const name=(ui.playerName.value.trim()||'달빛 수호자').slice(0,12);
     const entry={name,score:Math.round(this.score),wave:this.currentWave,kills:this.kills,maxRank:this.maxRank,mode:this.activeRunMode.id,seed:this.runSeed,edict:this.dailyEdict?.id||'',bossKills:this.runStats.bossKills,date:Date.now()};
     const local=[...this.getLocalScores(),entry].sort((a,b)=>b.score-a.score).slice(0,10);
-    localStorage.setItem('dokkaebi-luck-scores',JSON.stringify(local));
+    this.safeStorageV148.setJSON('dokkaebi-luck-scores', local);
     ui.saveScore.disabled=true;ui.saveScore.textContent='저장 완료';
     let scores=local;
     if(isFirebaseEnabled()) {
@@ -7471,9 +7475,12 @@ class DokkaebiLuckDefense {
   animate() {
     if (this.disposed) return;
     this.animationFrameId = requestAnimationFrame(() => this.animate());
-    const dt = Math.min(.033, this.clock.getDelta());
+    const rawDt = this.clock.getDelta();
+    const dt = Math.min(.033, rawDt);
     this.frameScheduler.tick(dt);
-    this.coreFoundation.sampleFrame(dt, { state: this.state, hidden: document.hidden });
+    const hidden = Boolean(document.hidden);
+    this.coreFoundation.sampleFrame(dt, { state: this.state, hidden });
+    if (this.runtimeHealthV148.noteFrame({ hidden, dt: rawDt })) return;
     this.runSafe('combat-presentation', () => this.combatPresentation?.update(dt));
     const impactScale = this.combatPresentation?.timeScale ?? 1;
     const gameDt = (this.cinematic ? dt * .42 : dt) * impactScale;

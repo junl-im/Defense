@@ -259,3 +259,18 @@ v1.0.12 크로스 플랫폼 기반, v1.0.17 승인 경계, v1.0.20 주인공 11�
 - Added compact pass evidence and full failed-report retention.
 - Added exact v1.0.45 Vite baseline promotion tooling; the supplied packages did not contain the candidate artifact, so the approved v1.0.44 envelope remains active without fabricated values.
 - Next: `docs/NEXT_UPDATE_v1.0.48.md`.
+
+
+## 2026-07-29 — v1.0.48 / b24.48
+
+- 작업 목표: 시스템, 성능, 기술, 기능, 엔진, 오류, 버그, 예외사항을 전면 감사하고 저장소 차단·장시간 오류 누적·백그라운드 비용 문제를 실제 코드에서 수정한다.
+- 주요 수정: `SafeStorageV148`, `RuntimeHealthAssuranceV148`, 백그라운드 프레임 조기 중단, 소스/import/package-script/성능 예산 종합 감사.
+- 고정 전달 규칙: 이후 모든 결과는 **1. 작업한 내역, 2. 전체 ZIP 및 direct-overlay 패치 ZIP, 3. 다음 예정 내역** 순서로 제공한다. `docs/DELIVERY_RESULT_RULE.md`가 단일 기준이다.
+- 검증 명령: `npm run verify:release:v148`, `npm run verify:ci`, `npm run stage:package:v148`, `npm run verify:package:v148`, `npm run create:patch:v148`, `npm run verify:patch:v148`.
+- 잔여 위험: `src/main.js` 책임 분리와 실제 Vite/브라우저 성능 기준선 승격은 v1.0.49에서 계속한다.
+- 다음 예정: `docs/NEXT_UPDATE_v1.0.49.md`.
+## v1.0.48 Identity Synchronization Hotfix
+
+- 부분 적용으로 package/runtime 버전이 갈라지는 문제를 차단합니다.
+- `npm run verify:identity:v148`가 package, lock, main, policy, HTML, service worker, public version을 비교합니다.
+- `preverify`와 `prebuild`에서 본 검증보다 먼저 실행됩니다.

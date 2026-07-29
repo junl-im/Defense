@@ -1,12 +1,12 @@
 {
   "schema": "DD-RUNTIME-MODULE-SHELL-1.0",
   "id": "DD-RELEASE-INTEGRITY-V135",
-  "releaseVersion": "1.0.47",
-  "buildId": "b24.47",
-  "cacheRevision": "1.0.47-b24.47",
+  "releaseVersion": "1.0.48",
+  "buildId": "b24.48",
+  "cacheRevision": "1.0.48-b24.48",
   "entry": "src/bootstrap.js",
-  "moduleCount": 117,
-  "totalBytes": 1502529,
+  "moduleCount": 119,
+  "totalBytes": 1511442,
   "files": [
     {
       "path": "src/art-production-gate.js",
@@ -185,8 +185,8 @@
     },
     {
       "path": "src/engine/frame-budget-scheduler.js",
-      "bytes": 1255,
-      "sha256": "379a6e3cf244b64287ea7744d0830d5eaf2d745afff794f57b6ac7c45da24787"
+      "bytes": 1281,
+      "sha256": "91ab9b933bc6298cfc6e8ea19dda214a082006f3fd5e8642ae6a10204db684fa"
     },
     {
       "path": "src/engine/geometry-budget.js",
@@ -225,8 +225,8 @@
     },
     {
       "path": "src/engine/render-stats-hud.js",
-      "bytes": 2811,
-      "sha256": "54ba31aa5c07e3411ae77805a3fef0bbd803bbeb18fda4de9f9a9e7b17dfc32c"
+      "bytes": 3118,
+      "sha256": "d21ee24a18f0417ea741a6a2a51137b89883f0db27ab60f14227e5aaa449dca2"
     },
     {
       "path": "src/engine/runtime-budget-manager.js",
@@ -310,8 +310,8 @@
     },
     {
       "path": "src/main.js",
-      "bytes": 409673,
-      "sha256": "0d39327fd154fc97bf167a834d18d7b7121a8e5cb19a47acfa9fe6254466d0ef"
+      "bytes": 410199,
+      "sha256": "7dfaccbbe6215aef92cc7dfcc9f7207970badb6039031fde05356cf66c360914"
     },
     {
       "path": "src/premium-assets.js",
@@ -514,9 +514,19 @@
       "sha256": "13ec0aa0f6393c6ad1676094ddbef7b035fc094a72692b69479ace690711b532"
     },
     {
+      "path": "src/runtime/runtime-health-assurance-v148.js",
+      "bytes": 3609,
+      "sha256": "e8f0a195b437af2eda76725470b199b07ac8549c7b7b68966aa6c42630e05f3b"
+    },
+    {
       "path": "src/runtime/runtime-visual-audit.js",
       "bytes": 1951,
       "sha256": "a1ffb32d52088452c49151dd0c45e85b1809b199ba365b351ad3afad155e4c7c"
+    },
+    {
+      "path": "src/runtime/safe-storage-v148.js",
+      "bytes": 4255,
+      "sha256": "5aeb448defa572721470f7b2d993d10b496e195f679da48f298b7c82a73df5c6"
     },
     {
       "path": "src/runtime/save-schema.js",
@@ -585,13 +595,13 @@
     },
     {
       "path": "src/ui-layout-manager.js",
-      "bytes": 10136,
-      "sha256": "48637b1f2b34f3d74f2d66475136a13cc5c8e58a1bfb32f3e6c566897003e1b0"
+      "bytes": 10326,
+      "sha256": "98718525b5935e12ea7874a03b3189f7ac0251244837e124a5f28dd4d1c44202"
     },
     {
       "path": "src/version-policy.js",
       "bytes": 1740,
-      "sha256": "e74d644b8f5d0e15081883c8a7592b6ed36a341487717a5ae35a525cac2a7ddd"
+      "sha256": "3c72457e000bcaf7a6dc5aafb22f86d7e104525a4310e645e1159dac976e5073"
     }
   ]
 }

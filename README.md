@@ -49,4 +49,14 @@ The 100-wave browser harness requires the complete Vite output (`dist/assets/gam
 - v1.0.44 complete-build mobile matrix, measured dist budgets, and reviewed asset candidates
 - v1.0.45 100-wave runtime trends, WebGL recovery, 5% source regression gate, and explicit asset residency
 
-> Current release: **v1.0.47 / b24.47** — offline/reconnect, save-schema fuzz, trace provenance, and compact evidence assurance.
+> Current release: **v1.0.48 / b24.48** — comprehensive integrity audit, safe persistence, bounded runtime diagnostics, and background performance protection.
+
+
+## 결과 전달 규칙
+
+모든 패치 결과는 **1. 작업한 내역 → 2. 전체 프로젝트 ZIP과 direct-overlay 패치 ZIP → 3. 다음 예정 내역** 순서로 제공한다. 상세 계약은 `docs/DELIVERY_RESULT_RULE.md`를 따른다.
+## v1.0.48 Identity Synchronization Hotfix
+
+- 부분 적용으로 package/runtime 버전이 갈라지는 문제를 차단합니다.
+- `npm run verify:identity:v148`가 package, lock, main, policy, HTML, service worker, public version을 비교합니다.
+- `preverify`와 `prebuild`에서 본 검증보다 먼저 실행됩니다.

@@ -1,10 +1,10 @@
-const RELEASE_VERSION = '1.0.47';
-const BUILD_ID = 'b24.47';
+const RELEASE_VERSION = '1.0.48';
+const BUILD_ID = 'b24.48';
 // const VERSION = '23.2.0'; historical lineage marker.
 const CACHE_PREFIX = 'dokkaebi-luck-defense-shell-';
 const LEGACY_CACHE_PREFIXES = ['dokkaebi-shell-', 'dokkaebi-luck-defense-shell-'];
 const CACHE_NAME = `${CACHE_PREFIX}${BUILD_ID}`;
-const UPGRADE_ASSURANCE_LINEAGE = Object.freeze(['DD-SW-UPGRADE-ASSURANCE-V146', 'DD-SW-UPGRADE-ASSURANCE-V147']);
+const UPGRADE_ASSURANCE_LINEAGE = Object.freeze(['DD-SW-UPGRADE-ASSURANCE-V146', 'DD-SW-UPGRADE-ASSURANCE-V147', 'DD-SW-UPGRADE-ASSURANCE-V148']);
 const UPGRADE_ASSURANCE_ID = UPGRADE_ASSURANCE_LINEAGE.at(-1);
 const CLIENT_STORAGE_POLICY = 'preserve-client-storage';
 // BEGIN GENERATED RUNTIME MODULE SHELL V135
@@ -110,7 +110,9 @@ const GENERATED_MODULE_SHELL_V135 = Object.freeze([
   './src/runtime/mobile-input-recovery-v143.js',
   './src/runtime/native-input-policy-v231.js',
   './src/runtime/release-assurance-director-v124.js',
+  './src/runtime/runtime-health-assurance-v148.js',
   './src/runtime/runtime-visual-audit.js',
+  './src/runtime/safe-storage-v148.js',
   './src/runtime/save-schema.js',
   './src/runtime/service-worker-upgrade-assurance-v146.js',
   './src/runtime/silhouette-assurance-director-v132.js',

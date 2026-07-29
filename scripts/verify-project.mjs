@@ -53,8 +53,10 @@ if (extraRootMarkdown.length) console.log(`INFO 추가 루트 Markdown은 빌드
 if (manifest.start_url === './') pass('PWA 상대 경로 start_url');
 else fail(`PWA start_url 확인 필요: ${manifest.start_url}`);
 
-if (main.includes(`const GAME_VERSION = '${expectedGameVersion}'`) && versionPolicy.includes(`PUBLIC_GAME_VERSION = '${expectedGameVersion}'`)) pass(`런타임 version ${expectedGameVersion}`);
-else fail(`런타임 version 불일치: package=${expectedGameVersion}`);
+const runtimeGameVersion = main.match(/const GAME_VERSION = '([^']+)'/)?.[1] || '<missing>';
+const policyGameVersion = versionPolicy.match(/PUBLIC_GAME_VERSION = '([^']+)'/)?.[1] || '<missing>';
+if (runtimeGameVersion === expectedGameVersion && policyGameVersion === expectedGameVersion) pass(`런타임 version ${expectedGameVersion}`);
+else fail(`런타임 version 불일치: package=${expectedGameVersion}, main=${runtimeGameVersion}, policy=${policyGameVersion}`);
 
 for (const feature of ['offerContract', 'resolveActiveContract', 'checkBossPhase', 'kingNightMarch', 'bossPounce']) {
   if (main.includes(feature)) pass(`기존 전투 기능 ${feature}`);

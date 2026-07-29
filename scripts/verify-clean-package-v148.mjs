@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+import path from 'node:path';
+const root = path.resolve(import.meta.dirname, '..');
+const stage = path.join(root, 'logs/package/1.0.48/DokkaebiLuckDefense3D_FULL_v1.0.48_COMPREHENSIVE_INTEGRITY_VERIFIED');
+if (!fs.existsSync(stage)) throw new Error('v148 staged package missing');
+for (const banned of ['dist','node_modules','.git']) if (fs.existsSync(path.join(stage, banned))) throw new Error(`v148 staged package contains ${banned}`);
+const pkg = JSON.parse(fs.readFileSync(path.join(stage, 'package.json'), 'utf8'));
+if (pkg.version !== '1.0.48' || pkg.dokkaebi?.buildId !== 'b24.48') throw new Error('v148 staged identity mismatch');
+for (const file of ['src/runtime/safe-storage-v148.js','src/runtime/runtime-health-assurance-v148.js','scripts/generate-system-audit-v148.mjs','scripts/verify-runtime-resilience-v148.mjs','scripts/verify-release-identity-v148.mjs','docs/DELIVERY_RESULT_RULE.md','docs/CI_VERSION_IDENTITY_SYNC_HOTFIX_v1.0.48.md','docs/generated/system-audit-v148.json']) if (!fs.existsSync(path.join(stage, file))) throw new Error(`v148 staged contract missing ${file}`);
+console.log('PASS v1.0.48 clean source package staging');
