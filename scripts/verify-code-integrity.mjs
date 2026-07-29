@@ -103,8 +103,18 @@ const packageJson = JSON.parse(read('package.json'));
 const cleanCommand = packageJson.scripts?.['clean:obsolete'];
 const preverifyCommand = packageJson.scripts?.preverify;
 const prebuildCommand = packageJson.scripts?.prebuild;
-const preverifyHasCleanup = preverifyCommand?.startsWith('npm run clean:obsolete') && preverifyCommand.includes('hygiene:check');
-const prebuildHasCleanup = prebuildCommand?.startsWith('npm run clean:obsolete') && prebuildCommand.includes('hygiene:check');
+const hasOrderedLifecycle = (command) => {
+  const required = ['npm run bootstrap:identity:v149', 'npm run clean:obsolete', 'npm run hygiene:check', 'npm run verify:identity:v149'];
+  let cursor = -1;
+  return required.every((token) => {
+    const index = String(command || '').indexOf(token, cursor + 1);
+    if (index < 0) return false;
+    cursor = index;
+    return true;
+  });
+};
+const preverifyHasCleanup = hasOrderedLifecycle(preverifyCommand);
+const prebuildHasCleanup = hasOrderedLifecycle(prebuildCommand);
 if (cleanCommand === 'node scripts/clean-obsolete-assets.mjs'
   && preverifyHasCleanup
   && prebuildHasCleanup) {

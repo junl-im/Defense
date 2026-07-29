@@ -2,6 +2,12 @@ import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 const root = path.resolve(import.meta.dirname, '..');
+const bootstrapRun = spawnSync(process.execPath, [path.join(root, 'scripts/bootstrap-release-package-v149.mjs')], { cwd: root, encoding: 'utf8' });
+process.stdout.write(bootstrapRun.stdout || '');
+process.stderr.write(bootstrapRun.stderr || '');
+if (bootstrapRun.error || bootstrapRun.status !== 0) {
+  throw new Error(`v149 identity bootstrap failed (${bootstrapRun.error?.code || bootstrapRun.status})`);
+}
 const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
 const json = (file) => JSON.parse(read(file));
 const pkg = json('package.json');

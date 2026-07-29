@@ -1,8 +1,18 @@
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
 import { resolve } from 'node:path';
 import { formatSvgViolations, scanSvgPolicy } from './svg-policy.mjs';
 
 const root = resolve(import.meta.dirname, '..');
+const identityBootstrap = spawnSync(process.execPath, [resolve(root, 'scripts/bootstrap-release-package-v149.mjs')], {
+  cwd: root,
+  encoding: 'utf8'
+});
+process.stdout.write(identityBootstrap.stdout || '');
+process.stderr.write(identityBootstrap.stderr || '');
+if (identityBootstrap.error || identityBootstrap.status !== 0) {
+  throw new Error(`v149 pre-verification identity bootstrap failed (${identityBootstrap.error?.code || identityBootstrap.status})`);
+}
 const read = (path) => readFileSync(resolve(root, path), 'utf8');
 const failures = [];
 const pass = (message) => console.log(`PASS ${message}`);
