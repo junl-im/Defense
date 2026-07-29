@@ -234,10 +234,11 @@ try {
         if(!recovery.supported||!recovery.lost||!recovery.restored) throw new Error('v146 WebGL recovery failed: '+JSON.stringify(recovery));
       }
       if(wave%5===0){
-        if(typeof gc==='function') gc();
-        const frameWindow=await api.measureFrameWindowV145(10);
+        const collectGarbage=wave%25===0||wave===100;
+        const stabilization=await api.stabilizeLongSessionMeasurementV145({collectGarbage,settleFrames:collectGarbage?8:3});
+        const frameWindow=await api.measureFrameWindowV145(24,{warmupFrames:3});
         const sample=api.recordLongSessionSampleV145(frameWindow);
-        progress.push({wave:sample.wave,frameP95Ms:sample.frameP95Ms,heapUsedMB:sample.heapUsedMB,textures:sample.textures,geometries:sample.geometries,loadPhase:snapshot.loadPhase||null});
+        progress.push({wave:sample.wave,frameP95Ms:sample.frameP95Ms,frameMaxMs:sample.frameMaxMs,longTasks:sample.longTasks,longTaskMs:sample.longTaskMs,heapUsedMB:sample.heapUsedMB,textures:sample.textures,geometries:sample.geometries,stabilization,loadPhase:snapshot.loadPhase||null});
       }
     }
     const report=api.finishLongSessionV146();
@@ -246,7 +247,13 @@ try {
 
   const screenshot = await client.send('Page.captureScreenshot', { format: 'png', fromSurface: true, captureBeyondViewport: false }, 10000);
   fs.writeFileSync(screenshotPath, Buffer.from(screenshot.data, 'base64'));
-  if (!sessionReport?.report?.passed) throw new Error(`v146 long-session checks failed: ${JSON.stringify({checks:sessionReport?.report?.checks||{},loadChecks:sessionReport?.report?.loadChecks||{},digest:sessionReport?.report?.failureDigest||{}})}`);
+  if (!sessionReport?.report?.passed) {
+    const assurance=sessionReport?.report||{};
+    const failedChecks=Object.entries(assurance.checks||{}).filter(([,passed])=>!passed).map(([name])=>name);
+    const failedLoadChecks=Object.entries(assurance.loadChecks||{}).filter(([,passed])=>!passed).map(([name])=>name);
+    const worstFrames=[...(assurance.samples||[])].sort((a,b)=>Number(b.frameP95Ms||0)-Number(a.frameP95Ms||0)).slice(0,5).map((sample)=>({wave:sample.wave,frameP95Ms:sample.frameP95Ms,frameMaxMs:sample.frameMaxMs,longTasks:sample.longTasks}));
+    throw new Error(`v146 long-session checks failed: ${JSON.stringify({failedChecks,failedLoadChecks,metrics:assurance.metrics,thresholds:assurance.thresholds,worstFrames,digest:assurance.failureDigest||{}})}`);
+  }
   if (!sessionReport?.report?.failureDigest) throw new Error('v146 failure digest missing');
   if ((sessionReport?.report?.loadPhases||[]).length !== 5) throw new Error('v146 deterministic load phases missing');
   if (diagnostics.exceptions.length) throw new Error(`v146 runtime exceptions captured: ${diagnostics.exceptions.length}`);

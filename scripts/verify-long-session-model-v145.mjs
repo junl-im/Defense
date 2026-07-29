@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { LongSessionAssuranceV145 } from '../src/runtime/long-session-assurance-v145.js';
+import { LongSessionAssuranceV145, normalizeLongSessionBrowserSampleV145 } from '../src/runtime/long-session-assurance-v145.js';
 
 const passing = new LongSessionAssuranceV145({ thresholds: { totalWaves: 100, sampleEveryWaves: 5 } });
 passing.start({ seed: 'UNIT-V145', targetWaves: 100 });
@@ -47,5 +47,13 @@ assert.throws(() => {
   invalid.record({ wave: 10 });
   invalid.record({ wave: 10 });
 }, /must increase/);
+
+
+const compensated = normalizeLongSessionBrowserSampleV145(
+  { longTasks: 24, longTaskMs: 850, contextLosses: 1, contextRestores: 1 },
+  { measuredLongTasks: 2, measuredLongTaskMs: 110 }
+);
+assert.equal(compensated.longTasks, 2);
+assert.equal(compensated.longTaskMs, 110);
 
 console.log('PASS v1.0.45 long-session trend model rejects runtime, memory, renderer, frame, and context regressions');

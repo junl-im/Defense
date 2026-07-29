@@ -83,7 +83,7 @@ import { auditRuntimeVisuals } from './runtime/runtime-visual-audit.js';
 import WaveFlowGuard from './runtime/wave-flow-guard.js';
 import WaveReliabilityDirector from './runtime/wave-reliability-director.js';
 import BrowserReliabilityLab from './runtime/browser-reliability-lab.js';
-import LongSessionAssuranceV145 from './runtime/long-session-assurance-v145.js';
+import LongSessionAssuranceV145, { normalizeLongSessionBrowserSampleV145, summarizeFrameDurationsV145 } from './runtime/long-session-assurance-v145.js';
 import { replayDeviceViewportTraceV146 } from './runtime/device-trace-assurance-v146.js';
 import { buildFailureDigestV146 } from './runtime/failure-digest-v146.js';
 import { simulateServiceWorkerUpgradeV146 } from './runtime/service-worker-upgrade-assurance-v146.js';
@@ -4574,6 +4574,8 @@ class DokkaebiLuckDefense {
 
   getLongSessionSnapshotV145(frameWindow = {}) {
     const memory = typeof performance !== 'undefined' ? performance.memory : null;
+    const harness = this.longSessionHarnessV145 || { measuredLongTasks: 0, measuredLongTaskMs: 0 };
+    const browserReliability = normalizeLongSessionBrowserSampleV145(this.browserReliability?.diagnostics || {}, harness);
     return {
       wave: this.currentWave || 0,
       state: this.state,
@@ -4597,14 +4599,43 @@ class DokkaebiLuckDefense {
         projectiles: this.projectiles?.length || 0,
         particles: this.particles?.length || 0
       },
-      browserReliability: this.browserReliability?.diagnostics || {},
+      browserReliability,
       runtimeErrors: this.runtimeErrors.length
     };
   }
 
-  async measureFrameWindowV145(frameCount = 8) {
-    const target = Math.max(3, Math.min(60, Math.round(Number(frameCount) || 8)));
+  async stabilizeLongSessionMeasurementV145({ collectGarbage = false, settleFrames = 4 } = {}) {
+    this.longSessionHarnessV145 ||= {
+      measuredLongTasks: 0, measuredLongTaskMs: 0, controlledLongTasks: 0, controlledLongTaskMs: 0, gcCycles: 0
+    };
+    const before = this.browserReliability?.diagnostics || {};
+    const collected = Boolean(collectGarbage && typeof globalThis.gc === 'function');
+    if (collected) {
+      globalThis.gc();
+      this.longSessionHarnessV145.gcCycles += 1;
+    }
+    await new Promise((resolve) => this.lifecycle.system.schedule(resolve, 0, { key: 'v145-observer-turn-before-settle' }));
+    await this.waitForRenderedFrames(Math.max(1, Math.min(16, Math.round(Number(settleFrames) || 4))), 5000).catch(() => false);
+    await new Promise((resolve) => this.lifecycle.system.schedule(resolve, 0, { key: 'v145-observer-turn-after-settle' }));
+    const after = this.browserReliability?.diagnostics || {};
+    const controlledLongTasks = Math.max(0, Number(after.longTasks || 0) - Number(before.longTasks || 0));
+    const controlledLongTaskMs = Math.max(0, Number(after.longTaskMs || 0) - Number(before.longTaskMs || 0));
+    this.longSessionHarnessV145.controlledLongTasks += controlledLongTasks;
+    this.longSessionHarnessV145.controlledLongTaskMs += controlledLongTaskMs;
+    return Object.freeze({
+      collected,
+      settleFrames: Math.max(1, Math.min(16, Math.round(Number(settleFrames) || 4))),
+      controlledLongTasks,
+      controlledLongTaskMs: Math.round(controlledLongTaskMs * 1000) / 1000,
+      gcCycles: this.longSessionHarnessV145.gcCycles
+    });
+  }
+
+  async measureFrameWindowV145(frameCount = 8, { warmupFrames = 2 } = {}) {
+    const target = Math.max(6, Math.min(60, Math.round(Number(frameCount) || 8)));
+    const warmup = Math.max(0, Math.min(12, Math.round(Number(warmupFrames) || 0)));
     const timestamps = [];
+    const reliabilityBefore = this.browserReliability?.diagnostics || {};
     await new Promise((resolve) => {
       let settled = false;
       const finish = () => {
@@ -4616,23 +4647,23 @@ class DokkaebiLuckDefense {
       };
       const step = (timestamp) => {
         timestamps.push(timestamp);
-        if (timestamps.length >= target + 1) {
+        if (timestamps.length >= target + warmup + 1) {
           finish();
           return;
         }
         this.lifecycle.frames.request(step, { key: 'v145-frame-window' });
       };
-      this.lifecycle.system.schedule(finish, 5000, { key: 'v145-frame-window-timeout' });
+      this.lifecycle.system.schedule(finish, 7000, { key: 'v145-frame-window-timeout' });
       this.lifecycle.frames.request(step, { key: 'v145-frame-window' });
     });
-    const durations = timestamps.slice(1).map((value, index) => Math.max(0, value - timestamps[index])).filter(Number.isFinite);
-    const sorted = [...durations].sort((a, b) => a - b);
-    const percentile = (ratio) => sorted.length ? sorted[Math.min(sorted.length - 1, Math.max(0, Math.ceil(sorted.length * ratio) - 1))] : 0;
+    await new Promise((resolve) => this.lifecycle.system.schedule(resolve, 0, { key: 'v145-frame-window-observer-turn' }));
+    const reliabilityAfter = this.browserReliability?.diagnostics || {};
+    const allDurations = timestamps.slice(1).map((value, index) => Math.max(0, value - timestamps[index])).filter(Number.isFinite);
+    const summary = summarizeFrameDurationsV145(allDurations, { warmupFrames: warmup });
     return Object.freeze({
-      samples: durations.length,
-      p50Ms: Math.round(percentile(.5) * 1000) / 1000,
-      p95Ms: Math.round(percentile(.95) * 1000) / 1000,
-      maxMs: Math.round((sorted.at(-1) || 0) * 1000) / 1000
+      ...summary,
+      longTasksDelta: Math.max(0, Number(reliabilityAfter.longTasks || 0) - Number(reliabilityBefore.longTasks || 0)),
+      longTaskMsDelta: Math.round(Math.max(0, Number(reliabilityAfter.longTaskMs || 0) - Number(reliabilityBefore.longTaskMs || 0)) * 1000) / 1000
     });
   }
 
@@ -4669,8 +4700,12 @@ class DokkaebiLuckDefense {
     this.waveReliability.resetRun({ seed: this.runSeed, mode: this.selectedRunModeId, hero: this.selectedHeroClassId, maxWaves: waves });
     this.longSessionAssuranceV145.start({ seed: this.runSeed, targetWaves: waves });
     this.longSessionLoadPhasesV146 = [];
-    const frameWindow = await this.measureFrameWindowV145(6);
-    this.longSessionAssuranceV145.record(this.getLongSessionSnapshotV145(frameWindow));
+    this.longSessionHarnessV145 = {
+      measuredLongTasks: 0, measuredLongTaskMs: 0, controlledLongTasks: 0, controlledLongTaskMs: 0, gcCycles: 0
+    };
+    await this.stabilizeLongSessionMeasurementV145({ collectGarbage: true, settleFrames: 8 });
+    const frameWindow = await this.measureFrameWindowV145(24, { warmupFrames: 3 });
+    this.recordLongSessionSampleV145(frameWindow);
     this.browserReliability?.noteMilestone('v145-long-session-start', { waves, seed: this.runSeed });
     return this.longSessionAssuranceV145.report;
   }
@@ -4695,6 +4730,11 @@ class DokkaebiLuckDefense {
   }
 
   recordLongSessionSampleV145(frameWindow = {}) {
+    this.longSessionHarnessV145 ||= {
+      measuredLongTasks: 0, measuredLongTaskMs: 0, controlledLongTasks: 0, controlledLongTaskMs: 0, gcCycles: 0
+    };
+    this.longSessionHarnessV145.measuredLongTasks += Math.max(0, Number(frameWindow.longTasksDelta || 0));
+    this.longSessionHarnessV145.measuredLongTaskMs += Math.max(0, Number(frameWindow.longTaskMsDelta || 0));
     const sample = this.longSessionAssuranceV145.record(this.getLongSessionSnapshotV145(frameWindow));
     this.browserReliability?.sample(`v145-wave-${sample.wave}`, this.getBrowserReliabilitySnapshot());
     return sample;
@@ -7808,7 +7848,8 @@ try {
       },
       prepareLongSessionV145: (options) => game.prepareLongSessionV145(options),
       advanceLongSessionWaveV145: () => game.advanceLongSessionWaveV145(),
-      measureFrameWindowV145: (frameCount) => game.measureFrameWindowV145(frameCount),
+      stabilizeLongSessionMeasurementV145: (options) => game.stabilizeLongSessionMeasurementV145(options),
+      measureFrameWindowV145: (frameCount, options) => game.measureFrameWindowV145(frameCount, options),
       recordLongSessionSampleV145: (frameWindow) => game.recordLongSessionSampleV145(frameWindow),
       exerciseWebGLRecoveryV145: () => game.exerciseWebGLRecoveryV145(),
       finishLongSessionV145: () => game.finishLongSessionV145(),

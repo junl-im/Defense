@@ -5,8 +5,8 @@
   "cacheRevision": "1.0.49-b24.49",
   "algorithm": "sha256-sorted-paths-v1",
   "fileCount": 2128,
-  "totalBytes": 119969365,
-  "aggregateSha256": "8235fed78156d337822bc8563ee1121bf06549f1c35b14f556b210aafe4e6da4",
+  "totalBytes": 119974131,
+  "aggregateSha256": "7d1293c59af2105234f34e98918de171e5a53a6c0e2bb4a00b7e5bd3e77350c6",
   "files": [
     {
       "path": ".env.production",
@@ -9050,8 +9050,8 @@
     },
     {
       "path": "public/assets/system-v135/runtime-module-shell-v135.json",
-      "bytes": 21336,
-      "sha256": "4175606814453c83e95492335ac4b848eb4cc6391372b4dae1ca663efe77e079"
+      "bytes": 21337,
+      "sha256": "bb61851b4c72823c9dd4eb81701e9b221cefb04b25c0dc5aec01d75de56f88ac"
     },
     {
       "path": "public/assets/textures/moon-market-ground-v1.webp",
@@ -10280,8 +10280,8 @@
     },
     {
       "path": "src/main.js",
-      "bytes": 410596,
-      "sha256": "bb4428a8276ef3d15ef43c34d7581cd0dbaf64554fcdf8af289f9726759dc17c"
+      "bytes": 413557,
+      "sha256": "b59780c12a09b94b6ac2e7dce7135311b0e5868667e9f335cfc94a680b82f95d"
     },
     {
       "path": "src/premium-assets.js",
@@ -10495,8 +10495,8 @@
     },
     {
       "path": "src/runtime/long-session-assurance-v145.js",
-      "bytes": 9160,
-      "sha256": "1142d23923a8c3c58ac10f6da77989d13dd327337b98cbece7f41bdfd7101e8e"
+      "bytes": 10964,
+      "sha256": "8a6fd520de85d16236418eaa8baf0c2ddd01ebca3e722625fb03d5dca8a148a9"
     },
     {
       "path": "src/runtime/mobile-hud-director-v21.js",

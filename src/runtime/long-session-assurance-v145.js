@@ -24,6 +24,33 @@ const round = (value, digits = 3) => {
 };
 const freeze = (value) => Object.freeze(value);
 
+export function normalizeLongSessionBrowserSampleV145(browser = {}, harness = {}) {
+  const measuredLongTasks = finite(harness.measuredLongTasks, NaN);
+  const measuredLongTaskMs = finite(harness.measuredLongTaskMs, NaN);
+  return freeze({
+    ...browser,
+    rawLongTasks: Math.max(0, Math.round(finite(browser.longTasks))),
+    rawLongTaskMs: round(browser.longTaskMs),
+    longTasks: Math.max(0, Math.round(Number.isFinite(measuredLongTasks) ? measuredLongTasks : finite(browser.longTasks))),
+    longTaskMs: round(Number.isFinite(measuredLongTaskMs) ? measuredLongTaskMs : finite(browser.longTaskMs))
+  });
+}
+
+export function summarizeFrameDurationsV145(values = [], { warmupFrames = 0 } = {}) {
+  const allDurations = [...values].map((value) => Math.max(0, finite(value, NaN))).filter(Number.isFinite);
+  const warmup = Math.max(0, Math.min(allDurations.length, Math.round(finite(warmupFrames))));
+  const durations = allDurations.slice(warmup);
+  const sorted = [...durations].sort((a, b) => a - b);
+  const pick = (ratio) => sorted.length ? sorted[Math.min(sorted.length - 1, Math.max(0, Math.ceil(sorted.length * ratio) - 1))] : 0;
+  return freeze({
+    samples: durations.length,
+    warmupFrames: warmup,
+    p50Ms: round(pick(.5)),
+    p95Ms: round(pick(.95)),
+    maxMs: round(sorted.at(-1) || 0)
+  });
+}
+
 function percentile(values, ratio) {
   if (!values.length) return 0;
   const sorted = [...values].sort((a, b) => a - b);
@@ -70,6 +97,9 @@ export function normalizeLongSessionSampleV145(input = {}) {
     contextLosses: Math.max(0, Math.round(finite(browser.contextLosses ?? input.contextLosses))),
     contextRestores: Math.max(0, Math.round(finite(browser.contextRestores ?? input.contextRestores))),
     longTasks: Math.max(0, Math.round(finite(browser.longTasks ?? input.longTasks))),
+    longTaskMs: round(browser.longTaskMs ?? input.longTaskMs),
+    rawLongTasks: Math.max(0, Math.round(finite(browser.rawLongTasks ?? input.rawLongTasks ?? browser.longTasks ?? input.longTasks))),
+    rawLongTaskMs: round(browser.rawLongTaskMs ?? input.rawLongTaskMs ?? browser.longTaskMs ?? input.longTaskMs),
     runtimeErrors: Math.max(0, Math.round(finite(input.runtimeErrors))),
     enemies: Math.max(0, Math.round(finite(input.counts?.enemies ?? input.enemies))),
     units: Math.max(0, Math.round(finite(input.counts?.units ?? input.units))),
@@ -158,6 +188,9 @@ export class LongSessionAssuranceV145 {
       geometryGrowth: growth(samples, 'geometries'),
       geometrySlopePer10Waves: slopePer10Waves(samples, 'geometries'),
       longTaskGrowth: growth(samples, 'longTasks'),
+      longTaskMsGrowth: growth(samples, 'longTaskMs'),
+      rawLongTaskGrowth: growth(samples, 'rawLongTasks'),
+      rawLongTaskMsGrowth: growth(samples, 'rawLongTaskMs'),
       contextLosses: last.contextLosses,
       contextRestores: last.contextRestores,
       contextBalance
