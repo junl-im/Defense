@@ -48,7 +48,7 @@
 - combatModules: 11
 - combatBytes: 40779
 - scriptFiles: 334
-- scriptBytes: 1499611
+- scriptBytes: 1502372
 - mainLines: 7839
 - mainBytes: 410596
 - runSafeCalls: 51

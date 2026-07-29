@@ -33,5 +33,12 @@ check(bootstrap.includes('globalThis.__DOKKAEBI_RELEASE_IDENTITY__') && bootstra
 const run = spawnSync(process.execPath, [path.join(root, 'scripts/generate-release-identity-v149.mjs'), '--check'], { cwd: root, encoding: 'utf8' });
 process.stdout.write(run.stdout || ''); process.stderr.write(run.stderr || '');
 check(!run.error && run.status === 0, 'generated identity freshness');
-if (failures.length) { failures.forEach((failure) => console.error(`FAIL ${failure}`)); process.exit(1); }
-console.log(`PASS v1.0.49 package-canonical generated identity (${pkg.version} / ${expectedBuild} / ${expectedCache})`);
+const selfTest = spawnSync(process.execPath, [path.join(root, 'scripts/generate-release-identity-v149.mjs'), '--self-test'], { cwd: root, encoding: 'utf8' });
+process.stdout.write(selfTest.stdout || ''); process.stderr.write(selfTest.stderr || '');
+check(!selfTest.error && selfTest.status === 0, 'identity self-heal fixture');
+if (failures.length) {
+  console.error(`INFO identity values package=${pkg.version || '<missing>'}, lock=${lock.version || '<missing>'}, public=${version.releaseVersion || '<missing>'}, expected=1.0.49`);
+  failures.forEach((failure) => console.error(`FAIL ${failure}`));
+  process.exit(1);
+}
+console.log(`PASS v1.0.49 self-healing generated identity (${pkg.version} / ${expectedBuild} / ${expectedCache})`);

@@ -53,10 +53,14 @@ if (extraRootMarkdown.length) console.log(`INFO 추가 루트 Markdown은 빌드
 if (manifest.start_url === './') pass('PWA 상대 경로 start_url');
 else fail(`PWA start_url 확인 필요: ${manifest.start_url}`);
 
-const runtimeGameVersion = main.match(/const GAME_VERSION = '([^']+)'/)?.[1] || '<missing>';
-const policyGameVersion = versionPolicy.match(/PUBLIC_GAME_VERSION = '([^']+)'/)?.[1] || '<missing>';
-if (runtimeGameVersion === expectedGameVersion && policyGameVersion === expectedGameVersion) pass(`런타임 version ${expectedGameVersion}`);
-else fail(`런타임 version 불일치: package=${expectedGameVersion}, main=${runtimeGameVersion}, policy=${policyGameVersion}`);
+const publicReleaseIdentity = JSON.parse(read('public/version.json'));
+const sourceReleaseIdentity = read('src/release-identity.generated.js');
+const mainUsesGeneratedVersion = main.includes('const GAME_VERSION = PUBLIC_GAME_VERSION;');
+const policyUsesGeneratedVersion = versionPolicy.includes("from './release-identity.generated.js'") && versionPolicy.includes('PUBLIC_GAME_VERSION = RELEASE_VERSION');
+const generatedGameVersion = publicReleaseIdentity.releaseVersion || '<missing>';
+const generatedSourceMatches = sourceReleaseIdentity.includes(`"releaseVersion": "${expectedGameVersion}"`);
+if (generatedGameVersion === expectedGameVersion && generatedSourceMatches && mainUsesGeneratedVersion && policyUsesGeneratedVersion) pass(`런타임 version ${expectedGameVersion}`);
+else fail(`런타임 version 불일치: package=${expectedGameVersion}, generated=${generatedGameVersion}, mainBinding=${mainUsesGeneratedVersion}, policyBinding=${policyUsesGeneratedVersion}`);
 
 for (const feature of ['offerContract', 'resolveActiveContract', 'checkBossPhase', 'kingNightMarch', 'bossPounce']) {
   if (main.includes(feature)) pass(`기존 전투 기능 ${feature}`);
