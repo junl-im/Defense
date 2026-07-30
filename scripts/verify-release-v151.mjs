@@ -14,6 +14,7 @@ check(pkg.version === '1.0.51' && pkg.dokkaebi?.buildId === 'b24.51' && pkg.dokk
 check(lock.version === pkg.version && lock.packages?.['']?.version === pkg.version, 'v151 lock identity');
 check(version.releaseVersion === pkg.version && version.buildId === 'b24.51', 'v151 public identity');
 check(main.includes('new CharacterPresentationDirectorV151'), 'v151 presentation director runtime integration');
+check(pkg.scripts?.['verify:long-session-hotfix:v151'] === 'node scripts/verify-long-session-hotfix-v151.mjs' && pkg.scripts?.['verify:release:v151']?.includes('verify:long-session-hotfix:v151'), 'v151 long-session hotfix verification chain');
 check(pipeline.includes('applyCharacterMaterialEnhancementV151(root'), 'v151 PBR character material runtime integration');
 for (const file of [
   'src/runtime/character-presentation-policy-v151.js',
@@ -22,6 +23,8 @@ for (const file of [
   'scripts/verify-character-presentation-v151.mjs',
   'scripts/verify-repository-root-v151.mjs',
   'scripts/verify-ci-root-cleanup-v151.mjs',
+  'scripts/verify-long-session-hotfix-v151.mjs',
+  'src/runtime/long-session-load-profile-v151.js',
   'scripts/root-output-policy.mjs',
   'docs/PATCH_NOTES_v1.0.51.md',
   'docs/CI_REPOSITORY_ROOT_REPAIR_v1.0.51.md',

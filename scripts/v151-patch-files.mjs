@@ -29,6 +29,7 @@ export const V151_PATCH_FILES = Object.freeze([
   "scripts/bootstrap-release-package-v151.mjs",
   "scripts/clean-obsolete-assets.mjs",
   "scripts/root-output-policy.mjs",
+  "scripts/run-release-assurance-v146.mjs",
   "scripts/create-patch-v151.mjs",
   "scripts/generate-build-input-manifest-v151.mjs",
   "scripts/generate-release-identity-v151.mjs",
@@ -36,6 +37,7 @@ export const V151_PATCH_FILES = Object.freeze([
   "scripts/v151-patch-files.mjs",
   "scripts/verify-character-presentation-v151.mjs",
   "scripts/verify-ci-root-cleanup-v151.mjs",
+  "scripts/verify-long-session-hotfix-v151.mjs",
   "scripts/verify-clean-package-v151.mjs",
   "scripts/verify-code-integrity.mjs",
   "scripts/verify-dist-chain-v140.mjs",
@@ -52,6 +54,7 @@ export const V151_PATCH_FILES = Object.freeze([
   "scripts/verify-release-v112.mjs",
   "scripts/verify-release-v114.mjs",
   "scripts/verify-release-v151.mjs",
+  "scripts/verify-release-v146.mjs",
   "scripts/verify-v150-foundation-v151.mjs",
   "src/engine/asset-pipeline.js",
   "src/engine/character-material-enhancer-v151.js",
@@ -59,6 +62,7 @@ export const V151_PATCH_FILES = Object.freeze([
   "src/release-identity.generated.js",
   "src/runtime/character-presentation-director-v151.js",
   "src/runtime/character-presentation-policy-v151.js",
+  "src/runtime/long-session-load-profile-v151.js",
   "src/version-policy.js",
 ]);
 export const V151_DELETED_PATHS = Object.freeze([

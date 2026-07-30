@@ -4,9 +4,9 @@
   "buildId": "b24.51",
   "cacheRevision": "1.0.51-b24.51",
   "algorithm": "sha256-sorted-paths-v1",
-  "fileCount": 2134,
-  "totalBytes": 120024331,
-  "aggregateSha256": "d92ff6d894717e511c23fe4d231b3025936a32dec01ae697c62533dac0d8147b",
+  "fileCount": 2135,
+  "totalBytes": 120027291,
+  "aggregateSha256": "3d3f2f9d076ba6d3a7862c9506d6c68d69f114a3ff87c4f98c348a058fc2d146",
   "files": [
     {
       "path": ".env.production",
@@ -25,8 +25,8 @@
     },
     {
       "path": "package.json",
-      "bytes": 37646,
-      "sha256": "a873d4deb68fb5c1bcaca5a54cf6038aa66b5c9626084c46282ecca0478c9f8c"
+      "bytes": 37780,
+      "sha256": "e673862c78f1252e5a2c5378141d3dafa38c4a183ee4beaaedc81d4c7a1d8712"
     },
     {
       "path": "public/action-asset-lab-v125.html",
@@ -9050,8 +9050,8 @@
     },
     {
       "path": "public/assets/system-v135/runtime-module-shell-v135.json",
-      "bytes": 22429,
-      "sha256": "9011281a754f089cfd1e1c6d958177899cc8ac4ec6313458123b381ed401d27d"
+      "bytes": 22608,
+      "sha256": "9cb5aff1062c95e9f77563aab5259baefdcc3de10a33d7ec6752ef8c46770d74"
     },
     {
       "path": "public/assets/textures/moon-market-ground-v1.webp",
@@ -9850,8 +9850,8 @@
     },
     {
       "path": "public/sw.js",
-      "bytes": 23731,
-      "sha256": "e8c9535fcdc9240e41d14f28ecf58de026fd61722358018910035f09759d90f0"
+      "bytes": 23784,
+      "sha256": "6f39f61aaca2693ec8ae9cc497cc1bc4a57a125370c595f27acd1bbe5e868d9d"
     },
     {
       "path": "public/version.json",
@@ -10285,8 +10285,8 @@
     },
     {
       "path": "src/main.js",
-      "bytes": 416479,
-      "sha256": "951ba9e10b4b144335546d9961c478e2de41a5a81bbfb0de57f07985b80e208e"
+      "bytes": 416945,
+      "sha256": "a600313599b05de699d6bdd97816c1f2a4cba817349897deb319446684c6f890"
     },
     {
       "path": "src/premium-assets.js",
@@ -10430,8 +10430,8 @@
     },
     {
       "path": "src/runtime/character-presentation-director-v151.js",
-      "bytes": 14479,
-      "sha256": "3acca1b4c5ed08252dd1fbd220aff80e61e2df20e357cb880d4c643429d5082c"
+      "bytes": 15961,
+      "sha256": "b281239f8805559ffa12bf7eaad20125cdb1744b151f04f56c66ef46c51d14b1"
     },
     {
       "path": "src/runtime/character-presentation-policy-v151.js",
@@ -10517,6 +10517,11 @@
       "path": "src/runtime/long-session-assurance-v145.js",
       "bytes": 11002,
       "sha256": "c3068a0d6f54cb8b6c0fae7e43322f11231ae2f90f353b00e25e5b2d3a912357"
+    },
+    {
+      "path": "src/runtime/long-session-load-profile-v151.js",
+      "bytes": 646,
+      "sha256": "906b4d3444997269a032dfd79323fca33a987293ee27c52d83c6e6a883a8f2d4"
     },
     {
       "path": "src/runtime/mobile-hud-director-v21.js",

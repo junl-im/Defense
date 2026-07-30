@@ -341,3 +341,7 @@ v1.0.12 크로스 플랫폼 기반, v1.0.17 승인 경계, v1.0.20 주인공 11�
 
 The repaired delivery is archive-root flat, removes stale root patch metadata, deletes any legacy root `overlay/` without merging it, and adds `verify:repo-root:v151` to stop nested or stale repository layouts before verification.
 
+
+## v1.0.51 R4 CI long-session repair
+
+A complete GitHub Actions Vite build reached `verify-dist-v146` and exposed two issues that static/local packaging verification could not see: repeated optional character-presentation update exceptions under SwiftShader and a stale QA assumption that at least three of waves 10/25/50/75/100 were campaign boss waves. R4 adds per-record presentation fail-open behavior, a QA-only deterministic boss load profile (`tiger`, `serpent`, `king`, `tiger`, `king`), and detailed runtime error reporting. The normal campaign boss table remains 4/7/10.

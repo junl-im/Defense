@@ -18,3 +18,9 @@ The source verifier checks integration and policy. Actual WebGL shader compilati
 
 The R3 delivery is archive-root flat, removes stale root patch metadata, deletes legacy root `overlay/` without merging it, and verifies that stale `package.json@1.0.46` content cannot downgrade the v1.0.51 identity.
 
+
+## R4 long-session assurance repair
+
+The R4 repair addresses the first complete Vite/Chromium failure reported after R3. The failure had two independent causes: repeated optional character-presentation exceptions during observed load windows, and a QA boss-phase expectation that did not match the campaign's 4/7/10 boss table. The enhancement layer now fails open per record, while the QA harness uses a separate deterministic boss load profile across all five observed windows. Campaign progression data is unchanged.
+
+The failure reporter now includes retained runtime-health entries and CDP exception messages. `scripts/verify-long-session-hotfix-v151.mjs` verifies the five load windows, three canonical boss identities, presentation fallback path, and actionable diagnostic fields.

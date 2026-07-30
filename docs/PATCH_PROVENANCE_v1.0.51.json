@@ -11,19 +11,20 @@
   "targetSourceTree": {
     "algorithm": "sha256-sorted-paths-v1",
     "scope": "repository-root-flat clean source package excluding dist, node_modules, .git, logs, ZIP files, and this provenance file",
-    "aggregateSha256": "b0ccf8a7ec2a66a05f9e31e41a65468aad842f9c810baf8f92c8ec726491efd6",
-    "fileCount": 3030
+    "aggregateSha256": "cf8659c579fdaca6343345c7a500efa86bfaf345bb0894fe7d848c7baca1635c",
+    "fileCount": 3032
   },
   "patchManifest": {
     "path": "logs/patch/1.0.51/PATCH_MANIFEST.json",
     "sha256": "RECORDED_IN_FINAL_PATCH_PACKAGE"
   },
   "targetFullZip": {
-    "name": "Defense_v1.0.51_FULL_CI_OVERLAY_R3.zip",
+    "name": "Defense_v1.0.51_FULL_LONG_SESSION_R4.zip",
     "sha256": "RECORDED_IN_FINAL_PATCH_PACKAGE"
   },
-  "repairRevision": 3,
+  "repairRevision": 4,
   "repositoryRootLayout": "flat",
   "ciCleanupOrder": "bootstrap-remove-overlay-clean-generate-verify",
-  "overlayCleanupStrategy": "bootstrap-and-cleaner-remove-without-merge"
+  "overlayCleanupStrategy": "bootstrap-and-cleaner-remove-without-merge",
+  "longSessionRepair": "per-record-presentation-fail-open-and-deterministic-five-boss-load-profile"
 }

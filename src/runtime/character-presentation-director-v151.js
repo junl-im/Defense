@@ -94,6 +94,8 @@ export default class CharacterPresentationDirectorV151 extends CombatArtPolishDi
     this.silhouetteFramesV151 = 0;
     this.contactShadowFramesV151 = 0;
     this.textureSamplingUpgradesV151 = 0;
+    this.presentationFallbacksV151 = 0;
+    this.presentationFallbackMessagesV151 = new Set();
   }
 
   upgradeTextureSamplingV151(record) {
@@ -279,9 +281,34 @@ export default class CharacterPresentationDirectorV151 extends CombatArtPolishDi
     modern.lastState = state;
   }
 
+  disableModernRecordV151(record, error) {
+    const modern = record?.modernV151;
+    if (!modern || modern.disabled) return;
+    modern.disabled = true;
+    const message = error instanceof Error ? error.message : String(error || 'unknown presentation error');
+    modern.fallbackReason = message.slice(0, 180);
+    modern.silhouette.visible = false;
+    modern.keyLight.visible = false;
+    if (modern.contactShadow) modern.contactShadow.visible = false;
+    modern.afterimages.forEach((sprite) => { sprite.visible = false; });
+    this.presentationFallbacksV151 += 1;
+    if (!this.presentationFallbackMessagesV151.has(modern.fallbackReason)) {
+      this.presentationFallbackMessagesV151.add(modern.fallbackReason);
+      console.warn('[CharacterPresentationV151] enhancement disabled for one record; legacy combat art remains active', modern.fallbackReason);
+    }
+  }
+
   updateRecord(record, dt, camera, elapsed, showHealth = true) {
+    // Legacy combat art is the release-critical path. The v1.0.51 enhancement
+    // is fail-open per record so an optional rim/shadow layer can never poison
+    // the global animation loop or the 100-wave assurance ledger.
     super.updateRecord(record, dt, camera, elapsed, showHealth);
-    this.updateModernRecordV151(record, dt, camera, elapsed);
+    if (record?.modernV151?.disabled) return;
+    try {
+      this.updateModernRecordV151(record, dt, camera, elapsed);
+    } catch (error) {
+      this.disableModernRecordV151(record, error);
+    }
   }
 
   detach(group, options = {}) {
@@ -330,6 +357,8 @@ export default class CharacterPresentationDirectorV151 extends CombatArtPolishDi
       silhouetteFramesV151: this.silhouetteFramesV151,
       contactShadowFramesV151: this.contactShadowFramesV151,
       textureSamplingUpgradesV151: this.textureSamplingUpgradesV151,
+      presentationFallbacksV151: this.presentationFallbacksV151,
+      presentationFallbackMessagesV151: [...this.presentationFallbackMessagesV151],
       finalCharacterArtApprovalsAddedV151: 0
     });
   }

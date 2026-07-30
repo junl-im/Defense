@@ -6,12 +6,12 @@
     "public/manifest.webmanifest",
     "public/sw.js"
   ],
-  "runtimeTextFilesScanned": 223,
+  "runtimeTextFilesScanned": 224,
   "assetFilesScanned": 1951,
   "reachableAssets": 1927,
   "reachableBytes": 114576229,
   "reviewCandidates": 24,
-  "reviewCandidateBytes": 3209081,
+  "reviewCandidateBytes": 3209260,
   "runtimeUnresolvedReferences": [],
   "catalogExternalReferences": [
     {
@@ -7634,7 +7634,7 @@
     },
     {
       "path": "public/assets/system-v135/runtime-module-shell-v135.json",
-      "bytes": 22429
+      "bytes": 22608
     }
   ],
   "reachable": [

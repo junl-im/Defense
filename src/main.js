@@ -90,6 +90,7 @@ import LongSessionAssuranceV145, { normalizeLongSessionBrowserSampleV145, summar
 import { replayDeviceViewportTraceV146 } from './runtime/device-trace-assurance-v146.js';
 import { buildFailureDigestV146 } from './runtime/failure-digest-v146.js';
 import { simulateServiceWorkerUpgradeV146 } from './runtime/service-worker-upgrade-assurance-v146.js';
+import { getLoadPhaseBossTypeV146 } from './runtime/long-session-load-profile-v151.js';
 import { installKoreanLanguageGuard } from './runtime/korean-language-guard.js';
 import VisualIntegrationDirector from './runtime/visual-integration-director.js';
 import AssetPresenceEnforcer from './runtime/asset-presence-enforcer.js';
@@ -4845,7 +4846,10 @@ class DokkaebiLuckDefense {
     const observed = [10, 25, 50, 75, 100].includes(wave);
     let loadPhase = null;
     if (observed) {
-      const bossType = getBossTypeForWave(wave);
+      // This is a synthetic load probe, not the campaign boss schedule. Use a
+      // deterministic canonical boss sequence across all five observation
+      // windows so the assurance actually exercises boss rendering repeatedly.
+      const bossType = getLoadPhaseBossTypeV146(wave) || getBossTypeForWave(wave);
       if (bossType) this.spawnEnemy({ forceType: bossType, emergency: true });
       while (this.enemies.length < 3 && this.spawnRemaining > 0) this.spawnEnemy({ forceType: 'imp', emergency: true });
       this.spawnParticles(this.player.group.position.clone().add(new THREE.Vector3(0, .8, 0)), 0x8cecff, 24, 4.2);
@@ -7917,7 +7921,7 @@ try {
       finishLongSessionV146: () => game.finishLongSessionV146(),
       foundationReport: () => game.coreFoundation?.report || {},
       dispose: () => game.dispose(),
-      reliabilityReport: () => ({ foundation: game.coreFoundation?.report || {}, wave: game.waveReliability?.report || {}, browser: game.browserReliability?.report || {}, firstPresentation: game.firstPresentationReport || game.firstPresentation?.report || {}, automation: game.automationV22?.report || {}, targeting: game.guardianTargetingV22?.report || {}, mobileHud: game.mobileHudV23?.report || {}, mobileInputRecoveryV143: game.mobileInputRecoveryV143?.report || {}, crossPlatformShell: game.crossPlatformShellV112?.report || {}, combatVisual: game.combatVisualV112?.diagnostics || {}, artApprovalV115: game.artApprovalReportV115 || {}, artApprovalV117: game.artApprovalReportV117 || {}, assetLoadingV115: { plan: game.assetLoadingPlanV115, ready: game.deferredAssetsReady, report: game.deferredAssetReport }, heroHudPolishV120: game.heroHudPolishV120 || {}, liveCombatV121: game.liveCombatV121?.report || {}, battlefieldClarityV122: game.battlefieldClarityV122?.report || {}, releaseAssuranceV124: game.releaseAssuranceV124?.report || {}, actionAssetAssuranceV125: game.actionAssetAssuranceV125?.report || {}, bossEncounterAssuranceV126: game.bossEncounterAssuranceV126?.report || {}, bossTacticalAssuranceV127: game.bossTacticalAssuranceV127?.report || {}, battlefieldVisibilityV128: game.battlefieldVisibilityV128?.report || {}, assetRefinementV129: game.assetRefinementV129?.report || {}, assetLineageV131: game.assetLineageV131?.report || {}, silhouetteAssuranceV132: game.silhouetteAssuranceV132?.report || {}, bossIdentityAssuranceV133: game.bossIdentityAssuranceV133?.report || {} })
+      reliabilityReport: () => ({ foundation: game.coreFoundation?.report || {}, wave: game.waveReliability?.report || {}, browser: game.browserReliability?.report || {}, firstPresentation: game.firstPresentationReport || game.firstPresentation?.report || {}, automation: game.automationV22?.report || {}, targeting: game.guardianTargetingV22?.report || {}, mobileHud: game.mobileHudV23?.report || {}, mobileInputRecoveryV143: game.mobileInputRecoveryV143?.report || {}, crossPlatformShell: game.crossPlatformShellV112?.report || {}, combatVisual: game.combatVisualV112?.diagnostics || {}, artApprovalV115: game.artApprovalReportV115 || {}, artApprovalV117: game.artApprovalReportV117 || {}, assetLoadingV115: { plan: game.assetLoadingPlanV115, ready: game.deferredAssetsReady, report: game.deferredAssetReport }, heroHudPolishV120: game.heroHudPolishV120 || {}, liveCombatV121: game.liveCombatV121?.report || {}, battlefieldClarityV122: game.battlefieldClarityV122?.report || {}, releaseAssuranceV124: game.releaseAssuranceV124?.report || {}, actionAssetAssuranceV125: game.actionAssetAssuranceV125?.report || {}, bossEncounterAssuranceV126: game.bossEncounterAssuranceV126?.report || {}, bossTacticalAssuranceV127: game.bossTacticalAssuranceV127?.report || {}, battlefieldVisibilityV128: game.battlefieldVisibilityV128?.report || {}, assetRefinementV129: game.assetRefinementV129?.report || {}, assetLineageV131: game.assetLineageV131?.report || {}, silhouetteAssuranceV132: game.silhouetteAssuranceV132?.report || {}, bossIdentityAssuranceV133: game.bossIdentityAssuranceV133?.report || {}, runtimeHealthV148: game.runtimeHealthV148?.diagnostics || {}, runtimeErrors: [...(game.runtimeErrors || [])] })
       });
     } else {
       delete window.__DOKKAEBI_TEST_API__;

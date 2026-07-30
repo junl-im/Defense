@@ -5,8 +5,8 @@
   "buildId": "b24.51",
   "cacheRevision": "1.0.51-b24.51",
   "entry": "src/bootstrap.js",
-  "moduleCount": 131,
-  "totalBytes": 1577848,
+  "moduleCount": 132,
+  "totalBytes": 1580442,
   "files": [
     {
       "path": "src/art-production-gate.js",
@@ -315,8 +315,8 @@
     },
     {
       "path": "src/main.js",
-      "bytes": 416479,
-      "sha256": "951ba9e10b4b144335546d9961c478e2de41a5a81bbfb0de57f07985b80e208e"
+      "bytes": 416945,
+      "sha256": "a600313599b05de699d6bdd97816c1f2a4cba817349897deb319446684c6f890"
     },
     {
       "path": "src/premium-assets.js",
@@ -445,8 +445,8 @@
     },
     {
       "path": "src/runtime/character-presentation-director-v151.js",
-      "bytes": 14479,
-      "sha256": "3acca1b4c5ed08252dd1fbd220aff80e61e2df20e357cb880d4c643429d5082c"
+      "bytes": 15961,
+      "sha256": "b281239f8805559ffa12bf7eaad20125cdb1744b151f04f56c66ef46c51d14b1"
     },
     {
       "path": "src/runtime/character-presentation-policy-v151.js",
@@ -522,6 +522,11 @@
       "path": "src/runtime/long-session-assurance-v145.js",
       "bytes": 11002,
       "sha256": "c3068a0d6f54cb8b6c0fae7e43322f11231ae2f90f353b00e25e5b2d3a912357"
+    },
+    {
+      "path": "src/runtime/long-session-load-profile-v151.js",
+      "bytes": 646,
+      "sha256": "906b4d3444997269a032dfd79323fca33a987293ee27c52d83c6e6a883a8f2d4"
     },
     {
       "path": "src/runtime/mobile-hud-director-v23.js",

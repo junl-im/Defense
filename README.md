@@ -87,3 +87,7 @@ The 100-wave browser harness requires the complete Vite output (`dist/assets/gam
 
 The repaired delivery is archive-root flat, removes stale root patch metadata, deletes any legacy root `overlay/` without merging it, and adds `verify:repo-root:v151` to stop nested or stale repository layouts before verification.
 
+
+### v1.0.51 R4 CI repair
+
+The 100-wave browser assurance now isolates optional character-presentation failures per record and exercises a deterministic QA-only boss load sequence at its five observation windows. Normal campaign boss waves are unchanged.

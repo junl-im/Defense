@@ -24,3 +24,11 @@ This update adds no new final character-art approvals. Existing approved and pro
 
 The R3 delivery is archive-root flat, removes stale root patch metadata, deletes legacy root `overlay/` without merging it, and verifies that stale `package.json@1.0.46` content cannot downgrade the v1.0.51 identity.
 
+
+## CI long-session repair R4
+
+- Fixed the v1.0.46 100-wave browser assurance regression observed under SwiftShader.
+- Character presentation v1.0.51 is now fail-open per visual record: an optional silhouette, rim, contact-shadow, or afterimage failure disables only that enhancement while the legacy combat-art update remains active.
+- Added a deterministic five-window boss load profile for waves 10, 25, 50, 75, and 100. This is QA-only and does not alter the campaign boss schedule at waves 4, 7, and 10.
+- Added retained runtime error entries and browser exception details to v1.0.46 failure output.
+- Added `verify:long-session-hotfix:v151` to prevent regression of the load profile and presentation fallback contract.

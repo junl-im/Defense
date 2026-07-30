@@ -18,3 +18,7 @@ node -e "const p=require('./package.json'); console.log(p.version, p.dokkaebi?.b
 8. Run `REQUIRE_BROWSER_V144=1 REQUIRE_BROWSER_V145=1 REQUIRE_BROWSER_V146=1 REQUIRE_BROWSER_V147=1 REQUIRE_BROWSER_V149=1 REQUIRE_BROWSER_V150=1 REQUIRE_BROWSER_V151=1 npm run verify:dist:all`.
 
 The patch manifest and `DELETE_PATHS.txt` list the six obsolete root metadata paths plus the legacy `overlay/` directory. Repair revision 3 also removes those files during dependency-free bootstrap and CI preflight. Any legacy root `overlay/` directory is deleted without merging so it cannot restore a stale package identity.
+
+## R4 note
+
+R4 supersedes R3. Apply the R4 archive directly at repository root and commit all overwritten files. No campaign data migration is required. The QA-only long-session load profile does not change normal boss-wave progression.

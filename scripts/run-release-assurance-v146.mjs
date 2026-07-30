@@ -254,7 +254,9 @@ try {
     const failedChecks=Object.entries(assurance.checks||{}).filter(([,passed])=>!passed).map(([name])=>name);
     const failedLoadChecks=Object.entries(assurance.loadChecks||{}).filter(([,passed])=>!passed).map(([name])=>name);
     const worstFrames=[...(assurance.samples||[])].sort((a,b)=>Number(b.frameP95Ms||0)-Number(a.frameP95Ms||0)).slice(0,5).map((sample)=>({wave:sample.wave,frameP95Ms:sample.frameP95Ms,frameMaxMs:sample.frameMaxMs,frameSamples:sample.frameSamples,frameLongTaskRate:sample.frameLongTaskRate,longTasks:sample.longTasks}));
-    throw new Error(`v146 long-session checks failed: ${JSON.stringify({failedChecks,failedLoadChecks,metrics:assurance.metrics,thresholds:assurance.thresholds,environment:assurance.environment,measurementMode:assurance.metrics?.measurementMode,longTaskMeasurementMode:assurance.metrics?.longTaskMeasurementMode,worstFrames,digest:assurance.failureDigest||{}})}`);
+    const runtimeErrorEntries=(sessionReport?.reliability?.runtimeErrors||[]).slice(-12);
+    const runtimeHealth=sessionReport?.reliability?.runtimeHealthV148||{};
+    throw new Error(`v146 long-session checks failed: ${JSON.stringify({failedChecks,failedLoadChecks,metrics:assurance.metrics,thresholds:assurance.thresholds,environment:assurance.environment,measurementMode:assurance.metrics?.measurementMode,longTaskMeasurementMode:assurance.metrics?.longTaskMeasurementMode,worstFrames,runtimeHealth,runtimeErrorEntries,exceptions:diagnostics.exceptions.slice(-12),digest:assurance.failureDigest||{}})}`);
   }
   if (!sessionReport?.report?.failureDigest) throw new Error('v146 failure digest missing');
   if ((sessionReport?.report?.loadPhases||[]).length !== 5) throw new Error('v146 deterministic load phases missing');

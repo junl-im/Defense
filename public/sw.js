@@ -117,6 +117,7 @@ const GENERATED_MODULE_SHELL_V135 = Object.freeze([
   './src/runtime/korean-language-guard.js',
   './src/runtime/live-combat-director-v121.js',
   './src/runtime/long-session-assurance-v145.js',
+  './src/runtime/long-session-load-profile-v151.js',
   './src/runtime/mobile-hud-director-v23.js',
   './src/runtime/mobile-input-recovery-v143.js',
   './src/runtime/native-input-policy-v231.js',
