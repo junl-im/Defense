@@ -1,12 +1,12 @@
-> Current improvement patch: **v1.0.45 / b24.45** - LONG-SESSION STABILITY ASSURANCE
+> Current improvement patch: **v1.0.50 / b24.50** - ATOMIC CHECKPOINT AND SAFE RECOVERY RELEASE
 
-# PROJECT HANDOFF - RELEASE 1.0.45
+# PROJECT HANDOFF - RELEASE 1.0.50
 
-- Project: `DokkaebiLuckDefense3D_FULL_v1.0.45_LONG_SESSION_ASSURANCE_VERIFIED`
-- Public game version: `1.0.45`
+- Project: `DokkaebiLuckDefense3D_FULL_v1.0.50_ATOMIC_CHECKPOINTS_VERIFIED`
+- Public game version: `1.0.50`
 - Lineage version: `23.12.0`
-- Build ID: `b24.45`
-- Base: `v1.0.44 / b24.44`
+- Build ID: `b24.50`
+- Base: uploaded `Defense.zip` containing v1.0.49 root plus a layered v145 CI hotfix overlay
 
 ## 절대 규칙
 
@@ -31,17 +31,15 @@
 ## 검증 명령
 
 ```bash
-npm run verify:residency:v145
-npm run verify:trend:v145
 npm run verify:model:v145
 npm run verify:release:v145
-npm run verify
-npm run build
-REQUIRE_BROWSER_V144=1 REQUIRE_BROWSER_V145=1 npm run verify:dist:all
-npm run stage:package:v145
-npm run verify:package:v145
-npm run create:patch:v145
-npm run verify:patch:v145
+npm run verify:release:v146
+npm run verify:release:v148
+npm run verify:foundation:v149:v150
+npm run verify:release:v150
+npm run verify:ci
+VITE_BASE_PATH=/Defense/ npm run build
+REQUIRE_BROWSER_V144=1 REQUIRE_BROWSER_V145=1 REQUIRE_BROWSER_V146=1 REQUIRE_BROWSER_V147=1 REQUIRE_BROWSER_V149=1 REQUIRE_BROWSER_V150=1 npm run verify:dist:all
 npm run hygiene:check
 ```
 
@@ -80,6 +78,30 @@ npm run hygiene:check
 - 100웨이브 자원 상한과 에셋 승인·격리 경계를 자동 검증한다.
 
 ## 인수인계 내역
+
+### 2026-07-30 — v1.0.50 / b24.50 atomic checkpoints and safe recovery
+
+- 작업 목표: 남은 점수·영구 보상 저장 책임을 `src/main.js`에서 분리하고, 여러 저장 키를 하나의 검증 가능한 스냅샷으로 커밋하며, 치명적 런타임 오류에서 사용자에게 내부 정보를 노출하지 않고 마지막 안전 지점을 복구한다.
+- 입력 패키지 점검: 업로드 ZIP은 v1.0.49 전체 루트와 별도 `overlay/` 핫픽스가 함께 들어 있었다. 오버레이의 `package.json`은 v1.0.46으로 회귀하고 v147~v149 스크립트 47개를 제거했으며, 오버레이 워크플로도 v147~v149 브라우저·증거 게이트를 삭제했다. 소스 핫픽스는 병합하되 두 파일은 정식 v1.0.49 루트를 보존한 뒤 v1.0.50으로 승격했다.
+- 주요 변경 파일: `src/runtime/atomic-save-snapshot-v150.js`, `src/runtime/persistent-reward-orchestrator-v150.js`, `src/runtime/production-error-boundary-v150.js`, `src/main.js`, `index.html`, `src/style.css`, 저장 스키마, v150 검증·패키징·패치·성능 기준선 스크립트, CI 워크플로, 릴리스 문서와 버전 파일.
+- 수정 내용: 스냅샷은 현재 전체 저장 집합과 최대 두 개 롤백 슬롯, 체크섬, 세대 번호를 유지한다. 원정 종료 시 혼불·숙련·장비·도감을 한 트랜잭션으로 커밋하고 동일 런 토큰의 중복 지급을 차단한다. 점수는 로컬 원자 저장 성공 후에만 온라인 제출을 시도한다. 치명적 오류 화면은 고정된 한국어 복구 문구만 표시하며 원문 오류는 제한된 개발자 진단에만 남긴다.
+- 성능 기준선: 실제 수치를 로컬에서 승인하지 않는다. GitHub Actions의 통과한 v145 장기 세션 보고서와 v144 Vite dist 예산 보고서에서 CPU p95/기울기, long-task 비율, JS heap, draw call, texture residency 후보를 생성하고 승인자·티켓·승인 시각이 있어야 승격한다.
+- 검증 명령: `npm run verify:atomic:v150`, `npm run verify:rewards:v150`, `npm run verify:error-boundary:v150`, `npm run verify:performance-baseline:v150`, `npm run verify:structure:v150`, `npm run verify:release:v150`, `npm run verify:ci`, `VITE_BASE_PATH=/Defense/ npm run build`, `npm run verify:dist:all`, `npm run stage:package:v150`, `npm run verify:package:v150`, `npm run create:patch:v150`, `npm run verify:patch:v150`.
+- 현재 검증 결과: `npm run verify` 전체 누적 체인 2,423줄이 종료 코드 0으로 통과했고, v1.0.50 저장·보상·오류 경계·성능 승격 모델과 v1.0.1~v1.0.49 보존 계약, 루트 위생 검사를 모두 통과했다. `npm run stage:package:v150`과 `npm run verify:package:v150`도 통과했다. 로컬 Vite 빌드는 전달본의 `node_modules`에 Vite 실행 파일이 없어 `vite: Permission denied`로 실행되지 않았으며, 통과로 간주하지 않고 GitHub Actions의 `npm ci → build → verify:dist:all → capture:baseline:v150` 필수 게이트로 남겼다.
+- 잔여 위험: 승인된 실제 하드웨어 기준값은 GitHub Actions 후보 생성 후 사람 승인 절차가 필요하다. 실제 iOS Safari 독립 PWA와 Android 제조사별 장기 세션은 계속 실기기 증거가 필요하다.
+- 다음 예정: `docs/NEXT_UPDATE_v1.0.51.md`의 실기기 기준선 승인·부분 저장 장애 주입·복구 UI 접근성 브라우저 행렬.
+
+
+### 2026-07-29 — v1.0.49 / b24.49 v145 CI measurement calibration hotfix
+
+- 작업 목표: GitHub Actions의 SwiftShader 소프트웨어 렌더러에서 100웨이브 장기 세션이 실제 누수·추세 회귀 없이도 `frameP95=216.6ms`, `longTaskGrowth=556`으로 실패한 오탐을 제거하고, 실제 하드웨어 성능 회귀는 기존 절대 기준으로 계속 차단한다.
+- 주요 변경 파일: `src/runtime/long-session-assurance-v145.js`, `src/runtime/failure-digest-v146.js`, `src/main.js`, `scripts/run-long-session-v145.mjs`, `scripts/run-release-assurance-v146.mjs`, v145/v146 모델·릴리스 검증기, 런타임 셸·시스템 감사·빌드 입력 매니페스트, README와 v145 보증 문서.
+- 수정 내용: WebGL renderer/vendor를 수집해 SwiftShader·llvmpipe 등 소프트웨어 렌더러를 명시적으로 구분한다. 하드웨어·미확인 환경은 `maxFrameP95Ms=34`와 누적 long-task 상한을 그대로 적용한다. 소프트웨어 렌더러는 wave 0 기준 대비 frame p95 비율·증가량·정규화 기울기와 프레임당 long-task 비율 추세를 판정한다. 프레임 창 요청 수·완료·timeout을 기록하고 불완전 측정은 `measurementCoverage`로 실패시킨다. Chromium 백그라운드 throttling 방지 플래그와 장기 세션 기본 DPR 1을 적용하며 환경 변수로 1~3 배율을 재지정할 수 있다.
+- 검증 명령: `node scripts/verify-long-session-model-v145.mjs`, `node scripts/verify-long-session-harness-v145.mjs`, `node scripts/verify-failure-digest-v146.mjs`, `node scripts/verify-release-v145.mjs`, `node scripts/verify-release-v146.mjs`, `node scripts/generate-runtime-shell-v135.mjs --check`, `npm run verify:release:v148`, `npm run verify:release:v149`, `npm run verify:ci`, GitHub Actions의 실제 `npm ci → build → verify:dist:all`.
+- 검증 결과: 제공 로그와 같은 200ms급 소프트웨어 렌더링·누적 long-task 픽스처는 안정 추세일 때 통과했고, 동일 수치를 하드웨어 프로필로 실행하면 절대 frame 기준으로 실패했다. 소프트웨어 환경에서도 p95 비율·기울기·long-task rate가 악화되거나 프레임 창이 timeout되면 실패한다. failure digest는 최종 실패 체크만 위치 추적하며 통과 보고서에 거짓 `firstRegression`을 남기지 않는다.
+- 예외사항: 현재 작업 환경의 내부 npm 레지스트리에 `vite@8.1.5`가 없어 실제 Vite 번들을 로컬 생성하지 못했다. 이 제한은 통과로 간주하지 않으며, 실제 브라우저 dist 검증은 GitHub Actions 필수 게이트로 남긴다.
+- 잔여 위험: 소프트웨어 렌더러 보정은 장기 추세 검증용이며 사용자 기기의 절대 FPS 승인을 대체하지 않는다. 실제 Android/iOS와 하드웨어 가속 Chrome의 승인 기준선 수집이 필요하다.
+- 다음 예정: `docs/NEXT_UPDATE_v1.0.50.md`의 승인 Vite CPU/long-task/heap 기준선 승격과 실제 기기 장기 세션 계측.
 
 ### 2026-07-28 — v1.0.45 / b24.45
 

@@ -41,8 +41,8 @@ import { IP_ASSET_LIBRARY_V15, atlasSpriteMarkup } from './ip-asset-library-v15.
 import { applyHeroClassVisuals, applyRelicVisuals } from './hero-visual-loadout.js';
 import { applyEnemyCandidateVisuals } from './enemy-candidate-visuals.js';
 import { getBossHudState } from './boss-hud-contract.js';
-import { EQUIPMENT_ITEMS, EQUIPMENT_SLOTS, EQUIPMENT_RARITIES, EQUIPMENT_FORGE_MAX_LEVEL, loadEquipmentState, saveEquipmentState, equipItem, getEquippedItems, getEquipmentForgeLevel, getEquipmentForgeCost, forgeEquipmentItem, applyEquipmentBonuses, awardEquipmentDrop } from './equipment-system.js';
-import { loadHeroMastery, saveHeroMastery, getHeroMasteryEntry, getHeroMasteryBonus, xpForNextLevel, awardHeroMastery, HERO_MASTERY_MAX_LEVEL } from './hero-mastery.js';
+import { EQUIPMENT_ITEMS, EQUIPMENT_SLOTS, EQUIPMENT_RARITIES, EQUIPMENT_FORGE_MAX_LEVEL, loadEquipmentState, saveEquipmentState, equipItem, getEquippedItems, getEquipmentForgeLevel, getEquipmentForgeCost, forgeEquipmentItem, applyEquipmentBonuses } from './equipment-system.js';
+import { loadHeroMastery, getHeroMasteryEntry, getHeroMasteryBonus, xpForNextLevel, HERO_MASTERY_MAX_LEVEL } from './hero-mastery.js';
 import { getStageProgress } from './stage-progression.js';
 import CodexViewer from './codex-viewer.js';
 import { createPremiumGuardian, createPremiumEnemy, createPremiumSacredTree, applyPremiumBossPhase, prepareImportedGuardian, prepareImportedEnemy } from './premium-assets.js';
@@ -62,6 +62,9 @@ import { RecoveryStateV149 } from './runtime/recovery-state-v149.js';
 import { RunStateCoordinatorV149 } from './runtime/run-state-coordinator-v149.js';
 import { resolveFeatureExposureV149 } from './runtime/feature-exposure-policy-v149.js';
 import { buildRunResultPresentationV149 } from './runtime/result-presenter-v149.js';
+import { AtomicSaveSnapshotV150 } from './runtime/atomic-save-snapshot-v150.js';
+import { META_PROGRESS_STORAGE_KEY_V150, PersistentRewardOrchestratorV150 } from './runtime/persistent-reward-orchestrator-v150.js';
+import { ProductionErrorBoundaryV150 } from './runtime/production-error-boundary-v150.js';
 import AdaptiveHudLayout from './ui-layout-manager.js';
 import CombatPresentation, { faceActorTowards, resolveAttackOrigin } from './combat-presentation.js';
 import EncounterDirector from './combat/encounter-director.js';
@@ -161,6 +164,7 @@ const ui = {
 };
 
 // const GAME_VERSION = '1.0.49'; generated compatibility marker
+// const GAME_VERSION = '1.0.50'; generated compatibility marker
 const GAME_VERSION = PUBLIC_GAME_VERSION;
 // const GAME_VERSION = '23.1.0'; historical lineage marker for pre-normalization contracts.
 if (GAME_VERSION !== PUBLIC_GAME_VERSION) throw new Error('Public version policy mismatch');
@@ -199,7 +203,7 @@ const FIRST_MISSIONS = [
   { id: 'bosses', title: '저승 호랑이 격파', goal: 1, reward: 80, copy: '완료 보상으로 삼지선다 소환권도 획득합니다.', ticket: 1 }
 ];
 
-const META_STORAGE_KEY = 'dokkaebi-guardian-growth-v1';
+const META_STORAGE_KEY = META_PROGRESS_STORAGE_KEY_V150;
 const CONTROL_STORAGE_KEY = 'dokkaebi-control-settings-v1';
 const DEFAULT_CONTROL_SETTINGS = Object.freeze({
   rotateSensitivity: 1,
@@ -240,9 +244,30 @@ class DokkaebiLuckDefense {
     });
     this.safeStorageV148 = this.persistenceV149;
     this.persistenceRecoveryV149 = this.persistenceV149.recover();
+    this.atomicSaveV150 = new AtomicSaveSnapshotV150({
+      persistence: this.persistenceV149,
+      onError: (entry) => console.warn('[AtomicSaveSnapshotV150]', entry)
+    });
+    this.storageBridgeV150 = Object.freeze({
+      getItem: (key) => this.persistenceV149.get(key, null),
+      setItem: (key, value) => this.persistenceV149.set(key, value),
+      removeItem: (key) => this.persistenceV149.remove(key)
+    });
+    this.atomicSaveRecoveryV150 = this.atomicSaveV150.reconcile('boot-reconcile');
     this.runtimeHealthV148 = new RuntimeHealthAssuranceV148();
     this.recoveryStateV149 = new RecoveryStateV149();
     this.runStateV149 = new RunStateCoordinatorV149({ initial: 'loading' });
+    this.errorBoundaryV150 = new ProductionErrorBoundaryV150({
+      snapshots: this.atomicSaveV150,
+      onPresent: (presentation) => window.__DOKKAEBI_SHOW_RUNTIME_ERROR_BOUNDARY_V150__?.(presentation.user)
+    });
+    this.persistentRewardsV150 = new PersistentRewardOrchestratorV150({
+      persistence: this.persistenceV149,
+      snapshots: this.atomicSaveV150,
+      isOnlineEnabled: isFirebaseEnabled,
+      submitOnlineScore,
+      loadOnlineScores
+    });
     this.featureExposureV149 = resolveFeatureExposureV149({
       mode: import.meta.env?.MODE || 'production',
       hostname: window.location.hostname,
@@ -349,14 +374,11 @@ class DokkaebiLuckDefense {
     this.activeContract = null;
     this.bossSpecialSerial = 0;
     this.metaProgress = this.loadMetaProgress();
-    this.equipmentState = loadEquipmentState();
-    this.heroMastery = loadHeroMastery();
-    this.progressRewarded = false;
-    this.codexProgress = loadCodexProgress();
+    this.equipmentState = loadEquipmentState(this.storageBridgeV150);
+    this.heroMastery = loadHeroMastery(this.storageBridgeV150);
+    this.codexProgress = loadCodexProgress(this.storageBridgeV150);
     this.controlSettings = this.loadControlSettings();
     this.mods = this.createDefaultMods();
-    this.runRewarded = false;
-    this.lastShardReward = 0;
     this.lastDangerKey = '';
     this.dangerHapticCooldown = 0;
     this.displayDanger = null;
@@ -438,7 +460,7 @@ class DokkaebiLuckDefense {
     this.autoPausedByContextLoss = false;
     this.lastVisibilityResumeSeconds = 0;
     this.runtimeErrors = this.runtimeHealthV148.errors;
-    this.saveMigration = migrateSaveSchema();
+    this.saveMigration = migrateSaveSchema(this.storageBridgeV150);
     this.activeEncounterPlan = null;
     this.lastEncounterResult = null;
     this.productionConsole = null;
@@ -940,6 +962,9 @@ class DokkaebiLuckDefense {
         runtimeHealthV148: this.runtimeHealthV148.diagnostics,
         safeStorageV148: this.storageBackendV148.diagnostics,
         persistenceV149: this.persistenceV149.diagnostics,
+        atomicSaveV150: this.atomicSaveV150.diagnostics,
+        persistentRewardsV150: this.persistentRewardsV150.diagnostics,
+        errorBoundaryV150: this.errorBoundaryV150.diagnostics,
         recoveryStateV149: this.recoveryStateV149.diagnostics,
         runStateV149: this.runStateV149.diagnostics,
         featureExposureV149: this.featureExposureV149,
@@ -2042,23 +2067,6 @@ class DokkaebiLuckDefense {
     this.showToast(`${trait.name} LEVEL ${level + 1} 달성`);
   }
 
-  calculateShardReward(won) {
-    const progress = Math.max(1, this.currentWave || 1);
-    const modeBonus = this.activeRunMode?.id === 'abyss' ? 1.35 : this.activeRunMode?.id === 'eclipse' ? 1.18 : 1;
-    const expeditionBonus = this.runStats.trialsCompleted * 1.5 + this.runStats.relicsChosen * 1.25;
-    const reward = (8 + progress * 2.4 + Math.floor(this.kills / 18) + this.maxRank * 2 + (won ? 20 : 0) + expeditionBonus) * modeBonus;
-    return clamp(Math.round(reward), 8, 95);
-  }
-
-  awardRunShards(won) {
-    if (this.runRewarded) return this.lastShardReward;
-    this.runRewarded = true;
-    this.lastShardReward = this.calculateShardReward(won);
-    this.metaProgress.shards += this.lastShardReward;
-    this.saveMetaProgress();
-    this.renderMetaProgress();
-    return this.lastShardReward;
-  }
 
   showMission(title, copy, kicker = 'MOON MARKET ALERT', duration = 1600) {
     this.lifecycle.ui.cancel('mission-hide');
@@ -2173,7 +2181,7 @@ class DokkaebiLuckDefense {
   }
 
   saveCodexState() {
-    saveCodexProgress(this.codexProgress);
+    saveCodexProgress(this.codexProgress, this.storageBridgeV150);
   }
 
   recordCodexDiscovery(section, id, { announce = true } = {}) {
@@ -3465,7 +3473,7 @@ class DokkaebiLuckDefense {
 
   selectEquipmentItem(itemId) {
     const previous = this.equipmentState;
-    this.equipmentState = saveEquipmentState(equipItem(previous, itemId));
+    this.equipmentState = saveEquipmentState(equipItem(previous, itemId), this.storageBridgeV150);
     const item = EQUIPMENT_ITEMS.find((entry) => entry.id === itemId);
     this.renderEquipmentModal();
     this.renderRunPreview();
@@ -3475,7 +3483,7 @@ class DokkaebiLuckDefense {
 
   forgeEquipment(itemId) {
     const result = forgeEquipmentItem(this.equipmentState, itemId);
-    this.equipmentState = saveEquipmentState(result.state);
+    this.equipmentState = saveEquipmentState(result.state, this.storageBridgeV150);
     this.renderEquipmentModal();
     this.renderRunPreview();
     if (result.upgraded) {
@@ -3835,8 +3843,6 @@ class DokkaebiLuckDefense {
       try { this.createWorld(true); } catch { /* world recovery is best effort */ }
       ui.title?.classList.add('visible');
       ui.title?.setAttribute('aria-hidden', 'false');
-      const reason = error instanceof Error ? error.message : String(error);
-      window.__DOKKAEBI_SHOW_BOOT_ERROR__?.(`전투 진입 중 오류가 발생했습니다: ${reason}`);
       return false;
     } finally {
       this.startRunPending = false;
@@ -3899,9 +3905,6 @@ class DokkaebiLuckDefense {
     this.activeContract = null;
     this.cinematic = null;
     this.cameraCollisionDistance = this.cameraDistance;
-    this.runRewarded = false;
-    this.progressRewarded = false;
-    this.lastShardReward = 0;
     this.commandCooldown = 0;
     this.commandActiveKey = '';
     this.activeOmen = null;
@@ -4572,9 +4575,34 @@ class DokkaebiLuckDefense {
     });
   }
 
+  getLongSessionEnvironmentV145() {
+    const context = this.renderer?.getContext?.();
+    let renderer = '';
+    let vendor = '';
+    try {
+      const debug = context?.getExtension?.('WEBGL_debug_renderer_info');
+      renderer = String(debug ? context.getParameter(debug.UNMASKED_RENDERER_WEBGL) : context?.getParameter?.(context.RENDERER) || '');
+      vendor = String(debug ? context.getParameter(debug.UNMASKED_VENDOR_WEBGL) : context?.getParameter?.(context.VENDOR) || '');
+    } catch {
+      renderer = '';
+      vendor = '';
+    }
+    const userAgent = typeof navigator !== 'undefined' ? String(navigator.userAgent || '') : '';
+    const softwareRenderer = /swiftshader|llvmpipe|software rasterizer|softpipe/i.test(`${renderer} ${vendor}`);
+    return Object.freeze({
+      softwareRenderer,
+      renderer,
+      vendor,
+      userAgent,
+      devicePixelRatio: typeof window !== 'undefined' ? Number(window.devicePixelRatio || 0) : 0,
+      headless: /HeadlessChrome/i.test(userAgent),
+      profile: softwareRenderer ? 'software-renderer-ci' : 'hardware-or-unknown'
+    });
+  }
+
   getLongSessionSnapshotV145(frameWindow = {}) {
     const memory = typeof performance !== 'undefined' ? performance.memory : null;
-    const harness = this.longSessionHarnessV145 || { measuredLongTasks: 0, measuredLongTaskMs: 0 };
+    const harness = this.longSessionHarnessV145 || { measuredLongTasks: 0, measuredLongTaskMs: 0, measuredFrames: 0 };
     const browserReliability = normalizeLongSessionBrowserSampleV145(this.browserReliability?.diagnostics || {}, harness);
     return {
       wave: this.currentWave || 0,
@@ -4606,7 +4634,7 @@ class DokkaebiLuckDefense {
 
   async stabilizeLongSessionMeasurementV145({ collectGarbage = false, settleFrames = 4 } = {}) {
     this.longSessionHarnessV145 ||= {
-      measuredLongTasks: 0, measuredLongTaskMs: 0, controlledLongTasks: 0, controlledLongTaskMs: 0, gcCycles: 0
+      measuredLongTasks: 0, measuredLongTaskMs: 0, measuredFrames: 0, controlledLongTasks: 0, controlledLongTaskMs: 0, gcCycles: 0
     };
     const before = this.browserReliability?.diagnostics || {};
     const collected = Boolean(collectGarbage && typeof globalThis.gc === 'function');
@@ -4636,11 +4664,15 @@ class DokkaebiLuckDefense {
     const warmup = Math.max(0, Math.min(12, Math.round(Number(warmupFrames) || 0)));
     const timestamps = [];
     const reliabilityBefore = this.browserReliability?.diagnostics || {};
+    const startedAt = performance.now();
+    let timedOut = false;
+    const timeoutMs = Math.max(8000, Math.min(15000, (target + warmup + 2) * 300));
     await new Promise((resolve) => {
       let settled = false;
-      const finish = () => {
+      const finish = ({ timeout = false } = {}) => {
         if (settled) return;
         settled = true;
+        timedOut = timeout;
         this.lifecycle.system.cancel('v145-frame-window-timeout');
         this.lifecycle.frames.cancel('v145-frame-window');
         resolve();
@@ -4653,7 +4685,7 @@ class DokkaebiLuckDefense {
         }
         this.lifecycle.frames.request(step, { key: 'v145-frame-window' });
       };
-      this.lifecycle.system.schedule(finish, 7000, { key: 'v145-frame-window-timeout' });
+      this.lifecycle.system.schedule(() => finish({ timeout: true }), timeoutMs, { key: 'v145-frame-window-timeout' });
       this.lifecycle.frames.request(step, { key: 'v145-frame-window' });
     });
     await new Promise((resolve) => this.lifecycle.system.schedule(resolve, 0, { key: 'v145-frame-window-observer-turn' }));
@@ -4662,6 +4694,10 @@ class DokkaebiLuckDefense {
     const summary = summarizeFrameDurationsV145(allDurations, { warmupFrames: warmup });
     return Object.freeze({
       ...summary,
+      requestedSamples: target,
+      complete: !timedOut && summary.samples >= target,
+      timedOut,
+      elapsedMs: Math.round(Math.max(0, performance.now() - startedAt) * 1000) / 1000,
       longTasksDelta: Math.max(0, Number(reliabilityAfter.longTasks || 0) - Number(reliabilityBefore.longTasks || 0)),
       longTaskMsDelta: Math.round(Math.max(0, Number(reliabilityAfter.longTaskMs || 0) - Number(reliabilityBefore.longTaskMs || 0)) * 1000) / 1000
     });
@@ -4698,10 +4734,14 @@ class DokkaebiLuckDefense {
     this.runSeed = String(seed);
     this.runRandom = createSeededRandom(this.runSeed);
     this.waveReliability.resetRun({ seed: this.runSeed, mode: this.selectedRunModeId, hero: this.selectedHeroClassId, maxWaves: waves });
-    this.longSessionAssuranceV145.start({ seed: this.runSeed, targetWaves: waves });
+    this.longSessionAssuranceV145.start({
+      seed: this.runSeed,
+      targetWaves: waves,
+      environment: this.getLongSessionEnvironmentV145()
+    });
     this.longSessionLoadPhasesV146 = [];
     this.longSessionHarnessV145 = {
-      measuredLongTasks: 0, measuredLongTaskMs: 0, controlledLongTasks: 0, controlledLongTaskMs: 0, gcCycles: 0
+      measuredLongTasks: 0, measuredLongTaskMs: 0, measuredFrames: 0, controlledLongTasks: 0, controlledLongTaskMs: 0, gcCycles: 0
     };
     await this.stabilizeLongSessionMeasurementV145({ collectGarbage: true, settleFrames: 8 });
     const frameWindow = await this.measureFrameWindowV145(24, { warmupFrames: 3 });
@@ -4731,10 +4771,11 @@ class DokkaebiLuckDefense {
 
   recordLongSessionSampleV145(frameWindow = {}) {
     this.longSessionHarnessV145 ||= {
-      measuredLongTasks: 0, measuredLongTaskMs: 0, controlledLongTasks: 0, controlledLongTaskMs: 0, gcCycles: 0
+      measuredLongTasks: 0, measuredLongTaskMs: 0, measuredFrames: 0, controlledLongTasks: 0, controlledLongTaskMs: 0, gcCycles: 0
     };
     this.longSessionHarnessV145.measuredLongTasks += Math.max(0, Number(frameWindow.longTasksDelta || 0));
     this.longSessionHarnessV145.measuredLongTaskMs += Math.max(0, Number(frameWindow.longTaskMsDelta || 0));
+    this.longSessionHarnessV145.measuredFrames += Math.max(0, Number(frameWindow.samples || 0));
     const sample = this.longSessionAssuranceV145.record(this.getLongSessionSnapshotV145(frameWindow));
     this.browserReliability?.sample(`v145-wave-${sample.wave}`, this.getBrowserReliabilitySnapshot());
     return sample;
@@ -4884,6 +4925,9 @@ class DokkaebiLuckDefense {
     console.error(`[RuntimeGuard:${entry.source}]`, error);
     const recovery = this.recoveryStateV149.begin(entry.source, entry.message);
     if (this.state === 'playing') this.showWaveRecovery(recovery.user.title, recovery.user.detail);
+    if (['window-error', 'unhandled-rejection', 'title-start-run'].includes(entry.source)) {
+      this.errorBoundaryV150.capture(error, { source: entry.source, state: this.state, wave: this.currentWave || 0 });
+    }
     return entry;
   }
 
@@ -7303,6 +7347,9 @@ class DokkaebiLuckDefense {
         runtimeHealthV148: this.runtimeHealthV148.diagnostics,
         safeStorageV148: this.storageBackendV148.diagnostics,
         persistenceV149: this.persistenceV149.diagnostics,
+        atomicSaveV150: this.atomicSaveV150.diagnostics,
+        persistentRewardsV150: this.persistentRewardsV150.diagnostics,
+        errorBoundaryV150: this.errorBoundaryV150.diagnostics,
         recoveryStateV149: this.recoveryStateV149.diagnostics,
         runStateV149: this.runStateV149.diagnostics,
         featureExposureV149: this.featureExposureV149
@@ -7384,51 +7431,62 @@ class DokkaebiLuckDefense {
     ui.resultRank.textContent = presentationV149.rankText;
     ui.resultUnits.innerHTML = presentationV149.unitsHtml;
     ui.resultAnalysis.innerHTML = presentationV149.analysisHtml;
-    const shardReward = this.awardRunShards(won);
-    const persistentReward = this.awardPersistentProgress(won);
+    const persistentReward = this.persistentRewardsV150.awardRun({
+      runToken: this.runId,
+      won,
+      currentWave: this.currentWave,
+      activeRunMode: this.activeRunMode,
+      runStats: this.runStats,
+      kills: this.kills,
+      maxRank: this.maxRank,
+      metaProgress: this.metaProgress,
+      heroMastery: this.heroMastery,
+      equipmentState: this.equipmentState,
+      codexProgress: this.codexProgress,
+      selectedHeroClassId: this.selectedHeroClassId,
+      random: () => this.random()
+    });
+    if (persistentReward.ok) {
+      this.metaProgress = persistentReward.metaProgress;
+      this.heroMastery = persistentReward.heroMastery;
+      this.equipmentState = persistentReward.equipmentState;
+    } else {
+      this.errorBoundaryV150.capture(new Error('persistent run reward commit failed'), {
+        source: 'finish-run-reward',
+        state: this.state,
+        wave: this.currentWave
+      });
+    }
+    const shardReward = persistentReward.shardReward || 0;
     ui.resultShards.textContent = `+${shardReward}`;
     ui.resultShardsTotal.textContent = this.metaProgress.shards.toLocaleString();
     ui.resultEquipmentReward.innerHTML = persistentReward.drop ? `<span style="--rarity:${EQUIPMENT_RARITIES[persistentReward.drop.item.rarity].color}">${equipmentIconMarkup(persistentReward.drop.item, 'reward-sprite')}</span><div><small>${persistentReward.drop.duplicate ? '중복 장비 분해' : '새 장비 획득'}</small><b>${persistentReward.drop.item.name}</b><em>${persistentReward.drop.duplicate ? `장비 정수 +${persistentReward.drop.essence}` : persistentReward.drop.item.desc}</em></div>` : '<span>–</span><div><small>장비 보상</small><b>웨이브 3부터 획득</b><em>더 깊은 원정에서 장비를 발견하세요.</em></div>';
     ui.resultMasteryReward.innerHTML = `<span>Lv.${persistentReward.mastery.entry.level}</span><div><small>${this.heroClass.name} 숙련</small><b>숙련 경험치 +${persistentReward.mastery.gained}</b><em>${persistentReward.mastery.levelsGained ? `${persistentReward.mastery.levelsGained}레벨 상승!` : `원정 ${persistentReward.mastery.entry.runs}회 누적`}</em></div>`;
+    this.renderHeroClassSelector();
+    this.renderEquipmentModal();
+    this.renderMetaProgress();
     this.renderLeaderboard(this.getLocalScores());
-    this.persistenceV149.checkpoint('finish-run');
     this.scheduleUi(() => { if (this.state === 'result') this.showModal(ui.resultModal); }, 700, { key: 'result-modal-show' });
   }
 
-  awardPersistentProgress(won) {
-    if (this.progressRewarded) {
-      return { mastery: { gained: 0, levelsGained: 0, entry: getHeroMasteryEntry(this.heroMastery, this.selectedHeroClassId) }, drop: null };
-    }
-    this.progressRewarded = true;
-    const mastery = awardHeroMastery(this.heroMastery, this.selectedHeroClassId, { wave: this.currentWave, won });
-    this.heroMastery = saveHeroMastery(mastery.state);
-    let drop = null;
-    if (this.currentWave >= 3) {
-      drop = awardEquipmentDrop(this.equipmentState, { wave: this.currentWave, won, random: () => this.random() });
-      this.equipmentState = saveEquipmentState(drop.state);
-    }
-    this.renderHeroClassSelector();
-    this.renderEquipmentModal();
-    return { mastery, drop };
-  }
-
   getLocalScores() {
-    try{return this.safeStorageV148.getJSON('dokkaebi-luck-scores', []);}catch{return[];}
+    return this.persistentRewardsV150.getLocalScores();
   }
 
   async saveScore() {
     const name=(ui.playerName.value.trim()||'달빛 수호자').slice(0,12);
     const entry={name,score:Math.round(this.score),wave:this.currentWave,kills:this.kills,maxRank:this.maxRank,mode:this.activeRunMode.id,seed:this.runSeed,edict:this.dailyEdict?.id||'',bossKills:this.runStats.bossKills,date:Date.now()};
-    const local=[...this.getLocalScores(),entry].sort((a,b)=>b.score-a.score).slice(0,10);
-    this.safeStorageV148.setJSON('dokkaebi-luck-scores', local);
-    this.persistenceV149.checkpoint('score-save');
+    const result = await this.persistentRewardsV150.submitScore(entry);
+    if (!result.ok) {
+      this.errorBoundaryV150.capture(new Error('score snapshot commit failed'), { source: 'score-save', state: this.state, wave: this.currentWave });
+      this.showToast('기록 저장을 완료하지 못했습니다. 안전 지점을 유지합니다.');
+      return;
+    }
     ui.saveScore.disabled=true;ui.saveScore.textContent='저장 완료';
-    let scores=local;
-    if(isFirebaseEnabled()) {
-      try { await submitOnlineScore(entry);scores=await loadOnlineScores();this.showToast('온라인 달빛 명부에 기록했습니다.'); }
-      catch { this.showToast('로컬 기록으로 저장했습니다.'); }
-    } else this.showToast('기기에 기록을 저장했습니다.');
-    this.renderLeaderboard(scores);
+    if (result.online === 'saved') this.showToast('온라인 달빛 명부에 기록했습니다.');
+    else if (result.online === 'fallback-local') this.showToast('온라인 연결 없이 기기에 안전하게 저장했습니다.');
+    else this.showToast('기기에 기록을 저장했습니다.');
+    this.renderLeaderboard(result.scores);
   }
 
   renderLeaderboard(scores) {

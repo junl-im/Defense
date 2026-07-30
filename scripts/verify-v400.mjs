@@ -69,13 +69,19 @@ for (const id of [
   else fail(`v4 UI missing: ${id}`);
 }
 
-for (const token of [
-  'loadEquipmentState()', 'loadHeroMastery()', 'applyEquipmentBonuses(this.mods',
-  'awardEquipmentDrop(this.equipmentState', 'awardHeroMastery(this.heroMastery',
-  'renderEquipmentModal()', 'updateStageHUD()', 'bossDangerFrame.dataset.urgency'
+const rewardOrchestrator = read('src/runtime/persistent-reward-orchestrator-v150.js');
+for (const [label, present] of [
+  ['loadEquipmentState', main.includes('loadEquipmentState(this.storageBridgeV150)') || main.includes('loadEquipmentState()')],
+  ['loadHeroMastery', main.includes('loadHeroMastery(this.storageBridgeV150)') || main.includes('loadHeroMastery()')],
+  ['applyEquipmentBonuses', main.includes('applyEquipmentBonuses(this.mods')],
+  ['awardEquipmentDrop', main.includes('awardEquipmentDrop(this.equipmentState') || rewardOrchestrator.includes('awardEquipmentDrop(equipmentState')],
+  ['awardHeroMastery', main.includes('awardHeroMastery(this.heroMastery') || rewardOrchestrator.includes('awardHeroMastery(heroMastery')],
+  ['renderEquipmentModal', main.includes('renderEquipmentModal()')],
+  ['updateStageHUD', main.includes('updateStageHUD()')],
+  ['bossDangerFrame urgency', main.includes('bossDangerFrame.dataset.urgency')]
 ]) {
-  if (main.includes(token)) pass(`v4 runtime ${token}`);
-  else fail(`v4 runtime missing: ${token}`);
+  if (present) pass(`v4 runtime ${label}`);
+  else fail(`v4 runtime missing: ${label}`);
 }
 
 for (const selector of ['.equipment-card', '.equipment-item', '.stage-chip', '.boss-danger-frame', '.result-progression']) {

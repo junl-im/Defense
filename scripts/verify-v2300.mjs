@@ -9,7 +9,7 @@ const checks = [
   ['package lineage remains v23', /^23\.\d+\.\d+$/.test(pkg.dokkaebi?.lineageVersion || pkg.version)],
   ['game lineage remains v23', /^23\.\d+\.\d+$/.test(pkg.dokkaebi?.lineageVersion || pkg.version) && main.includes('LEGACY_LINEAGE_VERSION')],
   ['engine version 20.0.0', /ENGINE_VERSION = '(?:2[0-9]|[3-9][0-9])\.\d+\.\d+'/.test(read('src/engine/engine-config.js'))],
-  ['save schema 21', read('src/runtime/save-schema.js').includes('SAVE_SCHEMA_VERSION = 21')],
+  ['save schema 22 or later', /SAVE_SCHEMA_VERSION = (?:22|2[3-9]|[3-9]\d)/.test(read('src/runtime/save-schema.js'))],
   ['service worker remains v23', /VERSION = '23\.\d+\.\d+'/.test(read('public/sw.js'))],
   ['zoom buttons removed from DOM', !html.includes('camera-zoom-controls') && !html.includes('zoom-in-btn') && !html.includes('zoom-out-btn')],
   ['zoom button handlers removed', !main.includes('camera-zoom-in') && !main.includes('camera-zoom-out') && !main.includes('ui.zoomIn') && !main.includes('ui.zoomOut')],

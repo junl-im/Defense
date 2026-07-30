@@ -5845,3 +5845,8 @@ body.controls-left-handed #summon-btn[data-summon-visibility-v143="enhanced"] .s
     font-size: 7px;
   }
 }
+
+/* v1.0.50 atomic checkpoint production error boundary */
+.runtime-error-v150 { z-index: 160; }
+.runtime-error-v150 .boot-error-card { border-color: rgba(132,233,255,.28); }
+.runtime-error-v150 .kicker { color: #84e9ff; }

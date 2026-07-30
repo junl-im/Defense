@@ -63,7 +63,8 @@ check(main.includes("createSafeStorageV148") && main.includes('RuntimeHealthAssu
 check(!main.includes('runtimeErrorKeys'), 'unbounded runtime error key set removed');
 check(!/localStorage\.(?:getItem|setItem|removeItem)/.test(main), 'main has no direct localStorage access');
 check(hiddenGuard >= 0 && heavyUpdate > hiddenGuard, 'hidden-page suspension occurs before heavy frame updates');
-check(main.includes("this.safeStorageV148.setJSON('dokkaebi-luck-scores', local)"), 'score persistence uses safe storage');
+const rewardsV150 = fs.readFileSync(path.join(root, 'src/runtime/persistent-reward-orchestrator-v150.js'), 'utf8');
+check(main.includes('this.persistentRewardsV150.submitScore(entry)') && rewardsV150.includes("this.snapshots.commit({ [LOCAL_SCORE_STORAGE_KEY_V150]: local }, 'score-save')"), 'score persistence uses safe transactional snapshots');
 
 if (failures.length) {
   failures.forEach((failure) => console.error(`FAIL ${failure}`));

@@ -1,0 +1,30 @@
+{
+  "id": "DD-PATCH-PROVENANCE-V150",
+  "releaseVersion": "1.0.50",
+  "buildId": "b24.50",
+  "algorithm": "sha256",
+  "receivedBaseZip": {
+    "name": "Defense.zip",
+    "bytes": 306907250,
+    "sha256": "b3ab0ea2dc9dc40713d6f6d6c43b1d46e510046cd43538e758994bdcd2be323e"
+  },
+  "inputNormalization": {
+    "mergedOverlayHotfix": true,
+    "rejectedStaleOverlayIdentity": "overlay/package.json v1.0.46",
+    "restoredCanonicalWorkflow": true
+  },
+  "targetSourceTree": {
+    "algorithm": "sha256-sorted-paths-v1",
+    "scope": "clean source package excluding dist, node_modules, .git, logs, ZIP files, and this provenance file",
+    "aggregateSha256": "e93dbc942f600f025c7de59e3a69715285bc83fde13f6ce450d097a2fed86851",
+    "fileCount": 3003
+  },
+  "patchManifest": {
+    "path": "logs/patch/1.0.50/PATCH_MANIFEST.json",
+    "sha256": "RECORDED_IN_FINAL_PATCH_PACKAGE"
+  },
+  "targetFullZip": {
+    "name": "Defense_v1.0.50_FULL.zip",
+    "sha256": "RECORDED_IN_FINAL_PATCH_PACKAGE"
+  }
+}

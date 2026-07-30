@@ -1,0 +1,19 @@
+{
+  "id": "DD-RUNTIME-PERFORMANCE-BASELINE-STATUS-V150",
+  "releaseVersion": "1.0.50",
+  "status": "ci-capture-required",
+  "approvedBaselinePresent": false,
+  "requiredEvidence": [
+    "logs/qa/v145/long-session-report.json",
+    "logs/qa/v144/dist-budget-report.json",
+    "logs/qa/v150/runtime-baseline-candidate.json"
+  ],
+  "metrics": [
+    "CPU frame p95 and slope",
+    "long-task rate and growth",
+    "JS heap p95/peak/growth",
+    "draw-call p95/peak",
+    "runtime and initial texture residency"
+  ],
+  "promotionRule": "Only a passing GitHub Actions candidate with approver, ticket, and approved-at metadata may create docs/PERFORMANCE_BASELINE_v1.0.50_RUNTIME.json."
+}

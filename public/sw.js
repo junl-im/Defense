@@ -1,5 +1,5 @@
-// const RELEASE_VERSION = '1.0.49'; generated compatibility marker
-// const BUILD_ID = 'b24.49'; generated compatibility marker
+// const RELEASE_VERSION = '1.0.50'; generated compatibility marker
+// const BUILD_ID = 'b24.50'; generated compatibility marker
 importScripts('./release-identity.generated.js');
 const RELEASE_IDENTITY = self.__DOKKAEBI_RELEASE_IDENTITY__;
 if (!RELEASE_IDENTITY) throw new Error('generated release identity missing');
@@ -89,6 +89,7 @@ const GENERATED_MODULE_SHELL_V135 = Object.freeze([
   './src/runtime/asset-lineage-assurance-director-v131.js',
   './src/runtime/asset-presence-enforcer.js',
   './src/runtime/asset-refinement-assurance-director-v129.js',
+  './src/runtime/atomic-save-snapshot-v150.js',
   './src/runtime/automation-director-v22.js',
   './src/runtime/battlefield-clarity-director-v122.js',
   './src/runtime/battlefield-prop-system.js',
@@ -116,6 +117,8 @@ const GENERATED_MODULE_SHELL_V135 = Object.freeze([
   './src/runtime/mobile-hud-director-v23.js',
   './src/runtime/mobile-input-recovery-v143.js',
   './src/runtime/native-input-policy-v231.js',
+  './src/runtime/persistent-reward-orchestrator-v150.js',
+  './src/runtime/production-error-boundary-v150.js',
   './src/runtime/recovery-state-v149.js',
   './src/runtime/release-assurance-director-v124.js',
   './src/runtime/result-presenter-v149.js',

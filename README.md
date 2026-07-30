@@ -1,27 +1,33 @@
 # Dokkaebi Luck Defense 3D
 
-> Current release: **v1.0.49 / b24.49** — reproducible runtime architecture, transactional persistence, generated release identity, recovery/diagnostic separation, and production QA exposure control.
+> Current release: **v1.0.50 / b24.50** — atomic multi-key save snapshots, extracted persistent rewards and score submission, safe production error recovery, CI-only runtime baseline promotion, and signed patch provenance.
 
-## v1.0.49 verification
+## v1.0.50 verification
 
 ```bash
-node scripts/generate-release-identity-v149.mjs
-npm ci
-npm run verify:identity:v149
+npm run verify:release:v150
 npm run verify:ci
 VITE_BASE_PATH=/Defense/ npm run build
-REQUIRE_BROWSER_V144=1 REQUIRE_BROWSER_V145=1 REQUIRE_BROWSER_V146=1 REQUIRE_BROWSER_V147=1 REQUIRE_BROWSER_V149=1 npm run verify:dist:all
+REQUIRE_BROWSER_V144=1 REQUIRE_BROWSER_V145=1 REQUIRE_BROWSER_V146=1 REQUIRE_BROWSER_V147=1 REQUIRE_BROWSER_V149=1 REQUIRE_BROWSER_V150=1 npm run verify:dist:all
+npm run capture:baseline:v150
 ```
 
-The direct patch is cumulative from v1.0.46+ and overwrites `package.json` and `package-lock.json`; a CI log that still reports `package=1.0.46` is running an unpatched commit.
+`v1.0.50` preserves the v1.0.49 runtime architecture and CI measurement calibration hotfix. The supplied `Defense.zip` contained a second `overlay/` package whose stale v1.0.46 `package.json` and reduced workflow would have downgraded the merged project; this release applies the hotfix source changes while retaining and advancing the canonical release identity.
 
+## v1.0.50 key changes
+
+- Commits meta shards, hero mastery, equipment, codex progress, and score records through schema-versioned atomic snapshots with two rollback slots.
+- Moves end-of-run rewards and local/online score submission out of `src/main.js` into `PersistentRewardOrchestratorV150`.
+- Adds a production-safe error screen that restores the last valid checkpoint and never exposes source paths, internal URLs, or raw exception text to players.
+- Captures CPU frame, long-task, JavaScript heap, draw-call, and texture residency metrics only from passing GitHub Actions Vite/Chromium evidence; local values cannot be promoted as approved baselines.
+- Adds SHA-256 provenance contracts for the received base ZIP, changed-file manifest, target source tree, and final full ZIP recorded in the patch package.
 
 ## v1.0.45 key changes
 
 - Advances the complete game through 100 deterministic wave lifecycles while preserving real wave, reward, UI, progression, and renderer code paths.
-- Samples frame p50/p95/max, JavaScript heap, Three.js textures/geometries, long tasks, draw calls, triangles, entity counts, and runtime errors every five waves.
+- Samples 24-frame p50/p95/max windows, JavaScript heap, Three.js textures/geometries, per-window long-task rate, draw calls, triangles, entity counts, and runtime errors every five waves.
 - Forces a WebGL context loss at wave 50 and requires a matched restore plus resumed rendering.
-- Rejects growth by both absolute delta and per-10-wave slope through a reusable runtime assurance model.
+- Keeps the 34ms absolute frame budget on hardware, while explicitly detected SwiftShader/llvmpipe CI uses baseline-relative p95, slope, and per-frame long-task-rate gates so software rasterization is not mistaken for a gameplay regression.
 - Compares current source raw/gzip measurements with the approved v1.0.44 package and fails unexplained growth above 5%.
 - Classifies all 53 runtime assets into 13 boot and 40 deferred assets with 74 explicit reachability edges.
 - Advances the service-worker cache to `1.0.45-b24.45` and keeps the v1.0.44 complete-build foundation forward-compatible.
@@ -62,8 +68,6 @@ The 100-wave browser harness requires the complete Vite output (`dist/assets/gam
 - v1.0.43 mobile input recovery, presentation snapshots, and runtime asset reachability
 - v1.0.44 complete-build mobile matrix, measured dist budgets, and reviewed asset candidates
 - v1.0.45 100-wave runtime trends, WebGL recovery, 5% source regression gate, and explicit asset residency
-
-> Current release: **v1.0.48 / b24.48** — comprehensive integrity audit, safe persistence, bounded runtime diagnostics, and background performance protection.
 
 
 ## 결과 전달 규칙

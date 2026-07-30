@@ -18,7 +18,7 @@ const record = (files) => ({
   rawBytes: files.reduce((sum, file) => sum + fs.statSync(file).size, 0),
   gzipBytes: files.reduce((sum, file) => sum + zlib.gzipSync(fs.readFileSync(file), { level: 9 }).length, 0)
 });
-const FORWARD_RELEASE_MODULE_TAGS = new Set(['146', '147', '148', '149']);
+const FORWARD_RELEASE_MODULE_TAGS = new Set(['146', '147', '148', '149', '150']);
 const forwardReleaseTag = (file) => /-v(\d+)\.js$/.exec(path.basename(file))?.[1] || '';
 const isForwardReleaseAddition = (file) => FORWARD_RELEASE_MODULE_TAGS.has(forwardReleaseTag(file));
 const v145SourceFiles = walk(path.join(root, 'src')).filter((file) => file.endsWith('.js') && !isForwardReleaseAddition(file));

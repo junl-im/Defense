@@ -36,7 +36,7 @@ const assetsUnchanged = Object.entries(baseline.files || {})
 const checks = [
   ['release remains on v1.0.4-or-later recovery line', is104OrLater && version === pkg.version && Number(buildRevision) >= 4],
   ['package lock is synchronized', lock.version === pkg.version && lock.packages?.['']?.version === pkg.version],
-  ['runtime policy and service worker identities match current release', policy.includes(`PUBLIC_GAME_VERSION = '${version}'`) && policy.includes(`BUILD_REVISION = ${buildRevision}`) && main.includes(`const GAME_VERSION = '${version}'`) && sw.includes(`RELEASE_VERSION = '${version}'`) && sw.includes(`BUILD_ID = '${buildId}'`)],
+  ['runtime policy and service worker identities match current release', policy.includes(`BUILD_REVISION = ${buildRevision}`) && policy.includes("from './release-identity.generated.js'") && main.includes('const GAME_VERSION = PUBLIC_GAME_VERSION;') && sw.includes("importScripts('./release-identity.generated.js')") && sw.includes('RELEASE_IDENTITY.releaseVersion') && sw.includes('RELEASE_IDENTITY.buildId')],
   ['loading label remains user-facing', html.includes('id="title-start-label"') && html.includes('게임 준비 중...') && !html.includes('엔진 연결 중')],
   ['root entry is relative and cache-versioned', html.includes(`src="./src/bootstrap.js?v=${version}-${buildId}"`) && !html.includes('src="/src/bootstrap.js')],
   ['resilient bootstrap entry diagnostics are installed', bootstrap.includes("mode: 'resilient-entry'") && bootstrap.includes("import('./main.js').catch")],
@@ -44,7 +44,7 @@ const checks = [
   ['static bootstrap has pinned redundant engine endpoints', ['local-vendor', 'fastly-jsdelivr', 'jsdelivr-npm', 'jsdelivr-github', 'unpkg', 'esm-sh'].every((id) => staticBootstrap.includes(`id: '${id}'`)) && !staticBootstrap.includes("id: 'threejs-org'")],
   ['static loader reports failures instead of leaving a dead button', staticBootstrap.includes('window.__DOKKAEBI_SHOW_BOOT_ERROR__') && staticBootstrap.includes('3D 엔진 파일을 불러오지 못했습니다')],
   ['start button uses guarded title entry path', main.includes("on(ui.start, 'click', () => this.startRunFromTitle") && main.includes('startRunFromTitle({ reuseSeed = false } = {})')],
-  ['start entry catches runtime failures and restores title controls', main.includes("this.recordRuntimeError(error, 'title-start-run')") && main.includes('전투 진입 중 오류가 발생했습니다') && (main.includes("startLabel.textContent = '달빛 장터 수호 준비 완료'") || main.includes("startLabel.textContent = 'TOUCH TO START'"))],
+  ['start entry catches runtime failures and restores title controls', main.includes("this.recordRuntimeError(error, 'title-start-run')") && main.includes('new ProductionErrorBoundaryV150') && !main.includes('전투 진입 중 오류가 발생했습니다: ${reason}') && (main.includes("startLabel.textContent = '달빛 장터 수호 준비 완료'") || main.includes("startLabel.textContent = 'TOUCH TO START'"))],
   ['static build emits the resilient bootstrap contract', buildStatic.includes('data-entry="./src/bootstrap.js"') && buildStatic.includes('data-vendor-base="./vendor/three/"') && (!hasDist || (distHtml.includes('data-entry="./src/bootstrap.js"') && distHtml.includes('data-vendor-base="./vendor/three/"')))],
   ['dist bootstrap matches public bootstrap', !hasDist || hash('public/static-bootstrap.js') === hash('dist/static-bootstrap.js')],
   ['absolute art bible tokens are unchanged', artBibleUnchanged],

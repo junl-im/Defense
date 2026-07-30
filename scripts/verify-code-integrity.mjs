@@ -104,7 +104,7 @@ const cleanCommand = packageJson.scripts?.['clean:obsolete'];
 const preverifyCommand = packageJson.scripts?.preverify;
 const prebuildCommand = packageJson.scripts?.prebuild;
 const hasOrderedLifecycle = (command) => {
-  const required = ['npm run bootstrap:identity:v149', 'npm run clean:obsolete', 'npm run hygiene:check', 'npm run verify:identity:v149'];
+  const required = ['npm run bootstrap:identity:v150', 'npm run clean:obsolete', 'npm run hygiene:check', 'npm run verify:identity:v150'];
   let cursor = -1;
   return required.every((token) => {
     const index = String(command || '').indexOf(token, cursor + 1);

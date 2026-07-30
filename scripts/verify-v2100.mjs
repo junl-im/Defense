@@ -8,7 +8,7 @@ const checks = [
   ['package version remains v21 or later', Number((pkg.dokkaebi?.lineageVersion || pkg.version).split('.')[0]) >= 21],
   ['game lineage remains v21 or later', Number((pkg.dokkaebi?.lineageVersion || pkg.version).split('.')[0]) >= 21 && main.includes('LEGACY_LINEAGE_VERSION')],
   ['engine version remains 18 or later', /ENGINE_VERSION = '(?:18|19|2[0-9]|[3-9][0-9])\.\d+\.\d+'/.test(read('src/engine/engine-config.js'))],
-  ['save schema remains 19 or later', /SAVE_SCHEMA_VERSION = (?:19|20|21)/.test(read('src/runtime/save-schema.js'))],
+  ['save schema remains 19 or later', /SAVE_SCHEMA_VERSION = (?:19|20|21|22)/.test(read('src/runtime/save-schema.js'))],
   ['service worker remains v21 or later', /VERSION = '(?:21|22|23)\.\d+\.\d+'/.test(read('public/sw.js'))],
   ['asset presence module wired', main.includes('new AssetPresenceEnforcer') && fs.existsSync('src/runtime/asset-presence-enforcer.js')],
   ['mobile HUD v21 lineage retained', (main.includes('MobileHudDirectorV21') || main.includes('MobileHudDirectorV22') || main.includes('MobileHudDirectorV23')) && (css.includes('mobile-hud-v21-emergency') || css.includes('mobile-hud-v22-emergency') || css.includes('mobile-hud-v23-emergency'))],

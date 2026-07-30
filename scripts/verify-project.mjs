@@ -4,14 +4,14 @@ import { resolve } from 'node:path';
 import { formatSvgViolations, scanSvgPolicy } from './svg-policy.mjs';
 
 const root = resolve(import.meta.dirname, '..');
-const identityBootstrap = spawnSync(process.execPath, [resolve(root, 'scripts/bootstrap-release-package-v149.mjs')], {
+const identityBootstrap = spawnSync(process.execPath, [resolve(root, 'scripts/bootstrap-release-package-v150.mjs')], {
   cwd: root,
   encoding: 'utf8'
 });
 process.stdout.write(identityBootstrap.stdout || '');
 process.stderr.write(identityBootstrap.stderr || '');
 if (identityBootstrap.error || identityBootstrap.status !== 0) {
-  throw new Error(`v149 pre-verification identity bootstrap failed (${identityBootstrap.error?.code || identityBootstrap.status})`);
+  throw new Error(`v150 pre-verification identity bootstrap failed (${identityBootstrap.error?.code || identityBootstrap.status})`);
 }
 const read = (path) => readFileSync(resolve(root, path), 'utf8');
 const failures = [];
@@ -85,8 +85,18 @@ else fail('제목 화면 생성 전에 this.mods 초기화 필요');
 if (main.includes('createDefaultMods(metaTraits = {})') && main.includes('(this.mods?.unitCooldown ?? 1)')) pass('unitCooldown 부팅 오류 방어');
 else fail('unitCooldown 부팅 오류 방어 코드 누락');
 
-for (const feature of ['loadMetaProgress', 'upgradeMetaTrait', 'awardRunShards', 'getDangerCandidate', 'updateDangerHint', 'useUnitCommand', 'updateCommandChipStates', 'renderRunPreview']) {
-  if (main.includes(feature)) pass(`v1.6 기능 ${feature}`);
+const persistentRewardsV150 = read('src/runtime/persistent-reward-orchestrator-v150.js');
+for (const [feature, present] of [
+  ['loadMetaProgress', main.includes('loadMetaProgress')],
+  ['upgradeMetaTrait', main.includes('upgradeMetaTrait')],
+  ['persistent run shard reward', main.includes('persistentRewardsV150.awardRun') && persistentRewardsV150.includes('calculateShardRewardV150')],
+  ['getDangerCandidate', main.includes('getDangerCandidate')],
+  ['updateDangerHint', main.includes('updateDangerHint')],
+  ['useUnitCommand', main.includes('useUnitCommand')],
+  ['updateCommandChipStates', main.includes('updateCommandChipStates')],
+  ['renderRunPreview', main.includes('renderRunPreview')]
+]) {
+  if (present) pass(`v1.6 기능 ${feature}`);
   else fail(`v1.6 기능 누락: ${feature}`);
 }
 
