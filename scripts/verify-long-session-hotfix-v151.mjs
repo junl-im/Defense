@@ -25,6 +25,15 @@ assert.match(main, /getLoadPhaseBossTypeV146\(wave\) \|\| getBossTypeForWave\(wa
 assert.match(main, /runtimeHealthV148: game\.runtimeHealthV148\?\.diagnostics/);
 assert.match(main, /runtimeErrors: \[\.\.\.\(game\.runtimeErrors \|\| \[\]\)\]/);
 
+
+const enemyMaterial = read('src/runtime/enemy-body-material-v151.js');
+const premium = read('src/premium-assets.js');
+assert.match(enemyMaterial, /resolveEnemyBodyMaterialsV151/);
+assert.match(enemyMaterial, /first-renderable:/);
+assert.match(enemyMaterial, /Array\.isArray\(object\?\.material\)/);
+assert.doesNotMatch(main, /enemy\.group\.userData\.body\.material/);
+assert.match(premium, /resolveEnemyBodyMaterialsV151\(group\)/);
+
 const runner = read('scripts/run-release-assurance-v146.mjs');
 const chain = read('scripts/verify-dist-chain-v140.mjs');
 const distGate = read('scripts/verify-dist-v146.mjs');
@@ -32,7 +41,7 @@ const workflow = read('.github/workflows/deploy.yml');
 assert.match(chain, /verify-ci-source-revision-v151\.mjs/);
 assert.match(distGate, /verify-ci-source-revision-v151\.mjs/);
 assert.match(workflow, /verify-ci-source-revision-v151\.mjs/);
-assert.match(runner, /DD-V151-LONG-SESSION-R5/);
+assert.match(runner, /DD-V151-ENEMY-MATERIAL-R6/);
 assert.match(runner, /runtimeErrorEntries/);
 assert.match(runner, /runtimeHealth/);
 assert.match(runner, /exceptions:diagnostics\.exceptions\.slice\(-12\)/);

@@ -88,6 +88,7 @@ import WaveReliabilityDirector from './runtime/wave-reliability-director.js';
 import BrowserReliabilityLab from './runtime/browser-reliability-lab.js';
 import LongSessionAssuranceV145, { normalizeLongSessionBrowserSampleV145, summarizeFrameDurationsV145 } from './runtime/long-session-assurance-v145.js';
 import { replayDeviceViewportTraceV146 } from './runtime/device-trace-assurance-v146.js';
+import { applyEnemyBodyEmissiveV151, clearEnemyBodyMaterialCacheV151 } from './runtime/enemy-body-material-v151.js';
 import { buildFailureDigestV146 } from './runtime/failure-digest-v146.js';
 import { simulateServiceWorkerUpgradeV146 } from './runtime/service-worker-upgrade-assurance-v146.js';
 import { getLoadPhaseBossTypeV146 } from './runtime/long-session-load-profile-v151.js';
@@ -2560,11 +2561,11 @@ class DokkaebiLuckDefense {
         group.position.set(0, -100, 0);
         group.rotation.set(0, 0, 0);
         group.scale.setScalar(1);
-        const body = group.userData.body;
-        if (body?.material) {
-          body.material.emissive?.set(group.userData.baseColor || 0x000000);
-          body.material.emissiveIntensity = group.userData.isBoss ? .24 : 0;
-        }
+        clearEnemyBodyMaterialCacheV151(group);
+        applyEnemyBodyEmissiveV151(group, {
+          color: group.userData.baseColor || 0x000000,
+          intensity: group.userData.isBoss ? .24 : 0
+        });
         if (group.userData.isBoss) applyPremiumBossPhase(group, type, 1);
         const shield = group.userData.shield;
         if (shield?.material) shield.material.emissiveIntensity = .18;
@@ -5836,7 +5837,7 @@ class DokkaebiLuckDefense {
       enemy.shieldFlash=Math.max(0,enemy.shieldFlash-dt);
       enemy.weaknessTextCooldown=Math.max(0,(enemy.weaknessTextCooldown||0)-dt);
       enemy.statusTextCooldown=Math.max(0,(enemy.statusTextCooldown||0)-dt);
-      if (enemy.flash<=0) enemy.group.userData.body.material.emissiveIntensity = enemy.boss ? (enemy.bossPhase > 1 ? .56 + enemy.bossPhase * .16 : .24) : 0;
+      if (enemy.flash<=0) applyEnemyBodyEmissiveV151(enemy.group, { intensity: enemy.boss ? (enemy.bossPhase > 1 ? .56 + enemy.bossPhase * .16 : .24) : 0 });
       if (enemy.group.userData.shield) enemy.group.userData.shield.material.emissiveIntensity = enemy.shieldFlash > 0 ? 2.4 : .18;
       if (enemy.group.userData.phaseVisual) {
         const phaseVisual = enemy.group.userData.phaseVisual;
@@ -5855,8 +5856,7 @@ class DokkaebiLuckDefense {
       if (abilityLocked) {
         this.animations.setBaseState(enemy.animation, 'idle');
         enemy.group.rotation.z = Math.sin(this.elapsed * 22) * .075;
-        enemy.group.userData.body.material.emissive.setHex(0x8cecff);
-        enemy.group.userData.body.material.emissiveIntensity = 1.15;
+        applyEnemyBodyEmissiveV151(enemy.group, { color: 0x8cecff, intensity: 1.15 });
       } else if (enemy.type === 'runner') abilityLocked = this.updateRunnerAbility(enemy, dt, distance);
       else if (enemy.type === 'shaman') abilityLocked = this.updateShamanAbility(enemy, dt, distance);
 
@@ -6281,8 +6281,7 @@ class DokkaebiLuckDefense {
     enemy.specialTimer = .9;
     enemy.intentDuration = .9;
     enemy.group.scale.multiplyScalar(1.055);
-    enemy.group.userData.body.material.emissive.set(color);
-    enemy.group.userData.body.material.emissiveIntensity = .75;
+    applyEnemyBodyEmissiveV151(enemy.group, { color, intensity: .75 });
     if (enemy.group.userData.phaseAura) {
       enemy.group.remove(enemy.group.userData.phaseAura);
       enemy.group.userData.phaseAura.geometry.dispose();
@@ -6563,8 +6562,7 @@ class DokkaebiLuckDefense {
     if (enemy.boss && enemy.hp > 0) this.checkBossPhase(enemy);
     enemy.flash=.09;
     this.animations.trigger(enemy.animation, 'hit', .16);
-    enemy.group.userData.body.material.emissive.set(0xffffff);
-    enemy.group.userData.body.material.emissiveIntensity=1.6;
+    applyEnemyBodyEmissiveV151(enemy.group, { color: 0xffffff, intensity: 1.6 });
     this.showCombatText(enemy.group.position.clone().add(new THREE.Vector3(0, enemy.boss ? 3.1 : 1.8, 0)), amount, { crit, label: shielded ? '방패!' : undefined });
     const presentationColor = impactColor
       || (source === 'hero' || source === 'skill' ? this.heroClass?.color : null)

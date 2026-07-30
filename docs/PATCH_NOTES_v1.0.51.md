@@ -39,3 +39,13 @@ The R3 delivery is archive-root flat, removes stale root patch metadata, deletes
 - Verifies SHA-256 for the v1.0.46 long-session runner, v1.0.51 fail-open presentation runtime, QA load profile, workflow, and package scripts.
 - A pre-R4 runner now fails immediately instead of spending five minutes producing an indistinguishable historical failure.
 - The long-session quality thresholds remain unchanged.
+
+## R6 enemy material lifecycle repair
+
+- Fixes the confirmed wave-10 runtime error `Cannot read properties of null (reading 'material')` from the enemy update stage.
+- Imported enemy models now recover their primary renderable from `body`, `Body`, `Torso`, `Chest`, `Pelvis`, `Head`, or the first mesh with a usable material.
+- Multi-material meshes are supported; emissive color and intensity changes are applied safely to every usable material.
+- All release-critical enemy combat paths now use the lifecycle helper instead of directly reading `enemy.group.userData.body.material`.
+- The primary enemy body is resolved before combat-art presentation layers attach, then cached for pooled enemy reuse.
+- Adds a dependency-free regression verifier covering null body recovery, unnamed mesh fallback, multi-material mutation, direct-access prohibition, and all three boss GLB body nodes.
+- CI source marker advances to `DD-V151-ENEMY-MATERIAL-R6` without relaxing the zero-runtime-error threshold.

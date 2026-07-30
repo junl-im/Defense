@@ -5,7 +5,7 @@ import path from 'node:path';
 import { spawn, spawnSync } from 'node:child_process';
 
 const root = path.resolve(import.meta.dirname, '..');
-const SOURCE_REVISION_V151 = 'DD-V151-LONG-SESSION-R5';
+const SOURCE_REVISION_V151 = 'DD-V151-ENEMY-MATERIAL-R6';
 console.log(`SOURCE ${SOURCE_REVISION_V151} runner=${path.basename(import.meta.filename || 'run-release-assurance-v146.mjs')}`);
 const dist = process.env.DIST_DIR ? path.resolve(process.env.DIST_DIR) : path.join(root, 'dist');
 const requireBrowser = process.env.REQUIRE_BROWSER_V146 === '1';

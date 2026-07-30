@@ -110,6 +110,7 @@ const GENERATED_MODULE_SHELL_V135 = Object.freeze([
   './src/runtime/core-foundation-director-v101.js',
   './src/runtime/cross-platform-shell-v112.js',
   './src/runtime/device-trace-assurance-v146.js',
+  './src/runtime/enemy-body-material-v151.js',
   './src/runtime/failure-digest-v146.js',
   './src/runtime/feature-exposure-policy-v149.js',
   './src/runtime/first-presentation-director-v107.js',

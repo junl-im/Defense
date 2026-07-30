@@ -349,3 +349,11 @@ A complete GitHub Actions Vite build reached `verify-dist-v146` and exposed two 
 ## v1.0.51 R5 CI source revision guard
 
 The R5 repair does not relax v1.0.46 long-session thresholds. It prevents stale pre-R4 source from reaching the five-minute browser gate. A valid run prints `DD-V151-LONG-SESSION-R5`, repair revision 5, and the current runner SHA-256.
+
+## v1.0.51 R6 enemy material lifecycle repair
+
+The R5 GitHub Actions run proved that the current source was executing and exposed the exact remaining exception: `source=enemies`, wave 10, `Cannot read properties of null (reading 'material')`. The affected path was the release-critical enemy emissive update, not the optional character-presentation fail-open layer.
+
+R6 adds `src/runtime/enemy-body-material-v151.js`. Imported and procedural enemies resolve a primary renderable before combat presentation attaches. Resolution accepts common node-name variants and falls back to the first mesh with a usable material. Material arrays are handled as a set. The enemy update, boss stagger, boss phase transition, hit flash, and pool reset paths no longer directly access `enemy.group.userData.body.material`.
+
+A valid R6 run prints `DD-V151-ENEMY-MATERIAL-R6`, repair revision 6, and the signed runner SHA-256 before the browser assurance chain. The v1.0.46 gate still requires zero runtime errors.

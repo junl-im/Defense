@@ -26,3 +26,14 @@ R4 supersedes R3. Apply the R4 archive directly at repository root and commit al
 ## R5 verification
 
 After applying the package, run `node scripts/verify-ci-source-revision-v151.mjs`. The command must print `DD-V151-LONG-SESSION-R5` before starting a new GitHub Actions run.
+
+## R6 verification
+
+R6 supersedes R5. After applying the package, run:
+
+```bash
+node scripts/verify-ci-source-revision-v151.mjs
+node scripts/verify-enemy-material-lifecycle-v151.mjs
+```
+
+The first command must print `DD-V151-ENEMY-MATERIAL-R6`. The second must report that null body recovery, multi-material emissive safety, boss GLB body nodes, and removal of direct `enemy.group.userData.body.material` access all passed.

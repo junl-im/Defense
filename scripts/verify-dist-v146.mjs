@@ -4,7 +4,7 @@ import { spawnSync } from 'node:child_process';
 const root = path.resolve(import.meta.dirname, '..');
 const sourcePreflight = spawnSync(process.execPath, [path.join(root, 'scripts/verify-ci-source-revision-v151.mjs')], { cwd: root, env: process.env, encoding: 'utf8' });
 process.stdout.write(sourcePreflight.stdout || ''); process.stderr.write(sourcePreflight.stderr || '');
-if (sourcePreflight.status !== 0) throw new Error(`DD-V151-LONG-SESSION-R5 preflight failed (${sourcePreflight.status})`);
+if (sourcePreflight.status !== 0) throw new Error(`DD-V151-ENEMY-MATERIAL-R6 preflight failed (${sourcePreflight.status})`);
 const dist = process.env.DIST_DIR ? path.resolve(process.env.DIST_DIR) : path.join(root, 'dist');
 const versionPath = path.join(dist, 'version.json');
 if (!fs.existsSync(versionPath)) throw new Error('v146 dist/version.json missing');

@@ -5,8 +5,8 @@
   "buildId": "b24.51",
   "cacheRevision": "1.0.51-b24.51",
   "entry": "src/bootstrap.js",
-  "moduleCount": 132,
-  "totalBytes": 1580442,
+  "moduleCount": 133,
+  "totalBytes": 1583617,
   "files": [
     {
       "path": "src/art-production-gate.js",
@@ -315,13 +315,13 @@
     },
     {
       "path": "src/main.js",
-      "bytes": 416945,
-      "sha256": "a600313599b05de699d6bdd97816c1f2a4cba817349897deb319446684c6f890"
+      "bytes": 416892,
+      "sha256": "b4e9f365e690092d890be84d17f7e663237368c82ff8be984b6bb900495d89ce"
     },
     {
       "path": "src/premium-assets.js",
-      "bytes": 34087,
-      "sha256": "35400631ae31d9698097a305f3b9ff5ad8f103f6497a20e10c297d8a63c179fb"
+      "bytes": 34350,
+      "sha256": "e613b240fd395f7b955b623cd149dd6547383da201d1dc42fd211ba0fa9f9a76"
     },
     {
       "path": "src/production-console.js",
@@ -487,6 +487,11 @@
       "path": "src/runtime/device-trace-assurance-v146.js",
       "bytes": 6259,
       "sha256": "4e74c467ff171f54d46998f0452abf3b84ba6576e6f5e34d185909d9f783a1b1"
+    },
+    {
+      "path": "src/runtime/enemy-body-material-v151.js",
+      "bytes": 2965,
+      "sha256": "88895c7dc7233b424dcc2e8d38613f893f21fe165d7f2f45299c017d62c66389"
     },
     {
       "path": "src/runtime/failure-digest-v146.js",

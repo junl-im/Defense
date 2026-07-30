@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { applyEnemyBodyEmissiveV151, resolveEnemyBodyMaterialsV151 } from './runtime/enemy-body-material-v151.js';
 
 const TOON_GRADIENT = (() => {
   const data = new Uint8Array([48, 116, 188, 255]);
@@ -345,10 +346,7 @@ export function applyPremiumBossPhase(group, type, phase = 1) {
   }
   group.userData.phaseVisual = null;
   group.userData.bossPhase = phase;
-  const body = group.userData.body;
-  if (body?.material) {
-    body.material.emissiveIntensity = phase > 1 ? .56 + phase * .16 : .24;
-  }
+  applyEnemyBodyEmissiveV151(group, { intensity: phase > 1 ? .56 + phase * .16 : .24 });
   if (phase <= 1) return group;
 
   const visual = new THREE.Group();
@@ -532,10 +530,11 @@ export function prepareImportedGuardian(root, type, rank, config, rankConfig, { 
     group.add(light);
   }
   group.userData = {
-    body: findImportedPart(root, 'body'), type, rank, baseY: .3, phase: Math.random() * Math.PI * 2,
+    body: findImportedPartAny(root, ['body', 'Body', 'torso', 'Torso', 'chest', 'Chest']), type, rank, baseY: .3, phase: Math.random() * Math.PI * 2,
     aura, parts, animations: root.userData.animations || [], assetMetrics: root.userData.assetMetrics || null,
     assetTier: root.userData.renderProfile || 'prototype-toon-fallback', assetId: root.userData.assetSourceId || `guardian-${type}-sd-toon`
   };
+  resolveEnemyBodyMaterialsV151(group);
   return group;
 }
 
@@ -557,13 +556,14 @@ export function prepareImportedEnemy(root, type, config, { lowPower = false } = 
     light.position.y = 1.8 * (config.scale || 1);
     group.add(light);
   }
-  const body = findImportedPart(root, 'body');
+  const body = findImportedPartAny(root, ['body', 'Body', 'torso', 'Torso', 'chest', 'Chest', 'pelvis', 'Pelvis']);
   group.userData = {
     body, baseColor: config.color, scale: config.scale || 1, phase: Math.random() * Math.PI * 2,
     isBoss: Boolean(config.boss), eliteAura, shield: null, lodState: 'high', lodHigh: [], parts,
     animations: root.userData.animations || [], assetMetrics: root.userData.assetMetrics || null,
     assetTier: root.userData.renderProfile || 'prototype-toon-fallback', assetId: root.userData.assetSourceId || `${config.boss ? 'boss' : 'monster'}-${type}-sd-toon`
   };
+  resolveEnemyBodyMaterialsV151(group);
   return group;
 }
 

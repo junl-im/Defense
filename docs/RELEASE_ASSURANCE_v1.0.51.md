@@ -28,3 +28,9 @@ The failure reporter now includes retained runtime-health entries and CDP except
 ## R5 source provenance gate
 
 CI must print `DD-V151-LONG-SESSION-R5` and the runner SHA-256 before browser assurance. Absence of this marker means the workflow is running an older commit or an incompletely applied patch.
+
+## R6 enemy material lifecycle assurance
+
+The R5 browser report identified a concrete enemy-stage exception at wave 10: the combat loop attempted to read `.material` from a null primary body reference. R6 resolves and caches a usable enemy body before presentation attachment, supports material arrays, and makes all enemy emissive writes fail-safe. The release gate keeps `maxRuntimeErrors: 0`; no runtime-error allowance or performance threshold is weakened.
+
+`verify:enemy-material:v151` performs dependency-free lifecycle tests and inspects the three shipped boss GLBs. `verify:ci-source:v151` signs the helper, premium model adapter, main combat integration, regression verifier, and browser runner under `DD-V151-ENEMY-MATERIAL-R6`.

@@ -91,3 +91,7 @@ The repaired delivery is archive-root flat, removes stale root patch metadata, d
 ### v1.0.51 R4 CI repair
 
 The 100-wave browser assurance now isolates optional character-presentation failures per record and exercises a deterministic QA-only boss load sequence at its five observation windows. Normal campaign boss waves are unchanged.
+
+### v1.0.51 R6 CI repair
+
+R6 fixes the confirmed wave-10 enemy material null dereference while preserving the zero-error 100-wave gate. Before pushing, run `node scripts/verify-ci-source-revision-v151.mjs` and `npm run verify:enemy-material:v151`; the source marker must be `DD-V151-ENEMY-MATERIAL-R6`.

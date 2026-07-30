@@ -1,10 +1,10 @@
 # Runtime Asset Reachability v1.0.43
 
 - Contract: DD-RUNTIME-ASSET-REACHABILITY-V143
-- Runtime text files scanned: 224
+- Runtime text files scanned: 225
 - Asset files scanned: 1951
 - Directly reachable assets: 1927 (114,576,229 bytes)
-- Conservative review candidates: 24 (3,209,260 bytes)
+- Conservative review candidates: 24 (3,209,434 bytes)
 - Unresolved runtime references: 0
 - External/production catalog references: 1881
 
@@ -35,4 +35,4 @@
 - `public/assets/ui/v390/enemy-ghost.png` — 40,895 bytes
 - `public/assets/models/monster-runner-sd-toon.glb` — 39,364 bytes
 - `public/assets/ui/v390/class-warrior.png` — 38,556 bytes
-- `public/assets/system-v135/runtime-module-shell-v135.json` — 22,608 bytes
+- `public/assets/system-v135/runtime-module-shell-v135.json` — 22,782 bytes

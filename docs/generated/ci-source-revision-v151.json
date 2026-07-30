@@ -2,9 +2,9 @@
   "id": "DD-CI-SOURCE-REVISION-V151",
   "releaseVersion": "1.0.51",
   "buildId": "b24.51",
-  "repairRevision": 5,
-  "marker": "DD-V151-LONG-SESSION-R5",
-  "purpose": "Fail fast when a stale pre-R4 long-session runner is committed or executed in CI.",
+  "repairRevision": 6,
+  "marker": "DD-V151-ENEMY-MATERIAL-R6",
+  "purpose": "Fail fast when the wave-10 enemy material lifecycle repair, bootstrap contract, or current long-session runner is missing from CI.",
   "files": [
     {
       "path": ".github/workflows/deploy.yml",
@@ -13,13 +13,18 @@
     },
     {
       "path": "package.json",
-      "sha256": "787a3d207ee961001fc331e18e92fcea5bde36569c399b0b48044436d4f3030b",
-      "bytes": 37926
+      "sha256": "97301ad50911bf46a35ba8ca6c954632358659bd2f4f79ee8627a95f0856c49f",
+      "bytes": 38055
+    },
+    {
+      "path": "scripts/bootstrap-release-package-v151.mjs",
+      "sha256": "eba91e11d84c05dc1ecf859c6c7c6b2f36e52810bf574da00d95ac6ddf04b90b",
+      "bytes": 7676
     },
     {
       "path": "scripts/run-release-assurance-v146.mjs",
-      "sha256": "7bf64519cdfa578942c0fb58a11904f7d4a121571333a4c0845996060211debe",
-      "bytes": 17870
+      "sha256": "589852e95bdea976801c43c6dd8e029c5bf42ea0135e7780868002e9e7258073",
+      "bytes": 17872
     },
     {
       "path": "scripts/verify-dist-chain-v140.mjs",
@@ -28,18 +33,33 @@
     },
     {
       "path": "scripts/verify-dist-v146.mjs",
-      "sha256": "262b686fdcfdf005a2fdd1d2a180029ba414a8c2228b17ee6433b983f4ab466e",
-      "bytes": 2503
+      "sha256": "008f5f7013cd89e6d74a76d8528c4be4c24c84ddc0d9b05f7f86db4cd2d761aa",
+      "bytes": 2505
     },
     {
       "path": "scripts/verify-long-session-hotfix-v151.mjs",
-      "sha256": "768f4f649116320ef743a5ff310960a8e14e0f48790daadd0727f264c9b234f9",
-      "bytes": 2174
+      "sha256": "6d5eb1eb150dd1d447303ab37d430cdc5e8d3647d8a417a1e90c62b176081a00",
+      "bytes": 2611
+    },
+    {
+      "path": "scripts/verify-enemy-material-lifecycle-v151.mjs",
+      "sha256": "93fdc3ab55330a7bcaf339822bd9ecadc705ca7254d161f17b3dabbf16e1eb5e",
+      "bytes": 4159
     },
     {
       "path": "src/main.js",
-      "sha256": "a600313599b05de699d6bdd97816c1f2a4cba817349897deb319446684c6f890",
-      "bytes": 416945
+      "sha256": "b4e9f365e690092d890be84d17f7e663237368c82ff8be984b6bb900495d89ce",
+      "bytes": 416892
+    },
+    {
+      "path": "src/premium-assets.js",
+      "sha256": "e613b240fd395f7b955b623cd149dd6547383da201d1dc42fd211ba0fa9f9a76",
+      "bytes": 34350
+    },
+    {
+      "path": "src/runtime/enemy-body-material-v151.js",
+      "sha256": "88895c7dc7233b424dcc2e8d38613f893f21fe165d7f2f45299c017d62c66389",
+      "bytes": 2965
     },
     {
       "path": "src/runtime/character-presentation-director-v151.js",
