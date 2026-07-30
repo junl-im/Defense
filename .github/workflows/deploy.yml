@@ -30,10 +30,11 @@ jobs:
       - name: Initialize QA evidence paths
         shell: bash
         run: |
-          mkdir -p logs/qa/v148 logs/qa/v149 logs/qa/v150
+          mkdir -p logs/qa/v148 logs/qa/v149 logs/qa/v150 logs/qa/v151
           printf 'v1.0.48 QA evidence was not produced before this upload step.\n' > logs/qa/v148/_ci-status.txt
           printf 'v1.0.49 QA evidence was not produced before this upload step.\n' > logs/qa/v149/_ci-status.txt
           printf 'v1.0.50 runtime baseline candidate was not produced before this upload step.\n' > logs/qa/v150/_ci-status.txt
+          printf 'v1.0.51 character presentation evidence was not produced before this upload step.\n' > logs/qa/v151/_ci-status.txt
 
       - name: Setup Python for dependency-free atlas checks
         uses: actions/setup-python@v7
@@ -43,10 +44,10 @@ jobs:
       - name: Repair and synchronize canonical release identity
         shell: bash
         run: |
-          node scripts/bootstrap-release-package-v150.mjs
-          node scripts/generate-release-identity-v150.mjs
-          node scripts/verify-release-identity-v150.mjs
-          node -e "const p=require('./package.json'); const l=require('./package-lock.json'); if(p.version!=='1.0.50'||l.version!=='1.0.50'||l.packages?.['']?.version!=='1.0.50') process.exit(1); console.log('PASS CI package identity 1.0.50 before npm ci')"
+          node scripts/bootstrap-release-package-v151.mjs
+          node scripts/generate-release-identity-v151.mjs
+          node scripts/verify-release-identity-v151.mjs
+          node -e "const p=require('./package.json'); const l=require('./package-lock.json'); if(p.version!=='1.0.51'||l.version!=='1.0.51'||l.packages?.['']?.version!=='1.0.51') process.exit(1); console.log('PASS CI package identity 1.0.51 before npm ci')"
 
       - name: Install dependencies
         run: npm ci
@@ -93,6 +94,7 @@ jobs:
           REQUIRE_BROWSER_V147: 1
           REQUIRE_BROWSER_V149: 1
           REQUIRE_BROWSER_V150: 1
+          REQUIRE_BROWSER_V151: 1
         run: |
           # npm run verify:dist:v117
           # npm run verify:dist:v118
@@ -178,6 +180,14 @@ jobs:
         with:
           name: v1.0.50-runtime-baseline-candidate
           path: logs/qa/v150
+          if-no-files-found: ignore
+
+      - name: Upload v1.0.51 character presentation evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: v1.0.51-character-presentation
+          path: logs/qa/v151
           if-no-files-found: ignore
 
       - name: Verify self-contained production bundle

@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js';
 import { selectAssetVariant } from './asset-catalog.js';
 import { applyRuntimeArtHarmonization } from '../runtime-art-harmonizer.js';
+import { applyCharacterMaterialEnhancementV151 } from './character-material-enhancer-v151.js';
 
 const ALLOWED_MODEL_EXTENSIONS = new Set(['glb', 'gltf']);
 const ALLOWED_TEXTURE_EXTENSIONS = new Set(['png', 'webp', 'ktx2', 'jpg', 'jpeg']);
@@ -129,6 +130,7 @@ export class AssetPipeline {
       });
     });
     applyRuntimeArtHarmonization(root, { role, lowPower: this.lowPower });
+    applyCharacterMaterialEnhancementV151(root, { role, lowPower: this.lowPower });
     return root;
   }
 

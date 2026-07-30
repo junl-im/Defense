@@ -1,5 +1,5 @@
-// const RELEASE_VERSION = '1.0.50'; generated compatibility marker
-// const BUILD_ID = 'b24.50'; generated compatibility marker
+// const RELEASE_VERSION = '1.0.51'; generated compatibility marker
+// const BUILD_ID = 'b24.51'; generated compatibility marker
 importScripts('./release-identity.generated.js');
 const RELEASE_IDENTITY = self.__DOKKAEBI_RELEASE_IDENTITY__;
 if (!RELEASE_IDENTITY) throw new Error('generated release identity missing');
@@ -47,6 +47,7 @@ const GENERATED_MODULE_SHELL_V135 = Object.freeze([
   './src/engine/blob-shadow-system.js',
   './src/engine/camera-director-v16.js',
   './src/engine/camera-profile.js',
+  './src/engine/character-material-enhancer-v151.js',
   './src/engine/directional-impostor.js',
   './src/engine/engine-config.js',
   './src/engine/frame-budget-scheduler.js',
@@ -100,6 +101,8 @@ const GENERATED_MODULE_SHELL_V135 = Object.freeze([
   './src/runtime/boss-tactical-assurance-director-v127.js',
   './src/runtime/browser-reliability-lab.js',
   './src/runtime/bundle-marker-gate-v119.js',
+  './src/runtime/character-presentation-director-v151.js',
+  './src/runtime/character-presentation-policy-v151.js',
   './src/runtime/combat-art-polish-director-v114.js',
   './src/runtime/combat-art-polish-policy-v114.js',
   './src/runtime/combat-art-runtime-policy-v113.js',

@@ -8,7 +8,7 @@ const reportDir = path.join(root, 'logs/qa/v149');
 const versionPath = path.join(dist, 'version.json');
 if (!fs.existsSync(versionPath)) throw new Error('v149 dist/version.json missing');
 const version = JSON.parse(fs.readFileSync(versionPath, 'utf8'));
-if (!['1.0.49','1.0.50'].includes(version.releaseVersion) || !/^b24\.(?:49|50)$/.test(version.buildId || '') || !/^1\.0\.(?:49|50)-b24\.(?:49|50)$/.test(version.cacheRevision || '')) throw new Error('v1.0.49+ dist identity mismatch');
+if (!['1.0.49','1.0.50'].includes(version.releaseVersion) || !/^b24\.(?:49|50|51)$/.test(version.buildId || '') || !/^1\.0\.(?:49|50|51)-b24\.(?:49|50|51)$/.test(version.cacheRevision || '')) throw new Error('v1.0.49+ dist identity mismatch');
 for (const required of ['index.html','assets/game.js','assets/game.css','sw.js','release-identity.generated.js']) if (!fs.existsSync(path.join(dist, required))) throw new Error(`v149 complete Vite dist missing: ${required}`);
 if (fs.existsSync(path.join(dist, 'src')) || fs.existsSync(path.join(dist, 'STATIC_BUILD_NOTICE.txt'))) throw new Error('v149 requires bundled Vite output, not static fallback');
 const gameJs = fs.readFileSync(path.join(dist, 'assets/game.js'), 'utf8');

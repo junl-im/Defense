@@ -100,7 +100,7 @@ import AutomationDirectorV22 from './runtime/automation-director-v22.js';
 import CoreFoundationDirectorV101 from './runtime/core-foundation-director-v101.js';
 import AppStateMachineV103 from './runtime/app-state-machine-v103.js';
 import FirstPresentationDirectorV107 from './runtime/first-presentation-director-v107.js';
-import CombatArtPolishDirectorV114 from './runtime/combat-art-polish-director-v114.js';
+import CharacterPresentationDirectorV151 from './runtime/character-presentation-director-v151.js';
 import CrossPlatformShellV112 from './runtime/cross-platform-shell-v112.js';
 // CameraDirector v14/v15 lineage is preserved by CameraDirectorV16.
 
@@ -164,7 +164,7 @@ const ui = {
 };
 
 // const GAME_VERSION = '1.0.49'; generated compatibility marker
-// const GAME_VERSION = '1.0.50'; generated compatibility marker
+// const GAME_VERSION = '1.0.51'; generated compatibility marker
 const GAME_VERSION = PUBLIC_GAME_VERSION;
 // const GAME_VERSION = '23.1.0'; historical lineage marker for pre-normalization contracts.
 if (GAME_VERSION !== PUBLIC_GAME_VERSION) throw new Error('Public version policy mismatch');
@@ -792,7 +792,7 @@ class DokkaebiLuckDefense {
       textureBudgetMB: this.engine.textureBudgetMB,
       lowPower: this.lowPower
     });
-    this.combatVisualV112 = new CombatArtPolishDirectorV114({ assetPipeline: this.assetPipeline, lowPower: this.lowPower });
+    this.combatVisualV112 = new CharacterPresentationDirectorV151({ assetPipeline: this.assetPipeline, lowPower: this.lowPower });
     this.liveCombatV121 = new LiveCombatDirectorV121({
       combatVisual: this.combatVisualV112,
       engine: this.engine,

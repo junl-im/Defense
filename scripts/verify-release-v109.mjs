@@ -34,10 +34,10 @@ const checks = [
   ['public release preserves v1.0.9 combat-art foundation or later', isV109OrLater],
   ['package lock release is synchronized', lock.version === pkg.version && lock.packages?.['']?.version === pkg.version],
   ['21 approved v1.0.9 raster slots remain catalogued', new Set(catalog.match(/combat-art-(?:hero|guardian|monster|boss)-[a-z]+-v109/g) || []).size === 21],
-  ['v1.0.9 bridge remains available or is superseded by a later visual director', (legacyBridge.includes("art-bible-billboard-v109") && main.includes('CombatArtSkinV109')) || (hasV112 && (main.includes('CombatVisualDirectorV112') || main.includes('CombatArtPolishDirectorV114'))) || (hasV110 && main.includes('CombatVisualDirectorV110'))],
+  ['v1.0.9 bridge remains available or is superseded by a later visual director', (legacyBridge.includes("art-bible-billboard-v109") && main.includes('CombatArtSkinV109')) || (hasV112 && (main.includes('CombatVisualDirectorV112') || main.includes('CombatArtPolishDirectorV114') || main.includes('CharacterPresentationDirectorV151'))) || (hasV110 && main.includes('CombatVisualDirectorV110'))],
   ['heroes guardians monsters and bosses retain approved combat-art attachment path', (hasV112 || hasV110) ? ['attachHero','attachGuardian','attachEnemy'].every((name) => currentVisual.includes(`${name}(`)) : ['attachHero','attachGuardian','attachEnemy'].every((name) => legacyBridge.includes(`${name}(`))],
   ['desktop HUD separated-lane contract remains present', css.includes('--desktop-upper-lane-v109') && layout.includes("left-insight-rail") && layout.includes("right-roster-rail")],
-  ['dist preserves current combat visual implementation when present', !hasCurrentDist || (hasV112 ? (distMain.includes('CombatVisualDirectorV112') || distMain.includes('CombatArtPolishDirectorV114')) : hasV110 ? distMain.includes('CombatVisualDirectorV110') : distMain.includes('CombatArtSkinV109'))],
+  ['dist preserves current combat visual implementation when present', !hasCurrentDist || (hasV112 ? (distMain.includes('CombatVisualDirectorV112') || distMain.includes('CombatArtPolishDirectorV114') || distMain.includes('CharacterPresentationDirectorV151')) : hasV110 ? distMain.includes('CombatVisualDirectorV110') : distMain.includes('CombatArtSkinV109'))],
   ['absolute art bible files are unchanged', artBibleUnchanged],
   ['pre-v1.0.9 runtime raster and 3D art bytes are unchanged', existingAssetsUnchanged],
   ['no SVG file or runtime SVG construction was introduced', !/<svg\b|createElementNS\([^)]*svg/i.test(combined)]

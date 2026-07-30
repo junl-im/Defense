@@ -1,26 +1,26 @@
 # Dokkaebi Luck Defense 3D
 
-> Current release: **v1.0.50 / b24.50** — atomic multi-key save snapshots, extracted persistent rewards and score submission, safe production error recovery, CI-only runtime baseline promotion, and signed patch provenance.
+> Current release: **v1.0.51 / b24.51** — modern character presentation runtime with soft PBR rim lighting, contact grounding, depth silhouettes, directional key light, action afterimages, and mobile-aware LOD.
 
-## v1.0.50 verification
+## v1.0.51 verification
 
 ```bash
-npm run verify:release:v150
+npm run verify:character:v151
+npm run verify:foundation:v150:v151
+npm run verify:release:v151
 npm run verify:ci
 VITE_BASE_PATH=/Defense/ npm run build
-REQUIRE_BROWSER_V144=1 REQUIRE_BROWSER_V145=1 REQUIRE_BROWSER_V146=1 REQUIRE_BROWSER_V147=1 REQUIRE_BROWSER_V149=1 REQUIRE_BROWSER_V150=1 npm run verify:dist:all
-npm run capture:baseline:v150
+REQUIRE_BROWSER_V144=1 REQUIRE_BROWSER_V145=1 REQUIRE_BROWSER_V146=1 REQUIRE_BROWSER_V147=1 REQUIRE_BROWSER_V149=1 REQUIRE_BROWSER_V150=1 REQUIRE_BROWSER_V151=1 npm run verify:dist:all
 ```
 
-`v1.0.50` preserves the v1.0.49 runtime architecture and CI measurement calibration hotfix. The supplied `Defense.zip` contained a second `overlay/` package whose stale v1.0.46 `package.json` and reduced workflow would have downgraded the merged project; this release applies the hotfix source changes while retaining and advancing the canonical release identity.
+## v1.0.51 key changes
 
-## v1.0.50 key changes
-
-- Commits meta shards, hero mastery, equipment, codex progress, and score records through schema-versioned atomic snapshots with two rollback slots.
-- Moves end-of-run rewards and local/online score submission out of `src/main.js` into `PersistentRewardOrchestratorV150`.
-- Adds a production-safe error screen that restores the last valid checkpoint and never exposes source paths, internal URLs, or raw exception text to players.
-- Captures CPU frame, long-task, JavaScript heap, draw-call, and texture residency metrics only from passing GitHub Actions Vite/Chromium evidence; local values cannot be promoted as approved baselines.
-- Adds SHA-256 provenance contracts for the received base ZIP, changed-file manifest, target source tree, and final full ZIP recorded in the patch package.
+- Preserves all approved character source art and explicitly adds zero new final-art approvals.
+- Adds quality-tiered contact shadows, depth silhouettes, directional key lighting, action rims, and up to two motion afterimages.
+- Adds distance and combat-density LOD so secondary character layers collapse first on low-power devices and crowded monster waves.
+- Hardens transparent atlas sampling with premultiplied alpha, anisotropy, dithering, and stricter alpha thresholds.
+- Enhances imported hero, guardian, monster, and boss PBR materials with bounded roughness/metalness, environment response, and a soft view-dependent rim shader.
+- Keeps the v1.0.50 atomic save and production recovery foundation unchanged.
 
 ## v1.0.45 key changes
 

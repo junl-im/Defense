@@ -3,9 +3,9 @@
 - 결과: **PASS**
 - 수정 완료: 11건
 - 추적 위험: 3건
-- 소스 모듈: 143개 / 1369613 bytes
-- 엔진 모듈: 23개 / 96089 bytes
-- 런타임 모듈: 62개 / 415776 bytes
+- 소스 모듈: 146개 / 1390809 bytes
+- 엔진 모듈: 24개 / 100446 bytes
+- 런타임 모듈: 64개 / 432598 bytes
 
 ## 점검 결과
 - PASS identitySynchronized
@@ -39,18 +39,18 @@
 - **V148-RISK-003 · performance · low** — 정확한 v1.0.45 승인 Vite 기준선이 아직 후보 대기 상태일 수 있음 → 승인 아티팩트 확보 후 5% 추세 기준선으로 승격
 
 ## 주요 계측
-- sourceModules: 143
-- sourceBytes: 1369613
-- runtimeModules: 62
-- runtimeBytes: 415776
-- engineModules: 23
-- engineBytes: 96089
+- sourceModules: 146
+- sourceBytes: 1390809
+- runtimeModules: 64
+- runtimeBytes: 432598
+- engineModules: 24
+- engineBytes: 100446
 - combatModules: 11
 - combatBytes: 40779
-- scriptFiles: 357
-- scriptBytes: 1582679
+- scriptFiles: 370
+- scriptBytes: 1617133
 - mainLines: 7938
-- mainBytes: 416462
+- mainBytes: 416479
 - runSafeCalls: 51
 - directMainStorage: 0
 - setIntervalCalls: 0

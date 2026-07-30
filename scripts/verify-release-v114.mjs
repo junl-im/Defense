@@ -50,8 +50,8 @@ check(catalog.includes("role: 'combat-art-polished-v114'"), 'v114 polished comba
 check(catalog.includes("role: 'guardian-citadel-state-v114'"), 'v114 citadel state role missing from catalog');
 check(catalog.includes("visual-v114/${folder}/${slug}-low-v114.webp"), 'v114 tier URL resolver missing');
 check(!catalog.includes('...Object.entries(p0DirectionalAtlasUrls).map'), 'unapproved P0 directional atlases remain in runtime preload catalog');
-check(main.includes("import CombatArtPolishDirectorV114 from './runtime/combat-art-polish-director-v114.js'"), 'v114 director import missing');
-check(main.includes('new CombatArtPolishDirectorV114'), 'v114 director is not instantiated');
+check(main.includes("import CombatArtPolishDirectorV114 from './runtime/combat-art-polish-director-v114.js'") || main.includes("import CharacterPresentationDirectorV151 from './runtime/character-presentation-director-v151.js'"), 'v114-compatible director import missing');
+check(main.includes('new CombatArtPolishDirectorV114') || main.includes('new CharacterPresentationDirectorV151'), 'v114-compatible director is not instantiated');
 if (!failures.length) pass('runtime preloads polished art and excludes unapproved P0 prototype atlases');
 
 check(policy.includes('staticArtMirroringAllowed: false'), 'static art no-mirroring policy missing');

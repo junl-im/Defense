@@ -1,0 +1,25 @@
+{
+  "id": "DD-PATCH-PROVENANCE-V151",
+  "releaseVersion": "1.0.51",
+  "buildId": "b24.51",
+  "algorithm": "sha256",
+  "receivedBaseZip": {
+    "name": "Defense_v1.0.50_FULL.zip",
+    "bytes": 165214738,
+    "sha256": "24566db7b5479b6e0af3b19c51c554592f5587f4228bc11ec8e3e683033384b8"
+  },
+  "targetSourceTree": {
+    "algorithm": "sha256-sorted-paths-v1",
+    "scope": "clean source package excluding dist, node_modules, .git, logs, ZIP files, and this provenance file",
+    "aggregateSha256": "3652f4c82dc6097d6853f4d33caa2529e48b1bcf2f385a5f499ed76afdb8b997",
+    "fileCount": 3027
+  },
+  "patchManifest": {
+    "path": "logs/patch/1.0.51/PATCH_MANIFEST.json",
+    "sha256": "RECORDED_IN_FINAL_PATCH_PACKAGE"
+  },
+  "targetFullZip": {
+    "name": "Defense_v1.0.51_FULL.zip",
+    "sha256": "RECORDED_IN_FINAL_PATCH_PACKAGE"
+  }
+}

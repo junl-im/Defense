@@ -68,7 +68,7 @@ check(lock.packages?.['']?.dokkaebi?.releaseVersion === currentVersion, 'package
 check(lock.packages?.['']?.dokkaebi?.buildId === currentBuildId, 'package-lock buildId mismatch');
 check(publicVersion.releaseVersion === currentVersion && publicVersion.buildId === currentBuildId, 'public version identity mismatch');
 check(publicVersion.cacheRevision === `${currentVersion}-${currentBuildId}`, 'public cache revision mismatch');
-check(policy.includes(`PUBLIC_GAME_VERSION = '${currentVersion}'`) && policy.includes(`BUILD_REVISION = ${pkg.dokkaebi?.buildRevision}`), 'version policy identity mismatch');
+check((policy.includes(`PUBLIC_GAME_VERSION = '${currentVersion}'`) || (policy.includes("from './release-identity.generated.js'") && policy.includes('PUBLIC_GAME_VERSION = RELEASE_VERSION'))) && policy.includes(`BUILD_REVISION = ${pkg.dokkaebi?.buildRevision}`), 'version policy identity mismatch');
 check(index.includes(`const RELEASE_VERSION = '${currentVersion}'`) && index.includes(`const BUILD_ID = '${currentBuildId}'`), 'index boot identity mismatch');
 check(index.includes(`./src/bootstrap.js?v=${currentVersion}-${currentBuildId}`), 'index bootstrap revision mismatch');
 check(main.includes(`const GAME_VERSION = '${currentVersion}'`), 'main game version mismatch');
@@ -162,7 +162,7 @@ for (const id of ['hero-warrior','guardian-ember','monster-imp','boss-tiger']) c
 check(visual.includes('ATLAS_COLUMNS = P0_DIRECTIONAL_ATLAS_SPEC_V112.columns'), 'combat visual atlas column contract missing');
 check(visual.includes('authoredDirectionalAtlasV112') && visual.includes('mirroringAllowed: false'), 'combat visual no-mirror diagnostics missing');
 check(visual.includes('shieldFill') && visual.includes('breakFill') && visual.includes('statusPips'), 'integrated world HP status bar missing');
-check(main.includes("import CombatVisualDirectorV112 from './runtime/combat-visual-director-v112.js'") || main.includes("import CombatArtPolishDirectorV114 from './runtime/combat-art-polish-director-v114.js'"), 'main v112-compatible combat visual director import missing');
+check(main.includes("import CombatVisualDirectorV112 from './runtime/combat-visual-director-v112.js'") || main.includes("import CombatArtPolishDirectorV114 from './runtime/combat-art-polish-director-v114.js'") || main.includes("import CharacterPresentationDirectorV151 from './runtime/character-presentation-director-v151.js'"), 'main v112-compatible combat visual director import missing');
 check(main.includes("import CrossPlatformShellV112 from './runtime/cross-platform-shell-v112.js'"), 'main CrossPlatformShellV112 import missing');
 check(!main.includes('new CombatVisualDirectorV110'), 'obsolete v110 visual director is still instantiated');
 check(shell.includes("CROSS_PLATFORM_SHELL_V112_VERSION = '1.0.12'"), 'cross-platform shell version mismatch');

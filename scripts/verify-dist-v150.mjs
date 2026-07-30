@@ -8,7 +8,7 @@ const reportDir=path.join(root,'logs/qa/v150');
 const versionPath=path.join(dist,'version.json');
 if(!fs.existsSync(versionPath))throw new Error('v150 dist/version.json missing');
 const version=JSON.parse(fs.readFileSync(versionPath,'utf8'));
-if(version.releaseVersion!=='1.0.50'||version.buildId!=='b24.50'||version.cacheRevision!=='1.0.50-b24.50')throw new Error('v1.0.50 dist identity mismatch');
+if(!['1.0.50','1.0.51'].includes(version.releaseVersion)||!/^b24\.(?:50|51)$/.test(version.buildId||'')||!/^1\.0\.(?:50|51)-b24\.(?:50|51)$/.test(version.cacheRevision||''))throw new Error('v1.0.50 dist identity mismatch');
 for(const required of ['index.html','assets/game.js','assets/game.css','sw.js','release-identity.generated.js'])if(!fs.existsSync(path.join(dist,required)))throw new Error(`v150 complete Vite dist missing: ${required}`);
 if(fs.existsSync(path.join(dist,'src'))||fs.existsSync(path.join(dist,'STATIC_BUILD_NOTICE.txt')))throw new Error('v150 requires bundled Vite output, not static fallback');
 const gameJs=fs.readFileSync(path.join(dist,'assets/game.js'),'utf8');
@@ -20,6 +20,6 @@ function walk(directory,relative=''){for(const name of fs.readdirSync(directory)
 walk(dist);files.sort((a,b)=>a.path.localeCompare(b.path));
 const report={id:'DD-VITE-DIST-MANIFEST-V150',releaseVersion:version.releaseVersion,buildId:version.buildId,fileCount:files.length,totalBytes:files.reduce((sum,file)=>sum+file.bytes,0),aggregateSha256:sha(Buffer.from(files.map((file)=>`${file.path}\0${file.bytes}\0${file.sha256}`).join('\n'))),files};
 fs.mkdirSync(reportDir,{recursive:true});fs.writeFileSync(path.join(reportDir,'dist-build-manifest.json'),`${JSON.stringify(report,null,2)}\n`);
-const tasks=['scripts/verify-atomic-save-snapshot-v150.mjs','scripts/verify-persistent-rewards-v150.mjs','scripts/verify-production-error-boundary-v150.mjs','scripts/verify-performance-baseline-v150.mjs','scripts/verify-responsibility-extraction-v150.mjs','scripts/verify-release-v150.mjs'];
+const tasks=['scripts/verify-atomic-save-snapshot-v150.mjs','scripts/verify-persistent-rewards-v150.mjs','scripts/verify-production-error-boundary-v150.mjs','scripts/verify-performance-baseline-v150.mjs','scripts/verify-responsibility-extraction-v150.mjs','scripts/verify-v150-foundation-v151.mjs'];
 for(const script of tasks){const run=spawnSync(process.execPath,[path.join(root,script)],{cwd:root,env:process.env,encoding:'utf8',timeout:120000,maxBuffer:32*1024*1024});process.stdout.write(run.stdout||'');process.stderr.write(run.stderr||'');if(run.error||run.status!==0)throw new Error(`v150 dist sub-verifier failed: ${script} (${run.error?.code||run.status})`);}
-console.log(`PASS v1.0.50 complete Vite dist and atomic checkpoint runtime markers (${report.fileCount} files)`);
+console.log(`PASS v1.0.50 foundation on forward-compatible Vite dist (${report.fileCount} files)`);

@@ -1,12 +1,12 @@
 {
   "schema": "DD-RUNTIME-MODULE-SHELL-1.0",
   "id": "DD-RELEASE-INTEGRITY-V135",
-  "releaseVersion": "1.0.50",
-  "buildId": "b24.50",
-  "cacheRevision": "1.0.50-b24.50",
+  "releaseVersion": "1.0.51",
+  "buildId": "b24.51",
+  "cacheRevision": "1.0.51-b24.51",
   "entry": "src/bootstrap.js",
-  "moduleCount": 128,
-  "totalBytes": 1556652,
+  "moduleCount": 131,
+  "totalBytes": 1577848,
   "files": [
     {
       "path": "src/art-production-gate.js",
@@ -150,8 +150,8 @@
     },
     {
       "path": "src/engine/asset-pipeline.js",
-      "bytes": 13443,
-      "sha256": "733b35f7925c1112abdf8adf899df08a0e82b1d183b6290d0f27a1702a9f66cd"
+      "bytes": 13622,
+      "sha256": "59ba4a5fdb33aa99fc0cd4ccc5bc47456cbf7a11c86798a420b83f6264c9b970"
     },
     {
       "path": "src/engine/asset-quality.js",
@@ -172,6 +172,11 @@
       "path": "src/engine/camera-profile.js",
       "bytes": 2012,
       "sha256": "92b5135f33be679c9a59ac073db46f29941efc551b7cee5f06462d57bb22c050"
+    },
+    {
+      "path": "src/engine/character-material-enhancer-v151.js",
+      "bytes": 4178,
+      "sha256": "c6d7c7616b7f068f15c564ded28fb8328b9f77a6ab1be4163b63cdfdfb62124b"
     },
     {
       "path": "src/engine/directional-impostor.js",
@@ -310,8 +315,8 @@
     },
     {
       "path": "src/main.js",
-      "bytes": 416462,
-      "sha256": "e1f70f2bcc4c590b822a86fd7feb9899a04a572c740f8d105c8b1700462f4614"
+      "bytes": 416479,
+      "sha256": "951ba9e10b4b144335546d9961c478e2de41a5a81bbfb0de57f07985b80e208e"
     },
     {
       "path": "src/premium-assets.js",
@@ -326,7 +331,7 @@
     {
       "path": "src/release-identity.generated.js",
       "bytes": 698,
-      "sha256": "10fa08d2bf198d53678ece764d9a8c28c09541492d8ccfaf484580854448e2b9"
+      "sha256": "4ff6c0904f677caa61614f43b19b2814775c661e9e13557c3062a8e07deb18e8"
     },
     {
       "path": "src/run-director.js",
@@ -437,6 +442,16 @@
       "path": "src/runtime/bundle-marker-gate-v119.js",
       "bytes": 477,
       "sha256": "821a08ad8db99bd626f4fd770e69803f30eca3143eae6a80958373960d715f20"
+    },
+    {
+      "path": "src/runtime/character-presentation-director-v151.js",
+      "bytes": 14479,
+      "sha256": "3acca1b4c5ed08252dd1fbd220aff80e61e2df20e357cb880d4c643429d5082c"
+    },
+    {
+      "path": "src/runtime/character-presentation-policy-v151.js",
+      "bytes": 2343,
+      "sha256": "c8666688d74e35d3c65dee0d85b6763c7bbec35940e17836d84846424517f127"
     },
     {
       "path": "src/runtime/combat-art-polish-director-v114.js",
@@ -646,7 +661,7 @@
     {
       "path": "src/version-policy.js",
       "bytes": 2303,
-      "sha256": "3729427f1baf1d0c98a35db68ee933d9ac8699e0d379285b812342feb63a6b67"
+      "sha256": "5111f330a098ffb03d427841abbdc5e0faf08159a90f176c6422d2a035efaa29"
     }
   ]
 }

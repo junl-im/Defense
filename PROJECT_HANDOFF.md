@@ -1,12 +1,12 @@
-> Current improvement patch: **v1.0.50 / b24.50** - ATOMIC CHECKPOINT AND SAFE RECOVERY RELEASE
+> Current improvement patch: **v1.0.51 / b24.51** - MODERN CHARACTER PRESENTATION RELEASE
 
-# PROJECT HANDOFF - RELEASE 1.0.50
+# PROJECT HANDOFF - RELEASE 1.0.51
 
-- Project: `DokkaebiLuckDefense3D_FULL_v1.0.50_ATOMIC_CHECKPOINTS_VERIFIED`
-- Public game version: `1.0.50`
+- Project: `DokkaebiLuckDefense3D_FULL_v1.0.51_MODERN_CHARACTER_PRESENTATION`
+- Public game version: `1.0.51`
 - Lineage version: `23.12.0`
-- Build ID: `b24.50`
-- Base: uploaded `Defense.zip` containing v1.0.49 root plus a layered v145 CI hotfix overlay
+- Build ID: `b24.51`
+- Base: `Defense_v1.0.50_FULL.zip` / SHA-256 `24566db7b5479b6e0af3b19c51c554592f5587f4228bc11ec8e3e683033384b8`
 
 ## 절대 규칙
 
@@ -78,6 +78,18 @@ npm run hygiene:check
 - 100웨이브 자원 상한과 에셋 승인·격리 경계를 자동 검증한다.
 
 ## 인수인계 내역
+
+### 2026-07-30 — v1.0.51 / b24.51 modern character presentation
+
+- 작업 목표: 기존 승인 캐릭터 에셋을 교체하거나 신규 최종 원화로 과장하지 않고, 엔진 렌더링 계층에서 접지감·깊이·방향성 조명·액션 잔상·PBR 재질 반응을 강화해 최근 게임에 가까운 전투 캐릭터 표현을 만든다.
+- 주요 변경 파일: `src/runtime/character-presentation-policy-v151.js`, `src/runtime/character-presentation-director-v151.js`, `src/engine/character-material-enhancer-v151.js`, `src/engine/asset-pipeline.js`, `src/main.js`, v151 릴리스·dist·패키지·패치 검증기, 버전·CI·README와 릴리스 문서.
+- 수정 내용: 캐릭터마다 접지 그림자, 어두운 깊이 실루엣, 방향성 키라이트, 기존 액션 림 계보, 최대 2단 모션 애프터이미지를 품질 단계별로 적용한다. 몬스터는 거리와 지속 고밀도 전투 압력에서 보조 레이어를 먼저 줄이고 영웅·수호대·보스 가독성을 우선한다. 투명 아틀라스는 premultiplied alpha, anisotropy, sRGB, dithering과 강화된 alpha threshold를 사용한다. GLB 캐릭터 재질은 roughness·metalness·환경광 범위를 제한하고 저전력 기기를 제외한 경로에 부드러운 view-dependent PBR 림 셰이더를 설치한다.
+- 승인 경계: 신규 최종 캐릭터 원화 승인 수는 0이다. 기존 승인·파생·격리 상태를 유지하며 이번 버전은 엔진 표현 강화로만 기록한다.
+- 검증 명령: `npm run verify:character:v151`, `npm run verify:foundation:v150:v151`, `npm run verify:release:v151`, `npm run verify`, `npm run stage:package:v151`, `npm run verify:package:v151`, `npm run create:patch:v151`, `npm run verify:patch:v151`, `npm run hygiene:check`, CI의 `npm ci → VITE_BASE_PATH=/Defense/ npm run build → REQUIRE_BROWSER_V151=1 npm run verify:dist:all`.
+- 현재 검증 결과: v1.0.1~v1.0.50 누적 보존 계약과 v1.0.51 캐릭터 표현·재질·릴리스 검증을 통과했다. 전체 `npm run verify` 결합 실행은 마지막 v1.0.51 중복 구간 직전까지 2,408줄을 통과한 뒤 25분 실행 제한으로 종료됐고, 남은 `verify:foundation:v150:v151`, `verify:release:v151`, 루트 위생, 패키지·패치 검증은 각각 별도 실행하여 모두 종료 코드 0을 확인했다. 로컬 Vite/WebGL 빌드는 내부 npm 저장소에서 고정 의존성 `vite@8.1.5`와 `three@0.185.1`을 제공하지 않아 실행하지 못했으며, 이를 통과로 간주하지 않고 GitHub Actions의 `npm ci → build → verify:dist:all → v151 character evidence upload` 필수 게이트로 남겼다.
+- 잔여 위험: 현재 전달 환경의 내부 npm 저장소에는 고정된 `vite@8.1.5` 패키지가 없어 로컬 WebGL 셰이더 컴파일과 실제 Vite 화면 캡처를 실행할 수 없다. CI에서 의존성 설치·번들 생성·dist 마커·실브라우저 계측을 필수로 유지한다. 독립 공격/기술 원화는 여전히 파생 임시 승인이다.
+- 다음 예정: `docs/NEXT_UPDATE_v1.0.52.md`의 애니메이션 이벤트 기반 클래스별 타이밍, GPU 비용 자동 강등, 실제 WebGL 전후 캡처, 나머지 직업 11방향 승인 검토.
+
 
 ### 2026-07-30 — v1.0.50 / b24.50 atomic checkpoints and safe recovery
 

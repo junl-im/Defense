@@ -1,7 +1,8 @@
-# Next Update v1.0.51
+# Update v1.0.51 — Completed
 
-- Promote the first approved hardware-accelerated GitHub Actions runtime baseline and compare repeated runs for variance.
-- Add deterministic fault injection at every operation boundary of a multi-key save commit, including journal cleanup and rollback recovery.
-- Run the production recovery screen through desktop/mobile keyboard, screen-reader, reduced-motion, forced-colors, and zoom browser matrices.
-- Add real-device iOS Safari standalone-PWA and Android vendor viewport traces to the long-session evidence bundle.
-- Split remaining codex/equipment write paths into scheduled snapshot checkpoints without increasing combat-frame storage pressure.
+- [x] Preserve approved character source art and add zero new final-art approvals.
+- [x] Add modern contact grounding, depth silhouettes, directional key lighting, action rims, and motion afterimages.
+- [x] Add economy, balanced, and cinematic presentation profiles with distance and crowd-pressure LOD.
+- [x] Harden transparent atlas sampling for scaled and rotated combat sprites.
+- [x] Add bounded PBR material enhancement and a soft view-dependent rim shader for imported character meshes.
+- [x] Add release, dist, package, patch, and provenance contracts for v1.0.51.
