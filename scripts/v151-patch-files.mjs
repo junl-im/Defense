@@ -34,6 +34,7 @@ export const V151_PATCH_FILES = Object.freeze([
   "scripts/stage-clean-package-v151.mjs",
   "scripts/v151-patch-files.mjs",
   "scripts/verify-character-presentation-v151.mjs",
+  "scripts/verify-ci-root-cleanup-v151.mjs",
   "scripts/verify-clean-package-v151.mjs",
   "scripts/verify-code-integrity.mjs",
   "scripts/verify-dist-chain-v140.mjs",

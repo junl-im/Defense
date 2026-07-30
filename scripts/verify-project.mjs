@@ -4,14 +4,14 @@ import { resolve } from 'node:path';
 import { formatSvgViolations, scanSvgPolicy } from './svg-policy.mjs';
 
 const root = resolve(import.meta.dirname, '..');
-const identityBootstrap = spawnSync(process.execPath, [resolve(root, 'scripts/bootstrap-release-package-v150.mjs')], {
+const identityBootstrap = spawnSync(process.execPath, [resolve(root, 'scripts/bootstrap-release-package-v151.mjs')], {
   cwd: root,
   encoding: 'utf8'
 });
 process.stdout.write(identityBootstrap.stdout || '');
 process.stderr.write(identityBootstrap.stderr || '');
 if (identityBootstrap.error || identityBootstrap.status !== 0) {
-  throw new Error(`v150 pre-verification identity bootstrap failed (${identityBootstrap.error?.code || identityBootstrap.status})`);
+  throw new Error(`v151 pre-verification identity bootstrap failed (${identityBootstrap.error?.code || identityBootstrap.status})`);
 }
 const read = (path) => readFileSync(resolve(root, path), 'utf8');
 const failures = [];

@@ -45,6 +45,7 @@ jobs:
         shell: bash
         run: |
           node scripts/bootstrap-release-package-v151.mjs
+          node scripts/clean-obsolete-assets.mjs
           node scripts/generate-release-identity-v151.mjs
           node scripts/verify-release-identity-v151.mjs
           node -e "const p=require('./package.json'); const l=require('./package-lock.json'); if(p.version!=='1.0.51'||l.version!=='1.0.51'||l.packages?.['']?.version!=='1.0.51') process.exit(1); console.log('PASS CI package identity 1.0.51 before npm ci')"

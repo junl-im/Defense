@@ -1,7 +1,7 @@
-// export const PUBLIC_GAME_VERSION = '1.0.50'; generated compatibility marker
+// export const PUBLIC_GAME_VERSION = '1.0.51'; generated compatibility marker
 // export const LEGACY_LINEAGE_VERSION = '23.12.0'; generated compatibility marker
 // export const BUILD_EPOCH = 24; generated compatibility marker
-// export const BUILD_REVISION = 50; generated compatibility marker
+// export const BUILD_REVISION = 51; generated compatibility marker
 import { RELEASE_VERSION, LINEAGE_VERSION, BUILD_EPOCH as GENERATED_BUILD_EPOCH, BUILD_REVISION as GENERATED_BUILD_REVISION, BUILD_ID as GENERATED_BUILD_ID, CACHE_REVISION as GENERATED_CACHE_REVISION } from './release-identity.generated.js';
 
 export const PUBLIC_GAME_VERSION = RELEASE_VERSION;

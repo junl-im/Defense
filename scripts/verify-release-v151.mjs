@@ -21,6 +21,7 @@ for (const file of [
   'src/engine/character-material-enhancer-v151.js',
   'scripts/verify-character-presentation-v151.mjs',
   'scripts/verify-repository-root-v151.mjs',
+  'scripts/verify-ci-root-cleanup-v151.mjs',
   'docs/PATCH_NOTES_v1.0.51.md',
   'docs/CI_REPOSITORY_ROOT_REPAIR_v1.0.51.md',
   'docs/RELEASE_ASSURANCE_v1.0.51.md',
@@ -33,6 +34,9 @@ const manifest = json('docs/generated/build-input-manifest-v151.json');
 check(manifest.id === 'DD-BUILD-INPUT-MANIFEST-V151' && manifest.releaseVersion === '1.0.51' && manifest.fileCount > 2000, 'v151 build input manifest');
 check(read('scripts/verify-dist-chain-v140.mjs').includes("'151'"), 'v151 dist chain');
 check(read('scripts/clean-obsolete-assets.mjs').includes("'PATCH_SUMMARY.md'"), 'v151 stale root patch metadata cleanup');
-check(read('.github/workflows/deploy.yml').includes('verify-repository-root-v151.mjs'), 'v151 CI repository-root preflight');
+const workflow = read('.github/workflows/deploy.yml');
+check(workflow.indexOf('node scripts/clean-obsolete-assets.mjs') >= 0 && workflow.indexOf('node scripts/clean-obsolete-assets.mjs') < workflow.indexOf('node scripts/verify-repository-root-v151.mjs'), 'v151 CI cleanup before repository-root preflight');
+check(read('scripts/bootstrap-release-package-v151.mjs').includes('removedStaleRootMetadata'), 'v151 bootstrap stale metadata cleanup');
+check(read('scripts/verify-repository-root-v151.mjs').includes('console.warn(`WARN stale patch metadata'), 'v151 non-fatal stale metadata preflight');
 if (failures.length) { failures.forEach((failure) => console.error(`FAIL ${failure}`)); process.exit(1); }
 console.log('PASS v1.0.51 modern character presentation, PBR material enhancement, honest asset boundary, identity, package, and patch contracts');

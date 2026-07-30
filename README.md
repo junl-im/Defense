@@ -2,6 +2,10 @@
 
 > Current release: **v1.0.51 / b24.51** — modern character presentation runtime with soft PBR rim lighting, contact grounding, depth silhouettes, directional key light, action afterimages, and mobile-aware LOD.
 
+## v1.0.51 CI cleanup repair R2
+
+The dependency-free release bootstrap now removes stale root patch metadata before repository verification. GitHub Actions also runs `clean-obsolete-assets.mjs` before the root preflight, and a regression test verifies this ordering with all six legacy metadata files.
+
 ## v1.0.51 verification
 
 ```bash

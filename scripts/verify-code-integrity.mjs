@@ -103,8 +103,7 @@ const packageJson = JSON.parse(read('package.json'));
 const cleanCommand = packageJson.scripts?.['clean:obsolete'];
 const preverifyCommand = packageJson.scripts?.preverify;
 const prebuildCommand = packageJson.scripts?.prebuild;
-const hasOrderedLifecycle = (command) => {
-  const required = ['npm run bootstrap:identity:v150', 'npm run clean:obsolete', 'npm run hygiene:check', 'npm run verify:identity:v150'];
+const hasOrderedTokens = (command, required) => {
   let cursor = -1;
   return required.every((token) => {
     const index = String(command || '').indexOf(token, cursor + 1);
@@ -113,9 +112,26 @@ const hasOrderedLifecycle = (command) => {
     return true;
   });
 };
+const prepareRootCommand = packageJson.scripts?.['prepare:repo-root:v151'];
+const prepareRootIsComplete = hasOrderedTokens(prepareRootCommand, [
+  'npm run bootstrap:identity:v151',
+  'npm run clean:repo-root:v151',
+  'npm run verify:repo-root:v151'
+]);
+const hasOrderedLifecycle = (command) => hasOrderedTokens(command, [
+  'npm run prepare:repo-root:v151',
+  'npm run hygiene:check',
+  'npm run verify:identity:v151'
+]) || hasOrderedTokens(command, [
+  'npm run bootstrap:identity:v151',
+  'npm run clean:obsolete',
+  'npm run hygiene:check',
+  'npm run verify:identity:v151'
+]);
 const preverifyHasCleanup = hasOrderedLifecycle(preverifyCommand);
 const prebuildHasCleanup = hasOrderedLifecycle(prebuildCommand);
 if (cleanCommand === 'node scripts/clean-obsolete-assets.mjs'
+  && prepareRootIsComplete
   && preverifyHasCleanup
   && prebuildHasCleanup) {
   pass('검증·빌드 전 구버전 번들 정리와 루트 위생 검사');

@@ -11,17 +11,18 @@
   "targetSourceTree": {
     "algorithm": "sha256-sorted-paths-v1",
     "scope": "repository-root-flat clean source package excluding dist, node_modules, .git, logs, ZIP files, and this provenance file",
-    "aggregateSha256": "1e61cc3b4061dfa1b1385aae430809ac6c9473b58c56ceb9c9a8cd1028b1503e",
-    "fileCount": 3029
+    "aggregateSha256": "3eed7d7fe8cef4cc1a2c97276765f3855d73838426ed4bb51e5ee42c1e290f24",
+    "fileCount": 3030
   },
   "patchManifest": {
     "path": "logs/patch/1.0.51/PATCH_MANIFEST.json",
     "sha256": "RECORDED_IN_FINAL_PATCH_PACKAGE"
   },
   "targetFullZip": {
-    "name": "Defense_v1.0.51_FULL_REPO_ROOT_FIXED.zip",
+    "name": "Defense_v1.0.51_FULL_CI_CLEANUP_R2.zip",
     "sha256": "RECORDED_IN_FINAL_PATCH_PACKAGE"
   },
-  "repairRevision": 1,
-  "repositoryRootLayout": "flat"
+  "repairRevision": 2,
+  "repositoryRootLayout": "flat",
+  "ciCleanupOrder": "bootstrap-clean-verify"
 }

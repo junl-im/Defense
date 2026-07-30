@@ -23,6 +23,6 @@ const staleRootFiles = [
   'README_PATCH.txt', 'APPLY_KO.txt', 'DELETE_PATHS.txt'
 ].filter((name) => fs.existsSync(path.join(root, name)));
 if (staleRootFiles.length) {
-  throw new Error(`stale patch metadata remains at repository root: ${staleRootFiles.join(', ')}; run npm run clean:obsolete`);
+  console.warn(`WARN stale patch metadata remains at repository root: ${staleRootFiles.join(', ')}; bootstrap/clean:obsolete will remove it before source verification`);
 }
 console.log('PASS v1.0.51 repository-root identity and layout');

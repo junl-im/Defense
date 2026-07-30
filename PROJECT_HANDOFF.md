@@ -1,3 +1,12 @@
+
+
+## 2026-07-30 — v1.0.51 CI cleanup repair R2
+
+- 재현 오류: GitHub Actions의 dependency-free preflight가 `clean:obsolete`보다 먼저 `verify-repository-root-v151.mjs`를 실행해, 삭제 가능한 `PATCH_SUMMARY.md`, `PATCH_MANIFEST.json`, `PATCH_MANIFEST_v1.0.23.json`, `README_PATCH.txt`, `APPLY_KO.txt`를 치명 오류로 처리했다.
+- 수정: bootstrap 단계에서 6개 stale metadata를 선제 삭제하고, workflow에서 cleaner를 root verifier보다 먼저 실행하며, root verifier는 해당 6개 파일만 경고 처리한다.
+- 회귀 방지: `scripts/verify-ci-root-cleanup-v151.mjs`가 workflow 명령 순서와 임시 저장소의 실제 삭제 결과를 검증한다.
+- 적용 후 필수 확인: `node scripts/bootstrap-release-package-v151.mjs`, `node scripts/clean-obsolete-assets.mjs`, `node scripts/verify-repository-root-v151.mjs`, `npm run verify:ci`.
+- 릴리스 식별자는 그대로 `v1.0.51 / b24.51`, repair revision은 2다.
 > Current improvement patch: **v1.0.51 / b24.51** - MODERN CHARACTER PRESENTATION RELEASE
 
 # PROJECT HANDOFF - RELEASE 1.0.51

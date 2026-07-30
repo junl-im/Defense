@@ -1,28 +1,36 @@
-# v1.0.51 Repository Root Repair
+# v1.0.51 Repository Root Repair R2
 
-## Failure signature
+## Failure signatures
 
 - CI prints `dokkaebi-luck-defense-3d@1.0.46` instead of `@1.0.51`.
-- `verify:ci` starts without `bootstrap:identity:v151`.
-- Root hygiene rejects `PATCH_SUMMARY.md`.
+- A wrapper directory leaves the actual repository root on an older release.
+- CI reaches `verify-repository-root-v151.mjs` while `PATCH_SUMMARY.md`, `PATCH_MANIFEST.json`, `PATCH_MANIFEST_v1.0.23.json`, `README_PATCH.txt`, or `APPLY_KO.txt` still exists at the repository root.
 
-## Root cause
+## Root causes
 
-The previous full ZIP contained one wrapper directory. Uploading that directory as-is into an existing repository could leave the old v1.0.46 files at the real repository root while placing v1.0.51 below it. The patch deletion contract also did not list legacy root patch metadata.
+The original full ZIP used a wrapper directory, which could leave the previous repository root active. Repair revision 1 flattened the archive but still ran the strict repository-root verifier before the workflow cleanup step. A repository containing old patch metadata could therefore fail even though `clean:obsolete` knew how to remove the files.
 
-## Repair contract
+## Repair R2 contract
 
-- The repaired full ZIP is repository-root flat: `package.json`, `src/`, and `.github/` are archive-root entries.
-- `npm run clean:obsolete` removes `PATCH_SUMMARY.md` and other stale patch metadata from the repository root.
-- `verify:repo-root:v151` fails early when the root identity is not v1.0.51/b24.51 or a nested full-package directory is detected.
-- The overwrite patch declares six stale root paths for deletion and also removes them through the preverify cleanup path.
+- The full ZIP remains repository-root flat: `package.json`, `src/`, `scripts/`, and `.github/` are archive-root entries.
+- `bootstrap-release-package-v151.mjs` removes the six known stale root metadata paths using Node built-ins before package installation.
+- GitHub Actions runs `node scripts/clean-obsolete-assets.mjs` before `verify-repository-root-v151.mjs`.
+- `verify-repository-root-v151.mjs` still fails on the wrong release identity, missing root contracts, or a nested full-package directory, but known removable patch metadata is reported as a warning rather than a premature fatal error.
+- `verify-ci-root-cleanup-v151.mjs` enforces workflow ordering and executes the cleaner against a temporary repository containing all six stale files.
+- The direct-overlay patch still declares all six paths in `DELETE_PATHS.txt` for users who apply deletions explicitly.
 
 ## Required post-apply check
 
 ```bash
+node scripts/bootstrap-release-package-v151.mjs
+node scripts/clean-obsolete-assets.mjs
+node scripts/verify-repository-root-v151.mjs
 node -e "const p=require('./package.json'); console.log(p.version, p.dokkaebi?.buildId)"
-npm run clean:obsolete
-npm run verify:repo-root:v151
 ```
 
-Expected identity: `1.0.51 b24.51`.
+Expected output includes:
+
+```text
+PASS v1.0.51 repository-root identity and layout
+1.0.51 b24.51
+```
