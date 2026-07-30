@@ -14,3 +14,7 @@ The v1.0.49 release gate requires:
 - hash-verified clean source-package staging and direct-root overlay application.
 
 The browser result is written to `logs/qa/v149/feature-exposure-report.json`.
+
+## v145 CI measurement calibration hotfix
+
+The v1.0.49 gate also distinguishes hardware performance from explicitly detected software-renderer CI baselines. Hardware and unknown renderers retain the original absolute frame/long-task limits. SwiftShader/llvmpipe sessions use bounded baseline-relative frame and long-task-rate regression checks, while incomplete or timed-out frame windows always fail. Runtime, WebGL recovery, heap, texture, and geometry limits remain unchanged.

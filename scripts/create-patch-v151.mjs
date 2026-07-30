@@ -29,7 +29,7 @@ const manifest = {
   targetVersion: '1.0.51',
   buildId: 'b24.51',
   applyMode: 'direct-root-overlay',
-  repairRevision: 2,
+  repairRevision: 3,
   archiveRootLayout: 'flat',
   repositoryRootGuard: 'verify:repo-root:v151',
   baseZipSha256: base.receivedBaseZip.sha256,

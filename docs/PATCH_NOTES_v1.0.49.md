@@ -21,3 +21,10 @@
 - Fixed generated top-level `package-lock.json.dokkaebi` metadata so historical v1.0.45 identity checks remain valid.
 - Made the v1.0.48 system audit forward-compatible with generated service-worker identity in v1.0.49.
 - Restored a non-empty, hash-verified v1.0.48→v1.0.49 direct-overlay manifest and added a cumulative v1.0.46+ recovery overlay for mixed partial-patch branches.
+
+## CI long-session measurement reliability hotfix
+- Preserved strict absolute frame and long-task limits for hardware and unknown renderers.
+- Added explicit SwiftShader/llvmpipe detection and bounded baseline-relative regression checks for software-rendered CI.
+- Normalized long tasks by measured frames instead of treating every slow software-renderer frame as a gameplay regression.
+- Added frame-window coverage and timeout failures so calibration cannot hide a stalled or incomplete measurement.
+- Added regression fixtures reproducing the reported 216.6ms p95 / 500+ long-task CI pattern while still rejecting hardware and worsening software-renderer cases.

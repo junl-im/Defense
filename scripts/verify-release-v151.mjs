@@ -22,6 +22,7 @@ for (const file of [
   'scripts/verify-character-presentation-v151.mjs',
   'scripts/verify-repository-root-v151.mjs',
   'scripts/verify-ci-root-cleanup-v151.mjs',
+  'scripts/root-output-policy.mjs',
   'docs/PATCH_NOTES_v1.0.51.md',
   'docs/CI_REPOSITORY_ROOT_REPAIR_v1.0.51.md',
   'docs/RELEASE_ASSURANCE_v1.0.51.md',
@@ -37,6 +38,11 @@ check(read('scripts/clean-obsolete-assets.mjs').includes("'PATCH_SUMMARY.md'"), 
 const workflow = read('.github/workflows/deploy.yml');
 check(workflow.indexOf('node scripts/clean-obsolete-assets.mjs') >= 0 && workflow.indexOf('node scripts/clean-obsolete-assets.mjs') < workflow.indexOf('node scripts/verify-repository-root-v151.mjs'), 'v151 CI cleanup before repository-root preflight');
 check(read('scripts/bootstrap-release-package-v151.mjs').includes('removedStaleRootMetadata'), 'v151 bootstrap stale metadata cleanup');
+check(read('scripts/bootstrap-release-package-v151.mjs').includes('removedStaleRootOverlay'), 'v151 bootstrap stale overlay cleanup');
 check(read('scripts/verify-repository-root-v151.mjs').includes('console.warn(`WARN stale patch metadata'), 'v151 non-fatal stale metadata preflight');
+check(read('scripts/verify-repository-root-v151.mjs').includes('stale root overlay/ remains after cleanup'), 'v151 repository verifier rejects remaining overlay');
+const rootOutputPolicy = read('scripts/root-output-policy.mjs');
+check(rootOutputPolicy.includes('accidentalOverlayRecovery: false') && rootOutputPolicy.includes("accidentalOverlayStrategy: 'remove-without-merge'"), 'v151 stale overlay removal without merge');
+check(!rootOutputPolicy.includes('RECOVER accidental root overlay/ -> project root'), 'v151 unsafe overlay merge removed');
 if (failures.length) { failures.forEach((failure) => console.error(`FAIL ${failure}`)); process.exit(1); }
 console.log('PASS v1.0.51 modern character presentation, PBR material enhancement, honest asset boundary, identity, package, and patch contracts');

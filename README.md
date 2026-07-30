@@ -2,9 +2,9 @@
 
 > Current release: **v1.0.51 / b24.51** — modern character presentation runtime with soft PBR rim lighting, contact grounding, depth silhouettes, directional key light, action afterimages, and mobile-aware LOD.
 
-## v1.0.51 CI cleanup repair R2
+## v1.0.51 CI cleanup repair R3
 
-The dependency-free release bootstrap now removes stale root patch metadata before repository verification. GitHub Actions also runs `clean-obsolete-assets.mjs` before the root preflight, and a regression test verifies this ordering with all six legacy metadata files.
+The dependency-free release bootstrap removes stale root patch metadata and any root-level `overlay/` before repository verification. The standalone cleaner repeats the same non-merging deletion, so a stale `package.json@1.0.46` can never overwrite the already repaired v1.0.51 package identity.
 
 ## v1.0.51 verification
 
@@ -85,5 +85,5 @@ The 100-wave browser harness requires the complete Vite output (`dist/assets/gam
 
 ## Repository-root repair revision
 
-The repaired delivery is archive-root flat, removes stale root `PATCH_SUMMARY.md` metadata, and adds `verify:repo-root:v151` to stop nested or stale v1.0.46 repository layouts before verification.
+The repaired delivery is archive-root flat, removes stale root patch metadata, deletes any legacy root `overlay/` without merging it, and adds `verify:repo-root:v151` to stop nested or stale repository layouts before verification.
 

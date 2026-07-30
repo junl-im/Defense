@@ -1,3 +1,11 @@
+## 2026-07-30 — v1.0.51 CI overlay downgrade repair R3
+
+- 재현 오류: bootstrap이 루트 `package.json`을 v1.0.51로 확인한 뒤 `clean-obsolete-assets.mjs`가 과거 `overlay/`를 자동 병합하면서, 오버레이의 `package.json@1.0.46`이 다시 루트를 덮어썼다.
+- 직접 원인: `root-output-policy.mjs`의 `recoverAccidentalRootOverlay()`가 오버레이 내부 파일을 신뢰하고 프로젝트 루트로 복사했다.
+- 수정: bootstrap과 standalone cleaner 양쪽에서 루트 `overlay/` 자동 병합을 영구 비활성화하고, 내용물을 읽거나 복사하지 않은 채 오래된 추출 잔재로 삭제한다.
+- 회귀 방지: `verify-ci-root-cleanup-v151.mjs`가 임시 저장소에 루트 v1.0.51과 오버레이 v1.0.46을 동시에 만들고 bootstrap과 standalone cleaner를 각각 실행해, 루트 버전 유지와 비복사를 모두 검증한다.
+- 패치 필수 파일: `scripts/root-output-policy.mjs`를 direct-root 패치 목록과 패치 검증 계약에 추가했다.
+
 
 
 ## 2026-07-30 — v1.0.51 CI cleanup repair R2
@@ -331,5 +339,5 @@ v1.0.12 크로스 플랫폼 기반, v1.0.17 승인 경계, v1.0.20 주인공 11�
 
 ## Repository-root repair revision
 
-The repaired delivery is archive-root flat, removes stale root `PATCH_SUMMARY.md` metadata, and adds `verify:repo-root:v151` to stop nested or stale v1.0.46 repository layouts before verification.
+The repaired delivery is archive-root flat, removes stale root patch metadata, deletes any legacy root `overlay/` without merging it, and adds `verify:repo-root:v151` to stop nested or stale repository layouts before verification.
 

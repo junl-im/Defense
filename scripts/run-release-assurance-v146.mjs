@@ -16,10 +16,11 @@ const positiveInt = (value, fallback) => {
   const parsed = Number.parseInt(value || '', 10);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 };
-const bootTimeoutMs = positiveInt(process.env.V145_BROWSER_BOOT_TIMEOUT_MS, 60000);
-const sessionTimeoutMs = positiveInt(process.env.V145_SESSION_TIMEOUT_MS, 180000);
-const cdpTimeoutMs = positiveInt(process.env.V145_BROWSER_CDP_TIMEOUT_MS, 190000);
-const extraFlags = (process.env.V145_CHROMIUM_FLAGS || '').split(/\s+/).map((value) => value.trim()).filter(Boolean);
+const bootTimeoutMs = positiveInt(process.env.V146_BROWSER_BOOT_TIMEOUT_MS || process.env.V145_BROWSER_BOOT_TIMEOUT_MS, 60000);
+const sessionTimeoutMs = positiveInt(process.env.V146_SESSION_TIMEOUT_MS || process.env.V145_SESSION_TIMEOUT_MS, 180000);
+const cdpTimeoutMs = positiveInt(process.env.V146_BROWSER_CDP_TIMEOUT_MS || process.env.V145_BROWSER_CDP_TIMEOUT_MS, 190000);
+const deviceScaleFactor = Math.max(1, Math.min(3, positiveInt(process.env.V146_DEVICE_SCALE_FACTOR || process.env.V145_DEVICE_SCALE_FACTOR, 1)));
+const extraFlags = (process.env.V146_CHROMIUM_FLAGS || process.env.V145_CHROMIUM_FLAGS || '').split(/\s+/).map((value) => value.trim()).filter(Boolean);
 
 const failOrSkip = (message) => {
   if (requireBrowser) throw new Error(message);
@@ -161,6 +162,7 @@ const stderr = fs.openSync(stderrPath, 'w');
 const chromiumFlags = [
   '--headless=new', '--no-sandbox', '--disable-dev-shm-usage', '--disable-background-networking', '--disable-default-apps',
   '--disable-extensions', '--disable-sync', '--metrics-recording-only', '--mute-audio', '--js-flags=--expose-gc',
+  '--disable-background-timer-throttling', '--disable-backgrounding-occluded-windows', '--disable-renderer-backgrounding',
   '--use-gl=angle', '--use-angle=swiftshader-webgl', '--enable-unsafe-swiftshader', '--remote-debugging-port=0'
 ];
 const child = spawn(command, [...chromiumFlags, ...extraFlags, `--user-data-dir=${profile}`, '--window-size=430,932', 'about:blank'], {
@@ -195,7 +197,7 @@ try {
   await client.send('Emulation.setDeviceMetricsOverride', {
     width: 430,
     height: 932,
-    deviceScaleFactor: 2,
+    deviceScaleFactor,
     mobile: true,
     screenOrientation: { type: 'portraitPrimary', angle: 0 }
   });
@@ -238,7 +240,7 @@ try {
         const stabilization=await api.stabilizeLongSessionMeasurementV145({collectGarbage,settleFrames:collectGarbage?8:3});
         const frameWindow=await api.measureFrameWindowV145(24,{warmupFrames:3});
         const sample=api.recordLongSessionSampleV145(frameWindow);
-        progress.push({wave:sample.wave,frameP95Ms:sample.frameP95Ms,frameMaxMs:sample.frameMaxMs,longTasks:sample.longTasks,longTaskMs:sample.longTaskMs,heapUsedMB:sample.heapUsedMB,textures:sample.textures,geometries:sample.geometries,stabilization,loadPhase:snapshot.loadPhase||null});
+        progress.push({wave:sample.wave,frameP95Ms:sample.frameP95Ms,frameMaxMs:sample.frameMaxMs,frameSamples:sample.frameSamples,frameWindowTimedOut:sample.frameWindowTimedOut,frameLongTaskRate:sample.frameLongTaskRate,longTasks:sample.longTasks,longTaskMs:sample.longTaskMs,heapUsedMB:sample.heapUsedMB,textures:sample.textures,geometries:sample.geometries,stabilization,loadPhase:snapshot.loadPhase||null});
       }
     }
     const report=api.finishLongSessionV146();
@@ -251,8 +253,8 @@ try {
     const assurance=sessionReport?.report||{};
     const failedChecks=Object.entries(assurance.checks||{}).filter(([,passed])=>!passed).map(([name])=>name);
     const failedLoadChecks=Object.entries(assurance.loadChecks||{}).filter(([,passed])=>!passed).map(([name])=>name);
-    const worstFrames=[...(assurance.samples||[])].sort((a,b)=>Number(b.frameP95Ms||0)-Number(a.frameP95Ms||0)).slice(0,5).map((sample)=>({wave:sample.wave,frameP95Ms:sample.frameP95Ms,frameMaxMs:sample.frameMaxMs,longTasks:sample.longTasks}));
-    throw new Error(`v146 long-session checks failed: ${JSON.stringify({failedChecks,failedLoadChecks,metrics:assurance.metrics,thresholds:assurance.thresholds,worstFrames,digest:assurance.failureDigest||{}})}`);
+    const worstFrames=[...(assurance.samples||[])].sort((a,b)=>Number(b.frameP95Ms||0)-Number(a.frameP95Ms||0)).slice(0,5).map((sample)=>({wave:sample.wave,frameP95Ms:sample.frameP95Ms,frameMaxMs:sample.frameMaxMs,frameSamples:sample.frameSamples,frameLongTaskRate:sample.frameLongTaskRate,longTasks:sample.longTasks}));
+    throw new Error(`v146 long-session checks failed: ${JSON.stringify({failedChecks,failedLoadChecks,metrics:assurance.metrics,thresholds:assurance.thresholds,environment:assurance.environment,measurementMode:assurance.metrics?.measurementMode,longTaskMeasurementMode:assurance.metrics?.longTaskMeasurementMode,worstFrames,digest:assurance.failureDigest||{}})}`);
   }
   if (!sessionReport?.report?.failureDigest) throw new Error('v146 failure digest missing');
   if ((sessionReport?.report?.loadPhases||[]).length !== 5) throw new Error('v146 deterministic load phases missing');
@@ -289,6 +291,7 @@ const report = {
   chromiumVersion: browserVersion,
   chromiumFlags: [...chromiumFlags, ...extraFlags],
   timeouts: { bootTimeoutMs, sessionTimeoutMs, cdpTimeoutMs },
+  deviceScaleFactor,
   passed: !fatalError && sessionReport?.report?.passed === true,
   error: fatalError,
   session: sessionReport,

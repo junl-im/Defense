@@ -4,9 +4,9 @@
   "buildId": "b24.49",
   "cacheRevision": "1.0.49-b24.49",
   "algorithm": "sha256-sorted-paths-v1",
-  "fileCount": 2128,
-  "totalBytes": 119974131,
-  "aggregateSha256": "7d1293c59af2105234f34e98918de171e5a53a6c0e2bb4a00b7e5bd3e77350c6",
+  "fileCount": 2138,
+  "totalBytes": 149775259,
+  "aggregateSha256": "d033eff4fb6d4acccdf95fabdadd3a4457dc74b7fd3b54a2417fd006cd6c7ccc",
   "files": [
     {
       "path": ".env.production",
@@ -2617,6 +2617,56 @@
       "path": "public/assets/ip-v13/crops/weapons/weapons-r06-c06.png",
       "bytes": 55215,
       "sha256": "d94eac0f6ee80059445147d3c094090b88da8b90993ecc03402f391011a09412"
+    },
+    {
+      "path": "public/assets/ip-v13/sheets/sheet-01-mixed.png",
+      "bytes": 2836099,
+      "sha256": "20a0197d6fb2a2930361182238b2149af3bb57b49936f6610fe9d8830a6ccea9"
+    },
+    {
+      "path": "public/assets/ip-v13/sheets/sheet-02-heroes.png",
+      "bytes": 3385755,
+      "sha256": "e087900269cc20152b48af952ed116565f50f1ebcba0f548ef9d1e748c323fc9"
+    },
+    {
+      "path": "public/assets/ip-v13/sheets/sheet-03-monsters.png",
+      "bytes": 2703861,
+      "sha256": "80eef33e8f8ae4535e44c68f34efe576d1a66db3e8efa3c3ed1352e1a9b70487"
+    },
+    {
+      "path": "public/assets/ip-v13/sheets/sheet-04-bosses.png",
+      "bytes": 3515471,
+      "sha256": "663afe53e9bbff9af8ca086e9ab248d49e32e1681c1813f18329962ebc6f802d"
+    },
+    {
+      "path": "public/assets/ip-v13/sheets/sheet-05-weapons.png",
+      "bytes": 2586913,
+      "sha256": "0f5ecba9a28fe855dc20d3d0170032ff8d7cdba3fabd24f2c86c0c15c52d4b1f"
+    },
+    {
+      "path": "public/assets/ip-v13/sheets/sheet-06-items.png",
+      "bytes": 3208779,
+      "sha256": "67fad19aedf09cbaaf939a348a6ddffa5749bd776ad30209fa2d2b7cde74dc7e"
+    },
+    {
+      "path": "public/assets/ip-v13/sheets/sheet-07-vfx.png",
+      "bytes": 2874052,
+      "sha256": "8e483da8bef62ffad1a8a653da91a834077c0c279b0270b46b89079e68ca5ddf"
+    },
+    {
+      "path": "public/assets/ip-v13/sheets/sheet-08-combat-props.png",
+      "bytes": 2801182,
+      "sha256": "3b4e202f8c061a6978766d0637e064589baecf3d67d10cd579439e3f38a6f1e7"
+    },
+    {
+      "path": "public/assets/ip-v13/sheets/sheet-09-environment.png",
+      "bytes": 2824656,
+      "sha256": "29ddcaa3b75cfa64bf19cb7d1c9c76a2011e70eb6a721f9c981f0cf7c5e1a520"
+    },
+    {
+      "path": "public/assets/ip-v13/sheets/sheet-10-ui.png",
+      "bytes": 3062696,
+      "sha256": "dccfdaa4f4637d6afd6754a84619b2aaeb7fd350b06fec65a586e8dbb07607e5"
     },
     {
       "path": "public/assets/ip-v14/atlas-manifest-v14.json",
@@ -9051,7 +9101,7 @@
     {
       "path": "public/assets/system-v135/runtime-module-shell-v135.json",
       "bytes": 21337,
-      "sha256": "bb61851b4c72823c9dd4eb81701e9b221cefb04b25c0dc5aec01d75de56f88ac"
+      "sha256": "0889f916ebe8fef3396080f964919d805287eb2975ff267d376c7851d8343882"
     },
     {
       "path": "public/assets/textures/moon-market-ground-v1.webp",
@@ -10280,8 +10330,8 @@
     },
     {
       "path": "src/main.js",
-      "bytes": 413557,
-      "sha256": "b59780c12a09b94b6ac2e7dce7135311b0e5868667e9f335cfc94a680b82f95d"
+      "bytes": 415319,
+      "sha256": "beea02057db22b225c51c2f4b98718f010dd20f6b21b0d2b0d2cadc29d4685eb"
     },
     {
       "path": "src/premium-assets.js",
@@ -10465,8 +10515,8 @@
     },
     {
       "path": "src/runtime/failure-digest-v146.js",
-      "bytes": 3718,
-      "sha256": "a7464e59189db310470a5ea1b9b412cc563a7e0f570d396349a01e1776cbf7b0"
+      "bytes": 3582,
+      "sha256": "5b37cdc20267543141642d8dff7376d8f817bc7c0b77359b050cf03ef3f571b2"
     },
     {
       "path": "src/runtime/feature-exposure-policy-v149.js",
@@ -10495,8 +10545,8 @@
     },
     {
       "path": "src/runtime/long-session-assurance-v145.js",
-      "bytes": 10964,
-      "sha256": "8a6fd520de85d16236418eaa8baf0c2ddd01ebca3e722625fb03d5dca8a148a9"
+      "bytes": 11002,
+      "sha256": "c3068a0d6f54cb8b6c0fae7e43322f11231ae2f90f353b00e25e5b2d3a912357"
     },
     {
       "path": "src/runtime/mobile-hud-director-v21.js",

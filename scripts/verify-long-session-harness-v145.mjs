@@ -9,13 +9,15 @@ const harness = fs.readFileSync(path.join(root, 'scripts/run-long-session-v145.m
 
 const measured = normalizeLongSessionBrowserSampleV145(
   { longTasks: 27, longTaskMs: 910, contextLosses: 1, contextRestores: 1 },
-  { measuredLongTasks: 3, measuredLongTaskMs: 146.25 }
+  { measuredLongTasks: 3, measuredLongTaskMs: 146.25, measuredFrames: 48 }
 );
 assert.equal(measured.longTasks, 3);
 assert.equal(measured.longTaskMs, 146.25);
 assert.equal(measured.contextLosses, 1);
 assert.equal(measured.rawLongTasks, 27);
 assert.equal(measured.rawLongTaskMs, 910);
+assert.equal(measured.measuredFrames, 48);
+assert.equal(measured.longTasksPerMeasuredFrame, 0.063);
 
 const fallback = normalizeLongSessionBrowserSampleV145({ longTasks: 4, longTaskMs: 205 });
 assert.equal(fallback.longTasks, 4);
@@ -30,6 +32,16 @@ assert.equal(contaminated.maxMs, 17);
 const realRegression = summarizeFrameDurationsV145([16, 16, 17, 18, 50, 52, 55, 16, 17, 18, 16, 17, 18, 16, 17, 18, 16, 17, 18, 16, 17, 18, 16, 17], { warmupFrames: 0 });
 assert.ok(realRegression.p95Ms >= 50);
 
+
+assert.match(main, /getLongSessionEnvironmentV145/);
+assert.match(main, /software-renderer-ci/);
+assert.match(main, /requestedSamples/);
+assert.match(main, /timedOut/);
+assert.match(main, /measuredFrames/);
+assert.match(harness, /V145_DEVICE_SCALE_FACTOR/);
+assert.match(harness, /disable-background-timer-throttling/);
+assert.match(harness, /frameLongTaskRate/);
+assert.match(harness, /measurementMode/);
 assert.match(main, /stabilizeLongSessionMeasurementV145/);
 assert.match(main, /longTasksDelta/);
 assert.match(main, /warmupFrames/);

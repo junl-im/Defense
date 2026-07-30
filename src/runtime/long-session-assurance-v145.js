@@ -1,235 +1,46 @@
-export const LONG_SESSION_ASSURANCE_VERSION = '1.0.45';
-export const LONG_SESSION_ASSURANCE_ID = 'DD-LONG-SESSION-ASSURANCE-V145';
+export const LONG_SESSION_ASSURANCE_VERSION='1.0.45';
+export const LONG_SESSION_ASSURANCE_ID='DD-LONG-SESSION-ASSURANCE-V145';
+export const DEFAULT_LONG_SESSION_THRESHOLDS_V145=Object.freeze({totalWaves:100,sampleEveryWaves:5,maxRuntimeErrors:0,maxUnmatchedContextLosses:0,maxHeapGrowthMB:32,maxHeapSlopeMBPer10Waves:3.2,maxTextureGrowth:12,maxTextureSlopePer10Waves:1.2,maxGeometryGrowth:12,maxGeometrySlopePer10Waves:1.2,maxFrameP95Ms:34,maxFrameSlopeMsPer10Waves:1.5,maxLongTaskGrowth:12,minFrameWindowSamples:18,maxCalibratedFrameP95Ratio:1.35,maxCalibratedFrameP95DeltaMs:50,maxCalibratedFrameSlopeRatioPer10Waves:.025,maxLongTaskBaselineRateForAbsolute:.25,maxCalibratedLongTaskRateDelta:.35,maxCalibratedLongTaskRateSlopePer10Waves:.05});
+const n=(v,d=0)=>Number.isFinite(Number(v))?Number(v):d;
+const r=(v,d=3)=>Math.round(n(v)*10**d)/10**d;
+const f=Object.freeze;
+const pct=(a,q)=>{const s=a.map(v=>n(v,NaN)).filter(Number.isFinite).sort((a,b)=>a-b);return s.length?s[Math.min(s.length-1,Math.max(0,Math.ceil(s.length*q)-1))]:0};
+const growth=(a,k)=>a.length>1?r(n(a.at(-1)?.[k])-n(a[0]?.[k])):0;
+const slope=(a,k)=>{const p=a.map(s=>({x:n(s.wave),y:n(s[k],NaN)})).filter(v=>Number.isFinite(v.y));if(p.length<2)return 0;const x=p.reduce((s,v)=>s+v.x,0)/p.length,y=p.reduce((s,v)=>s+v.y,0)/p.length,d=p.reduce((s,v)=>s+(v.x-x)**2,0);return d?r(p.reduce((s,v)=>s+(v.x-x)*(v.y-y),0)/d*10):0};
+const env=e=>f({softwareRenderer:e?.softwareRenderer===true,renderer:String(e?.renderer||''),vendor:String(e?.vendor||''),profile:String(e?.profile||(e?.softwareRenderer?'software-renderer':'hardware-or-unknown'))});
 
-export const DEFAULT_LONG_SESSION_THRESHOLDS_V145 = Object.freeze({
-  totalWaves: 100,
-  sampleEveryWaves: 5,
-  maxRuntimeErrors: 0,
-  maxUnmatchedContextLosses: 0,
-  maxHeapGrowthMB: 32,
-  maxHeapSlopeMBPer10Waves: 3.2,
-  maxTextureGrowth: 12,
-  maxTextureSlopePer10Waves: 1.2,
-  maxGeometryGrowth: 12,
-  maxGeometrySlopePer10Waves: 1.2,
-  maxFrameP95Ms: 34,
-  maxFrameSlopeMsPer10Waves: 1.5,
-  maxLongTaskGrowth: 12
-});
-
-const finite = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
-const round = (value, digits = 3) => {
-  const scale = 10 ** digits;
-  return Math.round(finite(value) * scale) / scale;
-};
-const freeze = (value) => Object.freeze(value);
-
-export function normalizeLongSessionBrowserSampleV145(browser = {}, harness = {}) {
-  const measuredLongTasks = finite(harness.measuredLongTasks, NaN);
-  const measuredLongTaskMs = finite(harness.measuredLongTaskMs, NaN);
-  return freeze({
-    ...browser,
-    rawLongTasks: Math.max(0, Math.round(finite(browser.longTasks))),
-    rawLongTaskMs: round(browser.longTaskMs),
-    longTasks: Math.max(0, Math.round(Number.isFinite(measuredLongTasks) ? measuredLongTasks : finite(browser.longTasks))),
-    longTaskMs: round(Number.isFinite(measuredLongTaskMs) ? measuredLongTaskMs : finite(browser.longTaskMs))
-  });
+export function normalizeLongSessionBrowserSampleV145(browser={},harness={}){
+  const mt=n(harness.measuredLongTasks,NaN),mm=n(harness.measuredLongTaskMs,NaN),mf=Math.max(0,Math.round(n(harness.measuredFrames)));
+  const longTasks=Math.max(0,Math.round(Number.isFinite(mt)?mt:n(browser.longTasks))),longTaskMs=r(Number.isFinite(mm)?mm:n(browser.longTaskMs));
+  return f({...browser,rawLongTasks:Math.max(0,Math.round(n(browser.longTasks))),rawLongTaskMs:r(browser.longTaskMs),longTasks,longTaskMs,measuredFrames:mf,longTasksPerMeasuredFrame:mf?r(longTasks/mf):0});
 }
 
-export function summarizeFrameDurationsV145(values = [], { warmupFrames = 0 } = {}) {
-  const allDurations = [...values].map((value) => Math.max(0, finite(value, NaN))).filter(Number.isFinite);
-  const warmup = Math.max(0, Math.min(allDurations.length, Math.round(finite(warmupFrames))));
-  const durations = allDurations.slice(warmup);
-  const sorted = [...durations].sort((a, b) => a - b);
-  const pick = (ratio) => sorted.length ? sorted[Math.min(sorted.length - 1, Math.max(0, Math.ceil(sorted.length * ratio) - 1))] : 0;
-  return freeze({
-    samples: durations.length,
-    warmupFrames: warmup,
-    p50Ms: round(pick(.5)),
-    p95Ms: round(pick(.95)),
-    maxMs: round(sorted.at(-1) || 0)
-  });
+export function summarizeFrameDurationsV145(values=[],{warmupFrames=0}={}){
+  const all=[...values].map(v=>Math.max(0,n(v,NaN))).filter(Number.isFinite),warmup=Math.max(0,Math.min(all.length,Math.round(n(warmupFrames)))),a=all.slice(warmup).sort((a,b)=>a-b),pick=q=>a.length?a[Math.min(a.length-1,Math.max(0,Math.ceil(a.length*q)-1))]:0;
+  return f({samples:a.length,warmupFrames:warmup,p50Ms:r(pick(.5)),p95Ms:r(pick(.95)),maxMs:r(a.at(-1)||0)});
 }
 
-function percentile(values, ratio) {
-  if (!values.length) return 0;
-  const sorted = [...values].sort((a, b) => a - b);
-  const index = Math.min(sorted.length - 1, Math.max(0, Math.ceil(sorted.length * ratio) - 1));
-  return sorted[index];
+export function normalizeLongSessionSampleV145(input={}){
+  const w=input.frameWindow||{},ren=input.renderer||{},b=input.browserReliability||input.browser||{},m=input.memory||{};
+  const samples=n(w.samples??input.frameSamples,NaN),frameSamples=Number.isFinite(samples)?Math.max(0,Math.round(samples)):0,requestedFrameSamples=Math.max(0,Math.round(n(w.requestedSamples??input.requestedFrameSamples)));
+  const tasks=n(w.longTasksDelta??input.frameWindowLongTasks,NaN),frameLongTaskMeasured=frameSamples>0&&Number.isFinite(tasks),frameWindowLongTasks=frameLongTaskMeasured?Math.max(0,Math.round(tasks)):0;
+  return f({wave:Math.max(0,Math.round(n(input.wave??input.currentWave))),state:String(input.state||''),timestampMs:r(input.timestampMs??(typeof performance!=='undefined'?performance.now():Date.now())),frameP50Ms:r(w.p50Ms??input.frameP50Ms??(n(input.fps)>0?1000/n(input.fps):0)),frameP95Ms:r(w.p95Ms??input.frameP95Ms??(n(input.fps)>0?1000/n(input.fps):0)),frameMaxMs:r(w.maxMs??input.frameMaxMs),frameSamples,requestedFrameSamples,frameWindowTimedOut:w.timedOut===true||input.frameWindowTimedOut===true,frameLongTaskMeasured,frameWindowLongTasks,frameLongTaskRate:frameLongTaskMeasured?r(frameWindowLongTasks/frameSamples):0,heapUsedMB:r(m.usedJSHeapMB??input.heapUsedMB),heapSupported:Boolean(m.supported??input.heapSupported),textures:Math.max(0,Math.round(n(ren.textures??input.textures))),geometries:Math.max(0,Math.round(n(ren.geometries??input.geometries))),drawCalls:Math.max(0,Math.round(n(ren.drawCalls??input.drawCalls))),triangles:Math.max(0,Math.round(n(ren.triangles??input.triangles))),contextLosses:Math.max(0,Math.round(n(b.contextLosses??input.contextLosses))),contextRestores:Math.max(0,Math.round(n(b.contextRestores??input.contextRestores))),longTasks:Math.max(0,Math.round(n(b.longTasks??input.longTasks))),longTaskMs:r(b.longTaskMs??input.longTaskMs),rawLongTasks:Math.max(0,Math.round(n(b.rawLongTasks??input.rawLongTasks??b.longTasks??input.longTasks))),rawLongTaskMs:r(b.rawLongTaskMs??input.rawLongTaskMs??b.longTaskMs??input.longTaskMs),runtimeErrors:Math.max(0,Math.round(n(input.runtimeErrors))),enemies:Math.max(0,Math.round(n(input.counts?.enemies??input.enemies))),units:Math.max(0,Math.round(n(input.counts?.units??input.units))),projectiles:Math.max(0,Math.round(n(input.counts?.projectiles??input.projectiles))),particles:Math.max(0,Math.round(n(input.counts?.particles??input.particles)))});
 }
 
-function slopePer10Waves(samples, key) {
-  const points = samples
-    .map((sample) => ({ x: finite(sample.wave), y: finite(sample[key], NaN) }))
-    .filter((point) => Number.isFinite(point.x) && Number.isFinite(point.y));
-  if (points.length < 2) return 0;
-  const meanX = points.reduce((sum, point) => sum + point.x, 0) / points.length;
-  const meanY = points.reduce((sum, point) => sum + point.y, 0) / points.length;
-  const denominator = points.reduce((sum, point) => sum + (point.x - meanX) ** 2, 0);
-  if (denominator <= 0) return 0;
-  const numerator = points.reduce((sum, point) => sum + (point.x - meanX) * (point.y - meanY), 0);
-  return round((numerator / denominator) * 10);
+export class LongSessionAssuranceV145{
+  constructor({thresholds=DEFAULT_LONG_SESSION_THRESHOLDS_V145}={}){this.thresholds=f({...DEFAULT_LONG_SESSION_THRESHOLDS_V145,...thresholds});this.reset()}
+  reset(){this.started=false;this.completed=false;this.seed='';this.targetWaves=this.thresholds.totalWaves;this.samples=[];this.startedAt=0;this.completedAt=0;this.environment=env();this.contextExercise=f({attempted:false,supported:false,lost:false,restored:false});return this}
+  start({seed='V145-LONG-SESSION',targetWaves=this.thresholds.totalWaves,environment={}}={}){this.reset();this.started=true;this.seed=String(seed);this.targetWaves=Math.max(1,Math.round(n(targetWaves,this.thresholds.totalWaves)));this.environment=env(environment);this.startedAt=Date.now();return this.report}
+  record(input={}){if(!this.started)this.start();const s=normalizeLongSessionSampleV145(input),p=this.samples.at(-1);if(p&&s.wave<=p.wave)throw new Error(`v145 sample wave must increase (${s.wave} <= ${p.wave})`);this.samples.push(s);return s}
+  noteContextExercise(v={}){this.contextExercise=f({attempted:true,supported:Boolean(v.supported),lost:Boolean(v.lost),restored:Boolean(v.restored),lossDelta:Math.max(0,Math.round(n(v.lossDelta))),restoreDelta:Math.max(0,Math.round(n(v.restoreDelta))),detail:String(v.detail||'')});return this.contextExercise}
+  finish({requireContextExercise=true}={}){this.completed=true;this.completedAt=Date.now();return f(this.buildReport({requireContextExercise}))}
+  buildReport({requireContextExercise=false}={}){
+    const a=this.samples,first=a[0]||normalizeLongSessionSampleV145(),last=a.at(-1)||first,frames=a.map(s=>s.frameP95Ms).filter(v=>v>0),heaps=a.filter(s=>s.heapSupported),frameBaselineP95Ms=first.frameP95Ms||r(pct(frames,.5)),frameP95Ms=r(pct(frames,.95)),frameSlopeMsPer10Waves=slope(a,'frameP95Ms'),calibrated=this.environment.softwareRenderer&&frameBaselineP95Ms>this.thresholds.maxFrameP95Ms;
+    const windows=a.filter(s=>s.requestedFrameSamples>0),incomplete=windows.filter(s=>s.frameWindowTimedOut||s.frameSamples<Math.min(s.requestedFrameSamples,this.thresholds.minFrameWindowSamples)),lt=a.filter(s=>s.frameLongTaskMeasured),ltBase=r(pct(lt.slice(0,3).map(s=>s.frameLongTaskRate),.5)),ltP95=r(pct(lt.map(s=>s.frameLongTaskRate),.95)),ltSlope=slope(lt,'frameLongTaskRate'),ltCal=calibrated&&lt.length>1&&ltBase>this.thresholds.maxLongTaskBaselineRateForAbsolute;
+    const metrics=f({sampledWaves:a.length,firstWave:first.wave,lastWave:last.wave,durationMs:Math.max(0,(this.completedAt||Date.now())-(this.startedAt||Date.now())),runtimeErrors:last.runtimeErrors,measurementMode:calibrated?'software-renderer-calibrated':'absolute-frame-budget',longTaskMeasurementMode:ltCal?'software-renderer-rate':'absolute-growth',frameBaselineP95Ms,frameP95Ms,frameP95RatioToBaseline:frameBaselineP95Ms?r(frameP95Ms/frameBaselineP95Ms):0,frameP95DeltaFromBaselineMs:r(Math.max(0,frameP95Ms-frameBaselineP95Ms)),frameSlopeMsPer10Waves,frameSlopeRatioPer10Waves:frameBaselineP95Ms?r(frameSlopeMsPer10Waves/frameBaselineP95Ms,5):0,incompleteFrameWindows:incomplete.length,heapSupported:heaps.length>1,heapGrowthMB:heaps.length>1?growth(heaps,'heapUsedMB'):0,heapSlopeMBPer10Waves:heaps.length>1?slope(heaps,'heapUsedMB'):0,textureGrowth:growth(a,'textures'),textureSlopePer10Waves:slope(a,'textures'),geometryGrowth:growth(a,'geometries'),geometrySlopePer10Waves:slope(a,'geometries'),longTaskGrowth:growth(a,'longTasks'),longTaskMsGrowth:growth(a,'longTaskMs'),longTaskBaselineRate:ltBase,longTaskRateP95:ltP95,longTaskRateDelta:r(Math.max(0,ltP95-ltBase)),longTaskRateSlopePer10Waves:ltSlope,rawLongTaskGrowth:growth(a,'rawLongTasks'),rawLongTaskMsGrowth:growth(a,'rawLongTaskMs'),contextLosses:last.contextLosses,contextRestores:last.contextRestores,contextBalance:last.contextLosses-last.contextRestores});
+    const checks=f({targetReached:last.wave>=this.targetWaves,sampleCoverage:a.length>=Math.floor(this.targetWaves/Math.max(1,this.thresholds.sampleEveryWaves)),measurementCoverage:!windows.length||!incomplete.length,runtimeErrors:metrics.runtimeErrors<=this.thresholds.maxRuntimeErrors,frameP95:calibrated?metrics.frameP95RatioToBaseline<=this.thresholds.maxCalibratedFrameP95Ratio&&metrics.frameP95DeltaFromBaselineMs<=this.thresholds.maxCalibratedFrameP95DeltaMs:metrics.frameP95Ms>0&&metrics.frameP95Ms<=this.thresholds.maxFrameP95Ms,frameTrend:calibrated?metrics.frameSlopeRatioPer10Waves<=this.thresholds.maxCalibratedFrameSlopeRatioPer10Waves:metrics.frameSlopeMsPer10Waves<=this.thresholds.maxFrameSlopeMsPer10Waves,heapGrowth:!metrics.heapSupported||metrics.heapGrowthMB<=this.thresholds.maxHeapGrowthMB,heapTrend:!metrics.heapSupported||metrics.heapSlopeMBPer10Waves<=this.thresholds.maxHeapSlopeMBPer10Waves,textureGrowth:metrics.textureGrowth<=this.thresholds.maxTextureGrowth,textureTrend:metrics.textureSlopePer10Waves<=this.thresholds.maxTextureSlopePer10Waves,geometryGrowth:metrics.geometryGrowth<=this.thresholds.maxGeometryGrowth,geometryTrend:metrics.geometrySlopePer10Waves<=this.thresholds.maxGeometrySlopePer10Waves,longTasks:ltCal?metrics.longTaskRateDelta<=this.thresholds.maxCalibratedLongTaskRateDelta&&metrics.longTaskRateSlopePer10Waves<=this.thresholds.maxCalibratedLongTaskRateSlopePer10Waves:metrics.longTaskGrowth<=this.thresholds.maxLongTaskGrowth,contextBalanced:metrics.contextBalance<=this.thresholds.maxUnmatchedContextLosses,contextExercise:!requireContextExercise||(this.contextExercise.supported&&this.contextExercise.lost&&this.contextExercise.restored)});
+    return{id:LONG_SESSION_ASSURANCE_ID,releaseVersion:LONG_SESSION_ASSURANCE_VERSION,seed:this.seed,targetWaves:this.targetWaves,thresholds:this.thresholds,environment:this.environment,contextExercise:this.contextExercise,metrics,checks,passed:Object.values(checks).every(Boolean),samples:[...a]};
+  }
+  get report(){return f(this.buildReport())}
 }
-
-function growth(samples, key) {
-  if (samples.length < 2) return 0;
-  return round(finite(samples.at(-1)?.[key]) - finite(samples[0]?.[key]));
-}
-
-export function normalizeLongSessionSampleV145(input = {}) {
-  const frameWindow = input.frameWindow || {};
-  const renderer = input.renderer || {};
-  const browser = input.browserReliability || input.browser || {};
-  const memory = input.memory || {};
-  return freeze({
-    wave: Math.max(0, Math.round(finite(input.wave ?? input.currentWave))),
-    state: String(input.state || ''),
-    timestampMs: round(input.timestampMs ?? (typeof performance !== 'undefined' ? performance.now() : Date.now())),
-    frameP50Ms: round(frameWindow.p50Ms ?? input.frameP50Ms ?? (finite(input.fps) > 0 ? 1000 / finite(input.fps) : 0)),
-    frameP95Ms: round(frameWindow.p95Ms ?? input.frameP95Ms ?? (finite(input.fps) > 0 ? 1000 / finite(input.fps) : 0)),
-    frameMaxMs: round(frameWindow.maxMs ?? input.frameMaxMs ?? 0),
-    heapUsedMB: round(memory.usedJSHeapMB ?? input.heapUsedMB),
-    heapSupported: Boolean(memory.supported ?? input.heapSupported),
-    textures: Math.max(0, Math.round(finite(renderer.textures ?? input.textures))),
-    geometries: Math.max(0, Math.round(finite(renderer.geometries ?? input.geometries))),
-    drawCalls: Math.max(0, Math.round(finite(renderer.drawCalls ?? input.drawCalls))),
-    triangles: Math.max(0, Math.round(finite(renderer.triangles ?? input.triangles))),
-    contextLosses: Math.max(0, Math.round(finite(browser.contextLosses ?? input.contextLosses))),
-    contextRestores: Math.max(0, Math.round(finite(browser.contextRestores ?? input.contextRestores))),
-    longTasks: Math.max(0, Math.round(finite(browser.longTasks ?? input.longTasks))),
-    longTaskMs: round(browser.longTaskMs ?? input.longTaskMs),
-    rawLongTasks: Math.max(0, Math.round(finite(browser.rawLongTasks ?? input.rawLongTasks ?? browser.longTasks ?? input.longTasks))),
-    rawLongTaskMs: round(browser.rawLongTaskMs ?? input.rawLongTaskMs ?? browser.longTaskMs ?? input.longTaskMs),
-    runtimeErrors: Math.max(0, Math.round(finite(input.runtimeErrors))),
-    enemies: Math.max(0, Math.round(finite(input.counts?.enemies ?? input.enemies))),
-    units: Math.max(0, Math.round(finite(input.counts?.units ?? input.units))),
-    projectiles: Math.max(0, Math.round(finite(input.counts?.projectiles ?? input.projectiles))),
-    particles: Math.max(0, Math.round(finite(input.counts?.particles ?? input.particles)))
-  });
-}
-
-export class LongSessionAssuranceV145 {
-  constructor({ thresholds = DEFAULT_LONG_SESSION_THRESHOLDS_V145 } = {}) {
-    this.thresholds = freeze({ ...DEFAULT_LONG_SESSION_THRESHOLDS_V145, ...thresholds });
-    this.reset();
-  }
-
-  reset() {
-    this.started = false;
-    this.completed = false;
-    this.seed = '';
-    this.targetWaves = this.thresholds.totalWaves;
-    this.samples = [];
-    this.startedAt = 0;
-    this.completedAt = 0;
-    this.contextExercise = freeze({ attempted: false, supported: false, lost: false, restored: false });
-    return this;
-  }
-
-  start({ seed = 'V145-LONG-SESSION', targetWaves = this.thresholds.totalWaves } = {}) {
-    this.reset();
-    this.started = true;
-    this.seed = String(seed);
-    this.targetWaves = Math.max(1, Math.round(finite(targetWaves, this.thresholds.totalWaves)));
-    this.startedAt = Date.now();
-    return this.report;
-  }
-
-  record(input = {}) {
-    if (!this.started) this.start();
-    const sample = normalizeLongSessionSampleV145(input);
-    const previous = this.samples.at(-1);
-    if (previous && sample.wave <= previous.wave) throw new Error(`v145 sample wave must increase (${sample.wave} <= ${previous.wave})`);
-    this.samples.push(sample);
-    return sample;
-  }
-
-  noteContextExercise(result = {}) {
-    this.contextExercise = freeze({
-      attempted: true,
-      supported: Boolean(result.supported),
-      lost: Boolean(result.lost),
-      restored: Boolean(result.restored),
-      lossDelta: Math.max(0, Math.round(finite(result.lossDelta))),
-      restoreDelta: Math.max(0, Math.round(finite(result.restoreDelta))),
-      detail: String(result.detail || '')
-    });
-    return this.contextExercise;
-  }
-
-  finish({ requireContextExercise = true } = {}) {
-    this.completed = true;
-    this.completedAt = Date.now();
-    const report = this.buildReport({ requireContextExercise });
-    return freeze(report);
-  }
-
-  buildReport({ requireContextExercise = false } = {}) {
-    const samples = this.samples;
-    const first = samples[0] || normalizeLongSessionSampleV145({});
-    const last = samples.at(-1) || first;
-    const frameP95Values = samples.map((sample) => sample.frameP95Ms).filter((value) => value > 0);
-    const heapSamples = samples.filter((sample) => sample.heapSupported);
-    const heapGrowthMB = heapSamples.length >= 2 ? growth(heapSamples, 'heapUsedMB') : 0;
-    const contextBalance = last.contextLosses - last.contextRestores;
-    const metrics = freeze({
-      sampledWaves: samples.length,
-      firstWave: first.wave,
-      lastWave: last.wave,
-      durationMs: Math.max(0, (this.completedAt || Date.now()) - (this.startedAt || Date.now())),
-      runtimeErrors: last.runtimeErrors,
-      frameP95Ms: round(percentile(frameP95Values, .95)),
-      frameSlopeMsPer10Waves: slopePer10Waves(samples, 'frameP95Ms'),
-      heapSupported: heapSamples.length >= 2,
-      heapGrowthMB,
-      heapSlopeMBPer10Waves: heapSamples.length >= 2 ? slopePer10Waves(heapSamples, 'heapUsedMB') : 0,
-      textureGrowth: growth(samples, 'textures'),
-      textureSlopePer10Waves: slopePer10Waves(samples, 'textures'),
-      geometryGrowth: growth(samples, 'geometries'),
-      geometrySlopePer10Waves: slopePer10Waves(samples, 'geometries'),
-      longTaskGrowth: growth(samples, 'longTasks'),
-      longTaskMsGrowth: growth(samples, 'longTaskMs'),
-      rawLongTaskGrowth: growth(samples, 'rawLongTasks'),
-      rawLongTaskMsGrowth: growth(samples, 'rawLongTaskMs'),
-      contextLosses: last.contextLosses,
-      contextRestores: last.contextRestores,
-      contextBalance
-    });
-
-    const checks = freeze({
-      targetReached: last.wave >= this.targetWaves,
-      sampleCoverage: samples.length >= Math.floor(this.targetWaves / Math.max(1, this.thresholds.sampleEveryWaves)),
-      runtimeErrors: metrics.runtimeErrors <= this.thresholds.maxRuntimeErrors,
-      frameP95: metrics.frameP95Ms > 0 && metrics.frameP95Ms <= this.thresholds.maxFrameP95Ms,
-      frameTrend: metrics.frameSlopeMsPer10Waves <= this.thresholds.maxFrameSlopeMsPer10Waves,
-      heapGrowth: !metrics.heapSupported || metrics.heapGrowthMB <= this.thresholds.maxHeapGrowthMB,
-      heapTrend: !metrics.heapSupported || metrics.heapSlopeMBPer10Waves <= this.thresholds.maxHeapSlopeMBPer10Waves,
-      textureGrowth: metrics.textureGrowth <= this.thresholds.maxTextureGrowth,
-      textureTrend: metrics.textureSlopePer10Waves <= this.thresholds.maxTextureSlopePer10Waves,
-      geometryGrowth: metrics.geometryGrowth <= this.thresholds.maxGeometryGrowth,
-      geometryTrend: metrics.geometrySlopePer10Waves <= this.thresholds.maxGeometrySlopePer10Waves,
-      longTasks: metrics.longTaskGrowth <= this.thresholds.maxLongTaskGrowth,
-      contextBalanced: metrics.contextBalance <= this.thresholds.maxUnmatchedContextLosses,
-      contextExercise: !requireContextExercise || (this.contextExercise.supported && this.contextExercise.lost && this.contextExercise.restored)
-    });
-
-    return {
-      id: LONG_SESSION_ASSURANCE_ID,
-      releaseVersion: LONG_SESSION_ASSURANCE_VERSION,
-      seed: this.seed,
-      targetWaves: this.targetWaves,
-      thresholds: this.thresholds,
-      contextExercise: this.contextExercise,
-      metrics,
-      checks,
-      passed: Object.values(checks).every(Boolean),
-      samples: [...samples]
-    };
-  }
-
-  get report() {
-    return freeze(this.buildReport());
-  }
-}
-
 export default LongSessionAssuranceV145;

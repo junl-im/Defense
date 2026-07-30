@@ -28,6 +28,7 @@ export const V151_PATCH_FILES = Object.freeze([
   "public/version.json",
   "scripts/bootstrap-release-package-v151.mjs",
   "scripts/clean-obsolete-assets.mjs",
+  "scripts/root-output-policy.mjs",
   "scripts/create-patch-v151.mjs",
   "scripts/generate-build-input-manifest-v151.mjs",
   "scripts/generate-release-identity-v151.mjs",
@@ -61,6 +62,7 @@ export const V151_PATCH_FILES = Object.freeze([
   "src/version-policy.js",
 ]);
 export const V151_DELETED_PATHS = Object.freeze([
+  "overlay",
   "PATCH_SUMMARY.md",
   "PATCH_MANIFEST.json",
   "PATCH_MANIFEST_v1.0.23.json",

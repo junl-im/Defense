@@ -18,6 +18,9 @@ const nested = fs.readdirSync(root, { withFileTypes: true })
 if (nested.length) {
   throw new Error(`nested full-package directory detected at repository root: ${nested.join(', ')}. Move its contents to the actual repository root.`);
 }
+if (fs.existsSync(path.join(root, 'overlay'))) {
+  throw new Error('stale root overlay/ remains after cleanup; automatic overlay merging is disabled');
+}
 const staleRootFiles = [
   'PATCH_SUMMARY.md', 'PATCH_MANIFEST.json', 'PATCH_MANIFEST_v1.0.23.json',
   'README_PATCH.txt', 'APPLY_KO.txt', 'DELETE_PATHS.txt'

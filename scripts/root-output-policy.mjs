@@ -1,5 +1,4 @@
 import {
-  copyFileSync,
   existsSync,
   lstatSync,
   mkdirSync,
@@ -25,87 +24,25 @@ const GENERATED_JSON = /(?:AUDIT|SIMULATION|REPORT|PACKAGE|MANIFEST|RESULT|DIAGN
 const LEGACY_PATCH_FILE = /^(?:APPLY_PATCH(?:_v[0-9.]+)?\.md|APPLY_[A-Z]{2}(?:-[A-Z]{2})?\.txt|README_PATCH(?:_v[0-9.]+)?\.(?:md|txt)|PATCH_(?:APPLY|APPLIED|DELETE|FILES|MANIFEST|README|NOTES)(?:_v[0-9.]+)?\.(?:md|txt|json)|DELETE_FILES(?:_v[0-9.]+)?\.txt)$/i;
 const LEGACY_PATCH_DIRECTORY = /^_patch_info$/i;
 
-const PATCH_OVERLAY_ALLOWED_DIRECTORIES = new Set([
-  '.github', '.vscode', 'docs', 'production', 'public', 'scripts', 'src'
-]);
-const PATCH_OVERLAY_MARKERS = new Set([
-  '.github', 'docs', 'index.html', 'package.json', 'public', 'scripts', 'src'
-]);
-
-function assertNoSymlinks(path, displayPath) {
-  const entry = lstatSync(path);
-  if (entry.isSymbolicLink()) {
-    throw new Error(`unsafe accidental overlay symlink: ${displayPath}`);
-  }
-  if (!entry.isDirectory()) return;
-  for (const name of readdirSync(path)) {
-    assertNoSymlinks(resolve(path, name), `${displayPath}/${name}`);
-  }
-}
-
-function mergeDirectory(source, target) {
-  mkdirSync(target, { recursive: true });
-  let files = 0;
-  for (const name of readdirSync(source)) {
-    const sourcePath = resolve(source, name);
-    const targetPath = resolve(target, name);
-    const entry = lstatSync(sourcePath);
-    if (entry.isSymbolicLink()) throw new Error(`unsafe accidental overlay symlink: ${sourcePath}`);
-    if (entry.isDirectory()) files += mergeDirectory(sourcePath, targetPath);
-    else {
-      mkdirSync(dirname(targetPath), { recursive: true });
-      copyFileSync(sourcePath, targetPath);
-      files += 1;
-    }
-  }
-  return files;
-}
-
+// Older delivery archives used a root-level overlay/ directory. Automatically
+// merging that directory is unsafe because it can reintroduce a stale
+// package.json after the release bootstrap has already repaired the canonical
+// package identity. v1.0.51 R3 therefore treats every root overlay/ as obsolete
+// extraction residue and removes it without reading or copying its contents.
 export function recoverAccidentalRootOverlay({ root, log = console.log } = {}) {
   if (!root) throw new Error('recoverAccidentalRootOverlay requires root');
   const overlay = resolve(root, 'overlay');
-  if (!existsSync(overlay)) return { recovered: false, files: 0 };
-  if (!statSync(overlay).isDirectory()) {
-    throw new Error('root overlay entry must be a directory');
+  if (!existsSync(overlay)) return { recovered: false, removed: false, entries: 0, files: 0 };
+
+  const entry = lstatSync(overlay);
+  if (!entry.isDirectory() && !entry.isSymbolicLink()) {
+    throw new Error('root overlay entry must be a directory or removable symlink');
   }
 
-  const names = readdirSync(overlay);
-  if (!names.length) {
-    rmSync(overlay, { recursive: true, force: true });
-    log('REMOVE empty accidental root overlay/');
-    return { recovered: true, files: 0 };
-  }
-
-  const invalid = names.filter((name) => {
-    const path = resolve(overlay, name);
-    const entry = lstatSync(path);
-    if (entry.isSymbolicLink()) return true;
-    return entry.isDirectory()
-      ? !PATCH_OVERLAY_ALLOWED_DIRECTORIES.has(name)
-      : !CORE_ROOT_FILES.has(name);
-  });
-  if (invalid.length) {
-    throw new Error(`unsafe accidental root overlay entries: ${invalid.join(', ')}`);
-  }
-  if (!names.some((name) => PATCH_OVERLAY_MARKERS.has(name))) {
-    throw new Error('root overlay/ does not look like a project patch overlay');
-  }
-
-  assertNoSymlinks(overlay, 'overlay');
-  let files = 0;
-  for (const name of names) {
-    const source = resolve(overlay, name);
-    const target = resolve(root, name);
-    const entry = lstatSync(source);
-    if (entry.isDirectory()) files += mergeDirectory(source, target);
-    else {
-      copyFileSync(source, target);
-      files += 1;
-    }
-  }
+  const entries = entry.isDirectory() ? readdirSync(overlay).length : 1;
   rmSync(overlay, { recursive: true, force: true });
-  log(`RECOVER accidental root overlay/ -> project root (${files} files)`);
-  return { recovered: true, files };
+  log(`REMOVE stale accidental root overlay/ (${entries} top-level entries; automatic merge disabled)`);
+  return { recovered: false, removed: true, entries, files: 0 };
 }
 
 function nextAvailablePath(path) {
@@ -173,5 +110,6 @@ export const ROOT_OUTPUT_POLICY = Object.freeze({
   legacyPatchFile: LEGACY_PATCH_FILE.source,
   legacyPatchDirectory: LEGACY_PATCH_DIRECTORY.source,
   accidentalOverlayDirectory: 'overlay',
-  accidentalOverlayRecovery: true
+  accidentalOverlayRecovery: false,
+  accidentalOverlayStrategy: 'remove-without-merge'
 });

@@ -21,6 +21,7 @@ const STALE_ROOT_METADATA = Object.freeze([
   'APPLY_KO.txt',
   'DELETE_PATHS.txt'
 ]);
+const STALE_ROOT_OVERLAY = 'overlay';
 const readJson = (file) => JSON.parse(fs.readFileSync(path.join(root, file), 'utf8'));
 const stableJson = (value) => `${JSON.stringify(value, null, 2)}\n`;
 
@@ -40,6 +41,13 @@ function removeStaleRootMetadata() {
     removed.push(file);
   }
   return removed;
+}
+
+function removeStaleRootOverlay() {
+  const absolute = path.join(root, STALE_ROOT_OVERLAY);
+  if (!fs.existsSync(absolute)) return false;
+  fs.rmSync(absolute, { recursive: true, force: true });
+  return true;
 }
 
 function ensureVerifyTail(command = '') {
@@ -99,9 +107,13 @@ function buildOutputs(pkg, lock) {
 }
 
 const removedStaleRootMetadata = checkOnly ? [] : removeStaleRootMetadata();
+const removedStaleRootOverlay = checkOnly ? false : removeStaleRootOverlay();
 const remainingStaleRootMetadata = STALE_ROOT_METADATA.filter((file) => fs.existsSync(path.join(root, file)));
 if (checkOnly && remainingStaleRootMetadata.length) {
   throw new Error(`v151 bootstrap stale root metadata: ${remainingStaleRootMetadata.join(', ')}`);
+}
+if (checkOnly && fs.existsSync(path.join(root, STALE_ROOT_OVERLAY))) {
+  throw new Error('v151 bootstrap stale root overlay/ remains');
 }
 
 const pkg = readJson('package.json');
@@ -118,4 +130,4 @@ if (checkOnly) {
   process.exit(0);
 }
 for (const [file, text] of files) atomicWrite(file, text);
-console.log(JSON.stringify({ id: 'DD-CI-PREVERIFY-PACKAGE-BOOTSTRAP-V151', action: sourceVersion === TARGET.releaseVersion && !stale.length ? 'confirmed' : `repaired-${sourceVersion}-to-${TARGET.releaseVersion}`, repaired: stale, removedStaleRootMetadata, ...TARGET }, null, 2));
+console.log(JSON.stringify({ id: 'DD-CI-PREVERIFY-PACKAGE-BOOTSTRAP-V151', action: sourceVersion === TARGET.releaseVersion && !stale.length ? 'confirmed' : `repaired-${sourceVersion}-to-${TARGET.releaseVersion}`, repaired: stale, removedStaleRootMetadata, removedStaleRootOverlay, ...TARGET }, null, 2));

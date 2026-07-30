@@ -11,7 +11,7 @@
   "targetSourceTree": {
     "algorithm": "sha256-sorted-paths-v1",
     "scope": "repository-root-flat clean source package excluding dist, node_modules, .git, logs, ZIP files, and this provenance file",
-    "aggregateSha256": "3eed7d7fe8cef4cc1a2c97276765f3855d73838426ed4bb51e5ee42c1e290f24",
+    "aggregateSha256": "b0ccf8a7ec2a66a05f9e31e41a65468aad842f9c810baf8f92c8ec726491efd6",
     "fileCount": 3030
   },
   "patchManifest": {
@@ -19,10 +19,11 @@
     "sha256": "RECORDED_IN_FINAL_PATCH_PACKAGE"
   },
   "targetFullZip": {
-    "name": "Defense_v1.0.51_FULL_CI_CLEANUP_R2.zip",
+    "name": "Defense_v1.0.51_FULL_CI_OVERLAY_R3.zip",
     "sha256": "RECORDED_IN_FINAL_PATCH_PACKAGE"
   },
-  "repairRevision": 2,
+  "repairRevision": 3,
   "repositoryRootLayout": "flat",
-  "ciCleanupOrder": "bootstrap-clean-verify"
+  "ciCleanupOrder": "bootstrap-remove-overlay-clean-generate-verify",
+  "overlayCleanupStrategy": "bootstrap-and-cleaner-remove-without-merge"
 }

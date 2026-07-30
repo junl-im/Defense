@@ -16,5 +16,5 @@ The source verifier checks integration and policy. Actual WebGL shader compilati
 
 ## Repository-root repair revision
 
-The repaired delivery is archive-root flat, removes stale root `PATCH_SUMMARY.md` metadata, and adds `verify:repo-root:v151` to stop nested or stale v1.0.46 repository layouts before verification.
+The R3 delivery is archive-root flat, removes stale root patch metadata, deletes legacy root `overlay/` without merging it, and verifies that stale `package.json@1.0.46` content cannot downgrade the v1.0.51 identity.
 

@@ -15,6 +15,7 @@ for (const file of [
   'scripts/verify-release-v151.mjs',
   'scripts/verify-repository-root-v151.mjs',
   'scripts/verify-ci-root-cleanup-v151.mjs',
+  'scripts/root-output-policy.mjs',
   'docs/generated/build-input-manifest-v151.json',
   'docs/PATCH_NOTES_v1.0.51.md',
   'docs/RELEASE_ASSURANCE_v1.0.51.md',
