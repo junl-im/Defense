@@ -49,16 +49,17 @@ function buildOutputs(pkg, lock) {
     'verify:character:v151': 'node scripts/verify-character-presentation-v151.mjs',
     'verify:foundation:v150:v151': 'npm run verify:atomic:v150 && npm run verify:rewards:v150 && npm run verify:error-boundary:v150 && npm run verify:performance-baseline:v150 && node scripts/verify-v150-foundation-v151.mjs',
     'verify:release:v150': 'npm run verify:foundation:v150:v151',
-    'verify:release:v151': 'npm run verify:identity:v151 && npm run verify:build-input:v151 && npm run verify:foundation:v150:v151 && npm run verify:character:v151 && node scripts/verify-release-v151.mjs',
+    'verify:repo-root:v151': 'node scripts/verify-repository-root-v151.mjs',
+    'verify:release:v151': 'npm run verify:repo-root:v151 && npm run verify:identity:v151 && npm run verify:build-input:v151 && npm run verify:foundation:v150:v151 && npm run verify:character:v151 && node scripts/verify-release-v151.mjs',
     'verify:dist:v151': 'node scripts/verify-dist-v151.mjs',
     'stage:package:v151': 'node scripts/stage-clean-package-v151.mjs',
     'verify:package:v151': 'node scripts/verify-clean-package-v151.mjs',
     'create:patch:v151': 'node scripts/create-patch-v151.mjs',
     'verify:patch:v151': 'node scripts/verify-patch-v151.mjs',
     'sync:generated:ci': 'npm run bootstrap:identity:v151 && npm run generate:identity:v151 && npm run generate:runtime-shell:v135 && npm run generate:reachability:v143 && npm run generate:asset-review:v144 && npm run generate:residency:v145 && npm run generate:audit:v148 && npm run generate:build-input:v151',
-    'verify:ci': 'npm run bootstrap:identity:v151 && npm run sync:generated:ci && npm run verify',
-    preverify: 'npm run bootstrap:identity:v151 && npm run clean:obsolete && npm run hygiene:check && npm run verify:identity:v151',
-    prebuild: 'npm run bootstrap:identity:v151 && npm run clean:obsolete && npm run hygiene:check && npm run verify:identity:v151'
+    'verify:ci': 'npm run bootstrap:identity:v151 && npm run clean:obsolete && npm run verify:repo-root:v151 && npm run sync:generated:ci && npm run verify',
+    preverify: 'npm run bootstrap:identity:v151 && npm run clean:obsolete && npm run verify:repo-root:v151 && npm run hygiene:check && npm run verify:identity:v151',
+    prebuild: 'npm run bootstrap:identity:v151 && npm run clean:obsolete && npm run verify:repo-root:v151 && npm run hygiene:check && npm run verify:identity:v151'
   });
   nextPkg.scripts.verify = ensureVerifyTail(nextPkg.scripts.verify);
   nextPkg.scripts = Object.fromEntries(Object.entries(nextPkg.scripts).sort(([a], [b]) => a.localeCompare(b)));

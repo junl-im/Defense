@@ -9,6 +9,7 @@ export const V151_PATCH_FILES = Object.freeze([
   "docs/PATCH_NOTES_v1.0.51.md",
   "docs/PATCH_PROVENANCE_v1.0.51.json",
   "docs/RELEASE_ASSURANCE_v1.0.51.md",
+  "docs/CI_REPOSITORY_ROOT_REPAIR_v1.0.51.md",
   "docs/generated/asset-review-v144.json",
   "docs/generated/asset-review-v144.md",
   "docs/generated/build-input-manifest-v151.json",
@@ -44,6 +45,7 @@ export const V151_PATCH_FILES = Object.freeze([
   "scripts/verify-performance-trend-v145.mjs",
   "scripts/verify-project.mjs",
   "scripts/verify-release-identity-v151.mjs",
+  "scripts/verify-repository-root-v151.mjs",
   "scripts/verify-release-v109.mjs",
   "scripts/verify-release-v112.mjs",
   "scripts/verify-release-v114.mjs",
@@ -58,4 +60,10 @@ export const V151_PATCH_FILES = Object.freeze([
   "src/version-policy.js",
 ]);
 export const V151_DELETED_PATHS = Object.freeze([
+  "PATCH_SUMMARY.md",
+  "PATCH_MANIFEST.json",
+  "PATCH_MANIFEST_v1.0.23.json",
+  "README_PATCH.txt",
+  "APPLY_KO.txt",
+  "DELETE_PATHS.txt",
 ]);

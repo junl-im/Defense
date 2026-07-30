@@ -13,9 +13,11 @@ for (const file of [
   'scripts/generate-release-identity-v151.mjs',
   'scripts/generate-build-input-manifest-v151.mjs',
   'scripts/verify-release-v151.mjs',
+  'scripts/verify-repository-root-v151.mjs',
   'docs/generated/build-input-manifest-v151.json',
   'docs/PATCH_NOTES_v1.0.51.md',
   'docs/RELEASE_ASSURANCE_v1.0.51.md',
+  'docs/CI_REPOSITORY_ROOT_REPAIR_v1.0.51.md',
   'docs/PATCH_PROVENANCE_v1.0.51.json',
   'docs/DELIVERY_RESULT_RULE.md'
 ]) if (!fs.existsSync(path.join(stage, file))) throw new Error(`v151 staged contract missing ${file}`);

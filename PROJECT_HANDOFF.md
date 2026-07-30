@@ -319,3 +319,8 @@ v1.0.12 크로스 플랫폼 기반, v1.0.17 승인 경계, v1.0.20 주인공 11�
 - 검증: 전체 누적 소스 체인(도구 시간 상한 이후 후반 게이트 연속 완료), 모바일 HUD 14/14, 600-case 저장 퍼징, v1.0.45~v1.0.49 릴리스 계약, clean package staging, patch hash/application 검증.
 - 예외사항: 현재 실행 환경에는 Vite 8.1.5가 없어 실제 Vite dist와 Chromium feature-exposure 시나리오는 GitHub Actions 필수 게이트로 남긴다.
 - 다음 예정: `docs/NEXT_UPDATE_v1.0.50.md`.
+
+## Repository-root repair revision
+
+The repaired delivery is archive-root flat, removes stale root `PATCH_SUMMARY.md` metadata, and adds `verify:repo-root:v151` to stop nested or stale v1.0.46 repository layouts before verification.
+

@@ -19,3 +19,8 @@ Imported hero, guardian, monster, and boss meshes receive bounded roughness, met
 ## Approval boundary
 
 This update adds no new final character-art approvals. Existing approved and provisional asset lineage remains unchanged; the improvement is an engine-side presentation upgrade.
+
+## Repository-root repair revision
+
+The repaired delivery is archive-root flat, removes stale root `PATCH_SUMMARY.md` metadata, and adds `verify:repo-root:v151` to stop nested or stale v1.0.46 repository layouts before verification.
+

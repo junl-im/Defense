@@ -10,16 +10,18 @@
   },
   "targetSourceTree": {
     "algorithm": "sha256-sorted-paths-v1",
-    "scope": "clean source package excluding dist, node_modules, .git, logs, ZIP files, and this provenance file",
-    "aggregateSha256": "3652f4c82dc6097d6853f4d33caa2529e48b1bcf2f385a5f499ed76afdb8b997",
-    "fileCount": 3027
+    "scope": "repository-root-flat clean source package excluding dist, node_modules, .git, logs, ZIP files, and this provenance file",
+    "aggregateSha256": "1e61cc3b4061dfa1b1385aae430809ac6c9473b58c56ceb9c9a8cd1028b1503e",
+    "fileCount": 3029
   },
   "patchManifest": {
     "path": "logs/patch/1.0.51/PATCH_MANIFEST.json",
     "sha256": "RECORDED_IN_FINAL_PATCH_PACKAGE"
   },
   "targetFullZip": {
-    "name": "Defense_v1.0.51_FULL.zip",
+    "name": "Defense_v1.0.51_FULL_REPO_ROOT_FIXED.zip",
     "sha256": "RECORDED_IN_FINAL_PATCH_PACKAGE"
-  }
+  },
+  "repairRevision": 1,
+  "repositoryRootLayout": "flat"
 }

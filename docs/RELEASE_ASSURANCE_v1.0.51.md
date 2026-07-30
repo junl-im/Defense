@@ -13,3 +13,8 @@
 ## Runtime evidence boundary
 
 The source verifier checks integration and policy. Actual WebGL shader compilation, visual captures, and bundle marker checks remain mandatory in the GitHub Actions `npm ci -> Vite build -> verify:dist:all` path because the delivery environment cannot install the pinned Vite package.
+
+## Repository-root repair revision
+
+The repaired delivery is archive-root flat, removes stale root `PATCH_SUMMARY.md` metadata, and adds `verify:repo-root:v151` to stop nested or stale v1.0.46 repository layouts before verification.
+

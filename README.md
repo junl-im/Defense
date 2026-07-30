@@ -78,3 +78,8 @@ The 100-wave browser harness requires the complete Vite output (`dist/assets/gam
 - 부분 적용으로 package/runtime 버전이 갈라지는 문제를 차단합니다.
 - `npm run verify:identity:v148`가 package, lock, main, policy, HTML, service worker, public version을 비교합니다.
 - `preverify`와 `prebuild`에서 본 검증보다 먼저 실행됩니다.
+
+## Repository-root repair revision
+
+The repaired delivery is archive-root flat, removes stale root `PATCH_SUMMARY.md` metadata, and adds `verify:repo-root:v151` to stop nested or stale v1.0.46 repository layouts before verification.
+

@@ -23,7 +23,13 @@ const fixedObsolete = [
   'dist/assets/models/monster-imp-nextgen.glb',
   'docs/ASSET_BIBLE.md',
   'COMPACT_PACKAGE_NOTE.txt',
-  'REBUILD_DIST_WINDOWS.bat'
+  'REBUILD_DIST_WINDOWS.bat',
+  'PATCH_SUMMARY.md',
+  'PATCH_MANIFEST.json',
+  'PATCH_MANIFEST_v1.0.23.json',
+  'README_PATCH.txt',
+  'APPLY_KO.txt',
+  'DELETE_PATHS.txt'
 ];
 
 const removed = [];
@@ -67,7 +73,14 @@ removeSvgFiles(root);
 // Patch notes belong under docs/. Older patch archives placed this file at the
 // project root, which made source verification fail before prebuild could run.
 for (const name of readdirSync(root)) {
-  if (!/^PATCH_(?:README|NOTES)(?:_v[0-9.]+)?\.md$/i.test(name)) continue;
+  if (!/^PATCH_(?:README|NOTES|SUMMARY)(?:_v[0-9.]+)?\.md$/i.test(name)) continue;
+  remove(name);
+}
+
+// Patch metadata is valid only under logs/patch/. Remove stale copies that were
+// accidentally extracted at the repository root by older delivery archives.
+for (const name of readdirSync(root)) {
+  if (!/^(?:PATCH_MANIFEST(?:_v[0-9.]+)?\.json|README_PATCH(?:_v[0-9.]+)?\.txt|APPLY_KO\.txt|DELETE_PATHS\.txt)$/i.test(name)) continue;
   remove(name);
 }
 
