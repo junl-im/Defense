@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 const root = path.resolve(import.meta.dirname, '..');
-const name = 'DokkaebiLuckDefense3D_FULL_v1.0.51_MODERN_CHARACTER_PRESENTATION';
+const name = 'DokkaebiLuckDefense3D_FULL_v1.0.51_CI_SOURCE_R5';
 const out = path.join(root, 'logs/package/1.0.51');
 const target = path.join(out, name);
 const skip = (rel) => ['dist', 'node_modules', '.git'].includes(rel.split('/')[0]) || (rel.startsWith('logs/') && rel !== 'logs/README.md') || /\.(zip|z\d\d)$/i.test(rel) || /^baseline_.*\.log$/i.test(path.basename(rel));

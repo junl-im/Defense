@@ -345,3 +345,7 @@ The repaired delivery is archive-root flat, removes stale root patch metadata, d
 ## v1.0.51 R4 CI long-session repair
 
 A complete GitHub Actions Vite build reached `verify-dist-v146` and exposed two issues that static/local packaging verification could not see: repeated optional character-presentation update exceptions under SwiftShader and a stale QA assumption that at least three of waves 10/25/50/75/100 were campaign boss waves. R4 adds per-record presentation fail-open behavior, a QA-only deterministic boss load profile (`tiger`, `serpent`, `king`, `tiger`, `king`), and detailed runtime error reporting. The normal campaign boss table remains 4/7/10.
+
+## v1.0.51 R5 CI source revision guard
+
+The R5 repair does not relax v1.0.46 long-session thresholds. It prevents stale pre-R4 source from reaching the five-minute browser gate. A valid run prints `DD-V151-LONG-SESSION-R5`, repair revision 5, and the current runner SHA-256.

@@ -26,6 +26,13 @@ assert.match(main, /runtimeHealthV148: game\.runtimeHealthV148\?\.diagnostics/);
 assert.match(main, /runtimeErrors: \[\.\.\.\(game\.runtimeErrors \|\| \[\]\)\]/);
 
 const runner = read('scripts/run-release-assurance-v146.mjs');
+const chain = read('scripts/verify-dist-chain-v140.mjs');
+const distGate = read('scripts/verify-dist-v146.mjs');
+const workflow = read('.github/workflows/deploy.yml');
+assert.match(chain, /verify-ci-source-revision-v151\.mjs/);
+assert.match(distGate, /verify-ci-source-revision-v151\.mjs/);
+assert.match(workflow, /verify-ci-source-revision-v151\.mjs/);
+assert.match(runner, /DD-V151-LONG-SESSION-R5/);
 assert.match(runner, /runtimeErrorEntries/);
 assert.match(runner, /runtimeHealth/);
 assert.match(runner, /exceptions:diagnostics\.exceptions\.slice\(-12\)/);

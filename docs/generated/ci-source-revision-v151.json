@@ -1,0 +1,55 @@
+{
+  "id": "DD-CI-SOURCE-REVISION-V151",
+  "releaseVersion": "1.0.51",
+  "buildId": "b24.51",
+  "repairRevision": 5,
+  "marker": "DD-V151-LONG-SESSION-R5",
+  "purpose": "Fail fast when a stale pre-R4 long-session runner is committed or executed in CI.",
+  "files": [
+    {
+      "path": ".github/workflows/deploy.yml",
+      "sha256": "b1eb38e380c4b4e702b5e1c18dc3475209b3a95db247ffc0dce95a0bd7246576",
+      "bytes": 7129
+    },
+    {
+      "path": "package.json",
+      "sha256": "787a3d207ee961001fc331e18e92fcea5bde36569c399b0b48044436d4f3030b",
+      "bytes": 37926
+    },
+    {
+      "path": "scripts/run-release-assurance-v146.mjs",
+      "sha256": "7bf64519cdfa578942c0fb58a11904f7d4a121571333a4c0845996060211debe",
+      "bytes": 17870
+    },
+    {
+      "path": "scripts/verify-dist-chain-v140.mjs",
+      "sha256": "937aab320107a34bb1c88b6b2d1640b90016ae391826d1c6dc69ee27a945ef97",
+      "bytes": 1115
+    },
+    {
+      "path": "scripts/verify-dist-v146.mjs",
+      "sha256": "262b686fdcfdf005a2fdd1d2a180029ba414a8c2228b17ee6433b983f4ab466e",
+      "bytes": 2503
+    },
+    {
+      "path": "scripts/verify-long-session-hotfix-v151.mjs",
+      "sha256": "768f4f649116320ef743a5ff310960a8e14e0f48790daadd0727f264c9b234f9",
+      "bytes": 2174
+    },
+    {
+      "path": "src/main.js",
+      "sha256": "a600313599b05de699d6bdd97816c1f2a4cba817349897deb319446684c6f890",
+      "bytes": 416945
+    },
+    {
+      "path": "src/runtime/character-presentation-director-v151.js",
+      "sha256": "b281239f8805559ffa12bf7eaad20125cdb1744b151f04f56c66ef46c51d14b1",
+      "bytes": 15961
+    },
+    {
+      "path": "src/runtime/long-session-load-profile-v151.js",
+      "sha256": "906b4d3444997269a032dfd79323fca33a987293ee27c52d83c6e6a883a8f2d4",
+      "bytes": 646
+    }
+  ]
+}

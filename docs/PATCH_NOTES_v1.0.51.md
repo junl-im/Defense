@@ -32,3 +32,10 @@ The R3 delivery is archive-root flat, removes stale root patch metadata, deletes
 - Added a deterministic five-window boss load profile for waves 10, 25, 50, 75, and 100. This is QA-only and does not alter the campaign boss schedule at waves 4, 7, and 10.
 - Added retained runtime error entries and browser exception details to v1.0.46 failure output.
 - Added `verify:long-session-hotfix:v151` to prevent regression of the load profile and presentation fallback contract.
+
+## R5 CI stale-run proof guard
+
+- Adds `DD-V151-LONG-SESSION-R5` source revision marker before dependency installation and before the dist verification chain.
+- Verifies SHA-256 for the v1.0.46 long-session runner, v1.0.51 fail-open presentation runtime, QA load profile, workflow, and package scripts.
+- A pre-R4 runner now fails immediately instead of spending five minutes producing an indistinguishable historical failure.
+- The long-session quality thresholds remain unchanged.

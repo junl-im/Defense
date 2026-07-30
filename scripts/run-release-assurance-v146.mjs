@@ -5,6 +5,8 @@ import path from 'node:path';
 import { spawn, spawnSync } from 'node:child_process';
 
 const root = path.resolve(import.meta.dirname, '..');
+const SOURCE_REVISION_V151 = 'DD-V151-LONG-SESSION-R5';
+console.log(`SOURCE ${SOURCE_REVISION_V151} runner=${path.basename(import.meta.filename || 'run-release-assurance-v146.mjs')}`);
 const dist = process.env.DIST_DIR ? path.resolve(process.env.DIST_DIR) : path.join(root, 'dist');
 const requireBrowser = process.env.REQUIRE_BROWSER_V146 === '1';
 const reportPath = path.join(root, 'logs/qa/v146/release-assurance-report.json');
@@ -256,7 +258,7 @@ try {
     const worstFrames=[...(assurance.samples||[])].sort((a,b)=>Number(b.frameP95Ms||0)-Number(a.frameP95Ms||0)).slice(0,5).map((sample)=>({wave:sample.wave,frameP95Ms:sample.frameP95Ms,frameMaxMs:sample.frameMaxMs,frameSamples:sample.frameSamples,frameLongTaskRate:sample.frameLongTaskRate,longTasks:sample.longTasks}));
     const runtimeErrorEntries=(sessionReport?.reliability?.runtimeErrors||[]).slice(-12);
     const runtimeHealth=sessionReport?.reliability?.runtimeHealthV148||{};
-    throw new Error(`v146 long-session checks failed: ${JSON.stringify({failedChecks,failedLoadChecks,metrics:assurance.metrics,thresholds:assurance.thresholds,environment:assurance.environment,measurementMode:assurance.metrics?.measurementMode,longTaskMeasurementMode:assurance.metrics?.longTaskMeasurementMode,worstFrames,runtimeHealth,runtimeErrorEntries,exceptions:diagnostics.exceptions.slice(-12),digest:assurance.failureDigest||{}})}`);
+    throw new Error(`v146 long-session checks failed: ${JSON.stringify({sourceRevision:SOURCE_REVISION_V151,failedChecks,failedLoadChecks,metrics:assurance.metrics,thresholds:assurance.thresholds,environment:assurance.environment,measurementMode:assurance.metrics?.measurementMode,longTaskMeasurementMode:assurance.metrics?.longTaskMeasurementMode,worstFrames,runtimeHealth,runtimeErrorEntries,exceptions:diagnostics.exceptions.slice(-12),digest:assurance.failureDigest||{}})}`);
   }
   if (!sessionReport?.report?.failureDigest) throw new Error('v146 failure digest missing');
   if ((sessionReport?.report?.loadPhases||[]).length !== 5) throw new Error('v146 deterministic load phases missing');

@@ -22,3 +22,7 @@ The patch manifest and `DELETE_PATHS.txt` list the six obsolete root metadata pa
 ## R4 note
 
 R4 supersedes R3. Apply the R4 archive directly at repository root and commit all overwritten files. No campaign data migration is required. The QA-only long-session load profile does not change normal boss-wave progression.
+
+## R5 verification
+
+After applying the package, run `node scripts/verify-ci-source-revision-v151.mjs`. The command must print `DD-V151-LONG-SESSION-R5` before starting a new GitHub Actions run.

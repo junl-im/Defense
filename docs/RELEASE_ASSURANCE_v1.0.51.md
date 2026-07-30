@@ -24,3 +24,7 @@ The R3 delivery is archive-root flat, removes stale root patch metadata, deletes
 The R4 repair addresses the first complete Vite/Chromium failure reported after R3. The failure had two independent causes: repeated optional character-presentation exceptions during observed load windows, and a QA boss-phase expectation that did not match the campaign's 4/7/10 boss table. The enhancement layer now fails open per record, while the QA harness uses a separate deterministic boss load profile across all five observed windows. Campaign progression data is unchanged.
 
 The failure reporter now includes retained runtime-health entries and CDP exception messages. `scripts/verify-long-session-hotfix-v151.mjs` verifies the five load windows, three canonical boss identities, presentation fallback path, and actionable diagnostic fields.
+
+## R5 source provenance gate
+
+CI must print `DD-V151-LONG-SESSION-R5` and the runner SHA-256 before browser assurance. Absence of this marker means the workflow is running an older commit or an incompletely applied patch.

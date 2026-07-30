@@ -11,20 +11,25 @@
   "targetSourceTree": {
     "algorithm": "sha256-sorted-paths-v1",
     "scope": "repository-root-flat clean source package excluding dist, node_modules, .git, logs, ZIP files, and this provenance file",
-    "aggregateSha256": "cf8659c579fdaca6343345c7a500efa86bfaf345bb0894fe7d848c7baca1635c",
-    "fileCount": 3032
+    "aggregateSha256": "2d2d3205ad250a699595d24f461052c81180a5f1107cb0d25b75b33536295081",
+    "fileCount": 3034
   },
   "patchManifest": {
     "path": "logs/patch/1.0.51/PATCH_MANIFEST.json",
     "sha256": "RECORDED_IN_FINAL_PATCH_PACKAGE"
   },
   "targetFullZip": {
-    "name": "Defense_v1.0.51_FULL_LONG_SESSION_R4.zip",
+    "name": "Defense_v1.0.51_FULL_CI_SOURCE_R5.zip",
     "sha256": "RECORDED_IN_FINAL_PATCH_PACKAGE"
   },
-  "repairRevision": 4,
+  "repairRevision": 5,
   "repositoryRootLayout": "flat",
   "ciCleanupOrder": "bootstrap-remove-overlay-clean-generate-verify",
   "overlayCleanupStrategy": "bootstrap-and-cleaner-remove-without-merge",
-  "longSessionRepair": "per-record-presentation-fail-open-and-deterministic-five-boss-load-profile"
+  "longSessionRepair": "per-record-presentation-fail-open, deterministic-five-boss-load-profile, and R5 stale-source SHA-256 preflight",
+  "ciSourceRevision": {
+    "marker": "DD-V151-LONG-SESSION-R5",
+    "manifest": "docs/generated/ci-source-revision-v151.json",
+    "runnerSha256": "7bf64519cdfa578942c0fb58a11904f7d4a121571333a4c0845996060211debe"
+  }
 }

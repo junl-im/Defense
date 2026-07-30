@@ -14,6 +14,8 @@ check(pkg.version === '1.0.51' && pkg.dokkaebi?.buildId === 'b24.51' && pkg.dokk
 check(lock.version === pkg.version && lock.packages?.['']?.version === pkg.version, 'v151 lock identity');
 check(version.releaseVersion === pkg.version && version.buildId === 'b24.51', 'v151 public identity');
 check(main.includes('new CharacterPresentationDirectorV151'), 'v151 presentation director runtime integration');
+check(pkg.scripts?.['verify:ci-source:v151'] === 'node scripts/verify-ci-source-revision-v151.mjs', 'v151 R5 CI source revision script');
+check(pkg.scripts?.['verify:dist:all']?.includes('verify:ci-source:v151'), 'v151 R5 dist source preflight');
 check(pkg.scripts?.['verify:long-session-hotfix:v151'] === 'node scripts/verify-long-session-hotfix-v151.mjs' && pkg.scripts?.['verify:release:v151']?.includes('verify:long-session-hotfix:v151'), 'v151 long-session hotfix verification chain');
 check(pipeline.includes('applyCharacterMaterialEnhancementV151(root'), 'v151 PBR character material runtime integration');
 for (const file of [
@@ -24,6 +26,8 @@ for (const file of [
   'scripts/verify-repository-root-v151.mjs',
   'scripts/verify-ci-root-cleanup-v151.mjs',
   'scripts/verify-long-session-hotfix-v151.mjs',
+  'scripts/verify-ci-source-revision-v151.mjs',
+  'docs/generated/ci-source-revision-v151.json',
   'src/runtime/long-session-load-profile-v151.js',
   'scripts/root-output-policy.mjs',
   'docs/PATCH_NOTES_v1.0.51.md',
@@ -39,6 +43,8 @@ check(manifest.id === 'DD-BUILD-INPUT-MANIFEST-V151' && manifest.releaseVersion 
 check(read('scripts/verify-dist-chain-v140.mjs').includes("'151'"), 'v151 dist chain');
 check(read('scripts/clean-obsolete-assets.mjs').includes("'PATCH_SUMMARY.md'"), 'v151 stale root patch metadata cleanup');
 const workflow = read('.github/workflows/deploy.yml');
+check(workflow.includes('node scripts/verify-ci-source-revision-v151.mjs'), 'v151 R5 workflow source preflight');
+check(read('scripts/run-release-assurance-v146.mjs').includes('DD-V151-LONG-SESSION-R5'), 'v151 R5 long-session runner marker');
 check(workflow.indexOf('node scripts/clean-obsolete-assets.mjs') >= 0 && workflow.indexOf('node scripts/clean-obsolete-assets.mjs') < workflow.indexOf('node scripts/verify-repository-root-v151.mjs'), 'v151 CI cleanup before repository-root preflight');
 check(read('scripts/bootstrap-release-package-v151.mjs').includes('removedStaleRootMetadata'), 'v151 bootstrap stale metadata cleanup');
 check(read('scripts/bootstrap-release-package-v151.mjs').includes('removedStaleRootOverlay'), 'v151 bootstrap stale overlay cleanup');

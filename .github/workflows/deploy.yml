@@ -50,6 +50,7 @@ jobs:
           node scripts/verify-release-identity-v151.mjs
           node -e "const p=require('./package.json'); const l=require('./package-lock.json'); if(p.version!=='1.0.51'||l.version!=='1.0.51'||l.packages?.['']?.version!=='1.0.51') process.exit(1); console.log('PASS CI package identity 1.0.51 before npm ci')"
           node scripts/verify-repository-root-v151.mjs
+          node scripts/verify-ci-source-revision-v151.mjs
 
       - name: Install dependencies
         run: npm ci
