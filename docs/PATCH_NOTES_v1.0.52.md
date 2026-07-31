@@ -82,3 +82,18 @@
 - 오프라인 reload 전에 `guardian/warrior/daily`의 유효한 저장 sentinel을 기록하고 reload 뒤 반드시 동일하게 남는지 확인한다.
 - JSON 저장값은 객체 키 순서를 정규화해 의미가 같은 재직렬화를 허용하지만, 실제 값 변경·누락·추가는 정확한 키 이름과 함께 실패한다.
 - 결정론 검증은 진단 키만 변경되는 정상 사례가 통과하고 `dokkaebi-guardian-growth-v1` 또는 직업 값이 변경되는 실제 손실 사례가 실패하는지 검사한다.
+
+
+## CI chain hotfix R6
+
+- v147은 서비스 워커 설치, 오프라인 부트, 저장 연속성, 재접속까지 모두 통과했다.
+- 다음 v148 실패는 런타임 마커가 누락된 것이 아니라 검증기가 `assets/game.js` 하나만 검사한 오탐이었다.
+- 실제 엔트리 `src/bootstrap.js`는 `import('./main.js')`를 사용하므로 Vite는 부트스트랩을 `assets/game.js`에 두고 게임 런타임을 `assets/chunks/main-*.js`에 분리한다.
+- `scripts/lib/dist-bundle-markers.mjs`를 추가해 `assets/game.js`에서 시작하는 실제 JavaScript 참조 그래프만 순회한다.
+- `/Defense/assets/chunks/...` 절대 base-path 참조와 상대 chunk 참조를 모두 해석한다.
+- 연결되지 않은 고아 chunk의 마커는 통과 근거로 인정하지 않는다.
+- v148, v149, v150, v151, v152 dist 마커 검사를 모두 같은 도달 가능 번들 방식으로 교체했다.
+- v149와 v150의 역사적 정체성 검사를 `patchRevision >= 49/50`, `buildId=b24.<patch>`, 정확한 cache revision 계약으로 전진 호환화했다.
+- v149 책임 분리 검증은 과거 `checkpoint('finish-run')`뿐 아니라 v150의 `PersistentRewardOrchestratorV150 → AtomicSaveSnapshotV150.commit('finish-run-rewards')` 경로도 정상 저장 계약으로 인정한다.
+- v1.0.49 소스 바이트 상한 1,700,000은 그대로 유지하고, 해당 버전 이후 승인된 `-v150.js`, `-v151.js`, `-v152.js` 모듈 62,708바이트만 역사 예산에서 제외한다.
+- 합성 Vite fixture는 엔트리에 마커가 없고 동적 chunk에만 마커가 있는 실제 구조를 재현하며, 고아 chunk 마커 거부까지 검증한다.

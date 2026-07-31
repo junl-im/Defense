@@ -403,3 +403,17 @@ A valid R6 run prints `DD-V151-ENEMY-MATERIAL-R6`, repair revision 6, and the si
 - 패키징 규칙: R5 전체본은 `dist`, `node_modules`, `.git`, 생성 로그를 제외한다. R5 패치는 ZIP 루트가 프로젝트 루트인 direct project-root 구조이며 wrapper/metadata 엔트리를 금지한다. 패치의 모든 파일은 R5 전체본 동일 경로와 SHA-256이 같아야 하며 R4 적용 결과가 R5 전체본과 정확히 일치해야 한다.
 - 잔여 위험: 실제 GitHub Actions Chromium에서 v147이 최종 통과하는지는 CI 재실행이 필요하다. 새 실패가 발생하면 `saveDiff`가 실제 변경 키를 제공하므로 진단 범위가 제한된다. 런타임 게임 저장 코드 자체는 이번 R5에서 변경하지 않았다.
 - 다음 예정: R5 적용 후 `npm run verify:dist:all`의 v147 통과 및 v148~v152 완료 확인. 이후 `docs/NEXT_UPDATE_v1.0.53.md`의 WebGL GPU/context-loss/mobile evidence 작업으로 이동한다.
+
+
+## 2026-07-31 — v1.0.52 CI HOTFIX R6
+
+- 버전/빌드: `v1.0.52 / b24.52`, repair revision R6. 게임 콘텐츠와 캐시 정체성은 변경하지 않는다.
+- 보고된 CI 상태: v147 오프라인 부트·재접속·durable save continuity가 모두 통과한 뒤 v148이 `DD-RUNTIME-HEALTH-ASSURANCE-V148`를 `assets/game.js`에서 찾지 못해 중단됐다.
+- 근본 원인: Vite 엔트리 `src/bootstrap.js`가 `src/main.js`를 동적 import한다. 따라서 `assets/game.js`는 부트스트랩이고 v148-v152 런타임은 `assets/chunks/main-*.js` 등 도달 가능한 chunk에 배치된다. 역사 dist verifier가 단일 파일만 검사했다.
+- 변경 파일: `scripts/lib/dist-bundle-markers.mjs` 신규, `scripts/verify-dist-bundle-markers-v152.mjs` 신규, `scripts/verify-dist-v148.mjs`~`verify-dist-v152.mjs`, `scripts/verify-release-v152.mjs`, CI source manifest 생성기, 패키징·패치 도구, README와 v1.0.52 문서.
+- 수정 방식: `assets/game.js`에서 시작해 emitted JavaScript 문자열 참조를 재귀적으로 해석한다. 상대 경로와 `/Defense/` base path를 지원하고 실제 dist 내부에 존재하는 JS만 순회한다. 고아 chunk는 인정하지 않는다. v151 SVG 금지 검사도 도달 가능한 전체 번들에 적용한다.
+- 선제 수정: v149와 v150의 고정 버전 허용 목록을 전진 호환 revision 계약으로 교체했다. v149 책임 분리 검증은 v150 원자 finish-run commit을 인정하고, v1.0.49 소스 예산은 상한을 유지한 채 승인된 v150-v152 태그 모듈만 분리한다.
+- 검증 명령/결과: `node scripts/verify-dist-bundle-markers-v152.mjs` PASS. 동적 main chunk와 `/Defense/` absolute chunk는 도달했고 고아 chunk marker는 거부됐다. 합성 complete dist에서 v148, v149, v150, v151, v152 게이트를 실행했으며 모두 도달 가능한 chunk 마커를 인식했다. v149 scoped source 1,664,833바이트, 제외된 v150-v152 모듈 62,708바이트로 기존 1,700,000 상한을 통과했다. 실제 Vite build는 로컬 의존성 부재로 실행하지 않았으며 GitHub Actions에서 최종 검증한다.
+- 패키징 규칙: R6 전체본은 `dist`, `node_modules`, `.git`, 생성 로그를 제외한다. R6 패치는 ZIP 루트가 프로젝트 루트이며 wrapper/metadata 엔트리를 금지한다. R5 전체본에 R6 패치를 적용한 결과가 R6 전체본과 정확히 같아야 한다.
+- 잔여 위험: 번들러가 미래에 JS 참조를 문자열이 아닌 다른 manifest 구조로 바꾸면 helper 확장이 필요하다. 현재 Vite 8 emitted dynamic import 구조는 fixture로 고정한다.
+- 다음 예정: R6 적용 후 `verify:dist:all`의 v148-v152 연속 통과 확인. 이후 `docs/NEXT_UPDATE_v1.0.53.md`의 WebGL GPU/context-loss/mobile evidence 작업으로 이동한다.

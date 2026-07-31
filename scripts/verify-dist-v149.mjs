@@ -2,17 +2,18 @@ import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { assertReachableBundleMarkers } from './lib/dist-bundle-markers.mjs';
 const root = path.resolve(import.meta.dirname, '..');
 const dist = process.env.DIST_DIR ? path.resolve(process.env.DIST_DIR) : path.join(root, 'dist');
 const reportDir = path.join(root, 'logs/qa/v149');
 const versionPath = path.join(dist, 'version.json');
 if (!fs.existsSync(versionPath)) throw new Error('v149 dist/version.json missing');
 const version = JSON.parse(fs.readFileSync(versionPath, 'utf8'));
-if (!['1.0.49','1.0.50'].includes(version.releaseVersion) || !/^b24\.(?:49|50|51)$/.test(version.buildId || '') || !/^1\.0\.(?:49|50|51)-b24\.(?:49|50|51)$/.test(version.cacheRevision || '')) throw new Error('v1.0.49+ dist identity mismatch');
+const patchRevision = Number(String(version.releaseVersion || '').split('.')[2]);
+if (!Number.isInteger(patchRevision) || patchRevision < 49 || version.buildId !== `b24.${patchRevision}` || version.cacheRevision !== `${version.releaseVersion}-${version.buildId}`) throw new Error('v1.0.49+ dist identity mismatch');
 for (const required of ['index.html','assets/game.js','assets/game.css','sw.js','release-identity.generated.js']) if (!fs.existsSync(path.join(dist, required))) throw new Error(`v149 complete Vite dist missing: ${required}`);
 if (fs.existsSync(path.join(dist, 'src')) || fs.existsSync(path.join(dist, 'STATIC_BUILD_NOTICE.txt'))) throw new Error('v149 requires bundled Vite output, not static fallback');
-const gameJs = fs.readFileSync(path.join(dist, 'assets/game.js'), 'utf8');
-for (const marker of ['DD-TRANSACTIONAL-PERSISTENCE-V149','DD-RECOVERY-STATE-V149','DD-RUN-STATE-COORDINATOR-V149','DD-FEATURE-EXPOSURE-POLICY-V149','DD-RUN-RESULT-PRESENTER-V149','__DOKKAEBI_PUBLIC_API__']) if (!gameJs.includes(marker)) throw new Error(`v149 bundled runtime marker missing: ${marker}`);
+const bundle = assertReachableBundleMarkers(dist, ['DD-TRANSACTIONAL-PERSISTENCE-V149','DD-RECOVERY-STATE-V149','DD-RUN-STATE-COORDINATOR-V149','DD-FEATURE-EXPOSURE-POLICY-V149','DD-RUN-RESULT-PRESENTER-V149','__DOKKAEBI_PUBLIC_API__'], { label: 'v149 bundled runtime' });
 const files=[]; const sha=(data)=>createHash('sha256').update(data).digest('hex');
 function walk(directory,relative=''){for(const name of fs.readdirSync(directory).sort()){const absolute=path.join(directory,name);const rel=relative?`${relative}/${name}`:name;const stat=fs.statSync(absolute);if(stat.isDirectory())walk(absolute,rel);else if(stat.isFile()){const data=fs.readFileSync(absolute);files.push({path:rel,bytes:data.length,sha256:sha(data)});}}}
 walk(dist); files.sort((a,b)=>a.path.localeCompare(b.path));
@@ -29,4 +30,4 @@ const tasks=[
   ['scripts/run-feature-exposure-v149.mjs',240000,[]]
 ];
 for(const [script,timeout,args] of tasks){const run=spawnSync(process.execPath,[path.join(root,script),...args],{cwd:root,env:process.env,encoding:'utf8',timeout,maxBuffer:32*1024*1024});process.stdout.write(run.stdout||'');process.stderr.write(run.stderr||'');if(run.error||run.status!==0)throw new Error(`v149 dist sub-verifier failed: ${script} (${run.error?.code||run.status})`);}
-console.log(`PASS v1.0.49 foundation on forward-compatible complete Vite dist, deterministic dist manifest, and production/QA exposure browser boundary (${report.fileCount} files)`);
+console.log(`PASS v1.0.49 foundation on forward-compatible complete Vite dist, deterministic dist manifest, and production/QA exposure browser boundary (${report.fileCount} files, ${bundle.files.length} reachable JS files)`);

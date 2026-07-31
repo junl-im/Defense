@@ -1,6 +1,6 @@
-# v1.0.52 CI HOTFIX R5 패치 적용
+# v1.0.52 CI HOTFIX R6 패치 적용
 
-R2 패치 ZIP은 프로젝트 루트 기준의 직접 덮어쓰기 구조다. `overlay/` 포장 폴더나 패치 전용 메타데이터 파일이 들어 있지 않다.
+R6 패치 ZIP은 프로젝트 루트 기준의 직접 덮어쓰기 구조다. `overlay/` 포장 폴더나 패치 전용 메타데이터 파일이 들어 있지 않다.
 
 1. 기존 프로젝트를 백업한다.
 2. 패치 ZIP의 내용 전체를 기존 프로젝트 루트에 직접 덮어쓴다.
@@ -15,7 +15,7 @@ VITE_BASE_PATH=/Defense/ npm run build
 npm run verify:dist:all
 ```
 
-패치 ZIP의 모든 파일 경로는 R2 전체 통파일에도 존재해야 하며, 같은 경로의 SHA-256이 일치해야 한다. 패치 적용 후 정리된 프로젝트 트리는 R2 전체 통파일과 동일해야 한다.
+패치 ZIP의 모든 파일 경로는 R6 전체 통파일에도 존재해야 하며, 같은 경로의 SHA-256이 일치해야 한다. 패치 적용 후 정리된 프로젝트 트리는 R6 전체 통파일과 동일해야 한다.
 
 
 ## R3 적용
@@ -62,3 +62,26 @@ PASS v1.0.47 offline launch and mid-wave reconnect browser assurance
 ```
 
 실패 시 `logs/qa/v147/offline-reconnect-report.json`의 `suite.scenarios[0].saveDiff`를 확인한다. `missing`, `added`, `changed`, `sentinelMissing`에는 실제 지속 저장 키만 표시된다. `storageBefore.volatile`과 `storageAfter.volatile`의 fingerprint 차이는 부트 진단·rolling checkpoint의 정상 갱신이며 그 자체로 실패가 아니다.
+
+
+## R6 적용
+
+R6는 R5 또는 이전 v1.0.52 전체본에 적용하는 프로젝트 루트 직접 덮어쓰기 패치다. ZIP 안에 `overlay/` wrapper와 패치 메타데이터가 없으며 프로젝트 경로만 포함한다.
+
+적용 후 다음을 실행한다.
+
+```bash
+npm run clean:obsolete
+npm ci
+npm run verify:ci
+VITE_BASE_PATH=/Defense/ npm run build
+npm run verify:dist:all
+```
+
+v147 다음에 v148이 다음과 같이 통과해야 한다.
+
+```text
+PASS v1.0.48+ complete dist contains safe persistence, bounded diagnostics, hidden-frame suspension, and comprehensive audit markers under 1.0.52
+```
+
+R6 검증기는 `assets/game.js` 하나에 모든 마커가 있어야 한다고 가정하지 않는다. 엔트리에서 실제로 도달 가능한 `assets/chunks/*.js`까지 순회한다. 패치 적용 후에도 `dist/`는 기존 것을 재사용하지 말고 반드시 새로 빌드한다.

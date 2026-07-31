@@ -63,6 +63,15 @@ const saveContinuityV147 = read('scripts/save-continuity-v147.mjs');
 const offlineModelVerifierV147 = read('scripts/verify-offline-reconnect-v147.mjs');
 const serviceWorker = read('public/sw.js');
 const serviceWorkerInstallVerifier = read('scripts/verify-service-worker-install-v152.mjs');
+const bundleMarkerHelperV152 = read('scripts/lib/dist-bundle-markers.mjs');
+const bundleMarkerVerifierV152 = read('scripts/verify-dist-bundle-markers-v152.mjs');
+const distVerifierV148 = read('scripts/verify-dist-v148.mjs');
+const distVerifierV149 = read('scripts/verify-dist-v149.mjs');
+const distVerifierV150 = read('scripts/verify-dist-v150.mjs');
+const distVerifierV151 = read('scripts/verify-dist-v151.mjs');
+const distVerifierV152 = read('scripts/verify-dist-v152.mjs');
+const responsibilityVerifierV149 = read('scripts/verify-responsibility-extraction-v149.mjs');
+const performanceVerifierV149 = read('scripts/verify-performance-reproducibility-v149.mjs');
 const stagePackageV152 = read('scripts/stage-clean-package-v152.mjs');
 const verifyPackageV152 = read('scripts/verify-clean-package-v152.mjs');
 const createPatchV152 = read('scripts/create-patch-v152.mjs');
@@ -83,9 +92,20 @@ check(offlineModelVerifierV147.includes('volatile diagnostics') && offlineModelV
 check(serviceWorker.includes('const INSTALL_SHELL_ASSETS') && serviceWorker.includes('PRECACHE_REQUEST_TIMEOUT_MS') && serviceWorker.includes('PRECACHE_CONCURRENCY') && serviceWorker.includes('DOKKAEBI_GET_INSTALL_STATUS'), 'v152 service-worker install is bounded and observable');
 check(serviceWorkerInstallVerifier.includes('source modules excluded') && serviceWorkerInstallVerifier.includes('new Set(INSTALL_SHELL_ASSETS)') && serviceWorkerInstallVerifier.includes('SHELL_ASSETS.map'), 'v152 service-worker install regression gate is registered');
 check(pkg.scripts?.['verify:sw-install:v152'] === 'node scripts/verify-service-worker-install-v152.mjs' && pkg.scripts?.['verify:release:v152']?.includes('verify:sw-install:v152'), 'v152 release chain includes service-worker install regression gate');
-check(stagePackageV152.includes('CI_HOTFIX_R5') && verifyPackageV152.includes('CI_HOTFIX_R5'), 'v152 clean package staging identifies CI hotfix R5');
-check(createPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R5') && createPatchV152.includes('1.0.52-r5') && verifyPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R5'), 'v152 project-root patch tooling identifies CI hotfix R5');
-check(!createPatchV152.includes("path.join(out, 'overlay')") && createPatchV152.includes("path.join(out, 'project-root')"), 'v152 R5 patch remains a true project-root overlay without wrapper');
+check(pkg.scripts?.['verify:bundle-markers:v152'] === 'node scripts/verify-dist-bundle-markers-v152.mjs' && pkg.scripts?.['verify:release:v152']?.includes('verify:bundle-markers:v152'), 'v152 release chain includes reachable bundle marker regression gate');
+check(bundleMarkerHelperV152.includes('collectReachableJavaScriptBundle') && bundleMarkerHelperV152.includes('assets/game.js') && bundleMarkerHelperV152.includes('resolveBundleReference'), 'v152 bundle marker helper follows emitted dynamic-import graph');
+check(bundleMarkerVerifierV152.includes('main-fixture.js') && bundleMarkerVerifierV152.includes('ORPHAN-MUST-NOT-PASS') && bundleMarkerVerifierV152.includes('/Defense/assets/chunks/runtime-fixture.js'), 'v152 bundle marker fixture covers dynamic chunks, base paths, and unreachable chunks');
+for (const [label, verifier] of [['v148', distVerifierV148], ['v149', distVerifierV149], ['v150', distVerifierV150], ['v151', distVerifierV151], ['v152', distVerifierV152]]) {
+  check(verifier.includes("from './lib/dist-bundle-markers.mjs'") && verifier.includes('assertReachableBundleMarkers'), `${label} dist verifier scans reachable Vite bundle graph`);
+  check(!verifier.includes("const gameJs = fs.readFileSync(path.join(dist, 'assets/game.js')") && !verifier.includes("const gameJs=fs.readFileSync(path.join(dist,'assets/game.js')"), `${label} dist verifier does not assume all runtime code is in game.js`);
+}
+check(distVerifierV149.includes('patchRevision < 49') && distVerifierV149.includes('version.buildId !== `b24.${patchRevision}`'), 'v149 dist identity is forward-compatible through v152');
+check(distVerifierV150.includes('patchRevision<50') && distVerifierV150.includes('version.buildId!==`b24.${patchRevision}`'), 'v150 dist identity is forward-compatible through v152');
+check(responsibilityVerifierV149.includes('finishRunPersistence') && responsibilityVerifierV149.includes("'finish-run-rewards'") && responsibilityVerifierV149.includes('this.persistentRewardsV150.awardRun'), 'v149 responsibility gate accepts v150 atomic finish-run persistence');
+check(performanceVerifierV149.includes('v149ScopedSourceBytes') && performanceVerifierV149.includes('forwardTagV150Plus') && performanceVerifierV149.includes('excluded v150-v152'), 'v149 historical source budget excludes only forward v150-v152 modules');
+check(stagePackageV152.includes('CI_HOTFIX_R6') && verifyPackageV152.includes('CI_HOTFIX_R6'), 'v152 clean package staging identifies CI hotfix R6');
+check(createPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R6') && createPatchV152.includes('1.0.52-r6') && verifyPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R6'), 'v152 project-root patch tooling identifies CI hotfix R6');
+check(!createPatchV152.includes("path.join(out, 'overlay')") && createPatchV152.includes("path.join(out, 'project-root')"), 'v152 R6 patch remains a true project-root overlay without wrapper');
 
 if (failures.length) {
   failures.forEach((failure) => console.error(`FAIL ${failure}`));

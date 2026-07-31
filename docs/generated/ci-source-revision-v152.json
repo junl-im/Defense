@@ -11,8 +11,8 @@
     },
     {
       "path": "package.json",
-      "bytes": 39909,
-      "sha256": "761b06bc4f0e7be34c37efc6e44aa6e6ea93d0dc4fb42f2c39e7a0ac1a9e0eba"
+      "bytes": 40033,
+      "sha256": "0befd6fec1c055ea6b4faca701c5a296612476a0700ae33bd3ab74dfe9be744e"
     },
     {
       "path": "package-lock.json",
@@ -81,8 +81,8 @@
     },
     {
       "path": "scripts/verify-release-v152.mjs",
-      "bytes": 11720,
-      "sha256": "11c3269c1450e5941b72dd1cbb1725a84368f5c584f262d7a42c42b6cd7496ee"
+      "bytes": 14713,
+      "sha256": "25e098acdd912eead5a1953858aea1cf77c982654e10a20eeb694654aa3b84eb"
     },
     {
       "path": "scripts/verify-runtime-hardening-v152.mjs",
@@ -183,6 +183,51 @@
       "path": "scripts/verify-service-worker-install-v152.mjs",
       "bytes": 6147,
       "sha256": "b3b42887012e8282ee02cf5858eac2a0cf6feffbea4f952bf7df1373cb883a9a"
+    },
+    {
+      "path": "scripts/lib/dist-bundle-markers.mjs",
+      "bytes": 3425,
+      "sha256": "b540d81ee75949363ded58b87dade618d6984c1657f701909571ae25866720e6"
+    },
+    {
+      "path": "scripts/verify-dist-bundle-markers-v152.mjs",
+      "bytes": 2236,
+      "sha256": "2b459ef3e664de19df6b01526215671629bd086daa4adfefdf42f6100257e958"
+    },
+    {
+      "path": "scripts/verify-dist-v148.mjs",
+      "bytes": 2384,
+      "sha256": "c7fbc018bed1a86982be57a05a8178c38d1c7dfbe55f1555379b31cbc100998b"
+    },
+    {
+      "path": "scripts/verify-dist-v149.mjs",
+      "bytes": 3695,
+      "sha256": "30f6c5183daaa4e454e1f2baac5107ce350283e3e0279c908c7492bf27b8e489"
+    },
+    {
+      "path": "scripts/verify-dist-v150.mjs",
+      "bytes": 3544,
+      "sha256": "c5186728ded8df310bb87a9113d4d78fe7fe3d6fd4a8947e25cd491c205240c9"
+    },
+    {
+      "path": "scripts/verify-dist-v151.mjs",
+      "bytes": 3739,
+      "sha256": "068eee0ef552367fe26d01b62b1773efb2611d647db3bdd4a6eef9581235c4d3"
+    },
+    {
+      "path": "scripts/verify-dist-v152.mjs",
+      "bytes": 2041,
+      "sha256": "bdbf6ff5040860f49d37ce18074293e73df578c5957ba95a0bb3dab1321f79c2"
+    },
+    {
+      "path": "scripts/verify-responsibility-extraction-v149.mjs",
+      "bytes": 2233,
+      "sha256": "2e7745476fbaf2cbc9a01f844699a71c11a06cb38c125baf19b41dcc39c3d1de"
+    },
+    {
+      "path": "scripts/verify-performance-reproducibility-v149.mjs",
+      "bytes": 2755,
+      "sha256": "d988d10b7d266f7366cc2003815a79901433e64e945eb95ae22a743ea3816258"
     }
   ]
 }

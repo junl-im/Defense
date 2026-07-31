@@ -1,6 +1,6 @@
 # Dokkaebi Luck Defense 3D
 
-> Current release: **v1.0.52 / b24.52 CI HOTFIX R5** — durable-save offline assurance, bounded service-worker installation, event-timed character presentation, and hardened CI/browser assurance.
+> Current release: **v1.0.52 / b24.52 CI HOTFIX R6** — reachable Vite chunk verification, durable-save offline assurance, bounded service-worker installation, and event-timed character presentation.
 
 ## v1.0.51 CI cleanup repair R3
 
@@ -114,3 +114,8 @@ R4 fixes the confirmed service-worker install stall exposed by R3 diagnostics. T
 ## v1.0.52 CI HOTFIX R5
 
 R5 fixes the false `saveContinuity` failure exposed after the offline service worker and reconnect path completed successfully. The v147 browser harness no longer compares every `dokkaebi-*` localStorage entry byte-for-byte. Boot diagnostics (`dokkaebi-browser-reliability-v19`), rolling wave checkpoints, and the transient persistence journal are classified as volatile. Strict continuity remains enforced for player-facing mode, class, controls, HUD, scores, growth, equipment, mastery, codex, council, review decisions, and the atomic recovery snapshot. The harness seeds valid durable sentinels before the offline reload and reports exact missing, added, changed, or lost-sentinel keys on failure.
+
+
+## v1.0.52 CI HOTFIX R6
+
+R6 fixes the v1.0.48+ dist verifiers' incorrect assumption that every runtime marker must be inside `assets/game.js`. The actual entry is `src/bootstrap.js`, which dynamically imports `src/main.js`; Vite therefore emits the runtime into reachable `assets/chunks/*.js` files. The repaired verifier starts at `assets/game.js`, follows emitted JavaScript references including `/Defense/` base-path URLs, accepts markers only from reachable chunks, and rejects orphan chunks. The same correction is applied proactively to v148-v152, and the v149/v150 historical identity gates now accept forward-compatible `1.0.52 / b24.52` output. R6 also teaches the v149 responsibility gate about v150 atomic finish-run commits and keeps the original v1.0.49 source-byte ceiling while excluding only approved v150-v152 modules.

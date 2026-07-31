@@ -317,7 +317,7 @@
     "verify:release:v149": "npm run verify:foundation:v149:v150",
     "verify:release:v150": "npm run verify:foundation:v150:v151",
     "verify:release:v151": "npm run verify:repo-root:v151 && npm run verify:identity:v151 && npm run verify:build-input:v151 && npm run verify:foundation:v150:v151 && npm run verify:character:v151 && npm run verify:ci-root-cleanup:v151 && npm run verify:ci-source:v151 && npm run verify:enemy-material:v151 && npm run verify:long-session-hotfix:v151 && node scripts/verify-release-v151.mjs",
-    "verify:release:v152": "npm run verify:identity:v152 && npm run verify:build-input:v152 && npm run verify:foundation:v150:v151 && npm run verify:character:v151 && npm run verify:enemy-material:v151 && npm run verify:long-session-hotfix:v151 && npm run verify:timing:v152 && npm run verify:presentation-budget:v152 && node scripts/verify-result-presenter-v149.mjs && npm run verify:hardening:v152 && npm run verify:sw-install:v152 && node scripts/generate-runtime-shell-v135.mjs --check && npm run verify:ci-source:v152 && node scripts/verify-release-v152.mjs",
+    "verify:release:v152": "npm run verify:identity:v152 && npm run verify:build-input:v152 && npm run verify:foundation:v150:v151 && npm run verify:character:v151 && npm run verify:enemy-material:v151 && npm run verify:long-session-hotfix:v151 && npm run verify:timing:v152 && npm run verify:presentation-budget:v152 && node scripts/verify-result-presenter-v149.mjs && npm run verify:hardening:v152 && npm run verify:sw-install:v152 && npm run verify:bundle-markers:v152 && node scripts/generate-runtime-shell-v135.mjs --check && npm run verify:ci-source:v152 && node scripts/verify-release-v152.mjs",
     "verify:repo-root:v151": "node scripts/verify-repository-root-v151.mjs",
     "verify:repo-root:v152": "node scripts/verify-repository-root-v152.mjs",
     "verify:residency:v145": "node scripts/generate-asset-residency-v145.mjs --check",
@@ -358,7 +358,8 @@
     "verify:v600": "node scripts/verify-v600.mjs",
     "verify:v700": "node scripts/verify-v700.mjs",
     "verify:v800": "node scripts/verify-v800.mjs",
-    "verify:v900": "node scripts/generate-asset-quality-registry-v9.mjs --check && node scripts/verify-v900.mjs"
+    "verify:v900": "node scripts/generate-asset-quality-registry-v9.mjs --check && node scripts/verify-v900.mjs",
+    "verify:bundle-markers:v152": "node scripts/verify-dist-bundle-markers-v152.mjs"
   },
   "dependencies": {
     "three": "0.185.1"

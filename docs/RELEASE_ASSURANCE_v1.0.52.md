@@ -123,3 +123,23 @@ R5 검증 항목:
 - v147 및 v152 릴리스 게이트와 CI source SHA-256 manifest가 이 계약 파일들을 고정한다.
 
 실제 GitHub Chromium에서 R5의 최종 v147 통과와 v148~v152 dist chain 완료를 확인해야 한다. 로컬 Chromium은 loopback navigation을 `ERR_BLOCKED_BY_ADMINISTRATOR`로 차단하므로 실제 네트워크 전환 성공 경로는 CI 필수 확인으로 남는다.
+
+
+## CI chain hotfix R6 검증
+
+R5 GitHub Actions에서 v147 전체 브라우저 보증은 통과했고 v148의 `DD-RUNTIME-HEALTH-ASSURANCE-V148` 검사에서 중단됐다. 소스에는 해당 마커가 존재하고 실제 런타임에서 사용되지만, `index.html`의 엔트리인 `src/bootstrap.js`가 `src/main.js`를 동적 import하므로 Vite complete build에서는 마커가 `assets/game.js`가 아닌 `assets/chunks/main-*.js`에 배치된다.
+
+R6 검증 항목:
+
+- `assets/game.js`를 루트로 실제 `.js` 참조를 재귀 순회한다.
+- 상대 chunk URL과 `/Defense/` base-path 절대 URL을 모두 dist 내부 경로로 정규화한다.
+- 존재하지 않는 참조, 외부 URL, dist 밖 경로는 통과 근거로 사용하지 않는다.
+- 연결되지 않은 고아 chunk에만 있는 마커는 실패한다.
+- v148-v152 모든 런타임 마커 검증이 공통 도달 가능 번들 helper를 사용한다.
+- v151 SVG 금지 검사도 `game.js` 하나가 아니라 도달 가능한 전체 JavaScript 번들에 적용한다.
+- v149/v150 정체성 게이트가 현재 `1.0.52 / b24.52 / 1.0.52-b24.52`를 허용한다.
+- v149 책임 분리 게이트는 v150 원자 보상 commit을 finish-run persistence로 검증한다.
+- v1.0.49의 `sourceJsCssBytes=1,700,000` 상한은 변경하지 않고 v150-v152 태그 모듈만 역사 측정 범위에서 제외한다. 현재 v149 scoped source는 1,664,833바이트다.
+- CI source manifest가 helper, fixture, v148-v152 dist verifier를 SHA-256 서명한다.
+
+로컬 환경에는 Vite 실행 의존성이 없어 GitHub와 동일한 실제 번들을 생성하지 못했다. 대신 `assets/game.js → dynamic main chunk → base-path runtime chunk` 구조의 합성 fixture에서 마커 탐색과 고아 chunk 거부를 종료 코드 0으로 확인한다. 실제 complete Vite dist의 v148-v152 연속 통과는 GitHub Actions에서 최종 확인한다.

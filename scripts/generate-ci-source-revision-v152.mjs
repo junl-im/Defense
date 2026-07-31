@@ -40,7 +40,16 @@ const files = [
   'scripts/verify-offline-reconnect-v147.mjs',
   'scripts/run-offline-reconnect-v147.mjs',
   'scripts/verify-release-v147.mjs',
-  'scripts/verify-service-worker-install-v152.mjs'
+  'scripts/verify-service-worker-install-v152.mjs',
+  'scripts/lib/dist-bundle-markers.mjs',
+  'scripts/verify-dist-bundle-markers-v152.mjs',
+  'scripts/verify-dist-v148.mjs',
+  'scripts/verify-dist-v149.mjs',
+  'scripts/verify-dist-v150.mjs',
+  'scripts/verify-dist-v151.mjs',
+  'scripts/verify-dist-v152.mjs',
+  'scripts/verify-responsibility-extraction-v149.mjs',
+  'scripts/verify-performance-reproducibility-v149.mjs'
 ];
 const sha = (data) => createHash('sha256').update(data).digest('hex');
 const rows = files.map((file) => {

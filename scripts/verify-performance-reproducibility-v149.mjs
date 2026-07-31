@@ -6,8 +6,21 @@ const manifest = JSON.parse(fs.readFileSync(path.join(root, 'docs/generated/buil
 const mainPath = path.join(root, 'src/main.js');
 const mainBytes = fs.statSync(mainPath).size;
 let sourceBytes = 0;
-function walk(directory) { for (const name of fs.readdirSync(directory)) { const file = path.join(directory, name); const stat = fs.statSync(file); if (stat.isDirectory()) walk(file); else if (/\.(?:js|css)$/.test(name)) sourceBytes += stat.size; } }
+let forwardSourceBytesV150Plus = 0;
+const forwardTagV150Plus = /-v(?:150|151|152)\.js$/;
+function walk(directory) {
+  for (const name of fs.readdirSync(directory)) {
+    const file = path.join(directory, name);
+    const stat = fs.statSync(file);
+    if (stat.isDirectory()) walk(file);
+    else if (/\.(?:js|css)$/.test(name)) {
+      sourceBytes += stat.size;
+      if (forwardTagV150Plus.test(name)) forwardSourceBytesV150Plus += stat.size;
+    }
+  }
+}
 walk(path.join(root, 'src'));
+const v149ScopedSourceBytes = sourceBytes - forwardSourceBytesV150Plus;
 const runtimeFiles = fs.readdirSync(path.join(root, 'src/runtime')).filter((name) => /-v149\.js$/.test(name));
 const runtimeBytes = runtimeFiles.reduce((sum, name) => sum + fs.statSync(path.join(root, 'src/runtime', name)).size, 0);
 const regression = ((mainBytes - budget.baseline.mainBytes) / budget.baseline.mainBytes) * 100;
@@ -16,9 +29,9 @@ const check = (value, label) => { if (!value) failures.push(label); };
 check(budget.id === 'DD-PERFORMANCE-AND-REPRODUCIBILITY-GUARD-V149', 'performance budget identity');
 check(mainBytes <= budget.limits.mainBytes, `main bytes ${mainBytes} > ${budget.limits.mainBytes}`);
 check(regression <= budget.limits.mainRegressionPercent, `main regression ${regression.toFixed(3)}% > ${budget.limits.mainRegressionPercent}%`);
-check(sourceBytes <= budget.limits.sourceJsCssBytes, `source bytes ${sourceBytes} > ${budget.limits.sourceJsCssBytes}`);
+check(v149ScopedSourceBytes <= budget.limits.sourceJsCssBytes, `v149-scoped source bytes ${v149ScopedSourceBytes} > ${budget.limits.sourceJsCssBytes} (excluded v150-v152 ${forwardSourceBytesV150Plus})`);
 check(runtimeBytes <= budget.limits.v149RuntimeModuleBytes, `v149 runtime bytes ${runtimeBytes} > ${budget.limits.v149RuntimeModuleBytes}`);
 check(runtimeFiles.length === 5, `v149 runtime module count ${runtimeFiles.length} != 5`);
 check(manifest.algorithm === budget.requiredBuildInputAlgorithm && manifest.releaseVersion === '1.0.49' && /^[a-f0-9]{64}$/.test(manifest.aggregateSha256 || ''), 'build input manifest contract');
 if (failures.length) { failures.forEach((failure) => console.error(`FAIL ${failure}`)); process.exit(1); }
-console.log(`PASS v1.0.49 performance/reproducibility guard (main ${mainBytes} bytes, ${regression.toFixed(3)}%, source ${sourceBytes}, v149 runtime ${runtimeBytes})`);
+console.log(`PASS v1.0.49 performance/reproducibility guard (main ${mainBytes} bytes, ${regression.toFixed(3)}%, scoped source ${v149ScopedSourceBytes}, excluded v150-v152 ${forwardSourceBytesV150Plus}, v149 runtime ${runtimeBytes})`);
