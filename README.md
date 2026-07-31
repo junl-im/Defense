@@ -1,6 +1,6 @@
 # Dokkaebi Luck Defense 3D
 
-> Current release: **v1.0.52 / b24.52** — event-timed character presentation, bounded GPU/runtime budget monitoring, and hardened CI/browser assurance.
+> Current release: **v1.0.52 / b24.52 CI HOTFIX R4** — bounded service-worker installation, event-timed character presentation, and hardened CI/browser assurance.
 
 ## v1.0.51 CI cleanup repair R3
 
@@ -105,3 +105,7 @@ R2 fixes the v146 dist gate's nested v1.0.51 source-identity preflight. The R2 p
 ## v1.0.52 CI HOTFIX R3
 
 R3 fixes the v1.0.47 offline/reconnect browser harness timeout. The old runner waited on the unbounded `navigator.serviceWorker.ready` promise and omitted the foreground scheduling flags already used by the passing v1.0.46 100-wave harness. The repaired runner polls service-worker activation with a fixed deadline, disables background timer/renderer throttling, separates each browser operation into a labeled phase, and writes `failedPhase` plus per-step durations to the v147 report.
+
+## v1.0.52 CI HOTFIX R4
+
+R4 fixes the confirmed service-worker install stall exposed by R3 diagnostics. The install event no longer fetches the 169-entry historical source ledger. It caches only 11 deployable Vite shell files with four workers and a 12-second per-request abort boundary. Source-module hashes remain in the v1.0.35 integrity ledger but `./src/...` paths are not requested from complete Vite dist. The v147 browser report now includes precache progress and failed asset paths.

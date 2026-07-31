@@ -59,3 +59,14 @@
 - 장기 세션 준비와 각 웨이브 진행을 독립된 CDP 단계로 분리하고, 각 단계에 브라우저 내부 제한 시간과 외부 CDP 제한 시간을 적용했다.
 - 실패 보고서에 `failedPhase`, 단계별 상태·소요 시간, 적용 플래그와 제한 시간을 기록한다.
 - CDP 소켓 종료와 HTTP keep-alive 연결이 남아도 러너가 무기한 종료 대기하지 않도록 정리 경계를 추가했다.
+
+## CI chain hotfix R4
+
+- R3 진단으로 확인된 서비스 워커 `installing` 정체를 수정했다.
+- 기존 설치 이벤트는 169개 경로를 동시에 fetch/cache했고 21개가 중복이었다. 대부분의 `./src/...` 원본 모듈은 complete Vite dist에 배포되지 않는다.
+- 설치 전용 목록을 실제 배포 셸 11개로 분리했다. `assets/game.js`, `assets/game.css`, HTML, manifest, version, release identity, icons, static bootstrap만 포함한다.
+- 설치 캐시 동시성을 4개로 제한하고 요청별 12초 `AbortController` 경계를 추가했다.
+- 하나라도 필수 배포 셸 캐시에 실패하면 서비스 워커 설치를 명확히 실패시키며 무기한 `installing`으로 남지 않는다.
+- 역사적 136개 source-module 목록은 v1.0.35 해시 무결성 장부로 유지하지만 install fetch에는 사용하지 않는다.
+- 설치 상태 메시지에 phase, 완료/실패 수, 현재 경로와 실패 경로를 제공한다.
+- 성공·지연 fetch를 모두 실행하는 서비스 워커 설치 시뮬레이션 검증을 v1.0.52 릴리스 체인에 추가했다.

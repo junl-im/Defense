@@ -152,6 +152,32 @@ const GENERATED_MODULE_SHELL_V135 = Object.freeze([
   './src/version-policy.js',
 ]);
 // END GENERATED RUNTIME MODULE SHELL V135
+// Vite production installs only the deployable shell. The generated source-module
+// list remains below as a release-integrity ledger, but is not fetched during
+// service-worker installation because complete Vite dist does not expose ./src/.
+const INSTALL_SHELL_ASSETS = Object.freeze([
+  './',
+  './index.html',
+  './manifest.webmanifest',
+  './version.json',
+  './release-identity.generated.js',
+  './icon-192.png',
+  './icon-512.png',
+  './icon-maskable-512.png',
+  './static-bootstrap.js',
+  './assets/game.js',
+  './assets/game.css'
+]);
+const PRECACHE_CONCURRENCY = 4;
+const PRECACHE_REQUEST_TIMEOUT_MS = 12000;
+const PRECACHE_STATUS = {
+  phase: 'idle',
+  total: INSTALL_SHELL_ASSETS.length,
+  completed: 0,
+  failed: 0,
+  current: '',
+  failures: []
+};
 const SHELL_ASSETS = [
   ...GENERATED_MODULE_SHELL_V135,
   './', './index.html', './manifest.webmanifest', './version.json', './release-identity.generated.js',
@@ -363,12 +389,47 @@ const isLocal = (request) => new URL(request.url).origin === self.location.origi
 const isTitleAsset = (pathname) => pathname.includes('/src/assets/title-v112/');
 const isMutableCode = (pathname) => /\.(?:js|css|json)$/i.test(pathname) || pathname.endsWith('/static-bootstrap.js');
 
+async function cacheInstallAsset(cache, assetPath) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(`precache timeout: ${assetPath}`), PRECACHE_REQUEST_TIMEOUT_MS);
+  PRECACHE_STATUS.current = assetPath;
+  try {
+    const request = new Request(assetPath, { cache: 'reload', signal: controller.signal });
+    const response = await fetch(request);
+    if (!response.ok) throw new Error(`precache ${response.status}: ${assetPath}`);
+    await cache.put(assetPath, response.clone());
+    PRECACHE_STATUS.completed += 1;
+  } catch (error) {
+    PRECACHE_STATUS.failed += 1;
+    if (PRECACHE_STATUS.failures.length < 12) PRECACHE_STATUS.failures.push({
+      path: assetPath,
+      error: error instanceof Error ? error.message : String(error)
+    });
+  } finally {
+    clearTimeout(timer);
+  }
+}
 async function precache() {
   const cache = await caches.open(CACHE_NAME);
-  await Promise.allSettled(SHELL_ASSETS.map(async (path) => {
-    const response = await fetch(new Request(path, { cache: 'reload' }));
-    if (response.ok) await cache.put(path, response.clone());
-  }));
+  const assets = [...new Set(INSTALL_SHELL_ASSETS)];
+  PRECACHE_STATUS.phase = 'running';
+  PRECACHE_STATUS.total = assets.length;
+  PRECACHE_STATUS.completed = 0;
+  PRECACHE_STATUS.failed = 0;
+  PRECACHE_STATUS.current = '';
+  PRECACHE_STATUS.failures = [];
+  let cursor = 0;
+  const workers = Array.from({ length: Math.min(PRECACHE_CONCURRENCY, assets.length) }, async () => {
+    while (cursor < assets.length) {
+      const assetPath = assets[cursor];
+      cursor += 1;
+      await cacheInstallAsset(cache, assetPath);
+    }
+  });
+  await Promise.all(workers);
+  PRECACHE_STATUS.phase = PRECACHE_STATUS.failed ? 'failed' : 'complete';
+  PRECACHE_STATUS.current = '';
+  if (PRECACHE_STATUS.failed) throw new Error(`precache failed for ${PRECACHE_STATUS.failed}/${PRECACHE_STATUS.total} install assets`);
 }
 async function removeOldCaches({ includeCurrent = false } = {}) {
   const keys = await caches.keys();
@@ -393,6 +454,15 @@ self.addEventListener('activate', (event) => event.waitUntil((async () => {
 })()));
 self.addEventListener('message', (event) => {
   const data = event.data || {};
+  if (data.type === 'DOKKAEBI_GET_INSTALL_STATUS') {
+    event.ports?.[0]?.postMessage({
+      type: 'DOKKAEBI_INSTALL_STATUS',
+      cacheName: CACHE_NAME,
+      ...PRECACHE_STATUS,
+      failures: [...PRECACHE_STATUS.failures]
+    });
+    return;
+  }
   if (data.type === 'DOKKAEBI_GET_VERSION') {
     event.ports?.[0]?.postMessage({ type: 'DOKKAEBI_VERSION', version: RELEASE_VERSION, buildId: BUILD_ID, cacheName: CACHE_NAME, assuranceId: UPGRADE_ASSURANCE_ID, storagePolicy: CLIENT_STORAGE_POLICY });
     return;

@@ -31,6 +31,7 @@ export const V152_PATCH_FILES = Object.freeze([
   'scripts/verify-dist-v146.mjs',
   'scripts/run-offline-reconnect-v147.mjs',
   'scripts/verify-release-v147.mjs',
+  'scripts/verify-service-worker-install-v152.mjs',
   'scripts/verify-dist-v151.mjs',
   'scripts/verify-dist-v152.mjs',
   'scripts/verify-long-session-hotfix-v151.mjs',

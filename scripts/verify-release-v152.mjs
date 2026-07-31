@@ -58,6 +58,8 @@ const distVerifierV146 = read('scripts/verify-dist-v146.mjs');
 const distChain = read('scripts/verify-dist-chain-v140.mjs');
 const offlineRunnerV147 = read('scripts/run-offline-reconnect-v147.mjs');
 const releaseVerifierV147 = read('scripts/verify-release-v147.mjs');
+const serviceWorker = read('public/sw.js');
+const serviceWorkerInstallVerifier = read('scripts/verify-service-worker-install-v152.mjs');
 const stagePackageV152 = read('scripts/stage-clean-package-v152.mjs');
 const verifyPackageV152 = read('scripts/verify-clean-package-v152.mjs');
 const createPatchV152 = read('scripts/create-patch-v152.mjs');
@@ -68,9 +70,12 @@ check(offlineRunnerV147.includes('--disable-background-timer-throttling') && off
 check(offlineRunnerV147.includes('V147_SERVICE_WORKER_TIMEOUT_MS') && offlineRunnerV147.includes('V147_BROWSER_OPERATION_TIMEOUT_MS') && offlineRunnerV147.includes('failedPhase') && offlineRunnerV147.includes('diagnostics.steps'), 'v147 offline browser assurance uses bounded labeled phase diagnostics');
 check(offlineRunnerV147.includes('navigator.serviceWorker.getRegistration') && !offlineRunnerV147.includes('navigator.serviceWorker.ready'), 'v147 offline browser assurance avoids unbounded service worker ready wait');
 check(releaseVerifierV147.includes('v147 browser runner disables background timer and renderer throttling') && releaseVerifierV147.includes('v147 browser runner has bounded labeled phase diagnostics'), 'v147 release gate locks browser timeout hardening');
-check(stagePackageV152.includes('CI_HOTFIX_R3') && verifyPackageV152.includes('CI_HOTFIX_R3'), 'v152 clean package staging identifies CI hotfix R3');
-check(createPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R3') && createPatchV152.includes('1.0.52-r3') && verifyPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R3'), 'v152 project-root patch tooling identifies CI hotfix R3');
-check(!createPatchV152.includes("path.join(out, 'overlay')") && createPatchV152.includes("path.join(out, 'project-root')"), 'v152 R3 patch remains a true project-root overlay without wrapper');
+check(serviceWorker.includes('const INSTALL_SHELL_ASSETS') && serviceWorker.includes('PRECACHE_REQUEST_TIMEOUT_MS') && serviceWorker.includes('PRECACHE_CONCURRENCY') && serviceWorker.includes('DOKKAEBI_GET_INSTALL_STATUS'), 'v152 service-worker install is bounded and observable');
+check(serviceWorkerInstallVerifier.includes('source modules excluded') && serviceWorkerInstallVerifier.includes('new Set(INSTALL_SHELL_ASSETS)') && serviceWorkerInstallVerifier.includes('SHELL_ASSETS.map'), 'v152 service-worker install regression gate is registered');
+check(pkg.scripts?.['verify:sw-install:v152'] === 'node scripts/verify-service-worker-install-v152.mjs' && pkg.scripts?.['verify:release:v152']?.includes('verify:sw-install:v152'), 'v152 release chain includes service-worker install regression gate');
+check(stagePackageV152.includes('CI_HOTFIX_R4') && verifyPackageV152.includes('CI_HOTFIX_R4'), 'v152 clean package staging identifies CI hotfix R4');
+check(createPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R4') && createPatchV152.includes('1.0.52-r4') && verifyPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R4'), 'v152 project-root patch tooling identifies CI hotfix R4');
+check(!createPatchV152.includes("path.join(out, 'overlay')") && createPatchV152.includes("path.join(out, 'project-root')"), 'v152 R4 patch remains a true project-root overlay without wrapper');
 
 if (failures.length) {
   failures.forEach((failure) => console.error(`FAIL ${failure}`));

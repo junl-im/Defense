@@ -29,6 +29,13 @@ check(browser.includes('Network.emulateNetworkConditions') && browser.includes('
 check(browser.includes('--disable-background-timer-throttling') && browser.includes('--disable-backgrounding-occluded-windows') && browser.includes('--disable-renderer-backgrounding'), 'v147 browser runner disables background timer and renderer throttling');
 check(browser.includes('V147_SERVICE_WORKER_TIMEOUT_MS') && browser.includes('V147_BROWSER_OPERATION_TIMEOUT_MS') && browser.includes('failedPhase') && browser.includes('diagnostics.steps'), 'v147 browser runner has bounded labeled phase diagnostics');
 check(!browser.includes('navigator.serviceWorker.ready'), 'v147 browser runner avoids unbounded serviceWorker.ready promise');
+check(browser.includes('DOKKAEBI_GET_INSTALL_STATUS') && browser.includes('precache'), 'v147 browser runner reports service-worker precache progress');
+check(sw.includes('const INSTALL_SHELL_ASSETS') && sw.includes("'./assets/game.js'") && sw.includes("'./assets/game.css'"), 'v147 service-worker install shell targets deployable Vite assets');
+check(sw.includes('PRECACHE_REQUEST_TIMEOUT_MS') && sw.includes('PRECACHE_CONCURRENCY') && sw.includes('new AbortController()'), 'v147 service-worker install has bounded request and cache concurrency');
+const installShell = sw.slice(sw.indexOf('const INSTALL_SHELL_ASSETS'), sw.indexOf('const PRECACHE_CONCURRENCY'));
+check(!installShell.includes("'./src/"), 'v147 service-worker install excludes non-deployed source modules');
+const precacheBlock = sw.slice(sw.indexOf('async function cacheInstallAsset'), sw.indexOf('async function removeOldCaches'));
+check(precacheBlock.includes('new Set(INSTALL_SHELL_ASSETS)') && !precacheBlock.includes('SHELL_ASSETS.map'), 'v147 service-worker install does not fetch the historical source ledger');
 check(fuzz.includes('DD-SAVE-SCHEMA-FUZZ-V147') && fuzz.includes("'1.0.42'") && fuzz.includes("'1.0.46'") && fuzz.includes('non-idempotent'), 'five-version save fuzz contract');
 check(ingestion.includes('DD-DEVICE-TRACE-INGESTION-V147') && ingestion.includes('SENSITIVE_KEYS') && ingestion.includes('sourceSha256'), 'trace identifier stripping and provenance contract');
 check(traces.id === 'DD-DEVICE-TRACE-INGESTION-V147' && traces.traces?.length === 3 && /^[a-f0-9]{64}$/.test(traces.provenance?.sourceSha256 || ''), 'committed trace provenance');

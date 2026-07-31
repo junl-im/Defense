@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 const root = path.resolve(import.meta.dirname, '..');
-const stage = path.join(root, 'logs/package/1.0.52/DokkaebiLuckDefense3D_FULL_v1.0.52_EVENT_TIMING_RUNTIME_GUARD_CI_HOTFIX_R3');
+const stage = path.join(root, 'logs/package/1.0.52/DokkaebiLuckDefense3D_FULL_v1.0.52_EVENT_TIMING_RUNTIME_GUARD_CI_HOTFIX_R4');
 if (!fs.existsSync(stage)) throw new Error('v152 staged package missing');
 for (const banned of ['dist', 'node_modules', '.git', 'overlay']) if (fs.existsSync(path.join(stage, banned))) throw new Error(`v152 staged package contains ${banned}`);
 const pkg = JSON.parse(fs.readFileSync(path.join(stage, 'package.json'), 'utf8'));
@@ -12,6 +12,7 @@ for (const file of [
   'src/engine/gpu-frame-timer-v152.js',
   'scripts/verify-release-v152.mjs',
   'scripts/verify-runtime-hardening-v152.mjs',
+  'scripts/verify-service-worker-install-v152.mjs',
   'scripts/verify-repository-root-v152.mjs',
   'scripts/verify-project.mjs',
   'scripts/verify-performance-trend-v145.mjs',
@@ -21,4 +22,4 @@ for (const file of [
   'docs/NEXT_UPDATE_v1.0.53.md',
   'PROJECT_HANDOFF.md'
 ]) if (!fs.existsSync(path.join(stage, file))) throw new Error(`v152 staged contract missing ${file}`);
-console.log('PASS v1.0.52 CI hotfix R3 clean source package staging');
+console.log('PASS v1.0.52 CI hotfix R4 clean source package staging');

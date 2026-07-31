@@ -87,3 +87,22 @@ R3 검증 항목:
 - `verify-release-v147.mjs`, `verify-release-v152.mjs` 회귀 검사 통과
 
 로컬 Chromium은 플랫폼 정책상 loopback 탐색이 `ERR_BLOCKED_BY_ADMINISTRATOR`로 차단됐지만, R3 러너가 이를 `failedPhase=warm-navigation`으로 즉시 기록하고 종료하는 것은 확인했다. 실제 서비스 워커 오프라인 성공 경로는 GitHub Actions에서 필수 브라우저 게이트로 확인한다.
+
+## CI chain hotfix R4 검증
+
+R3 로그는 서비스 워커가 등록 실패가 아니라 install event 내부에서 45초 이상 `installing` 상태였음을 확인했다. 소스 감사 결과 설치 함수가 136개 generated source modules와 33개 shell entries를 한꺼번에 처리했으며, 합계 169개 중 21개가 중복이었다. complete Vite dist에는 원본 `./src/...` 모듈이 없으므로 이 목록은 설치 캐시가 아니라 무결성 장부로만 사용해야 한다.
+
+R4 검증 항목:
+
+- 설치 목록은 정확히 11개 deployable paths이며 `./src/` 경로가 없음
+- `assets/game.js`와 `assets/game.css` 포함
+- 중복 설치 경로 0개
+- Cache Storage 동시 작업 최대 4개
+- fetch별 `AbortController` 12초 경계
+- 설치 실패 시 service worker install 명시적 거부
+- `DOKKAEBI_GET_INSTALL_STATUS` 진단 응답
+- 정상 fetch 시 11개 전부 fetch/cache되는 VM 시뮬레이션
+- `game.css` fetch가 종료되지 않는 경우 제한 시간 후 실패 경로가 기록되는 VM 시뮬레이션
+- v1.0.15 lightweight shell, v1.0.35 source integrity, v1.0.47 offline runner, v1.0.52 release gate 보존
+
+로컬 Chromium의 loopback 정책 제한 때문에 실제 service-worker navigation은 GitHub Actions에서 최종 확인한다. 다만 정체를 만든 무제한 169개 동시 install 경로는 제거됐고, 동일 유형의 지연은 제한 시간과 자산별 진단으로 종료된다.

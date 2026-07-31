@@ -379,3 +379,14 @@ A valid R6 run prints `DD-V151-ENEMY-MATERIAL-R6`, repair revision 6, and the si
 - 회귀 방지: v147 릴리스 게이트와 v1.0.52 릴리스 게이트가 스로틀 방지 플래그, 제한 시간 환경변수, `failedPhase`, `diagnostics.steps`, 무제한 `serviceWorker.ready` 제거를 검사한다. v1.0.52 CI source manifest는 관련 파일을 추가 서명한다.
 - 로컬 검증: JavaScript 구문, v147 릴리스 계약, v1.0.52 릴리스 계약, 소스 서명 생성·검사, 브라우저 실패 단계 보고를 확인했다. 현재 실행 환경의 Chromium은 loopback HTTP를 `ERR_BLOCKED_BY_ADMINISTRATOR`로 차단했으며, 새 보고서가 `warm-navigation`을 정확히 기록하는 것을 확인했다. 실제 오프라인 성공 시나리오는 GitHub Actions에서 재확인한다.
 - 다음 예정: R3 적용 후 `npm run verify:dist:all`에서 v147을 통과하고 v148~v152 후속 게이트가 실행되는지 확인한다.
+
+## 2026-07-31 — v1.0.52 CI HOTFIX R4
+
+- 보고된 CI 실패: R3가 타임아웃 단계를 정확히 노출한 뒤 v147에서 서비스 워커가 45초 동안 `installing` 상태에 머물렀다. 진단값은 `updateFound=true`, `installing=installing`, `active=''`였다.
+- 근본 원인: `public/sw.js` 설치 이벤트가 역사적 소스 무결성 목록까지 `SHELL_ASSETS`로 처리해 169개 fetch/cache 작업을 동시에 시작했다. 21개는 중복이고 대부분은 complete Vite dist에 존재하지 않는 `./src/...` 경로였다. 각 fetch와 Cache Storage 쓰기에 제한 시간이 없어 하나만 지연돼도 install event가 끝나지 않았다.
+- 수정 파일: `public/sw.js`, `scripts/run-offline-reconnect-v147.mjs`, `scripts/verify-service-worker-install-v152.mjs`, `scripts/verify-release-v147.mjs`, `scripts/verify-release-v152.mjs`, CI 서명·패키징·문서 파일.
+- 수정 방식: 실제 배포 셸 11개만 `INSTALL_SHELL_ASSETS`로 설치 캐시한다. `assets/game.js`와 `assets/game.css`를 포함하고 `./src/...`는 설치 목록에서 제외한다. 동시 캐시 작업은 4개, 요청별 제한은 12초이며 실패 시 install을 명확히 거부한다. 역사적 `GENERATED_MODULE_SHELL_V135`는 해시 무결성 장부로 보존한다.
+- 진단 강화: 설치 작업은 `DOKKAEBI_GET_INSTALL_STATUS` 메시지로 phase, total, completed, failed, current, failures를 반환한다. v147 러너는 활성화 대기 중 이 상태를 수집한다.
+- 회귀 방지: 새 검증기는 성공 설치에서 정확히 11개 경로만 fetch/cache되고 동시성이 4 이하임을 시뮬레이션한다. 한 자산이 무한 대기하는 경우 60ms 테스트 제한으로 install이 실패하고 실패 경로가 보고되는지 검증한다. 실제 런타임 값은 12초다.
+- 로컬 검증: v1.0.15 lightweight install 계약, v1.0.35 source-shell 무결성, v1.0.47 릴리스 계약, v1.0.52 bounded install 시뮬레이션과 릴리스 계약을 통과한다. 실제 GitHub Chromium 오프라인 성공 경로는 R4 Actions에서 최종 확인한다.
+- 다음 예정: R4 적용 후 v147 browser assurance 통과와 v148~v152 dist 체인 완료 확인.

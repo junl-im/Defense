@@ -187,15 +187,27 @@ async function waitForServiceWorker(client) {
   return evaluate(client, 'service-worker-activation', `(async()=>{
     const deadline=Date.now()+${serviceWorkerTimeoutMs};
     const timeout=(promise,ms,label)=>Promise.race([promise,new Promise((_,reject)=>setTimeout(()=>reject(new Error(label+' timeout')),ms))]);
+    const inspectPrecache=async(worker)=>{
+      if(!worker)return null;
+      return await new Promise((resolve)=>{
+        const channel=new MessageChannel();
+        const timer=setTimeout(()=>resolve(null),750);
+        channel.port1.onmessage=(event)=>{clearTimeout(timer);resolve(event.data||null);};
+        try{worker.postMessage({type:'DOKKAEBI_GET_INSTALL_STATUS'},[channel.port2]);}catch{clearTimeout(timer);resolve(null);}
+      });
+    };
     let registration=await timeout(navigator.serviceWorker.getRegistration(),5000,'getRegistration').catch(()=>null);
     if(!registration){
       registration=await timeout(navigator.serviceWorker.register('./sw.js',{scope:'./',updateViaCache:'none'}),10000,'register').catch(()=>null);
     }
-    let last={ready:false,controlled:Boolean(navigator.serviceWorker.controller),scope:registration?.scope||'',installing:registration?.installing?.state||'',waiting:registration?.waiting?.state||'',active:registration?.active?.state||'',diagnostics:window.__DOKKAEBI_BOOT_DIAGNOSTICS__||null};
+    let precache=null;
+    let lastInspectionAt=0;
+    let last={ready:false,controlled:Boolean(navigator.serviceWorker.controller),scope:registration?.scope||'',installing:registration?.installing?.state||'',waiting:registration?.waiting?.state||'',active:registration?.active?.state||'',precache,diagnostics:window.__DOKKAEBI_BOOT_DIAGNOSTICS__||null};
     while(Date.now()<deadline){
       registration=registration||await navigator.serviceWorker.getRegistration().catch(()=>null);
       const worker=registration?.active||registration?.waiting||registration?.installing||null;
-      last={ready:worker?.state==='activated',controlled:Boolean(navigator.serviceWorker.controller),scope:registration?.scope||'',installing:registration?.installing?.state||'',waiting:registration?.waiting?.state||'',active:registration?.active?.state||'',diagnostics:window.__DOKKAEBI_BOOT_DIAGNOSTICS__||null};
+      if(worker&&Date.now()-lastInspectionAt>=1000){lastInspectionAt=Date.now();precache=await inspectPrecache(worker);}
+      last={ready:worker?.state==='activated',controlled:Boolean(navigator.serviceWorker.controller),scope:registration?.scope||'',installing:registration?.installing?.state||'',waiting:registration?.waiting?.state||'',active:registration?.active?.state||'',precache,diagnostics:window.__DOKKAEBI_BOOT_DIAGNOSTICS__||null};
       if(last.ready)return last;
       await new Promise(r=>setTimeout(r,100));
     }

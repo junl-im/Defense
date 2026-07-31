@@ -23,3 +23,19 @@ npm run verify:dist:all
 R3 패치 ZIP은 R2와 동일하게 프로젝트 루트 직접 덮어쓰기 구조다. `overlay/` 포장 폴더나 패치 전용 메타데이터를 프로젝트에 추가하지 않는다. R2에 R3를 덮어써도 되고, 최초 v1.0.52 전체본에 바로 덮어써도 된다.
 
 적용 후 GitHub Actions에서 v147 보고서의 실패 메시지가 더 이상 일반 `Runtime.evaluate timed out`가 아니라 단계명과 함께 출력되는지 확인한다. 성공 시 `PASS v1.0.47 offline launch and mid-wave reconnect browser assurance`가 출력되어야 한다.
+
+## R4 적용
+
+R4 패치 ZIP은 프로젝트 루트 직접 덮어쓰기 구조다. R3 또는 이전 v1.0.52 기준본에 ZIP의 내용 전체를 프로젝트 루트로 덮어쓴다. `overlay/` 포장 폴더와 패치 메타데이터는 ZIP 내부에 없다.
+
+적용 후 다음을 실행한다.
+
+```bash
+npm run clean:obsolete
+npm ci
+npm run verify:ci
+VITE_BASE_PATH=/Defense/ npm run build
+npm run verify:dist:all
+```
+
+v147 성공 로그에는 `PASS v1.0.47 offline launch and mid-wave reconnect browser assurance`가 출력되어야 한다. 실패 시 서비스 워커 진단의 `precache.phase`, `completed`, `failed`, `current`, `failures`를 확인한다. R4에서는 역사적 `./src/...` 모듈이 설치 요청 목록에 나타나면 안 된다.

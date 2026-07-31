@@ -5,8 +5,8 @@
   "cacheRevision": "1.0.52-b24.52",
   "algorithm": "sha256-sorted-paths-v1",
   "fileCount": 2139,
-  "totalBytes": 120055711,
-  "aggregateSha256": "a2f0f218528dbb103439292a17e4599f8d005e7cfefa6674270a61bb52313400",
+  "totalBytes": 120058287,
+  "aggregateSha256": "04664935a48a6432f94ab4c02e87c56067eff9e55709a4ffdb107dd7a9edb0cf",
   "files": [
     {
       "path": ".env.production",
@@ -25,8 +25,8 @@
     },
     {
       "path": "package.json",
-      "bytes": 39790,
-      "sha256": "0aad53ab827db86e24fafac4c0b11e9a220e7467f438c231fe48d589495cd393"
+      "bytes": 39909,
+      "sha256": "761b06bc4f0e7be34c37efc6e44aa6e6ea93d0dc4fb42f2c39e7a0ac1a9e0eba"
     },
     {
       "path": "public/action-asset-lab-v125.html",
@@ -9850,8 +9850,8 @@
     },
     {
       "path": "public/sw.js",
-      "bytes": 23981,
-      "sha256": "477c6d4ad56171dad23d06ed9a85c59d9b6d0dd0c392f8b82054e8c61f059716"
+      "bytes": 26438,
+      "sha256": "d18e49a0311b4f010bf36d6f6561362a8f7f3f65d50510d44ac39f2712e4e8aa"
     },
     {
       "path": "public/version.json",
