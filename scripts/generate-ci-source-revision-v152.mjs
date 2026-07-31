@@ -34,7 +34,9 @@ const files = [
   'scripts/verify-performance-guard-v148.mjs',
   'scripts/verify-release-v148.mjs',
   'scripts/verify-dist-chain-v140.mjs',
-  'scripts/verify-dist-v146.mjs'
+  'scripts/verify-dist-v146.mjs',
+  'scripts/run-offline-reconnect-v147.mjs',
+  'scripts/verify-release-v147.mjs'
 ];
 const sha = (data) => createHash('sha256').update(data).digest('hex');
 const rows = files.map((file) => {

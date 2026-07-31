@@ -25,7 +25,10 @@ check(Number.isInteger(patchRevision) && patchRevision >= 47 && Number.isInteger
 check(lock.version === pkg.version && lock.packages?.['']?.version === pkg.version && lock.packages?.['']?.dokkaebi?.buildId === pkg.dokkaebi?.buildId, 'lock identity');
 check(version.releaseVersion === pkg.version && version.buildId === pkg.dokkaebi?.buildId && version.cacheRevision === pkg.dokkaebi?.cacheRevision, 'public identity');
 check(offline.includes('DD-OFFLINE-RECONNECT-ASSURANCE-V147') && offline.includes('offline-launch') && offline.includes('mid-wave-reconnect'), 'offline reconnect deterministic contract');
-check(browser.includes('Network.emulateNetworkConditions') && browser.includes('offline:true') && browser.includes('offline:false') && browser.includes('navigator.serviceWorker.ready'), 'controlled network browser scenarios');
+check(browser.includes('Network.emulateNetworkConditions') && browser.includes('offline: true') && browser.includes('offline: false') && browser.includes('navigator.serviceWorker.getRegistration') && browser.includes('service-worker-activation'), 'controlled network browser scenarios');
+check(browser.includes('--disable-background-timer-throttling') && browser.includes('--disable-backgrounding-occluded-windows') && browser.includes('--disable-renderer-backgrounding'), 'v147 browser runner disables background timer and renderer throttling');
+check(browser.includes('V147_SERVICE_WORKER_TIMEOUT_MS') && browser.includes('V147_BROWSER_OPERATION_TIMEOUT_MS') && browser.includes('failedPhase') && browser.includes('diagnostics.steps'), 'v147 browser runner has bounded labeled phase diagnostics');
+check(!browser.includes('navigator.serviceWorker.ready'), 'v147 browser runner avoids unbounded serviceWorker.ready promise');
 check(fuzz.includes('DD-SAVE-SCHEMA-FUZZ-V147') && fuzz.includes("'1.0.42'") && fuzz.includes("'1.0.46'") && fuzz.includes('non-idempotent'), 'five-version save fuzz contract');
 check(ingestion.includes('DD-DEVICE-TRACE-INGESTION-V147') && ingestion.includes('SENSITIVE_KEYS') && ingestion.includes('sourceSha256'), 'trace identifier stripping and provenance contract');
 check(traces.id === 'DD-DEVICE-TRACE-INGESTION-V147' && traces.traces?.length === 3 && /^[a-f0-9]{64}$/.test(traces.provenance?.sourceSha256 || ''), 'committed trace provenance');

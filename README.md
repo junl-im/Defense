@@ -1,6 +1,6 @@
 # Dokkaebi Luck Defense 3D
 
-> Current release: **v1.0.51 / b24.51** — modern character presentation runtime with soft PBR rim lighting, contact grounding, depth silhouettes, directional key light, action afterimages, and mobile-aware LOD.
+> Current release: **v1.0.52 / b24.52** — event-timed character presentation, bounded GPU/runtime budget monitoring, and hardened CI/browser assurance.
 
 ## v1.0.51 CI cleanup repair R3
 
@@ -100,3 +100,8 @@ R6 fixes the confirmed wave-10 enemy material null dereference while preserving 
 
 R2 fixes the v146 dist gate's nested v1.0.51 source-identity preflight. The R2 patch archive is a true project-root overlay: it contains only project paths that also exist in the R2 full package, with no `overlay/` wrapper or patch metadata entries.
 
+
+
+## v1.0.52 CI HOTFIX R3
+
+R3 fixes the v1.0.47 offline/reconnect browser harness timeout. The old runner waited on the unbounded `navigator.serviceWorker.ready` promise and omitted the foreground scheduling flags already used by the passing v1.0.46 100-wave harness. The repaired runner polls service-worker activation with a fixed deadline, disables background timer/renderer throttling, separates each browser operation into a labeled phase, and writes `failedPhase` plus per-step durations to the v147 report.

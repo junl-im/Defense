@@ -56,8 +56,21 @@ const releaseVerifierV148 = read('scripts/verify-release-v148.mjs');
 check(releaseVerifierV148.includes('resolveLifecycleCommand') && releaseVerifierV148.includes('preverifyLifecycle') && releaseVerifierV148.includes('prebuildLifecycle'), 'v148 identity preflight resolves nested v152 lifecycle scripts');
 const distVerifierV146 = read('scripts/verify-dist-v146.mjs');
 const distChain = read('scripts/verify-dist-chain-v140.mjs');
+const offlineRunnerV147 = read('scripts/run-offline-reconnect-v147.mjs');
+const releaseVerifierV147 = read('scripts/verify-release-v147.mjs');
+const stagePackageV152 = read('scripts/stage-clean-package-v152.mjs');
+const verifyPackageV152 = read('scripts/verify-clean-package-v152.mjs');
+const createPatchV152 = read('scripts/create-patch-v152.mjs');
+const verifyPatchV152 = read('scripts/verify-patch-v152.mjs');
 check(distVerifierV146.includes('verify-ci-source-revision-v152.mjs') && !distVerifierV146.includes('verify-ci-source-revision-v151.mjs'), 'v146 dist gate uses active v152 source preflight without nested v151 identity check');
 check(distChain.includes('verify-ci-source-revision-v152.mjs') && !distChain.includes('verify-ci-source-revision-v151.mjs'), 'complete dist chain uses active v152 source preflight');
+check(offlineRunnerV147.includes('--disable-background-timer-throttling') && offlineRunnerV147.includes('--disable-backgrounding-occluded-windows') && offlineRunnerV147.includes('--disable-renderer-backgrounding'), 'v147 offline browser assurance preserves foreground frame scheduling in headless CI');
+check(offlineRunnerV147.includes('V147_SERVICE_WORKER_TIMEOUT_MS') && offlineRunnerV147.includes('V147_BROWSER_OPERATION_TIMEOUT_MS') && offlineRunnerV147.includes('failedPhase') && offlineRunnerV147.includes('diagnostics.steps'), 'v147 offline browser assurance uses bounded labeled phase diagnostics');
+check(offlineRunnerV147.includes('navigator.serviceWorker.getRegistration') && !offlineRunnerV147.includes('navigator.serviceWorker.ready'), 'v147 offline browser assurance avoids unbounded service worker ready wait');
+check(releaseVerifierV147.includes('v147 browser runner disables background timer and renderer throttling') && releaseVerifierV147.includes('v147 browser runner has bounded labeled phase diagnostics'), 'v147 release gate locks browser timeout hardening');
+check(stagePackageV152.includes('CI_HOTFIX_R3') && verifyPackageV152.includes('CI_HOTFIX_R3'), 'v152 clean package staging identifies CI hotfix R3');
+check(createPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R3') && createPatchV152.includes('1.0.52-r3') && verifyPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R3'), 'v152 project-root patch tooling identifies CI hotfix R3');
+check(!createPatchV152.includes("path.join(out, 'overlay')") && createPatchV152.includes("path.join(out, 'project-root')"), 'v152 R3 patch remains a true project-root overlay without wrapper');
 
 if (failures.length) {
   failures.forEach((failure) => console.error(`FAIL ${failure}`));

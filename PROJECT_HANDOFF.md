@@ -368,3 +368,14 @@ A valid R6 run prints `DD-V151-ENEMY-MATERIAL-R6`, repair revision 6, and the si
 - 필수 CI 확인: `npm ci`, `npm run verify:ci`, `VITE_BASE_PATH=/Defense/ npm run build`, `npm run verify:dist:all`.
 - 다음 예정: v1.0.53 WebGL GPU 계측·context loss/disjoint 브라우저 행렬·모바일 화면 증거.
 
+
+
+## 2026-07-31 — v1.0.52 CI HOTFIX R3
+
+- 보고된 CI 실패: v146 전체 브라우저 보증 통과 후 v147 오프라인/재접속 브라우저 러너의 `Runtime.evaluate`가 120초 뒤 타임아웃됐다.
+- 원인: v147 러너가 종료 보장이 없는 `navigator.serviceWorker.ready`를 직접 기다렸고, v146 러너에 있던 `--disable-background-timer-throttling`, `--disable-backgrounding-occluded-windows`, `--disable-renderer-backgrounding` 플래그가 누락됐다. 장기 세션 준비와 웨이브 진행도 한 개의 라벨 없는 CDP 평가로 묶여 정확한 정지 구간을 알 수 없었다.
+- 수정 파일: `scripts/run-offline-reconnect-v147.mjs`, `scripts/verify-release-v147.mjs`, `scripts/verify-release-v152.mjs`, `scripts/generate-ci-source-revision-v152.mjs`, `scripts/v152-patch-files.mjs`, v1.0.52 문서와 생성 서명.
+- 수정 방식: 서비스 워커 활성화를 `getRegistration()` 기반 45초 제한 폴링으로 변경하고, 각 탐색·부트·오프라인 전환·세션 준비·웨이브 진행을 독립된 라벨 단계로 분리했다. 브라우저 소켓 종료 시 대기 명령을 즉시 실패시키며, HTTP 서버 종료도 제한 시간 후 강제 연결 정리한다.
+- 회귀 방지: v147 릴리스 게이트와 v1.0.52 릴리스 게이트가 스로틀 방지 플래그, 제한 시간 환경변수, `failedPhase`, `diagnostics.steps`, 무제한 `serviceWorker.ready` 제거를 검사한다. v1.0.52 CI source manifest는 관련 파일을 추가 서명한다.
+- 로컬 검증: JavaScript 구문, v147 릴리스 계약, v1.0.52 릴리스 계약, 소스 서명 생성·검사, 브라우저 실패 단계 보고를 확인했다. 현재 실행 환경의 Chromium은 loopback HTTP를 `ERR_BLOCKED_BY_ADMINISTRATOR`로 차단했으며, 새 보고서가 `warm-navigation`을 정확히 기록하는 것을 확인했다. 실제 오프라인 성공 시나리오는 GitHub Actions에서 재확인한다.
+- 다음 예정: R3 적용 후 `npm run verify:dist:all`에서 v147을 통과하고 v148~v152 후속 게이트가 실행되는지 확인한다.

@@ -69,3 +69,21 @@ R2는 `scripts/verify-dist-v146.mjs`의 내부 preflight를 `verify-ci-source-re
 - 두 dist orchestration 파일을 v1.0.52 CI source manifest에 SHA-256 서명한다.
 - R2 직접 덮어쓰기 ZIP에는 전체 통파일에 없는 포장 폴더·메타데이터 엔트리가 없어야 한다.
 
+
+
+## CI chain hotfix R3 검증
+
+CI 로그의 `CDP Runtime.evaluate timed out after 120000ms`는 기존 러너가 단계명을 기록하지 않아 정확한 평가식을 구분할 수 없었다. 코드 감사 결과 기본 120초 평가 중 종료 보장이 없는 호출은 `navigator.serviceWorker.ready`였고, 프레임 기반 장기 세션 호출은 v146과 달리 스로틀 방지 플래그 없이 실행되고 있었다.
+
+R3 검증 항목:
+
+- `navigator.serviceWorker.ready` 문자열이 활성 v147 러너에 없음
+- 서비스 워커 등록·활성화에 독립된 제한 시간 적용
+- 백그라운드 타이머·occluded window·renderer 스로틀 방지 플래그 3종 적용
+- 세션 준비와 6개 웨이브 진행을 단계별 평가로 분리
+- `failedPhase`와 `diagnostics.steps` 보고 계약
+- CDP WebSocket 종료 시 pending 명령 즉시 거부
+- 서버 종료 최대 대기 후 keep-alive 연결 강제 정리
+- `verify-release-v147.mjs`, `verify-release-v152.mjs` 회귀 검사 통과
+
+로컬 Chromium은 플랫폼 정책상 loopback 탐색이 `ERR_BLOCKED_BY_ADMINISTRATOR`로 차단됐지만, R3 러너가 이를 `failedPhase=warm-navigation`으로 즉시 기록하고 종료하는 것은 확인했다. 실제 서비스 워커 오프라인 성공 경로는 GitHub Actions에서 필수 브라우저 게이트로 확인한다.

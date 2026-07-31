@@ -16,3 +16,10 @@ npm run verify:dist:all
 ```
 
 패치 ZIP의 모든 파일 경로는 R2 전체 통파일에도 존재해야 하며, 같은 경로의 SHA-256이 일치해야 한다. 패치 적용 후 정리된 프로젝트 트리는 R2 전체 통파일과 동일해야 한다.
+
+
+## R3 적용
+
+R3 패치 ZIP은 R2와 동일하게 프로젝트 루트 직접 덮어쓰기 구조다. `overlay/` 포장 폴더나 패치 전용 메타데이터를 프로젝트에 추가하지 않는다. R2에 R3를 덮어써도 되고, 최초 v1.0.52 전체본에 바로 덮어써도 된다.
+
+적용 후 GitHub Actions에서 v147 보고서의 실패 메시지가 더 이상 일반 `Runtime.evaluate timed out`가 아니라 단계명과 함께 출력되는지 확인한다. 성공 시 `PASS v1.0.47 offline launch and mid-wave reconnect browser assurance`가 출력되어야 한다.
