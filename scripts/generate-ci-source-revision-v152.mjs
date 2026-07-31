@@ -32,7 +32,9 @@ const files = [
   'scripts/clean-obsolete-assets.mjs',
   'scripts/verify-performance-trend-v145.mjs',
   'scripts/verify-performance-guard-v148.mjs',
-  'scripts/verify-release-v148.mjs'
+  'scripts/verify-release-v148.mjs',
+  'scripts/verify-dist-chain-v140.mjs',
+  'scripts/verify-dist-v146.mjs'
 ];
 const sha = (data) => createHash('sha256').update(data).digest('hex');
 const rows = files.map((file) => {

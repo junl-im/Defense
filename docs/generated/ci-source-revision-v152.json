@@ -81,8 +81,8 @@
     },
     {
       "path": "scripts/verify-release-v152.mjs",
-      "bytes": 6420,
-      "sha256": "ce834f1dbbde9044f80a4fa998bdff1207d82b66b1106e125bc927b64986b76b"
+      "bytes": 6955,
+      "sha256": "bdbd8605372931f2608bf95adcecd0d0a7aee6aadabe516f820c8fefb7d84d73"
     },
     {
       "path": "scripts/verify-runtime-hardening-v152.mjs",
@@ -143,6 +143,16 @@
       "path": "scripts/verify-release-v148.mjs",
       "bytes": 4616,
       "sha256": "c27bcab6f7521d4112d7a7aa4a2d69f10ba61d737be65cbde20b3ed31742cd70"
+    },
+    {
+      "path": "scripts/verify-dist-chain-v140.mjs",
+      "bytes": 1121,
+      "sha256": "bc91df2e933b5a97c9541d7be0fc3eb6118a7d1cfab2ae6ff8300628eefb3b1d"
+    },
+    {
+      "path": "scripts/verify-dist-v146.mjs",
+      "bytes": 2514,
+      "sha256": "bf20c030afef1bf0e793f4a3cac1b76a49214a45de26d0d63bc2a5015cd9327d"
     }
   ]
 }

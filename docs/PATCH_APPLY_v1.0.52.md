@@ -1,19 +1,18 @@
-# v1.0.52 CI HOTFIX R1 패치 적용
+# v1.0.52 CI HOTFIX R2 패치 적용
 
-이 패치는 최초 v1.0.52 전달본과 v1.0.51 기준본 모두에 적용할 수 있다.
+R2 패치 ZIP은 프로젝트 루트 기준의 직접 덮어쓰기 구조다. `overlay/` 포장 폴더나 패치 전용 메타데이터 파일이 들어 있지 않다.
 
 1. 기존 프로젝트를 백업한다.
-2. 패치 ZIP을 별도 폴더에 압축 해제한다.
-3. `DELETE_PATHS.txt`에 적힌 경로가 있으면 먼저 삭제한다. 특히 오래된 `dist/`는 남기지 않는다.
-4. `overlay/` 폴더 안의 내용만 기존 프로젝트 루트에 덮어쓴다.
-5. ZIP 루트의 안내문·매니페스트는 프로젝트 루트에 복사하지 않는다.
-6. 의존성이 정상 설치된 환경에서 아래 검증을 실행한다.
+2. 패치 ZIP의 내용 전체를 기존 프로젝트 루트에 직접 덮어쓴다.
+3. 아래 정리 명령으로 오래된 `dist/`, `dist-pages/`, 실수로 남은 `overlay/`와 루트 패치 메타데이터를 제거한다.
+4. 의존성을 새로 설치하고 전체 검증·빌드·dist 검증을 실행한다.
 
 ```bash
-npm run prepare:repo-root:v152
-npm run sync:generated:ci
-npm run verify:release:v152
+npm run clean:obsolete
+npm ci
 npm run verify:ci
 VITE_BASE_PATH=/Defense/ npm run build
 npm run verify:dist:all
 ```
+
+패치 ZIP의 모든 파일 경로는 R2 전체 통파일에도 존재해야 하며, 같은 경로의 SHA-256이 일치해야 한다. 패치 적용 후 정리된 프로젝트 트리는 R2 전체 통파일과 동일해야 한다.

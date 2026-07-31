@@ -40,3 +40,12 @@
 - v1.0.45·v1.0.48 역사 성능 게이트는 기준을 완화하지 않고 v1.0.49~v1.0.52 forward-tagged 모듈과 v1.0.52 `main.js` 계측 추가분만 측정 범위에서 분리한다.
 - v1.0.48 identity preflight가 `preverify → prepare:repo-root:v152`처럼 중첩된 lifecycle 명령을 해석한다.
 - CI source revision은 위 회귀 방지 파일까지 포함해 28개 파일을 SHA-256 서명한다.
+
+## CI chain hotfix R2
+
+- `verify-dist-v146.mjs`가 현재 v1.0.52 dist 체인 안에서 `verify-ci-source-revision-v151.mjs`를 중복 호출해 `1.0.52/b24.52`를 거부하던 문제를 수정했다.
+- v146의 장시간 브라우저·재질·런타임 오류 계약은 그대로 유지하고, 소스 정체성 preflight만 활성 v1.0.52 서명으로 교체했다.
+- `verify-release-v152.mjs`가 활성 dist 체인에 v1.0.51 전용 preflight가 다시 들어오면 실패하도록 회귀 검사를 추가했다.
+- v1.0.52 CI source 서명 범위에 `verify-dist-chain-v140.mjs`와 `verify-dist-v146.mjs`를 추가했다.
+- R2 패치 ZIP은 `overlay/` 포장 폴더와 패치 메타데이터를 포함하지 않는다. ZIP의 모든 경로는 전체 통파일의 동일 경로에 존재하고 동일 SHA-256을 가져야 한다.
+

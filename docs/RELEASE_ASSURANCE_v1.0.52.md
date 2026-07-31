@@ -55,3 +55,17 @@ npm run hygiene:check
 ```
 
 `npm run verify:ci` 단일 로컬 실행은 검증 실패 없이 v1.0.50 후반 게이트까지 진행했으나, 이 작업 환경의 장시간 명령 실행 상한으로 프로세스가 종료됐다. 동일 명령의 후반 구간인 v1.0.48→v1.0.52 릴리스 체인은 분할 실행으로 모두 통과했다. 따라서 보고된 v1.0.51 bootstrap 오류와 이후 드러난 source-contract 회귀는 제거됐지만, `npm ci`, 실제 Vite build, 브라우저 필수 dist 게이트의 최종 녹색 상태는 GitHub Actions에서 확인해야 한다.
+
+## CI chain hotfix R2 검증
+
+GitHub Actions의 실제 Vite 빌드와 v1.0.17~v1.0.45 dist 게이트가 모두 통과한 뒤, v146 게이트 내부의 중첩된 v1.0.51 소스 서명 검사에서 실패했다. 이는 번들 또는 브라우저 실행 오류가 아니라 역사 게이트가 현재 패키지 정체성을 다시 검사한 결합 오류다.
+
+R2는 `scripts/verify-dist-v146.mjs`의 내부 preflight를 `verify-ci-source-revision-v152.mjs`로 교체한다. v1.0.51의 `DD-V151-ENEMY-MATERIAL-R6` 런타임·장시간 세션 마커와 기능 보존 검사는 제거하거나 완화하지 않는다.
+
+회귀 방지 항목:
+
+- v146 dist gate와 complete dist chain은 활성 v1.0.52 source verifier만 호출한다.
+- 활성 dist 체인에서 `verify-ci-source-revision-v151.mjs` 문자열이 발견되면 v1.0.52 릴리스 검증이 실패한다.
+- 두 dist orchestration 파일을 v1.0.52 CI source manifest에 SHA-256 서명한다.
+- R2 직접 덮어쓰기 ZIP에는 전체 통파일에 없는 포장 폴더·메타데이터 엔트리가 없어야 한다.
+

@@ -28,6 +28,7 @@ export const V152_PATCH_FILES = Object.freeze([
   'scripts/verify-ci-source-revision-v152.mjs',
   'scripts/verify-clean-package-v152.mjs',
   'scripts/verify-dist-chain-v140.mjs',
+  'scripts/verify-dist-v146.mjs',
   'scripts/verify-dist-v151.mjs',
   'scripts/verify-dist-v152.mjs',
   'scripts/verify-long-session-hotfix-v151.mjs',

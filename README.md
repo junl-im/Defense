@@ -1,38 +1,30 @@
 # Dokkaebi Luck Defense 3D
 
-> Current release: **v1.0.52 / b24.52** — event-timed character presentation, bounded CPU/GPU degradation, stale-afterimage prevention, and a v1.0.52-only CI generated-output chain.
+> Current release: **v1.0.51 / b24.51** — modern character presentation runtime with soft PBR rim lighting, contact grounding, depth silhouettes, directional key light, action afterimages, and mobile-aware LOD.
 
-## v1.0.52 CI chain hotfix R1
+## v1.0.51 CI cleanup repair R3
 
-`verify:ci`, `preverify`, and `prebuild` no longer invoke the v1.0.51 package bootstrap. The active repository lifecycle is now:
+The dependency-free release bootstrap removes stale root patch metadata and any root-level `overlay/` before repository verification. The standalone cleaner repeats the same non-merging deletion, so a stale `package.json@1.0.46` can never overwrite the already repaired v1.0.51 package identity.
 
-```text
-clean:obsolete → hygiene:check → verify:identity:v152 → verify:repo-root:v152
-```
-
-Generated CI outputs use the v1.0.52 identity and build-input generators. The committed source revision manifest is verified, not regenerated, during `sync:generated:ci`.
-
-R1 also removes a direct v1.0.51 bootstrap call from the project verifier, updates the golden-motion harness for v1.0.52 module imports and authored event duration, synchronizes historical identity markers from one generator, clears stale dist before source verification, and isolates only forward-release code from v1.0.45/v1.0.48 historical byte budgets.
-
-## v1.0.52 verification
+## v1.0.51 verification
 
 ```bash
-npm run prepare:repo-root:v152
-npm run sync:generated:ci
-npm run verify:release:v152
+npm run verify:character:v151
+npm run verify:foundation:v150:v151
+npm run verify:release:v151
 npm run verify:ci
 VITE_BASE_PATH=/Defense/ npm run build
-REQUIRE_BROWSER_V144=1 REQUIRE_BROWSER_V145=1 REQUIRE_BROWSER_V146=1 REQUIRE_BROWSER_V147=1 REQUIRE_BROWSER_V149=1 REQUIRE_BROWSER_V150=1 REQUIRE_BROWSER_V151=1 REQUIRE_BROWSER_V152=1 npm run verify:dist:all
+REQUIRE_BROWSER_V144=1 REQUIRE_BROWSER_V145=1 REQUIRE_BROWSER_V146=1 REQUIRE_BROWSER_V147=1 REQUIRE_BROWSER_V149=1 REQUIRE_BROWSER_V150=1 REQUIRE_BROWSER_V151=1 npm run verify:dist:all
 ```
 
-## v1.0.52 key changes
+## v1.0.51 key changes
 
-- Prevents stale action-afterimage samples from leaking across state changes, invisibility, or teleports.
-- Replaces per-frame afterimage allocations with fixed reusable buffers.
-- Keeps one-shot states alive through class-specific release and impact events.
-- Adds WebGL2 GPU timing diagnostics and one-way cinematic-to-balanced degradation under sustained budget pressure.
-- Preserves authored emissive material data and hardens result-string rendering.
-- Keeps the v1.0.50 atomic save foundation and v1.0.51 character presentation contracts.
+- Preserves all approved character source art and explicitly adds zero new final-art approvals.
+- Adds quality-tiered contact shadows, depth silhouettes, directional key lighting, action rims, and up to two motion afterimages.
+- Adds distance and combat-density LOD so secondary character layers collapse first on low-power devices and crowded monster waves.
+- Hardens transparent atlas sampling with premultiplied alpha, anisotropy, dithering, and stricter alpha thresholds.
+- Enhances imported hero, guardian, monster, and boss PBR materials with bounded roughness/metalness, environment response, and a soft view-dependent rim shader.
+- Keeps the v1.0.50 atomic save and production recovery foundation unchanged.
 
 ## v1.0.45 key changes
 
@@ -103,3 +95,8 @@ The 100-wave browser assurance now isolates optional character-presentation fail
 ### v1.0.51 R6 CI repair
 
 R6 fixes the confirmed wave-10 enemy material null dereference while preserving the zero-error 100-wave gate. Before pushing, run `node scripts/verify-ci-source-revision-v151.mjs` and `npm run verify:enemy-material:v151`; the source marker must be `DD-V151-ENEMY-MATERIAL-R6`.
+
+## v1.0.52 CI HOTFIX R2
+
+R2 fixes the v146 dist gate's nested v1.0.51 source-identity preflight. The R2 patch archive is a true project-root overlay: it contains only project paths that also exist in the R2 full package, with no `overlay/` wrapper or patch metadata entries.
+

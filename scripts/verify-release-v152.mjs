@@ -54,6 +54,10 @@ const performanceGuardV148 = read('scripts/verify-performance-guard-v148.mjs');
 check(performanceGuardV148.includes('forwardTagV149Plus') && performanceGuardV148.includes('149|150|151|152') && performanceGuardV148.includes('v148ScopedEngineBytes'), 'v148 performance guard excludes only forward-tagged v149-v152 modules from historical byte budgets');
 const releaseVerifierV148 = read('scripts/verify-release-v148.mjs');
 check(releaseVerifierV148.includes('resolveLifecycleCommand') && releaseVerifierV148.includes('preverifyLifecycle') && releaseVerifierV148.includes('prebuildLifecycle'), 'v148 identity preflight resolves nested v152 lifecycle scripts');
+const distVerifierV146 = read('scripts/verify-dist-v146.mjs');
+const distChain = read('scripts/verify-dist-chain-v140.mjs');
+check(distVerifierV146.includes('verify-ci-source-revision-v152.mjs') && !distVerifierV146.includes('verify-ci-source-revision-v151.mjs'), 'v146 dist gate uses active v152 source preflight without nested v151 identity check');
+check(distChain.includes('verify-ci-source-revision-v152.mjs') && !distChain.includes('verify-ci-source-revision-v151.mjs'), 'complete dist chain uses active v152 source preflight');
 
 if (failures.length) {
   failures.forEach((failure) => console.error(`FAIL ${failure}`));
