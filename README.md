@@ -1,6 +1,6 @@
 # Dokkaebi Luck Defense 3D
 
-> Current release: **v1.0.52 / b24.52 CI HOTFIX R4** — bounded service-worker installation, event-timed character presentation, and hardened CI/browser assurance.
+> Current release: **v1.0.52 / b24.52 CI HOTFIX R5** — durable-save offline assurance, bounded service-worker installation, event-timed character presentation, and hardened CI/browser assurance.
 
 ## v1.0.51 CI cleanup repair R3
 
@@ -109,3 +109,8 @@ R3 fixes the v1.0.47 offline/reconnect browser harness timeout. The old runner w
 ## v1.0.52 CI HOTFIX R4
 
 R4 fixes the confirmed service-worker install stall exposed by R3 diagnostics. The install event no longer fetches the 169-entry historical source ledger. It caches only 11 deployable Vite shell files with four workers and a 12-second per-request abort boundary. Source-module hashes remain in the v1.0.35 integrity ledger but `./src/...` paths are not requested from complete Vite dist. The v147 browser report now includes precache progress and failed asset paths.
+
+
+## v1.0.52 CI HOTFIX R5
+
+R5 fixes the false `saveContinuity` failure exposed after the offline service worker and reconnect path completed successfully. The v147 browser harness no longer compares every `dokkaebi-*` localStorage entry byte-for-byte. Boot diagnostics (`dokkaebi-browser-reliability-v19`), rolling wave checkpoints, and the transient persistence journal are classified as volatile. Strict continuity remains enforced for player-facing mode, class, controls, HUD, scores, growth, equipment, mastery, codex, council, review decisions, and the atomic recovery snapshot. The harness seeds valid durable sentinels before the offline reload and reports exact missing, added, changed, or lost-sentinel keys on failure.

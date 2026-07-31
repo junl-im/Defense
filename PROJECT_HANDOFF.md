@@ -390,3 +390,16 @@ A valid R6 run prints `DD-V151-ENEMY-MATERIAL-R6`, repair revision 6, and the si
 - 회귀 방지: 새 검증기는 성공 설치에서 정확히 11개 경로만 fetch/cache되고 동시성이 4 이하임을 시뮬레이션한다. 한 자산이 무한 대기하는 경우 60ms 테스트 제한으로 install이 실패하고 실패 경로가 보고되는지 검증한다. 실제 런타임 값은 12초다.
 - 로컬 검증: v1.0.15 lightweight install 계약, v1.0.35 source-shell 무결성, v1.0.47 릴리스 계약, v1.0.52 bounded install 시뮬레이션과 릴리스 계약을 통과한다. 실제 GitHub Chromium 오프라인 성공 경로는 R4 Actions에서 최종 확인한다.
 - 다음 예정: R4 적용 후 v147 browser assurance 통과와 v148~v152 dist 체인 완료 확인.
+
+
+## 2026-07-31 — v1.0.52 CI HOTFIX R5
+
+- 버전/빌드: `v1.0.52 / b24.52`, repair revision R5. 게임 콘텐츠 버전과 캐시 정체성은 변경하지 않는다.
+- 작업 목표: R4 GitHub Actions에서 오프라인 부트와 mid-wave reconnect가 성공한 뒤 `saveContinuity:false`만 남은 원인을 분리하고, 실제 플레이어 저장 손실만 차단하는 검증으로 교체한다.
+- 근본 원인: `scripts/run-offline-reconnect-v147.mjs`가 모든 `dokkaebi-*` localStorage 항목을 원문 문자열로 비교했다. `dokkaebi-browser-reliability-v19`는 부트마다 `generatedAt`/이벤트/표본을 갱신하고 `dokkaebi-wave-checkpoint-v18`은 heartbeat `savedAt`을 갱신하므로 정상 reload도 불일치했다. 로그의 다른 오프라인·재접속 검사는 모두 통과했으므로 실제 사용자 저장 손실 증거는 없었다.
+- 변경 파일: `scripts/save-continuity-v147.mjs` 신규, `scripts/offline-reconnect-model-v147.mjs`, `scripts/verify-offline-reconnect-v147.mjs`, `scripts/run-offline-reconnect-v147.mjs`, `scripts/verify-release-v147.mjs`, `scripts/verify-release-v152.mjs`, CI source manifest 생성기, v1.0.52 패키징·패치 도구, README와 v1.0.52 문서.
+- 수정 방식: durable namespace와 volatile namespace를 명시적으로 분리한다. durable에는 모드·직업·조작·HUD·점수·영구 성장·장비·숙련·도감·수호 회의·검토 결정·atomic recovery snapshot을 포함한다. browser reliability, wave checkpoint, persistence journal은 fingerprint 진단만 남기고 strict equality에서 제외한다. 브라우저 러너는 유효한 `guardian/warrior/daily` sentinel을 심고 reload 뒤 보존을 요구한다.
+- 검증 명령/결과: `node scripts/verify-offline-reconnect-v147.mjs` PASS, `node scripts/verify-release-v147.mjs` PASS, JavaScript syntax PASS. 진단 키만 바뀌는 fixture PASS, `dokkaebi-guardian-growth-v1`/직업 변경 fixture FAIL 예상 확인. 로컬 실제 Chromium 실행은 환경 정책의 `warm-navigation: ERR_BLOCKED_BY_ADMINISTRATOR`로 차단되며 실패 단계 진단은 정상이다.
+- 패키징 규칙: R5 전체본은 `dist`, `node_modules`, `.git`, 생성 로그를 제외한다. R5 패치는 ZIP 루트가 프로젝트 루트인 direct project-root 구조이며 wrapper/metadata 엔트리를 금지한다. 패치의 모든 파일은 R5 전체본 동일 경로와 SHA-256이 같아야 하며 R4 적용 결과가 R5 전체본과 정확히 일치해야 한다.
+- 잔여 위험: 실제 GitHub Actions Chromium에서 v147이 최종 통과하는지는 CI 재실행이 필요하다. 새 실패가 발생하면 `saveDiff`가 실제 변경 키를 제공하므로 진단 범위가 제한된다. 런타임 게임 저장 코드 자체는 이번 R5에서 변경하지 않았다.
+- 다음 예정: R5 적용 후 `npm run verify:dist:all`의 v147 통과 및 v148~v152 완료 확인. 이후 `docs/NEXT_UPDATE_v1.0.53.md`의 WebGL GPU/context-loss/mobile evidence 작업으로 이동한다.

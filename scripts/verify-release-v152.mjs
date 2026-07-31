@@ -58,6 +58,9 @@ const distVerifierV146 = read('scripts/verify-dist-v146.mjs');
 const distChain = read('scripts/verify-dist-chain-v140.mjs');
 const offlineRunnerV147 = read('scripts/run-offline-reconnect-v147.mjs');
 const releaseVerifierV147 = read('scripts/verify-release-v147.mjs');
+const offlineModelV147 = read('scripts/offline-reconnect-model-v147.mjs');
+const saveContinuityV147 = read('scripts/save-continuity-v147.mjs');
+const offlineModelVerifierV147 = read('scripts/verify-offline-reconnect-v147.mjs');
 const serviceWorker = read('public/sw.js');
 const serviceWorkerInstallVerifier = read('scripts/verify-service-worker-install-v152.mjs');
 const stagePackageV152 = read('scripts/stage-clean-package-v152.mjs');
@@ -70,12 +73,19 @@ check(offlineRunnerV147.includes('--disable-background-timer-throttling') && off
 check(offlineRunnerV147.includes('V147_SERVICE_WORKER_TIMEOUT_MS') && offlineRunnerV147.includes('V147_BROWSER_OPERATION_TIMEOUT_MS') && offlineRunnerV147.includes('failedPhase') && offlineRunnerV147.includes('diagnostics.steps'), 'v147 offline browser assurance uses bounded labeled phase diagnostics');
 check(offlineRunnerV147.includes('navigator.serviceWorker.getRegistration') && !offlineRunnerV147.includes('navigator.serviceWorker.ready'), 'v147 offline browser assurance avoids unbounded service worker ready wait');
 check(releaseVerifierV147.includes('v147 browser runner disables background timer and renderer throttling') && releaseVerifierV147.includes('v147 browser runner has bounded labeled phase diagnostics'), 'v147 release gate locks browser timeout hardening');
+check(offlineModelV147.includes('compareDurableSaveSnapshotsV147') && !offlineModelV147.includes('JSON.stringify(saveAfter) === JSON.stringify(saveBefore)'), 'v147 offline model excludes volatile diagnostic churn from save continuity');
+const durableSaveBlockV147 = saveContinuityV147.slice(saveContinuityV147.indexOf('DURABLE_SAVE_KEYS_V147'), saveContinuityV147.indexOf('VOLATILE_STORAGE_KEYS_V147'));
+const volatileSaveBlockV147 = saveContinuityV147.slice(saveContinuityV147.indexOf('VOLATILE_STORAGE_KEYS_V147'), saveContinuityV147.indexOf('OFFLINE_SAVE_SENTINEL_V147'));
+check(durableSaveBlockV147.includes("'dokkaebi-guardian-growth-v1'") && durableSaveBlockV147.includes("'dokkaebi-atomic-save-snapshot-v150'") && !durableSaveBlockV147.includes('dokkaebi-browser-reliability-v19'), 'v147 strict save continuity targets durable player state');
+check(volatileSaveBlockV147.includes('dokkaebi-browser-reliability-v19') && volatileSaveBlockV147.includes('dokkaebi-wave-checkpoint-v18'), 'v147 volatile boot diagnostics are excluded from strict save equality');
+check(offlineRunnerV147.includes('seed-and-snapshot-save-before-offline-launch') && offlineRunnerV147.includes('storageSnapshotExpressionV147') && offlineRunnerV147.includes('saveDiff'), 'v147 browser assurance seeds and diagnoses durable save continuity');
+check(offlineModelVerifierV147.includes('volatile diagnostics') && offlineModelVerifierV147.includes('detects player-save drift'), 'v147 save continuity regression test covers false positive and real loss');
 check(serviceWorker.includes('const INSTALL_SHELL_ASSETS') && serviceWorker.includes('PRECACHE_REQUEST_TIMEOUT_MS') && serviceWorker.includes('PRECACHE_CONCURRENCY') && serviceWorker.includes('DOKKAEBI_GET_INSTALL_STATUS'), 'v152 service-worker install is bounded and observable');
 check(serviceWorkerInstallVerifier.includes('source modules excluded') && serviceWorkerInstallVerifier.includes('new Set(INSTALL_SHELL_ASSETS)') && serviceWorkerInstallVerifier.includes('SHELL_ASSETS.map'), 'v152 service-worker install regression gate is registered');
 check(pkg.scripts?.['verify:sw-install:v152'] === 'node scripts/verify-service-worker-install-v152.mjs' && pkg.scripts?.['verify:release:v152']?.includes('verify:sw-install:v152'), 'v152 release chain includes service-worker install regression gate');
-check(stagePackageV152.includes('CI_HOTFIX_R4') && verifyPackageV152.includes('CI_HOTFIX_R4'), 'v152 clean package staging identifies CI hotfix R4');
-check(createPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R4') && createPatchV152.includes('1.0.52-r4') && verifyPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R4'), 'v152 project-root patch tooling identifies CI hotfix R4');
-check(!createPatchV152.includes("path.join(out, 'overlay')") && createPatchV152.includes("path.join(out, 'project-root')"), 'v152 R4 patch remains a true project-root overlay without wrapper');
+check(stagePackageV152.includes('CI_HOTFIX_R5') && verifyPackageV152.includes('CI_HOTFIX_R5'), 'v152 clean package staging identifies CI hotfix R5');
+check(createPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R5') && createPatchV152.includes('1.0.52-r5') && verifyPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R5'), 'v152 project-root patch tooling identifies CI hotfix R5');
+check(!createPatchV152.includes("path.join(out, 'overlay')") && createPatchV152.includes("path.join(out, 'project-root')"), 'v152 R5 patch remains a true project-root overlay without wrapper');
 
 if (failures.length) {
   failures.forEach((failure) => console.error(`FAIL ${failure}`));

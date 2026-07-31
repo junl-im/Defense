@@ -70,3 +70,15 @@
 - 역사적 136개 source-module 목록은 v1.0.35 해시 무결성 장부로 유지하지만 install fetch에는 사용하지 않는다.
 - 설치 상태 메시지에 phase, 완료/실패 수, 현재 경로와 실패 경로를 제공한다.
 - 성공·지연 fetch를 모두 실행하는 서비스 워커 설치 시뮬레이션 검증을 v1.0.52 릴리스 체인에 추가했다.
+
+
+## CI chain hotfix R5
+
+- R4 이후 서비스 워커 설치·오프라인 부트·중간 웨이브 재접속은 모두 통과했지만 `saveContinuity`만 실패하던 문제를 수정했다.
+- 원인은 실제 저장 손실이 아니라 v147 러너가 모든 `dokkaebi-*` localStorage 값을 원문 그대로 비교한 것이었다.
+- `dokkaebi-browser-reliability-v19`는 부트마다 `generatedAt`, 이벤트, 메모리 표본이 갱신되고 `dokkaebi-wave-checkpoint-v18`도 heartbeat의 `savedAt`이 갱신된다. 이 정상 진단 변경이 플레이어 저장 손실로 오판됐다.
+- 엄격 비교 대상을 플레이어 지속 상태로 한정했다: 실행 모드, 직업, 시드 모드, 조작 설정, HUD 설정, 점수, 영구 성장, 장비, 숙련, 도감, 수호 회의, 로컬 아트 검토 결정, 원자 저장 복구 스냅샷.
+- 브라우저 진단, rolling wave checkpoint, transactional journal은 volatile namespace로 분리했다. 이 값들은 보고서에 fingerprint로 남지만 save continuity 합격 여부에는 사용하지 않는다.
+- 오프라인 reload 전에 `guardian/warrior/daily`의 유효한 저장 sentinel을 기록하고 reload 뒤 반드시 동일하게 남는지 확인한다.
+- JSON 저장값은 객체 키 순서를 정규화해 의미가 같은 재직렬화를 허용하지만, 실제 값 변경·누락·추가는 정확한 키 이름과 함께 실패한다.
+- 결정론 검증은 진단 키만 변경되는 정상 사례가 통과하고 `dokkaebi-guardian-growth-v1` 또는 직업 값이 변경되는 실제 손실 사례가 실패하는지 검사한다.

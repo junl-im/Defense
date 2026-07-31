@@ -4,6 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawn, spawnSync } from 'node:child_process';
 import { buildOfflineReconnectSuiteV147 } from './offline-reconnect-model-v147.mjs';
+import { DURABLE_SAVE_KEYS_V147, OFFLINE_SAVE_SENTINEL_V147, VOLATILE_STORAGE_KEYS_V147 } from './save-continuity-v147.mjs';
 
 const root = path.resolve(import.meta.dirname, '..');
 const dist = process.env.DIST_DIR ? path.resolve(process.env.DIST_DIR) : path.join(root, 'dist');
@@ -20,6 +21,22 @@ const bootTimeoutMs = positiveInt(process.env.V147_BROWSER_BOOT_TIMEOUT_MS, 7000
 const cdpTimeoutMs = positiveInt(process.env.V147_BROWSER_CDP_TIMEOUT_MS, 120000);
 const serviceWorkerTimeoutMs = positiveInt(process.env.V147_SERVICE_WORKER_TIMEOUT_MS, 45000);
 const operationTimeoutMs = positiveInt(process.env.V147_BROWSER_OPERATION_TIMEOUT_MS, 45000);
+
+const durableSaveKeysV147 = JSON.stringify(DURABLE_SAVE_KEYS_V147);
+const volatileStorageKeysV147 = JSON.stringify(VOLATILE_STORAGE_KEYS_V147);
+const offlineSaveSentinelV147 = JSON.stringify(OFFLINE_SAVE_SENTINEL_V147);
+const storageSnapshotExpressionV147 = `(()=>{
+  const durableKeys=${durableSaveKeysV147};
+  const volatileKeys=${volatileStorageKeysV147};
+  const read=(keys)=>Object.fromEntries(keys.filter((key)=>localStorage.getItem(key)!==null).map((key)=>[key,localStorage.getItem(key)]));
+  const fingerprint=(value)=>{let hash=2166136261;for(const char of String(value||'')){hash^=char.codePointAt(0);hash=Math.imul(hash,16777619);}return {bytes:String(value||'').length,hash:(hash>>>0).toString(16).padStart(8,'0')};};
+  return {durable:read(durableKeys),volatile:Object.fromEntries(volatileKeys.filter((key)=>localStorage.getItem(key)!==null).map((key)=>[key,fingerprint(localStorage.getItem(key))]))};
+})()`;
+const seedAndSnapshotExpressionV147 = `(()=>{
+  const sentinel=${offlineSaveSentinelV147};
+  for(const [key,value] of Object.entries(sentinel))localStorage.setItem(key,value);
+  return (${storageSnapshotExpressionV147});
+})()`;
 const failOrSkip = (message) => {
   if (requireBrowser) throw new Error(message);
   console.log(`SKIP v1.0.47 offline/reconnect browser assurance: ${message}`);
@@ -336,12 +353,14 @@ try {
     diagnostics.boot.push({ phase: 'service-worker-controlled', ...worker });
     if (!boot.ok || !worker.controlled) throw new Error(`service-worker control boot failed: ${boot.error || 'controller missing'}`);
   }
-  const saveBefore = await runStep('save-before-offline-launch', () => evaluate(client, 'save-before-offline-launch', `Object.fromEntries(Object.keys(localStorage).filter(k=>k.startsWith('dokkaebi-')).sort().map(k=>[k,localStorage.getItem(k)]))`, 10000));
+  const storageBefore = await runStep('seed-and-snapshot-save-before-offline-launch', () => evaluate(client, 'seed-and-snapshot-save-before-offline-launch', seedAndSnapshotExpressionV147, 10000));
+  const saveBefore = storageBefore?.durable || {};
   await runStep('network-offline-launch', () => client.send('Network.emulateNetworkConditions', { offline: true, latency: 0, downloadThroughput: 0, uploadThroughput: 0, connectionType: 'none' }, 10000));
   await runStep('offline-reload', () => reloadAndLoad(client));
   const offlineBoot = await runStep('offline-boot', () => waitBoot(client, 'offline-launch'));
   diagnostics.boot.push({ phase: 'offline-launch', ...offlineBoot });
-  const saveAfter = await runStep('save-after-offline-launch', () => evaluate(client, 'save-after-offline-launch', `Object.fromEntries(Object.keys(localStorage).filter(k=>k.startsWith('dokkaebi-')).sort().map(k=>[k,localStorage.getItem(k)]))`, 10000));
+  const storageAfter = await runStep('save-after-offline-launch', () => evaluate(client, 'save-after-offline-launch', storageSnapshotExpressionV147, 10000));
+  const saveAfter = storageAfter?.durable || {};
   await runStep('network-online-after-launch', () => client.send('Network.emulateNetworkConditions', { offline: false, latency: 40, downloadThroughput: 5 * 1024 * 1024, uploadThroughput: 2 * 1024 * 1024, connectionType: 'wifi' }, 10000));
   await sleep(300);
   await runStep('install-network-observers', () => evaluate(client, 'install-network-observers', `(()=>{window.__V147_NET__={online:0,offline:0};addEventListener('online',()=>window.__V147_NET__.online++);addEventListener('offline',()=>window.__V147_NET__.offline++);return window.__V147_NET__;})()`, 10000));
@@ -356,7 +375,7 @@ try {
   await runStep('network-online-reconnect', () => client.send('Network.emulateNetworkConditions', { offline: false, latency: 80, downloadThroughput: 3 * 1024 * 1024, uploadThroughput: 1024 * 1024, connectionType: 'cellular4g' }, 10000));
   await sleep(500);
   const after = await runStep('advance-reconnected-wave', () => evaluate(client, 'advance-reconnected-wave', `(async()=>{const api=window.__DOKKAEBI_TEST_API__;await Promise.race([api.advanceLongSessionWaveV146({observationFrames:8}),new Promise((_,reject)=>setTimeout(()=>reject(new Error('advance reconnected wave in-page timeout')),${operationTimeoutMs}))]);return {snapshot:api.snapshot(),net:window.__V147_NET__,errors:api.reliabilityReport()?.runtimeErrors||[]};})()`, operationTimeoutMs + 5000));
-  scenarioData = { saveBefore, saveAfter, before, offline, after };
+  scenarioData = { saveBefore, saveAfter, storageBefore, storageAfter, before, offline, after };
   suite = buildOfflineReconnectSuiteV147({
     offlineLaunch: {
       shellCached: offlineBoot.ok,
@@ -376,7 +395,7 @@ try {
       runtimeErrors: diagnostics.exceptions
     }
   });
-  if (!suite.passed) throw new Error(`offline/reconnect checks failed: ${JSON.stringify(suite.scenarios.map((entry) => entry.checks))}`);
+  if (!suite.passed) throw new Error(`offline/reconnect checks failed: ${JSON.stringify({checks:suite.scenarios.map((entry) => entry.checks),saveDiff:suite.scenarios[0]?.saveDiff||null})}`);
 } catch (caught) {
   const detail = caught instanceof Error ? caught.message : String(caught);
   error = detail.startsWith(`${currentPhase}:`) ? detail : `${currentPhase}: ${detail}`;

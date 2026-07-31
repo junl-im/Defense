@@ -106,3 +106,20 @@ R4 검증 항목:
 - v1.0.15 lightweight shell, v1.0.35 source integrity, v1.0.47 offline runner, v1.0.52 release gate 보존
 
 로컬 Chromium의 loopback 정책 제한 때문에 실제 service-worker navigation은 GitHub Actions에서 최종 확인한다. 다만 정체를 만든 무제한 169개 동시 install 경로는 제거됐고, 동일 유형의 지연은 제한 시간과 자산별 진단으로 종료된다.
+
+
+## CI chain hotfix R5 검증
+
+R4 GitHub Actions는 서비스 워커 설치, 오프라인 부트, 중간 웨이브 오프라인 진행, 재접속 이벤트를 모두 통과했다. 마지막 실패는 플레이어 저장 손실이 아니라 volatile 진단 저장소를 엄격 비교에 포함한 v147 QA 모델의 범위 오류였다.
+
+R5 검증 항목:
+
+- `DURABLE_SAVE_KEYS_V147`은 플레이어 선택·진행·복구 상태만 포함한다.
+- `VOLATILE_STORAGE_KEYS_V147`은 browser reliability report, wave checkpoint, transactional journal을 포함하며 엄격 save equality에서 제외된다.
+- 오프라인 reload 전에 유효한 실행 모드·직업·시드 모드 sentinel을 기록하고 reload 뒤 보존을 요구한다.
+- JSON 값은 recursive key-order canonicalization 뒤 비교한다.
+- missing, added, changed, sentinelMissing 키를 개별 보고한다.
+- 진단값만 바뀌는 회귀 fixture는 통과하고 영구 성장 또는 직업 값 변경 fixture는 실패한다.
+- v147 및 v152 릴리스 게이트와 CI source SHA-256 manifest가 이 계약 파일들을 고정한다.
+
+실제 GitHub Chromium에서 R5의 최종 v147 통과와 v148~v152 dist chain 완료를 확인해야 한다. 로컬 Chromium은 loopback navigation을 `ERR_BLOCKED_BY_ADMINISTRATOR`로 차단하므로 실제 네트워크 전환 성공 경로는 CI 필수 확인으로 남는다.

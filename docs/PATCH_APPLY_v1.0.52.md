@@ -1,4 +1,4 @@
-# v1.0.52 CI HOTFIX R2 패치 적용
+# v1.0.52 CI HOTFIX R5 패치 적용
 
 R2 패치 ZIP은 프로젝트 루트 기준의 직접 덮어쓰기 구조다. `overlay/` 포장 폴더나 패치 전용 메타데이터 파일이 들어 있지 않다.
 
@@ -39,3 +39,26 @@ npm run verify:dist:all
 ```
 
 v147 성공 로그에는 `PASS v1.0.47 offline launch and mid-wave reconnect browser assurance`가 출력되어야 한다. 실패 시 서비스 워커 진단의 `precache.phase`, `completed`, `failed`, `current`, `failures`를 확인한다. R4에서는 역사적 `./src/...` 모듈이 설치 요청 목록에 나타나면 안 된다.
+
+
+## R5 적용
+
+R5는 R4 또는 이전 v1.0.52 전체본에 적용하는 프로젝트 루트 직접 덮어쓰기 패치다. ZIP 안에 `overlay/` wrapper나 패치 메타데이터가 없으며, ZIP의 `scripts/`, `docs/`, `package.json` 등 프로젝트 경로를 저장소 루트에 그대로 덮어쓴다.
+
+적용 뒤 다음을 실행한다.
+
+```bash
+npm run clean:obsolete
+npm ci
+npm run verify:ci
+VITE_BASE_PATH=/Defense/ npm run build
+npm run verify:dist:all
+```
+
+v147 성공 로그에는 다음이 출력되어야 한다.
+
+```text
+PASS v1.0.47 offline launch and mid-wave reconnect browser assurance
+```
+
+실패 시 `logs/qa/v147/offline-reconnect-report.json`의 `suite.scenarios[0].saveDiff`를 확인한다. `missing`, `added`, `changed`, `sentinelMissing`에는 실제 지속 저장 키만 표시된다. `storageBefore.volatile`과 `storageAfter.volatile`의 fingerprint 차이는 부트 진단·rolling checkpoint의 정상 갱신이며 그 자체로 실패가 아니다.

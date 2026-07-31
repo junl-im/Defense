@@ -1,3 +1,5 @@
+import { compareDurableSaveSnapshotsV147 } from './save-continuity-v147.mjs';
+
 export const OFFLINE_RECONNECT_ASSURANCE_V147_ID = 'DD-OFFLINE-RECONNECT-ASSURANCE-V147';
 
 const freeze = (value) => Object.freeze(value);
@@ -13,17 +15,19 @@ export function simulateOfflineLaunchV147({
 } = {}) {
   const meaningfulFailures = (Array.isArray(failedRequests) ? failedRequests : [])
     .filter((entry) => !entry?.canceled && !/ERR_ABORTED|INTERNET_DISCONNECTED/.test(String(entry?.errorText || '')));
+  const saveDiff = compareDurableSaveSnapshotsV147(saveBefore, saveAfter);
   const checks = freeze({
     shellCached: Boolean(shellCached),
     serviceWorkerControlled: Boolean(serviceWorkerControlled),
     bootMarker: Boolean(bootMarker),
-    saveContinuity: JSON.stringify(saveAfter) === JSON.stringify(saveBefore),
+    saveContinuity: saveDiff.passed,
     noUnexpectedNetworkFailures: meaningfulFailures.length === 0
   });
   return freeze({
     id: OFFLINE_RECONNECT_ASSURANCE_V147_ID,
     scenario: 'offline-launch',
     checks,
+    saveDiff,
     failedRequests: freeze(meaningfulFailures),
     passed: Object.values(checks).every(Boolean)
   });

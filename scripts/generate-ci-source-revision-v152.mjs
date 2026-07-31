@@ -35,6 +35,9 @@ const files = [
   'scripts/verify-release-v148.mjs',
   'scripts/verify-dist-chain-v140.mjs',
   'scripts/verify-dist-v146.mjs',
+  'scripts/save-continuity-v147.mjs',
+  'scripts/offline-reconnect-model-v147.mjs',
+  'scripts/verify-offline-reconnect-v147.mjs',
   'scripts/run-offline-reconnect-v147.mjs',
   'scripts/verify-release-v147.mjs',
   'scripts/verify-service-worker-install-v152.mjs'
