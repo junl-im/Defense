@@ -1,0 +1,73 @@
+{
+  "id": "DD-CI-SOURCE-REVISION-V152",
+  "releaseVersion": "1.0.52",
+  "buildId": "b24.52",
+  "marker": "DD-V152-EVENT-TIMING-RUNTIME-GUARD",
+  "files": [
+    {
+      "path": ".github/workflows/deploy.yml",
+      "bytes": 7523,
+      "sha256": "0f227b5df3590c3759902c5d46262fe0f412d3a5d38eece82d7f6daa197a54fd"
+    },
+    {
+      "path": "package.json",
+      "bytes": 39713,
+      "sha256": "81114df8eadea0184e4504dc0dd2366a2443becf0cf2cf81d52669197a455fa6"
+    },
+    {
+      "path": "package-lock.json",
+      "bytes": 29186,
+      "sha256": "a8863edc8c6c3a6cf69100e2ccd3e00b6b6473dff884d243ebceab4d1582647a"
+    },
+    {
+      "path": "src/main.js",
+      "bytes": 418248,
+      "sha256": "d5ebc5d830a7f51826cfa6bfa75ac6bffa12b732a4e2d5a0115cc84341ef154f"
+    },
+    {
+      "path": "src/engine/animation-state-system.js",
+      "bytes": 12106,
+      "sha256": "3b385b024da82946ac88d1e5ca6deef45e44c4f26b4cca1866059e1d5be9458b"
+    },
+    {
+      "path": "src/engine/character-material-enhancer-v151.js",
+      "bytes": 4672,
+      "sha256": "382cfe01653fe73c957e1c644ff2c037625988a70e02ebec8c7953d7026f56af"
+    },
+    {
+      "path": "src/engine/gpu-frame-timer-v152.js",
+      "bytes": 3006,
+      "sha256": "abdeb9090a4485b6a807798bf139c05cbfb1258fffb7b83ff47db7cda2c0dc4b"
+    },
+    {
+      "path": "src/runtime/character-action-timing-v152.js",
+      "bytes": 6491,
+      "sha256": "b4daaf7d1b4cbb2311e6b230eacb2d03cb4f63dec7290c7bf57a811d73e8b438"
+    },
+    {
+      "path": "src/runtime/character-presentation-budget-v152.js",
+      "bytes": 3543,
+      "sha256": "6e2921f04fa1b643b8eadfed3def739b4c35313878c0f99be50e71c5958780e6"
+    },
+    {
+      "path": "src/runtime/character-presentation-director-v151.js",
+      "bytes": 20425,
+      "sha256": "ca20317a97a8e68df6e8fc0dfff33d73b13994534beeee1216683265b8512928"
+    },
+    {
+      "path": "src/runtime/result-presenter-v149.js",
+      "bytes": 4628,
+      "sha256": "cc64a1f256f7dc1e82442d191b95b8ea04966ca8e1cbf13688bc534fde92014e"
+    },
+    {
+      "path": "scripts/verify-release-v152.mjs",
+      "bytes": 2054,
+      "sha256": "7ef5773476a5660b395363676f249009b04b83dd5bafcfcb919cf0acfd4be213"
+    },
+    {
+      "path": "scripts/verify-runtime-hardening-v152.mjs",
+      "bytes": 3586,
+      "sha256": "46cc0c3978cb58152883d0590ce576f279222699f2f28ffd8579d70a7238ca97"
+    }
+  ]
+}

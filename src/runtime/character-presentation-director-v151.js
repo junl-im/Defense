@@ -5,6 +5,7 @@ import {
   CHARACTER_PRESENTATION_POLICY_V151,
   resolveCharacterPresentationQualityV151
 } from './character-presentation-policy-v151.js';
+import { CharacterPresentationBudgetV152 } from './character-presentation-budget-v152.js';
 
 const finite = (value, fallback = 0) => Number.isFinite(value) ? value : fallback;
 const clamp01 = (value) => Math.max(0, Math.min(1, Number(value) || 0));
@@ -83,7 +84,13 @@ export default class CharacterPresentationDirectorV151 extends CombatArtPolishDi
   constructor({ assetPipeline, lowPower = false } = {}) {
     super({ assetPipeline, lowPower });
     this.qualityTierV151 = assetPipeline?.qualityTier || (lowPower ? 'low' : 'high');
+    this.qualityTierV152 = lowPower || this.qualityTierV151 === 'low' ? 'economy' : this.qualityTierV151 === 'medium' ? 'balanced' : 'cinematic';
     this.qualityV151 = resolveCharacterPresentationQualityV151({ lowPower, qualityTier: this.qualityTierV151 });
+    this.presentationBudgetV152 = new CharacterPresentationBudgetV152({ initialTier: this.qualityTierV152 });
+    this.presentationBudgetDowngradesV152 = 0;
+    this.motionHistoryResetsV152 = 0;
+    this.teleportResetsV152 = 0;
+    this.eventDrivenFramesV152 = 0;
     this.contactShadowTextureV151 = createContactShadowTextureV151();
     this.modernRecordsV151 = 0;
     this.secondaryLayersV151 = 0;
@@ -151,8 +158,12 @@ export default class CharacterPresentationDirectorV151 extends CombatArtPolishDi
       contactShadow,
       afterimages,
       categoryProfile,
-      history: [],
-      previousWorld: null,
+      history: Array.from({ length: CHARACTER_PRESENTATION_POLICY_V151.maxAfterimages + 2 }, () => ({
+        x: 0, y: 0, sx: 1, sy: 1, rotation: 0, opacity: 0, state: 'idle', valid: false
+      })),
+      historyCount: 0,
+      previousWorld: new THREE.Vector3(),
+      hasPreviousWorld: false,
       velocity: 0,
       lastState: 'idle',
       elapsedSinceHistory: 0
@@ -183,6 +194,61 @@ export default class CharacterPresentationDirectorV151 extends CombatArtPolishDi
     return result;
   }
 
+  clearMotionHistoryV152(modern, { resetWorld = false, teleport = false } = {}) {
+    if (!modern) return;
+    const hadHistory = modern.historyCount > 0 || (modern.history || []).some((sample) => sample.valid);
+    const hadWorldAnchor = Boolean(modern.hasPreviousWorld);
+    for (const sample of modern.history || []) sample.valid = false;
+    modern.historyCount = 0;
+    modern.elapsedSinceHistory = 0;
+    if (resetWorld) modern.hasPreviousWorld = false;
+    modern.afterimages?.forEach?.((sprite) => { sprite.visible = false; });
+    if (hadHistory || (resetWorld && hadWorldAnchor) || teleport) this.motionHistoryResetsV152 += 1;
+    if (teleport) this.teleportResetsV152 += 1;
+  }
+
+  pushMotionHistoryV152(modern, record, state, opacity) {
+    const history = modern.history || [];
+    if (!history.length) return;
+    for (let index = history.length - 1; index > 0; index -= 1) {
+      const source = history[index - 1];
+      const target = history[index];
+      target.x = source.x; target.y = source.y; target.sx = source.sx; target.sy = source.sy;
+      target.rotation = source.rotation; target.opacity = source.opacity; target.state = source.state; target.valid = source.valid;
+    }
+    const first = history[0];
+    first.x = record.sprite.position.x;
+    first.y = record.sprite.position.y;
+    first.sx = record.sprite.scale.x;
+    first.sy = record.sprite.scale.y;
+    first.rotation = record.sprite.material.rotation;
+    first.opacity = opacity;
+    first.state = state;
+    first.valid = true;
+    modern.historyCount = Math.min(history.length, modern.historyCount + 1);
+  }
+
+  applyPresentationBudgetV152(report) {
+    if (!report || report.activeTier === this.qualityTierV152) return false;
+    this.qualityTierV152 = report.activeTier;
+    const qualityTier = report.activeTier === 'economy' ? 'low' : report.activeTier === 'balanced' ? 'medium' : 'high';
+    this.qualityV151 = resolveCharacterPresentationQualityV151({ lowPower: report.activeTier === 'economy', qualityTier });
+    this.presentationBudgetDowngradesV152 += 1;
+    for (const record of this.records || []) {
+      const modern = record.modernV151;
+      if (!modern) continue;
+      modern.afterimages.forEach((sprite, index) => { if (index >= this.qualityV151.afterimages) sprite.visible = false; });
+      this.clearMotionHistoryV152(modern);
+    }
+    return true;
+  }
+
+  observePresentationCostV152(sample = {}) {
+    const report = this.presentationBudgetV152.observe(sample);
+    this.applyPresentationBudgetV152(report);
+    return report;
+  }
+
   updateModernRecordV151(record, dt, camera, elapsed) {
     const modern = record.modernV151;
     if (!modern || !record.sprite?.visible) {
@@ -190,7 +256,8 @@ export default class CharacterPresentationDirectorV151 extends CombatArtPolishDi
         modern.silhouette.visible = false;
         modern.keyLight.visible = false;
         modern.contactShadow && (modern.contactShadow.visible = false);
-        modern.afterimages.forEach((sprite) => { sprite.visible = false; });
+        this.clearMotionHistoryV152(modern, { resetWorld: true });
+        modern.velocity = 0;
       }
       return;
     }
@@ -204,16 +271,30 @@ export default class CharacterPresentationDirectorV151 extends CombatArtPolishDi
     const visibleBudget = maxDistance > 0 && distance <= maxDistance && !(pressure && record.category === 'monster');
     if (!visibleBudget) this.lodSuppressionsV151 += 1;
 
-    const currentWorld = tempWorldV151.clone();
-    if (modern.previousWorld) modern.velocity = THREE.MathUtils.lerp(modern.velocity, currentWorld.distanceTo(modern.previousWorld) / Math.max(.001, dt), .22);
-    modern.previousWorld = currentWorld;
+    if (modern.hasPreviousWorld) {
+      const worldDelta = tempWorldV151.distanceTo(modern.previousWorld);
+      const teleportThreshold = Math.max(2.5, record.baseScale * 3.5);
+      if (worldDelta > teleportThreshold || dt > .22) {
+        modern.velocity = 0;
+        this.clearMotionHistoryV152(modern, { teleport: true });
+      } else {
+        modern.velocity = THREE.MathUtils.lerp(modern.velocity, worldDelta / Math.max(.001, dt), .22);
+      }
+    }
+    modern.previousWorld.copy(tempWorldV151);
+    modern.hasPreviousWorld = true;
 
     const state = record.state || 'idle';
+    if (state !== modern.lastState) this.clearMotionHistoryV152(modern);
     const stateTime = Math.max(0, finite(record.animation?.stateTime, 0));
-    const attack = state === 'attack' ? Math.sin(Math.min(1, stateTime / .32) * Math.PI) : 0;
-    const skill = state === 'skill' ? Math.sin(Math.min(1, stateTime / .58) * Math.PI) : 0;
-    const hit = state === 'hit' ? Math.sin(Math.min(1, stateTime / .20) * Math.PI) : 0;
-    const move = state === 'move' ? clamp01(modern.velocity / 4.8) : 0;
+    const eventEnvelope = record.animation?.presentationV152;
+    const hasEventEnvelope = eventEnvelope && eventEnvelope.state === state;
+    const attack = hasEventEnvelope ? clamp01(eventEnvelope.attack) : (state === 'attack' ? Math.sin(Math.min(1, stateTime / .32) * Math.PI) : 0);
+    const skill = hasEventEnvelope ? clamp01(eventEnvelope.skill) : (state === 'skill' ? Math.sin(Math.min(1, stateTime / .58) * Math.PI) : 0);
+    const hit = hasEventEnvelope ? clamp01(eventEnvelope.hit) : (state === 'hit' ? Math.sin(Math.min(1, stateTime / .20) * Math.PI) : 0);
+    const trailEvent = hasEventEnvelope ? clamp01(eventEnvelope.trail) : Math.max(attack, skill, hit);
+    if (hasEventEnvelope) this.eventDrivenFramesV152 += 1;
+    const move = state === 'move' || state === 'run' ? clamp01(modern.velocity / 4.8) : 0;
     const actionEnergy = Math.max(attack, skill, hit, move * .72);
     const side = finite(record.directionSide, 0) || 1;
     const profile = modern.categoryProfile;
@@ -250,23 +331,16 @@ export default class CharacterPresentationDirectorV151 extends CombatArtPolishDi
     }
 
     modern.elapsedSinceHistory += Math.max(0, dt);
-    const shouldTrail = visibleBudget && modern.afterimages.length > 0 && (state === 'attack' || state === 'skill' || (state === 'move' && modern.velocity > 1.2));
+    const activeAfterimages = Math.min(modern.afterimages.length, this.qualityV151.afterimages);
+    const shouldTrail = visibleBudget && activeAfterimages > 0 && (trailEvent > .08 || ((state === 'move' || state === 'run') && modern.velocity > 1.2));
+    if (!shouldTrail && modern.historyCount > 0) this.clearMotionHistoryV152(modern);
     if (shouldTrail && modern.elapsedSinceHistory >= (this.lowPower ? .075 : .045)) {
       modern.elapsedSinceHistory = 0;
-      modern.history.unshift({
-        x: record.sprite.position.x,
-        y: record.sprite.position.y,
-        sx: record.sprite.scale.x,
-        sy: record.sprite.scale.y,
-        rotation: record.sprite.material.rotation,
-        opacity: .18 + actionEnergy * .24,
-        state
-      });
-      modern.history.length = Math.min(5, modern.afterimages.length + 2);
+      this.pushMotionHistoryV152(modern, record, state, .18 + Math.max(actionEnergy, trailEvent) * .24);
     }
     modern.afterimages.forEach((sprite, index) => {
       const sample = modern.history[index + 1];
-      if (!shouldTrail || !sample) {
+      if (!shouldTrail || index >= activeAfterimages || !sample?.valid) {
         sprite.visible = false;
         return;
       }
@@ -347,7 +421,13 @@ export default class CharacterPresentationDirectorV151 extends CombatArtPolishDi
       presentationVersionV151: CHARACTER_PRESENTATION_POLICY_V151.version,
       presentationBuildV151: CHARACTER_PRESENTATION_POLICY_V151.buildId,
       qualityTierV151: this.qualityTierV151,
+      qualityTierV152: this.qualityTierV152,
       qualityProfileV151: { ...this.qualityV151 },
+      presentationBudgetV152: this.presentationBudgetV152.report,
+      presentationBudgetDowngradesV152: this.presentationBudgetDowngradesV152,
+      motionHistoryResetsV152: this.motionHistoryResetsV152,
+      teleportResetsV152: this.teleportResetsV152,
+      eventDrivenFramesV152: this.eventDrivenFramesV152,
       modernRecordsV151: this.modernRecordsV151,
       secondaryLayersV151: this.secondaryLayersV151,
       afterimageLayersV151: this.afterimageLayersV151,

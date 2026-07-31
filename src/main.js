@@ -16,6 +16,7 @@ import { BOSS_PROFILES, getBossTypeForWave, getBossSpawnCount, isBossWave } from
 import { getBattlefieldTheme } from './battlefield-themes.js';
 import { CODEX_SECTION_META, CODEX_SECTION_ORDER, getCodexEntries, getCodexTotals } from './codex-data.js';
 import { ENGINE_VERSION, MobileGameEngine, InstanceBatch, BlobShadowSystem, ObjectPool, RenderStatsHUD, AssetPipeline, AnimationStateSystem, FrameBudgetScheduler } from './engine/index.js';
+import { GpuFrameTimerV152 } from './engine/gpu-frame-timer-v152.js';
 import { isMovementCode } from './runtime/native-input-policy-v231.js';
 import { createArtApprovalReportV115 } from './runtime/art-approval-pipeline-v115.js';
 import { createAssetApprovalReportV117 } from './runtime/asset-approval-pipeline-v117.js';
@@ -466,6 +467,7 @@ class DokkaebiLuckDefense {
     this.activeEncounterPlan = null;
     this.lastEncounterResult = null;
     this.productionConsole = null;
+    this.gpuFrameTimerV152 = null;
 
     this.assertRequiredUI();
     this.hudLayout = new AdaptiveHudLayout({
@@ -739,12 +741,16 @@ class DokkaebiLuckDefense {
   startDeferredAssetPreload() {
     if (this.deferredAssetPromise) return this.deferredAssetPromise;
     const task = async () => {
+      if (this.disposed) return null;
       const startedAt = performance.now();
       await this.assetPipeline.warmDecoders(DEFERRED_ASSET_CATALOG);
+      if (this.disposed) return null;
       const report = await this.assetPipeline.preload(DEFERRED_ASSET_CATALOG, {
         concurrency: this.lowPower ? 2 : 4
       });
+      if (this.disposed) return null;
       await this.battlefieldSprites.preload();
+      if (this.disposed) return null;
       if (this.state === 'title' && this.worldRoot) {
         this.battlefieldSprites.populate(this.worldRoot, { titleMode: true });
       }
@@ -787,6 +793,7 @@ class DokkaebiLuckDefense {
 
   initThree() {
     this.renderer = this.engine.createRenderer(ui.canvas);
+    this.gpuFrameTimerV152 = new GpuFrameTimerV152(this.renderer);
     this.battlefieldSprites = new BattlefieldSpriteDirectorV16({ lowPower: this.lowPower });
     this.cameraDirectorV16 = new CameraDirectorV16();
     this.assetPipeline = new AssetPipeline(this.renderer, {
@@ -3295,7 +3302,7 @@ class DokkaebiLuckDefense {
     const flame = group.userData.parts?.signature || group.getObjectByName('signature') || group;
     group.traverse((object) => { if (object.isMesh) object.userData.baseY = object.position.y; });
     this.dynamicRoot.add(group);
-    const animation = this.animations.createController(group, group.userData.animations || [], { procedural: !(group.userData.animations?.length) });
+    const animation = this.animations.createController(group, group.userData.animations || [], { procedural: !(group.userData.animations?.length), actorCategory: 'hero', actorId: heroClass.id });
     const player = {
       group, flame, classConfig: heroClass, attackCooldown: 0, dashCooldown: 0, skillCooldown: 0, dashTimer: 0, stunTimer: 0,
       hp: 100, maxHp: 100,
@@ -4164,7 +4171,7 @@ class DokkaebiLuckDefense {
     model.rotation.y = -Math.atan2(pad.position.z, pad.position.x) + Math.PI / 2;
     this.dynamicRoot.add(model);
     this.setUnitPadVisual(pad, true, RANKS[rank - 1].color);
-    const animation = this.animations.createController(model, model.userData.animations || [], { procedural: !(model.userData.animations?.length) });
+    const animation = this.animations.createController(model, model.userData.animations || [], { procedural: !(model.userData.animations?.length), actorCategory: 'guardian', actorId: type });
     const unit = {
       id: crypto.randomUUID?.() || `${Date.now()}-${this.random()}`,
       type, rank, pad, group: model, cooldown: this.random() * .5, createdAt: this.elapsed,
@@ -4453,7 +4460,7 @@ class DokkaebiLuckDefense {
     const damage = config.damage * (1 + (this.currentWave - 1) * .1) * (omen.enemyDamage || 1) * mode.enemyDamage * (this.dailyEdict?.enemyDamage || 1) * (elite?.damage || 1) * (encounter.damageMultiplier || 1) * (campaign.enemyDamage || 1);
     this.applyEliteVisual(group, elite);
     if (elite) this.showCombatText(group.position.clone().add(new THREE.Vector3(0, 2.15, 0)), elite.name, { label: `${elite.icon} 정예` });
-    const animation = this.animations.createController(group, group.userData.animations || [], { procedural: !(group.userData.animations?.length) });
+    const animation = this.animations.createController(group, group.userData.animations || [], { procedural: !(group.userData.animations?.length), actorCategory: config.boss ? 'boss' : 'monster', actorId: type });
     const enemy = {
       id: ++this.enemySerial,
       type, group, hp, maxHp: hp, speed,
@@ -7602,6 +7609,7 @@ class DokkaebiLuckDefense {
       this.renderStatsHud,
       this.blobShadows,
       this.assetPipeline,
+      this.gpuFrameTimerV152,
       this.codexViewer
     ];
     for (const disposable of disposables) {
@@ -7615,6 +7623,8 @@ class DokkaebiLuckDefense {
     this.renderer?.renderLists?.dispose?.();
     this.renderer?.dispose?.();
     if (window.__DOKKAEBI_GAME__ === this) delete window.__DOKKAEBI_GAME__;
+    delete window.__DOKKAEBI_TEST_API__;
+    delete window.__DOKKAEBI_PUBLIC_API__;
   }
 
   animate() {
@@ -7819,7 +7829,15 @@ class DokkaebiLuckDefense {
       this.runSafe('modal-particles', () => this.updateParticles(dt));
     }
 
-    this.runSafe('combat-art-polish-v114', () => this.combatVisualV112?.update(this.state === 'playing' ? gameDt : dt, this.camera, this.elapsed, { showHealth: this.state === 'playing' }));
+    this.runSafe('combat-art-polish-v114', () => {
+      const presentationStartedV152 = performance.now();
+      this.combatVisualV112?.update(this.state === 'playing' ? gameDt : dt, this.camera, this.elapsed, { showHealth: this.state === 'playing' });
+      this.combatVisualV112?.observePresentationCostV152?.({
+        cpuMs: performance.now() - presentationStartedV152,
+        frameMs: rawDt * 1000,
+        source: 'character-presentation-update'
+      });
+    });
 
     if (this.player?.group && this.worldReady && this.frameScheduler.shouldRun('chunks', this.engine.qualityProfile?.chunkHz || 15)) {
       this.runSafe('world-chunks', () => this.engine.worldChunks.update(this.player.group.position));
@@ -7827,9 +7845,19 @@ class DokkaebiLuckDefense {
     if (this.frameScheduler.shouldRun('shadows', this.engine.qualityProfile?.shadowHz || 18)) this.runSafe('blob-shadows', () => this.updateBlobShadows());
     this.runSafe('camera', () => this.updateCamera(dt));
     this.runSafe('renderer', () => {
-      this.renderer.render(this.scene, this.camera);
-      this.renderedFrameSerial += 1;
-      this.flushRenderedFrameWaiters();
+      const gpuQueryStartedV152 = this.gpuFrameTimerV152?.beginFrame?.() || false;
+      try {
+        this.renderer.render(this.scene, this.camera);
+        this.renderedFrameSerial += 1;
+        this.flushRenderedFrameWaiters();
+      } finally {
+        if (gpuQueryStartedV152) this.gpuFrameTimerV152?.endFrame?.();
+        const gpuSampleV152 = this.gpuFrameTimerV152?.poll?.();
+        if (gpuSampleV152) this.combatVisualV112?.observePresentationCostV152?.({
+          ...gpuSampleV152,
+          frameMs: rawDt * 1000
+        });
+      }
     });
     if (this.frameScheduler.shouldRun('production-console', this.coreFoundation.cadence('production-console', 8, { minHz: 2 }))) this.runSafe('production-console', () => this.productionConsole?.update(dt));
     if (this.frameScheduler.shouldRun('render-stats', this.coreFoundation.cadence('render-stats', 8, { minHz: 2 }))) this.runSafe('render-stats', () => this.renderStatsHud?.update(dt, {
@@ -7845,6 +7873,7 @@ class DokkaebiLuckDefense {
       chunks: this.engine.worldChunks.diagnostics,
       assets: this.assetPipeline?.diagnostics,
       animations: this.animations?.diagnostics,
+      gpuFrameTimerV152: this.gpuFrameTimerV152?.diagnostics || {},
       lifecycle: this.lifecycle.diagnostics,
       encounter: this.encounterDirector?.diagnostics,
       combat: this.combatTelemetry?.snapshot,

@@ -33,7 +33,7 @@ function installSoftRimShader(material, profile, lowPower) {
     material.userData.characterRimUniformsV151 = shader.uniforms;
   };
   const previousKey = material.customProgramCacheKey?.bind(material);
-  material.customProgramCacheKey = () => `${previousKey?.() || material.type}:dokkaebi-soft-rim-v151:${profile.rim}`;
+  material.customProgramCacheKey = () => `${previousKey?.() || material.type}:dokkaebi-soft-rim-v151:${profile.rim}:${profile.rimColor.toString(16)}`;
   material.userData.characterRimShaderV151 = true;
   return true;
 }
@@ -56,8 +56,16 @@ export function applyCharacterMaterialEnhancementV151(root, { role = 'default', 
       if ('metalness' in material) material.metalness = clamp(material.metalness ?? .08, 0, profile.metalnessMax);
       if ('envMapIntensity' in material) material.envMapIntensity = Math.max(Number(material.envMapIntensity || 0), lowPower ? .72 : profile.env);
       if (material.emissive?.isColor && material.color?.isColor) {
-        material.emissive.copy(material.color).multiplyScalar(profile.emissive);
-        material.emissiveIntensity = Math.max(Number(material.emissiveIntensity || 0), lowPower ? .08 : .18);
+        const hasAuthoredEmissiveMap = Boolean(material.emissiveMap);
+        const hasAuthoredEmissiveColor = material.emissive.getHex() !== 0x000000;
+        const authoredEmissiveIntensity = Math.max(0, Number(material.emissiveIntensity || 0));
+        if (!hasAuthoredEmissiveMap && !hasAuthoredEmissiveColor && authoredEmissiveIntensity <= 0) {
+          material.emissive.copy(material.color).multiplyScalar(profile.emissive);
+          material.emissiveIntensity = lowPower ? .08 : .18;
+          material.userData.characterEmissiveSeededV152 = true;
+        } else {
+          material.userData.characterEmissivePreservedV152 = true;
+        }
       }
       material.dithering = true;
       material.shadowSide = THREE.FrontSide;

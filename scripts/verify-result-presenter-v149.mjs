@@ -13,4 +13,20 @@ assert(result.finalScore === 6300 && result.scoreText === '6,300', 'winning scor
 assert(result.unitsHtml.includes('달여우') && result.unitsHtml.includes('★★★★') && !result.unitsHtml.includes('moon'), 'unit summary mismatch');
 assert(result.analysisHtml.includes('V149') && result.analysisHtml.includes('월식'), 'result analysis missing run identity');
 assert(input.score === 1000, 'presenter must not mutate source state');
-console.log('PASS v1.0.49 result presentation is deterministic, pure, and extracted from runtime orchestration');
+
+const hostile = '<img src=x onerror=alert(1)>';
+const hardened = buildRunResultPresentationV149({
+  won: true,
+  score: Number.NaN,
+  units: [{ type: 'hostile', rank: 1 }],
+  unitTypes: { hostile: { symbol: hostile, name: hostile } },
+  runStats: { damageByType: { hostile: 10 } },
+  activeRunMode: { icon: hostile, name: hostile },
+  runSeed: hostile,
+  dailyEdict: { icon: hostile, name: hostile },
+  guardianCouncil: { bond: { icon: hostile, name: hostile }, support: { name: hostile } }
+});
+assert(hardened.finalScore === 5000, 'invalid score must normalize before victory bonus');
+assert(!hardened.unitsHtml.includes('<img') && !hardened.analysisHtml.includes('<img'), 'dynamic result strings must be HTML-escaped');
+assert(hardened.unitsHtml.includes('&lt;img') && hardened.analysisHtml.includes('&lt;img'), 'escaped result evidence missing');
+console.log('PASS v1.0.49 result presentation remains deterministic and v1.0.52 hardening escapes dynamic HTML and invalid scores');

@@ -8,7 +8,9 @@ const reportDir = path.join(root, 'logs/qa/v151');
 const versionPath = path.join(dist, 'version.json');
 if (!fs.existsSync(versionPath)) throw new Error('v151 dist/version.json missing');
 const version = JSON.parse(fs.readFileSync(versionPath, 'utf8'));
-if (version.releaseVersion !== '1.0.51' || version.buildId !== 'b24.51' || version.cacheRevision !== '1.0.51-b24.51') throw new Error('v1.0.51 dist identity mismatch');
+const parsedPatch = Number(String(version.releaseVersion || '').split('.')[2]);
+const expectedBuildId = `b24.${parsedPatch}`;
+if (!Number.isInteger(parsedPatch) || parsedPatch < 51 || version.buildId !== expectedBuildId || version.cacheRevision !== `${version.releaseVersion}-${version.buildId}`) throw new Error('v1.0.51+ dist identity mismatch');
 for (const required of ['index.html', 'assets/game.js', 'assets/game.css', 'sw.js', 'release-identity.generated.js']) if (!fs.existsSync(path.join(dist, required))) throw new Error(`v151 complete Vite dist missing: ${required}`);
 if (fs.existsSync(path.join(dist, 'src')) || fs.existsSync(path.join(dist, 'STATIC_BUILD_NOTICE.txt'))) throw new Error('v151 requires bundled Vite output, not static fallback');
 const gameJs = fs.readFileSync(path.join(dist, 'assets/game.js'), 'utf8');
@@ -50,10 +52,10 @@ const report = {
 };
 fs.mkdirSync(reportDir, { recursive: true });
 fs.writeFileSync(path.join(reportDir, 'dist-build-manifest.json'), `${JSON.stringify(report, null, 2)}\n`);
-for (const script of ['scripts/verify-character-presentation-v151.mjs', 'scripts/verify-v150-foundation-v151.mjs', 'scripts/verify-release-v151.mjs']) {
+for (const script of ['scripts/verify-character-presentation-v151.mjs', 'scripts/verify-v150-foundation-v151.mjs']) {
   const run = spawnSync(process.execPath, [path.join(root, script)], { cwd: root, env: process.env, encoding: 'utf8', timeout: 120000, maxBuffer: 32 * 1024 * 1024 });
   process.stdout.write(run.stdout || '');
   process.stderr.write(run.stderr || '');
   if (run.error || run.status !== 0) throw new Error(`v151 dist sub-verifier failed: ${script} (${run.error?.code || run.status})`);
 }
-console.log(`PASS v1.0.51 complete Vite dist and modern character presentation markers (${report.fileCount} files)`);
+console.log(`PASS v1.0.51+ complete Vite dist and modern character presentation markers (${report.fileCount} files)`);

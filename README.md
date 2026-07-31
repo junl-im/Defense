@@ -1,6 +1,23 @@
 # Dokkaebi Luck Defense 3D
 
-> Current release: **v1.0.51 / b24.51** — modern character presentation runtime with soft PBR rim lighting, contact grounding, depth silhouettes, directional key light, action afterimages, and mobile-aware LOD.
+> Current release: **v1.0.52 / b24.52** — class-authored action events, stale-afterimage and allocation hardening, authored material preservation, result HTML safety, and sustained presentation-budget downgrade.
+
+## v1.0.52 verification
+
+```bash
+npm run verify:release:v152
+VITE_BASE_PATH=/Defense/ npm run build
+npm run verify:dist:all
+```
+
+## v1.0.52 key changes
+
+- Uses absolute-second attack, skill, and hit event profiles for warrior, archer, mage, taoist, shaman, guardian, monster, and boss presentation pulses.
+- Keeps one-shot animation states alive through their authored final event so late release/impact markers cannot be skipped.
+- Clears stale afterimage history on state changes, invisibility, and teleports while reusing fixed samples and vectors.
+- Preserves authored emissive maps, colors, and intensity instead of replacing them.
+- Escapes dynamic result-screen HTML and normalizes invalid scores.
+- Samples optional WebGL2 GPU frame queries and performs a one-way cinematic-to-balanced downgrade after sustained budget pressure.
 
 ## v1.0.51 CI cleanup repair R3
 

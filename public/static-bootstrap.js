@@ -1,6 +1,6 @@
 (() => {
-  // const RELEASE_VERSION = '1.0.51'; generated compatibility marker
-  // const BUILD_ID = 'b24.51'; generated compatibility marker
+  // const RELEASE_VERSION = '1.0.52'; generated compatibility marker
+  // const BUILD_ID = 'b24.52'; generated compatibility marker
   const identity = globalThis.__DOKKAEBI_RELEASE_IDENTITY__;
   if (!identity) throw new Error('generated release identity missing');
   const RELEASE_VERSION = identity.releaseVersion;

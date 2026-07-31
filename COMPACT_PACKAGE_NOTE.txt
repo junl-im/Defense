@@ -1,6 +1,0 @@
-Dokkaebi Luck Defense 3D v1.0.32 compact full source package
-
-The generated dist directory is omitted to keep this as one durable ZIP file.
-All source files, current runtime assets, production data, docs, scripts, and verification files are included.
-To restore dist on Windows, run REBUILD_DIST_WINDOWS.bat.
-Equivalent command: npm run build:static

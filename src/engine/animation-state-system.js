@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { getCharacterActionTimelineV152, resolveCharacterActionTimingV152 } from '../runtime/character-action-timing-v152.js';
 
 const DEFAULT_ALIASES = Object.freeze({
   idle: ['idle', 'stand', 'breath'],
@@ -28,7 +29,7 @@ export class AnimationStateSystem {
     this.distanceLimit = lowPower ? 18 : mobile ? 24 : 34;
   }
 
-  createController(root, clips = [], { aliases = DEFAULT_ALIASES, procedural = true } = {}) {
+  createController(root, clips = [], { aliases = DEFAULT_ALIASES, procedural = true, actorCategory = 'default', actorId = '' } = {}) {
     if (!root?.position || !root?.scale) throw new Error('Animation controller root is missing or invalid.');
     const mixer = clips.length ? new THREE.AnimationMixer(root) : null;
     const actions = {};
@@ -36,11 +37,22 @@ export class AnimationStateSystem {
       const clip = findClip(clips, names);
       if (clip && mixer) actions[state] = mixer.clipAction(clip);
     }
+    const actionTimingV152 = resolveCharacterActionTimingV152({ category: actorCategory, actorId });
     const controller = {
       root, mixer, actions, state: '', previousState: '', baseState: 'idle', returnState: 'idle', stateTime: 0,
       procedural, enabled: true, visibleLastFrame: true, oneShotUntil: 0,
       baseY: root.position.y, baseScale: root.scale.clone(), phase: Math.random() * Math.PI * 2,
-      parts: root.userData?.parts || {}, partBase: {}
+      parts: root.userData?.parts || {}, partBase: {},
+      actorCategoryV152: actorCategory,
+      actorIdV152: actorId,
+      actionTimingV152,
+      eventTimelineV152: Object.freeze([]),
+      eventCursorV152: 0,
+      eventSerialV152: 0,
+      presentationV152: {
+        eventName: '', state: 'idle', serial: 0,
+        attack: 0, skill: 0, hit: 0, trail: 0
+      }
     };
     for (const [key, part] of Object.entries(controller.parts)) {
       if (part?.rotation) controller.partBase[key] = {
@@ -85,7 +97,18 @@ export class AnimationStateSystem {
     }
     controller.state = state;
     controller.stateTime = 0;
-    controller.oneShotUntil = oneShot ? Math.max(0.01, duration) : 0;
+    controller.eventTimelineV152 = getCharacterActionTimelineV152(controller.actionTimingV152, state);
+    const authoredDurationV152 = controller.eventTimelineV152.length
+      ? controller.eventTimelineV152[controller.eventTimelineV152.length - 1].at
+      : 0;
+    controller.oneShotUntil = oneShot ? Math.max(0.01, duration, authoredDurationV152) : 0;
+    controller.eventCursorV152 = 0;
+    controller.presentationV152.state = state;
+    controller.presentationV152.eventName = '';
+    controller.presentationV152.attack = 0;
+    controller.presentationV152.skill = 0;
+    controller.presentationV152.hit = 0;
+    controller.presentationV152.trail = 0;
     const next = controller.actions[state];
     if (next) {
       const current = controller.actions[outgoingState];
@@ -107,12 +130,46 @@ export class AnimationStateSystem {
     this.setState(controller, state, { oneShot: true, duration });
   }
 
+  updatePresentationEventsV152(controller, dt) {
+    const presentation = controller?.presentationV152;
+    if (!presentation) return;
+    const decay = Math.exp(-Math.max(0, dt) * 9.5);
+    presentation.attack *= decay;
+    presentation.skill *= decay;
+    presentation.hit *= decay;
+    presentation.trail *= decay;
+    const timeline = controller.eventTimelineV152 || [];
+    while (controller.eventCursorV152 < timeline.length) {
+      const event = timeline[controller.eventCursorV152];
+      if (controller.stateTime + 1e-6 < event.at) break;
+      controller.eventCursorV152 += 1;
+      controller.eventSerialV152 += 1;
+      presentation.eventName = event.name;
+      presentation.state = controller.state;
+      presentation.serial = controller.eventSerialV152;
+      presentation.attack = Math.max(presentation.attack, event.attack || 0);
+      presentation.skill = Math.max(presentation.skill, event.skill || 0);
+      presentation.hit = Math.max(presentation.hit, event.hit || 0);
+      presentation.trail = Math.max(presentation.trail, event.trail || 0);
+    }
+  }
+
   updateController(controller, dt, camera) {
-    if (!controller?.enabled || !controller.root?.visible) return;
+    if (!controller?.enabled) return;
+    if (!controller.root?.visible) {
+      if (controller.presentationV152) {
+        controller.presentationV152.attack = 0;
+        controller.presentationV152.skill = 0;
+        controller.presentationV152.hit = 0;
+        controller.presentationV152.trail = 0;
+      }
+      return;
+    }
     const distance = camera ? controller.root.position.distanceTo(camera.position) : 0;
     const inRange = distance <= this.distanceLimit;
     if (controller.mixer && inRange) controller.mixer.update(dt);
     controller.stateTime += dt;
+    this.updatePresentationEventsV152(controller, dt);
     if (controller.oneShotUntil > 0) {
       controller.oneShotUntil -= dt;
       if (controller.oneShotUntil <= 0) this.setState(controller, controller.returnState || controller.baseState || 'idle');
@@ -202,8 +259,12 @@ export class AnimationStateSystem {
 
   get diagnostics() {
     let mixers = 0;
-    for (const controller of this.controllers) if (controller.mixer) mixers += 1;
-    return { controllers: this.controllers.size, mixers, distanceLimit: this.distanceLimit };
+    let eventSerialV152 = 0;
+    for (const controller of this.controllers) {
+      if (controller.mixer) mixers += 1;
+      eventSerialV152 += controller.eventSerialV152 || 0;
+    }
+    return { controllers: this.controllers.size, mixers, distanceLimit: this.distanceLimit, actionTimingV152: true, eventSerialV152 };
   }
 }
 
