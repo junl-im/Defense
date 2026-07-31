@@ -8,7 +8,11 @@ const files = [
   '.github/workflows/deploy.yml',
   'package.json',
   'package-lock.json',
+  'index.html',
   'src/main.js',
+  'src/version-policy.js',
+  'public/sw.js',
+  'public/static-bootstrap.js',
   'src/engine/animation-state-system.js',
   'src/engine/character-material-enhancer-v151.js',
   'src/engine/gpu-frame-timer-v152.js',
@@ -17,7 +21,18 @@ const files = [
   'src/runtime/character-presentation-director-v151.js',
   'src/runtime/result-presenter-v149.js',
   'scripts/verify-release-v152.mjs',
-  'scripts/verify-runtime-hardening-v152.mjs'
+  'scripts/verify-runtime-hardening-v152.mjs',
+  'scripts/verify-repository-root-v152.mjs',
+  'scripts/verify-code-integrity.mjs',
+  'scripts/verify-project.mjs',
+  'scripts/verify-golden-motion.mjs',
+  'scripts/generate-release-identity-v152.mjs',
+  'scripts/verify-v1600.mjs',
+  'scripts/verify-v2302.mjs',
+  'scripts/clean-obsolete-assets.mjs',
+  'scripts/verify-performance-trend-v145.mjs',
+  'scripts/verify-performance-guard-v148.mjs',
+  'scripts/verify-release-v148.mjs'
 ];
 const sha = (data) => createHash('sha256').update(data).digest('hex');
 const rows = files.map((file) => {

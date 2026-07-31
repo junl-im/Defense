@@ -4,14 +4,18 @@ import { resolve } from 'node:path';
 import { formatSvgViolations, scanSvgPolicy } from './svg-policy.mjs';
 
 const root = resolve(import.meta.dirname, '..');
-const identityBootstrap = spawnSync(process.execPath, [resolve(root, 'scripts/bootstrap-release-package-v151.mjs')], {
+const packageBeforeVerification = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
+const activeIdentityCommand = packageBeforeVerification.version === '1.0.52'
+  ? ['scripts/generate-release-identity-v152.mjs', '--check']
+  : ['scripts/bootstrap-release-package-v151.mjs', '--check'];
+const identityVerification = spawnSync(process.execPath, [resolve(root, activeIdentityCommand[0]), ...activeIdentityCommand.slice(1)], {
   cwd: root,
   encoding: 'utf8'
 });
-process.stdout.write(identityBootstrap.stdout || '');
-process.stderr.write(identityBootstrap.stderr || '');
-if (identityBootstrap.error || identityBootstrap.status !== 0) {
-  throw new Error(`v151 pre-verification identity bootstrap failed (${identityBootstrap.error?.code || identityBootstrap.status})`);
+process.stdout.write(identityVerification.stdout || '');
+process.stderr.write(identityVerification.stderr || '');
+if (identityVerification.error || identityVerification.status !== 0) {
+  throw new Error(`active pre-verification identity check failed for ${packageBeforeVerification.version || '<missing>'} (${identityVerification.error?.code || identityVerification.status})`);
 }
 const read = (path) => readFileSync(resolve(root, path), 'utf8');
 const failures = [];

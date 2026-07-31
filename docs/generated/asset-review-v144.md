@@ -3,7 +3,7 @@
 - Contract: DD-ASSET-REVIEW-V144
 - Source: DD-RUNTIME-ASSET-REACHABILITY-V143
 - Candidates reviewed: 24/24
-- Reviewed bytes: 3,209,434
+- Reviewed bytes: 3,209,966
 - Deletion approvals: 0
 
 > No candidate may be quarantined or deleted until an explicit follow-up patch changes deleteApproved and provides replacement evidence.
@@ -14,7 +14,7 @@
 - `retain-asset-readiness`: 1 files, 74,552 bytes
 - `retain-production-candidate`: 6 files, 269,194 bytes
 - `retain-runtime-catalog`: 14 files, 2,629,836 bytes
-- `retain-runtime-contract`: 1 files, 22,782 bytes
+- `retain-runtime-contract`: 1 files, 23,314 bytes
 
 ## Reviewed candidates
 

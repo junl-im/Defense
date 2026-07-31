@@ -20,7 +20,14 @@ const delivery = read('docs/DELIVERY_RESULT_RULE.md');
 const patchRevision = Number(String(pkg.version || '').split('.')[2]);
 const buildRevision = Number(pkg.dokkaebi?.buildRevision);
 check(Number.isInteger(patchRevision) && patchRevision >= 48 && Number.isInteger(buildRevision) && buildRevision >= 48 && pkg.dokkaebi?.buildId === `b24.${buildRevision}` && pkg.dokkaebi?.cacheRevision === `${pkg.version}-b24.${buildRevision}`, 'package identity');
-check(Boolean(pkg.scripts?.['verify:identity:v148']) && /verify:identity:v\d+/.test(pkg.scripts?.preverify || '') && /verify:identity:v\d+/.test(pkg.scripts?.prebuild || ''), 'identity preflight preserved');
+const resolveLifecycleCommand = (scriptName) => {
+  const command = String(pkg.scripts?.[scriptName] || '');
+  const nested = /^npm run ([^ ]+)$/.exec(command)?.[1];
+  return nested ? `${command} && ${String(pkg.scripts?.[nested] || '')}` : command;
+};
+const preverifyLifecycle = resolveLifecycleCommand('preverify');
+const prebuildLifecycle = resolveLifecycleCommand('prebuild');
+check(Boolean(pkg.scripts?.['verify:identity:v148']) && /verify:identity:v\d+/.test(preverifyLifecycle) && /verify:identity:v\d+/.test(prebuildLifecycle), 'identity preflight preserved');
 check(lock.version === pkg.version && lock.packages?.['']?.version === pkg.version && lock.packages?.['']?.dokkaebi?.buildId === pkg.dokkaebi?.buildId, 'lock identity');
 check(version.releaseVersion === pkg.version && version.buildId === pkg.dokkaebi?.buildId && version.cacheRevision === pkg.dokkaebi?.cacheRevision, 'public identity');
 check(storage.includes('class SafeStorageV148') && storage.includes('maxFallbackEntries') && storage.includes('QuotaExceededError') === false, 'safe storage fallback contract');

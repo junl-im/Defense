@@ -6,6 +6,8 @@ import { organizeLegacyRootOutput } from './root-output-policy.mjs';
 const root = resolve(import.meta.dirname, '..');
 organizeLegacyRootOutput({ root });
 const fixedObsolete = [
+  'dist',
+  'dist-pages',
   'public/icon.svg',
   'public/cover.svg',
   'dist/icon.svg',

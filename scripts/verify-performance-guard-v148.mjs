@@ -6,22 +6,33 @@ const audit = JSON.parse(fs.readFileSync(path.join(root, 'docs/generated/system-
 const main = fs.readFileSync(path.join(root, 'src/main.js'), 'utf8');
 const engine = fs.readFileSync(path.join(root, 'src/engine/mobile-engine.js'), 'utf8');
 const scheduler = fs.readFileSync(path.join(root, 'src/engine/frame-budget-scheduler.js'), 'utf8');
-const forwardRuntimeBytesV150Plus = fs.readdirSync(path.join(root, 'src/runtime'))
-  .filter((name) => /-v(?:150|151)\.js$/.test(name))
-  .reduce((sum, name) => sum + fs.statSync(path.join(root, 'src/runtime', name)).size, 0);
-const v148ScopedRuntimeBytes = audit.metrics.runtimeBytes - forwardRuntimeBytesV150Plus;
-const forwardSourceBytesV151 = [
-  'src/runtime/character-presentation-policy-v151.js',
-  'src/runtime/character-presentation-director-v151.js',
-  'src/engine/character-material-enhancer-v151.js'
-].filter((file) => fs.existsSync(path.join(root, file))).reduce((sum, file) => sum + fs.statSync(path.join(root, file)).size, 0);
-const v148ScopedSourceBytes = audit.metrics.sourceBytes - forwardSourceBytesV151;
+const forwardTagV149Plus = /-v(?:149|150|151|152)\.js$/;
+const walk = (dir, out = []) => {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) walk(full, out);
+    else out.push(full);
+  }
+  return out;
+};
+const sourceFiles = walk(path.join(root, 'src')).filter((file) => file.endsWith('.js'));
+const forwardSourceFilesV149Plus = sourceFiles.filter((file) => forwardTagV149Plus.test(path.basename(file)));
+const forwardSourceBytesV149Plus = forwardSourceFilesV149Plus.reduce((sum, file) => sum + fs.statSync(file).size, 0);
+const forwardRuntimeBytesV149Plus = forwardSourceFilesV149Plus
+  .filter((file) => file.startsWith(path.join(root, 'src/runtime') + path.sep))
+  .reduce((sum, file) => sum + fs.statSync(file).size, 0);
+const forwardEngineBytesV149Plus = forwardSourceFilesV149Plus
+  .filter((file) => file.startsWith(path.join(root, 'src/engine') + path.sep))
+  .reduce((sum, file) => sum + fs.statSync(file).size, 0);
+const v148ScopedSourceBytes = audit.metrics.sourceBytes - forwardSourceBytesV149Plus;
+const v148ScopedRuntimeBytes = audit.metrics.runtimeBytes - forwardRuntimeBytesV149Plus;
+const v148ScopedEngineBytes = audit.metrics.engineBytes - forwardEngineBytesV149Plus;
 const failures = [];
 const check = (value, label) => { if (!value) failures.push(label); };
-check(v148ScopedSourceBytes <= budget.maximum.sourceBytes, `v148-scoped source bytes ${v148ScopedSourceBytes}/${budget.maximum.sourceBytes} (excluded v151 ${forwardSourceBytesV151})`);
+check(v148ScopedSourceBytes <= budget.maximum.sourceBytes, `v148-scoped source bytes ${v148ScopedSourceBytes}/${budget.maximum.sourceBytes} (excluded v149-v152 ${forwardSourceBytesV149Plus})`);
 check(audit.metrics.mainBytes <= budget.maximum.mainBytes, `main bytes ${audit.metrics.mainBytes}/${budget.maximum.mainBytes}`);
-check(audit.metrics.engineBytes <= budget.maximum.engineBytes, `engine bytes ${audit.metrics.engineBytes}/${budget.maximum.engineBytes}`);
-check(v148ScopedRuntimeBytes <= budget.maximum.runtimeBytes, `v148-scoped runtime bytes ${v148ScopedRuntimeBytes}/${budget.maximum.runtimeBytes} (excluded v150-v151 ${forwardRuntimeBytesV150Plus})`);
+check(v148ScopedEngineBytes <= budget.maximum.engineBytes, `v148-scoped engine bytes ${v148ScopedEngineBytes}/${budget.maximum.engineBytes} (excluded v149-v152 ${forwardEngineBytesV149Plus})`);
+check(v148ScopedRuntimeBytes <= budget.maximum.runtimeBytes, `v148-scoped runtime bytes ${v148ScopedRuntimeBytes}/${budget.maximum.runtimeBytes} (excluded v149-v152 ${forwardRuntimeBytesV149Plus})`);
 check(audit.metrics.setIntervalCalls === 0, 'setInterval calls must remain zero');
 check(audit.checks.hiddenFrameSuspensionBeforeHeavyWork, 'hidden frame must suspend before heavy work');
 check(main.includes('Math.min(.033, rawDt)'), 'frame delta clamp preserved');

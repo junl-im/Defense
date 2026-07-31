@@ -26,3 +26,32 @@ npm run verify:dist:all
 ```
 
 실브라우저에서는 WebGL2 timer-query 지원/미지원 양쪽, disjoint 발생, cinematic→balanced 강등, 모바일 장기 세션을 확인해야 한다.
+
+## CI chain hotfix R1 검증
+
+보고된 실패 명령 `npm run verify:ci`의 첫 중단 지점이 `bootstrap:identity:v151`임을 확인했다. 활성 v1.0.52 체인에서 다음 과거 mutator 호출을 제거했다.
+
+- `bootstrap:identity:v151`
+- `generate:identity:v151`
+- `generate:build-input:v151`
+
+`preverify`, `prebuild`, `sync:generated:ci`, v1.0.52 루트 검증과 릴리스 회귀 계약을 함께 수정했다. v1.0.51 스크립트는 과거 패키지 검증용으로 보존하지만 현재 릴리스 수명주기에서는 호출하지 않는다.
+
+
+### R1 재현 검증 결과
+
+다음 활성 단계는 종료 코드 0을 확인했다.
+
+```bash
+npm run prepare:repo-root:v152
+npm run sync:generated:ci
+npm run verify:trend:v145
+npm run verify:performance:v148
+npm run verify:release:v148
+npm run verify:foundation:v149:v150
+npm run verify:release:v150
+npm run verify:release:v152
+npm run hygiene:check
+```
+
+`npm run verify:ci` 단일 로컬 실행은 검증 실패 없이 v1.0.50 후반 게이트까지 진행했으나, 이 작업 환경의 장시간 명령 실행 상한으로 프로세스가 종료됐다. 동일 명령의 후반 구간인 v1.0.48→v1.0.52 릴리스 체인은 분할 실행으로 모두 통과했다. 따라서 보고된 v1.0.51 bootstrap 오류와 이후 드러난 source-contract 회귀는 제거됐지만, `npm ci`, 실제 Vite build, 브라우저 필수 dist 게이트의 최종 녹색 상태는 GitHub Actions에서 확인해야 한다.

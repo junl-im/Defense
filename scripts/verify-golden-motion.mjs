@@ -2,12 +2,17 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const sourcePath = resolve(import.meta.dirname, '../src/engine/animation-state-system.js');
+const timingSourcePath = resolve(import.meta.dirname, '../src/runtime/character-action-timing-v152.js');
 const source = readFileSync(sourcePath, 'utf8');
+const timingSource = readFileSync(timingSourcePath, 'utf8');
+const timingModuleUrl = `data:text/javascript;base64,${Buffer.from(timingSource).toString('base64')}`;
 const shim = `
 class AnimationMixer { constructor(){ } clipAction(){ return { reset(){return this}, setLoop(){return this}, fadeIn(){return this}, fadeOut(){return this}, play(){return this} }; } update(){} stopAllAction(){} }
 const THREE = { AnimationMixer, LoopOnce: 2200, LoopRepeat: 2201 };
 `;
-const transformed = source.replace("import * as THREE from 'three';", shim);
+const transformed = source
+  .replace("import * as THREE from 'three';", shim)
+  .replace("../runtime/character-action-timing-v152.js", timingModuleUrl);
 const moduleUrl = `data:text/javascript;base64,${Buffer.from(transformed).toString('base64')}`;
 const { AnimationStateSystem, CHARACTER_ANIMATION_STATES } = await import(moduleUrl);
 
@@ -24,11 +29,11 @@ system.setBaseState(controller, 'move');
 assert(controller.state === 'move' && controller.baseState === 'move', 'Walk 기본 상태 설정');
 system.trigger(controller, 'attack', .1);
 system.setBaseState(controller, 'run');
-system.updateController(controller, .12, null);
-assert(controller.state === 'run', 'Attack 종료 후 최신 Run 상태 복귀');
+system.updateController(controller, controller.oneShotUntil + .01, null);
+assert(controller.state === 'run', 'Attack authored timeline 종료 후 최신 Run 상태 복귀');
 system.trigger(controller, 'skill', .1);
-system.updateController(controller, .12, null);
-assert(controller.state === 'run', 'Skill 종료 후 Run 상태 복귀');
+system.updateController(controller, controller.oneShotUntil + .01, null);
+assert(controller.state === 'run', 'Skill authored timeline 종료 후 Run 상태 복귀');
 assert(['idle','move','run','attack','skill','hit','death'].every((state)=>CHARACTER_ANIMATION_STATES.includes(state)), '골든 샘플 7개 모션 상태');
 system.remove(controller);
 assert(system.diagnostics.controllers === 0, '애니메이션 컨트롤러 수명 정리');

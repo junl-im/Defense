@@ -42,7 +42,12 @@ check(sprites.includes("RuntimeAtlasBattlefieldPropsV16") && sprites.includes("p
 check(html.includes('id="hero-hud-portrait"') && main.includes('updateHeroHudPortrait'), 'selected atlas hero is visible in combat HUD');
 check(audit.includes('core-collision-guard') && audit.includes('title-simplified') && main.includes('runRuntimeVisualAudit'), 'runtime visual self-audit integrated');
 check(consoleSource.includes('VISUAL AUDIT') && (consoleSource.includes('CLEAR HORIZON v16') || (consoleSource.includes('MOON GATE REBORN v17') || consoleSource.includes('TEN-WAVE RELIABILITY v18'))), 'production console reports visual audit without cluttering title');
-check(html.includes(`const RELEASE_VERSION = '${pkg.dokkaebi?.releaseVersion || pkg.version}'`) && html.includes(`const BUILD_ID = '${pkg.dokkaebi?.buildId}'`), 'boot cache reset uses current release and build identity');
+const activeRevisionToken = `release-v${String(pkg.dokkaebi?.releaseVersion || pkg.version).split('.').filter((part, index) => index !== 1 || part !== '0').join('')}-b${pkg.dokkaebi?.buildEpoch}-${pkg.dokkaebi?.buildRevision}`;
+check(html.includes('<script src="./release-identity.generated.js"></script>')
+  && html.includes('const RELEASE_VERSION = releaseIdentity.releaseVersion;')
+  && html.includes('const BUILD_ID = releaseIdentity.buildId;')
+  && html.includes('const VERSION = releaseIdentity.cacheRevision;')
+  && html.includes(`?rev=${activeRevisionToken}`), 'boot cache reset uses current generated release and build identity');
 check(['docs/CLEAR_HORIZON_v16.0.0.md', 'docs/RUNTIME_VISUAL_AUDIT_v16.0.0.json', 'docs/PATCH_NOTES_v16.0.0.md', 'docs/PATCH_APPLY_v16.0.0.md', 'docs/NEXT_PATCH_LINEUP_v16.x.md'].every((path) => existsSync(resolve(root, path))), 'v16 operating and audit documents exist');
 
 if (failures) {

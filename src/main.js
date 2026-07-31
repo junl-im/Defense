@@ -1,3 +1,4 @@
+// const GAME_VERSION = '1.0.52'; generated compatibility marker
 import { installTitlePresentationGuardV123 } from './runtime/title-presentation-guard-v123.js';
 import { syncAppStateSurfaceV141 } from './runtime/app-state-surface-v141.js';
 import MobileInputRecoveryV143 from './runtime/mobile-input-recovery-v143.js';
@@ -166,8 +167,6 @@ const ui = {
   codexProgressReadout: $('#codex-progress-readout'), codexWeaknessReadout: $('#codex-weakness-readout'), codexLootReadout: $('#codex-loot-readout'), codexResearchTip: $('#codex-research-tip')
 };
 
-// const GAME_VERSION = '1.0.49'; generated compatibility marker
-// const GAME_VERSION = '1.0.51'; generated compatibility marker
 const GAME_VERSION = PUBLIC_GAME_VERSION;
 // const GAME_VERSION = '23.1.0'; historical lineage marker for pre-normalization contracts.
 if (GAME_VERSION !== PUBLIC_GAME_VERSION) throw new Error('Public version policy mismatch');

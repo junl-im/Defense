@@ -4,7 +4,7 @@
   "sourceContract": "DD-RUNTIME-ASSET-REACHABILITY-V143",
   "sourceCandidateCount": 24,
   "reviewedCount": 24,
-  "reviewedBytes": 3209434,
+  "reviewedBytes": 3209966,
   "deleteApprovedCount": 0,
   "policy": "No candidate may be quarantined or deleted until an explicit follow-up patch changes deleteApproved and provides replacement evidence.",
   "dispositions": {
@@ -26,7 +26,7 @@
     },
     "retain-runtime-contract": {
       "count": 1,
-      "bytes": 22782
+      "bytes": 23314
     }
   },
   "reviews": [
@@ -308,7 +308,7 @@
     },
     {
       "path": "public/assets/system-v135/runtime-module-shell-v135.json",
-      "bytes": 22782,
+      "bytes": 23314,
       "disposition": "retain-runtime-contract",
       "owner": "release-engineering",
       "evidence": [

@@ -14,6 +14,30 @@ const TARGET = Object.freeze({
 });
 const ALLOWED = new Set(['1.0.51', '1.0.52']);
 const stableJson = (value) => `${JSON.stringify(value, null, 2)}\n`;
+const activeRevisionToken = `release-v${TARGET.releaseVersion.split('.').filter((part, index) => index !== 1 || part !== '0').join('')}-b${TARGET.buildEpoch}-${TARGET.buildRevision}`;
+function syncCompatibilityMarkers(source, markers) {
+  const names = markers.map((marker) => marker.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+  const pattern = new RegExp(`^[\\t ]*//\\s*(?:export\\s+)?const\\s+(?:${names})\\s*=.*generated compatibility marker[\\t ]*\\r?\\n?`, 'gm');
+  const body = String(source || '').replace(pattern, '').replace(/^\s*\n/, '');
+  const lines = markers.map((marker) => {
+    const declaration = marker.exported ? 'export const' : 'const';
+    const value = typeof marker.value === 'number' ? String(marker.value) : `'${marker.value}'`;
+    return `// ${declaration} ${marker.name} = ${value}; generated compatibility marker`;
+  });
+  return `${lines.join('\n')}\n${body}`;
+}
+function syncIndexIdentity(source) {
+  return String(source || '').split('\n').map((line) => {
+    let next = line
+      .replace(/\/\/ const RELEASE_VERSION = '[^']+'; generated compatibility marker/, `// const RELEASE_VERSION = '${TARGET.releaseVersion}'; generated compatibility marker`)
+      .replace(/\/\/ const BUILD_ID = '[^']+'; generated compatibility marker/, `// const BUILD_ID = '${TARGET.buildId}'; generated compatibility marker`)
+      .replace(/\/\/ src="\.\/src\/bootstrap\.js\?v=[^"]+" generated compatibility marker/, `// src="./src/bootstrap.js?v=${TARGET.cacheRevision}" generated compatibility marker`);
+    if (!next.includes('historical') && !next.includes('compatibility marker')) {
+      next = next.replace(/\?rev=release-v\d+-b\d+-\d+/g, `?rev=${activeRevisionToken}`);
+    }
+    return next;
+  }).join('\n');
+}
 function outputs(pkg, lock) {
   if (pkg?.name !== 'dokkaebi-luck-defense-3d' || !ALLOWED.has(String(pkg.version || ''))) throw new Error(`v152 identity sync refused for ${pkg?.name || '<missing>'}@${pkg?.version || '<missing>'}`);
   const nextPkg = structuredClone(pkg); nextPkg.version = TARGET.releaseVersion; nextPkg.dokkaebi = { ...(nextPkg.dokkaebi || {}), ...TARGET };
@@ -26,13 +50,33 @@ if (selfTest) {
   const pkg = { name: 'dokkaebi-luck-defense-3d', version: '1.0.51', scripts: { verify: 'x' } };
   const lock = { version: '1.0.51', packages: { '': { version: '1.0.51' } } };
   const files = outputs(pkg, lock);
-  if (JSON.parse(files.get('package.json')).version !== '1.0.52' || JSON.parse(files.get('package-lock.json')).packages[''].version !== '1.0.52') throw new Error('v152 identity self-test failed');
+  const indexFixture = syncIndexIdentity(`// const RELEASE_VERSION = '1.0.51'; generated compatibility marker\n// const BUILD_ID = 'b24.51'; generated compatibility marker\n<link href="./manifest.webmanifest?rev=release-v151-b24-51">`);
+  const sourceFixture = syncCompatibilityMarkers(`// const GAME_VERSION = '1.0.51'; generated compatibility marker\nconst GAME_VERSION = PUBLIC_GAME_VERSION;`, [{ name: 'GAME_VERSION', value: TARGET.releaseVersion }]);
+  if (JSON.parse(files.get('package.json')).version !== '1.0.52' || JSON.parse(files.get('package-lock.json')).packages[''].version !== '1.0.52' || !indexFixture.includes('1.0.52') || !indexFixture.includes('b24.52') || !indexFixture.includes(activeRevisionToken) || !sourceFixture.includes(`const GAME_VERSION = '${TARGET.releaseVersion}'`) || sourceFixture.includes("const GAME_VERSION = '1.0.51'")) throw new Error('v152 identity self-test failed');
   console.log('PASS v1.0.52 identity self-test (1.0.51 -> 1.0.52)');
   process.exit(0);
 }
 const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
 const lock = JSON.parse(fs.readFileSync(path.join(root, 'package-lock.json'), 'utf8'));
 const files = outputs(pkg, lock);
+files.set('index.html', syncIndexIdentity(fs.readFileSync(path.join(root, 'index.html'), 'utf8')));
+files.set('src/version-policy.js', syncCompatibilityMarkers(fs.readFileSync(path.join(root, 'src/version-policy.js'), 'utf8'), [
+  { name: 'PUBLIC_GAME_VERSION', value: TARGET.releaseVersion, exported: true },
+  { name: 'LEGACY_LINEAGE_VERSION', value: TARGET.lineageVersion, exported: true },
+  { name: 'BUILD_EPOCH', value: TARGET.buildEpoch, exported: true },
+  { name: 'BUILD_REVISION', value: TARGET.buildRevision, exported: true }
+]));
+files.set('src/main.js', syncCompatibilityMarkers(fs.readFileSync(path.join(root, 'src/main.js'), 'utf8'), [
+  { name: 'GAME_VERSION', value: TARGET.releaseVersion }
+]));
+files.set('public/sw.js', syncCompatibilityMarkers(fs.readFileSync(path.join(root, 'public/sw.js'), 'utf8'), [
+  { name: 'RELEASE_VERSION', value: TARGET.releaseVersion },
+  { name: 'BUILD_ID', value: TARGET.buildId }
+]));
+files.set('public/static-bootstrap.js', syncCompatibilityMarkers(fs.readFileSync(path.join(root, 'public/static-bootstrap.js'), 'utf8'), [
+  { name: 'RELEASE_VERSION', value: TARGET.releaseVersion },
+  { name: 'BUILD_ID', value: TARGET.buildId }
+]));
 const stale = [...files].filter(([file, expected]) => !fs.existsSync(path.join(root, file)) || fs.readFileSync(path.join(root, file), 'utf8') !== expected).map(([file]) => file);
 if (checkOnly) {
   if (stale.length) throw new Error(`v152 generated identity is stale: ${stale.join(', ')}`);

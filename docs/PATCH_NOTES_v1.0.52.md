@@ -21,3 +21,22 @@
 - 신규 최종 캐릭터 원화 승인 수는 0이다.
 - 기존 승인·파생·격리 상태를 그대로 유지한다.
 - GPU 타이머는 전체 렌더 프레임을 측정하며 캐릭터 계층만의 독립 GPU 비용으로 과장하지 않는다.
+
+## CI chain hotfix R1
+
+- `sync:generated:ci`가 v1.0.52에서 v1.0.51 bootstrap을 호출해 중단되던 문제를 수정했다.
+- v1.0.51 bootstrap의 허용 버전을 확장하지 않았다. 과거 릴리스 복구 도구는 그대로 보존하고 활성 v1.0.52 체인에서만 분리했다.
+- `preverify`와 `prebuild`를 v1.0.52 루트 준비 경로로 통일했다.
+- v1.0.52 전용 repository-root 검증과 활성 체인 회귀 검사를 추가했다.
+- CI source manifest는 동기화 중 재생성하지 않고 검증만 수행해 커밋된 서명 경계를 유지한다.
+
+
+### R1 추가 수정 범위
+
+- `scripts/verify-project.mjs`의 직접 v1.0.51 bootstrap 호출을 현재 릴리스 identity check로 교체했다.
+- 골든 모션 검증기가 v1.0.52 상대 import와 클래스별 실제 authored timeline 종료 시간을 사용하도록 수정했다.
+- 생성 identity가 `index.html`, `src/version-policy.js`, `src/main.js`, `public/sw.js`, `public/static-bootstrap.js`의 호환 마커까지 멱등적으로 동기화한다.
+- 오래된 `dist/`와 `dist-pages/`는 source verification 전에 정리하고, 새 빌드 뒤 `verify:dist:all`에서만 엄격 검증한다.
+- v1.0.45·v1.0.48 역사 성능 게이트는 기준을 완화하지 않고 v1.0.49~v1.0.52 forward-tagged 모듈과 v1.0.52 `main.js` 계측 추가분만 측정 범위에서 분리한다.
+- v1.0.48 identity preflight가 `preverify → prepare:repo-root:v152`처럼 중첩된 lifecycle 명령을 해석한다.
+- CI source revision은 위 회귀 방지 파일까지 포함해 28개 파일을 SHA-256 서명한다.

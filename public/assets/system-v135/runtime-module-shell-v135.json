@@ -6,7 +6,7 @@
   "cacheRevision": "1.0.52-b24.52",
   "entry": "src/bootstrap.js",
   "moduleCount": 136,
-  "totalBytes": 1606018,
+  "totalBytes": 1605953,
   "files": [
     {
       "path": "src/art-production-gate.js",
@@ -320,8 +320,8 @@
     },
     {
       "path": "src/main.js",
-      "bytes": 418248,
-      "sha256": "d5ebc5d830a7f51826cfa6bfa75ac6bffa12b732a4e2d5a0115cc84341ef154f"
+      "bytes": 418183,
+      "sha256": "8cf2576223f211183860cb325e73a9440ab71b9c1869289f825edc36ea9c0d74"
     },
     {
       "path": "src/premium-assets.js",

@@ -112,31 +112,41 @@ const hasOrderedTokens = (command, required) => {
     return true;
   });
 };
-const prepareRootCommand = packageJson.scripts?.['prepare:repo-root:v151'];
-const prepareRootIsComplete = hasOrderedTokens(prepareRootCommand, [
-  'npm run bootstrap:identity:v151',
-  'npm run clean:repo-root:v151',
-  'npm run verify:repo-root:v151'
-]);
-const hasOrderedLifecycle = (command) => hasOrderedTokens(command, [
-  'npm run prepare:repo-root:v151',
-  'npm run hygiene:check',
-  'npm run verify:identity:v151'
-]) || hasOrderedTokens(command, [
-  'npm run bootstrap:identity:v151',
-  'npm run clean:obsolete',
-  'npm run hygiene:check',
-  'npm run verify:identity:v151'
-]);
+const activeRootVersion = packageJson.version === '1.0.52' ? 'v152' : 'v151';
+const prepareRootCommand = packageJson.scripts?.[`prepare:repo-root:${activeRootVersion}`];
+const prepareRootIsComplete = activeRootVersion === 'v152'
+  ? hasOrderedTokens(prepareRootCommand, [
+    'npm run clean:obsolete',
+    'npm run hygiene:check',
+    'npm run verify:identity:v152',
+    'npm run verify:repo-root:v152'
+  ])
+  : hasOrderedTokens(prepareRootCommand, [
+    'npm run bootstrap:identity:v151',
+    'npm run clean:repo-root:v151',
+    'npm run verify:repo-root:v151'
+  ]);
+const hasOrderedLifecycle = (command) => activeRootVersion === 'v152'
+  ? hasOrderedTokens(command, ['npm run prepare:repo-root:v152'])
+  : hasOrderedTokens(command, [
+    'npm run prepare:repo-root:v151',
+    'npm run hygiene:check',
+    'npm run verify:identity:v151'
+  ]) || hasOrderedTokens(command, [
+    'npm run bootstrap:identity:v151',
+    'npm run clean:obsolete',
+    'npm run hygiene:check',
+    'npm run verify:identity:v151'
+  ]);
 const preverifyHasCleanup = hasOrderedLifecycle(preverifyCommand);
 const prebuildHasCleanup = hasOrderedLifecycle(prebuildCommand);
 if (cleanCommand === 'node scripts/clean-obsolete-assets.mjs'
   && prepareRootIsComplete
   && preverifyHasCleanup
   && prebuildHasCleanup) {
-  pass('검증·빌드 전 구버전 번들 정리와 루트 위생 검사');
+  pass('검증·빌드 전 활성 릴리스 정리와 루트 위생 검사');
 } else {
-  fail('preverify/prebuild 정리·위생 검사 연결 누락');
+  fail('preverify/prebuild 활성 릴리스 정리·위생 검사 연결 누락');
 }
 if (main.includes("from './runtime-lifecycle.js'") && main.includes('this.lifecycle.beginRun()') && main.includes('this.lifecycle.endRun()')) pass('런 수명 토큰과 작업 취소 연결');
 else fail('런 수명 관리 연결 누락');

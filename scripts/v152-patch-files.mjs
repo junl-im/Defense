@@ -45,7 +45,23 @@ export const V152_PATCH_FILES = Object.freeze([
   'src/runtime/character-presentation-budget-v152.js',
   'src/runtime/character-presentation-director-v151.js',
   'src/runtime/result-presenter-v149.js',
-  'src/version-policy.js'
+  'src/version-policy.js',
+  'docs/generated/asset-review-v144.json',
+  'docs/generated/asset-review-v144.md',
+  'docs/generated/runtime-asset-reachability-v143.json',
+  'docs/generated/runtime-asset-reachability-v143.md',
+  'docs/generated/system-audit-v148.json',
+  'docs/generated/system-audit-v148.md',
+  'scripts/clean-obsolete-assets.mjs',
+  'scripts/verify-code-integrity.mjs',
+  'scripts/verify-golden-motion.mjs',
+  'scripts/verify-performance-guard-v148.mjs',
+  'scripts/verify-performance-trend-v145.mjs',
+  'scripts/verify-project.mjs',
+  'scripts/verify-release-v148.mjs',
+  'scripts/verify-repository-root-v152.mjs',
+  'scripts/verify-v1600.mjs',
+  'scripts/verify-v2302.mjs',
 ]);
 
 export const V152_DELETED_PATHS = Object.freeze([

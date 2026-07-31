@@ -15,7 +15,7 @@
 - 회귀 방지: `scripts/verify-ci-root-cleanup-v151.mjs`가 workflow 명령 순서와 임시 저장소의 실제 삭제 결과를 검증한다.
 - 적용 후 필수 확인: `node scripts/bootstrap-release-package-v151.mjs`, `node scripts/clean-obsolete-assets.mjs`, `node scripts/verify-repository-root-v151.mjs`, `npm run verify:ci`.
 - 릴리스 식별자는 그대로 `v1.0.51 / b24.51`, repair revision은 2다.
-> Current improvement patch: **v1.0.52 / b24.52** - EVENT TIMING & RUNTIME GUARD RELEASE
+> Current improvement patch: **v1.0.52 / b24.52** - EVENT TIMING & RUNTIME GUARD / CI CHAIN HOTFIX R1
 
 # PROJECT HANDOFF - RELEASE 1.0.52
 
@@ -23,7 +23,7 @@
 - Public game version: `1.0.52`
 - Lineage version: `23.12.0`
 - Build ID: `b24.52`
-- Base: `Defense.zip` / SHA-256 `f2b27898e8cceb61ee7a95b7ce4505a2829d9b37753d23a89a0529d8edf21672`
+- Base: `Defense_v1.0.50_FULL.zip` / SHA-256 `24566db7b5479b6e0af3b19c51c554592f5587f4228bc11ec8e3e683033384b8`
 
 ## 절대 규칙
 
@@ -96,15 +96,25 @@ npm run hygiene:check
 
 ## 인수인계 내역
 
+### 2026-07-31 — v1.0.52 / b24.52 CI generated-output chain hotfix R1
+
+- 작업 목표: GitHub Actions의 `npm run verify:ci`가 v1.0.52에서 과거 `bootstrap:identity:v151`을 호출해 `supported source versions are 1.0.50-1.0.51, actual 1.0.52`로 중단되는 오류와, 그 뒤에 숨어 있던 역사 검증기 호환 문제를 제거한다.
+- 직접 원인: `sync:generated:ci`, `prebuild`, `verify-project.mjs`가 v1.0.51 identity 경로를 참조했고, 일부 역사 게이트는 현재 생성형 identity·중첩 lifecycle·forward-release 성능 코드를 인식하지 못했다. v1.0.51 도구의 허용 버전을 넓히지 않고 활성 v1.0.52 호출 체인을 분리했다.
+- 주요 변경 파일: `package.json`, `scripts/verify-repository-root-v152.mjs`, `scripts/generate-release-identity-v152.mjs`, `scripts/verify-project.mjs`, `scripts/verify-golden-motion.mjs`, `scripts/verify-code-integrity.mjs`, `scripts/verify-v1600.mjs`, `scripts/verify-v2302.mjs`, `scripts/verify-performance-trend-v145.mjs`, `scripts/verify-performance-guard-v148.mjs`, `scripts/verify-release-v148.mjs`, `scripts/clean-obsolete-assets.mjs`, v1.0.52 source 서명·패키징·문서 파일.
+- 수정 내용: 활성 수명주기를 `clean:obsolete → hygiene:check → verify:identity:v152 → verify:repo-root:v152`로 고정했다. v1.0.52 identity generator가 package/lock/generated identity/index와 source·service-worker 호환 마커를 멱등적으로 동기화한다. 골든 모션 검증은 v1.0.52 timing module import와 authored event 종료 시간을 사용한다. 오래된 dist는 source verify 전에 제거하고 build 후 dist chain에서 검증한다. 역사 성능 게이트는 원래 상한을 유지하면서 v1.0.49~v1.0.52 forward-tagged 코드만 분리한다.
+- 검증 명령: `npm run prepare:repo-root:v152`, `npm run sync:generated:ci`, `npm run verify:trend:v145`, `npm run verify:performance:v148`, `npm run verify:release:v148`, `npm run verify:foundation:v149:v150`, `npm run verify:release:v150`, `npm run verify:release:v152`, `npm run hygiene:check`, CI의 `npm ci → npm run verify:ci → VITE_BASE_PATH=/Defense/ npm run build → npm run verify:dist:all`.
+- 검증 결과: 보고된 v1.0.51 bootstrap 실패는 동일 호출 체인에서 제거됐다. v1.0.52 루트·identity·생성물·28개 CI source 서명, v1.0.45 추세, v1.0.48 성능·identity preflight, v1.0.50 기반, v1.0.52 릴리스 게이트가 종료 코드 0으로 통과했다. `npm run verify:ci` 단일 로컬 실행은 FAIL 없이 v1.0.50 후반까지 진행했으나 장시간 명령 실행 상한으로 종료됐고, 남은 후반 체인은 동일 순서로 분할 실행해 전부 통과했다.
+- 잔여 위험: 이 전달 환경에는 정상 Vite 실행 의존성이 없어 실제 `npm ci`, Vite 번들, WebGL/browser 필수 dist 검증을 로컬 통과로 기록할 수 없다. 수정본 푸시 후 GitHub Actions의 build와 `REQUIRE_BROWSER_*` dist 게이트 종료 코드 0을 확인해야 한다.
+- 산출물 규칙: 전체본은 `dist`, `node_modules`, 생성 로그를 제외한다. R1 패치는 최초 v1.0.52 전체 ZIP SHA-256 `1f5f5ea84eb1f34df79830f2a70b1cb749392504f9d511337fce7c7206305412`를 provenance 기준으로 기록하며 `overlay/` 내용만 루트에 덮어쓴다.
+- 다음 예정: v1.0.53 실 WebGL 계측·화면 증거 작업 전에 v1.0.52 CI 전체 녹색 상태를 기준선으로 확정한다.
+
 ### 2026-07-31 — v1.0.52 / b24.52 event timing and runtime guard
 
-- 작업 목표: v1.0.51 캐릭터 표현 계층의 자동 게이트 밖 경계 오류를 전수 점검하고, 클래스별 액션 타이밍·장기 세션 할당·GPU 비용·재질·결과 UI·폐기 수명주기를 보강한다.
-- 주요 변경 파일: `src/runtime/character-action-timing-v152.js`, `src/runtime/character-presentation-budget-v152.js`, `src/engine/gpu-frame-timer-v152.js`, `src/engine/animation-state-system.js`, `src/runtime/character-presentation-director-v151.js`, `src/engine/character-material-enhancer-v151.js`, `src/runtime/result-presenter-v149.js`, `src/main.js`, v152 검증·정체성·문서·패키지·패치 파일.
-- 수정 내용: 상태 전환·비가시화·순간이동 때 잔상 기록을 비우고 고정 샘플 버퍼와 지속 Vector3를 사용한다. 5개 영웅 직업과 수호대·몬스터·보스에 절대 초 단위 이벤트를 연결하며 원샷 종료시간이 마지막 authored event보다 짧아지지 않게 한다. WebGL2 disjoint timer query와 CPU/frame p95 예산을 수집해 지속 초과 시 cinematic을 balanced로 한 번만 낮춘다. authored emissive를 보존하고 결과 HTML과 비정상 점수, 지연 로딩·전역 API 폐기를 보강한다.
-- 검증 명령: `node --check` 전체 JS/MJS, `npm run verify:release:v152`, `node scripts/audit-code-health-v102.mjs --check`, `node scripts/generate-runtime-shell-v135.mjs --check`, `npm run hygiene:check`, 정리 패키지·direct-overlay 해시 검증.
-- 현재 검증 결과: 전체 구문, 클래스 이벤트, 비용 강등, 결과 HTML, v1.0.50 기반, v1.0.51 캐릭터·재질·장기 세션 보존, 런타임 셸, 루트 위생 검증은 종료 코드 0이다. 전달된 `dist`는 v1.0.35로 오래되어 최종 패키지에서 제외한다.
-- 잔여 위험: 전달 환경의 `node_modules`는 실행 본문이 없고 내부 저장소는 `vite@8.1.5`를 제공하지 않아 실제 Vite 빌드·WebGL 셰이더 컴파일·GPU query 실측·화면 캡처는 실행하지 못했다. GPU 표본은 전체 렌더 프레임 비용이며 캐릭터 계층 단독 비용으로 간주하지 않는다.
-- 다음 예정: `docs/NEXT_UPDATE_v1.0.53.md`의 실제 WebGL 캡처, 구간별 GPU/CPU 귀속 개선, timer-query/context-loss 브라우저 행렬, 승인 원본 기반 mask, 나머지 11방향 사람 검토.
+- 작업 목표: v1.0.51 캐릭터 표현 계층의 잔상 상태 경계, 장기 세션 할당 압력, 클래스별 release/impact 이벤트 누락 위험을 수정하고 GPU/CPU 예산 초과 시 안전 강등을 추가한다.
+- 주요 변경 파일: `src/runtime/character-action-timing-v152.js`, `src/runtime/character-presentation-budget-v152.js`, `src/engine/gpu-frame-timer-v152.js`, `src/runtime/character-presentation-director-v151.js`, `src/engine/animation-state-system.js`, `src/main.js`, `src/runtime/result-presenter-v149.js`, v1.0.52 검증·패키징·문서 파일.
+- 검증 결과: 액션 타임라인, 고정 잔상 버퍼, GPU/CPU 강등 모델, 결과 문자열 이스케이프, authored emissive 보존, v1.0.50/v1.0.51 기반 보존 검증을 통과했다. 신규 최종 원화 승인은 0종이다.
+- 잔여 위험: 실제 GPU timer-query, WebGL 셰이더 컴파일과 모바일 화면 증거는 CI·실기기 환경에서 확인해야 한다.
+- 다음 예정: `docs/NEXT_UPDATE_v1.0.53.md`.
 
 ### 2026-07-30 — v1.0.51 / b24.51 modern character presentation
 

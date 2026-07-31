@@ -4,6 +4,11 @@ const pkg = JSON.parse(read('package.json'));
 const workflow = read('.github/workflows/deploy.yml');
 const handoff = read('PROJECT_HANDOFF.md');
 const gitignore = read('.gitignore');
+const preverifyCommand = String(pkg.scripts?.preverify || '');
+const nestedPrepareMatch = preverifyCommand.match(/npm run (prepare:repo-root:v\d+)/);
+const nestedPrepareCommand = nestedPrepareMatch ? String(pkg.scripts?.[nestedPrepareMatch[1]] || '') : '';
+const preverifyHasHygiene = preverifyCommand.includes('hygiene:check') || nestedPrepareCommand.includes('hygiene:check');
+
 const simulations = [
   read('scripts/simulate-ten-wave-run-v18.mjs'),
   read('scripts/simulate-autonomous-moonfront-v22.mjs'),
@@ -18,7 +23,7 @@ const checks = [
   ['central output path utility exists', fs.existsSync('scripts/output-paths.mjs')],
   ['logs directory contract exists', fs.existsSync('logs/README.md')],
   ['logs are ignored except contract', gitignore.includes('logs/*') && gitignore.includes('!logs/README.md')],
-  ['verification starts and ends with hygiene checks', pkg.scripts.preverify.includes('hygiene:check') && pkg.scripts.verify.endsWith('npm run hygiene:check')],
+  ['verification starts and ends with hygiene checks', preverifyHasHygiene && pkg.scripts.verify.endsWith('npm run hygiene:check')],
   ['logged commands write under logs', pkg.scripts['verify:logged'].includes('run-with-log.mjs verify') && pkg.scripts['build:logged'].includes('run-with-log.mjs build')],
   ['simulations default to logs', simulations.every((source) => source.includes('generatedOutput') && source.includes("category: 'simulations'"))],
   ['browser and asset audits default to logs', read('scripts/run-browser-reliability-lab-v19.mjs').includes("category: 'audits'") && read('scripts/audit-asset-presence-v21.mjs').includes("category: 'audits'")],
