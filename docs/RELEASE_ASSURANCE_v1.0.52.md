@@ -143,3 +143,21 @@ R6 검증 항목:
 - CI source manifest가 helper, fixture, v148-v152 dist verifier를 SHA-256 서명한다.
 
 로컬 환경에는 Vite 실행 의존성이 없어 GitHub와 동일한 실제 번들을 생성하지 못했다. 대신 `assets/game.js → dynamic main chunk → base-path runtime chunk` 구조의 합성 fixture에서 마커 탐색과 고아 chunk 거부를 종료 코드 0으로 확인한다. 실제 complete Vite dist의 v148-v152 연속 통과는 GitHub Actions에서 최종 확인한다.
+
+
+## CI chain hotfix R7 검증
+
+R6 GitHub Actions는 v147과 v148을 통과한 뒤 v149 production-default에서 `testApi:true`로 실패했다. 페이지는 `127.0.0.1`에서 실행됐고 기존 정책은 production localhost를 QA 허용 예외로 처리했으므로, 실패는 실제 무단 노출 탐지이자 동시에 테스트와 정책의 상충이었다.
+
+R7 검증 항목:
+
+- production + 일반 호스트: QA API 숨김
+- production + localhost/127.0.0.1: QA API 숨김
+- production + 명시적 `?qa=v149`: frozen QA API 노출
+- development mode: QA API 노출
+- v144, v145, v146, v147 자동화 URL에 명시적 `?qa=` 토큰 존재
+- 숨겨진 `#boot-error` 템플릿 텍스트는 오류 보고에서 제외
+- 실제 visible boot recovery 화면은 production/default와 explicit-QA 시나리오 모두 실패
+- v149 Chromium foreground scheduling 플래그 3종 유지
+
+실제 Vite/Chromium 성공 경로는 GitHub Actions에서 최종 확인한다. 이번 변경은 게임 저장·전투·서비스 워커 코드에는 영향을 주지 않고 전역 QA API 노출 경계만 강화한다.

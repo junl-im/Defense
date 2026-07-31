@@ -75,14 +75,19 @@
       "sha256": "ca20317a97a8e68df6e8fc0dfff33d73b13994534beeee1216683265b8512928"
     },
     {
+      "path": "src/runtime/feature-exposure-policy-v149.js",
+      "bytes": 914,
+      "sha256": "914d7289f0f9536f927fed2de47604d9ea1864b147e7686d79986ff36a46f27f"
+    },
+    {
       "path": "src/runtime/result-presenter-v149.js",
       "bytes": 4628,
       "sha256": "cc64a1f256f7dc1e82442d191b95b8ea04966ca8e1cbf13688bc534fde92014e"
     },
     {
       "path": "scripts/verify-release-v152.mjs",
-      "bytes": 14713,
-      "sha256": "25e098acdd912eead5a1953858aea1cf77c982654e10a20eeb694654aa3b84eb"
+      "bytes": 16381,
+      "sha256": "50e48793195e74a2384dc846e612629931d679fbeb2213c270e81be302fffda7"
     },
     {
       "path": "scripts/verify-runtime-hardening-v152.mjs",
@@ -203,6 +208,16 @@
       "path": "scripts/verify-dist-v149.mjs",
       "bytes": 3695,
       "sha256": "30f6c5183daaa4e454e1f2baac5107ce350283e3e0279c908c7492bf27b8e489"
+    },
+    {
+      "path": "scripts/run-feature-exposure-v149.mjs",
+      "bytes": 8827,
+      "sha256": "2465ee21929d9306324fc4404aa2a99c17afb7aba4e54bb561c47e6ea2aa4792"
+    },
+    {
+      "path": "scripts/verify-feature-exposure-v149.mjs",
+      "bytes": 1357,
+      "sha256": "e30490be119ca4ae0517817b0b28c67d3f04a77d68b141c2901520c49f162316"
     },
     {
       "path": "scripts/verify-dist-v150.mjs",

@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 const root = path.resolve(import.meta.dirname, '..');
-const stage = path.join(root, 'logs/package/1.0.52/DokkaebiLuckDefense3D_FULL_v1.0.52_EVENT_TIMING_RUNTIME_GUARD_CI_HOTFIX_R6');
+const stage = path.join(root, 'logs/package/1.0.52/DokkaebiLuckDefense3D_FULL_v1.0.52_EVENT_TIMING_RUNTIME_GUARD_CI_HOTFIX_R7');
 if (!fs.existsSync(stage)) throw new Error('v152 staged package missing');
 for (const banned of ['dist', 'node_modules', '.git', 'overlay']) if (fs.existsSync(path.join(stage, banned))) throw new Error(`v152 staged package contains ${banned}`);
 const pkg = JSON.parse(fs.readFileSync(path.join(stage, 'package.json'), 'utf8'));
@@ -17,6 +17,9 @@ for (const file of [
   'scripts/verify-dist-bundle-markers-v152.mjs',
   'scripts/verify-dist-v148.mjs',
   'scripts/verify-dist-v149.mjs',
+  'scripts/run-feature-exposure-v149.mjs',
+  'scripts/verify-feature-exposure-v149.mjs',
+  'src/runtime/feature-exposure-policy-v149.js',
   'scripts/verify-dist-v150.mjs',
   'scripts/verify-dist-v151.mjs',
   'scripts/verify-dist-v152.mjs',
@@ -35,4 +38,4 @@ for (const file of [
   'docs/NEXT_UPDATE_v1.0.53.md',
   'PROJECT_HANDOFF.md'
 ]) if (!fs.existsSync(path.join(stage, file))) throw new Error(`v152 staged contract missing ${file}`);
-console.log('PASS v1.0.52 CI hotfix R6 clean source package staging');
+console.log('PASS v1.0.52 CI hotfix R7 clean source package staging');

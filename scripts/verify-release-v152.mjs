@@ -72,6 +72,12 @@ const distVerifierV151 = read('scripts/verify-dist-v151.mjs');
 const distVerifierV152 = read('scripts/verify-dist-v152.mjs');
 const responsibilityVerifierV149 = read('scripts/verify-responsibility-extraction-v149.mjs');
 const performanceVerifierV149 = read('scripts/verify-performance-reproducibility-v149.mjs');
+const featurePolicyV149 = read('src/runtime/feature-exposure-policy-v149.js');
+const featureVerifierV149 = read('scripts/verify-feature-exposure-v149.mjs');
+const featureRunnerV149 = read('scripts/run-feature-exposure-v149.mjs');
+const mobileRunnerV144 = read('scripts/run-built-game-mobile-matrix-v144.mjs');
+const longSessionRunnerV145 = read('scripts/run-long-session-v145.mjs');
+const assuranceRunnerV146 = read('scripts/run-release-assurance-v146.mjs');
 const stagePackageV152 = read('scripts/stage-clean-package-v152.mjs');
 const verifyPackageV152 = read('scripts/verify-clean-package-v152.mjs');
 const createPatchV152 = read('scripts/create-patch-v152.mjs');
@@ -103,9 +109,14 @@ check(distVerifierV149.includes('patchRevision < 49') && distVerifierV149.includ
 check(distVerifierV150.includes('patchRevision<50') && distVerifierV150.includes('version.buildId!==`b24.${patchRevision}`'), 'v150 dist identity is forward-compatible through v152');
 check(responsibilityVerifierV149.includes('finishRunPersistence') && responsibilityVerifierV149.includes("'finish-run-rewards'") && responsibilityVerifierV149.includes('this.persistentRewardsV150.awardRun'), 'v149 responsibility gate accepts v150 atomic finish-run persistence');
 check(performanceVerifierV149.includes('v149ScopedSourceBytes') && performanceVerifierV149.includes('forwardTagV150Plus') && performanceVerifierV149.includes('excluded v150-v152'), 'v149 historical source budget excludes only forward v150-v152 modules');
-check(stagePackageV152.includes('CI_HOTFIX_R6') && verifyPackageV152.includes('CI_HOTFIX_R6'), 'v152 clean package staging identifies CI hotfix R6');
-check(createPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R6') && createPatchV152.includes('1.0.52-r6') && verifyPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R6'), 'v152 project-root patch tooling identifies CI hotfix R6');
-check(!createPatchV152.includes("path.join(out, 'overlay')") && createPatchV152.includes("path.join(out, 'project-root')"), 'v152 R6 patch remains a true project-root overlay without wrapper');
+check(featurePolicyV149.includes('const allowQaApi = !production || qaRequested;') && !featurePolicyV149.includes('!production || local || qaRequested'), 'production localhost requires explicit QA opt-in');
+check(featureVerifierV149.includes('localProduction.local && !localProduction.allowQaApi') && featureVerifierV149.includes('localQa.local && localQa.allowQaApi'), 'feature exposure regression covers localhost default and explicit QA');
+check(featureRunnerV149.includes('!publicScenario.testApi') && featureRunnerV149.includes('qaScenario.testApi') && featureRunnerV149.includes('bootErrorVisible'), 'v149 browser exposure distinguishes default, explicit QA, and visible boot failure');
+check(featureRunnerV149.includes('--disable-background-timer-throttling') && featureRunnerV149.includes('--disable-backgrounding-occluded-windows') && featureRunnerV149.includes('--disable-renderer-backgrounding'), 'v149 browser exposure preserves foreground scheduling');
+check(mobileRunnerV144.includes('?qa=v144') && longSessionRunnerV145.includes('?qa=v145') && assuranceRunnerV146.includes('?qa=v146') && offlineRunnerV147.includes('?qa=v147'), 'all production browser automation explicitly opts into QA API');
+check(stagePackageV152.includes('CI_HOTFIX_R7') && verifyPackageV152.includes('CI_HOTFIX_R7'), 'v152 clean package staging identifies CI hotfix R7');
+check(createPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R7') && createPatchV152.includes('1.0.52-r7') && verifyPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R7'), 'v152 project-root patch tooling identifies CI hotfix R7');
+check(!createPatchV152.includes("path.join(out, 'overlay')") && createPatchV152.includes("path.join(out, 'project-root')"), 'v152 R7 patch remains a true project-root overlay without wrapper');
 
 if (failures.length) {
   failures.forEach((failure) => console.error(`FAIL ${failure}`));

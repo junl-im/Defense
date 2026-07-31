@@ -417,3 +417,15 @@ A valid R6 run prints `DD-V151-ENEMY-MATERIAL-R6`, repair revision 6, and the si
 - 패키징 규칙: R6 전체본은 `dist`, `node_modules`, `.git`, 생성 로그를 제외한다. R6 패치는 ZIP 루트가 프로젝트 루트이며 wrapper/metadata 엔트리를 금지한다. R5 전체본에 R6 패치를 적용한 결과가 R6 전체본과 정확히 같아야 한다.
 - 잔여 위험: 번들러가 미래에 JS 참조를 문자열이 아닌 다른 manifest 구조로 바꾸면 helper 확장이 필요하다. 현재 Vite 8 emitted dynamic import 구조는 fixture로 고정한다.
 - 다음 예정: R6 적용 후 `verify:dist:all`의 v148-v152 연속 통과 확인. 이후 `docs/NEXT_UPDATE_v1.0.53.md`의 WebGL GPU/context-loss/mobile evidence 작업으로 이동한다.
+
+
+## 2026-07-31 — v1.0.52 CI HOTFIX R7
+
+- 버전/빌드: `v1.0.52 / b24.52`, repair revision R7. 게임 콘텐츠와 캐시 정체성은 변경하지 않는다.
+- 보고된 CI 상태: v147과 v148은 통과했고 v149 production-default 브라우저 시나리오에서 `testApi:true`로 중단됐다.
+- 근본 원인: `resolveFeatureExposureV149`는 production에서도 `localhost`, `127.0.0.1`, `::1`을 자동 QA 허용했지만 `run-feature-exposure-v149.mjs`는 127.0.0.1 기본 URL에서 QA API가 없어야 한다고 검사했다.
+- 수정 방식: production은 호스트와 무관하게 explicit QA query 또는 build-time explicit QA가 있어야만 QA API를 노출한다. development mode는 계속 허용한다. v144~v147 브라우저 자동화는 이미 모두 명시적 `?qa=` 쿼리를 사용한다.
+- 진단 보강: v149 보고서는 `#boot-error`가 실제 visible일 때만 오류 텍스트를 기록하고, Chromium foreground scheduling 플래그를 적용한다.
+- 검증 범위: feature exposure 단위 계약, 모든 QA 브라우저 URL의 explicit token, v1.0.49/v1.0.52 릴리스 게이트, 전체 JS 구문·모듈·코드 무결성, R6→R7 직접 패치 적용 동일성.
+- 패키징 규칙: R7 전체본은 `dist`, `node_modules`, `.git`, 생성 로그를 제외한다. R7 패치는 ZIP 루트가 프로젝트 루트이며 wrapper/metadata 엔트리를 금지한다.
+- 잔여 위험: 실제 Vite Chromium v149 success path는 GitHub Actions 재실행으로 최종 확인한다.

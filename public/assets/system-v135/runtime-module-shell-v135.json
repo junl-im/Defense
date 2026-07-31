@@ -6,7 +6,7 @@
   "cacheRevision": "1.0.52-b24.52",
   "entry": "src/bootstrap.js",
   "moduleCount": 136,
-  "totalBytes": 1605953,
+  "totalBytes": 1605944,
   "files": [
     {
       "path": "src/art-production-gate.js",
@@ -515,8 +515,8 @@
     },
     {
       "path": "src/runtime/feature-exposure-policy-v149.js",
-      "bytes": 923,
-      "sha256": "f5514779203b34deda2a2162846472b70c45bc62fd1bfbf74427105c6d9e0492"
+      "bytes": 914,
+      "sha256": "914d7289f0f9536f927fed2de47604d9ea1864b147e7686d79986ff36a46f27f"
     },
     {
       "path": "src/runtime/first-presentation-director-v107.js",

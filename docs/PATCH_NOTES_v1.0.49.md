@@ -13,7 +13,7 @@
 ## Error, recovery, and production exposure
 - User-visible recovery messages no longer expose internal source names, paths, URLs, or developer details.
 - Developer diagnostics remain bounded and available only through approved QA surfaces.
-- The full QA API is hidden in normal production sessions and enabled only for local/development or explicit `?qa=v149` sessions.
+- The full QA API is hidden in normal production sessions and enabled only in development mode or by an explicit `?qa=v149` session. Production builds served from localhost remain hidden by default.
 
 ## Reproducibility and cumulative regression fixes
 - Added a sorted SHA-256 build-input manifest covering package metadata, lockfile, Vite config, index, source, and public assets.

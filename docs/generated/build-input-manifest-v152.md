@@ -2,7 +2,7 @@
 
 - Identity: 1.0.52 / b24.52
 - Files: 2,139
-- Bytes: 120,058,411
-- Aggregate SHA-256: `4493637cd6be9da4ed9bb839eb06459b991bb26c8adbbb60b73a88f1fb53c290`
+- Bytes: 120,058,402
+- Aggregate SHA-256: `7777aafadbdff4ab062a84c328c2c6205de5f22db71ad0ab73fb2ed206f88ce0`
 
 This manifest is generated from sorted build inputs and excludes timestamps and absolute paths.

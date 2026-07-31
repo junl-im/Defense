@@ -10,7 +10,7 @@ export function resolveFeatureExposureV149({ mode = 'production', hostname = '',
   const local = ['localhost', '127.0.0.1', '::1'].includes(normalizedHost);
   const qaRequested = Boolean(explicitQa || qaToken);
   const production = normalizedMode === 'production';
-  const allowQaApi = !production || local || qaRequested;
+  const allowQaApi = !production || qaRequested;
   return Object.freeze({
     id: 'DD-FEATURE-EXPOSURE-POLICY-V149',
     production,

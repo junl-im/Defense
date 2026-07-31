@@ -97,3 +97,13 @@
 - v149 책임 분리 검증은 과거 `checkpoint('finish-run')`뿐 아니라 v150의 `PersistentRewardOrchestratorV150 → AtomicSaveSnapshotV150.commit('finish-run-rewards')` 경로도 정상 저장 계약으로 인정한다.
 - v1.0.49 소스 바이트 상한 1,700,000은 그대로 유지하고, 해당 버전 이후 승인된 `-v150.js`, `-v151.js`, `-v152.js` 모듈 62,708바이트만 역사 예산에서 제외한다.
 - 합성 Vite fixture는 엔트리에 마커가 없고 동적 chunk에만 마커가 있는 실제 구조를 재현하며, 고아 chunk 마커 거부까지 검증한다.
+
+
+## CI chain hotfix R7
+
+- v148은 통과했고 v149 production-default 브라우저 노출 검사에서 `testApi:true`가 확인됐다.
+- 원인은 런타임 정책과 브라우저 러너의 계약 불일치였다. 정책은 production에서도 정확한 localhost/127.0.0.1이면 QA API를 자동 허용했지만, 러너는 동일한 127.0.0.1 기본 URL에서 QA API가 숨겨져야 한다고 요구했다.
+- production 빌드는 호스트가 localhost여도 QA API를 자동 노출하지 않는다. 개발 모드 또는 명시적인 `?qa=...` 쿼리만 허용한다.
+- v144~v147의 브라우저 자동화는 이미 모두 명시적 QA 쿼리를 사용하므로 기능 검증 경로는 유지된다.
+- v149 브라우저 보고서는 숨겨진 boot-error 템플릿의 텍스트를 실제 오류로 기록하지 않고, 화면에 표시된 경우에만 오류로 판정한다.
+- v149 headless 실행에도 백그라운드 타이머·occluded window·renderer 스로틀 방지 플래그를 적용했다.
