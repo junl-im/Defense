@@ -125,9 +125,10 @@ check(featureVerifierV149.includes('localProduction.local && !localProduction.al
 check(featureRunnerV149.includes('!publicScenario.testApi') && featureRunnerV149.includes('qaScenario.testApi') && featureRunnerV149.includes('bootErrorVisible'), 'v149 browser exposure distinguishes default, explicit QA, and visible boot failure');
 check(featureRunnerV149.includes('--disable-background-timer-throttling') && featureRunnerV149.includes('--disable-backgrounding-occluded-windows') && featureRunnerV149.includes('--disable-renderer-backgrounding'), 'v149 browser exposure preserves foreground scheduling');
 check(mobileRunnerV144.includes('?qa=v144') && longSessionRunnerV145.includes('?qa=v145') && assuranceRunnerV146.includes('?qa=v146') && offlineRunnerV147.includes('?qa=v147'), 'all production browser automation explicitly opts into QA API');
-check(stagePackageV152.includes('CI_HOTFIX_R9') && verifyPackageV152.includes('CI_HOTFIX_R9'), 'v152 clean package staging identifies CI hotfix R9');
-check(createPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R9') && createPatchV152.includes('1.0.52-r9') && verifyPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R9'), 'v152 project-root patch tooling identifies CI hotfix R9');
-check(!createPatchV152.includes("path.join(out, 'overlay')") && createPatchV152.includes("path.join(out, 'project-root')"), 'v152 R9 patch remains a true project-root overlay without wrapper');
+check(stagePackageV152.includes('CI_HOTFIX_R10') && verifyPackageV152.includes('CI_HOTFIX_R10'), 'v152 clean package staging identifies CI hotfix R10');
+check(performanceTrendV145.includes('replaceOneOfRequired') && performanceTrendV145.includes('observePresentationCostV152') && performanceTrendV145.includes('observeWholeFrameCostV152'), 'v145 trend isolation accepts exactly one R8/R9 GPU observation variant');
+check(createPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R10') && createPatchV152.includes('1.0.52-r10') && verifyPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R10'), 'v152 project-root patch tooling identifies CI hotfix R10');
+check(!createPatchV152.includes("path.join(out, 'overlay')") && createPatchV152.includes("path.join(out, 'project-root')"), 'v152 R10 patch remains a true project-root overlay without wrapper');
 
 if (failures.length) {
   failures.forEach((failure) => console.error(`FAIL ${failure}`));

@@ -6,6 +6,7 @@ export const V152_PATCH_FILES = Object.freeze([
   'docs/NEXT_UPDATE_v1.0.53.md',
   'docs/PATCH_APPLY_v1.0.52.md',
   'docs/CI_V152_GPU_CONTEXT_SCOPE_HOTFIX_R9.md',
+  'docs/CI_V152_TREND_ISOLATION_HOTFIX_R10.md',
   'docs/PATCH_NOTES_v1.0.49.md',
   'docs/PATCH_NOTES_v1.0.52.md',
   'docs/RELEASE_ASSURANCE_v1.0.52.md',

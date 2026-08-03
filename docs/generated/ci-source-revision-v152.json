@@ -96,8 +96,8 @@
     },
     {
       "path": "scripts/verify-release-v152.mjs",
-      "bytes": 17790,
-      "sha256": "59616ac55fb2c8b286207eb224a744ea13d27eef2300691e2718e4ddb9d48888"
+      "bytes": 18060,
+      "sha256": "c2c7c6dab1596b83c9d926def3f31aa4c03f40f2bf735b04e3ae78b7bb971a82"
     },
     {
       "path": "scripts/verify-runtime-hardening-v152.mjs",
@@ -156,8 +156,8 @@
     },
     {
       "path": "scripts/verify-performance-trend-v145.mjs",
-      "bytes": 7897,
-      "sha256": "559bae462524afb0e8aa1860db73ee1255f75d3733c5d179787383349db6ecf6"
+      "bytes": 8868,
+      "sha256": "eabbe3e7297f016d5f3f2efb41aab6bf28684a55880e1aefa53544303f4508b0"
     },
     {
       "path": "scripts/verify-performance-guard-v148.mjs",

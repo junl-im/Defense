@@ -130,3 +130,11 @@
 - context restore 시 renderer context와 `EXT_disjoint_timer_query_webgl2`를 재획득한다.
 - query begin/end/poll 예외, disjoint, overflow, dispose 경계를 fail-closed로 처리하고 진단 카운터를 제공한다.
 - `scripts/verify-gpu-frame-timer-v152.mjs`가 미지원·overflow·disjoint·stale query·context loss/restore·dispose 행렬을 검사한다.
+
+
+## CI chain hotfix R10
+
+- R9의 `observeWholeFrameCostV152` 변경을 v145 역사 성능 trend isolation이 인식하지 못해 CI가 중단되던 문제를 수정했다.
+- R8 `observePresentationCostV152`와 R9 `observeWholeFrameCostV152` 중 정확히 하나만 허용하고 제거한다.
+- 허용 블록이 없거나 중복되면 실패하므로 문자열 완화로 인한 거짓 통과를 방지한다.
+- v1.0.44 성능 기준값과 5% 회귀 상한은 변경하지 않았다.

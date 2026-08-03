@@ -1,3 +1,12 @@
+## 2026-08-03 — v1.0.52 historical trend isolation hotfix R10
+
+- 작업 목표: R9의 GPU scope API 변경 뒤 v145 역사 성능 추세 검증기가 R8 문자열만 찾다가 전체 CI를 중단시키는 회귀를 수정한다.
+- 주요 변경 파일: `scripts/verify-performance-trend-v145.mjs`, `scripts/verify-release-v152.mjs`, v152 CI 서명·패키지·패치 검증기, `docs/CI_V152_TREND_ISOLATION_HOTFIX_R10.md`.
+- 수정 내용: v145 forward-isolation은 R8 `observePresentationCostV152`와 R9 `observeWholeFrameCostV152` 블록 중 정확히 하나만 허용해 제거한다. 역사 v1.0.44 기준값과 5% 상한은 그대로 유지한다.
+- 검증 명령: `npm run verify:trend:v145`, `npm run verify:release:v145`, `npm run verify:release:v152`, `npm run verify:ci-source:v152`, `npm run stage:package:v152`, `npm run verify:package:v152`, `npm run create:patch:v152`, `npm run verify:patch:v152`.
+- 릴리스 식별자: 게임 버전과 빌드 ID는 `v1.0.52 / b24.52`, repair revision은 R10이다.
+- 다음 예정: R9에서 남긴 실제 Vite/WebGL 및 실기기 scoped GPU 검증을 계속 진행한다.
+
 ## 2026-08-03 — v1.0.52 GPU scope and context recovery hotfix R9
 
 - 재현 위험: 전체 `renderer.render()` GPU 시간이 캐릭터 표현 전용 GPU 비용으로 집계되어 배경·전장 이펙트 부하만으로 캐릭터 품질이 오강등될 수 있었다.

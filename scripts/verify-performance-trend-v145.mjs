@@ -27,6 +27,12 @@ const isolateForwardMainV152 = (input) => {
     source = source.replace(before, after);
     adjustments.push(label);
   };
+  const replaceOneOfRequired = (variants, after, label) => {
+    const matches = variants.filter((before) => source.includes(before));
+    if (matches.length !== 1) throw new Error(`v145 main isolation expected exactly one v152 segment for ${label}, actual ${matches.length}`);
+    source = source.replace(matches[0], after);
+    adjustments.push(label);
+  };
   replaceRequired("// const GAME_VERSION = '1.0.52'; generated compatibility marker\n", '', 'generated identity compatibility marker');
   replaceRequired("import { GpuFrameTimerV152 } from './engine/gpu-frame-timer-v152.js';\n", '', 'GPU timer import');
   replaceRequired('    this.gpuFrameTimerV152 = null;\n', '', 'GPU timer lifecycle property');
@@ -50,7 +56,8 @@ const isolateForwardMainV152 = (input) => {
         source: 'character-presentation-update'
       });
     });`, "    this.runSafe('combat-art-polish-v114', () => this.combatVisualV112?.update(this.state === 'playing' ? gameDt : dt, this.camera, this.elapsed, { showHealth: this.state === 'playing' }));", 'character presentation CPU observation');
-  replaceRequired(`    this.runSafe('renderer', () => {
+  replaceOneOfRequired([
+    `    this.runSafe('renderer', () => {
       const gpuQueryStartedV152 = this.gpuFrameTimerV152?.beginFrame?.() || false;
       try {
         this.renderer.render(this.scene, this.camera);
@@ -64,7 +71,23 @@ const isolateForwardMainV152 = (input) => {
           frameMs: rawDt * 1000
         });
       }
-    });`, `    this.runSafe('renderer', () => {
+    });`,
+    `    this.runSafe('renderer', () => {
+      const gpuQueryStartedV152 = this.gpuFrameTimerV152?.beginFrame?.() || false;
+      try {
+        this.renderer.render(this.scene, this.camera);
+        this.renderedFrameSerial += 1;
+        this.flushRenderedFrameWaiters();
+      } finally {
+        if (gpuQueryStartedV152) this.gpuFrameTimerV152?.endFrame?.();
+        const gpuSampleV152 = this.gpuFrameTimerV152?.poll?.();
+        if (gpuSampleV152) this.combatVisualV112?.observeWholeFrameCostV152?.({
+          ...gpuSampleV152,
+          frameMs: rawDt * 1000
+        });
+      }
+    });`
+  ], `    this.runSafe('renderer', () => {
       this.renderer.render(this.scene, this.camera);
       this.renderedFrameSerial += 1;
       this.flushRenderedFrameWaiters();

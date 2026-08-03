@@ -1,4 +1,27 @@
-# v1.0.52 CI HOTFIX R8 패치 적용
+# v1.0.52 CI HOTFIX 누적 패치 적용
+
+## R10 적용
+
+R10은 R9 또는 이전 v1.0.52 전체본에 적용하는 프로젝트 루트 직접 덮어쓰기 패치다. 런타임 버전은 `1.0.52 / b24.52`로 유지된다.
+
+```bash
+npm run clean:obsolete
+npm ci
+npm run verify:trend:v145
+npm run verify:release:v145
+npm run verify:ci
+VITE_BASE_PATH=/Defense/ npm run build
+npm run verify:dist:all
+```
+
+성공 로그에는 다음 문구가 포함되어야 한다.
+
+```text
+PASS v1.0.45 performance trend stays within 5% of approved v1.0.44 source package
+```
+
+R10은 v1.0.44 기준이나 허용치를 완화하지 않고, R8/R9의 승인된 v1.0.52 GPU 계측 블록만 역사 측정 범위에서 정확히 분리한다.
+
 
 R8 패치 ZIP은 프로젝트 루트 기준의 직접 덮어쓰기 구조다. `overlay/` 포장 폴더나 패치 전용 메타데이터 파일이 들어 있지 않다.
 
