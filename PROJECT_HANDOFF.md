@@ -1,3 +1,12 @@
+## 2026-08-03 — v1.0.52 runtime baseline report contract hotfix R12
+
+- 보고된 실패: 전체 dist chain 통과 뒤 `capture:baseline:v150`가 `v150 baseline candidate requires a passing dist-budget report`로 중단됐다.
+- 근본 원인: v144 dist-budget 생성기는 개별 check를 모두 통과하고 종료 코드 0을 반환했지만 JSON에 top-level `passed`를 기록하지 않았고, v150 baseline 소비자는 `passed === true`만 허용했다.
+- 수정: report 저장 전에 명시적 pass/fail을 기록하고, R11 legacy 보고서는 정확한 ID와 전 check 통과가 확인될 때만 호환 수용한다.
+- CI 순서: baseline capture 직전에 `verify:budget:v144`를 재실행한다.
+- 회귀: 명시적 성공, R11 legacy 성공, 명시적 실패, failed check, 미식별 보고서 행렬을 검증한다.
+- 런타임·에셋·성능 상한·승인 baseline·게임 버전은 변경하지 않았다. 릴리스 식별자는 `v1.0.52 / b24.52`, repair revision은 R12다.
+
 ## 2026-08-03 — v1.0.52 minification-stable dist marker hotfix R11
 
 - 보고된 실패: 실제 Vite build 뒤 `verify-dist-v152.mjs`가 `authoredDurationV152` 문자열을 번들에서 찾지 못해 중단됐다.

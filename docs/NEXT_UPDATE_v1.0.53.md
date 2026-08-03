@@ -20,3 +20,10 @@
 - 소스 의미 검증과 번들 존재 검증의 책임 분리
 - reachable chunk 기반 안정 마커 fixture 고정
 
+
+
+## R12에서 선행 완료
+
+- dist-budget report의 명시적 pass/fail schema
+- R11 legacy report의 제한적 호환 읽기
+- baseline capture 직전 budget evidence 재생성

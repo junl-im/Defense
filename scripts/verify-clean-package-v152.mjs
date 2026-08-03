@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 const root = path.resolve(import.meta.dirname, '..');
-const stage = path.join(root, 'logs/package/1.0.52/DokkaebiLuckDefense3D_FULL_v1.0.52_EVENT_TIMING_RUNTIME_GUARD_CI_HOTFIX_R11');
+const stage = path.join(root, 'logs/package/1.0.52/DokkaebiLuckDefense3D_FULL_v1.0.52_EVENT_TIMING_RUNTIME_GUARD_CI_HOTFIX_R12');
 if (!fs.existsSync(stage)) throw new Error('v152 staged package missing');
 for (const banned of ['dist', 'node_modules', '.git', 'overlay']) if (fs.existsSync(path.join(stage, banned))) throw new Error(`v152 staged package contains ${banned}`);
 
@@ -26,6 +26,7 @@ for (const file of [
   'docs/CI_V152_GPU_CONTEXT_SCOPE_HOTFIX_R9.md',
   'docs/CI_V152_TREND_ISOLATION_HOTFIX_R10.md',
   'docs/CI_V152_MINIFIED_BUNDLE_MARKER_HOTFIX_R11.md',
+  'docs/CI_V150_BASELINE_REPORT_CONTRACT_HOTFIX_R12.md',
   'src/runtime/character-presentation-budget-v152.js',
   'src/engine/gpu-frame-timer-v152.js',
   'scripts/verify-release-v152.mjs',
@@ -43,6 +44,10 @@ for (const file of [
   'scripts/verify-dist-v152.mjs',
   'scripts/verify-responsibility-extraction-v149.mjs',
   'scripts/verify-performance-reproducibility-v149.mjs',
+  'scripts/verify-dist-budget-v144.mjs',
+  'scripts/capture-runtime-baseline-v150.mjs',
+  'scripts/lib/runtime-baseline-v150.mjs',
+  'scripts/verify-performance-baseline-v150.mjs',
   'scripts/save-continuity-v147.mjs',
   'scripts/offline-reconnect-model-v147.mjs',
   'scripts/verify-offline-reconnect-v147.mjs',
@@ -56,4 +61,4 @@ for (const file of [
   'docs/NEXT_UPDATE_v1.0.53.md',
   'PROJECT_HANDOFF.md'
 ]) if (!fs.existsSync(path.join(stage, file))) throw new Error(`v152 staged contract missing ${file}`);
-console.log('PASS v1.0.52 CI hotfix R11 clean source package staging');
+console.log('PASS v1.0.52 CI hotfix R12 clean source package staging');

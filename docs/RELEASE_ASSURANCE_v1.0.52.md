@@ -216,3 +216,19 @@ R11 검증 항목:
 
 실제 Vite build와 전체 dist chain의 최종 결과는 GitHub Actions에서 확인한다.
 
+
+
+## CI chain hotfix R12 검증
+
+R12는 dist-budget report 생산자와 runtime baseline 소비자의 pass/fail schema를 일치시킨다.
+
+검증 항목:
+
+- 성공 보고서가 저장 전에 `passed: true`를 갖는다.
+- 하나라도 실패한 check가 있으면 `passed: false`로 저장되고 프로세스는 실패한다.
+- R11 legacy 보고서는 `DD-DIST-BUDGET-V144` ID와 1개 이상의 전부 통과한 check가 있을 때만 허용된다.
+- 명시적 `passed: false`, failed check, ID 없는 legacy 보고서는 baseline 후보 생성에서 거부된다.
+- CI workflow가 capture 직전에 `verify:budget:v144`를 실행한다.
+- R11 minification-stable marker, R10 trend isolation, R9 GPU scope 계약을 유지한다.
+
+실제 GitHub Actions에서 `capture:baseline:v150` 이후 artifact upload와 Pages deploy까지 완료되는지 최종 확인한다.

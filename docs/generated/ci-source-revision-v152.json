@@ -6,8 +6,8 @@
   "files": [
     {
       "path": ".github/workflows/deploy.yml",
-      "bytes": 7523,
-      "sha256": "0f227b5df3590c3759902c5d46262fe0f412d3a5d38eece82d7f6daa197a54fd"
+      "bytes": 7572,
+      "sha256": "d07250a55c317875def5c0ef2fd000bee2ec89dfe3afab97c189163dcea42899"
     },
     {
       "path": "package.json",
@@ -96,8 +96,8 @@
     },
     {
       "path": "scripts/verify-release-v152.mjs",
-      "bytes": 18665,
-      "sha256": "6e282757a83866d5f534b4ffa9f7b5301b57587b70f779f0cac4a2b96254ffd6"
+      "bytes": 20022,
+      "sha256": "a18a0db63cd44992ed05a9790e66fc9d2877fa9c6c9d801f53440707c116e832"
     },
     {
       "path": "scripts/verify-character-action-timing-v152.mjs",
@@ -268,6 +268,26 @@
       "path": "scripts/verify-performance-reproducibility-v149.mjs",
       "bytes": 2755,
       "sha256": "d988d10b7d266f7366cc2003815a79901433e64e945eb95ae22a743ea3816258"
+    },
+    {
+      "path": "scripts/verify-dist-budget-v144.mjs",
+      "bytes": 9296,
+      "sha256": "54929dce0fa2e86f0b890f6356909e2beb76f994a23138bf0adc123d92d41f09"
+    },
+    {
+      "path": "scripts/capture-runtime-baseline-v150.mjs",
+      "bytes": 1394,
+      "sha256": "14d187dc86e0d0daaf3b7253589173fbe419453e7267c5ac4edbf59e1744f475"
+    },
+    {
+      "path": "scripts/lib/runtime-baseline-v150.mjs",
+      "bytes": 5989,
+      "sha256": "d6050985824a731ff7da8e540402d31d4fb703f049cbbbc441c10687ab6b63d8"
+    },
+    {
+      "path": "scripts/verify-performance-baseline-v150.mjs",
+      "bytes": 2984,
+      "sha256": "5da2c80582feb5b8faefc2683f5d88620ec6bb29c9a2af8e66341c5a24f274c2"
     }
   ]
 }

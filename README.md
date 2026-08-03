@@ -1,6 +1,6 @@
 # Dokkaebi Luck Defense 3D
 
-> Current release: **v1.0.52 / b24.52 CI HOTFIX R11** — reachable Vite chunk verification, durable-save offline assurance, bounded service-worker installation, and event-timed character presentation.
+> Current release: **v1.0.52 / b24.52 CI HOTFIX R12** — reachable Vite chunk verification, durable-save offline assurance, bounded service-worker installation, and event-timed character presentation.
 
 ## v1.0.51 CI cleanup repair R3
 
@@ -137,3 +137,11 @@ R9 separates whole-frame GPU timer-query diagnostics from character-presentation
 - 액션 타이밍 동결 계약의 `DD-AUTHORED-DURATION-GUARD-V152` 안정 마커를 확인한다.
 - authored event timeline이 one-shot 지속시간 하한에 반영되는 실제 소스 로직 검증은 그대로 유지한다.
 - reachable chunk fixture가 minified 형태에서도 안정 마커를 찾고 고아 chunk는 거부하는지 검사한다.
+
+
+## CI chain hotfix R12
+
+- v144 dist-budget producer가 성공 보고서에 top-level `passed`를 기록하지 않아 v150 baseline capture가 성공 결과를 거부하던 계약 불일치를 수정했다.
+- 보고서는 모든 개별 check를 계산한 뒤 `passed: true|false`를 JSON에 기록한다.
+- R11 형식의 과거 보고서는 정확한 report ID와 전 check 통과가 확인될 때만 호환 수용한다.
+- CI는 baseline capture 직전에 dist budget을 다시 생성해 stale evidence를 사용하지 않는다.

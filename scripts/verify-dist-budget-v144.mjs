@@ -194,10 +194,11 @@ const checks = {
   largestJsChunkBytes: [Math.max(0, ...jsFiles.map((file) => fs.statSync(file).size)), config.thresholds.maxSingleJsChunkRawBytes]
 };
 report.checks = Object.fromEntries(Object.entries(checks).map(([name, [actual, maximum]]) => [name, { actual, maximum, pass: actual <= maximum }]));
+const failures = Object.entries(report.checks).filter(([, value]) => !value.pass);
+report.passed = failures.length === 0;
 
 fs.mkdirSync(path.dirname(reportPath), { recursive: true });
 fs.writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`);
-const failures = Object.entries(report.checks).filter(([, value]) => !value.pass);
 if (failures.length) {
   for (const [name, value] of failures) console.error(`FAIL v144 dist budget ${name}: ${value.actual} > ${value.maximum}`);
   process.exit(1);

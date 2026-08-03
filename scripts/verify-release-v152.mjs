@@ -85,6 +85,9 @@ const distVerifierV151 = read('scripts/verify-dist-v151.mjs');
 const distVerifierV152 = read('scripts/verify-dist-v152.mjs');
 const responsibilityVerifierV149 = read('scripts/verify-responsibility-extraction-v149.mjs');
 const performanceVerifierV149 = read('scripts/verify-performance-reproducibility-v149.mjs');
+const distBudgetVerifierV144 = read('scripts/verify-dist-budget-v144.mjs');
+const runtimeBaselineLibV150 = read('scripts/lib/runtime-baseline-v150.mjs');
+const performanceBaselineVerifierV150 = read('scripts/verify-performance-baseline-v150.mjs');
 const featurePolicyV149 = read('src/runtime/feature-exposure-policy-v149.js');
 const featureVerifierV149 = read('scripts/verify-feature-exposure-v149.mjs');
 const featureRunnerV149 = read('scripts/run-feature-exposure-v149.mjs');
@@ -129,10 +132,14 @@ check(featureVerifierV149.includes('localProduction.local && !localProduction.al
 check(featureRunnerV149.includes('!publicScenario.testApi') && featureRunnerV149.includes('qaScenario.testApi') && featureRunnerV149.includes('bootErrorVisible'), 'v149 browser exposure distinguishes default, explicit QA, and visible boot failure');
 check(featureRunnerV149.includes('--disable-background-timer-throttling') && featureRunnerV149.includes('--disable-backgrounding-occluded-windows') && featureRunnerV149.includes('--disable-renderer-backgrounding'), 'v149 browser exposure preserves foreground scheduling');
 check(mobileRunnerV144.includes('?qa=v144') && longSessionRunnerV145.includes('?qa=v145') && assuranceRunnerV146.includes('?qa=v146') && offlineRunnerV147.includes('?qa=v147'), 'all production browser automation explicitly opts into QA API');
-check(stagePackageV152.includes('CI_HOTFIX_R11') && verifyPackageV152.includes('CI_HOTFIX_R11'), 'v152 clean package staging identifies CI hotfix R11');
+check(distBudgetVerifierV144.includes('report.passed = failures.length === 0') && distBudgetVerifierV144.indexOf('report.passed = failures.length === 0') < distBudgetVerifierV144.indexOf('fs.writeFileSync(reportPath'), 'v144 dist-budget report persists explicit pass/fail before baseline capture');
+check(runtimeBaselineLibV150.includes('isPassingDistBudgetReportV150') && runtimeBaselineLibV150.includes("report.id === 'DD-DIST-BUDGET-V144'") && runtimeBaselineLibV150.includes('report.passed === false'), 'v150 baseline consumer accepts legacy passing evidence but rejects explicit failure');
+check(performanceBaselineVerifierV150.includes('R11 passing dist-budget report without explicit passed flag') && performanceBaselineVerifierV150.includes('non-passing or unidentifiable dist-budget input must be refused'), 'v150 baseline regression covers R11 compatibility and failed evidence rejection');
+check(read('.github/workflows/deploy.yml').includes('npm run verify:budget:v144\n          npm run capture:baseline:v150'), 'CI refreshes the dist-budget report immediately before runtime baseline capture');
+check(stagePackageV152.includes('CI_HOTFIX_R12') && verifyPackageV152.includes('CI_HOTFIX_R12'), 'v152 clean package staging identifies CI hotfix R12');
 check(performanceTrendV145.includes('replaceOneOfRequired') && performanceTrendV145.includes('observePresentationCostV152') && performanceTrendV145.includes('observeWholeFrameCostV152'), 'v145 trend isolation accepts exactly one R8/R9 GPU observation variant');
-check(createPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R11') && createPatchV152.includes('1.0.52-r11') && verifyPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R11'), 'v152 project-root patch tooling identifies CI hotfix R11');
-check(!createPatchV152.includes("path.join(out, 'overlay')") && createPatchV152.includes("path.join(out, 'project-root')"), 'v152 R11 patch remains a true project-root overlay without wrapper');
+check(createPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R12') && createPatchV152.includes('1.0.52-r12') && verifyPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R12'), 'v152 project-root patch tooling identifies CI hotfix R12');
+check(!createPatchV152.includes("path.join(out, 'overlay')") && createPatchV152.includes("path.join(out, 'project-root')"), 'v152 R12 patch remains a true project-root overlay without wrapper');
 
 if (failures.length) {
   failures.forEach((failure) => console.error(`FAIL ${failure}`));

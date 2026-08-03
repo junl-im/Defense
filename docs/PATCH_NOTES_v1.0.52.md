@@ -146,3 +146,12 @@
 - `Math.max(0.01, duration, authoredDurationV152)` 소스 의미 검증은 유지해 동작 계약을 완화하지 않았다.
 - minified 형태의 reachable chunk fixture와 로컬 식별자 dist 마커 재도입 금지를 릴리스 계약에 추가했다.
 
+
+
+## CI chain hotfix R12
+
+- v144 dist-budget 검증은 성공했지만 JSON에 `passed`가 없어 v150 runtime baseline candidate가 거부되던 생산자/소비자 계약 불일치를 수정했다.
+- report는 개별 checks 계산 뒤 top-level `passed`를 기록하며 실패 보고서도 진단용으로 저장한다.
+- baseline 소비자는 R11 legacy shape를 정확한 ID와 모든 check 통과 조건에서만 허용한다.
+- CI는 capture 직전에 budget report를 재생성한다.
+- 성능 threshold, 승인 baseline, 게임 코드와 에셋은 변경하지 않았다.

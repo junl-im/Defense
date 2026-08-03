@@ -9,12 +9,21 @@ const percentile = (values, ratio = .95) => {
 };
 export const sha256TextV150 = (text) => createHash('sha256').update(String(text)).digest('hex');
 
+export function isPassingDistBudgetReportV150(report) {
+  if (!report || typeof report !== 'object') return false;
+  const checks = Object.values(report.checks || {});
+  if (checks.some((entry) => entry?.pass !== true)) return false;
+  if (report.passed === true) return true;
+  if (report.passed === false) return false;
+  return report.id === 'DD-DIST-BUDGET-V144' && checks.length > 0;
+}
+
 export function buildRuntimeBaselineCandidateV150({ longSessionReport, distBudgetReport, longSessionSha256 = '', distBudgetSha256 = '', githubActions = false, runId = '', commitSha = '', capturedAt = new Date().toISOString() } = {}) {
   const assurance = longSessionReport?.session?.report || longSessionReport?.report || longSessionReport;
   const samples = Array.isArray(assurance?.samples) ? assurance.samples : [];
   const dist = distBudgetReport || {};
   if (longSessionReport?.passed !== true || assurance?.passed !== true) throw new Error('v150 baseline candidate requires a passing long-session report');
-  if (dist.passed !== true) throw new Error('v150 baseline candidate requires a passing dist-budget report');
+  if (!isPassingDistBudgetReportV150(dist)) throw new Error('v150 baseline candidate requires a passing dist-budget report');
   if (samples.length < 10) throw new Error('v150 baseline candidate requires at least 10 long-session samples');
   const heapSamples = samples.filter((sample) => sample.heapSupported && Number.isFinite(Number(sample.heapUsedMB)));
   const candidate = {

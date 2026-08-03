@@ -57,7 +57,11 @@ const files = [
   'scripts/verify-dist-v151.mjs',
   'scripts/verify-dist-v152.mjs',
   'scripts/verify-responsibility-extraction-v149.mjs',
-  'scripts/verify-performance-reproducibility-v149.mjs'
+  'scripts/verify-performance-reproducibility-v149.mjs',
+  'scripts/verify-dist-budget-v144.mjs',
+  'scripts/capture-runtime-baseline-v150.mjs',
+  'scripts/lib/runtime-baseline-v150.mjs',
+  'scripts/verify-performance-baseline-v150.mjs'
 ];
 const sha = (data) => createHash('sha256').update(data).digest('hex');
 const rows = files.map((file) => {

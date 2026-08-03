@@ -128,7 +128,9 @@ jobs:
           npm run verify:dist:all
 
       - name: Capture v1.0.50 runtime baseline candidate
-        run: npm run capture:baseline:v150
+        run: |
+          npm run verify:budget:v144
+          npm run capture:baseline:v150
 
       - name: Upload v1.0.44 mobile QA evidence
         if: always()
