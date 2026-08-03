@@ -1,3 +1,15 @@
+## 2026-08-03 — v1.0.52 CI leaderboard integrity hotfix R8
+
+- 재현 위험: 익명 인증 사용자가 `addDoc()`로 `dokkaebiScores` 문서를 반복 생성할 수 있어 사용자당 기록 수가 제한되지 않았다.
+- 직접 원인: 점수 문서 ID가 Firebase Auth UID와 결합되지 않았고, 규칙은 생성 횟수·기존 최고 점수와의 관계를 검사하지 않았다.
+- 수정: `dokkaebiScores/{auth.uid}` 단일 문서와 Firestore transaction을 사용하고 기존 최고 점수보다 높은 경우에만 갱신한다.
+- 규칙: 문서 ID·uid·인증 UID 일치, 정확한 필드 집합, 서버 타임스탬프, createdAt 보존, 점수 비감소를 강제한다.
+- 회귀 방지: `npm run verify:leaderboard:v152`가 입력 범위, 단일 UID 문서, transaction, 규칙 계약과 `addDoc` 재도입 금지를 검사한다.
+- 패키징 위생: Python `__pycache__`와 `.pyc/.pyo`를 정리 패키지에서 제외하고 검증기로 금지한다.
+- 배포 주의: 소스 배포와 별도로 `firebase deploy --only firestore:rules`를 실행해야 서버 보호가 활성화된다.
+- 제한: 클라이언트 단독 점수 계산이므로 서버 권위 안티치트는 별도 과제로 남는다.
+
+
 ## 2026-07-30 — v1.0.51 CI overlay downgrade repair R3
 
 - 재현 오류: bootstrap이 루트 `package.json`을 v1.0.51로 확인한 뒤 `clean-obsolete-assets.mjs`가 과거 `overlay/`를 자동 병합하면서, 오버레이의 `package.json@1.0.46`이 다시 루트를 덮어썼다.

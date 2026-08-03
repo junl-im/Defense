@@ -3,7 +3,7 @@
 - 결과: **PASS**
 - 수정 완료: 11건
 - 추적 위험: 3건
-- 소스 모듈: 151개 / 1418905 bytes
+- 소스 모듈: 151개 / 1420030 bytes
 - 엔진 모듈: 25개 / 106661 bytes
 - 런타임 모듈: 68개 / 452512 bytes
 
@@ -40,15 +40,15 @@
 
 ## 주요 계측
 - sourceModules: 151
-- sourceBytes: 1418905
+- sourceBytes: 1420030
 - runtimeModules: 68
 - runtimeBytes: 452512
 - engineModules: 25
 - engineBytes: 106661
 - combatModules: 11
 - combatBytes: 40779
-- scriptFiles: 394
-- scriptBytes: 1740661
+- scriptFiles: 395
+- scriptBytes: 1744842
 - mainLines: 7968
 - mainBytes: 418183
 - runSafeCalls: 51

@@ -5,8 +5,8 @@
   "cacheRevision": "1.0.52-b24.52",
   "algorithm": "sha256-sorted-paths-v1",
   "fileCount": 2139,
-  "totalBytes": 120058402,
-  "aggregateSha256": "7777aafadbdff4ab062a84c328c2c6205de5f22db71ad0ab73fb2ed206f88ce0",
+  "totalBytes": 120059647,
+  "aggregateSha256": "f33612b6b0843cf12af8c065c783731f2886bf96ca2574bf5bf09cb8ce69de23",
   "files": [
     {
       "path": ".env.production",
@@ -25,8 +25,8 @@
     },
     {
       "path": "package.json",
-      "bytes": 40033,
-      "sha256": "0befd6fec1c055ea6b4faca701c5a296612476a0700ae33bd3ab74dfe9be744e"
+      "bytes": 40153,
+      "sha256": "3d81322f5678116fb2a2c3397313a958cbb96ef59f2ad23f5cb626bbab349e45"
     },
     {
       "path": "public/action-asset-lab-v125.html",
@@ -9051,7 +9051,7 @@
     {
       "path": "public/assets/system-v135/runtime-module-shell-v135.json",
       "bytes": 23314,
-      "sha256": "ae2f4dde4fcbfc94ca69c829ce4720e12a4b1f0a96a6ba59e1a4e8f8fcfa900b"
+      "sha256": "0d22689963dcfed8d902fc855f73d5cebd033d8531c4a880ecc01c339fa2413e"
     },
     {
       "path": "public/assets/textures/moon-market-ground-v1.webp",
@@ -10205,8 +10205,8 @@
     },
     {
       "path": "src/firebase.js",
-      "bytes": 2556,
-      "sha256": "00205500e8513ebf3990dbfff356e86790f5e49fc00ef9bcdbfe7796a16fec7a"
+      "bytes": 3681,
+      "sha256": "b78e8d61189f4f5692ccde5a1619245ba4afa7da03efbb202fc36bd83a1d8bde"
     },
     {
       "path": "src/game-data.js",

@@ -1,6 +1,6 @@
-# v1.0.52 CI HOTFIX R7 패치 적용
+# v1.0.52 CI HOTFIX R8 패치 적용
 
-R7 패치 ZIP은 프로젝트 루트 기준의 직접 덮어쓰기 구조다. `overlay/` 포장 폴더나 패치 전용 메타데이터 파일이 들어 있지 않다.
+R8 패치 ZIP은 프로젝트 루트 기준의 직접 덮어쓰기 구조다. `overlay/` 포장 폴더나 패치 전용 메타데이터 파일이 들어 있지 않다.
 
 1. 기존 프로젝트를 백업한다.
 2. 패치 ZIP의 내용 전체를 기존 프로젝트 루트에 직접 덮어쓴다.
@@ -15,7 +15,7 @@ VITE_BASE_PATH=/Defense/ npm run build
 npm run verify:dist:all
 ```
 
-패치 ZIP의 모든 파일 경로는 R7 전체 통파일에도 존재해야 하며, 같은 경로의 SHA-256이 일치해야 한다. 패치 적용 후 정리된 프로젝트 트리는 R7 전체 통파일과 동일해야 한다.
+패치 ZIP의 모든 파일 경로는 R8 전체 통파일에도 존재해야 하며, 같은 경로의 SHA-256이 일치해야 한다. 패치 적용 후 정리된 프로젝트 트리는 R8 전체 통파일과 동일해야 한다.
 
 
 ## R3 적용
@@ -101,3 +101,28 @@ PASS v1.0.49 foundation on forward-compatible complete Vite dist
 ```
 
 production-default 시나리오에서 `testApi:true`가 다시 나오면 패치가 적용되지 않았거나 이전 `dist/`를 재사용한 것이다.
+
+
+## R8 적용
+
+R8은 R7 또는 이전 v1.0.52 전체본에 적용하는 프로젝트 루트 직접 덮어쓰기 패치다. ZIP 안에는 `overlay/` wrapper나 패치 메타데이터가 없으며 프로젝트 경로만 들어 있다.
+
+적용 후 소스 검증과 Firestore 규칙 배포를 분리해서 실행한다.
+
+```bash
+npm run clean:obsolete
+npm ci
+npm run verify:leaderboard:v152
+npm run verify:ci
+VITE_BASE_PATH=/Defense/ npm run build
+npm run verify:dist:all
+firebase deploy --only firestore:rules
+```
+
+`firebase deploy --only firestore:rules`를 실행하지 않으면 클라이언트는 UID 문서 트랜잭션을 사용하더라도 서버 규칙의 단일 문서·점수 비감소 보호가 적용되지 않는다. 기존 자동 ID 점수 문서는 읽기 호환을 위해 남지만, R8 이후 신규 쓰기는 인증 UID 문서에만 허용된다.
+
+성공 로그에는 다음 문구가 포함되어야 한다.
+
+```text
+PASS v1.0.52 R8 leaderboard integrity: UID-bound single best score, bounded schema, monotonic transaction, and rules contract
+```

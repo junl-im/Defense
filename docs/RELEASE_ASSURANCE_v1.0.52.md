@@ -161,3 +161,21 @@ R7 검증 항목:
 - v149 Chromium foreground scheduling 플래그 3종 유지
 
 실제 Vite/Chromium 성공 경로는 GitHub Actions에서 최종 확인한다. 이번 변경은 게임 저장·전투·서비스 워커 코드에는 영향을 주지 않고 전역 QA API 노출 경계만 강화한다.
+
+
+## CI chain hotfix R8 검증
+
+R8은 온라인 순위표의 문서 생성 경계를 보강한다. 기존 구현은 익명 인증만 통과하면 자동 문서 ID로 반복 생성할 수 있어 동일 브라우저에서도 순위표 문서 수를 제한하지 못했다.
+
+R8 검증 항목:
+
+- `firestore.addDoc()` 점수 생성 경로 제거
+- `dokkaebiScores/{auth.uid}` 단일 문서 경로 사용
+- transaction에서 현재 최고 점수를 읽고 더 높은 점수만 쓰기
+- 이름·점수·웨이브·처치·등급의 클라이언트 정규화와 Firestore 규칙 범위 일치
+- 규칙에서 `scoreId == request.auth.uid` 및 `uid == request.auth.uid` 강제
+- 생성 시 `createdAt == request.time`, 업데이트 시 생성 시각 보존과 `updatedAt == request.time` 강제
+- 업데이트 점수가 기존 점수보다 낮아지는 쓰기 거부
+- 삭제 금지와 공개 TOP 10 읽기 호환 유지
+
+로컬에서 `npm run verify:leaderboard:v152`와 `npm run verify:release:v152`를 통과했다. Firestore rules emulator를 사용한 실제 허용/거부 행렬과 배포 후 익명 인증 쓰기는 CI 또는 Firebase 프로젝트에서 추가 확인해야 한다. 이 변경은 문서 스팸과 최고 점수 롤백을 줄이지만, 서버 권위 점수 계산이 아니므로 조작된 클라이언트의 고득점 제출 자체를 완전히 증명하지는 않는다.

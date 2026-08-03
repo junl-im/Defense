@@ -11,8 +11,8 @@
     },
     {
       "path": "package.json",
-      "bytes": 40033,
-      "sha256": "0befd6fec1c055ea6b4faca701c5a296612476a0700ae33bd3ab74dfe9be744e"
+      "bytes": 40153,
+      "sha256": "3d81322f5678116fb2a2c3397313a958cbb96ef59f2ad23f5cb626bbab349e45"
     },
     {
       "path": "package-lock.json",
@@ -28,6 +28,16 @@
       "path": "src/main.js",
       "bytes": 418183,
       "sha256": "8cf2576223f211183860cb325e73a9440ab71b9c1869289f825edc36ea9c0d74"
+    },
+    {
+      "path": "src/firebase.js",
+      "bytes": 3681,
+      "sha256": "b78e8d61189f4f5692ccde5a1619245ba4afa7da03efbb202fc36bd83a1d8bde"
+    },
+    {
+      "path": "firestore.rules",
+      "bytes": 5175,
+      "sha256": "c475debdd3bd82bd1ffea77e3ad3d40f2e404d48c6e8a3efcd950ad5c4b2d3b3"
     },
     {
       "path": "src/version-policy.js",
@@ -86,13 +96,18 @@
     },
     {
       "path": "scripts/verify-release-v152.mjs",
-      "bytes": 16381,
-      "sha256": "50e48793195e74a2384dc846e612629931d679fbeb2213c270e81be302fffda7"
+      "bytes": 17384,
+      "sha256": "4a7d35a2461afb37deedfabed5b46354335958dd0910c3373ba191e6090e77da"
     },
     {
       "path": "scripts/verify-runtime-hardening-v152.mjs",
       "bytes": 3586,
       "sha256": "46cc0c3978cb58152883d0590ce576f279222699f2f28ffd8579d70a7238ca97"
+    },
+    {
+      "path": "scripts/verify-leaderboard-integrity-v152.mjs",
+      "bytes": 2812,
+      "sha256": "cb33d6fd613704606248df286159ab69e27845610de9134cb6357ef6c6280735"
     },
     {
       "path": "scripts/verify-repository-root-v152.mjs",

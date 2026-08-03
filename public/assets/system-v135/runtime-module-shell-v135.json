@@ -6,7 +6,7 @@
   "cacheRevision": "1.0.52-b24.52",
   "entry": "src/bootstrap.js",
   "moduleCount": 136,
-  "totalBytes": 1605944,
+  "totalBytes": 1607069,
   "files": [
     {
       "path": "src/art-production-gate.js",
@@ -265,8 +265,8 @@
     },
     {
       "path": "src/firebase.js",
-      "bytes": 2556,
-      "sha256": "00205500e8513ebf3990dbfff356e86790f5e49fc00ef9bcdbfe7796a16fec7a"
+      "bytes": 3681,
+      "sha256": "b78e8d61189f4f5692ccde5a1619245ba4afa7da03efbb202fc36bd83a1d8bde"
     },
     {
       "path": "src/game-data.js",

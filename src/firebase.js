@@ -10,9 +10,33 @@ const config = {
 
 const FIREBASE_VERSION = '12.16.0';
 const FIREBASE_CDN_BASE = `https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}`;
+export const ONLINE_SCORE_SCHEMA_VERSION = '5.1.0';
 
 const enabled = Boolean(config.apiKey && config.projectId && config.appId);
 let contextPromise = null;
+
+const boundedInteger = (value, minimum, maximum, fallback = minimum) => {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return fallback;
+  return Math.min(maximum, Math.max(minimum, Math.round(number)));
+};
+
+export function sanitizeOnlineScoreEntry(entry = {}) {
+  const name = String(entry.name || '수호자').trim().slice(0, 12) || '수호자';
+  return Object.freeze({
+    name,
+    score: boundedInteger(entry.score, 0, 99999999, 0),
+    wave: boundedInteger(entry.wave, 0, 100, 0),
+    kills: boundedInteger(entry.kills, 0, 100000, 0),
+    maxRank: boundedInteger(entry.maxRank, 1, 5, 1),
+    version: ONLINE_SCORE_SCHEMA_VERSION
+  });
+}
+
+export function shouldPromoteOnlineScore(current, candidate) {
+  if (!current || typeof current !== 'object') return true;
+  return Number(candidate?.score || 0) > Number(current.score || 0);
+}
 
 async function getContext() {
   if (!enabled) return null;
@@ -26,6 +50,7 @@ async function getContext() {
       const auth = authModule.getAuth(app);
       await authModule.signInAnonymously(auth);
       return {
+        auth,
         db: firestoreModule.getFirestore(app),
         firestore: firestoreModule
       };
@@ -45,15 +70,21 @@ export function isFirebaseEnabled() {
 export async function submitOnlineScore(entry) {
   const context = await getContext();
   if (!context) return false;
-  const { db, firestore } = context;
-  await firestore.addDoc(firestore.collection(db, 'dokkaebiScores'), {
-    name: String(entry.name || '수호자').slice(0, 12),
-    score: Math.max(0, Number(entry.score) || 0),
-    wave: Math.max(0, Number(entry.wave) || 0),
-    kills: Math.max(0, Number(entry.kills) || 0),
-    maxRank: Math.max(1, Math.min(5, Number(entry.maxRank) || 1)),
-    version: '5.0.0',
-    createdAt: firestore.serverTimestamp()
+  const { auth, db, firestore } = context;
+  const uid = auth.currentUser?.uid;
+  if (!uid) return false;
+  const candidate = sanitizeOnlineScoreEntry(entry);
+  const scoreRef = firestore.doc(db, 'dokkaebiScores', uid);
+  await firestore.runTransaction(db, async (transaction) => {
+    const snapshot = await transaction.get(scoreRef);
+    const current = snapshot.exists() ? snapshot.data() : null;
+    if (!shouldPromoteOnlineScore(current, candidate)) return;
+    transaction.set(scoreRef, {
+      uid,
+      ...candidate,
+      createdAt: current?.createdAt || firestore.serverTimestamp(),
+      updatedAt: firestore.serverTimestamp()
+    });
   });
   return true;
 }

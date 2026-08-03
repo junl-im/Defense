@@ -12,6 +12,8 @@ const lock = json('package-lock.json');
 const publicVersion = json('public/version.json');
 const identity = read('src/release-identity.generated.js');
 const main = read('src/main.js');
+const firebase = read('src/firebase.js');
+const firestoreRules = read('firestore.rules');
 const handoff = read('PROJECT_HANDOFF.md');
 
 check(pkg.version === '1.0.52', 'package version 1.0.52');
@@ -19,6 +21,12 @@ check(lock.version === '1.0.52' && lock.packages?.['']?.version === '1.0.52', 'l
 check(publicVersion.releaseVersion === '1.0.52' && publicVersion.buildId === 'b24.52', 'public version identity');
 check(identity.includes('\"releaseVersion\": \"1.0.52\"') && identity.includes('\"buildId\": \"b24.52\"'), 'generated source identity');
 check(fs.existsSync(path.join(root, 'src/runtime/character-action-timing-v152.js')), 'action timing module exists');
+check(fs.existsSync(path.join(root, 'scripts/verify-leaderboard-integrity-v152.mjs')), 'leaderboard integrity verifier exists');
+check(pkg.scripts?.['verify:leaderboard:v152'] === 'node scripts/verify-leaderboard-integrity-v152.mjs', 'leaderboard integrity verifier registered');
+check(String(pkg.scripts?.['verify:release:v152'] || '').includes('verify:leaderboard:v152'), 'v152 release chain includes leaderboard integrity');
+check(firebase.includes("firestore.doc(db, 'dokkaebiScores', uid)") && firebase.includes('firestore.runTransaction'), 'leaderboard uses UID-bound best-score transaction');
+check(!firebase.includes('firestore.addDoc('), 'leaderboard no longer permits unbounded score documents');
+check(firestoreRules.includes('scoreId == request.auth.uid') && firestoreRules.includes('request.resource.data.score >= resource.data.score'), 'Firestore rules bind score ownership and monotonic updates');
 check(fs.existsSync(path.join(root, 'src/runtime/character-presentation-budget-v152.js')), 'presentation budget module exists');
 check(fs.existsSync(path.join(root, 'src/engine/gpu-frame-timer-v152.js')), 'GPU timer module exists');
 check(main.includes("from './engine/gpu-frame-timer-v152.js'"), 'main imports GPU timer');
@@ -114,9 +122,9 @@ check(featureVerifierV149.includes('localProduction.local && !localProduction.al
 check(featureRunnerV149.includes('!publicScenario.testApi') && featureRunnerV149.includes('qaScenario.testApi') && featureRunnerV149.includes('bootErrorVisible'), 'v149 browser exposure distinguishes default, explicit QA, and visible boot failure');
 check(featureRunnerV149.includes('--disable-background-timer-throttling') && featureRunnerV149.includes('--disable-backgrounding-occluded-windows') && featureRunnerV149.includes('--disable-renderer-backgrounding'), 'v149 browser exposure preserves foreground scheduling');
 check(mobileRunnerV144.includes('?qa=v144') && longSessionRunnerV145.includes('?qa=v145') && assuranceRunnerV146.includes('?qa=v146') && offlineRunnerV147.includes('?qa=v147'), 'all production browser automation explicitly opts into QA API');
-check(stagePackageV152.includes('CI_HOTFIX_R7') && verifyPackageV152.includes('CI_HOTFIX_R7'), 'v152 clean package staging identifies CI hotfix R7');
-check(createPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R7') && createPatchV152.includes('1.0.52-r7') && verifyPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R7'), 'v152 project-root patch tooling identifies CI hotfix R7');
-check(!createPatchV152.includes("path.join(out, 'overlay')") && createPatchV152.includes("path.join(out, 'project-root')"), 'v152 R7 patch remains a true project-root overlay without wrapper');
+check(stagePackageV152.includes('CI_HOTFIX_R8') && verifyPackageV152.includes('CI_HOTFIX_R8'), 'v152 clean package staging identifies CI hotfix R8');
+check(createPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R8') && createPatchV152.includes('1.0.52-r8') && verifyPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R8'), 'v152 project-root patch tooling identifies CI hotfix R8');
+check(!createPatchV152.includes("path.join(out, 'overlay')") && createPatchV152.includes("path.join(out, 'project-root')"), 'v152 R8 patch remains a true project-root overlay without wrapper');
 
 if (failures.length) {
   failures.forEach((failure) => console.error(`FAIL ${failure}`));
