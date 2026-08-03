@@ -25,6 +25,7 @@ const files = [
   'src/runtime/result-presenter-v149.js',
   'scripts/verify-release-v152.mjs',
   'scripts/verify-runtime-hardening-v152.mjs',
+  'scripts/verify-gpu-frame-timer-v152.mjs',
   'scripts/verify-leaderboard-integrity-v152.mjs',
   'scripts/verify-repository-root-v152.mjs',
   'scripts/verify-code-integrity.mjs',

@@ -244,9 +244,19 @@ export default class CharacterPresentationDirectorV151 extends CombatArtPolishDi
   }
 
   observePresentationCostV152(sample = {}) {
-    const report = this.presentationBudgetV152.observe(sample);
+    const report = this.presentationBudgetV152.observe({
+      ...sample,
+      source: sample.source || 'character-presentation-update'
+    });
     this.applyPresentationBudgetV152(report);
     return report;
+  }
+
+  observeWholeFrameCostV152(sample = {}) {
+    return this.presentationBudgetV152.observe({
+      ...sample,
+      source: sample.source || 'whole-frame-gpu'
+    });
   }
 
   updateModernRecordV151(record, dt, camera, elapsed) {

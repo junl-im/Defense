@@ -179,3 +179,24 @@ R8 검증 항목:
 - 삭제 금지와 공개 TOP 10 읽기 호환 유지
 
 로컬에서 `npm run verify:leaderboard:v152`와 `npm run verify:release:v152`를 통과했다. Firestore rules emulator를 사용한 실제 허용/거부 행렬과 배포 후 익명 인증 쓰기는 CI 또는 Firebase 프로젝트에서 추가 확인해야 한다. 이 변경은 문서 스팸과 최고 점수 롤백을 줄이지만, 서버 권위 점수 계산이 아니므로 조작된 클라이언트의 고득점 제출 자체를 완전히 증명하지는 않는다.
+
+
+## CI chain hotfix R9 검증
+
+R9는 전체 프레임 GPU 비용과 캐릭터 표현 전용 비용의 측정 scope를 분리하고 WebGL context lifecycle에서 stale query가 남지 않도록 한다.
+
+검증 항목:
+
+- 정상 WebGL2 timer-query의 밀리초 변환과 `whole-frame-gpu` scope
+- extension 미지원 환경의 안전한 no-op
+- pending query 상한과 overflow 폐기
+- GPU disjoint 시 같은 generation의 pending query 전량 폐기
+- stale query poll 예외의 외부 전파 차단
+- `webglcontextlost`의 suspend 및 query 폐기
+- `webglcontextrestored`의 context/extension 재획득
+- dispose 후 event listener 비활성
+- whole-frame GPU p95와 presentation GPU p95의 독립 집계
+- whole-frame GPU 과부하의 캐릭터 오강등 방지
+- 명시적인 presentation GPU/CPU 과부하의 1회 강등
+
+결정론 fixture와 정적 릴리스 계약은 통과했다. 실제 WebGL2 extension 동작, GPU disjoint, context loss/restore와 하드웨어 예산은 Vite complete build 및 실기기 브라우저에서 추가 확인해야 한다.

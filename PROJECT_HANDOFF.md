@@ -1,3 +1,13 @@
+## 2026-08-03 — v1.0.52 GPU scope and context recovery hotfix R9
+
+- 재현 위험: 전체 `renderer.render()` GPU 시간이 캐릭터 표현 전용 GPU 비용으로 집계되어 배경·전장 이펙트 부하만으로 캐릭터 품질이 오강등될 수 있었다.
+- context 위험: WebGL context loss 뒤 이전 query/extension 참조가 남고 `poll()` 예외가 보호되지 않아 복원 직후 timer가 반복 실패할 수 있었다.
+- 수정: GPU 표본을 `whole-frame-gpu`로 분리하고 캐릭터 budget의 presentation GPU/CPU와 whole-frame GPU/frame 진단을 독립 집계한다. 전체 프레임 GPU는 캐릭터 전용 강등 근거로 사용하지 않는다.
+- 복구: context loss에서 query를 폐기·suspend하고 restore에서 context와 extension을 재획득한다. begin/end/poll 예외, disjoint, overflow, dispose를 fail-closed로 처리한다.
+- 회귀 방지: `npm run verify:gpu-timer:v152`와 `npm run verify:presentation-budget:v152`가 미지원·overflow·disjoint·query 오류·context loss/restore·scope 오인을 검사한다.
+- 릴리스 식별자: 게임 버전과 빌드 ID는 `v1.0.52 / b24.52`, repair revision은 R9다.
+
+
 ## 2026-08-03 — v1.0.52 CI leaderboard integrity hotfix R8
 
 - 재현 위험: 익명 인증 사용자가 `addDoc()`로 `dokkaebiScores` 문서를 반복 생성할 수 있어 사용자당 기록 수가 제한되지 않았다.
@@ -107,6 +117,17 @@ npm run hygiene:check
 - 100웨이브 자원 상한과 에셋 승인·격리 경계를 자동 검증한다.
 
 ## 인수인계 내역
+
+### 2026-08-03 — v1.0.52 / b24.52 GPU scope and context recovery hotfix R9
+
+- 작업 목표: 전체 프레임 GPU timer-query를 캐릭터 전용 비용으로 오인하는 품질 강등 오류를 제거하고 WebGL context loss/restore 동안 stale query가 런타임 오류를 만들지 않도록 한다.
+- 주요 변경 파일: `src/engine/gpu-frame-timer-v152.js`, `src/runtime/character-presentation-budget-v152.js`, `src/runtime/character-presentation-director-v151.js`, `src/main.js`, `scripts/verify-gpu-frame-timer-v152.mjs`, v152 릴리스·CI 서명·패키지·패치 검증기, R9 문서.
+- 수정 내용: GPU 표본은 `whole-frame-gpu` scope로 반환되고 캐릭터 budget은 `presentationGpuP95Ms`, `presentationCpuP95Ms`, `wholeFrameGpuP95Ms`, `wholeFrameP95Ms`를 분리한다. 캐릭터 품질 강등은 명시적인 캐릭터 GPU/CPU 표본에만 반응한다. timer는 context loss에서 suspend 및 query 폐기, restore에서 context/extension rebind, query 예외 fail-closed, disjoint pending 전량 폐기, dispose listener 정리를 수행한다.
+- 검증 명령: `npm run verify:gpu-timer:v152`, `npm run verify:presentation-budget:v152`, `npm run verify:hardening:v152`, `npm run verify:release:v152`, `npm run verify:ci-source:v152`, `npm run verify:build-input:v152`, `npm run stage:package:v152`, `npm run verify:package:v152`, `npm run create:patch:v152`, `npm run verify:patch:v152`, `npm run hygiene:check`.
+- 현재 검증 결과: 결정론 fake WebGL 행렬에서 extension 미지원, 정상 표본, overflow, disjoint, stale poll 예외, context loss, restore, 수동 rebind, dispose를 통과했다. 전체 프레임 GPU 과부하가 캐릭터 품질을 강등하지 않고 명시적 캐릭터 GPU/CPU 과부하는 cinematic에서 balanced로 한 번만 강등되는 것을 확인했다. 최신 v1.0.52 릴리스·서명·패키지·패치 계약을 통과했다.
+- 잔여 위험: 현재 환경의 npm 미러가 고정 `vite@8.1.5`를 제공하지 않아 실제 Vite/WebGL timer-query와 모바일 context loss/restore는 실행하지 못했다. 캐릭터 레이어만의 실제 GPU 비용은 별도 scoped render 측정 설계와 실기기 승인이 필요하다.
+- 다음 예정: `docs/NEXT_UPDATE_v1.0.53.md`의 실제 Vite/WebGL 전후 캡처, scoped GPU 측정 설계, 실기기 예산 승인, 승인 원본 기반 normal/emissive mask, 나머지 직업 11방향 사람 검토.
+
 
 ### 2026-07-30 — v1.0.51 / b24.51 modern character presentation
 

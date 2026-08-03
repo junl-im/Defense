@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 const root = path.resolve(import.meta.dirname, '..');
-const stage = path.join(root, 'logs/package/1.0.52/DokkaebiLuckDefense3D_FULL_v1.0.52_EVENT_TIMING_RUNTIME_GUARD_CI_HOTFIX_R8');
+const stage = path.join(root, 'logs/package/1.0.52/DokkaebiLuckDefense3D_FULL_v1.0.52_EVENT_TIMING_RUNTIME_GUARD_CI_HOTFIX_R9');
 if (!fs.existsSync(stage)) throw new Error('v152 staged package missing');
 for (const banned of ['dist', 'node_modules', '.git', 'overlay']) if (fs.existsSync(path.join(stage, banned))) throw new Error(`v152 staged package contains ${banned}`);
 
@@ -22,6 +22,8 @@ for (const file of [
   'src/firebase.js',
   'firestore.rules',
   'scripts/verify-leaderboard-integrity-v152.mjs',
+  'scripts/verify-gpu-frame-timer-v152.mjs',
+  'docs/CI_V152_GPU_CONTEXT_SCOPE_HOTFIX_R9.md',
   'src/runtime/character-presentation-budget-v152.js',
   'src/engine/gpu-frame-timer-v152.js',
   'scripts/verify-release-v152.mjs',
@@ -52,4 +54,4 @@ for (const file of [
   'docs/NEXT_UPDATE_v1.0.53.md',
   'PROJECT_HANDOFF.md'
 ]) if (!fs.existsSync(path.join(stage, file))) throw new Error(`v152 staged contract missing ${file}`);
-console.log('PASS v1.0.52 CI hotfix R8 clean source package staging');
+console.log('PASS v1.0.52 CI hotfix R9 clean source package staging');

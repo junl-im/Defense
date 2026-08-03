@@ -11,8 +11,8 @@
     },
     {
       "path": "package.json",
-      "bytes": 40153,
-      "sha256": "3d81322f5678116fb2a2c3397313a958cbb96ef59f2ad23f5cb626bbab349e45"
+      "bytes": 40263,
+      "sha256": "707b448b67040c27ab8ea0536448e0358dd8b69fae862024912ef27ec0fe7e26"
     },
     {
       "path": "package-lock.json",
@@ -26,8 +26,8 @@
     },
     {
       "path": "src/main.js",
-      "bytes": 418183,
-      "sha256": "8cf2576223f211183860cb325e73a9440ab71b9c1869289f825edc36ea9c0d74"
+      "bytes": 418181,
+      "sha256": "7cc3b0d2970dc906fd1a5f7976e1245a2aa1441343d1a4877bd2f13876ecdbe8"
     },
     {
       "path": "src/firebase.js",
@@ -66,8 +66,8 @@
     },
     {
       "path": "src/engine/gpu-frame-timer-v152.js",
-      "bytes": 3006,
-      "sha256": "abdeb9090a4485b6a807798bf139c05cbfb1258fffb7b83ff47db7cda2c0dc4b"
+      "bytes": 7236,
+      "sha256": "b7f97485c8dd817c94771a9071d69924d2911e55e0cb3005dab365fe8b191f76"
     },
     {
       "path": "src/runtime/character-action-timing-v152.js",
@@ -76,13 +76,13 @@
     },
     {
       "path": "src/runtime/character-presentation-budget-v152.js",
-      "bytes": 3543,
-      "sha256": "6e2921f04fa1b643b8eadfed3def739b4c35313878c0f99be50e71c5958780e6"
+      "bytes": 5531,
+      "sha256": "13ebf6d9433839a3fc5c2b98c67be1c19560a01df9f101ad0db472e320c46d52"
     },
     {
       "path": "src/runtime/character-presentation-director-v151.js",
-      "bytes": 20425,
-      "sha256": "ca20317a97a8e68df6e8fc0dfff33d73b13994534beeee1216683265b8512928"
+      "bytes": 20677,
+      "sha256": "8be4c4f492faae13e05d8bc99a10a8b45d028d280f86d3b20e500aa2a86f40f1"
     },
     {
       "path": "src/runtime/feature-exposure-policy-v149.js",
@@ -96,13 +96,18 @@
     },
     {
       "path": "scripts/verify-release-v152.mjs",
-      "bytes": 17384,
-      "sha256": "4a7d35a2461afb37deedfabed5b46354335958dd0910c3373ba191e6090e77da"
+      "bytes": 17790,
+      "sha256": "59616ac55fb2c8b286207eb224a744ea13d27eef2300691e2718e4ddb9d48888"
     },
     {
       "path": "scripts/verify-runtime-hardening-v152.mjs",
-      "bytes": 3586,
-      "sha256": "46cc0c3978cb58152883d0590ce576f279222699f2f28ffd8579d70a7238ca97"
+      "bytes": 4348,
+      "sha256": "d3104cb3d76d3bd643862e6ba1b3411147e411008217967f7af79815412ab0b1"
+    },
+    {
+      "path": "scripts/verify-gpu-frame-timer-v152.mjs",
+      "bytes": 4397,
+      "sha256": "64692716616636057e8202d599fdd9b4c6944dd2943bee1418808c2bb5bfce45"
     },
     {
       "path": "scripts/verify-leaderboard-integrity-v152.mjs",

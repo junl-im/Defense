@@ -1,6 +1,6 @@
 # Dokkaebi Luck Defense 3D
 
-> Current release: **v1.0.52 / b24.52 CI HOTFIX R7** — reachable Vite chunk verification, durable-save offline assurance, bounded service-worker installation, and event-timed character presentation.
+> Current release: **v1.0.52 / b24.52 CI HOTFIX R9** — reachable Vite chunk verification, durable-save offline assurance, bounded service-worker installation, and event-timed character presentation.
 
 ## v1.0.51 CI cleanup repair R3
 
@@ -124,3 +124,8 @@ R6 fixes the v1.0.48+ dist verifiers' incorrect assumption that every runtime ma
 ## v1.0.52 CI HOTFIX R7
 
 R7 resolves the v1.0.49 feature-exposure contract conflict. A production bundle no longer exposes `window.__DOKKAEBI_TEST_API__` merely because it is served from localhost. QA automation must use an explicit `?qa=...` token, while development mode remains enabled. The v149 browser report now distinguishes a hidden boot-recovery template from a visible boot failure and runs with foreground scheduling flags.
+
+
+## v1.0.52 CI HOTFIX R9
+
+R9 separates whole-frame GPU timer-query diagnostics from character-presentation GPU cost so unrelated scene load cannot be mislabeled as character rendering pressure. The GPU timer now suspends on WebGL context loss, discards stale queries, reacquires the context and extension on restore, and fails closed on query errors. Run `npm run verify:gpu-timer:v152` and `npm run verify:presentation-budget:v152` before the full release chain.

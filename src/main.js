@@ -7852,7 +7852,7 @@ class DokkaebiLuckDefense {
       } finally {
         if (gpuQueryStartedV152) this.gpuFrameTimerV152?.endFrame?.();
         const gpuSampleV152 = this.gpuFrameTimerV152?.poll?.();
-        if (gpuSampleV152) this.combatVisualV112?.observePresentationCostV152?.({
+        if (gpuSampleV152) this.combatVisualV112?.observeWholeFrameCostV152?.({
           ...gpuSampleV152,
           frameMs: rawDt * 1000
         });

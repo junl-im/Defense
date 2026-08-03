@@ -12,17 +12,20 @@ const main = read('src/main.js');
 const material = read('src/engine/character-material-enhancer-v151.js');
 const presenter = read('src/runtime/result-presenter-v149.js');
 const gpuTimer = read('src/engine/gpu-frame-timer-v152.js');
+const presentationBudget = read('src/runtime/character-presentation-budget-v152.js');
 
 check(!director.includes('tempWorldV151.clone()'), 'presentation director avoids per-frame Vector3 clone');
 check(!director.includes('history.unshift('), 'presentation director avoids per-frame history object churn');
 check(director.includes('clearMotionHistoryV152(modern') && director.includes('state !== modern.lastState') && director.includes('worldDelta > teleportThreshold'), 'state and teleport history reset');
 check(director.includes('!record.sprite?.visible') && director.includes('{ resetWorld: true }'), 'invisible record history reset');
-check(director.includes('CharacterPresentationBudgetV152') && director.includes('observePresentationCostV152'), 'presentation budget integration');
+check(director.includes('CharacterPresentationBudgetV152') && director.includes('observePresentationCostV152') && director.includes('observeWholeFrameCostV152'), 'presentation and whole-frame budget integration');
 check(animation.includes('authoredDurationV152') && animation.includes('Math.max(0.01, duration, authoredDurationV152)'), 'one-shot duration covers authored event timeline');
 check(animation.includes('updatePresentationEventsV152') && animation.includes('eventCursorV152'), 'authored event cursor integration');
 check(main.includes("actorCategory: 'hero'") && main.includes("actorCategory: 'guardian'") && main.includes("config.boss ? 'boss' : 'monster'"), 'actor-specific timing identity wiring');
-check(main.includes('new GpuFrameTimerV152(this.renderer)') && main.includes('beginFrame?.()') && main.includes('endFrame?.()') && main.includes('poll?.()'), 'WebGL GPU timer lifecycle integration');
+check(main.includes('new GpuFrameTimerV152(this.renderer)') && main.includes('beginFrame?.()') && main.includes('endFrame?.()') && main.includes('poll?.()') && main.includes('observeWholeFrameCostV152'), 'WebGL GPU timer lifecycle and whole-frame routing integration');
 check(gpuTimer.includes('EXT_disjoint_timer_query_webgl2') && gpuTimer.includes('GPU_DISJOINT_EXT') && gpuTimer.includes('overflowDrops'), 'disjoint and overflow-safe GPU timing');
+check(gpuTimer.includes("addEventListener('webglcontextlost'") && gpuTimer.includes("addEventListener('webglcontextrestored'") && gpuTimer.includes('rebindContext') && gpuTimer.includes('queryErrors'), 'GPU timer context loss, restore, and stale-query recovery');
+check(presentationBudget.includes('presentationGpuP95Ms') && presentationBudget.includes('wholeFrameGpuP95Ms') && presentationBudget.includes('isWholeFrameGpuSourceV152'), 'presentation budget separates scoped GPU and whole-frame diagnostics');
 check(material.includes('hasAuthoredEmissiveMap') && material.includes('hasAuthoredEmissiveColor') && material.includes('characterEmissivePreservedV152') && !material.includes('authoredEmissiveIntensity || 1'), 'authored emissive preservation');
 check(presenter.includes('function html(value)') && presenter.includes('const baseScore = Number.isFinite'), 'result HTML and invalid-score hardening');
 check(main.includes('if (this.disposed) return') && main.includes('delete window.__DOKKAEBI_PUBLIC_API__'), 'deferred task and public API disposal guard');
@@ -37,7 +40,7 @@ fs.writeFileSync(path.join(evidenceDir, 'runtime-hardening-summary.json'), `${JS
   id: 'DD-RUNTIME-HARDENING-EVIDENCE-V152',
   releaseVersion: '1.0.52',
   passed: true,
-  checks: ['stale-afterimage-reset', 'allocation-free-history', 'authored-event-duration', 'gpu-query-disjoint-guard', 'emissive-preservation', 'result-html-escaping', 'dispose-guards'],
+  checks: ['stale-afterimage-reset', 'allocation-free-history', 'authored-event-duration', 'gpu-query-disjoint-guard', 'gpu-context-rebind', 'gpu-scope-separation', 'emissive-preservation', 'result-html-escaping', 'dispose-guards'],
   runtimeWebglExecution: 'required-in-vite-ci'
 }, null, 2)}\n`);
-console.log('PASS v1.0.52 runtime hardening contracts cover stale trails, allocation churn, event duration, GPU queries, materials, HTML, and disposal');
+console.log('PASS v1.0.52 R9 runtime hardening covers scoped GPU metrics, context recovery, stale trails, materials, HTML, and disposal');

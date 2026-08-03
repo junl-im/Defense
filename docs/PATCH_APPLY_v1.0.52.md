@@ -126,3 +126,28 @@ firebase deploy --only firestore:rules
 ```text
 PASS v1.0.52 R8 leaderboard integrity: UID-bound single best score, bounded schema, monotonic transaction, and rules contract
 ```
+
+
+## R9 적용
+
+R9은 R8 또는 이전 v1.0.52 전체본에 적용하는 프로젝트 루트 직접 덮어쓰기 패치다. 게임 버전과 빌드 ID는 `1.0.52 / b24.52`로 유지된다.
+
+```bash
+npm run clean:obsolete
+npm ci
+npm run verify:gpu-timer:v152
+npm run verify:presentation-budget:v152
+npm run verify:release:v152
+npm run verify:ci
+VITE_BASE_PATH=/Defense/ npm run build
+npm run verify:dist:all
+```
+
+성공 로그에는 다음 문구가 포함되어야 한다.
+
+```text
+PASS v1.0.52 R9 GPU timer handles unsupported, overflow, disjoint, query error, context loss, restore, and disposal
+PASS v1.0.52 R9 presentation budget separates whole-frame diagnostics from scoped character cost and preserves one-way downgrade
+```
+
+실제 브라우저에서 context loss/restore를 강제한 뒤 `gpuFrameTimerV152` 진단의 `contextLosses`, `contextRestores`, `rebinds`, `queryErrors`, `status`를 확인한다.

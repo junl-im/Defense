@@ -119,3 +119,14 @@
 - `scripts/verify-leaderboard-integrity-v152.mjs`를 추가해 무제한 `addDoc` 재도입, UID 미결합, 낮은 점수 덮어쓰기, 규칙 스키마 회귀를 차단한다.
 - 정리 패키지에서 `__pycache__`, `.pyc`, `.pyo`를 제외하고 패키지 검증기가 재유입을 차단한다.
 - 이 패치는 리더보드 문서 수와 무결성을 보강하지만, 클라이언트 단독 게임의 점수 조작을 서버 권위 방식으로 완전히 방지하는 안티치트는 아니다.
+
+
+## CI chain hotfix R9
+
+- 전체 `renderer.render()` timer-query 표본을 캐릭터 표현 전용 GPU 비용으로 오인하던 집계를 수정했다.
+- GPU 표본은 `whole-frame-gpu` scope로 기록하고 `presentationGpuP95Ms`와 `wholeFrameGpuP95Ms`를 별도로 유지한다.
+- 전체 프레임 GPU 과부하는 캐릭터 전용 GPU 강등 근거로 사용하지 않으며, 명시적인 캐릭터 GPU/CPU 표본만 cinematic → balanced 강등을 발생시킨다.
+- WebGL context loss 시 active/pending query를 폐기하고 타이머를 suspend한다.
+- context restore 시 renderer context와 `EXT_disjoint_timer_query_webgl2`를 재획득한다.
+- query begin/end/poll 예외, disjoint, overflow, dispose 경계를 fail-closed로 처리하고 진단 카운터를 제공한다.
+- `scripts/verify-gpu-frame-timer-v152.mjs`가 미지원·overflow·disjoint·stale query·context loss/restore·dispose 행렬을 검사한다.
