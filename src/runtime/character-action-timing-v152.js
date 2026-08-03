@@ -3,6 +3,7 @@ export const CHARACTER_ACTION_TIMING_V152 = Object.freeze({
   version: '1.0.52',
   buildId: 'b24.52',
   eventModel: 'authored-absolute-seconds',
+  durationGuardId: 'DD-AUTHORED-DURATION-GUARD-V152',
   states: Object.freeze(['attack', 'skill', 'hit'])
 });
 

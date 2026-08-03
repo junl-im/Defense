@@ -1,6 +1,6 @@
 # Dokkaebi Luck Defense 3D
 
-> Current release: **v1.0.52 / b24.52 CI HOTFIX R9** — reachable Vite chunk verification, durable-save offline assurance, bounded service-worker installation, and event-timed character presentation.
+> Current release: **v1.0.52 / b24.52 CI HOTFIX R11** — reachable Vite chunk verification, durable-save offline assurance, bounded service-worker installation, and event-timed character presentation.
 
 ## v1.0.51 CI cleanup repair R3
 
@@ -129,3 +129,11 @@ R7 resolves the v1.0.49 feature-exposure contract conflict. A production bundle 
 ## v1.0.52 CI HOTFIX R9
 
 R9 separates whole-frame GPU timer-query diagnostics from character-presentation GPU cost so unrelated scene load cannot be mislabeled as character rendering pressure. The GPU timer now suspends on WebGL context loss, discards stale queries, reacquires the context and extension on restore, and fails closed on query errors. Run `npm run verify:gpu-timer:v152` and `npm run verify:presentation-budget:v152` before the full release chain.
+
+
+## CI chain hotfix R11
+
+- production minification에서 사라질 수 있는 로컬 변수명 `authoredDurationV152`를 dist 마커로 사용하던 오류를 수정했다.
+- 액션 타이밍 동결 계약의 `DD-AUTHORED-DURATION-GUARD-V152` 안정 마커를 확인한다.
+- authored event timeline이 one-shot 지속시간 하한에 반영되는 실제 소스 로직 검증은 그대로 유지한다.
+- reachable chunk fixture가 minified 형태에서도 안정 마커를 찾고 고아 chunk는 거부하는지 검사한다.

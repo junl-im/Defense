@@ -3,9 +3,9 @@
 - 결과: **PASS**
 - 수정 완료: 11건
 - 추적 위험: 3건
-- 소스 모듈: 151개 / 1426498 bytes
+- 소스 모듈: 151개 / 1426552 bytes
 - 엔진 모듈: 25개 / 110891 bytes
-- 런타임 모듈: 68개 / 454752 bytes
+- 런타임 모듈: 68개 / 454806 bytes
 
 ## 점검 결과
 - PASS identitySynchronized
@@ -40,15 +40,15 @@
 
 ## 주요 계측
 - sourceModules: 151
-- sourceBytes: 1426498
+- sourceBytes: 1426552
 - runtimeModules: 68
-- runtimeBytes: 454752
+- runtimeBytes: 454806
 - engineModules: 25
 - engineBytes: 110891
 - combatModules: 11
 - combatBytes: 40779
 - scriptFiles: 396
-- scriptBytes: 1754021
+- scriptBytes: 1755709
 - mainLines: 7968
 - mainBytes: 418181
 - runSafeCalls: 51

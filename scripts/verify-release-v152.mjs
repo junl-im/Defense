@@ -12,6 +12,7 @@ const lock = json('package-lock.json');
 const publicVersion = json('public/version.json');
 const identity = read('src/release-identity.generated.js');
 const main = read('src/main.js');
+const actionTimingV152 = read('src/runtime/character-action-timing-v152.js');
 const firebase = read('src/firebase.js');
 const firestoreRules = read('firestore.rules');
 const handoff = read('PROJECT_HANDOFF.md');
@@ -21,6 +22,7 @@ check(lock.version === '1.0.52' && lock.packages?.['']?.version === '1.0.52', 'l
 check(publicVersion.releaseVersion === '1.0.52' && publicVersion.buildId === 'b24.52', 'public version identity');
 check(identity.includes('\"releaseVersion\": \"1.0.52\"') && identity.includes('\"buildId\": \"b24.52\"'), 'generated source identity');
 check(fs.existsSync(path.join(root, 'src/runtime/character-action-timing-v152.js')), 'action timing module exists');
+check(actionTimingV152.includes("durationGuardId: 'DD-AUTHORED-DURATION-GUARD-V152'"), 'action timing exposes a minification-stable duration guard marker');
 check(fs.existsSync(path.join(root, 'scripts/verify-leaderboard-integrity-v152.mjs')), 'leaderboard integrity verifier exists');
 check(pkg.scripts?.['verify:leaderboard:v152'] === 'node scripts/verify-leaderboard-integrity-v152.mjs', 'leaderboard integrity verifier registered');
 check(String(pkg.scripts?.['verify:release:v152'] || '').includes('verify:leaderboard:v152'), 'v152 release chain includes leaderboard integrity');
@@ -112,6 +114,8 @@ check(pkg.scripts?.['verify:sw-install:v152'] === 'node scripts/verify-service-w
 check(pkg.scripts?.['verify:bundle-markers:v152'] === 'node scripts/verify-dist-bundle-markers-v152.mjs' && pkg.scripts?.['verify:release:v152']?.includes('verify:bundle-markers:v152'), 'v152 release chain includes reachable bundle marker regression gate');
 check(bundleMarkerHelperV152.includes('collectReachableJavaScriptBundle') && bundleMarkerHelperV152.includes('assets/game.js') && bundleMarkerHelperV152.includes('resolveBundleReference'), 'v152 bundle marker helper follows emitted dynamic-import graph');
 check(bundleMarkerVerifierV152.includes('main-fixture.js') && bundleMarkerVerifierV152.includes('ORPHAN-MUST-NOT-PASS') && bundleMarkerVerifierV152.includes('/Defense/assets/chunks/runtime-fixture.js'), 'v152 bundle marker fixture covers dynamic chunks, base paths, and unreachable chunks');
+check(bundleMarkerVerifierV152.includes('DD-AUTHORED-DURATION-GUARD-V152'), 'v152 bundle marker fixture covers minified authored-duration identity');
+check(distVerifierV152.includes('DD-AUTHORED-DURATION-GUARD-V152') && !distVerifierV152.includes("'authoredDurationV152'"), 'v152 dist verifier uses a minification-stable duration marker instead of a local identifier');
 for (const [label, verifier] of [['v148', distVerifierV148], ['v149', distVerifierV149], ['v150', distVerifierV150], ['v151', distVerifierV151], ['v152', distVerifierV152]]) {
   check(verifier.includes("from './lib/dist-bundle-markers.mjs'") && verifier.includes('assertReachableBundleMarkers'), `${label} dist verifier scans reachable Vite bundle graph`);
   check(!verifier.includes("const gameJs = fs.readFileSync(path.join(dist, 'assets/game.js')") && !verifier.includes("const gameJs=fs.readFileSync(path.join(dist,'assets/game.js')"), `${label} dist verifier does not assume all runtime code is in game.js`);
@@ -125,10 +129,10 @@ check(featureVerifierV149.includes('localProduction.local && !localProduction.al
 check(featureRunnerV149.includes('!publicScenario.testApi') && featureRunnerV149.includes('qaScenario.testApi') && featureRunnerV149.includes('bootErrorVisible'), 'v149 browser exposure distinguishes default, explicit QA, and visible boot failure');
 check(featureRunnerV149.includes('--disable-background-timer-throttling') && featureRunnerV149.includes('--disable-backgrounding-occluded-windows') && featureRunnerV149.includes('--disable-renderer-backgrounding'), 'v149 browser exposure preserves foreground scheduling');
 check(mobileRunnerV144.includes('?qa=v144') && longSessionRunnerV145.includes('?qa=v145') && assuranceRunnerV146.includes('?qa=v146') && offlineRunnerV147.includes('?qa=v147'), 'all production browser automation explicitly opts into QA API');
-check(stagePackageV152.includes('CI_HOTFIX_R10') && verifyPackageV152.includes('CI_HOTFIX_R10'), 'v152 clean package staging identifies CI hotfix R10');
+check(stagePackageV152.includes('CI_HOTFIX_R11') && verifyPackageV152.includes('CI_HOTFIX_R11'), 'v152 clean package staging identifies CI hotfix R11');
 check(performanceTrendV145.includes('replaceOneOfRequired') && performanceTrendV145.includes('observePresentationCostV152') && performanceTrendV145.includes('observeWholeFrameCostV152'), 'v145 trend isolation accepts exactly one R8/R9 GPU observation variant');
-check(createPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R10') && createPatchV152.includes('1.0.52-r10') && verifyPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R10'), 'v152 project-root patch tooling identifies CI hotfix R10');
-check(!createPatchV152.includes("path.join(out, 'overlay')") && createPatchV152.includes("path.join(out, 'project-root')"), 'v152 R10 patch remains a true project-root overlay without wrapper');
+check(createPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R11') && createPatchV152.includes('1.0.52-r11') && verifyPatchV152.includes('DD-PROJECT-ROOT-PATCH-V152-R11'), 'v152 project-root patch tooling identifies CI hotfix R11');
+check(!createPatchV152.includes("path.join(out, 'overlay')") && createPatchV152.includes("path.join(out, 'project-root')"), 'v152 R11 patch remains a true project-root overlay without wrapper');
 
 if (failures.length) {
   failures.forEach((failure) => console.error(`FAIL ${failure}`));

@@ -138,3 +138,11 @@
 - R8 `observePresentationCostV152`와 R9 `observeWholeFrameCostV152` 중 정확히 하나만 허용하고 제거한다.
 - 허용 블록이 없거나 중복되면 실패하므로 문자열 완화로 인한 거짓 통과를 방지한다.
 - v1.0.44 성능 기준값과 5% 회귀 상한은 변경하지 않았다.
+
+## CI chain hotfix R11
+
+- 실제 Vite production bundle에서 `authoredDurationV152` 로컬 변수명이 minification되어 v152 dist 검증이 실패하던 문제를 수정했다.
+- 액션 타이밍 계약에 `DD-AUTHORED-DURATION-GUARD-V152` 안정 마커를 추가하고 dist 검증을 해당 문자열로 교체했다.
+- `Math.max(0.01, duration, authoredDurationV152)` 소스 의미 검증은 유지해 동작 계약을 완화하지 않았다.
+- minified 형태의 reachable chunk fixture와 로컬 식별자 dist 마커 재도입 금지를 릴리스 계약에 추가했다.
+

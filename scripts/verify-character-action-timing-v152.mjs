@@ -11,6 +11,7 @@ const ordered = (events) => events.every((event, index) => index === 0 || event.
 
 check(CHARACTER_ACTION_TIMING_V152.version === '1.0.52' && CHARACTER_ACTION_TIMING_V152.buildId === 'b24.52', 'v152 timing identity');
 check(CHARACTER_ACTION_TIMING_V152.eventModel === 'authored-absolute-seconds', 'absolute-second event model');
+check(CHARACTER_ACTION_TIMING_V152.durationGuardId === 'DD-AUTHORED-DURATION-GUARD-V152', 'minification-stable authored-duration guard identity');
 for (const heroClass of ['warrior', 'archer', 'mage', 'taoist', 'shaman']) {
   const profile = resolveCharacterActionTimingV152({ category: 'hero', actorId: heroClass });
   check(profile === HERO_ACTION_TIMING_PROFILES_V152[heroClass], `${heroClass} authored profile resolution`);

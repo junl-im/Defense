@@ -1,3 +1,28 @@
+# Patch Apply v1.0.52
+
+## R11 적용
+
+R11은 R10 또는 이전 v1.0.52 프로젝트 루트에 직접 덮어쓰는 CI 핫픽스다. 게임 버전과 빌드 ID는 `1.0.52 / b24.52`로 유지된다.
+
+1. 기존 프로젝트를 별도 위치에 백업한다.
+2. R11 패치 ZIP의 내용을 프로젝트 루트에 직접 덮어쓴다.
+3. `DELETE_PATHS_v1.0.52_R11.txt`에 적힌 생성물·과거 패치 잔재를 삭제한다.
+4. 다음 명령을 실행한다.
+
+```bash
+npm run clean:obsolete
+npm ci
+npm run verify:timing:v152
+npm run verify:bundle-markers:v152
+npm run verify:release:v152
+VITE_BASE_PATH=/Defense/ npm run build
+npm run verify:dist:all
+```
+
+R11은 minification에서 사라지는 로컬 변수명을 dist 증거로 사용하지 않고, 동결 런타임 계약의 안정 문자열 마커를 사용한다. 애니메이션 시간값과 one-shot 로직은 변경하지 않는다.
+
+---
+
 # v1.0.52 CI HOTFIX 누적 패치 적용
 
 ## R10 적용

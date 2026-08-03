@@ -8,6 +8,7 @@ const check = (value, label) => { if (!value) failures.push(label); };
 
 const director = read('src/runtime/character-presentation-director-v151.js');
 const animation = read('src/engine/animation-state-system.js');
+const actionTiming = read('src/runtime/character-action-timing-v152.js');
 const main = read('src/main.js');
 const material = read('src/engine/character-material-enhancer-v151.js');
 const presenter = read('src/runtime/result-presenter-v149.js');
@@ -20,6 +21,7 @@ check(director.includes('clearMotionHistoryV152(modern') && director.includes('s
 check(director.includes('!record.sprite?.visible') && director.includes('{ resetWorld: true }'), 'invisible record history reset');
 check(director.includes('CharacterPresentationBudgetV152') && director.includes('observePresentationCostV152') && director.includes('observeWholeFrameCostV152'), 'presentation and whole-frame budget integration');
 check(animation.includes('authoredDurationV152') && animation.includes('Math.max(0.01, duration, authoredDurationV152)'), 'one-shot duration covers authored event timeline');
+check(actionTiming.includes("durationGuardId: 'DD-AUTHORED-DURATION-GUARD-V152'"), 'authored-duration dist marker survives identifier minification');
 check(animation.includes('updatePresentationEventsV152') && animation.includes('eventCursorV152'), 'authored event cursor integration');
 check(main.includes("actorCategory: 'hero'") && main.includes("actorCategory: 'guardian'") && main.includes("config.boss ? 'boss' : 'monster'"), 'actor-specific timing identity wiring');
 check(main.includes('new GpuFrameTimerV152(this.renderer)') && main.includes('beginFrame?.()') && main.includes('endFrame?.()') && main.includes('poll?.()') && main.includes('observeWholeFrameCostV152'), 'WebGL GPU timer lifecycle and whole-frame routing integration');
@@ -40,7 +42,7 @@ fs.writeFileSync(path.join(evidenceDir, 'runtime-hardening-summary.json'), `${JS
   id: 'DD-RUNTIME-HARDENING-EVIDENCE-V152',
   releaseVersion: '1.0.52',
   passed: true,
-  checks: ['stale-afterimage-reset', 'allocation-free-history', 'authored-event-duration', 'gpu-query-disjoint-guard', 'gpu-context-rebind', 'gpu-scope-separation', 'emissive-preservation', 'result-html-escaping', 'dispose-guards'],
+  checks: ['stale-afterimage-reset', 'allocation-free-history', 'authored-event-duration', 'minification-stable-duration-marker', 'gpu-query-disjoint-guard', 'gpu-context-rebind', 'gpu-scope-separation', 'emissive-preservation', 'result-html-escaping', 'dispose-guards'],
   runtimeWebglExecution: 'required-in-vite-ci'
 }, null, 2)}\n`);
-console.log('PASS v1.0.52 R9 runtime hardening covers scoped GPU metrics, context recovery, stale trails, materials, HTML, and disposal');
+console.log('PASS v1.0.52 R11 runtime hardening covers stable dist identity, scoped GPU metrics, context recovery, stale trails, materials, HTML, and disposal');

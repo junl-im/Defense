@@ -71,8 +71,8 @@
     },
     {
       "path": "src/runtime/character-action-timing-v152.js",
-      "bytes": 6491,
-      "sha256": "b4daaf7d1b4cbb2311e6b230eacb2d03cb4f63dec7290c7bf57a811d73e8b438"
+      "bytes": 6545,
+      "sha256": "0cd882f3cdbb6ebc68ec1ec4d2e212d7d0e205e94fabfb1f7a5111ebc7e839ea"
     },
     {
       "path": "src/runtime/character-presentation-budget-v152.js",
@@ -96,13 +96,18 @@
     },
     {
       "path": "scripts/verify-release-v152.mjs",
-      "bytes": 18060,
-      "sha256": "c2c7c6dab1596b83c9d926def3f31aa4c03f40f2bf735b04e3ae78b7bb971a82"
+      "bytes": 18665,
+      "sha256": "6e282757a83866d5f534b4ffa9f7b5301b57587b70f779f0cac4a2b96254ffd6"
+    },
+    {
+      "path": "scripts/verify-character-action-timing-v152.mjs",
+      "bytes": 2399,
+      "sha256": "76668527f5f153dfa3b312e898b7d7cc54fd36343b331e9f7db527870a4ba00c"
     },
     {
       "path": "scripts/verify-runtime-hardening-v152.mjs",
-      "bytes": 4348,
-      "sha256": "d3104cb3d76d3bd643862e6ba1b3411147e411008217967f7af79815412ab0b1"
+      "bytes": 4634,
+      "sha256": "63f8fe56ceb48933b06d31c00ddec68a66345f581d474cbab44a61b4ef49990c"
     },
     {
       "path": "scripts/verify-gpu-frame-timer-v152.mjs",
@@ -216,8 +221,8 @@
     },
     {
       "path": "scripts/verify-dist-bundle-markers-v152.mjs",
-      "bytes": 2236,
-      "sha256": "2b459ef3e664de19df6b01526215671629bd086daa4adfefdf42f6100257e958"
+      "bytes": 2516,
+      "sha256": "c3a37a02fc896aa2c2e0afd1b4c25bf0bd9c70211893473e506f2a91a1794e39"
     },
     {
       "path": "scripts/verify-dist-v148.mjs",
@@ -251,8 +256,8 @@
     },
     {
       "path": "scripts/verify-dist-v152.mjs",
-      "bytes": 2041,
-      "sha256": "bdbf6ff5040860f49d37ce18074293e73df578c5957ba95a0bb3dab1321f79c2"
+      "bytes": 2052,
+      "sha256": "1be58abf9425ead55ccbd66c9d4f66501026f111fb310052a526394dab40761d"
     },
     {
       "path": "scripts/verify-responsibility-extraction-v149.mjs",

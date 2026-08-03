@@ -1,3 +1,16 @@
+## 2026-08-03 — v1.0.52 minification-stable dist marker hotfix R11
+
+- 보고된 실패: 실제 Vite build 뒤 `verify-dist-v152.mjs`가 `authoredDurationV152` 문자열을 번들에서 찾지 못해 중단됐다.
+- 근본 원인: `authoredDurationV152`는 production minification에서 이름 보존이 보장되지 않는 로컬 변수인데 dist 계약이 해당 식별자 문자열을 요구했다.
+- 수정: 액션 타이밍 동결 계약에 `DD-AUTHORED-DURATION-GUARD-V152` 영구 마커를 추가하고 dist 검증을 이 마커로 교체했다. 실제 one-shot 하한 로직에 대한 소스 검증은 유지한다.
+- 회귀 방지: minified 형태의 reachable chunk fixture, 안정 마커 계약, 로컬 식별자 재사용 금지를 v1.0.52 릴리스 게이트에 고정했다.
+- 주요 변경 파일: `src/runtime/character-action-timing-v152.js`, `scripts/verify-dist-v152.mjs`, `scripts/verify-character-action-timing-v152.mjs`, `scripts/verify-runtime-hardening-v152.mjs`, `scripts/verify-dist-bundle-markers-v152.mjs`, `scripts/verify-release-v152.mjs`, R11 패키징·패치 도구와 문서.
+- 검증 결과: `verify:timing:v152`, `verify:hardening:v152`, `verify:bundle-markers:v152`, `verify:trend:v145`, `verify:release:v145`, `verify:release:v152`, 패키지·패치 SHA-256 검증이 통과했다. 로컬 식별자가 없는 minified 형태의 합성 complete dist는 `verify-dist-v152.mjs`를 통과했고, 안정 마커가 없는 local-only fixture는 의도대로 실패했다.
+- 적용 동일성: R10 전체본에 R11 direct-root 패치를 덮어쓴 3,071개 파일이 R11 전체본과 바이트 단위로 일치했다.
+- 잔여 위험: 이 환경에서는 `vite@8.1.5` 실제 의존성 설치와 production build를 실행할 수 없으므로, GitHub Actions에서 actual Vite bundle의 최종 `verify:dist:v152` 및 전체 dist 체인을 다시 확인해야 한다.
+- 릴리스 식별자: 게임 버전과 빌드 ID는 `v1.0.52 / b24.52`, repair revision은 R11이다.
+- 다음 예정: GitHub Actions actual Vite build에서 `verify:dist:v152`와 전체 `verify:dist:all` 통과를 확인한 뒤 v1.0.53 실기기 WebGL 검증으로 이동한다.
+
 ## 2026-08-03 — v1.0.52 historical trend isolation hotfix R10
 
 - 작업 목표: R9의 GPU scope API 변경 뒤 v145 역사 성능 추세 검증기가 R8 문자열만 찾다가 전체 CI를 중단시키는 회귀를 수정한다.

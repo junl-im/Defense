@@ -24,6 +24,7 @@ const files = [
   'src/runtime/feature-exposure-policy-v149.js',
   'src/runtime/result-presenter-v149.js',
   'scripts/verify-release-v152.mjs',
+  'scripts/verify-character-action-timing-v152.mjs',
   'scripts/verify-runtime-hardening-v152.mjs',
   'scripts/verify-gpu-frame-timer-v152.mjs',
   'scripts/verify-leaderboard-integrity-v152.mjs',

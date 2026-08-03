@@ -11,7 +11,7 @@ try {
     'import("./chunks/main-fixture.js");',
     'const deps=["/Defense/assets/chunks/runtime-fixture.js"];'
   ].join('\n'));
-  fs.writeFileSync(path.join(fixture, 'assets/chunks/main-fixture.js'), 'const marker="DD-RUNTIME-HEALTH-ASSURANCE-V148";\n');
+  fs.writeFileSync(path.join(fixture, 'assets/chunks/main-fixture.js'), 'const e=Object.freeze({id:"DD-RUNTIME-HEALTH-ASSURANCE-V148",durationGuardId:"DD-AUTHORED-DURATION-GUARD-V152"});\n');
   fs.writeFileSync(path.join(fixture, 'assets/chunks/runtime-fixture.js'), 'const marker="DD-TRANSACTIONAL-PERSISTENCE-V149";\n');
   fs.writeFileSync(path.join(fixture, 'assets/chunks/orphan-fixture.js'), 'const marker="ORPHAN-MUST-NOT-PASS";\n');
 
@@ -23,9 +23,11 @@ try {
 
   const result = assertReachableBundleMarkers(fixture, [
     'DD-RUNTIME-HEALTH-ASSURANCE-V148',
+    'DD-AUTHORED-DURATION-GUARD-V152',
     'DD-TRANSACTIONAL-PERSISTENCE-V149'
   ], { label: 'v152 fixture' });
   if (!result.locations['DD-RUNTIME-HEALTH-ASSURANCE-V148']?.includes('assets/chunks/main-fixture.js')) throw new Error('dynamic chunk marker location missing');
+  if (!result.locations['DD-AUTHORED-DURATION-GUARD-V152']?.includes('assets/chunks/main-fixture.js')) throw new Error('minification-stable duration marker location missing');
 
   let rejectedOrphan = false;
   try {

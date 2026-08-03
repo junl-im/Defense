@@ -13,3 +13,10 @@
 3. 실제 Chrome/Android/iOS 브라우저에서 timer-query 미지원·disjoint·context loss·복원 행렬을 실행한다.
 4. 승인된 원본이 제공될 때만 캐릭터별 normal/emissive mask를 선택 적용한다.
 5. 궁수·마법사·도사·무당 11방향 원본 시트를 사람 검토하며 임시 자산을 자동 승격하지 않는다.
+
+## R11에서 선행 완료
+
+- production minification에 안전한 v152 dist 계약 마커 적용
+- 소스 의미 검증과 번들 존재 검증의 책임 분리
+- reachable chunk 기반 안정 마커 fixture 고정
+

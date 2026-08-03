@@ -200,3 +200,19 @@ R9는 전체 프레임 GPU 비용과 캐릭터 표현 전용 비용의 측정 sc
 - 명시적인 presentation GPU/CPU 과부하의 1회 강등
 
 결정론 fixture와 정적 릴리스 계약은 통과했다. 실제 WebGL2 extension 동작, GPU disjoint, context loss/restore와 하드웨어 예산은 Vite complete build 및 실기기 브라우저에서 추가 확인해야 한다.
+
+## CI chain hotfix R11 검증
+
+보고된 실패는 실제 빌드 실패가 아니라 production minification 후 로컬 변수명이 사라져 발생한 dist 문자열 계약 오류였다.
+
+R11 검증 항목:
+
+- 액션 타이밍 계약의 `DD-AUTHORED-DURATION-GUARD-V152` 안정 마커 존재
+- 클래스별 authored event timeline 및 완료 이벤트 순서 유지
+- one-shot 지속시간이 요청 duration과 authored 마지막 이벤트 시간의 최댓값을 사용하는 소스 계약 유지
+- reachable dynamic chunk에서 안정 마커 탐색
+- 고아 chunk의 마커는 인정하지 않음
+- `verify-dist-v152.mjs`가 로컬 식별자 `authoredDurationV152`를 dist 마커로 다시 요구하지 않음
+
+실제 Vite build와 전체 dist chain의 최종 결과는 GitHub Actions에서 확인한다.
+

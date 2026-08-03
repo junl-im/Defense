@@ -6,7 +6,7 @@
   "cacheRevision": "1.0.52-b24.52",
   "entry": "src/bootstrap.js",
   "moduleCount": 136,
-  "totalBytes": 1613537,
+  "totalBytes": 1613591,
   "files": [
     {
       "path": "src/art-production-gate.js",
@@ -450,8 +450,8 @@
     },
     {
       "path": "src/runtime/character-action-timing-v152.js",
-      "bytes": 6491,
-      "sha256": "b4daaf7d1b4cbb2311e6b230eacb2d03cb4f63dec7290c7bf57a811d73e8b438"
+      "bytes": 6545,
+      "sha256": "0cd882f3cdbb6ebc68ec1ec4d2e212d7d0e205e94fabfb1f7a5111ebc7e839ea"
     },
     {
       "path": "src/runtime/character-presentation-budget-v152.js",
