@@ -78,6 +78,19 @@ with sync_playwright() as p:
     # The original PC radial ring is positioned with absolute children; its
     # wrapper has zero size, so checking wrapper.is_visible() is misleading.
     assert page.locator('#radial-menu .radial-center').is_visible(), 'Tile detail must be visible'
+    # v1.1: original 3D-hex anchored radial, never a 3-column bottom list.
+    assert page.evaluate("""() => {
+      const root=document.querySelector('#radial-menu');
+      const button=root.querySelector('.radial-btn');
+      return getComputedStyle(root).display !== 'grid' &&
+        !!button && getComputedStyle(button).position === 'absolute' &&
+        getComputedStyle(root).bottom === 'auto';
+    }"""), 'Original circular action ring was replaced by a bottom menu'
+    # Display Korean building name and construction % rather than raw icon IDs.
+    page.evaluate("""() => {
+      const game=window.__game;
+      game.radialMenu?._refreshProgress();
+    }""")
     page.screenshot(path=str(OUT/(label+'-placed.png')),full_page=True)
     assert not errors,f'{label}: {errors}'
     print('PASS',label,'empty tap/menu toggle/combo 3D construction/mobile dock/compact layout',flush=True)
