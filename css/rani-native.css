@@ -49,8 +49,10 @@ body[data-game-mode="world"] :is(#game-canvas,#hud-top,#hud-right,#hud-bottom,
  #slg-tutorial,#slg-mobile-dock,#debug-hud) {display:none!important}
 #rani-nav :focus-visible,#rani-world-overview :focus-visible {outline:3px solid #ffe2a2;outline-offset:2px}
 @media(max-width:700px) {
- #rani-nav {bottom:calc(86px + env(safe-area-inset-bottom));width:calc(100vw - 24px);
- padding:7px 9px;box-sizing:border-box;max-width:none;min-width:0}
+ #rani-nav {bottom:calc(67px + env(safe-area-inset-bottom));width:calc(100vw - 24px);
+ padding:4px 6px;box-sizing:border-box;max-width:none;min-width:0}
+ .rani-nav-line {gap:4px;flex-wrap:nowrap}
+ #rani-nav small {display:none!important}
  #rani-nav-town {font-size:12px}
  #rani-nav button {font-size:11px;padding:7px}
  #rani-nav small {font-size:10px}
