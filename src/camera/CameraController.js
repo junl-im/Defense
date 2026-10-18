@@ -129,7 +129,8 @@ export class CameraController {
 
     // total travel from press point decides click vs drag
     const travel = Math.hypot(e.clientX - this._downX, e.clientY - this._downY);
-    if (travel > DRAG_THRESHOLD_PX) {
+    const threshold = e.pointerType === 'touch' ? 12 : DRAG_THRESHOLD_PX;
+    if (travel > threshold) {
       if (this._button === 0) this.moved = true;
       if (this._button === 2) this.rmbMoved = true;
     }

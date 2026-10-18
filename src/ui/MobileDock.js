@@ -1,6 +1,6 @@
 // Progressive mobile navigation: preserves all upstream panels and game logic.
 const sections = [
-  ['map', '🗺️', '지도'],
+  ['map', '🏡', '마을'],
   ['tiles', '🏗️', '건설'],
   ['research', '📚', '연구'],
   ['factions', '⚔️', '세력'],

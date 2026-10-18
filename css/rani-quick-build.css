@@ -58,3 +58,40 @@
  #rani-quick-build .rani-qb-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
  #rani-nav{top:132px}
 }
+
+
+/* v0.9.1 — compact unified top HUD: no title, guide/status never above map controls. */
+#game-title{display:none!important}
+@media (min-width:701px) {
+ #hud-top{top:7px;left:9px;gap:5px}
+ #score-panel{padding:3px 9px;gap:5px;border-radius:8px}
+ #score-value{font-size:18px;min-width:20px}
+ #gameplay-hud{top:9px!important}
+ #hud-top-bar.hud-bar{padding:3px 5px;gap:3px}
+ #rani-nav{top:81px;bottom:auto;left:auto;right:12px;transform:none;min-width:0;max-width:min(500px,calc(100vw - 420px));padding:7px 10px}
+ #rani-nav small{font-size:10px}
+ #slg-tutorial{top:88px;bottom:auto;left:10px;width:min(260px,25vw)}
+ #toast{top:56px;bottom:auto;pointer-events:none}
+}
+@media(max-width:700px){
+ #hud-top{top:4px!important;left:7px!important}
+ #score-panel{padding:2px 6px!important;border-width:1px!important;border-radius:7px!important}
+ #score-label{font-size:8px!important}
+ #score-value{font-size:13px!important}
+ #gameplay-hud{top:35px!important;left:6px!important;right:6px!important}
+ #hud-top-bar.hud-bar{padding:2px 1px!important;min-height:31px;border-radius:7px!important}
+ #hud-top-bar .hud-res-val{font-size:10px!important}
+ #hud-top-bar .hud-res-icon .ico{width:12px!important;height:12px!important}
+ #slg-tutorial{top:112px!important;bottom:auto!important;left:7px!important;
+  width:min(180px,calc(100vw - 151px))!important;z-index:27!important}
+ #slg-tutorial .slg-tutorial-head{padding:5px!important;gap:3px}
+ #slg-tutorial .slg-tutorial-head strong{font-size:10px}
+ #slg-tutorial .slg-tutorial-fold{min-width:30px;min-height:32px;padding:2px 4px}
+ #rani-nav{top:112px!important;right:7px!important;max-width:132px}
+ #rani-nav-toggle{font-size:10px!important;min-height:42px!important}
+ #toast{top:76px!important;bottom:auto!important;left:50%;max-width:min(360px,calc(100vw - 16px));
+  pointer-events:none;z-index:110}
+ #hud-right,#research-panel,#faction-panel{top:83px!important}
+ #rani-quick-build{top:auto}
+ #construction-panel.construction-panel{max-height:30dvh;overflow:auto}
+}

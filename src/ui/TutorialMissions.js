@@ -70,7 +70,7 @@ export function tutorialProgress(game) {
 export class TutorialMissions {
   constructor(game) {
     this.game = game;
-    this.collapsed = false;
+    this.collapsed = window.matchMedia('(max-width: 700px)').matches;
     this._build();
     const refresh = () => this.refresh();
     this.unsubscribers = [
@@ -111,8 +111,10 @@ export class TutorialMissions {
     document.body.appendChild(root);
     this.root = root;
     this.fold = root.querySelector('.slg-tutorial-fold');
+    if(this.collapsed) root.classList.add('slg-tutorial-collapsed');
     this.body = root.querySelector('.slg-tutorial-body');
     this.go = root.querySelector('#slg-tutorial-go');
+    this.fold.setAttribute('aria-expanded',String(!this.collapsed));
     this.fold.addEventListener('click', () => this.setCollapsed(!this.collapsed));
     this.go.addEventListener('click', () => {
       const state = tutorialProgress(this.game);
