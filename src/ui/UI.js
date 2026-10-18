@@ -297,7 +297,11 @@ export class UI {
   }
 
   setLoadingProgress(t) {
-    this.el.loadingFill.style.width = `${Math.round(t * 100)}%`;
+    const pct=Math.max(0,Math.min(100,Math.round(t*100)));
+    this.el.loadingFill.style.width = pct + '%';
+    document.getElementById('loading-bar')?.setAttribute('aria-valuenow', String(pct));
+    const label=document.getElementById('loading-status');
+    if(label) label.textContent='왕국 자료 불러오는 중 · '+pct+'%';
   }
 
   hideLoading() {
