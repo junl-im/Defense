@@ -30,6 +30,11 @@ with sync_playwright() as playwright:
         })""")
         assert state["canvas"] and state["game"], f"{name}: missing game {state}"
         assert not issues, f"{name}: page errors: {issues}"
+        assert page.locator("#rani-village-screen").is_visible(), "Village should be the first screen"
+        assert page.locator("#rani-village-grid .rani-village-tile").count() == 9
+        page.screenshot(path=str(OUT / f"rani-village-{name}.png"), full_page=True)
+        page.locator("#rani-go-world").click()
+        assert page.evaluate("window.__game.mode") == "world"
         if name == "mobile":
             dock = page.locator("#slg-mobile-dock")
             assert dock.is_visible(), "Mobile navigation is missing"

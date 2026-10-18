@@ -31,6 +31,7 @@ with sync_playwright() as p:
                 initial:d.cells.slice(0,3),keys:Object.keys(d)}; }
         }""")
         assert preflight["ok"], f"Real save does not pass validator: {preflight}"
+        page.locator("#rani-go-world").click()
         page.locator("#save-manager-btn").click()
         dialog=page.locator("#save-manager-overlay [role='dialog']")
         assert dialog.is_visible()

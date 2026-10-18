@@ -18,6 +18,7 @@ export class VillageView {
     root.innerHTML=[
       '<header class="rani-village-header"><div><small>나만의 첫 마을</small><h1>라니킹덤</h1></div>',
       '<div class="rani-village-actions"><button type="button" id="rani-help">게임 방법</button>',
+      '<button type="button" id="rani-open-save">💾 저장 관리</button>',
       '<button type="button" id="rani-go-world">🌍 필드 나가기</button></div></header>',
       '<div id="rani-village-res" class="rani-village-res" aria-label="자원 현황"></div>',
       '<div class="rani-village-layout"><section class="rani-village-main">',
@@ -42,6 +43,7 @@ export class VillageView {
     this.worldButton.setAttribute('aria-label','내 마을로 돌아가기');
     document.body.appendChild(this.worldButton);
     root.querySelector('#rani-go-world').addEventListener('click',()=>this.setMode('world'));
+    root.querySelector('#rani-open-save').addEventListener('click',()=>this.game.saveManager?.open());
     this.worldButton.addEventListener('click',()=>this.setMode('village'));
     root.querySelector('#rani-help').addEventListener('click',()=>document.querySelector('#help-btn')?.click());
     this.grid.addEventListener('click',(e)=>{

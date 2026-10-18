@@ -22,6 +22,11 @@ with sync_playwright() as playwright:
         assert "라니킹덤" in page.title()
         assert page.locator(".research-btn-name").first.inner_text() == "농업"
         assert "정착지" in page.locator("#hud-tier-name").inner_text()
+        assert page.locator("#rani-village-screen").is_visible()
+        assert page.locator("#rani-village-grid .rani-village-tile").count() == 9
+        assert page.evaluate("window.__game.mode") == "village"
+        page.locator("#rani-go-world").click()
+        assert page.evaluate("window.__game.mode") == "world"
         assert page.locator("#help-btn").is_visible()
         goal=page.locator("#slg-tutorial")
         assert goal.is_visible(), f"{name}: Korean tutorial missing"
