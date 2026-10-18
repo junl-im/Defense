@@ -5,8 +5,3 @@ dist/
 !.env.example
 *.log
 assets/source/
-public/assets/approved/*.glb
-public/assets/approved/*.gltf
-public/assets/approved/*.bin
-public/assets/approved/*.fbx
-public/assets/approved/*.zip
