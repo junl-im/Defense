@@ -81,9 +81,11 @@ export class CameraController {
 
     // touch pinch zoom
     d.addEventListener('touchstart', (e) => {
+      if (document.body.dataset.gameMode === 'world') return;
       if (e.touches.length === 2) this._pinchDist = this._touchDist(e);
     }, { passive: true });
     d.addEventListener('touchmove', (e) => {
+      if (document.body.dataset.gameMode === 'world') return;
       if (e.touches.length === 2) {
         const nd = this._touchDist(e);
         if (this._pinchDist > 0) {
@@ -104,6 +106,7 @@ export class CameraController {
   // ---------------- pointer gestures ----------------
 
   _onDown(e) {
+    if (document.body.dataset.gameMode === 'world') return;
     this._button = e.button;
     this._downX = this._lastX = e.clientX;
     this._downY = this._lastY = e.clientY;
@@ -123,6 +126,7 @@ export class CameraController {
   }
 
   _onMove(e) {
+    if (document.body.dataset.gameMode === 'world') return;
     if (!this._mode) return;
     const dx = e.clientX - this._lastX;
     const dy = e.clientY - this._lastY;
@@ -154,6 +158,7 @@ export class CameraController {
   }
 
   _onUp(e) {
+    if (document.body.dataset.gameMode === 'world') { this._cancel(); return; }
     if (this._mode === 'pan' && this.moved) {
       // keep inertia only for a fresh flick (released while still moving)
       if (performance.now() - this._lastMoveT > 90) this._vel.set(0, 0, 0);
@@ -194,6 +199,8 @@ export class CameraController {
   // ---------------- zoom to cursor ----------------
 
   _onWheel(e) {
+    // The field has its own camera; do not zoom or move the village behind it.
+    if (document.body.dataset.gameMode === 'world') return;
     e.preventDefault();
     const oldZoom = this.zoomGoal;
     const f = Math.exp(e.deltaY * 0.0012);
@@ -219,6 +226,7 @@ export class CameraController {
   // ---------------- keyboard ----------------
 
   _onKeyDown(e) {
+    if (document.body.dataset.gameMode === 'world') return;
     // ignore when typing in inputs
     if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return;
     this._keys.add(e.code);
@@ -228,6 +236,7 @@ export class CameraController {
   }
 
   _keyPan(dt) {
+    if (document.body.dataset.gameMode === 'world') return;
     let x = 0, y = 0;
     if (this._keys.has('KeyW') || this._keys.has('ArrowUp')) y -= 1;
     if (this._keys.has('KeyS') || this._keys.has('ArrowDown')) y += 1;
