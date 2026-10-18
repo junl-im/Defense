@@ -1,52 +1,29 @@
-name: Import official Quaternius anime heroines
+name: Verify integrated Quaternius female rigs
 on:
   push:
     branches: [feat/anime-crowd-reboot-v0]
     paths:
-      - 'scripts/collect-quaternius.py'
+      - 'public/assets/characters/**'
+      - 'docs/QUATERNIUS_IMPORT.json'
+      - 'scripts/verify-quaternius-art.py'
       - '.github/workflows/collect-quaternius.yml'
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 jobs:
-  import:
-    if: github.ref == 'refs/heads/feat/anime-crowd-reboot-v0'
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          persist-credentials: true
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - run: pip install --disable-pip-version-check gdown==5.2.0
-      - run: python scripts/collect-quaternius.py
-      - name: Assert no SVG and verify glTF binary magic
+      - name: GLB format, female skeletons, 24 animation clips and SVG policy
         run: |
-          python - <<'PY'
-          import json,pathlib,struct
-          info=json.loads(pathlib.Path('docs/QUATERNIUS_IMPORT.json').read_text())
-          assert len(info)==4
-          for x in info:
-            b=pathlib.Path('public/assets/characters/'+x['character']+'.glb').read_bytes()
-            assert b[:4]==b'glTF' and struct.unpack_from('<I',b,8)[0]==len(b)
-            assert x['animations']==24 and x['meshes']>0
-          PY
+          python3 scripts/verify-quaternius-art.py
           node scripts/verify-assets.mjs
-      - name: Commit checked GLB + animation evidence to feature branch
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add public/assets/characters docs/QUATERNIUS_IMPORT.json
-          if git diff --cached --quiet; then exit 0; fi
-          git commit -m "assets: integrate 4 licensed female rigs with 24 animations each"
-          git push origin HEAD:feat/anime-crowd-reboot-v0
       - uses: actions/upload-artifact@v4
-        if: always()
         with:
-          name: quaternius-characters-4
+          name: quaternius-female-rigs-reviewed-format
           path: |
             public/assets/characters
             docs/QUATERNIUS_IMPORT.json
           retention-days: 30
-          if-no-files-found: warn
+          if-no-files-found: error
