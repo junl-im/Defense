@@ -12,7 +12,7 @@ const sun=new DirectionalLight('sun',new Vector3(-.4,-1,.5),scene);sun.intensity
 const camera=new ArcRotateCamera('follow',Math.PI/2,1.05,32,new Vector3(0,0,12),scene);
 camera.inputs.clear(); camera.fov=.74;
 const mat=(name,hex)=>{const m=new StandardMaterial(name,scene);m.diffuseColor=Color3.FromHexString(hex);m.specularColor=new Color3(.19,.19,.22);return m;};
-const groundMat=mat('lane','#8992b2'),railMat=mat('rail','#4b5378'),heroMat=mat('hero','#65b8ff'),enemyMat=mat('enemy','#f04c7f'),bossMat=mat('boss','#8336a9'),hairMat=mat('hair','#c2a6ff'),whiteMat=mat('white','#efedf8'),gateBlue=mat('blueGate','#348cfa'),gateGold=mat('goldGate','#f0b64e');
+const groundMat=mat('lane','#8f99ae'),railMat=mat('rail','#606f90'),heroMat=mat('hero','#65b8ff'),enemyMat=mat('enemy','#f04c7f'),bossMat=mat('boss','#8336a9'),hairMat=mat('hair','#c2a6ff'),whiteMat=mat('white','#efedf8'),gateBlue=mat('blueGate','#348cfa'),gateGold=mat('goldGate','#f0b64e');
 const ground=MeshBuilder.CreateGround('floor',{width:13,height:105},scene);ground.position.z=45;ground.material=groundMat;
 for(const x of [-6.75,6.75]){const wall=MeshBuilder.CreateBox('parapet',{width:.8,height:1.55,depth:105},scene);wall.position.set(x,.7,45);wall.material=railMat;}
 for(let z=0;z<90;z+=4){const strip=MeshBuilder.CreateBox('stripe',{width:12,height:.025,depth:.075},scene);strip.position.set(0,.02,z);strip.material=whiteMat;strip.visibility=.15;}
@@ -56,16 +56,18 @@ async function decorateStage(){
  const home=import.meta.env.BASE_URL+'assets/environment/';
  const road=[],walls=[],towers=[],trees=[],rocks=[],flags=[];
  for(let z=-1;z<92;z+=4)for(const x of [-4,0,4])road.push([x,.04,z,4]);
- for(let z=1;z<92;z+=3.4){walls.push([-7.6,0,z,3.4],[7.6,0,z,3.4]);}
+ for(let z=1;z<92;z+=6.0){walls.push([-7.6,0,z,6.0],[7.6,0,z,6.0]);}
  for(let z=10;z<92;z+=16)towers.push([-6.8,0,z,3.7],[6.8,0,z,3.7]);
  for(let z=7;z<96;z+=13)trees.push([-13,0,z,3], [12.5,0,z+5,2.7]);
  for(let z=11;z<96;z+=18)rocks.push([-10.4,0,z,2.1],[11,0,z+8,2.3]);
  flags.push([-6.7,3.4,72,3.2],[6.7,3.4,72,3.2]);
- const designs=[['road',road],['wall-block',walls],['pillar-stone',towers],['tree',trees],['rock-large',rocks],['banner-red',flags]];
- await Promise.all(designs.map(async ([name,locations])=>{
+ const stoneMat=mat('castleStone','#8291aa'),towerMat=mat('castlePillars','#aab5c8'),forestMat=mat('woodland','#3f8f75'),rocksMat=mat('stones','#627288'),bannerMat=mat('castleBanners','#ab779e');
+ const designs=[['wall-block',walls,stoneMat],['pillar-stone',towers,towerMat],['tree',trees,forestMat],['rock-large',rocks,rocksMat],['banner-red',flags,bannerMat]];
+ await Promise.all(designs.map(async ([name,locations,material])=>{
   try {
    const pack=await SceneLoader.ImportMeshAsync('',home,name+'.glb',scene);
    const template=pack.meshes.find(m=>!m.parent)||pack.meshes[0];
+   if(material)for(const mesh of pack.meshes)if(mesh.material&&mesh.getTotalVertices&&mesh.getTotalVertices()>0)mesh.material=material;
    if(!template||!template.clone)throw Error('No GLB root for '+name);
    for(let i=0;i<locations.length;i++){
     const [x,y,z,scale]=locations[i],copy=template.clone(name+'_instance_'+i,null,false);
@@ -111,6 +113,17 @@ async function loadSquadArt(){
   if(!mesh)throw Error('No static crowd mesh');
   mesh.setParent(null);mesh.position.set(9999,-1000,9999);
   mesh.alwaysSelectAsActiveMesh=true;
+  // One 256-triangle licensed female mesh can be GPU-instanced for both sides.
+  // This replaces the generic pink enemy capsules without per-soldier rigs.
+  const redSource=mesh.clone('enemyFemaleSource');
+  redSource.material=enemyMat;redSource.position.set(-9999,-1000,-9999);
+  redSource.alwaysSelectAsActiveMesh=true;
+  enemies.forEach((old,i)=>{
+   const copy=redSource.createInstance('femaleEnemy_'+i);
+   copy.position.copyFrom(old.position);copy.position.y=.01;
+   copy.scaling.setAll(.53);copy.isVisible=old.isVisible;
+   old.dispose();enemies[i]=copy;
+  });
   soldierMeshes.forEach(s=>s.dispose());soldierMeshes=[];
   soldierTemplate=mesh;squadScale=.49;squadBaseY=.02;
  }catch(e){console.warn('Female squad prototype unavailable',e);}
@@ -149,5 +162,7 @@ if(state.z>66){
 }
 if(state.z>94)complete(false);
 renderHud();}
-tickBullets(dt);drawSquad(state.units);camera.target.set(state.x*.18,0,state.z+16);camera.position.set(state.x*.22,19,state.z-16);scene.render();});
+tickBullets(dt);drawSquad(state.units);camera.target.set(state.x*.18,0,state.z+6.5);camera.position.set(state.x*.22,19,state.z-18);scene.render();});
+// Read-only QA telemetry; does not change gameplay.
+window.__defenseQa=()=>({running:state.running,finished:state.finished,z:+state.z.toFixed(2),units:state.units,score:state.score,bossHp:Math.ceil(state.bossHp),elapsed:+state.time.toFixed(2),fps:Math.round(engine.getFps()),meshes:scene.meshes.length,sceneReady:scene.isReady()});
 window.addEventListener('resize',()=>engine.resize());
