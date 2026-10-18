@@ -146,25 +146,25 @@ export class BuildingSystem {
    */
   canBuild(cell, id) {
     const def = BUILDINGS[id];
-    if (!def) return { ok: false, reason: 'Unknown building' };
-    if (cell.owner && cell.owner !== 'player') return { ok: false, reason: 'Tile is occupied by enemies' };
+    if (!def) return { ok: false, reason: '알 수 없는 시설입니다' };
+    if (cell.owner && cell.owner !== 'player') return { ok: false, reason: '적이 점령 중인 영토입니다' };
     if (!this.fitsTile(def, cell)) {
-      let reason = def.frontierOnly ? 'Only on frontier tiles' : `Needs a ${def.tiles} tile`;
-      if (def.upgradeOnly) reason = 'Built by upgrading';
-      else if (def.townOnly && !this.isVillageUpgraded(cell)) reason = 'Towns only (upgrade the village)';
-      else if (def.context === 'wall') reason = 'Needs a walled border (enemy adjacent)';
-      else if (def.context === 'enemyNear') reason = 'No enemies nearby';
+      let reason = def.frontierOnly ? '국경 영토에만 지을 수 있습니다' : `이 시설을 지을 수 없는 지형입니다`;
+      if (def.upgradeOnly) reason = '기존 시설을 강화해야 합니다';
+      else if (def.townOnly && !this.isVillageUpgraded(cell)) reason = '마을을 읍성으로 승격해야 합니다';
+      else if (def.context === 'wall') reason = '적과 인접한 성벽 경계가 필요합니다';
+      else if (def.context === 'enemyNear') reason = '주변에 적이 없습니다';
       return { ok: false, reason };
     }
     const list = this.buildingsOn(cell);
-    if (list.length >= MAX_BUILDINGS_PER_TILE) return { ok: false, reason: 'Tile is full' };
-    if (list.some((b) => b.id === id)) return { ok: false, reason: 'Already built here' };
-    if (def.isRoad && cell.roadEdges?.length) return { ok: false, reason: 'Road already here' };
+    if (list.length >= MAX_BUILDINGS_PER_TILE) return { ok: false, reason: '해당 영토의 건설 슬롯이 가득 찼습니다' };
+    if (list.some((b) => b.id === id)) return { ok: false, reason: '이미 건설된 시설입니다' };
+    if (def.isRoad && cell.roadEdges?.length) return { ok: false, reason: '이미 도로가 있습니다' };
     if (def.research && this.research && !this.research.isCompleted(def.research)) {
-      return { ok: false, reason: `Requires ${this.research.nameOf(def.research)} research` };
+      return { ok: false, reason: `${this.research.nameOf(def.research)} 연구가 필요합니다` };
     }
     if (!this.resources.canAfford(def.cost)) {
-      return { ok: false, reason: `Not enough resources (${fmtCost(def.cost)})` };
+      return { ok: false, reason: `자원이 부족합니다 (${fmtCost(def.cost)})` };
     }
     return { ok: true, reason: '' };
   }
@@ -177,7 +177,7 @@ export class BuildingSystem {
       return false;
     }
     const def = BUILDINGS[id];
-    if (!this.resources.spend(def.cost, `Build ${def.name}`)) return false;
+    if (!this.resources.spend(def.cost, `${def.name} 건설`)) return false;
 
     const key = cellKey(cell.q, cell.r);
     if (!this.byCell.has(key)) this.byCell.set(key, []);
@@ -268,14 +268,14 @@ export class BuildingSystem {
   canUpgradeBuilding(cell, rec) {
     const def = BUILDINGS[rec.id];
     const target = def?.upgradesTo ? BUILDINGS[def.upgradesTo] : null;
-    if (!target) return { ok: false, reason: 'No upgrade available' };
-    if (!rec.done || rec.upgradeTo) return { ok: false, reason: 'Upgrade in progress' };
-    if (cell.owner && cell.owner !== 'player') return { ok: false, reason: 'Tile is occupied by enemies' };
+    if (!target) return { ok: false, reason: '강화할 수 없는 시설입니다' };
+    if (!rec.done || rec.upgradeTo) return { ok: false, reason: '이미 강화가 진행 중입니다' };
+    if (cell.owner && cell.owner !== 'player') return { ok: false, reason: '적이 점령 중인 영토입니다' };
     if (target.research && this.research && !this.research.isCompleted(target.research)) {
-      return { ok: false, reason: `Requires ${this.research.nameOf(target.research)} research` };
+      return { ok: false, reason: `${this.research.nameOf(target.research)} 연구가 필요합니다` };
     }
     if (!this.resources.canAfford(target.cost)) {
-      return { ok: false, reason: `Not enough resources (${fmtCost(target.cost)})` };
+      return { ok: false, reason: `자원이 부족합니다 (${fmtCost(target.cost)})` };
     }
     return { ok: true, reason: '' };
   }
@@ -288,7 +288,7 @@ export class BuildingSystem {
       return false;
     }
     const target = BUILDINGS[BUILDINGS[rec.id].upgradesTo];
-    if (!this.resources.spend(target.cost, `Upgrade to ${target.name}`)) return false;
+    if (!this.resources.spend(target.cost, `${target.name} 강화`)) return false;
     const timeMult = this.research ? this.research.buildTimeMult : 1;
     rec.upgradeTo = target.id;
     rec.upRemaining = target.buildTime * timeMult;
@@ -320,23 +320,23 @@ export class BuildingSystem {
 
   canUpgradeVillage(cell) {
     const U = VILLAGE_UPGRADE;
-    if (cell.tileType !== 'village') return { ok: false, reason: 'Not a village' };
-    if (cell.owner && cell.owner !== 'player') return { ok: false, reason: 'Tile is occupied by enemies' };
+    if (cell.tileType !== 'village') return { ok: false, reason: '마을 영토가 아닙니다' };
+    if (cell.owner && cell.owner !== 'player') return { ok: false, reason: '적이 점령 중인 영토입니다' };
     const key = cellKey(cell.q, cell.r);
-    if (this.upgradedVillages.has(key)) return { ok: false, reason: 'Already a town' };
-    if (this.upgrading.has(key)) return { ok: false, reason: 'Upgrade in progress' };
+    if (this.upgradedVillages.has(key)) return { ok: false, reason: '이미 읍성으로 승격했습니다' };
+    if (this.upgrading.has(key)) return { ok: false, reason: '이미 강화가 진행 중입니다' };
     if (this.game.progressionSystem.tier < U.minTier) {
-      return { ok: false, reason: `Kingdom must be tier ${U.minTier + 1}+` };
+      return { ok: false, reason: `왕국 단계가 ${U.minTier + 1} 이상이어야 합니다` };
     }
     const pop = this.game.citizenSystem.populationOf(cell);
     if (pop < U.minPopulation) {
-      return { ok: false, reason: `Needs ${U.minPopulation} population (have ${pop})` };
+      return { ok: false, reason: `인구 ${U.minPopulation}명 필요 (현재 ${pop}명)` };
     }
     if (this.resources.stability < U.minStability) {
-      return { ok: false, reason: `Needs ${U.minStability} stability` };
+      return { ok: false, reason: `안정도 ${U.minStability} 이상 필요` };
     }
     if (!this.resources.canAfford(U.cost)) {
-      return { ok: false, reason: `Not enough resources (${fmtCost(U.cost)})` };
+      return { ok: false, reason: `자원이 부족합니다 (${fmtCost(U.cost)})` };
     }
     return { ok: true, reason: '' };
   }
@@ -347,7 +347,7 @@ export class BuildingSystem {
       events.emit('build:denied', { cell, id: 'village_upgrade', reason: check.reason });
       return false;
     }
-    if (!this.resources.spend(VILLAGE_UPGRADE.cost, 'Upgrade village')) return false;
+    if (!this.resources.spend(VILLAGE_UPGRADE.cost, '마을 승격')) return false;
     const timeMult = this.research ? this.research.buildTimeMult : 1;
     const time = VILLAGE_UPGRADE.buildTime * timeMult;
     this.upgrading.set(cellKey(cell.q, cell.r), { remaining: time, total: time });
@@ -459,7 +459,7 @@ export class BuildingSystem {
           losses[res] = amount;
           gold += amount * price;
         }
-        if (gold > 0) this.resources.convert(losses, { gold }, 'Trade: surplus sold');
+        if (gold > 0) this.resources.convert(losses, { gold }, '교역: 남는 자원 판매');
       }
     }
   }

@@ -36,7 +36,7 @@ export class FactionPanel {
         <button type="button" class="hud-panel-toggle" id="fp-toggle" aria-label="창 접기">−</button>
       </div>
       <button type="button" class="hud-toggle-btn" id="fp-borders-btn"
-        data-tip="지도에 세력 경계 표시">${iconHtml('borders')} Borders</button>
+        data-tip="지도에 세력 경계 표시">${iconHtml('borders')} 경계 보기</button>
       <div class="faction-list" id="fp-list"></div>`;
     document.body.appendChild(root);
     this.root = root;
@@ -66,7 +66,7 @@ export class FactionPanel {
       this.refresh();
     });
     events.on('faction:tribute', ({ faction, gold }) => {
-      this.game.ui.toast(`${iconLabel('gift')} Tribute from ${faction.label}: +${gold} gold`);
+      this.game.ui.toast(`${iconLabel('gift')} ${faction.label}에서 조공 도착: 금화 +${gold}`);
       this.refresh();
     });
     events.on('territory:captured', ({ factionLabel }) => {
@@ -90,7 +90,7 @@ export class FactionPanel {
         : '';
       const homeDist = Math.abs(f.home.q) + Math.abs(f.home.r);
       return `
-        <div class="faction-card ${rel.cls}" data-tip="<b>${f.label}</b><br>Tiles: ${f.territory.size}<br>Strength: ${Math.round(f.strength)}<br>Settlement ${homeDist} tiles away">
+        <div class="faction-card ${rel.cls}" data-tip="<b>${f.label}</b><br>영토: ${f.territory.size}개<br>전투력: ${Math.round(f.strength)}<br>정착지까지 약 ${homeDist}칸">
           <span class="fp-icon">${iconHtml(f.icon)}</span>
           <div class="fp-body">
             <span class="fp-name">${f.label}</span>

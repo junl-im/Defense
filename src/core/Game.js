@@ -190,19 +190,19 @@ export class Game {
     this.debugHUD = new DebugHUD(this);
 
     events.on('evolution:castle', () => {
-      this.scoring.addBonus(150, 'Castle!');
+      this.scoring.addBonus(150, '성채 건설');
       this.ui.toast(`${iconLabel('castle')} A castle rises over your kingdom! +150`);
     });
     events.on('evolution:town', () => {
-      this.scoring.addBonus(60, 'Town!');
+      this.scoring.addBonus(60, '읍성 성장');
       this.ui.toast(`${iconLabel('town')} A village grew into a town! +60`);
     });
     events.on('evolution:bridge', () => {
-      this.scoring.addBonus(40, 'Bridge');
+      this.scoring.addBonus(40, '다리 건설');
       this.ui.toast(`${iconLabel('bridge')} A bridge spans the river! +40`);
     });
     events.on('build:completed', ({ name, icon }) => {
-      this.ui.toast(`${iconLabel(icon)} ${name} complete!`);
+      this.ui.toast(`${iconLabel(icon)} ${name} 건설 완료!`);
     });
     events.on('build:denied', ({ reason }) => this.ui.toast(reason));
     events.on('progression:completed', () => this._refreshTilePanelMeta());
@@ -210,7 +210,7 @@ export class Game {
       this.ui.toast(won
         ? `${iconLabel('sword')} Victory! The tile is yours${faction ? ` (${faction} routed)` : ''}`
         : `${iconLabel('sword')} Defeat… the assault${faction ? ` on ${faction}` : ''} failed`);
-      if (won) this.scoring.addBonus(25, 'Conquest');
+      if (won) this.scoring.addBonus(25, '영토 정복');
     });
   }
 
@@ -327,7 +327,7 @@ export class Game {
     }
 
     if (!this.grid.canPlace(cell.q, cell.r)) {
-      this.ui.toast('Place next to an existing tile');
+      this.ui.toast('기존 영토에 인접한 곳에 설치하세요');
       return;
     }
     this.selection.clear();
@@ -369,11 +369,11 @@ export class Game {
     const prog = this.progressionSystem;
     if (!prog.isUnlocked(type)) {
       const name = TILE_TYPES[type]?.name || type;
-      this.ui.toast(`${name} unlocks at ${tileUnlockTierName(type)}`);
+      this.ui.toast(`${name} 지형은 ${tileUnlockTierName(type)} 단계에서 해금됩니다`);
       return;
     }
     if (!prog.underTileCap(this.tilesPlaced)) {
-      this.ui.toast(`Tile cap reached — upgrade your kingdom!`);
+      this.ui.toast(`영토 한도에 도달했습니다. 왕국을 승격하세요!`);
       return;
     }
     const rng = this._drawRng();
@@ -422,18 +422,18 @@ export class Game {
     const prog = this.progressionSystem;
 
     if (!prog.underTileCap(this.tilesPlaced)) {
-      this.ui.toast(`Tile cap reached (${prog.current.maxTiles}) — upgrade your kingdom!`);
+      this.ui.toast(`영토 한도(${prog.current.maxTiles}개)에 도달했습니다. 왕국을 승격하세요!`);
       return;
     }
     if (!prog.isUnlocked(type)) {
       const name = TILE_TYPES[type]?.name || type;
-      this.ui.toast(`${name} unlocks at a higher kingdom tier`);
+      this.ui.toast(`${name} 지형은 왕국 승격 후 해금됩니다`);
       return;
     }
 
     const cost = scaledTileCost(type, this.tilesPlaced);
     if (!this.resourceSystem.canAfford(cost)) {
-      this.ui.toast(`Not enough resources! Need ${fmtCost(cost)}`);
+      this.ui.toast(`자원이 부족합니다! 필요 자원: ${fmtCost(cost)}`);
       return;
     }
     this.resourceSystem.spend(cost, `Place ${type}`);
@@ -452,8 +452,8 @@ export class Game {
     this.autoMesh.onTileChanged(q, r);
 
     const result = this.scoring.scorePlacement(cell, evalResult);
-    if (result.perfect) this.ui.toast('Perfect alignment! x3');
-    else if (result.chain >= 3) this.ui.toast(`Chain x${result.chain}!`);
+    if (result.perfect) this.ui.toast('완벽한 연결! 점수 3배');
+    else if (result.chain >= 3) this.ui.toast(`연속 연결 ${result.chain}회!`);
 
     this.tilesPlaced++;
     this.ui.setTilesPlaced(this.tilesPlaced);

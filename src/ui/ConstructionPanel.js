@@ -75,7 +75,7 @@ export class ConstructionPanel {
       keys.add(id);
       const pct = Math.round((1 - j.remaining / Math.max(j.total, 0.01)) * 100);
       html += `
-        <div class="construction-row" data-row-id="${id}" data-tip="Tile ${j.q},${j.r}">
+        <div class="construction-row" data-row-id="${id}" data-tip="영토 좌표 ${j.q},${j.r}">
           <span class="construction-icon">${iconHtml(j.icon)}</span>
           <div class="construction-body">
             <span class="construction-name">${j.name}</span>
