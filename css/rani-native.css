@@ -166,3 +166,6 @@ body[data-game-mode="world"] .rani-world-head{top:76px!important}
    bottom:auto!important;max-height:27dvh;right:7px!important;
    left:auto!important;width:min(240px,calc(100vw - 14px))!important}
 }
+
+/* World heading hides its legacy title only; never hide the new accessible picker. */
+body[data-game-mode="world"] .rani-world-head > .rani-field-tools{display:flex!important}
