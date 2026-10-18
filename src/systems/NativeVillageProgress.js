@@ -54,13 +54,15 @@ export class NativeVillageProgress {
   }
   update(dt){
     if(!this.upgrade)return;
+    const before=Math.ceil(this.upgrade.remaining);
     this.upgrade.remaining=Math.max(0,this.upgrade.remaining-Math.max(0,dt));
     if(this.upgrade.remaining<=0){
       this.level=Math.min(VILLAGE_MAX_LEVEL,this.level+1);
       this.upgrade=null;
       events.emit('native-village:expanded',{size:this.size,level:this.level});
     }
-    events.emit('native-village:changed',{});
+    if(before!==Math.ceil(this.upgrade?.remaining||0))
+      events.emit('native-village:changed',{});
   }
   serialize(){
     return {mode:'hex3d',level:this.level,upgrade:this.upgrade?{...this.upgrade}:null,

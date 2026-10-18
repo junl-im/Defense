@@ -78,7 +78,16 @@ export class NativeVillageUI {
       this.game.ui.toast('중심 건물 승격 완료! 마을 건설 구역이 확장되었습니다.');
     });
     for(const name of ['factions:tick','territory:changed','army:changed'])
-      events.on(name,()=>{if(this.activeWorld)this.refreshWorld()});
+      events.on(name,()=>{
+        this.hideForeignCells();
+        if(this.activeWorld)this.refreshWorld();
+      });
+  }
+  hideForeignCells(){
+    // Foreign settlements are world-map nodes, not rendered in my construction scene.
+    for(const cell of this.game.grid.cells.values()){
+      if(cell.group)cell.group.visible=(!cell.owner||cell.owner==='player');
+    }
   }
   setMode(mode){
     this.activeWorld=mode==='world';
@@ -86,6 +95,7 @@ export class NativeVillageUI {
     document.body.dataset.gameMode=this.game.mode;
     this.overlay.hidden=!this.activeWorld;
     this.top.hidden=this.activeWorld;
+    this.hideForeignCells();
     if(this.activeWorld){
       this.game.selection.clear();
       this.game.tileFactory.hideGhost();
