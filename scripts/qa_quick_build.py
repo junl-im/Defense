@@ -91,6 +91,9 @@ with sync_playwright() as p:
       const game=window.__game;
       game.radialMenu?._refreshProgress();
     }""")
+    progress=page.locator('#radial-progress').text_content() or ''
+    assert '건설' in progress and 'lumber_mill' not in progress, (
+      'Construction percentage should use a Korean building name',progress)
     page.screenshot(path=str(OUT/(label+'-placed.png')),full_page=True)
     assert not errors,f'{label}: {errors}'
     print('PASS',label,'empty tap/menu toggle/combo 3D construction/mobile dock/compact layout',flush=True)
