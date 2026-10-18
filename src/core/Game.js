@@ -298,10 +298,20 @@ export class Game {
     // One short touch/click selects even when the finger moves a few pixels.
     // Long-press is never required; drag/pinch continues to work as before.
     this._tapStart = null;
+    this._touchPointers = new Set();
+    this._multiGesture = false;
     this.canvas.addEventListener('pointerdown', (e) => {
       if (e.button !== 0) return;
-      this._tapStart = { id:e.pointerId, x:e.clientX, y:e.clientY,
-        touch:e.pointerType !== 'mouse' };
+      if(e.pointerType === 'touch') {
+        this._touchPointers.add(e.pointerId);
+        if(this._touchPointers.size>1){
+          this._multiGesture=true;
+          this._tapStart=null;
+        }
+      }
+      if(!this._multiGesture)this._tapStart={
+        id:e.pointerId,x:e.clientX,y:e.clientY,touch:e.pointerType!=='mouse'
+      };
       if(this.mode==='world') {
         this.controls._cancel();
         this.controls.moved=false;
@@ -309,7 +319,10 @@ export class Game {
     });
     this.canvas.addEventListener('pointerup', (e) => {
       const start=this._tapStart; this._tapStart=null;
-      if (e.button !== 0 || !start || e.pointerId!==start.id) return;
+      this._touchPointers.delete(e.pointerId);
+      const multi=this._multiGesture;
+      if(this._touchPointers.size===0)this._multiGesture=false;
+      if(multi || e.button !== 0 || !start || e.pointerId!==start.id) return;
       const travel=Math.hypot(start.x-e.clientX,start.y-e.clientY);
       if (travel>(start.touch?12:5) || this.controls.moved) return;
       if(this.mode==='world'){
@@ -320,7 +333,11 @@ export class Game {
         -(e.clientY / window.innerHeight) * 2 + 1);
       this._tryPlaceAtPointer(e.clientX, e.clientY);
     });
-    this.canvas.addEventListener('pointercancel',()=>{this._tapStart=null});
+    this.canvas.addEventListener('pointercancel',(e)=>{
+      this._touchPointers.delete(e.pointerId);
+      if(this._touchPointers.size===0)this._multiGesture=false;
+      this._tapStart=null;
+    });
 
     this.canvas.addEventListener('contextmenu', (e) => {
       e.preventDefault();
