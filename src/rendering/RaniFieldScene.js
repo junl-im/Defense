@@ -146,7 +146,7 @@ export class RaniFieldScene {
       this._town(entry);
     }
     this.labels.innerHTML=this.entries.map(entry=>
-      '<button type="button" data-field-faction="'+entry.id.replace(/[^\\w-]/g,'')+
+      '<button type="button" data-field-faction="'+entry.id.replace(/[^\w-]/g,'')+
       '" aria-label="'+entry.name.replace(/[<>&"]/g,'')+
       '">'+(entry.id==='player'?'🏰':'🏘️')+' '+entry.name.replace(/[<>&"]/g,'')+
       ' · '+entry.tier+'단계</button>').join('');
