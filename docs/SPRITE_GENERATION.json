@@ -28,5 +28,20 @@
     "opaque_pixels": 31109,
     "bytes": 20208,
     "status": "generated_from_original_GL_B"
+  },
+  {
+    "model": "medieval",
+    "file": "public/assets/sprites/heroine-portrait.png",
+    "resolution": [
+      384,
+      512
+    ],
+    "alpha_min_max": [
+      0,
+      255
+    ],
+    "opaque_pixels": 30434,
+    "bytes": 22811,
+    "status": "generated_from_original_GL_B"
   }
 ]
