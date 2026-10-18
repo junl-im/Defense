@@ -38,6 +38,8 @@ export class Selection {
   constructor(game) {
     this.game = game;
     this.cell = null;
+    this.anchor = null;
+    this.buildingId = null;
     this._pulseT = 0;
 
     this.outline = new THREE.Mesh(
@@ -56,10 +58,14 @@ export class Selection {
     game.scene.add(this.outline);
   }
 
-  select(cell) {
-    // Tapping an already selected building must reopen its information sheet.
+  select(cell, anchor = null, buildingId = null) {
+    // The selected building's world-space anchor must travel with selection.
+    // Never substitute a screen-coordinate guess for the actual raycast hit.
+    this.anchor = cell && anchor?.isVector3 ? anchor.clone() : null;
+    this.buildingId = cell ? buildingId : null;
+    // Repeated short taps refresh the anchor (another structure on the same hex).
     if (this.cell === cell) {
-      if (cell) events.emit('selection:changed',{cell,reselected:true});
+      if (cell) events.emit('selection:changed', { cell, anchor:this.anchor, buildingId:this.buildingId, reselected:true });
       return;
     }
     this.cell = cell;
@@ -72,7 +78,7 @@ export class Selection {
     } else {
       this.outline.visible = false;
     }
-    events.emit('selection:changed', { cell });
+    events.emit('selection:changed', { cell, anchor:this.anchor, buildingId:this.buildingId });
   }
 
   clear() {

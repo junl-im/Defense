@@ -39,8 +39,10 @@ export class QuickBuildMenu {
           this.game.ui.toast('지형은 설치되었습니다. 건축 조건을 다시 확인하세요.');
         }
       }
-      // Select the new 3D tile: existing on-tile menu exposes remaining buildings.
-      this.game.selection.select(cell);
+      // Construction stays in BuildingSystem's real timed queue. Closing the
+      // picker must NOT immediately open a second radial/selection popup.
+      // The player can tap this 3D hex again to inspect its progress.
+      this.game.selection.clear();
       document.dispatchEvent(new Event('rani:map-focus'));
     });
     events.on('resources:changed',()=>this.render());

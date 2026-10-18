@@ -357,6 +357,9 @@ export class Game {
   }
 
   _pointerToCell(preferBuildingMesh = false) {
+    // Camera controls update immediately, but renderer may not have run yet.
+    // A stale inverse-world matrix makes picking the neighbouring 3D hex.
+    if(preferBuildingMesh)this.camera.updateMatrixWorld();
     this.raycaster.setFromCamera(this._pointerNdc, this.camera);
     if (preferBuildingMesh) {
       // Picking a tall building via the ground plane alone can select the
@@ -368,11 +371,47 @@ export class Game {
         if (cell.group?.visible && (!cell.owner || cell.owner === 'player'))
           byGroup.set(cell.group, cell);
       }
-      for (const hit of this.raycaster.intersectObjects(root.children, true)) {
+      // Pick the actual visible structure first. A 2D ground projection
+      // alone can land in the hex behind a tall roof.
+      // The upgraded central hall is mounted directly on scene, while other
+      // CC0 building replacements are inside their native cell group.
+      const hall=this.townHallArt?.model;
+      const targets=hall?.visible?[...root.children,hall]:root.children;
+      for (const hit of this.raycaster.intersectObjects(targets, true)) {
+        if (hall?.visible && (hit.object===hall || hall.getObjectById(hit.object.id))) {
+          const box=new THREE.Box3().setFromObject(hall);
+          const anchor=box.isEmpty()?new THREE.Vector3(0,TILE_H,0):
+            box.getCenter(new THREE.Vector3());
+          return {q:0,r:0,anchor,buildingId:null};
+        }
         let object = hit.object;
         while (object && object !== root) {
           const cell = byGroup.get(object);
-          if (cell) return {q:cell.q,r:cell.r};
+          if (cell) {
+            let replacement=null,node=hit.object;
+            while (node && node!==cell.group) {
+              if (node.userData.raniUpgradedBuilding) {replacement=node;break;}
+              node=node.parent;
+            }
+            // CC0 art swaps hide the original model. Picking must use the
+            // VISIBLE replacement, otherwise the real click looks like ground.
+            const building = this.buildingSystem.buildingsOn(cell).find(rec => {
+              if (replacement && rec.id===replacement.userData.raniUpgradedBuilding) return true;
+              const visual = rec.visual?.group || rec.marker;
+              return visual && (visual === hit.object || visual.getObjectById(hit.object.id));
+            });
+            let anchor = null;
+            const model = replacement || building?.visual?.group || building?.marker;
+            if (model) {
+              const box = new THREE.Box3().setFromObject(model);
+              if (!box.isEmpty()) anchor = box.getCenter(new THREE.Vector3());
+            }
+            if (!anchor && object === cell.group) {
+              const p = axialToWorld(cell.q, cell.r);
+              anchor = new THREE.Vector3(p.x,TILE_H,p.z);
+            }
+            return {q:cell.q,r:cell.r,anchor,buildingId:building?.id||null};
+          }
           object = object.parent;
         }
       }
@@ -407,7 +446,7 @@ export class Game {
       this.quickBuildMenu?.close();
       const existing = this.grid.get(cell.q, cell.r);
       // Repeated taps keep information open; close with the explicit × / Esc.
-      this.selection.select(existing);
+      this.selection.select(existing, cell.anchor || null, cell.buildingId || null);
       return;
     }
 
