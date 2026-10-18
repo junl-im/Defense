@@ -15,7 +15,7 @@
     "status": "generated_from_original_GL_B"
   },
   {
-    "model": "witch",
+    "model": "scifi",
     "file": "public/assets/sprites/enemy-female.png",
     "resolution": [
       384,
@@ -25,8 +25,8 @@
       0,
       255
     ],
-    "opaque_pixels": 27448,
-    "bytes": 19488,
+    "opaque_pixels": 31109,
+    "bytes": 20208,
     "status": "generated_from_original_GL_B"
   }
 ]
