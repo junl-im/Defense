@@ -9,11 +9,11 @@ function mountGuide() {
   overlay.innerHTML = `
     <section class="ko-guide-panel" role="dialog" aria-modal="true" aria-labelledby="ko-guide-title">
       <header class="ko-guide-head">
-        <h2 id="ko-guide-title">왕국전략 게임 방법</h2>
+        <h2 id="ko-guide-title">라니킹덤 게임 방법</h2>
         <button type="button" class="ko-guide-close" aria-label="게임 방법 닫기">✕</button>
       </header>
-      <p class="ko-guide-intro">한 칸의 마을에서 시작해 나만의 왕국을 키우세요.</p>
-      <div class="ko-guide-step"><strong>1. 영토 확장</strong><span>PC에서는 오른쪽의 ‘영토 확장’, 모바일에서는 아래 ‘건설’을 누르세요. 지형을 고른 뒤 기존 땅 옆을 선택하면 설치됩니다.</span></div>
+      <p class="ko-guide-intro">3×3 작은 마을에서 시작해 중심 건물을 키우고 외부 필드로 진출하세요.</p>
+      <div class="ko-guide-step"><strong>1. 마을 건설과 영토 확장</strong><span>먼저 마을 빈 칸에서 건물을 건설하세요. '필드 나가기'로 월드에 들어가면 PC에서는 오른쪽, 모바일에서는 아래 건설 메뉴를 이용합니다. 지형을 고른 뒤 필드에서는 지형을 고른 뒤 기존 땅 옆을 선택할 수 있습니다.</span></div>
       <div class="ko-guide-step"><strong>2. 자원과 건축</strong><span>숲에서 목재, 농경지에서 식량을 얻습니다. 설치한 영토를 눌러 시설을 짓고 자원을 생산하세요.</span></div>
       <div class="ko-guide-step"><strong>3. 연구와 왕국 승격</strong><span>‘연구소’에서 기술을 배우고, 영토 수와 안정도를 높여 왕국 단계 ‘승격’을 진행하세요.</span></div>
       <div class="ko-guide-step"><strong>4. 병력과 세력전</strong><span>병영에서 병력을 모집하고 인접한 적 영토를 공격하세요. 전투 전 보급 자원도 확인하세요.</span></div>

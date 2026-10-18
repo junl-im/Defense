@@ -6,7 +6,7 @@
 import { BUILDINGS, VILLAGE_UPGRADE } from '../config/BuildingConfig.js';
 import { RESEARCH } from '../config/ResearchConfig.js';
 import { events } from '../core/Events.js';
-import { iconHtml } from './GameIcons.js';
+import { iconHtml, iconSvg } from './GameIcons.js';
 
 function jobLabel(id) {
   if (id === 'village_upgrade') return { icon: VILLAGE_UPGRADE.icon, name: VILLAGE_UPGRADE.name };
@@ -34,20 +34,30 @@ export class ConstructionPanel {
     document.body.appendChild(root);
     this.root = root;
     this.listEl = root.querySelector('#construction-list');
+    this.listEl.addEventListener('click', (event) => {
+      const button = event.target.closest('button[data-cancel-key]');
+      if (!button || !this.listEl.contains(button)) return;
+      if (!window.confirm('진행 중인 건설을 취소하시겠습니까? 자원의 80%가 반환됩니다.')) return;
+      if (this.game.buildingSystem.cancelJob(button.dataset.cancelKey, button.dataset.cancelId)) {
+        this.game.ui.toast('건설 취소 완료 · 사용 자원 80% 반환');
+        this.refresh();
+      }
+    });
   }
 
   _bindEvents() {
     const toastStart = ({ id, time }) => {
       const { icon, name } = jobLabel(id);
-      this.game.ui.toast(`${icon} ${name} 건설 시작 (${Math.round(time)}초)`);
+      this.game.ui.toast(`${iconSvg(icon)} ${name} 건설 중 · ${Math.round(time)}초`);
       this.refresh();
     };
 
     events.on('build:started', toastStart);
     events.on('build:completed', () => this.refresh());
+    events.on('build:cancelled', () => this.refresh());
     events.on('buildings:changed', () => this.refresh());
     events.on('research:started', ({ icon, name, time }) => {
-      this.game.ui.toast(`${icon} ${name} 연구 시작 (${Math.round(time)}초)`);
+      this.game.ui.toast(`${iconSvg(icon)} ${name} 연구 중 · ${Math.round(time)}초`);
       this.refresh();
     });
     events.on('research:completed', () => this.refresh());
@@ -78,10 +88,11 @@ export class ConstructionPanel {
         <div class="construction-row" data-row-id="${id}" data-tip="영토 좌표 ${j.q},${j.r}">
           <span class="construction-icon">${iconHtml(j.icon)}</span>
           <div class="construction-body">
-            <span class="construction-name">${j.name}</span>
+            <span class="construction-name">${j.name} <small class="construction-state">${j.name.includes("(강화)") ? "강화 중" : "건설 중"}</small></span>
             <div class="hud-progress"><div class="hud-progress-fill construction-fill" style="width:${pct}%"></div></div>
           </div>
           <span class="construction-pct">${pct}%</span>
+          <button type="button" class="construction-cancel" data-cancel-key="${j.key}" data-cancel-id="${j.id}" aria-label="${j.name} 건설 취소">취소</button>
         </div>`;
     }
 
@@ -94,7 +105,7 @@ export class ConstructionPanel {
         <div class="construction-row" data-row-id="${id}">
           <span class="construction-icon">${iconHtml(def?.icon || 'research')}</span>
           <div class="construction-body">
-            <span class="construction-name">${def?.name || research.id}</span>
+            <span class="construction-name">${def?.name || research.id} <small class="construction-state">연구 중</small></span>
             <div class="hud-progress"><div class="hud-progress-fill construction-fill" style="width:${pct}%"></div></div>
           </div>
           <span class="construction-pct">${pct}%</span>

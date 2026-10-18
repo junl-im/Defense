@@ -21,6 +21,8 @@ import { CameraController } from '../camera/CameraController.js';
 import { UI } from '../ui/UI.js';
 import { TutorialMissions } from '../ui/TutorialMissions.js';
 import { SaveManager } from '../ui/SaveManager.js';
+import { VillageState } from '../systems/VillageState.js';
+import { VillageView } from '../ui/VillageView.js';
 import { Rng } from './Rng.js';
 import { tweens } from './Tween.js';
 import { events } from './Events.js';
@@ -75,9 +77,12 @@ export class Game {
     this._initScene();
     this._initSystems();
     this._initInput();
+    this.mode = 'world';
+    this.villageState = new VillageState(this);
     this._restoreOrStart();
     this.tutorialMissions = new TutorialMissions(this);
     this.saveManager = new SaveManager(this);
+    this.villageView = new VillageView(this);
   }
 
   // ---------------- renderer / scene ----------------
@@ -541,6 +546,7 @@ export class Game {
       this.researchSystem.restore(data.research);
       this.buildingSystem.restore(data.buildings);
       this.armySystem.restore(data.army);
+      this.villageState.restore(data.village);
       this.wallSystem.rebuild();
 
       events.emit('score:changed', { total: this.scoring.total, delta: 0, multiplier: 1 });
@@ -601,6 +607,7 @@ export class Game {
     this.buildingSystem.reset();
     this.researchSystem.reset();
     this.armySystem.reset();
+    this.villageState.reset();
     this.caravanSystem.clear();
     this.worldEvents.reset();
     this.wallSystem.reset();
@@ -611,6 +618,7 @@ export class Game {
     this.worldSeed = (Math.random() * 0xffffffff) >>> 0;
     this.controls.focusOn(0, 0);
     this._newGame();
+    this.villageView?.setMode('village');
     this.ui.toast(`${iconLabel('kingdom')} 새 왕국이 시작됩니다`);
   }
 
@@ -663,30 +671,40 @@ export class Game {
       dt = Math.min(dt, 0.1); // clamp tab-switch spikes
       this.elapsed += dt;
 
-      updateMaterialsClock(this.elapsed);
-      tweens.update(dt);
-      this.controls.update(dt);
-      this.construction.update(dt);
-      this.evolution.update(dt);
-      this.pool.update(dt, this.controls.target);
-      this._updateDayNight(dt);
-      this.ui.updateFps(dt);
+      const inVillage = this.mode === 'village';
+      // Village-only gameplay needs no 3D map rendering, meshes or world AI ticks.
+      if (!inVillage) {
+        updateMaterialsClock(this.elapsed);
+        tweens.update(dt);
+        this.controls.update(dt);
+        this.construction.update(dt);
+        this.evolution.update(dt);
+        this.pool.update(dt, this.controls.target);
+        this._updateDayNight(dt);
+        this.ui.updateFps(dt);
+      }
       this.resourceSystem.update(dt);
       this.citizenSystem.update(dt);
       this.progressionSystem.update(dt);
-      this.territorySystem.update(dt);
-      this.factionSystem.update(dt);
+      if (!inVillage) {
+        this.territorySystem.update(dt);
+        this.factionSystem.update(dt);
+      }
       this.buildingSystem.update(dt);
       this.researchSystem.update(dt);
-      this.caravanSystem.update(dt);
-      this.worldEvents.update(dt);
-      this.selection.update(dt);
-      this.radialMenu.update();
+      this.villageState.update(dt);
+      if (!inVillage) {
+        this.caravanSystem.update(dt);
+        this.worldEvents.update(dt);
+        this.selection.update(dt);
+        this.radialMenu.update();
+        this.debugHUD.update(dt);
+        this.debugOverlays.update(dt);
+      }
       if (this.progressionSystem.upgrading) this.resourcePanel.refreshProgress();
       if (this.researchSystem.active) this.researchPanel.refreshProgress();
       if (this.constructionPanel.hasActiveWork()) this.constructionPanel.refreshProgress();
-      this.debugHUD.update(dt);
-      this.debugOverlays.update(dt);
+      this.villageView?.refreshProgress(dt);
 
       // periodic autosave (keeps evolution ages fresh)
       this._autosaveT += dt;
@@ -695,7 +713,7 @@ export class Game {
         this.saveSystem.save(this);
       }
 
-      this.renderer.render(this.scene, this.camera);
+      if (!inVillage) this.renderer.render(this.scene, this.camera);
     };
     requestAnimationFrame(loop);
   }

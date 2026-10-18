@@ -20,6 +20,7 @@ with sync_playwright() as playwright:
         page.on("pageerror", lambda error: issues.append(str(error)))
         page.goto(BASE, wait_until="load", timeout=60000)
         page.wait_for_function("window.__game !== undefined", timeout=60000)
+        page.locator('#loading-screen').wait_for(state='detached',timeout=15000)
         page.wait_for_timeout(2000)
         state = page.evaluate("""() => ({
           title: document.title,
@@ -30,6 +31,11 @@ with sync_playwright() as playwright:
         })""")
         assert state["canvas"] and state["game"], f"{name}: missing game {state}"
         assert not issues, f"{name}: page errors: {issues}"
+        assert page.locator("#rani-village-screen").is_visible(), "Village should be the first screen"
+        assert page.locator("#rani-village-grid .rani-village-tile").count() == 9
+        page.screenshot(path=str(OUT / f"rani-village-{name}.png"), full_page=True)
+        page.locator("#rani-go-world").click()
+        assert page.evaluate("window.__game.mode") == "world"
         if name == "mobile":
             dock = page.locator("#slg-mobile-dock")
             assert dock.is_visible(), "Mobile navigation is missing"

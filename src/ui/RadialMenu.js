@@ -158,6 +158,8 @@ export class RadialMenu {
     // buildings that fit this tile type
     const tileFull = bs.buildingsOn(cell).length >= MAX_BUILDINGS_PER_TILE;
     for (const def of Object.values(BUILDINGS)) {
+      // Roads are removed from new village/world construction; legacy saves remain readable.
+      if (def.isRoad) continue;
       if (!bs.fitsTile(def, cell)) continue;
       // keep the wheel lean: hide buildings whose research is not unlocked yet
       if (def.research && rs && !rs.isCompleted(def.research)) continue;

@@ -1,0 +1,20 @@
+
+/* Rani Kingdom compact, elegant scrollbars and active construction state */
+:root { scrollbar-color: #b89557 transparent; scrollbar-width: thin; }
+.ui-panel, .hud-side-panel, .tile-shop, .research-list, .construction-list,
+.ko-guide-panel, .save-manager-dialog, #slg-tutorial {
+  scrollbar-width: thin;
+  scrollbar-color: #b89557 transparent;
+}
+:is(.ui-panel, .hud-side-panel, .tile-shop, .research-list, .construction-list,
+ .ko-guide-panel, .save-manager-dialog, #slg-tutorial)::-webkit-scrollbar { width: 5px; height: 5px; }
+:is(.ui-panel, .hud-side-panel, .tile-shop, .research-list, .construction-list,
+ .ko-guide-panel, .save-manager-dialog, #slg-tutorial)::-webkit-scrollbar-track { background: transparent; }
+:is(.ui-panel, .hud-side-panel, .tile-shop, .research-list, .construction-list,
+ .ko-guide-panel, .save-manager-dialog, #slg-tutorial)::-webkit-scrollbar-thumb {
+ background: #b89557b3; border-radius: 8px;
+}
+.construction-cancel {border: 1px solid #d19b70; background: #583e35; color: #ffe7d0;
+  border-radius: 6px; font-size: 11px; padding: 4px 7px; cursor:pointer; flex-shrink:0}
+.construction-cancel:hover {background: #8a4b3e}
+.construction-state {font-size: 10px; color:#e5bf80; display:inline-block; white-space:nowrap; margin-left:3px}

@@ -17,11 +17,17 @@ with sync_playwright() as playwright:
         page.on("pageerror", lambda error: errors.append(str(error)))
         page.goto("http://127.0.0.1:8123/", wait_until="load", timeout=60000)
         page.wait_for_function("window.__game !== undefined", timeout=60000)
+        page.locator('#loading-screen').wait_for(state='detached',timeout=15000)
         page.wait_for_timeout(1500)
         assert page.locator("html").get_attribute("lang") == "ko"
-        assert "왕국전략" in page.title()
+        assert "라니킹덤" in page.title()
         assert page.locator(".research-btn-name").first.inner_text() == "농업"
         assert "정착지" in page.locator("#hud-tier-name").inner_text()
+        assert page.locator("#rani-village-screen").is_visible()
+        assert page.locator("#rani-village-grid .rani-village-tile").count() == 9
+        assert page.evaluate("window.__game.mode") == "village"
+        page.locator("#rani-go-world").click()
+        assert page.evaluate("window.__game.mode") == "world"
         assert page.locator("#help-btn").is_visible()
         goal=page.locator("#slg-tutorial")
         assert goal.is_visible(), f"{name}: Korean tutorial missing"

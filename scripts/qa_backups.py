@@ -18,6 +18,7 @@ with sync_playwright() as p:
         page.on("pageerror",lambda e:errors.append(str(e)))
         page.goto("http://127.0.0.1:8123/",wait_until="load",timeout=60000)
         page.wait_for_function("window.__game?.tilesPlaced===1",timeout=60000)
+        page.locator('#loading-screen').wait_for(state='detached',timeout=15000)
         ratio=page.evaluate("window.__game.renderer.getPixelRatio()")
         assert ratio<= (1.25 if device=="mobile" else 2.0)
         shadow=page.evaluate("window.__game.sun.shadow.mapSize.x")
@@ -31,6 +32,7 @@ with sync_playwright() as p:
                 initial:d.cells.slice(0,3),keys:Object.keys(d)}; }
         }""")
         assert preflight["ok"], f"Real save does not pass validator: {preflight}"
+        page.locator("#rani-go-world").click()
         page.locator("#save-manager-btn").click()
         dialog=page.locator("#save-manager-overlay [role='dialog']")
         assert dialog.is_visible()
@@ -39,7 +41,7 @@ with sync_playwright() as p:
         with page.expect_download() as info:
             page.locator("#save-export").click()
         download=info.value
-        assert download.suggested_filename.startswith("왕국전략-저장-")
+        assert download.suggested_filename.startswith("라니킹덤-저장-")
         path=out/(device+"-initial-save.json")
         download.save_as(str(path))
         text=path.read_text(encoding="utf8")
@@ -58,10 +60,12 @@ with sync_playwright() as p:
         page.locator("#save-import-file").set_input_files({
             "name":"valid.json","mimeType":"application/json","buffer":text.encode("utf8")})
         page.wait_for_function("window.__game?.tilesPlaced===1",timeout=60000)
+        page.locator("#rani-go-world").click()
         page.locator("#save-manager-btn").click()
         assert page.locator("#save-undo").is_enabled()
         page.locator("#save-undo").click()
         page.wait_for_function("window.__game?.tilesPlaced===2",timeout=60000)
+        page.locator("#rani-go-world").click()
         page.locator("#save-manager-btn").click()
         assert page.locator("#save-undo").is_disabled()
         page.screenshot(path=str(out/(device+"-save-manager.png")),full_page=True)
