@@ -64,3 +64,9 @@ jobs:
         uses: actions/deploy-pages@v4
       - name: Print exact public preview URL
         run: echo "Preview live at ${{ steps.deployment.outputs.page_url }} (commit ${{ needs.build.outputs.revision }})"
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify real public GitHub Pages endpoints
+        run: node scripts/check-live-pages.mjs
