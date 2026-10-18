@@ -86,7 +86,7 @@ export class FactionPanel {
     const html = fs.factions.map((f) => {
       const rel = REL_LABEL[f.archetype] || { text: f.hostile ? '적대' : '중립', cls: f.hostile ? 'rel-hostile' : 'rel-neutral' };
       const tribute = f.archetype === 'friendly_kingdom'
-        ? '<span class="fp-tribute">Tribute ~' + Math.round(2 + f.strength * 0.05) + iconLabel('gold') + '/분</span>'
+        ? '<span class="fp-tribute">조공 약 ' + Math.round(2 + f.strength * 0.05) + iconLabel('gold') + '/분</span>'
         : '';
       const homeDist = Math.abs(f.home.q) + Math.abs(f.home.r);
       return `

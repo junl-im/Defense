@@ -59,7 +59,7 @@ export class WorldEventsSystem {
       case 'trade_caravan':
         rs.grant(def.gain, def.label);
         if (def.stability) rs.adjustStability(def.stability);
-        ui.toast(`${iconLabel(def.icon)} ${def.label}! Bonus resources arrive`);
+        ui.toast(`${iconLabel(def.icon)} ${def.label}! 추가 자원이 도착했습니다`);
         break;
       case 'raid': {
         const stolen = {
@@ -68,7 +68,7 @@ export class WorldEventsSystem {
         };
         rs.plunder(stolen, def.label);
         if (def.stability) rs.adjustStability(def.stability);
-        ui.toast(`${iconLabel(def.icon)} ${def.label}! Raiders stole supplies`);
+        ui.toast(`${iconLabel(def.icon)} ${def.label}! 약탈자들이 자원을 훔쳤습니다`);
         break;
       }
       case 'famine': {
@@ -76,8 +76,8 @@ export class WorldEventsSystem {
         if (def.stability) rs.adjustStability(def.stability);
         const lost = this.game.citizenSystem.reducePopulation(2);
         ui.toast(lost
-          ? `${iconLabel(def.icon)} ${def.label}! Food depleted · ${lost} citizens lost`
-          : `${iconLabel(def.icon)} ${def.label}! Food stores depleted`);
+          ? `${iconLabel(def.icon)} ${def.label}! 식량 고갈 · 주민 ${lost}명이 떠났습니다`
+          : `${iconLabel(def.icon)} ${def.label}! 식량 저장량이 줄었습니다`);
         break;
       }
       case 'prosperity':
@@ -85,14 +85,14 @@ export class WorldEventsSystem {
         rs._ratesDirty = true;
         this._prosperityT = def.duration;
         if (def.stability) rs.adjustStability(def.stability);
-        ui.toast(`${iconLabel(def.icon)} ${def.label}! ×${def.productionMult} production for ${def.duration}s`);
+        ui.toast(`${iconLabel(def.icon)} ${def.label}! ${def.duration}초 동안 생산량 ${def.productionMult}배`);
         break;
       case 'migration': {
         const added = this.game.citizenSystem.grantPopulation(def.populationGain);
         if (def.stability) rs.adjustStability(def.stability);
         ui.toast(added > 0
-          ? `${iconLabel(def.icon)} ${def.label}! +${added} citizens arrive`
-          : `${iconLabel(def.icon)} ${def.label}! No villages to settle in`);
+          ? `${iconLabel(def.icon)} ${def.label}! 주민 ${added}명이 이주했습니다`
+          : `${iconLabel(def.icon)} ${def.label}! 이주민이 정착할 마을이 없습니다`);
         break;
       }
       default:

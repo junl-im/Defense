@@ -146,7 +146,7 @@ export class RadialMenu {
       actions.push({
         id: `upgrade_b${b.slot}`,
         icon: target.icon,
-        label: b.upgradeTo ? '승격 중…' : `→ ${target.name}`,
+        label: b.upgradeTo ? '강화 중…' : `→ ${target.name}`,
         tip: `<b>시설 강화: ${cur.name} → ${target.name}</b><br>${target.desc}` +
           `<br>강화 비용: ${fmtCost(target.cost)} · ${Math.round(target.buildTime)}초` +
           (check.ok || b.upgradeTo ? '' : `<br><i class="tip-bad">${check.reason}</i>`),

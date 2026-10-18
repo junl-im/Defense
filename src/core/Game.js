@@ -191,15 +191,15 @@ export class Game {
 
     events.on('evolution:castle', () => {
       this.scoring.addBonus(150, '성채 건설');
-      this.ui.toast(`${iconLabel('castle')} A castle rises over your kingdom! +150`);
+      this.ui.toast(`${iconLabel('castle')} 왕국에 웅장한 성채가 세워졌습니다! +150`);
     });
     events.on('evolution:town', () => {
       this.scoring.addBonus(60, '읍성 성장');
-      this.ui.toast(`${iconLabel('town')} A village grew into a town! +60`);
+      this.ui.toast(`${iconLabel('town')} 마을이 읍성으로 성장했습니다! +60`);
     });
     events.on('evolution:bridge', () => {
       this.scoring.addBonus(40, '다리 건설');
-      this.ui.toast(`${iconLabel('bridge')} A bridge spans the river! +40`);
+      this.ui.toast(`${iconLabel('bridge')} 강을 가로지르는 다리가 완성됐습니다! +40`);
     });
     events.on('build:completed', ({ name, icon }) => {
       this.ui.toast(`${iconLabel(icon)} ${name} 건설 완료!`);
@@ -208,8 +208,8 @@ export class Game {
     events.on('progression:completed', () => this._refreshTilePanelMeta());
     events.on('army:battle', ({ won, faction }) => {
       this.ui.toast(won
-        ? `${iconLabel('sword')} Victory! The tile is yours${faction ? ` (${faction} routed)` : ''}`
-        : `${iconLabel('sword')} Defeat… the assault${faction ? ` on ${faction}` : ''} failed`);
+        ? `${iconLabel('sword')} 승리! 영토를 점령했습니다${faction ? ` (${faction} 격퇴)` : ''}`
+        : `${iconLabel('sword')} 패배… 공격에${faction ? ` ${faction}` : ''} 실패했습니다`);
       if (won) this.scoring.addBonus(25, '영토 정복');
     });
   }
@@ -436,7 +436,7 @@ export class Game {
       this.ui.toast(`자원이 부족합니다! 필요 자원: ${fmtCost(cost)}`);
       return;
     }
-    this.resourceSystem.spend(cost, `Place ${type}`);
+    this.resourceSystem.spend(cost, `영토 ${TILE_TYPES[type]?.name || '신규'} 설치`);
 
     const cell = this.tileFactory.makeCell(q, r, type, variant, this.rotation);
 
@@ -542,7 +542,7 @@ export class Game {
         this.selectTileType('forest');
       }
       this._refreshFrontier();
-      this.ui.toast(`${iconLabel('kingdom')} Kingdom restored`);
+      this.ui.toast(`${iconLabel('kingdom')} 왕국을 다시 불러왔습니다`);
     } else {
       this._newGame();
     }
@@ -600,7 +600,7 @@ export class Game {
     this.worldSeed = (Math.random() * 0xffffffff) >>> 0;
     this.controls.focusOn(0, 0);
     this._newGame();
-    this.ui.toast(`${iconLabel('kingdom')} A new kingdom begins`);
+    this.ui.toast(`${iconLabel('kingdom')} 새 왕국이 시작됩니다`);
   }
 
   // ---------------- day / night ----------------

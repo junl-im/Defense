@@ -34,7 +34,7 @@ function fmtProduction(type) {
   const prod = BASE_PRODUCTION[type];
   if (!prod || !Object.keys(prod).length) return '';
   return Object.entries(prod)
-    .map(([k, v]) => `${iconHtml(k, 'sm')}+${v}/s`)
+    .map(([k, v]) => `${iconHtml(k, 'sm')}+${v}/초`)
     .join(' ');
 }
 
@@ -78,7 +78,7 @@ export class UI {
     this.el.rotateBtn.addEventListener('click', () => this.game.rotateHand());
     this.el.rerollBtn.addEventListener('click', () => this.game.rollHandVariant());
     this.el.restartBtn.addEventListener('click', () => {
-      if (confirm('Start a new kingdom? Current progress will be lost.')) {
+      if (confirm('새 왕국을 시작하시겠습니까? 현재 저장된 왕국은 삭제됩니다.')) {
         this.game.restart();
       }
     });
@@ -216,7 +216,7 @@ export class UI {
       const tip = !unlocked
         ? `${tileUnlockTierName(type)} 단계에서 해금`
         : atCap
-          ? 'Tile cap — upgrade kingdom'
+          ? '영토 한도 도달 · 왕국 승격 필요'
           : `<b>${def.name}</b><br>${costStr}${affordable ? '' : '<br><i class="tip-bad">자원이 부족합니다</i>'}` +
             (fmtProduction(type) ? `<br>${fmtProduction(type)}` : '');
       btn.setAttribute('data-tip', tip);

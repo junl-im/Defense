@@ -27,7 +27,7 @@ const STABILITY_TIP =
   '영토 빼앗김: −8 · 되찾음: +4';
 
 function fmt(n) {
-  if (n >= 1000) return (n / 1000).toFixed(1) + 'k';
+  if (n >= 1000) return (n / 1000).toFixed(1) + '천';
   return String(Math.floor(n));
 }
 

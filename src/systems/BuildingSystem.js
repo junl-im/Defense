@@ -477,7 +477,7 @@ export class BuildingSystem {
           out.push({
             key, q, r, id: b.upgradeTo,
             icon: t?.icon || 'upgrade',
-            name: `${t?.name || b.upgradeTo} (upgrade)`,
+            name: `${t?.name || b.upgradeTo} (강화)`,
             remaining: b.upRemaining,
             total: b.upTotal || 1,
           });
