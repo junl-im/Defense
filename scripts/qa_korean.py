@@ -57,8 +57,8 @@ with sync_playwright() as playwright:
         page.screenshot(path=str(out/(name+"-guide.png")), full_page=True)
         page.locator(".ko-guide-start").click()
         assert not dialog.is_visible()
-        // A normal forest purchase/placement must advance the tutorial without
-        // granting free resources or counting hostile AI territory.
+        # A normal forest placement advances the tutorial without granting
+        # free resources or counting hostile AI territory.
         page.evaluate("() => window.__game.placeTile(1, 0)")
         page.wait_for_function("document.querySelector('#slg-tutorial').dataset.step === 'field'")
         assert "식량 생산 기반" in goal.inner_text()
