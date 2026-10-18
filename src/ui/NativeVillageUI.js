@@ -3,7 +3,9 @@
 // new construction interface. World mode skips expensive 3D drawing.
 import { hallUpgradeCost,villageBounds,villageOwnedCount,VILLAGE_MAX_LEVEL } from '../systems/NativeVillageProgress.js';
 import { events } from '../core/Events.js';
-import { fmtCost } from '../config/BuildingConfig.js';
+import { fmtCost,BUILDINGS } from '../config/BuildingConfig.js';
+import { TILE_TYPES } from '../tiles/TileDefs.js';
+import { axialToWorld } from '../grid/Hex.js';
 
 const clean=(s)=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export class NativeVillageUI {
@@ -11,6 +13,7 @@ export class NativeVillageUI {
     this.game=game;
     this.activeWorld=false;
     this.selectedId=null;
+    this.selectedCell=null;
     this._lastRender=0;
     this._build();
     this._events();
@@ -49,12 +52,13 @@ export class NativeVillageUI {
     });
     top.querySelector('#rani-native-world').addEventListener('click',()=>this.setMode('world'));
     top.querySelector('#rani-field-shortcut').addEventListener('click',()=>this.setMode('world'));
-    overlay.querySelector('#rani-native-home').addEventListener('click',()=>this.setMode('village'));
+    overlay.querySelector('#rani-native-home').addEventListener('click',()=>this.showVillageInfo());
     overlay.querySelector('#rani-field-focus-home').addEventListener('click',()=>this.game.fieldScene?.select('player'));
     overlay.querySelector('#rani-field-faction-select').addEventListener('change', e => {
       const id=e.target.value;
       if(!id)return;
-      this.game.fieldScene?.select(id);
+      if(id==='player')this.showVillageInfo();
+      else this.game.fieldScene?.select(id);
     });
     top.querySelector('#rani-native-upgrade').addEventListener('click',()=>{
       const result=this.game.nativeVillage.startUpgrade();
@@ -72,6 +76,7 @@ export class NativeVillageUI {
       if(!btn)return;this.selectedId=btn.dataset.factionId;this.refreshWorld();
     });
     overlay.querySelector('#rani-world-detail').addEventListener('click',(event)=>{
+      if(event.target.closest('button[data-rani-enter-village]')){this.showVillageInfo();return;}
       if(!event.target.closest('button[data-rani-attack]'))return;
       const f=this.game.factionSystem.factions.find(f=>f.id===this.selectedId);
       const cell=f?this.game.grid.get(f.home.q,f.home.r):null;
@@ -105,6 +110,22 @@ export class NativeVillageUI {
     // Foreign settlements are world-map nodes, not rendered in my construction scene.
     for(const cell of this.game.grid.cells.values()){
       if(cell.group)cell.group.visible=(!cell.owner||cell.owner==='player');
+    }
+  }
+  showVillageInfo(cell=null){
+    // A field "my village" tap returns to the genuine first-screen 3D hex
+    // and opens its original selection ring rather than a synthetic card.
+    const target=cell&&(!cell.owner||cell.owner==='player')?cell:
+      this.game.grid.get(0,0)||
+      [...this.game.grid.cells.values()].find(c=>!c.owner||c.owner==='player');
+    this.setMode('village');
+    this.selectedId='player';
+    this.selectedCell=null;
+    document.dispatchEvent(new Event('rani:map-focus'));
+    if(target){
+      const {x,z}=axialToWorld(target.q,target.r);
+      this.game.controls.focusOn(x,z);
+      this.game.selection.select(target);
     }
   }
   setMode(mode){
@@ -178,8 +199,8 @@ export class NativeVillageUI {
     this.game.fieldScene?.updateLabels();
     const detail=this.overlay.querySelector('#rani-world-detail');
     if(!this.selectedId||this.selectedId==='player'){
-      detail.innerHTML='<h3>내 마을</h3><p>기존 3D 건설 화면에서 마을을 키우고 병력을 모집하세요.</p>'+
-        '<p>월드의 다른 세력은 현재 실제 데이터에서 표시됩니다.</p>';
+      detail.innerHTML='<h3>내 마을</h3><p>실제 마을을 이루는 3D 육각 타일을 선택해 시설과 진행 상태를 확인할 수 있습니다.</p>'+
+        '<button type="button" data-rani-enter-village>내 마을 6각 보기</button>';
       return;
     }
     const f=all.find(f=>f.id===this.selectedId);
@@ -187,8 +208,15 @@ export class NativeVillageUI {
     const cell=this.game.grid.get(f.home.q,f.home.r);
     const can=cell&&cell.owner!=='player'?this.game.armySystem.canAttack(cell):{ok:false,reason:'공격할 수 없는 마을입니다.'};
     const distance=Math.round((Math.abs(f.home.q)+Math.abs(f.home.r)+Math.abs(f.home.q+f.home.r))/2);
+    const selected=this.selectedCell?.owner===f.id?this.selectedCell:null;
+    const structures=selected?
+      this.game.buildingSystem.buildingsOn(selected).map(b=>clean(BUILDINGS[b.id]?.name||'시설')+
+        (b.done?' · 완공':' · 건설 중')).join(', '):'';
+    const land=selected?'<p>선택한 육각 지형: '+clean(TILE_TYPES[selected.tileType]?.name||'영토')+
+      ' · 좌표 '+selected.q+', '+selected.r+'</p>'+
+      (structures?'<p>건물: '+structures+'</p>':'<p>현재 건설된 건물 없음</p>'):'';
     detail.innerHTML='<h3>'+clean(f.label)+'</h3>'+
-      '<p>관계: '+(f.hostile?'적대':'우호 또는 중립')+'</p>'+
+      land+'<p>관계: '+(f.hostile?'적대':'우호 또는 중립')+'</p>'+
       '<p>거리: '+distance+'칸 · 영토: '+f.territory.size+'칸</p>'+
       '<p>전투력: '+Math.round(f.strength)+' · 내 병력 '+this.game.armySystem.unitCount+'명</p>'+
       (can.ok?'<button data-rani-attack type="button">⚔️ 공격</button>':
