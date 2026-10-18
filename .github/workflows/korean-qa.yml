@@ -1,0 +1,44 @@
+name: Validate Korean SLG
+on:
+  push:
+    branches: [feat/korean-first-slg-v02]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  korean-game:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify full source and Korean display content
+        run: npm test
+      - name: JavaScript syntax
+        run: find src scripts -name '*.js' -o -name '*.mjs' | while read f; do node --check "$f" || exit 1; done
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Chromium
+        run: |
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium
+      - name: Serve playable SLG
+        run: |
+          python -m http.server 8123 --bind 127.0.0.1 >/tmp/kingdom-server.log 2>&1 &
+          for i in {1..30}; do curl -fsS http://127.0.0.1:8123/ >/dev/null && break; sleep 1; done
+      - name: Run original gameplay logic tests
+        run: |
+          python test/run_headless.py
+          python test/run_headless.py http://127.0.0.1:8123/test/smoke_military.html
+      - name: Test Korean game in desktop and mobile Chromium
+        run: python scripts/qa_korean.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: korean-slg-desktop-mobile
+          path: qa/korean/
+          if-no-files-found: ignore
