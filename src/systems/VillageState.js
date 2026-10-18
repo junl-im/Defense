@@ -6,9 +6,16 @@ export const HALL_MAX_LEVEL = 4;
 export const HALL_NAME = '중심 건물';
 export const VILLAGE_BUILD_IDS = Object.freeze(['lumber_mill','farm','mine','market','barracks','garrison']);
 export const VILLAGE_COST_REFUND = 0.8;
+export const STARTER_FREE_IDS = Object.freeze(['lumber_mill', 'farm']);
+export const EARLY_BUILD_TIME_MULT = 0.45;
+export function starterCost(id, claims = []) {
+  return STARTER_FREE_IDS.includes(id) && !claims.includes(id) ? {} : BUILDINGS[id]?.cost || {};
+}
 export function villageSize(level) { return Math.min(HALL_MAX_LEVEL, Math.max(1,level)) + 2; }
 export function hallCost(level) {
-  return { wood:40*level, stone:20*level, gold:10*level };
+  // Affordable first 4×4 unlock; later levels retain meaningful progression.
+  return level === 1 ? { wood:20, stone:10, gold:5 } :
+    { wood: 30*level, stone: 15*level, gold: 8*level };
 }
 function refund(cost) {
   return Object.fromEntries(Object.entries(cost).map(([key,value])=>[key,Math.round(value*VILLAGE_COST_REFUND*100)/100]));
@@ -21,6 +28,7 @@ export class VillageState {
   reset() {
     this.hallLevel=1;
     this.hallUpgrade=null;
+    this.starterClaims=[];
     this.plots=[{x:1,y:1,id:'hall',done:true,remaining:0,total:0}];
     this._tick=0;
     events.emit('village:changed',{});
@@ -33,22 +41,44 @@ export class VillageState {
     if (this.getPlot(x,y)) return {ok:false,reason:'이미 건물이 있는 칸입니다.'};
     const def=BUILDINGS[id];
     if(!VILLAGE_BUILD_IDS.includes(id)||!def) return {ok:false,reason:'건설할 수 없는 시설입니다.'};
-    if(def.research&&!this.game.researchSystem.isCompleted(def.research))
+    const starter = STARTER_FREE_IDS.includes(id) && !this.starterClaims.includes(id);
+    if(def.research&&!starter&&!this.game.researchSystem.isCompleted(def.research))
       return {ok:false,reason:this.game.researchSystem.nameOf(def.research)+' 연구가 필요합니다.'};
-    if(!this.game.resourceSystem.canAfford(def.cost))
-      return {ok:false,reason:'자원이 부족합니다. '+fmtCost(def.cost)};
-    return {ok:true,reason:''};
+    const cost = starter ? {} : def.cost;
+    if(!this.game.resourceSystem.canAfford(cost))
+      return {ok:false,reason:'자원이 부족합니다. '+fmtCost(cost)};
+    return {ok:true,reason:'',starter,cost};
   }
   build(x,y,id) {
     const check=this.canBuild(x,y,id);
     if(!check.ok) return check;
     const def=BUILDINGS[id];
-    if(!this.game.resourceSystem.spend(def.cost,def.name+' 건설')) return {ok:false,reason:'자원이 부족합니다.'};
-    const time=def.buildTime*(this.game.researchSystem?.buildTimeMult||1);
-    this.plots.push({x,y,id,done:false,remaining:time,total:time});
+    if(!this.game.resourceSystem.spend(check.cost,def.name+' 건설')) return {ok:false,reason:'자원이 부족합니다.'};
+    if(check.starter) this.starterClaims.push(id);
+    const time=check.starter ? 0 : Math.max(5,
+      Math.round(def.buildTime * (this.hallLevel <= 2 ? EARLY_BUILD_TIME_MULT : 1)
+        * (this.game.researchSystem?.buildTimeMult || 1)));
+    this.plots.push({x,y,id,done:check.starter,remaining:time,total:time});
     events.emit('village:changed',{});
-    return {ok:true,reason:def.name+' 건설 중'};
+    return {ok:true,starter:check.starter,reason:check.starter?def.name+' 무료 즉시 건설 완료':def.name+' 건설 중'};
   }
+  /** Build the recommended first structures without a grid selection. */
+  quickBuild(id) {
+    if (!VILLAGE_BUILD_IDS.includes(id)) return {ok:false,reason:'선택할 수 없는 시설입니다.'};
+    for(let y=0;y<this.size;y++) for(let x=0;x<this.size;x++) {
+      if(this.getPlot(x,y))continue;
+      const check=this.canBuild(x,y,id);
+      if(check.ok)return {...this.build(x,y,id),x,y};
+    }
+    return {ok:false,reason:'건설 가능한 빈 칸이나 자원이 부족합니다.'};
+  }
+
+  getStarterProgress() {
+    return {completed:STARTER_FREE_IDS.filter(id=>this.starterClaims.includes(id)).length,
+      total:STARTER_FREE_IDS.length,
+      next:STARTER_FREE_IDS.find(id=>!this.starterClaims.includes(id))||null};
+  }
+
   cancel(x,y) {
     const p=this.getPlot(x,y);
     if(!p||p.id==='hall'||p.done) return false;
@@ -71,7 +101,8 @@ export class VillageState {
     const level=this.hallLevel;
     if(!this.game.resourceSystem.spend(hallCost(level),'중심 건물 승격'))
       return {ok:false,reason:'자원이 부족합니다.'};
-    this.hallUpgrade={remaining:20*level,total:20*level};
+    const seconds = level === 1 ? 8 : 15*level;
+    this.hallUpgrade={remaining:seconds,total:seconds};
     events.emit('village:changed',{});
     return {ok:true,reason:'중심 건물 승격 중'};
   }
@@ -119,6 +150,7 @@ export class VillageState {
       level:this.hallLevel,
       plots:this.plots.map(({x,y,id,done,remaining,total})=>({x,y,id,done,remaining:Math.round(remaining*10)/10,total:Math.round(total*10)/10})),
       hallUpgrade:this.hallUpgrade?{...this.hallUpgrade}:null,
+      starterClaims:[...this.starterClaims],
     };
   }
   restore(data) {
@@ -144,6 +176,10 @@ export class VillageState {
     if(!hasHall)return;
     this.hallLevel=data.level;
     this.plots=valid;
+    // Older v0.5 saves had no starterClaims; count previously constructed starter buildings.
+    const inferred=valid.filter(p=>STARTER_FREE_IDS.includes(p.id)).map(p=>p.id);
+    this.starterClaims=[...new Set([...inferred,...(Array.isArray(data.starterClaims)?
+      data.starterClaims.filter(id=>STARTER_FREE_IDS.includes(id)):[])])];
     this.hallUpgrade=data.hallUpgrade&&data.level<HALL_MAX_LEVEL&&Number(data.hallUpgrade.remaining)>0?
       {remaining:Math.min(500,Math.max(0,Number(data.hallUpgrade.remaining))),
        total:Math.min(500,Math.max(0,Number(data.hallUpgrade.total)||20))}:null;
