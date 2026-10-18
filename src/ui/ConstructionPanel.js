@@ -6,7 +6,7 @@
 import { BUILDINGS, VILLAGE_UPGRADE } from '../config/BuildingConfig.js';
 import { RESEARCH } from '../config/ResearchConfig.js';
 import { events } from '../core/Events.js';
-import { iconHtml } from './GameIcons.js';
+import { iconHtml, iconSvg } from './GameIcons.js';
 
 function jobLabel(id) {
   if (id === 'village_upgrade') return { icon: VILLAGE_UPGRADE.icon, name: VILLAGE_UPGRADE.name };
@@ -48,7 +48,7 @@ export class ConstructionPanel {
   _bindEvents() {
     const toastStart = ({ id, time }) => {
       const { icon, name } = jobLabel(id);
-      this.game.ui.toast(`${icon} ${name} 건설 시작 (${Math.round(time)}초)`);
+      this.game.ui.toast(`${iconSvg(icon)} ${name} 건설 중 · ${Math.round(time)}초`);
       this.refresh();
     };
 
@@ -57,7 +57,7 @@ export class ConstructionPanel {
     events.on('build:cancelled', () => this.refresh());
     events.on('buildings:changed', () => this.refresh());
     events.on('research:started', ({ icon, name, time }) => {
-      this.game.ui.toast(`${icon} ${name} 연구 시작 (${Math.round(time)}초)`);
+      this.game.ui.toast(`${iconSvg(icon)} ${name} 연구 중 · ${Math.round(time)}초`);
       this.refresh();
     });
     events.on('research:completed', () => this.refresh());
