@@ -5,6 +5,7 @@ import {makeBossAttack,hitsHero,bossCasualties} from './boss-combat.js';
 import './style.css';
 
 const $=id=>document.getElementById(id);
+$('heroPreview').src=import.meta.env.BASE_URL+'assets/sprites/ally-female.png';
 const canvas=$('gameCanvas'),engine=new Engine(canvas,true,{preserveDrawingBuffer:false,stencil:true});
 const scene=new Scene(engine);
 scene.clearColor=new Color4(.045,.055,.11,1);
@@ -79,7 +80,7 @@ box('boss armor',4.2,5,2.6,0,4,0,bossMat,bossRoot);const bossHead=MeshBuilder.Cr
 const bossHair=MeshBuilder.CreateSphere('boss hair',{diameter:3.45},scene);bossHair.parent=bossRoot;bossHair.position.set(0,8.75,-.25);bossHair.scaling.y=.65;bossHair.material=hairMat;
 for(const x of [-2.55,2.55])box('boss gauntlet',1.25,4.5,1.6,x,4.2,0,bossMat,bossRoot);
 box('boss left boot',1.4,3,1.7,-1,1.1,0,railMat,bossRoot);box('boss right boot',1.4,3,1.7,1,1.1,0,railMat,bossRoot);
-const state={running:false,finished:false,z:3,x:0,units:12,score:0,enemyCount:135,bossHp:1600,maxBossHp:1600,time:0};
+const state={running:false,paused:false,finished:false,z:3,x:0,units:12,score:0,enemyCount:135,bossHp:1600,maxBossHp:1600,time:0};
 let input=0,pointerStart=null;
 const bossPrototypeMeshes=bossRoot.getChildMeshes();
 async function decorateStage(){
@@ -142,13 +143,23 @@ function renderHud(){
  health.style.width=(100*value/state.maxBossHp).toFixed(1)+'%';
  track.setAttribute('aria-valuenow',String(value));
 }
-function reset(){Object.assign(state,{running:true,finished:false,z:3,x:0,units:12,score:0,enemyCount:135,bossHp:1600,time:0});
+function reset(){Object.assign(state,{running:true,paused:false,finished:false,z:3,x:0,units:12,score:0,enemyCount:135,bossHp:1600,time:0});
+ $('pausePanel').classList.add('hidden');$('pauseBtn').setAttribute('aria-pressed','false');$('pauseBtn').textContent='Ⅱ';
  bossAttackTime=0;bossPreviousPhase=1;attackCount=0;pendingAttack=null;shotCooldown=0;hitFlashUntil=0;bossPulseUntil=0;
  clearBossWarnings();$('hitFlash').classList.remove('active');$('attackText').textContent='다음 공격 대기';
  bullets.forEach(b=>{b.life=0;b.mesh.setEnabled(false);});
 gates.forEach(g=>g.done=false);enemies.forEach(e=>e.isVisible=true);$('front').classList.add('hidden');heroine.position.z=3;heroine.position.x=0;renderHud();}
 $('startBtn').addEventListener('click',reset);
-window.addEventListener('keydown',e=>{if(['ArrowLeft','a','A'].includes(e.key))input=-1;if(['ArrowRight','d','D'].includes(e.key))input=1;if(['ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();});
+function togglePause(){
+ if(!state.running || state.finished)return;
+ state.paused=!state.paused;
+ $('pausePanel').classList.toggle('hidden',!state.paused);
+ $('pauseBtn').textContent=state.paused?'▶':'Ⅱ';
+ $('pauseBtn').setAttribute('aria-pressed',String(state.paused));
+}
+$('pauseBtn').addEventListener('click',togglePause);
+$('resumeBtn').addEventListener('click',togglePause);
+window.addEventListener('keydown',e=>{if(e.key==='p'||e.key==='P'||e.key==='Escape'){e.preventDefault();togglePause();return;}if(['ArrowLeft','a','A'].includes(e.key))input=-1;if(['ArrowRight','d','D'].includes(e.key))input=1;if(['ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();});
 window.addEventListener('keyup',e=>{if(['ArrowLeft','ArrowRight','a','A','d','D'].includes(e.key))input=0;});
 canvas.addEventListener('pointerdown',e=>{pointerStart=e.clientX;canvas.setPointerCapture(e.pointerId)});
 canvas.addEventListener('pointermove',e=>{if(pointerStart!==null){state.x=clamp(state.x+(e.clientX-pointerStart)*.014,-4.9,4.9);pointerStart=e.clientX;}});
@@ -238,7 +249,7 @@ function tickBullets(dt){
  for(const b of bullets)if(b.life>0){b.life-=dt;b.mesh.position.z+=30*dt;if(b.life<=0)b.mesh.setEnabled(false);}
 }
 
-engine.runRenderLoop(()=>{const dt=Math.min(engine.getDeltaTime()/1000,.35);if(state.running){state.time+=dt;state.x=clamp(state.x+input*dt*7.2,-4.9,4.9);if(state.z<70)state.z+=dt*5.6;heroine.position.x=state.x;heroine.position.z=state.z;heroine.rotation.z=input*-.07;
+engine.runRenderLoop(()=>{const dt=Math.min(engine.getDeltaTime()/1000,.35);if(state.running&&!state.paused){state.time+=dt;state.x=clamp(state.x+input*dt*7.2,-4.9,4.9);if(state.z<70)state.z+=dt*5.6;heroine.position.x=state.x;heroine.position.z=state.z;heroine.rotation.z=input*-.07;
 for(const g of gates){if(!g.done&&state.z>=g.z){g.done=true;const choice=g.choices[state.x>=0?1:0];state.units=applyGate(state.units,choice.kind,choice.value);state.score+=120;say(choice.kind==='multiply'?'병력 ×'+choice.value:'병력 +'+choice.value);}}
 if(state.z>26&&state.z<59&&state.enemyCount>0){const defeated=Math.min(state.enemyCount,dt*(5+state.units*.38));state.enemyCount-=defeated;state.score+=Math.ceil(defeated*3);const alive=Math.ceil(state.enemyCount);enemies.forEach((e,i)=>e.isVisible=i<alive);if(state.time%2<dt&&state.units>1)state.units=Math.max(1,state.units-1);}
 if(state.z>66){
@@ -272,7 +283,7 @@ if(state.z>66){
 $('hitFlash').classList.toggle('active',state.running&&state.time<hitFlashUntil);
 if(state.z>94)complete(false);
 renderHud();}
-tickBullets(dt);drawSquad(state.units);camera.target.set(state.x*.18,0,state.z+9.0);camera.position.set(state.x*.22,15.5,state.z-12.5);scene.render();});
+tickBullets(state.paused?0:dt);drawSquad(state.units);camera.target.set(state.x*.18,0,state.z+9.0);camera.position.set(state.x*.22,15.5,state.z-12.5);scene.render();});
 // Read-only QA telemetry; does not change gameplay.
-window.__defenseQa=()=>({running:state.running,finished:state.finished,bossPattern:pendingAttack?.type||'none',attacksLaunched:attackCount,z:+state.z.toFixed(2),units:state.units,score:state.score,bossHp:Math.ceil(state.bossHp),elapsed:+state.time.toFixed(2),fps:Math.round(engine.getFps()),meshes:scene.meshes.length,billboards:activeBillboards,enemySprites:activeBillboards?enemies.length:0,allySprites:allySprites.length,sceneReady:scene.isReady()});
+window.__defenseQa=()=>({running:state.running,paused:state.paused,finished:state.finished,bossPattern:pendingAttack?.type||'none',attacksLaunched:attackCount,z:+state.z.toFixed(2),units:state.units,score:state.score,bossHp:Math.ceil(state.bossHp),elapsed:+state.time.toFixed(2),fps:Math.round(engine.getFps()),meshes:scene.meshes.length,billboards:activeBillboards,enemySprites:activeBillboards?enemies.length:0,allySprites:allySprites.length,sceneReady:scene.isReady()});
 window.addEventListener('resize',()=>engine.resize());
