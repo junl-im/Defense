@@ -3,6 +3,11 @@
 // Field graphics are not part of the village grid or saved data.
 import * as THREE from 'three';
 const a=Math.PI/6;
+// Shared geometry: refreshing factions never allocates fresh WebGL buffers.
+const platformGeometry=new THREE.CylinderGeometry(.72,.76,.23,6);
+const bodyGeometry=new THREE.BoxGeometry(.68,.58,.64);
+const roofGeometry=new THREE.ConeGeometry(.53,.55,4);
+const towerGeometry=new THREE.CylinderGeometry(.14,.17,.70,8);
 const castleMaterial=new THREE.MeshStandardMaterial({color:0xc9b98a,roughness:.9});
 const enemyMaterial=new THREE.MeshStandardMaterial({color:0xa48670,roughness:.9});
 const playerMaterial=new THREE.MeshStandardMaterial({color:0xc7ad66,roughness:.9});
@@ -104,16 +109,16 @@ export class RaniFieldScene {
     group.userData.factionId=entry.id;
     const tone=entry.id==='player'?playerMaterial:entry.hostile?enemyMaterial:castleMaterial;
     const roof=entry.id==='player'?playerRoofMaterial:roofMaterial;
-    const platform=new THREE.Mesh(new THREE.CylinderGeometry(.72,.76,.23,6),tone);
+    const platform=new THREE.Mesh(platformGeometry,tone);
     platform.position.y=.12;group.add(platform);
-    const body=new THREE.Mesh(new THREE.BoxGeometry(.68,.58,.64),tone);body.position.y=.49;group.add(body);
-    const roofMesh=new THREE.Mesh(new THREE.ConeGeometry(.53,.55,4),roof);
+    const body=new THREE.Mesh(bodyGeometry,tone);body.position.y=.49;group.add(body);
+    const roofMesh=new THREE.Mesh(roofGeometry,roof);
     roofMesh.position.y=1.04;roofMesh.rotation.y=a;group.add(roofMesh);
     const scale=entry.tier===1?.82:entry.tier===2?.95:entry.tier===3?1.12:1.3;
     group.scale.setScalar(scale);
     if(entry.tier>=3){
       for(const x of [-.43,.43]){
-        const tower=new THREE.Mesh(new THREE.CylinderGeometry(.14,.17,.70,8),tone);
+        const tower=new THREE.Mesh(towerGeometry,tone);
         tower.position.set(x,.48,-.31);group.add(tower);
       }
     }
