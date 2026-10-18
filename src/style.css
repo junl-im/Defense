@@ -16,3 +16,20 @@
 #hitFlash{pointer-events:none;position:absolute;inset:0;z-index:2;opacity:0;background:radial-gradient(ellipse at center,transparent 28%,rgba(252,69,104,.56) 100%);transition:opacity .13s}
 #hitFlash.active{opacity:1}
 @media(max-width:640px){.bossbar-head small{font-size:8px}.boss-attack-label{font-size:10px;margin-top:4px}}
+
+
+/* Dating-sim inspired command portrait — source PNG, no vector assets. */
+.hero-showcase{display:flex;align-items:center;text-align:left;gap:16px;margin:18px auto 5px;padding:10px 13px;background:linear-gradient(100deg,#344267aa,#54345ba8);border:1px solid #ffe0f055;border-radius:16px;max-width:390px}
+.hero-avatar{width:90px;height:105px;min-width:90px;position:relative;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 42%,#b3a4db88,#25305222 73%);border-radius:10px;overflow:hidden}
+.hero-avatar img{display:block;width:94px;height:126px;object-fit:contain;filter:drop-shadow(0 2px 5px #10112fcc)}
+.hero-intro span{font-size:9px;font-weight:800;letter-spacing:.11em;color:#ffaacf}
+.hero-intro strong{display:block;font-size:18px;margin:4px 0 2px;color:#fff3f8}
+.hero-intro p{margin:0 0 4px;font-size:12px;line-height:1.5;color:#e1dceb}
+.hero-intro small{font-size:10px;color:#ebbacf}
+.pause-action{position:relative;min-width:36px;margin:0;padding:7px 11px;background:#eec4d8b8;color:#241b38;border:1px solid #ffe1f1;border-radius:9px;font-size:15px;box-shadow:none;z-index:6}
+.pause-panel{position:absolute;z-index:7;left:50%;top:50%;transform:translate(-50%,-50%);background:linear-gradient(140deg,#222345f9,#141b3cf9);padding:25px 30px;border:1px solid #d9b3deaa;border-radius:17px;width:min(310px,92vw);text-align:center;box-shadow:0 18px 75px #060b19ed}
+.pause-panel.hidden{display:none}
+.pause-panel h2{font-size:21px;margin:6px 0 12px}
+.pause-panel p{color:#c9c8e5;font-size:12px;line-height:1.6}
+.pause-panel button{font-size:14px}
+@media(max-width:640px){.hero-showcase{gap:9px;padding:8px;margin:10px 0}.hero-avatar{width:68px;height:84px;min-width:68px}.hero-avatar img{width:70px;height:100px}.hero-intro strong{font-size:15px}.hero-intro p{font-size:10px}.front .tip{font-size:9px!important}.pause-action{position:absolute;right:12px;bottom:12px}}
