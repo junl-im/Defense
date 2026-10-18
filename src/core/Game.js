@@ -373,20 +373,36 @@ export class Game {
       }
       // Pick the actual visible structure first. A 2D ground projection
       // alone can land in the hex behind a tall roof.
-      for (const hit of this.raycaster.intersectObjects(root.children, true)) {
+      // The upgraded central hall is mounted directly on scene, while other
+      // CC0 building replacements are inside their native cell group.
+      const hall=this.townHallArt?.model;
+      const targets=hall?.visible?[...root.children,hall]:root.children;
+      for (const hit of this.raycaster.intersectObjects(targets, true)) {
+        if (hall?.visible && (hit.object===hall || hall.getObjectById(hit.object.id))) {
+          const box=new THREE.Box3().setFromObject(hall);
+          const anchor=box.isEmpty()?new THREE.Vector3(0,TILE_H,0):
+            box.getCenter(new THREE.Vector3());
+          return {q:0,r:0,anchor,buildingId:null};
+        }
         let object = hit.object;
         while (object && object !== root) {
           const cell = byGroup.get(object);
           if (cell) {
+            let replacement=null,node=hit.object;
+            while (node && node!==cell.group) {
+              if (node.userData.raniUpgradedBuilding) {replacement=node;break;}
+              node=node.parent;
+            }
+            // CC0 art swaps hide the original model. Picking must use the
+            // VISIBLE replacement, otherwise the real click looks like ground.
             const building = this.buildingSystem.buildingsOn(cell).find(rec => {
+              if (replacement && rec.id===replacement.userData.raniUpgradedBuilding) return true;
               const visual = rec.visual?.group || rec.marker;
               return visual && (visual === hit.object || visual.getObjectById(hit.object.id));
             });
-            // The bounding center stays on the chosen building, not a random
-            // clicked roof vertex; for plain ground use the hex center.
             let anchor = null;
-            if (building) {
-              const model = building.visual?.group || building.marker;
+            const model = replacement || building?.visual?.group || building?.marker;
+            if (model) {
               const box = new THREE.Box3().setFromObject(model);
               if (!box.isEmpty()) anchor = box.getCenter(new THREE.Vector3());
             }
