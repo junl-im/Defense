@@ -23,7 +23,18 @@ with sync_playwright() as playwright:
         assert page.locator(".research-btn-name").first.inner_text() == "농업"
         assert "정착지" in page.locator("#hud-tier-name").inner_text()
         assert page.locator("#help-btn").is_visible()
+        goal=page.locator("#slg-tutorial")
+        assert goal.is_visible(), f"{name}: Korean tutorial missing"
+        assert goal.get_attribute("data-step") == "first_land"
+        assert "처음 영토 확장" in goal.inner_text()
+        page.locator(".slg-tutorial-fold").click()
+        assert "slg-tutorial-collapsed" in goal.get_attribute("class")
+        page.locator(".slg-tutorial-fold").click()
+        assert "slg-tutorial-collapsed" not in goal.get_attribute("class")
         if name == "mobile":
+            page.locator("#slg-tutorial-go").click()
+            assert page.locator("#hud-right").is_visible(), "Tutorial should open construction menu"
+            page.locator("#slg-mobile-dock button[data-panel='map']").click()
             assert not page.locator("#research-panel").is_visible()
             assert not page.locator("#faction-panel").is_visible()
             assert not page.locator("#hud-right").is_visible()
@@ -46,6 +57,11 @@ with sync_playwright() as playwright:
         page.screenshot(path=str(out/(name+"-guide.png")), full_page=True)
         page.locator(".ko-guide-start").click()
         assert not dialog.is_visible()
+        # A normal forest placement advances the tutorial without granting
+        # free resources or counting hostile AI territory.
+        page.evaluate("() => window.__game.placeTile(1, 0)")
+        page.wait_for_function("document.querySelector('#slg-tutorial').dataset.step === 'field'")
+        assert "식량 생산 기반" in goal.inner_text()
         visible=page.locator("body").inner_text()
         leftover=sorted(set(re.findall(r"(?<![가-힣A-Za-z])[A-Za-z]{3,}(?![A-Za-z])",visible)))
         assert not leftover, f"{name} visible English: {leftover}"

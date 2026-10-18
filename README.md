@@ -39,3 +39,14 @@ The source checks run on each push to `main`, then GitHub Actions deploys the st
 - Temporary emoji pictograms are used in place of original inline SVG icons until verified PNG/WebP assets are prepared.
 - Former Defense projects are preserved as `archive/dokkaebi-defense-20261018` and `archive/anime-crowd-runner-20261018` branches.
 - GPL/AGPL games such as TravianZ and Pillage First! are references, not code combined into this project.
+
+## Local workspace and Firebase project
+
+- Windows source workspace: `D:\K-city-webgame\Defense` (user-owned local path; remote GitHub edits require a local `git pull`).
+- Firebase project display name: **Defense game**; project ID: **web-game2**.
+- `.firebaserc` identifies the project but does not initialize login or cloud saves. This v0.3 remains GitHub Pages + local browser saves.
+- See [개발 환경 및 Firebase 연결 안내](docs/LOCAL_FIREBASE_KO.md).
+
+## First-play growth missions (v0.3)
+
+Korean tutorial missions guide players through land expansion, forest, farmland, starting agriculture research, owning 8 tiles and starting the first kingdom promotion. Progress is **derived from existing game state**, compatible with pre-v0.3 saves and without changing game economics.

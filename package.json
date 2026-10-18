@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "test": "node scripts/check-slg.mjs && node scripts/check-korean.mjs",
-    "build": "node scripts/check-slg.mjs && node scripts/check-korean.mjs"
+    "test": "node scripts/check-slg.mjs && node scripts/check-korean.mjs && node scripts/check-tutorial.mjs",
+    "build": "node scripts/check-slg.mjs && node scripts/check-korean.mjs && node scripts/check-tutorial.mjs"
   }
 }

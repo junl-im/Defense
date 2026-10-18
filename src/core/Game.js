@@ -19,6 +19,7 @@ import { SaveSystem } from '../systems/SaveSystem.js';
 import { DecorationSystem } from '../systems/DecorationSystem.js';
 import { CameraController } from '../camera/CameraController.js';
 import { UI } from '../ui/UI.js';
+import { TutorialMissions } from '../ui/TutorialMissions.js';
 import { Rng } from './Rng.js';
 import { tweens } from './Tween.js';
 import { events } from './Events.js';
@@ -74,6 +75,7 @@ export class Game {
     this._initSystems();
     this._initInput();
     this._restoreOrStart();
+    this.tutorialMissions = new TutorialMissions(this);
   }
 
   // ---------------- renderer / scene ----------------
