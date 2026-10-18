@@ -14,11 +14,11 @@ const SHOP_ORDER = [
 ];
 
 const TILE_CATEGORIES = {
-  all:   { label: 'All',   types: SHOP_ORDER },
-  land:  { label: 'Land',  types: ['forest', 'field', 'meadow', 'hills'] },
-  water: { label: 'Water', types: ['river', 'lake', 'swamp'] },
-  rock:  { label: 'Rock',  types: ['mountain', 'quarry', 'ruins'] },
-  town:  { label: 'Town',  types: ['village'] },
+  all:   { label: '전체',   types: SHOP_ORDER },
+  land:  { label: '대지',  types: ['forest', 'field', 'meadow', 'hills'] },
+  water: { label: '물가', types: ['river', 'lake', 'swamp'] },
+  rock:  { label: '산지',  types: ['mountain', 'quarry', 'ruins'] },
+  town:  { label: '마을',  types: ['village'] },
 };
 
 const EDGE_COLORS = {
@@ -214,10 +214,10 @@ export class UI {
 
       const costStr = fmtCost(cost);
       const tip = !unlocked
-        ? `Unlocks at ${tileUnlockTierName(type)}`
+        ? `${tileUnlockTierName(type)} 단계에서 해금`
         : atCap
           ? 'Tile cap — upgrade kingdom'
-          : `<b>${def.name}</b><br>${costStr}${affordable ? '' : '<br><i class="tip-bad">Not enough resources</i>'}` +
+          : `<b>${def.name}</b><br>${costStr}${affordable ? '' : '<br><i class="tip-bad">자원이 부족합니다</i>'}` +
             (fmtProduction(type) ? `<br>${fmtProduction(type)}` : '');
       btn.setAttribute('data-tip', tip);
     }
@@ -249,7 +249,7 @@ export class UI {
 
     if (this.el.tileProd) {
       const prod = fmtProduction(tile.type);
-      this.el.tileProd.innerHTML = prod ? `Yields ${prod}` : '';
+      this.el.tileProd.innerHTML = prod ? `생산량 ${prod}` : '';
     }
 
     const actionsOk = !atCap && tile;
@@ -282,9 +282,9 @@ export class UI {
   setTileCap(placed, max) {
     if (!this.el.tileCap) return;
     if (placed >= max) {
-      this.el.tileCap.textContent = `${placed} / ${max} tiles — upgrade to expand`;
+      this.el.tileCap.textContent = `영토 ${placed} / ${max} · 왕국 승격 후 확장 가능`;
     } else {
-      this.el.tileCap.textContent = `${placed} / ${max} tiles`;
+      this.el.tileCap.textContent = `영토 ${placed} / ${max}`;
     }
     this.el.tileCap.classList.toggle('at-cap', placed >= max);
   }

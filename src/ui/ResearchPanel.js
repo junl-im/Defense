@@ -20,10 +20,10 @@ export class ResearchPanel {
     const root = document.createElement('aside');
     root.id = 'research-panel';
     root.className = 'hud-side-panel';
-    root.setAttribute('aria-label', 'Research');
+    root.setAttribute('aria-label', '연구');
 
     root.innerHTML = `
-      <h2 class="hud-panel-title">Research</h2>
+      <h2 class="hud-panel-title">연구소</h2>
       <div class="research-active hidden" id="rp-active">
         <span class="research-active-icon" id="rp-active-icon"></span>
         <span class="research-active-name" id="rp-active-name"></span>
@@ -45,7 +45,7 @@ export class ResearchPanel {
     events.on('resources:changed', () => this._refreshButtons());
     events.on('research:started', () => this.refresh());
     events.on('research:completed', ({ name, icon, unlocks }) => {
-      this.game.ui.toast(`${iconLabel(icon)} ${name} researched! ${unlocks}`);
+      this.game.ui.toast(`${iconLabel(icon)} ${name} 연구 완료! ${unlocks}`);
       this.refresh();
     });
     events.on('research:denied', ({ reason }) => this.game.ui.toast(reason));
@@ -80,11 +80,11 @@ export class ResearchPanel {
         `<span class="research-btn-icon">${iconHtml(def.icon)}</span>` +
         `<span class="research-btn-body">` +
         `<span class="research-btn-name">${def.name}</span>` +
-        `<span class="research-btn-meta">${done ? '✓ Complete' : fmtCost(def.cost) + ' · ' + def.duration + 's'}</span>` +
+        `<span class="research-btn-meta">${done ? '✓ 완료' : fmtCost(def.cost) + ' · ' + def.duration + '초'}</span>` +
         `</span>`;
       btn.setAttribute('data-tip',
         `<b>${def.name}</b><br>${def.unlocks}` +
-        (def.requires.length ? `<br>Requires: ${def.requires.map((r) => RESEARCH[r].name).join(', ')}` : '') +
+        (def.requires.length ? `<br>선행 연구: ${def.requires.map((r) => RESEARCH[r].name).join(', ')}` : '') +
         (done ? '' : (!check.ok && !inProgress ? `<br><i class="tip-bad">${check.reason}</i>` : ''))
       );
       btn.addEventListener('click', () => {

@@ -27,9 +27,9 @@ export class ConstructionPanel {
     const root = document.createElement('aside');
     root.id = 'construction-panel';
     root.className = 'hud-side-panel construction-panel hidden';
-    root.setAttribute('aria-label', 'Construction queue');
+    root.setAttribute('aria-label', '건설 대기열');
     root.innerHTML = `
-      <h2 class="hud-panel-title">Construction</h2>
+      <h2 class="hud-panel-title">진행 중인 작업</h2>
       <div class="construction-list" id="construction-list"></div>`;
     document.body.appendChild(root);
     this.root = root;
@@ -39,7 +39,7 @@ export class ConstructionPanel {
   _bindEvents() {
     const toastStart = ({ id, time }) => {
       const { icon, name } = jobLabel(id);
-      this.game.ui.toast(`${icon} ${name} started (${Math.round(time)}s)`);
+      this.game.ui.toast(`${icon} ${name} 건설 시작 (${Math.round(time)}초)`);
       this.refresh();
     };
 
@@ -47,7 +47,7 @@ export class ConstructionPanel {
     events.on('build:completed', () => this.refresh());
     events.on('buildings:changed', () => this.refresh());
     events.on('research:started', ({ icon, name, time }) => {
-      this.game.ui.toast(`${icon} Researching ${name} (${Math.round(time)}s)`);
+      this.game.ui.toast(`${icon} ${name} 연구 시작 (${Math.round(time)}초)`);
       this.refresh();
     });
     events.on('research:completed', () => this.refresh());

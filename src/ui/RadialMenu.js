@@ -73,9 +73,9 @@ export class RadialMenu {
         actions.push({
           id: 'reclaim',
           icon: 'reclaim',
-          label: 'Reclaim',
-          tip: `<b>Reclaim territory</b><br>Cost: ${cost} influence` +
-            (affordable ? '' : '<br><i class="tip-bad">Not enough influence</i>'),
+          label: '영토 회복',
+          tip: `<b>영토 회복</b><br>비용: 영향력 ${cost}` +
+            (affordable ? '' : '<br><i class="tip-bad">영향력이 부족합니다</i>'),
           disabled: !affordable,
           run: () => terr.reclaim(cell),
         });
@@ -87,10 +87,10 @@ export class RadialMenu {
         actions.push({
           id: 'attack',
           icon: 'sword',
-          label: 'Attack',
-          tip: `<b>Attack this tile</b><br>Your army: ${power} ⚔ vs defense ~${defense}` +
-            `<br>Supplies: ${fmtCost(ATTACK_SUPPLY_COST)} · casualties expected` +
-            (check.ok ? '<br>Victory claims the tile for your kingdom' : `<br><i class="tip-bad">${check.reason}</i>`),
+          label: '공격',
+          tip: `<b>영토 공격</b><br>내 병력: ${power} ⚔ 적 방어력 약 ${defense}` +
+            `<br>보급 비용: ${fmtCost(ATTACK_SUPPLY_COST)} · 피해 발생 가능` +
+            (check.ok ? '<br>승리하면 해당 영토를 차지합니다' : `<br><i class="tip-bad">${check.reason}</i>`),
           disabled: !check.ok,
           run: () => army.attack(cell),
         });
@@ -107,9 +107,9 @@ export class RadialMenu {
           id: `recruit_${u.id}`,
           icon: u.icon,
           label: u.name,
-          tip: `<b>Recruit ${u.name}</b><br>${u.desc}` +
-            `<br>Cost: ${fmtCost(u.cost)} · +${u.strength} army strength` +
-            `<br>Army: ${Math.round(army.strength)} / cap ${Math.round(army.cap)}` +
+          tip: `<b>${u.name} 모집</b><br>${u.desc}` +
+            `<br>모집 비용: ${fmtCost(u.cost)} · 전투력 +${u.strength}` +
+            `<br>병력: ${Math.round(army.strength)} / 최대 ${Math.round(army.cap)}` +
             (check.ok ? '' : `<br><i class="tip-bad">${check.reason}</i>`),
           disabled: !check.ok,
           run: () => army.recruit(u.id, cell),
@@ -124,10 +124,10 @@ export class RadialMenu {
       actions.push({
         id: 'village_upgrade',
         icon: VILLAGE_UPGRADE.icon,
-        label: inProgress ? 'Upgrading…' : 'Upgrade',
+        label: inProgress ? '승격 중…' : '승격',
         tip: `<b>${VILLAGE_UPGRADE.name}</b><br>${VILLAGE_UPGRADE.desc}` +
-          `<br>Cost: ${fmtCost(VILLAGE_UPGRADE.cost)} · ${VILLAGE_UPGRADE.buildTime}s` +
-          `<br>Needs: ${VILLAGE_UPGRADE.minPopulation} pop · ${VILLAGE_UPGRADE.minStability} stability · tier ${VILLAGE_UPGRADE.minTier + 1}+` +
+          `<br>비용: ${fmtCost(VILLAGE_UPGRADE.cost)} · ${VILLAGE_UPGRADE.buildTime}초` +
+          `<br>조건: 인구 ${VILLAGE_UPGRADE.minPopulation}명 · 안정도 ${VILLAGE_UPGRADE.minStability} · 왕국 ${VILLAGE_UPGRADE.minTier + 1}단계 이상` +
           (check.ok || inProgress ? '' : `<br><i class="tip-bad">${check.reason}</i>`),
         disabled: !check.ok || inProgress,
         run: () => bs.upgradeVillage(cell),
@@ -146,9 +146,9 @@ export class RadialMenu {
       actions.push({
         id: `upgrade_b${b.slot}`,
         icon: target.icon,
-        label: b.upgradeTo ? 'Upgrading…' : `→ ${target.name}`,
-        tip: `<b>Upgrade: ${cur.name} → ${target.name}</b><br>${target.desc}` +
-          `<br>Cost: ${fmtCost(target.cost)} · ${Math.round(target.buildTime)}s` +
+        label: b.upgradeTo ? '승격 중…' : `→ ${target.name}`,
+        tip: `<b>시설 강화: ${cur.name} → ${target.name}</b><br>${target.desc}` +
+          `<br>강화 비용: ${fmtCost(target.cost)} · ${Math.round(target.buildTime)}초` +
           (check.ok || b.upgradeTo ? '' : `<br><i class="tip-bad">${check.reason}</i>`),
         disabled: !check.ok || !!b.upgradeTo,
         run: () => bs.upgradeBuilding(cell, b),
@@ -166,16 +166,16 @@ export class RadialMenu {
       if (tileFull && !existing) continue;
       const check = bs.canBuild(cell, def.id);
       let label = def.name;
-      if (existing) label = existing.done ? `${def.name} ✓` : 'Building…';
+      if (existing) label = existing.done ? `${def.name} ✓` : '건설 중…';
       actions.push({
         id: def.id,
         icon: def.icon,
         label,
         tip: `<b>${def.name}</b><br>${def.desc}` +
-          `<br>Cost: ${fmtCost(def.cost)} · ${Math.round(def.buildTime)}s` +
+          `<br>건설 비용: ${fmtCost(def.cost)} · ${Math.round(def.buildTime)}초` +
           (Object.keys(def.production).length
-            ? `<br>Produces: ${fmtProduction(def.production)}/s` : '') +
-          (def.capBonus ? `<br>+${def.capBonus} storage` : '') +
+            ? `<br>생산량: ${fmtProduction(def.production)}/초` : '') +
+          (def.capBonus ? `<br>저장 한도 +${def.capBonus}` : '') +
           (existing || check.ok ? '' : `<br><i class="tip-bad">${check.reason}</i>`),
         disabled: !!existing || !check.ok,
         run: () => bs.build(cell, def.id),
@@ -195,10 +195,10 @@ export class RadialMenu {
     const def = TILE_TYPES[cell.tileType];
     const towny = this.game.buildingSystem.isVillageUpgraded(cell);
     center.innerHTML =
-      `<span class="radial-title">${towny ? 'Town' : (def ? def.name : cell.tileType)}</span>` +
+      `<span class="radial-title">${towny ? '읍성' : (def ? def.name : cell.tileType)}</span>` +
       `<span class="radial-progress" id="radial-progress"></span>`;
     center.addEventListener('click', () => this.game.selection.clear());
-    center.setAttribute('data-tip', 'Click to deselect (Esc)');
+    center.setAttribute('data-tip', '선택 취소 (Esc)');
     this.root.appendChild(center);
     this._progressEl = center.querySelector('#radial-progress');
 
@@ -260,7 +260,7 @@ export class RadialMenu {
     for (const b of bs.buildingsOn(this.cell)) {
       if (b.upgradeTo) {
         const pct = Math.round((1 - b.upRemaining / Math.max(b.upTotal, 0.01)) * 100);
-        parts.push(`up ${pct}%`);
+        parts.push(`강화 ${pct}%`);
         continue;
       }
       if (b.done) continue;
@@ -271,7 +271,7 @@ export class RadialMenu {
     const up = bs.upgrading.get(key);
     if (up) {
       const pct = Math.round((1 - up.remaining / Math.max(up.total, 0.01)) * 100);
-      parts.push(`Up ${pct}%`);
+      parts.push(`승격 ${pct}%`);
     }
     const txt = parts.join(' ');
     if (this._progressEl.textContent !== txt) this._progressEl.textContent = txt;
