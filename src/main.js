@@ -145,7 +145,10 @@ box('boss armor',4.2,5,2.6,0,4,0,bossMat,bossRoot);const bossHead=MeshBuilder.Cr
 const bossHair=MeshBuilder.CreateSphere('boss hair',{diameter:3.45},scene);bossHair.parent=bossRoot;bossHair.position.set(0,8.75,-.25);bossHair.scaling.y=.65;bossHair.material=hairMat;
 for(const x of [-2.55,2.55])box('boss gauntlet',1.25,4.5,1.6,x,4.2,0,bossMat,bossRoot);
 box('boss left boot',1.4,3,1.7,-1,1.1,0,railMat,bossRoot);box('boss right boot',1.4,3,1.7,1,1.1,0,railMat,bossRoot);
-const state={running:false,paused:false,finished:false,z:3,x:0,units:12,score:0,enemyCount:135,bossHp:1600,maxBossHp:1600,wallHp:BARRICADE_MAX_HP,wallStoppedSeconds:0,wallDamage:0,time:0};
+const state={running:false,paused:false,finished:false,z:3,x:0,units:12,score:0,
+ enemyCount:0,waveIndex:0,waveActive:false,wavesCleared:0,enemiesDefeated:0,
+ bossHp:5000,maxBossHp:5000,wallHp:BARRIERS[0].hp,wallIndex:0,wallsBroken:0,
+ wallStoppedSeconds:0,wallDamage:0,time:0,phaseSection:-1,bulletsHit:0};
 let input=0,pointerStart=null;
 const bossPrototypeMeshes=bossRoot.getChildMeshes();
 async function decorateStage(){
@@ -225,13 +228,24 @@ function renderHud(){
  $('units').textContent=state.units.toLocaleString();
  $('score').textContent=state.score.toLocaleString();
  $('bossHp').textContent=state.z>60?Math.max(0,Math.ceil(state.bossHp)).toLocaleString():'—';
+ const section=getSection(state.z);
+ $('sectionLabel').textContent='구간 '+(section.index+1)+' / '+section.total+' · '+section.name;
+ const progress=progressPercent(state.z);
+ $('levelPercent').textContent=Math.floor(progress)+'%';
+ $('levelProgressFill').style.width=progress.toFixed(1)+'%';
+ $('killCount').textContent=Math.floor(state.enemiesDefeated).toLocaleString();
+ $('breakCount').textContent=state.wallsBroken+' / '+BARRIERS.length;
+ $('waveCount').textContent=state.wavesCleared+' / '+WAVES.length;
+ $('distanceCount').textContent=Math.floor(state.z-3).toLocaleString();
  const wallRemaining=Math.max(0,Math.ceil(state.wallHp));
  const wallTrack=$('wallBar');
- wallTrack.classList.toggle('active',state.z>=45&&wallRemaining>0);
- $('wallHpLabel').textContent=wallRemaining.toLocaleString()+' / '+BARRICADE_MAX_HP;
- $('wallBarFill').style.width=(100*wallRemaining/BARRICADE_MAX_HP).toFixed(1)+'%';
+ const nextBarrier=BARRIERS[state.wallIndex];
+ wallTrack.classList.toggle('active',Boolean(nextBarrier)&&state.z>=nextBarrier.z-38&&wallRemaining>0);
+ $('wallBar').setAttribute('aria-valuemax',String(nextBarrier?.hp||900));
+ $('wallHpLabel').textContent=wallRemaining.toLocaleString()+' / '+(nextBarrier?.hp||BARRIERS[BARRIERS.length-1].hp);
+ $('wallBarFill').style.width=(100*wallRemaining/(nextBarrier?.hp||900)).toFixed(1)+'%';
  wallTrack.setAttribute('aria-valuenow',String(wallRemaining));
- const showBoss=state.z>=66;
+ const showBoss=state.z>=BOSS_TRIGGER_Z;
  const track=$('bossBar');
  track.classList.toggle('active',showBoss);
  const value=Math.max(0,Math.ceil(state.bossHp));
@@ -241,17 +255,17 @@ function renderHud(){
  health.style.width=(100*value/state.maxBossHp).toFixed(1)+'%';
  track.setAttribute('aria-valuenow',String(value));
 }
-function reset(){Object.assign(state,{running:true,paused:false,finished:false,z:3,x:0,units:12,score:0,enemyCount:135,bossHp:1600,wallHp:BARRICADE_MAX_HP,wallStoppedSeconds:0,wallDamage:0,time:0});
+function reset(){Object.assign(state,{running:true,paused:false,finished:false,z:3,x:0,units:12,score:0,enemyCount:0,waveIndex:0,waveActive:false,wavesCleared:0,enemiesDefeated:0,bossHp:5000,maxBossHp:5000,wallHp:BARRIERS[0].hp,wallIndex:0,wallsBroken:0,wallStoppedSeconds:0,wallDamage:0,time:0,phaseSection:-1,bulletsHit:0});
  $('pausePanel').classList.add('hidden');$('pauseBtn').setAttribute('aria-pressed','false');$('pauseBtn').textContent='Ⅱ';
  bossAttackTime=0;bossPreviousPhase=1;attackCount=0;pendingAttack=null;shotCooldown=0;hitFlashUntil=0;bossPulseUntil=0;
  clearBossWarnings();$('hitFlash').classList.remove('active');$('attackText').textContent='다음 공격 대기';
- barricadeBrokeAt=-1;barricadeRoot.setEnabled(true);barricadeBillboard.setEnabled(true);
- barricadeLastHp=-1;updateBarricadeLabel(BARRICADE_MAX_HP);
+ barricadeBrokeAt=-1;barricadeRoot.position.z=BARRIERS[0].z;barricadeRoot.setEnabled(true);barricadeBillboard.setEnabled(true);
+ barricadeLastHp=-1;updateBarricadeLabel(BARRIERS[0].hp);
  for(const p of barricadePlanks){p.mesh.position.set(p.x,p.originalY,-.02);p.mesh.rotation.z=0;}
  lastBossAnimation='Idle';
  if(bossAnimationGroups?.length){bossAnimationGroups.forEach(g=>g.stop());bossAnimationGroups.find(g=>g.name==='Idle')?.start(true,.75);}
  bullets.forEach(b=>{b.life=0;b.mesh.setEnabled(false);});impactLife=0;siegeImpact.setEnabled(false);
-gates.forEach(g=>g.done=false);enemies.forEach(e=>e.isVisible=true);$('front').classList.add('hidden');heroine.position.z=3;heroine.position.x=0;renderHud();}
+gates.forEach(g=>g.done=false);enemies.forEach(e=>e.isVisible=false);$('front').classList.add('hidden');heroine.position.z=3;heroine.position.x=0;renderHud();}
 $('startBtn').addEventListener('click',reset);
 function togglePause(){
  if(!state.running || state.finished)return;
@@ -267,7 +281,9 @@ window.addEventListener('keyup',e=>{if(['ArrowLeft','ArrowRight','a','A','d','D'
 canvas.addEventListener('pointerdown',e=>{pointerStart=e.clientX;canvas.setPointerCapture(e.pointerId)});
 canvas.addEventListener('pointermove',e=>{if(pointerStart!==null){state.x=clamp(state.x+(e.clientX-pointerStart)*.014,-4.9,4.9);pointerStart=e.clientX;}});
 canvas.addEventListener('pointerup',()=>pointerStart=null);
-function complete(win){state.running=false;state.finished=true;$('front').classList.remove('hidden');$('front').querySelector('h1').innerHTML=win?'작전 <em>성공</em>':'작전 <em>실패</em>';$('front').querySelector('.eyebrow').textContent=win?'MISSION CLEARED':'MISSION FAILED';$('startBtn').innerHTML='다시 도전 →';}
+function complete(win){state.running=false;state.finished=true;
+ $('runSummary').textContent='전투 시간 '+Math.floor(state.time/60)+'분 '+Math.floor(state.time%60)+'초 · 적군 처치 '+Math.floor(state.enemiesDefeated).toLocaleString()+'명 · 방벽 파괴 '+state.wallsBroken+'개 · 돌파 '+Math.floor(progressPercent(state.z))+'%';
+$('front').classList.remove('hidden');$('front').querySelector('h1').innerHTML=win?'작전 <em>성공</em>':'작전 <em>실패</em>';$('front').querySelector('.eyebrow').textContent=win?'MISSION CLEARED':'MISSION FAILED';$('startBtn').innerHTML='다시 도전 →';}
 async function tryLoadApprovedModel(path,parent,scale,clip='Idle'){try{const exists=await fetch(path,{method:'HEAD'});if(!exists.ok)return false;const file=path.split('/').pop(),dir=path.slice(0,path.lastIndexOf('/')+1);const result=await SceneLoader.ImportMeshAsync('',dir,file,scene);const group=new TransformNode('approvedArt',scene);group.parent=parent;group.scaling.setAll(scale);if(parent!==bossRoot)group.rotation.y=Math.PI;result.meshes.forEach(m=>{if(!m.parent)m.parent=group;});if(parent===heroine){[body,head,hair].forEach(m=>m.setEnabled(false));scene.getMeshByName('weapon')?.setEnabled(false);}
 if(parent===bossRoot){bossPrototypeMeshes.forEach(m=>m.setEnabled(false));bossAnimationGroups=result.animationGroups||null;}
 const animation=result.animationGroups?.find(a=>a.name===clip)||result.animationGroups?.find(a=>a.name==='Idle');
@@ -352,29 +368,38 @@ async function initCrowdBillboards(){
 initCrowdBillboards();
 function tickBullets(dt){
  shotCooldown-=dt;
- if(state.running&&!state.paused&&shotCooldown<=0&&state.z>21&&state.z<91){
-  shotCooldown=state.z>64?.09:.135;
+ if(state.running&&!state.paused&&shotCooldown<=0&&state.z>21&&state.z<BOSS_STOP_Z){
+  shotCooldown=state.z>=BOSS_TRIGGER_Z?.09:.135;
   const found=bullets.find(p=>p.life<=0);
   if(found){found.life=.42;found.mesh.position.set(state.x+.4,1.28,state.z+.8);found.mesh.setEnabled(true);}
  }
  if(impactLife>0){impactLife=Math.max(0,impactLife-dt);siegeImpact.scaling.setAll(.8+impactLife*2);if(!impactLife)siegeImpact.setEnabled(false);}
  for(const b of bullets)if(b.life>0){
   b.life-=dt;b.mesh.position.z+=30*dt;
-  if(state.wallHp>0&&b.mesh.position.z>=BARRICADE_Z-.55){
-   impactLife=.12;siegeImpact.position.set(b.mesh.position.x,1.3,BARRICADE_Z-.64);siegeImpact.setEnabled(true);
+  if(BARRIERS[state.wallIndex]&&state.wallHp>0&&b.mesh.position.z>=BARRIERS[state.wallIndex].z-.55){
+   impactLife=.12;siegeImpact.position.set(b.mesh.position.x,1.3,BARRIERS[state.wallIndex].z-.64);state.bulletsHit++;siegeImpact.setEnabled(true);
    b.life=0;
   }
   if(b.life<=0)b.mesh.setEnabled(false);
  }
 }
 
-engine.runRenderLoop(()=>{const dt=Math.min(engine.getDeltaTime()/1000,.35);if(state.running&&!state.paused){state.time+=dt;state.x=clamp(state.x+input*dt*7.2,-4.9,4.9);if(state.z<70)state.z=Math.min(70,advanceTowardsBarricade(state.z,dt*5.6,state.wallHp));
-if(state.wallHp>0 && state.z>=BARRICADE_HOLD_Z-.001){
+engine.runRenderLoop(()=>{const dt=Math.min(engine.getDeltaTime()/1000,.35);if(state.running&&!state.paused){state.time+=dt;state.x=clamp(state.x+input*dt*7.2,-4.9,4.9);if(state.z<BOSS_STOP_Z){
+ const nextWall=BARRIERS[state.wallIndex];
+ const advanced=Math.min(BOSS_STOP_Z,state.z+dt*RUN_SPEED);
+ state.z=nextWall&&state.wallHp>0?Math.min(nextWall.z-3.2,advanced):advanced;
+}
+if(state.wallHp>0 && BARRIERS[state.wallIndex] && state.z>=BARRIERS[state.wallIndex].z-3.201){
  state.wallStoppedSeconds+=dt;
  const result=stepBarricade(state.wallHp,state.units,dt);
  state.wallHp=result.hp;state.wallDamage+=result.damage;
  updateBarricadeLabel(state.wallHp);
- if(result.destroyed){barricadeBrokeAt=state.time;say('방벽 파괴! +300');state.score+=300;barricadeBillboard.setEnabled(false);}
+ if(result.destroyed){
+  barricadeBrokeAt=state.time;state.wallsBroken++;
+  say('방벽 파괴 '+state.wallsBroken+'/'+BARRIERS.length+'!');
+  state.score+=300+state.wallIndex*150;
+  barricadeBillboard.setEnabled(false);
+ }
 }
 if(barricadeBrokeAt>=0){
  const age=state.time-barricadeBrokeAt;
@@ -383,15 +408,53 @@ if(barricadeBrokeAt>=0){
   p.mesh.position.y=p.originalY-Math.min(3,age*2.8);
   p.mesh.rotation.z=side*Math.min(1.5,age*1.3+(p.index%3)*.12);
  }
- if(age>1.5)barricadeRoot.setEnabled(false);
+ if(age>1.5){
+  barricadeBrokeAt=-1;
+  state.wallIndex++;
+  const next=BARRIERS[state.wallIndex];
+  if(next){
+   state.wallHp=next.hp;
+   barricadeRoot.position.z=next.z;
+   barricadeRoot.setEnabled(true);barricadeBillboard.setEnabled(true);
+   barricadeLastHp=-1;updateBarricadeLabel(next.hp);
+   for(const p of barricadePlanks){p.mesh.position.set(p.x,p.originalY,-.02);p.mesh.rotation.z=0;}
+  }else{
+   barricadeRoot.setEnabled(false);
+  }
+ }
 }
 heroine.position.x=state.x;heroine.position.z=state.z;heroine.rotation.z=input*-.07;
 for(const g of gates){if(!g.done&&state.z>=g.z){g.done=true;const choice=g.choices[state.x>=0?1:0];state.units=applyGate(state.units,choice.kind,choice.value);state.score+=120;say(choice.kind==='multiply'?'병력 ×'+choice.value:'병력 +'+choice.value);}}
-if(state.z>26&&state.z<59&&state.enemyCount>0){const defeated=Math.min(state.enemyCount,dt*(5+state.units*.38));state.enemyCount-=defeated;state.score+=Math.ceil(defeated*3);const alive=Math.ceil(state.enemyCount);enemies.forEach((e,i)=>e.isVisible=i<alive);if(state.time%2<dt&&state.units>1)state.units=Math.max(1,state.units-1);}
-if(state.z>66){
+// Each wave reuses 135 licensed female billboards instead of spawning hundreds
+// of new meshes. Kill numbers represent the logical full wave size.
+if(!state.waveActive && state.waveIndex<WAVES.length && state.z>=WAVES[state.waveIndex].z){
+ const wave=WAVES[state.waveIndex];
+ state.waveActive=true;state.enemyCount=wave.count;
+ enemies.forEach((e,i)=>{
+  e.position.set((i%13-6)*.68,.78,wave.z+7+Math.floor(i/13)*1.65);
+  e.isVisible=i<Math.min(wave.count,enemies.length);
+ });
+ say('적군 웨이브 '+(state.waveIndex+1)+' / '+WAVES.length);
+}
+if(state.waveActive && state.enemyCount>0){
+ const destroyed=Math.min(state.enemyCount,dt*(5+Math.min(state.units,400)*.32));
+ state.enemyCount-=destroyed;
+ state.enemiesDefeated+=destroyed;
+ state.score+=Math.round(destroyed*3);
+ const visible=Math.min(enemies.length,Math.ceil(state.enemyCount));
+ enemies.forEach((enemy,i)=>enemy.isVisible=i<visible);
+ if(state.time%3.6<dt&&state.units>1)state.units=Math.max(1,state.units-1);
+ if(state.enemyCount<=0.001){
+  state.enemyCount=0;state.waveActive=false;state.waveIndex++;state.wavesCleared++;
+  enemies.forEach(e=>e.isVisible=false);
+  state.score+=100*state.wavesCleared;
+ }
+}
+if(state.z>=BOSS_TRIGGER_Z){
+
  const phase=phaseForHp(state.bossHp,state.maxBossHp);
  if(phase!==bossPreviousPhase){say('보스 '+phase+'페이즈!');bossPreviousPhase=phase;bossPulseUntil=state.time+.55;}
- const damage=dt*(state.units*(phase===3?1.2:1.8)+15);
+ const damage=dt*(Math.min(135,state.units*.22)*(phase===3?.9:1)+26);
  state.bossHp-=damage;
  bossRoot.rotation.y=Math.sin(state.time*2)*.14;
  bossRoot.scaling.x=bossRoot.scaling.z=1+(state.time<bossPulseUntil?.045:0);
@@ -417,7 +480,7 @@ if(state.z>66){
  else if(state.units<=0){pendingAttack=null;clearBossWarnings();complete(false);}
 }
 $('hitFlash').classList.toggle('active',state.running&&state.time<hitFlashUntil);
-if(state.z>94)complete(false);
+if(state.z>LEVEL_FINISH_Z)complete(false);
 renderHud();}
 tickBullets(state.paused?0:dt);drawSquad(state.units);
 const mobileView=canvas.clientWidth<=650;
@@ -448,5 +511,5 @@ function projectedDirection(){
  };
 }
 // Read-only QA telemetry; does not change gameplay.
-window.__defenseQa=()=>({projection:projectedDirection(),running:state.running,paused:state.paused,finished:state.finished,bossPattern:pendingAttack?.type||'none',attacksLaunched:attackCount,bossLastAnimation:lastBossAnimation,bossAnimationsLoaded:bossAnimationGroups?.length||0,z:+state.z.toFixed(2),units:state.units,score:state.score,bossHp:Math.ceil(state.bossHp),wallHp:Math.ceil(state.wallHp),wallDamage:Math.round(state.wallDamage),wallStoppedSeconds:+state.wallStoppedSeconds.toFixed(2),elapsed:+state.time.toFixed(2),fps:Math.round(engine.getFps()),meshes:scene.meshes.length,billboards:activeBillboards,enemySprites:activeBillboards?enemies.length:0,allySprites:allySprites.length,sceneReady:scene.isReady()});
+window.__defenseQa=()=>({projection:projectedDirection(),running:state.running,paused:state.paused,finished:state.finished,bossPattern:pendingAttack?.type||'none',attacksLaunched:attackCount,bossLastAnimation:lastBossAnimation,bossAnimationsLoaded:bossAnimationGroups?.length||0,z:+state.z.toFixed(2),units:state.units,score:state.score,bossHp:Math.ceil(state.bossHp),progress:Math.round(progressPercent(state.z)),section:getSection(state.z).index+1,waveIndex:state.waveIndex,wavesCleared:state.wavesCleared,totalWaves:WAVES.length,enemiesDefeated:Math.floor(state.enemiesDefeated),wallsBroken:state.wallsBroken,barrierIndex:state.wallIndex,bulletsHit:state.bulletsHit,wallHp:Math.ceil(state.wallHp),wallDamage:Math.round(state.wallDamage),wallStoppedSeconds:+state.wallStoppedSeconds.toFixed(2),elapsed:+state.time.toFixed(2),fps:Math.round(engine.getFps()),meshes:scene.meshes.length,billboards:activeBillboards,enemySprites:activeBillboards?enemies.length:0,allySprites:allySprites.length,sceneReady:scene.isReady()});
 window.addEventListener('resize',()=>engine.resize());
