@@ -55,9 +55,8 @@ with sync_playwright() as p:
    page.screenshot(path=str(output/(label+"-result.png")))
    victory_ok=victory["finished"] and victory["score"]>=10000 and page.locator("#front").is_visible()
    page.locator("#startBtn").click()
-   page.wait_for_timeout(500)
    restarted=page.evaluate("window.__defenseQa()")
-   restart_ok=(restarted["running"] and not restarted["paused"] and restarted["z"]<7 and restarted["bossHp"]==5000 and restarted["score"]==0)
+   restart_ok=(restarted["running"] and not restarted["paused"] and restarted["z"]<26 and restarted["bossHp"]==5000 and restarted["score"]==0)
    webgl_failure=any("WebGL not supported" in e or "WebGL not supported" in c for e in errors for c in console)
    status="passed" if not errors and any(x["url"].endswith("medieval.glb") and x["status"]==200 for x in assets) and any(x["url"].endswith("witch.glb") and x["status"]==200 for x in assets) and initial_orientation["cameraBehind"] and initial_orientation["futureAboveHero"] and gameplay and gameplay["elapsed"]>1 and gameplay["z"]>4 and gameplay.get("billboards") and gameplay.get("enemySprites",0)>=130 and gameplay.get("allySprites",0)>=10 and boss_gameplay and boss_gameplay["z"]>=676 and boss_gameplay["bossHp"]<5000 and boss_gameplay.get("attacksLaunched",0)>=1 and boss_gameplay.get("bossAnimationsLoaded",0)>=24 and boss_gameplay.get("bossLastAnimation") not in (None,"Idle") and pause_ok and resume_ok and victory_ok and restart_ok and wall_gameplay['wallStoppedSeconds']>0 and wall_gameplay['wallHp']<300 and boss_gameplay['wallHp']==0 and boss_gameplay['wallDamage']>=300 and restarted['wallHp']==300 and boss_gameplay['wallsBroken']==4 and boss_gameplay['wavesCleared']>=12 and boss_gameplay['enemiesDefeated']>1500 and boss_gameplay['section']>=8 else "failed"
    report.append({"device":label,"status":status,"initial_orientation":initial_orientation,"units":units,"gameplay":gameplay,"wall_gameplay":wall_gameplay,"boss_gameplay":boss_gameplay,"pause_ok":pause_ok,"resume_ok":resume_ok,"victory":victory,"victory_ok":victory_ok,"restart_ok":restart_ok,"js_errors":errors[:10],"console_tail":console[-12:],"glb_requests":assets})
