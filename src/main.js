@@ -23,7 +23,7 @@ function boot() {
       const inner = document.getElementById('loading-inner');
       if (inner) {
         inner.innerHTML =
-          '<h1>Hexkingdom</h1><p style="color:#e08a7a">Failed to start: ' +
+          '<h1>왕국전략</h1><p style="color:#e08a7a">게임을 시작할 수 없습니다: ' +
           String(err && err.message ? err.message : err) +
           '</p>';
       }

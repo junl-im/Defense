@@ -50,3 +50,15 @@ The source checks run on each push to `main`, then GitHub Actions deploys the st
 ## First-play growth missions (v0.3)
 
 Korean tutorial missions guide players through land expansion, forest, farmland, starting agriculture research, owning 8 tiles and starting the first kingdom promotion. Progress is **derived from existing game state**, compatible with pre-v0.3 saves and without changing game economics.
+
+## v0.4 왕국 세이브 백업·복원 (로컬 전용)
+
+화면 아래 **저장 관리** → **현재 왕국 백업** 버튼으로 현재 왕국을 JSON 파일로 내려받을 수 있습니다.
+**백업 파일 복원**에서 JSON을 선택하면 저장 형식과 범위를 검사한 뒤 교체 확인을 받습니다.
+복원 직전의 왕국은 브라우저에 임시 보관되며 **이전 왕국 되돌리기**로 1회 되돌릴 수 있습니다.
+
+- 기존 `kingdom-tiles-save-v2` 저장 키와 진행 형식은 유지합니다.
+- 불완전한 JSON·지원하지 않는 버전·잘못된 지형·중복 영토 좌표·2MB 초과 파일은 복원을 막습니다.
+- 사용자가 내려받은 JSON 백업 파일을 별도로 안전한 곳에 보관하세요. 브라우저 데이터를 삭제하면 로컬 되돌리기 기록도 사라집니다.
+- 파일 백업은 **Firebase 클라우드 세이브가 아닙니다**. 계정 로그인과 다른 기기 자동 동기화는 구현되지 않았습니다.
+- 고해상도 모바일 기기의 렌더링 픽셀 비율을 최대 1.25, 그림자 맵을 1024로 제한하며 PC 품질 설정은 유지합니다.
