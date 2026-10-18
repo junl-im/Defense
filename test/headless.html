@@ -53,9 +53,12 @@
       game.rotateHand();
       log(game.rotation === (r0 + 1) % 6, 'rotation increments');
 
-      // place 12 tiles programmatically on valid frontier cells
+      // Regression-test original 12 placements in an expanded 6×6 village.
+      // The separate unit and browser tests cover the genuine 3×3 restriction.
+      game.nativeVillage.level = 4;
+      game._refreshFrontier();
       for (let i = 0; i < 12; i++) {
-        const frontier = game.grid.frontierCells();
+        const frontier = game.grid.frontierCells().filter(pos => game.nativeVillage.allows(pos.q,pos.r));
         const target = frontier[i % frontier.length];
         game.placeTile(target.q, target.r);
       }

@@ -18,7 +18,7 @@
 
 ## 이식할 가치가 있는 완성형 오픈소스 비교
 - Hexkingdom — https://github.com/Leks2000/Hexkingdom — MIT, 원작 전체 3D 건설 게임이 현재 저장소에 이미 들어와 있음. 마을 기준으로 가장 호환성 높음. **이번 패치에 실제 재적용**.
-- 3d.city — https://github.com/lo-th/3d.city — upstream 설명 MIT (라이선스 파일을 읽어 확인 필요), 완성형 3D 도시 시뮬레이션 + 별도 Web Worker 및 Three.js renderer. 그러나 현대 도시·도로 중심/큰 저장소라 중세 SLG 본편 통째로 대체하면 방향 이탈. worker/instancing 설계 조사용.
+- 3d.city — https://github.com/lo-th/3d.city — README에는 MIT로 소개되지만 저장소 LICENSE와 COPYING에서 micropolisJS 시뮬레이션 코어의 **GPL-3.0 및 추가 고지**가 명시됨. 이를 MIT 라이선스의 라니킹덤에 통째로 직접 병합하지 않는다. worker/instancing 고수준 설계만 참고.
 - Settlement Village — https://github.com/Lingikaushikreddy/Settlement-Village — MIT, 완성형 마을 주민 에이전트·건설/군대/저장. 기술 스택과 시각 톤이 달라 엔진 전체 치환보다 내정/주민 작업 지능 부분 참고.
 - Metropolis — https://github.com/rebollo507/Metropolis — ISC, Three.js 도시 건설 오픈소스. 절차 생성 텍스처/세이브/실측 품질 관리 참고.
 - Ironcrown — https://github.com/fanaustinca/ironcrown — 코드 공개지만 라이선스 메타데이터 미표시. 공격/영토 설계 참고만, 라이선스 확인 없이 파일 이식 금지.
