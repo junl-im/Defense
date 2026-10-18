@@ -17,18 +17,18 @@ with sync_playwright() as playwright:
         page.on("pageerror", lambda error: errors.append(str(error)))
         page.goto("http://127.0.0.1:8123/", wait_until="load", timeout=60000)
         page.wait_for_function("window.__game !== undefined", timeout=60000)
-        page.locator('#loading-screen').wait_for(state='detached',timeout=15000)
         page.wait_for_timeout(1500)
         assert page.locator("html").get_attribute("lang") == "ko"
         assert "라니킹덤" in page.title()
         assert page.locator(".research-btn-name").first.inner_text() == "농업"
         assert "정착지" in page.locator("#hud-tier-name").inner_text()
-        assert page.locator("#rani-village-screen").is_visible()
-        assert page.locator("#rani-village-grid .rani-village-tile").count() == 9
-        assert page.evaluate("window.__game.mode") == "village"
-        page.locator("#rani-go-world").click()
-        assert page.evaluate("window.__game.mode") == "world"
         assert page.locator("#help-btn").is_visible()
+        assert page.locator("#game-canvas").is_visible()
+        assert page.locator("#rani-nav").is_visible()
+        assert not page.locator("#rani-world-overview").is_visible()
+        assert not page.locator("#rani-village-screen").count()
+        assert page.evaluate("window.__game.nativeVillage.size") == 3
+        assert page.evaluate("window.__game.mode") == "village"
         goal=page.locator("#slg-tutorial")
         assert goal.is_visible(), f"{name}: Korean tutorial missing"
         assert goal.get_attribute("data-step") == "first_land"
