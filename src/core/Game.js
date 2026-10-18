@@ -288,6 +288,8 @@ export class Game {
 
   _initInput() {
     this.canvas.addEventListener('pointermove', (e) => {
+      // Field owns its own input and camera; don't move the village ghost behind it.
+      if(this.mode==='world')return;
       this._pointerNdc.set(
         (e.clientX / window.innerWidth) * 2 - 1,
         -(e.clientY / window.innerHeight) * 2 + 1
