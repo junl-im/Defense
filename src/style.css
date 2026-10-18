@@ -8,3 +8,11 @@
 .bossbar-track{width:100%;height:10px;border-radius:7px;background:#0a0b1d;overflow:hidden;border:1px solid #6c4b6b}
 .bossbar-fill{width:100%;height:100%;background:linear-gradient(90deg,#ee5f8e,#f7acb8,#fed2a5);border-radius:6px;transition:width .16s linear}
 @media(max-width:640px){.bossbar{top:113px;width:min(350px,91vw);padding:9px 12px 11px}.bossbar-head{font-size:10px}}
+
+
+/* Boss readability pass v0.5 — native CSS and PNG only, no SVG. */
+.bossbar-head small{display:inline-block;color:#f9c5d6;font-size:9px;font-weight:800;letter-spacing:.04em;background:#87476a88;border:1px solid #e4b2cc77;padding:3px 5px;border-radius:5px;margin-left:5px}
+.boss-attack-label{margin-top:6px;text-align:center;letter-spacing:.02em;color:#ffe1cb;font-weight:700;font-size:11px;min-height:15px;text-shadow:0 0 8px #d75474}
+#hitFlash{pointer-events:none;position:absolute;inset:0;z-index:2;opacity:0;background:radial-gradient(ellipse at center,transparent 28%,rgba(252,69,104,.56) 100%);transition:opacity .13s}
+#hitFlash.active{opacity:1}
+@media(max-width:640px){.bossbar-head small{font-size:8px}.boss-attack-label{font-size:10px;margin-top:4px}}
