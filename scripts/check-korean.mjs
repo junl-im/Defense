@@ -29,7 +29,7 @@ for (const [key, item] of Object.entries(UNIT_TYPES)) {
 assert(fmtCost({wood:5,stone:2,food:3,gold:4,influence:1}).includes('목재'), 'Korean resource costs missing');
 const page=readFileSync('index.html','utf8');
 assert(page.includes('<html lang="ko">'), 'document language is not Korean');
-assert(page.includes('왕국전략'), 'Korean title missing');
+assert(page.includes('라니킹덤'), 'Korean title missing');
 assert(page.includes('KoreanGuide.js'), 'Korean help missing');
 const englishText = ['Buy Tile', 'Researching ', 'Maximum tier reached', 'Not enough resources',
   'Tile cap — upgrade kingdom', 'Victory! The tile is yours', 'No neighbours yet',

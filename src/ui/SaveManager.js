@@ -50,7 +50,7 @@ export class SaveManager {
       const url=URL.createObjectURL(new Blob([raw],{type:'application/json;charset=utf-8'}));
       const a=document.createElement('a');
       a.href=url;
-      a.download='왕국전략-저장-'+new Date().toISOString().slice(0,10)+'.json';
+      a.download='라니킹덤-저장-'+new Date().toISOString().slice(0,10)+'.json';
       document.body.appendChild(a);a.click();a.remove();
       setTimeout(()=>URL.revokeObjectURL(url),30000);
       this.message('왕국 백업 파일을 만들었습니다.');

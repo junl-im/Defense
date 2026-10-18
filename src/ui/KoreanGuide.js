@@ -9,7 +9,7 @@ function mountGuide() {
   overlay.innerHTML = `
     <section class="ko-guide-panel" role="dialog" aria-modal="true" aria-labelledby="ko-guide-title">
       <header class="ko-guide-head">
-        <h2 id="ko-guide-title">왕국전략 게임 방법</h2>
+        <h2 id="ko-guide-title">라니킹덤 게임 방법</h2>
         <button type="button" class="ko-guide-close" aria-label="게임 방법 닫기">✕</button>
       </header>
       <p class="ko-guide-intro">한 칸의 마을에서 시작해 나만의 왕국을 키우세요.</p>

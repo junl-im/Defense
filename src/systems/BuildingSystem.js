@@ -197,6 +197,49 @@ export class BuildingSystem {
     return true;
   }
 
+
+  /** Cancel an unfinished construction or upgrade. Refund 80% of its fixed cost. */
+  cancelJob(key, id) {
+    const refund = (cost) => Object.fromEntries(
+      Object.entries(cost).map(([res, value]) => [res, Math.round(value * 0.8 * 100) / 100])
+    );
+    let cost;
+    if (id === 'village_upgrade' && this.upgrading.has(key)) {
+      this.upgrading.delete(key);
+      cost = VILLAGE_UPGRADE.cost;
+    } else {
+      const list = this.byCell.get(key);
+      if (!list) return false;
+      const index = list.findIndex((rec) => rec.upgradeTo === id || (rec.id === id && !rec.done));
+      if (index < 0) return false;
+      const rec = list[index];
+      if (rec.upgradeTo === id) {
+        cost = BUILDINGS[id]?.cost;
+        rec.upgradeTo = null;
+        rec.upRemaining = 0;
+        rec.upTotal = 0;
+      } else {
+        cost = BUILDINGS[id]?.cost;
+        if (rec.marker) {
+          rec.marker.parent?.remove(rec.marker);
+          rec.marker.traverse((obj) => {
+            obj.geometry?.dispose();
+            if (Array.isArray(obj.material)) obj.material.forEach((mat) => mat.dispose());
+            else obj.material?.dispose();
+          });
+          rec.marker = null;
+        }
+        list.splice(index, 1);
+        if (!list.length) this.byCell.delete(key);
+      }
+    }
+    if (!cost) return false;
+    this.resources.grant(refund(cost), '건설 취소 환급');
+    events.emit('build:cancelled', { key, id });
+    events.emit('buildings:changed', {});
+    return true;
+  }
+
   /** small construction-site post while the timer runs */
   _spawnSiteMarker(cell, rec) {
     if (!cell.group) return;

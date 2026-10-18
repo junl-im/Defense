@@ -19,7 +19,7 @@ with sync_playwright() as playwright:
         page.wait_for_function("window.__game !== undefined", timeout=60000)
         page.wait_for_timeout(1500)
         assert page.locator("html").get_attribute("lang") == "ko"
-        assert "왕국전략" in page.title()
+        assert "라니킹덤" in page.title()
         assert page.locator(".research-btn-name").first.inner_text() == "농업"
         assert "정착지" in page.locator("#hud-tier-name").inner_text()
         assert page.locator("#help-btn").is_visible()

@@ -39,7 +39,7 @@ with sync_playwright() as p:
         with page.expect_download() as info:
             page.locator("#save-export").click()
         download=info.value
-        assert download.suggested_filename.startswith("왕국전략-저장-")
+        assert download.suggested_filename.startswith("라니킹덤-저장-")
         path=out/(device+"-initial-save.json")
         download.save_as(str(path))
         text=path.read_text(encoding="utf8")
