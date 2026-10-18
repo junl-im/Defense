@@ -1,10 +1,12 @@
 node_modules/
 dist/
 .env
-.firebase/
+.env.*
+!.env.example
 *.log
-.DS_Store
-
-# Generated verification/build/audit output
-logs/*
-!logs/README.md
+assets/source/
+public/assets/approved/*.glb
+public/assets/approved/*.gltf
+public/assets/approved/*.bin
+public/assets/approved/*.fbx
+public/assets/approved/*.zip

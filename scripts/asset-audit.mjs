@@ -1,0 +1,1 @@
+import fs from 'node:fs';const items=JSON.parse(fs.readFileSync('docs/sources.json','utf8'));console.log('SOURCE / LICENSE / ACQUISITION STATUS');for(const x of items)console.log([x.id,x.license,x.status,x.url].join(' | '));console.log('Total:',items.length);console.log('This is a metadata audit; it does not claim that remote downloads or their hashes were verified.');

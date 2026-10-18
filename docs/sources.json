@@ -1,0 +1,66 @@
+[
+  {
+    "id": "quaternius-modular-women",
+    "category": "female characters",
+    "url": "https://quaternius.com/packs/ultimatemodularwomen.html",
+    "license": "CC0 as shown on publisher page",
+    "status": "identified; publisher download required",
+    "format": "FBX, OBJ, glTF, Blend"
+  },
+  {
+    "id": "quaternius-base-characters",
+    "category": "hero",
+    "url": "https://quaternius.com/packs/universalbasecharacters.html",
+    "license": "CC0 as shown on publisher page",
+    "status": "identified; publisher download required",
+    "format": "glTF, FBX"
+  },
+  {
+    "id": "quaternius-animation-library",
+    "category": "animation",
+    "url": "https://quaternius.itch.io/universal-animation-library",
+    "license": "CC0 as shown on publisher page",
+    "status": "identified; publisher download required",
+    "format": "archive"
+  },
+  {
+    "id": "oga-animegirl",
+    "category": "distant squad",
+    "url": "https://opengameart.org/sites/default/files/gal.zip",
+    "license": "CC0",
+    "status": "direct source URL known; not downloaded",
+    "format": "BLEND ZIP"
+  },
+  {
+    "id": "oga-female-rigged",
+    "category": "female 3D",
+    "url": "https://opengameart.org/sites/default/files/female_basic_rigged.zip",
+    "license": "CC0",
+    "status": "direct source URL known; not downloaded",
+    "format": "ZIP"
+  },
+  {
+    "id": "kenney-ui",
+    "category": "UI raster",
+    "url": "https://kenney.nl/assets/ui-pack",
+    "license": "CC0",
+    "status": "identified; download required",
+    "format": "PNG"
+  },
+  {
+    "id": "kenney-town",
+    "category": "environment",
+    "url": "https://kenney.nl/assets/fantasy-town-kit",
+    "license": "CC0",
+    "status": "identified; download required",
+    "format": "glTF, OBJ, FBX"
+  },
+  {
+    "id": "kenney-border",
+    "category": "UI raster",
+    "url": "https://kenney-assets.itch.io/fantasy-ui-borders",
+    "license": "CC0",
+    "status": "identified; download required",
+    "format": "PNG"
+  }
+]

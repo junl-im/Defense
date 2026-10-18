@@ -1,0 +1,30 @@
+name: New Defense - CI, SVG policy, and build
+on:
+  push:
+    branches: ["feat/anime-crowd-reboot-v0", "main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install
+        run: npm install --no-audit --no-fund
+      - name: Logic tests and asset policy
+        run: npm test
+      - name: Build deployable web bundle
+        run: npm run build
+        env:
+          VITE_BASE_PATH: /Defense/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: anime-crowd-web-dist
+          path: dist
+          if-no-files-found: error
