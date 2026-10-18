@@ -212,7 +212,10 @@ export class RaniFieldScene {
     this.camera.aspect=innerWidth/innerHeight;this.camera.updateProjectionMatrix();
     this.select(this.game.nativeVillageUI?.selectedId||'player');
   }
-  close(){this.active=false;this.labels.hidden=true}
+  close(){
+    this.active=false;this.labels.hidden=true;
+    this.pointers.clear();this.lastTap=null;this.pinchDistance=0;
+  }
   select(id){
     const entry=this.entries.find(e=>e.id===id);
     if(!entry)return;
