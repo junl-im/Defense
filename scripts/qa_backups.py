@@ -22,6 +22,15 @@ with sync_playwright() as p:
         assert ratio<= (1.25 if device=="mobile" else 2.0)
         shadow=page.evaluate("window.__game.sun.shadow.mapSize.x")
         assert shadow==(1024 if device=="mobile" else 2048)
+        preflight=page.evaluate("""async () => {
+            const m=await import('/src/systems/SaveBackups.js');
+            const raw=localStorage.getItem('kingdom-tiles-save-v2');
+            try { return {ok:true,tiles:m.validateBackup(raw).cells.length}; }
+            catch(e) { const d=JSON.parse(raw); return {ok:false,error:e.message,
+                tiles:d.tilesPlaced,cells:d.cells.length,
+                initial:d.cells.slice(0,3),keys:Object.keys(d)}; }
+        }""")
+        assert preflight["ok"], f"Real save does not pass validator: {preflight}"
         page.locator("#save-manager-btn").click()
         dialog=page.locator("#save-manager-overlay [role='dialog']")
         assert dialog.is_visible()
