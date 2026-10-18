@@ -40,14 +40,14 @@ export class NativeVillageUI {
     top.querySelector('#rani-native-world').addEventListener('click',()=>this.setMode('world'));
     overlay.querySelector('#rani-native-home').addEventListener('click',()=>this.setMode('village'));
     top.querySelector('#rani-native-upgrade').addEventListener('click',()=>{
-      const result=game.nativeVillage.startUpgrade();
-      game.ui.toast(result.reason);
-      if(result.ok)game.saveSystem.save(game);
+      const result=this.game.nativeVillage.startUpgrade();
+      this.game.ui.toast(result.reason);
+      if(result.ok)this.game.saveSystem.save(this.game);
       this.refresh();
     });
     top.querySelector('#rani-native-cancel').addEventListener('click',()=>{
       if(!confirm('중심 건물 승격을 취소하고 자원 80%를 돌려받으시겠습니까?'))return;
-      if(game.nativeVillage.cancelUpgrade())game.saveSystem.save(game);
+      if(this.game.nativeVillage.cancelUpgrade())this.game.saveSystem.save(this.game);
       this.refresh();
     });
     overlay.querySelector('#rani-world-map').addEventListener('click',(event)=>{
@@ -56,12 +56,12 @@ export class NativeVillageUI {
     });
     overlay.querySelector('#rani-world-detail').addEventListener('click',(event)=>{
       if(!event.target.closest('button[data-rani-attack]'))return;
-      const f=game.factionSystem.factions.find(f=>f.id===this.selectedId);
-      const cell=f?game.grid.get(f.home.q,f.home.r):null;
-      if(!cell||!game.armySystem.canAttack(cell).ok)return;
+      const f=this.game.factionSystem.factions.find(f=>f.id===this.selectedId);
+      const cell=f?this.game.grid.get(f.home.q,f.home.r):null;
+      if(!cell||!this.game.armySystem.canAttack(cell).ok)return;
       if(!confirm('실제 병력을 사용해 이 적 영토를 공격하시겠습니까?'))return;
-      game.armySystem.attack(cell);
-      game.saveSystem.save(game);
+      this.game.armySystem.attack(cell);
+      this.game.saveSystem.save(this.game);
       this.refreshWorld();
     });
     window.addEventListener('keydown',e=>{
