@@ -25,7 +25,7 @@ for (const bad of ['', 'not json', JSON.stringify({...snap(),version:99}),
   JSON.stringify({...snap(),cells:[snap().cells[0],snap().cells[0]]}),
   JSON.stringify({...snap(),cells:[{...snap().cells[0],t:'unknown'}]}),
   JSON.stringify({...snap(),cells:[{...snap().cells[0],q:14}]}),
-  JSON.stringify(snap()).replace('"resources":{"wood":42}', '"resources":{"__proto__":{},"wood":42}')) {
+  JSON.stringify(snap()).replace('"resources":{"wood":42}', '"resources":{"__proto__":{},"wood":42}') {
   assert.throws(()=>validateBackup(bad), 'should reject invalid import');
 }
 memory.set(SAVE_KEY,current);
