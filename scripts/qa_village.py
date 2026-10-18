@@ -52,8 +52,12 @@ with sync_playwright() as p:
     page.wait_for_function('window.__game && window.__game.nativeVillage',timeout=60000)
     page.locator('#loading-screen').wait_for(state='detached',timeout=15000)
     assert page.evaluate('window.__game.nativeVillage.size')==4
-    if w<=700: page.locator('#rani-nav-toggle').click()
-    page.locator('#rani-native-world').click()
+    if w<=700:
+      shortcut=page.locator('#rani-field-shortcut')
+      assert shortcut.is_visible(), 'Mobile field should be one tap away'
+      shortcut.click()
+    else:
+      page.locator('#rani-native-world').click()
     assert page.evaluate('window.__game.mode')=='world'
     assert page.locator('#rani-world-overview').is_visible()
     assert page.locator('#game-canvas').is_visible(), '3D field render should replace flat map'

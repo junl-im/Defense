@@ -169,3 +169,13 @@ body[data-game-mode="world"] .rani-world-head{top:76px!important}
 
 /* World heading hides its legacy title only; never hide the new accessible picker. */
 body[data-game-mode="world"] .rani-world-head > .rani-field-tools{display:flex!important}
+
+/* One-tap FIELD shortcut, next to the foldable town-management button. */
+#rani-field-shortcut{display:none!important}
+@media(max-width:700px){
+ #rani-nav{display:grid;grid-template-columns:auto auto;align-items:start;column-gap:4px}
+ #rani-field-shortcut{display:inline-flex!important;min-height:42px!important;
+   justify-content:center;align-items:center;font-size:10px!important;
+   font-weight:800;white-space:nowrap;padding:5px!important}
+ #rani-nav .rani-nav-line{grid-column:1/-1;min-width:126px}
+}
