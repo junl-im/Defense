@@ -15,6 +15,17 @@ export const SECTIONS=[
  {start:540,end:630,name:'최후의 방어선',theme:'ruin'},
  {start:630,end:710,name:'마녀 여왕의 성역',theme:'boss'}
 ];
+// Palette changes at zone boundaries only; modest variation keeps the gate numbers readable.
+export const SECTION_PALETTES=[
+ {ground:'#667d92',rail:'#61718d',sky:'#0b142a',ambient:.78},
+ {ground:'#6e718d',rail:'#61657a',sky:'#10172e',ambient:.73},
+ {ground:'#616990',rail:'#705b9b',sky:'#14102e',ambient:.68},
+ {ground:'#818996',rail:'#485f7a',sky:'#121827',ambient:.76},
+ {ground:'#607c70',rail:'#517466',sky:'#091e23',ambient:.78},
+ {ground:'#826c89',rail:'#746280',sky:'#1a1027',ambient:.7},
+ {ground:'#766b76',rail:'#695465',sky:'#1e1726',ambient:.72},
+ {ground:'#625478',rail:'#765277',sky:'#180f2d',ambient:.75}
+];
 export const BARRIERS=[
  {z:142,hp:300,label:'전방 보급 차단벽'},
  {z:306,hp:480,label:'강철 방어문'},
