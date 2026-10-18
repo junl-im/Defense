@@ -25,9 +25,14 @@ with sync_playwright() as p:
    page.screenshot(path=str(output/(label+"-running.png")))
    units=page.locator("#units").inner_text()
    gameplay=page.evaluate("window.__defenseQa && window.__defenseQa()")
+   # After basic play, keep the real WebGL engine running into the boss zone.
+   page.wait_for_function("window.__defenseQa && (window.__defenseQa().z>=67 || window.__defenseQa().finished)",timeout=40000)
+   page.wait_for_timeout(750)
+   page.screenshot(path=str(output/(label+"-boss.png")))
+   boss_gameplay=page.evaluate("window.__defenseQa && window.__defenseQa()")
    webgl_failure=any("WebGL not supported" in e or "WebGL not supported" in c for e in errors for c in console)
-   status="passed" if not errors and any(x["url"].endswith("medieval.glb") and x["status"]==200 for x in assets) and any(x["url"].endswith("witch.glb") and x["status"]==200 for x in assets) and gameplay and gameplay["elapsed"]>1 and gameplay["z"]>4 and gameplay.get("billboards") and gameplay.get("enemySprites",0)>=130 and gameplay.get("allySprites",0)>=10 else "failed"
-   report.append({"device":label,"status":status,"units":units,"gameplay":gameplay,"js_errors":errors[:10],"console_tail":console[-12:],"glb_requests":assets})
+   status="passed" if not errors and any(x["url"].endswith("medieval.glb") and x["status"]==200 for x in assets) and any(x["url"].endswith("witch.glb") and x["status"]==200 for x in assets) and gameplay and gameplay["elapsed"]>1 and gameplay["z"]>4 and gameplay.get("billboards") and gameplay.get("enemySprites",0)>=130 and gameplay.get("allySprites",0)>=10 and boss_gameplay and boss_gameplay["z"]>=67 and boss_gameplay["bossHp"]<1600 else "failed"
+   report.append({"device":label,"status":status,"units":units,"gameplay":gameplay,"boss_gameplay":boss_gameplay,"js_errors":errors[:10],"console_tail":console[-12:],"glb_requests":assets})
   except Exception as e:
    report.append({"device":label,"status":"failed","error":str(e)[:1000],"js_errors":errors})
   page.close()
