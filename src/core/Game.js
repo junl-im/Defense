@@ -350,6 +350,9 @@ export class Game {
       }
       // Use the gesture's own start and travel. The camera controller's
       // moved flag can lag behind pointerup on browser/mobile event ordering.
+      // The browser's subsequent synthetic click may target the ring center
+      // opened here; it must not count as a second 'close' interaction.
+      this.radialMenu?.blockSyntheticActivation(e.pointerId);
       selectTap(e.clientX,e.clientY);
       this._lastTapHandled=performance.now();
       this._blockSyntheticClickUntil=this._lastTapHandled+500;
