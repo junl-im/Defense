@@ -1,4 +1,4 @@
-import { Engine, Scene, Vector3, Color3, Color4, HemisphericLight, DirectionalLight, ArcRotateCamera, MeshBuilder, StandardMaterial, DynamicTexture, TransformNode, SceneLoader } from '@babylonjs/core';
+import { Engine, Scene, Vector3, Color3, Color4, HemisphericLight, DirectionalLight, ArcRotateCamera, MeshBuilder, StandardMaterial, DynamicTexture, TransformNode, SceneLoader, SpriteManager, Sprite } from '@babylonjs/core';
 import '@babylonjs/loaders/glTF';
 import {applyGate,phaseForHp,clamp} from './logic.js';
 import './style.css';
@@ -17,7 +17,7 @@ const ground=MeshBuilder.CreateGround('floor',{width:13,height:105},scene);groun
 for(const x of [-6.75,6.75]){const wall=MeshBuilder.CreateBox('parapet',{width:.8,height:1.55,depth:105},scene);wall.position.set(x,.7,45);wall.material=railMat;}
 for(let z=0;z<90;z+=4){const strip=MeshBuilder.CreateBox('stripe',{width:12,height:.025,depth:.075},scene);strip.position.set(0,.02,z);strip.material=whiteMat;strip.visibility=.15;}
 function box(name,w,h,d,x,y,z,material,parent){const mesh=MeshBuilder.CreateBox(name,{width:w,height:h,depth:d},scene);mesh.position.set(x,y,z);mesh.material=material;if(parent)mesh.parent=parent;return mesh;}
-function label(text,color,parent,y){const plane=MeshBuilder.CreatePlane('sign',{width:3.2,height:1.35},scene);plane.parent=parent;plane.position.y=y;plane.rotation.y=Math.PI;const dt=new DynamicTexture('text',{width:512,height:210},scene,true);dt.hasAlpha=true;dt.drawText(text,null,151,'bold 120px Arial',color,'transparent',true);const sm=new StandardMaterial('textMat',scene);sm.diffuseTexture=dt;sm.emissiveColor=new Color3(.95,.95,.95);sm.backFaceCulling=false;plane.material=sm;return plane;}
+function label(text,color,parent,y){const plane=MeshBuilder.CreatePlane('sign',{width:3.2,height:1.35},scene);plane.parent=parent;plane.position.y=y;plane.rotation.y=Math.PI;const dt=new DynamicTexture('text',{width:512,height:210},scene,true);dt.hasAlpha=true;dt.drawText(text,null,151,'bold 133px Arial',color,'#202744',true);const sm=new StandardMaterial('textMat',scene);sm.diffuseTexture=dt;sm.emissiveColor=new Color3(.95,.95,.95);sm.backFaceCulling=false;plane.material=sm;return plane;}
 const heroine=new TransformNode('heroRoot',scene);heroine.position.set(0,0,3);
 const body=MeshBuilder.CreateCapsule('prototype hero',{radius:.43,height:1.75},scene);body.parent=heroine;body.position.y=1;body.material=heroMat;
 const head=MeshBuilder.CreateSphere('head',{diameter:.83},scene);head.parent=heroine;head.position.y=2.1;head.material=whiteMat;
@@ -28,13 +28,30 @@ const gates=[
  {z:37,done:false,choices:[{x:-3,kind:'add',value:30,material:gateBlue},{x:3,kind:'multiply',value:2,material:gateGold}]},
  {z:55,done:false,choices:[{x:-3,kind:'add',value:15,material:gateBlue},{x:3,kind:'multiply',value:2,material:gateGold}]}
 ];
-for(const gate of gates)for(const c of gate.choices){const r=new TransformNode('gate',scene);r.position.set(c.x,0,gate.z);box('gateFoot',3.6,.24,.26,0,.14,0,c.material,r);box('gateLeft',.2,2.55,.3,-1.7,1.35,0,c.material,r);box('gateRight',.2,2.55,.3,1.7,1.35,0,c.material,r);box('gateTop',3.6,.25,.3,0,2.5,0,c.material,r);label(c.kind==='multiply'?'×'+c.value:'+'+c.value,'#ffffff',r,1.45);}
+for(const gate of gates)for(const c of gate.choices){const r=new TransformNode('gate',scene);r.position.set(c.x,0,gate.z);box('gateFoot',3.6,.24,.26,0,.14,0,c.material,r);box('gateLeft',.2,2.55,.3,-1.7,1.35,0,c.material,r);box('gateRight',.2,2.55,.3,1.7,1.35,0,c.material,r);box('gateTop',3.6,.25,.3,0,2.5,0,c.material,r);box('gateBackplate',3.1,1.55,.14,0,1.43,0,c.material,r);label(c.kind==='multiply'?'×'+c.value:'+'+c.value,'#ffffff',r,1.45);}
 const mobRoot=new TransformNode('mobRoot',scene);
 let soldierTemplate=MeshBuilder.CreateCapsule('squad proto',{radius:.27,height:1.1},scene);soldierTemplate.isVisible=false;soldierTemplate.material=heroMat;
-let squadScale=1,squadBaseY=.58;
+let squadScale=1,squadBaseY=.58;let activeBillboards=false;const allySprites=[];
 let soldierMeshes=[];
-function drawSquad(count){const visible=Math.min(110,Math.floor(count));while(soldierMeshes.length<visible){const a=soldierTemplate.createInstance('soldier'+soldierMeshes.length);a.scaling.setAll(squadScale);soldierMeshes.push(a);}
+function drawSquad(count){const visible=Math.min(110,Math.floor(count));
+if(activeBillboards){
+ while(allySprites.length<visible){
+  const sprite=new Sprite('femaleAlly'+allySprites.length,allySpriteManager);
+  sprite.width=.86;sprite.height=1.36;
+  allySprites.push(sprite);
+ }
+ for(let i=0;i<allySprites.length;i++){
+  const sprite=allySprites[i];sprite.isVisible=i<visible;
+  if(i<visible){
+   const col=i%11,row=Math.floor(i/11);
+   sprite.position.set(heroine.position.x+(col-5)*.42,.76,heroine.position.z-1.3-row*.55);
+  }
+ }
+ return;
+}
+while(soldierMeshes.length<visible){const a=soldierTemplate.createInstance('soldier'+soldierMeshes.length);a.scaling.setAll(squadScale);soldierMeshes.push(a);}
 soldierMeshes.forEach((a,i)=>{a.isVisible=i<visible;if(i<visible){const col=i%11,row=Math.floor(i/11);a.position.set(heroine.position.x+(col-5)*.37,squadBaseY+Math.sin(state.time*7+i*.7)*.045,heroine.position.z-1.2-row*.54);}});}
+let allySpriteManager=null,enemySpriteManager=null;
 const enemyBase=MeshBuilder.CreateCapsule('enemy base',{radius:.28,height:1.3},scene);enemyBase.isVisible=false;enemyBase.material=enemyMat;
 const enemies=[];for(let i=0;i<135;i++){const n=enemyBase.createInstance('enemy_'+i);n.position.set((i%13-6)*.66,.7,25+Math.floor(i/13)*1.65);enemies.push(n);}
 const bossRoot=new TransformNode('bossRoot',scene);bossRoot.position.set(0,0,77);
@@ -129,6 +146,33 @@ async function loadSquadArt(){
  }catch(e){console.warn('Female squad prototype unavailable',e);}
 }
 loadSquadArt();
+async function initCrowdBillboards(){
+ try{
+  const base=import.meta.env.BASE_URL+'assets/sprites/';
+  const sprites=['ally-female.png','enemy-female.png'];
+  const available=await Promise.all(sprites.map(async file=>{
+   const reply=await fetch(base+file,{method:'HEAD'});return reply.ok;
+  }));
+  if(!available.every(Boolean))return;
+  allySpriteManager=new SpriteManager('licensedFemaleAllies',base+sprites[0],120,{width:384,height:512},scene);
+  enemySpriteManager=new SpriteManager('licensedFemaleEnemies',base+sprites[1],160,{width:384,height:512},scene);
+  allySpriteManager.isPickable=false;enemySpriteManager.isPickable=false;
+  const world=enemies.map(enemy=>({pos:enemy.position.clone(),visible:enemy.isVisible}));
+  const replacements=world.map((entry,i)=>{
+   const sprite=new Sprite('femaleEnemy'+i,enemySpriteManager);
+   sprite.width=.95;sprite.height=1.42;
+   sprite.position.set(entry.pos.x,.78,entry.pos.z);
+   sprite.isVisible=entry.visible;return sprite;
+  });
+  enemies.forEach(e=>e.dispose());
+  enemies.splice(0,enemies.length,...replacements);
+  soldierMeshes.forEach(m=>m.dispose());
+  soldierMeshes=[];soldierTemplate.setEnabled(false);
+  activeBillboards=true;
+  console.info('Female PNG impostors enabled for crowd:',world.length);
+ }catch(error){console.warn('PNG female crowd setup failed; retaining 3D fallback',error);}
+}
+initCrowdBillboards();
 function tickBullets(dt){
  shotCooldown-=dt;
  if(state.running&&shotCooldown<=0&&state.z>21&&state.z<91){
@@ -164,5 +208,5 @@ if(state.z>94)complete(false);
 renderHud();}
 tickBullets(dt);drawSquad(state.units);camera.target.set(state.x*.18,0,state.z+6.5);camera.position.set(state.x*.22,19,state.z-18);scene.render();});
 // Read-only QA telemetry; does not change gameplay.
-window.__defenseQa=()=>({running:state.running,finished:state.finished,z:+state.z.toFixed(2),units:state.units,score:state.score,bossHp:Math.ceil(state.bossHp),elapsed:+state.time.toFixed(2),fps:Math.round(engine.getFps()),meshes:scene.meshes.length,sceneReady:scene.isReady()});
+window.__defenseQa=()=>({running:state.running,finished:state.finished,z:+state.z.toFixed(2),units:state.units,score:state.score,bossHp:Math.ceil(state.bossHp),elapsed:+state.time.toFixed(2),fps:Math.round(engine.getFps()),meshes:scene.meshes.length,billboards:activeBillboards,enemySprites:enemySpriteManager?.sprites?.length||0,allySprites:allySprites.length,sceneReady:scene.isReady()});
 window.addEventListener('resize',()=>engine.resize());
