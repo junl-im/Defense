@@ -1,0 +1,60 @@
+/* Contextual empty-land build UX; compact visual footprint, generous tap areas. */
+#rani-quick-build[hidden]{display:none!important}
+#rani-quick-build{position:fixed;z-index:82;width:min(340px,calc(100vw - 20px));
+ max-height:min(67dvh,530px);overflow:auto;overscroll-behavior:contain;
+ box-sizing:border-box;padding:11px;border:1px solid #c4a475;
+ border-radius:13px;background:linear-gradient(155deg,#203735f5,#1b2930f7);
+ color:#f8e9c8;box-shadow:0 16px 28px #05151bd6;
+ scrollbar-width:thin;scrollbar-color:#bb995d transparent}
+.rani-qb-head{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.rani-qb-head strong{font-size:14px;color:#ffe2a2}
+#rani-qb-close{min-width:44px;min-height:44px;border:1px solid #bd9e74;border-radius:9px;
+ background:#644d35;color:#ffead0;font-size:17px;cursor:pointer}
+#rani-quick-build p{font-size:11px;line-height:1.4;color:#ced8c7;margin:2px 0 7px}
+.rani-qb-options h3{font-size:12px;color:#d9c395;margin:10px 0 4px}
+.rani-qb-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
+.rani-qb-grid button{min-height:52px;display:flex;flex-direction:column;justify-content:center;
+ gap:3px;text-align:left;padding:7px 8px;border:1px solid #9b8665;
+ border-radius:8px;background:#334c42;color:#fff0cc;cursor:pointer;min-width:0}
+.rani-qb-grid button:hover:not(:disabled){background:#5b754e}
+.rani-qb-grid button:disabled{opacity:.43;cursor:not-allowed}
+.rani-qb-grid button strong{font-size:12px;white-space:normal;overflow-wrap:anywhere}
+.rani-qb-grid button small{font-size:10px;color:#d6c8a9;line-height:1.3}
+.rani-qb-muted{font-size:11px;color:#b8bdb0}
+@media(max-width:700px){
+ #rani-quick-build{left:8px!important;right:8px!important;top:auto!important;
+  bottom:calc(65px + env(safe-area-inset-bottom))!important;
+  width:auto;max-height:min(49dvh,390px);padding:9px;border-radius:12px;
+  box-shadow:0 -10px 25px #08191ac0}
+ #rani-quick-build p{font-size:10px}
+ #rani-quick-build .rani-qb-grid button{min-height:48px}
+ #radial-menu:not(.hidden){position:fixed!important;left:8px!important;right:8px!important;
+  top:auto!important;bottom:calc(65px + env(safe-area-inset-bottom))!important;
+  width:auto!important;max-height:48dvh;overflow:auto;z-index:81!important;
+  transform:none!important;background:#1a3030f5;border:1px solid #c2a474;
+  border-radius:12px;padding:8px;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:6px;box-shadow:0 -8px 25px #08191ac0}
+ #radial-menu:not(.hidden) .radial-center {position:static!important;transform:none!important;
+  grid-column:1/-1;width:100%;height:auto;min-height:35px;border-radius:7px}
+ #radial-menu:not(.hidden) .radial-btn {position:static!important;transform:none!important;
+  width:100%!important;min-height:48px;border-radius:8px;animation:none!important;
+  padding:5px;gap:2px}
+ #radial-menu:not(.hidden) .radial-btn:hover:not(.disabled) {transform:none!important}
+ #radial-menu .radial-label{font-size:10px}
+ #slg-mobile-dock{height:calc(58px + env(safe-area-inset-bottom));padding:3px 5px calc(3px + env(safe-area-inset-bottom));gap:2px}
+ #slg-mobile-dock button{min-height:44px}
+ #slg-mobile-dock button > span{font-size:17px}
+ #slg-mobile-dock button > small{font-size:10px}
+ #hud-bottom{bottom:calc(64px + env(safe-area-inset-bottom));left:6px}
+ #hud-bottom .ui-btn{padding:5px 6px!important;font-size:10px!important}
+ #hud-right,#research-panel,#faction-panel{top:95px!important;
+  width:calc(100vw - 28px)!important;max-width:324px!important;
+  max-height:calc(100dvh - 190px)!important}
+ #next-tile-panel{padding:6px!important}
+ #tile-preview{width:82px!important;height:82px!important}
+ #rani-nav.expanded{z-index:86}
+}
+@media(max-width:360px){
+ #rani-quick-build .rani-qb-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #rani-nav{top:132px}
+}

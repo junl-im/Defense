@@ -82,3 +82,21 @@ body[data-game-mode="world"] :is(#game-canvas,#hud-top,#hud-right,#hud-bottom,
    display:none!important;
  }
 }
+
+#rani-nav-toggle {display:none}
+@media (max-width:700px){
+ #rani-nav {top:136px;right:7px;left:auto;bottom:auto;transform:none;
+  width:auto;min-width:0;max-width:168px;padding:0;background:transparent;
+  box-shadow:none;border:none;z-index:42}
+ #rani-nav-toggle {display:block!important;min-width:44px;min-height:44px;
+  padding:7px 10px;border-radius:11px;border:1px solid #bd9d6a;
+  background:linear-gradient(#735535,#402f2b);color:#ffead1;font-size:11px;
+  font-weight:800;box-shadow:0 4px 14px #07191a70}
+ #rani-nav .rani-nav-line {display:none;flex-direction:column;align-items:stretch;
+  padding:8px;gap:5px;margin-top:5px;border:1px solid #c7ab7a;
+  background:#172c31f4;border-radius:10px;box-shadow:0 8px 20px #06121980}
+ #rani-nav.expanded .rani-nav-line {display:flex}
+ #rani-nav .rani-nav-line button {min-height:44px;font-size:11px;line-height:1.2}
+ #rani-nav small {display:none!important}
+ body[data-active-slg-panel]:not([data-active-slg-panel="map"]) #rani-nav {display:none!important}
+}

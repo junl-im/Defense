@@ -25,11 +25,16 @@ function installMobileDock() {
     button.dataset.panel = key;
     button.setAttribute('aria-label', text);
     button.innerHTML = '<span aria-hidden="true">' + icon + '</span><small>' + text + '</small>';
-    button.addEventListener('click', () => select(key));
+    button.addEventListener('click', () => {
+      const opened=document.body.dataset.activeSlgPanel;
+      // Clicking the current menu again closes it, without losing the map.
+      select(key !== 'map' && opened === key ? 'map' : key);
+    });
     nav.appendChild(button);
   }
   document.body.appendChild(nav);
   select('map');
+  document.addEventListener('rani:map-focus',()=>select('map'));
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && matchMedia('(max-width: 700px)').matches) select('map');
   });

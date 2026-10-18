@@ -20,7 +20,8 @@ export class NativeVillageUI {
     const top=document.createElement('nav');
     top.id='rani-nav';
     top.setAttribute('aria-label','마을과 필드 이동');
-    top.innerHTML='<div class="rani-nav-line"><span id="rani-nav-town">🏰 내 마을 · 3×3</span>'+
+    top.innerHTML='<button type="button" id="rani-nav-toggle" aria-expanded="false" aria-controls="rani-nav-buttons">🏰 마을 메뉴</button>'+
+      '<div class="rani-nav-line" id="rani-nav-buttons"><span id="rani-nav-town">🏰 내 마을 · 3×3</span>'+
       '<button type="button" id="rani-native-upgrade">중심 건물 승격</button>'+
       '<button type="button" id="rani-native-cancel" hidden>승격 취소</button>'+
       '<button type="button" id="rani-native-world">🗺️ 필드 나가기</button></div>'+
@@ -37,6 +38,15 @@ export class NativeVillageUI {
       '<aside class="rani-world-detail" id="rani-world-detail" aria-live="polite">마을을 선택하세요.</aside></div>';
     document.body.appendChild(overlay);
     this.top=top;this.overlay=overlay;
+    const toggle=top.querySelector('#rani-nav-toggle');
+    toggle.addEventListener('click',()=>{
+      const expanded=top.classList.toggle('expanded');
+      toggle.setAttribute('aria-expanded',String(expanded));
+    });
+    document.addEventListener('rani:map-focus',()=>{
+      top.classList.remove('expanded');
+      toggle.setAttribute('aria-expanded','false');
+    });
     top.querySelector('#rani-native-world').addEventListener('click',()=>this.setMode('world'));
     overlay.querySelector('#rani-native-home').addEventListener('click',()=>this.setMode('village'));
     top.querySelector('#rani-native-upgrade').addEventListener('click',()=>{
@@ -90,6 +100,7 @@ export class NativeVillageUI {
     }
   }
   setMode(mode){
+    this.game.quickBuildMenu?.close();
     this.activeWorld=mode==='world';
     this.game.mode=this.activeWorld?'world':'village';
     document.body.dataset.gameMode=this.game.mode;

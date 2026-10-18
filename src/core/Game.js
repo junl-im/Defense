@@ -25,6 +25,7 @@ import { NativeVillageProgress } from '../systems/NativeVillageProgress.js';
 import { NativeVillageUI } from '../ui/NativeVillageUI.js';
 import { UpgradedTownHallArt } from '../rendering/UpgradedTownHallArt.js';
 import { VillageBuildingArt } from '../rendering/VillageBuildingArt.js';
+import { QuickBuildMenu } from '../ui/QuickBuildMenu.js';
 import { Rng } from './Rng.js';
 import { tweens } from './Tween.js';
 import { events } from './Events.js';
@@ -85,6 +86,7 @@ export class Game {
     this.tutorialMissions = new TutorialMissions(this);
     this.saveManager = new SaveManager(this);
     this.nativeVillageUI = new NativeVillageUI(this);
+    this.quickBuildMenu = new QuickBuildMenu(this);
     this.townHallArt = new UpgradedTownHallArt(this);
     this.villageBuildingArt = new VillageBuildingArt(this);
   }
@@ -294,7 +296,10 @@ export class Game {
     this.canvas.addEventListener('pointerup', (e) => {
       if (e.button !== 0) return;
       if (this.controls.moved) return; // was a drag, not a click
-      this._tryPlaceAtPointer();
+      // A touch can have no preceding pointermove; use the actual tap location.
+      this._pointerNdc.set((e.clientX / window.innerWidth) * 2 - 1,
+        -(e.clientY / window.innerHeight) * 2 + 1);
+      this._tryPlaceAtPointer(e.clientX, e.clientY);
     });
 
     this.canvas.addEventListener('contextmenu', (e) => {
@@ -335,11 +340,12 @@ export class Game {
     }
   }
 
-  _tryPlaceAtPointer() {
+  _tryPlaceAtPointer(clientX, clientY) {
     const cell = this._pointerToCell();
     if (!cell) return;
 
     if (this.grid.has(cell.q, cell.r)) {
+      this.quickBuildMenu?.close();
       const existing = this.grid.get(cell.q, cell.r);
       if (this.selection.cell === existing) this.selection.clear();
       else this.selection.select(existing);
@@ -354,8 +360,7 @@ export class Game {
       this.ui.toast('기존 영토에 인접한 곳에 설치하세요');
       return;
     }
-    this.selection.clear();
-    this.placeTile(cell.q, cell.r);
+    this.quickBuildMenu?.open(cell.q,cell.r,clientX,clientY);
   }
 
   // ---------------- tile hand / placement ----------------
@@ -624,6 +629,7 @@ export class Game {
     this.researchSystem.reset();
     this.armySystem.reset();
     this.nativeVillage.reset();
+    this.quickBuildMenu?.close();
     this.caravanSystem.clear();
     this.worldEvents.reset();
     this.wallSystem.reset();
