@@ -22,7 +22,8 @@ try{
  for(const m of meshes){m.computeWorldMatrix(true);const b=m.getBoundingInfo().boundingBox;
   min=Vector3.Minimize(min,b.minimumWorld);max=Vector3.Maximize(max,b.maximumWorld);}
  const center=Vector3.Center(min,max),height=Math.max(.5,max.y-min.y),width=Math.max(.5,max.x-min.x);
- const camera=new ArcRotateCamera('portrait',-Math.PI/2,Math.PI/2.1,Math.max(height*2.25,width*3.45),center,scene);
+ const portraitFront=new URLSearchParams(location.search).get('facing')==='front';
+ const camera=new ArcRotateCamera('portrait',portraitFront?Math.PI/2:-Math.PI/2,Math.PI/2.1,Math.max(height*2.25,width*3.45),center,scene);
  camera.inputs.clear();camera.mode=0;camera.fov=.52;
  window.__spriteCamera=camera;window.__spriteModel=model;
  let frame=0;
