@@ -65,7 +65,7 @@ box('weapon',.18,.15,.82,.42,1.32,.35,railMat,heroine);
 const gateDanger=mat('dangerGate','#d95872');
 const gates=initialGates();
 for(const g of gates)for(const c of g.choices)c.material=c.color==='danger'?gateDanger:c.color==='gold'?gateGold:gateBlue;
-for(const gate of gates)for(const c of gate.choices){const r=new TransformNode('gate',scene);r.position.set(c.x,0,gate.z);box('gateFoot',3.6,.24,.26,0,.14,0,c.material,r);box('gateLeft',.2,2.55,.3,-1.7,1.35,0,c.material,r);box('gateRight',.2,2.55,.3,1.7,1.35,0,c.material,r);box('gateTop',3.6,.25,.3,0,2.5,0,c.material,r);box('gateBackplate',3.1,1.55,.14,0,1.43,0,c.material,r);drawGateDigits(c.kind==='multiply'?'×'+c.value:'+'+c.value,r);}
+for(const gate of gates)for(const c of gate.choices){const r=new TransformNode('gate',scene);(gate.visuals??=[]).push(r);r.position.set(c.x,0,gate.z);box('gateFoot',3.6,.24,.26,0,.14,0,c.material,r);box('gateLeft',.2,2.55,.3,-1.7,1.35,0,c.material,r);box('gateRight',.2,2.55,.3,1.7,1.35,0,c.material,r);box('gateTop',3.6,.25,.3,0,2.5,0,c.material,r);box('gateBackplate',3.1,1.55,.14,0,1.43,0,c.material,r);drawGateDigits(c.kind==='multiply'?'×'+c.value:'+'+c.value,r);}
 // Breakable 300 HP siege barricade. Only Babylon meshes, PNG and CSS; no SVG.
 const woodMat=mat('siegeOak','#875737'),ironMat=mat('siegeIron','#33384f');
 const barricadeRoot=new TransformNode('siegeBarricade',scene);
@@ -384,7 +384,10 @@ function tickBullets(dt){
  }
 }
 
-engine.runRenderLoop(()=>{const dt=Math.min(engine.getDeltaTime()/1000,.35);if(state.running&&!state.paused){state.time+=dt;state.x=clamp(state.x+input*dt*7.2,-4.9,4.9);if(state.z<BOSS_STOP_Z){
+// QA-only clock acceleration on the LOCAL test server. The public game
+// always runs at real speed, so published campaign length is unaffected.
+const qaAccelerated=(location.hostname==='127.0.0.1'||location.hostname==='localhost')&&new URLSearchParams(location.search).has('acceleratedQa');
+engine.runRenderLoop(()=>{const dt=Math.min(engine.getDeltaTime()/1000,.35)*(qaAccelerated?5:1);if(state.running&&!state.paused){state.time+=dt;state.x=clamp(state.x+input*dt*7.2,-4.9,4.9);if(state.z<BOSS_STOP_Z){
  const nextWall=BARRIERS[state.wallIndex];
  const advanced=Math.min(BOSS_STOP_Z,state.z+dt*RUN_SPEED);
  state.z=nextWall&&state.wallHp>0?Math.min(nextWall.z-3.2,advanced):advanced;
@@ -424,7 +427,7 @@ if(barricadeBrokeAt>=0){
  }
 }
 heroine.position.x=state.x;heroine.position.z=state.z;heroine.rotation.z=input*-.07;
-for(const g of gates){if(!g.done&&state.z>=g.z){g.done=true;const choice=g.choices[state.x>=0?1:0];state.units=applyGate(state.units,choice.kind,choice.value);state.score+=120;say(choice.kind==='multiply'?'병력 ×'+choice.value:'병력 +'+choice.value);}}
+for(const g of gates){if(!g.done&&state.z>=g.z){g.done=true;const choice=g.choices[state.x>=0?1:0];state.units=applyGate(state.units,choice.kind,choice.value);state.score+=120;say(choice.kind==='multiply'?'병력 ×'+choice.value:choice.kind==='subtract'?'병력 -'+choice.value:'병력 +'+choice.value);}}
 // Each wave reuses 135 licensed female billboards instead of spawning hundreds
 // of new meshes. Kill numbers represent the logical full wave size.
 if(!state.waveActive && state.waveIndex<WAVES.length && state.z>=WAVES[state.waveIndex].z){
@@ -483,6 +486,8 @@ $('hitFlash').classList.toggle('active',state.running&&state.time<hitFlashUntil)
 if(state.z>LEVEL_FINISH_Z)complete(false);
 renderHud();}
 tickBullets(state.paused?0:dt);drawSquad(state.units);
+ // Only nearby gate pairs are active; keeps long map fast on mobile WebGL.
+ for(const gate of gates){const near=Math.abs(gate.z-state.z)<42;for(const root of gate.visuals||[])root.setEnabled(near);}
 const mobileView=canvas.clientWidth<=650;
 // Pull back on portrait screens so players can actually see gates and the boss.
 camera.fov=mobileView?.78:.72;
@@ -511,5 +516,5 @@ function projectedDirection(){
  };
 }
 // Read-only QA telemetry; does not change gameplay.
-window.__defenseQa=()=>({projection:projectedDirection(),running:state.running,paused:state.paused,finished:state.finished,bossPattern:pendingAttack?.type||'none',attacksLaunched:attackCount,bossLastAnimation:lastBossAnimation,bossAnimationsLoaded:bossAnimationGroups?.length||0,z:+state.z.toFixed(2),units:state.units,score:state.score,bossHp:Math.ceil(state.bossHp),progress:Math.round(progressPercent(state.z)),section:getSection(state.z).index+1,waveIndex:state.waveIndex,wavesCleared:state.wavesCleared,totalWaves:WAVES.length,enemiesDefeated:Math.floor(state.enemiesDefeated),wallsBroken:state.wallsBroken,barrierIndex:state.wallIndex,bulletsHit:state.bulletsHit,wallHp:Math.ceil(state.wallHp),wallDamage:Math.round(state.wallDamage),wallStoppedSeconds:+state.wallStoppedSeconds.toFixed(2),elapsed:+state.time.toFixed(2),fps:Math.round(engine.getFps()),meshes:scene.meshes.length,billboards:activeBillboards,enemySprites:activeBillboards?enemies.length:0,allySprites:allySprites.length,sceneReady:scene.isReady()});
+window.__defenseQa=()=>({projection:projectedDirection(),running:state.running,paused:state.paused,finished:state.finished,bossPattern:pendingAttack?.type||'none',attacksLaunched:attackCount,bossLastAnimation:lastBossAnimation,bossAnimationsLoaded:bossAnimationGroups?.length||0,z:+state.z.toFixed(2),units:state.units,score:state.score,bossHp:Math.ceil(state.bossHp),progress:Math.round(progressPercent(state.z)),section:getSection(state.z).index+1,waveIndex:state.waveIndex,wavesCleared:state.wavesCleared,totalWaves:WAVES.length,enemiesDefeated:Math.floor(state.enemiesDefeated),wallsBroken:state.wallsBroken,barrierIndex:state.wallIndex,bulletsHit:state.bulletsHit,wallHp:Math.ceil(state.wallHp),wallDamage:Math.round(state.wallDamage),wallStoppedSeconds:+state.wallStoppedSeconds.toFixed(2),qaAccelerated,elapsed:+state.time.toFixed(2),fps:Math.round(engine.getFps()),meshes:scene.meshes.length,billboards:activeBillboards,enemySprites:activeBillboards?enemies.length:0,allySprites:allySprites.length,sceneReady:scene.isReady()});
 window.addEventListener('resize',()=>engine.resize());
