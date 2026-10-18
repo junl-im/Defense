@@ -179,3 +179,10 @@ body[data-game-mode="world"] .rani-world-head > .rani-field-tools{display:flex!i
    font-weight:800;white-space:nowrap;padding:5px!important}
  #rani-nav .rani-nav-line{grid-column:1/-1;min-width:126px}
 }
+
+/* Field top row and details occupy distinct bands; actions must never overlap. */
+body[data-game-mode="world"] .rani-world-head{z-index:70!important}
+body[data-game-mode="world"] .rani-world-detail{top:149px!important;z-index:61!important}
+@media(max-width:700px){
+ body[data-game-mode="world"] .rani-world-detail{top:148px!important}
+}
