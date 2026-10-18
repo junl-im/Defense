@@ -368,11 +368,32 @@ export class Game {
         if (cell.group?.visible && (!cell.owner || cell.owner === 'player'))
           byGroup.set(cell.group, cell);
       }
+      // Pick the actual visible structure first. A 2D ground projection
+      // alone can land in the hex behind a tall roof.
+      this.camera.updateMatrixWorld();
       for (const hit of this.raycaster.intersectObjects(root.children, true)) {
         let object = hit.object;
         while (object && object !== root) {
           const cell = byGroup.get(object);
-          if (cell) return {q:cell.q,r:cell.r};
+          if (cell) {
+            const building = this.buildingSystem.buildingsOn(cell).find(rec => {
+              const visual = rec.visual?.group || rec.marker;
+              return visual && (visual === hit.object || visual.getObjectById(hit.object.id));
+            });
+            // The bounding center stays on the chosen building, not a random
+            // clicked roof vertex; for plain ground use the hex center.
+            let anchor = null;
+            if (building) {
+              const model = building.visual?.group || building.marker;
+              const box = new THREE.Box3().setFromObject(model);
+              if (!box.isEmpty()) anchor = box.getCenter(new THREE.Vector3());
+            }
+            if (!anchor && object === cell.group) {
+              const p = axialToWorld(cell.q, cell.r);
+              anchor = new THREE.Vector3(p.x,TILE_H,p.z);
+            }
+            return {q:cell.q,r:cell.r,anchor,buildingId:building?.id||null};
+          }
           object = object.parent;
         }
       }
@@ -407,7 +428,7 @@ export class Game {
       this.quickBuildMenu?.close();
       const existing = this.grid.get(cell.q, cell.r);
       // Repeated taps keep information open; close with the explicit × / Esc.
-      this.selection.select(existing);
+      this.selection.select(existing, cell.anchor || null, cell.buildingId || null);
       return;
     }
 
