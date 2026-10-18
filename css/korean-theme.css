@@ -60,3 +60,6 @@ body, button, input, .ui-panel, .ui-panel *, .hud-side-panel, .hud-side-panel *,
   .ko-guide-panel { padding: 14px; max-height: 88dvh; }
   .ko-guide-step { padding: 7px 9px; }
 }
+
+/* Developer instrumentation is not part of the public Korean game UI. */
+#debug-hud, #debug-btn, #fps-label { display: none !important; }
