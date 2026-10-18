@@ -68,7 +68,9 @@ export function validateBackup(text) {
       data.next.variant >= TILE_TYPES[data.next.type].variants.length))
     throw new Error('선택 지형 데이터가 올바르지 않습니다.');
   for (const key of ['resources','citizens','progression','territory','factions','buildings','research','army']) {
-    if (data[key] != null && !object(data[key])) throw new Error('저장 구성 요소에 오류가 있습니다.');
+    // These two subsystems persist arrays, while the others persist records.
+    const arrayRecord = (key === 'citizens' || key === 'factions') && Array.isArray(data[key]);
+    if (data[key] != null && !object(data[key]) && !arrayRecord) throw new Error('저장 구성 요소에 오류가 있습니다.');
   }
   return data;
 }
