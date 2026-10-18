@@ -71,15 +71,24 @@ let input=0,pointerStart=null;
 const bossPrototypeMeshes=bossRoot.getChildMeshes();
 async function decorateStage(){
  const home=import.meta.env.BASE_URL+'assets/environment/';
- const road=[],walls=[],towers=[],trees=[],rocks=[],flags=[];
- for(let z=-1;z<92;z+=4)for(const x of [-4,0,4])road.push([x,.04,z,4]);
+ const walls=[],towers=[],trees=[],rocks=[],flags=[];
+ 
  for(let z=1;z<92;z+=6.0){walls.push([-7.6,0,z,6.0],[7.6,0,z,6.0]);}
  for(let z=10;z<92;z+=16)towers.push([-6.8,0,z,3.7],[6.8,0,z,3.7]);
  for(let z=7;z<96;z+=13)trees.push([-13,0,z,3], [12.5,0,z+5,2.7]);
  for(let z=11;z<96;z+=18)rocks.push([-10.4,0,z,2.1],[11,0,z+8,2.3]);
  flags.push([-6.7,3.4,72,3.2],[6.7,3.4,72,3.2]);
  const stoneMat=mat('castleStone','#8291aa'),towerMat=mat('castlePillars','#aab5c8'),forestMat=mat('woodland','#3f8f75'),rocksMat=mat('stones','#627288'),bannerMat=mat('castleBanners','#ab779e');
- const designs=[['wall-block',walls,stoneMat],['pillar-stone',towers,towerMat],['tree',trees,forestMat],['rock-large',rocks,rocksMat],['banner-red',flags,bannerMat]];
+ 
+ // Castle side walls are batched modular stone blocks while GLB wall-block is
+ // excluded: its upstream texture is not supported in Chromium and caused a silent fallback.
+ for(let z=1;z<92;z+=6){
+  for(const x of [-7.25,7.25]){
+   const outer=box('castleStoneSegment',.75,2.5,5.75,x,1.18,z,stoneMat);
+   outer.freezeWorldMatrix();
+  }
+ }
+ const designs=[['pillar-stone',towers,towerMat],['tree',trees,forestMat],['rock-large',rocks,rocksMat],['banner-red',flags,bannerMat]];
  await Promise.all(designs.map(async ([name,locations,material])=>{
   try {
    const pack=await SceneLoader.ImportMeshAsync('',home,name+'.glb',scene);
@@ -206,7 +215,7 @@ if(state.z>66){
 }
 if(state.z>94)complete(false);
 renderHud();}
-tickBullets(dt);drawSquad(state.units);camera.target.set(state.x*.18,0,state.z+3.8);camera.position.set(state.x*.22,18.5,state.z-19);scene.render();});
+tickBullets(dt);drawSquad(state.units);camera.target.set(state.x*.18,0,state.z+7.0);camera.position.set(state.x*.22,18.5,state.z-19);scene.render();});
 // Read-only QA telemetry; does not change gameplay.
-window.__defenseQa=()=>({running:state.running,finished:state.finished,z:+state.z.toFixed(2),units:state.units,score:state.score,bossHp:Math.ceil(state.bossHp),elapsed:+state.time.toFixed(2),fps:Math.round(engine.getFps()),meshes:scene.meshes.length,billboards:activeBillboards,enemySprites:enemySpriteManager?.sprites?.length||0,allySprites:allySprites.length,sceneReady:scene.isReady()});
+window.__defenseQa=()=>({running:state.running,finished:state.finished,z:+state.z.toFixed(2),units:state.units,score:state.score,bossHp:Math.ceil(state.bossHp),elapsed:+state.time.toFixed(2),fps:Math.round(engine.getFps()),meshes:scene.meshes.length,billboards:activeBillboards,enemySprites:activeBillboards?enemies.length:0,allySprites:allySprites.length,sceneReady:scene.isReady()});
 window.addEventListener('resize',()=>engine.resize());
