@@ -32,7 +32,7 @@ export class NativeVillageUI {
     overlay.hidden=true;
     overlay.setAttribute('aria-label','라니킹덤 세계 지도');
     overlay.innerHTML='<header class="rani-world-head"><div><small>라니킹덤 · 외부 지역</small><h2>세계 지도</h2></div>'+
-      '<div class="rani-field-tools"><label for="rani-field-faction-select">마을 찾기</label>'+'<select id="rani-field-faction-select" aria-label="필드에서 마을 선택"></select>'+'<button id="rani-native-home" type="button">🏠 마을</button></div></header>'+
+      '<div class="rani-field-tools"><label for="rani-field-faction-select">마을 찾기</label>'+'<select id="rani-field-faction-select" aria-label="필드에서 마을 선택"></select>'+'<button id="rani-field-focus-home" type="button" aria-label="필드에서 내 거점 위치 보기">내 거점</button>'+'<button id="rani-native-home" type="button">🏠 마을</button></div></header>'+
       '<p class="rani-world-explain">외부 지도의 마을을 선택해 세력과 병력 정보를 확인하세요. 전투는 실제 병력이 있고 내 영토와 맞닿은 곳에서만 가능합니다.</p>'+
       '<div class="rani-world-layout"><div class="rani-world-map" id="rani-world-map" role="group" aria-label="세력별 월드 위치"></div>'+
       '<aside class="rani-world-detail" id="rani-world-detail" aria-live="polite">마을을 선택하세요.</aside></div>';
@@ -50,6 +50,7 @@ export class NativeVillageUI {
     top.querySelector('#rani-native-world').addEventListener('click',()=>this.setMode('world'));
     top.querySelector('#rani-field-shortcut').addEventListener('click',()=>this.setMode('world'));
     overlay.querySelector('#rani-native-home').addEventListener('click',()=>this.setMode('village'));
+    overlay.querySelector('#rani-field-focus-home').addEventListener('click',()=>this.game.fieldScene?.select('player'));
     overlay.querySelector('#rani-field-faction-select').addEventListener('change', e => {
       const id=e.target.value;
       if(!id)return;

@@ -186,3 +186,19 @@ body[data-game-mode="world"] .rani-world-detail{top:149px!important;z-index:61!i
 @media(max-width:700px){
  body[data-game-mode="world"] .rani-world-detail{top:148px!important}
 }
+
+
+/* v1.0: One-touch 3D field camera focus, compact selected settlement cues. */
+#rani-field-labels button.selected,
+#rani-field-labels button[aria-pressed="true"]{
+  border-color:#ffe39e;background:#52674be9;box-shadow:0 0 0 2px #ffe39e77,0 5px 18px #0b161aba;
+}
+body[data-game-mode="world"] #rani-field-focus-home{
+  pointer-events:auto;min-height:44px;white-space:nowrap;
+  font-size:11px;padding:6px 8px;
+}
+@media(max-width:360px){
+  body[data-game-mode="world"] .rani-field-tools label{display:none}
+  body[data-game-mode="world"] #rani-field-faction-select{max-width:39vw}
+  body[data-game-mode="world"] #rani-field-focus-home{padding:5px 6px;font-size:10px}
+}

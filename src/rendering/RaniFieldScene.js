@@ -24,6 +24,11 @@ export class RaniFieldScene {
     this.camera.position.set(9,15,18);this.camera.lookAt(0,0,0);
     this.ray=new THREE.Raycaster();this.ndc=new THREE.Vector2();
     this.entries=[];this.active=false;
+    this.focus=new THREE.Vector3(0,0,0);
+    this.viewDirection=this.camera.position.clone().normalize();
+    this.zoomDistance=this.camera.position.length();
+    this.pointers=new Map();
+    this.pinchDistance=0;
     this.lastTap=null;
     this.labels=document.createElement('div');
     this.labels.id='rani-field-labels';
@@ -43,30 +48,60 @@ export class RaniFieldScene {
     game.canvas.addEventListener('wheel',e=>{
       if(!this.active)return;
       e.preventDefault();
-      const unit=e.deltaY>0?1.12:.89;
-      const pos=this.camera.position;
-      const r=pos.length();
-      pos.multiplyScalar(Math.min(1.5,Math.max(.55,r*unit/r)));
-      const length=pos.length();
-      if(length>29)pos.multiplyScalar(29/length);
-      if(length<11)pos.multiplyScalar(11/length);
-      this.camera.lookAt(0,0,0);
+      this._zoom(e.deltaY>0?1.12:.89);
     },{passive:false});
     game.canvas.addEventListener('pointerdown',e=>{
       if(!this.active||e.button!==0)return;
-      this.lastTap={x:e.clientX,y:e.clientY};
+      this.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+      if(this.pointers.size===1){
+        this.lastTap={x:e.clientX,y:e.clientY,id:e.pointerId};
+        this.pinchDistance=0;
+      }else{
+        this.lastTap=null;
+        this.pinchDistance=this._pointerDistance();
+      }
     });
     game.canvas.addEventListener('pointermove',e=>{
-      if(!this.active||!this.lastTap)return;
-      // A small drag pans the field slightly; no new village meshes are generated.
+      if(!this.active||!this.pointers.has(e.pointerId))return;
+      this.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+      if(this.pointers.size>=2){
+        const next=this._pointerDistance();
+        if(this.pinchDistance>0&&next>0)this._zoom(this.pinchDistance/next);
+        this.pinchDistance=next;
+        this.lastTap=null;
+        return;
+      }
+      if(!this.lastTap||this.lastTap.id!==e.pointerId)return;
       const dx=e.clientX-this.lastTap.x,dy=e.clientY-this.lastTap.y;
-      if(Math.abs(dx)+Math.abs(dy)<8)return;
-      this.camera.position.x=Math.max(-6,Math.min(17,this.camera.position.x-dx*.012));
-      this.camera.position.z=Math.max(5,Math.min(22,this.camera.position.z+dy*.012));
-      this.camera.lookAt(0,0,0);
-      this.lastTap={x:e.clientX,y:e.clientY};
+      if(Math.hypot(dx,dy)<8)return;
+      const step=.016*(this.zoomDistance/22);
+      this.focus.x=THREE.MathUtils.clamp(this.focus.x-dx*step,-9,9);
+      this.focus.z=THREE.MathUtils.clamp(this.focus.z+dy*step,-9,9);
+      this._applyCamera();
+      this.lastTap={x:e.clientX,y:e.clientY,id:e.pointerId};
     });
-    game.canvas.addEventListener('pointerup',()=>{this.lastTap=null});
+    const release=e=>{
+      if(!this.pointers.has(e.pointerId))return;
+      this.pointers.delete(e.pointerId);
+      this.lastTap=null;
+      this.pinchDistance=this.pointers.size>=2?this._pointerDistance():0;
+    };
+    game.canvas.addEventListener('pointerup',release);
+    game.canvas.addEventListener('pointercancel',release);
+    window.addEventListener('blur',()=>{this.pointers.clear();this.lastTap=null;this.pinchDistance=0;});
+  }
+  _pointerDistance(){
+    const [a,b]=[...this.pointers.values()];
+    return a&&b?Math.hypot(a.x-b.x,a.y-b.y):0;
+  }
+  _applyCamera(){
+    this.camera.position.copy(this.focus).addScaledVector(this.viewDirection,this.zoomDistance);
+    this.camera.lookAt(this.focus);
+  }
+  _zoom(factor){
+    if(!Number.isFinite(factor)||factor<=0)return;
+    this.zoomDistance=THREE.MathUtils.clamp(this.zoomDistance*factor,9,32);
+    this._applyCamera();
   }
   _createTerrain(){
     const geometry=new THREE.CylinderGeometry(.76,.8,.20,6,1);
@@ -155,7 +190,19 @@ export class RaniFieldScene {
       '" aria-label="'+entry.name.replace(/[<>&"]/g,'')+
       '">'+(entry.id==='player'?'🏰':'🏘️')+' '+entry.name.replace(/[<>&"]/g,'')+
       ' · '+entry.tier+'단계</button>').join('');
+    this._markSelected(this.game.nativeVillageUI?.selectedId);
     this.updateLabels();
+  }
+  _markSelected(id){
+    for(const entry of this.entries){
+      entry.group.children[0].material=entry.id===id?playerMaterial:
+        entry.id==='player'?playerMaterial:entry.hostile?enemyMaterial:castleMaterial;
+    }
+    for(const button of this.labels.querySelectorAll('[data-field-faction]')){
+      const selected=button.dataset.fieldFaction===id;
+      button.classList.toggle('selected',selected);
+      button.setAttribute('aria-pressed',String(selected));
+    }
   }
   open(){
     this.active=true;this.labels.hidden=false;this.refresh();
@@ -163,17 +210,23 @@ export class RaniFieldScene {
       this.modelPending=this._loadAsset().finally(()=>{this.modelPending=null});
     }
     this.camera.aspect=innerWidth/innerHeight;this.camera.updateProjectionMatrix();
+    this.select(this.game.nativeVillageUI?.selectedId||'player');
   }
-  close(){this.active=false;this.labels.hidden=true}
+  close(){
+    this.active=false;this.labels.hidden=true;
+    this.pointers.clear();this.lastTap=null;this.pinchDistance=0;
+  }
   select(id){
+    const entry=this.entries.find(e=>e.id===id);
+    if(!entry)return;
     this.game.nativeVillageUI.selectedId=id;
+    // Selecting a city moves the actual 3D camera to that settlement.
+    // The toolbar picker is therefore useful even for offscreen cities.
+    this.focus.set(entry.x,0,entry.z);
+    this._applyCamera();
+    this._markSelected(id);
     this.game.nativeVillageUI.refreshWorld();
-    for(const entry of this.entries){
-      const selected=entry.id===id;
-      entry.group.scale.multiplyScalar(1); // scale determined by its verified stage
-      entry.group.children[0].material=selected?playerMaterial:
-        entry.id==='player'?playerMaterial:entry.hostile?enemyMaterial:castleMaterial;
-    }
+    this.updateLabels();
   }
   tap(x,y){
     this.ndc.set(x/innerWidth*2-1,1-y/innerHeight*2);
@@ -192,7 +245,7 @@ export class RaniFieldScene {
       const projected=new THREE.Vector3(entry.x,1.8*entry.group.scale.x,entry.z).project(this.camera);
       const x=(projected.x*.5+.5)*innerWidth,y=(-projected.y*.5+.5)*innerHeight;
       button.style.left=x+'px';button.style.top=y+'px';
-      button.hidden=projected.z>1||x<0||x>innerWidth||y<0||y>innerHeight;
+      button.hidden=projected.z< -1||projected.z>1||x<0||x>innerWidth||y<0||y>innerHeight;
     }
   }
   render(){
