@@ -60,6 +60,7 @@ export class SaveSystem {
         buildings: game.buildingSystem ? game.buildingSystem.serialize() : null,
         research: game.researchSystem ? game.researchSystem.serialize() : null,
         army: game.armySystem ? game.armySystem.serialize() : null,
+        village: game.nativeVillage ? game.nativeVillage.serialize() : null,
         savedAt: Date.now(),
       };
       localStorage.setItem(KEY, JSON.stringify(data));
