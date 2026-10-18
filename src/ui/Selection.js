@@ -57,7 +57,11 @@ export class Selection {
   }
 
   select(cell) {
-    if (this.cell === cell) return;
+    // Tapping an already selected building must reopen its information sheet.
+    if (this.cell === cell) {
+      if (cell) events.emit('selection:changed',{cell,reselected:true});
+      return;
+    }
     this.cell = cell;
     if (cell) {
       const { x, z } = axialToWorld(cell.q, cell.r);

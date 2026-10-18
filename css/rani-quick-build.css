@@ -112,3 +112,5 @@
   max-height:43dvh!important
  }
 }
+
+@media(max-width:700px){body[data-active-slg-panel]:not([data-active-slg-panel="map"]) #slg-tutorial{display:none!important}}
