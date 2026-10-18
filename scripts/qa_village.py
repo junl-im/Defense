@@ -59,8 +59,15 @@ with sync_playwright() as p:
     assert page.locator('#game-canvas').is_visible(), '3D field render should replace flat map'
     assert page.evaluate("window.__game.fieldScene.entries.length")>1
     assert page.locator('#rani-field-labels button[data-field-faction]').count()>1
-    page.locator('#rani-field-labels button[data-field-faction]:not([data-field-faction="player"])').first.click()
-    assert page.locator('#rani-world-detail').inner_text().find('거리:')>=0
+    first_id=page.evaluate('window.__game.factionSystem.factions[0].id')
+    picker=page.locator('#rani-field-faction-select')
+    assert picker.is_visible(), 'Field must offer an accessible settlement selector'
+    picker.select_option(first_id)
+    assert page.evaluate('window.__game.nativeVillageUI.selectedId')==first_id
+    assert '거리:' in page.locator('#rani-world-detail').inner_text()
+    # A displayed 3D city label remains touch selectable as well.
+    visible_labels=page.locator('#rani-field-labels button[data-field-faction]:visible')
+    assert visible_labels.count()>=1, 'The 3D field must show at least one town label'
     assert page.evaluate("window.__game.fieldScene.towns.children.length === window.__game.fieldScene.entries.length")
     page.screenshot(path=str(OUT/(kind+'-faction-world.png')),full_page=True)
     page.locator('#rani-native-home').click()

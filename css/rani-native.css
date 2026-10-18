@@ -148,3 +148,21 @@ body[data-game-mode="world"] .rani-world-head{top:76px!important}
 @media(max-width:700px){
  #rani-field-labels button{min-height:40px}
 }
+
+/* All field towns remain selectable even when their 3D labels are offscreen. */
+.rani-field-tools{display:flex;align-items:center;justify-content:flex-end;gap:8px;
+  margin-left:auto;pointer-events:auto}
+.rani-field-tools label{font-size:11px;color:#ffebc6;white-space:nowrap;
+  text-shadow:0 1px 4px #122624}
+#rani-field-faction-select{appearance:auto;min-height:44px;max-width:190px;
+  border:1px solid #cdb17a;border-radius:8px;padding:6px;
+  background:#1b3337;color:#ffead1;font-size:12px;font-family:inherit}
+@media(max-width:700px){
+ .rani-field-tools{gap:5px;max-width:100%}
+ .rani-field-tools label{font-size:10px}
+ #rani-field-faction-select{min-height:42px;max-width:min(40vw,150px);
+   font-size:11px}
+ body[data-game-mode="world"] .rani-world-detail{top:143px!important;
+   bottom:auto!important;max-height:27dvh;right:7px!important;
+   left:auto!important;width:min(240px,calc(100vw - 14px))!important}
+}

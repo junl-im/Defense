@@ -35,3 +35,5 @@
 - 인풋·모바일 터치 처리 참고: https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events/Multi-touch_interaction
 - Three.js 인스턴싱 근거: https://threejs.org/docs/pages/InstancedMesh.html
 - 로컬/CI 3D 타일 탭, 모바일 토글, 상단 겹침, 3D 필드 렌더·선택 검증 필수.
+
+- 필드 화면 밖에 존재하는 세력도 상단 **마을 찾기** 선택창에서 찾을 수 있게 추가. 이름 버튼/3D 모델 직접 선택도 유지. 월드 UI는 실제 세력 좌표·영토 상태 참조, 유령 세력 생성 없음.

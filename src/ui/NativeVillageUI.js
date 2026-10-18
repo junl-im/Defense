@@ -24,7 +24,7 @@ export class NativeVillageUI {
       '<div class="rani-nav-line" id="rani-nav-buttons"><span id="rani-nav-town">🏰 내 마을 · 3×3</span>'+
       '<button type="button" id="rani-native-upgrade">중심 건물 승격</button>'+
       '<button type="button" id="rani-native-cancel" hidden>승격 취소</button>'+
-      '<button type="button" id="rani-native-world">🗺️ 필드 나가기</button></div>'+
+      '<button type="button" id="rani-native-world">🌍 필드</button></div>'+
       '<small id="rani-native-status">기존 3D 건설 화면에서 지형을 설치하고 시설을 세우세요.</small>';
     document.body.appendChild(top);
     const overlay=document.createElement('section');
@@ -32,7 +32,7 @@ export class NativeVillageUI {
     overlay.hidden=true;
     overlay.setAttribute('aria-label','라니킹덤 세계 지도');
     overlay.innerHTML='<header class="rani-world-head"><div><small>라니킹덤 · 외부 지역</small><h2>세계 지도</h2></div>'+
-      '<button id="rani-native-home" type="button">🏠 내 마을 돌아가기</button></header>'+
+      '<div class="rani-field-tools"><label for="rani-field-faction-select">마을 찾기</label>'+'<select id="rani-field-faction-select" aria-label="필드에서 마을 선택"></select>'+'<button id="rani-native-home" type="button">🏠 마을</button></div></header>'+
       '<p class="rani-world-explain">외부 지도의 마을을 선택해 세력과 병력 정보를 확인하세요. 전투는 실제 병력이 있고 내 영토와 맞닿은 곳에서만 가능합니다.</p>'+
       '<div class="rani-world-layout"><div class="rani-world-map" id="rani-world-map" role="group" aria-label="세력별 월드 위치"></div>'+
       '<aside class="rani-world-detail" id="rani-world-detail" aria-live="polite">마을을 선택하세요.</aside></div>';
@@ -49,6 +49,11 @@ export class NativeVillageUI {
     });
     top.querySelector('#rani-native-world').addEventListener('click',()=>this.setMode('world'));
     overlay.querySelector('#rani-native-home').addEventListener('click',()=>this.setMode('village'));
+    overlay.querySelector('#rani-field-faction-select').addEventListener('change', e => {
+      const id=e.target.value;
+      if(!id)return;
+      this.game.fieldScene?.select(id);
+    });
     top.querySelector('#rani-native-upgrade').addEventListener('click',()=>{
       const result=this.game.nativeVillage.startUpgrade();
       this.game.ui.toast(result.reason);
@@ -160,6 +165,14 @@ export class NativeVillageUI {
         '<span>'+e.icon+'</span><small>'+clean(e.label)+'</small></button>';
     }).join('');
     parent.innerHTML='<div class="rani-world-grid" aria-hidden="true"></div>'+board;
+    // The offscreen settlement selector is always available, including mobile.
+    const picker=this.overlay.querySelector('#rani-field-faction-select');
+    const ids=entries.map(e=>e.id);
+    const current=Array.from(picker.options).map(o=>o.value);
+    if(ids.join('|')!==current.join('|')){
+      picker.replaceChildren(...entries.map(e=>new Option(e.label,e.id)));
+    }
+    picker.value=ids.includes(this.selectedId)?this.selectedId:'player';
     this.game.fieldScene?.updateLabels();
     const detail=this.overlay.querySelector('#rani-world-detail');
     if(!this.selectedId||this.selectedId==='player'){
