@@ -4,7 +4,8 @@ $folder = Join-Path $Project "assets\source"
 New-Item -ItemType Directory -Force -Path $folder | Out-Null
 $downloads = @(
  @{Name="OpenGameArt-LowPolyAnimeGirl-CC0.zip"; Uri="https://opengameart.org/sites/default/files/gal.zip"},
- @{Name="OpenGameArt-BasicFemaleRigged-CC0.zip"; Uri="https://opengameart.org/sites/default/files/female_basic_rigged.zip"}
+ @{Name="OpenGameArt-BasicFemaleRigged-CC0.zip"; Uri="https://opengameart.org/sites/default/files/female_basic_rigged.zip"},
+ @{Name="Kenney-FantasyTown-CC0.zip"; Uri="https://opengameart.org/sites/default/files/kenney_fantasy-town-kit_2.0.zip"}
 )
 foreach($item in $downloads) {
  $target=Join-Path $folder $item.Name
