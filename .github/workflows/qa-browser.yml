@@ -1,0 +1,36 @@
+name: KINGDOM SLG Browser QA
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Playwright Chromium
+        run: |
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium
+      - name: Serve game
+        run: |
+          python -m http.server 8123 --bind 127.0.0.1 >/tmp/kingdom-http.log 2>&1 &
+          for i in {1..30}; do curl -fsS http://127.0.0.1:8123/ >/dev/null && break; sleep 1; done
+      - name: Upstream game logic headless suite
+        run: |
+          python test/run_headless.py
+          python test/run_headless.py http://127.0.0.1:8123/test/smoke_military.html
+      - name: Actual desktop/mobile game boot + screenshots
+        run: python scripts/qa_browser.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: kingdom-browser-screenshots
+          path: qa/screenshots/
+          if-no-files-found: ignore
