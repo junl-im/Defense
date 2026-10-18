@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     environment:
-      name: github-pages
+      name: defense-preview
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
