@@ -41,6 +41,21 @@ with sync_playwright() as p:
     assert page.evaluate("window.__game.grid.get(1,0)?.tileType")=='forest'
     assert page.evaluate("window.__game.buildingSystem.buildingsOn(window.__game.grid.get(1,0)).some(b=>b.id==='lumber_mill'&&!b.done)")
     assert not page.locator('#rani-quick-build').is_visible()
+    # After choosing a building, construction persists, but ALL context menus
+    # close instead of reopening the radial popup on the newly placed hex.
+    assert page.evaluate("window.__game.selection.cell===null")
+    assert page.locator('#radial-menu.hidden').count()==1, (
+      'Construction incorrectly reopened the selected-hex information popup')
+    t0=page.evaluate("""() => {
+      const g=window.__game;
+      return g.buildingSystem.buildingsOn(g.grid.get(1,0)).find(b=>b.id==='lumber_mill').remaining;
+    }""")
+    page.wait_for_timeout(300)
+    t1=page.evaluate("""() => {
+      const g=window.__game;
+      return g.buildingSystem.buildingsOn(g.grid.get(1,0)).find(b=>b.id==='lumber_mill').remaining;
+    }""")
+    assert t1 < t0, 'Closing the build UI must not pause building construction'
     assert page.evaluate("JSON.parse(localStorage.getItem('kingdom-tiles-save-v2')).buildings.cells.some(c=>c.key==='1,0')")
     if w<=700:
       dock=page.locator('#slg-mobile-dock')
@@ -97,6 +112,39 @@ with sync_playwright() as p:
     progress=page.locator('#radial-progress').text_content() or ''
     assert '건설' in progress and 'lumber_mill' not in progress, (
       'Construction percentage should use a Korean building name',progress)
+    # v1.2: the selected model anchor and the ring's computed CSS position MUST
+    # agree pixel-for-pixel, including on 320px mobile screens and while panning.
+    position=page.evaluate("""() => {
+      const g=window.__game, cell=g.grid.get(1,0);
+      const Vector3=g.camera.position.constructor;
+      const p=cell.group.position.clone().add(new Vector3(.18,.62,-.13));
+      g.selection.select(cell,p,'lumber_mill');
+      g.radialMenu.update();
+      const projected=p.clone().project(g.camera);
+      const root=document.querySelector('#radial-menu'), css=getComputedStyle(root);
+      return {expectedX:(projected.x*.5+.5)*innerWidth,
+        expectedY:(-projected.y*.5+.5)*innerHeight,
+        actualX:parseFloat(css.left), actualY:parseFloat(css.top),
+        title:root.querySelector('.radial-title')?.textContent};
+    }""")
+    assert abs(position['actualX']-position['expectedX'])<2, ('X anchor drift',position)
+    assert abs(position['actualY']-position['expectedY'])<2, ('Y anchor drift',position)
+    assert position['title']=='벌목장',('Building title is not from selected building',position)
+    page.evaluate("""() => {
+      const g=window.__game;
+      g.controls.target.set(1,0,1);
+      g.controls.targetGoal.set(1,0,1);
+      g.controls._apply(1);
+      g.radialMenu.update();
+    }""")
+    moved=page.evaluate("""() => {
+      const g=window.__game, p=g.selection.anchor.clone().project(g.camera),
+        css=getComputedStyle(document.getElementById('radial-menu'));
+      return {x:(p.x*.5+.5)*innerWidth,y:(-p.y*.5+.5)*innerHeight,
+        left:parseFloat(css.left),top:parseFloat(css.top)};
+    }""")
+    assert abs(moved['left']-moved['x'])<2 and abs(moved['top']-moved['y'])<2, (
+      'Ring does not follow the chosen building while the camera pans',moved)
     page.screenshot(path=str(OUT/(label+'-placed.png')),full_page=True)
     assert not errors,f'{label}: {errors}'
     print('PASS',label,'empty tap/menu toggle/combo 3D construction/mobile dock/compact layout',flush=True)
