@@ -1,0 +1,50 @@
+/* Compact mission UI, keeps the map interactive and avoids other side panels. */
+#slg-tutorial {
+  position: fixed;
+  left: 18px;
+  bottom: 70px;
+  z-index: 34;
+  width: min(272px, calc(100vw - 36px));
+  border: 1px solid #b99555;
+  border-radius: 13px;
+  box-shadow: 0 8px 28px rgba(16, 23, 30, .32), inset 0 1px 0 #ffedc055;
+  background: linear-gradient(160deg, rgba(39,55,60,.96), rgba(21,33,43,.97));
+  color: #f5e7cb;
+  font: 13px/1.45 "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+  overflow: hidden;
+}
+.slg-tutorial-head {
+  display:flex; align-items:center; gap:6px;
+  padding:9px 10px 8px;
+  border-bottom:1px solid #f6dca032;
+}
+.slg-tutorial-mark {font-size:17px}
+.slg-tutorial-head strong {flex:1; font-size:13px}
+.slg-tutorial-fold {
+  background: #ffffff0d; color: #f5e7cb;
+  border: 1px solid #c1aa7b5e; border-radius:7px;
+  padding:2px 8px; cursor:pointer; font-size:17px;
+}
+.slg-tutorial-body { padding: 9px 11px 11px }
+.slg-tutorial-count { font-size:11px; color:#ead2a3 }
+#slg-tutorial-title { font-size:15px; margin:3px 0 4px }
+#slg-tutorial-text { margin:0 0 9px; font-size:12px; line-height:1.52; color:#ddd8cc }
+.slg-tutorial-progress {height:6px; border-radius:6px; background:#6a695f; overflow:hidden}
+#slg-tutorial-bar {display:block; height:100%; width:0%; border-radius:6px; background:#e7b85d; transition:width .25s}
+.slg-tutorial-bottom {display:flex; align-items:center; justify-content:space-between; margin-top:8px; gap:6px}
+.slg-tutorial-bottom small {color:#edd8ae; font-size:11px}
+#slg-tutorial-go {
+  cursor:pointer; border:1px solid #d0ac6a; border-radius:7px;
+  padding:5px 9px; background:#a0763f; color:#fff7e8;
+  font-size:11px; font-weight:700; white-space:nowrap;
+}
+#slg-tutorial-go:hover, .slg-tutorial-fold:hover {filter:brightness(1.15)}
+#slg-tutorial-go[hidden], .slg-tutorial-collapsed .slg-tutorial-body {display:none !important}
+#slg-tutorial button:focus-visible {outline:2px solid #ffe29a}
+@media (max-width:700px) {
+  #slg-tutorial {left:8px; bottom:calc(145px + env(safe-area-inset-bottom)); width:min(240px,calc(100vw - 16px)); z-index:28}
+  .slg-tutorial-body {padding:8px 10px}
+  #slg-tutorial-title {font-size:13px}
+  #slg-tutorial-text {font-size:11px}
+  .slg-tutorial-head {padding:7px 9px}
+}
