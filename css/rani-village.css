@@ -80,3 +80,28 @@ body[data-game-mode="village"] #toast {z-index:150}
  .rani-build-choice small,.rani-build-choice em {grid-column:2;word-break:keep-all}
  .rani-hall-panel {margin-top:8px}
 }
+
+/* Fast and accessible first village construction — no tutorial grind. */
+.rani-starter-box{max-width:1120px;box-sizing:border-box;margin:0 auto 13px;padding:12px 14px;border:1px solid #d8b36c9e;
+  border-radius:13px;background:linear-gradient(120deg,#654c2cee,#2b3e33ea);
+  box-shadow:0 8px 16px #0b1c2191}
+.rani-starter-heading{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.rani-starter-heading>div{display:flex;flex-direction:column;gap:2px}
+.rani-starter-heading small{color:#d4bf8e;font-size:11px}
+.rani-starter-heading strong{color:#ffe4a6;font-size:15px}
+#rani-starter-count{padding:4px 8px;border:1px solid #e0c27c80;border-radius:999px;color:#f6dca0;font-size:11px;white-space:nowrap}
+#rani-starter-guide{margin:7px 0 11px;font-size:12px;color:#e1e4cd;line-height:1.5}
+.rani-starter-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-width:510px}
+.rani-starter-button{border:1px solid #e0bf7f;border-radius:9px;background:linear-gradient(#c49b59,#946535);
+  color:#211e18;padding:9px 11px;display:flex;align-items:center;justify-content:space-between;gap:7px;
+  cursor:pointer;font-family:inherit;font-size:13px;font-weight:800;text-align:left}
+.rani-starter-button small{font-size:10px;font-weight:600;white-space:nowrap;color:#322615}
+.rani-starter-button:hover:not(:disabled){filter:brightness(1.16);transform:translateY(-1px)}
+.rani-starter-button:disabled{opacity:.65;cursor:default;background:#3d614f;color:#e6f0dd;border-color:#7fa98f}
+.rani-starter-button:focus-visible,.rani-village-actions button:focus-visible{outline:3px solid #ffe4aa;outline-offset:2px}
+@media(max-width:750px){
+  .rani-starter-box{padding:9px;margin-bottom:8px}
+  .rani-starter-heading strong{font-size:12px}
+  .rani-starter-button{font-size:11px;padding:8px 7px;flex-direction:column;align-items:flex-start;gap:3px}
+  .rani-starter-button small{font-size:9px}
+}

@@ -1,6 +1,6 @@
 import { BUILDINGS, fmtCost } from '../config/BuildingConfig.js';
 import { events } from '../core/Events.js';
-import { VILLAGE_BUILD_IDS, hallCost, HALL_MAX_LEVEL } from '../systems/VillageState.js';
+import { VILLAGE_BUILD_IDS, STARTER_FREE_IDS, hallCost, HALL_MAX_LEVEL } from '../systems/VillageState.js';
 const emoji={hall:'🏰',lumber_mill:'🪵',farm:'🌾',mine:'⛏️',market:'🛍️',barracks:'⚔️',garrison:'🛡️'};
 
 export class VillageView {
@@ -21,6 +21,12 @@ export class VillageView {
       '<button type="button" id="rani-open-save">💾 저장 관리</button>',
       '<button type="button" id="rani-go-world">🌍 필드 나가기</button></div></header>',
       '<div id="rani-village-res" class="rani-village-res" aria-label="자원 현황"></div>',
+      '<section class="rani-starter-box" aria-label="초보자 마을 건설 안내">',
+      '<div class="rani-starter-heading"><div><small>처음 오셨나요?</small><strong>첫 건설 2개 무료 · 즉시 완공!</strong></div>',
+      '<span id="rani-starter-count">0 / 2 완성</span></div>',
+      '<p id="rani-starter-guide">벌목장과 농장을 먼저 건설해 목재와 식량을 확보하세요.</p>',
+      '<div id="rani-starter-actions" class="rani-starter-actions"></div>',
+      '</section>',
       '<div class="rani-village-layout"><section class="rani-village-main">',
       '<div class="rani-village-meta"><strong id="rani-village-level"></strong>',
       '<span id="rani-village-size"></span></div>',
@@ -36,6 +42,19 @@ export class VillageView {
     this.grid=root.querySelector('#rani-village-grid');
     this.options=root.querySelector('#rani-village-options');
     this.hallPanel=root.querySelector('#rani-hall-panel');
+    this.starterActions=root.querySelector('#rani-starter-actions');
+    this.starterActions.addEventListener('click',(e)=>{
+      const btn=e.target.closest('button[data-starter-build]');
+      if(!btn)return;
+      const id=btn.dataset.starterBuild;
+      const result=this.game.villageState.quickBuild(id);
+      if(result.ok){
+        this.selected={x:result.x,y:result.y};
+        this.game.saveSystem.save(this.game);
+      }
+      this.game.ui.toast(result.reason||'건설할 수 없습니다.');
+      this.render();
+    });
     this.worldButton=document.createElement('button');
     this.worldButton.id='rani-return-village';
     this.worldButton.type='button';
@@ -113,6 +132,7 @@ export class VillageView {
     const v=this.game.villageState;
     this.renderResources();
     const size=v.size;
+    this.renderStarter();
     this.root.querySelector('#rani-village-level').textContent='중심 건물 '+v.hallLevel+'단계';
     this.root.querySelector('#rani-village-size').textContent='건설 구역 '+size+'×'+size+' · '+(size*size)+'칸';
     this.grid.style.gridTemplateColumns='repeat('+size+', minmax(0,1fr))';
@@ -141,6 +161,29 @@ export class VillageView {
     }else this.hallPanel.innerHTML='<strong>🏰 최고 단계 도달</strong><span>마을 전체 '+size+'×'+size+'칸 개방</span>';
     this.renderOptions();
   }
+  renderStarter() {
+    const v=this.game.villageState;
+    const progress=v.getStarterProgress();
+    this.root.querySelector('#rani-starter-count').textContent=
+      progress.completed+' / '+progress.total+' 완성';
+    if(progress.next) {
+      this.root.querySelector('#rani-starter-guide').textContent=
+        progress.completed===0
+          ? '아래 버튼만 누르면 벌목장과 농장이 무료로 바로 완성됩니다.'
+          : '좋아요! 남은 무료 건설까지 완료하고 마을을 넓혀보세요.';
+    } else {
+      this.root.querySelector('#rani-starter-guide').textContent=
+        '초기 생산 시설 준비 완료! 중심 건물을 승격하면 건설 구역이 늘어납니다.';
+    }
+    const labels={lumber_mill:'🪵 벌목장 무료 건설',farm:'🌾 농장 무료 건설'};
+    this.starterActions.innerHTML=STARTER_FREE_IDS.map(id=>{
+      const claimed=v.starterClaims.includes(id);
+      return '<button type="button" class="rani-starter-button" data-starter-build="'+id+
+        '"'+(claimed?' disabled':'')+'>'+ (claimed?'✓ '+BUILDINGS[id].name+' 완료':labels[id])+
+        (claimed?'':'<small>0원 · 바로 완공</small>')+'</button>';
+    }).join('');
+  }
+
   renderOptions() {
     const v=this.game.villageState;
     const p=this.selected&&v.getPlot(this.selected.x,this.selected.y);
@@ -155,8 +198,9 @@ export class VillageView {
     }
     this.options.innerHTML=VILLAGE_BUILD_IDS.map(id=>{
       const def=BUILDINGS[id],check=v.canBuild(this.selected.x,this.selected.y,id);
+      const price=check.starter?'무료 · 즉시 완공':fmtCost(def.cost);
       return '<button type="button" class="rani-build-choice" data-village-build="'+id+'"'+(check.ok?'':' disabled')+'>'+
-        '<span>'+emoji[id]+'</span><strong>'+def.name+'</strong><small>'+fmtCost(def.cost)+'</small>'+
+        '<span>'+emoji[id]+'</span><strong>'+def.name+'</strong><small>'+price+'</small>'+
         (check.ok?'':'<em>'+check.reason+'</em>')+'</button>';
     }).join('');
   }
