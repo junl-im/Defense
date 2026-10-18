@@ -5,7 +5,8 @@
 // mid-growth on reload.
 // ============================================================
 
-const KEY = 'kingdom-tiles-save-v2';
+export const SAVE_KEY = 'kingdom-tiles-save-v2';
+const KEY = SAVE_KEY;
 const VERSION = 3;
 
 export class SaveSystem {
