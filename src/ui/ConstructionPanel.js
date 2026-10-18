@@ -11,7 +11,7 @@ import { iconHtml, iconSvg } from './GameIcons.js';
 function jobLabel(id) {
   if (id === 'village_upgrade') return { icon: VILLAGE_UPGRADE.icon, name: VILLAGE_UPGRADE.name };
   const def = BUILDINGS[id];
-  return { icon: def?.icon || 'build', name: def?.name || id };
+  return { icon: def?.icon || 'build', name: def?.name || '시설' };
 }
 
 export class ConstructionPanel {
@@ -105,7 +105,7 @@ export class ConstructionPanel {
         <div class="construction-row" data-row-id="${id}">
           <span class="construction-icon">${iconHtml(def?.icon || 'research')}</span>
           <div class="construction-body">
-            <span class="construction-name">${def?.name || research.id} <small class="construction-state">연구 중</small></span>
+            <span class="construction-name">${def?.name || '연구'} <small class="construction-state">연구 중</small></span>
             <div class="hud-progress"><div class="hud-progress-fill construction-fill" style="width:${pct}%"></div></div>
           </div>
           <span class="construction-pct">${pct}%</span>

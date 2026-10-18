@@ -288,6 +288,8 @@ export class Game {
 
   _initInput() {
     this.canvas.addEventListener('pointermove', (e) => {
+      // Field owns its own input and camera; don't move the village ghost behind it.
+      if(this.mode==='world')return;
       this._pointerNdc.set(
         (e.clientX / window.innerWidth) * 2 - 1,
         -(e.clientY / window.innerHeight) * 2 + 1
@@ -341,6 +343,7 @@ export class Game {
 
     this.canvas.addEventListener('contextmenu', (e) => {
       e.preventDefault();
+      if(this.mode==='world')return;
       // RMB is also the rotate-camera drag: only rotate the tile in hand
       // when the right button was a clean click (no drag).
       if (!this.controls.rmbMoved) this.rotateHand();

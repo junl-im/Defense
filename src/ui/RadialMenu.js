@@ -248,8 +248,15 @@ export class RadialMenu {
     this._screen.copy(this._worldPos).project(this.game.camera);
     const sx = (this._screen.x * 0.5 + 0.5) * window.innerWidth;
     const sy = (-this._screen.y * 0.5 + 0.5) * window.innerHeight;
-    this.root.style.left = sx + 'px';
-    this.root.style.top = sy + 'px';
+    // Keep the original centered ring on its 3D hex. Only clamp near the
+    // viewport edges so mobile action buttons remain tappable.
+    const mobile=window.innerWidth<=700;
+    const radius=mobile?115:125;
+    const left=Math.min(Math.max(sx,radius),Math.max(radius,window.innerWidth-radius));
+    const topMin=mobile?220:Math.min(125,window.innerHeight/3);
+    const topMax=Math.max(topMin,window.innerHeight-(mobile?122:115));
+    this.root.style.left = left + 'px';
+    this.root.style.top = Math.min(Math.max(sy,topMin),topMax) + 'px';
     // hide if behind the camera
     this.root.style.visibility = this._screen.z < 1 ? 'visible' : 'hidden';
   }
@@ -267,7 +274,7 @@ export class RadialMenu {
       }
       if (b.done) continue;
       const pct = Math.round((1 - b.remaining / Math.max(b.total, 0.01)) * 100);
-      parts.push(`${BUILDINGS[b.id].icon} ${pct}%`);
+      parts.push(`${BUILDINGS[b.id]?.name || '시설'} 건설 ${pct}%`);
     }
     const key = `${this.cell.q},${this.cell.r}`;
     const up = bs.upgrading.get(key);

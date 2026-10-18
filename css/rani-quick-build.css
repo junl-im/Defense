@@ -28,19 +28,6 @@
   box-shadow:0 -10px 25px #08191ac0}
  #rani-quick-build p{font-size:10px}
  #rani-quick-build .rani-qb-grid button{min-height:48px}
- #radial-menu:not(.hidden){position:fixed!important;left:8px!important;right:8px!important;
-  top:auto!important;bottom:calc(65px + env(safe-area-inset-bottom))!important;
-  width:auto!important;max-height:48dvh;overflow:auto;z-index:81!important;
-  transform:none!important;background:#1a3030f5;border:1px solid #c2a474;
-  border-radius:12px;padding:8px;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:6px;box-shadow:0 -8px 25px #08191ac0}
- #radial-menu:not(.hidden) .radial-center {position:static!important;transform:none!important;
-  grid-column:1/-1;width:100%;height:auto;min-height:35px;border-radius:7px}
- #radial-menu:not(.hidden) .radial-btn {position:static!important;transform:none!important;
-  width:100%!important;min-height:48px;border-radius:8px;animation:none!important;
-  padding:5px;gap:2px}
- #radial-menu:not(.hidden) .radial-btn:hover:not(.disabled) {transform:none!important}
- #radial-menu .radial-label{font-size:10px}
  #slg-mobile-dock{height:calc(58px + env(safe-area-inset-bottom));padding:3px 5px calc(3px + env(safe-area-inset-bottom));gap:2px}
  #slg-mobile-dock button{min-height:44px}
  #slg-mobile-dock button > span{font-size:17px}
@@ -114,3 +101,38 @@
 }
 
 @media(max-width:700px){body[data-active-slg-panel]:not([data-active-slg-panel="map"]) #slg-tutorial{display:none!important}}
+
+
+/* v1.1: restore original building-centered radial interaction in every viewport. */
+#radial-menu:not(.hidden){
+  position:fixed!important;
+  right:auto!important;bottom:auto!important;
+  display:block!important;overflow:visible!important;
+  width:0!important;height:0!important;max-height:none!important;
+  padding:0!important;border:0!important;border-radius:0!important;
+  background:transparent!important;box-shadow:none!important;
+  transform:translate(-50%,-50%)!important;
+  z-index:83!important;
+}
+#radial-menu .radial-center{
+  position:absolute!important;left:50%!important;top:50%!important;
+  width:72px!important;height:72px!important;min-height:0!important;
+  border-radius:50%!important;transform:translate(-50%,-50%)!important;
+  grid-column:auto!important;
+}
+#radial-menu .radial-btn{
+  position:absolute!important;left:50%!important;top:50%!important;
+  transform:translate(calc(-50% + var(--rx)),calc(-50% + var(--ry)))!important;
+  width:64px!important;min-height:58px!important;
+  padding:4px!important;border-radius:12px!important;
+  display:flex!important;animation:radialIn .25s cubic-bezier(.34,1.56,.64,1) both!important;
+}
+#radial-menu .radial-btn:hover:not(.disabled){
+  transform:translate(calc(-50% + var(--rx)),calc(-50% + var(--ry))) scale(1.08)!important;
+}
+@media(max-width:700px){
+  /* The original projected radial stays on the selected 3D hex, not in a bottom list. */
+  #radial-menu .radial-label{font-size:9px!important}
+  #radial-menu .radial-btn{width:60px!important;min-height:55px!important}
+  #radial-menu .radial-center{width:68px!important;height:68px!important}
+}

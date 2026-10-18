@@ -112,9 +112,36 @@ with sync_playwright() as p:
     visible_labels=page.locator('#rani-field-labels button[data-field-faction]:visible')
     assert visible_labels.count()>=1, 'The 3D field must show at least one town label'
     assert page.evaluate("window.__game.fieldScene.towns.children.length === window.__game.fieldScene.entries.length")
+    # The field shows actual native hex territory instances, not just decorative ground.
+    assert page.evaluate("""() => {
+      const g=window.__game;
+      return g.fieldScene.territoryMeshes.reduce((n,m)=>n+m.count,0) === g.grid.cells.size;
+    }"""), 'Field does not render the actual saved 3D hex territory'
+    # Pan with the same isometric screen-ground formula as the village.
+    assert page.evaluate("""() => {
+      const f=window.__game.fieldScene, c=window.__game.controls;
+      return Math.abs(f.yaw-c.yaw)<.001 && Math.abs(f.pitch-c.pitch)<.001;
+    }"""), 'Field uses a different starting camera direction from village'
+    page.evaluate("""() => {
+      const c=document.getElementById('game-canvas'),f=window.__game.fieldScene;
+      window.__fieldPanX=f.focus.x;
+      c.dispatchEvent(new PointerEvent('pointerdown',{pointerId:72,button:0,clientX:120,clientY:420,bubbles:true}));
+      c.dispatchEvent(new PointerEvent('pointermove',{pointerId:72,button:0,clientX:180,clientY:420,bubbles:true}));
+      c.dispatchEvent(new PointerEvent('pointerup',{pointerId:72,button:0,clientX:180,clientY:420,bubbles:true}));
+    }""")
+    assert abs(page.evaluate('window.__game.fieldScene.focus.x-window.__fieldPanX'))>0.01
     page.screenshot(path=str(OUT/(kind+'-faction-world.png')),full_page=True)
     page.locator('#rani-native-home').click()
     assert page.evaluate('window.__game.mode')=='village'
+    assert page.locator('#radial-menu .radial-center').is_visible(), (
+      'Returning to my village must open its original 3D hex info ring')
+    # The player's name in the field picker is another direct path to the
+    # very same hex view, not a separate DOM village card.
+    if w<=700: page.locator('#rani-field-shortcut').click()
+    else: page.locator('#rani-native-world').click()
+    page.locator('#rani-field-faction-select').select_option('player')
+    assert page.evaluate('window.__game.mode')=='village'
+    assert page.locator('#radial-menu .radial-center').is_visible()
     assert page.locator('#game-canvas').is_visible()
     assert not errors,f'{kind}: {errors}'
     print('PASS',kind,'original Three.js 3×3 village, 4×4 upgrade, saved, real world faction map',flush=True)

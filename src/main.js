@@ -8,13 +8,20 @@ function boot() {
   initTooltip();
   const canvas = document.getElementById('game-canvas');
   const fill = document.getElementById('loading-fill');
+  const status = document.getElementById('loading-status');
+  const meter = document.getElementById('loading-bar');
+  const setProgress = (value, message='왕국 자료 준비 중') => {
+    fill.style.width = value + '%';
+    if (status) status.textContent = message + ' · ' + value + '%';
+    meter?.setAttribute('aria-valuenow', String(value));
+  };
 
   // fake-but-honest progress: asset build is synchronous & fast,
   // so we animate the bar across the actual init steps.
-  fill.style.width = '30%';
+  setProgress(30, '화면 준비 중');
 
   requestAnimationFrame(() => {
-    fill.style.width = '65%';
+    setProgress(65, '마을 자료 불러오는 중');
     let game;
     try {
       game = new Game(canvas);
@@ -29,7 +36,7 @@ function boot() {
       }
       return;
     }
-    fill.style.width = '100%';
+    setProgress(100, '왕국 준비 완료');
     game.start();
     setTimeout(() => game.ui.hideLoading(), 350);
 

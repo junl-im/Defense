@@ -59,7 +59,7 @@ export class ResearchPanel {
       const def = RESEARCH[rs.active.id];
       this.el.active.classList.remove('hidden');
       this.el.activeIcon.innerHTML = iconHtml(def?.icon || 'research');
-      this.el.activeName.textContent = def?.name || rs.active.id;
+      this.el.activeName.textContent = def?.name || '연구';
       this._syncActiveProgress();
     } else {
       this.el.active.classList.add('hidden');

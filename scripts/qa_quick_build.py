@@ -78,6 +78,25 @@ with sync_playwright() as p:
     # The original PC radial ring is positioned with absolute children; its
     # wrapper has zero size, so checking wrapper.is_visible() is misleading.
     assert page.locator('#radial-menu .radial-center').is_visible(), 'Tile detail must be visible'
+    # v1.1: original 3D-hex anchored radial, never a 3-column bottom list.
+    radial_style=page.evaluate("""() => {
+      const root=document.querySelector('#radial-menu');
+      const button=root.querySelector('.radial-btn');
+      return {display:getComputedStyle(root).display,
+        buttonCount:root.querySelectorAll('.radial-btn').length,
+        buttonPosition:button?getComputedStyle(button).position:'missing',
+        bottom:getComputedStyle(root).bottom};
+    }""")
+    assert radial_style['display']!='grid' and radial_style['buttonPosition']=='absolute', (
+      'Original hex radial style not restored',radial_style)
+    # Display Korean building name and construction % rather than raw icon IDs.
+    page.evaluate("""() => {
+      const game=window.__game;
+      game.radialMenu?._refreshProgress();
+    }""")
+    progress=page.locator('#radial-progress').text_content() or ''
+    assert '건설' in progress and 'lumber_mill' not in progress, (
+      'Construction percentage should use a Korean building name',progress)
     page.screenshot(path=str(OUT/(label+'-placed.png')),full_page=True)
     assert not errors,f'{label}: {errors}'
     print('PASS',label,'empty tap/menu toggle/combo 3D construction/mobile dock/compact layout',flush=True)
