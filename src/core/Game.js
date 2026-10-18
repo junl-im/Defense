@@ -357,6 +357,9 @@ export class Game {
   }
 
   _pointerToCell(preferBuildingMesh = false) {
+    // Camera controls update immediately, but renderer may not have run yet.
+    // A stale inverse-world matrix makes picking the neighbouring 3D hex.
+    if(preferBuildingMesh)this.camera.updateMatrixWorld();
     this.raycaster.setFromCamera(this._pointerNdc, this.camera);
     if (preferBuildingMesh) {
       // Picking a tall building via the ground plane alone can select the
@@ -370,7 +373,6 @@ export class Game {
       }
       // Pick the actual visible structure first. A 2D ground projection
       // alone can land in the hex behind a tall roof.
-      this.camera.updateMatrixWorld();
       for (const hit of this.raycaster.intersectObjects(root.children, true)) {
         let object = hit.object;
         while (object && object !== root) {
