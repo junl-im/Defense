@@ -7,12 +7,12 @@ const $=id=>document.getElementById(id);
 const canvas=$('gameCanvas'),engine=new Engine(canvas,true,{preserveDrawingBuffer:false,stencil:true});
 const scene=new Scene(engine);
 scene.clearColor=new Color4(.045,.055,.11,1);
-const light=new HemisphericLight('ambient',new Vector3(.2,1,.2),scene); light.intensity=.85;
-const sun=new DirectionalLight('sun',new Vector3(-.4,-1,.5),scene);sun.intensity=1.25;
+const light=new HemisphericLight('ambient',new Vector3(.2,1,.2),scene); light.intensity=.7;
+const sun=new DirectionalLight('sun',new Vector3(-.4,-1,.5),scene);sun.intensity=.9;
 const camera=new ArcRotateCamera('follow',Math.PI/2,1.05,32,new Vector3(0,0,12),scene);
 camera.inputs.clear(); camera.fov=.74;
 const mat=(name,hex)=>{const m=new StandardMaterial(name,scene);m.diffuseColor=Color3.FromHexString(hex);m.specularColor=new Color3(.19,.19,.22);return m;};
-const groundMat=mat('lane','#8f99ae'),railMat=mat('rail','#606f90'),heroMat=mat('hero','#65b8ff'),enemyMat=mat('enemy','#f04c7f'),bossMat=mat('boss','#8336a9'),hairMat=mat('hair','#c2a6ff'),whiteMat=mat('white','#efedf8'),gateBlue=mat('blueGate','#348cfa'),gateGold=mat('goldGate','#f0b64e');
+const groundMat=mat('lane','#62728f'),railMat=mat('rail','#606f90'),heroMat=mat('hero','#65b8ff'),enemyMat=mat('enemy','#f04c7f'),bossMat=mat('boss','#8336a9'),hairMat=mat('hair','#c2a6ff'),whiteMat=mat('white','#efedf8'),gateBlue=mat('blueGate','#348cfa'),gateGold=mat('goldGate','#f0b64e');
 const ground=MeshBuilder.CreateGround('floor',{width:13,height:105},scene);ground.position.z=45;ground.material=groundMat;
 for(const x of [-6.75,6.75]){const wall=MeshBuilder.CreateBox('parapet',{width:.8,height:1.55,depth:105},scene);wall.position.set(x,.7,45);wall.material=railMat;}
 for(let z=0;z<90;z+=4){const strip=MeshBuilder.CreateBox('stripe',{width:12,height:.025,depth:.075},scene);strip.position.set(0,.02,z);strip.material=whiteMat;strip.visibility=.15;}
@@ -206,7 +206,7 @@ if(state.z>66){
 }
 if(state.z>94)complete(false);
 renderHud();}
-tickBullets(dt);drawSquad(state.units);camera.target.set(state.x*.18,0,state.z+6.5);camera.position.set(state.x*.22,19,state.z-18);scene.render();});
+tickBullets(dt);drawSquad(state.units);camera.target.set(state.x*.18,0,state.z+3.8);camera.position.set(state.x*.22,18.5,state.z-19);scene.render();});
 // Read-only QA telemetry; does not change gameplay.
 window.__defenseQa=()=>({running:state.running,finished:state.finished,z:+state.z.toFixed(2),units:state.units,score:state.score,bossHp:Math.ceil(state.bossHp),elapsed:+state.time.toFixed(2),fps:Math.round(engine.getFps()),meshes:scene.meshes.length,billboards:activeBillboards,enemySprites:enemySpriteManager?.sprites?.length||0,allySprites:allySprites.length,sceneReady:scene.isReady()});
 window.addEventListener('resize',()=>engine.resize());
