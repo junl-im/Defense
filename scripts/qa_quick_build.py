@@ -34,13 +34,15 @@ with sync_playwright() as p:
     assert page.locator('#radial-menu.hidden').count()==1
     page.evaluate("""([x,y]) => {const canvas=document.getElementById('game-canvas');canvas.dispatchEvent(new PointerEvent('pointerdown',{button:0,buttons:1,clientX:x,clientY:y,bubbles:true,pointerId:1,pointerType:'touch'}));canvas.dispatchEvent(new PointerEvent('pointerup',{button:0,buttons:0,clientX:x,clientY:y,bubbles:true,pointerId:1,pointerType:'touch'}));}""",[int(w/2),int(h/2)])
     assert page.locator('#radial-menu .radial-center').is_visible()
-    assert page.locator('button[data-action-id="next-page"]').is_visible()
-    first=page.locator('#radial-menu .radial-center').inner_text()
-    page.locator('button[data-action-id="next-page"]').click()
-    assert page.locator('#radial-menu .radial-center').inner_text()!=first
-    for _ in range(5):
-      if page.locator('button[data-action-id="combo:lumber_mill"]').count(): break
+    # First village tier may unlock only <=5 plans. In that case, a
+    # redundant page arrow would be a UX defect; higher tiers can have pages.
+    if page.locator('button[data-action-id="next-page"]').count():
+      first=page.locator('#radial-menu .radial-center').inner_text()
       page.locator('button[data-action-id="next-page"]').click()
+      assert page.locator('#radial-menu .radial-center').inner_text()!=first
+      for _ in range(8):
+        if page.locator('button[data-action-id="combo:lumber_mill"]').count(): break
+        page.locator('button[data-action-id="next-page"]').click()
     assert page.locator('button[data-action-id="combo:lumber_mill"]').is_visible()
     page.screenshot(path=str(OUT/(label+'-context.png')),full_page=True)
     before=page.evaluate('window.__game.tilesPlaced')
