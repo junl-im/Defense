@@ -1,0 +1,36 @@
+#!/usr/bin/env python3
+"""Actual browser screenshot QA for PC and mobile dimensions, WebGL, asset fetches."""
+from pathlib import Path
+from playwright.sync_api import sync_playwright
+import json,sys
+output=Path("logs/qa/visual");output.mkdir(parents=True,exist_ok=True)
+report=[]
+with sync_playwright() as p:
+ browser=p.chromium.launch(headless=True,args=[
+  "--no-sandbox","--disable-dev-shm-usage","--enable-webgl",
+  "--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader"
+ ])
+ for width,height,label in [(1365,768,"desktop"),(390,844,"mobile")]:
+  page=browser.new_page(viewport={"width":width,"height":height},device_scale_factor=1)
+  errors=[];console=[];assets=[]
+  page.on("pageerror",lambda e:errors.append(str(e)))
+  page.on("console",lambda e:console.append(e.type+": "+e.text))
+  page.on("response",lambda response:assets.append({"url":response.url,"status":response.status}) if ".glb" in response.url else None)
+  try:
+   page.goto("http://127.0.0.1:4173/Defense/",wait_until="domcontentloaded",timeout=40000)
+   page.wait_for_timeout(3000)
+   page.screenshot(path=str(output/(label+"-menu.png")))
+   page.locator("#startBtn").click()
+   page.wait_for_timeout(6500)
+   page.screenshot(path=str(output/(label+"-running.png")))
+   units=page.locator("#units").inner_text()
+   webgl_failure=any("WebGL not supported" in e or "WebGL not supported" in c for e in errors for c in console)
+   status="passed" if not errors and any(x["url"].endswith("medieval.glb") and x["status"]==200 for x in assets) and any(x["url"].endswith("witch.glb") and x["status"]==200 for x in assets) else "failed"
+   report.append({"device":label,"status":status,"units":units,"js_errors":errors[:10],"console_tail":console[-12:],"glb_requests":assets})
+  except Exception as e:
+   report.append({"device":label,"status":"failed","error":str(e)[:1000],"js_errors":errors})
+  page.close()
+ browser.close()
+(output/"report.json").write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding="utf-8")
+print(json.dumps(report,ensure_ascii=False,indent=2)[:12000])
+if any(i["status"]!="passed" for i in report):sys.exit(1)
