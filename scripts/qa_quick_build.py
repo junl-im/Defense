@@ -21,15 +21,15 @@ with sync_playwright() as p:
       g._pointerToCell=()=>({q:1,r:0});
       g.controls.moved=false;
     }""")
-    canvas=page.locator('#game-canvas')
-    canvas.dispatch_event('pointerup',{'button':0,'clientX':int(w/2),'clientY':int(h/2)})
+    # Synthesize a real PointerEvent with button=0, not a generic DOM Event.
+    page.evaluate("([x,y]) => document.getElementById('game-canvas').dispatchEvent(new PointerEvent('pointerup',{button:0,clientX:x,clientY:y,bubbles:true}))",[int(w/2),int(h/2)])
     assert page.locator('#rani-quick-build').is_visible(), 'tap should open context menu'
     assert page.locator('button[data-plan="combo:lumber_mill"]').is_visible()
     assert page.locator('button[data-plan="tile:forest"]').is_visible()
     # Same tile is a real open/close toggle.
-    canvas.dispatch_event('pointerup',{'button':0,'clientX':int(w/2),'clientY':int(h/2)})
+    page.evaluate("([x,y]) => document.getElementById('game-canvas').dispatchEvent(new PointerEvent('pointerup',{button:0,clientX:x,clientY:y,bubbles:true}))",[int(w/2),int(h/2)])
     assert not page.locator('#rani-quick-build').is_visible()
-    canvas.dispatch_event('pointerup',{'button':0,'clientX':int(w/2),'clientY':int(h/2)})
+    page.evaluate("([x,y]) => document.getElementById('game-canvas').dispatchEvent(new PointerEvent('pointerup',{button:0,clientX:x,clientY:y,bubbles:true}))",[int(w/2),int(h/2)])
     assert page.locator('#rani-quick-build').is_visible()
     page.screenshot(path=str(OUT/(label+'-context.png')),full_page=True)
     menu=page.locator('#rani-quick-build').bounding_box()
