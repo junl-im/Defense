@@ -1,0 +1,66 @@
+name: Deploy Anime Defense v0.7 Preview to GitHub Pages
+on:
+  push:
+    branches: ["feat/anime-crowd-reboot-v0"]
+    paths:
+      - ".github/workflows/preview-pages.yml"
+      - "src/**"
+      - "public/**"
+      - "tests/**"
+      - "scripts/verify-assets.mjs"
+      - "index.html"
+      - "sprite-preview.html"
+      - "vite.config.js"
+      - "package.json"
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      revision: ${{ steps.revision.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: revision
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Tests and SVG-ban policy
+        run: npm test
+      - name: Compile the web game with GitHub Pages base path
+        run: npm run build
+        env:
+          VITE_BASE_PATH: /Defense/
+      - name: Assert built game and licensed art exist
+        run: |
+          test -f dist/index.html
+          test -f dist/assets/characters/medieval.glb
+          test -f dist/assets/characters/witch.glb
+          test -f dist/assets/sprites/heroine-portrait.png
+          test -f dist/assets/sprites/ally-female.png
+          test -f dist/assets/sprites/enemy-female.png
+          ! find dist -iname '*.svg' | grep -q .
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+      - name: Print exact public preview URL
+        run: echo "Preview live at ${{ steps.deployment.outputs.page_url }} (commit ${{ needs.build.outputs.revision }})"
