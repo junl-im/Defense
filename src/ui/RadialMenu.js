@@ -31,6 +31,8 @@ export class RadialMenu {
   constructor(game) {
     this.game = game;
     this.cell = null;
+    this.anchor = null;
+    this.buildingId = null;
     this._worldPos = new THREE.Vector3();
     this._screen = new THREE.Vector3();
 
@@ -39,8 +41,10 @@ export class RadialMenu {
     this.root.className = 'hidden';
     document.body.appendChild(this.root);
 
-    events.on('selection:changed', ({ cell }) => {
+    events.on('selection:changed', ({ cell, anchor, buildingId }) => {
       this.cell = cell;
+      this.anchor = anchor?.isVector3 ? anchor.clone() : null;
+      this.buildingId = buildingId || null;
       if (cell) this._build(cell);
       else this._hide();
     });
@@ -54,6 +58,8 @@ export class RadialMenu {
   _hide() {
     this.root.classList.add('hidden');
     this.root.innerHTML = '';
+    this.anchor = null;
+    this.buildingId = null;
     this._items = null;
   }
 
@@ -131,6 +137,7 @@ export class RadialMenu {
           (check.ok || inProgress ? '' : `<br><i class="tip-bad">${check.reason}</i>`),
         disabled: !check.ok || inProgress,
         run: () => bs.upgradeVillage(cell),
+        closeAfter: true,
       });
     }
 
@@ -152,6 +159,7 @@ export class RadialMenu {
           (check.ok || b.upgradeTo ? '' : `<br><i class="tip-bad">${check.reason}</i>`),
         disabled: !check.ok || !!b.upgradeTo,
         run: () => bs.upgradeBuilding(cell, b),
+        closeAfter: true,
       });
     }
 
@@ -181,6 +189,7 @@ export class RadialMenu {
           (existing || check.ok ? '' : `<br><i class="tip-bad">${check.reason}</i>`),
         disabled: !!existing || !check.ok,
         run: () => bs.build(cell, def.id),
+        closeAfter: true,
       });
     }
     return actions;
@@ -196,8 +205,9 @@ export class RadialMenu {
     center.className = 'radial-center';
     const def = TILE_TYPES[cell.tileType];
     const towny = this.game.buildingSystem.isVillageUpgraded(cell);
+    const pickedName = this.buildingId && BUILDINGS[this.buildingId]?.name;
     center.innerHTML =
-      `<span class="radial-title">${towny ? '읍성' : (def ? def.name : cell.tileType)}</span>` +
+      `<span class="radial-title">${pickedName || (towny ? '읍성' : (def ? def.name : cell.tileType))}</span>` +
       `<span class="radial-progress" id="radial-progress"></span>`;
     center.addEventListener('click', () => this.game.selection.clear());
     center.setAttribute('data-tip', '선택 취소 (Esc)');
@@ -218,7 +228,10 @@ export class RadialMenu {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         if (btn.classList.contains('disabled')) return;
-        a.run();
+        const result = a.run();
+        // A successful construction must keep its actual timer running, but
+        // the contextual action menu should close without another click.
+        if (a.closeAfter && result !== false) this.game.selection.clear();
       });
       this.root.appendChild(btn);
       this._items.push({ action: a, btn });
@@ -226,6 +239,7 @@ export class RadialMenu {
 
     this.root.classList.remove('hidden');
     this._place();
+    this._refreshProgress();
   }
 
   /** re-evaluate disabled state without rebuilding DOM (smooth updates) */
@@ -240,25 +254,46 @@ export class RadialMenu {
     }
   }
 
-  /** project the tile to screen space and anchor the ring there */
+  /** Always project the ACTUAL selected building into viewport coordinates.
+   * No CSS top override or offscreen clamp is permitted to shift its anchor.
+   * Move the ACTIONS (not the selected-building marker) into the safe area.
+   */
   _place() {
     if (!this.cell) return;
-    const { x, z } = axialToWorld(this.cell.q, this.cell.r);
-    this._worldPos.set(x, TILE_H, z);
+    if (this.anchor) this._worldPos.copy(this.anchor);
+    else {
+      const { x, z } = axialToWorld(this.cell.q, this.cell.r);
+      this._worldPos.set(x, TILE_H, z);
+    }
+    this.game.camera.updateMatrixWorld();
     this._screen.copy(this._worldPos).project(this.game.camera);
     const sx = (this._screen.x * 0.5 + 0.5) * window.innerWidth;
     const sy = (-this._screen.y * 0.5 + 0.5) * window.innerHeight;
-    // Keep the original centered ring on its 3D hex. Only clamp near the
-    // viewport edges so mobile action buttons remain tappable.
+    // Exact projected point. Even at the screen edge, never float a building's
+    // information at a different/phantom hex.
+    this.root.style.left = sx + 'px';
+    this.root.style.top = sy + 'px';
+    this.root.style.visibility = this._screen.z > -1 && this._screen.z < 1 ? 'visible' : 'hidden';
+    const items=this._items||[];
+    const n=items.length;
+    if(!n)return;
     const mobile=window.innerWidth<=700;
-    const radius=mobile?115:125;
-    const left=Math.min(Math.max(sx,radius),Math.max(radius,window.innerWidth-radius));
-    const topMin=mobile?220:Math.min(125,window.innerHeight/3);
-    const topMax=Math.max(topMin,window.innerHeight-(mobile?122:115));
-    this.root.style.left = left + 'px';
-    this.root.style.top = Math.min(Math.max(sy,topMin),topMax) + 'px';
-    // hide if behind the camera
-    this.root.style.visibility = this._screen.z < 1 ? 'visible' : 'hidden';
+    const left=35,right=window.innerWidth-35;
+    const top=mobile?157:48,bottom=window.innerHeight-(mobile?85:42);
+    const constrained=sx<left+115||sx>right-115||sy<top+115||sy>bottom-115;
+    const toward=Math.atan2((top+bottom)/2-sy,(left+right)/2-sx);
+    const span=constrained?Math.PI:Math.PI*2;
+    const radius=mobile?86:RADIUS;
+    items.forEach(({btn},i)=>{
+      const angle=constrained?(toward-span/2+span*(i+.5)/n):(-Math.PI/2+span*i/n);
+      let dx=Math.cos(angle)*radius,dy=Math.sin(angle)*radius;
+      // Offscreen buttons can flip to the usable side without shifting the
+      // label/marker from the selected building.
+      const x=Math.max(left,Math.min(right,sx+dx));
+      const y=Math.max(top,Math.min(bottom,sy+dy));
+      btn.style.setProperty('--rx',(x-sx)+'px');
+      btn.style.setProperty('--ry',(y-sy)+'px');
+    });
   }
 
   /** construction progress of this tile's active works (center readout) */
