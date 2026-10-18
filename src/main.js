@@ -2,7 +2,8 @@ import { Engine, Scene, Vector3, Color3, Color4, HemisphericLight, DirectionalLi
 import '@babylonjs/loaders/glTF';
 import {applyGate,phaseForHp,clamp} from './logic.js';
 import {makeBossAttack,hitsHero,bossCasualties} from './boss-combat.js';
-import {BARRICADE_MAX_HP,BARRICADE_Z,BARRICADE_HOLD_Z,stepBarricade,advanceTowardsBarricade} from './barricade.js';
+import {stepBarricade} from './barricade.js';
+import {RUN_SPEED,BOSS_TRIGGER_Z,BOSS_STOP_Z,BOSS_WORLD_Z,LEVEL_FINISH_Z,SECTIONS,BARRIERS,WAVES,initialGates,getSection,progressPercent} from './long-level.js';
 import './style.css';
 
 const $=id=>document.getElementById(id);
@@ -16,9 +17,9 @@ const camera=new ArcRotateCamera('follow',-Math.PI/2,1.05,32,new Vector3(0,0,12)
 camera.inputs.clear(); camera.fov=.68;
 const mat=(name,hex)=>{const m=new StandardMaterial(name,scene);m.diffuseColor=Color3.FromHexString(hex);m.specularColor=new Color3(.19,.19,.22);return m;};
 const groundMat=mat('lane','#62728f'),railMat=mat('rail','#606f90'),heroMat=mat('hero','#65b8ff'),enemyMat=mat('enemy','#f04c7f'),bossMat=mat('boss','#8336a9'),hairMat=mat('hair','#c2a6ff'),whiteMat=mat('white','#efedf8'),gateBlue=mat('blueGate','#348cfa'),gateGold=mat('goldGate','#f0b64e');
-const ground=MeshBuilder.CreateGround('floor',{width:13,height:105},scene);ground.position.z=45;ground.material=groundMat;
-for(const x of [-6.75,6.75]){const wall=MeshBuilder.CreateBox('parapet',{width:.8,height:1.55,depth:105},scene);wall.position.set(x,.7,45);wall.material=railMat;}
-for(let z=0;z<90;z+=4){const strip=MeshBuilder.CreateBox('stripe',{width:12,height:.025,depth:.075},scene);strip.position.set(0,.02,z);strip.material=whiteMat;strip.visibility=.15;}
+const ground=MeshBuilder.CreateGround('floor',{width:13,height:LEVEL_FINISH_Z+45},scene);ground.position.z=(LEVEL_FINISH_Z-3)/2;ground.material=groundMat;
+for(const x of [-6.75,6.75]){const wall=MeshBuilder.CreateBox('parapet',{width:.8,height:1.55,depth:LEVEL_FINISH_Z+45},scene);wall.position.set(x,.7,(LEVEL_FINISH_Z-3)/2);wall.material=railMat;}
+for(let z=0;z<LEVEL_FINISH_Z;z+=8){const strip=MeshBuilder.CreateBox('stripe',{width:12,height:.025,depth:.075},scene);strip.position.set(0,.02,z);strip.material=whiteMat;strip.visibility=.15;}
 function box(name,w,h,d,x,y,z,material,parent){const mesh=MeshBuilder.CreateBox(name,{width:w,height:h,depth:d},scene);mesh.position.set(x,y,z);mesh.material=material;if(parent)mesh.parent=parent;return mesh;}
 function label(text,color,parent,y){const plane=MeshBuilder.CreatePlane('sign',{width:3.2,height:1.35},scene);plane.parent=parent;plane.position.y=y;plane.position.z=-.25;plane.rotation.y=Math.PI;const dt=new DynamicTexture('text',{width:512,height:210},scene,true);dt.hasAlpha=true;dt.drawText(text,null,151,'bold 133px Arial',color,'#202744',true);const sm=new StandardMaterial('textMat',scene);sm.diffuseTexture=dt;sm.emissiveColor=new Color3(.95,.95,.95);sm.backFaceCulling=false;plane.material=sm;return plane;}
 // Legible gate numbers are real 3D emissive strokes. This avoids the
@@ -61,16 +62,14 @@ const body=MeshBuilder.CreateCapsule('prototype hero',{radius:.43,height:1.75},s
 const head=MeshBuilder.CreateSphere('head',{diameter:.83},scene);head.parent=heroine;head.position.y=2.1;head.material=whiteMat;
 const hair=MeshBuilder.CreateSphere('hair',{diameter:.88,segments:12},scene);hair.parent=heroine;hair.position.set(0,2.34,-.12);hair.scaling.y=.52;hair.material=hairMat;
 box('weapon',.18,.15,.82,.42,1.32,.35,railMat,heroine);
-const gates=[
- {z:17,done:false,choices:[{x:-3,kind:'add',value:5,material:gateBlue},{x:3,kind:'multiply',value:3,material:gateGold}]},
- {z:37,done:false,choices:[{x:-3,kind:'add',value:30,material:gateBlue},{x:3,kind:'multiply',value:2,material:gateGold}]},
- {z:55,done:false,choices:[{x:-3,kind:'add',value:15,material:gateBlue},{x:3,kind:'multiply',value:2,material:gateGold}]}
-];
+const gateDanger=mat('dangerGate','#d95872');
+const gates=initialGates();
+for(const g of gates)for(const c of g.choices)c.material=c.color==='danger'?gateDanger:c.color==='gold'?gateGold:gateBlue;
 for(const gate of gates)for(const c of gate.choices){const r=new TransformNode('gate',scene);r.position.set(c.x,0,gate.z);box('gateFoot',3.6,.24,.26,0,.14,0,c.material,r);box('gateLeft',.2,2.55,.3,-1.7,1.35,0,c.material,r);box('gateRight',.2,2.55,.3,1.7,1.35,0,c.material,r);box('gateTop',3.6,.25,.3,0,2.5,0,c.material,r);box('gateBackplate',3.1,1.55,.14,0,1.43,0,c.material,r);drawGateDigits(c.kind==='multiply'?'×'+c.value:'+'+c.value,r);}
 // Breakable 300 HP siege barricade. Only Babylon meshes, PNG and CSS; no SVG.
 const woodMat=mat('siegeOak','#875737'),ironMat=mat('siegeIron','#33384f');
 const barricadeRoot=new TransformNode('siegeBarricade',scene);
-barricadeRoot.position.set(0,0,BARRICADE_Z);
+barricadeRoot.position.set(0,0,BARRIERS[0].z);
 const barricadePlanks=[];
 for(let i=0;i<15;i++){
  const x=-5.6+i*.8,height=1.95+(i%3)*.1;
@@ -93,7 +92,7 @@ function updateBarricadeLabel(hp){
  barricadeLastHp=rounded;
  barricadeText.drawText(String(rounded),null,143,'bold 130px Arial','#fff6df','#2c2434',true);
 }
-updateBarricadeLabel(BARRICADE_MAX_HP);
+updateBarricadeLabel(BARRIERS[0].hp);
 const mobRoot=new TransformNode('mobRoot',scene);
 let soldierTemplate=MeshBuilder.CreateCapsule('squad proto',{radius:.27,height:1.1},scene);soldierTemplate.isVisible=false;soldierTemplate.material=heroMat;
 let squadScale=1,squadBaseY=.58;let activeBillboards=false;const allySprites=[];
@@ -118,8 +117,8 @@ while(soldierMeshes.length<visible){const a=soldierTemplate.createInstance('sold
 soldierMeshes.forEach((a,i)=>{a.isVisible=i<visible;if(i<visible){const col=i%11,row=Math.floor(i/11);a.position.set(heroine.position.x+(col-5)*.37,squadBaseY+Math.sin(state.time*7+i*.7)*.045,heroine.position.z-1.2-row*.54);}});}
 let allySpriteManager=null,enemySpriteManager=null;
 const enemyBase=MeshBuilder.CreateCapsule('enemy base',{radius:.28,height:1.3},scene);enemyBase.isVisible=false;enemyBase.material=enemyMat;
-const enemies=[];for(let i=0;i<135;i++){const n=enemyBase.createInstance('enemy_'+i);n.position.set((i%13-6)*.66,.7,25+Math.floor(i/13)*1.65);enemies.push(n);}
-const bossRoot=new TransformNode('bossRoot',scene);bossRoot.position.set(0,0,77);
+const enemies=[];for(let i=0;i<135;i++){const n=enemyBase.createInstance('enemy_'+i);n.position.set((i%13-6)*.66,.7,44+Math.floor(i/13)*1.65);n.isVisible=false;enemies.push(n);}
+const bossRoot=new TransformNode('bossRoot',scene);bossRoot.position.set(0,0,BOSS_WORLD_Z);
 const warningMat=mat('bossWarning','#ff4e83');warningMat.alpha=.3;warningMat.emissiveColor=new Color3(.8,.1,.3);
 const warning=MeshBuilder.CreateGround('bossWarningZone',{width:3.4,height:15},scene);
 warning.material=warningMat;warning.position.y=.12;warning.setEnabled(false);
@@ -153,18 +152,18 @@ async function decorateStage(){
  const home=import.meta.env.BASE_URL+'assets/environment/';
  const walls=[],towers=[],trees=[],rocks=[],flags=[];
  
- for(let z=1;z<92;z+=6.0){walls.push([-7.6,0,z,6.0],[7.6,0,z,6.0]);}
- for(let z=10;z<92;z+=16)towers.push([-6.8,0,z,3.7],[6.8,0,z,3.7]);
- for(let z=7;z<96;z+=13)trees.push([-13,0,z,3], [12.5,0,z+5,2.7]);
- for(let z=11;z<96;z+=18)rocks.push([-10.4,0,z,2.1],[11,0,z+8,2.3]);
- flags.push([-6.7,3.4,72,3.2],[6.7,3.4,72,3.2]);
+ for(let z=1;z<LEVEL_FINISH_Z;z+=13.0){walls.push([-7.6,0,z,6.0],[7.6,0,z,6.0]);}
+ for(let z=10;z<LEVEL_FINISH_Z;z+=48)towers.push([-6.8,0,z,3.7],[6.8,0,z,3.7]);
+ for(let z=7;z<LEVEL_FINISH_Z;z+=39)trees.push([-13,0,z,3], [12.5,0,z+5,2.7]);
+ for(let z=11;z<LEVEL_FINISH_Z;z+=55)rocks.push([-10.4,0,z,2.1],[11,0,z+8,2.3]);
+ flags.push([-6.7,3.4,BOSS_WORLD_Z-10,3.2],[6.7,3.4,BOSS_WORLD_Z-10,3.2]);
  const stoneMat=mat('castleStone','#8291aa'),towerMat=mat('castlePillars','#aab5c8'),forestMat=mat('woodland','#3f8f75'),rocksMat=mat('stones','#627288'),bannerMat=mat('castleBanners','#ab779e');
  
  // Castle side walls are batched modular stone blocks while GLB wall-block is
  // excluded: its upstream texture is not supported in Chromium and caused a silent fallback.
- for(let z=1;z<92;z+=6){
+ for(let z=1;z<LEVEL_FINISH_Z;z+=13){
   for(const x of [-7.25,7.25]){
-   const outer=box('castleStoneSegment',.75,2.5,5.75,x,1.18,z,stoneMat);
+   const outer=box('castleStoneSegment',.75,2.5,12.7,x,1.18,z,stoneMat);
    outer.freezeWorldMatrix();
   }
  }
