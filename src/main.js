@@ -241,7 +241,7 @@ async function initCrowdBillboards(){
 initCrowdBillboards();
 function tickBullets(dt){
  shotCooldown-=dt;
- if(state.running&&shotCooldown<=0&&state.z>21&&state.z<91){
+ if(state.running&&!state.paused&&shotCooldown<=0&&state.z>21&&state.z<91){
   shotCooldown=state.z>64?.09:.135;
   const found=bullets.find(p=>p.life<=0);
   if(found){found.life=.42;found.mesh.position.set(state.x+.4,1.28,state.z+.8);found.mesh.setEnabled(true);}
