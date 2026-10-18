@@ -17,7 +17,7 @@ with sync_playwright() as p:
   page.on("console",lambda e:console.append(e.type+": "+e.text))
   page.on("response",lambda response:assets.append({"url":response.url,"status":response.status}) if ".glb" in response.url else None)
   try:
-   page.goto("http://127.0.0.1:4173/Defense/",wait_until="domcontentloaded",timeout=40000)
+   page.goto("http://127.0.0.1:4173/Defense/?acceleratedQa=1",wait_until="domcontentloaded",timeout=40000)
    page.wait_for_timeout(3000)
    page.screenshot(path=str(output/(label+"-menu.png")))
    page.locator("#startBtn").click()
@@ -25,7 +25,7 @@ with sync_playwright() as p:
    initial_orientation=page.evaluate("window.__defenseQa().projection")
    assert initial_orientation["cameraBehind"], "Camera is in FRONT of heroine: "+str(initial_orientation)
    assert initial_orientation["futureAboveHero"], "Future +Z renders BELOW heroine: "+str(initial_orientation)
-   page.wait_for_timeout(6400)
+   page.wait_for_timeout(2200)
    page.screenshot(path=str(output/(label+"-running.png")))
    units=page.locator("#units").inner_text()
    gameplay=page.evaluate("window.__defenseQa && window.__defenseQa()")
@@ -41,25 +41,25 @@ with sync_playwright() as p:
    page.wait_for_timeout(300)
    resume_ok=(page.evaluate("window.__defenseQa().paused") is False)
    # The first obstacle must physically stop player movement and lose HP to automatic fire.
-   page.wait_for_function("window.__defenseQa && window.__defenseQa().wallStoppedSeconds>0",timeout=40000)
+   page.wait_for_function("window.__defenseQa && window.__defenseQa().wallStoppedSeconds>0 && window.__defenseQa().wallHp<300",timeout=150000)
    page.screenshot(path=str(output/(label+"-barricade.png")))
    wall_gameplay=page.evaluate("window.__defenseQa()")
    # After basic play, keep the real WebGL engine running into the boss zone.
-   page.wait_for_function("window.__defenseQa && (window.__defenseQa().z>=67 || window.__defenseQa().finished)",timeout=40000)
+   page.wait_for_function("window.__defenseQa && (window.__defenseQa().z>=676 || window.__defenseQa().finished)",timeout=180000)
    page.wait_for_timeout(750)
    page.screenshot(path=str(output/(label+"-boss.png")))
    boss_gameplay=page.evaluate("window.__defenseQa && window.__defenseQa()")
    # Prove one whole stage can be completed, then restart without browser reload.
-   page.wait_for_function("window.__defenseQa && window.__defenseQa().finished",timeout=55000)
+   page.wait_for_function("window.__defenseQa && window.__defenseQa().finished",timeout=90000)
    victory=page.evaluate("window.__defenseQa && window.__defenseQa()")
    page.screenshot(path=str(output/(label+"-result.png")))
    victory_ok=victory["finished"] and victory["score"]>=10000 and page.locator("#front").is_visible()
    page.locator("#startBtn").click()
    page.wait_for_timeout(500)
    restarted=page.evaluate("window.__defenseQa()")
-   restart_ok=(restarted["running"] and not restarted["paused"] and restarted["z"]<7 and restarted["bossHp"]==1600 and restarted["score"]==0)
+   restart_ok=(restarted["running"] and not restarted["paused"] and restarted["z"]<7 and restarted["bossHp"]==5000 and restarted["score"]==0)
    webgl_failure=any("WebGL not supported" in e or "WebGL not supported" in c for e in errors for c in console)
-   status="passed" if not errors and any(x["url"].endswith("medieval.glb") and x["status"]==200 for x in assets) and any(x["url"].endswith("witch.glb") and x["status"]==200 for x in assets) and initial_orientation["cameraBehind"] and initial_orientation["futureAboveHero"] and gameplay and gameplay["elapsed"]>1 and gameplay["z"]>4 and gameplay.get("billboards") and gameplay.get("enemySprites",0)>=130 and gameplay.get("allySprites",0)>=10 and boss_gameplay and boss_gameplay["z"]>=67 and boss_gameplay["bossHp"]<1600 and boss_gameplay.get("attacksLaunched",0)>=1 and boss_gameplay.get("bossAnimationsLoaded",0)>=24 and boss_gameplay.get("bossLastAnimation") not in (None,"Idle") and pause_ok and resume_ok and victory_ok and restart_ok and wall_gameplay['wallStoppedSeconds']>0 and wall_gameplay['wallHp']<300 and boss_gameplay['wallHp']==0 and boss_gameplay['wallDamage']>=300 and restarted['wallHp']==300 else "failed"
+   status="passed" if not errors and any(x["url"].endswith("medieval.glb") and x["status"]==200 for x in assets) and any(x["url"].endswith("witch.glb") and x["status"]==200 for x in assets) and initial_orientation["cameraBehind"] and initial_orientation["futureAboveHero"] and gameplay and gameplay["elapsed"]>1 and gameplay["z"]>4 and gameplay.get("billboards") and gameplay.get("enemySprites",0)>=130 and gameplay.get("allySprites",0)>=10 and boss_gameplay and boss_gameplay["z"]>=676 and boss_gameplay["bossHp"]<5000 and boss_gameplay.get("attacksLaunched",0)>=1 and boss_gameplay.get("bossAnimationsLoaded",0)>=24 and boss_gameplay.get("bossLastAnimation") not in (None,"Idle") and pause_ok and resume_ok and victory_ok and restart_ok and wall_gameplay['wallStoppedSeconds']>0 and wall_gameplay['wallHp']<300 and boss_gameplay['wallHp']==0 and boss_gameplay['wallDamage']>=300 and restarted['wallHp']==300 and boss_gameplay['wallsBroken']==4 and boss_gameplay['wavesCleared']>=12 and boss_gameplay['enemiesDefeated']>1500 and boss_gameplay['section']>=8 else "failed"
    report.append({"device":label,"status":status,"initial_orientation":initial_orientation,"units":units,"gameplay":gameplay,"wall_gameplay":wall_gameplay,"boss_gameplay":boss_gameplay,"pause_ok":pause_ok,"resume_ok":resume_ok,"victory":victory,"victory_ok":victory_ok,"restart_ok":restart_ok,"js_errors":errors[:10],"console_tail":console[-12:],"glb_requests":assets})
   except Exception as e:
    report.append({"device":label,"status":"failed","error":str(e)[:1000],"js_errors":errors})
