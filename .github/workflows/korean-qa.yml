@@ -35,10 +35,14 @@ jobs:
           python test/run_headless.py
           python test/run_headless.py http://127.0.0.1:8123/test/smoke_military.html
       - name: Test Korean game in desktop and mobile Chromium
-        run: python scripts/qa_korean.py
+        run: |
+          python scripts/qa_korean.py
+          python scripts/qa_backups.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: korean-slg-desktop-mobile
-          path: qa/korean/
+          path: |
+            qa/korean/
+            qa/backup/
           if-no-files-found: ignore
