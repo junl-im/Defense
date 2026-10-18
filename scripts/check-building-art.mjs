@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { VILLAGE_ART_CATALOG, artBuildingKey } from '../src/rendering/VillageBuildingArt.js';
+import { VILLAGE_ART_CATALOG, artBuildingKey } from '../src/rendering/VillageBuildingCatalog.js';
 assert.deepEqual(Object.keys(VILLAGE_ART_CATALOG).sort(),['barracks','farm','market']);
 for(const [id,url] of Object.entries(VILLAGE_ART_CATALOG)){
   assert(url.endsWith('.gltf'),id);

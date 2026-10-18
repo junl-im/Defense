@@ -5,14 +5,7 @@
 import * as THREE from 'three';
 import { events } from '../core/Events.js';
 
-export const VILLAGE_ART_CATALOG = Object.freeze({
-  farm: 'assets/quaternius/farm-second-age-3.gltf',
-  market: 'assets/quaternius/market-first-age-3.gltf',
-  barracks: 'assets/quaternius/barracks-first-age-3.gltf',
-});
-export function artBuildingKey(cellKey, rec) {
-  return cellKey + '/' + rec.slot + '/' + rec.id;
-}
+import { VILLAGE_ART_CATALOG, artBuildingKey } from './VillageBuildingCatalog.js';
 
 export class VillageBuildingArt {
   constructor(game) {
@@ -58,6 +51,11 @@ export class VillageBuildingArt {
             size.x <= 0 || size.y <= 0 || size.z <= 0) {
           throw new Error('3D 건축 모델 크기가 잘못되었습니다.');
         }
+        // TileFactory.removeCell() disposes only non-shared geometries.
+        // Our cloned models share glTF buffers and must remain reusable after restart.
+        scene.traverse(node => {
+          if (node.isMesh && node.geometry) node.geometry.userData.shared = true;
+        });
         this.templates.set(id, { scene, bounds, size });
       } catch (error) {
         this.failed.add(id);
