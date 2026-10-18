@@ -5,14 +5,14 @@ import {makeBossAttack,hitsHero,bossCasualties} from './boss-combat.js';
 import './style.css';
 
 const $=id=>document.getElementById(id);
-$('heroPreview').src=import.meta.env.BASE_URL+'assets/sprites/ally-female.png';
+$('heroPreview').src=import.meta.env.BASE_URL+'assets/sprites/heroine-portrait.png';
 const canvas=$('gameCanvas'),engine=new Engine(canvas,true,{preserveDrawingBuffer:false,stencil:true});
 const scene=new Scene(engine);
 scene.clearColor=new Color4(.045,.055,.11,1);
 const light=new HemisphericLight('ambient',new Vector3(.2,1,.2),scene); light.intensity=.7;
 const sun=new DirectionalLight('sun',new Vector3(-.4,-1,.5),scene);sun.intensity=.9;
 const camera=new ArcRotateCamera('follow',Math.PI/2,1.05,32,new Vector3(0,0,12),scene);
-camera.inputs.clear(); camera.fov=.74;
+camera.inputs.clear(); camera.fov=.68;
 const mat=(name,hex)=>{const m=new StandardMaterial(name,scene);m.diffuseColor=Color3.FromHexString(hex);m.specularColor=new Color3(.19,.19,.22);return m;};
 const groundMat=mat('lane','#62728f'),railMat=mat('rail','#606f90'),heroMat=mat('hero','#65b8ff'),enemyMat=mat('enemy','#f04c7f'),bossMat=mat('boss','#8336a9'),hairMat=mat('hair','#c2a6ff'),whiteMat=mat('white','#efedf8'),gateBlue=mat('blueGate','#348cfa'),gateGold=mat('goldGate','#f0b64e');
 const ground=MeshBuilder.CreateGround('floor',{width:13,height:105},scene);ground.position.z=45;ground.material=groundMat;
@@ -291,7 +291,7 @@ if(state.z>66){
 $('hitFlash').classList.toggle('active',state.running&&state.time<hitFlashUntil);
 if(state.z>94)complete(false);
 renderHud();}
-tickBullets(state.paused?0:dt);drawSquad(state.units);camera.target.set(state.x*.18,0,state.z+9.0);camera.position.set(state.x*.22,15.5,state.z-12.5);scene.render();});
+tickBullets(state.paused?0:dt);drawSquad(state.units);camera.target.set(state.x*.18,0,state.z+2.7);camera.position.set(state.x*.22,12.8,state.z-10.2);scene.render();});
 // Read-only QA telemetry; does not change gameplay.
 window.__defenseQa=()=>({running:state.running,paused:state.paused,finished:state.finished,bossPattern:pendingAttack?.type||'none',attacksLaunched:attackCount,bossLastAnimation:lastBossAnimation,bossAnimationsLoaded:bossAnimationGroups?.length||0,z:+state.z.toFixed(2),units:state.units,score:state.score,bossHp:Math.ceil(state.bossHp),elapsed:+state.time.toFixed(2),fps:Math.round(engine.getFps()),meshes:scene.meshes.length,billboards:activeBillboards,enemySprites:activeBillboards?enemies.length:0,allySprites:allySprites.length,sceneReady:scene.isReady()});
 window.addEventListener('resize',()=>engine.resize());
