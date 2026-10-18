@@ -66,3 +66,7 @@ Korean tutorial missions guide players through land expansion, forest, farmland,
 ## 라니킹덤 v0.5 — 마을과 필드 분리
 
 첫 시작은 3×3 마을 건설 화면입니다. 중심 건물 승격으로 4×4/5×5/6×6 확장하고, 필드 나가기 / 내 마을 버튼으로 3D 월드와 전환합니다. 마을 중에는 월드 3D 렌더링을 중단합니다. 건설 취소 시 자원 80% 반환, 진행 상태 한글화, 얇은 스크롤바 적용. 상세 구현 범위와 이식 후보의 라이선스는 [라니킹덤 MASTER](docs/RANI_KINGDOM_MASTER_KO.md)를 참조하세요.
+
+## 라니킹덤 v0.7 — 3D 건설 화면이 마을입니다
+
+v0.5의 별도 이모지/DIV 마을 화면을 철회했습니다. **원본 MIT Hexkingdom의 완성된 Three.js 3D 건설 화면**에서 마을을 발전시킵니다. 중심 건물 승격으로 건설 가능 좌표를 3×3→4×4→5×5→6×6 확장하고, 외부 세계는 실제 FactionSystem 세력을 표시하는 별도 전략 지도에서 확인합니다. 외부 소스 이식 판단과 세이브 보존 정책은 [3D 마을 MASTER](docs/RANI_KINGDOM_NATIVE_3D_MASTER_KO.md)를 보세요.
