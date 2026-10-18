@@ -20,7 +20,7 @@ const ground=MeshBuilder.CreateGround('floor',{width:13,height:105},scene);groun
 for(const x of [-6.75,6.75]){const wall=MeshBuilder.CreateBox('parapet',{width:.8,height:1.55,depth:105},scene);wall.position.set(x,.7,45);wall.material=railMat;}
 for(let z=0;z<90;z+=4){const strip=MeshBuilder.CreateBox('stripe',{width:12,height:.025,depth:.075},scene);strip.position.set(0,.02,z);strip.material=whiteMat;strip.visibility=.15;}
 function box(name,w,h,d,x,y,z,material,parent){const mesh=MeshBuilder.CreateBox(name,{width:w,height:h,depth:d},scene);mesh.position.set(x,y,z);mesh.material=material;if(parent)mesh.parent=parent;return mesh;}
-function label(text,color,parent,y){const plane=MeshBuilder.CreatePlane('sign',{width:3.2,height:1.35},scene);plane.parent=parent;plane.position.y=y;plane.rotation.y=Math.PI;const dt=new DynamicTexture('text',{width:512,height:210},scene,true);dt.hasAlpha=true;dt.drawText(text,null,151,'bold 133px Arial',color,'#202744',true);const sm=new StandardMaterial('textMat',scene);sm.diffuseTexture=dt;sm.emissiveColor=new Color3(.95,.95,.95);sm.backFaceCulling=false;plane.material=sm;return plane;}
+function label(text,color,parent,y){const plane=MeshBuilder.CreatePlane('sign',{width:3.2,height:1.35},scene);plane.parent=parent;plane.position.y=y;plane.position.z=-.25;plane.rotation.y=Math.PI;const dt=new DynamicTexture('text',{width:512,height:210},scene,true);dt.hasAlpha=true;dt.drawText(text,null,151,'bold 133px Arial',color,'#202744',true);const sm=new StandardMaterial('textMat',scene);sm.diffuseTexture=dt;sm.emissiveColor=new Color3(.95,.95,.95);sm.backFaceCulling=false;plane.material=sm;return plane;}
 const heroine=new TransformNode('heroRoot',scene);heroine.position.set(0,0,3);
 const body=MeshBuilder.CreateCapsule('prototype hero',{radius:.43,height:1.75},scene);body.parent=heroine;body.position.y=1;body.material=heroMat;
 const head=MeshBuilder.CreateSphere('head',{diameter:.83},scene);head.parent=heroine;head.position.y=2.1;head.material=whiteMat;
@@ -152,7 +152,20 @@ async function decorateStage(){
    foliage.material=tier?lightLeaf:deepLeaf;foliage.freezeWorldMatrix();
   }
  }
- const designs=[['rock-large',rocks,rocksMat],['banner-red',flags,bannerMat]];
+ // These two original GLBs include browser-incompatible embedded textures.
+ // Preserve source GLBs in the asset archive; ship dependable polygon props here.
+ for(const [x,,z,scale] of rocks){
+  const boulder=MeshBuilder.CreatePolyhedron('rockOutcrop',{type:2,size:scale*.66},scene);
+  boulder.position.set(x,.2,z);boulder.scaling.y=.82;boulder.material=rocksMat;boulder.freezeWorldMatrix();
+ }
+ for(const [x,,z,scale] of flags){
+  const flagPole=MeshBuilder.CreateCylinder('bannerPost',{height:scale,diameter:.13,tessellation:8},scene);
+  flagPole.position.set(x,scale/2,z);flagPole.material=towerMat;flagPole.freezeWorldMatrix();
+  const cloth=MeshBuilder.CreatePlane('castleBanner',{width:1.2,height:2},scene);
+  cloth.position.set(x,scale-.9,z);cloth.material=bannerMat;
+  bannerMat.backFaceCulling=false;cloth.freezeWorldMatrix();
+ }
+ const designs=[];
  await Promise.all(designs.map(async ([name,locations,material])=>{
   try {
    const pack=await SceneLoader.ImportMeshAsync('',home,name+'.glb',scene);
@@ -218,7 +231,7 @@ canvas.addEventListener('pointerdown',e=>{pointerStart=e.clientX;canvas.setPoint
 canvas.addEventListener('pointermove',e=>{if(pointerStart!==null){state.x=clamp(state.x+(e.clientX-pointerStart)*.014,-4.9,4.9);pointerStart=e.clientX;}});
 canvas.addEventListener('pointerup',()=>pointerStart=null);
 function complete(win){state.running=false;state.finished=true;$('front').classList.remove('hidden');$('front').querySelector('h1').innerHTML=win?'작전 <em>성공</em>':'작전 <em>실패</em>';$('front').querySelector('.eyebrow').textContent=win?'MISSION CLEARED':'MISSION FAILED';$('startBtn').innerHTML='다시 도전 →';}
-async function tryLoadApprovedModel(path,parent,scale,clip='Idle'){try{const exists=await fetch(path,{method:'HEAD'});if(!exists.ok)return false;const file=path.split('/').pop(),dir=path.slice(0,path.lastIndexOf('/')+1);const result=await SceneLoader.ImportMeshAsync('',dir,file,scene);const group=new TransformNode('approvedArt',scene);group.parent=parent;group.scaling.setAll(scale);result.meshes.forEach(m=>{if(!m.parent)m.parent=group;});if(parent===heroine){[body,head,hair].forEach(m=>m.setEnabled(false));scene.getMeshByName('weapon')?.setEnabled(false);}
+async function tryLoadApprovedModel(path,parent,scale,clip='Idle'){try{const exists=await fetch(path,{method:'HEAD'});if(!exists.ok)return false;const file=path.split('/').pop(),dir=path.slice(0,path.lastIndexOf('/')+1);const result=await SceneLoader.ImportMeshAsync('',dir,file,scene);const group=new TransformNode('approvedArt',scene);group.parent=parent;group.scaling.setAll(scale);if(parent!==bossRoot)group.rotation.y=Math.PI;result.meshes.forEach(m=>{if(!m.parent)m.parent=group;});if(parent===heroine){[body,head,hair].forEach(m=>m.setEnabled(false));scene.getMeshByName('weapon')?.setEnabled(false);}
 if(parent===bossRoot){bossPrototypeMeshes.forEach(m=>m.setEnabled(false));bossAnimationGroups=result.animationGroups||null;}
 const animation=result.animationGroups?.find(a=>a.name===clip)||result.animationGroups?.find(a=>a.name==='Idle');
 if(animation)animation.start(true,/^Run/.test(clip)?1.05:.75);
