@@ -56,17 +56,17 @@ export class ProgressionSystem {
     return [
       {
         id: 'tiles',
-        label: `Tiles under control: ${owned} / ${nxt.minTiles}`,
+        label: `보유 영토: ${owned} / ${nxt.minTiles}`,
         ok: owned >= nxt.minTiles,
       },
       {
         id: 'stability',
-        label: `Stability: ${Math.round(this.resources.stability)} / ${nxt.minStability}`,
+        label: `안정도: ${Math.round(this.resources.stability)} / ${nxt.minStability}`,
         ok: this.resources.stability >= nxt.minStability,
       },
       {
         id: 'cost',
-        label: `Cost: ${fmtCost(nxt.upgradeCost)}`,
+        label: `필요 자원: ${fmtCost(nxt.upgradeCost)}`,
         ok: this.resources.canAfford(nxt.upgradeCost),
       },
     ];
@@ -76,8 +76,8 @@ export class ProgressionSystem {
    * Check upgrade preconditions. Returns { ok, reason }.
    */
   canStartUpgrade() {
-    if (this.maxed) return { ok: false, reason: 'Already a Kingdom — max tier reached' };
-    if (this.upgrading) return { ok: false, reason: 'Upgrade already in progress' };
+    if (this.maxed) return { ok: false, reason: '왕국 최고 단계입니다' };
+    if (this.upgrading) return { ok: false, reason: '왕국 승격이 이미 진행 중입니다' };
     const missing = this.upgradeRequirements().filter((r) => !r.ok);
     if (missing.length) {
       return { ok: false, reason: missing.map((r) => r.label).join(' · ') };
@@ -93,7 +93,7 @@ export class ProgressionSystem {
       return false;
     }
     const nxt = this.next;
-    if (!this.resources.spend(nxt.upgradeCost, `Upgrade → ${nxt.name}`)) return false;
+    if (!this.resources.spend(nxt.upgradeCost, `${nxt.name}(으)로 승격`)) return false;
     this.upgrading = true;
     this.upgradeT = nxt.upgradeTime;
     events.emit('progression:started', { to: nxt.name, time: nxt.upgradeTime });

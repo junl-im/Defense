@@ -76,12 +76,12 @@ export class ArmySystem {
 
   canRecruit(type) {
     const def = UNIT_TYPES[type];
-    if (!def) return { ok: false, reason: 'Unknown unit' };
+    if (!def) return { ok: false, reason: '알 수 없는 병종입니다' };
     if (this.baseStrength + def.strength > this.cap) {
-      return { ok: false, reason: `Army cap reached (${Math.round(this.cap)}) — build barracks` };
+      return { ok: false, reason: `병력 한도(${Math.round(this.cap)})에 도달했습니다. 병영을 건설하세요` };
     }
     if (!this.resources.canAfford(def.cost)) {
-      return { ok: false, reason: `Not enough resources (${fmtCost(def.cost)})` };
+      return { ok: false, reason: `모집 자원이 부족합니다 (${fmtCost(def.cost)})` };
     }
     return { ok: true, reason: '' };
   }
@@ -93,7 +93,7 @@ export class ArmySystem {
       return false;
     }
     const def = UNIT_TYPES[type];
-    if (!this.resources.spend(def.cost, `Recruit ${def.name}`)) return false;
+    if (!this.resources.spend(def.cost, `${def.name} 모집`)) return false;
     this.units[type] = (this.units[type] || 0) + 1;
     if (cell) this._spawnUnitFx(cell, [def.maker], 2.2);
     events.emit('army:changed', { units: { ...this.units }, strength: this.strength });
@@ -115,15 +115,15 @@ export class ArmySystem {
 
   /** target must be enemy-owned and touch player land */
   canAttack(cell) {
-    if (!cell.owner || cell.owner === 'player') return { ok: false, reason: 'Not an enemy tile' };
+    if (!cell.owner || cell.owner === 'player') return { ok: false, reason: '적 영토가 아닙니다' };
     const touches = neighbors(cell.q, cell.r).some((n) => {
       const nc = this.game.grid.get(n.q, n.r);
       return nc && (!nc.owner || nc.owner === 'player');
     });
-    if (!touches) return { ok: false, reason: 'Must border your territory' };
-    if (this.unitCount === 0) return { ok: false, reason: 'No army — recruit units at a barracks or garrison' };
+    if (!touches) return { ok: false, reason: '내 영토와 맞닿은 곳만 공격할 수 있습니다' };
+    if (this.unitCount === 0) return { ok: false, reason: '병력이 없습니다. 병영 또는 주둔지에서 병사를 모집하세요' };
     if (!this.resources.canAfford(ATTACK_SUPPLY_COST)) {
-      return { ok: false, reason: `Needs supplies (${fmtCost(ATTACK_SUPPLY_COST)})` };
+      return { ok: false, reason: `공격 보급이 부족합니다 (${fmtCost(ATTACK_SUPPLY_COST)})` };
     }
     return { ok: true, reason: '' };
   }

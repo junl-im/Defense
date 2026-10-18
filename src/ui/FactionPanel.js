@@ -8,11 +8,11 @@ import { events } from '../core/Events.js';
 import { iconHtml, iconLabel } from './GameIcons.js';
 
 const REL_LABEL = {
-  friendly_kingdom: { text: 'Allied', cls: 'rel-friendly' },
-  neutral_village: { text: 'Neutral', cls: 'rel-neutral' },
-  hostile_kingdom: { text: 'Hostile', cls: 'rel-hostile' },
-  barbarian_clan: { text: 'Hostile', cls: 'rel-hostile' },
-  bandit_camp: { text: 'Hostile', cls: 'rel-hostile' },
+  friendly_kingdom: { text: '동맹', cls: 'rel-friendly' },
+  neutral_village: { text: '중립', cls: 'rel-neutral' },
+  hostile_kingdom: { text: '적대', cls: 'rel-hostile' },
+  barbarian_clan: { text: '적대', cls: 'rel-hostile' },
+  bandit_camp: { text: '적대', cls: 'rel-hostile' },
 };
 
 export class FactionPanel {
@@ -28,15 +28,15 @@ export class FactionPanel {
     const root = document.createElement('aside');
     root.id = 'faction-panel';
     root.className = 'hud-side-panel hud-side-right';
-    root.setAttribute('aria-label', 'Neighbouring factions');
+    root.setAttribute('aria-label', '주변 세력');
 
     root.innerHTML = `
       <div class="hud-panel-head">
-        <h2 class="hud-panel-title">Factions</h2>
-        <button type="button" class="hud-panel-toggle" id="fp-toggle" aria-label="Collapse panel">−</button>
+        <h2 class="hud-panel-title">주변 세력</h2>
+        <button type="button" class="hud-panel-toggle" id="fp-toggle" aria-label="창 접기">−</button>
       </div>
       <button type="button" class="hud-toggle-btn" id="fp-borders-btn"
-        data-tip="Show faction territory borders on the map">${iconHtml('borders')} Borders</button>
+        data-tip="지도에 세력 경계 표시">${iconHtml('borders')} 경계 보기</button>
       <div class="faction-list" id="fp-list"></div>`;
     document.body.appendChild(root);
     this.root = root;
@@ -62,15 +62,15 @@ export class FactionPanel {
     events.on('factions:generated', () => this.refresh());
     events.on('factions:tick', () => this.refresh());
     events.on('faction:raided', ({ faction, cell }) => {
-      this.game.ui.toast(`${iconLabel('sword')} ${faction.label} raided your ${cell.tileType}!`);
+      this.game.ui.toast(`${iconLabel('sword')} ${faction.label}이(가) 우리 영토를 약탈했습니다!`);
       this.refresh();
     });
     events.on('faction:tribute', ({ faction, gold }) => {
-      this.game.ui.toast(`${iconLabel('gift')} Tribute from ${faction.label}: +${gold} gold`);
+      this.game.ui.toast(`${iconLabel('gift')} ${faction.label}에서 조공 도착: 금화 +${gold}`);
       this.refresh();
     });
     events.on('territory:captured', ({ factionLabel }) => {
-      this.game.ui.toast(`${iconLabel('flag')} ${factionLabel || 'Enemies'} captured a border tile!`);
+      this.game.ui.toast(`${iconLabel('flag')} ${factionLabel || '적군'}이(가) 국경 영토를 점령했습니다!`);
       this.refresh();
     });
     events.on('territory:reclaimed', () => this.refresh());
@@ -79,18 +79,18 @@ export class FactionPanel {
   refresh() {
     const fs = this.game.factionSystem;
     if (!fs?.factions?.length) {
-      this.el.list.innerHTML = '<p class="hud-muted">No neighbours yet…</p>';
+      this.el.list.innerHTML = '<p class="hud-muted">아직 주변 세력이 없습니다</p>';
       return;
     }
 
     const html = fs.factions.map((f) => {
-      const rel = REL_LABEL[f.archetype] || { text: f.hostile ? 'Hostile' : 'Neutral', cls: f.hostile ? 'rel-hostile' : 'rel-neutral' };
+      const rel = REL_LABEL[f.archetype] || { text: f.hostile ? '적대' : '중립', cls: f.hostile ? 'rel-hostile' : 'rel-neutral' };
       const tribute = f.archetype === 'friendly_kingdom'
-        ? '<span class="fp-tribute">Tribute ~' + Math.round(2 + f.strength * 0.05) + iconLabel('gold') + '/min</span>'
+        ? '<span class="fp-tribute">조공 약 ' + Math.round(2 + f.strength * 0.05) + iconLabel('gold') + '/분</span>'
         : '';
       const homeDist = Math.abs(f.home.q) + Math.abs(f.home.r);
       return `
-        <div class="faction-card ${rel.cls}" data-tip="<b>${f.label}</b><br>Tiles: ${f.territory.size}<br>Strength: ${Math.round(f.strength)}<br>Settlement ${homeDist} tiles away">
+        <div class="faction-card ${rel.cls}" data-tip="<b>${f.label}</b><br>영토: ${f.territory.size}개<br>전투력: ${Math.round(f.strength)}<br>정착지까지 약 ${homeDist}칸">
           <span class="fp-icon">${iconHtml(f.icon)}</span>
           <div class="fp-body">
             <span class="fp-name">${f.label}</span>

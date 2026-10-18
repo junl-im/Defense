@@ -9,7 +9,7 @@
 export const BUILDINGS = {
   farm: {
     id: 'farm',
-    name: 'Farm',
+    name: '농장',
     icon: 'farm',
     cost: { wood: 20, gold: 5 },
     buildTime: 20,                    // seconds
@@ -17,11 +17,11 @@ export const BUILDINGS = {
     tiles: ['field', 'meadow', 'village'],
     research: 'agriculture',          // required research id (null = free)
     maker: 'barn',                    // BUILDING_MAKERS key for visuals
-    desc: 'Produces food. Best near villages.',
+    desc: '식량을 생산합니다. 마을 근처에서 효율적입니다.',
   },
   lumber_mill: {
     id: 'lumber_mill',
-    name: 'Lumber Mill',
+    name: '벌목장',
     icon: 'lumber_mill',
     cost: { wood: 15, stone: 5 },
     buildTime: 25,
@@ -29,11 +29,11 @@ export const BUILDINGS = {
     tiles: ['forest'],
     research: null,
     maker: 'lumberMill',
-    desc: 'Harvests the forest for extra wood.',
+    desc: '숲에서 목재를 추가로 생산합니다.',
   },
   mine: {
     id: 'mine',
-    name: 'Mine',
+    name: '광산',
     icon: 'mine',
     cost: { wood: 25, stone: 10 },
     buildTime: 30,
@@ -41,11 +41,11 @@ export const BUILDINGS = {
     tiles: ['mountain', 'hills', 'quarry'],
     research: 'mining',
     maker: 'mine',
-    desc: 'Extracts stone and a trickle of gold.',
+    desc: '석재와 소량의 금화를 생산합니다.',
   },
   market: {
     id: 'market',
-    name: 'Market',
+    name: '시장',
     icon: 'market',
     cost: { wood: 30, gold: 15 },
     buildTime: 35,
@@ -54,11 +54,11 @@ export const BUILDINGS = {
     research: 'trade',
     maker: 'market',
     trade: 0.6,                       // surplus auto-sell power
-    desc: 'Trade stalls that generate gold and sell surplus goods.',
+    desc: '금화를 생산하고 남는 물자를 판매합니다.',
   },
   watchtower: {
     id: 'watchtower',
-    name: 'Watchtower',
+    name: '감시탑',
     icon: 'watchtower',
     cost: { wood: 20, stone: 15 },
     buildTime: 30,
@@ -67,13 +67,13 @@ export const BUILDINGS = {
     frontierOnly: true,               // …but only on the frontier
     research: 'military',
     maker: 'towerWatch',
-    desc: 'Frontier defense. Counts toward kingdom defense.',
+    desc: '변경을 방어하고 왕국 방어력을 높입니다.',
     onComplete: 'tower',              // increments defense building counter
     upgradesTo: 'archer_tower',       // in-place upgrade chain
   },
   storage: {
     id: 'storage',
-    name: 'Storage',
+    name: '창고',
     icon: 'storage',
     cost: { wood: 25, stone: 20 },
     buildTime: 25,
@@ -82,12 +82,12 @@ export const BUILDINGS = {
     research: 'engineering',
     maker: 'storage',
     capBonus: 80,                     // storage cap increase
-    desc: '+80 storage capacity.',
+    desc: '자원 저장 한도가 80 증가합니다.',
   },
   // -------- military & trade expansion --------
   trade_post: {
     id: 'trade_post',
-    name: 'Trade Post',
+    name: '교역소',
     icon: 'trade_post',
     cost: { wood: 10, gold: 8 },
     buildTime: 12,
@@ -96,11 +96,11 @@ export const BUILDINGS = {
     research: 'trade',
     maker: 'tradeMarker',
     trade: 0.35,
-    desc: 'Waystation post that earns gold and sells surplus goods.',
+    desc: '금화를 벌고 초과 자원을 판매합니다.',
   },
   caravan: {
     id: 'caravan',
-    name: 'Caravan',
+    name: '상단',
     icon: 'caravan',
     cost: { wood: 20, gold: 20 },
     buildTime: 20,
@@ -109,11 +109,11 @@ export const BUILDINGS = {
     research: 'trade',
     maker: 'caravanLoaded',
     trade: 0.5,
-    desc: 'Loaded trade wagon: steady gold, sells surplus goods.',
+    desc: '교역으로 금화를 얻고 남는 물자를 판매합니다.',
   },
   banner: {
     id: 'banner',
-    name: 'Banner',
+    name: '왕국 깃발',
     icon: 'flag',
     cost: { wood: 8, gold: 5 },
     buildTime: 8,
@@ -122,11 +122,11 @@ export const BUILDINGS = {
     research: 'military',
     maker: 'armyBanner',
     stability: 0.015,
-    desc: 'Kingdom banner: influence and a touch of order (+stability).',
+    desc: '영향력과 안정도를 조금 높입니다.',
   },
   garrison: {
     id: 'garrison',
-    name: 'Garrison',
+    name: '주둔지',
     icon: 'garrison',
     cost: { food: 15, gold: 12 },
     buildTime: 15,
@@ -135,12 +135,12 @@ export const BUILDINGS = {
     research: 'military',
     maker: 'garrison',
     stability: 0.02,
-    desc: 'Stationed soldier. Defense and public order (+stability).',
+    desc: '병력을 주둔시켜 방어력과 안정도를 높입니다.',
     onComplete: 'tower',
   },
   archer_tower: {
     id: 'archer_tower',
-    name: 'Archer Tower',
+    name: '궁수탑',
     icon: 'archer_tower',
     cost: { wood: 25, stone: 25 },
     buildTime: 35,
@@ -149,13 +149,13 @@ export const BUILDINGS = {
     upgradeOnly: true,                // built by upgrading a Watchtower
     research: 'military',
     maker: 'towerArcher',
-    desc: 'Combat tower with a hoarding gallery. Strong frontier defense.',
+    desc: '변경 방어에 강한 원거리 방어 시설입니다.',
     onComplete: 'tower',
     upgradesTo: 'ballista_tower',
   },
   ballista_tower: {
     id: 'ballista_tower',
-    name: 'Ballista Tower',
+    name: '쇠뇌탑',
     icon: 'ballista_tower',
     cost: { wood: 30, stone: 35, gold: 10 },
     buildTime: 45,
@@ -164,12 +164,12 @@ export const BUILDINGS = {
     upgradeOnly: true,                // built by upgrading an Archer Tower
     research: 'warfare',
     maker: 'towerBallista',
-    desc: 'Tower-mounted ballista. Heavy frontier defense.',
+    desc: '대형 쇠뇌로 변경을 강하게 방어합니다.',
     onComplete: 'tower',
   },
   gate: {
     id: 'gate',
-    name: 'Gate',
+    name: '성문',
     icon: 'gate',
     cost: { wood: 20, stone: 40 },
     buildTime: 40,
@@ -178,12 +178,12 @@ export const BUILDINGS = {
     context: 'wall',                  // only where border walls stand
     research: 'warfare',
     maker: 'wallGate',
-    desc: 'Fortified gatehouse for walled borders. Counts toward kingdom defense.',
+    desc: '성벽의 출입을 통제하고 방어력을 높입니다.',
     onComplete: 'tower',
   },
   bastion: {
     id: 'bastion',
-    name: 'Bastion',
+    name: '보루',
     icon: 'bastion',
     cost: { stone: 35, wood: 10 },
     buildTime: 35,
@@ -192,12 +192,12 @@ export const BUILDINGS = {
     context: 'wall',                  // only where border walls stand
     research: 'warfare',
     maker: 'wallCorner',
-    desc: 'Round bastion anchoring walled borders. Counts toward kingdom defense.',
+    desc: '성벽 구간을 지키는 둥근 방어 시설입니다.',
     onComplete: 'tower',
   },
   siege_camp: {
     id: 'siege_camp',
-    name: 'Siege Camp',
+    name: '공성 진지',
     icon: 'siege_camp',
     cost: { wood: 35, stone: 15, gold: 15 },
     buildTime: 45,
@@ -206,13 +206,13 @@ export const BUILDINGS = {
     context: 'enemyNear',             // only with enemies within 2 tiles
     research: 'warfare',
     maker: 'siegeCamp',
-    desc: 'Siege emplacement raised against nearby enemies. Counts toward kingdom defense.',
+    desc: '적 근처에서 공성을 지원하는 군사 시설입니다.',
     onComplete: 'tower',
   },
   // -------- economy & city expansion --------
   apiary: {
     id: 'apiary',
-    name: 'Apiary',
+    name: '양봉장',
     icon: 'apiary',
     cost: { wood: 12, gold: 5 },
     buildTime: 15,
@@ -220,11 +220,11 @@ export const BUILDINGS = {
     tiles: ['field', 'meadow'],
     research: 'agriculture',
     maker: 'apiary',
-    desc: 'Beehives producing food and a little honey gold.',
+    desc: '꿀벌을 길러 식량과 소량의 금화를 생산합니다.',
   },
   fishing_pier: {
     id: 'fishing_pier',
-    name: 'Fishing Pier',
+    name: '낚시 부두',
     icon: 'fishing_pier',
     cost: { wood: 18 },
     buildTime: 18,
@@ -232,11 +232,11 @@ export const BUILDINGS = {
     tiles: ['river', 'lake'],
     research: 'agriculture',
     maker: 'fishingPier',
-    desc: 'Wooden dock with nets. Steady food from the water.',
+    desc: '강과 호수에서 식량을 생산합니다.',
   },
   bakery: {
     id: 'bakery',
-    name: 'Bakery',
+    name: '제빵소',
     icon: 'bakery',
     cost: { wood: 15, stone: 10, gold: 10 },
     buildTime: 22,
@@ -244,11 +244,11 @@ export const BUILDINGS = {
     tiles: ['village'],
     research: 'trade',
     maker: 'bakery',
-    desc: 'Stone oven turning grain into bread and coin.',
+    desc: '곡물을 빵으로 가공해 식량과 금화를 생산합니다.',
   },
   sawmill: {
     id: 'sawmill',
-    name: 'Sawmill',
+    name: '제재소',
     icon: 'sawmill',
     cost: { wood: 20, stone: 15 },
     buildTime: 30,
@@ -256,11 +256,11 @@ export const BUILDINGS = {
     tiles: ['forest', 'river'],
     research: 'engineering',
     maker: 'sawmill',
-    desc: 'Water-driven saw. Cuts more wood than a lumber mill.',
+    desc: '수력 제재기로 벌목장보다 많은 목재를 생산합니다.',
   },
   forge: {
     id: 'forge',
-    name: 'Forge',
+    name: '대장간',
     icon: 'forge',
     cost: { wood: 15, stone: 25, gold: 10 },
     buildTime: 30,
@@ -268,11 +268,11 @@ export const BUILDINGS = {
     tiles: ['quarry', 'hills'],
     research: 'mining',
     maker: 'forge',
-    desc: 'Smithy working ore into tools and coin.',
+    desc: '광석을 가공해 금화와 석재를 생산합니다.',
   },
   stable: {
     id: 'stable',
-    name: 'Stable',
+    name: '마구간',
     icon: 'stable',
     cost: { wood: 20, food: 10 },
     buildTime: 25,
@@ -280,11 +280,11 @@ export const BUILDINGS = {
     tiles: ['meadow'],
     research: 'military',
     maker: 'stable',
-    desc: 'Horses for the realm. Slowly grows influence.',
+    desc: '말을 길러 영향력을 조금씩 늘립니다.',
   },
   barracks: {
     id: 'barracks',
-    name: 'Barracks',
+    name: '병영',
     icon: 'barracks',
     cost: { wood: 25, stone: 25, food: 15 },
     buildTime: 40,
@@ -292,12 +292,12 @@ export const BUILDINGS = {
     tiles: ['village'],
     research: 'warfare',
     maker: 'barracks',
-    desc: 'Trains soldiers. Counts toward kingdom defense.',
+    desc: '군사를 훈련시키고 방어력을 높입니다.',
     onComplete: 'tower',
   },
   temple: {
     id: 'temple',
-    name: 'Temple',
+    name: '신전',
     icon: 'temple',
     cost: { stone: 30, gold: 20 },
     buildTime: 45,
@@ -307,11 +307,11 @@ export const BUILDINGS = {
     research: null,
     maker: 'temple',
     stability: 0.08,                  // passive stability regen /s
-    desc: 'A spired sanctuary. Towns only; influence and calm (+stability).',
+    desc: '도시에서 영향력과 안정도를 높입니다.',
   },
   port: {
     id: 'port',
-    name: 'Port',
+    name: '항구',
     icon: 'port',
     cost: { wood: 30, stone: 15, gold: 15 },
     buildTime: 35,
@@ -320,11 +320,11 @@ export const BUILDINGS = {
     research: 'trade',
     maker: 'port',
     trade: 0.9,
-    desc: 'Harbor with a crane. Strong gold, sells surplus goods.',
+    desc: '교역으로 금화를 벌고 남는 물자를 판매합니다.',
   },
   university: {
     id: 'university',
-    name: 'University',
+    name: '대학',
     icon: 'university',
     cost: { wood: 30, stone: 30, gold: 30 },
     buildTime: 55,
@@ -334,11 +334,11 @@ export const BUILDINGS = {
     research: 'engineering',
     maker: 'university',
     stability: 0.03,
-    desc: 'Halls of learning. Towns only; influence and calm (+stability).',
+    desc: '도시에서 학문을 발전시키고 안정도를 높입니다.',
   },
   observatory: {
     id: 'observatory',
-    name: 'Observatory',
+    name: '천문대',
     icon: 'observatory',
     cost: { stone: 25, gold: 20 },
     buildTime: 40,
@@ -346,11 +346,11 @@ export const BUILDINGS = {
     tiles: ['mountain', 'hills'],
     research: 'engineering',
     maker: 'observatory',
-    desc: 'Dome and telescope reading the stars for influence.',
+    desc: '별을 연구해 영향력을 생산합니다.',
   },
   library: {
     id: 'library',
-    name: 'Library',
+    name: '도서관',
     icon: 'library',
     cost: { wood: 20, gold: 15 },
     buildTime: 30,
@@ -360,11 +360,11 @@ export const BUILDINGS = {
     research: 'trade',
     maker: 'library',
     stability: 0.02,
-    desc: 'Scrolls and books. Towns only; influence and calm (+stability).',
+    desc: '도시의 학문을 발전시키고 안정도를 높입니다.',
   },
   road: {
     id: 'road',
-    name: 'Road',
+    name: '도로',
     icon: 'road',
     cost: { wood: 8 },
     buildTime: 8,
@@ -372,7 +372,7 @@ export const BUILDINGS = {
     tiles: ['field', 'meadow', 'forest', 'hills', 'quarry', 'river', 'swamp', 'village', 'ruins'],
     research: null,
     isRoad: true,
-    desc: 'Connects to nearby roads and villages (up to 6 sides).',
+    desc: '인접한 도로와 마을을 연결합니다. 최대 6방향입니다.',
   },
 };
 
@@ -380,17 +380,17 @@ export const MAX_BUILDINGS_PER_TILE = 2;
 
 // -------- manual village upgrade (replaces the old auto-town) --------
 export const VILLAGE_UPGRADE = {
-  name: 'Upgrade Village',
+  name: '마을 승격',
   icon: 'upgrade',
   cost: { wood: 40, stone: 20, food: 25, gold: 15 },
   buildTime: 40,          // seconds of construction
   minPopulation: 3,       // population of THIS village
   minStability: 40,
   minTier: 1,             // kingdom tier index (>= Village)
-  desc: 'Grow this village into a town (watchtower + bonus).',
+  desc: '마을을 읍성으로 승격하고 감시탑과 추가 혜택을 받습니다.',
 };
 
-const RES_NAMES = { wood: 'wood', stone: 'stone', food: 'food', gold: 'gold', influence: 'influence' };
+const RES_NAMES = {"wood":"목재","stone":"석재","food":"식량","gold":"금화","influence":"영향력"};
 
 /** compact cost string for buttons/tooltips */
 export function fmtCost(cost) {

@@ -10,24 +10,24 @@ import { fmtCost } from '../config/BuildingConfig.js';
 import { iconHtml, iconLabel } from './GameIcons.js';
 
 const TOP_RES = [
-  { key: 'wood', icon: 'wood', label: 'Wood' },
-  { key: 'stone', icon: 'stone', label: 'Stone' },
-  { key: 'food', icon: 'food', label: 'Food' },
-  { key: 'gold', icon: 'gold', label: 'Gold' },
-  { key: 'influence', icon: 'influence', label: 'Influence' },
+  { key: 'wood', icon: 'wood', label: '목재' },
+  { key: 'stone', icon: 'stone', label: '석재' },
+  { key: 'food', icon: 'food', label: '식량' },
+  { key: 'gold', icon: 'gold', label: '금화' },
+  { key: 'influence', icon: 'influence', label: '영향력' },
 ];
 
 const STABILITY_TIP =
-  '<b>Stability</b> (0–100)<br>' +
-  'Affects production: ×0.6 at 0 → ×1.0 at 100<br>' +
-  'Adds to kingdom defense<br><br>' +
-  '<b>Drifts toward 70</b><br>' +
-  'Hunger (food &lt; 5): −0.35/s<br>' +
-  'Storage overflow: −0.08/s per resource<br>' +
-  'Tile captured: −8 · Reclaimed: +4';
+  '<b>안정도</b> (0~100)<br>' +
+  '생산 효율: 안정도 0일 때 60%, 100일 때 100%<br>' +
+  '왕국 방어력에도 영향을 줍니다<br><br>' +
+  '<b>기본 안정도 70을 향해 서서히 회복</b><br>' +
+  '기아 (식량 5 미만): 초당 −0.35<br>' +
+  '창고 초과: 자원별 초당 −0.08<br>' +
+  '영토 빼앗김: −8 · 되찾음: +4';
 
 function fmt(n) {
-  if (n >= 1000) return (n / 1000).toFixed(1) + 'k';
+  if (n >= 1000) return (n / 1000).toFixed(1) + '천';
   return String(Math.floor(n));
 }
 
@@ -49,12 +49,12 @@ export class ResourcePanel {
     const root = document.createElement('div');
     root.id = 'gameplay-hud';
     root.className = 'ui-panel';
-    root.setAttribute('aria-label', 'Kingdom HUD');
+    root.setAttribute('aria-label', '왕국 정보');
 
     let topCells = '';
     for (const d of TOP_RES) {
       topCells += `
-        <div class="hud-res-cell" data-res="${d.key}" data-tip="${d.label} production rate">
+        <div class="hud-res-cell" data-res="${d.key}" data-tip="${d.label} 생산 속도">
           <span class="hud-res-icon">${iconHtml(d.icon)}</span>
           <span class="hud-res-val" id="hud-${d.key}">0</span>
           <span class="hud-res-rate" id="hud-${d.key}-rate">+0/s</span>
@@ -65,7 +65,7 @@ export class ResourcePanel {
     root.innerHTML = `
       <div id="hud-top-bar" class="hud-bar">
         ${topCells}
-        <div class="hud-res-cell hud-res-popcell" data-tip="Total population across all villages">
+        <div class="hud-res-cell hud-res-popcell" data-tip="전체 마을의 인구">
           <span class="hud-res-icon">${iconHtml('population')}</span>
           <span class="hud-res-val" id="hud-population">0</span>
         </div>
@@ -77,40 +77,40 @@ export class ResourcePanel {
       </div>
 
       <div id="hud-kingdom-panel" class="hud-sub-panel">
-        <h2 class="hud-panel-title">Kingdom</h2>
+        <h2 class="hud-panel-title">왕국</h2>
         <div class="hud-kingdom-row">
           <span class="hud-tier-icon" id="hud-tier-icon"></span>
           <div class="hud-tier-body">
-            <span class="hud-tier-name" id="hud-tier-name">Settlement</span>
+            <span class="hud-tier-name" id="hud-tier-name">정착지</span>
             <span class="hud-tier-next" id="hud-tier-next"></span>
-            <span class="hud-storage" id="hud-storage" data-tip="Resource storage capacity">📦 0 / 140</span>
+            <span class="hud-storage" id="hud-storage" data-tip="자원 저장 한도">📦 0 / 140</span>
             <div class="hud-progress hidden" id="hud-tier-progress">
               <div class="hud-progress-fill" id="hud-tier-fill"></div>
             </div>
           </div>
           <button type="button" class="hud-upgrade-btn" id="hud-upgrade-btn"
-            data-tip="Upgrade kingdom tier when requirements are met">Upgrade</button>
+            data-tip="조건을 충족하면 왕국 단계 승격">승격</button>
         </div>
       </div>
 
       <div id="hud-territory-panel" class="hud-sub-panel">
-        <h2 class="hud-panel-title">Territory</h2>
+        <h2 class="hud-panel-title">영토 현황</h2>
         <div class="hud-territory-stats">
-          <div class="hud-stat" data-tip="Tiles under your control">
+          <div class="hud-stat" data-tip="내가 소유한 영토">
             <span class="hud-stat-val" id="hud-tiles">0</span>
-            <span class="hud-stat-label">Tiles</span>
+            <span class="hud-stat-label">영토</span>
           </div>
-          <div class="hud-stat" data-tip="Border tiles exposed to enemies">
+          <div class="hud-stat" data-tip="적에게 노출된 국경 영토">
             <span class="hud-stat-val" id="hud-borders">0</span>
-            <span class="hud-stat-label">Borders</span>
+            <span class="hud-stat-label">국경</span>
           </div>
-          <div class="hud-stat" data-tip="Villages connected by roads">
+          <div class="hud-stat" data-tip="도로로 연결된 마을">
             <span class="hud-stat-val" id="hud-villages">0</span>
-            <span class="hud-stat-label">Villages</span>
+            <span class="hud-stat-label">마을</span>
           </div>
-          <div class="hud-stat" data-tip="Army strength / cap — recruit at barracks &amp; garrisons, attack enemy border tiles">
+          <div class="hud-stat" data-tip="현재 병력 / 최대 병력 · 병영에서 모집한 뒤 적 영토를 공격하세요">
             <span class="hud-stat-val" id="hud-army">0</span>
-            <span class="hud-stat-label">Army</span>
+            <span class="hud-stat-label">병력</span>
           </div>
         </div>
       </div>`;
@@ -143,13 +143,13 @@ export class ResourcePanel {
       const prog = this.game.progressionSystem;
       const check = prog.canStartUpgrade();
       if (!check.ok) {
-        this.game.ui.toast(check.reason || 'Cannot upgrade yet');
+        this.game.ui.toast(check.reason || '아직 승격 조건을 충족하지 못했습니다');
         this.el.upgradeBtn.classList.add('shake');
         setTimeout(() => this.el.upgradeBtn.classList.remove('shake'), 400);
         return;
       }
       if (prog.startUpgrade()) {
-        this.game.ui.toast(`⬆ Upgrading to ${prog.next.name}…`);
+        this.game.ui.toast(`⬆ ${prog.next.name}(으)로 승격 중…`);
       }
     });
   }
@@ -166,7 +166,7 @@ export class ResourcePanel {
     events.on('stability:changed', () => this._refreshStability());
     events.on('progression:started', () => this._refreshKingdom());
     events.on('progression:completed', (p) => {
-      if (!p.silent) this.game.ui.toast(`${iconLabel(p.icon)} Your realm is now a ${p.name}!`);
+      if (!p.silent) this.game.ui.toast(`${iconLabel(p.icon)} 왕국이 ${p.name} 단계로 성장했습니다!`);
       this._refreshKingdom();
     });
     events.on('progression:denied', ({ reason }) => this.game.ui.toast(reason));
@@ -250,7 +250,7 @@ export class ResourcePanel {
     this.el.tierName.textContent = prog.current.name;
 
     if (prog.maxed) {
-      this.el.tierNext.textContent = 'Maximum tier reached';
+      this.el.tierNext.textContent = '최고 단계에 도달했습니다';
       this.el.tierProgress.classList.add('hidden');
       this.el.upgradeBtn.classList.add('hidden');
       this.el.upgradeBtn.disabled = true;
@@ -261,7 +261,7 @@ export class ResourcePanel {
     const nxt = prog.next;
     const check = prog.canStartUpgrade();
     const reqs = prog.upgradeRequirements();
-    const reqParts = [`${nxt.minTiles} tiles`, `${nxt.minStability} stability`, fmtCost(nxt.upgradeCost)];
+    const reqParts = [`영토 ${nxt.minTiles}개`, `안정도 ${nxt.minStability}`, fmtCost(nxt.upgradeCost)];
     this.el.tierNext.textContent = `→ ${nxt.name} (${reqParts.join(' · ')})`;
     this.el.upgradeBtn.classList.toggle('hidden', prog.upgrading);
     this.el.upgradeBtn.disabled = !check.ok && !prog.upgrading;
@@ -271,8 +271,8 @@ export class ResourcePanel {
     ).join('<br>');
     this.el.upgradeBtn.setAttribute('data-tip',
       check.ok
-        ? `Upgrade to ${nxt.name} (${nxt.upgradeTime}s)`
-        : `<b>Requirements</b><br>${tipLines}`
+        ? `${nxt.name} 단계로 승격 (${nxt.upgradeTime}초)`
+        : `<b>승격 조건</b><br>${tipLines}`
     );
 
     if (prog.upgrading && nxt) {

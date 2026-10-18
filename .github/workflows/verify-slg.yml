@@ -22,7 +22,7 @@ jobs:
         run: find src -name '*.js' -print0 | xargs -0 -n1 node --check
       - name: Validate game HTML and source credits
         run: |
-          grep -q 'KINGDOM SLG' index.html
+          grep -q '왕국전략' index.html
           grep -q 'Copyright (c) 2026 Aleksandr' LICENSE
           test -f src/core/Game.js
           test -f src/systems/FactionSystem.js

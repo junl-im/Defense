@@ -21,7 +21,7 @@ export const EDGE = {
   
   export const TILE_TYPES = {
     forest: {
-      name: 'Forest',
+      name: '숲',
       weight: 20,
       variants: [
         { edges: ['forest', 'forest', 'forest', 'forest', 'forest', 'forest'] },
@@ -31,7 +31,7 @@ export const EDGE = {
       previewColor: '#4e7f3a',
     },
     field: {
-      name: 'Field',
+      name: '농경지',
       weight: 20,
       variants: [
         { edges: ['field', 'field', 'field', 'field', 'field', 'field'] },
@@ -41,7 +41,7 @@ export const EDGE = {
       previewColor: '#d9b256',
     },
     river: {
-      name: 'River',
+      name: '강',
       weight: 14,
       variants: [
         { edges: ['river', 'field', 'field', 'river', 'field', 'field'], river: [0, 3] },
@@ -51,7 +51,7 @@ export const EDGE = {
       previewColor: '#4e8fc4',
     },
     mountain: {
-      name: 'Mountain',
+      name: '산악',
       weight: 11,
       variants: [
         { edges: ['mountain', 'mountain', 'field', 'mountain', 'mountain', 'field'] },
@@ -61,7 +61,7 @@ export const EDGE = {
       previewColor: '#8d8d94',
     },
     village: {
-      name: 'Village',
+      name: '마을',
       weight: 17,
       variants: [
         { edges: ['village', 'field', 'village', 'village', 'field', 'village'] },
@@ -74,7 +74,7 @@ export const EDGE = {
     // ================= expansion biomes =================
   
     lake: {
-      name: 'Lake',
+      name: '호수',
       weight: 5,
       variants: [
         // shore all around; connects to rivers on two edges
@@ -84,7 +84,7 @@ export const EDGE = {
       previewColor: '#3a72a4',
     },
     meadow: {
-      name: 'Meadow',
+      name: '초원',
       weight: 6,
       variants: [
         { edges: ['field', 'field', 'field', 'field', 'field', 'field'] },
@@ -93,7 +93,7 @@ export const EDGE = {
       previewColor: '#a4c46a',
     },
     swamp: {
-      name: 'Swamp',
+      name: '늪지',
       weight: 4,
       variants: [
         { edges: ['river', 'forest', 'field', 'river', 'forest', 'field'], river: [0, 3] },
@@ -102,7 +102,7 @@ export const EDGE = {
       previewColor: '#5a7052',
     },
     hills: {
-      name: 'Hills',
+      name: '구릉',
       weight: 6,
       variants: [
         { edges: ['mountain', 'field', 'field', 'mountain', 'field', 'field'] },
@@ -111,7 +111,7 @@ export const EDGE = {
       previewColor: '#9aa06a',
     },
     quarry: {
-      name: 'Quarry',
+      name: '채석장',
       weight: 4,
       variants: [
         { edges: ['mountain', 'field', 'field', 'mountain', 'field', 'field'] },
@@ -120,7 +120,7 @@ export const EDGE = {
       previewColor: '#7d7468',
     },
     ruins: {
-      name: 'Ruins',
+      name: '유적',
       weight: 3,
       variants: [
         { edges: ['field', 'forest', 'field', 'field', 'forest', 'field'] },

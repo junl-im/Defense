@@ -71,18 +71,18 @@ export class ResearchSystem {
   /** { ok, reason } — mirrors ProgressionSystem.canStartUpgrade style */
   canStart(id) {
     const def = RESEARCH[id];
-    if (!def) return { ok: false, reason: 'Unknown research' };
-    if (this.completed.has(id)) return { ok: false, reason: 'Already researched' };
+    if (!def) return { ok: false, reason: '알 수 없는 연구입니다' };
+    if (this.completed.has(id)) return { ok: false, reason: '이미 완료한 연구입니다' };
     if (this.active) {
-      return { ok: false, reason: this.active.id === id ? 'In progress' : 'Another research is in progress' };
+      return { ok: false, reason: this.active.id === id ? '연구 진행 중입니다' : '다른 연구가 진행 중입니다' };
     }
     for (const req of def.requires) {
       if (!this.completed.has(req)) {
-        return { ok: false, reason: `Requires ${this.nameOf(req)}` };
+        return { ok: false, reason: `${this.nameOf(req)} 선행 연구가 필요합니다` };
       }
     }
     if (!this.resources.canAfford(def.cost)) {
-      return { ok: false, reason: 'Not enough resources' };
+      return { ok: false, reason: '자원이 부족합니다' };
     }
     return { ok: true, reason: '' };
   }
@@ -94,7 +94,7 @@ export class ResearchSystem {
       return false;
     }
     const def = RESEARCH[id];
-    if (!this.resources.spend(def.cost, `Research ${def.name}`)) return false;
+    if (!this.resources.spend(def.cost, `${def.name} 연구`)) return false;
     this.active = { id, remaining: def.duration, total: def.duration };
     events.emit('research:started', { id, name: def.name, icon: def.icon, time: def.duration });
     return true;
