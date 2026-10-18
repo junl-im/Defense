@@ -74,7 +74,10 @@ with sync_playwright() as p:
       c.dispatchEvent(new PointerEvent('pointerdown',{button:0,pointerId:2,pointerType:'touch',clientX:x,clientY:y,bubbles:true}));
       c.dispatchEvent(new PointerEvent('pointerup',{button:0,pointerId:2,pointerType:'touch',clientX:x,clientY:y,bubbles:true}));}""",[int(w/2),int(h/2)])
     assert page.evaluate("window.__game.selection.cell?.q === 1"),'Building single tap should select immediately'
-    assert page.locator('#radial-menu:not(.hidden)').is_visible()
+    assert page.locator('#radial-menu:not(.hidden)').count()==1, 'Tile actions were not rebuilt on tap'
+    # The original PC radial ring is positioned with absolute children; its
+    # wrapper has zero size, so checking wrapper.is_visible() is misleading.
+    assert page.locator('#radial-menu .radial-center').is_visible(), 'Tile detail must be visible'
     page.screenshot(path=str(OUT/(label+'-placed.png')),full_page=True)
     assert not errors,f'{label}: {errors}'
     print('PASS',label,'empty tap/menu toggle/combo 3D construction/mobile dock/compact layout',flush=True)
