@@ -16,7 +16,7 @@ for name in expected:
  if len(obj.get('animations',[]))!=24:raise ValueError(name+' must have 24 clips')
  if not obj.get('skins') or not obj.get('meshes'):raise ValueError(name+' not skinned')
  clips={x.get('name') for x in obj['animations']}
- for clip in ['Run','Idle','Gun_Shoot','Death']:
+ for clip in ['Run','Run_Shoot','Idle','Gun_Shoot','Sword_Slash','Punch_Left','Death']:
   if clip not in clips:raise ValueError(name+' missing clip '+clip)
  print('OK',name,len(raw),'bytes /',len(obj['animations']),'clips /',len(obj['meshes']),'meshes / SHA256',hashlib.sha256(raw).hexdigest())
 print('All four female animated GLBs verified. Art-direction and browser QA remain separate.')
