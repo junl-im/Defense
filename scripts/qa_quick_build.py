@@ -170,9 +170,29 @@ with sync_playwright() as p:
       p.y=.22;g.camera.updateMatrixWorld();p.project(g.camera);
       return [(p.x*.5+.5)*innerWidth,(-p.y*.5+.5)*innerHeight];
     }""")
+    page.evaluate("""() => {
+      window.__tapTrace=[];
+      const c=document.getElementById('game-canvas');
+      for(const name of ['pointerdown','pointermove','pointerup','touchstart','touchend','click'])
+        document.addEventListener(name,e=>{
+          if(window.__tapTrace.length<30)window.__tapTrace.push({
+            type:name,button:e.button,pointerId:e.pointerId,target:e.target?.id||e.target?.tagName,
+            x:e.clientX,y:e.clientY,touches:e.touches?.length});
+        },{capture:true});
+    }""")
     if w<=700: page.touchscreen.tap(*xy)
     else: page.mouse.click(*xy)
-    assert page.locator('#radial-menu .radial-center').is_visible(),('Real short tap failed',xy)
+    debug=page.evaluate("""([x,y]) => {
+      const g=window.__game;
+      return {trace:window.__tapTrace,selected:g.selection.cell?.q+','+g.selection.cell?.r,
+        quick:g.quickBuildMenu.current, mode:g.mode,
+        point:document.elementFromPoint(x,y)?.id,
+        radial:{display:document.querySelector('#radial-menu')?.className,
+          title:document.querySelector('#radial-menu .radial-title')?.textContent},
+        lastTap:g._lastTapHandled,clickBlock:g._blockSyntheticClickUntil,
+        pointers:[...g._touchPointers],cameraMoved:g.controls.moved};
+    }""",xy)
+    assert page.locator('#radial-menu .radial-center').is_visible(),('Real short tap failed',xy,debug)
     assert page.evaluate("window.__game.selection.cell?.q===0&&window.__game.selection.cell?.r===0")
     hud=page.locator('#hud-top-bar').bounding_box()
     score=page.locator('#score-panel').bounding_box()
