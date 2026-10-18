@@ -40,7 +40,8 @@ export class RaniFieldScene {
     this.labels.addEventListener('click',e=>{
       const el=e.target.closest('[data-field-faction]');
       if(!el)return;
-      this.select(el.dataset.fieldFaction);
+      if(el.dataset.fieldFaction==='player')this.game.nativeVillageUI.showVillageInfo();
+      else this.select(el.dataset.fieldFaction);
     });
     const hemi=new THREE.HemisphereLight(0xe9f6ee,0x66765a,2.1);this.scene.add(hemi);
     const sun=new THREE.DirectionalLight(0xffebc0,2);sun.position.set(-6,15,8);this.scene.add(sun);
@@ -301,6 +302,7 @@ export class RaniFieldScene {
     const entry=this.entries.find(e=>e.id===id);
     if(!entry)return;
     this.game.nativeVillageUI.selectedId=id;
+    this.game.nativeVillageUI.selectedCell=null;
     // Selecting a city moves the actual 3D camera to that settlement.
     // The toolbar picker is therefore useful even for offscreen cities.
     this.focus.set(entry.x,0,entry.z);
