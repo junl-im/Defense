@@ -205,6 +205,30 @@ with sync_playwright() as p:
       dock=page.locator('#slg-mobile-dock').bounding_box()
       assert 0<=dock['y']-(nav['y']+nav['height'])<=17,(
         'Field management must sit above the bottom dock',nav,dock)
+    # A real one-tap on blank 3D ground must ALSO open the same radial and
+    # survive the browser's synthetic follow-up click.
+    candidate=page.evaluate("""() => {
+      const g=window.__game;
+      g.selection.clear();
+      g.quickBuildMenu.close();
+      g.camera.updateMatrixWorld();
+      for(let q=-1;q<=1;q++)for(let r=-1;r<=1;r++){
+        if(g.grid.has(q,r)||!g.grid.canPlace(q,r)||!g.nativeVillage.allows(q,r))continue;
+        const V=g.camera.position.constructor;
+        const p=new V(Math.sqrt(3)*q+Math.sqrt(3)/2*r,0,1.5*r).project(g.camera);
+        const x=(p.x*.5+.5)*innerWidth,y=(-p.y*.5+.5)*innerHeight;
+        if(x>40&&x<innerWidth-40&&y>175&&y<innerHeight-120 &&
+           document.elementFromPoint(x,y)?.id==='game-canvas')return {q,r,x,y};
+      }
+      return null;
+    }""")
+    assert candidate, 'No actual unoccupied visible and tappable hex could be found'
+    if w<=700: page.touchscreen.tap(candidate['x'],candidate['y'])
+    else: page.mouse.click(candidate['x'],candidate['y'])
+    assert page.locator('#radial-menu .radial-center').is_visible(),(
+      'Native click on blank hex did not open/stay on radial',candidate)
+    assert page.evaluate('window.__game.radialMenu.empty?.q')==candidate['q']
+    assert page.evaluate('window.__game.radialMenu.empty?.r')==candidate['r']
     page.screenshot(path=str(OUT/(label+'-placed.png')),full_page=True)
     assert not errors,f'{label}: {errors}'
     print('PASS',label,'empty tap/menu toggle/combo 3D construction/mobile dock/compact layout',flush=True)
