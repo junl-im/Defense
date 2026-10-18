@@ -24,6 +24,7 @@ import { SaveManager } from '../ui/SaveManager.js';
 import { NativeVillageProgress } from '../systems/NativeVillageProgress.js';
 import { NativeVillageUI } from '../ui/NativeVillageUI.js';
 import { UpgradedTownHallArt } from '../rendering/UpgradedTownHallArt.js';
+import { VillageBuildingArt } from '../rendering/VillageBuildingArt.js';
 import { Rng } from './Rng.js';
 import { tweens } from './Tween.js';
 import { events } from './Events.js';
@@ -85,6 +86,7 @@ export class Game {
     this.saveManager = new SaveManager(this);
     this.nativeVillageUI = new NativeVillageUI(this);
     this.townHallArt = new UpgradedTownHallArt(this);
+    this.villageBuildingArt = new VillageBuildingArt(this);
   }
 
   // ---------------- renderer / scene ----------------

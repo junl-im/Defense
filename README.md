@@ -70,3 +70,7 @@ Korean tutorial missions guide players through land expansion, forest, farmland,
 ## 라니킹덤 v0.7 — 3D 건설 화면이 마을입니다
 
 v0.5의 별도 이모지/DIV 마을 화면을 철회했습니다. **원본 MIT Hexkingdom의 완성된 Three.js 3D 건설 화면**에서 마을을 발전시킵니다. 중심 건물 승격으로 건설 가능 좌표를 3×3→4×4→5×5→6×6 확장하고, 외부 세계는 실제 FactionSystem 세력을 표시하는 별도 전략 지도에서 확인합니다. 외부 소스 이식 판단과 세이브 보존 정책은 [3D 마을 MASTER](docs/RANI_KINGDOM_NATIVE_3D_MASTER_KO.md)를 보세요.
+
+## v0.8 — 고품질 3D 건물 선택 이식
+
+Quaternius Ultimate Fantasy RTS의 CC0 농장/시장/병영 glTF 모델을 기존 Three.js 게임에 추가했습니다. 기존 3D 건설·경제·전투·카메라 시스템을 유지하면서 완공된 건물만 지연 로드·외형 교체합니다. 로드 실패 시 원래 Hexkingdom 모델을 유지합니다. 건설 취소 직후 세이브를 확정하여 새로고침 시 취소된 작업이 되살아나는 문제도 방지합니다. [출처·라이선스](docs/THIRD_PARTY_ASSETS_KO.md).

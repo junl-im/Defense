@@ -237,6 +237,9 @@ export class BuildingSystem {
     this.resources.grant(refund(cost), '건설 취소 환급');
     events.emit('build:cancelled', { key, id });
     events.emit('buildings:changed', {});
+    // A canceled queue must stay canceled after an immediate page refresh.
+    // Without this, its refund would persist but the canceled job could return.
+    this.game.saveSystem?.save?.(this.game);
     return true;
   }
 
