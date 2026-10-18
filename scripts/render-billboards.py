@@ -28,9 +28,23 @@ with sync_playwright() as pw:
    path=out/name
    page.locator('canvas#render').screenshot(path=str(path),animations='disabled')
    img=Image.open(path).convert('RGBA')
+   # The Chromium screenshot flattens transparent canvases; render against chroma green,
+   # then recover transparent alpha while preserving anti-aliased character edges.
+   pixels=img.load()
+   for y in range(img.height):
+    for x in range(img.width):
+     red,green,blue,_=pixels[x,y]
+     chroma=max(0,green-max(red,blue))
+     alpha=255-chroma
+     if alpha<5:
+      pixels[x,y]=(0,0,0,0)
+     elif alpha<255:
+      scale=255/alpha
+      pixels[x,y]=(min(255,round(red*scale)),min(255,round(max(0,green-chroma)*scale)),min(255,round(blue*scale)),alpha)
+   img.save(path,optimize=True)
    alphas=img.getchannel('A').getextrema()
    visible=sum(1 for val in img.getchannel('A').getdata() if val>64)
-   if visible<1800 or alphas[0]!=0:raise RuntimeError(f'Unexpected PNG transparency/empty render: {name} alpha={alphas} pixels={visible}')
+   if visible<1800 or alphas[0]!=0 or alphas[1]!=255:raise RuntimeError(f'Unexpected PNG transparency/empty render: {name} alpha={alphas} pixels={visible}')
    reports.append({'model':model,'file':str(path),'resolution':img.size,'alpha_min_max':alphas,'opaque_pixels':visible,'bytes':path.stat().st_size,'status':'generated_from_original_GL_B'})
   finally:page.close()
  browser.close()
