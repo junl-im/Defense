@@ -20,6 +20,7 @@ import { DecorationSystem } from '../systems/DecorationSystem.js';
 import { CameraController } from '../camera/CameraController.js';
 import { UI } from '../ui/UI.js';
 import { TutorialMissions } from '../ui/TutorialMissions.js';
+import { SaveManager } from '../ui/SaveManager.js';
 import { Rng } from './Rng.js';
 import { tweens } from './Tween.js';
 import { events } from './Events.js';
@@ -76,9 +77,15 @@ export class Game {
     this._initInput();
     this._restoreOrStart();
     this.tutorialMissions = new TutorialMissions(this);
+    this.saveManager = new SaveManager(this);
   }
 
   // ---------------- renderer / scene ----------------
+
+  _targetPixelRatio() {
+    return Math.min(window.devicePixelRatio || 1, window.innerWidth <= 700 ? 1.25 : 2);
+  }
+
 
   _initRenderer() {
     this.renderer = new THREE.WebGLRenderer({
@@ -86,7 +93,7 @@ export class Game {
       antialias: true,
       powerPreference: 'high-performance',
     });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    this.renderer.setPixelRatio(this._targetPixelRatio());
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -97,6 +104,7 @@ export class Game {
     window.addEventListener('resize', () => {
       this.camera.aspect = window.innerWidth / window.innerHeight;
       this.camera.updateProjectionMatrix();
+      this.renderer.setPixelRatio(this._targetPixelRatio());
       this.renderer.setSize(window.innerWidth, window.innerHeight);
     });
   }
@@ -110,7 +118,8 @@ export class Game {
     this.sun = new THREE.DirectionalLight(0xfff2d8, 2.2);
     this.sun.position.set(10, 18, 6);
     this.sun.castShadow = true;
-    this.sun.shadow.mapSize.set(2048, 2048);
+    const shadowSize = window.innerWidth <= 700 ? 1024 : 2048;
+    this.sun.shadow.mapSize.set(shadowSize, shadowSize);
     this.sun.shadow.camera.left = -22;
     this.sun.shadow.camera.right = 22;
     this.sun.shadow.camera.top = 22;
