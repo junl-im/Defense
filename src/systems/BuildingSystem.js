@@ -188,7 +188,7 @@ export class BuildingSystem {
       remaining: def.buildTime * timeMult,
       total: def.buildTime * timeMult,
       done: false,
-      slot: list.length,
+      slot: (() => { const used = new Set(list.map((b) => b.slot)); let next = 0; while (used.has(next)) next++; return next; })(),
     };
     list.push(rec);
     this._spawnSiteMarker(cell, rec);
