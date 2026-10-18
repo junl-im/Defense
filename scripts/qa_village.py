@@ -93,6 +93,16 @@ with sync_playwright() as p:
     }""")
     assert page.evaluate('window.__game.fieldScene.zoomDistance')<zoom_before*1.12
     assert page.evaluate('window.__game.controls.zoomGoal')==village_zoom
+    # A one-finger drag pans the FIELD focus but not the original village camera.
+    old_focus=page.evaluate('window.__game.fieldScene.focus.x')
+    page.evaluate("""() => {
+      const c=document.getElementById('game-canvas'),ev=(type,x,y)=>
+        c.dispatchEvent(new PointerEvent(type,{pointerId:63,pointerType:'touch',button:0,
+          clientX:x,clientY:y,bubbles:true}));
+      ev('pointerdown',180,410);ev('pointermove',240,410);ev('pointerup',240,410);
+    }""")
+    assert abs(page.evaluate('window.__game.fieldScene.focus.x')-old_focus)>0.05
+    assert page.evaluate('window.__game.controls.zoomGoal')==village_zoom
     page.locator('#rani-field-focus-home').click()
     assert page.evaluate("window.__game.nativeVillageUI.selectedId")=='player'
     assert page.evaluate('Math.abs(window.__game.fieldScene.focus.x)+Math.abs(window.__game.fieldScene.focus.z)')<0.01
