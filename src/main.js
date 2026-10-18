@@ -139,7 +139,7 @@ function tickBullets(dt){
  for(const b of bullets)if(b.life>0){b.life-=dt;b.mesh.position.z+=30*dt;if(b.life<=0)b.mesh.setEnabled(false);}
 }
 
-engine.runRenderLoop(()=>{const dt=Math.min(engine.getDeltaTime()/1000,.04);if(state.running){state.time+=dt;state.x=clamp(state.x+input*dt*7.2,-4.9,4.9);if(state.z<70)state.z+=dt*5.6;heroine.position.x=state.x;heroine.position.z=state.z;heroine.rotation.z=input*-.07;
+engine.runRenderLoop(()=>{const dt=Math.min(engine.getDeltaTime()/1000,.35);if(state.running){state.time+=dt;state.x=clamp(state.x+input*dt*7.2,-4.9,4.9);if(state.z<70)state.z+=dt*5.6;heroine.position.x=state.x;heroine.position.z=state.z;heroine.rotation.z=input*-.07;
 for(const g of gates){if(!g.done&&state.z>=g.z){g.done=true;const choice=g.choices[state.x>=0?1:0];state.units=applyGate(state.units,choice.kind,choice.value);state.score+=120;say(choice.kind==='multiply'?'병력 ×'+choice.value:'병력 +'+choice.value);}}
 if(state.z>26&&state.z<59&&state.enemyCount>0){const defeated=Math.min(state.enemyCount,dt*(5+state.units*.38));state.enemyCount-=defeated;state.score+=Math.ceil(defeated*3);const alive=Math.ceil(state.enemyCount);enemies.forEach((e,i)=>e.isVisible=i<alive);if(state.time%2<dt&&state.units>1)state.units=Math.max(1,state.units-1);}
 if(state.z>66){
