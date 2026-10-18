@@ -33,3 +33,15 @@
 .pause-panel p{color:#c9c8e5;font-size:12px;line-height:1.6}
 .pause-panel button{font-size:14px}
 @media(max-width:640px){.hero-showcase{gap:9px;padding:8px;margin:10px 0}.hero-avatar{width:68px;height:84px;min-width:68px}.hero-avatar img{width:70px;height:100px}.hero-intro strong{font-size:15px}.hero-intro p{font-size:10px}.front .tip{font-size:9px!important}.pause-action{position:absolute;right:12px;bottom:12px}}
+
+
+/* Wood-and-metal barricade encounter HUD; CSS/PNG only, no SVG. */
+.wallbar{position:absolute;z-index:3;top:84px;left:50%;width:min(340px,74vw);padding:9px 13px 11px;transform:translate(-50%,-9px);background:linear-gradient(100deg,#392b28ed,#221f34ef);border:1px solid #f3c28e99;border-radius:11px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 7px 20px #160d14a8}
+.wallbar.active{opacity:1;visibility:visible;transform:translate(-50%,0)}
+.wallbar-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:12px;color:#ffe4bd}
+.wallbar-heading strong{font-weight:900;letter-spacing:.04em}
+.wallbar-heading span{font-variant-numeric:tabular-nums}
+.wallbar-track{overflow:hidden;height:9px;border:1px solid #9b7245;background:#171927;border-radius:7px;margin-top:6px}
+.wallbar-fill{width:100%;height:100%;background:linear-gradient(90deg,#ef904c,#ffce7c);transition:width .15s}
+.wallbar-caption{text-align:center;margin-top:5px;color:#d7b7a5;font-size:10px}
+@media(max-width:640px){.wallbar{top:119px;width:min(330px,92vw)}.wallbar-heading{font-size:11px}}
