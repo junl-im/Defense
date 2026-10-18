@@ -20,6 +20,7 @@ with sync_playwright() as playwright:
         page.on("pageerror", lambda error: issues.append(str(error)))
         page.goto(BASE, wait_until="load", timeout=60000)
         page.wait_for_function("window.__game !== undefined", timeout=60000)
+        page.locator('#loading-screen').wait_for(state='detached',timeout=15000)
         page.wait_for_timeout(2000)
         state = page.evaluate("""() => ({
           title: document.title,

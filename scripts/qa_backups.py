@@ -18,6 +18,7 @@ with sync_playwright() as p:
         page.on("pageerror",lambda e:errors.append(str(e)))
         page.goto("http://127.0.0.1:8123/",wait_until="load",timeout=60000)
         page.wait_for_function("window.__game?.tilesPlaced===1",timeout=60000)
+        page.locator('#loading-screen').wait_for(state='detached',timeout=15000)
         ratio=page.evaluate("window.__game.renderer.getPixelRatio()")
         assert ratio<= (1.25 if device=="mobile" else 2.0)
         shadow=page.evaluate("window.__game.sun.shadow.mapSize.x")

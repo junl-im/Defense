@@ -11,6 +11,7 @@ with sync_playwright() as p:
     page.on('pageerror',lambda e:errors.append(str(e)))
     page.goto('http://127.0.0.1:8123/',wait_until='load',timeout=60000)
     page.wait_for_function("window.__game !== undefined",timeout=60000)
+    page.locator('#loading-screen').wait_for(state='detached',timeout=15000)
     assert page.evaluate('window.__game.mode')=='village'
     assert page.locator('#rani-village-grid .rani-village-tile').count()==9
     assert not page.locator('#game-canvas').is_visible()
