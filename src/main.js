@@ -1,4 +1,4 @@
-import { Engine, Scene, Vector3, Color3, Color4, HemisphericLight, DirectionalLight, ArcRotateCamera, MeshBuilder, StandardMaterial, DynamicTexture, TransformNode, SceneLoader, SpriteManager, Sprite } from '@babylonjs/core';
+import { Engine, Scene, Vector3, Color3, Color4, HemisphericLight, DirectionalLight, ArcRotateCamera, MeshBuilder, StandardMaterial, DynamicTexture, TransformNode, SceneLoader, SpriteManager, Sprite, Matrix } from '@babylonjs/core';
 import '@babylonjs/loaders/glTF';
 import {applyGate,phaseForHp,clamp} from './logic.js';
 import {makeBossAttack,hitsHero,bossCasualties} from './boss-combat.js';
@@ -12,7 +12,7 @@ const scene=new Scene(engine);
 scene.clearColor=new Color4(.045,.055,.11,1);
 const light=new HemisphericLight('ambient',new Vector3(.2,1,.2),scene); light.intensity=.7;
 const sun=new DirectionalLight('sun',new Vector3(-.4,-1,.5),scene);sun.intensity=.9;
-const camera=new ArcRotateCamera('follow',Math.PI/2,1.05,32,new Vector3(0,0,12),scene);
+const camera=new ArcRotateCamera('follow',-Math.PI/2,1.05,32,new Vector3(0,0,12),scene);
 camera.inputs.clear(); camera.fov=.68;
 const mat=(name,hex)=>{const m=new StandardMaterial(name,scene);m.diffuseColor=Color3.FromHexString(hex);m.specularColor=new Color3(.19,.19,.22);return m;};
 const groundMat=mat('lane','#62728f'),railMat=mat('rail','#606f90'),heroMat=mat('hero','#65b8ff'),enemyMat=mat('enemy','#f04c7f'),bossMat=mat('boss','#8336a9'),hairMat=mat('hair','#c2a6ff'),whiteMat=mat('white','#efedf8'),gateBlue=mat('blueGate','#348cfa'),gateGold=mat('goldGate','#f0b64e');
@@ -425,8 +425,29 @@ const mobileView=canvas.clientWidth<=650;
 // Pull back on portrait screens so players can actually see gates and the boss.
 camera.fov=mobileView?.78:.72;
 camera.target.set(state.x*.18,0,state.z+(mobileView?7.1:5.5));
-camera.position.set(state.x*.22,mobileView?18.4:16.1,state.z-(mobileView?18.2:14.4));
+// ArcRotateCamera derives its position from spherical alpha/beta/radius.
+ // setPosition() recomputes those orbit values; setting camera.position directly
+ // is overwritten by its orbit update and can put it in FRONT of the runner.
+ camera.setPosition(new Vector3(state.x*.22,mobileView?18.4:16.1,state.z-(mobileView?18.2:14.4)));
 scene.render();});
+// Prove the camera is behind the heroine and nearer (future +Z) terrain
+// appears ABOVE her on-screen. Works for both mobile and desktop WebGL.
+function projectedDirection(){
+ const viewport=camera.viewport.toGlobal(engine.getRenderWidth(),engine.getRenderHeight());
+ const proj=(x,z)=>Vector3.Project(new Vector3(x,1.15,z),Matrix.IdentityReadOnly,scene.getTransformMatrix(),viewport);
+ const hero=proj(state.x,state.z);
+ const ahead=proj(state.x,state.z+12);
+ const left=proj(state.x-3,state.z+12);
+ const right=proj(state.x+3,state.z+12);
+ return {
+  cameraBehind:camera.position.z<state.z,
+  futureAboveHero:ahead.y<hero.y,
+  screenHeroY:Math.round(hero.y),screenAheadY:Math.round(ahead.y),
+  leftScreenX:Math.round(left.x),rightScreenX:Math.round(right.x),
+  leftWorldOnLeft:left.x<right.x,
+  cameraZ:+camera.position.z.toFixed(2),heroZ:+state.z.toFixed(2)
+ };
+}
 // Read-only QA telemetry; does not change gameplay.
-window.__defenseQa=()=>({running:state.running,paused:state.paused,finished:state.finished,bossPattern:pendingAttack?.type||'none',attacksLaunched:attackCount,bossLastAnimation:lastBossAnimation,bossAnimationsLoaded:bossAnimationGroups?.length||0,z:+state.z.toFixed(2),units:state.units,score:state.score,bossHp:Math.ceil(state.bossHp),wallHp:Math.ceil(state.wallHp),wallDamage:Math.round(state.wallDamage),wallStoppedSeconds:+state.wallStoppedSeconds.toFixed(2),elapsed:+state.time.toFixed(2),fps:Math.round(engine.getFps()),meshes:scene.meshes.length,billboards:activeBillboards,enemySprites:activeBillboards?enemies.length:0,allySprites:allySprites.length,sceneReady:scene.isReady()});
+window.__defenseQa=()=>({projection:projectedDirection(),running:state.running,paused:state.paused,finished:state.finished,bossPattern:pendingAttack?.type||'none',attacksLaunched:attackCount,bossLastAnimation:lastBossAnimation,bossAnimationsLoaded:bossAnimationGroups?.length||0,z:+state.z.toFixed(2),units:state.units,score:state.score,bossHp:Math.ceil(state.bossHp),wallHp:Math.ceil(state.wallHp),wallDamage:Math.round(state.wallDamage),wallStoppedSeconds:+state.wallStoppedSeconds.toFixed(2),elapsed:+state.time.toFixed(2),fps:Math.round(engine.getFps()),meshes:scene.meshes.length,billboards:activeBillboards,enemySprites:activeBillboards?enemies.length:0,allySprites:allySprites.length,sceneReady:scene.isReady()});
 window.addEventListener('resize',()=>engine.resize());
