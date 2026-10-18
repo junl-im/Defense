@@ -43,6 +43,20 @@ export class RadialMenu {
     this.root.id = 'radial-menu';
     this.root.className = 'hidden';
     document.body.appendChild(this.root);
+    this._blockedActivation=null;
+    // Touch browsers dispatch a synthetic click AFTER pointerup. If pointerup
+    // opens the ring under the finger, that click is re-targeted to the newly
+    // mounted center 'close' button: the ring vanishes on every short tap.
+    // Consume ONLY the click from the same pointer that opened the ring.
+    this.root.addEventListener('click', e=>{
+      const b=this._blockedActivation;
+      if(!b||performance.now()>b.until)return;
+      if(e.pointerId===b.pointerId){
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        this._blockedActivation=null;
+      }
+    },true);
 
     events.on('selection:changed', ({ cell, anchor, buildingId }) => {
       this.cell = cell;
@@ -66,6 +80,12 @@ export class RadialMenu {
     this.anchor = null;
     this.buildingId = null;
     this._items = null;
+  }
+
+  // Called by the canvas pointerup immediately before opening a selected
+  // building or blank-hex picker. Mouse and touch share PointerEvent click IDs.
+  blockSyntheticActivation(pointerId) {
+    this._blockedActivation={pointerId,until:performance.now()+450};
   }
 
   // Empty frontier hexes have exactly the same 3D action ring as buildings.
