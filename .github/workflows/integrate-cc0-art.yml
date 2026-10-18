@@ -1,5 +1,8 @@
 name: Integrate verified CC0 GLB art into prototype
 on:
+  push:
+    branches: ["feat/anime-crowd-reboot-v0"]
+    paths: [".github/workflows/integrate-cc0-art.yml", "scripts/build-reviewed-art.py"]
   workflow_dispatch:
 permissions:
   contents: write
