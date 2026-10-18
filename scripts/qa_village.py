@@ -29,6 +29,7 @@ with sync_playwright() as p:
     assert page.evaluate('window.__game.tilesPlaced')==before
     assert page.evaluate('window.__game.resourceSystem.resources.wood')==wood
     page.screenshot(path=str(OUT/(kind+'-native-village-3x3.png')),full_page=True)
+    if w<=700: page.locator('#rani-nav-toggle').click()
     page.locator('#rani-native-upgrade').click()
     status=page.locator('#rani-native-status').inner_text()
     details=page.evaluate("""() => ({
@@ -51,14 +52,27 @@ with sync_playwright() as p:
     page.wait_for_function('window.__game && window.__game.nativeVillage',timeout=60000)
     page.locator('#loading-screen').wait_for(state='detached',timeout=15000)
     assert page.evaluate('window.__game.nativeVillage.size')==4
-    page.locator('#rani-native-world').click()
+    if w<=700:
+      shortcut=page.locator('#rani-field-shortcut')
+      assert shortcut.is_visible(), 'Mobile field should be one tap away'
+      shortcut.click()
+    else:
+      page.locator('#rani-native-world').click()
     assert page.evaluate('window.__game.mode')=='world'
     assert page.locator('#rani-world-overview').is_visible()
-    assert not page.locator('#game-canvas').is_visible()
-    assert page.locator('#rani-world-map button[data-faction-id]').count()>1
-    f=page.locator('#rani-world-map button[data-faction-id]').filter(has_not=page.locator('[data-faction-id="player"]')).first
-    page.locator('#rani-world-map button[data-faction-id]:not([data-faction-id="player"])').first.click()
-    assert page.locator('#rani-world-detail').inner_text().find('거리:')>=0
+    assert page.locator('#game-canvas').is_visible(), '3D field render should replace flat map'
+    assert page.evaluate("window.__game.fieldScene.entries.length")>1
+    assert page.locator('#rani-field-labels button[data-field-faction]').count()>1
+    first_id=page.evaluate('window.__game.factionSystem.factions[0].id')
+    picker=page.locator('#rani-field-faction-select')
+    assert picker.is_visible(), 'Field must offer an accessible settlement selector'
+    picker.select_option(first_id)
+    assert page.evaluate('window.__game.nativeVillageUI.selectedId')==first_id
+    assert '거리:' in page.locator('#rani-world-detail').inner_text()
+    # A displayed 3D city label remains touch selectable as well.
+    visible_labels=page.locator('#rani-field-labels button[data-field-faction]:visible')
+    assert visible_labels.count()>=1, 'The 3D field must show at least one town label'
+    assert page.evaluate("window.__game.fieldScene.towns.children.length === window.__game.fieldScene.entries.length")
     page.screenshot(path=str(OUT/(kind+'-faction-world.png')),full_page=True)
     page.locator('#rani-native-home').click()
     assert page.evaluate('window.__game.mode')=='village'

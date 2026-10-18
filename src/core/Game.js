@@ -25,6 +25,8 @@ import { NativeVillageProgress } from '../systems/NativeVillageProgress.js';
 import { NativeVillageUI } from '../ui/NativeVillageUI.js';
 import { UpgradedTownHallArt } from '../rendering/UpgradedTownHallArt.js';
 import { VillageBuildingArt } from '../rendering/VillageBuildingArt.js';
+import { QuickBuildMenu } from '../ui/QuickBuildMenu.js';
+import { RaniFieldScene } from '../rendering/RaniFieldScene.js';
 import { Rng } from './Rng.js';
 import { tweens } from './Tween.js';
 import { events } from './Events.js';
@@ -85,6 +87,8 @@ export class Game {
     this.tutorialMissions = new TutorialMissions(this);
     this.saveManager = new SaveManager(this);
     this.nativeVillageUI = new NativeVillageUI(this);
+    this.quickBuildMenu = new QuickBuildMenu(this);
+    this.fieldScene = new RaniFieldScene(this);
     this.townHallArt = new UpgradedTownHallArt(this);
     this.villageBuildingArt = new VillageBuildingArt(this);
   }
@@ -291,10 +295,48 @@ export class Game {
       this._updateHover();
     });
 
-    this.canvas.addEventListener('pointerup', (e) => {
+    // One short touch/click selects even when the finger moves a few pixels.
+    // Long-press is never required; drag/pinch continues to work as before.
+    this._tapStart = null;
+    this._touchPointers = new Set();
+    this._multiGesture = false;
+    this.canvas.addEventListener('pointerdown', (e) => {
       if (e.button !== 0) return;
-      if (this.controls.moved) return; // was a drag, not a click
-      this._tryPlaceAtPointer();
+      if(e.pointerType === 'touch') {
+        this._touchPointers.add(e.pointerId);
+        if(this._touchPointers.size>1){
+          this._multiGesture=true;
+          this._tapStart=null;
+        }
+      }
+      if(!this._multiGesture)this._tapStart={
+        id:e.pointerId,x:e.clientX,y:e.clientY,touch:e.pointerType!=='mouse'
+      };
+      if(this.mode==='world') {
+        this.controls._cancel();
+        this.controls.moved=false;
+      }
+    });
+    this.canvas.addEventListener('pointerup', (e) => {
+      const start=this._tapStart; this._tapStart=null;
+      this._touchPointers.delete(e.pointerId);
+      const multi=this._multiGesture;
+      if(this._touchPointers.size===0)this._multiGesture=false;
+      if(multi || e.button !== 0 || !start || e.pointerId!==start.id) return;
+      const travel=Math.hypot(start.x-e.clientX,start.y-e.clientY);
+      if (travel>(start.touch?12:5) || this.controls.moved) return;
+      if(this.mode==='world'){
+        this.fieldScene?.tap(e.clientX,e.clientY);
+        return;
+      }
+      this._pointerNdc.set((e.clientX / window.innerWidth) * 2 - 1,
+        -(e.clientY / window.innerHeight) * 2 + 1);
+      this._tryPlaceAtPointer(e.clientX, e.clientY);
+    });
+    this.canvas.addEventListener('pointercancel',(e)=>{
+      this._touchPointers.delete(e.pointerId);
+      if(this._touchPointers.size===0)this._multiGesture=false;
+      this._tapStart=null;
     });
 
     this.canvas.addEventListener('contextmenu', (e) => {
@@ -311,8 +353,27 @@ export class Game {
     });
   }
 
-  _pointerToCell() {
+  _pointerToCell(preferBuildingMesh = false) {
     this.raycaster.setFromCamera(this._pointerNdc, this.camera);
+    if (preferBuildingMesh) {
+      // Picking a tall building via the ground plane alone can select the
+      // hex behind it. On a short tap raycast the actual visible 3D mesh
+      // once; regular pointermove hover keeps its cheap ground-plane check.
+      const root = this.tileFactory.tileRoot;
+      const byGroup = new Map();
+      for (const cell of this.grid.cells.values()) {
+        if (cell.group?.visible && (!cell.owner || cell.owner === 'player'))
+          byGroup.set(cell.group, cell);
+      }
+      for (const hit of this.raycaster.intersectObjects(root.children, true)) {
+        let object = hit.object;
+        while (object && object !== root) {
+          const cell = byGroup.get(object);
+          if (cell) return {q:cell.q,r:cell.r};
+          object = object.parent;
+        }
+      }
+    }
     const hit = new THREE.Vector3();
     if (!this.raycaster.ray.intersectPlane(this.groundPlane, hit)) return null;
     return worldToAxial(hit.x, hit.z);
@@ -335,14 +396,15 @@ export class Game {
     }
   }
 
-  _tryPlaceAtPointer() {
-    const cell = this._pointerToCell();
+  _tryPlaceAtPointer(clientX, clientY) {
+    const cell = this._pointerToCell(true);
     if (!cell) return;
 
     if (this.grid.has(cell.q, cell.r)) {
+      this.quickBuildMenu?.close();
       const existing = this.grid.get(cell.q, cell.r);
-      if (this.selection.cell === existing) this.selection.clear();
-      else this.selection.select(existing);
+      // Repeated taps keep information open; close with the explicit × / Esc.
+      this.selection.select(existing);
       return;
     }
 
@@ -354,8 +416,7 @@ export class Game {
       this.ui.toast('기존 영토에 인접한 곳에 설치하세요');
       return;
     }
-    this.selection.clear();
-    this.placeTile(cell.q, cell.r);
+    this.quickBuildMenu?.open(cell.q,cell.r,clientX,clientY);
   }
 
   // ---------------- tile hand / placement ----------------
@@ -624,6 +685,7 @@ export class Game {
     this.researchSystem.reset();
     this.armySystem.reset();
     this.nativeVillage.reset();
+    this.quickBuildMenu?.close();
     this.caravanSystem.clear();
     this.worldEvents.reset();
     this.wallSystem.reset();
@@ -726,7 +788,8 @@ export class Game {
         this.saveSystem.save(this);
       }
 
-      if (!viewingWorld) this.renderer.render(this.scene, this.camera);
+      if (viewingWorld) this.fieldScene?.render();
+      else this.renderer.render(this.scene, this.camera);
     };
     requestAnimationFrame(loop);
   }

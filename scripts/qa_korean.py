@@ -32,6 +32,9 @@ with sync_playwright() as playwright:
         goal=page.locator("#slg-tutorial")
         assert goal.is_visible(), f"{name}: Korean tutorial missing"
         assert goal.get_attribute("data-step") == "first_land"
+        if name=="mobile":
+            assert "slg-tutorial-collapsed" in goal.get_attribute("class")
+            page.locator(".slg-tutorial-fold").click()
         assert "처음 영토 확장" in goal.inner_text()
         page.locator(".slg-tutorial-fold").click()
         assert "slg-tutorial-collapsed" in goal.get_attribute("class")
@@ -59,7 +62,7 @@ with sync_playwright() as playwright:
         dialog=page.locator("#ko-game-guide [role='dialog']")
         assert dialog.is_visible()
         assert "게임 방법" in dialog.inner_text()
-        assert "영토 확장" in dialog.inner_text()
+        assert "마을 건설" in dialog.inner_text()
         page.screenshot(path=str(out/(name+"-guide.png")), full_page=True)
         page.locator(".ko-guide-start").click()
         assert not dialog.is_visible()

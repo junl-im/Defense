@@ -13,14 +13,14 @@ function countTerrain(game, type) {
 export const TUTORIAL_STEPS = Object.freeze([
   {
     id: 'first_land', title: '처음 영토 확장',
-    description: '기존 마을 옆에 영토 1칸을 더 설치하세요.',
+    description: '마을의 비어 있는 건설 가능 땅을 한 번 눌러 영토를 늘리세요.',
     panel: 'tiles',
     count: (game) => game.tilesPlaced,
     goal: 2, unit: '칸',
   },
   {
     id: 'forest', title: '목재 생산 기반',
-    description: '건설 메뉴에서 숲을 선택하고 영토에 배치하세요.',
+    description: '빈 땅을 눌러 숲을 배치하거나 숲과 벌목장을 함께 건설하세요.',
     panel: 'tiles',
     count: (game) => countTerrain(game, 'forest'),
     goal: 1, unit: '칸',
@@ -70,7 +70,7 @@ export function tutorialProgress(game) {
 export class TutorialMissions {
   constructor(game) {
     this.game = game;
-    this.collapsed = false;
+    this.collapsed = window.matchMedia('(max-width: 700px)').matches;
     this._build();
     const refresh = () => this.refresh();
     this.unsubscribers = [
@@ -111,8 +111,10 @@ export class TutorialMissions {
     document.body.appendChild(root);
     this.root = root;
     this.fold = root.querySelector('.slg-tutorial-fold');
+    if(this.collapsed) root.classList.add('slg-tutorial-collapsed');
     this.body = root.querySelector('.slg-tutorial-body');
     this.go = root.querySelector('#slg-tutorial-go');
+    this.fold.setAttribute('aria-expanded',String(!this.collapsed));
     this.fold.addEventListener('click', () => this.setCollapsed(!this.collapsed));
     this.go.addEventListener('click', () => {
       const state = tutorialProgress(this.game);
