@@ -29,6 +29,7 @@ with sync_playwright() as p:
     assert page.evaluate('window.__game.tilesPlaced')==before
     assert page.evaluate('window.__game.resourceSystem.resources.wood')==wood
     page.screenshot(path=str(OUT/(kind+'-native-village-3x3.png')),full_page=True)
+    if w<=700: page.locator('#rani-nav-toggle').click()
     page.locator('#rani-native-upgrade').click()
     status=page.locator('#rani-native-status').inner_text()
     details=page.evaluate("""() => ({
@@ -51,6 +52,7 @@ with sync_playwright() as p:
     page.wait_for_function('window.__game && window.__game.nativeVillage',timeout=60000)
     page.locator('#loading-screen').wait_for(state='detached',timeout=15000)
     assert page.evaluate('window.__game.nativeVillage.size')==4
+    if w<=700: page.locator('#rani-nav-toggle').click()
     page.locator('#rani-native-world').click()
     assert page.evaluate('window.__game.mode')=='world'
     assert page.locator('#rani-world-overview').is_visible()
