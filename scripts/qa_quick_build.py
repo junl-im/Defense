@@ -7,7 +7,7 @@ with sync_playwright() as p:
   browser=p.chromium.launch(args=['--use-gl=swiftshader','--enable-webgl',
                                   '--ignore-gpu-blocklist','--enable-unsafe-swiftshader'])
   for label,w,h in [('desktop',1440,900),('mobile',390,844),('small-mobile',320,700)]:
-    ctx=browser.new_context(viewport={'width':w,'height':h})
+    ctx=browser.new_context(viewport={'width':w,'height':h},has_touch=(w<=700),is_mobile=(w<=700))
     page=ctx.new_page()
     errors=[]
     page.on('pageerror',lambda e:errors.append(str(e)))
@@ -18,29 +18,39 @@ with sync_playwright() as p:
     page.evaluate("""() => {
       const g=window.__game;
       g.resourceSystem.grant({wood:100,stone:70,gold:60,food:60},'품질 테스트');
+      g._originalPick=g._pointerToCell.bind(g);
       g._pointerToCell=()=>({q:1,r:0});
       g.controls.moved=false;
     }""")
     # Synthesize a real PointerEvent with button=0, not a generic DOM Event.
     page.evaluate("""([x,y]) => {const canvas=document.getElementById('game-canvas');canvas.dispatchEvent(new PointerEvent('pointerdown',{button:0,buttons:1,clientX:x,clientY:y,bubbles:true,pointerId:1,pointerType:'touch'}));canvas.dispatchEvent(new PointerEvent('pointerup',{button:0,buttons:0,clientX:x,clientY:y,bubbles:true,pointerId:1,pointerType:'touch'}));}""",[int(w/2),int(h/2)])
-    assert page.locator('#rani-quick-build').is_visible(), 'tap should open context menu'
-    assert page.locator('button[data-plan="combo:lumber_mill"]').is_visible()
-    assert page.locator('button[data-plan="tile:forest"]').is_visible()
+    assert page.locator('#radial-menu .radial-center').is_visible(), 'Short tap did not show hex radial'
+    assert page.evaluate('window.__game.radialMenu.empty?.q===1')
+    assert page.locator('button[data-action-id="combo:lumber_mill"]').is_visible()
+    assert page.locator('button[data-action-id="tile:forest"]').is_visible()
+    assert page.locator('#rani-quick-build').count()==0
     # Same tile is a real open/close toggle.
     page.evaluate("""([x,y]) => {const canvas=document.getElementById('game-canvas');canvas.dispatchEvent(new PointerEvent('pointerdown',{button:0,buttons:1,clientX:x,clientY:y,bubbles:true,pointerId:1,pointerType:'touch'}));canvas.dispatchEvent(new PointerEvent('pointerup',{button:0,buttons:0,clientX:x,clientY:y,bubbles:true,pointerId:1,pointerType:'touch'}));}""",[int(w/2),int(h/2)])
-    assert not page.locator('#rani-quick-build').is_visible()
+    assert page.locator('#radial-menu.hidden').count()==1
     page.evaluate("""([x,y]) => {const canvas=document.getElementById('game-canvas');canvas.dispatchEvent(new PointerEvent('pointerdown',{button:0,buttons:1,clientX:x,clientY:y,bubbles:true,pointerId:1,pointerType:'touch'}));canvas.dispatchEvent(new PointerEvent('pointerup',{button:0,buttons:0,clientX:x,clientY:y,bubbles:true,pointerId:1,pointerType:'touch'}));}""",[int(w/2),int(h/2)])
-    assert page.locator('#rani-quick-build').is_visible()
+    assert page.locator('#radial-menu .radial-center').is_visible()
+    # First village tier may unlock only <=5 plans. In that case, a
+    # redundant page arrow would be a UX defect; higher tiers can have pages.
+    if page.locator('button[data-action-id="next-page"]').count():
+      first=page.locator('#radial-menu .radial-center').inner_text()
+      page.locator('button[data-action-id="next-page"]').click()
+      assert page.locator('#radial-menu .radial-center').inner_text()!=first
+      for _ in range(8):
+        if page.locator('button[data-action-id="combo:lumber_mill"]').count(): break
+        page.locator('button[data-action-id="next-page"]').click()
+    assert page.locator('button[data-action-id="combo:lumber_mill"]').is_visible()
     page.screenshot(path=str(OUT/(label+'-context.png')),full_page=True)
-    menu=page.locator('#rani-quick-build').bounding_box()
-    assert menu and menu['x']>=0 and menu['x']+menu['width']<=w+1
-    assert menu['y']>=0 and menu['y']+menu['height']<=h+1
     before=page.evaluate('window.__game.tilesPlaced')
-    page.locator('button[data-plan="combo:lumber_mill"]').click()
+    page.locator('button[data-action-id="combo:lumber_mill"]').click()
     assert page.evaluate('window.__game.tilesPlaced')==before+1
     assert page.evaluate("window.__game.grid.get(1,0)?.tileType")=='forest'
     assert page.evaluate("window.__game.buildingSystem.buildingsOn(window.__game.grid.get(1,0)).some(b=>b.id==='lumber_mill'&&!b.done)")
-    assert not page.locator('#rani-quick-build').is_visible()
+    assert page.locator('#radial-menu.hidden').count()==1
     # After choosing a building, construction persists, but ALL context menus
     # close instead of reopening the radial popup on the newly placed hex.
     assert page.evaluate("window.__game.selection.cell===null")
@@ -66,16 +76,17 @@ with sync_playwright() as p:
         assert page.evaluate('document.body.dataset.activeSlgPanel')==key
         button.click()
         assert page.evaluate('document.body.dataset.activeSlgPanel')=='map'
-      if page.locator('#radial-menu:not(.hidden)').is_visible():
-        box=page.locator('#radial-menu').bounding_box()
-        assert box['x']>=0 and box['x']+box['width']<=w+1
+      assert page.locator('#radial-menu.hidden').count()==1
       nav=page.locator('#rani-nav-toggle')
       assert nav.is_visible()
       tutorial=page.locator('#slg-tutorial').bounding_box()
       nav_box=page.locator('#rani-nav').bounding_box()
       assert tutorial and nav_box
-      assert tutorial['x']+tutorial['width']<=nav_box['x']+2, (
-        'Top tutorial and village menus overlap',tutorial,nav_box)
+      apart=(tutorial['x']+tutorial['width']<=nav_box['x'] or
+        nav_box['x']+nav_box['width']<=tutorial['x'] or
+        tutorial['y']+tutorial['height']<=nav_box['y'] or
+        nav_box['y']+nav_box['height']<=tutorial['y'])
+      assert apart,('Tutorial overlaps bottom management',tutorial,nav_box)
       nav.click()
       assert nav.get_attribute('aria-expanded')=='true'
       assert page.locator('#rani-native-world').is_visible()
@@ -145,6 +156,79 @@ with sync_playwright() as p:
     }""")
     assert abs(moved['left']-moved['x'])<2 and abs(moved['top']-moved['y'])<2, (
       'Ring does not follow the chosen building while the camera pans',moved)
+    # Real native mouse click or touch tap, with no held press and no picking stub.
+    page.evaluate("""() => {
+      const g=window.__game;
+      g.selection.clear();
+      g._pointerToCell=g._originalPick;
+      g.controls.target.set(0,0,0);
+      g.controls.targetGoal.set(0,0,0);
+      g.controls._apply(1);
+    }""")
+    xy=page.evaluate("""() => {
+      const g=window.__game,p=g.grid.get(0,0).group.position.clone();
+      p.y=.22;g.camera.updateMatrixWorld();p.project(g.camera);
+      return [(p.x*.5+.5)*innerWidth,(-p.y*.5+.5)*innerHeight];
+    }""")
+    page.evaluate("""() => {
+      window.__tapTrace=[];
+      const c=document.getElementById('game-canvas');
+      for(const name of ['pointerdown','pointermove','pointerup','touchstart','touchend','click'])
+        document.addEventListener(name,e=>{
+          if(window.__tapTrace.length<30)window.__tapTrace.push({
+            type:name,button:e.button,pointerId:e.pointerId,target:e.target?.id||e.target?.tagName,
+            x:e.clientX,y:e.clientY,touches:e.touches?.length});
+        },{capture:true});
+    }""")
+    if w<=700: page.touchscreen.tap(*xy)
+    else: page.mouse.click(*xy)
+    debug=page.evaluate("""([x,y]) => {
+      const g=window.__game;
+      return {trace:window.__tapTrace,selected:g.selection.cell?.q+','+g.selection.cell?.r,
+        quick:g.quickBuildMenu.current, mode:g.mode,
+        point:document.elementFromPoint(x,y)?.id,
+        radial:{display:document.querySelector('#radial-menu')?.className,
+          title:document.querySelector('#radial-menu .radial-title')?.textContent},
+        lastTap:g._lastTapHandled,clickBlock:g._blockSyntheticClickUntil,
+        pointers:[...g._touchPointers],cameraMoved:g.controls.moved};
+    }""",xy)
+    assert page.locator('#radial-menu .radial-center').is_visible(),('Real short tap failed',xy,debug)
+    assert page.evaluate("window.__game.selection.cell?.q===0&&window.__game.selection.cell?.r===0")
+    hud=page.locator('#hud-top-bar').bounding_box()
+    score=page.locator('#score-panel').bounding_box()
+    assert hud and score and score['y']>=hud['y']+hud['height']-2,(
+      'Score overlaps the top HUD',hud,score)
+    assert score['y']-(hud['y']+hud['height'])<=16,(
+      'Excessive vertical gap between top HUD and score',hud,score)
+    if w<=700:
+      nav=page.locator('#rani-nav').bounding_box()
+      dock=page.locator('#slg-mobile-dock').bounding_box()
+      assert 0<=dock['y']-(nav['y']+nav['height'])<=17,(
+        'Field management must sit above the bottom dock',nav,dock)
+    # A real one-tap on blank 3D ground must ALSO open the same radial and
+    # survive the browser's synthetic follow-up click.
+    candidate=page.evaluate("""() => {
+      const g=window.__game;
+      g.selection.clear();
+      g.quickBuildMenu.close();
+      g.camera.updateMatrixWorld();
+      for(let q=-1;q<=1;q++)for(let r=-1;r<=1;r++){
+        if(g.grid.has(q,r)||!g.grid.canPlace(q,r)||!g.nativeVillage.allows(q,r))continue;
+        const V=g.camera.position.constructor;
+        const p=new V(Math.sqrt(3)*q+Math.sqrt(3)/2*r,0,1.5*r).project(g.camera);
+        const x=(p.x*.5+.5)*innerWidth,y=(-p.y*.5+.5)*innerHeight;
+        if(x>40&&x<innerWidth-40&&y>175&&y<innerHeight-120 &&
+           document.elementFromPoint(x,y)?.id==='game-canvas')return {q,r,x,y};
+      }
+      return null;
+    }""")
+    assert candidate, 'No actual unoccupied visible and tappable hex could be found'
+    if w<=700: page.touchscreen.tap(candidate['x'],candidate['y'])
+    else: page.mouse.click(candidate['x'],candidate['y'])
+    assert page.locator('#radial-menu .radial-center').is_visible(),(
+      'Native click on blank hex did not open/stay on radial',candidate)
+    assert page.evaluate('window.__game.radialMenu.empty?.q')==candidate['q']
+    assert page.evaluate('window.__game.radialMenu.empty?.r')==candidate['r']
     page.screenshot(path=str(OUT/(label+'-placed.png')),full_page=True)
     assert not errors,f'{label}: {errors}'
     print('PASS',label,'empty tap/menu toggle/combo 3D construction/mobile dock/compact layout',flush=True)

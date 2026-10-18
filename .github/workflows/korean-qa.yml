@@ -36,11 +36,12 @@ jobs:
           python test/run_headless.py http://127.0.0.1:8123/test/smoke_military.html
       - name: Test Korean game in desktop and mobile Chromium
         run: |
+          # Catch tap/empty-hex/HUD regressions first, then full game suites.
+          python scripts/qa_quick_build.py
           python scripts/qa_korean.py
           python scripts/qa_backups.py
           python scripts/qa_village.py
           python scripts/qa_building_art.py
-          python scripts/qa_quick_build.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:

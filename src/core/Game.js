@@ -302,6 +302,9 @@ export class Game {
     this._tapStart = null;
     this._touchPointers = new Set();
     this._multiGesture = false;
+    this._lastTapHandled = 0;
+    this._blockSyntheticClickUntil = 0;
+    const tapTolerance = (pointerType) => pointerType === 'mouse' ? 6 : 24;
     this.canvas.addEventListener('pointerdown', (e) => {
       if (e.button !== 0) return;
       if(e.pointerType === 'touch') {
@@ -312,33 +315,62 @@ export class Game {
         }
       }
       if(!this._multiGesture)this._tapStart={
-        id:e.pointerId,x:e.clientX,y:e.clientY,touch:e.pointerType!=='mouse'
+        id:e.pointerId,x:e.clientX,y:e.clientY,pointerType:e.pointerType,
+        maxTravel:0
       };
       if(this.mode==='world') {
         this.controls._cancel();
         this.controls.moved=false;
       }
     });
+    // Mobile's tiny pointermove jitter must not turn a normal tap into a
+    // long-press requirement. Track MAX excursion, not just release distance:
+    // real drags remain drags even if the finger returns to its start.
+    this.canvas.addEventListener('pointermove', (e) => {
+      const start=this._tapStart;
+      if(start?.id===e.pointerId)
+        start.maxTravel=Math.max(start.maxTravel,Math.hypot(e.clientX-start.x,e.clientY-start.y));
+    });
+    const selectTap = (x,y) => {
+      if(this.mode==='world') { this.fieldScene?.tap(x,y);return; }
+      this._pointerNdc.set(x/window.innerWidth*2-1,1-y/window.innerHeight*2);
+      this._tryPlaceAtPointer(x,y);
+    };
     this.canvas.addEventListener('pointerup', (e) => {
       const start=this._tapStart; this._tapStart=null;
       this._touchPointers.delete(e.pointerId);
       const multi=this._multiGesture;
       if(this._touchPointers.size===0)this._multiGesture=false;
-      if(multi || e.button !== 0 || !start || e.pointerId!==start.id) return;
-      const travel=Math.hypot(start.x-e.clientX,start.y-e.clientY);
-      if (travel>(start.touch?12:5) || this.controls.moved) return;
-      if(this.mode==='world'){
-        this.fieldScene?.tap(e.clientX,e.clientY);
-        return;
+      if(multi || e.button!==0 || !start || e.pointerId!==start.id) {
+        this._blockSyntheticClickUntil=performance.now()+500;return;
       }
-      this._pointerNdc.set((e.clientX / window.innerWidth) * 2 - 1,
-        -(e.clientY / window.innerHeight) * 2 + 1);
-      this._tryPlaceAtPointer(e.clientX, e.clientY);
+      const travel=Math.max(start.maxTravel,Math.hypot(start.x-e.clientX,start.y-e.clientY));
+      if(travel>tapTolerance(start.pointerType)) {
+        this._blockSyntheticClickUntil=performance.now()+500;return;
+      }
+      // Use the gesture's own start and travel. The camera controller's
+      // moved flag can lag behind pointerup on browser/mobile event ordering.
+      // The browser's subsequent synthetic click may target the ring center
+      // opened here; it must not count as a second 'close' interaction.
+      this.radialMenu?.blockSyntheticActivation(e.pointerId);
+      selectTap(e.clientX,e.clientY);
+      this._lastTapHandled=performance.now();
+      this._blockSyntheticClickUntil=this._lastTapHandled+500;
     });
     this.canvas.addEventListener('pointercancel',(e)=>{
       this._touchPointers.delete(e.pointerId);
       if(this._touchPointers.size===0)this._multiGesture=false;
       this._tapStart=null;
+      this._blockSyntheticClickUntil=performance.now()+500;
+    });
+    // A native click is a fallback for browsers which synthesize click but
+    // omit/re-target pointerup. De-duplicate handled taps and suppress swipes.
+    this.canvas.addEventListener('click',(e)=>{
+      if(e.button!==0||performance.now()<this._blockSyntheticClickUntil||
+         this._touchPointers.size>0)return;
+      selectTap(e.clientX,e.clientY);
+      this._lastTapHandled=performance.now();
+      this._blockSyntheticClickUntil=this._lastTapHandled+500;
     });
 
     this.canvas.addEventListener('contextmenu', (e) => {

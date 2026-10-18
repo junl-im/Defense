@@ -15,6 +15,7 @@ import { UNIT_TYPES, ATTACK_SUPPLY_COST } from '../config/EconomyConfig.js';
 import { TILE_TYPES } from '../tiles/TileDefs.js';
 import { events } from '../core/Events.js';
 import { iconHtml, iconLabel } from './GameIcons.js';
+import { buildPlans } from './QuickBuildPlans.js';
 
 const RADIUS = 86; // px ring radius
 
@@ -31,6 +32,8 @@ export class RadialMenu {
   constructor(game) {
     this.game = game;
     this.cell = null;
+    this.empty = null;
+    this.emptyPage = 0;
     this.anchor = null;
     this.buildingId = null;
     this._worldPos = new THREE.Vector3();
@@ -40,18 +43,34 @@ export class RadialMenu {
     this.root.id = 'radial-menu';
     this.root.className = 'hidden';
     document.body.appendChild(this.root);
+    this._blockedActivation=null;
+    // Touch browsers dispatch a synthetic click AFTER pointerup. If pointerup
+    // opens the ring under the finger, that click is re-targeted to the newly
+    // mounted center 'close' button: the ring vanishes on every short tap.
+    // Consume ONLY the click from the same pointer that opened the ring.
+    this.root.addEventListener('click', e=>{
+      const b=this._blockedActivation;
+      if(!b||performance.now()>b.until)return;
+      if(e.pointerId===b.pointerId){
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        this._blockedActivation=null;
+      }
+    },true);
 
     events.on('selection:changed', ({ cell, anchor, buildingId }) => {
       this.cell = cell;
+      if(cell)this.empty=null;
       this.anchor = anchor?.isVector3 ? anchor.clone() : null;
       this.buildingId = buildingId || null;
       if (cell) this._build(cell);
-      else this._hide();
+      else if (!this.empty) this._hide();
     });
     // requirements can change while open (resources, research, construction)
     events.on('resources:changed', () => this._refreshDisabled());
     events.on('buildings:changed', () => { if (this.cell) this._build(this.cell); });
-    events.on('research:completed', () => { if (this.cell) this._build(this.cell); });
+    events.on('research:completed', () => { if (this.cell) this._build(this.cell); else this.refreshEmpty(); });
+    events.on('progression:completed',()=>this.refreshEmpty());
     events.on('army:changed', () => { if (this.cell) this._build(this.cell); });
   }
 
@@ -61,6 +80,62 @@ export class RadialMenu {
     this.anchor = null;
     this.buildingId = null;
     this._items = null;
+  }
+
+  // Called by the canvas pointerup immediately before opening a selected
+  // building or blank-hex picker. Mouse and touch share PointerEvent click IDs.
+  blockSyntheticActivation(pointerId) {
+    this._blockedActivation={pointerId,until:performance.now()+450};
+  }
+
+  // Empty frontier hexes have exactly the same 3D action ring as buildings.
+  // Six positions per page keep individual actions large enough for a finger.
+  openEmpty(q,r) {
+    if(!buildPlans(this.game,q,r).length)return false;
+    this.cell=null;
+    this.anchor=null;
+    this.buildingId=null;
+    this.empty={q,r};
+    this.emptyPage=0;
+    this._buildEmpty();
+    return true;
+  }
+  closeEmpty() {
+    if(!this.empty)return;
+    this.empty=null;
+    this.emptyPage=0;
+    this._hide();
+  }
+  refreshEmpty(){if(this.empty)this._buildEmpty();}
+  _emptyActions(){
+    if(!this.empty)return [];
+    const {q,r}=this.empty;
+    const plans=buildPlans(this.game,q,r);
+    const pages=Math.max(1,Math.ceil(plans.length/5));
+    this.emptyPage=Math.min(this.emptyPage,pages-1);
+    const slice=plans.slice(this.emptyPage*5,this.emptyPage*5+5);
+    const actions=slice.map(plan=>({
+      id:plan.id,
+      icon:plan.building?(BUILDINGS[plan.building]?.icon||'build'):plan.type,
+      label:plan.label,
+      tip:'<b>'+plan.label+'</b><br>건설 비용: '+fmtCost(plan.cost)+
+        (plan.reason?'<br><i class="tip-bad">'+plan.reason+'</i>':''),
+      disabled:!plan.ok,
+      closeAfter:true,
+      run:()=>this.game.quickBuildMenu.applyPlan(q,r,plan.id)
+    }));
+    if(pages>1)actions.push({
+      id:'next-page',icon:'build',label:'다음 '+(this.emptyPage+1)+'/'+pages,
+      tip:'다른 지형 및 건설 선택지 보기',disabled:false,
+      run:()=>{this.emptyPage=(this.emptyPage+1)%pages;this._buildEmpty();return false;}
+    });
+    return actions;
+  }
+  _buildEmpty(){
+    if(!this.empty)return;
+    const total=buildPlans(this.game,this.empty.q,this.empty.r).length;
+    const count=Math.max(1,Math.ceil(total/5));
+    this._renderRing(this._emptyActions(),'빈 땅',count>1?(this.emptyPage+1)+' / '+count:'건설 선택');
   }
 
   /** action list for a cell, derived from config + existing checks */
@@ -196,20 +271,23 @@ export class RadialMenu {
   }
 
   _build(cell) {
-    const actions = this._actionsFor(cell);
-    this.root.innerHTML = '';
-    this._items = [];
-
-    // center label: tile name + construction progress slot
-    const center = document.createElement('div');
-    center.className = 'radial-center';
     const def = TILE_TYPES[cell.tileType];
     const towny = this.game.buildingSystem.isVillageUpgraded(cell);
     const pickedName = this.buildingId && BUILDINGS[this.buildingId]?.name;
+    this._renderRing(this._actionsFor(cell),pickedName || (towny ? '읍성' : (def ? def.name : cell.tileType)));
+  }
+  _renderRing(actions,title,subtitle='') {
+    this.root.innerHTML = '';
+    this._items = [];
+    const center = document.createElement('div');
+    center.className = 'radial-center';
     center.innerHTML =
-      `<span class="radial-title">${pickedName || (towny ? '읍성' : (def ? def.name : cell.tileType))}</span>` +
-      `<span class="radial-progress" id="radial-progress"></span>`;
-    center.addEventListener('click', () => this.game.selection.clear());
+      `<span class="radial-title">${title}</span>` +
+      `<span class="radial-progress" id="radial-progress">${subtitle}</span>`;
+    center.addEventListener('click', () => {
+      if(this.empty)this.game.quickBuildMenu.close();
+      else this.game.selection.clear();
+    });
     center.setAttribute('data-tip', '선택 취소 (Esc)');
     this.root.appendChild(center);
     this._progressEl = center.querySelector('#radial-progress');
@@ -231,7 +309,10 @@ export class RadialMenu {
         const result = a.run();
         // A successful construction must keep its actual timer running, but
         // the contextual action menu should close without another click.
-        if (a.closeAfter && result !== false) this.game.selection.clear();
+        if (a.closeAfter && result !== false) {
+          if(this.empty)this.game.quickBuildMenu.close();
+          else this.game.selection.clear();
+        }
       });
       this.root.appendChild(btn);
       this._items.push({ action: a, btn });
@@ -244,8 +325,8 @@ export class RadialMenu {
 
   /** re-evaluate disabled state without rebuilding DOM (smooth updates) */
   _refreshDisabled() {
-    if (!this.cell || !this._items) return;
-    const fresh = this._actionsFor(this.cell);
+    if ((!this.cell && !this.empty) || !this._items) return;
+    const fresh = this.empty ? this._emptyActions() : this._actionsFor(this.cell);
     for (const item of this._items) {
       const a = fresh.find((x) => x.id === item.action.id);
       if (!a) continue;
@@ -259,10 +340,11 @@ export class RadialMenu {
    * Move the ACTIONS (not the selected-building marker) into the safe area.
    */
   _place() {
-    if (!this.cell) return;
+    if (!this.cell && !this.empty) return;
     if (this.anchor) this._worldPos.copy(this.anchor);
     else {
-      const { x, z } = axialToWorld(this.cell.q, this.cell.r);
+      const target=this.empty||this.cell;
+      const { x, z } = axialToWorld(target.q, target.r);
       this._worldPos.set(x, TILE_H, z);
     }
     this.game.camera.updateMatrixWorld();
@@ -322,7 +404,7 @@ export class RadialMenu {
   }
 
   update() {
-    if (!this.cell) return;
+    if (!this.cell && !this.empty) return;
     this._place();          // follows camera while open
     this._refreshProgress();
   }
