@@ -30,6 +30,25 @@ with sync_playwright() as playwright:
         })""")
         assert state["canvas"] and state["game"], f"{name}: missing game {state}"
         assert not issues, f"{name}: page errors: {issues}"
+        if name == "mobile":
+            dock = page.locator("#slg-mobile-dock")
+            assert dock.is_visible(), "Mobile navigation is missing"
+            assert not page.locator("#research-panel").is_visible(), "Research obscures map by default"
+            assert not page.locator("#faction-panel").is_visible(), "Factions obscure map by default"
+            assert not page.locator("#hud-right").is_visible(), "Tile shop obscures map by default"
+            page.screenshot(path=str(OUT / "kingdom-mobile-map.png"), full_page=True)
+            for item, target in (("tiles", "#hud-right"), ("research", "#research-panel"), ("factions", "#faction-panel")):
+                page.locator("#slg-mobile-dock button[data-panel='" + item + "']").click()
+                assert page.locator(target).is_visible(), f"Mobile {item} tab failed to open"
+                if item == "research":
+                    page.screenshot(path=str(OUT / "kingdom-mobile-research.png"), full_page=True)
+            page.locator("#slg-mobile-dock button[data-panel='map']").click()
+            assert not page.locator("#research-panel").is_visible()
+            assert not page.locator("#faction-panel").is_visible()
+            assert not page.locator("#hud-right").is_visible()
+            print("PASS mobile dock tabs: tiles/research/factions/map", flush=True)
+        else:
+            assert not page.locator("#slg-mobile-dock").is_visible(), "Mobile dock visible on desktop"
         page.screenshot(path=str(OUT / f"kingdom-{name}.png"), full_page=True)
         print(f"PASS {name} boot; {state}", flush=True)
         page.close()
