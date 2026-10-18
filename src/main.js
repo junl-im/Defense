@@ -169,7 +169,7 @@ async function initCrowdBillboards(){
   const world=enemies.map(enemy=>({pos:enemy.position.clone(),visible:enemy.isVisible}));
   const replacements=world.map((entry,i)=>{
    const sprite=new Sprite('femaleEnemy'+i,enemySpriteManager);
-   sprite.width=.95;sprite.height=1.42;
+   sprite.width=1.0;sprite.height=1.48;sprite.color=new Color4(1,.55,.68,1);
    sprite.position.set(entry.pos.x,.78,entry.pos.z);
    sprite.isVisible=entry.visible;return sprite;
   });
@@ -215,7 +215,7 @@ if(state.z>66){
 }
 if(state.z>94)complete(false);
 renderHud();}
-tickBullets(dt);drawSquad(state.units);camera.target.set(state.x*.18,0,state.z+7.0);camera.position.set(state.x*.22,18.5,state.z-19);scene.render();});
+tickBullets(dt);drawSquad(state.units);camera.target.set(state.x*.18,0,state.z+9.0);camera.position.set(state.x*.22,15.5,state.z-12.5);scene.render();});
 // Read-only QA telemetry; does not change gameplay.
 window.__defenseQa=()=>({running:state.running,finished:state.finished,z:+state.z.toFixed(2),units:state.units,score:state.score,bossHp:Math.ceil(state.bossHp),elapsed:+state.time.toFixed(2),fps:Math.round(engine.getFps()),meshes:scene.meshes.length,billboards:activeBillboards,enemySprites:activeBillboards?enemies.length:0,allySprites:allySprites.length,sceneReady:scene.isReady()});
 window.addEventListener('resize',()=>engine.resize());
