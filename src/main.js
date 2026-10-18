@@ -103,6 +103,9 @@ let bossAttackTime=0,bossPreviousPhase=1,attackCount=0,pendingAttack=null,shotCo
 let bossAnimationGroups=null,hitFlashUntil=0,bossPulseUntil=0;
 const bulletMat=mat('projectileMaterial','#ffe88e');bulletMat.emissiveColor=new Color3(.8,.65,.1);
 const bullets=Array.from({length:26},(_,i)=>{const mesh=MeshBuilder.CreateSphere('shot'+i,{diameter:.18,segments:6},scene);mesh.material=bulletMat;mesh.setEnabled(false);return {mesh,life:0};});
+const impactMat=mat('wallImpact','#ffd58b');impactMat.emissiveColor=new Color3(.85,.45,.17);
+const siegeImpact=MeshBuilder.CreateSphere('siegeImpact',{diameter:.46,segments:7},scene);siegeImpact.material=impactMat;siegeImpact.setEnabled(false);
+let impactLife=0;
 
 box('boss armor',4.2,5,2.6,0,4,0,bossMat,bossRoot);const bossHead=MeshBuilder.CreateSphere('boss head',{diameter:3.3},scene);bossHead.parent=bossRoot;bossHead.position.y=7.8;bossHead.material=whiteMat;
 const bossHair=MeshBuilder.CreateSphere('boss hair',{diameter:3.45},scene);bossHair.parent=bossRoot;bossHair.position.set(0,8.75,-.25);bossHair.scaling.y=.65;bossHair.material=hairMat;
@@ -213,7 +216,7 @@ function reset(){Object.assign(state,{running:true,paused:false,finished:false,z
  for(const p of barricadePlanks){p.mesh.position.set(p.x,p.originalY,-.02);p.mesh.rotation.z=0;}
  lastBossAnimation='Idle';
  if(bossAnimationGroups?.length){bossAnimationGroups.forEach(g=>g.stop());bossAnimationGroups.find(g=>g.name==='Idle')?.start(true,.75);}
- bullets.forEach(b=>{b.life=0;b.mesh.setEnabled(false);});
+ bullets.forEach(b=>{b.life=0;b.mesh.setEnabled(false);});impactLife=0;siegeImpact.setEnabled(false);
 gates.forEach(g=>g.done=false);enemies.forEach(e=>e.isVisible=true);$('front').classList.add('hidden');heroine.position.z=3;heroine.position.x=0;renderHud();}
 $('startBtn').addEventListener('click',reset);
 function togglePause(){
@@ -320,7 +323,15 @@ function tickBullets(dt){
   const found=bullets.find(p=>p.life<=0);
   if(found){found.life=.42;found.mesh.position.set(state.x+.4,1.28,state.z+.8);found.mesh.setEnabled(true);}
  }
- for(const b of bullets)if(b.life>0){b.life-=dt;b.mesh.position.z+=30*dt;if(b.life<=0)b.mesh.setEnabled(false);}
+ if(impactLife>0){impactLife=Math.max(0,impactLife-dt);siegeImpact.scaling.setAll(.8+impactLife*2);if(!impactLife)siegeImpact.setEnabled(false);}
+ for(const b of bullets)if(b.life>0){
+  b.life-=dt;b.mesh.position.z+=30*dt;
+  if(state.wallHp>0&&b.mesh.position.z>=BARRICADE_Z-.55){
+   impactLife=.12;siegeImpact.position.set(b.mesh.position.x,1.3,BARRICADE_Z-.64);siegeImpact.setEnabled(true);
+   b.life=0;
+  }
+  if(b.life<=0)b.mesh.setEnabled(false);
+ }
 }
 
 engine.runRenderLoop(()=>{const dt=Math.min(engine.getDeltaTime()/1000,.35);if(state.running&&!state.paused){state.time+=dt;state.x=clamp(state.x+input*dt*7.2,-4.9,4.9);if(state.z<70)state.z=Math.min(70,advanceTowardsBarricade(state.z,dt*5.6,state.wallHp));
