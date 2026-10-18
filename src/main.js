@@ -36,20 +36,21 @@ const segmentShapes={
 function drawGateDigits(text,parent){
  const spacing=.52,start=-(text.length-1)*spacing/2;
  for(const depth of [-.55,.55]){
+  const handedness=depth<0?-1:1; // Correct camera-facing mirror without SVG.
   for(let i=0;i<text.length;i++){
    const glyph=text[i],offset=start+i*spacing;
    if(glyph==='+'||glyph==='×'){
     const strokes=glyph==='+'?[[0,0,.42,.08,0],[0,0,.08,.5,0]]:
                   [[0,0,.52,.08,.78],[0,0,.52,.08,-.78]];
     for(const [dx,dy,w,h,angle] of strokes){
-     const g=box('gateOperator',w,h,.052,offset+dx,1.47+dy,depth,digitInk,parent);
-     g.rotation.z=angle;g.isPickable=false;
+     const g=box('gateOperator',w,h,.052,(offset+dx)*handedness,1.47+dy,depth,digitInk,parent);
+     g.rotation.z=angle*handedness;g.isPickable=false;
     }
    }else{
     for(const key of sevenSegment[glyph]||''){
      const [dx,dy,w,h,angle]=segmentShapes[key];
-     const bar=box('gateGlyph',w,h,.052,offset+dx,1.47+dy,depth,digitInk,parent);
-     bar.rotation.z=angle;bar.isPickable=false;
+     const bar=box('gateGlyph',w,h,.052,(offset+dx)*handedness,1.47+dy,depth,digitInk,parent);
+     bar.rotation.z=angle*handedness;bar.isPickable=false;
     }
    }
   }
