@@ -20,7 +20,7 @@ npm run build
 Place reviewed character GLB at `public/assets/approved/hero.glb` and later `squad.glb`, `boss.glb`; the model loader only attempts a file if it exists. The repository intentionally does **not** ship unverified/undownloaded assets. See `docs/ASSET_MANIFEST.md`.
 
 ## PC sync (Windows)
-Run `powershell -ExecutionPolicy Bypass -File scripts/sync-windows.ps1` from a terminal. Local target is `D:\K-city-webgame\Defense`. The script refuses dirty Git worktrees and checks out the new remote feature branch; it does not rewrite GitHub main.
+From an existing local `Defense` checkout: run `git status --short` and preserve any local changes first, then `git fetch origin` and `git switch --track origin/feat/anime-crowd-reboot-v0`. Only after switching does `scripts/sync-windows.ps1` become available for subsequent updates. Local target is `D:\K-city-webgame\Defense`. Never hard-reset a dirty worktree; GitHub main is untouched.
 
 ## Workflow
 - `checks.yml`: pushes/PRs -> install, unit tests, SVG ban check, build, upload dist artifact.
