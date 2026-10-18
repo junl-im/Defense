@@ -30,7 +30,14 @@ with sync_playwright() as p:
     assert page.evaluate('window.__game.resourceSystem.resources.wood')==wood
     page.screenshot(path=str(OUT/(kind+'-native-village-3x3.png')),full_page=True)
     page.locator('#rani-native-upgrade').click()
-    assert '승격 중' in page.locator('#rani-native-status').inner_text()
+    status=page.locator('#rani-native-status').inner_text()
+    details=page.evaluate("""() => ({
+      level:window.__game.nativeVillage.level,
+      upgrade:window.__game.nativeVillage.upgrade,
+      canUpgrade:window.__game.nativeVillage.canUpgrade(),
+      resources:window.__game.resourceSystem.resources
+    })""")
+    assert '승격 중' in status, f'Native upgrade not started: {status} {details}'
     page.evaluate('window.__game.nativeVillage.update(13)')
     assert page.evaluate('window.__game.nativeVillage.size')==4
     assert page.evaluate('window.__game.nativeVillage.allows(2,0)') is True
