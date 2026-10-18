@@ -1,0 +1,31 @@
+name: Validate KINGDOM SLG
+on:
+  push:
+    branches:
+      - feat/slg-kingdom-reboot-v1
+  pull_request:
+    branches:
+      - main
+permissions:
+  contents: read
+jobs:
+  source-qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Full static dependency and source audit
+        run: npm test
+      - name: Validate every ESM game module
+        run: find src -name '*.js' -print0 | xargs -0 -n1 node --check
+      - name: Validate game HTML and source credits
+        run: |
+          grep -q 'KINGDOM SLG' index.html
+          grep -q 'Copyright (c) 2026 Aleksandr' LICENSE
+          test -f src/core/Game.js
+          test -f src/systems/FactionSystem.js
+          test -f src/systems/ArmySystem.js
+          test -f src/systems/SaveSystem.js
+          test -f src/ui/UI.js
