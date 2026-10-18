@@ -138,7 +138,21 @@ async function decorateStage(){
   const cap=MeshBuilder.CreateCylinder('stoneTowerCap',{height:.32,diameter:1.12,tessellation:8},scene);
   cap.position.set(x,scale+.13,z);cap.material=stoneMat;cap.freezeWorldMatrix();
  }
- const designs=[['tree',trees,forestMat],['rock-large',rocks,rocksMat],['banner-red',flags,bannerMat]];
+ // Stable stylized evergreen pieces replace the source tree GLB whose texture
+ // falls back in Chromium. All geometry is legitimate gameplay decoration.
+ const barkMat=mat('treeBark','#5b443c');
+ const deepLeaf=mat('evergreenLeaves','#346f67');
+ const lightLeaf=mat('evergreenTips','#52977b');
+ for(const [x,,z,scale] of trees){
+  const trunk=MeshBuilder.CreateCylinder('evergreenTrunk',{height:scale*.75,diameter:.34,tessellation:7},scene);
+  trunk.position.set(x,scale*.38,z);trunk.material=barkMat;trunk.freezeWorldMatrix();
+  for(let tier=0;tier<2;tier++){
+   const foliage=MeshBuilder.CreateCylinder('evergreenFoliage',{height:scale*(tier?.56:.72),diameterBottom:scale*(tier?.65:.92),diameterTop:0,tessellation:7},scene);
+   foliage.position.set(x,scale*(tier?1.05:.72),z);
+   foliage.material=tier?lightLeaf:deepLeaf;foliage.freezeWorldMatrix();
+  }
+ }
+ const designs=[['rock-large',rocks,rocksMat],['banner-red',flags,bannerMat]];
  await Promise.all(designs.map(async ([name,locations,material])=>{
   try {
    const pack=await SceneLoader.ImportMeshAsync('',home,name+'.glb',scene);
@@ -347,7 +361,13 @@ if(state.z>66){
 $('hitFlash').classList.toggle('active',state.running&&state.time<hitFlashUntil);
 if(state.z>94)complete(false);
 renderHud();}
-tickBullets(state.paused?0:dt);drawSquad(state.units);camera.target.set(state.x*.18,0,state.z+2.7);camera.position.set(state.x*.22,12.8,state.z-10.2);scene.render();});
+tickBullets(state.paused?0:dt);drawSquad(state.units);
+const mobileView=canvas.clientWidth<=650;
+// Pull back on portrait screens so players can actually see gates and the boss.
+camera.fov=mobileView?.78:.72;
+camera.target.set(state.x*.18,0,state.z+(mobileView?7.1:5.5));
+camera.position.set(state.x*.22,mobileView?18.4:16.1,state.z-(mobileView?18.2:14.4));
+scene.render();});
 // Read-only QA telemetry; does not change gameplay.
 window.__defenseQa=()=>({running:state.running,paused:state.paused,finished:state.finished,bossPattern:pendingAttack?.type||'none',attacksLaunched:attackCount,bossLastAnimation:lastBossAnimation,bossAnimationsLoaded:bossAnimationGroups?.length||0,z:+state.z.toFixed(2),units:state.units,score:state.score,bossHp:Math.ceil(state.bossHp),wallHp:Math.ceil(state.wallHp),wallDamage:Math.round(state.wallDamage),wallStoppedSeconds:+state.wallStoppedSeconds.toFixed(2),elapsed:+state.time.toFixed(2),fps:Math.round(engine.getFps()),meshes:scene.meshes.length,billboards:activeBillboards,enemySprites:activeBillboards?enemies.length:0,allySprites:allySprites.length,sceneReady:scene.isReady()});
 window.addEventListener('resize',()=>engine.resize());
