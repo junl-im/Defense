@@ -6,6 +6,7 @@ on:
       - 'src/sprite-preview.js'
       - 'sprite-preview.html'
       - 'scripts/render-billboards.py'
+      - 'vite.config.js'
       - '.github/workflows/generate-billboards.yml'
   workflow_dispatch:
 permissions:
