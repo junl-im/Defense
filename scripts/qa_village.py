@@ -41,6 +41,10 @@ with sync_playwright() as p:
     page.evaluate('window.__game.nativeVillage.update(13)')
     assert page.evaluate('window.__game.nativeVillage.size')==4
     assert page.evaluate('window.__game.nativeVillage.allows(2,0)') is True
+    # Verify the SELECTIVELY IMPORTED real CC0 glTF became a visible 3D scene
+    # object, not just a recorded link in documentation.
+    page.wait_for_function("window.__game.townHallArt?.model?.visible === true",timeout=25000)
+    assert page.evaluate("window.__game.townHallArt.model.parent===window.__game.scene")
     page.evaluate('window.__game.saveSystem.save(window.__game)')
     page.screenshot(path=str(OUT/(kind+'-native-village-4x4.png')),full_page=True)
     page.reload(wait_until='load')
