@@ -3,7 +3,7 @@ import '@babylonjs/loaders/glTF';
 import {applyGate,phaseForHp,clamp} from './logic.js';
 import {makeBossAttack,hitsHero,bossCasualties} from './boss-combat.js';
 import {stepBarricade} from './barricade.js';
-import {RUN_SPEED,BOSS_TRIGGER_Z,BOSS_STOP_Z,BOSS_WORLD_Z,LEVEL_FINISH_Z,SECTIONS,BARRIERS,WAVES,initialGates,getSection,progressPercent} from './long-level.js';
+import {RUN_SPEED,BOSS_TRIGGER_Z,BOSS_STOP_Z,BOSS_WORLD_Z,LEVEL_FINISH_Z,SECTIONS,SECTION_PALETTES,BARRIERS,WAVES,initialGates,getSection,progressPercent} from './long-level.js';
 import './style.css';
 
 const $=id=>document.getElementById(id);
@@ -387,7 +387,18 @@ function tickBullets(dt){
 // QA-only clock acceleration on the LOCAL test server. The public game
 // always runs at real speed, so published campaign length is unaffected.
 const qaAccelerated=(location.hostname==='127.0.0.1'||location.hostname==='localhost')&&new URLSearchParams(location.search).has('acceleratedQa');
-engine.runRenderLoop(()=>{const dt=Math.min(engine.getDeltaTime()/1000,.35)*(qaAccelerated?5:1);if(state.running&&!state.paused){state.time+=dt;state.x=clamp(state.x+input*dt*7.2,-4.9,4.9);if(state.z<BOSS_STOP_Z){
+engine.runRenderLoop(()=>{const dt=Math.min(engine.getDeltaTime()/1000,.35)*(qaAccelerated?5:1);if(state.running&&!state.paused){state.time+=dt;state.x=clamp(state.x+input*dt*7.2,-4.9,4.9);
+const currentSection=getSection(state.z);
+if(currentSection.index!==state.phaseSection){
+ state.phaseSection=currentSection.index;
+ const colors=SECTION_PALETTES[currentSection.index];
+ groundMat.diffuseColor=Color3.FromHexString(colors.ground);
+ railMat.diffuseColor=Color3.FromHexString(colors.rail);
+ const sky=Color3.FromHexString(colors.sky);
+ scene.clearColor=new Color4(sky.r,sky.g,sky.b,1);
+ light.intensity=colors.ambient;
+ if(currentSection.index>0)say((currentSection.index+1)+'구간 · '+currentSection.name);
+}if(state.z<BOSS_STOP_Z){
  const nextWall=BARRIERS[state.wallIndex];
  const advanced=Math.min(BOSS_STOP_Z,state.z+dt*RUN_SPEED);
  state.z=nextWall&&state.wallHp>0?Math.min(nextWall.z-3.2,advanced):advanced;
@@ -440,13 +451,15 @@ if(!state.waveActive && state.waveIndex<WAVES.length && state.z>=WAVES[state.wav
  say('적군 웨이브 '+(state.waveIndex+1)+' / '+WAVES.length);
 }
 if(state.waveActive && state.enemyCount>0){
- const destroyed=Math.min(state.enemyCount,dt*(5+Math.min(state.units,400)*.32));
+ const difficulty={scouts:1.3,troops:1,rush:.9,elite:.65,royal:.50}[WAVES[state.waveIndex].type]||1;
+ const destroyed=Math.min(state.enemyCount,dt*(5+Math.min(state.units,400)*.32)*difficulty);
  state.enemyCount-=destroyed;
  state.enemiesDefeated+=destroyed;
  state.score+=Math.round(destroyed*3);
  const visible=Math.min(enemies.length,Math.ceil(state.enemyCount));
  enemies.forEach((enemy,i)=>enemy.isVisible=i<visible);
- if(state.time%3.6<dt&&state.units>1)state.units=Math.max(1,state.units-1);
+ const pressure=WAVES[state.waveIndex].type==='royal'?2.5:WAVES[state.waveIndex].type==='elite'?2.9:3.6;
+ if(state.time%pressure<dt&&state.units>1)state.units=Math.max(1,state.units-1);
  if(state.enemyCount<=0.001){
   state.enemyCount=0;state.waveActive=false;state.waveIndex++;state.wavesCleared++;
   enemies.forEach(e=>e.isVisible=false);
