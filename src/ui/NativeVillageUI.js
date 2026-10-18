@@ -20,7 +20,7 @@ export class NativeVillageUI {
     const top=document.createElement('nav');
     top.id='rani-nav';
     top.setAttribute('aria-label','마을과 필드 이동');
-    top.innerHTML='<button type="button" id="rani-nav-toggle" aria-expanded="false" aria-controls="rani-nav-buttons">🏰 마을 메뉴</button>'+
+    top.innerHTML='<button type="button" id="rani-nav-toggle" aria-expanded="false" aria-controls="rani-nav-buttons">🏰 관리</button>'+
       '<button type="button" id="rani-field-shortcut" aria-label="한 번 눌러 필드로 이동">🌍 필드</button>'+'<div class="rani-nav-line" id="rani-nav-buttons"><span id="rani-nav-town">🏰 내 마을 · 3×3</span>'+
       '<button type="button" id="rani-native-upgrade">중심 건물 승격</button>'+
       '<button type="button" id="rani-native-cancel" hidden>승격 취소</button>'+

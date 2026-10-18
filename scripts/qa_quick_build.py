@@ -56,6 +56,11 @@ with sync_playwright() as p:
         assert box['x']>=0 and box['x']+box['width']<=w+1
       nav=page.locator('#rani-nav-toggle')
       assert nav.is_visible()
+      tutorial=page.locator('#slg-tutorial').bounding_box()
+      nav_box=page.locator('#rani-nav').bounding_box()
+      assert tutorial and nav_box
+      assert tutorial['x']+tutorial['width']<=nav_box['x']+2, (
+        'Top tutorial and village menus overlap',tutorial,nav_box)
       nav.click()
       assert nav.get_attribute('aria-expanded')=='true'
       assert page.locator('#rani-native-world').is_visible()
