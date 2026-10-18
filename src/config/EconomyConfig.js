@@ -104,7 +104,7 @@ export const OVERFLOW_DECAY = 0.05; // fraction of excess lost per economy tick
 
 export const TIERS = [
   { // Tier 1 (index 0)
-    name: 'Settlement',
+    name: '정착지',
     icon: 'settlement',
     maxTiles: 14,
     storageCap: 140,
@@ -113,7 +113,7 @@ export const TIERS = [
     upgradeCost: null, upgradeTime: 0, minStability: 0, minTiles: 0,
   },
   { // Tier 2
-    name: 'Village',
+    name: '마을',
     icon: 'village_tier',
     maxTiles: 26,
     storageCap: 280,
@@ -123,7 +123,7 @@ export const TIERS = [
     upgradeTime: 45, minStability: 35, minTiles: 8,
   },
   { // Tier 3
-    name: 'Town',
+    name: '읍성',
     icon: 'town',
     maxTiles: 44,
     storageCap: 520,
@@ -133,7 +133,7 @@ export const TIERS = [
     upgradeTime: 90, minStability: 45, minTiles: 18,
   },
   { // Tier 4
-    name: 'City',
+    name: '도시',
     icon: 'city',
     maxTiles: 72,
     storageCap: 950,
@@ -143,7 +143,7 @@ export const TIERS = [
     upgradeTime: 150, minStability: 50, minTiles: 34,
   },
   { // Tier 5
-    name: 'Kingdom',
+    name: '왕국',
     icon: 'kingdom',
     maxTiles: 999,
     storageCap: 1700,
@@ -164,7 +164,7 @@ export function tileUnlockTierName(type) {
 
 export const FACTION_ARCHETYPES = {
   friendly_kingdom: {
-    label: 'Friendly Kingdom', icon: 'friendly', hostile: false,
+    label: '우호 왕국', icon: 'friendly', hostile: false,
     count: 1, spawnDist: [11, 15],
     strength: 40, strengthGrowth: 0.015, maxStrength: 120,
     aggression: 0.0, expansion: 0.30, maxTerritory: 40,
@@ -172,7 +172,7 @@ export const FACTION_ARCHETYPES = {
     tilePool: ['forest', 'field', 'meadow', 'village'],
   },
   neutral_village: {
-    label: 'Neutral Village', icon: 'neutral', hostile: false,
+    label: '중립 마을', icon: 'neutral', hostile: false,
     count: 2, spawnDist: [7, 11],
     strength: 8, strengthGrowth: 0.004, maxStrength: 25,
     aggression: 0.0, expansion: 0.06, maxTerritory: 6,
@@ -180,7 +180,7 @@ export const FACTION_ARCHETYPES = {
     tilePool: ['field', 'forest', 'meadow'],
   },
   hostile_kingdom: {
-    label: 'Hostile Kingdom', icon: 'hostile', hostile: true,
+    label: '적대 왕국', icon: 'hostile', hostile: true,
     count: 1, spawnDist: [15, 20],
     strength: 22, strengthGrowth: 0.02, maxStrength: 130,
     aggression: 0.22, expansion: 0.22, maxTerritory: 50,
@@ -188,7 +188,7 @@ export const FACTION_ARCHETYPES = {
     tilePool: ['forest', 'field', 'mountain', 'village'],
   },
   barbarian_clan: {
-    label: 'Barbarian Clan', icon: 'barbarian', hostile: true,
+    label: '야만 부족', icon: 'barbarian', hostile: true,
     count: 1, spawnDist: [12, 16],
     strength: 12, strengthGrowth: 0.025, maxStrength: 75,
     aggression: 0.28, expansion: 0.28, maxTerritory: 35,
@@ -196,7 +196,7 @@ export const FACTION_ARCHETYPES = {
     tilePool: ['forest', 'field', 'hills'],
   },
   bandit_camp: {
-    label: 'Bandit Camp', icon: 'bandit', hostile: true,
+    label: '도적 소굴', icon: 'bandit', hostile: true,
     count: 2, spawnDist: [10, 14],
     strength: 5, strengthGrowth: 0.006, maxStrength: 18,
     aggression: 0.22, expansion: 0.05, maxTerritory: 4,
@@ -214,19 +214,19 @@ export const EARLY_CAPTURE_MIN_TILES = 10;
 
 export const UNIT_TYPES = {
   swordsman: {
-    id: 'swordsman', name: 'Swordsman', icon: 'garrison', maker: 'unitSwordsman',
+    id: 'swordsman', name: '검병', icon: 'garrison', maker: 'unitSwordsman',
     cost: { food: 8, gold: 6 }, strength: 3,
-    desc: 'Steady line infantry.',
+    desc: '균형 잡힌 근접 보병입니다.',
   },
   archer: {
-    id: 'archer', name: 'Archer', icon: 'unit_bow', maker: 'unitArcher',
+    id: 'archer', name: '궁병', icon: 'unit_bow', maker: 'unitArcher',
     cost: { wood: 6, gold: 8 }, strength: 4,
-    desc: 'Ranged support with a longbow.',
+    desc: '장궁으로 후방에서 지원합니다.',
   },
   knight: {
-    id: 'knight', name: 'Knight', icon: 'unit_knight', maker: 'unitKnight',
+    id: 'knight', name: '기사', icon: 'unit_knight', maker: 'unitKnight',
     cost: { gold: 16, food: 10 }, strength: 7,
-    desc: 'Heavy elite cavalry.',
+    desc: '중장갑 정예 기병입니다.',
   },
 };
 
@@ -258,28 +258,28 @@ export const WORLD_EVENT_INTERVAL = [35, 70]; // seconds, uniform roll
 
 export const WORLD_EVENTS = {
   trade_caravan: {
-    label: 'Trade Caravan', icon: 'caravan',
+    label: '교역 상단', icon: 'caravan',
     baseWeight: 3,
     gain: { gold: 12, food: 4 }, stability: +3,
   },
   raid: {
-    label: 'Raid', icon: 'raid',
+    label: '약탈', icon: 'raid',
     baseWeight: 2,
     stealFraction: 0.12, // of current gold+food
     stability: -6,
   },
   famine: {
-    label: 'Famine', icon: 'famine',
+    label: '기근', icon: 'famine',
     baseWeight: 1.5,
     foodLossFraction: 0.25, stability: -5,
   },
   prosperity: {
-    label: 'Prosperity', icon: 'prosperity',
+    label: '번영', icon: 'prosperity',
     baseWeight: 2,
     productionMult: 1.5, duration: 30, stability: +5,
   },
   migration: {
-    label: 'Migration', icon: 'migration',
+    label: '이주', icon: 'migration',
     baseWeight: 1.5,
     populationGain: 2, stability: +2,
   },
