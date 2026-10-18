@@ -30,10 +30,11 @@ const gates=[
 ];
 for(const gate of gates)for(const c of gate.choices){const r=new TransformNode('gate',scene);r.position.set(c.x,0,gate.z);box('gateFoot',3.6,.24,.26,0,.14,0,c.material,r);box('gateLeft',.2,2.55,.3,-1.7,1.35,0,c.material,r);box('gateRight',.2,2.55,.3,1.7,1.35,0,c.material,r);box('gateTop',3.6,.25,.3,0,2.5,0,c.material,r);label(c.kind==='multiply'?'×'+c.value:'+'+c.value,'#ffffff',r,1.45);}
 const mobRoot=new TransformNode('mobRoot',scene);
-const soldierTemplate=MeshBuilder.CreateCapsule('squad proto',{radius:.27,height:1.1},scene);soldierTemplate.isVisible=false;soldierTemplate.material=heroMat;
+let soldierTemplate=MeshBuilder.CreateCapsule('squad proto',{radius:.27,height:1.1},scene);soldierTemplate.isVisible=false;soldierTemplate.material=heroMat;
+let squadScale=1,squadBaseY=.58;
 let soldierMeshes=[];
-function drawSquad(count){const visible=Math.min(110,Math.floor(count));while(soldierMeshes.length<visible){const a=soldierTemplate.createInstance('soldier'+soldierMeshes.length);soldierMeshes.push(a);}
-soldierMeshes.forEach((a,i)=>{a.isVisible=i<visible;if(i<visible){const col=i%11,row=Math.floor(i/11);a.position.set(heroine.position.x+(col-5)*.37,.58,heroine.position.z-1.2-row*.54);}});}
+function drawSquad(count){const visible=Math.min(110,Math.floor(count));while(soldierMeshes.length<visible){const a=soldierTemplate.createInstance('soldier'+soldierMeshes.length);a.scaling.setAll(squadScale);soldierMeshes.push(a);}
+soldierMeshes.forEach((a,i)=>{a.isVisible=i<visible;if(i<visible){const col=i%11,row=Math.floor(i/11);a.position.set(heroine.position.x+(col-5)*.37,squadBaseY+Math.sin(state.time*7+i*.7)*.045,heroine.position.z-1.2-row*.54);}});}
 const enemyBase=MeshBuilder.CreateCapsule('enemy base',{radius:.28,height:1.3},scene);enemyBase.isVisible=false;enemyBase.material=enemyMat;
 const enemies=[];for(let i=0;i<135;i++){const n=enemyBase.createInstance('enemy_'+i);n.position.set((i%13-6)*.66,.7,25+Math.floor(i/13)*1.65);enemies.push(n);}
 const bossRoot=new TransformNode('bossRoot',scene);bossRoot.position.set(0,0,77);
@@ -89,10 +90,32 @@ canvas.addEventListener('pointerdown',e=>{pointerStart=e.clientX;canvas.setPoint
 canvas.addEventListener('pointermove',e=>{if(pointerStart!==null){state.x=clamp(state.x+(e.clientX-pointerStart)*.014,-4.9,4.9);pointerStart=e.clientX;}});
 canvas.addEventListener('pointerup',()=>pointerStart=null);
 function complete(win){state.running=false;state.finished=true;$('front').classList.remove('hidden');$('front').querySelector('h1').innerHTML=win?'작전 <em>성공</em>':'작전 <em>실패</em>';$('front').querySelector('.eyebrow').textContent=win?'MISSION CLEARED':'MISSION FAILED';$('startBtn').innerHTML='다시 도전 →';}
-async function tryLoadApprovedModel(path,parent,scale){try{const exists=await fetch(path,{method:'HEAD'});if(!exists.ok)return;const file=path.split('/').pop(),dir=path.slice(0,path.lastIndexOf('/')+1);const result=await SceneLoader.ImportMeshAsync('',dir,file,scene);const group=new TransformNode('approvedArt',scene);group.parent=parent;group.scaling.setAll(scale);result.meshes.forEach(m=>{if(!m.parent)m.parent=group;});if(parent===heroine){[body,head,hair].forEach(m=>m.setEnabled(false));}
-if(parent===bossRoot){bossPrototypeMeshes.forEach(m=>m.setEnabled(false));} }catch(e){console.warn('Approved model not loaded',e);}}
-tryLoadApprovedModel(import.meta.env.BASE_URL+'assets/approved/hero.glb',heroine,1);
-tryLoadApprovedModel(import.meta.env.BASE_URL+'assets/approved/hero.glb',bossRoot,4.1);
+async function tryLoadApprovedModel(path,parent,scale,clip='Idle'){try{const exists=await fetch(path,{method:'HEAD'});if(!exists.ok)return false;const file=path.split('/').pop(),dir=path.slice(0,path.lastIndexOf('/')+1);const result=await SceneLoader.ImportMeshAsync('',dir,file,scene);const group=new TransformNode('approvedArt',scene);group.parent=parent;group.scaling.setAll(scale);result.meshes.forEach(m=>{if(!m.parent)m.parent=group;});if(parent===heroine){[body,head,hair].forEach(m=>m.setEnabled(false));scene.getMeshByName('weapon')?.setEnabled(false);}
+if(parent===bossRoot){bossPrototypeMeshes.forEach(m=>m.setEnabled(false));}
+const animation=result.animationGroups?.find(a=>a.name===clip)||result.animationGroups?.find(a=>a.name==='Idle');
+if(animation)animation.start(true,clip==='Run'?1.05:.75);
+return true;
+}catch(e){console.warn('Approved model not loaded',path,e);return false;}}
+const characterBase=import.meta.env.BASE_URL+'assets/characters/';
+tryLoadApprovedModel(characterBase+'medieval.glb',heroine,1.25,'Run').then(ok=>{if(!ok)tryLoadApprovedModel(import.meta.env.BASE_URL+'assets/approved/hero.glb',heroine,1);});
+tryLoadApprovedModel(characterBase+'witch.glb',bossRoot,4.2,'Idle').then(ok=>{if(!ok)tryLoadApprovedModel(import.meta.env.BASE_URL+'assets/approved/hero.glb',bossRoot,4.1);});
+const supportRoot=new TransformNode('scifiSupport',scene);supportRoot.parent=heroine;supportRoot.position.set(-1.45,0,-1.1);
+const eliteRoot=new TransformNode('soldierElite',scene);eliteRoot.parent=heroine;eliteRoot.position.set(1.45,0,-1.1);
+tryLoadApprovedModel(characterBase+'scifi.glb',supportRoot,.78,'Run');
+tryLoadApprovedModel(characterBase+'soldier.glb',eliteRoot,.78,'Run');
+async function loadSquadArt(){
+ const path=import.meta.env.BASE_URL+'assets/approved/hero.glb';
+ try{
+  const loaded=await SceneLoader.ImportMeshAsync('',path.slice(0,path.lastIndexOf('/')+1),'hero.glb',scene);
+  const mesh=loaded.meshes.find(m=>m.getTotalVertices&&m.getTotalVertices()>0);
+  if(!mesh)throw Error('No static crowd mesh');
+  mesh.setParent(null);mesh.position.set(9999,-1000,9999);
+  mesh.alwaysSelectAsActiveMesh=true;
+  soldierMeshes.forEach(s=>s.dispose());soldierMeshes=[];
+  soldierTemplate=mesh;squadScale=.49;squadBaseY=.02;
+ }catch(e){console.warn('Female squad prototype unavailable',e);}
+}
+loadSquadArt();
 function tickBullets(dt){
  shotCooldown-=dt;
  if(state.running&&shotCooldown<=0&&state.z>21&&state.z<91){
