@@ -8,6 +8,7 @@ scene.clearColor=new Color4(0,0,0,0);
 const amb=new HemisphericLight('ambient',new Vector3(.15,1,0),scene);amb.intensity=1.45;
 const key=new DirectionalLight('softbox',new Vector3(-.4,-.85,.5),scene);key.intensity=.9;
 window.__spriteStatus={ready:false,error:null};
+async function prepareSprite(){
 try{
  const model=new URLSearchParams(location.search).get('model')||'soldier';
  if(!['soldier','scifi','medieval','witch'].includes(model))throw new Error('Invalid character '+model);
@@ -28,3 +29,5 @@ try{
  engine.runRenderLoop(()=>{scene.render();frame++;if(frame>=12)window.__spriteStatus.ready=true;});
  window.addEventListener('beforeunload',()=>engine.dispose());
 }catch(e){window.__spriteStatus.error=String(e?.stack||e);}
+}
+prepareSprite();
