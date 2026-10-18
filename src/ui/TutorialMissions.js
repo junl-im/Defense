@@ -15,7 +15,7 @@ export const TUTORIAL_STEPS = Object.freeze([
     id: 'first_land', title: '처음 영토 확장',
     description: '기존 마을 옆에 영토 1칸을 더 설치하세요.',
     panel: 'tiles',
-    count: (game) => game.grid.cells.size,
+    count: (game) => game.tilesPlaced,
     goal: 2, unit: '칸',
   },
   {
@@ -44,7 +44,7 @@ export const TUTORIAL_STEPS = Object.freeze([
     id: 'eight_lands', title: '영토 8칸 달성',
     description: '영토를 넓히고 자원을 모아 다음 왕국 단계에 대비하세요.',
     panel: 'tiles',
-    count: (game) => game.grid.cells.size,
+    count: (game) => game.tilesPlaced,
     goal: 8, unit: '칸',
   },
   {
