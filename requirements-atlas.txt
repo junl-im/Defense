@@ -1,6 +1,0 @@
-# Optional dependencies used only when regenerating sprite atlases or v1.0.12 visual assets.
-# Every CI --check path is intentionally standard-library-only.
-Pillow>=10.4,<13
-numpy>=1.26,<3
-opencv-python-headless>=4.10,<5
-trimesh>=4,<5
