@@ -4,7 +4,7 @@ import '@babylonjs/loaders/glTF';
 const canvas=document.getElementById('render');
 const engine=new Engine(canvas,false,{preserveDrawingBuffer:true,premultipliedAlpha:false,alpha:true,stencil:false},false);
 const scene=new Scene(engine);
-scene.clearColor=new Color4(0,0,0,0);
+scene.clearColor=new Color4(0,1,0,1);
 const amb=new HemisphericLight('ambient',new Vector3(.15,1,0),scene);amb.intensity=1.45;
 const key=new DirectionalLight('softbox',new Vector3(-.4,-.85,.5),scene);key.intensity=.9;
 window.__spriteStatus={ready:false,error:null};
@@ -22,7 +22,7 @@ try{
  for(const m of meshes){m.computeWorldMatrix(true);const b=m.getBoundingInfo().boundingBox;
   min=Vector3.Minimize(min,b.minimumWorld);max=Vector3.Maximize(max,b.maximumWorld);}
  const center=Vector3.Center(min,max),height=Math.max(.5,max.y-min.y),width=Math.max(.5,max.x-min.x);
- const camera=new ArcRotateCamera('portrait',-Math.PI/2,Math.PI/2.1,Math.max(height*1.7,width*2.8),center,scene);
+ const camera=new ArcRotateCamera('portrait',-Math.PI/2,Math.PI/2.1,Math.max(height*2.25,width*3.45),center,scene);
  camera.inputs.clear();camera.mode=0;camera.fov=.52;
  window.__spriteCamera=camera;window.__spriteModel=model;
  let frame=0;
