@@ -144,3 +144,7 @@ body[data-game-mode="world"] #hud-top{display:flex!important}
 body[data-game-mode="world"] #hud-kingdom-panel,body[data-game-mode="world"] #hud-territory-panel{display:none!important}
 body[data-game-mode="world"] .rani-world-head{top:76px!important}
 @media(max-width:700px){body[data-game-mode="world"] .rani-world-head{top:92px!important}}
+
+@media(max-width:700px){
+ #rani-field-labels button{min-height:40px}
+}

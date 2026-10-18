@@ -34,7 +34,7 @@ export class RaniFieldScene {
     this.terrain=new THREE.Group();this.scene.add(this.terrain);
     this._createTerrain();
     this.towns=new THREE.Group();this.scene.add(this.towns);
-    this._loadAsset();
+    // Field assets load only after the player opens the field (not at game boot).
     game.canvas.addEventListener('wheel',e=>{
       if(!this.active)return;
       e.preventDefault();
@@ -87,6 +87,7 @@ export class RaniFieldScene {
     try{
       const {GLTFLoader}=await import('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js');
       const res=await new GLTFLoader().loadAsync('assets/quaternius/town-center-first-age-3.gltf');
+      if(!this.active)return;
       this.modelTemplate=res.scene;
       const box=new THREE.Box3().setFromObject(this.modelTemplate);
       const size=box.getSize(new THREE.Vector3());
@@ -153,6 +154,9 @@ export class RaniFieldScene {
   }
   open(){
     this.active=true;this.labels.hidden=false;this.refresh();
+    if(!this.modelTemplate&&!this.assetUnavailable&&!this.modelPending){
+      this.modelPending=this._loadAsset().finally(()=>{this.modelPending=null});
+    }
     this.camera.aspect=innerWidth/innerHeight;this.camera.updateProjectionMatrix();
   }
   close(){this.active=false;this.labels.hidden=true}

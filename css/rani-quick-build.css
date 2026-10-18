@@ -99,3 +99,16 @@
 /* Keep all informational panels anchored at the top in field/village modes. */
 @media(min-width:701px){#construction-panel.construction-panel{top:140px;bottom:auto;max-height:38vh;overflow:auto}}
 @media(max-width:700px){#construction-panel.construction-panel{top:165px;bottom:auto;max-height:27dvh}}
+
+/* Mobile: keep contextual building information below the fixed top status,
+   not at the bottom over important gameplay buttons. */
+@media(max-width:700px){
+ #rani-quick-build{
+  top:166px!important;bottom:auto!important;
+  max-height:min(43dvh,350px)!important
+ }
+ #radial-menu:not(.hidden){
+  top:166px!important;bottom:auto!important;
+  max-height:43dvh!important
+ }
+}
