@@ -21,6 +21,40 @@ for(const x of [-6.75,6.75]){const wall=MeshBuilder.CreateBox('parapet',{width:.
 for(let z=0;z<90;z+=4){const strip=MeshBuilder.CreateBox('stripe',{width:12,height:.025,depth:.075},scene);strip.position.set(0,.02,z);strip.material=whiteMat;strip.visibility=.15;}
 function box(name,w,h,d,x,y,z,material,parent){const mesh=MeshBuilder.CreateBox(name,{width:w,height:h,depth:d},scene);mesh.position.set(x,y,z);mesh.material=material;if(parent)mesh.parent=parent;return mesh;}
 function label(text,color,parent,y){const plane=MeshBuilder.CreatePlane('sign',{width:3.2,height:1.35},scene);plane.parent=parent;plane.position.y=y;plane.position.z=-.25;plane.rotation.y=Math.PI;const dt=new DynamicTexture('text',{width:512,height:210},scene,true);dt.hasAlpha=true;dt.drawText(text,null,151,'bold 133px Arial',color,'#202744',true);const sm=new StandardMaterial('textMat',scene);sm.diffuseTexture=dt;sm.emissiveColor=new Color3(.95,.95,.95);sm.backFaceCulling=false;plane.material=sm;return plane;}
+// Legible gate numbers are real 3D emissive strokes. This avoids the
+// browser-dependent DynamicTexture sign clipping and uses no SVG/icon fonts.
+const digitInk=mat('gateDigitsIvory','#fffaf0');digitInk.emissiveColor=new Color3(.95,.92,.82);
+const sevenSegment={
+ '0':'abcdef','1':'bc','2':'abged','3':'abgcd','4':'fgbc',
+ '5':'afgcd','6':'afgecd','7':'abc','8':'abcdefg','9':'abfgcd'
+};
+const segmentShapes={
+ a:[0,.29,.38,.07,0],g:[0,0,.38,.07,0],d:[0,-.29,.38,.07,0],
+ f:[-.18,.15,.065,.29,0],b:[.18,.15,.065,.29,0],
+ e:[-.18,-.15,.065,.29,0],c:[.18,-.15,.065,.29,0]
+};
+function drawGateDigits(text,parent){
+ const spacing=.52,start=-(text.length-1)*spacing/2;
+ for(const depth of [-.55,.55]){
+  for(let i=0;i<text.length;i++){
+   const glyph=text[i],offset=start+i*spacing;
+   if(glyph==='+'||glyph==='×'){
+    const strokes=glyph==='+'?[[0,0,.42,.08,0],[0,0,.08,.5,0]]:
+                  [[0,0,.52,.08,.78],[0,0,.52,.08,-.78]];
+    for(const [dx,dy,w,h,angle] of strokes){
+     const g=box('gateOperator',w,h,.052,offset+dx,1.47+dy,depth,digitInk,parent);
+     g.rotation.z=angle;g.isPickable=false;
+    }
+   }else{
+    for(const key of sevenSegment[glyph]||''){
+     const [dx,dy,w,h,angle]=segmentShapes[key];
+     const bar=box('gateGlyph',w,h,.052,offset+dx,1.47+dy,depth,digitInk,parent);
+     bar.rotation.z=angle;bar.isPickable=false;
+    }
+   }
+  }
+ }
+}
 const heroine=new TransformNode('heroRoot',scene);heroine.position.set(0,0,3);
 const body=MeshBuilder.CreateCapsule('prototype hero',{radius:.43,height:1.75},scene);body.parent=heroine;body.position.y=1;body.material=heroMat;
 const head=MeshBuilder.CreateSphere('head',{diameter:.83},scene);head.parent=heroine;head.position.y=2.1;head.material=whiteMat;
@@ -31,7 +65,7 @@ const gates=[
  {z:37,done:false,choices:[{x:-3,kind:'add',value:30,material:gateBlue},{x:3,kind:'multiply',value:2,material:gateGold}]},
  {z:55,done:false,choices:[{x:-3,kind:'add',value:15,material:gateBlue},{x:3,kind:'multiply',value:2,material:gateGold}]}
 ];
-for(const gate of gates)for(const c of gate.choices){const r=new TransformNode('gate',scene);r.position.set(c.x,0,gate.z);box('gateFoot',3.6,.24,.26,0,.14,0,c.material,r);box('gateLeft',.2,2.55,.3,-1.7,1.35,0,c.material,r);box('gateRight',.2,2.55,.3,1.7,1.35,0,c.material,r);box('gateTop',3.6,.25,.3,0,2.5,0,c.material,r);box('gateBackplate',3.1,1.55,.14,0,1.43,0,c.material,r);label(c.kind==='multiply'?'×'+c.value:'+'+c.value,'#ffffff',r,1.45);}
+for(const gate of gates)for(const c of gate.choices){const r=new TransformNode('gate',scene);r.position.set(c.x,0,gate.z);box('gateFoot',3.6,.24,.26,0,.14,0,c.material,r);box('gateLeft',.2,2.55,.3,-1.7,1.35,0,c.material,r);box('gateRight',.2,2.55,.3,1.7,1.35,0,c.material,r);box('gateTop',3.6,.25,.3,0,2.5,0,c.material,r);box('gateBackplate',3.1,1.55,.14,0,1.43,0,c.material,r);drawGateDigits(c.kind==='multiply'?'×'+c.value:'+'+c.value,r);}
 // Breakable 300 HP siege barricade. Only Babylon meshes, PNG and CSS; no SVG.
 const woodMat=mat('siegeOak','#875737'),ironMat=mat('siegeIron','#33384f');
 const barricadeRoot=new TransformNode('siegeBarricade',scene);
