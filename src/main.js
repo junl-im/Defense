@@ -168,25 +168,33 @@ function complete(win){state.running=false;state.finished=true;$('front').classL
 async function tryLoadApprovedModel(path,parent,scale,clip='Idle'){try{const exists=await fetch(path,{method:'HEAD'});if(!exists.ok)return false;const file=path.split('/').pop(),dir=path.slice(0,path.lastIndexOf('/')+1);const result=await SceneLoader.ImportMeshAsync('',dir,file,scene);const group=new TransformNode('approvedArt',scene);group.parent=parent;group.scaling.setAll(scale);result.meshes.forEach(m=>{if(!m.parent)m.parent=group;});if(parent===heroine){[body,head,hair].forEach(m=>m.setEnabled(false));scene.getMeshByName('weapon')?.setEnabled(false);}
 if(parent===bossRoot){bossPrototypeMeshes.forEach(m=>m.setEnabled(false));bossAnimationGroups=result.animationGroups||null;}
 const animation=result.animationGroups?.find(a=>a.name===clip)||result.animationGroups?.find(a=>a.name==='Idle');
-if(animation)animation.start(true,clip==='Run'?1.05:.75);
+if(animation)animation.start(true,/^Run/.test(clip)?1.05:.75);
 return true;
 }catch(e){console.warn('Approved model not loaded',path,e);return false;}}
 const characterBase=import.meta.env.BASE_URL+'assets/characters/';
-tryLoadApprovedModel(characterBase+'medieval.glb',heroine,1.25,'Run').then(ok=>{if(!ok)tryLoadApprovedModel(import.meta.env.BASE_URL+'assets/approved/hero.glb',heroine,1);});
+tryLoadApprovedModel(characterBase+'medieval.glb',heroine,1.25,'Run_Shoot').then(ok=>{if(!ok)tryLoadApprovedModel(import.meta.env.BASE_URL+'assets/approved/hero.glb',heroine,1);});
 tryLoadApprovedModel(characterBase+'witch.glb',bossRoot,4.2,'Idle').then(ok=>{if(!ok)tryLoadApprovedModel(import.meta.env.BASE_URL+'assets/approved/hero.glb',bossRoot,4.1);});
 const supportRoot=new TransformNode('scifiSupport',scene);supportRoot.parent=heroine;supportRoot.position.set(-1.45,0,-1.1);
 const eliteRoot=new TransformNode('soldierElite',scene);eliteRoot.parent=heroine;eliteRoot.position.set(1.45,0,-1.1);
-tryLoadApprovedModel(characterBase+'scifi.glb',supportRoot,.78,'Run');
-tryLoadApprovedModel(characterBase+'soldier.glb',eliteRoot,.78,'Run');
-function triggerBossAnimation(){
+tryLoadApprovedModel(characterBase+'scifi.glb',supportRoot,.78,'Run_Shoot');
+tryLoadApprovedModel(characterBase+'soldier.glb',eliteRoot,.78,'Run_Shoot');
+let lastBossAnimation='Idle';
+function triggerBossAnimation(pattern){
  if(!bossAnimationGroups?.length)return;
- const attack=bossAnimationGroups.find(group=>/attack|shoot|cast|spell|slash/i.test(group.name));
+ const clip=pattern==='lane'?'Sword_Slash':pattern==='sweep'?'Gun_Shoot':'Punch_Left';
+ const attack=bossAnimationGroups.find(group=>group.name===clip);
  if(!attack)return;
- const idle=bossAnimationGroups.find(group=>/idle/i.test(group.name));
+ lastBossAnimation=clip;
+ const idle=bossAnimationGroups.find(group=>group.name==='Idle');
  if(idle)idle.stop();
- attack.stop();
- attack.start(false,1.15);
+ attack.stop();attack.start(false,1.15);
  attack.onAnimationGroupEndObservable.addOnce(()=>{if(state.running&&idle)idle.start(true,.75);});
+}
+function playBossDefeat(){
+ if(!bossAnimationGroups?.length)return;
+ bossAnimationGroups.forEach(group=>group.stop());
+ const death=bossAnimationGroups.find(group=>group.name==='Death');
+ if(death){lastBossAnimation='Death';death.start(false,.88);}
 }
 async function loadSquadArt(){
  const path=import.meta.env.BASE_URL+'assets/approved/hero.glb';
@@ -262,7 +270,7 @@ if(state.z>66){
  if(!pendingAttack && state.time>=bossAttackTime && state.bossHp>0){
   pendingAttack=makeBossAttack(phase,attackCount++,state.x,state.time);
   bossAttackTime=pendingAttack.nextAttackAt;
-  showBossWarnings(pendingAttack);triggerBossAnimation();
+  showBossWarnings(pendingAttack);triggerBossAnimation(pendingAttack.type);
   $('attackText').textContent=pendingAttack.title+' · 회피!';
  }
  if(pendingAttack && state.time>=pendingAttack.executeAt){
@@ -277,7 +285,7 @@ if(state.z>66){
   }
   pendingAttack=null;$('attackText').textContent='다음 공격 대기';
  }
- if(state.bossHp<=0){state.bossHp=0;state.score+=10000;pendingAttack=null;clearBossWarnings();complete(true);}
+ if(state.bossHp<=0){state.bossHp=0;state.score+=10000;pendingAttack=null;clearBossWarnings();playBossDefeat();complete(true);}
  else if(state.units<=0){pendingAttack=null;clearBossWarnings();complete(false);}
 }
 $('hitFlash').classList.toggle('active',state.running&&state.time<hitFlashUntil);
@@ -285,5 +293,5 @@ if(state.z>94)complete(false);
 renderHud();}
 tickBullets(state.paused?0:dt);drawSquad(state.units);camera.target.set(state.x*.18,0,state.z+9.0);camera.position.set(state.x*.22,15.5,state.z-12.5);scene.render();});
 // Read-only QA telemetry; does not change gameplay.
-window.__defenseQa=()=>({running:state.running,paused:state.paused,finished:state.finished,bossPattern:pendingAttack?.type||'none',attacksLaunched:attackCount,z:+state.z.toFixed(2),units:state.units,score:state.score,bossHp:Math.ceil(state.bossHp),elapsed:+state.time.toFixed(2),fps:Math.round(engine.getFps()),meshes:scene.meshes.length,billboards:activeBillboards,enemySprites:activeBillboards?enemies.length:0,allySprites:allySprites.length,sceneReady:scene.isReady()});
+window.__defenseQa=()=>({running:state.running,paused:state.paused,finished:state.finished,bossPattern:pendingAttack?.type||'none',attacksLaunched:attackCount,bossLastAnimation:lastBossAnimation,bossAnimationsLoaded:bossAnimationGroups?.length||0,z:+state.z.toFixed(2),units:state.units,score:state.score,bossHp:Math.ceil(state.bossHp),elapsed:+state.time.toFixed(2),fps:Math.round(engine.getFps()),meshes:scene.meshes.length,billboards:activeBillboards,enemySprites:activeBillboards?enemies.length:0,allySprites:allySprites.length,sceneReady:scene.isReady()});
 window.addEventListener('resize',()=>engine.resize());
