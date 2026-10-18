@@ -21,8 +21,9 @@ import { CameraController } from '../camera/CameraController.js';
 import { UI } from '../ui/UI.js';
 import { TutorialMissions } from '../ui/TutorialMissions.js';
 import { SaveManager } from '../ui/SaveManager.js';
-import { VillageState } from '../systems/VillageState.js';
-import { VillageView } from '../ui/VillageView.js';
+import { NativeVillageProgress } from '../systems/NativeVillageProgress.js';
+import { NativeVillageUI } from '../ui/NativeVillageUI.js';
+import { UpgradedTownHallArt } from '../rendering/UpgradedTownHallArt.js';
 import { Rng } from './Rng.js';
 import { tweens } from './Tween.js';
 import { events } from './Events.js';
@@ -77,12 +78,13 @@ export class Game {
     this._initScene();
     this._initSystems();
     this._initInput();
-    this.mode = 'world';
-    this.villageState = new VillageState(this);
+    this.mode = 'village';
+    this.nativeVillage = new NativeVillageProgress(this);
     this._restoreOrStart();
     this.tutorialMissions = new TutorialMissions(this);
     this.saveManager = new SaveManager(this);
-    this.villageView = new VillageView(this);
+    this.nativeVillageUI = new NativeVillageUI(this);
+    this.townHallArt = new UpgradedTownHallArt(this);
   }
 
   // ---------------- renderer / scene ----------------
@@ -323,7 +325,7 @@ export class Game {
     const affordable = this.nextTile
       ? this.resourceSystem.canAfford(scaledTileCost(this.nextTile.type, this.tilesPlaced))
       : true;
-    const valid = canPlace && !atCap && affordable;
+    const valid = canPlace && this.nativeVillage.allows(cell.q,cell.r) && !atCap && affordable;
     if (this.grid.has(cell.q, cell.r)) {
       this.tileFactory.hideGhost();
     } else {
@@ -342,6 +344,10 @@ export class Game {
       return;
     }
 
+    if (!this.nativeVillage.allows(cell.q,cell.r)) {
+      this.ui.toast('현재 마을 건설 구역 밖입니다. 중심 건물을 승격하세요.');
+      return;
+    }
     if (!this.grid.canPlace(cell.q, cell.r)) {
       this.ui.toast('기존 영토에 인접한 곳에 설치하세요');
       return;
@@ -434,6 +440,14 @@ export class Game {
   }
 
   placeTile(q, r) {
+    if(!this.nativeVillage.allows(q,r)){
+      this.ui.toast('마을 영역을 넓히려면 중심 건물을 승격하세요.');
+      return false;
+    }
+    if(!this.grid.canPlace(q,r)){
+      this.ui.toast('기존 마을 영토와 맞닿은 곳에 건설하세요.');
+      return false;
+    }
     const { type, variant } = this.nextTile;
     const prog = this.progressionSystem;
 
@@ -485,7 +499,7 @@ export class Game {
 
   _refreshFrontier() {
     // reuse pool of flat hex meshes for frontier hints
-    const frontier = this.grid.frontierCells();
+    const frontier = this.grid.frontierCells().filter(p=>this.nativeVillage?.allows(p.q,p.r) ?? true);
     while (this._frontierMeshes.length < frontier.length) {
       const m = new THREE.Mesh(hexFlatGeometry(), MATS.frontier);
       m.renderOrder = -1;
@@ -546,7 +560,7 @@ export class Game {
       this.researchSystem.restore(data.research);
       this.buildingSystem.restore(data.buildings);
       this.armySystem.restore(data.army);
-      this.villageState.restore(data.village);
+      this.nativeVillage.restore(data.village);
       this.wallSystem.rebuild();
 
       events.emit('score:changed', { total: this.scoring.total, delta: 0, multiplier: 1 });
@@ -607,7 +621,7 @@ export class Game {
     this.buildingSystem.reset();
     this.researchSystem.reset();
     this.armySystem.reset();
-    this.villageState.reset();
+    this.nativeVillage.reset();
     this.caravanSystem.clear();
     this.worldEvents.reset();
     this.wallSystem.reset();
@@ -618,7 +632,7 @@ export class Game {
     this.worldSeed = (Math.random() * 0xffffffff) >>> 0;
     this.controls.focusOn(0, 0);
     this._newGame();
-    this.villageView?.setMode('village');
+    this.nativeVillageUI?.setMode('village');
     this.ui.toast(`${iconLabel('kingdom')} 새 왕국이 시작됩니다`);
   }
 
@@ -671,10 +685,9 @@ export class Game {
       dt = Math.min(dt, 0.1); // clamp tab-switch spikes
       this.elapsed += dt;
 
-      const inVillage = this.mode === 'village';
-      // Village-only gameplay needs no 3D map rendering, meshes or world AI ticks.
-      if (!inVillage) {
-        updateMaterialsClock(this.elapsed);
+      const viewingWorld = this.mode === 'world';
+      if (!viewingWorld) updateMaterialsClock(this.elapsed);
+      if (!viewingWorld) {
         tweens.update(dt);
         this.controls.update(dt);
         this.construction.update(dt);
@@ -686,25 +699,23 @@ export class Game {
       this.resourceSystem.update(dt);
       this.citizenSystem.update(dt);
       this.progressionSystem.update(dt);
-      if (!inVillage) {
-        this.territorySystem.update(dt);
-        this.factionSystem.update(dt);
-      }
+      this.territorySystem.update(dt);
+      if (viewingWorld) this.factionSystem.update(dt);
       this.buildingSystem.update(dt);
       this.researchSystem.update(dt);
-      this.villageState.update(dt);
-      if (!inVillage) {
-        this.caravanSystem.update(dt);
-        this.worldEvents.update(dt);
+      this.caravanSystem.update(dt);
+      if (viewingWorld) this.worldEvents.update(dt);
+      if (!viewingWorld) {
         this.selection.update(dt);
         this.radialMenu.update();
-        this.debugHUD.update(dt);
-        this.debugOverlays.update(dt);
       }
+      this.nativeVillage.update(dt);
+      this.nativeVillageUI?.update(dt);
       if (this.progressionSystem.upgrading) this.resourcePanel.refreshProgress();
       if (this.researchSystem.active) this.researchPanel.refreshProgress();
       if (this.constructionPanel.hasActiveWork()) this.constructionPanel.refreshProgress();
-      this.villageView?.refreshProgress(dt);
+      this.debugHUD.update(dt);
+      this.debugOverlays.update(dt);
 
       // periodic autosave (keeps evolution ages fresh)
       this._autosaveT += dt;
@@ -713,7 +724,7 @@ export class Game {
         this.saveSystem.save(this);
       }
 
-      if (!inVillage) this.renderer.render(this.scene, this.camera);
+      if (!viewingWorld) this.renderer.render(this.scene, this.camera);
     };
     requestAnimationFrame(loop);
   }
