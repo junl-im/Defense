@@ -353,8 +353,27 @@ export class Game {
     });
   }
 
-  _pointerToCell() {
+  _pointerToCell(preferBuildingMesh = false) {
     this.raycaster.setFromCamera(this._pointerNdc, this.camera);
+    if (preferBuildingMesh) {
+      // Picking a tall building via the ground plane alone can select the
+      // hex behind it. On a short tap raycast the actual visible 3D mesh
+      // once; regular pointermove hover keeps its cheap ground-plane check.
+      const root = this.tileFactory.tileRoot;
+      const byGroup = new Map();
+      for (const cell of this.grid.cells.values()) {
+        if (cell.group?.visible && (!cell.owner || cell.owner === 'player'))
+          byGroup.set(cell.group, cell);
+      }
+      for (const hit of this.raycaster.intersectObjects(root.children, true)) {
+        let object = hit.object;
+        while (object && object !== root) {
+          const cell = byGroup.get(object);
+          if (cell) return {q:cell.q,r:cell.r};
+          object = object.parent;
+        }
+      }
+    }
     const hit = new THREE.Vector3();
     if (!this.raycaster.ray.intersectPlane(this.groundPlane, hit)) return null;
     return worldToAxial(hit.x, hit.z);
@@ -378,7 +397,7 @@ export class Game {
   }
 
   _tryPlaceAtPointer(clientX, clientY) {
-    const cell = this._pointerToCell();
+    const cell = this._pointerToCell(true);
     if (!cell) return;
 
     if (this.grid.has(cell.q, cell.r)) {
