@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "test": "node scripts/check-slg.mjs && node scripts/check-korean.mjs && node scripts/check-tutorial.mjs && node scripts/check-backups.mjs && node scripts/check-native-village.mjs && node scripts/check-building-art.mjs",
-    "build": "node scripts/check-slg.mjs && node scripts/check-korean.mjs && node scripts/check-tutorial.mjs && node scripts/check-backups.mjs && node scripts/check-native-village.mjs && node scripts/check-building-art.mjs"
+    "test": "node scripts/check-slg.mjs && node scripts/check-korean.mjs && node scripts/check-tutorial.mjs && node scripts/check-backups.mjs && node scripts/check-native-village.mjs && node scripts/check-building-art.mjs && node scripts/check-quick-build.mjs",
+    "build": "node scripts/check-slg.mjs && node scripts/check-korean.mjs && node scripts/check-tutorial.mjs && node scripts/check-backups.mjs && node scripts/check-native-village.mjs && node scripts/check-building-art.mjs && node scripts/check-quick-build.mjs"
   }
 }
