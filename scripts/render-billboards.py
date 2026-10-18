@@ -9,7 +9,7 @@ out.mkdir(parents=True,exist_ok=True)
 reports=[]
 with sync_playwright() as pw:
  browser=pw.chromium.launch(headless=True,args=['--no-sandbox','--disable-dev-shm-usage','--enable-webgl','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader'])
- for model,name in [('soldier','ally-female.png'),('witch','enemy-female.png')]:
+ for model,name in [('soldier','ally-female.png'),('scifi','enemy-female.png')]:
   page=browser.new_page(viewport={'width':384,'height':512},device_scale_factor=1)
   url=f'http://127.0.0.1:4173/Defense/sprite-preview.html?model={model}'
   page_errors=[]
