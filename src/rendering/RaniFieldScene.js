@@ -25,6 +25,9 @@ export class RaniFieldScene {
     this.ray=new THREE.Raycaster();this.ndc=new THREE.Vector2();
     this.entries=[];this.active=false;
     this.focus=new THREE.Vector3(0,0,0);
+    // Match the exact isometric yaw/pitch conventions used by CameraController.
+    this.yaw=game.controls?.yaw??Math.PI/4;
+    this.pitch=game.controls?.pitch??THREE.MathUtils.degToRad(50);
     this.viewDirection=this.camera.position.clone().normalize();
     this.zoomDistance=this.camera.position.length();
     this.pointers=new Map();
@@ -43,12 +46,21 @@ export class RaniFieldScene {
     const sun=new THREE.DirectionalLight(0xffebc0,2);sun.position.set(-6,15,8);this.scene.add(sun);
     this.terrain=new THREE.Group();this.scene.add(this.terrain);
     this._createTerrain();
+    this.territory=new THREE.Group();this.scene.add(this.territory);
+    this.territoryMeshes=[];this.territoryIndex=[];this.territoryCapacity=0;
+    this.territoryGeometry=new THREE.CylinderGeometry(1,1,.30,6,1);
+    this.territoryMaterials=[
+      new THREE.MeshStandardMaterial({color:0xbca46c,roughness:.88}),
+      new THREE.MeshStandardMaterial({color:0xb68174,roughness:.88}),
+      new THREE.MeshStandardMaterial({color:0x89aa91,roughness:.88}),
+    ];
     this.towns=new THREE.Group();this.scene.add(this.towns);
     // Field assets load only after the player opens the field (not at game boot).
     game.canvas.addEventListener('wheel',e=>{
       if(!this.active)return;
       e.preventDefault();
-      this._zoom(e.deltaY>0?1.12:.89);
+      // Match village logarithmic wheel speed and zoom-to-pointer behaviour.
+      this._zoom(Math.exp(e.deltaY*.0012),e.clientX,e.clientY);
     },{passive:false});
     game.canvas.addEventListener('pointerdown',e=>{
       if(!this.active||e.button!==0)return;
@@ -74,9 +86,13 @@ export class RaniFieldScene {
       if(!this.lastTap||this.lastTap.id!==e.pointerId)return;
       const dx=e.clientX-this.lastTap.x,dy=e.clientY-this.lastTap.y;
       if(Math.hypot(dx,dy)<8)return;
-      const step=.016*(this.zoomDistance/22);
-      this.focus.x=THREE.MathUtils.clamp(this.focus.x-dx*step,-9,9);
-      this.focus.z=THREE.MathUtils.clamp(this.focus.z+dy*step,-9,9);
+      // Same screen-to-ground pan basis and zoom scaling as village.
+      const step=2*Math.tan(THREE.MathUtils.degToRad(this.camera.fov)/2)*this.zoomDistance/innerHeight;
+      const fx=-Math.cos(this.yaw),fz=-Math.sin(this.yaw);
+      const rx=-fz,rz=fx;
+      const safePitch=Math.max(.1,Math.sin(this.pitch));
+      this.focus.x=THREE.MathUtils.clamp(this.focus.x-(rx*dx-fx*dy/safePitch)*step,-14,14);
+      this.focus.z=THREE.MathUtils.clamp(this.focus.z-(rz*dx-fz*dy/safePitch)*step,-14,14);
       this._applyCamera();
       this.lastTap={x:e.clientX,y:e.clientY,id:e.pointerId};
     });
@@ -89,18 +105,41 @@ export class RaniFieldScene {
     game.canvas.addEventListener('pointerup',release);
     game.canvas.addEventListener('pointercancel',release);
     window.addEventListener('blur',()=>{this.pointers.clear();this.lastTap=null;this.pinchDistance=0;});
+    window.addEventListener('keydown',e=>{
+      if(!this.active||e.target?.matches?.('input,select,textarea'))return;
+      if(e.code==='KeyQ')this.yaw+=Math.PI/3;
+      if(e.code==='KeyE')this.yaw-=Math.PI/3;
+      if(e.code==='KeyQ'||e.code==='KeyE')this._applyCamera();
+    });
   }
   _pointerDistance(){
     const [a,b]=[...this.pointers.values()];
     return a&&b?Math.hypot(a.x-b.x,a.y-b.y):0;
   }
   _applyCamera(){
+    // Same yaw and pitch projection as the original village camera.
+    this.viewDirection.set(
+      Math.cos(this.yaw)*Math.cos(this.pitch),
+      Math.sin(this.pitch),
+      Math.sin(this.yaw)*Math.cos(this.pitch));
     this.camera.position.copy(this.focus).addScaledVector(this.viewDirection,this.zoomDistance);
     this.camera.lookAt(this.focus);
   }
-  _zoom(factor){
+  _zoom(factor,x=null,y=null){
     if(!Number.isFinite(factor)||factor<=0)return;
-    this.zoomDistance=THREE.MathUtils.clamp(this.zoomDistance*factor,9,32);
+    const before=this.zoomDistance;
+    const after=THREE.MathUtils.clamp(before*factor,9,32);
+    if(before===after)return;
+    if(x!==null&&y!==null){
+      this.ndc.set(x/innerWidth*2-1,1-y/innerHeight*2);
+      this.ray.setFromCamera(this.ndc,this.camera);
+      const hit=new THREE.Vector3();
+      if(this.ray.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0,1,0),0),hit)){
+        this.focus.x=hit.x+(this.focus.x-hit.x)*(after/before);
+        this.focus.z=hit.z+(this.focus.z-hit.z)*(after/before);
+      }
+    }
+    this.zoomDistance=after;
     this._applyCamera();
   }
   _createTerrain(){
@@ -171,10 +210,48 @@ export class RaniFieldScene {
     this.towns.add(group);
     entry.group=group;
   }
+  // Render actual ownership and hex terrain from the saved native grid;
+  // the decorative underlay never replaces the authoritative territory data.
+  _refreshRealHexes(radius){
+    const cells=[...this.game.grid.cells.values()];
+    const capacity=Math.max(24,2**Math.ceil(Math.log2(Math.max(1,cells.length))));
+    if(capacity>this.territoryCapacity){
+      for(const old of this.territoryMeshes){this.territory.remove(old);old.dispose();}
+      this.territoryCapacity=capacity;
+      this.territoryMeshes=this.territoryMaterials.map(mat=>{
+        const mesh=new THREE.InstancedMesh(this.territoryGeometry,mat,capacity);
+        mesh.frustumCulled=false;
+        this.territory.add(mesh);
+        return mesh;
+      });
+    }
+    const counts=[0,0,0],index=[[],[],[]];
+    const dummy=new THREE.Object3D();
+    const hexRadius=Math.min(.53,4.35/Math.max(8,radius));
+    for(const cell of cells){
+      const owner=cell.owner;
+      const category=(!owner||owner==='player')?0:
+        this.game.factionSystem.factions.find(f=>f.id===owner)?.hostile?1:2;
+      const pos=normalize(cell.q,cell.r,radius);
+      dummy.position.set(pos.x,.04,pos.z);
+      dummy.rotation.set(0,a,0);
+      dummy.scale.set(hexRadius,.83,hexRadius);
+      dummy.updateMatrix();
+      const i=counts[category]++;
+      this.territoryMeshes[category].setMatrixAt(i,dummy.matrix);
+      index[category].push(cell);
+    }
+    for(let i=0;i<this.territoryMeshes.length;i++){
+      const mesh=this.territoryMeshes[i];
+      mesh.count=counts[i];mesh.instanceMatrix.needsUpdate=true;
+    }
+    this.territoryIndex=index;
+  }
   refresh(){
     for(const obj of [...this.towns.children])this.towns.remove(obj);
     const factions=this.game.factionSystem.factions;
-    const radius=Math.max(8,...factions.map(f=>Math.max(Math.abs(f.home.q),Math.abs(f.home.r))));
+    const radius=Math.max(8,...factions.map(f=>Math.max(Math.abs(f.home.q),Math.abs(f.home.r))),...Array.from(this.game.grid.cells.values(),c=>Math.max(Math.abs(c.q),Math.abs(c.r))));
+    this._refreshRealHexes(radius);
     this.entries=[{id:'player',name:'내 마을',q:0,r:0,
       count:this.game.nativeVillage.size*this.game.nativeVillage.size,
       tier:this.game.nativeVillage.level,hostile:false},
@@ -205,7 +282,11 @@ export class RaniFieldScene {
     }
   }
   open(){
-    this.active=true;this.labels.hidden=false;this.refresh();
+    this.active=true;this.labels.hidden=false;
+    this.yaw=this.game.controls.yaw;
+    this.pitch=this.game.controls.pitch;
+    this._applyCamera();
+    this.refresh();
     if(!this.modelTemplate&&!this.assetUnavailable&&!this.modelPending){
       this.modelPending=this._loadAsset().finally(()=>{this.modelPending=null});
     }
@@ -232,10 +313,29 @@ export class RaniFieldScene {
     this.ndc.set(x/innerWidth*2-1,1-y/innerHeight*2);
     this.ray.setFromCamera(this.ndc,this.camera);
     const found=this.ray.intersectObjects(this.towns.children,true);
-    if(!found.length)return;
-    let obj=found[0].object;
-    while(obj&&!obj.userData.factionId)obj=obj.parent;
-    if(obj?.userData?.factionId)this.select(obj.userData.factionId);
+    if(found.length){
+      let obj=found[0].object;
+      while(obj&&!obj.userData.factionId)obj=obj.parent;
+      if(obj?.userData?.factionId){
+        const id=obj.userData.factionId;
+        if(id==='player')this.game.nativeVillageUI.showVillageInfo();
+        else this.select(id);
+        return;
+      }
+    }
+    // The external hexes are actual native-grid cells, not fake action cards.
+    const hexes=this.ray.intersectObjects(this.territoryMeshes,false);
+    if(!hexes.length)return;
+    const hit=hexes[0],category=this.territoryMeshes.indexOf(hit.object);
+    const cell=this.territoryIndex[category]?.[hit.instanceId];
+    if(!cell)return;
+    if(!cell.owner||cell.owner==='player')
+      this.game.nativeVillageUI.showVillageInfo(cell);
+    else {
+      this.select(cell.owner);
+      this.game.nativeVillageUI.selectedCell=cell;
+      this.game.nativeVillageUI.refreshWorld();
+    }
   }
   updateLabels(){
     if(!this.active)return;
