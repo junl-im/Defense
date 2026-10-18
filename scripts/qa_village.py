@@ -69,6 +69,35 @@ with sync_playwright() as p:
     picker.select_option(first_id)
     assert page.evaluate('window.__game.nativeVillageUI.selectedId')==first_id
     assert '거리:' in page.locator('#rani-world-detail').inner_text()
+    # The picker must bring the real selected 3D settlement into camera focus.
+    assert page.evaluate("""() => {
+      const field=window.__game.fieldScene;
+      const city=field.entries.find(x=>x.id===window.__game.nativeVillageUI.selectedId);
+      return city && Math.abs(field.focus.x-city.x)<0.01 && Math.abs(field.focus.z-city.z)<0.01;
+    }"""), 'Picker changed info but did not move the 3D camera'
+    # Field zoom must not mutate the original village camera.
+    zoom_before=page.evaluate('window.__game.fieldScene.zoomDistance')
+    village_zoom=page.evaluate('window.__game.controls.zoomGoal')
+    page.evaluate("""() => document.getElementById('game-canvas').dispatchEvent(
+      new WheelEvent('wheel',{deltaY:140,bubbles:true,cancelable:true}))""")
+    assert page.evaluate('window.__game.fieldScene.zoomDistance')>zoom_before
+    assert page.evaluate('window.__game.controls.zoomGoal')==village_zoom
+    # Pointer pinch expands/zooms the field without changing village controls.
+    page.evaluate("""() => {
+      const c=document.getElementById('game-canvas'),ev=(type,id,x,y)=>
+        c.dispatchEvent(new PointerEvent(type,{pointerId:id,pointerType:'touch',button:0,
+          clientX:x,clientY:y,bubbles:true}));
+      ev('pointerdown',44,80,320);ev('pointerdown',45,140,320);
+      ev('pointermove',45,230,320);
+      ev('pointerup',44,80,320);ev('pointerup',45,230,320);
+    }""")
+    assert page.evaluate('window.__game.fieldScene.zoomDistance')<zoom_before*1.12
+    assert page.evaluate('window.__game.controls.zoomGoal')==village_zoom
+    page.locator('#rani-field-focus-home').click()
+    assert page.evaluate("window.__game.nativeVillageUI.selectedId")=='player'
+    assert page.evaluate('Math.abs(window.__game.fieldScene.focus.x)+Math.abs(window.__game.fieldScene.focus.z)')<0.01
+    # Restore faction focus for the existing screenshot & 3D selection checks.
+    picker.select_option(first_id)
     # A displayed 3D city label remains touch selectable as well.
     visible_labels=page.locator('#rani-field-labels button[data-field-faction]:visible')
     assert visible_labels.count()>=1, 'The 3D field must show at least one town label'
