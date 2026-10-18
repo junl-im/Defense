@@ -4,7 +4,8 @@ export class SaveManager {
   constructor(game) {
     this.game=game;
     this.button=document.getElementById('save-manager-btn');
-    if(!this.button) throw new Error('저장 관리 버튼이 없습니다.');
+    // Standalone engine and military test pages intentionally omit the main HUD.
+    if(!this.button) return;
     const root=document.createElement('div');
     root.id='save-manager-overlay';
     root.className='save-manager-overlay';
