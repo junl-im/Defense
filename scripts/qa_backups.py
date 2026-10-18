@@ -59,10 +59,12 @@ with sync_playwright() as p:
         page.locator("#save-import-file").set_input_files({
             "name":"valid.json","mimeType":"application/json","buffer":text.encode("utf8")})
         page.wait_for_function("window.__game?.tilesPlaced===1",timeout=60000)
+        page.locator("#rani-go-world").click()
         page.locator("#save-manager-btn").click()
         assert page.locator("#save-undo").is_enabled()
         page.locator("#save-undo").click()
         page.wait_for_function("window.__game?.tilesPlaced===2",timeout=60000)
+        page.locator("#rani-go-world").click()
         page.locator("#save-manager-btn").click()
         assert page.locator("#save-undo").is_disabled()
         page.screenshot(path=str(out/(device+"-save-manager.png")),full_page=True)
