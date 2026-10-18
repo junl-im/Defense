@@ -88,7 +88,15 @@ async function decorateStage(){
    outer.freezeWorldMatrix();
   }
  }
- const designs=[['pillar-stone',towers,towerMat],['tree',trees,forestMat],['rock-large',rocks,rocksMat],['banner-red',flags,bannerMat]];
+ // The source pillar-stone GLB has an unsupported embedded texture in Chromium.
+ // Use optimized low-poly stone pillars here while preserving other approved GLBs.
+ for(const [x,,z,scale] of towers){
+  const column=MeshBuilder.CreateCylinder('stoneTower',{height:scale,diameter:.65,tessellation:8},scene);
+  column.position.set(x,scale/2,z);column.material=towerMat;column.freezeWorldMatrix();
+  const cap=MeshBuilder.CreateCylinder('stoneTowerCap',{height:.32,diameter:1.12,tessellation:8},scene);
+  cap.position.set(x,scale+.13,z);cap.material=stoneMat;cap.freezeWorldMatrix();
+ }
+ const designs=[['tree',trees,forestMat],['rock-large',rocks,rocksMat],['banner-red',flags,bannerMat]];
  await Promise.all(designs.map(async ([name,locations,material])=>{
   try {
    const pack=await SceneLoader.ImportMeshAsync('',home,name+'.glb',scene);
@@ -107,7 +115,19 @@ async function decorateStage(){
 decorateStage();
 
 const say=(text)=>{const target=$('message');target.textContent=text;target.classList.add('show');setTimeout(()=>target.classList.remove('show'),1000);};
-function renderHud(){ $('units').textContent=state.units.toLocaleString();$('score').textContent=state.score.toLocaleString();$('bossHp').textContent=state.z>60?Math.max(0,Math.ceil(state.bossHp)).toLocaleString():'—';}
+function renderHud(){
+ $('units').textContent=state.units.toLocaleString();
+ $('score').textContent=state.score.toLocaleString();
+ $('bossHp').textContent=state.z>60?Math.max(0,Math.ceil(state.bossHp)).toLocaleString():'—';
+ const showBoss=state.z>=66;
+ const track=$('bossBar');
+ track.classList.toggle('active',showBoss);
+ const value=Math.max(0,Math.ceil(state.bossHp));
+ $('bossBarText').textContent=value.toLocaleString()+' / '+state.maxBossHp.toLocaleString();
+ const health=$('bossBarFill');
+ health.style.width=(100*value/state.maxBossHp).toFixed(1)+'%';
+ track.setAttribute('aria-valuenow',String(value));
+}
 function reset(){Object.assign(state,{running:true,finished:false,z:3,x:0,units:12,score:0,enemyCount:135,bossHp:1600,time:0});
  bossAttackTime=0;bossWarningUntil=0;bossPreviousPhase=1;shotCooldown=0;warning.setEnabled(false);bullets.forEach(b=>{b.life=0;b.mesh.setEnabled(false);});
 gates.forEach(g=>g.done=false);enemies.forEach(e=>e.isVisible=true);$('front').classList.add('hidden');heroine.position.z=3;heroine.position.x=0;renderHud();}
