@@ -1,0 +1,58 @@
+name: Generate licensed female crowd PNG impostors
+on:
+  push:
+    branches: [feat/anime-crowd-reboot-v0]
+    paths:
+      - 'src/sprite-preview.js'
+      - 'sprite-preview.html'
+      - 'scripts/render-billboards.py'
+      - '.github/workflows/generate-billboards.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  generate:
+    if: github.ref == 'refs/heads/feat/anime-crowd-reboot-v0'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm install --no-audit --no-fund
+      - name: Build site
+        run: npm run build
+        env:
+          VITE_BASE_PATH: /Defense/
+      - name: Install Chromium/Pillow
+        run: |
+          pip install playwright==1.55.0 Pillow==11.3.0
+          python -m playwright install --with-deps chromium
+      - name: Render PNGs and verify alpha pixels
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 4173 > preview.log 2>&1 &
+          sleep 4
+          python scripts/render-billboards.py
+      - name: Commit generated PNG only (feature branch)
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add public/assets/sprites docs/SPRITE_GENERATION.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'assets: render licensed animated female models to transparent crowd PNG'
+          git push origin HEAD:feat/anime-crowd-reboot-v0
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: female-crowd-png-and-evidence
+          path: |
+            public/assets/sprites
+            docs/SPRITE_GENERATION.json
+            preview.log
+          if-no-files-found: warn
