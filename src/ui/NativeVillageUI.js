@@ -90,6 +90,7 @@ export class NativeVillageUI {
     for(const name of ['factions:tick','territory:changed','army:changed'])
       events.on(name,()=>{
         this.hideForeignCells();
+        if(this.activeWorld)this.game.fieldScene?.refresh();
         if(this.activeWorld)this.refreshWorld();
       });
   }
@@ -108,10 +109,12 @@ export class NativeVillageUI {
     this.top.hidden=this.activeWorld;
     this.hideForeignCells();
     if(this.activeWorld){
+      this.game.fieldScene?.open();
       this.game.selection.clear();
       this.game.tileFactory.hideGhost();
       this.refreshWorld();
     } else {
+      this.game.fieldScene?.close();
       this.game._refreshFrontier();
       this.game._updateHover();
     }
@@ -157,6 +160,7 @@ export class NativeVillageUI {
         '<span>'+e.icon+'</span><small>'+clean(e.label)+'</small></button>';
     }).join('');
     parent.innerHTML='<div class="rani-world-grid" aria-hidden="true"></div>'+board;
+    this.game.fieldScene?.updateLabels();
     const detail=this.overlay.querySelector('#rani-world-detail');
     if(!this.selectedId||this.selectedId==='player'){
       detail.innerHTML='<h3>내 마을</h3><p>기존 3D 건설 화면에서 마을을 키우고 병력을 모집하세요.</p>'+

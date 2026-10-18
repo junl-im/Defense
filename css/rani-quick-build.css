@@ -95,3 +95,7 @@
  #rani-quick-build{top:auto}
  #construction-panel.construction-panel{max-height:30dvh;overflow:auto}
 }
+
+/* Keep all informational panels anchored at the top in field/village modes. */
+@media(min-width:701px){#construction-panel.construction-panel{top:140px;bottom:auto;max-height:38vh;overflow:auto}}
+@media(max-width:700px){#construction-panel.construction-panel{top:165px;bottom:auto;max-height:27dvh}}

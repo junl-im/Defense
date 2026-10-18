@@ -26,6 +26,7 @@ import { NativeVillageUI } from '../ui/NativeVillageUI.js';
 import { UpgradedTownHallArt } from '../rendering/UpgradedTownHallArt.js';
 import { VillageBuildingArt } from '../rendering/VillageBuildingArt.js';
 import { QuickBuildMenu } from '../ui/QuickBuildMenu.js';
+import { RaniFieldScene } from '../rendering/RaniFieldScene.js';
 import { Rng } from './Rng.js';
 import { tweens } from './Tween.js';
 import { events } from './Events.js';
@@ -87,6 +88,7 @@ export class Game {
     this.saveManager = new SaveManager(this);
     this.nativeVillageUI = new NativeVillageUI(this);
     this.quickBuildMenu = new QuickBuildMenu(this);
+    this.fieldScene = new RaniFieldScene(this);
     this.townHallArt = new UpgradedTownHallArt(this);
     this.villageBuildingArt = new VillageBuildingArt(this);
   }
@@ -300,12 +302,20 @@ export class Game {
       if (e.button !== 0) return;
       this._tapStart = { id:e.pointerId, x:e.clientX, y:e.clientY,
         touch:e.pointerType !== 'mouse' };
+      if(this.mode==='world') {
+        this.controls._cancel();
+        this.controls.moved=false;
+      }
     });
     this.canvas.addEventListener('pointerup', (e) => {
       const start=this._tapStart; this._tapStart=null;
       if (e.button !== 0 || !start || e.pointerId!==start.id) return;
       const travel=Math.hypot(start.x-e.clientX,start.y-e.clientY);
       if (travel>(start.touch?12:5) || this.controls.moved) return;
+      if(this.mode==='world'){
+        this.fieldScene?.tap(e.clientX,e.clientY);
+        return;
+      }
       this._pointerNdc.set((e.clientX / window.innerWidth) * 2 - 1,
         -(e.clientY / window.innerHeight) * 2 + 1);
       this._tryPlaceAtPointer(e.clientX, e.clientY);
@@ -742,7 +752,8 @@ export class Game {
         this.saveSystem.save(this);
       }
 
-      if (!viewingWorld) this.renderer.render(this.scene, this.camera);
+      if (viewingWorld) this.fieldScene?.render();
+      else this.renderer.render(this.scene, this.camera);
     };
     requestAnimationFrame(loop);
   }
