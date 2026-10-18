@@ -94,10 +94,6 @@
   top:166px!important;bottom:auto!important;
   max-height:min(43dvh,350px)!important
  }
- #radial-menu:not(.hidden){
-  top:166px!important;bottom:auto!important;
-  max-height:43dvh!important
- }
 }
 
 @media(max-width:700px){body[data-active-slg-panel]:not([data-active-slg-panel="map"]) #slg-tutorial{display:none!important}}
@@ -136,3 +132,8 @@
   #radial-menu .radial-btn{width:60px!important;min-height:55px!important}
   #radial-menu .radial-center{width:68px!important;height:68px!important}
 }
+
+/* v1.2 — the selected 3D building owns the exact anchor, including mobile.
+   Do not set !important top/left; JS writes the projected position per frame. */
+#radial-menu:not(.hidden){top:0;left:0;}
+#radial-menu .radial-center{pointer-events:auto;}
