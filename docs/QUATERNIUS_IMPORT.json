@@ -1,0 +1,30 @@
+[
+  {
+    "name": "medieval",
+    "sha": "24014629857e71a8f5f1c9e12f904150818844e4",
+    "clips": 24,
+    "source": "https://quaternius.com/packs/ultimatemodularwomen.html",
+    "status": "official CC0 glTF validated; conversion to GLB; art direction review pending"
+  },
+  {
+    "name": "witch",
+    "sha": "ca15370f97dfa7fddd9107dcb13954385455a848",
+    "clips": 24,
+    "source": "https://quaternius.com/packs/ultimatemodularwomen.html",
+    "status": "official CC0 glTF validated; conversion to GLB; art direction review pending"
+  },
+  {
+    "name": "scifi",
+    "sha": "69c04735122f1d8c01f1d9ca269bf1bc37e5033a",
+    "clips": 24,
+    "source": "https://quaternius.com/packs/ultimatemodularwomen.html",
+    "status": "official CC0 glTF validated; conversion to GLB; art direction review pending"
+  },
+  {
+    "name": "soldier",
+    "sha": "c4eb59f40d879af5286042cd80c4da9d18b7fa6b",
+    "clips": 24,
+    "source": "https://quaternius.com/packs/ultimatemodularwomen.html",
+    "status": "official CC0 glTF validated; conversion to GLB; art direction review pending"
+  }
+]
