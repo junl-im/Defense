@@ -2,6 +2,7 @@ import { Engine, Scene, Vector3, Color3, Color4, HemisphericLight, DirectionalLi
 import '@babylonjs/loaders/glTF';
 import {applyGate,phaseForHp,clamp} from './logic.js';
 import {makeBossAttack,hitsHero,bossCasualties} from './boss-combat.js';
+import {BARRICADE_MAX_HP,BARRICADE_Z,BARRICADE_HOLD_Z,stepBarricade,advanceTowardsBarricade} from './barricade.js';
 import './style.css';
 
 const $=id=>document.getElementById(id);
@@ -31,6 +32,33 @@ const gates=[
  {z:55,done:false,choices:[{x:-3,kind:'add',value:15,material:gateBlue},{x:3,kind:'multiply',value:2,material:gateGold}]}
 ];
 for(const gate of gates)for(const c of gate.choices){const r=new TransformNode('gate',scene);r.position.set(c.x,0,gate.z);box('gateFoot',3.6,.24,.26,0,.14,0,c.material,r);box('gateLeft',.2,2.55,.3,-1.7,1.35,0,c.material,r);box('gateRight',.2,2.55,.3,1.7,1.35,0,c.material,r);box('gateTop',3.6,.25,.3,0,2.5,0,c.material,r);box('gateBackplate',3.1,1.55,.14,0,1.43,0,c.material,r);label(c.kind==='multiply'?'×'+c.value:'+'+c.value,'#ffffff',r,1.45);}
+// Breakable 300 HP siege barricade. Only Babylon meshes, PNG and CSS; no SVG.
+const woodMat=mat('siegeOak','#875737'),ironMat=mat('siegeIron','#33384f');
+const barricadeRoot=new TransformNode('siegeBarricade',scene);
+barricadeRoot.position.set(0,0,BARRICADE_Z);
+const barricadePlanks=[];
+for(let i=0;i<15;i++){
+ const x=-5.6+i*.8,height=1.95+(i%3)*.1;
+ const plank=box('woodPlank'+i,.75,height,.38,x,height/2,-.02,woodMat,barricadeRoot);
+ barricadePlanks.push({mesh:plank,x,originalY:height/2,index:i});
+}
+for(const y of [.52,1.6])box('ironBrace',12,.15,.32,0,y,-.37,ironMat,barricadeRoot);
+for(const x of [-5.95,5.95])box('siegePost',.4,2.4,.5,x,1.2,-.12,ironMat,barricadeRoot);
+const barricadeBillboard=MeshBuilder.CreatePlane('barrierHPInWorld',{width:3.1,height:1.15},scene);
+barricadeBillboard.parent=barricadeRoot;barricadeBillboard.position.set(0,2.5,-.5);barricadeBillboard.rotation.y=Math.PI;
+const barricadeText=new DynamicTexture('barrierNumber',{width:512,height:192},scene,true);
+barricadeText.hasAlpha=true;
+const barricadeLabelMat=new StandardMaterial('barrierNumberInk',scene);
+barricadeLabelMat.diffuseTexture=barricadeText;barricadeLabelMat.emissiveColor=new Color3(1,1,1);barricadeLabelMat.backFaceCulling=false;
+barricadeBillboard.material=barricadeLabelMat;
+let barricadeLastHp=-1,barricadeBrokeAt=-1;
+function updateBarricadeLabel(hp){
+ const rounded=Math.ceil(Math.max(0,hp));
+ if(rounded===barricadeLastHp)return;
+ barricadeLastHp=rounded;
+ barricadeText.drawText(String(rounded),null,143,'bold 130px Arial','#fff6df','#2c2434',true);
+}
+updateBarricadeLabel(BARRICADE_MAX_HP);
 const mobRoot=new TransformNode('mobRoot',scene);
 let soldierTemplate=MeshBuilder.CreateCapsule('squad proto',{radius:.27,height:1.1},scene);soldierTemplate.isVisible=false;soldierTemplate.material=heroMat;
 let squadScale=1,squadBaseY=.58;let activeBillboards=false;const allySprites=[];
@@ -80,7 +108,7 @@ box('boss armor',4.2,5,2.6,0,4,0,bossMat,bossRoot);const bossHead=MeshBuilder.Cr
 const bossHair=MeshBuilder.CreateSphere('boss hair',{diameter:3.45},scene);bossHair.parent=bossRoot;bossHair.position.set(0,8.75,-.25);bossHair.scaling.y=.65;bossHair.material=hairMat;
 for(const x of [-2.55,2.55])box('boss gauntlet',1.25,4.5,1.6,x,4.2,0,bossMat,bossRoot);
 box('boss left boot',1.4,3,1.7,-1,1.1,0,railMat,bossRoot);box('boss right boot',1.4,3,1.7,1,1.1,0,railMat,bossRoot);
-const state={running:false,paused:false,finished:false,z:3,x:0,units:12,score:0,enemyCount:135,bossHp:1600,maxBossHp:1600,time:0};
+const state={running:false,paused:false,finished:false,z:3,x:0,units:12,score:0,enemyCount:135,bossHp:1600,maxBossHp:1600,wallHp:BARRICADE_MAX_HP,wallStoppedSeconds:0,wallDamage:0,time:0};
 let input=0,pointerStart=null;
 const bossPrototypeMeshes=bossRoot.getChildMeshes();
 async function decorateStage(){
@@ -133,6 +161,12 @@ function renderHud(){
  $('units').textContent=state.units.toLocaleString();
  $('score').textContent=state.score.toLocaleString();
  $('bossHp').textContent=state.z>60?Math.max(0,Math.ceil(state.bossHp)).toLocaleString():'—';
+ const wallRemaining=Math.max(0,Math.ceil(state.wallHp));
+ const wallTrack=$('wallBar');
+ wallTrack.classList.toggle('active',state.z>=45&&wallRemaining>0);
+ $('wallHpLabel').textContent=wallRemaining.toLocaleString()+' / '+BARRICADE_MAX_HP;
+ $('wallBarFill').style.width=(100*wallRemaining/BARRICADE_MAX_HP).toFixed(1)+'%';
+ wallTrack.setAttribute('aria-valuenow',String(wallRemaining));
  const showBoss=state.z>=66;
  const track=$('bossBar');
  track.classList.toggle('active',showBoss);
@@ -143,10 +177,15 @@ function renderHud(){
  health.style.width=(100*value/state.maxBossHp).toFixed(1)+'%';
  track.setAttribute('aria-valuenow',String(value));
 }
-function reset(){Object.assign(state,{running:true,paused:false,finished:false,z:3,x:0,units:12,score:0,enemyCount:135,bossHp:1600,time:0});
+function reset(){Object.assign(state,{running:true,paused:false,finished:false,z:3,x:0,units:12,score:0,enemyCount:135,bossHp:1600,wallHp:BARRICADE_MAX_HP,wallStoppedSeconds:0,wallDamage:0,time:0});
  $('pausePanel').classList.add('hidden');$('pauseBtn').setAttribute('aria-pressed','false');$('pauseBtn').textContent='Ⅱ';
  bossAttackTime=0;bossPreviousPhase=1;attackCount=0;pendingAttack=null;shotCooldown=0;hitFlashUntil=0;bossPulseUntil=0;
  clearBossWarnings();$('hitFlash').classList.remove('active');$('attackText').textContent='다음 공격 대기';
+ barricadeBrokeAt=-1;barricadeRoot.setEnabled(true);barricadeBillboard.setEnabled(true);
+ barricadeLastHp=-1;updateBarricadeLabel(BARRICADE_MAX_HP);
+ for(const p of barricadePlanks){p.mesh.position.set(p.x,p.originalY,-.02);p.mesh.rotation.z=0;}
+ lastBossAnimation='Idle';
+ if(bossAnimationGroups?.length){bossAnimationGroups.forEach(g=>g.stop());bossAnimationGroups.find(g=>g.name==='Idle')?.start(true,.75);}
  bullets.forEach(b=>{b.life=0;b.mesh.setEnabled(false);});
 gates.forEach(g=>g.done=false);enemies.forEach(e=>e.isVisible=true);$('front').classList.add('hidden');heroine.position.z=3;heroine.position.x=0;renderHud();}
 $('startBtn').addEventListener('click',reset);
@@ -257,7 +296,24 @@ function tickBullets(dt){
  for(const b of bullets)if(b.life>0){b.life-=dt;b.mesh.position.z+=30*dt;if(b.life<=0)b.mesh.setEnabled(false);}
 }
 
-engine.runRenderLoop(()=>{const dt=Math.min(engine.getDeltaTime()/1000,.35);if(state.running&&!state.paused){state.time+=dt;state.x=clamp(state.x+input*dt*7.2,-4.9,4.9);if(state.z<70)state.z+=dt*5.6;heroine.position.x=state.x;heroine.position.z=state.z;heroine.rotation.z=input*-.07;
+engine.runRenderLoop(()=>{const dt=Math.min(engine.getDeltaTime()/1000,.35);if(state.running&&!state.paused){state.time+=dt;state.x=clamp(state.x+input*dt*7.2,-4.9,4.9);if(state.z<70)state.z=Math.min(70,advanceTowardsBarricade(state.z,dt*5.6,state.wallHp));
+if(state.wallHp>0 && state.z>=BARRICADE_HOLD_Z-.001){
+ state.wallStoppedSeconds+=dt;
+ const result=stepBarricade(state.wallHp,state.units,dt);
+ state.wallHp=result.hp;state.wallDamage+=result.damage;
+ updateBarricadeLabel(state.wallHp);
+ if(result.destroyed){barricadeBrokeAt=state.time;say('방벽 파괴! +300');state.score+=300;barricadeBillboard.setEnabled(false);}
+}
+if(barricadeBrokeAt>=0){
+ const age=state.time-barricadeBrokeAt;
+ for(const p of barricadePlanks){
+  const side=p.x<0?-1:1;
+  p.mesh.position.y=p.originalY-Math.min(3,age*2.8);
+  p.mesh.rotation.z=side*Math.min(1.5,age*1.3+(p.index%3)*.12);
+ }
+ if(age>1.5)barricadeRoot.setEnabled(false);
+}
+heroine.position.x=state.x;heroine.position.z=state.z;heroine.rotation.z=input*-.07;
 for(const g of gates){if(!g.done&&state.z>=g.z){g.done=true;const choice=g.choices[state.x>=0?1:0];state.units=applyGate(state.units,choice.kind,choice.value);state.score+=120;say(choice.kind==='multiply'?'병력 ×'+choice.value:'병력 +'+choice.value);}}
 if(state.z>26&&state.z<59&&state.enemyCount>0){const defeated=Math.min(state.enemyCount,dt*(5+state.units*.38));state.enemyCount-=defeated;state.score+=Math.ceil(defeated*3);const alive=Math.ceil(state.enemyCount);enemies.forEach((e,i)=>e.isVisible=i<alive);if(state.time%2<dt&&state.units>1)state.units=Math.max(1,state.units-1);}
 if(state.z>66){
@@ -293,5 +349,5 @@ if(state.z>94)complete(false);
 renderHud();}
 tickBullets(state.paused?0:dt);drawSquad(state.units);camera.target.set(state.x*.18,0,state.z+2.7);camera.position.set(state.x*.22,12.8,state.z-10.2);scene.render();});
 // Read-only QA telemetry; does not change gameplay.
-window.__defenseQa=()=>({running:state.running,paused:state.paused,finished:state.finished,bossPattern:pendingAttack?.type||'none',attacksLaunched:attackCount,bossLastAnimation:lastBossAnimation,bossAnimationsLoaded:bossAnimationGroups?.length||0,z:+state.z.toFixed(2),units:state.units,score:state.score,bossHp:Math.ceil(state.bossHp),elapsed:+state.time.toFixed(2),fps:Math.round(engine.getFps()),meshes:scene.meshes.length,billboards:activeBillboards,enemySprites:activeBillboards?enemies.length:0,allySprites:allySprites.length,sceneReady:scene.isReady()});
+window.__defenseQa=()=>({running:state.running,paused:state.paused,finished:state.finished,bossPattern:pendingAttack?.type||'none',attacksLaunched:attackCount,bossLastAnimation:lastBossAnimation,bossAnimationsLoaded:bossAnimationGroups?.length||0,z:+state.z.toFixed(2),units:state.units,score:state.score,bossHp:Math.ceil(state.bossHp),wallHp:Math.ceil(state.wallHp),wallDamage:Math.round(state.wallDamage),wallStoppedSeconds:+state.wallStoppedSeconds.toFixed(2),elapsed:+state.time.toFixed(2),fps:Math.round(engine.getFps()),meshes:scene.meshes.length,billboards:activeBillboards,enemySprites:activeBillboards?enemies.length:0,allySprites:allySprites.length,sceneReady:scene.isReady()});
 window.addEventListener('resize',()=>engine.resize());
