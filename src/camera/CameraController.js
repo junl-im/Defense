@@ -36,8 +36,8 @@ export class CameraController {
     // logical state (goals) vs displayed (smoothed)
     this.target = new THREE.Vector3(0, 0, 0);
     this.targetGoal = new THREE.Vector3(0, 0, 0);
-    this.zoom = 14;
-    this.zoomGoal = 14;
+    this.zoom = 10;
+    this.zoomGoal = 10;
     this.yaw = Math.PI / 4;
     this.yawGoal = Math.PI / 4;
     this.pitch = BASE_PITCH;

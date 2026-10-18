@@ -1,0 +1,62 @@
+/* Korean-first typography, improved desktop spacing and responsive guide. */
+:root { font-family: "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; }
+body, button, input, .ui-panel, .ui-panel *, .hud-side-panel, .hud-side-panel *,
+#radial-menu, #radial-menu *, #slg-mobile-dock, #slg-mobile-dock * {
+  font-family: "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif !important;
+  letter-spacing: -0.015em;
+}
+#game-title { white-space: nowrap; letter-spacing: -0.02em; }
+.hud-panel-title, .panel-title { letter-spacing: 0.01em; }
+.tile-chip-name { font-size: 11px; font-weight: 750; }
+.tile-shop-tab { font-size: 11px; }
+.research-btn-name { font-size: 12px; }
+#research-panel .hud-panel-title { margin-bottom: 8px; }
+#faction-panel { max-height: min(350px, 42vh); overflow-y: auto; }
+@media (min-width: 701px) {
+  #faction-panel {
+    right: 240px;
+    left: auto;
+    bottom: 16px;
+    width: 200px;
+    max-height: 290px;
+  }
+  #hud-bottom { gap: 8px; }
+  #hud-bottom .ui-btn { padding: 8px 12px; }
+}
+.ko-guide-overlay[hidden] { display: none !important; }
+.ko-guide-overlay {
+  position: fixed; inset: 0; z-index: 120;
+  background: rgba(5, 17, 25, 0.72);
+  display: grid; place-items: center; padding: 12px;
+  box-sizing: border-box;
+}
+.ko-guide-panel {
+  background: #f5ebd5; border: 2px solid #8a693f; color: #322618;
+  border-radius: 16px; box-shadow: 0 16px 55px #0911179a;
+  width: min(540px, 100%); max-height: min(88dvh, 730px);
+  overflow-y: auto; box-sizing: border-box; padding: 18px;
+  font: 14px/1.6 "Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+}
+.ko-guide-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.ko-guide-head h2 { font-size: 20px; margin: 0; }
+.ko-guide-close { border: 1px solid #998569; border-radius: 9px; background: #e9ddc1; color: #35271b; padding: 5px 9px; cursor: pointer; }
+.ko-guide-intro { margin: 4px 0 12px; color: #66513e; }
+.ko-guide-step {
+  display: flex; flex-direction: column; gap: 2px;
+  background: #fff9eb; border: 1px solid #dfccab; border-radius: 10px;
+  padding: 8px 11px; margin-bottom: 7px;
+}
+.ko-guide-step strong { font-size: 14px; }
+.ko-guide-control { display: flex; flex-direction: column; padding: 7px 5px; font-size: 12px; }
+.ko-guide-control b { color: #63472d; }
+.ko-guide-start {
+  margin-top: 10px; width: 100%; border-radius: 10px; padding: 11px;
+  background: #523924; color: #fff2d7; border: 1px solid #392517;
+  font-size: 14px; font-weight: 700; cursor: pointer;
+}
+@media(max-width:700px) {
+  #hud-bottom #help-btn { padding: 6px 10px; font-size: 11px; }
+  #hud-bottom { align-items: center; }
+  .ko-guide-panel { padding: 14px; max-height: 88dvh; }
+  .ko-guide-step { padding: 7px 9px; }
+}
