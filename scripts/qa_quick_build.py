@@ -22,14 +22,14 @@ with sync_playwright() as p:
       g.controls.moved=false;
     }""")
     # Synthesize a real PointerEvent with button=0, not a generic DOM Event.
-    page.evaluate("([x,y]) => document.getElementById('game-canvas').dispatchEvent(new PointerEvent('pointerup',{button:0,clientX:x,clientY:y,bubbles:true}))",[int(w/2),int(h/2)])
+    page.evaluate("""([x,y]) => {const canvas=document.getElementById('game-canvas');canvas.dispatchEvent(new PointerEvent('pointerdown',{button:0,buttons:1,clientX:x,clientY:y,bubbles:true,pointerId:1,pointerType:'touch'}));canvas.dispatchEvent(new PointerEvent('pointerup',{button:0,buttons:0,clientX:x,clientY:y,bubbles:true,pointerId:1,pointerType:'touch'}));}""",[int(w/2),int(h/2)])
     assert page.locator('#rani-quick-build').is_visible(), 'tap should open context menu'
     assert page.locator('button[data-plan="combo:lumber_mill"]').is_visible()
     assert page.locator('button[data-plan="tile:forest"]').is_visible()
     # Same tile is a real open/close toggle.
-    page.evaluate("([x,y]) => document.getElementById('game-canvas').dispatchEvent(new PointerEvent('pointerup',{button:0,clientX:x,clientY:y,bubbles:true}))",[int(w/2),int(h/2)])
+    page.evaluate("""([x,y]) => {const canvas=document.getElementById('game-canvas');canvas.dispatchEvent(new PointerEvent('pointerdown',{button:0,buttons:1,clientX:x,clientY:y,bubbles:true,pointerId:1,pointerType:'touch'}));canvas.dispatchEvent(new PointerEvent('pointerup',{button:0,buttons:0,clientX:x,clientY:y,bubbles:true,pointerId:1,pointerType:'touch'}));}""",[int(w/2),int(h/2)])
     assert not page.locator('#rani-quick-build').is_visible()
-    page.evaluate("([x,y]) => document.getElementById('game-canvas').dispatchEvent(new PointerEvent('pointerup',{button:0,clientX:x,clientY:y,bubbles:true}))",[int(w/2),int(h/2)])
+    page.evaluate("""([x,y]) => {const canvas=document.getElementById('game-canvas');canvas.dispatchEvent(new PointerEvent('pointerdown',{button:0,buttons:1,clientX:x,clientY:y,bubbles:true,pointerId:1,pointerType:'touch'}));canvas.dispatchEvent(new PointerEvent('pointerup',{button:0,buttons:0,clientX:x,clientY:y,bubbles:true,pointerId:1,pointerType:'touch'}));}""",[int(w/2),int(h/2)])
     assert page.locator('#rani-quick-build').is_visible()
     page.screenshot(path=str(OUT/(label+'-context.png')),full_page=True)
     menu=page.locator('#rani-quick-build').bounding_box()
@@ -61,6 +61,15 @@ with sync_playwright() as p:
       assert page.locator('#rani-native-world').is_visible()
       nav.click()
       assert nav.get_attribute('aria-expanded')=='false'
+      assert page.locator('#slg-mobile-dock button[data-panel="map"]').inner_text().find('마을')>=0
+      assert not page.locator('#game-title').is_visible()
+    # One short tap on the completed 3D tile should open the EXISTING info/radial action sheet.
+    page.evaluate("window.__game._pointerToCell=()=>({q:1,r:0})")
+    page.evaluate("""([x,y]) => {let c=document.getElementById('game-canvas');
+      c.dispatchEvent(new PointerEvent('pointerdown',{button:0,pointerId:2,pointerType:'touch',clientX:x,clientY:y,bubbles:true}));
+      c.dispatchEvent(new PointerEvent('pointerup',{button:0,pointerId:2,pointerType:'touch',clientX:x,clientY:y,bubbles:true}));}""",[int(w/2),int(h/2)])
+    assert page.evaluate("window.__game.selection.cell?.q === 1"),'Building single tap should select immediately'
+    assert page.locator('#radial-menu:not(.hidden)').is_visible()
     page.screenshot(path=str(OUT/(label+'-placed.png')),full_page=True)
     assert not errors,f'{label}: {errors}'
     print('PASS',label,'empty tap/menu toggle/combo 3D construction/mobile dock/compact layout',flush=True)

@@ -137,3 +137,10 @@ body[data-game-mode="world"] .rani-world-detail{
  #rani-field-labels button{font-size:9px;padding:3px 5px;min-height:32px}
  body[data-game-mode="world"] #slg-mobile-dock{display:none!important}
 }
+
+/* Top-first field information, keep resource strip available in world. */
+body[data-game-mode="world"] #gameplay-hud{display:flex!important}
+body[data-game-mode="world"] #hud-top{display:flex!important}
+body[data-game-mode="world"] #hud-kingdom-panel,body[data-game-mode="world"] #hud-territory-panel{display:none!important}
+body[data-game-mode="world"] .rani-world-head{top:76px!important}
+@media(max-width:700px){body[data-game-mode="world"] .rani-world-head{top:92px!important}}

@@ -13,14 +13,14 @@ function countTerrain(game, type) {
 export const TUTORIAL_STEPS = Object.freeze([
   {
     id: 'first_land', title: '처음 영토 확장',
-    description: '기존 마을 옆에 영토 1칸을 더 설치하세요.',
+    description: '마을의 비어 있는 건설 가능 땅을 한 번 눌러 영토를 늘리세요.',
     panel: 'tiles',
     count: (game) => game.tilesPlaced,
     goal: 2, unit: '칸',
   },
   {
     id: 'forest', title: '목재 생산 기반',
-    description: '건설 메뉴에서 숲을 선택하고 영토에 배치하세요.',
+    description: '빈 땅을 눌러 숲을 배치하거나 숲과 벌목장을 함께 건설하세요.',
     panel: 'tiles',
     count: (game) => countTerrain(game, 'forest'),
     goal: 1, unit: '칸',

@@ -56,11 +56,12 @@ with sync_playwright() as p:
     page.locator('#rani-native-world').click()
     assert page.evaluate('window.__game.mode')=='world'
     assert page.locator('#rani-world-overview').is_visible()
-    assert not page.locator('#game-canvas').is_visible()
-    assert page.locator('#rani-world-map button[data-faction-id]').count()>1
-    f=page.locator('#rani-world-map button[data-faction-id]').filter(has_not=page.locator('[data-faction-id="player"]')).first
-    page.locator('#rani-world-map button[data-faction-id]:not([data-faction-id="player"])').first.click()
+    assert page.locator('#game-canvas').is_visible(), '3D field render should replace flat map'
+    assert page.evaluate("window.__game.fieldScene.entries.length")>1
+    assert page.locator('#rani-field-labels button[data-field-faction]').count()>1
+    page.locator('#rani-field-labels button[data-field-faction]:not([data-field-faction="player"])').first.click()
     assert page.locator('#rani-world-detail').inner_text().find('거리:')>=0
+    assert page.evaluate("window.__game.fieldScene.towns.children.length === window.__game.fieldScene.entries.length")
     page.screenshot(path=str(OUT/(kind+'-faction-world.png')),full_page=True)
     page.locator('#rani-native-home').click()
     assert page.evaluate('window.__game.mode')=='village'
