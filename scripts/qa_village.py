@@ -133,6 +133,15 @@ with sync_playwright() as p:
     page.screenshot(path=str(OUT/(kind+'-faction-world.png')),full_page=True)
     page.locator('#rani-native-home').click()
     assert page.evaluate('window.__game.mode')=='village'
+    assert page.locator('#radial-menu .radial-center').is_visible(), (
+      'Returning to my village must open its original 3D hex info ring')
+    # The player's name in the field picker is another direct path to the
+    # very same hex view, not a separate DOM village card.
+    if w<=700: page.locator('#rani-field-shortcut').click()
+    else: page.locator('#rani-native-world').click()
+    page.locator('#rani-field-faction-select').select_option('player')
+    assert page.evaluate('window.__game.mode')=='village'
+    assert page.locator('#radial-menu .radial-center').is_visible()
     assert page.locator('#game-canvas').is_visible()
     assert not errors,f'{kind}: {errors}'
     print('PASS',kind,'original Three.js 3×3 village, 4×4 upgrade, saved, real world faction map',flush=True)
