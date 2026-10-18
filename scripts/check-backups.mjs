@@ -12,8 +12,8 @@ const snap = (count=1) => ({
   version:3,score:10,drawCount:2,worldSeed:123,tilesPlaced:count,
   cells:[{q:0,r:0,t:'village',v:1,rot:0,seed:123,age:0},
     ...(count===2?[{q:1,r:0,t:'forest',v:0,rot:0,seed:345,age:0}]:[])],
-  next:{type:'forest',variant:0}, resources:{wood:42},citizens:{},
-  progression:{tier:0},territory:{},factions:{},buildings:{},research:{},army:{}
+  next:{type:'forest',variant:0}, resources:{wood:42},citizens:[],
+  progression:{tier:0},territory:{},factions:[],buildings:{},research:{},army:{}
 });
 const old=JSON.stringify(snap(1));
 const current=JSON.stringify(snap(2));
