@@ -1,0 +1,50 @@
+name: Integrate verified CC0 GLB art into prototype
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  import:
+    if: github.ref == 'refs/heads/feat/anime-crowd-reboot-v0'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install conversion dependencies
+        run: python -m pip install --disable-pip-version-check trimesh==4.7.4 Pillow==11.3.0 numpy==2.2.6
+      - name: Download pinned originals, verify and convert
+        run: python scripts/build-reviewed-art.py
+      - name: Block SVG and invalid assets
+        run: |
+          node scripts/verify-assets.mjs
+          python - <<'PY'
+          import pathlib
+          for path in pathlib.Path("public/assets").rglob("*"):
+            if path.is_file() and path.suffix.lower() == ".svg":
+              raise SystemExit("SVG disallowed: "+str(path))
+          PY
+      - name: Commit reviewed source outputs on feature branch only
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/assets/approved/hero.glb public/assets/environment docs/INTEGRATED_ASSETS.json
+          if git diff --cached --quiet; then
+            echo "No changes."
+          else
+            git commit -m "assets: import SHA256-verified CC0 character prototype and 16 fantasy GLB props"
+            git push origin HEAD:feat/anime-crowd-reboot-v0
+          fi
+      - name: Upload conversion manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reviewed-cc0-glb-evidence
+          path: |
+            docs/INTEGRATED_ASSETS.json
+            public/assets/approved/hero.glb
+            public/assets/environment
+          if-no-files-found: warn
