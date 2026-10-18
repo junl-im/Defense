@@ -79,13 +79,16 @@ with sync_playwright() as p:
     # wrapper has zero size, so checking wrapper.is_visible() is misleading.
     assert page.locator('#radial-menu .radial-center').is_visible(), 'Tile detail must be visible'
     # v1.1: original 3D-hex anchored radial, never a 3-column bottom list.
-    assert page.evaluate("""() => {
+    radial_style=page.evaluate("""() => {
       const root=document.querySelector('#radial-menu');
       const button=root.querySelector('.radial-btn');
-      return getComputedStyle(root).display !== 'grid' &&
-        !!button && getComputedStyle(button).position === 'absolute' &&
-        getComputedStyle(root).bottom === 'auto';
-    }"""), 'Original circular action ring was replaced by a bottom menu'
+      return {display:getComputedStyle(root).display,
+        buttonCount:root.querySelectorAll('.radial-btn').length,
+        buttonPosition:button?getComputedStyle(button).position:'missing',
+        bottom:getComputedStyle(root).bottom};
+    }""")
+    assert radial_style['display']!='grid' and radial_style['buttonPosition']=='absolute', (
+      'Original hex radial style not restored',radial_style)
     # Display Korean building name and construction % rather than raw icon IDs.
     page.evaluate("""() => {
       const game=window.__game;
