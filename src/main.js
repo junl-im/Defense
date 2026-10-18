@@ -1,6 +1,7 @@
 import { Engine, Scene, Vector3, Color3, Color4, HemisphericLight, DirectionalLight, ArcRotateCamera, MeshBuilder, StandardMaterial, DynamicTexture, TransformNode, SceneLoader, SpriteManager, Sprite } from '@babylonjs/core';
 import '@babylonjs/loaders/glTF';
 import {applyGate,phaseForHp,clamp} from './logic.js';
+import {makeBossAttack,hitsHero,bossCasualties} from './boss-combat.js';
 import './style.css';
 
 const $=id=>document.getElementById(id);
@@ -58,7 +59,19 @@ const bossRoot=new TransformNode('bossRoot',scene);bossRoot.position.set(0,0,77)
 const warningMat=mat('bossWarning','#ff4e83');warningMat.alpha=.3;warningMat.emissiveColor=new Color3(.8,.1,.3);
 const warning=MeshBuilder.CreateGround('bossWarningZone',{width:3.4,height:15},scene);
 warning.material=warningMat;warning.position.y=.12;warning.setEnabled(false);
-let bossAttackTime=0,bossWarningUntil=0,bossWarningLane=0,bossPreviousPhase=1,shotCooldown=0;
+const outerWarnings=[-3.55,3.55].map((x,i)=>{
+ const lane=MeshBuilder.CreateGround('bossSideWarning'+i,{width:3.9,height:15},scene);
+ lane.material=warningMat;lane.position.set(x,.13,71.5);lane.setEnabled(false);return lane;
+});
+function clearBossWarnings(){warning.setEnabled(false);warning.scaling.x=1;outerWarnings.forEach(w=>w.setEnabled(false));}
+function showBossWarnings(attack){
+ clearBossWarnings();
+ const playerZ=state.z+1.5;
+ if(attack.type==='sweep'){for(const w of outerWarnings){w.position.z=playerZ;w.setEnabled(true);}}
+ else{warning.position.set(attack.lane,.12,playerZ);warning.scaling.x=attack.type==='pulse'?1.65:1;warning.setEnabled(true);}
+}
+let bossAttackTime=0,bossPreviousPhase=1,attackCount=0,pendingAttack=null,shotCooldown=0;
+let bossAnimationGroups=null,hitFlashUntil=0,bossPulseUntil=0;
 const bulletMat=mat('projectileMaterial','#ffe88e');bulletMat.emissiveColor=new Color3(.8,.65,.1);
 const bullets=Array.from({length:26},(_,i)=>{const mesh=MeshBuilder.CreateSphere('shot'+i,{diameter:.18,segments:6},scene);mesh.material=bulletMat;mesh.setEnabled(false);return {mesh,life:0};});
 
@@ -124,12 +137,15 @@ function renderHud(){
  track.classList.toggle('active',showBoss);
  const value=Math.max(0,Math.ceil(state.bossHp));
  $('bossBarText').textContent=value.toLocaleString()+' / '+state.maxBossHp.toLocaleString();
+ $('bossPhase').textContent='PHASE '+phaseForHp(value,state.maxBossHp);
  const health=$('bossBarFill');
  health.style.width=(100*value/state.maxBossHp).toFixed(1)+'%';
  track.setAttribute('aria-valuenow',String(value));
 }
 function reset(){Object.assign(state,{running:true,finished:false,z:3,x:0,units:12,score:0,enemyCount:135,bossHp:1600,time:0});
- bossAttackTime=0;bossWarningUntil=0;bossPreviousPhase=1;shotCooldown=0;warning.setEnabled(false);bullets.forEach(b=>{b.life=0;b.mesh.setEnabled(false);});
+ bossAttackTime=0;bossPreviousPhase=1;attackCount=0;pendingAttack=null;shotCooldown=0;hitFlashUntil=0;bossPulseUntil=0;
+ clearBossWarnings();$('hitFlash').classList.remove('active');$('attackText').textContent='다음 공격 대기';
+ bullets.forEach(b=>{b.life=0;b.mesh.setEnabled(false);});
 gates.forEach(g=>g.done=false);enemies.forEach(e=>e.isVisible=true);$('front').classList.add('hidden');heroine.position.z=3;heroine.position.x=0;renderHud();}
 $('startBtn').addEventListener('click',reset);
 window.addEventListener('keydown',e=>{if(['ArrowLeft','a','A'].includes(e.key))input=-1;if(['ArrowRight','d','D'].includes(e.key))input=1;if(['ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();});
@@ -139,7 +155,7 @@ canvas.addEventListener('pointermove',e=>{if(pointerStart!==null){state.x=clamp(
 canvas.addEventListener('pointerup',()=>pointerStart=null);
 function complete(win){state.running=false;state.finished=true;$('front').classList.remove('hidden');$('front').querySelector('h1').innerHTML=win?'작전 <em>성공</em>':'작전 <em>실패</em>';$('front').querySelector('.eyebrow').textContent=win?'MISSION CLEARED':'MISSION FAILED';$('startBtn').innerHTML='다시 도전 →';}
 async function tryLoadApprovedModel(path,parent,scale,clip='Idle'){try{const exists=await fetch(path,{method:'HEAD'});if(!exists.ok)return false;const file=path.split('/').pop(),dir=path.slice(0,path.lastIndexOf('/')+1);const result=await SceneLoader.ImportMeshAsync('',dir,file,scene);const group=new TransformNode('approvedArt',scene);group.parent=parent;group.scaling.setAll(scale);result.meshes.forEach(m=>{if(!m.parent)m.parent=group;});if(parent===heroine){[body,head,hair].forEach(m=>m.setEnabled(false));scene.getMeshByName('weapon')?.setEnabled(false);}
-if(parent===bossRoot){bossPrototypeMeshes.forEach(m=>m.setEnabled(false));}
+if(parent===bossRoot){bossPrototypeMeshes.forEach(m=>m.setEnabled(false));bossAnimationGroups=result.animationGroups||null;}
 const animation=result.animationGroups?.find(a=>a.name===clip)||result.animationGroups?.find(a=>a.name==='Idle');
 if(animation)animation.start(true,clip==='Run'?1.05:.75);
 return true;
@@ -151,6 +167,16 @@ const supportRoot=new TransformNode('scifiSupport',scene);supportRoot.parent=her
 const eliteRoot=new TransformNode('soldierElite',scene);eliteRoot.parent=heroine;eliteRoot.position.set(1.45,0,-1.1);
 tryLoadApprovedModel(characterBase+'scifi.glb',supportRoot,.78,'Run');
 tryLoadApprovedModel(characterBase+'soldier.glb',eliteRoot,.78,'Run');
+function triggerBossAnimation(){
+ if(!bossAnimationGroups?.length)return;
+ const attack=bossAnimationGroups.find(group=>/attack|shoot|cast|spell|slash/i.test(group.name));
+ if(!attack)return;
+ const idle=bossAnimationGroups.find(group=>/idle/i.test(group.name));
+ if(idle)idle.stop();
+ attack.stop();
+ attack.start(false,1.15);
+ attack.onAnimationGroupEndObservable.addOnce(()=>{if(state.running&&idle)idle.start(true,.75);});
+}
 async function loadSquadArt(){
  const path=import.meta.env.BASE_URL+'assets/approved/hero.glb';
  try{
@@ -217,25 +243,36 @@ for(const g of gates){if(!g.done&&state.z>=g.z){g.done=true;const choice=g.choic
 if(state.z>26&&state.z<59&&state.enemyCount>0){const defeated=Math.min(state.enemyCount,dt*(5+state.units*.38));state.enemyCount-=defeated;state.score+=Math.ceil(defeated*3);const alive=Math.ceil(state.enemyCount);enemies.forEach((e,i)=>e.isVisible=i<alive);if(state.time%2<dt&&state.units>1)state.units=Math.max(1,state.units-1);}
 if(state.z>66){
  const phase=phaseForHp(state.bossHp,state.maxBossHp);
- if(phase!==bossPreviousPhase){say('보스 '+phase+'페이즈');bossPreviousPhase=phase;}
+ if(phase!==bossPreviousPhase){say('보스 '+phase+'페이즈!');bossPreviousPhase=phase;bossPulseUntil=state.time+.55;}
  const damage=dt*(state.units*(phase===3?1.2:1.8)+15);
- state.bossHp-=damage;bossRoot.rotation.y=Math.sin(state.time*2)*.12;
- if(state.time>=bossAttackTime){
-  bossWarningLane=state.x<-1?-2.8:state.x>1?2.8:0;
-  bossWarningUntil=state.time+.9;
-  bossAttackTime=state.time+(phase===3?1.7:2.5);
-  warning.position.set(bossWarningLane,.12,state.z+1.5);warning.setEnabled(true);
+ state.bossHp-=damage;
+ bossRoot.rotation.y=Math.sin(state.time*2)*.14;
+ bossRoot.scaling.x=bossRoot.scaling.z=1+(state.time<bossPulseUntil?.045:0);
+ if(!pendingAttack && state.time>=bossAttackTime && state.bossHp>0){
+  pendingAttack=makeBossAttack(phase,attackCount++,state.x,state.time);
+  bossAttackTime=pendingAttack.nextAttackAt;
+  showBossWarnings(pendingAttack);triggerBossAnimation();
+  $('attackText').textContent=pendingAttack.title+' · 회피!';
  }
- if(warning.isEnabled()&&state.time>=bossWarningUntil){
-  warning.setEnabled(false);
-  if(Math.abs(state.x-bossWarningLane)<1.7){state.units=Math.max(0,state.units-(phase===3?Math.max(5,Math.ceil(state.units*.14)):phase+3));say('보스 공격! 회피하세요');}
+ if(pendingAttack && state.time>=pendingAttack.executeAt){
+  clearBossWarnings();
+  if(hitsHero(pendingAttack,state.x)){
+   const casualties=bossCasualties(state.units,pendingAttack);
+   state.units=Math.max(0,state.units-casualties);
+   hitFlashUntil=state.time+.25;
+   say('피격! -'+casualties+'명');
+  }else{
+   state.score+=40;say('완벽 회피 +40');
+  }
+  pendingAttack=null;$('attackText').textContent='다음 공격 대기';
  }
- if(state.bossHp<=0){state.bossHp=0;state.score+=10000;warning.setEnabled(false);complete(true);}
- else if(state.units<=0){warning.setEnabled(false);complete(false);}
+ if(state.bossHp<=0){state.bossHp=0;state.score+=10000;pendingAttack=null;clearBossWarnings();complete(true);}
+ else if(state.units<=0){pendingAttack=null;clearBossWarnings();complete(false);}
 }
+$('hitFlash').classList.toggle('active',state.running&&state.time<hitFlashUntil);
 if(state.z>94)complete(false);
 renderHud();}
 tickBullets(dt);drawSquad(state.units);camera.target.set(state.x*.18,0,state.z+9.0);camera.position.set(state.x*.22,15.5,state.z-12.5);scene.render();});
 // Read-only QA telemetry; does not change gameplay.
-window.__defenseQa=()=>({running:state.running,finished:state.finished,z:+state.z.toFixed(2),units:state.units,score:state.score,bossHp:Math.ceil(state.bossHp),elapsed:+state.time.toFixed(2),fps:Math.round(engine.getFps()),meshes:scene.meshes.length,billboards:activeBillboards,enemySprites:activeBillboards?enemies.length:0,allySprites:allySprites.length,sceneReady:scene.isReady()});
+window.__defenseQa=()=>({running:state.running,finished:state.finished,bossPattern:pendingAttack?.type||'none',attacksLaunched:attackCount,z:+state.z.toFixed(2),units:state.units,score:state.score,bossHp:Math.ceil(state.bossHp),elapsed:+state.time.toFixed(2),fps:Math.round(engine.getFps()),meshes:scene.meshes.length,billboards:activeBillboards,enemySprites:activeBillboards?enemies.length:0,allySprites:allySprites.length,sceneReady:scene.isReady()});
 window.addEventListener('resize',()=>engine.resize());
