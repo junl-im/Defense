@@ -1,0 +1,32 @@
+[
+  {
+    "model": "soldier",
+    "file": "public/assets/sprites/ally-female.png",
+    "resolution": [
+      384,
+      512
+    ],
+    "alpha_min_max": [
+      0,
+      255
+    ],
+    "opaque_pixels": 32878,
+    "bytes": 21484,
+    "status": "generated_from_original_GL_B"
+  },
+  {
+    "model": "witch",
+    "file": "public/assets/sprites/enemy-female.png",
+    "resolution": [
+      384,
+      512
+    ],
+    "alpha_min_max": [
+      0,
+      255
+    ],
+    "opaque_pixels": 27448,
+    "bytes": 19488,
+    "status": "generated_from_original_GL_B"
+  }
+]
