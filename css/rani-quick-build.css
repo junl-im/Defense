@@ -137,3 +137,112 @@
    Do not set !important top/left; JS writes the projected position per frame. */
 #radial-menu:not(.hidden){top:0;left:0;}
 #radial-menu .radial-center{pointer-events:auto;}
+
+
+/* v1.3 -- strict HUD hierarchy. 1) resources at the top edge,
+   2) score immediately under them, 3) field management just above the dock. */
+#gameplay-hud{
+  top:calc(3px + env(safe-area-inset-top))!important;
+  animation:none!important;
+  gap:3px!important;
+  z-index:41!important;
+}
+#hud-top{
+  top:calc(44px + env(safe-area-inset-top))!important;
+  left:8px!important;
+  right:auto!important;
+  animation:none!important;
+  gap:3px!important;
+  z-index:40!important;
+}
+#score-panel{
+  padding:2px 8px!important;
+  gap:5px!important;
+  border-width:1px!important;
+  border-radius:8px!important;
+}
+#score-value{font-size:17px!important;min-width:23px!important}
+#score-label{font-size:9px!important;letter-spacing:0!important}
+#hud-top-bar.hud-bar{padding:3px 5px!important;gap:2px!important}
+#rani-nav{
+  top:auto!important;
+  bottom:65px!important;
+  left:auto!important;right:9px!important;
+  transform:none!important;
+  max-width:min(490px,calc(100vw - 18px))!important;
+  min-width:0!important;
+  padding:5px 7px!important;
+  gap:5px!important;
+  z-index:62!important;
+}
+body[data-game-mode="world"] .rani-world-head{
+  top:calc(81px + env(safe-area-inset-top))!important;
+}
+body[data-game-mode="world"] .rani-world-detail{
+  top:calc(137px + env(safe-area-inset-top))!important;
+}
+@media(max-width:700px){
+  #gameplay-hud{
+    top:calc(2px + env(safe-area-inset-top))!important;
+    left:5px!important;right:5px!important;
+    width:auto!important;
+  }
+  #hud-top{
+    top:calc(35px + env(safe-area-inset-top))!important;
+    left:6px!important;
+  }
+  #score-panel{padding:2px 6px!important}
+  #score-value{font-size:13px!important;min-width:15px!important}
+  #rani-nav{
+    top:auto!important;
+    bottom:calc(63px + env(safe-area-inset-bottom))!important;
+    right:7px!important;left:auto!important;
+    display:grid!important;grid-template-columns:auto auto;
+    align-items:start;column-gap:3px!important;
+    width:auto!important;max-width:147px!important;
+    padding:0!important;border:none!important;
+    background:transparent!important;box-shadow:none!important;
+  }
+  #rani-nav-toggle,#rani-field-shortcut{
+    min-height:42px!important;
+    padding:5px 7px!important;
+  }
+  #rani-nav .rani-nav-line{
+    position:absolute!important;
+    bottom:calc(100% + 3px)!important;
+    top:auto!important;
+    right:0!important;left:auto!important;
+    width:min(220px,calc(100vw - 14px))!important;
+    margin:0!important;
+    box-sizing:border-box!important;
+    grid-column:auto!important;
+  }
+  #rani-nav.expanded{z-index:87!important}
+  #hud-bottom{
+    bottom:calc(65px + env(safe-area-inset-bottom))!important;
+    left:6px!important;
+    right:155px!important;
+    max-width:calc(100vw - 165px)!important;
+    gap:3px!important;
+    flex-wrap:wrap;
+  }
+  #hud-bottom .ui-btn{
+    font-size:9px!important;padding:4px 5px!important;
+  }
+  #slg-tutorial{
+    top:calc(72px + env(safe-area-inset-top))!important;
+    left:6px!important;
+    width:min(200px,calc(100vw - 20px))!important;
+  }
+  #toast{top:calc(67px + env(safe-area-inset-top))!important}
+  body[data-game-mode="world"] .rani-world-head{
+    top:calc(74px + env(safe-area-inset-top))!important;
+  }
+  body[data-game-mode="world"] .rani-world-detail{
+    top:calc(127px + env(safe-area-inset-top))!important;
+    max-height:26dvh!important;
+  }
+  /* Former square quick-build panel is no longer mounted. Empty hexes share
+     the same 3D radial menu as already constructed buildings. */
+  #radial-menu .radial-center{border-width:2px!important}
+}
