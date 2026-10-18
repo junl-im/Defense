@@ -112,6 +112,24 @@ with sync_playwright() as p:
     visible_labels=page.locator('#rani-field-labels button[data-field-faction]:visible')
     assert visible_labels.count()>=1, 'The 3D field must show at least one town label'
     assert page.evaluate("window.__game.fieldScene.towns.children.length === window.__game.fieldScene.entries.length")
+    # The field shows actual native hex territory instances, not just decorative ground.
+    assert page.evaluate("""() => {
+      const g=window.__game;
+      return g.fieldScene.territoryMeshes.reduce((n,m)=>n+m.count,0) === g.grid.cells.size;
+    }"""), 'Field does not render the actual saved 3D hex territory'
+    # Pan with the same isometric screen-ground formula as the village.
+    assert page.evaluate("""() => {
+      const f=window.__game.fieldScene, c=window.__game.controls;
+      return Math.abs(f.yaw-c.yaw)<.001 && Math.abs(f.pitch-c.pitch)<.001;
+    }"""), 'Field uses a different starting camera direction from village'
+    page.evaluate("""() => {
+      const c=document.getElementById('game-canvas'),f=window.__game.fieldScene;
+      window.__fieldPanX=f.focus.x;
+      c.dispatchEvent(new PointerEvent('pointerdown',{pointerId:72,button:0,clientX:120,clientY:420,bubbles:true}));
+      c.dispatchEvent(new PointerEvent('pointermove',{pointerId:72,button:0,clientX:180,clientY:420,bubbles:true}));
+      c.dispatchEvent(new PointerEvent('pointerup',{pointerId:72,button:0,clientX:180,clientY:420,bubbles:true}));
+    }""")
+    assert abs(page.evaluate('window.__game.fieldScene.focus.x-window.__fieldPanX'))>0.01
     page.screenshot(path=str(OUT/(kind+'-faction-world.png')),full_page=True)
     page.locator('#rani-native-home').click()
     assert page.evaluate('window.__game.mode')=='village'
