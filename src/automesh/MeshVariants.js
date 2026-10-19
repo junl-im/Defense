@@ -22,6 +22,7 @@ import * as THREE from 'three';
 import { MATS } from '../rendering/Materials.js';
 import { edgeAngle, HEX_SIZE } from '../grid/Hex.js';
 import { TILE_H } from '../tiles/TileMeshBuilder.js';
+import { makeRoyalRoadPaving } from '../rendering/RoyalInfrastructureArt.js';
 
 const APOTHEM = HEX_SIZE * Math.sqrt(3) / 2;
 const TOP_Y = TILE_H;
@@ -139,6 +140,10 @@ function roadBuilder(cell, variant) {
     default: plazaR = 0.18; break; // dead_end / isolated / preview
   }
   if (plazaR > 0) g.add(disc(plazaR, TOP_Y + 0.02, MATS.road, 8, 0.028));
+  // True 3D royal cobblestones above the original connected road geometry.
+  // Read-only overlay, one merged mesh even at a six-way junction.
+  const paving=makeRoyalRoadPaving(own,variant.mask);
+  if(paving)g.add(paving);
   return g;
 }
 

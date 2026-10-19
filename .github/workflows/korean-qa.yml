@@ -41,6 +41,7 @@ jobs:
           python scripts/qa_ui_v17.py
           python scripts/qa_royal_v18.py
           python scripts/qa_royal_world_v19.py
+          python scripts/qa_royal_infra_v20.py
           # Catch tap/empty-hex/HUD regressions first, then full game suites.
           python scripts/qa_quick_build.py
           python scripts/qa_korean.py
@@ -61,4 +62,5 @@ jobs:
             qa/ui-v17/
             qa/royal-v18/
             qa/royal-world-v19/
+            qa/royal-infra-v20/
           if-no-files-found: ignore

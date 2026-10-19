@@ -6,6 +6,7 @@
 import { cellKey, edgeMidpoint, edgeAngle, DIRS } from '../grid/Hex.js';
 import { TILE_H } from '../tiles/TileMeshBuilder.js';
 import { makeWallPalisade } from '../buildings/BuildingFactory.js';
+import { makeRoyalBorderWall } from '../rendering/RoyalInfrastructureArt.js';
 import { Rng } from '../core/Rng.js';
 import { events } from '../core/Events.js';
 
@@ -21,12 +22,22 @@ export class WallSystem {
     events.on('territory:changed', () => this.rebuild());
     events.on('territory:captured', () => this.rebuild());
     events.on('territory:reclaimed', () => this.rebuild());
+    // Village hall promotions drive the royal masonry upgrade. Do not listen
+    // to per-second progress events; they would rebuild hundreds of meshes.
+    events.on('native-village:expanded', () => this.rebuild());
     events.on('game:restart', () => this.clear());
   }
 
   clear() {
     for (const mesh of this.segments.values()) {
       if (mesh.parent) mesh.parent.remove(mesh);
+      // Both the original palisade and new stone wall use unique merged
+      // geometries. Dispose when a border is rebuilt or game restarts.
+      mesh.traverse(obj=>{
+        if(obj.isMesh&&obj.geometry&&!obj.geometry.userData.shared){
+          obj.geometry.dispose();
+        }
+      });
     }
     this.segments.clear();
   }
@@ -49,7 +60,8 @@ export class WallSystem {
         if (!this._isHostileEdge(cell, e)) continue;
         const key = `${cellKey(cell.q, cell.r)},${e}`;
         const rng = new Rng((cell.seed ^ (e * 0x9e3779b9)) >>> 0);
-        const mesh = makeWallPalisade(rng);
+        const royal=this.game.nativeVillage?.level>=2;
+        const mesh=royal?makeRoyalBorderWall():makeWallPalisade(rng);
         const mp = edgeMidpoint(e);
         const a = edgeAngle(e);
         // tangent to the hex edge (not radial), nudged toward the hostile side
