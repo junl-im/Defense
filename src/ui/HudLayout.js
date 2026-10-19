@@ -57,7 +57,7 @@ export function installHudLayout() {
   function apply(el,id) {
     const entry=state[scope()]?.[id];
     if(!valid(entry)){
-      el.classList.remove('rani-positioned');
+      if(el.classList.contains('rani-positioned'))el.classList.remove('rani-positioned');
       el.style.removeProperty('--rani-pos-x');
       el.style.removeProperty('--rani-pos-y');
       return;
@@ -67,7 +67,7 @@ export function installHudLayout() {
     const y=clamp(entry.y*Math.max(0,innerHeight-box.height),0,Math.max(0,innerHeight-box.height));
     el.style.setProperty('--rani-pos-x',Math.round(x)+'px');
     el.style.setProperty('--rani-pos-y',Math.round(y)+'px');
-    el.classList.add('rani-positioned');
+    if(!el.classList.contains('rani-positioned'))el.classList.add('rani-positioned');
   }
   function savePixel(el,id,x,y) {
     const box=size(el);
@@ -75,13 +75,13 @@ export function installHudLayout() {
     const px=clamp(x,0,maxX),py=clamp(y,0,maxY);
     el.style.setProperty('--rani-pos-x',Math.round(px)+'px');
     el.style.setProperty('--rani-pos-y',Math.round(py)+'px');
-    el.classList.add('rani-positioned');
+    if(!el.classList.contains('rani-positioned'))el.classList.add('rani-positioned');
     state[scope()][id]={x:maxX?px/maxX:0,y:maxY?py/maxY:0};
     persist();
   }
   function reset(el,id){
     delete state[scope()][id];
-    el.classList.remove('rani-positioned');
+    if(el.classList.contains('rani-positioned'))el.classList.remove('rani-positioned');
     el.style.removeProperty('--rani-pos-x');
     el.style.removeProperty('--rani-pos-y');
     persist();
