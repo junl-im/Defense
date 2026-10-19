@@ -155,6 +155,17 @@ export function installHudLayout() {
     });
     footer.appendChild(button);
   }
+  // Mobile panels toggle via body.dataset, not their own class. Recompute
+  // geometry AFTER becoming visible; a hidden panel reports zero width and
+  // must not be restored offscreen on reload.
+  new MutationObserver(()=>{
+    for(const [id] of PANELS){
+      const el=document.getElementById(id);
+      if(!el||el.classList.contains('rani-dragging'))continue;
+      if(!state[scope()]?.[id]||!el.getBoundingClientRect().width)continue;
+      apply(el,id);
+    }
+  }).observe(document.body,{attributes:true,attributeFilter:['data-active-slg-panel']});
   let lastScope=scope();
   window.addEventListener('resize',()=>{
     const next=scope();
