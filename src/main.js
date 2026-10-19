@@ -4,6 +4,7 @@
 import { Game } from './core/Game.js';
 import { initTooltip } from './ui/Tooltip.js';
 import { installHudLayout } from './ui/HudLayout.js';
+import { installRoyalLauncher } from './ui/RoyalLauncher.js';
 
 function boot() {
   const splashStartedAt=performance.now();
