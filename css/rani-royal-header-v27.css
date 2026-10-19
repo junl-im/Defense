@@ -1,0 +1,59 @@
+/* v2.7 — restore approved standalone royal banner, with its original 512:254
+ * aspect ratio. This is the kingdom INFO header, never the long resource bar.
+ * No SVG, no resized sheet slices, no overlay blocking existing game controls.
+ */
+#hud-kingdom-panel .rani-royal-heading {
+  display:flex;align-items:center;gap:9px;min-height:56px;
+  width:100%;box-sizing:border-box;margin:0 0 7px;
+  padding:0 1px 5px;border-bottom:1px solid #d5b97b55;
+}
+#hud-kingdom-panel .rani-royal-header-frame {
+  position:relative;display:block;flex:0 0 106px;
+  width:106px;max-width:40%;height:auto;aspect-ratio:512 / 254;
+  min-width:0;overflow:visible;
+  pointer-events:none;user-select:none;
+}
+#hud-kingdom-panel .rani-royal-header-art {
+  display:block;width:100%;height:auto;aspect-ratio:512 / 254;
+  object-fit:contain;object-position:center;
+  filter:drop-shadow(0 2px 3px #050b10ab);
+  -webkit-user-drag:none;user-select:none;pointer-events:none;
+}
+#hud-kingdom-panel .rani-royal-header-art[hidden]{display:none!important}
+#hud-kingdom-panel .rani-royal-header-frame .rani-raster-fallback:not([hidden]){
+  display:grid;place-items:center;
+  width:100%;aspect-ratio:512 / 254;
+  color:#ffe39c;font-size:35px;text-shadow:0 2px 3px #040809;
+  background:linear-gradient(155deg,#57432e,#152b34);
+  border:1px solid #e1b871;border-radius:8px;
+  box-sizing:border-box;
+}
+#hud-kingdom-panel .rani-royal-heading-copy {
+  flex:1 1 auto;min-width:0;display:flex;
+  flex-direction:column;justify-content:center;gap:3px;
+}
+#hud-kingdom-panel .rani-royal-heading .hud-panel-title {
+  display:block;margin:0;padding:0;
+  color:#f7d788!important;letter-spacing:0!important;
+  white-space:normal;
+}
+#hud-kingdom-panel .rani-royal-heading-caption {
+  font-size:9px;letter-spacing:1.05px;line-height:1.2;
+  color:#bca67b;white-space:nowrap;
+}
+@media (max-width:700px){
+  #hud-kingdom-panel .rani-royal-heading{
+    gap:8px;min-height:50px;margin-bottom:6px;
+  }
+  #hud-kingdom-panel .rani-royal-header-frame {
+    flex-basis:88px;width:88px;max-width:37%;
+  }
+}
+@media (max-width:360px){
+  #hud-kingdom-panel .rani-royal-header-frame{
+    flex-basis:78px;width:78px;max-width:35%;
+  }
+  #hud-kingdom-panel .rani-royal-heading-caption{
+    font-size:8px;letter-spacing:.5px;
+  }
+}
