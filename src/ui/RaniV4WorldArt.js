@@ -10,11 +10,7 @@ const ART=Object.freeze({
   market:RANI_PREPARED_ASSETS.market,
   trade_post:RANI_PREPARED_ASSETS.market,
   port:RANI_PREPARED_ASSETS.tradeShip,
-  fishing_pier:RANI_PREPARED_ASSETS.tradeShip,
-  bakery:RANI_PREPARED_ASSETS.houseA,
-  library:RANI_PREPARED_ASSETS.houseA,
-  stable:RANI_PREPARED_ASSETS.houseA,
-  apiary:RANI_PREPARED_ASSETS.houseA
+  fishing_pier:RANI_PREPARED_ASSETS.tradeShip
 });
 const pos=new THREE.Vector3(),offset=new THREE.Vector3(),projected=new THREE.Vector3();
 const flat=(v)=>Math.round(v*10)/10;
