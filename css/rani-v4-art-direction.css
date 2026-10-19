@@ -131,7 +131,7 @@ body.rani-v4-active #hud-territory-panel{
 #rani-v4-bottom .rani-v4-symbol{font-size:29px;line-height:1}
 #rani-v4-bottom .rani-v4-label{font-size:12px;font-weight:900;white-space:nowrap}
 /* Original approved images are now on real 3D built-world coordinates. */
-#rani-v4-world-art{position:fixed;inset:0;z-index:35;pointer-events:none;overflow:hidden}
+#rani-v4-world-art{position:fixed;inset:0;z-index:12;pointer-events:none;overflow:hidden}
 #rani-v4-world-art[hidden]{display:none!important}
 .rani-v4-world-sprite{position:absolute;top:0;left:0;pointer-events:auto;
   padding:0;border:0;background:transparent;outline-offset:3px;
