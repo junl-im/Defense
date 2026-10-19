@@ -5,7 +5,20 @@ import { Game } from './core/Game.js';
 import { initTooltip } from './ui/Tooltip.js';
 
 function boot() {
+  const splashStartedAt=performance.now();
   initTooltip();
+  // Use the illustrated logo, with a readable Korean fallback only when
+  // the actual image fails to load. Never let a missing logo block the game.
+  const logo=document.getElementById('loading-logo');
+  const fallback=document.getElementById('loading-logo-fallback');
+  logo?.addEventListener('error',()=>{
+    logo.hidden=true;
+    if(fallback)fallback.hidden=false;
+  },{once:true});
+  if(logo?.complete && !logo.naturalWidth){
+    logo.hidden=true;
+    if(fallback)fallback.hidden=false;
+  }
   const canvas = document.getElementById('game-canvas');
   const fill = document.getElementById('loading-fill');
   const status = document.getElementById('loading-status');
@@ -27,18 +40,23 @@ function boot() {
       game = new Game(canvas);
     } catch (err) {
       console.error('[KingdomTiles] fatal init error:', err);
-      const inner = document.getElementById('loading-inner');
-      if (inner) {
-        inner.innerHTML =
-          '<h1>라니킹덤</h1><p style="color:#e08a7a">게임을 시작할 수 없습니다: ' +
-          String(err && err.message ? err.message : err) +
-          '</p>';
+      // Keep the actual image emblem visible on errors. Never inject error
+      // messages into HTML (messages may contain arbitrary third-party text).
+      document.getElementById('loading-screen')?.classList.add('loading-failure');
+      if(status){
+        const detail=String(err?.message||'알 수 없는 오류');
+        status.textContent='왕국을 불러오지 못했습니다. 화면을 새로고침하세요. · '+detail;
+        status.setAttribute('role','alert');
       }
       return;
     }
     setProgress(100, '왕국 준비 완료');
     game.start();
-    setTimeout(() => game.ui.hideLoading(), 350);
+    // A high-detail logo needs a brief, meaningful on-screen debut. Keep the
+    // game running immediately; only delay removal of the lightweight overlay.
+    const logoVisibleForMs=900;
+    const remaining=Math.max(250,logoVisibleForMs-(performance.now()-splashStartedAt));
+    setTimeout(() => game.ui.hideLoading(), remaining);
 
     // expose for debugging / headless tests
     window.__game = game;
