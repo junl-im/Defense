@@ -46,7 +46,13 @@ with sync_playwright() as p:
     assert page.locator('button[data-action-id="combo:lumber_mill"]').is_visible()
     page.screenshot(path=str(OUT/(label+'-context.png')),full_page=True)
     before=page.evaluate('window.__game.tilesPlaced')
+    # A rapid deliberate follow-up click is not the old synthetic ghost click.
+    # Prime the guard as though the ring was opened milliseconds ago: an
+    # actual pointerdown on a build action must clear it before click.
+    page.evaluate("() => window.__game.radialMenu.blockSyntheticActivation(1)")
     page.locator('button[data-action-id="combo:lumber_mill"]').click()
+    assert page.evaluate('window.__game.radialMenu._blockedActivation===null'),(
+      'Deliberate second tap must cancel the stale ghost-click guard')
     assert page.evaluate('window.__game.tilesPlaced')==before+1
     assert page.evaluate("window.__game.grid.get(1,0)?.tileType")=='forest'
     assert page.evaluate("window.__game.buildingSystem.buildingsOn(window.__game.grid.get(1,0)).some(b=>b.id==='lumber_mill'&&!b.done)")
