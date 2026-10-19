@@ -829,6 +829,13 @@ export class Game {
       let dt = (now - this._last) / 1000;
       this._last = now;
       dt = Math.min(dt, 0.1); // clamp tab-switch spikes
+      // Title/exit overlay pauses simulation without changing save schema.
+      // requestAnimationFrame continues so resuming never skips world time.
+      if(this.shellPaused){
+        if(this.mode==='world')this.fieldScene?.render();
+        else this.renderer.render(this.scene,this.camera);
+        return;
+      }
       this.elapsed += dt;
 
       const viewingWorld = this.mode === 'world';
