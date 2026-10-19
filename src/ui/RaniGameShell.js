@@ -35,7 +35,13 @@ export function installRaniGameShell(game){
     mobileToggle.id='rani-shell-menu-mobile-toggle';
     mobileToggle.setAttribute('aria-label','전체화면 및 게임 나가기 메뉴');
     mobileToggle.setAttribute('aria-haspopup','dialog');
-    mobileToggle.innerHTML='<span aria-hidden="true">☰</span><small>메뉴</small>';
+    const mobileGlyph=document.createElement('span');
+    mobileGlyph.textContent='☰';
+    mobileGlyph.setAttribute('aria-hidden','true');
+    const mobileText=document.createElement('small');
+    mobileText.textContent='메뉴';
+    mobileToggle.textContent='';
+    mobileToggle.append(mobileGlyph,mobileText);
     mobileDock.appendChild(mobileToggle);
   }
   const root=document.createElement('div');
