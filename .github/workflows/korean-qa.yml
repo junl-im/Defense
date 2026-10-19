@@ -46,6 +46,7 @@ jobs:
           python scripts/qa_rani_assets_v22.py
           python scripts/qa_rani_visual_v23.py
           python scripts/qa_royal_field_v24.py
+          python scripts/qa_rani_integrity_v25.py
           # Catch tap/empty-hex/HUD regressions first, then full game suites.
           python scripts/qa_quick_build.py
           python scripts/qa_korean.py
@@ -71,4 +72,5 @@ jobs:
             qa/rani-asset-v22/
             qa/rani-visual-v23/
             qa/royal-field-v24/
+            qa/asset-integrity-v25/
           if-no-files-found: ignore
