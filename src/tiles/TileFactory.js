@@ -10,6 +10,7 @@ import { axialToWorld } from '../grid/Hex.js';
 import { Rng, hashCell } from '../core/Rng.js';
 import { MATS } from '../rendering/Materials.js';
 import { makeRoyalTileDressing } from '../rendering/RoyalWorldArt.js';
+import { makeRoyalWaterfrontDressing } from '../rendering/RoyalWaterfrontArt.js';
 import { tweens, Easing } from '../core/Tween.js';
 
 export class TileFactory {
@@ -58,6 +59,8 @@ export class TileFactory {
     // paving/wheat without changing original tile geometry or picking data.
     const royal = makeRoyalTileDressing(cell);
     if (royal) group.add(royal);
+    const waterfront = makeRoyalWaterfrontDressing(cell);
+    if (waterfront) group.add(waterfront);
     const { x, z } = axialToWorld(cell.q, cell.r);
     group.position.set(x, 0, z);
     cell.group = group;
@@ -116,6 +119,8 @@ export class TileFactory {
     const g = buildTileMesh(cell, rng);
     const royal = makeRoyalTileDressing(cell);
     if (royal) g.add(royal);
+    const waterfront = makeRoyalWaterfrontDressing(cell);
+    if (waterfront) g.add(waterfront);
     // make every mesh translucent
     g.traverse((o) => {
       if (o.isMesh) {
