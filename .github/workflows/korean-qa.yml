@@ -41,6 +41,7 @@ jobs:
           python scripts/qa_lived_in_district_v30.py
           python scripts/qa_royal_street_v31.py
           python scripts/qa_rani_shell_v33.py
+          python scripts/qa_v4_art_direction.py
           python scripts/qa_built_neighborhood_v32.py
           python scripts/qa_branding.py
           python scripts/qa_ui_v17.py
@@ -90,4 +91,5 @@ jobs:
             qa/royal-street-v31/
             qa/built-neighborhood-v32/
             qa/immersive-shell-v33/
+            qa/visual-v40/
           if-no-files-found: ignore
