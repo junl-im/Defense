@@ -13,6 +13,7 @@ const ART=Object.freeze({
   fishing_pier:RANI_PREPARED_ASSETS.tradeShip
 });
 const pos=new THREE.Vector3(),offset=new THREE.Vector3(),projected=new THREE.Vector3();
+const cameraRight=new THREE.Vector3(),selectAnchor=new THREE.Vector3();
 const flat=(v)=>Math.round(v*10)/10;
 export function installRaniV4WorldArt(game){
   if(game.raniV4WorldArt)return game.raniV4WorldArt;
@@ -55,7 +56,7 @@ export function installRaniV4WorldArt(game){
           img.alt='';img.draggable=false;img.decoding='async';
           img.src=art;
           button.appendChild(img);
-          const newItem={button,img,visual:rec.visual,cell,loaded:false,didHide:false};
+          const newItem={button,img,visual:rec.visual,cell,id:rec.id,loaded:false,didHide:false};
           img.addEventListener('load',()=>{
             newItem.loaded=img.naturalWidth>0;
             if(newItem.loaded)dirty=true;
@@ -71,7 +72,13 @@ export function installRaniV4WorldArt(game){
             if(game.mode!=='village')return;
             // Real cell selection — building records and panel remain the
             // genuine BuildingSystem, never a mocked facade.
-            game.selection.select(cell);
+            // Preserve the exact real 3D building and anchor for the existing
+            // radial actions; selecting just a tile loses multi-slot identity.
+            const group=newItem.visual?.group;
+            if(!group?.parent)return;
+            group.getWorldPosition(selectAnchor);
+            selectAnchor.y+=.2;
+            game.selection.select(newItem.cell,selectAnchor,newItem.id);
           });
           layer.appendChild(button);
           slots.set(key,newItem);
@@ -101,6 +108,9 @@ export function installRaniV4WorldArt(game){
     const rect=game.canvas.getBoundingClientRect();
     const camera=game.camera;
     camera.updateMatrixWorld();
+    // World camera-right, not fixed world X. Keeps artwork size stable when
+    // the player rotates the camera around a building.
+    cameraRight.setFromMatrixColumn(camera.matrixWorld,0);
     for(const item of slots.values()){
       const group=item.visual?.group;
       if(!group||!item.loaded||!item.img.naturalWidth){item.button.hidden=true;continue;}
@@ -110,18 +120,30 @@ export function installRaniV4WorldArt(game){
       // Hide sprites behind camera or outside the real 3D view.
       const visible=projected.z>-1 && projected.z<1 &&
         Math.abs(projected.x)<1.4&&Math.abs(projected.y)<1.4;
-      if(!visible){item.button.hidden=true;continue;}
+      if(!visible){
+        item.button.hidden=true;
+        // No off-screen invisible model if projection/zoom changes or
+        // the image element cannot be displayed.
+        if(item.didHide){group.visible=true;item.didHide=false;}
+        continue;
+      }
       item.button.hidden=false;
       if(!item.didHide){group.visible=false;item.didHide=true;}
       const x=rect.left+(projected.x+1)*rect.width/2;
       const y=rect.top+(-projected.y+1)*rect.height/2;
-      offset.copy(pos).add(new THREE.Vector3(.65,0,0)).project(camera);
-      const width=Math.max(52,Math.min(200,
+      offset.copy(pos).addScaledVector(cameraRight,.65).project(camera);
+      // Match the mobile CSS cap. A mismatched CSS max-width previously
+      // shifted the painted image away from its actual world anchor.
+      const maxWidth=window.innerWidth<=700?155:200;
+      const width=Math.max(52,Math.min(maxWidth,
         Math.abs(offset.x-projected.x)*rect.width*.94));
       item.button.style.width=flat(width)+'px';
       item.button.style.transform='translate3d('+
         flat(x-width*.5)+'px,'+flat(y-width*.69)+'px,0)';
-      item.button.style.zIndex=String(Math.round((projected.y+1)*-1000+5000));
+      // Near buildings must stack above distant ones at any camera angle.
+      item.button.style.zIndex=String(Math.max(1,
+        9999-Math.round(camera.position.distanceTo(pos)*90)));
+
     }
   }
   function onChange(){dirty=true;}
