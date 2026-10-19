@@ -49,6 +49,7 @@ jobs:
           python scripts/qa_rani_integrity_v25.py
           python scripts/qa_royal_water_v26.py
           python scripts/qa_royal_header_v27.py
+          python scripts/qa_harbor_fleet_v28.py
           # Catch tap/empty-hex/HUD regressions first, then full game suites.
           python scripts/qa_quick_build.py
           python scripts/qa_korean.py
@@ -77,4 +78,5 @@ jobs:
             qa/asset-integrity-v25/
             qa/royal-waterfront-v26/
             qa/royal-header-v27/
+            qa/harbor-fleet-v28/
           if-no-files-found: ignore
