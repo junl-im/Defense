@@ -63,8 +63,15 @@ export function installHudLayout() {
       return;
     }
     const box=size(el);
-    const x=clamp(entry.x*Math.max(0,innerWidth-box.width),0,Math.max(0,innerWidth-box.width));
-    const y=clamp(entry.y*Math.max(0,innerHeight-box.height),0,Math.max(0,innerHeight-box.height));
+    // On the SAME screen size restore the exact dragged pixels. Panels can
+    // change their height as research rows finish or CSS animation settles;
+    // normalizing only by available room made reload jump downward.
+    const exact=entry.viewportW===innerWidth && entry.viewportH===innerHeight &&
+      Number.isFinite(entry.pixelX) && Number.isFinite(entry.pixelY);
+    const x=clamp(exact?entry.pixelX:entry.x*Math.max(0,innerWidth-box.width),
+      0,Math.max(0,innerWidth-box.width));
+    const y=clamp(exact?entry.pixelY:entry.y*Math.max(0,innerHeight-box.height),
+      0,Math.max(0,innerHeight-box.height));
     el.style.setProperty('--rani-pos-x',Math.round(x)+'px');
     el.style.setProperty('--rani-pos-y',Math.round(y)+'px');
     if(!el.classList.contains('rani-positioned'))el.classList.add('rani-positioned');
@@ -76,7 +83,10 @@ export function installHudLayout() {
     el.style.setProperty('--rani-pos-x',Math.round(px)+'px');
     el.style.setProperty('--rani-pos-y',Math.round(py)+'px');
     if(!el.classList.contains('rani-positioned'))el.classList.add('rani-positioned');
-    state[scope()][id]={x:maxX?px/maxX:0,y:maxY?py/maxY:0};
+    state[scope()][id]={
+      x:maxX?px/maxX:0,y:maxY?py/maxY:0,
+      pixelX:px,pixelY:py,viewportW:innerWidth,viewportH:innerHeight
+    };
     persist();
   }
   function reset(el,id){
