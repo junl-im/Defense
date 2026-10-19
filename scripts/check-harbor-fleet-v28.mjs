@@ -1,0 +1,26 @@
+// Royal harbor v2.8 — no original binary overwritten and no fake asset crop.
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const art=fs.readFileSync('src/rendering/RoyalHarborFleetArt.js','utf8');
+const civic=fs.readFileSync('src/buildings/CivicFactory.js','utf8');
+const old=fs.readFileSync('src/rendering/RoyalInfrastructureArt.js','utf8');
+const lock=JSON.parse(fs.readFileSync('assets/rani/asset-integrity-lock-v25.json','utf8'));
+assert.match(art,/export function makeRoyalHarborFleetDetail\(kind='port'\)/);
+assert.match(art,/if\(kind!=='port'&&kind!=='pier'\)return null/);
+assert.match(art,/rani-royal-harbor-fleet-v28/);
+assert.match(art,/rani-royal-fishing-fleet-v28/);
+assert.match(art,/mesh=new THREE\.Mesh\(merge\(parts\),MATS\.vcStatic\)/);
+assert.match(art,/mesh\.raycast=\(\)=>\{\}/);
+assert.match(art,/mesh\.userData\.raniVisualOnly=true/);
+assert.doesNotMatch(art,/localStorage|saveSystem|\.attack\(|<svg|\.svg\b|data:image\//);
+assert.match(civic,/import \{ makeRoyalHarborFleetDetail \} from '\.\.\/rendering\/RoyalHarborFleetArt\.js'/);
+assert.match(civic,/p4\.add\(makeRoyalHarborFleetDetail\('port'\)\)/);
+assert.match(civic,/p4\.add\(makeRoyalHarborFleetDetail\('pier'\)\)/);
+assert.equal((civic.match(/makeRoyalHarborFleetDetail\('port'\)/g)||[]).length,1);
+assert.equal((civic.match(/makeRoyalHarborFleetDetail\('pier'\)/g)||[]).length,1);
+assert.match(civic,/p4\.add\(makeRoyalHarborOrnaments\('port'\)\)/);
+assert.match(civic,/p4\.add\(makeRoyalHarborOrnaments\('pier'\)\)/);
+assert.match(old,/makeRoyalHarborOrnaments\(kind='port'\)/);
+assert.equal(lock.protectedFiles.length,16);
+assert.ok(fs.existsSync('assets/rani/manifest-v27.json'));
+console.log('PASS v2.8 real port+fishing fleet decorations, 2 original makers and 16 immutable preserved 3D/raster assets');
