@@ -44,6 +44,20 @@ img{ -webkit-user-drag:none;user-drag:none; }
   #next-tile-panel{width:216px!important;max-width:calc(100vw - 20px)}
   #tile-shop.tile-shop{grid-template-columns:repeat(3,minmax(0,1fr))!important}
   .tile-chip .tile-chip-swatch.rani-terrain-art{width:51px!important;height:51px!important}
+  /* A dragged pane must keep its compact dimensions. The unpositioned
+     selector no longer matches during drag; without this, research jumped
+     from its short scrollable frame to a full-height legacy side panel. */
+  #research-panel.rani-positioned{
+    width:205px!important;max-height:min(365px,calc(100dvh - 175px))!important;
+    overflow-y:auto!important;
+  }
+  #faction-panel.rani-positioned{
+    width:205px!important;max-height:min(240px,calc(100dvh - 175px))!important;
+    overflow-y:auto!important;
+  }
+  #hud-right.rani-positioned{
+    max-height:calc(100dvh - 440px)!important;overflow-y:auto!important;
+  }
   #research-panel:not(.rani-positioned){
     left:10px!important;right:auto!important;
     top:100px!important;bottom:auto!important;
