@@ -42,6 +42,8 @@ jobs:
           python scripts/run_legacy_qa.py scripts/qa_royal_street_v31.py
           python scripts/run_legacy_qa.py scripts/qa_rani_shell_v33.py
           python scripts/qa_v4_art_direction.py
+          # The post-merge v4 mobile smoke now runs BEFORE merge as well.
+          python scripts/qa_browser.py
           python scripts/run_legacy_qa.py scripts/qa_built_neighborhood_v32.py
           python scripts/run_legacy_qa.py scripts/qa_branding.py
           python scripts/run_legacy_qa.py scripts/qa_ui_v17.py

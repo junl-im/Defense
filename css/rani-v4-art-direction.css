@@ -232,3 +232,50 @@ body.rani-v4-active #hud-right:not(.rani-positioned){top:125px!important}
 @media(max-width:700px){
  #rani-v4-shell .rani-v4-symbol .rani-v4-menu-art{width:30px;height:24px}
 }
+
+/* v4.0 mobile gameplay panels must remain genuinely usable after the
+ * old mobile dock is visually replaced by the royal controls. Keep the
+ * interactive panels between 45px side rails with a higher z-order. */
+@media(max-width:700px){
+  body.rani-v4-active:is([data-active-slg-panel="tiles"],[data-active-slg-panel="research"],[data-active-slg-panel="factions"]) :is(#hud-right,#research-panel,#faction-panel){
+    box-sizing:border-box;
+    width:calc(100vw - 106px)!important;
+    max-width:320px!important;
+    left:50%!important;right:auto!important;
+    top:117px!important;
+    max-height:calc(100dvh - 199px)!important;
+    z-index:85!important;
+    transform:translateX(-50%)!important;
+  }
+  body.rani-v4-active[data-active-slg-panel="tiles"] #hud-right,
+  body.rani-v4-active[data-active-slg-panel="research"] #research-panel,
+  body.rani-v4-active[data-active-slg-panel="factions"] #faction-panel{
+    display:block!important;
+  }
+  body.rani-v4-active #hud-right .tile-shop{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+}
+
+
+/* The crowned profile is a genuine existing kingdom panel on mobile too. */
+@media(max-width:700px){
+  body.rani-v4-active[data-active-slg-panel="info"] #hud-kingdom-panel,
+  body.rani-v4-active[data-active-slg-panel="info"] #hud-territory-panel{
+    display:block!important;
+    position:fixed!important;
+    left:50%!important;right:auto!important;
+    width:calc(100vw - 106px)!important;
+    min-width:0!important;max-width:320px!important;
+    transform:translateX(-50%)!important;
+    z-index:85!important;
+    box-sizing:border-box!important;
+  }
+  body.rani-v4-active[data-active-slg-panel="info"] #hud-kingdom-panel{
+    top:119px!important;
+  }
+  body.rani-v4-active[data-active-slg-panel="info"] #hud-territory-panel{
+    top:246px!important;max-height:calc(100dvh - 320px)!important;
+    overflow-y:auto!important;
+  }
+}
