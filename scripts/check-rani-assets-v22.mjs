@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
 const manifest=JSON.parse(fs.readFileSync('assets/rani/manifest-v22.json','utf8'));
-const registry=fs.readFileSync('src/ui/RaniAssetRegistry.js','utf8');
+import { RANI_ALL_ASSET_PATHS } from '../src/ui/RaniAssetRegistry.js';
 const iconSource=fs.readFileSync('src/ui/GameIcons.js','utf8');
 const html=fs.readFileSync('index.html','utf8');
 assert.equal(manifest.svgAllowed,false);
@@ -18,7 +18,7 @@ for(const asset of manifest.assets){
   assert.equal(data.subarray(8,12).toString('ascii'),'WEBP',asset.path);
   assert.ok(data.length>5000 && data.length<90000,asset.path+' not optimized');
   assert.equal(data.length,asset.bytes,asset.path+' bytes changed without manifest approval');
-  assert.ok(registry.includes(asset.path),'Asset missing from registry: '+asset.path);
+  assert.ok(RANI_ALL_ASSET_PATHS.includes(asset.path),'Asset missing from registry: '+asset.path);
 }
 for(const oldAsset of manifest.preserve){
   assert.ok(fs.existsSync(oldAsset),'Regression: PREVIOUS asset lost: '+oldAsset);
