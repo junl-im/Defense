@@ -113,6 +113,23 @@ export function installRaniV4RoyalHud(game){
     if(original)original.click();
     return Boolean(original);
   };
+  // The hidden legacy MobileDock still owns the actual mobile panel state.
+  // Clicking the desktop-only RoyalLauncher cannot display panels on mobile
+  // because responsive CSS keys visibility to data-active-slg-panel.
+  const panel=(name)=>{
+    if(matchMedia('(max-width:700px)').matches){
+      if(game.mode!=='village')game.nativeVillageUI?.setMode('village');
+      const mobile=document.querySelector('#slg-mobile-dock [data-panel="'+name+'"]');
+      if(mobile){
+        // Any desktop hidden class must not override a real mobile panel.
+        document.body.classList.remove('royal-hide-'+name);
+        mobile.click(); // original MobileDock controls open/toggle/close
+        return;
+      }
+    }
+    const desktop={tiles:'tiles',research:'research',factions:'factions',info:'kingdom'};
+    trigger(desktop[name]||name);
+  };
   const toast=(message)=>game.ui?.toast(message);
   const showInfo=(kind)=>{
     for(const cell of game.grid.cells.values()){
@@ -125,11 +142,11 @@ export function installRaniV4RoyalHud(game){
     return false;
   };
   const commands={
-    build(){trigger('tiles');},
-    research(){trigger('research');},
-    train(){if(!showInfo('barracks')){trigger('tiles');toast('병영을 먼저 건설하면 실제 병사 모집이 열립니다');}},
-    army(){trigger('factions');},
-    alliance(){trigger('factions');},
+    build(){panel('tiles');},
+    research(){panel('research');},
+    train(){if(!showInfo('barracks')){panel('tiles');toast('병영을 먼저 건설하면 실제 병사 모집이 열립니다');}},
+    army(){panel('factions');},
+    alliance(){panel('factions');},
     events(){game.nativeVillageUI?.setMode('world');toast('실제 필드에서 발생하는 세력과 사건을 확인하세요');},
     quests(){
       document.body.classList.toggle('royal-hide-missions');
@@ -137,10 +154,10 @@ export function installRaniV4RoyalHud(game){
     },
     map(){game.nativeVillageUI?.setMode('world');},
     field(){game.nativeVillageUI?.setMode('world');},
-    village(){game.nativeVillageUI?.setMode('village');},
-    shop(){trigger('tiles');},
+    village(){game.nativeVillageUI?.setMode('village');document.dispatchEvent(new Event('rani:map-focus'));},
+    shop(){panel('tiles');},
     harbor(){
-      if(!showInfo('port')){trigger('tiles');toast('항구를 건설하면 여기에서 선택할 수 있습니다');}
+      if(!showInfo('port')){panel('tiles');toast('항구를 건설하면 여기에서 선택할 수 있습니다');}
     },
     explore(){game.nativeVillageUI?.setMode('world');},
     kingdom(){trigger('kingdom');},
