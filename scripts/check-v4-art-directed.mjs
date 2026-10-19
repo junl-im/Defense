@@ -47,7 +47,7 @@ assert.match(hud,/panel\('research'\)/);
 assert.match(hud,/NOT_IMPLEMENTED=new Set/);
 assert.match(hud,/const timer=setInterval\(update,900\)/);
 // World art must stay below the real radial building action ring (z=20).
-assert.match(css,/#rani-v4-world-art\\{position:fixed;inset:0;z-index:12;/);
+assert.ok(css.includes('#rani-v4-world-art{position:fixed;inset:0;z-index:12;'));
 assert.match(css,/#rani-v4-profile/);
 assert.match(css,/#rani-v4-left/);
 assert.match(css,/#rani-v4-right/);
