@@ -1,0 +1,234 @@
+/* RANI KINGDOM v4.0 — real playable royal composition from user's target.
+ * Original separate transparent WebP artwork, live 3D, live resource & build
+ * systems. No SVG, mock screenshots, fake values, or giant flat HUD texture.
+ */
+body.rani-v4-active{
+  --v4-ink:#091522;--v4-navy:#122d43;--v4-blue:#244a70;
+  --v4-gold:#ebc37d;--v4-gold-dark:#926b36;--v4-cream:#fff1cc;
+}
+#rani-v4-shell{position:fixed;inset:0;z-index:76;pointer-events:none;
+  font-family:"Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  color:var(--v4-cream)}
+#rani-v4-shell button{color:inherit;font:inherit;cursor:pointer;touch-action:manipulation}
+#rani-v4-shell button:focus-visible{outline:2px solid #ffe8a5;outline-offset:2px}
+#rani-v4-shell button:disabled{opacity:.34;cursor:not-allowed;filter:grayscale(.7)}
+body.rani-v4-active #rani-royal-launcher,
+body.rani-v4-active #slg-mobile-dock,
+body.rani-v4-active #rani-production-command-rail,
+body.rani-v4-active #hud-top,
+body.rani-v4-active #hud-bottom{display:none!important}
+#rani-v4-top{position:fixed;top:8px;left:8px;right:8px;
+  display:flex;justify-content:space-between;align-items:flex-start;
+  z-index:78;pointer-events:none}
+#rani-v4-profile{pointer-events:auto;display:flex;align-items:center;
+  gap:11px;box-sizing:border-box;width:318px;min-height:107px;
+  border:3px ridge #dbb56f;border-radius:26px 12px 25px 16px;
+  background:linear-gradient(160deg,#906538,#152d43 21%,#0c1b29 76%,#76502f);
+  box-shadow:inset 0 0 0 2px #ffeac04b,0 7px 20px #050909bb;
+  padding:7px 15px 7px 7px;text-align:left}
+#rani-v4-profile .rani-v4-ruler-crest{display:grid;place-items:center;
+  flex:0 0 79px;width:79px;height:82px;font:800 63px/1 Georgia,serif;
+  border:3px ridge #f2c97f;border-radius:50%;
+  background:radial-gradient(circle at 43% 35%,#d2a567,#634529 33%,#1c3545 65%,#081723 90%);
+  color:#ffe6a0;text-shadow:1px 1px 0 #866138,0 0 10px #d3ad77;
+  box-shadow:0 0 0 3px #51351e,0 0 0 5px #dfae66,inset 0 0 7px #081823}
+.rani-v4-ruler-desc{min-width:0;display:grid;gap:5px}
+.rani-v4-ruler-desc strong{font-size:25px;font-weight:900;text-shadow:0 2px 4px #000}
+.rani-v4-ruler-desc small{font-size:13px;color:#ffdf9d}
+#rani-v4-power{display:inline-block;max-width:max-content;padding:3px 7px;
+  background:#091723;border:1px solid #8c713f;border-radius:6px;
+  color:#ffda85;font-size:17px;font-weight:900;font-variant-numeric:tabular-nums}
+#rani-v4-top-actions{display:flex;gap:8px;pointer-events:auto}
+#rani-v4-top-actions button{display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:2px;min-width:57px;min-height:55px;padding:4px;
+  border:2px ridge #d3ab67;border-radius:11px;
+  background:linear-gradient(155deg,#69492e,#22394c 43%,#071725);
+  box-shadow:0 3px 10px #020914c9,inset 0 1px #ffe2a65a}
+#rani-v4-top-actions button .rani-v4-symbol{font-size:25px}
+#rani-v4-top-actions button .rani-v4-label{font-size:10px}
+body.rani-v4-active #gameplay-hud:not(.rani-positioned){
+  position:fixed!important;top:12px!important;left:50%!important;
+  right:auto!important;transform:translateX(-50%)!important;
+  width:min(44vw,720px)!important;max-width:calc(100vw - 680px)!important;
+  z-index:80!important;
+  background:transparent!important;box-shadow:none!important;
+  border:0!important;padding:0!important
+}
+body.rani-v4-active #hud-top-bar.hud-bar{
+  display:flex!important;width:100%!important;align-items:center!important;
+  gap:2px!important;box-sizing:border-box!important;overflow:hidden;
+  padding:5px 7px!important;border:3px ridge #dcad6b!important;
+  border-radius:15px!important;
+  background:linear-gradient(180deg,#7e5f39,#142c3f 18%,#081827 85%,#66492c)!important;
+  box-shadow:0 3px 15px #02070b!important
+}
+body.rani-v4-active #hud-top-bar .hud-res-cell{
+  min-width:0!important;flex:1 1 0!important;
+  padding:3px 2px!important;white-space:nowrap;
+}
+body.rani-v4-active #hud-top-bar .hud-res-rate{display:none!important}
+body.rani-v4-active #hud-top-bar .hud-res-val{
+  font-size:clamp(11px,1.12vw,18px)!important;color:#fff0c3!important;
+}
+body.rani-v4-active #hud-top-bar .hud-res-icon{
+  width:23px;height:23px;border:0!important;background:transparent!important
+}
+body.rani-v4-active #hud-top-bar .hud-res-stab,
+body.rani-v4-active #hud-top-bar .hud-res-popcell{display:none!important}
+body.rani-v4-active #hud-kingdom-panel{
+  position:fixed;left:50%;top:90px;transform:translateX(-50%);
+  min-width:300px;max-width:380px;
+}
+body.rani-v4-active:not(.royal-kingdom-open) #hud-kingdom-panel{
+  display:none!important;
+}
+body.rani-v4-active #hud-territory-panel{
+  position:fixed;left:50%;top:210px;transform:translateX(-50%);
+}
+#rani-v4-left{position:fixed;top:160px;left:16px}
+#rani-v4-right{position:fixed;top:98px;right:16px}
+.rani-v4-rail{display:flex;flex-direction:column;gap:10px;pointer-events:auto}
+.rani-v4-rail button{display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:2px;min-width:75px;min-height:76px;padding:4px;
+  border:3px ridge #b79059;border-radius:50%;
+  color:#ffe9be;background:radial-gradient(circle at 45% 25%,#546779,#182e3d 50%,#0a1722 85%);
+  box-shadow:0 3px 10px #02070ab3,inset 0 1px 3px #ffe6ad3d;text-shadow:0 1px 3px #000}
+.rani-v4-rail button .rani-v4-symbol{font-size:32px;line-height:1}
+.rani-v4-rail button .rani-v4-label{font-size:12px;font-weight:900}
+.rani-v4-rail button:not(:disabled):hover,
+.rani-v4-bottom button:not(:disabled):hover{filter:brightness(1.2);transform:translateY(-1px)}
+#rani-v4-queues{position:fixed;right:16px;bottom:148px;width:240px;
+  display:grid;gap:4px;pointer-events:auto}
+.rani-v4-queue-item{display:flex;align-items:center;gap:8px;
+  box-sizing:border-box;padding:4px 5px;border:2px ridge #be955e;
+  border-radius:11px;background:linear-gradient(150deg,#453422,#152a39 30%,#061724 90%);
+  box-shadow:0 3px 6px #0008;min-height:47px}
+.rani-v4-queue-symbol{font-size:24px}
+.rani-v4-queue-copy{display:grid;flex:1;min-width:0;gap:2px}
+.rani-v4-queue-copy b{font-size:12px;white-space:nowrap}
+.rani-v4-queue-copy small{color:#d6d8c9;font-size:10px;white-space:nowrap}
+#rani-v4-queues .rani-v4-queue-open{
+  flex:0 0 29px;width:29px;height:31px;padding:0;
+  border:2px ridge #deaf6b;border-radius:8px;
+  background:linear-gradient(#996e3f,#513921);font-weight:900}
+#rani-v4-queues .rani-v4-queue-open .rani-v4-label{display:none}
+#rani-v4-bottom{position:fixed;left:50%;bottom:9px;
+  transform:translateX(-50%);
+  width:min(1100px,calc(100vw - 160px));
+  display:flex;justify-content:center;gap:7px;box-sizing:border-box;
+  padding:7px 9px;border:3px ridge #d0a265;border-radius:19px;
+  background:linear-gradient(170deg,#77583b,#1a3142 14%,#081724 88%,#694726);
+  box-shadow:0 8px 21px #000c;pointer-events:auto}
+#rani-v4-bottom button{display:flex;flex:1 1 0;flex-direction:column;
+  justify-content:center;align-items:center;min-width:0;gap:3px;
+  min-height:72px;padding:5px 2px;border:2px ridge #bd9762;
+  border-radius:50% 50% 35% 35%;
+  background:linear-gradient(#896844,#314b61 18%,#122b42 60%,#061927);
+  box-shadow:inset 0 1px 4px #ffdaa84d}
+#rani-v4-bottom button[aria-pressed="true"]{
+  border-color:#ffe3a3;background:linear-gradient(#c18d49,#305579,#17334a);
+  box-shadow:inset 0 1px 4px #ffeaaf,0 0 10px #b6c2ec80}
+#rani-v4-bottom .rani-v4-symbol{font-size:29px;line-height:1}
+#rani-v4-bottom .rani-v4-label{font-size:12px;font-weight:900;white-space:nowrap}
+/* Original approved images are now on real 3D built-world coordinates. */
+#rani-v4-world-art{position:fixed;inset:0;z-index:35;pointer-events:none;overflow:hidden}
+#rani-v4-world-art[hidden]{display:none!important}
+.rani-v4-world-sprite{position:absolute;top:0;left:0;pointer-events:auto;
+  padding:0;border:0;background:transparent;outline-offset:3px;
+  filter:drop-shadow(0 5px 4px #030c17a6);will-change:transform;
+  cursor:pointer;touch-action:manipulation}
+.rani-v4-world-sprite img{display:block;width:100%;height:auto;
+  user-select:none;-webkit-user-drag:none}
+.rani-v4-world-sprite[hidden]{display:none!important}
+.rani-v4-world-sprite:focus-visible{outline:2px solid #ffda87;border-radius:5px}
+body.rani-v4-active #rani-native-top:not(.rani-positioned){top:94px!important}
+body.rani-v4-active #slg-tutorial:not(.rani-positioned){top:134px!important}
+body.rani-v4-active #hud-right:not(.rani-positioned){top:125px!important}
+@media (max-width:1300px){
+  #rani-v4-profile{width:240px;min-height:77px;padding:5px}
+  #rani-v4-profile .rani-v4-ruler-crest{flex-basis:56px;width:56px;height:60px;font-size:47px}
+  .rani-v4-ruler-desc strong{font-size:18px}
+  #rani-v4-power{font-size:12px}
+  body.rani-v4-active #gameplay-hud:not(.rani-positioned){
+    max-width:calc(100vw - 525px)!important
+  }
+  #rani-v4-top-actions button{min-width:47px;min-height:50px}
+  #rani-v4-left{left:5px;top:120px}
+  #rani-v4-right{right:5px;top:105px}
+  .rani-v4-rail{gap:7px}
+  .rani-v4-rail button{min-width:58px;min-height:61px}
+  .rani-v4-rail button .rani-v4-symbol{font-size:24px}
+  .rani-v4-rail button .rani-v4-label{font-size:10px}
+  #rani-v4-bottom{bottom:5px;width:calc(100vw - 120px);gap:3px}
+  #rani-v4-bottom button{min-height:60px}
+  #rani-v4-bottom .rani-v4-symbol{font-size:22px}
+  #rani-v4-bottom .rani-v4-label{font-size:10px}
+}
+@media (max-width:700px){
+  #rani-v4-top{top:3px;left:4px;right:4px}
+  #rani-v4-profile{width:145px;min-height:48px;padding:3px;gap:5px;border-radius:11px}
+  #rani-v4-profile .rani-v4-ruler-crest{flex:0 0 34px;width:34px;height:34px;font-size:27px}
+  .rani-v4-ruler-desc{gap:1px}
+  .rani-v4-ruler-desc strong{font-size:12px}
+  .rani-v4-ruler-desc small{font-size:9px}
+  #rani-v4-power{font-size:9px;padding:1px 3px}
+  #rani-v4-top-actions{gap:2px}
+  #rani-v4-top-actions button{min-width:37px;min-height:45px;padding:2px}
+  #rani-v4-top-actions button .rani-v4-symbol{font-size:19px}
+  #rani-v4-top-actions button .rani-v4-label{font-size:8px}
+  body.rani-v4-active #gameplay-hud:not(.rani-positioned){
+    top:51px!important;left:50%!important;width:calc(100vw - 9px)!important;
+    max-width:none!important;
+  }
+  body.rani-v4-active #hud-top-bar.hud-bar{padding:3px 4px!important}
+  body.rani-v4-active #hud-top-bar .hud-res-val{font-size:10px!important}
+  body.rani-v4-active #hud-top-bar .hud-res-icon{width:18px!important;height:18px!important}
+  #rani-v4-left{left:4px;top:113px}
+  #rani-v4-right{right:4px;top:113px}
+  .rani-v4-rail{gap:5px}
+  .rani-v4-rail button{min-width:41px;min-height:43px;
+    border-width:2px;padding:1px}
+  .rani-v4-rail button .rani-v4-symbol{font-size:21px}
+  .rani-v4-rail button .rani-v4-label{font-size:8px}
+  #rani-v4-queues{right:3px;bottom:83px;width:124px;gap:2px}
+  .rani-v4-queue-item{min-height:30px;gap:3px;padding:1px 3px;border-width:1px;border-radius:5px}
+  .rani-v4-queue-symbol{font-size:14px}
+  .rani-v4-queue-copy b{font-size:8px}
+  .rani-v4-queue-copy small{font-size:8px}
+  #rani-v4-queues .rani-v4-queue-open{flex-basis:18px;width:18px;height:22px;border-width:1px}
+  #rani-v4-bottom{left:0;bottom:0;transform:none;
+    width:100%;max-width:100%;gap:2px;padding:4px 2px;
+    border-radius:9px 9px 0 0;overflow-x:auto;scrollbar-width:thin;
+    justify-content:flex-start;overscroll-behavior-x:contain;
+    padding-bottom:calc(4px + env(safe-area-inset-bottom,0px))}
+  #rani-v4-bottom button{flex:0 0 48px;min-width:48px;min-height:57px;
+    border-width:1px;border-radius:12px;padding:2px 0}
+  #rani-v4-bottom .rani-v4-symbol{font-size:20px}
+  #rani-v4-bottom .rani-v4-label{font-size:9px}
+  body.rani-v4-active #rani-native-top:not(.rani-positioned){top:96px!important}
+  body.rani-v4-active #slg-tutorial:not(.rani-positioned){
+    top:114px!important;max-width:calc(100vw - 108px)!important
+  }
+  body.rani-v4-active #hud-right:not(.rani-positioned){top:90px!important}
+  body.rani-v4-active #hud-kingdom-panel{top:100px;width:calc(100vw - 90px);min-width:0}
+  .rani-v4-world-sprite{max-width:155px}
+}
+@media (max-width:360px){
+  #rani-v4-top-actions button{min-width:32px}
+  #rani-v4-profile{width:130px}
+  #rani-v4-bottom button{flex-basis:45px;min-width:45px}
+}
+@media (prefers-reduced-motion:reduce){
+  .rani-v4-world-sprite{transition:none!important}
+}
+
+/* Approved individual house, market and trade-ship icons, never sheet crops. */
+#rani-v4-shell .rani-v4-symbol .rani-v4-menu-art{
+ display:block;width:42px;height:35px;max-width:100%;object-fit:contain;
+ filter:drop-shadow(0 3px 2px #030b14bb);pointer-events:none;
+}
+#rani-v4-shell .rani-v4-menu-art[hidden]{display:none!important}
+#rani-v4-shell .rani-v4-menu-fallback:not([hidden]){display:block;font-size:24px}
+@media(max-width:700px){
+ #rani-v4-shell .rani-v4-symbol .rani-v4-menu-art{width:30px;height:24px}
+}
