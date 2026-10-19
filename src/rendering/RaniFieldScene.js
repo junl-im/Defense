@@ -2,6 +2,7 @@
 // Every faction is one visible 3D town-center model, scaled to its actual territory.
 // Field graphics are not part of the village grid or saved data.
 import * as THREE from 'three';
+import { installRoyalFieldScenery, makeRoyalFieldTownDressing } from './RoyalFieldScenery.js';
 const a=Math.PI/6;
 // Shared geometry: refreshing factions never allocates fresh WebGL buffers.
 const platformGeometry=new THREE.CylinderGeometry(.72,.76,.23,6);
@@ -12,7 +13,7 @@ const castleMaterial=new THREE.MeshStandardMaterial({color:0xc9b98a,roughness:.9
 const enemyMaterial=new THREE.MeshStandardMaterial({color:0xa48670,roughness:.9});
 const playerMaterial=new THREE.MeshStandardMaterial({color:0xc7ad66,roughness:.9});
 const roofMaterial=new THREE.MeshStandardMaterial({color:0x7e4537,roughness:.85});
-const playerRoofMaterial=new THREE.MeshStandardMaterial({color:0x4b786a,roughness:.85});
+const playerRoofMaterial=new THREE.MeshStandardMaterial({color:0x285eaa,roughness:.85}); // cobalt roofs match the actual royal village
 function tier(n){return n>=16?4:n>=9?3:n>=4?2:1;}
 function normalize(q,r,limit) {return {x:8*(q+0.5*r)/limit,z:7*r/limit};}
 export class RaniFieldScene {
@@ -47,6 +48,7 @@ export class RaniFieldScene {
     const sun=new THREE.DirectionalLight(0xffebc0,2);sun.position.set(-6,15,8);this.scene.add(sun);
     this.terrain=new THREE.Group();this.scene.add(this.terrain);
     this._createTerrain();
+    this.royalScenery=installRoyalFieldScenery(this.scene);
     this.territory=new THREE.Group();this.scene.add(this.territory);
     this.territoryMeshes=[];this.territoryIndex=[];this.territoryCapacity=0;
     this.territoryGeometry=new THREE.CylinderGeometry(1,1,.30,6,1);
@@ -207,6 +209,8 @@ export class RaniFieldScene {
       group.add(model);
       body.visible=false;roofMesh.visible=false;
     }
+    // Actual 3D settlement heraldry; its mesh is visual-only/non-pickable.
+    group.add(makeRoyalFieldTownDressing(entry));
     group.traverse(o=>{if(o.isMesh)o.userData.factionId=entry.id});
     this.towns.add(group);
     entry.group=group;
@@ -249,7 +253,11 @@ export class RaniFieldScene {
     this.territoryIndex=index;
   }
   refresh(){
-    for(const obj of [...this.towns.children])this.towns.remove(obj);
+    for(const obj of [...this.towns.children]){
+      // Release newly generated per-town geometry; never dispose shared GLTF buffers.
+      obj.traverse(o=>{if(o.userData.raniFieldVisualOnly&&o.geometry)o.geometry.dispose()});
+      this.towns.remove(obj);
+    }
     const factions=this.game.factionSystem.factions;
     const radius=Math.max(8,...factions.map(f=>Math.max(Math.abs(f.home.q),Math.abs(f.home.r))),...Array.from(this.game.grid.cells.values(),c=>Math.max(Math.abs(c.q),Math.abs(c.r))));
     this._refreshRealHexes(radius);
