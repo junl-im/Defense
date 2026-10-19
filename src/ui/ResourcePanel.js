@@ -8,6 +8,7 @@
 import { events } from '../core/Events.js';
 import { fmtCost } from '../config/BuildingConfig.js';
 import { iconHtml, iconLabel } from './GameIcons.js';
+import { RANI_PREPARED_ASSETS } from './RaniAssetRegistry.js';
 
 const TOP_RES = [
   { key: 'wood', icon: 'wood', label: '목재' },
@@ -77,7 +78,18 @@ export class ResourcePanel {
       </div>
 
       <div id="hud-kingdom-panel" class="hud-sub-panel">
-        <h2 class="hud-panel-title">왕국</h2>
+        <div class="rani-royal-heading">
+          <span class="rani-royal-header-frame" aria-hidden="true">
+            <img class="rani-royal-header-art rani-raster-image"
+                 src="${RANI_PREPARED_ASSETS.hudPanel}" alt=""
+                 width="512" height="254" decoding="async" draggable="false" />
+            <span class="rani-raster-fallback" hidden>♛</span>
+          </span>
+          <div class="rani-royal-heading-copy">
+            <h2 class="hud-panel-title">왕국</h2>
+            <span class="rani-royal-heading-caption" aria-hidden="true">ROYAL COURT</span>
+          </div>
+        </div>
         <div class="hud-kingdom-row">
           <span class="hud-tier-icon" id="hud-tier-icon"></span>
           <div class="hud-tier-body">
