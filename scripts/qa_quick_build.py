@@ -229,6 +229,74 @@ with sync_playwright() as p:
       'Native click on blank hex did not open/stay on radial',candidate)
     assert page.evaluate('window.__game.radialMenu.empty?.q')==candidate['q']
     assert page.evaluate('window.__game.radialMenu.empty?.r')==candidate['r']
+    # v1.4: a held pointer and ordinary interactions postpone closing.
+    # Fast-forward only the UI idle clock; no 15s browser sleeps and no
+    # changes to the real BuildingSystem update loop.
+    state=page.evaluate("""() => {
+      const g=window.__game, menu=g.radialMenu;
+      const t=performance.now();
+      menu.lastInteractionAt=t-menu.idleTimeoutMs-1;
+      document.dispatchEvent(new PointerEvent('pointerdown',{
+        pointerId:910,button:0,buttons:1,bubbles:true}));
+      const held=menu._heldPointers.has(910);
+      menu.lastInteractionAt=performance.now()-menu.idleTimeoutMs-1;
+      const paused=!menu._expireIfIdle()&&Boolean(menu.empty);
+      document.dispatchEvent(new PointerEvent('pointerup',{
+        pointerId:910,button:0,buttons:0,bubbles:true}));
+      const renewed=performance.now()-menu.lastInteractionAt<500;
+      const stillOpen=Boolean(menu.empty);
+      return {held,paused,renewed,stillOpen};
+    }""")
+    assert all(state.values()),('A held pointer must keep the menu open',state)
+    gone=page.evaluate("""() => {
+      const g=window.__game, m=g.radialMenu;
+      m.lastInteractionAt=performance.now()-m.idleTimeoutMs-1;
+      const expired=m._expireIfIdle();
+      return {expired,empty:m.empty,picker:g.quickBuildMenu.current,
+        hidden:m.root.classList.contains('hidden')};
+    }""")
+    assert gone['expired'] and gone['empty'] is None and gone['picker'] is None and gone['hidden'],(
+      'Idle blank-hex menu was not dismissed cleanly',gone)
+    # An already built hex uses the SAME inactivity policy and deselects
+    # both its selection outline and its original building-centered radial.
+    page.evaluate("""() => {
+      const g=window.__game;
+      g.selection.select(g.grid.get(1,0));
+    }""")
+    assert page.locator('#radial-menu .radial-center').is_visible()
+    before=page.evaluate("""() => {
+      const g=window.__game;
+      return g.buildingSystem.buildingsOn(g.grid.get(1,0))[0].remaining;
+    }""")
+    state=page.evaluate("""() => {
+      const g=window.__game,m=g.radialMenu;
+      document.dispatchEvent(new WheelEvent('wheel',{deltaY:120,bubbles:true}));
+      const reset=performance.now()-m.lastInteractionAt<500;
+      m.lastInteractionAt=performance.now()-m.idleTimeoutMs-1;
+      const expired=m._expireIfIdle();
+      return {reset,expired,selected:g.selection.cell,outline:g.selection.outline.visible,
+        popupHidden:m.root.classList.contains('hidden')};
+    }""")
+    assert state['reset'] and state['expired'] and state['selected'] is None and (
+      not state['outline']) and state['popupHidden'],(
+      'Building info/outline not removed on inactivity',state)
+    page.wait_for_timeout(270)
+    after=page.evaluate("""() => {
+      const g=window.__game;
+      return g.buildingSystem.buildingsOn(g.grid.get(1,0))[0].remaining;
+    }""")
+    assert after<before, 'Auto-dismissed building selection must not pause ongoing construction'
+    # Opening a different mobile HUD panel also removes stale floating info,
+    # leaving the actual kingdom progress and persisted building untouched.
+    if w<=700:
+      page.evaluate("""() => {
+        const g=window.__game;
+        g.selection.select(g.grid.get(1,0));
+      }""")
+      page.locator('#slg-mobile-dock button[data-panel="research"]').click()
+      assert page.evaluate('window.__game.selection.cell===null')
+      assert page.locator('#radial-menu.hidden').count()==1
+      page.locator('#slg-mobile-dock button[data-panel="research"]').click()
     page.screenshot(path=str(OUT/(label+'-placed.png')),full_page=True)
     assert not errors,f'{label}: {errors}'
     print('PASS',label,'empty tap/menu toggle/combo 3D construction/mobile dock/compact layout',flush=True)

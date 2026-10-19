@@ -18,6 +18,7 @@ import { iconHtml, iconLabel } from './GameIcons.js';
 import { buildPlans } from './QuickBuildPlans.js';
 
 const RADIUS = 86; // px ring radius
+export const SELECTION_IDLE_MS = 15_000; // actual user inactivity; never a building timer
 
 const RES_ICONS = { wood: 'wood', stone: 'stone', food: 'food', gold: 'gold', influence: 'influence' };
 
@@ -34,6 +35,9 @@ export class RadialMenu {
     this.cell = null;
     this.empty = null;
     this.emptyPage = 0;
+    this.idleTimeoutMs = SELECTION_IDLE_MS;
+    this.lastInteractionAt = performance.now();
+    this._heldPointers = new Set();
     this.anchor = null;
     this.buildingId = null;
     this._worldPos = new THREE.Vector3();
@@ -42,8 +46,11 @@ export class RadialMenu {
     this.root = document.createElement('div');
     this.root.id = 'radial-menu';
     this.root.className = 'hidden';
+    this.root.setAttribute('role','group');
+    this.root.setAttribute('aria-label','육각 건물 정보와 건설 메뉴');
     document.body.appendChild(this.root);
     this._blockedActivation=null;
+    this._bindIdleActivity();
     // Touch browsers dispatch a synthetic click AFTER pointerup. If pointerup
     // opens the ring under the finger, that click is re-targeted to the newly
     // mounted center 'close' button: the ring vanishes on every short tap.
@@ -63,8 +70,10 @@ export class RadialMenu {
       if(cell)this.empty=null;
       this.anchor = anchor?.isVector3 ? anchor.clone() : null;
       this.buildingId = buildingId || null;
-      if (cell) this._build(cell);
-      else if (!this.empty) this._hide();
+      if (cell) {
+        this._markActive();
+        this._build(cell);
+      } else if (!this.empty) this._hide();
     });
     // requirements can change while open (resources, research, construction)
     events.on('resources:changed', () => this._refreshDisabled());
@@ -74,7 +83,68 @@ export class RadialMenu {
     events.on('army:changed', () => { if (this.cell) this._build(this.cell); });
   }
 
+  _bindIdleActivity() {
+    // Only real user input resets the countdown. Background simulation
+    // updates/resources/build progress must NOT keep a selection open forever.
+    const active=()=>Boolean(this.cell||this.empty);
+    document.addEventListener('pointerdown',e=>{
+      if (!active()) return;
+      this._heldPointers.add(e.pointerId);
+      this._markActive();
+    },true);
+    window.addEventListener('pointerup',e=>{
+      this._heldPointers.delete(e.pointerId);
+      if (active()) this._markActive();
+    },true);
+    window.addEventListener('pointercancel',e=>{
+      this._heldPointers.delete(e.pointerId);
+      if (active()) this._markActive();
+    },true);
+    document.addEventListener('pointermove',e=>{
+      // Do not count idle mouse hover, only a genuine held mouse/touch drag.
+      if (active() && e.buttons!==0) this._markActive();
+    },true);
+    document.addEventListener('wheel',()=>{
+      if (active()) this._markActive();
+    },{passive:true,capture:true});
+    document.addEventListener('keydown',()=>{
+      if (active()) this._markActive();
+    },true);
+    this.root.addEventListener('pointerenter',()=>{
+      if (active()) this._markActive();
+    });
+    window.addEventListener('blur',()=>{
+      this._heldPointers.clear();
+      this._markActive();
+    });
+    document.addEventListener('visibilitychange',()=>{
+      // Hidden tabs do not count as deliberate in-game inactivity.
+      this._heldPointers.clear();
+      this._markActive();
+    });
+    // Other HUD panels replace the contextual action ring rather than
+    // leaving a stale floating building selection on top of them.
+    document.addEventListener('rani:panel-opened',()=>{
+      if(!active())return;
+      if (this.empty) this.game.quickBuildMenu?.close();
+      else this.game.selection?.clear();
+    });
+  }
+  _markActive(){this.lastInteractionAt=performance.now();}
+  /** Used by the frame loop and deterministic browser regression tests. */
+  _expireIfIdle(now=performance.now()){
+    if ((!this.cell && !this.empty) ||
+        document.hidden || this._heldPointers.size ||
+        this.game.mode==='world') return false;
+    if(now-this.lastInteractionAt<this.idleTimeoutMs)return false;
+    // Closing the view cannot cancel/pause any BuildingSystem or research job.
+    if(this.empty)this.game.quickBuildMenu?.close();
+    else this.game.selection?.clear();
+    return true;
+  }
+
   _hide() {
+    this._heldPointers.clear();
     this.root.classList.add('hidden');
     this.root.innerHTML = '';
     this.anchor = null;
@@ -92,6 +162,7 @@ export class RadialMenu {
   // Six positions per page keep individual actions large enough for a finger.
   openEmpty(q,r) {
     if(!buildPlans(this.game,q,r).length)return false;
+    this._markActive();
     this.cell=null;
     this.anchor=null;
     this.buildingId=null;
@@ -288,7 +359,17 @@ export class RadialMenu {
       if(this.empty)this.game.quickBuildMenu.close();
       else this.game.selection.clear();
     });
-    center.setAttribute('data-tip', '선택 취소 (Esc)');
+    center.setAttribute('data-tip', '15초 동안 조작이 없으면 자동 닫힘 · 눌러 닫기 (Esc)');
+    center.setAttribute('role','button');
+    center.setAttribute('tabindex','0');
+    center.setAttribute('aria-label','육각 메뉴 닫기');
+    center.addEventListener('keydown',e=>{
+      if(e.key!=='Enter' && e.key!==' ')return;
+      e.preventDefault();
+      e.stopPropagation();
+      if(this.empty)this.game.quickBuildMenu.close();
+      else this.game.selection.clear();
+    });
     this.root.appendChild(center);
     this._progressEl = center.querySelector('#radial-progress');
 
@@ -405,6 +486,7 @@ export class RadialMenu {
 
   update() {
     if (!this.cell && !this.empty) return;
+    if (this._expireIfIdle()) return;
     this._place();          // follows camera while open
     this._refreshProgress();
   }

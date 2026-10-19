@@ -28,7 +28,9 @@ function installMobileDock() {
     button.addEventListener('click', () => {
       const opened=document.body.dataset.activeSlgPanel;
       // Clicking the current menu again closes it, without losing the map.
-      select(key !== 'map' && opened === key ? 'map' : key);
+      const next=key !== 'map' && opened === key ? 'map' : key;
+      if(next!=='map')document.dispatchEvent(new Event('rani:panel-opened'));
+      select(next);
     });
     nav.appendChild(button);
   }
