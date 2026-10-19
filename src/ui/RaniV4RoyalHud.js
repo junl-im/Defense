@@ -132,8 +132,11 @@ export function installRaniV4RoyalHud(game){
     kingdom(){trigger('kingdom');},
     save(){trigger('save');},
     settings(){byId('save-manager-btn')?.click();},
-    menu(){byId('rani-shell-menu-toggle')?.click()||
-      byId('rani-shell-menu-mobile-toggle')?.click();}
+    menu(){
+      const id=matchMedia('(max-width:700px)').matches?
+        'rani-shell-menu-mobile-toggle':'rani-shell-menu-toggle';
+      byId(id)?.click();
+    }
   };
   frame.addEventListener('click',e=>{
     const b=e.target.closest('button[data-v4-action]');
