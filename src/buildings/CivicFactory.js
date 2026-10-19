@@ -11,6 +11,7 @@ import { MATS, PALETTE } from '../rendering/Materials.js';
 import { makeRoyalHarborOrnaments } from '../rendering/RoyalInfrastructureArt.js';
 import { makeRoyalHarborFleetDetail } from '../rendering/RoyalHarborFleetArt.js';
 import { makeRoyalDistrictDetails } from '../rendering/RoyalDistrictArt.js';
+import { makeRoyalLivedInDistrict } from '../rendering/RoyalLivedInDistrictArt.js';
 import { part, merge } from '../assets/GeometryUtils.js';
 
 function vc(parts) {
@@ -101,6 +102,7 @@ export function makeApiary(rng) {
     part(new THREE.SphereGeometry(0.016, 4, 3), PALETTE.flower3, { t: [0.08, 0.055, -0.12] }),
     part(new THREE.CylinderGeometry(0.025, 0.03, 0.05, 6), PALETTE.goldDeep, { t: [-0.05, 0.065, -0.03] }),
   ]));
+  p4.add(makeRoyalLivedInDistrict('apiary'));
   return wrap([p1, p2, p3, p4]);
 }
 
@@ -181,6 +183,7 @@ export function makeBakery(rng) {
   win.position.set(0.1, 0.06 + wallH * 0.6, d / 2 + 0.011);
   p4.add(win);
   p4.add(smokePuffs(0.1, 0.06 + wallH + 0.3, -d / 2 + 0.02));
+  p4.add(makeRoyalLivedInDistrict('bakery'));
   return wrap([p1, p2, p3, p4]);
 }
 
@@ -315,6 +318,7 @@ export function makeStable(rng) {
     part(new THREE.SphereGeometry(0.06, 5, 4), PALETTE.hay, { t: [0.32, 0.055, -0.08], s: [1, 0.8, 1] }),
     part(new THREE.BoxGeometry(0.12, 0.04, 0.06), PALETTE.trunk, { t: [0.05, 0.06, 0.22] }),
   ]));
+  p4.add(makeRoyalLivedInDistrict('stable'));
   return wrap([p1, p2, p3, p4]);
 }
 
@@ -404,6 +408,7 @@ export function makeTemple(rng) {
   win2.rotation.y = Math.PI / 2;
   p4.add(win2);
   p4.add(lanternPost(0.3, 0.24, 0.7));
+  p4.add(makeRoyalLivedInDistrict('temple'));
   return wrap([p1, p2, p3, p4]);
 }
 
@@ -493,6 +498,7 @@ export function makeUniversity(rng) {
     part(new THREE.BoxGeometry(0.05, 0.02, 0.035), PALETTE.tabardRed, { t: [0.31, 0.19, 0.1], ry: 0.3 }),
     part(new THREE.BoxGeometry(0.05, 0.02, 0.035), PALETTE.tabardBlue, { t: [0.31, 0.21, 0.1], ry: 0.1 }),
   ]));
+  p4.add(makeRoyalLivedInDistrict('university'));
   return wrap([p1, p2, p3, p4]);
 }
 
@@ -525,6 +531,7 @@ export function makeObservatory(rng) {
   ]));
   const lamp = lanternPost(0.2, 0.14, 0.6);
   p4.add(lamp);
+  p4.add(makeRoyalLivedInDistrict('observatory'));
   return wrap([p1, p2, p3, p4]);
 }
 
@@ -565,6 +572,7 @@ export function makeLibrary(rng) {
   const win = windowPane(0.05, 0.12);
   win.position.set(-w * 0.28, 0.06 + wallH * 0.55, d / 2 + 0.015);
   p4.add(win);
+  p4.add(makeRoyalLivedInDistrict('library'));
   return wrap([p1, p2, p3, p4]);
 }
 
