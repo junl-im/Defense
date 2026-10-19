@@ -68,4 +68,5 @@ jobs:
             qa/royal-infra-v20/
             qa/royal-district-v21/
             qa/rani-asset-v22/
+            qa/rani-visual-v23/
           if-no-files-found: ignore
