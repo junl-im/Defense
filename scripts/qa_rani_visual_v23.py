@@ -61,8 +61,8 @@ with sync_playwright() as pw:
     assert abs(result['button']['w']/result['button']['h']-2)<0.03,(label,result)
     assert not errors,(label,errors)
     page.screenshot(path=str(OUT/(label+'-kingdom-real-assets.png')),full_page=True)
-    if label=='desktop':
-      # Existing actual action still opens the research panel.
+    if w>700:
+      # Desktop and 1024px laptop both show the actual PC kingdom dock.
       nav=page.locator('#rani-royal-launcher')
       nav.locator('[data-royal-action="research"]').click()
       assert page.locator('#research-panel').is_hidden()
