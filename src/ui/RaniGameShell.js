@@ -17,6 +17,27 @@ export function installRaniGameShell(game){
   toggle.id='rani-shell-menu-toggle';
   toggle.setAttribute('aria-label','전체화면 및 게임 나가기 메뉴');
   toggle.setAttribute('aria-haspopup','dialog');
+  // Put navigation inside the EXISTING docks. A fixed floating button
+  // covered the original #rani-field-shortcut on mobile.
+  const label=document.createElement('span');
+  label.className='royal-text';
+  label.textContent='메뉴';
+  const glyph=document.createElement('span');
+  glyph.className='royal-icon';
+  glyph.setAttribute('aria-hidden','true');
+  glyph.textContent='☰';
+  toggle.textContent='';
+  toggle.append(glyph,label);
+  launcher.appendChild(toggle);
+  const mobileDock=document.getElementById('slg-mobile-dock');
+  const mobileToggle=mobileDock?button('☰ 메뉴','menu'):null;
+  if(mobileToggle){
+    mobileToggle.id='rani-shell-menu-mobile-toggle';
+    mobileToggle.setAttribute('aria-label','전체화면 및 게임 나가기 메뉴');
+    mobileToggle.setAttribute('aria-haspopup','dialog');
+    mobileToggle.innerHTML='<span aria-hidden="true">☰</span><small>메뉴</small>';
+    mobileDock.appendChild(mobileToggle);
+  }
   const root=document.createElement('div');
   root.id='rani-shell-menu';
   root.hidden=true;
@@ -44,16 +65,18 @@ export function installRaniGameShell(game){
   controls.append(resume,fullscreen,leave,quit);
   dialog.append(title,subtitle,controls,feedback);
   root.appendChild(dialog);
-  document.body.append(toggle,root);
+  document.body.appendChild(root);
   document.body.classList.add('rani-shell-immersive');
   let view='game'; // game, menu, title. Never a second gameplay engine.
   let fullscreenAttempted=false;
   let guardArmed=false;
+  let lastTrigger=toggle;
   const fullscreenSupported=()=>!!document.fullscreenEnabled&&
     typeof document.documentElement.requestFullscreen==='function';
   function updateButton(){
     fullscreen.textContent=document.fullscreenElement?'⛶ 전체화면 해제':'⛶ 전체화면';
     toggle.setAttribute('aria-expanded',String(!root.hidden));
+    mobileToggle?.setAttribute('aria-expanded',String(!root.hidden));
   }
   const save=()=>{
     // SaveSystem already exists and owns the only canonical save key.
@@ -88,7 +111,7 @@ export function installRaniGameShell(game){
     root.setAttribute('aria-hidden','true');
     document.body.classList.remove('rani-shell-title-open');
     updateButton();
-    toggle.focus();
+    lastTrigger.focus();
   }
   async function enterFullscreen(){
     if(!fullscreenSupported())return false;
@@ -122,7 +145,12 @@ export function installRaniGameShell(game){
     }
     show('menu');
   }
-  toggle.addEventListener('click',()=>root.hidden?show('menu'):hide());
+  for(const trigger of [toggle,mobileToggle].filter(Boolean)){
+    trigger.addEventListener('click',()=>{
+      lastTrigger=trigger;
+      root.hidden?show('menu'):hide();
+    });
+  }
   root.addEventListener('click',e=>{
     if(e.target===root){hide();return;}
     const cmd=e.target.closest('button[data-shell-action]')?.dataset.shellAction;
