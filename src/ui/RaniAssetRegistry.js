@@ -16,6 +16,13 @@ export const RANI_PREPARED_ASSETS=Object.freeze({
   market:RANI_ASSET_ROOT+'buildings/economy/rk_building_market_v001.webp',
   tradeShip:RANI_ASSET_ROOT+'harbor/ships/rk_ship_trade_v001.webp',
 });
+// Approved high-resolution illustrated UI thumbnails: these are ONLY
+// in game UI; original interactive Three.js buildings/harbors stay intact.
+export const RANI_GAMEPLAY_ICONS=Object.freeze({
+  village: RANI_PREPARED_ASSETS.houseA,
+  market: RANI_PREPARED_ASSETS.market,
+  port: RANI_PREPARED_ASSETS.tradeShip,
+});
 export const RANI_PRESERVED_ASSETS=Object.freeze([
   'assets/branding/rani-kingdom-logo.webp',
   'assets/terrain/rani-terrain-atlas.webp',
