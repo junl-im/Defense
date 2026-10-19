@@ -42,7 +42,7 @@ for(const item of lock.protectedFiles){
   // Git's canonical SHA-1 hashes the "blob <length>\\0" prefix + raw bytes.
   // This catches byte changes even when malicious/mistaken outputs retain size.
   const blob=crypto.createHash('sha1')
-    .update('blob '+bytes.length+'\\0','utf8').update(bytes).digest('hex');
+    .update('blob '+bytes.length).update(Buffer.alloc(1)).update(bytes).digest('hex');
   if(blob!==item.gitBlobSha1)fail('Original content fingerprint changed: '+relative);
   if(relative.endsWith('.webp')){
     assert.equal(bytes.subarray(0,4).toString('ascii'),'RIFF',relative);
