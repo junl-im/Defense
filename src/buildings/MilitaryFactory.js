@@ -7,6 +7,7 @@
 // ============================================================
 import * as THREE from 'three';
 import { MATS, PALETTE } from '../rendering/Materials.js';
+import { makeRoyalGateOrnaments, makeRoyalBastionOrnaments } from '../rendering/RoyalInfrastructureArt.js';
 import { part, merge } from '../assets/GeometryUtils.js';
 
 function vc(parts) {
@@ -605,7 +606,7 @@ export function makeWallGate(rng) {
   ];
   for (const x of [-0.21, 0.21]) {
     top.push(part(new THREE.BoxGeometry(0.2, 0.04, 0.24), PALETTE.rockDark, { t: [x, 0.66, 0] }));
-    top.push(part(new THREE.ConeGeometry(0.13, 0.14, 4), PALETTE.roofSlate, { ry: Math.PI / 4, t: [x, 0.75, 0] }));
+    top.push(part(new THREE.ConeGeometry(0.13, 0.14, 4), PALETTE.roofBlue, { ry: Math.PI / 4, t: [x, 0.75, 0] }));
   }
   // arch shoulders over the opening
   top.push(part(new THREE.BoxGeometry(0.04, 0.08, 0.18), PALETTE.wallStoneB, { t: [-0.11, 0.42, 0] }));
@@ -619,7 +620,7 @@ export function makeWallGate(rng) {
     part(new THREE.BoxGeometry(0.1, 0.02, 0.03), PALETTE.ironBand, { ry: 0.35, t: [-0.085, 0.36, 0.05] }),
     part(new THREE.BoxGeometry(0.1, 0.02, 0.03), PALETTE.ironBand, { ry: -0.35, t: [0.085, 0.36, 0.05] }),
   ]));
-  const fl = makeFactionFlag(0.24, rng.pick(FACTION_IDS));
+  const fl = makeFactionFlag(0.24, 'blue');
   fl.position.set(-0.21, 0.78, 0);
   p4.add(fl);
   for (const x of [-0.13, 0.13]) {
@@ -627,6 +628,7 @@ export function makeWallGate(rng) {
     flame.position.set(x, 0.47, 0.12);
     p4.add(flame);
   }
+  p4.add(makeRoyalGateOrnaments());
   return wrap([p1, p2, p3, p4]);
 }
 
@@ -660,6 +662,7 @@ export function makeWallTowerCorner(rng) {
   const brazier = new THREE.Mesh(new THREE.SphereGeometry(0.03, 5, 4), MATS.lantern);
   brazier.position.set(0.09, 0.61, 0.09);
   p4.add(brazier);
+  p4.add(makeRoyalBastionOrnaments());
   return wrap([p1, p2, p3, p4]);
 }
 
