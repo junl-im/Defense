@@ -25,3 +25,5 @@
 
 원본 Drive ZIP: https://drive.google.com/file/d/17z3CxG084H009VspkNGYBaQMQDt9aXRf/view
 기존 잠금: assets/rani/asset-integrity-lock-v25.json
+## 자산 의미 일치 검증
+주택 원본 WebP는 v4 하단 마을 버튼에 사용하지만, 실제 건설 목록에 주택 종류가 없기 때문에 제과점·양봉장·도서관·마구간을 억지로 주택 그림으로 덮어씌우지 않는다. 현재 실제 월드 외관 교체는 시장/교역소와 항구/낚시부두에 맞는 각각의 승인 원본만 사용한다. 추가 시설은 각각 맞는 독립 이미지 확보 후 연결한다.
