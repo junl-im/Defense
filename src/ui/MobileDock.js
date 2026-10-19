@@ -1,3 +1,4 @@
+import { iconHtml } from './GameIcons.js';
 // Progressive mobile navigation: preserves all upstream panels and game logic.
 const sections = [
   ['map', '🏡', '마을'],
