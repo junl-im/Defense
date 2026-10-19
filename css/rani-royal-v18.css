@@ -293,7 +293,10 @@ button:disabled{cursor:not-allowed!important}
  #hud-top-bar .hud-res-icon{min-width:15px;height:15px;border-radius:50%}
  #hud-top-bar .hud-res-icon .ico{font-size:11px!important}
  #hud-top-bar .hud-res-val{font-size:10px!important}
- #hud-top:not(.rani-positioned){top:calc(46px + env(safe-area-inset-top))!important}
+ #hud-top:not(.rani-positioned){top:calc(61px + env(safe-area-inset-top))!important}
+ #slg-tutorial:not(.rani-positioned){top:calc(94px + env(safe-area-inset-top))!important}
+ body[data-game-mode="world"] .rani-world-head{top:calc(99px + env(safe-area-inset-top))!important}
+ body[data-game-mode="world"] .rani-world-detail{top:calc(160px + env(safe-area-inset-top))!important}
  #score-panel{padding:2px 7px!important;border-radius:7px!important}
  #score-value{font-size:12px!important}
  #research-panel,#faction-panel,#hud-right{
