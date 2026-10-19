@@ -29,6 +29,6 @@ assert.match(builders,/rec\.visual = this\.construction\.build/);
 assert.match(construction,/events\.emit\('building:complete'/);
 assert.match(construction,/PHASE_DELAY = \[0, 1\.4, 2\.9, 4\.4\]/);
 assert.doesNotMatch(art,/localStorage|saveSystem|\.spend\(|\.build\(|<svg|\.svg\b/);
-assert.doesNotMatch(system,/localStorage|serialize\(|restore\(|new BuildingSystem|\.spend\(|<svg|\.svg\b/);
+assert.doesNotMatch(system,/localStorage|serialize\(|this\.game\.saveSystem|new BuildingSystem|\.spend\(|<svg|\.svg\b/);
 assert.equal(JSON.parse(fs.readFileSync('package.json','utf8')).scripts.build,'npm run test');
 console.log('PASS v3.2: actual finished-player-building neighborhoods; original save and 16 assets guarded');
