@@ -67,8 +67,13 @@ with sync_playwright() as pw:
         page.mouse.move(startx+51,starty+49,steps=8)
         page.mouse.up()
         moved=page.locator(target).bounding_box()
-        assert abs(moved['x']-box['x'])>22 and abs(moved['y']-box['y'])>22,(
+        # At 320px, the research panel is 292px wide and can legally
+        # move horizontally by only 28px in total. Verify it moved and was
+        # clamped inside the screen, not that it traveled an impossible 22px.
+        assert abs(moved['y']-box['y'])>22 and abs(moved['x']-box['x'])>8,(
           label,'panel did not move when dragging its grip',box,moved)
+        assert moved['x']>=0 and moved['x']+moved['width']<=w+1,(
+          'Panel must remain on-screen after dragging',label,moved)
         saved=page.evaluate("""() => {
           const x=JSON.parse(localStorage.getItem('rani-hud-layout-v2'));
           return x[innerWidth<=700?'mobile':'desktop']['research-panel'];
