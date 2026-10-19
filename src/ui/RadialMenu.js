@@ -46,6 +46,8 @@ export class RadialMenu {
     this.root = document.createElement('div');
     this.root.id = 'radial-menu';
     this.root.className = 'hidden';
+    this.root.setAttribute('role','group');
+    this.root.setAttribute('aria-label','육각 건물 정보와 건설 메뉴');
     document.body.appendChild(this.root);
     this._blockedActivation=null;
     this._bindIdleActivity();
@@ -357,7 +359,17 @@ export class RadialMenu {
       if(this.empty)this.game.quickBuildMenu.close();
       else this.game.selection.clear();
     });
-    center.setAttribute('data-tip', '선택 취소 (Esc)');
+    center.setAttribute('data-tip', '15초 동안 조작이 없으면 자동 닫힘 · 눌러 닫기 (Esc)');
+    center.setAttribute('role','button');
+    center.setAttribute('tabindex','0');
+    center.setAttribute('aria-label','육각 메뉴 닫기');
+    center.addEventListener('keydown',e=>{
+      if(e.key!=='Enter' && e.key!==' ')return;
+      e.preventDefault();
+      e.stopPropagation();
+      if(this.empty)this.game.quickBuildMenu.close();
+      else this.game.selection.clear();
+    });
     this.root.appendChild(center);
     this._progressEl = center.querySelector('#radial-progress');
 
