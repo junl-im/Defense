@@ -1,0 +1,159 @@
+/* v1.7 — true movable HUD, compact default PC layout, raster terrain cards.
+   Late-loaded after legacy style files to avoid contradictory position rules. */
+html,body,#game-canvas,button,#slg-mobile-dock,.hud-side-panel,
+#hud-right,#gameplay-hud,#hud-top,#hud-bottom,#rani-nav,
+#slg-tutorial { -webkit-user-select:none;user-select:none;-webkit-touch-callout:none; }
+input,textarea,[contenteditable="true"]{
+  -webkit-user-select:text!important;user-select:text!important;
+}
+img{ -webkit-user-drag:none;user-drag:none; }
+
+/* The atlas is a genuine painted 640×480 WebP, 4 columns × 3 rows. */
+.tile-chip .tile-chip-swatch.rani-terrain-art{
+  display:block!important;
+  background-image:url('../assets/terrain/rani-terrain-atlas.webp')!important;
+  background-size:400% 300%!important;
+  background-repeat:no-repeat!important;
+  background-color:transparent!important;
+  width:58px!important;height:58px!important;
+  margin:0 auto 2px;
+  border:none!important;
+  box-shadow:none!important;
+  border-radius:0!important;
+  image-rendering:auto;
+}
+.tile-chip{
+  min-width:0; padding:4px 3px!important;
+  background:linear-gradient(180deg,#f5e9cb,#d8c39a)!important;
+  border:1px solid #97734c!important;
+  border-radius:9px!important;
+  box-shadow:inset 0 1px 0 #fffbef,0 2px 5px #241b1660!important;
+}
+.tile-chip.selected{
+  outline:2px solid #ffd06b!important;outline-offset:-2px;
+  box-shadow:0 0 0 1px #825123,inset 0 1px 0 #fffbef,0 0 8px #ffa52e66!important;
+}
+.tile-chip.locked .rani-terrain-art{filter:grayscale(.84);opacity:.58}
+.tile-chip-name{display:block;font-size:11px!important;line-height:1.12;font-weight:800!important}
+#tile-preview{background:linear-gradient(170deg,#daecd1,#b5c9b3)!important;border:1px solid #987d50}
+#tile-shop.tile-shop{gap:5px!important}
+
+/* Clear predictable PC corners: research left-top, factions right-top,
+   expansion below factions, without the former scattered floating stacks. */
+@media(min-width:701px){
+  #next-tile-panel{width:216px!important;max-width:calc(100vw - 20px)}
+  #tile-shop.tile-shop{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .tile-chip .tile-chip-swatch.rani-terrain-art{width:51px!important;height:51px!important}
+  /* A dragged pane must keep its compact dimensions. The unpositioned
+     selector no longer matches during drag; without this, research jumped
+     from its short scrollable frame to a full-height legacy side panel. */
+  #research-panel.rani-positioned{
+    width:205px!important;max-height:min(365px,calc(100dvh - 175px))!important;
+    overflow-y:auto!important;
+  }
+  #faction-panel.rani-positioned{
+    width:205px!important;max-height:min(240px,calc(100dvh - 175px))!important;
+    overflow-y:auto!important;
+  }
+  #hud-right.rani-positioned{
+    max-height:calc(100dvh - 440px)!important;overflow-y:auto!important;
+  }
+  #research-panel:not(.rani-positioned){
+    left:10px!important;right:auto!important;
+    top:100px!important;bottom:auto!important;
+    width:205px;max-height:min(365px,calc(100dvh - 175px))!important;
+    animation:none!important;
+  }
+  #faction-panel:not(.rani-positioned){
+    top:100px!important;bottom:auto!important;
+    right:10px!important;left:auto!important;
+    width:205px;max-height:min(240px,calc(100dvh - 175px))!important;
+    animation:none!important;
+  }
+  #hud-right:not(.rani-positioned){
+    top:355px!important;right:10px!important;left:auto!important;
+    bottom:auto!important;animation:none!important;
+    max-height:calc(100dvh - 440px);overflow-y:auto;
+  }
+  #slg-tutorial:not(.rani-positioned){
+    top:490px!important;left:10px!important;right:auto!important;bottom:auto!important;
+    max-height:min(175px,calc(100dvh - 580px));overflow-y:auto;
+    width:215px!important;animation:none!important;
+  }
+  #construction-panel.construction-panel:not(.rani-positioned){
+    top:auto!important;bottom:78px!important;
+    left:10px!important;right:auto!important;
+    max-height:28dvh!important;animation:none!important;
+  }
+  #rani-nav:not(.rani-positioned){bottom:74px!important;top:auto!important;right:10px!important;left:auto!important;}
+  .hud-side-panel,.panel-title,.hud-panel-title{letter-spacing:0!important}
+  .hud-side-panel{padding:7px 9px;box-shadow:0 3px 12px #161e2940}
+  .research-list,.faction-list{scrollbar-width:thin}
+}
+/* On touch screens retain the single active dock-panel workflow. Moving
+   an open panel does not make all hidden panels visible. */
+@media(max-width:700px){
+  .tile-chip .tile-chip-swatch.rani-terrain-art{width:49px!important;height:49px!important;}
+  .tile-chip{padding:3px 2px!important}
+}
+
+/* Only user-moved panels override default responsive positions.
+   Ratios in localStorage restore per breakpoint and clamp to viewport. */
+#gameplay-hud.rani-positioned,
+#hud-top.rani-positioned,
+#hud-right.rani-positioned,
+#research-panel.rani-positioned,
+#faction-panel.rani-positioned,
+#construction-panel.rani-positioned,
+#hud-bottom.rani-positioned,
+#rani-nav.rani-positioned,
+#slg-tutorial.rani-positioned,
+#slg-mobile-dock.rani-positioned{
+  position:fixed!important;
+  left:var(--rani-pos-x)!important;
+  top:var(--rani-pos-y)!important;
+  right:auto!important;bottom:auto!important;
+  transform:none!important;animation:none!important;
+  margin:0!important;
+}
+.rani-move-handle{
+  position:absolute!important;
+  box-sizing:border-box;
+  z-index:4;
+  right:-5px;top:-6px;
+  width:23px;height:23px;min-width:23px;min-height:23px;
+  border:1px solid #916c3b;border-radius:7px;
+  color:#ffe3a1;background:linear-gradient(150deg,#5a4330,#2e2824);
+  box-shadow:0 2px 5px #050c145e;
+  font:800 14px/21px sans-serif;
+  text-align:center;padding:0;margin:0;
+  cursor:grab;touch-action:none!important;pointer-events:auto!important;
+  -webkit-user-select:none!important;user-select:none!important;
+}
+.rani-move-handle:active{cursor:grabbing}
+.rani-move-handle:focus-visible{outline:2px solid #f2cc79;outline-offset:2px}
+.rani-dragging{z-index:94!important;filter:drop-shadow(0 8px 10px #0a142899)}
+/* Bars have a handle in the upper right without blocking important controls. */
+#hud-bottom>.rani-move-handle{right:-3px;top:-23px}
+#gameplay-hud>.rani-move-handle{right:-11px;top:-7px}
+#hud-top>.rani-move-handle{right:-22px;top:2px}
+#slg-tutorial>.rani-move-handle{right:-8px;top:-6px}
+#slg-mobile-dock>.rani-move-handle{top:-20px;right:2px}
+#rani-nav>.rani-move-handle{top:-10px;right:-4px}
+#rani-reset-ui{
+  border:1px solid #98784b!important;
+  background:linear-gradient(180deg,#54412f,#312a25)!important;
+  color:#f9e1b1!important;white-space:nowrap!important;
+  padding:5px 7px!important;font-size:10px!important;
+}
+@media(max-width:700px){
+  #rani-reset-ui{
+    position:fixed!important;
+    left:6px!important;right:auto!important;
+    top:auto!important;bottom:calc(126px + env(safe-area-inset-bottom))!important;
+    z-index:98!important;pointer-events:auto!important;
+    padding:5px 7px!important;font-size:9px!important;
+    border-radius:8px!important;
+    box-shadow:0 2px 8px #030a1899!important;
+  }
+}
