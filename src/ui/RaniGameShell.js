@@ -153,6 +153,12 @@ export function installRaniGameShell(game){
     if(e.key==='Backspace'&&/^(INPUT|TEXTAREA)$/.test(document.activeElement?.tagName||''))return;
     e.preventDefault();
     e.stopImmediatePropagation();
+    // Preserve original Escape behavior: selected building/hex is deselected
+    // before opening the global game menu.
+    if(root.hidden && e.key==='Escape' && game.selection?.cell){
+      game.selection.clear();
+      return;
+    }
     back();
   },true);
   // On Android browser Back the app receives popstate. Restore one
