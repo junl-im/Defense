@@ -8,7 +8,7 @@
 ## 실제 개발
 - RaniV4RoyalHud.js + rani-v4-art-direction.css: 좌상단 실제 왕국/전투력 카드, 중앙 실제 ResourcePanel 자원바, 좌측 건설·연구·훈련·부대·동맹, 우측 사건·임무 및 미구현 버튼, 하단 9개 게임 이동 버튼, 실제 건설/연구/병력 진행 상태.
 - 기존 게임 RoyalLauncher, BuildingSystem, ResearchSystem, ArmySystem, NativeVillageUI, RaniGameShell을 그대로 호출. 허구의 레벨/수치/진행 상태는 넣지 않으며, 보상·랭킹·가방·업적처럼 아직 없는 시스템은 비활성화한다.
-- RaniV4WorldArt.js: 실제 완공된 BuildingSystem 기록과 Three.js 카메라/월드 좌표로 투영한 사용자 승인 주택·시장·무역선 투명 WebP 이미지를 실게임 세계 위에 렌더링.
+- RaniV4WorldArt.js: 실제 완공된 BuildingSystem 기록과 Three.js 카메라/월드 좌표로 투영한 사용자 승인 시장·무역선 투명 WebP 2종을 해당 업종의 실게임 월드 건물에 직접 렌더링. 주택 원본은 하단 마을 내비게이션 이미지에 별도로 사용.
 - 이미지가 로드된 건물에 한해 기존 로우폴리 모델을 숨기고, 실패/필드 전환 때 원래 모델 복구. 실제 건물 클릭은 기존 Selection.select(cell)만 호출하며 저장·생산·건축 비용을 바꾸지 않는다.
 - SVG 금지, 기존 시안 스크린샷 잘라붙이기 금지, 큰 이미지에 가짜 UI를 그려 실제 게임이라고 주장하지 않는다.
 
