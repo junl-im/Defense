@@ -64,4 +64,5 @@ jobs:
             qa/royal-v18/
             qa/royal-world-v19/
             qa/royal-infra-v20/
+            qa/royal-district-v21/
           if-no-files-found: ignore
