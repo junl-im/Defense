@@ -18,6 +18,8 @@ import { iconHtml, iconLabel } from './GameIcons.js';
 import { buildPlans } from './QuickBuildPlans.js';
 
 const RADIUS = 86; // px ring radius
+const PAGE_SIZE = 5; // five actions plus one page-turn control
+const RESOURCE_NAMES = {wood:'목재',stone:'석재',food:'식량',gold:'금화',influence:'영향력'};
 export const SELECTION_IDLE_MS = 15_000; // actual user inactivity; never a building timer
 
 const RES_ICONS = { wood: 'wood', stone: 'stone', food: 'food', gold: 'gold', influence: 'influence' };
@@ -35,6 +37,8 @@ export class RadialMenu {
     this.cell = null;
     this.empty = null;
     this.emptyPage = 0;
+    this.cellPage = 0;
+    this.cellPages = 1;
     this.idleTimeoutMs = SELECTION_IDLE_MS;
     this.lastInteractionAt = performance.now();
     this._heldPointers = new Set();
@@ -67,7 +71,7 @@ export class RadialMenu {
 
     events.on('selection:changed', ({ cell, anchor, buildingId }) => {
       this.cell = cell;
-      if(cell)this.empty=null;
+      if(cell){this.empty=null;this.cellPage=0;}
       this.anchor = anchor?.isVector3 ? anchor.clone() : null;
       this.buildingId = buildingId || null;
       if (cell) {
@@ -345,7 +349,33 @@ export class RadialMenu {
     const def = TILE_TYPES[cell.tileType];
     const towny = this.game.buildingSystem.isVillageUpgraded(cell);
     const pickedName = this.buildingId && BUILDINGS[this.buildingId]?.name;
-    this._renderRing(this._actionsFor(cell),pickedName || (towny ? '읍성' : (def ? def.name : cell.tileType)));
+    // Previously all unlocked actions were packed onto one circle. Research
+    // can unlock >6 actions and cause untappable, overlapping mobile buttons.
+    // Keep upgrades/current buildings ahead of optional construction choices.
+    const existing = new Set(this.game.buildingSystem.buildingsOn(cell).map(b=>b.id));
+    const all = this._actionsFor(cell).map((a,i)=>({
+      ...a,order:i,priority:a.id.startsWith('upgrade_') || a.id==='village_upgrade' ? 0 :
+        a.id.startsWith('recruit_') || existing.has(a.id) ? 1 :
+        a.disabled ? 3 : 2
+    })).sort((a,b)=>a.priority-b.priority||a.order-b.order);
+    this.cellPages=Math.max(1,Math.ceil(all.length/PAGE_SIZE));
+    this.cellPage=Math.min(this.cellPage,this.cellPages-1);
+    const actions=all.slice(this.cellPage*PAGE_SIZE,this.cellPage*PAGE_SIZE+PAGE_SIZE);
+    if(this.cellPages>1){
+      actions.push({
+        id:'next-cell-page',icon:'build',
+        label:'다음 '+(this.cellPage+1)+'/'+this.cellPages,
+        tip:'건물 건설·강화·모집의 다음 선택지 보기',
+        disabled:false,
+        run:()=>{
+          this.cellPage=(this.cellPage+1)%this.cellPages;
+          this._markActive();
+          this._build(cell);
+          return false;
+        }
+      });
+    }
+    this._renderRing(actions,pickedName || (towny ? '읍성' : (def ? def.name : cell.tileType)));
   }
   _renderRing(actions,title,subtitle='') {
     this.root.innerHTML = '';
@@ -380,6 +410,9 @@ export class RadialMenu {
       btn.innerHTML = `<span class="radial-icon">${iconHtml(a.icon)}</span><span class="radial-label">${a.label}</span>`;
       btn.setAttribute('data-tip', a.tip);
       btn.dataset.actionId = a.id;
+      btn.setAttribute('aria-label',a.label);
+      btn.setAttribute('aria-disabled',String(!!a.disabled));
+      if(a.id==='next-cell-page'||a.id==='next-page')btn.classList.add('radial-page-next');
       const angle = -Math.PI / 2 + (i / Math.max(n, 1)) * Math.PI * 2;
       btn.style.setProperty('--rx', `${Math.cos(angle) * RADIUS}px`);
       btn.style.setProperty('--ry', `${Math.sin(angle) * RADIUS}px`);
@@ -412,6 +445,7 @@ export class RadialMenu {
       const a = fresh.find((x) => x.id === item.action.id);
       if (!a) continue;
       item.btn.classList.toggle('disabled', !!a.disabled);
+      item.btn.setAttribute('aria-disabled',String(!!a.disabled));
       item.btn.setAttribute('data-tip', a.tip);
     }
   }
@@ -480,8 +514,23 @@ export class RadialMenu {
       const pct = Math.round((1 - up.remaining / Math.max(up.total, 0.01)) * 100);
       parts.push(`승격 ${pct}%`);
     }
-    const txt = parts.join(' ');
+    // Show a useful building/tile summary when no construction is underway.
+    // Full production details are available as an accessible native tooltip.
+    let txt=parts.join(' ');
+    const existing=bs.buildingsOn(this.cell);
+    const chosen=this.buildingId ? existing.find(b=>b.id===this.buildingId) : null;
+    if(!txt && chosen){
+      const def=BUILDINGS[chosen.id];
+      const production=Object.entries(def?.production||{}).filter(([,rate])=>rate>0);
+      txt=production.length===1
+        ? (RESOURCE_NAMES[production[0][0]]||production[0][0])+' +'+production[0][1]+'/초'
+        : (chosen.done ? '완공' : '건설 중');
+    }
+    if(!txt)txt=existing.length
+      ? '시설 '+existing.length+'/'+MAX_BUILDINGS_PER_TILE
+      : '건설 가능';
     if (this._progressEl.textContent !== txt) this._progressEl.textContent = txt;
+    if(this._progressEl.getAttribute('title')!==txt)this._progressEl.setAttribute('title',txt);
   }
 
   update() {
