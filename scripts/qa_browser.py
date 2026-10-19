@@ -57,6 +57,11 @@ with sync_playwright() as playwright:
                         page.screenshot(path=str(OUT / "kingdom-mobile-research.png"), full_page=True)
                     trigger.click()
                     assert not page.locator(target).is_visible(), f"New royal {action} cannot close its original panel"
+                profile = page.locator("#rani-v4-profile")
+                profile.click()
+                assert page.locator("#hud-kingdom-panel").is_visible(), "Kingdom portrait failed to open genuine kingdom info"
+                profile.click()
+                assert not page.locator("#hud-kingdom-panel").is_visible(), "Kingdom info failed to close"
                 page.locator("#rani-v4-bottom [data-v4-action='field']").click()
                 assert page.evaluate("window.__game.mode") == "world"
                 page.locator("#rani-v4-bottom [data-v4-action='village']").click()
