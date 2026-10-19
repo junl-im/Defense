@@ -23,8 +23,22 @@ const NOT_IMPLEMENTED=new Set(['rewards','ranking','bag','achievements']);
 function button(key,glyph,label){
   const el=document.createElement('button');el.type='button';
   el.dataset.v4Action=key;el.title=label;el.setAttribute('aria-label',label);
-  const i=document.createElement('span');i.className='rani-v4-symbol';i.textContent=glyph;
+  const i=document.createElement('span');i.className='rani-v4-symbol';
   i.setAttribute('aria-hidden','true');
+  const approvedArt={village:RANI_PREPARED_ASSETS.houseA,
+    shop:RANI_PREPARED_ASSETS.market,harbor:RANI_PREPARED_ASSETS.tradeShip}[key];
+  if(approvedArt){
+    const img=document.createElement('img');
+    img.className='rani-v4-menu-art';
+    img.alt='';img.draggable=false;img.decoding='async';
+    const fallback=document.createElement('span');
+    fallback.className='rani-v4-menu-fallback';
+    fallback.textContent=glyph;
+    fallback.hidden=true;
+    img.addEventListener('error',()=>{img.hidden=true;fallback.hidden=false;},{once:true});
+    img.src=approvedArt;
+    i.append(img,fallback);
+  }else i.textContent=glyph;
   const t=document.createElement('span');t.className='rani-v4-label';t.textContent=label;
   el.append(i,t);
   if(NOT_IMPLEMENTED.has(key)){
