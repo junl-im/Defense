@@ -35,10 +35,6 @@ with sync_playwright() as pw:
       const repeat=water.makeRoyalWaterfrontDressing(river0);
       const lake=water.makeRoyalWaterfrontDressing(lake0);
       const lakeWithoutRiver=water.makeRoyalWaterfrontDressing(lake1);
-      const single=mesh=>mesh?.isMesh&&mesh?.name==='rani-royal-waterfront-dressing' &&
-        mesh.userData.raniVisualOnly===true &&
-        mesh.userData.raniWaterVisualOnly===true &&
-        mesh.material=== (await import('./src/rendering/Materials.js')).MATS.vcStatic;
       const positions=m=>Array.from(m.geometry.attributes.position.array.slice(0,120));
       const same=JSON.stringify(positions(river))===JSON.stringify(positions(repeat));
       const changed=JSON.stringify(positions(river))!==JSON.stringify(positions(rotated));
@@ -72,7 +68,7 @@ with sync_playwright() as pw:
         cells:g.grid.cells.size,placed:g.tilesPlaced,
         mode:g.mode,level:g.nativeVillage.level});
       return result;
-    }""".replace("const single=mesh=>mesh?.isMesh&&mesh?.name==='rani-royal-waterfront-dressing' &&\n        mesh.userData.raniVisualOnly===true &&\n        mesh.userData.raniWaterVisualOnly===true &&\n        mesh.material=== (await import('./src/rendering/Materials.js')).MATS.vcStatic;",""))
+    }""")
     assert result['riverEdges']==[0,3],(label,result)
     assert result['rotatedEdges']==[1,4],(label,result)
     assert all(v>120 for v in result['vertices']),(label,result)
