@@ -1,0 +1,27 @@
+# 라니킹덤 v4.0 — 실제 게임 아트·UI 전환 1차
+
+## 고정 목표
+- 사용자 이미지의 고품질 청색 왕궁·돌성벽·폭포·항구, 왕실 금장 UI를 기준으로 게임의 화면과 자산을 바꾼다.
+- 이전 v2.4~v3.3은 주변 3D 소품 중심으로 실제 게임의 기본 로우폴리 건물과 차이가 컸음을 명확히 인정한다.
+- 검증된 사용자 원본 자산 10개 WebP(자원 5, 주택, 시장, 무역선, 버튼, HUD 프레임), 로고/지형/GLTF 4개, SHA-1 잠금 16종은 불변이다.
+
+## 실제 개발
+- RaniV4RoyalHud.js + rani-v4-art-direction.css: 좌상단 실제 왕국/전투력 카드, 중앙 실제 ResourcePanel 자원바, 좌측 건설·연구·훈련·부대·동맹, 우측 사건·임무 및 미구현 버튼, 하단 9개 게임 이동 버튼, 실제 건설/연구/병력 진행 상태.
+- 기존 게임 RoyalLauncher, BuildingSystem, ResearchSystem, ArmySystem, NativeVillageUI, RaniGameShell을 그대로 호출. 허구의 레벨/수치/진행 상태는 넣지 않으며, 보상·랭킹·가방·업적처럼 아직 없는 시스템은 비활성화한다.
+- RaniV4WorldArt.js: 실제 완공된 BuildingSystem 기록과 Three.js 카메라/월드 좌표로 투영한 사용자 승인 주택·시장·무역선 투명 WebP 이미지를 실게임 세계 위에 렌더링.
+- 이미지가 로드된 건물에 한해 기존 로우폴리 모델을 숨기고, 실패/필드 전환 때 원래 모델 복구. 실제 건물 클릭은 기존 Selection.select(cell)만 호출하며 저장·생산·건축 비용을 바꾸지 않는다.
+- SVG 금지, 기존 시안 스크린샷 잘라붙이기 금지, 큰 이미지에 가짜 UI를 그려 실제 게임이라고 주장하지 않는다.
+
+## 자동 검사
+- scripts/check-v4-art-directed.mjs와 scripts/qa_v4_art_direction.py 신규 검사.
+- Chromium PC1440, 노트북1024, 모바일390, 소형320 화면에서 실제 자원/메뉴/월드 그림/기존 v3.3 종료 메뉴/월드 전환 및 원본 안전성을 점검.
+- v0.1~v3.3 회귀·원본 지문 보호 검사는 삭제 없이 유지. 성공한 뒤에만 main 병합.
+
+## 명시적인 미완료
+- 첨부 시안의 고화질 성 본체, 전체 폭포/산맥/항만·NPC·건물 수백 종은 이번 1차 패치에 전부 들어간 것이 아니다.
+- 2.5D 월드용 독립 궁궐·환경 아트를 확보·백업해 실제 중심 건물에 연결해야 한다.
+- 이미지 생성된 전체 HUD 포함 시안은 게임 자산으로 혼동하지 않고 코드에 삽입하지 않았다.
+- 실제 Android/iOS 스마트폰 GPU·FPS 실측과 육안 시안 비교는 별도 필요.
+
+원본 Drive ZIP: https://drive.google.com/file/d/17z3CxG084H009VspkNGYBaQMQDt9aXRf/view
+기존 잠금: assets/rani/asset-integrity-lock-v25.json
