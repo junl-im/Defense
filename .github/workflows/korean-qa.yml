@@ -40,6 +40,7 @@ jobs:
           # Run the new regression FIRST to detect mistakes before the long legacy suite.
           python scripts/qa_lived_in_district_v30.py
           python scripts/qa_royal_street_v31.py
+          python scripts/qa_built_neighborhood_v32.py
           python scripts/qa_branding.py
           python scripts/qa_ui_v17.py
           python scripts/qa_royal_v18.py
@@ -86,4 +87,5 @@ jobs:
             qa/production-play-v29/
             qa/lived-in-district-v30/
             qa/royal-street-v31/
+            qa/built-neighborhood-v32/
           if-no-files-found: ignore
