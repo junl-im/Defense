@@ -60,4 +60,5 @@ jobs:
             qa/branding/
             qa/ui-v17/
             qa/royal-v18/
+            qa/royal-world-v19/
           if-no-files-found: ignore
