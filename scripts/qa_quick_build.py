@@ -324,14 +324,14 @@ with sync_playwright() as p:
     page.locator('button[data-action-id="next-cell-page"]').click()
     page_ids=page.locator('#radial-menu .radial-btn').evaluate_all(
       '(buttons)=>buttons.map(b=>b.dataset.actionId)')
-    assert page_ids[0]=='qa-action-5' and len(page_ids)==6,(
-      'Radial page 2 did not show the next set of five actions',page_ids)
-    assert page.locator('button[data-action-id="qa-action-7"]').get_attribute('aria-disabled')=='true'
+    assert page_ids[:5]==['qa-action-5','qa-action-6','qa-action-8','qa-action-9','qa-action-10'] and len(page_ids)==6,(
+      'Available actions should precede unavailable construction choices',page_ids)
     page.locator('button[data-action-id="next-cell-page"]').click()
     last_ids=page.locator('#radial-menu .radial-btn').evaluate_all(
       '(buttons)=>buttons.map(b=>b.dataset.actionId)')
-    assert last_ids[:3]==['qa-action-10','qa-action-11','qa-action-12']
+    assert last_ids[:3]==['qa-action-11','qa-action-12','qa-action-7']
     assert len(last_ids)==4,('Last page must contain remaining actions and page navigation',last_ids)
+    assert page.locator('button[data-action-id="qa-action-7"]').get_attribute('aria-disabled')=='true'
     page.locator('button[data-action-id="next-cell-page"]').click()
     assert page.locator('button[data-action-id="qa-action-0"]').is_visible()
 
