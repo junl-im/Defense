@@ -15,7 +15,9 @@ assert.equal(lock.protectedFiles.length,16,'Approved art binary inventory must r
 assert.equal(manifest.assets.filter(x=>x.status.startsWith('applied-')).length,10);
 assert.match(hud,/installRaniV4RoyalHud\(game\)/);
 assert.match(world,/installRaniV4WorldArt\(game\)/);
-assert.match(main,/installRaniGameShell\(game\);\s*installRaniV4RoyalHud\(game\);\s*installRaniV4WorldArt\(game\);/);
+assert.match(main,/installRaniGameShell\(game\);/);
+assert.match(main,/new URLSearchParams\(location\.search\)\.has\('legacy_ui'\)/);
+assert.match(main,/installRaniV4RoyalHud\(game\);\s*installRaniV4WorldArt\(game\);/);
 assert.ok(html.indexOf('rani-shell-v33.css')<html.indexOf('rani-v4-art-direction.css'));
 assert.match(world,/RANI_PREPARED_ASSETS\.market/);
 assert.match(world,/RANI_PREPARED_ASSETS\.tradeShip/);
