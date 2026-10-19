@@ -124,6 +124,12 @@ export function installRaniV4RoyalHud(game){
         // Any desktop hidden class must not override a real mobile panel.
         document.body.classList.remove('royal-hide-'+name);
         mobile.click(); // original MobileDock controls open/toggle/close
+        const active=document.body.dataset.activeSlgPanel;
+        if(active===name){
+          const panelId={tiles:'hud-right',research:'research-panel',
+            factions:'faction-panel',info:'hud-kingdom-panel'}[name];
+          document.getElementById(panelId)?.classList.remove('collapsed');
+        }
         return;
       }
     }
@@ -160,7 +166,7 @@ export function installRaniV4RoyalHud(game){
       if(!showInfo('port')){panel('tiles');toast('항구를 건설하면 여기에서 선택할 수 있습니다');}
     },
     explore(){game.nativeVillageUI?.setMode('world');},
-    kingdom(){trigger('kingdom');},
+    kingdom(){panel('info');},
     save(){trigger('save');},
     settings(){byId('save-manager-btn')?.click();},
     menu(){
