@@ -56,4 +56,5 @@ jobs:
             qa/building-art/
             qa/quick-build/
             qa/branding/
+            qa/ui-v17/
           if-no-files-found: ignore
