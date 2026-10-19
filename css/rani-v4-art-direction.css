@@ -221,3 +221,14 @@ body.rani-v4-active #hud-right:not(.rani-positioned){top:125px!important}
 @media (prefers-reduced-motion:reduce){
   .rani-v4-world-sprite{transition:none!important}
 }
+
+/* Approved individual house, market and trade-ship icons, never sheet crops. */
+#rani-v4-shell .rani-v4-symbol .rani-v4-menu-art{
+ display:block;width:42px;height:35px;max-width:100%;object-fit:contain;
+ filter:drop-shadow(0 3px 2px #030b14bb);pointer-events:none;
+}
+#rani-v4-shell .rani-v4-menu-art[hidden]{display:none!important}
+#rani-v4-shell .rani-v4-menu-fallback:not([hidden]){display:block;font-size:24px}
+@media(max-width:700px){
+ #rani-v4-shell .rani-v4-symbol .rani-v4-menu-art{width:30px;height:24px}
+}
