@@ -20,7 +20,7 @@ function oneMesh(name, parts) {
  * The base road mesh remains as a smooth continuous support layer.
  * Returns a single batched mesh instead of one draw call per stone.
  */
-export function makeRoyalRoadPaving(edges) {
+export function makeRoyalRoadPaving(edges, connectedMask=0x3f) {
   if (!edges?.length) return null;
   const parts=[];
   const apothem=Math.sqrt(3)/2;
@@ -29,8 +29,11 @@ export function makeRoyalRoadPaving(edges) {
     if(!Number.isInteger(edge)||edge<0||edge>5)continue;
     const a=edgeAngle(edge), c=Math.cos(a),s=Math.sin(a);
     const radialSteps=5;
+    // Unconnected roads are capped at 60% of an edge, matching
+    // AutoMesh's existing dead-end support, never floating off-road.
+    const maxR=((connectedMask>>edge)&1)?(apothem-.08):.47;
     for(let step=0;step<radialSteps;step++){
-      const r=.15+step*(apothem-.22)/(radialSteps-1);
+      const r=.15+step*(maxR-.15)/(radialSteps-1);
       for(const lane of [-1,1]){
         const side=(lane*.075)+((step%2)*.009);
         const x=c*r+s*side,z=-s*r+c*side;
