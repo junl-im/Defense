@@ -9,6 +9,7 @@ import { MATS, PALETTE } from '../rendering/Materials.js';
 import { part, merge } from '../assets/GeometryUtils.js';
 import { MILITARY_MAKERS } from './MilitaryFactory.js';
 import { CIVIC_MAKERS } from './CivicFactory.js';
+import { makeRoyalCastleOrnaments } from '../rendering/RoyalWorldArt.js';
 
 function vc(parts) {
   return new THREE.Mesh(merge(parts), MATS.vcStatic);
@@ -229,6 +230,7 @@ export function makeCastle(rng) {
   const flag1 = makeFlag(0.3); flag1.position.set(0.3, 0.72, -0.25); p4.add(flag1);
   const flag2 = makeFlag(0.3); flag2.position.set(-0.3, 0.72, 0.25); p4.add(flag2);
   const lan = makeLantern(); lan.scale.setScalar(0.9); lan.position.set(0.14, 0.08, 0.32); p4.add(lan);
+  p4.add(makeRoyalCastleOrnaments('round'));
 
   return wrap([p1, p2, p3, p4]);
 }
@@ -580,11 +582,11 @@ export function makeCastleB(rng) {
   const corners = [[-0.3, -0.24], [0.3, -0.24], [-0.3, 0.24], [0.3, 0.24]];
   for (const [x, z] of corners) {
     towerParts.push(part(new THREE.BoxGeometry(0.14, 0.44, 0.14), PALETTE.wallStoneB, { t: [x, 0.3, z] }));
-    towerParts.push(part(new THREE.ConeGeometry(0.11, 0.16, 4), PALETTE.roofSlate, { t: [x, 0.6, z], ry: Math.PI / 4 }));
+    towerParts.push(part(new THREE.ConeGeometry(0.11, 0.16, 4), PALETTE.roofBlue, { t: [x, 0.6, z], ry: Math.PI / 4 }));
   }
   // keep roof
-  towerParts.push(part(new THREE.ConeGeometry(0.26, 0.2, 4), PALETTE.roofSlate, { t: [0, 0.68, -0.05], ry: Math.PI / 4 }));
-  towerParts.push(part(new THREE.ConeGeometry(0.14, 0.1, 4), PALETTE.roofSlate, { t: [0, 0.39, 0.24], ry: Math.PI / 4 }));
+  towerParts.push(part(new THREE.ConeGeometry(0.26, 0.2, 4), PALETTE.roofBlue, { t: [0, 0.68, -0.05], ry: Math.PI / 4 }));
+  towerParts.push(part(new THREE.ConeGeometry(0.14, 0.1, 4), PALETTE.roofBlue, { t: [0, 0.39, 0.24], ry: Math.PI / 4 }));
   p3.add(vc(towerParts));
 
   const p4 = phaseGroup(); // banners + torches + keep window glow
@@ -598,6 +600,7 @@ export function makeCastleB(rng) {
   const win = windowPane(0.05, 0.08);
   win.position.set(0, 0.44, 0.115);
   p4.add(win);
+  p4.add(makeRoyalCastleOrnaments('square'));
   return wrap([p1, p2, p3, p4]);
 }
 

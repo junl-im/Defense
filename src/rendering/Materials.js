@@ -25,7 +25,7 @@ export const PALETTE = {
   wallStone:  0xb0a89a,
   woodBeam:   0x6b4a2c,
   roofRed:    0xb0523a,
-  roofBlue:   0x5c7a9e,
+  roofBlue:   0x386fa7,  // reference kingdom's saturated cobalt roofs
   roofThatch: 0xc2a05a,
   road:       0xb8a684,
   fence:      0x8a6a44,
@@ -95,6 +95,17 @@ export const PALETTE = {
   goldCoin:   0xe8b83a,
   goldDeep:   0xc89020,
   gemBlue:    0x4a8ac8,
+  // Royal Kingdom v1.9 — readable blue/gold stone materials, real meshes.
+  royalBlue:       0x285eaa,
+  royalGold:       0xe5bf6d,
+  royalStone:      0xd9cfb9,
+  royalWindow:     0xffd482,
+  royalPave:       0xb7a995,
+  royalPaveLight:  0xdfd3b6,
+  royalPaveShade:  0x948979,
+  royalWheat:      0xdcb64a,
+  royalWheatTip:   0xf9dd82,
+  royalSoil:       0x856745,
   ramHead:    0x565058,
   siegeWood:  0x8a6840,
 };
