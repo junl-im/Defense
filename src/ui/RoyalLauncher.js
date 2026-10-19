@@ -30,7 +30,8 @@ export function installRoyalLauncher(game){
     const art=document.createElement('span');
     art.className='royal-icon';
     art.setAttribute('aria-hidden','true');
-    art.textContent=icon;
+    if(key==='village')art.innerHTML=iconHtml('village','md');
+    else art.textContent=icon;
     const name=document.createElement('span');
     name.className='royal-text';
     name.textContent=label;
