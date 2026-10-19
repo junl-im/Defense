@@ -43,7 +43,7 @@ export function installRoyalFieldScenery(scene) {
     // Keep the center clear and never replace the authoritative field grid.
     if(Math.max(Math.abs(q),Math.abs(r),Math.abs(q+r))<5)continue;
     const hash=mix(Math.imul(q+23,73856093)^Math.imul(r+41,19349663));
-    if(hash%4!==0)continue;
+    if((hash>>>9)%2!==0)continue; // mixed conifers/oaks, still sparse at map edges
     const x=q*.93+r*.465, z=r*.81;
     // Avoid masking the player's central castle or the prominent map axis.
     if(Math.hypot(x,z)<4.2)continue;
