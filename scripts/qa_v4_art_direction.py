@@ -99,6 +99,46 @@ with sync_playwright() as pw:
     }""")
     assert status['loaded'] and status['shown'] and status['width']>30,(label,status)
     assert status['realModelHidden'],(label,status)
+    # Artwork button must select the real construction record, not merely
+    # the containing tile; the radial menu anchor is the rendered 3D model.
+    page.locator('.rani-v4-world-sprite[data-building="market"]').click(force=True)
+    picked=page.evaluate("""()=>{
+      const g=window.__game;
+      const slot=[...g.raniV4WorldArt.slots.values()].find(x=>x.id==='market');
+      const p=slot?.visual.group.getWorldPosition(
+        new g.camera.position.constructor());
+      return {cell:g.selection.cell===slot?.cell,id:g.selection.buildingId,
+        anchor:!!g.selection.anchor&&g.selection.anchor.distanceTo(p)<.5};
+    }""")
+    assert picked['cell'] and picked['id']=='market' and picked['anchor'],(label,picked)
+    page.evaluate("window.__game.selection.clear()")
+    # A sprite moved out of camera view must restore the native 3D model.
+    page.evaluate("""()=>{
+      const g=window.__game,s=[...g.raniV4WorldArt.slots.values()]
+        .find(x=>x.id==='market');
+      s.visual.group.position.x+=500;
+    }""")
+    page.wait_for_function("""()=>{
+      const s=[...window.__game.raniV4WorldArt.slots.values()]
+        .find(x=>x.id==='market');
+      return !!s?.button.hidden&&s.visual.group.visible;
+    }""",timeout=4000)
+    page.evaluate("""()=>{
+      const g=window.__game,s=[...g.raniV4WorldArt.slots.values()]
+        .find(x=>x.id==='market');
+      s.visual.group.position.x-=500;
+    }""")
+    page.wait_for_function("""()=>{
+      const s=[...window.__game.raniV4WorldArt.slots.values()]
+        .find(x=>x.id==='market');
+      return !!s&&!s.button.hidden&&!s.visual.group.visible;
+    }""",timeout=4000)
+    assert page.evaluate("""()=>{
+      const s=[...window.__game.raniV4WorldArt.slots.values()]
+        .find(x=>x.id==='market');
+      const w=s.button.getBoundingClientRect().width;
+      return w>30 && w<=(innerWidth<=700?155:200)+.5;
+    }"""),label
     # Verify UI responds to original game data, not example fake resources.
     before=page.locator('#rani-v4-power').inner_text()
     assert '전투력' in before,label
