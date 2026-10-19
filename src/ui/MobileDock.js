@@ -25,7 +25,7 @@ function installMobileDock() {
     button.type = 'button';
     button.dataset.panel = key;
     button.setAttribute('aria-label', text);
-    button.innerHTML = '<span aria-hidden="true">' + icon + '</span><small>' + text + '</small>';
+    button.innerHTML = '<span aria-hidden="true">' + (key==='map'?iconHtml('village','md'):icon) + '</span><small>' + text + '</small>';
     button.addEventListener('click', () => {
       const opened=document.body.dataset.activeSlgPanel;
       // Clicking the current menu again closes it, without losing the map.
