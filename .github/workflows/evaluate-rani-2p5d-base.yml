@@ -23,6 +23,15 @@ jobs:
           ref: 8bb66ceeb5a8ec1f77ec899130090061c25078b3
           path: candidate
           persist-credentials: false
+      - name: Confirm actual game source is linked in this branch as pinned submodule
+        shell: bash
+        run: |
+          set -euo pipefail
+          git -C current submodule update --init --depth 1 engines/fiefdom
+          test "$(git -C current/engines/fiefdom rev-parse HEAD)" = "8bb66ceeb5a8ec1f77ec899130090061c25078b3"
+          test "$(git -C candidate rev-parse HEAD)" = "8bb66ceeb5a8ec1f77ec899130090061c25078b3"
+          cmp current/engines/fiefdom/package.json candidate/package.json
+          echo "Pinned real engine submodule verified"
       - name: Check upstream copyright, assets and package lock
         working-directory: candidate
         run: |
