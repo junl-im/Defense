@@ -472,7 +472,13 @@ export class Game {
 
   _tryPlaceAtPointer(clientX, clientY) {
     const cell = this._pointerToCell(true);
-    if (!cell) return;
+    if (!cell) {
+      // A tap in open background is the natural way to leave a selection.
+      // This never cancels construction or discards saved buildings.
+      this.quickBuildMenu?.close();
+      this.selection.clear();
+      return;
+    }
 
     if (this.grid.has(cell.q, cell.r)) {
       this.quickBuildMenu?.close();
