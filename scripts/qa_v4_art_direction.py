@@ -67,7 +67,19 @@ with sync_playwright() as pw:
       const key='0,0';
       const original=game.buildingSystem.byCell.get(key);
       const group=new THREE.Group();
-      group.position.set(.2,.12,.1);cell.group.add(group);
+      cell.group.add(group);
+      // Center this test-only in-memory structure in the unobstructed
+      // gameplay viewport, not underneath the real bottom military dock.
+      // Normal gameplay buildings remain at their saved world positions.
+      const ray=new THREE.Raycaster();
+      ray.setFromCamera(new THREE.Vector2(0,0),game.camera);
+      const hit=new THREE.Vector3();
+      if(!ray.ray.intersectPlane(
+        new THREE.Plane(new THREE.Vector3(0,1,0),-.32),hit)){
+        throw new Error('QA fixture: cannot find an unobstructed world center');
+      }
+      cell.group.updateMatrixWorld(true);
+      group.position.copy(cell.group.worldToLocal(hit));
       const rec={id:'market',slot:888,done:true,
         visual:{done:true,group}};
       const current=original?[...original,rec]:[rec];
