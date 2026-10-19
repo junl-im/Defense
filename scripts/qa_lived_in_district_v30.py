@@ -19,6 +19,13 @@ with sync_playwright() as pw:
     page.locator('#loading-screen').wait_for(state='detached',timeout=40000)
     result=page.evaluate("""async()=>{
       const game=window.__game;
+      const original=game.grid.get(0,0).group;
+      const three=await import('three');
+      const {Rng}=await import('./src/core/Rng.js');
+      const makers=await import('./src/buildings/CivicFactory.js');
+      const art=await import('./src/rendering/RoyalLivedInDistrictArt.js');
+      // All asynchronous imports are complete before comparing game state:
+      // the live engine may legitimately tick passive resources during await.
       const before={
         level:game.nativeVillage.level,
         count:game.grid.cells.size,
@@ -27,11 +34,6 @@ with sync_playwright() as pw:
         buildSlots:game.buildingSystem.byCell.size,
         resources:JSON.stringify(game.resourceSystem.resources)
       };
-      const original=game.grid.get(0,0).group;
-      const three=await import('three');
-      const {Rng}=await import('./src/core/Rng.js');
-      const makers=await import('./src/buildings/CivicFactory.js');
-      const art=await import('./src/rendering/RoyalLivedInDistrictArt.js');
       const kinds=['apiary','bakery','stable','temple','university','observatory','library'];
       const models=kinds.map(kind=>{
         const cap=kind[0].toUpperCase()+kind.slice(1);
