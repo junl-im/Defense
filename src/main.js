@@ -6,6 +6,7 @@ import { initTooltip } from './ui/Tooltip.js';
 import { installHudLayout } from './ui/HudLayout.js';
 import { installRoyalLauncher } from './ui/RoyalLauncher.js';
 import { installProductionCommandRail } from './ui/ProductionCommandRail.js';
+import { installRaniGameShell } from './ui/RaniGameShell.js';
 
 function boot() {
   const splashStartedAt=performance.now();
@@ -61,6 +62,7 @@ function boot() {
       installHudLayout();
       installRoyalLauncher(game);
       installProductionCommandRail(game);
+      installRaniGameShell(game);
     },0);
     // A high-detail logo needs a brief, meaningful on-screen debut. Keep the
     // game running immediately; only delay removal of the lightweight overlay.
