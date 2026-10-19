@@ -14,6 +14,8 @@
   <link rel="stylesheet" href="css/rani-ux.css" />
   <link rel="stylesheet" href="css/rani-native.css" />
   <link rel="stylesheet" href="css/rani-quick-build.css" />
+  <link rel="stylesheet" href="css/rani-branding.css" />
+  <link rel="preload" as="image" href="assets/branding/rani-kingdom-logo.webp" type="image/webp" />
   <script type="importmap">
   {
     "imports": {
@@ -66,8 +68,13 @@
 
   <div id="loading-screen">
     <div id="loading-inner">
-      <h1>라니킹덤</h1>
-      <p id="loading-status">왕국 자료 준비 중 · 0%</p>
+      <h1 id="loading-title" class="loading-brand">
+        <img id="loading-logo" src="assets/branding/rani-kingdom-logo.webp"
+             alt="라니킹덤" width="720" height="240" decoding="async"
+             fetchpriority="high" />
+        <span id="loading-logo-fallback" hidden>라니킹덤</span>
+      </h1>
+      <p id="loading-status" role="status" aria-live="polite">왕국 자료 준비 중 · 0%</p>
       <div id="loading-bar" role="progressbar" aria-label="왕국 불러오기" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="loading-fill"></div></div>
     </div>
   </div>
