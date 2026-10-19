@@ -85,10 +85,10 @@ export class ResourcePanel {
                  width="512" height="254" decoding="async" draggable="false" />
             <span class="rani-raster-fallback" hidden>♛</span>
           </span>
-          <span class="rani-royal-heading-copy">
+          <div class="rani-royal-heading-copy">
             <h2 class="hud-panel-title">왕국</h2>
             <span class="rani-royal-heading-caption" aria-hidden="true">ROYAL COURT</span>
-          </span>
+          </div>
         </div>
         <div class="hud-kingdom-row">
           <span class="hud-tier-icon" id="hud-tier-icon"></span>
