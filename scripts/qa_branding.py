@@ -44,7 +44,7 @@ with sync_playwright() as pw:
             viewportW:innerWidth,viewportH:innerHeight,
             fallbackHidden:document.querySelector('#loading-logo-fallback').hidden,
             status:status?.textContent,barLabel:bar?.getAttribute('aria-label'),
-            bodyText:document.querySelector('#loading-title')?.textContent?.trim()};
+            bodyText:document.querySelector('#loading-title')?.innerText?.trim()};
         }""")
         assert dims["source"].endswith("/assets/branding/rani-kingdom-logo.webp"),dims
         assert dims["naturalWidth"]==720 and dims["naturalHeight"]==240,dims
