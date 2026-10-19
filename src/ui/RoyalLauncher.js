@@ -1,3 +1,4 @@
+import { iconHtml } from './GameIcons.js';
 // v1.8 approved visual direction: a REAL desktop game launcher, not
 // decorative links. All commands delegate to existing Three.js game systems.
 const ACTIONS=[
@@ -29,7 +30,8 @@ export function installRoyalLauncher(game){
     const art=document.createElement('span');
     art.className='royal-icon';
     art.setAttribute('aria-hidden','true');
-    art.textContent=icon;
+    if(key==='village')art.innerHTML=iconHtml('village','md');
+    else art.textContent=icon;
     const name=document.createElement('span');
     name.className='royal-text';
     name.textContent=label;
