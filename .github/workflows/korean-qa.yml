@@ -39,6 +39,7 @@ jobs:
           # Inspect real title art on desktop/mobile/landscape before game regressions.
           python scripts/qa_branding.py
           python scripts/qa_ui_v17.py
+          python scripts/qa_royal_v18.py
           # Catch tap/empty-hex/HUD regressions first, then full game suites.
           python scripts/qa_quick_build.py
           python scripts/qa_korean.py
