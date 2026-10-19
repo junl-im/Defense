@@ -66,4 +66,5 @@ jobs:
             qa/royal-world-v19/
             qa/royal-infra-v20/
             qa/royal-district-v21/
+            qa/rani-asset-v22/
           if-no-files-found: ignore
