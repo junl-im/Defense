@@ -7,6 +7,7 @@ import { events } from '../core/Events.js';
 import { fmtCost } from '../config/BuildingConfig.js';
 import { scaledTileCost, tileUnlockTierName, BASE_PRODUCTION } from '../config/EconomyConfig.js';
 import { iconHtml } from './GameIcons.js';
+import { TERRAIN_ATLAS_URL, terrainArtworkPosition, paintTerrainArtwork } from './TerrainArtwork.js';
 
 const SHOP_ORDER = [
   'forest', 'field', 'meadow', 'hills', 'river', 'lake', 'swamp',
@@ -63,6 +64,13 @@ export class UI {
       loadingFill: document.getElementById('loading-fill'),
     };
     this.ctx = this.el.preview.getContext('2d');
+    this.terrainAtlas=new Image();
+    this.terrainAtlas.decoding='async';
+    this.terrainAtlas.addEventListener('load',()=>{
+      const tile=this.game?.nextTile;
+      if(tile)this.drawPreview(tile.type,tile.variant,this.game.rotation||0);
+    });
+    this.terrainAtlas.src=TERRAIN_ATLAS_URL;
     this.debugVisible = false;
     this._toastTimer = 0;
     this._fpsFrames = 0;
@@ -171,7 +179,7 @@ export class UI {
       btn.className = 'tile-chip';
       btn.dataset.type = type;
       btn.innerHTML =
-        `<span class="tile-chip-swatch" style="background:${def.previewColor}"></span>` +
+        `<span class="tile-chip-swatch rani-terrain-art" style="background-position:${terrainArtworkPosition(type)}" aria-hidden="true"></span>` +
         `<span class="tile-chip-name">${def.name}</span>` +
         `<span class="tile-chip-lock" hidden></span>`;
       btn.setAttribute('data-tip', def.name);
@@ -328,6 +336,9 @@ export class UI {
     ctx.closePath();
     ctx.fillStyle = def.previewColor;
     ctx.fill();
+    // Painted tile thumbnail replaces an anonymous flat color. The simulated
+    // edge connections stay above it so rotation remains visually informative.
+    paintTerrainArtwork(ctx,this.terrainAtlas,type,cx-W*.48,cy-W*.48,W*.96);
     ctx.lineWidth = 4;
     ctx.strokeStyle = '#3a2a18';
     ctx.stroke();
