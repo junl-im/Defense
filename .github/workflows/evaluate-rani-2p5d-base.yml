@@ -69,6 +69,43 @@ jobs:
           du -sh dist
           echo "Built asset file count:"
           find dist/assets -type f | wc -l
+      - name: Launch actual 2.5D game in headless Chrome and capture screen
+        working-directory: candidate
+        timeout-minutes: 7
+        shell: bash
+        run: |
+          set -euo pipefail
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          if [ -z "$CHROME_BIN" ]; then
+            echo "Chromium/Chrome executable is unavailable on runner"
+            exit 1
+          fi
+          mkdir -p qa
+          PORT=8931 STATIC_DIR="$PWD/dist" DATA_DIR=/tmp/rani-fiefdom-qa node docker/server.mjs >/tmp/rani-fiefdom-server.log 2>&1 &
+          "$CHROME_BIN" --headless=new --remote-debugging-port=9341 --no-sandbox \
+            --disable-dev-shm-usage --disable-gpu-sandbox --use-gl=swiftshader \
+            --enable-unsafe-swiftshader --user-data-dir=/tmp/rani-fiefdom-chrome \
+            >/tmp/rani-fiefdom-chrome.log 2>&1 &
+          for i in {1..45}; do
+            if curl -fsS http://127.0.0.1:8931/ >/dev/null && \
+               curl -fsS http://127.0.0.1:9341/json/version >/dev/null; then break; fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:8931/ >/dev/null
+          curl -fsS http://127.0.0.1:9341/json/version >/dev/null
+          node tools/e2e/smoke.mjs http://127.0.0.1:8931/ 9341 qa/fiefdom-real-2p5d.png
+          test -s qa/fiefdom-real-2p5d.png
+      - name: Save rendered browser proof separately
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rani-fiefdom-browser-screenshot-and-logs
+          path: |
+            candidate/qa/
+            /tmp/rani-fiefdom-server.log
+            /tmp/rani-fiefdom-chrome.log
+          retention-days: 14
+          if-no-files-found: warn
       - name: Save separately playable build (NOT GitHub Pages)
         uses: actions/upload-artifact@v4
         with:
