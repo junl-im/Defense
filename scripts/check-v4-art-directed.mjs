@@ -26,13 +26,13 @@ assert.doesNotMatch(world,/bakery:RANI_PREPARED_ASSETS\.houseA|library:RANI_PREP
 assert.match(world,/rec\.done\|\|!rec\.visual\?\.done/);
 assert.match(world,/group\.getWorldPosition\(pos\)/);
 assert.match(world,/\.project\(camera\)/);
-assert.match(world,/game\\.selection\\.select\\(newItem\\.cell,selectAnchor,newItem\\.id\\)/);
-assert.match(world,/group\\.getWorldPosition\\(selectAnchor\\)/);
-assert.match(world,/cameraRight\\.setFromMatrixColumn\\(camera\\.matrixWorld,0\\)/);
-assert.match(world,/addScaledVector\\(cameraRight,\\.65\\)/);
-assert.match(world,/window\\.innerWidth<=700\\?155:200/);
-assert.match(world,/camera\\.position\\.distanceTo\\(pos\\)/);
-assert.match(world,/if\\(item\\.didHide\\)\\{group\\.visible=true;item\\.didHide=false;\\}/);
+assert.match(world,/game\.selection\.select\(newItem\.cell,selectAnchor,newItem\.id\)/);
+assert.match(world,/group\.getWorldPosition\(selectAnchor\)/);
+assert.match(world,/cameraRight\.setFromMatrixColumn\(camera\.matrixWorld,0\)/);
+assert.match(world,/addScaledVector\(cameraRight,\.65\)/);
+assert.match(world,/window\.innerWidth<=700\?155:200/);
+assert.match(world,/camera\.position\.distanceTo\(pos\)/);
+assert.match(world,/if\(item\.didHide\)\{group\.visible=true;item\.didHide=false;\}/);
 
 assert.match(world,/group\.visible=false/);
 assert.match(world,/group\.visible=true/);
