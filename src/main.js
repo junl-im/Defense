@@ -65,8 +65,13 @@ function boot() {
       installRoyalLauncher(game);
       installProductionCommandRail(game);
       installRaniGameShell(game);
-      installRaniV4RoyalHud(game);
-      installRaniV4WorldArt(game);
+      // v4 is the default playable layout. The explicit legacy_ui=1 route
+      // exists solely for rollback/older regression visual contracts, without
+      // duplicating or rewriting any actual game data/systems.
+      if(!new URLSearchParams(location.search).has('legacy_ui')){
+        installRaniV4RoyalHud(game);
+        installRaniV4WorldArt(game);
+      }
     },0);
     // A high-detail logo needs a brief, meaningful on-screen debut. Keep the
     // game running immediately; only delay removal of the lightweight overlay.
