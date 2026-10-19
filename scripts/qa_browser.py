@@ -34,23 +34,51 @@ with sync_playwright() as playwright:
         assert page.locator("#rani-nav").is_visible()
         assert not page.locator("#rani-village-screen").count()
         assert page.evaluate("window.__game.mode") == "village"
+        v4 = page.locator("#rani-v4-shell").count() > 0
+        if v4:
+            assert page.locator("#rani-v4-bottom").is_visible(), "New live navigation is missing"
+            assert len(page.locator("#rani-v4-bottom button").all()) == 9, "Royal dock is incomplete"
+            assert page.locator("#rani-v4-profile").is_visible(), "Royal ruler HUD is missing"
         if name == "mobile":
-            dock = page.locator("#slg-mobile-dock")
-            assert dock.is_visible(), "Mobile navigation is missing"
-            assert not page.locator("#research-panel").is_visible(), "Research obscures map by default"
-            assert not page.locator("#faction-panel").is_visible(), "Factions obscure map by default"
-            assert not page.locator("#hud-right").is_visible(), "Tile shop obscures map by default"
-            page.screenshot(path=str(OUT / "kingdom-mobile-map.png"), full_page=True)
-            for item, target in (("tiles", "#hud-right"), ("research", "#research-panel"), ("factions", "#faction-panel")):
-                page.locator("#slg-mobile-dock button[data-panel='" + item + "']").click()
-                assert page.locator(target).is_visible(), f"Mobile {item} tab failed to open"
-                if item == "research":
-                    page.screenshot(path=str(OUT / "kingdom-mobile-research.png"), full_page=True)
-            page.locator("#slg-mobile-dock button[data-panel='map']").click()
-            assert not page.locator("#research-panel").is_visible()
-            assert not page.locator("#faction-panel").is_visible()
-            assert not page.locator("#hud-right").is_visible()
-            print("PASS mobile dock tabs: tiles/research/factions/map", flush=True)
+            if v4:
+                # The replaced legacy mobile dock is intentionally hidden.
+                assert not page.locator("#slg-mobile-dock").is_visible()
+                assert not page.locator("#research-panel").is_visible()
+                assert not page.locator("#faction-panel").is_visible()
+                assert not page.locator("#hud-right").is_visible()
+                page.screenshot(path=str(OUT / "kingdom-mobile-map.png"), full_page=True)
+                for action, target in (("build", "#hud-right"),
+                                       ("research", "#research-panel"),
+                                       ("army", "#faction-panel")):
+                    trigger = page.locator("#rani-v4-left [data-v4-action='" + action + "']")
+                    trigger.click()
+                    assert page.locator(target).is_visible(), f"New royal {action} cannot open original gameplay panel"
+                    if action == "research":
+                        page.screenshot(path=str(OUT / "kingdom-mobile-research.png"), full_page=True)
+                    trigger.click()
+                    assert not page.locator(target).is_visible(), f"New royal {action} cannot close its original panel"
+                page.locator("#rani-v4-bottom [data-v4-action='field']").click()
+                assert page.evaluate("window.__game.mode") == "world"
+                page.locator("#rani-v4-bottom [data-v4-action='village']").click()
+                assert page.evaluate("window.__game.mode") == "village"
+                print("PASS v4.0 mobile: original build/research/faction panels and world/village",flush=True)
+            else:
+                dock = page.locator("#slg-mobile-dock")
+                assert dock.is_visible(), "Legacy mobile navigation is missing"
+                assert not page.locator("#research-panel").is_visible()
+                assert not page.locator("#faction-panel").is_visible()
+                assert not page.locator("#hud-right").is_visible()
+                page.screenshot(path=str(OUT / "kingdom-mobile-map.png"), full_page=True)
+                for item, target in (("tiles", "#hud-right"), ("research", "#research-panel"), ("factions", "#faction-panel")):
+                    page.locator("#slg-mobile-dock button[data-panel='" + item + "']").click()
+                    assert page.locator(target).is_visible(), f"Mobile {item} tab failed to open"
+                    if item == "research":
+                        page.screenshot(path=str(OUT / "kingdom-mobile-research.png"), full_page=True)
+                page.locator("#slg-mobile-dock button[data-panel='map']").click()
+                assert not page.locator("#research-panel").is_visible()
+                assert not page.locator("#faction-panel").is_visible()
+                assert not page.locator("#hud-right").is_visible()
+                print("PASS legacy mobile dock tabs", flush=True)
         else:
             assert not page.locator("#slg-mobile-dock").is_visible(), "Mobile dock visible on desktop"
         page.screenshot(path=str(OUT / f"kingdom-{name}.png"), full_page=True)
