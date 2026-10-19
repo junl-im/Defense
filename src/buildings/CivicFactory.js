@@ -9,6 +9,7 @@
 import * as THREE from 'three';
 import { MATS, PALETTE } from '../rendering/Materials.js';
 import { makeRoyalHarborOrnaments } from '../rendering/RoyalInfrastructureArt.js';
+import { makeRoyalDistrictDetails } from '../rendering/RoyalDistrictArt.js';
 import { part, merge } from '../assets/GeometryUtils.js';
 
 function vc(parts) {
@@ -201,7 +202,7 @@ export function makeSawmill(rng) {
   const roof = new THREE.BoxGeometry(0.44, 0.03, 0.36);
   roof.rotateZ(0.1);
   p3.add(vc([
-    part(roof, PALETTE.roofThatch, { t: [-0.08, 0.32, 0] }),
+    part(roof, PALETTE.roofBlue, { t: [-0.08, 0.32, 0] }),
     part(new THREE.CylinderGeometry(0.02, 0.02, 0.14, 5), PALETTE.trunk, { rz: Math.PI / 2, t: [0.24, 0.18, 0] }),
   ]));
   const wheelParts = [
@@ -229,6 +230,7 @@ export function makeSawmill(rng) {
     part(new THREE.BoxGeometry(0.2, 0.015, 0.07), PALETTE.crateWood, { t: [-0.28, 0.06, -0.14] }),
     part(new THREE.BoxGeometry(0.2, 0.015, 0.07), PALETTE.crateWood, { t: [-0.27, 0.075, -0.13], ry: 0.1 }),
   ]));
+  p4.add(makeRoyalDistrictDetails('sawmill'));
   return wrap([p1, p2, p3, p4]);
 }
 
@@ -249,7 +251,7 @@ export function makeForge(rng) {
 
   const p3 = phaseGroup(); // slate roof + massive chimney
   p3.add(vc([
-    part(gableRoof(w, d, 0.18), PALETTE.roofSlate, { t: [0, 0.06 + wallH + 0.09, 0] }),
+    part(gableRoof(w, d, 0.18), PALETTE.roofBlue, { t: [0, 0.06 + wallH + 0.09, 0] }),
     part(new THREE.BoxGeometry(0.1, 0.28, 0.1), PALETTE.rockDark, { t: [-w * 0.28, 0.06 + wallH + 0.1, -0.04] }),
   ]));
 
@@ -263,6 +265,7 @@ export function makeForge(rng) {
   glow.position.set(0, 0.13, d / 2 - 0.01);
   p4.add(glow);
   p4.add(smokePuffs(-w * 0.28, 0.06 + wallH + 0.28, -0.04));
+  p4.add(makeRoyalDistrictDetails('forge'));
   return wrap([p1, p2, p3, p4]);
 }
 
@@ -334,7 +337,7 @@ export function makeBarracks(rng) {
 
   const p3 = phaseGroup(); // slate roof
   p3.add(vc([
-    part(gableRoof(w, d, 0.18), PALETTE.roofSlate, { t: [0, 0.05 + wallH + 0.09, -0.06] }),
+    part(gableRoof(w, d, 0.18), PALETTE.roofBlue, { t: [0, 0.05 + wallH + 0.09, -0.06] }),
   ]));
 
   const p4 = phaseGroup(); // weapon rack + training dummy + shield
@@ -357,6 +360,7 @@ export function makeBarracks(rng) {
   const flame = new THREE.Mesh(new THREE.ConeGeometry(0.026, 0.06, 5), MATS.torchFlame);
   flame.position.set(-0.09, 0.3, -0.06 + d / 2 + 0.03);
   p4.add(flame);
+  p4.add(makeRoyalDistrictDetails('barracks'));
   return wrap([p1, p2, p3, p4]);
 }
 
