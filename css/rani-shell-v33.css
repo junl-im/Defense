@@ -10,18 +10,31 @@ body.rani-shell-immersive #game-canvas{
   width:100vw;height:100vh;height:100dvh;
   touch-action:none;
 }
-#rani-shell-menu-toggle{
-  position:fixed;right:11px;bottom:75px;z-index:77;
-  min-width:78px;min-height:41px;padding:9px 12px;
-  border:2px solid #c99d5e;border-radius:11px;
-  color:#ffedc8;background:linear-gradient(155deg,#826343,#283f50 50%,#102432);
-  font:800 12px/1 "Malgun Gothic",sans-serif;
-  box-shadow:0 5px 13px #020910a8,inset 0 1px #ffe2a872;
-  cursor:pointer;touch-action:manipulation;
+/* The menu is a real member of the original navigation. NEVER float above
+ * #rani-field-shortcut or intercept camera/field interactions. */
+#rani-royal-launcher #rani-shell-menu-toggle{
+  position:static;min-width:0;min-height:52px;padding:4px 5px;
+  touch-action:manipulation;
 }
-#rani-shell-menu-toggle:active{filter:brightness(1.2);transform:translateY(1px)}
-#rani-shell-menu-toggle:focus-visible{
+#rani-shell-menu-toggle:focus-visible,
+#rani-shell-menu-mobile-toggle:focus-visible{
   outline:2px solid #ffe2a0;outline-offset:2px;
+}
+@media(max-width:700px){
+  body.rani-shell-immersive #slg-mobile-dock{
+    grid-template-columns:repeat(6,minmax(0,1fr));
+    gap:2px;
+  }
+  #slg-mobile-dock #rani-shell-menu-mobile-toggle{
+    min-width:0;padding:3px 1px;
+    touch-action:manipulation;
+  }
+  #slg-mobile-dock #rani-shell-menu-mobile-toggle > span{
+    font-size:20px;line-height:1;
+  }
+  #slg-mobile-dock #rani-shell-menu-mobile-toggle > small{
+    font-size:10px;line-height:1.15;
+  }
 }
 #rani-shell-menu[hidden]{display:none!important}
 #rani-shell-menu{
@@ -68,14 +81,9 @@ body.rani-shell-immersive #game-canvas{
   font:600 12px/1.5 "Malgun Gothic",sans-serif;color:#f8cb97;
 }
 @media(max-width:700px){
-  #rani-shell-menu-toggle{
-    bottom:calc(73px + env(safe-area-inset-bottom,0px));right:8px;
-    min-width:70px;min-height:38px;padding:7px 10px;
-  }
   #rani-shell-menu .rani-shell-dialog{padding:20px 14px}
 }
 @media(max-height:440px){
-  #rani-shell-menu-toggle{bottom:8px}
   #rani-shell-menu .rani-shell-dialog{padding:10px 15px}
   #rani-shell-menu .rani-shell-actions button{min-height:36px}
 }
