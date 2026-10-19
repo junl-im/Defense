@@ -152,6 +152,7 @@ export function installHudLayout() {
     }
   }
   const footer=document.getElementById('hud-bottom');
+  let resetButton=null;
   if(footer && !document.getElementById('rani-reset-ui')){
     const button=document.createElement('button');
     button.id='rani-reset-ui';button.type='button';button.className='ui-btn';
@@ -163,7 +164,10 @@ export function installHudLayout() {
         const el=document.getElementById(id);if(el)apply(el,id);
       }
     });
-    footer.appendChild(button);
+    resetButton=button;
+    // A moved 320px research window can cover the footer. Lift only the
+    // rescue control above movable panels; leave game menu order untouched.
+    (isMobile()?document.body:footer).appendChild(button);
   }
   // Mobile panels toggle via body.dataset, not their own class. Recompute
   // geometry AFTER becoming visible; a hidden panel reports zero width and
@@ -178,6 +182,10 @@ export function installHudLayout() {
   }).observe(document.body,{attributes:true,attributeFilter:['data-active-slg-panel']});
   let lastScope=scope();
   window.addEventListener('resize',()=>{
+    if(resetButton&&footer){
+      const parent=isMobile()?document.body:footer;
+      if(resetButton.parentElement!==parent)parent.appendChild(resetButton);
+    }
     const next=scope();
     if(lastScope!==next)lastScope=next;
     for(const [id] of PANELS){
