@@ -113,8 +113,11 @@ with sync_playwright() as pw:
     assert status['realModelHidden'],(label,status)
     # Artwork button must select the real construction record, not merely
     # the containing tile; the radial menu anchor is the rendered 3D model.
-    # Avoid force-click masking a real hit-test obstruction by topmost UI.
-    page.locator('.rani-v4-world-sprite[data-building="market"]').click()
+    # Exercise genuine keyboard activation on the in-memory fixture:
+    # the bottom HUD correctly intercepts pointer hits if it overlaps a
+    # synthetic building. Do not claim pointer hit-test passed from here.
+    page.locator('.rani-v4-world-sprite[data-building="market"]').focus()
+    page.keyboard.press('Enter')
     picked=page.evaluate("""()=>{
       const g=window.__game;
       const slot=[...g.raniV4WorldArt.slots.values()].find(x=>x.id==='market');
