@@ -15,7 +15,7 @@ assert.match(art,/export function makeRoyalLivedInDistrict\(kind\)/);
 assert.match(art,/mesh=new THREE\.Mesh\(merge\(p\),MATS\.vcStatic\)/);
 assert.match(art,/mesh\.userData\.raniVisualOnly=true/);
 assert.match(art,/mesh\.raycast=\(\)=>\{\}/);
-assert.match(civic,/import \{ makeRoyalLivedInDistrict \} from '.\.\/rendering\/RoyalLivedInDistrictArt.js'/);
+assert.ok(civic.includes("import { makeRoyalLivedInDistrict } from '../rendering/RoyalLivedInDistrictArt.js';"));
 for(const kind of kinds){
  const cap=kind[0].toUpperCase()+kind.slice(1);
  const begin=civic.indexOf('export function make'+cap+'(');
