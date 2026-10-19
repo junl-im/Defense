@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "test": "node scripts/check-slg.mjs && node scripts/check-korean.mjs && node scripts/check-tutorial.mjs && node scripts/check-backups.mjs && node scripts/check-native-village.mjs && node scripts/check-building-art.mjs && node scripts/check-quick-build.mjs && node scripts/check-branding.mjs && node scripts/check-ui-v17.mjs && node scripts/check-royal-v18.mjs",
-    "build": "node scripts/check-slg.mjs && node scripts/check-korean.mjs && node scripts/check-tutorial.mjs && node scripts/check-backups.mjs && node scripts/check-native-village.mjs && node scripts/check-building-art.mjs && node scripts/check-quick-build.mjs && node scripts/check-branding.mjs && node scripts/check-ui-v17.mjs && node scripts/check-royal-v18.mjs"
+    "test": "node scripts/check-slg.mjs && node scripts/check-korean.mjs && node scripts/check-tutorial.mjs && node scripts/check-backups.mjs && node scripts/check-native-village.mjs && node scripts/check-building-art.mjs && node scripts/check-quick-build.mjs && node scripts/check-branding.mjs && node scripts/check-ui-v17.mjs && node scripts/check-royal-v18.mjs && node scripts/check-royal-world-v19.mjs",
+    "build": "node scripts/check-slg.mjs && node scripts/check-korean.mjs && node scripts/check-tutorial.mjs && node scripts/check-backups.mjs && node scripts/check-native-village.mjs && node scripts/check-building-art.mjs && node scripts/check-quick-build.mjs && node scripts/check-branding.mjs && node scripts/check-ui-v17.mjs && node scripts/check-royal-v18.mjs && node scripts/check-royal-world-v19.mjs"
   }
 }
