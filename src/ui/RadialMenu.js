@@ -477,10 +477,10 @@ export class RadialMenu {
     const mobile=window.innerWidth<=700;
     const left=35,right=window.innerWidth-35;
     const top=mobile?157:48,bottom=window.innerHeight-(mobile?85:42);
-    const constrained=sx<left+115||sx>right-115||sy<top+115||sy>bottom-115;
+    const constrained=sx<left+125||sx>right-125||sy<top+125||sy>bottom-125;
     const toward=Math.atan2((top+bottom)/2-sy,(left+right)/2-sx);
     const span=constrained?Math.PI:Math.PI*2;
-    const radius=mobile?86:RADIUS;
+    const radius=constrained ? (mobile?123:124) : (mobile?86:RADIUS);
     items.forEach(({btn},i)=>{
       const angle=constrained?(toward-span/2+span*(i+.5)/n):(-Math.PI/2+span*i/n);
       let dx=Math.cos(angle)*radius,dy=Math.sin(angle)*radius;
