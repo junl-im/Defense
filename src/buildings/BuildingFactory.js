@@ -10,6 +10,7 @@ import { part, merge } from '../assets/GeometryUtils.js';
 import { MILITARY_MAKERS } from './MilitaryFactory.js';
 import { CIVIC_MAKERS } from './CivicFactory.js';
 import { makeRoyalCastleOrnaments } from '../rendering/RoyalWorldArt.js';
+import { makeRoyalHouseDetails, makeRoyalDistrictDetails } from '../rendering/RoyalDistrictArt.js';
 
 function vc(parts) {
   return new THREE.Mesh(merge(parts), MATS.vcStatic);
@@ -74,7 +75,7 @@ export function makeHouse(rng) {
   const w = rng.range(0.34, 0.44);
   const d = rng.range(0.3, 0.4);
   const wallH = rng.range(0.24, 0.3);
-  const roofMat = rng.pick([PALETTE.roofRed, PALETTE.roofBlue, PALETTE.roofThatch]);
+  const roofMat = rng.pick([PALETTE.roofBlue, PALETTE.roofBlue, PALETTE.roofRed, PALETTE.roofThatch]);
 
   const p1 = phaseGroup(); // foundation
   p1.add(vc([part(new THREE.BoxGeometry(w + 0.08, 0.06, d + 0.08), PALETTE.wallStone, { t: [0, 0.03, 0] })]));
@@ -107,6 +108,7 @@ export function makeHouse(rng) {
   lant.position.set(w / 2 + 0.12, 0, d / 2 - 0.05);
   p4.add(lant);
 
+  p4.add(makeRoyalHouseDetails('A', w, d, wallH));
   return wrap([p1, p2, p3, p4]);
 }
 
@@ -325,7 +327,7 @@ export function makeHouseB(rng) {
   roofGeo.rotateY(Math.PI / 4);
   roofGeo.scale(1, 1, d / w * 1.05);
   p3.add(vc([
-    part(roofGeo, PALETTE.roofSlate, { t: [0, 0.06 + wallH + 0.12, 0] }),
+    part(roofGeo, PALETTE.roofBlue, { t: [0, 0.06 + wallH + 0.12, 0] }),
     part(new THREE.BoxGeometry(0.07, 0.2, 0.07), PALETTE.wallStoneB, { t: [-w * 0.28, 0.06 + wallH + 0.15, 0] }),
   ]));
 
@@ -338,6 +340,7 @@ export function makeHouseB(rng) {
   p4.add(win);
   const smoke = makeChimneySmoke(-w * 0.28, 0.06 + wallH + 0.28, 0);
   p4.add(smoke);
+  p4.add(makeRoyalHouseDetails('B', w, d, wallH));
   return wrap([p1, p2, p3, p4]);
 }
 
@@ -364,7 +367,7 @@ export function makeHouseC(rng) {
   roofGeo.rotateY(Math.PI / 4);
   roofGeo.scale(1, 1, d / w * 1.05);
   p3.add(vc([
-    part(roofGeo, rng.chance(0.5) ? PALETTE.roofRed : PALETTE.roofGreen, { t: [0, 0.06 + floorH * 2 + 0.11, 0] }),
+    part(roofGeo, rng.chance(0.7) ? PALETTE.roofBlue : PALETTE.roofRed, { t: [0, 0.06 + floorH * 2 + 0.11, 0] }),
     part(new THREE.BoxGeometry(0.06, 0.15, 0.06), PALETTE.wallStone, { t: [w * 0.22, 0.06 + floorH * 2 + 0.13, 0] }),
   ]));
 
@@ -379,6 +382,7 @@ export function makeHouseC(rng) {
   win2.position.set(w * 0.22, 0.06 + floorH * 1.5, (d + 0.06) / 2 + 0.011);
   p4.add(win2);
   p4.add(makeChimneySmoke(w * 0.22, 0.06 + floorH * 2 + 0.24, 0));
+  p4.add(makeRoyalHouseDetails('C', w, d, floorH * 2));
   return wrap([p1, p2, p3, p4]);
 }
 
@@ -406,7 +410,7 @@ export function makeHouseD(rng) {
   const annexRoof = new THREE.CylinderGeometry(0.01, 0.17, 0.1, 4, 1);
   annexRoof.rotateY(Math.PI / 4);
   p3.add(vc([
-    part(roofGeo, PALETTE.roofGreen, { t: [0, 0.06 + wallH + 0.1, 0] }),
+    part(roofGeo, PALETTE.roofBlue, { t: [0, 0.06 + wallH + 0.1, 0] }),
     part(annexRoof, PALETTE.roofThatch, { t: [w * 0.24, 0.06 + wallH * 0.7 + 0.05, d / 2 + 0.08] }),
     part(new THREE.BoxGeometry(0.06, 0.16, 0.06), PALETTE.wallStone, { t: [-w * 0.3, 0.06 + wallH + 0.12, 0] }),
   ]));
@@ -423,6 +427,7 @@ export function makeHouseD(rng) {
   lant.position.set(-w / 2 - 0.1, 0, d / 2 - 0.02);
   p4.add(lant);
   p4.add(makeChimneySmoke(-w * 0.3, 0.06 + wallH + 0.24, 0));
+  p4.add(makeRoyalHouseDetails('D', w, d, wallH));
   return wrap([p1, p2, p3, p4]);
 }
 
@@ -455,6 +460,7 @@ export function makeHouseE(rng) {
   win.position.set(r * 0.75, 0.05 + wallH * 0.62, r * 0.62);
   win.rotation.y = 0.7;
   p4.add(win);
+  p4.add(makeRoyalHouseDetails('E', r, r, wallH));
   return wrap([p1, p2, p3, p4]);
 }
 
@@ -765,7 +771,7 @@ export function makeLumberMill(rng) {
   const roof = new THREE.BoxGeometry(0.48, 0.03, 0.4);
   roof.rotateZ(0.12);
   p3.add(vc([
-    part(roof, PALETTE.roofThatch, { t: [0, 0.32, 0] }),
+    part(roof, PALETTE.roofBlue, { t: [0, 0.32, 0] }),
     part(new THREE.CylinderGeometry(0.09, 0.09, 0.02, 10), PALETTE.rock, { t: [0.16, 0.16, 0.155], rx: Math.PI / 2 }),
   ]));
 
@@ -775,6 +781,7 @@ export function makeLumberMill(rng) {
     part(new THREE.CylinderGeometry(0.04, 0.04, 0.3, 5), PALETTE.trunk, { t: [-0.26, 0.04, 0.26], rz: Math.PI / 2 }),
     part(new THREE.CylinderGeometry(0.04, 0.04, 0.28, 5), PALETTE.trunk, { t: [-0.26, 0.11, 0.22], rz: Math.PI / 2 }),
   ]));
+  p4.add(makeRoyalDistrictDetails('lumber'));
   return wrap([p1, p2, p3, p4]);
 }
 
@@ -832,7 +839,7 @@ export function makeMarket(rng) {
   p3.add(vc([
     part(new THREE.BoxGeometry(0.025, 0.26, 0.025), PALETTE.woodBeam, { t: [-0.22, 0.13, 0.08] }),
     part(new THREE.BoxGeometry(0.025, 0.26, 0.025), PALETTE.woodBeam, { t: [0.02, 0.13, 0.08] }),
-    part(awn1, PALETTE.flag, { t: [-0.1, 0.27, 0.1] }),
+    part(awn1, PALETTE.royalGold, { t: [-0.1, 0.27, 0.1] }),
     part(awn2, PALETTE.roofBlue, { t: [0.12, 0.27, -0.1], ry: 0.6 }),
   ]));
 
@@ -842,6 +849,7 @@ export function makeMarket(rng) {
     part(new THREE.CylinderGeometry(0.05, 0.055, 0.1, 7), PALETTE.trunk, { t: [0.24, 0.05, 0.12] }),
     part(new THREE.SphereGeometry(0.035, 5, 4), PALETTE.appleRed || PALETTE.roofRed, { t: [-0.1, 0.17, 0.08] }),
   ]));
+  p4.add(makeRoyalDistrictDetails('market'));
   return wrap([p1, p2, p3, p4]);
 }
 
