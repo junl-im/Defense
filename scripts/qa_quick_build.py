@@ -297,6 +297,68 @@ with sync_playwright() as p:
       assert page.evaluate('window.__game.selection.cell===null')
       assert page.locator('#radial-menu.hidden').count()==1
       page.locator('#slg-mobile-dock button[data-panel="research"]').click()
+    # v1.5: an evolved tile can expose >6 construction/recruit/upgrade
+    # actions. Inject the action data only into this presentation regression:
+    # original game and economy stay untouched.
+    pagination=page.evaluate("""() => {
+      const g=window.__game, m=g.radialMenu;
+      const original=m._actionsFor.bind(m);
+      const actions=Array.from({length:13},(_,i)=>({
+        id:'qa-action-'+i, icon:'build',label:'시설 '+i,
+        tip:'테스트 건물 '+i,disabled:i===7,run:()=>true
+      }));
+      m._actionsFor=()=>actions;
+      g.selection.select(g.grid.get(0,0));
+      window.__radialTestOriginal=original;
+      return {
+        pages:m.cellPages,
+        ids:[...m.root.querySelectorAll('.radial-btn')].map(b=>b.dataset.actionId),
+        count:m.root.querySelectorAll('.radial-btn').length
+      };
+    }""")
+    assert pagination['pages']==3 and pagination['count']==6,(
+      'Evolved tile radial displays too many overlapping actions',pagination)
+    assert pagination['ids'][0]=='qa-action-0'
+    assert pagination['ids'][-1]=='next-cell-page'
+    assert page.locator('button[data-action-id="next-cell-page"]').is_visible()
+    page.locator('button[data-action-id="next-cell-page"]').click()
+    page_ids=page.locator('#radial-menu .radial-btn').evaluate_all(
+      '(buttons)=>buttons.map(b=>b.dataset.actionId)')
+    assert page_ids[:5]==['qa-action-5','qa-action-6','qa-action-8','qa-action-9','qa-action-10'] and len(page_ids)==6,(
+      'Available actions should precede unavailable construction choices',page_ids)
+    page.locator('button[data-action-id="next-cell-page"]').click()
+    last_ids=page.locator('#radial-menu .radial-btn').evaluate_all(
+      '(buttons)=>buttons.map(b=>b.dataset.actionId)')
+    assert last_ids[:3]==['qa-action-11','qa-action-12','qa-action-7']
+    assert len(last_ids)==4,('Last page must contain remaining actions and page navigation',last_ids)
+    assert page.locator('button[data-action-id="qa-action-7"]').get_attribute('aria-disabled')=='true'
+    page.locator('button[data-action-id="next-cell-page"]').click()
+    assert page.locator('button[data-action-id="qa-action-0"]').is_visible()
+
+    # Return to the actual game actions, without changing live resources,
+    # placing new buildings or altering the original source data.
+    page.evaluate("""() => {
+      const g=window.__game,m=g.radialMenu;
+      m._actionsFor=window.__radialTestOriginal;
+      g.selection.select(g.grid.get(1,0),null,'lumber_mill');
+      m.update();
+    }""")
+    assert page.locator('.radial-title').inner_text()=='벌목장'
+    status=page.locator('#radial-progress').inner_text()
+    assert ('건설' in status or '목재' in status or '완공' in status),(
+      'Selected building should show its actual work/production status',status)
+    # Clicking terrain outside the 3D map projection must dismiss old info
+    # immediately, without modifying production or the selected hex data.
+    clear=page.evaluate("""() => {
+      const g=window.__game,old=g._pointerToCell;
+      g._pointerToCell=()=>null;
+      g._tryPlaceAtPointer(3,3);
+      g._pointerToCell=old;
+      return {selected:g.selection.cell,hidden:g.radialMenu.root.classList.contains('hidden')};
+    }""")
+    assert clear['selected'] is None and clear['hidden'],(
+      'Click on background must dismiss a previously selected tile',clear)
+
     page.screenshot(path=str(OUT/(label+'-placed.png')),full_page=True)
     assert not errors,f'{label}: {errors}'
     print('PASS',label,'empty tap/menu toggle/combo 3D construction/mobile dock/compact layout',flush=True)
