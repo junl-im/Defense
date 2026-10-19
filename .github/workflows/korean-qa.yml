@@ -62,4 +62,5 @@ jobs:
             qa/ui-v17/
             qa/royal-v18/
             qa/royal-world-v19/
+            qa/royal-infra-v20/
           if-no-files-found: ignore
