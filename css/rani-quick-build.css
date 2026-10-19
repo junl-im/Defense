@@ -246,3 +246,22 @@ body[data-game-mode="world"] .rani-world-detail{
      the same 3D radial menu as already constructed buildings. */
   #radial-menu .radial-center{border-width:2px!important}
 }
+
+
+/* v1.5: distinguish paging from actual construction without changing radial art. */
+#radial-menu .radial-page-next{
+  background:linear-gradient(180deg,#fff0c9,#e6c88d)!important;
+  border-color:#b48142!important;
+}
+#radial-menu .radial-page-next .radial-label{color:#563816!important;font-weight:800}
+#radial-menu .radial-progress{
+  font-size:9px;
+  line-height:1.12;
+  max-width:70px;
+  text-align:center;
+  overflow-wrap:anywhere;
+}
+@media(max-width:700px){
+  #radial-menu .radial-progress{font-size:8px;max-width:64px}
+  #radial-menu .radial-page-next{box-shadow:0 0 0 1px #ffe3a0a0,0 3px 10px #050f1780}
+}
