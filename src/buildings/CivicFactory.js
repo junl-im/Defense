@@ -9,6 +9,7 @@
 import * as THREE from 'three';
 import { MATS, PALETTE } from '../rendering/Materials.js';
 import { makeRoyalHarborOrnaments } from '../rendering/RoyalInfrastructureArt.js';
+import { makeRoyalHarborFleetDetail } from '../rendering/RoyalHarborFleetArt.js';
 import { makeRoyalDistrictDetails } from '../rendering/RoyalDistrictArt.js';
 import { part, merge } from '../assets/GeometryUtils.js';
 
@@ -144,6 +145,7 @@ export function makeFishingPier(rng) {
   lamp.position.y = 0.11;
   p4.add(lamp);
   p4.add(makeRoyalHarborOrnaments('pier'));
+  p4.add(makeRoyalHarborFleetDetail('pier'));
   return wrap([p1, p2, p3, p4]);
 }
 
@@ -445,6 +447,7 @@ export function makePort(rng) {
   lamp.position.y = 0.1;
   p4.add(lamp);
   p4.add(makeRoyalHarborOrnaments('port'));
+  p4.add(makeRoyalHarborFleetDetail('port'));
   return wrap([p1, p2, p3, p4]);
 }
 
