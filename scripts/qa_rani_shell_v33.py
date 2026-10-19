@@ -36,7 +36,15 @@ with sync_playwright() as pw:
     assert initial['shellHidden'] and initial['gameMode']=='village',(label,initial)
     assert initial['world'] and initial['oldArts']==5 and initial['svg']==0,(label,initial)
     assert initial['area']==initial['viewport'],(label,'not immersive viewport',initial)
-    page.locator('#rani-shell-menu-toggle').click()
+    menu_trigger='#rani-shell-menu-mobile-toggle' if w<=700 else '#rani-shell-menu-toggle'
+    assert page.locator(menu_trigger).is_visible(),(label,'menu not in active dock')
+    # The new menu must not cover the ORIGINAL mobile one-touch field shortcut.
+    if w<=700:
+      page.locator('#rani-field-shortcut').click()
+      assert page.evaluate("window.__game.mode==='world'"),label
+      page.evaluate("window.__game.nativeVillageUI.setMode('village')")
+      assert page.evaluate("window.__game.mode==='village'"),label
+    page.locator(menu_trigger).click()
     assert page.locator('#rani-shell-menu').is_visible(),label
     assert page.locator('[data-shell-action="fullscreen"]').is_visible(),label
     # Fullscreen is permission-dependent. Check controls work or acknowledge failure.
@@ -59,7 +67,7 @@ with sync_playwright() as pw:
     if not page.is_closed():
       # Browsers can block or ignore overriding window.close itself. Verify
       # the observable safe fallback, not a non-portable close call counter.
-      page.locator('#rani-shell-menu-toggle').click()
+      page.locator(menu_trigger).click()
       page.locator('[data-shell-action="quit"]').click()
       if not page.is_closed():
         assert page.evaluate("window.__game.shellPaused===true"),label
