@@ -38,7 +38,7 @@ with sync_playwright() as pw:
             disposed,afterTowns:s.towns.children.length,
             originalSave:oldSave,svgCount:document.querySelectorAll('svg').length};
         }""")
-        assert len(result['startCounts'])==4 and result['startCounts'][0]>8,(
+        assert len(result['startCounts'])==4 and result['startCounts'][0]>15 and result['startCounts'][1]>0 and result['startCounts'][2]>0,(
           label,'shared trees missing',result)
         assert result['nonPickable'],(label,result)
         assert result['opened'] and result['towns']>0 and result['decorated'],(
