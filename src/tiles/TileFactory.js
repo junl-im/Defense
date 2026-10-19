@@ -11,6 +11,7 @@ import { Rng, hashCell } from '../core/Rng.js';
 import { MATS } from '../rendering/Materials.js';
 import { makeRoyalTileDressing } from '../rendering/RoyalWorldArt.js';
 import { makeRoyalWaterfrontDressing } from '../rendering/RoyalWaterfrontArt.js';
+import { makeRoyalVillageSquareArt } from '../rendering/RoyalVillageSquareArt.js';
 import { tweens, Easing } from '../core/Tween.js';
 
 export class TileFactory {
@@ -61,6 +62,8 @@ export class TileFactory {
     if (royal) group.add(royal);
     const waterfront = makeRoyalWaterfrontDressing(cell);
     if (waterfront) group.add(waterfront);
+    const square = makeRoyalVillageSquareArt(cell);
+    if (square) group.add(square);
     const { x, z } = axialToWorld(cell.q, cell.r);
     group.position.set(x, 0, z);
     cell.group = group;
@@ -121,6 +124,8 @@ export class TileFactory {
     if (royal) g.add(royal);
     const waterfront = makeRoyalWaterfrontDressing(cell);
     if (waterfront) g.add(waterfront);
+    const square = makeRoyalVillageSquareArt(cell);
+    if (square) g.add(square);
     // make every mesh translucent
     g.traverse((o) => {
       if (o.isMesh) {
