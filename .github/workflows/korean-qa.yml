@@ -58,4 +58,5 @@ jobs:
             qa/quick-build/
             qa/branding/
             qa/ui-v17/
+            qa/royal-v18/
           if-no-files-found: ignore
