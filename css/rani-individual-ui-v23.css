@@ -2,7 +2,7 @@
  * Never crop a multi-item sprite or force the 3D town into a flat 2D mock.
  * 2:1 original gold button is shown in a 2:1 live tutorial action control.
  */
-#slg-tutorial-go {
+#slg-tutorial #slg-tutorial-go {
   flex:0 0 auto;
   box-sizing:border-box!important;
   min-width:94px!important;
@@ -20,10 +20,10 @@
   white-space:nowrap;
   transition:transform .12s ease,filter .12s ease!important;
 }
-#slg-tutorial-go:hover:not(:disabled){filter:brightness(1.18)!important}
-#slg-tutorial-go:active:not(:disabled){transform:translateY(1px) scale(.97)!important}
-#slg-tutorial-go:focus-visible{outline:2px solid #fff3b2!important;outline-offset:2px!important}
-#slg-tutorial-go:disabled{filter:grayscale(1)!important;opacity:.48!important}
+#slg-tutorial #slg-tutorial-go:hover:not(:disabled){filter:brightness(1.18)!important}
+#slg-tutorial #slg-tutorial-go:active:not(:disabled){transform:translateY(1px) scale(.97)!important}
+#slg-tutorial #slg-tutorial-go:focus-visible{outline:2px solid #fff3b2!important;outline-offset:2px!important}
+#slg-tutorial #slg-tutorial-go:disabled{filter:grayscale(1)!important;opacity:.48!important}
 
 /* Large *illustrated* building images belong to their existing action/icon
  * slots, never as opaque covers on top of 3D village model hit targets.
@@ -52,7 +52,7 @@
   width:100%;height:100%;filter:drop-shadow(0 1px 2px #030b0dcc);
 }
 @media(max-width:700px){
- #slg-tutorial-go{
+ #slg-tutorial #slg-tutorial-go{
    width:86px!important;min-width:86px!important;
    height:43px!important;font-size:10px!important;
  }
@@ -61,7 +61,7 @@
  }
 }
 @media(max-width:360px){
- #slg-tutorial-go{width:80px!important;min-width:80px!important;height:40px!important;font-size:9px!important}
+ #slg-tutorial #slg-tutorial-go{width:80px!important;min-width:80px!important;height:40px!important;font-size:9px!important}
  #slg-mobile-dock button[data-panel="map"]>span>.rani-raster-ico{width:23px!important;height:23px!important}
 }
-@media(prefers-reduced-motion:reduce){#slg-tutorial-go{transition:none!important}}
+@media(prefers-reduced-motion:reduce){#slg-tutorial #slg-tutorial-go{transition:none!important}}
