@@ -1,0 +1,341 @@
+/* 라니킹덤 v1.8 — APPROVED Royal Kingdom 2.5D UI direction.
+ * Reference: dark lacquered timber, hand-forged warm-gold trim, forest green
+ * inset panels, gold highlights, warm white type. Not a DOM replacement map.
+ * Loaded last; movable-panel v1.7 positioning remains the authority.
+ */
+:root{
+ --rk-ink:#111c20;--rk-wood:#291c15;--rk-wood2:#503623;
+ --rk-panel:#17282a;--rk-gold:#eac47b;--rk-gold-hi:#ffe5a0;
+ --rk-gold-low:#977043;--rk-cream:#fbe9c8;--rk-muted:#bfc8b8;
+ --rk-shadow:0 7px 18px #020a0db8,0 2px 0 #070d10;
+}
+:is(.hud-side-panel,#next-tile-panel,#score-panel,#slg-tutorial,
+    #rani-nav,.hud-sub-panel,.rani-world-detail,.construction-panel){
+ color:var(--rk-cream)!important;
+ background:
+   linear-gradient(117deg,#ffdb8a0a 0 9%,transparent 9% 88%,#ffdb8a07 88%),
+   linear-gradient(165deg,#263b36fa,#192526f9 52%,#101a20fa)!important;
+ border:2px solid var(--rk-gold-low)!important;
+ border-radius:11px!important;
+ box-shadow:inset 0 0 0 1px #080f14,inset 0 2px 0 #ffde9259,var(--rk-shadow)!important;
+}
+:is(#research-panel,#faction-panel,#slg-tutorial,#hud-right,#hud-top,#hud-bottom,#gameplay-hud){
+ isolation:isolate;
+}
+:is(.hud-side-panel,#next-tile-panel,#slg-tutorial,.construction-panel)::before{
+ content:"";position:absolute;inset:4px;border:1px solid #d8b5712c;
+ border-radius:6px;pointer-events:none;
+}
+:is(.hud-panel-title,.panel-title,.slg-tutorial-head strong,
+    .construction-title,#tile-name){
+ color:var(--rk-gold-hi)!important;
+ text-shadow:0 2px 2px #01090b,0 0 13px #f7c26240!important;
+ font-size:clamp(12px,1.05vw,15px)!important;
+ font-weight:900!important;letter-spacing:0!important;
+}
+.hud-panel-head,.slg-tutorial-head{
+ padding-bottom:5px!important;margin-bottom:6px!important;
+ border-bottom:1px solid #ddb77059!important;
+}
+:is(.hud-muted,.research-btn-meta,.fp-meta,.tile-meta,.tile-prod,#hint-text){
+ color:#d0c6ae!important;
+}
+#hud-top-bar.hud-bar{
+ color:var(--rk-cream)!important;
+ background:linear-gradient(180deg,#67482b,#2b231c 23%,#111d20 89%,#463622)!important;
+ border:2px solid var(--rk-gold-low)!important;
+ border-radius:12px!important;
+ box-shadow:inset 0 1px 0 #ffdb9e94,inset 0 -1px 0 #16181d,var(--rk-shadow)!important;
+ gap:2px!important;padding:4px 6px!important;
+ max-width:calc(100vw - 12px);
+}
+#hud-top-bar .hud-res-cell{
+ display:flex!important;flex-direction:row!important;gap:4px!important;
+ align-items:center!important;justify-content:center!important;
+ padding:4px 7px!important;min-width:0!important;
+ border-radius:7px!important;
+ background:linear-gradient(#090f13a8,#29282394)!important;
+ box-shadow:inset 0 1px 3px #050a0d!important;
+ border:1px solid #9a744b66!important;
+}
+#hud-top-bar .hud-res-cell:hover{background:linear-gradient(#413722c5,#252b27da)!important}
+#hud-top-bar .hud-res-icon{
+ display:inline-grid;place-items:center;flex-shrink:0;
+ min-width:25px;height:25px;
+ border-radius:50%;
+ background:radial-gradient(circle at 30% 20%,#f4d47f,#9c662e 75%,#47321d)!important;
+ box-shadow:0 1px 0 #ffe5ac,0 2px 4px #04080ab5,inset 0 -2px 2px #533417;
+}
+#hud-top-bar .hud-res-icon .ico{font-size:15px!important;line-height:1}
+#hud-top-bar .hud-res-val{
+ color:var(--rk-cream)!important;
+ text-shadow:0 2px 2px #000!important;
+ font-weight:900!important;font-size:clamp(11px,1.05vw,17px)!important;
+ font-variant-numeric:tabular-nums;
+ white-space:nowrap;
+}
+#hud-top-bar .hud-res-rate{
+ color:#b5e7a0!important;font-size:9px!important;
+}
+#hud-top-bar .hud-res-rate.neg{color:#ff9792!important}
+#hud-top-bar .hud-stab-bar{
+ border:1px solid #a88b55!important;background:#101b1b!important;
+}
+#score-panel{
+ background:linear-gradient(180deg,#31261b,#131f22)!important;
+ padding:4px 8px!important;
+}
+#score-label{color:#f2c76f!important;text-shadow:0 1px 2px #000}
+#score-value{color:#fff2c7!important;text-shadow:0 2px 2px #000}
+.hud-sub-panel{
+ padding:8px 10px!important;max-width:300px;
+}
+
+/* All real research/faction/actions retain their original listeners. */
+:is(.research-btn,.faction-card,.construction-item){
+ background:linear-gradient(170deg,#2a3c36,#1b292c)!important;
+ border:1px solid #91794fe0!important;
+ border-radius:8px!important;
+ box-shadow:inset 0 1px 0 #f9e4b82b,0 2px 4px #050c1255!important;
+ color:var(--rk-cream)!important;
+}
+.research-btn{padding:6px 7px!important;gap:7px!important}
+.research-btn .research-btn-name,.fp-name{color:#fff4d9!important;font-weight:800!important}
+.research-btn.done{opacity:.7!important;background:linear-gradient(#284532,#1c3228)!important}
+.research-btn.disabled:not(.done){opacity:.54!important}
+.research-btn.active{
+ border-color:#ffe0a0!important;
+ box-shadow:0 0 0 1px #e0b76e,0 0 10px #f1d08366,inset 0 1px 0 #ffedb355!important;
+}
+.research-active{
+ background:linear-gradient(100deg,#3a3429,#1f3b32)!important;
+ border:1px solid #dcbd73!important;color:#f7e6c4!important;
+}
+#rp-active-name{font-weight:900!important;color:#fbe6be!important}
+.hud-progress,.slg-tutorial-progress{
+ height:8px!important;border-radius:6px!important;
+ background:#111a1d!important;
+ border:1px solid #926d3f!important;box-shadow:inset 0 1px 3px #030707!important;
+}
+.hud-progress-fill,#slg-tutorial-bar{
+ background:linear-gradient(90deg,#5caa62,#d0cf79,#ffe68d)!important;
+ box-shadow:0 0 8px #f7d57f77;
+}
+.faction-card{padding:6px 7px!important}
+.faction-card.rel-hostile{border-left:4px solid #cd6359!important}
+.faction-card.rel-neutral{border-left:4px solid #e8bc67!important}
+.faction-card.rel-friendly{border-left:4px solid #6cae77!important}
+.rel-friendly{color:#89df97!important}.rel-hostile{color:#ff9388!important}
+.rel-neutral{color:#f3d17b!important}
+.fp-tribute{color:#9ce6a4!important}
+:is(.research-btn-icon,.fp-icon){
+ display:grid;place-items:center;min-width:29px;height:29px;
+ border:1px solid #bb975caa;border-radius:7px;
+ background:linear-gradient(150deg,#40564a,#172526)!important;
+}
+
+/* Wood-and-brass buttons and explicit interaction feedback. */
+:is(.ui-btn,.hud-upgrade-btn,.hud-toggle-btn,.hud-panel-toggle,.tile-shop-tab,
+    .slg-tutorial-fold,#slg-tutorial-go,#rani-nav button,
+    .rani-world-detail button,.rani-world-head button,#rani-reset-ui){
+ color:#fff0cb!important;
+ background:linear-gradient(180deg,#795735,#573c2a 45%,#2a241f)!important;
+ border:1px solid #d2a25f!important;
+ border-radius:8px!important;
+ box-shadow:inset 0 1px 0 #ffecb65a,0 2px 4px #060c12b9!important;
+ font-weight:800!important;text-shadow:0 1px 2px #150e0b;
+ transition:filter .13s,box-shadow .13s,transform .12s;
+}
+:is(.ui-btn,.hud-upgrade-btn,.hud-toggle-btn,.hud-panel-toggle,.tile-shop-tab,
+    .slg-tutorial-fold,#slg-tutorial-go,#rani-nav button,
+    #rani-reset-ui):hover:not(:disabled){filter:brightness(1.17)}
+:is(.ui-btn,.hud-upgrade-btn,.hud-toggle-btn,.tile-shop-tab,
+    .slg-tutorial-fold,#slg-tutorial-go,#rani-nav button):active:not(:disabled){
+ transform:translateY(1px) scale(.98)!important;filter:brightness(1.25);
+ box-shadow:inset 0 2px 4px #12100dab!important;
+}
+:is(button,a,select,.rani-move-handle):focus-visible{
+ outline:2px solid #ffe39b!important;outline-offset:2px;
+}
+button:disabled{cursor:not-allowed!important}
+.tile-shop-tab.active,.hud-toggle-btn.on{
+ background:linear-gradient(180deg,#c89e4a,#7d542c)!important;
+ color:#fff7d9!important;border-color:#ffdf86!important;
+}
+#next-tile-panel{position:relative;padding:9px!important;}
+#next-tile-panel .tile-chip{
+ background:linear-gradient(180deg,#5a4935,#332b26)!important;
+ color:#ffe9b8!important;border:1px solid #aa824e!important;
+ border-radius:8px!important;
+}
+#next-tile-panel .tile-chip.selected{
+ border:2px solid #ffe38d!important;
+ box-shadow:0 0 0 1px #765227,0 0 12px #eac57689!important;
+}
+#next-tile-panel .tile-chip-name{color:#ffedc9!important}
+#tile-preview{box-shadow:inset 0 0 0 2px #71502e,0 2px 8px #0a1719b0}
+#tile-name{margin:4px auto 2px!important}
+#hint-text{font-size:10px!important;line-height:1.35!important}
+
+/* Mission box and world management visually belong to one royal interface. */
+#slg-tutorial .slg-tutorial-head{background:linear-gradient(90deg,#72502a40,transparent)}
+#slg-tutorial .slg-tutorial-mark{filter:drop-shadow(0 1px 3px #070e10)}
+#slg-tutorial-title{color:#ffe49f!important;text-shadow:0 1px 1px #000}
+#slg-tutorial-text{color:#dbdac8!important}
+#rani-nav .rani-nav-line{color:#f5e7c9!important}
+#rani-nav-town{color:#ffe39c!important}
+#rani-nav small{color:#d7c5a2!important}
+#rani-field-labels button,.rani-world-detail{
+ border-color:#c69a57!important;color:#ffebc4!important;
+ background:linear-gradient(170deg,#293d36e9,#151e25e9)!important;
+ box-shadow:var(--rk-shadow)!important;
+}
+
+/* Keep the original quick-build hex anchored to the selected 3D building. */
+#radial-menu .radial-center,
+#radial-menu .radial-btn{
+ border-color:#efc67d!important;
+ color:#fff0c7!important;
+ background:linear-gradient(155deg,#664727,#253832 63%,#15252c)!important;
+ box-shadow:inset 0 1px 0 #ffe8a588,0 3px 10px #060c12b3!important;
+}
+#radial-menu .radial-title{color:#ffdf9b!important}
+#radial-menu .radial-progress{color:#d7e1cd!important}
+#radial-menu .radial-label{color:#fff2d7!important;text-shadow:0 1px 2px #070e10}
+#radial-menu .radial-btn.disabled{opacity:.48!important}
+#radial-menu .radial-page-next{
+ background:linear-gradient(150deg,#c39a4f,#79532e 67%,#453324)!important;
+}
+.rani-move-handle{
+ color:#ffe5a4!important;
+ background:linear-gradient(#946835,#463321)!important;
+ border:1px solid #e3c07d!important;
+ box-shadow:0 2px 5px #02080da8,inset 0 1px 0 #ffe0a37a!important;
+}
+
+/* Desktop: minimize covered map, keep moveable v1.7 positions intact. */
+@media(min-width:701px){
+ #hud-top:not(.rani-positioned){top:59px!important;left:12px!important}
+ #gameplay-hud:not(.rani-positioned){top:4px!important;left:50%!important;right:auto!important;transform:translateX(-50%)!important}
+ #hud-top-bar.hud-bar{white-space:nowrap}
+ #gameplay-hud #hud-kingdom-panel,
+ #gameplay-hud #hud-territory-panel{display:none!important}
+ body.royal-kingdom-open #gameplay-hud #hud-kingdom-panel,
+ body.royal-kingdom-open #gameplay-hud #hud-territory-panel{
+   display:block!important;width:min(290px,35vw);
+ }
+ #research-panel:not(.rani-positioned){top:112px!important;left:12px!important}
+ #faction-panel:not(.rani-positioned){top:112px!important;right:12px!important}
+ #hud-right:not(.rani-positioned){top:367px!important;right:12px!important}
+ #slg-tutorial:not(.rani-positioned){top:490px!important;left:12px!important}
+ #hud-bottom:not(.rani-positioned){bottom:18px!important;left:12px!important}
+ #rani-nav:not(.rani-positioned){bottom:100px!important;right:12px!important}
+ /* Existing source panels can be hidden by real functional launcher buttons. */
+ body.royal-hide-research #research-panel{display:none!important}
+ body.royal-hide-factions #faction-panel{display:none!important}
+ body.royal-hide-tiles #hud-right{display:none!important}
+ body.royal-hide-missions #slg-tutorial{display:none!important}
+ body:not([data-game-mode="world"]) #rani-royal-launcher{display:flex}
+ body[data-game-mode="world"] #rani-royal-launcher{display:flex}
+}
+
+/* Screen-edge dock: actual navigation, not decorative/fake features. */
+#rani-royal-launcher{
+ display:none;position:fixed;z-index:68;
+ left:50%;bottom:11px;transform:translateX(-50%);
+ max-width:min(760px,calc(100vw - 340px));
+ padding:7px 10px;gap:6px;
+ border:3px solid #c49a5f;border-radius:15px;
+ box-shadow:0 0 0 2px #191513,inset 0 1px 0 #ffda8d9a,0 10px 26px #000b;
+ background:linear-gradient(180deg,#483523,#1d2928 23%,#111c22 82%,#59402a);
+}
+#rani-royal-launcher button{
+ min-width:64px;min-height:57px;flex:1 1 0;
+ display:flex;flex-direction:column;align-items:center;justify-content:center;
+ gap:1px;padding:4px 7px;
+ color:#ffe8ad;
+ background:linear-gradient(180deg,#72502f,#25362e 33%,#162126);
+ border:2px solid #956f3e;border-radius:10px;
+ box-shadow:inset 0 1px 0 #f7c98377,0 2px 4px #020b0db0;
+ text-shadow:0 1px 2px #000;
+ font-weight:900;cursor:pointer;transition:filter .12s,transform .12s,box-shadow .12s;
+}
+#rani-royal-launcher button:hover{filter:brightness(1.16);transform:translateY(-2px)}
+#rani-royal-launcher button:active{transform:translateY(1px)}
+#rani-royal-launcher button[aria-pressed="true"]{
+ border-color:#ffe98b;
+ background:linear-gradient(180deg,#a47b3c,#31523c 45%,#1f392c);
+ box-shadow:inset 0 0 0 1px #e8c270bb,0 0 10px #d8b96576;
+}
+#rani-royal-launcher .royal-icon{font-size:23px;line-height:1.2;filter:drop-shadow(0 2px 1px #121313)}
+#rani-royal-launcher .royal-text{font-size:11px;white-space:nowrap}
+#rani-royal-launcher button:disabled{opacity:.45}
+
+/* Small laptop: controls must not overlay game instead of simply shrinking text. */
+@media(min-width:701px) and (max-width:1170px){
+ #rani-royal-launcher{max-width:calc(100vw - 320px);gap:3px;padding:5px}
+ #rani-royal-launcher button{min-width:0;padding:3px 4px}
+ #rani-royal-launcher .royal-icon{font-size:18px}
+ #rani-royal-launcher .royal-text{font-size:9px}
+ #hud-bottom:not(.rani-positioned){bottom:79px!important}
+}
+
+/* Same color and visual language on mobile, rearranged for actual finger taps. */
+@media(max-width:700px){
+ #hud-top-bar.hud-bar{
+   padding:3px 2px!important;gap:2px!important;
+   border-radius:8px!important;width:100%!important;
+ }
+ #hud-top-bar .hud-res-cell{
+   padding:3px 1px!important;gap:1px!important;
+   flex-direction:column!important;min-width:0!important;
+ }
+ #hud-top-bar .hud-res-icon{min-width:15px;height:15px;border-radius:50%}
+ #hud-top-bar .hud-res-icon .ico{font-size:11px!important}
+ #hud-top-bar .hud-res-val{font-size:10px!important}
+ #hud-top:not(.rani-positioned){top:calc(46px + env(safe-area-inset-top))!important}
+ #score-panel{padding:2px 7px!important;border-radius:7px!important}
+ #score-value{font-size:12px!important}
+ #research-panel,#faction-panel,#hud-right{
+   color:var(--rk-cream)!important;
+   max-height:calc(100dvh - 193px)!important;
+ }
+ #slg-mobile-dock{
+   background:linear-gradient(180deg,#65492b,#28362f 12%,#0e1b20 94%)!important;
+   border:2px solid #cba161!important;border-bottom:0!important;
+   border-radius:11px 11px 0 0!important;
+   box-shadow:inset 0 2px 0 #ffe4a27e,0 -5px 18px #050a10b0!important;
+   padding:4px 5px calc(4px + env(safe-area-inset-bottom))!important;
+   gap:3px!important;
+ }
+ #slg-mobile-dock button{
+   color:#f5ddab!important;
+   border:1px solid #b28b53!important;
+   border-radius:8px!important;
+   background:linear-gradient(#64482e,#24352d 37%,#17252b)!important;
+   box-shadow:inset 0 1px 0 #eec78c44!important;
+   min-height:46px!important;
+ }
+ #slg-mobile-dock button.active{
+   color:#ffeaa9!important;
+   border-color:#ffe299!important;
+   background:linear-gradient(#a0783c,#335841 57%,#25442f)!important;
+   box-shadow:inset 0 0 0 1px #eec47783,0 0 9px #ecda8440!important;
+ }
+ #slg-mobile-dock button>span{font-size:18px!important;line-height:1.1}
+ #slg-mobile-dock button>small{font-size:10px!important}
+ #rani-royal-launcher{display:none!important}
+ #rani-reset-ui{border-color:#cfac69!important}
+}
+@media(max-width:360px){
+ #slg-mobile-dock{gap:2px!important;padding-left:3px!important;padding-right:3px!important}
+ #slg-mobile-dock button{min-width:0!important;padding:3px 2px!important}
+ #slg-mobile-dock button>span{font-size:16px!important}
+ #slg-mobile-dock button>small{font-size:9px!important}
+ #hud-top-bar .hud-res-val{font-size:9px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #rani-royal-launcher button,:is(.research-btn,.faction-card,.tile-chip){
+   transition:none!important;animation:none!important;
+ }
+}
