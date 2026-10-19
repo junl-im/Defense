@@ -21,7 +21,8 @@ assert.match(main,/installRaniV4RoyalHud\(game\);\s*installRaniV4WorldArt\(game\
 assert.ok(html.indexOf('rani-shell-v33.css')<html.indexOf('rani-v4-art-direction.css'));
 assert.match(world,/RANI_PREPARED_ASSETS\.market/);
 assert.match(world,/RANI_PREPARED_ASSETS\.tradeShip/);
-assert.match(world,/RANI_PREPARED_ASSETS\.houseA/);
+assert.match(hud,/RANI_PREPARED_ASSETS\.houseA/);
+assert.doesNotMatch(world,/bakery:RANI_PREPARED_ASSETS\.houseA|library:RANI_PREPARED_ASSETS\.houseA|stable:RANI_PREPARED_ASSETS\.houseA/);
 assert.match(world,/rec\.done\|\|!rec\.visual\?\.done/);
 assert.match(world,/group\.getWorldPosition\(pos\)/);
 assert.match(world,/\.project\(camera\)/);
