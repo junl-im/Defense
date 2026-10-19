@@ -4,6 +4,7 @@
 import { Game } from './core/Game.js';
 import { initTooltip } from './ui/Tooltip.js';
 import { installHudLayout } from './ui/HudLayout.js';
+import { installRoyalLauncher } from './ui/RoyalLauncher.js';
 
 function boot() {
   const splashStartedAt=performance.now();
@@ -55,7 +56,10 @@ function boot() {
     game.start();
     // MobileDock installs on DOMContentLoaded after this bootstrap. Defer
     // panel grip registration one tick so both desktop and mobile are covered.
-    setTimeout(installHudLayout,0);
+    setTimeout(()=>{
+      installHudLayout();
+      installRoyalLauncher(game);
+    },0);
     // A high-detail logo needs a brief, meaningful on-screen debut. Keep the
     // game running immediately; only delay removal of the lightweight overlay.
     const logoVisibleForMs=900;
