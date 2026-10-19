@@ -25,6 +25,7 @@ import { NativeVillageProgress } from '../systems/NativeVillageProgress.js';
 import { NativeVillageUI } from '../ui/NativeVillageUI.js';
 import { UpgradedTownHallArt } from '../rendering/UpgradedTownHallArt.js';
 import { VillageBuildingArt } from '../rendering/VillageBuildingArt.js';
+import { RoyalBuiltNeighborhoodSystem } from '../rendering/RoyalBuiltNeighborhoodSystem.js';
 import { QuickBuildMenu } from '../ui/QuickBuildMenu.js';
 import { RaniFieldScene } from '../rendering/RaniFieldScene.js';
 import { Rng } from './Rng.js';
@@ -91,6 +92,7 @@ export class Game {
     this.fieldScene = new RaniFieldScene(this);
     this.townHallArt = new UpgradedTownHallArt(this);
     this.villageBuildingArt = new VillageBuildingArt(this);
+    this.royalBuiltNeighborhood = new RoyalBuiltNeighborhoodSystem(this);
   }
 
   // ---------------- renderer / scene ----------------
