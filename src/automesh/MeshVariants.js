@@ -23,6 +23,7 @@ import { MATS } from '../rendering/Materials.js';
 import { edgeAngle, HEX_SIZE } from '../grid/Hex.js';
 import { TILE_H } from '../tiles/TileMeshBuilder.js';
 import { makeRoyalRoadPaving } from '../rendering/RoyalInfrastructureArt.js';
+import { makeRoyalConnectedRoadside, makeRoyalConnectedVillageGate } from '../rendering/RoyalStreetConnectionArt.js';
 
 const APOTHEM = HEX_SIZE * Math.sqrt(3) / 2;
 const TOP_Y = TILE_H;
@@ -144,6 +145,8 @@ function roadBuilder(cell, variant) {
   // Read-only overlay, one merged mesh even at a six-way junction.
   const paving=makeRoyalRoadPaving(own,variant.mask);
   if(paving)g.add(paving);
+  const roadside=makeRoyalConnectedRoadside(cell,variant.mask);
+  if(roadside)g.add(roadside);
   return g;
 }
 
@@ -289,6 +292,8 @@ function villageBuilder(cell, variant) {
   }
   // village plaza where paths converge
   g.add(disc(0.2, TOP_Y + 0.018, MATS.dirt, 8, 0.026));
+  const gate=makeRoyalConnectedVillageGate(cell,variant.connections);
+  if(gate)g.add(gate);
   return g;
 }
 
