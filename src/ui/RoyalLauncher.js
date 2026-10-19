@@ -1,3 +1,4 @@
+import { iconHtml } from './GameIcons.js';
 // v1.8 approved visual direction: a REAL desktop game launcher, not
 // decorative links. All commands delegate to existing Three.js game systems.
 const ACTIONS=[
