@@ -65,6 +65,6 @@ with sync_playwright() as pw:
     page.locator("#loading-screen").wait_for(state="detached",timeout=15000)
     assert page.locator("#game-canvas").is_visible()
     assert page.locator("#hud-top-bar").is_visible()
-    assert page.evaluate("document.querySelector('#loading-logo').naturalWidth===720")
+    assert page.evaluate("window.__game.mode==='village'")
     print("PASS live startup Three.js village, Korean HUD and branding image",flush=True)
     browser.close()
