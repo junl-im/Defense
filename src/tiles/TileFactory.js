@@ -9,6 +9,7 @@ import { buildTileMesh, hexFlatGeometry, TILE_H } from './TileMeshBuilder.js';
 import { axialToWorld } from '../grid/Hex.js';
 import { Rng, hashCell } from '../core/Rng.js';
 import { MATS } from '../rendering/Materials.js';
+import { makeRoyalTileDressing } from '../rendering/RoyalWorldArt.js';
 import { tweens, Easing } from '../core/Tween.js';
 
 export class TileFactory {
@@ -53,6 +54,10 @@ export class TileFactory {
   placeCell(cell, { animate = true } = {}) {
     const rng = new Rng(cell.seed);
     const group = buildTileMesh(cell, rng);
+    // A single vertex-colored draw call per village/field adds hand-detailed
+    // paving/wheat without changing original tile geometry or picking data.
+    const royal = makeRoyalTileDressing(cell);
+    if (royal) group.add(royal);
     const { x, z } = axialToWorld(cell.q, cell.r);
     group.position.set(x, 0, z);
     cell.group = group;
@@ -109,6 +114,8 @@ export class TileFactory {
     const cell = this.makeCell(0, 0, type, variant, rotation, 12345);
     const rng = new Rng(12345);
     const g = buildTileMesh(cell, rng);
+    const royal = makeRoyalTileDressing(cell);
+    if (royal) g.add(royal);
     // make every mesh translucent
     g.traverse((o) => {
       if (o.isMesh) {
