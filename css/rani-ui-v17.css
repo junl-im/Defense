@@ -41,6 +41,9 @@ img{ -webkit-user-drag:none;user-drag:none; }
 /* Clear predictable PC corners: research left-top, factions right-top,
    expansion below factions, without the former scattered floating stacks. */
 @media(min-width:701px){
+  #next-tile-panel{width:216px!important;max-width:calc(100vw - 20px)}
+  #tile-shop.tile-shop{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .tile-chip .tile-chip-swatch.rani-terrain-art{width:51px!important;height:51px!important}
   #research-panel:not(.rani-positioned){
     left:10px!important;right:auto!important;
     top:100px!important;bottom:auto!important;
