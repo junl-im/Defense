@@ -8,6 +8,7 @@
 // ============================================================
 import * as THREE from 'three';
 import { MATS, PALETTE } from '../rendering/Materials.js';
+import { makeRoyalHarborOrnaments } from '../rendering/RoyalInfrastructureArt.js';
 import { part, merge } from '../assets/GeometryUtils.js';
 
 function vc(parts) {
@@ -141,6 +142,7 @@ export function makeFishingPier(rng) {
   const lamp = lanternPost(-0.18, 0.35, 0.6);
   lamp.position.y = 0.11;
   p4.add(lamp);
+  p4.add(makeRoyalHarborOrnaments('pier'));
   return wrap([p1, p2, p3, p4]);
 }
 
@@ -438,6 +440,7 @@ export function makePort(rng) {
   const lamp = lanternPost(-0.32, 0.16, 0.7);
   lamp.position.y = 0.1;
   p4.add(lamp);
+  p4.add(makeRoyalHarborOrnaments('port'));
   return wrap([p1, p2, p3, p4]);
 }
 
