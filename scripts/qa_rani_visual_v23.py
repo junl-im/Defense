@@ -39,8 +39,9 @@ with sync_playwright() as pw:
       const pc=icon(desktop);
       return {paths,
          button:{bg:style.backgroundImage,size:style.backgroundSize,
-           w:button.getBoundingClientRect().width,
-           h:button.getBoundingClientRect().height},
+           // The tutorial starts collapsed on mobile, thus box rect=0.
+           // Read declared CSS width/height to validate its 2:1 image aspect.
+           w:parseFloat(style.width),h:parseFloat(style.height)},
          mobile:{has:!!mobile,complete:!!mobile?.complete,width:mobile?.naturalWidth,
              path:mobile?.getAttribute('src')},
          pc:{has:!!pc,complete:!!pc?.complete,width:pc?.naturalWidth,
