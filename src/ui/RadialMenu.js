@@ -55,6 +55,13 @@ export class RadialMenu {
     document.body.appendChild(this.root);
     this._blockedActivation=null;
     this._bindIdleActivity();
+    // A *new* deliberate press on the actual menu is always legitimate.
+    // Without this reset, a fast second tap on "건설" can share pointerId
+    // with the opening gesture and be mistakenly discarded for 450ms.
+    // The browser's ghost click has no pointerdown on the newly added menu.
+    this.root.addEventListener('pointerdown',()=>{
+      this._blockedActivation=null;
+    },true);
     // Touch browsers dispatch a synthetic click AFTER pointerup. If pointerup
     // opens the ring under the finger, that click is re-targeted to the newly
     // mounted center 'close' button: the ring vanishes on every short tap.
