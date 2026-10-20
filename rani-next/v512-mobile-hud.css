@@ -37,8 +37,13 @@ html.phone .sheet .sheet-body{padding-bottom:calc(60px + env(safe-area-inset-bot
 html.phone .sheet #buildmenu .items{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
 html.phone .sheet #buildmenu button{min-width:0;border-radius:9px;font-size:11px}
 html.phone #rk-hex-menu:not([hidden]){
- z-index:60!important;bottom:calc(66px + env(safe-area-inset-bottom))!important;
- top:auto!important;max-width:calc(100vw - 16px)!important;
+ z-index:60!important;position:fixed;
+ left:var(--rk-anchor-left,50%)!important;
+ top:var(--rk-anchor-top,50%)!important;
+ bottom:auto!important;
+ transform:translate(-50%,-50%)!important;
+ width:min(298px,calc(100vw - 12px))!important;
+ max-width:calc(100vw - 12px)!important;
 }
 html.phone #rk-hex-menu .rk-hex-buttons{
  max-width:calc(100vw - 24px)!important;
@@ -68,10 +73,10 @@ html.phone #rk-harbor-toggle{float:none;min-height:31px}
 html.phone #rk-harbor-panel #rk-harbor-body{max-height:51dvh;overflow-y:auto}
 html.phone:has(#rk-first-steps) #rk-harbor-panel{top:calc(236px + env(safe-area-inset-top))}
 html.phone:has(#rk-hex-menu:not([hidden])) #rk-harbor-panel{visibility:hidden;pointer-events:none}
-@media(max-width:700px) and (max-height:540px){
+@media(max-height:540px){
  html.phone #rk-first-steps{top:42px;max-height:28dvh;overflow:auto}
  html.phone #rk-phone-zoom{top:26%;gap:4px}
  html.phone #rk-phone-zoom button{height:32px;width:34px;font-size:19px}
- html.phone #rk-hex-menu:not([hidden]){bottom:calc(56px + env(safe-area-inset-bottom))!important}
+ html.phone #rk-hex-menu:not([hidden]){max-height:calc(100dvh - 94px)!important;overflow-y:auto}
  html.phone #rk-hex-menu .rk-hex-option{height:43px!important}
 }
