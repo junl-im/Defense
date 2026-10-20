@@ -69,6 +69,24 @@ await evaluate("document.querySelector('#rani-map-picker .map').click()");
 assert.equal(await evaluate("document.querySelector('#rani-start-hero strong').textContent"),'푸른 해안');
 await evaluate("[...document.querySelectorAll('#menu button')].find(b=>b.textContent.includes('영주 선택')).click()");
 await wait("[...document.querySelectorAll('button')].some(b=>b.textContent.includes('게임 시작'))");
+
+const lordStyle=await evaluate(`(()=>{
+ const root=document.getElementById('lords');
+ const canvas=root?.querySelector('canvas');
+ return {realMapCanvas:!!canvas&&canvas.width>350,
+   hero:getComputedStyle(root,'::before').backgroundImage.includes('rk_logo.webp'),
+   royalBegin:getComputedStyle(root.querySelector('.go')).backgroundImage.includes('rk_royal_button.webp'),
+   rows:root.querySelectorAll('.seat').length,
+   mapClick:typeof canvas?.onclick==='function'};
+})()`);
+assert.ok(lordStyle.realMapCanvas&&lordStyle.hero&&lordStyle.royalBegin
+  &&lordStyle.rows>0&&lordStyle.mapClick,lordStyle);
+console.log('PASS actual map-position screen: WebP branded layout and interactive roster',lordStyle);
+if(shot){
+ const screenshot=await c.send('Page.captureScreenshot',{format:'png'},s);
+ fs.writeFileSync(shot.replace(/\.png$/,'-choose-start.png'),Buffer.from(screenshot.data,'base64'));
+}
+
 await evaluate("[...document.querySelectorAll('button')].find(b=>b.textContent.includes('게임 시작')).click()");
 await wait("!!window.__game&&!!document.getElementById('rani-controls-toggle')",120);
 await wait("document.getElementById('ui')?.dataset.raniAssets==='1'",20);
