@@ -21,6 +21,7 @@ await ev("document.querySelector('#lords .go').click()");
 await until("!!window.__game&&!!document.getElementById('rk-guide-toggle')");
 if(!await ev("!!document.querySelector('#rk-first-steps')"))await ev("document.getElementById('rk-guide-toggle').click()");
 await until("!!document.querySelector('#rk-first-steps .rk-step-select')");
+await until("document.querySelector('#rk-first-steps .rk-step-count')?.textContent.includes(' / 4')");
 const guide=await ev("(()=>{const root=document.getElementById('rk-first-steps');return {count:root.querySelector('.rk-step-count')?.textContent,goal:root.querySelector('.rk-step-progress')?.textContent,open:root.querySelector('.rk-step-open')?.textContent,choose:root.querySelector('.rk-step-select')?.textContent}})()");
 assert.ok(/\/ 4/.test(guide.count)&&guide.goal&&guide.choose,JSON.stringify(guide));
 await ev("document.querySelector('#rk-first-steps .rk-step-select').click()");
