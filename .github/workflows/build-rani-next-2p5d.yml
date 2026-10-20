@@ -1,0 +1,117 @@
+name: Build Rani Next 2.5D Playable World
+on:
+  push:
+    branches: [spike/rani-complete-isometric-base]
+    paths:
+      - 'rani-next/**'
+      - 'assets/rani/**'
+      - 'assets/branding/**'
+      - '.gitmodules'
+      - 'engines/fiefdom'
+      - '.github/workflows/build-rani-next-2p5d.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build-next:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify pinned upstream, protected original artwork and license
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C engines/fiefdom rev-parse HEAD)" = "8bb66ceeb5a8ec1f77ec899130090061c25078b3"
+          test -f engines/fiefdom/LICENSE
+          test -f engines/fiefdom/docs/THIRD-PARTY.md
+          test -f engines/fiefdom/public/assets/sprites/0ad/LICENSE.txt
+          test -f assets/rani/asset-integrity-lock-v25.json
+          test -f assets/branding/rani-kingdom-logo.webp
+      - name: Install original dependencies and validate gameplay
+        working-directory: engines/fiefdom
+        run: |
+          npm ci --no-audit --no-fund
+          npm test
+      - name: Convert actual world source and copy independent WebP assets
+        run: |
+          node rani-next/prepare.mjs engines/fiefdom
+          node rani-next/check.mjs engines/fiefdom
+      - name: Recolour REAL castle sprites, four sides each (not HUD mockups)
+        run: |
+          python -m pip install Pillow==11.3.0
+          python rani-next/recolor_world.py engines/fiefdom/public/assets/sprites
+      - name: Compile actual playable 2.5D kingdom
+        working-directory: engines/fiefdom
+        run: npm run build
+      - name: Publish original copyright and complete reproducible source instructions
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s engines/fiefdom/dist/index.html
+          test -s engines/fiefdom/dist/rani/rk_logo.webp
+          mkdir -p engines/fiefdom/dist/licenses
+          cp engines/fiefdom/LICENSE engines/fiefdom/dist/licenses/FIEFDOM-AGPL-3.0.txt
+          cp engines/fiefdom/docs/THIRD-PARTY.md engines/fiefdom/dist/licenses/THIRD-PARTY.md
+          cp engines/fiefdom/public/assets/sprites/0ad/LICENSE.txt engines/fiefdom/dist/licenses/0AD-CC-BY-SA-3.0.txt
+          cat > engines/fiefdom/dist/SOURCE-AND-ATTRIBUTION.txt <<'EOF'
+          Rani Kingdom Next / Preview v0.1 — NOT the existing deployed Kingdom Tiles game.
+          Underlying real playable engine: Fiefdom, halvar20000/fiefdom.
+          Upstream source ref 8bb66ceeb5a8ec1f77ec899130090061c25078b3.
+          Original code and game sprites AGPL-3.0-only.
+          Some 0 A.D.-derived images CC BY-SA 3.0: see /licenses/ files.
+          Original approved Rani WebP art is separately sourced in the developer's
+          Defense project, and not sublicensed as upstream Fiefdom artwork.
+          Complete corresponding source: https://github.com/junl-im/Defense/tree/spike/rani-complete-isometric-base
+          Conversion scripts: rani-next/prepare.mjs, recolor_world.py, skin.css.
+          Engine source is pinned at engines/fiefdom (.gitmodules).
+          Preview defaults to genuine 2.5D, 3D via ?r3d=1.
+          The coast is an existing seeded Fiefdom map; no ships/harbor yet.
+          Existing published /Defense/ main URL, asset SHA lock, saved games
+          and project settings are UNCHANGED by this preview build.
+          EOF
+          du -sh engines/fiefdom/dist
+      - name: Browser smoke (real menu, buildings, units and 600s gameplay)
+        timeout-minutes: 7
+        shell: bash
+        working-directory: engines/fiefdom
+        run: |
+          set -euo pipefail
+          CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          test -n "$CHROME"
+          mkdir -p qa
+          PORT=8931 STATIC_DIR="$PWD/dist" DATA_DIR=/tmp/rani-next-game node docker/server.mjs >/tmp/rani-next-server.log 2>&1 &
+          "$CHROME" --headless=new --remote-debugging-port=9341 --no-sandbox \
+            --disable-dev-shm-usage --use-gl=swiftshader --enable-unsafe-swiftshader \
+            --user-data-dir=/tmp/rani-next-browser >/tmp/rani-next-chrome.log 2>&1 &
+          for i in {1..45}; do
+            if curl -fsS http://127.0.0.1:8931/ >/dev/null && \
+               curl -fsS http://127.0.0.1:9341/json/version >/dev/null; then break; fi
+            sleep 1
+          done
+          node tools/e2e/smoke.mjs http://127.0.0.1:8931/ 9341 qa/rani-next-coast-and-royal-fortress.png
+          test -s qa/rani-next-coast-and-royal-fortress.png
+      - name: Keep real-world screenshot and browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rani-next-world-screenshot
+          path: engines/fiefdom/qa/
+          retention-days: 14
+          if-no-files-found: warn
+      - name: Deliver complete playable build ZIP separately from main site
+        uses: actions/upload-artifact@v4
+        with:
+          name: rani-next-2p5d-playable-build
+          path: engines/fiefdom/dist/
+          retention-days: 14
+          if-no-files-found: error
