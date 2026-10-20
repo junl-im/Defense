@@ -46,6 +46,7 @@ jobs:
         run: |
           node rani-next/prepare.mjs engines/fiefdom
           node rani-next/koreanize.mjs engines/fiefdom
+          node rani-next/no-svg-chart.mjs engines/fiefdom
           node rani-next/check.mjs engines/fiefdom
           node rani-next/verify-art.mjs engines/fiefdom
       - name: Recolour REAL castle sprites, four sides each (not HUD mockups)
