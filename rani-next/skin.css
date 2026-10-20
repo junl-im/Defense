@@ -206,3 +206,111 @@ padding:10px 3px!important;scrollbar-color:#b69462 #102a40;}
 
 #menu .go{letter-spacing:0!important;font-size:14px!important}
 #rani-build-toggle{letter-spacing:0!important}
+
+
+/* v5.1 — genuine world-first presentation.
+ * Desktop side sheets must not obscure the castle or crowd the ground.
+ * Keep every native live control; no screenshot overlay and no vector art.
+ */
+@media (min-width: 901px) {
+  html:not(.phone) #rightcol {
+    right: 9px!important;
+    top: 9px!important;
+    bottom: 62px!important;
+    gap: 6px!important;
+  }
+  html:not(.phone) #rightpanel {
+    width: 246px!important;
+    max-height: min(44vh, 404px)!important;
+    min-height: 112px!important;
+    flex: 0 1 auto!important;
+    padding: 5px 7px!important;
+  }
+  html:not(.phone) #rightpanel.wide {
+    width: clamp(320px, 24vw, 350px)!important;
+  }
+  html:not(.phone) #rightpanel .view {
+    overflow-x:auto!important;scrollbar-gutter:stable;
+  }
+  html:not(.phone) #rightpanel .head {
+    margin-bottom:3px!important;
+  }
+  html:not(.phone) #rani-approved-royal-panel {
+    width: 112px!important;
+    height: 48px!important;
+    aspect-ratio: auto!important;
+    margin: 0 auto 3px!important;
+    object-fit:contain!important;
+  }
+  html:not(.phone) #rani-market-art {
+    min-height: 39px!important;
+    margin: 2px 0 5px!important;
+  }
+  html:not(.phone) #rani-market-art img {
+    width: 36px!important;height:36px!important;flex-basis:36px!important;
+  }
+  html:not(.phone) #rani-market-art span {font-size:10px!important}
+  html:not(.phone) #minimap {padding:5px!important}
+  html:not(.phone) #minimap canvas {
+    width:min(100%,17vh,155px)!important;
+    max-width:155px!important;
+    border-radius:9px!important;
+    border:1.5px solid #d8ae67!important;
+    image-rendering:auto!important;
+  }
+  html:not(.phone) #controls {
+    width:210px!important;
+    max-height: min(32vh,286px)!important;
+    min-height: 88px!important;
+    padding: 6px 8px!important;
+  }
+  html:not(.phone) #leftcol {left:9px!important;top:9px!important}
+  html:not(.phone) #stats {
+    min-width:174px!important;
+    padding:6px 8px!important;
+    font-size:11px!important;
+  }
+  html:not(.phone) #topbar {
+    top:9px!important;
+    max-height:43px!important;
+    font-size:11px!important;
+  }
+}
+@media (min-width: 701px) and (max-width: 900px) {
+  html:not(.phone) #rightpanel {
+    width: min(305px,38vw)!important;
+    max-height:46vh!important;
+  }
+  html:not(.phone) #rightpanel.wide {width:min(320px,39vw)!important}
+  html:not(.phone) #minimap canvas {width:min(100%,15vh)!important}
+}
+@media (max-width:700px) {
+  #rani-market-art{min-height:42px!important}
+  #rani-approved-royal-panel {max-height:56px!important}
+}
+/* Brown/grey native sidebars get the same coherent, lightly backlit
+   sapphire/brass construction as individually authored raster buttons. */
+#ui .panel{
+  background:linear-gradient(160deg,rgba(23,57,80,.91),rgba(8,26,43,.89))!important;
+  border-color:#b99458!important;
+  box-shadow:inset 0 1px rgba(250,216,153,.30),
+             inset 0 -1px rgba(0,0,0,.3),
+             0 5px 16px rgba(0,7,16,.45)!important;
+}
+#rightpanel select,
+#rightpanel button,
+#controls button,
+#buildbar button{
+  transition: background .13s ease, border-color .13s ease,transform .13s ease;
+}
+#rightpanel button:active,#controls button:active,#buildbar button:active {
+  transform:scale(.97);
+}
+#rightpanel button:focus-visible,#controls button:focus-visible,
+#buildbar button:focus-visible{
+ outline:2px solid #ffe1a1!important;outline-offset:2px!important;
+}
+#rightpanel .view,#controls,#buildmenu {
+  scrollbar-width:thin;
+  scrollbar-color:#c19a5e #19354b;
+}
