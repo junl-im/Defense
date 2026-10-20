@@ -58,6 +58,7 @@ jobs:
           python rani-next/recolor_world.py engines/fiefdom/public/assets/sprites
           python rani-next/royal-ground.py engines/fiefdom/public/assets/ground
           python rani-next/v52-building-polish.py engines/fiefdom/public/assets/sprites
+          python rani-next/v52-forest-polish.py engines/fiefdom/public/assets/sprites
       - name: Compile actual playable 2.5D kingdom
         working-directory: engines/fiefdom
         run: npm run build
