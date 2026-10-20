@@ -49,6 +49,8 @@ assert.equal(initial.title,'라니킹덤');
 assert.equal(initial.chosen,'푸른 해안');
 assert.ok(initial.visible&&initial.closed&&initial.originalCards>=10&&initial.actualStart,initial);
 assert.equal(initial.mapDisplay,'none');
+assert.equal(await evaluate("getComputedStyle(document.querySelector('#menu .go')).backgroundImage.includes('rk_royal_button.webp')"),true);
+
 await evaluate("document.querySelector('#rani-map-picker summary').click()");
 assert.equal(await evaluate("document.querySelector('#rani-map-picker').open"),true);
 // Select another existing Fiefdom map, then choose coast again. The original
@@ -63,7 +65,29 @@ await evaluate("[...document.querySelectorAll('#menu button')].find(b=>b.textCon
 await wait("[...document.querySelectorAll('button')].some(b=>b.textContent.includes('BEGIN'))");
 await evaluate("[...document.querySelectorAll('button')].find(b=>b.textContent.includes('BEGIN')).click()");
 await wait("!!window.__game&&!!document.getElementById('rani-controls-toggle')",120);
+await wait("document.getElementById('ui')?.dataset.raniAssets==='1'",20);
 await sleep(800);
+const owned=await evaluate(`(()=>{
+ const ui=document.getElementById('ui');
+ const house=ui.querySelector('#buildmenu button[data-name="hovel"]');
+ const market=ui.querySelector('#buildmenu button[data-name="market"]');
+ const trade=ui.querySelector('#view-market #rani-market-art img');
+ const panel=ui.querySelector('#rani-approved-royal-panel');
+ const images=[
+  house?.querySelector('img.rani-approved-building'),
+  market?.querySelector('img.rani-approved-building'),trade,panel
+ ];
+ return {count:images.length,loaded:images.map(x=>!!x&&x.complete&&x.naturalWidth>0),
+   originalButtons:[house,market].map(x=>typeof x?.onclick==='function'),
+   nativeCanvas:[house,market].map(x=>!!x?.querySelector('canvas')),
+   fallbackReady:[house,market].map(x=>!!x?.querySelector('canvas.rani-hide-canvas')),
+   tradingControls:!!ui.querySelector('#view-market')};
+})()`);
+assert.deepEqual(owned.loaded,[true,true,true,true],owned);
+assert.deepEqual(owned.originalButtons,[true,true],owned);
+assert.deepEqual(owned.nativeCanvas,[true,true],owned);
+assert.deepEqual(owned.fallbackReady,[true,true],owned);
+assert.ok(owned.tradingControls,owned);
 const state=await evaluate(`(()=>{
  const g=window.__game,ui=document.querySelector('#ui');
  const controls=document.querySelector('#controls');
