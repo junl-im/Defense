@@ -116,6 +116,53 @@ const state=await evaluate(`(()=>{
          mini:!!document.querySelector('#minimap canvas')};
 })()`);
 assert.ok(state.game&&state.buildings>0&&Math.abs(state.zoom-1.5)<.05,state);
+
+const hexEvidence=await evaluate(`(()=>{
+ const g=window.__game,w=g.raniWheel;
+ const keep=g.state.buildings.find(b=>b.name==='keep');
+ if(!keep||!w)return {available:false};
+ const mk=b=>({key:'building:'+b.id,name:b.name,label:b.def.label,
+   x:b.x+b.def.footprint[0]/2,z:b.z+b.def.footprint[1]/2,building:b});
+ const target=mk(keep);
+ w.toggle(target);
+ const menu=document.querySelector('#rk-hex-menu');
+ const visible=!menu.hidden;
+ const actions=[...menu.querySelectorAll('button[data-action]')].map(b=>b.dataset.action);
+ const protectedKeep=menu.querySelector('[data-action="remove"]').disabled;
+ menu.querySelector('[data-action="info"]').click();
+ const hasInfo=!document.querySelector('#rk-hex-info').hidden;
+ w.toggle(target);
+ const toggledClosed=menu.hidden;
+ w.toggle(target);
+ const stoneBefore=g.state.stock.stone,woodBefore=g.state.stock.wood,hpBefore=keep.hp;
+ g.state.stock.stone+=400;g.state.stock.wood+=400;
+ menu.querySelector('[data-action="upgrade"]').click();
+ const increasedHp=keep.hp>hpBefore,upgraded=keep.lvl===2;
+ const persisted=g.snapshot().buildings.find(b=>b.n==='keep')?.lvl===2;
+ const stoneSpent=g.state.stock.stone<stoneBefore+400,
+       woodSpent=g.state.stock.wood<woodBefore+400;
+ const other=g.state.buildings.find(b=>b.name!=='keep'&&b.name!=='stockpile'&&b.name!=='granary');
+ let confirm=false,cancelWorks=false;
+ if(other){
+   w.toggle(mk(other));
+   menu.querySelector('[data-action="remove"]').click();
+   const modal=document.getElementById('rk-hex-confirm');
+   confirm=!!modal&&!!modal.querySelector('.rk-hex-danger');
+   modal.querySelector('.rk-hex-cancel').click();
+   cancelWorks=!document.getElementById('rk-hex-confirm')&&g.state.buildings.includes(other);
+ }
+ w.close();
+ return {available:true,visible,actions,protectedKeep,hasInfo,toggledClosed,
+    upgraded,increasedHp,persisted,stoneSpent,woodSpent,confirm,cancelWorks};
+})()`);
+assert.ok(hexEvidence.available&&hexEvidence.visible&&hexEvidence.protectedKeep
+ &&hexEvidence.hasInfo&&hexEvidence.toggledClosed&&hexEvidence.upgraded
+ &&hexEvidence.increasedHp&&hexEvidence.persisted&&hexEvidence.stoneSpent
+ &&hexEvidence.woodSpent&&hexEvidence.confirm&&hexEvidence.cancelWorks,hexEvidence);
+assert.deepEqual(hexEvidence.actions,['info','upgrade','repair','manage','build','remove']);
+console.log('PASS real Rani hex UI, protected keep, click-toggle, saved upgrades, payment, demolition cancel',hexEvidence);
+assert.equal(await evaluate("document.querySelectorAll('svg').length"),0);
+
 const shoreProof=await evaluate(`(()=>{
  const t=window.__game.terrain, attr=t.mesh.geometry.getAttribute('aShore');
  if(!attr || attr.itemSize!==4) return {present:false};
