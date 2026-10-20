@@ -49,6 +49,10 @@ assert.equal(initial.title,'라니킹덤');
 assert.equal(initial.chosen,'푸른 해안');
 assert.ok(initial.visible&&initial.closed&&initial.originalCards>=10&&initial.actualStart,initial);
 assert.equal(initial.mapDisplay,'none');
+if(shot){
+ const page=await c.send('Page.captureScreenshot',{format:'png'},s);
+ fs.writeFileSync(shot.replace(/\.png$/,'-menu.png'),Buffer.from(page.data,'base64'));
+}
 assert.equal(await evaluate("getComputedStyle(document.querySelector('#menu .go')).backgroundImage.includes('rk_royal_button.webp')"),true);
 
 await evaluate("document.querySelector('#rani-map-picker summary').click()");
@@ -111,10 +115,30 @@ const state=await evaluate(`(()=>{
 })()`);
 assert.ok(state.game&&state.buildings>0&&Math.abs(state.zoom-1.5)<.05,state);
 assert.ok(state.controlsHidden&&state.infoHidden&&state.realRes>4&&state.nativeBuild&&state.mini,state);
+const res=await evaluate(`(()=>{
+ const ui=document.getElementById('ui');
+ return {toggle:!!document.getElementById('rani-resource-toggle'),
+   displayed:[...document.querySelectorAll('#topbar .res')].filter(e=>getComputedStyle(e).display!=='none').length,
+   total:document.querySelectorAll('#topbar .res').length};
+})()`);
+assert.ok(res.toggle&&res.displayed===5&&res.total>res.displayed,res);
+await evaluate("document.getElementById('rani-resource-toggle').click()");
+const expanded=await evaluate("[...document.querySelectorAll('#topbar .res')].filter(e=>getComputedStyle(e).display!=='none').length");
+assert.ok(expanded>res.displayed,{expanded,res});
+await evaluate("document.getElementById('rani-resource-toggle').click()");
 await evaluate("document.getElementById('rani-controls-toggle').click()");
 assert.equal(await evaluate("getComputedStyle(document.getElementById('controls')).display==='none'"),false);
 await evaluate("document.getElementById('rani-info-toggle').click()");
 assert.equal(await evaluate("getComputedStyle(document.getElementById('rightpanel')).display==='none'"),false);
+if(shot){
+ await evaluate(`(()=>{
+ const sel=document.querySelector('#rightpanel select');
+ sel.value='market';sel.dispatchEvent(new Event('change',{bubbles:true}));
+ })()`);
+ await sleep(250);
+ const proof=await c.send('Page.captureScreenshot',{format:'png'},s);
+ fs.writeFileSync(shot.replace(/\.png$/,'-market.png'),Buffer.from(proof.data,'base64'));
+}
 await evaluate("document.getElementById('rani-controls-toggle').click();document.getElementById('rani-info-toggle').click()");
 if(shot){
  const r=await c.send('Page.captureScreenshot',{format:'png'},s);
