@@ -116,3 +116,20 @@ border-radius:10px!important}
  #lords .acts{position:sticky;bottom:4px;z-index:2;
  padding:10px;background:#0c2639dd;border-radius:14px}
 }
+
+/* Actual licensed/approved raster brand, displayed only at the existing
+   post-map terrain/roster setup screen. No fake screenshot over the map. */
+#lords::before{
+ content:'';display:block;flex:0 0 auto;
+ width:190px;height:60px;margin:0 auto 3px;
+ background:url('/rani/rk_logo.webp') center/contain no-repeat;
+ filter:drop-shadow(0 6px 10px #050e19);
+ pointer-events:none
+}
+#lords .go{
+ background:linear-gradient(rgba(55,61,67,.18),rgba(5,22,39,.20)),
+ url('/rani/rk_royal_button.webp') center/100% 100% no-repeat!important;
+ color:#fff4d8!important;
+ text-shadow:0 2px 3px #101b27!important
+}
+@media(max-width:680px){#lords::before{height:43px;width:135px}}
