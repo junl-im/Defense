@@ -47,5 +47,17 @@ const newDraw=[
  "        royalFoliageTint(t.name, t.x, t.z));"
 ].join('\n');
 src=src.replace(oldDraw,newDraw);
+// Additional screen-QA copy: these are runtime status *display strings*,
+// never a save key, worker state, or simulation identifier.
+for (const [oldCopy,ko] of [
+  ["'no worker'", "'작업자 없음'"],
+  ['short ${want - b.staff}', '작업자 ${want - b.staff}명 부족'],
+  ["'Autosaved.'", "'자동 저장 완료.'"],
+  ['Autosave failed: ${err}', '자동 저장 실패: ${err}']
+]) {
+  assert.ok(src.includes(oldCopy),'Missing original status message: '+oldCopy);
+  src=src.replace(oldCopy,ko);
+}
+
 fs.writeFileSync(file,src);
 console.log('PASS Rani v5.2: seeded woodland and per-tree native sprite GPU tint');
