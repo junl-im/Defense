@@ -21,10 +21,14 @@ assert.match(compact,/grid\.addEventListener\('click'/);
 assert.match(compact,/enhanceGameHud/);
 assert.match(compact,/rani-controls-toggle/);
 assert.match(compact,/rani-info-toggle/);
+assert.match(compact,/attachApprovedArt/);
+assert.match(compact,/rani-approved-royal-panel/);
+assert.match(compact,/rani-market-art/);
+assert.match(compact,/rani-approved-building/);
 
 for(const name of ['rk_gold.webp','rk_wood.webp','rk_stone.webp',
 'rk_food.webp','rk_people.webp','rk_house.webp','rk_market.webp',
-'rk_ship.webp','rk_logo.webp','skin.css','menu-compact.js']){
+'rk_ship.webp','rk_logo.webp','rk_royal_button.webp','rk_royal_panel.webp','skin.css','menu-compact.js']){
   assert.ok(fs.statSync(path.join(root,'public/rani',name)).size>100,name);
 }
 const metadata=JSON.parse(read('public/assets/sprites/buildings.json'));
