@@ -25,8 +25,8 @@ function enhance(menu) {
  const update=()=>{
    const selected=grid.querySelector('.map.on')||grid.querySelector('.map');
    const name=selected?.querySelector('h3')?.textContent||'왕국';
-   title.textContent=name==='The Salt Coast'?'푸른 해안':name;
-   subtitle.textContent=name==='The Salt Coast'
+   title.textContent=(name==='The Salt Coast'||name==='푸른 해안')?'푸른 해안':name;
+   subtitle.textContent=(name==='The Salt Coast'||name==='푸른 해안')
     ? '숲과 해안이 만나는 진짜 건설 지도. 자원과 부대를 운영해 왕국을 발전시키세요.'
     : selected?.querySelector('p')?.textContent||'지도에 건물을 배치하고 실제 생산과 군사를 발전시키세요.';
  };
