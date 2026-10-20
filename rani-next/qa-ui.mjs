@@ -150,6 +150,22 @@ await evaluate("document.getElementById('rani-controls-toggle').click()");
 assert.equal(await evaluate("getComputedStyle(document.getElementById('controls')).display==='none'"),false);
 await evaluate("document.getElementById('rani-info-toggle').click()");
 assert.equal(await evaluate("getComputedStyle(document.getElementById('rightpanel')).display==='none'"),false);
+
+const royalLayout=await evaluate(`(()=>{
+ const panel=document.getElementById('rightpanel');
+ const mini=document.querySelector('#minimap canvas');
+ const root=document.querySelector('#ui');
+ return {viewport:innerWidth, panelWidth:panel.getBoundingClientRect().width,
+   miniWidth:mini.getBoundingClientRect().width,
+   originalStats:document.querySelector('#stats').innerText.length>3,
+   actualWorldCanvas:document.querySelectorAll('canvas').length>2,
+   panelVisible:panel.getBoundingClientRect().width>0,
+   svgNodes:document.querySelectorAll('svg').length};
+})()`);
+assert.ok(royalLayout.panelVisible&&royalLayout.panelWidth<=350&&royalLayout.miniWidth<=160,royalLayout);
+assert.ok(royalLayout.actualWorldCanvas&&royalLayout.originalStats&&royalLayout.svgNodes===0,royalLayout);
+console.log('PASS royal space-saving actual world HUD',JSON.stringify(royalLayout));
+
 if(shot){
  await evaluate(`(()=>{
  const sel=document.querySelector('#rightpanel select');
