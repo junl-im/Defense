@@ -46,6 +46,7 @@ jobs:
         run: |
           node rani-next/prepare.mjs engines/fiefdom
           node rani-next/koreanize.mjs engines/fiefdom
+          node rani-next/no-svg-chart.mjs engines/fiefdom
           node rani-next/check.mjs engines/fiefdom
           node rani-next/verify-art.mjs engines/fiefdom
           python -m pip install Pillow==11.3.0
