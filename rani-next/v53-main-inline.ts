@@ -115,7 +115,9 @@
         return {ok,message:ok?b.def.label+' 철거 완료':'철거할 수 없습니다.'};
       }
       if(mp)return {ok:false,message:'대전에서 자연물 제거는 지원하지 않습니다.'};
-      const i=t.decorationIndex,d=i===undefined?null:decorations[i];
+      const i=t.decorationIndex;
+      if(i===undefined)return {ok:false,message:'자연물 정보가 없습니다.'};
+      const d=decorations[i];
       if(!d||!d.alive)return {ok:false,message:'이미 제거된 자연물입니다.'};
       // Reuse the original terrain obstacle and saved felled-tree index.
       for(const w of workers.workers) if(w.claim===i)w.claim=null;
