@@ -44,6 +44,11 @@ fs.writeFileSync(placementFile,p);
 modify('src/main.ts',
  "ok ? (placement.turnable ? "+String.fromCharCode(96)+"\${def.label} \\u00b7 , . to turn"+String.fromCharCode(96)+" : def.label)\n             : placement.lastCheck.reason, ok);",
  "ok ? (placement.turnable ? "+String.fromCharCode(96)+"설치 가능 · \${def.label} (\${def.footprint[0]}×\${def.footprint[1]}칸) · , . 회전"+String.fromCharCode(96)+" : "+String.fromCharCode(96)+"설치 가능 · \${def.label} (\${def.footprint[0]}×\${def.footprint[1]}칸)"+String.fromCharCode(96)+")\n             : "+String.fromCharCode(96)+"설치 불가 · \${placement.lastCheck.reason}"+String.fromCharCode(96)+", ok);");
+// Visible worker shortage flags are also gameplay-facing Korean.
+modify('src/main.ts',
+ "text: want - b.staff === want ? 'no worker' : `short ${want - b.staff}`,
+ "text: want - b.staff === want ? '작업자 없음' : `작업자 ${want - b.staff}명 부족`,
+);
 // Contextual action menu: show only functional choices, keep disabled reasons
 // in visible source-backed status messages rather than unexplained grey tiles.
 const wheelFile=path.join(root,'src/ui/raniWheel.ts');
