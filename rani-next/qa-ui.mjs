@@ -48,9 +48,9 @@ const initial=await evaluate(`(()=>{
 assert.equal(initial.title,'라니킹덤');
 assert.ok(await evaluate("!document.getElementById('menu').textContent.includes('오류 제보')"),'Developer link visible on title');
 assert.ok(await evaluate("!document.getElementById('menu').textContent.includes('최초 실행 시')"),'Technical loading note still visible');
-assert.ok(await evaluate("document.querySelector('#menu .rk-public-version')?.textContent==='v5.5'"),'v5.5 marker missing');
+assert.ok(await evaluate("document.querySelector('#menu .rk-public-version')?.textContent==='v5.6'"),'v5.5 marker missing');
 assert.equal(initial.chosen,'푸른 해안');
-assert.ok(initial.visible&&initial.closed&&initial.originalCards>=10&&initial.actualStart,initial);
+assert.ok(!initial.visible&&initial.closed&&initial.originalCards>=10&&initial.actualStart,initial);
 assert.equal(initial.mapDisplay,'none');
 if(shot){
  const page=await c.send('Page.captureScreenshot',{format:'png'},s);
@@ -58,14 +58,14 @@ if(shot){
 }
 assert.equal(await evaluate("getComputedStyle(document.querySelector('#menu .rk-start-now')).backgroundImage.includes('rk_royal_button.webp')"),true);
 
-await evaluate("document.querySelector('#rani-map-picker summary').click()");
+await evaluate("document.querySelector('#rk-start-now').click()");
+await wait("document.querySelector('#menu').classList.contains('rk-choose-region')");
 assert.equal(await evaluate("document.querySelector('#rani-map-picker').open"),true);
 // Select another existing Fiefdom map, then choose coast again. The original
 // real map selection controls and their saved seeds are still authoritative.
 await evaluate("document.querySelectorAll('#rani-map-picker .maps .map')[1].click()");
-assert.equal(await evaluate("document.querySelector('#rani-map-picker').open"),false);
+assert.equal(await evaluate("document.querySelector('#rani-map-picker').open"),true);
 assert.notEqual(await evaluate("document.querySelector('#rani-start-hero strong').textContent"),'푸른 해안');
-await evaluate("document.querySelector('#rani-map-picker summary').click()");
 await evaluate("document.querySelector('#rani-map-picker .map').click()");
 assert.equal(await evaluate("document.querySelector('#rani-start-hero strong').textContent"),'푸른 해안');
 await evaluate("[...document.querySelectorAll('#menu button')].find(b=>b.textContent.includes('영주 선택')).click()");
@@ -105,7 +105,7 @@ if(shot){
  fs.writeFileSync(shot.replace(/\.png$/,'-choose-start.png'),Buffer.from(screenshot.data,'base64'));
 }
 
-await evaluate("[...document.querySelectorAll('button')].find(b=>b.textContent.includes('게임 시작')).click()");
+await evaluate("document.querySelector('#lords button.go').click()");
 await wait("!!window.__game&&!!document.getElementById('rani-controls-toggle')",120);
 await wait("document.getElementById('ui')?.dataset.raniAssets==='1'",20);
 const placements=await evaluate(`(()=>{

@@ -33,7 +33,7 @@ function enhance(menu) {
  update();
  grid.addEventListener('click',e=>{
    if(!e.target.closest('.map'))return;
-   queueMicrotask(()=>{update();if(menu.isConnected)details.open=false;});
+   queueMicrotask(()=>{update();if(menu.isConnected&&!menu.classList.contains('rk-choose-region'))details.open=false;});
  });
 }
 function enhanceGameHud(root){

@@ -32,9 +32,13 @@ await c.send('Page.navigate',{url:host},s);
 await wait("!!document.querySelector('#rani-map-picker')&&!!document.querySelector('#rk-start-now')");
 const initial=await evaluate("(()=>({coast:document.querySelector('#rani-start-hero strong')?.textContent,quick:document.querySelector('#rk-start-now')?.textContent,manual:!!document.querySelector('#menu button.go'),mapPicker:!!document.querySelector('#rani-map-picker')}))()");
 assert.equal(initial.coast,'푸른 해안',initial);
-assert.equal(initial.quick,'바로 왕국 시작',initial);
+assert.equal(initial.quick,'게임 시작',initial);
 assert.ok(initial.manual&&initial.mapPicker,initial);
 await evaluate("document.querySelector('#rk-start-now').click()");
+await wait("document.querySelector('#menu').classList.contains('rk-choose-region')");
+await evaluate("document.querySelector('#menu button.rk-manual-start').click()");
+await wait("!!document.querySelector('#lords .go')");
+await evaluate("document.querySelector('#lords .go').click()");
 await wait("!!window.__game&&!!document.querySelector('#ui')&&!document.querySelector('#lords')");
 const proof=await evaluate("(()=>{const g=window.__game;return {menuGone:!document.querySelector('#menu'),lordGone:!document.querySelector('#lords'),hasKeep:g.state?.buildings?.some(b=>b.name==='keep'),buildings:g.state?.buildings?.length,canvas:!!document.querySelector('canvas'),realBuild:!!document.querySelector('#buildmenu button[data-name]'),wheel:!!g.raniWheel};})()");
 assert.ok(proof.menuGone&&proof.lordGone&&proof.hasKeep&&proof.buildings>0
