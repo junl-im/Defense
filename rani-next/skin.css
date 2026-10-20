@@ -120,3 +120,46 @@ padding:10px 3px!important;scrollbar-color:#b69462 #102a40;}
    border-color:#f9d58d;background:linear-gradient(#65768b,#18394e);
  }
 }
+
+
+/* Individually authored royal UI bitmap art; no atlas extraction or SVG. */
+#menu .go{
+ width:180px!important;height:90px!important;min-height:90px!important;
+ padding:12px 14px!important;flex:0 0 auto;
+ background: url('/rani/rk_royal_button.webp') center/contain no-repeat!important;
+ border:none!important;border-radius:0!important;box-shadow:none!important;
+ color:#fff6d9!important;font-weight:800!important;
+ text-shadow:0 2px 5px #02080b,0 0 9px #02080b!important;
+ filter:drop-shadow(0 4px 6px #0009);
+ transition:filter .15s,transform .15s!important;
+}
+#menu .go:hover{transform:translateY(-2px);filter:drop-shadow(0 6px 10px #000b)}
+#menu .go:focus-visible{outline:3px solid #fff1ad;outline-offset:3px}
+#buildmenu button img.rani-approved-building{
+ width:54px;height:42px;max-width:95%;object-fit:contain;
+ display:block;margin:0 auto;image-rendering:auto;
+ filter:drop-shadow(0 2px 3px #0008);pointer-events:none
+}
+#buildmenu button canvas.rani-hide-canvas{display:none!important}
+#rani-approved-royal-panel{
+ display:block;width:min(172px,95%);height:auto;aspect-ratio:512/254;
+ margin:2px auto 6px;object-fit:contain;pointer-events:none;
+ filter:drop-shadow(0 3px 5px #0007)
+}
+#rani-market-art{
+ display:flex;align-items:center;gap:8px;
+ min-height:50px;padding:4px 6px;margin:4px 0 7px;
+ background:linear-gradient(130deg,#183a50,#0b2232);
+ border:1px solid #9b774c;border-radius:9px
+}
+#rani-market-art img{
+ width:52px;height:52px;object-fit:contain;flex:0 0 52px;
+ filter:drop-shadow(0 2px 3px #0008)
+}
+#rani-market-art span{font:700 11px/1.4 'Malgun Gothic',sans-serif;color:#eddbb9}
+@media(max-width:700px){
+ #menu .go{width:148px!important;height:75px!important;min-height:75px!important;font-size:11px!important}
+ #buildmenu button img.rani-approved-building{width:40px;height:30px}
+ #rani-approved-royal-panel{width:130px}
+ #rani-market-art img{width:40px;height:40px;flex-basis:40px}
+}
