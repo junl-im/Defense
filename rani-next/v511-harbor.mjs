@@ -143,9 +143,11 @@ alter('src/main.ts',"    prof.frame();\n    iso.update(dt);",
 alter('src/main.ts',"      if(b.name!=='fishery')continue;",
 "      if(b.name!=='fishery'&&b.name!=='harbor')continue;");
 alter('src/main.ts',"        rkPortDocks.set(b.id,rkMakePier(near.x,near.z,rotation,b.id));}",
+[
 "        const dock=rkMakePier(near.x,near.z,rotation,b.id);",
 "        if(b.name==='harbor')dock.scale.set(1.45,1.06,1.45);",
-"        rkPortDocks.set(b.id,dock);}");
+"        rkPortDocks.set(b.id,dock);}"
+].join('\n'));
 alter('src/main.ts',"    rkPortDocks,\n    rkSyncPortDocks,",
 "    rkPortDocks,\n    rkSyncPortDocks,\n    rkHarborPanel,");
 // One real sprite vessel per owned harbor. Ship phase is keyed to the SAME
