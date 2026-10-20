@@ -13,6 +13,10 @@ function change(p,oldText,newText) {
 }
 change('src/ui/menu.ts',"h1.textContent = 'FIEFDOM';","h1.textContent = '라니킹덤';");
 change('src/ui/menu.ts',"sub.textContent = 'HOLD THE LAND · WORK IT · KEEP IT';","sub.textContent = '푸른 왕국을 건설하고, 지키고, 발전시키세요';");
+change('src/ui/menu.ts',"go.textContent = 'CHOOSE LORDS →';","go.textContent = '영주 선택 →';");
+change('src/ui/menu.ts',"mpBtn.textContent = 'MULTIPLAYER →';","mpBtn.textContent = '멀티플레이어 →';");
+// Keep the upstream real-game smoke meaningful after Korean-localized button.
+change('tools/e2e/smoke.mjs','/CHOOSE LORDS/','/영주 선택/');
 change('src/main.ts','renderer.setClearColor(0x0d0c0a, 1);','renderer.setClearColor(0x10283b, 1);');
 // One level closer from first boot: a real game camera change (not CSS scale).
 // The sprite atlas is baked at scale 3, and zoom 1.5 stays within that detail.
