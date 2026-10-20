@@ -41,12 +41,13 @@ function enhanceGameHud(root){
  const createToggle=(id,text,cls,tip)=>{
    const b=document.createElement('button');
    b.type='button';b.id=id;b.textContent=text;b.title=tip;
-   b.setAttribute('aria-controls',cls==='rani-controls-open'?'controls':'stats2');
+   b.setAttribute('aria-controls',cls==='rani-controls-open'?'controls':'rightpanel');
    b.setAttribute('aria-expanded','false');
    b.addEventListener('click',()=>{
      const opened=root.classList.toggle(cls);
      b.setAttribute('aria-expanded',String(opened));
      b.setAttribute('aria-pressed',String(opened));
+     if(opened && cls==='rani-info-open')root.querySelector('#rightpanel')?.classList.remove('hidden');
    });
    root.appendChild(b);
  };
