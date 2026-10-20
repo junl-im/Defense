@@ -162,6 +162,28 @@ assert.ok(hexEvidence.available&&hexEvidence.visible&&hexEvidence.protectedKeep
 assert.deepEqual(hexEvidence.actions,['info','upgrade','repair','manage','build','remove']);
 console.log('PASS real Rani hex UI, protected keep, click-toggle, saved upgrades, payment, demolition cancel',hexEvidence);
 assert.equal(await evaluate("document.querySelectorAll('svg').length"),0);
+const sceneryEvidence=await evaluate(`(()=>{
+ const g=window.__game,w=g.raniWheel;
+ const i=g.decorations.findIndex(d=>d.alive);
+ if(i<0)return {available:false};
+ const d=g.decorations[i],old=g.state.buildings.length;
+ w.toggle({key:'nature:'+i,name:d.name,label:'자연물',
+   x:d.x+0.5,z:d.z+0.5,decorationIndex:i});
+ const menu=document.querySelector('#rk-hex-menu');
+ const hasControl=!menu.querySelector('[data-action="remove"]').disabled;
+ menu.querySelector('[data-action="remove"]').click();
+ const modal=document.querySelector('#rk-hex-confirm');
+ const asks=!!modal&&!!modal.querySelector('.rk-hex-danger');
+ modal.querySelector('.rk-hex-danger').click();
+ const gone=!d.alive,serial=g.snapshot().felled.some(([n,time])=>n===i&&time>=1e11);
+ const buildingsIntact=g.state.buildings.length===old;
+ const obstacleCleared=!g.paths.isBlocked(d.x,d.z);
+ return {available:true,hasControl,asks,gone,serial,buildingsIntact,obstacleCleared};
+})()`);
+assert.ok(sceneryEvidence.available&&sceneryEvidence.hasControl&&sceneryEvidence.asks
+  &&sceneryEvidence.gone&&sceneryEvidence.serial&&sceneryEvidence.buildingsIntact
+  &&sceneryEvidence.obstacleCleared,sceneryEvidence);
+console.log('PASS actual scenery removal: confirmation, persistent felled index, collision released',sceneryEvidence);
 
 const shoreProof=await evaluate(`(()=>{
  const t=window.__game.terrain, attr=t.mesh.geometry.getAttribute('aShore');
