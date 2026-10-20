@@ -1,0 +1,77 @@
+/* v5.12 — responsive genuine gameplay, not a screenshot overlay. SVG-free. */
+#rk-phone-zoom{display:none}
+html.phone #rk-phone-zoom{
+ position:fixed;right:8px;top:37%;z-index:32;
+ display:flex;flex-direction:column;gap:7px;
+ padding:5px;border:1px solid #bf985b88;border-radius:12px;
+ background:#0d2437cc;box-shadow:0 4px 14px #0008;
+ pointer-events:auto;
+}
+html.phone #rk-phone-zoom button{
+ width:37px;height:38px;line-height:1;cursor:pointer;
+ background:linear-gradient(160deg,#31556b,#122b40);
+ color:#ffe2ac;font:800 23px 'Malgun Gothic',sans-serif;
+ border:1px solid #cfad75;border-radius:9px;touch-action:manipulation;
+}
+html.phone #rk-phone-zoom button:active{transform:scale(.94);background:#536d7c}
+html.phone #rk-phone-zoom button:focus-visible{outline:2px solid #ffe5a3;outline-offset:2px}
+html.phone #topbar{
+ box-sizing:border-box;width:100%;min-height:34px!important;max-height:46px!important;
+ background:linear-gradient(180deg,#102b43f7,#0c2438ee)!important;
+ border-bottom:1px solid #bd985780!important;
+ padding:calc(4px + env(safe-area-inset-top)) 5px 5px!important;
+}
+html.phone #topbar .res{min-height:22px!important;padding:0 5px!important}
+html.phone #topbar .res .n{font-size:11px!important;font-variant-numeric:tabular-nums}
+html.phone #pad{
+ box-sizing:border-box;max-width:100%;padding:5px 5px calc(6px + env(safe-area-inset-bottom));
+ background:linear-gradient(180deg,#0d2739df,#071a2bef);
+ border-top:1px solid #b38d597a;gap:3px;
+}
+html.phone #pad button{height:43px;min-width:0;padding:0 2px;font-size:12px;
+ border-radius:9px;white-space:nowrap}
+html.phone #pad button:active{transform:scale(.96)}
+html.phone .sheet{max-height:68dvh;border-color:#c59b61;
+ background:linear-gradient(#17364bef,#0c2232fa)}
+html.phone .sheet .sheet-body{padding-bottom:calc(60px + env(safe-area-inset-bottom))}
+html.phone .sheet #buildmenu .items{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+html.phone .sheet #buildmenu button{min-width:0;border-radius:9px;font-size:11px}
+html.phone #rk-hex-menu:not([hidden]){
+ z-index:60!important;bottom:calc(66px + env(safe-area-inset-bottom))!important;
+ top:auto!important;max-width:calc(100vw - 16px)!important;
+}
+html.phone #rk-hex-menu .rk-hex-buttons{
+ max-width:calc(100vw - 24px)!important;
+ padding:5px!important;row-gap:4px;
+}
+html.phone #rk-hex-menu .rk-hex-option{height:54px!important;flex-basis:80px}
+html.phone #rk-hex-menu .rk-hex-core{height:39px!important}
+html.phone #rk-hex-menu .rk-hex-message{max-height:42px;overflow-y:auto}
+html.phone #rk-first-steps{
+ top:calc(52px + env(safe-area-inset-top));bottom:auto!important;
+ left:6px;width:min(244px,calc(100vw - 78px));
+ padding:8px 10px;
+}
+html.phone #rk-first-steps .rk-step-head{margin-bottom:3px;padding-bottom:3px}
+html.phone #rk-first-steps .rk-step-help{font-size:10px;line-height:1.35;margin:3px 0 5px}
+html.phone #rk-first-steps .rk-step-actions button{min-height:29px}
+html.phone #rk-guide-toggle{
+ left:7px;bottom:calc(62px + env(safe-area-inset-bottom));z-index:46;
+}
+html.phone:has(#rk-hex-menu:not([hidden])) #rk-first-steps,
+html.phone:has(#rk-hex-menu:not([hidden])) #rk-phone-zoom{visibility:hidden;pointer-events:none}
+html.phone #rk-harbor-panel{
+ position:fixed;left:8px;right:auto;top:calc(52px + env(safe-area-inset-top));
+ bottom:auto;width:min(236px,calc(100vw - 65px));z-index:35;
+}
+html.phone #rk-harbor-toggle{float:none;min-height:31px}
+html.phone #rk-harbor-panel #rk-harbor-body{max-height:51dvh;overflow-y:auto}
+html.phone:has(#rk-first-steps) #rk-harbor-panel{top:calc(236px + env(safe-area-inset-top))}
+html.phone:has(#rk-hex-menu:not([hidden])) #rk-harbor-panel{visibility:hidden;pointer-events:none}
+@media(max-width:700px) and (max-height:540px){
+ html.phone #rk-first-steps{top:42px;max-height:28dvh;overflow:auto}
+ html.phone #rk-phone-zoom{top:26%;gap:4px}
+ html.phone #rk-phone-zoom button{height:32px;width:34px;font-size:19px}
+ html.phone #rk-hex-menu:not([hidden]){bottom:calc(56px + env(safe-area-inset-bottom))!important}
+ html.phone #rk-hex-menu .rk-hex-option{height:43px!important}
+}
