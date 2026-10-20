@@ -203,3 +203,6 @@ padding:10px 3px!important;scrollbar-color:#b69462 #102a40;}
 #rani-build-toggle[aria-expanded="true"]{filter:drop-shadow(0 3px 10px #e9bd6f)}
 #rani-build-toggle:focus-visible{outline:2px solid #ffe9a6;outline-offset:1px}
 }
+
+#menu .go{letter-spacing:0!important;font-size:14px!important}
+#rani-build-toggle{letter-spacing:0!important}
