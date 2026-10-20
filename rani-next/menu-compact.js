@@ -72,7 +72,7 @@ function attachApprovedArt(ui) {
    if(!original)continue;
    const art=document.createElement('img');
    art.className='rani-approved-building'; art.src=source;
-   art.alt=label; art.loading='lazy'; art.decoding='async';
+   art.alt=label; art.loading='eager'; art.decoding='async';
    // A failed image must never remove Fiefdom's REAL model icon.
    art.addEventListener('error',()=>{art.remove();original.classList.remove('rani-hide-canvas');});
    art.addEventListener('load',()=>{if(art.naturalWidth)original.classList.add('rani-hide-canvas');});
@@ -95,7 +95,7 @@ function attachApprovedArt(ui) {
    const section=document.createElement('section');
    section.id='rani-market-art';section.setAttribute('aria-label','왕국 상업 일러스트');
    const img=document.createElement('img');img.src='/rani/rk_ship.webp';
-   img.alt='향후 항구 개발용 무역선 이미지';img.loading='lazy';
+   img.alt='향후 항구 개발용 무역선 이미지';img.loading='eager';
    img.addEventListener('error',()=>section.remove());
    const note=document.createElement('span');
    note.textContent='왕국 교역 · 아래 실제 시장 거래 기능 이용';
