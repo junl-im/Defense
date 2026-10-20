@@ -101,7 +101,9 @@ function attachApprovedArt(ui) {
    note.textContent='왕국 교역 · 아래 실제 시장 거래 기능 이용';
    section.append(img,note);actualMarket.prepend(section);done++;
  }
- if(done===4)ui.dataset.raniAssets='1';
+ ui.dataset.raniAssets='1';
+ ui.dataset.raniAssetCount=String(done);
+ if(done!==4)console.warn('[rani-next] Some source asset placement targets are absent',done);
 }
 
 const watch=()=>{
