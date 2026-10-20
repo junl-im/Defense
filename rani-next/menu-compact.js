@@ -65,6 +65,25 @@ function enhanceGameHud(root){
    resources.textContent=expanded?'자원 −':'자원 +';
  });
  root.appendChild(resources);
+ const build=document.createElement('button');
+ build.type='button';build.id='rani-build-toggle';
+ build.textContent='건설';build.title='실제 건축 메뉴 열기/닫기';
+ build.setAttribute('aria-controls','buildwrap');
+ build.setAttribute('aria-expanded','false');
+ const setBuild=open=>{
+   root.classList.toggle('rani-build-open',open);
+   build.setAttribute('aria-expanded',String(open));
+ };
+ build.addEventListener('click',()=>setBuild(!root.classList.contains('rani-build-open')));
+ // Native hotkeys 1-9 must remain useful even with the compact default view.
+ document.addEventListener('keydown',e=>{
+  if(!root.isConnected||! /^[1-9]$/.test(e.key))return;
+  if(e.ctrlKey||e.altKey||e.metaKey||e.repeat)return;
+  if(e.target instanceof HTMLElement&&
+      (e.target.isContentEditable||e.target.closest('input,textarea,select')))return;
+  setBuild(true);
+ },{capture:true});
+ root.appendChild(build);
 }
 // Connect EXISTING individually painted WebP originals to the real game.
  // Building art below is a catalogue thumbnail, never a fake world building:
