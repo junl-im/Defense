@@ -54,6 +54,17 @@ function enhanceGameHud(root){
  // Only collapse real PC game panels. Native Fiefdom mobile drawers stay intact.
  createToggle('rani-info-toggle','왕국 정보','rani-info-open','식량·인구·병력·생산 현황');
  createToggle('rani-controls-toggle','설정','rani-controls-open','속도·세금·사운드·전체화면');
+ const resources=document.createElement('button');
+ resources.type='button';resources.id='rani-resource-toggle';
+ resources.textContent='자원 +';resources.title='모든 실제 생산 자원 표시 또는 접기';
+ resources.setAttribute('aria-controls','topbar');
+ resources.setAttribute('aria-expanded','false');
+ resources.addEventListener('click',()=>{
+   const expanded=root.classList.toggle('rani-res-expanded');
+   resources.setAttribute('aria-expanded',String(expanded));
+   resources.textContent=expanded?'자원 −':'자원 +';
+ });
+ root.appendChild(resources);
 }
 // Connect EXISTING individually painted WebP originals to the real game.
  // Building art below is a catalogue thumbnail, never a fake world building:
