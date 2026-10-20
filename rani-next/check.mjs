@@ -35,4 +35,15 @@ const metadata=JSON.parse(read('public/assets/sprites/buildings.json'));
 for(const name of ['keep','gatehouse','wall','tower']){
  assert.equal(metadata.filter(m=>m.name===name).length,4,name);
 }
+
+// v5.2 real renderer gate: individual forest tint must be tied to the same
+// actual sprite draw path, without extra SVGs, overlays, or gameplay changes.
+assert.match(main,/chosen\.id === 'rani_coast' && name === 'palm'/);
+assert.match(main,/royalFoliageTint\(t\.name, t\.x, t\.z\)/);
+assert.match(main,/Math\.imul\(x \+ 1, 92837111\)/);
+assert.match(main,/name = leaf < 0\.55 \? 'oak' : 'olive_tree'/);
+assert.ok(!main.includes('document.createElementNS('));
+assert.equal((main.match(/decorations\.push\(\{ name, x: t\.x/g)||[]).length,1,
+  'Preserve one original collision-affecting scatter allocation path');
+
 console.log('PASS Rani Next source: true coastal map, 2.5D atlas, preserved original controls and originals');
