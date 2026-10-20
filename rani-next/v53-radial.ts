@@ -65,13 +65,14 @@ export function createRaniWheel(callbacks: RaniWheelCallbacks) {
   document.body.appendChild(host);
   let target:RaniTarget|null=null;
   let infoOpen=false;
+  let lastInfo='';
   let modal:HTMLDivElement|null=null;
 
   function cleanModal(){
     if(modal){modal.remove();modal=null;}
   }
   function closeMenu(){
-    cleanModal();target=null;infoOpen=false;
+    cleanModal();target=null;infoOpen=false;lastInfo='';
     info.hidden=true;host.hidden=true;message.textContent='';
   }
   function update(){
@@ -91,7 +92,9 @@ export function createRaniWheel(callbacks: RaniWheelCallbacks) {
     const remove=actionButtons.get('remove')!;
     remove.disabled=!status.removable;
     remove.title=status.removable?'철거 전 확인':'철거 보호: '+status.reason;
-    if(infoOpen){
+    const signature=JSON.stringify(status);
+    if(infoOpen&&signature!==lastInfo){
+      lastInfo=signature;
       info.replaceChildren();
       const heading=document.createElement('strong');heading.textContent=target.label+' · 상세 정보';
       const detail=document.createElement('p');detail.textContent=status.detail;
@@ -117,13 +120,13 @@ export function createRaniWheel(callbacks: RaniWheelCallbacks) {
   }
   function show(t:RaniTarget) {
     if(target?.key===t.key){closeMenu();return;}
-    cleanModal();target=t;infoOpen=false;info.hidden=true;
+    cleanModal();target=t;infoOpen=false;lastInfo='';info.hidden=true;
     host.hidden=false;message.textContent='';
     update();place();
   }
   function confirmRemoval(t:RaniTarget) {
     const status=callbacks.status(t);
-    if(!status.removable){message.textContent=status.reason;return;}
+    if(!status.removable){if(host.hidden)show(t);message.textContent=status.reason;return;}
     cleanModal();
     const scrim=document.createElement('div');
     scrim.id='rk-hex-confirm';scrim.setAttribute('role','presentation');
@@ -153,7 +156,7 @@ export function createRaniWheel(callbacks: RaniWheelCallbacks) {
   core.onclick=closeMenu;close.onclick=closeMenu;
   for(const [id,button] of actionButtons)button.onclick=()=>{
     const t=target;if(!t)return;
-    if(id==='info'){infoOpen=!infoOpen;info.hidden=!infoOpen;update();return;}
+    if(id==='info'){infoOpen=!infoOpen;lastInfo='';info.hidden=!infoOpen;update();return;}
     if(id==='remove'){confirmRemoval(t);return;}
     if(id==='build'){closeMenu();callbacks.build();return;}
     const result=id==='upgrade'?callbacks.upgrade(t)
