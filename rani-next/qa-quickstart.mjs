@@ -42,4 +42,4 @@ assert.ok(proof.menuGone&&proof.lordGone&&proof.hasKeep&&proof.buildings>0
 await sleep(700);assert.deepEqual(issues,[],issues);
 if(shot){const pic=await c.send('Page.captureScreenshot',{format:'png'},s);fs.writeFileSync(shot,Buffer.from(pic.data,'base64'));}
 console.log('PASS v5.4 real world quickstart: coast, native seat, keep, economy/build interface, zero JS errors',proof);
-await c.send('Target.closeTarget',{targetId});c.close();
+await c.send('Target.closeTarget',{targetId});
