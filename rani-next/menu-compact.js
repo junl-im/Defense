@@ -55,9 +55,58 @@ function enhanceGameHud(root){
  createToggle('rani-info-toggle','왕국 정보','rani-info-open','식량·인구·병력·생산 현황');
  createToggle('rani-controls-toggle','설정','rani-controls-open','속도·세금·사운드·전체화면');
 }
+// Connect EXISTING individually painted WebP originals to the real game.
+ // Building art below is a catalogue thumbnail, never a fake world building:
+ // actual placed houses/markets still use native 4-angle atlas + simulation.
+function attachApprovedArt(ui) {
+ if(ui.dataset.raniAssets==='1')return;
+ const btns=[
+  ['hovel','/rani/rk_house.webp','주택 외형 미리보기'],
+  ['market','/rani/rk_market.webp','시장 외형 미리보기']
+ ];
+ let done=0;
+ for(const [id,source,label] of btns){
+   const button=ui.querySelector('#buildmenu button[data-name="'+id+'"]');
+   if(!button)continue;
+   const original=button.querySelector('canvas');
+   if(!original)continue;
+   const art=document.createElement('img');
+   art.className='rani-approved-building'; art.src=source;
+   art.alt=label; art.loading='lazy'; art.decoding='async';
+   // A failed image must never remove Fiefdom's REAL model icon.
+   art.addEventListener('error',()=>{art.remove();original.classList.remove('rani-hide-canvas');});
+   art.addEventListener('load',()=>{if(art.naturalWidth)original.classList.add('rani-hide-canvas');});
+   original.before(art);
+   done++;
+ }
+ const panel=ui.querySelector('#rightpanel');
+ if(panel){
+   const head=panel.querySelector('.head');
+   if(head){
+     const img=document.createElement('img');
+     img.id='rani-approved-royal-panel';img.src='/rani/rk_royal_panel.webp';
+     img.alt='기존 개별 제작 왕실 정보 패널 원본';img.decoding='async';
+     img.addEventListener('error',()=>img.remove());
+     head.after(img);done++;
+   }
+ }
+ const actualMarket=ui.querySelector('#view-market');
+ if(actualMarket){
+   const section=document.createElement('section');
+   section.id='rani-market-art';section.setAttribute('aria-label','왕국 상업 일러스트');
+   const img=document.createElement('img');img.src='/rani/rk_ship.webp';
+   img.alt='향후 항구 개발용 무역선 이미지';img.loading='lazy';
+   img.addEventListener('error',()=>section.remove());
+   const note=document.createElement('span');
+   note.textContent='왕국 교역 · 아래 실제 시장 거래 기능 이용';
+   section.append(img,note);actualMarket.prepend(section);done++;
+ }
+ if(done===4)ui.dataset.raniAssets='1';
+}
+
 const watch=()=>{
  const menu=document.getElementById('menu');if(menu)enhance(menu);
- const ui=document.getElementById('ui');if(ui)enhanceGameHud(ui);
+ const ui=document.getElementById('ui');if(ui){enhanceGameHud(ui);attachApprovedArt(ui);}
 };
 // The title screen can be reopened after leaving the map editor.
 watch();setInterval(watch,700);
