@@ -22,7 +22,7 @@ change('src/main.ts',
  "import { Hud } from './ui/hud';\nimport { createRaniWheel, type RaniTarget } from './ui/raniWheel';");
 change('src/main.ts',
  '      buildings: state.buildings.map(b => ({\n        n: b.name, x: b.x, z: b.z, staff: b.staff, hp: b.hp,',
- '        n: b.name, x: b.x, z: b.z, staff: b.staff, hp: b.hp,\n        lvl: b.lvl && b.lvl > 1 ? b.lvl : undefined,');
+ '      buildings: state.buildings.map(b => ({\n        n: b.name, x: b.x, z: b.z, staff: b.staff, hp: b.hp,\n        lvl: b.lvl && b.lvl > 1 ? b.lvl : undefined,');
 change('src/main.ts',
  '      b.hp = sb.hp;\n      b.held = { ...sb.held } as typeof b.held;',
  '      b.hp = sb.hp;\n      b.lvl = Math.max(1, Math.min(3, sb.lvl ?? 1));\n      b.held = { ...sb.held } as typeof b.held;');
