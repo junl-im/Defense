@@ -53,6 +53,7 @@ jobs:
           node rani-next/verify-art.mjs engines/fiefdom
           python -m pip install Pillow==11.3.0
           python rani-next/recolor_world.py engines/fiefdom/public/assets/sprites
+          python rani-next/royal-ground.py engines/fiefdom/public/assets/ground
       - name: Compile actual game with project-path-aware Vite imports
         working-directory: engines/fiefdom
         run: npm run build -- --base=/Defense/
