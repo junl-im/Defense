@@ -82,6 +82,23 @@ const lordStyle=await evaluate(`(()=>{
 assert.ok(lordStyle.realMapCanvas&&lordStyle.hero&&lordStyle.royalBegin
   &&lordStyle.rows>0&&lordStyle.mapClick,lordStyle);
 console.log('PASS actual map-position screen: WebP branded layout and interactive roster',lordStyle);
+
+const stageFit=await evaluate(`(()=>{
+ const root=document.getElementById('lords');
+ const map=root.querySelector('canvas').getBoundingClientRect();
+ const roster=root.querySelector('.side').getBoundingClientRect();
+ const begin=root.querySelector('button.go').getBoundingClientRect();
+ const names=[...root.querySelectorAll('.seat .nm')].map(x=>x.textContent);
+ return {mapRight:map.right,rosterLeft:roster.left,
+    beginVisible:begin.top>0&&begin.bottom<=innerHeight,
+    verticalTogether:Math.abs(map.top-roster.top)<30,
+    names,viewport:innerWidth};
+})()`);
+assert.ok(stageFit.rosterLeft>stageFit.mapRight&&stageFit.verticalTogether
+ &&stageFit.beginVisible&&stageFit.names[0]==='나'
+ &&stageFit.names[1]==='붉은 영주',stageFit);
+console.log('PASS post-map desktop roster + map + BEGIN fit without scrolling',stageFit);
+
 if(shot){
  const screenshot=await c.send('Page.captureScreenshot',{format:'png'},s);
  fs.writeFileSync(shot.replace(/\.png$/,'-choose-start.png'),Buffer.from(screenshot.data,'base64'));
