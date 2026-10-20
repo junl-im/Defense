@@ -46,6 +46,8 @@ const initial=await evaluate(`(()=>{
          actualStart:!!menu?.querySelector('button.go')};
 })()`);
 assert.equal(initial.title,'라니킹덤');
+assert.ok(await evaluate("document.getElementById('menu').textContent.includes('오류 제보')"),'Error report link is not Korean');
+assert.ok(await evaluate("document.getElementById('menu').textContent.includes('최초 실행 시')"),'Start guidance still English');
 assert.equal(initial.chosen,'푸른 해안');
 assert.ok(initial.visible&&initial.closed&&initial.originalCards>=10&&initial.actualStart,initial);
 assert.equal(initial.mapDisplay,'none');
@@ -114,6 +116,10 @@ const state=await evaluate(`(()=>{
          mini:!!document.querySelector('#minimap canvas')};
 })()`);
 assert.ok(state.game&&state.buildings>0&&Math.abs(state.zoom-1.5)<.05,state);
+const koHud=await evaluate("document.getElementById('stats').innerText");
+assert.ok(koHud.includes('인구')&&koHud.includes('미취업 주민')&&koHud.includes('식량 창고'),koHud);
+assert.ok(!/Population|Unemployed|Food stores|Stockpile|Enemies/.test(koHud),'HUD must be Korean');
+assert.equal(await evaluate("document.querySelectorAll('svg').length"),0,'SVG is forbidden in the game DOM');
 assert.ok(state.controlsHidden&&state.infoHidden&&state.realRes>4&&state.nativeBuild&&state.mini,state);
 const res=await evaluate(`(()=>{
  const ui=document.getElementById('ui');
