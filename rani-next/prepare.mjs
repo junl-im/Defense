@@ -49,9 +49,11 @@ for(const [name,rel] of Object.entries(assets)){
  fs.copyFileSync(from,path.join(dest,name));
 }
 fs.copyFileSync(path.join(import.meta.dirname,'skin.css'),path.join(dest,'skin.css'));
+fs.copyFileSync(path.join(import.meta.dirname,'menu-compact.js'),path.join(dest,'menu-compact.js'));
 const index=file('index.html');let html=fs.readFileSync(index,'utf8');
 assert.ok(!html.includes('/rani/skin.css'));
 html=html.replace('</head>','  <link rel="stylesheet" href="/rani/skin.css">\n  </head>');
 html=html.replace('<title>Fiefdom</title>','<title>라니킹덤 — 2.5D 개발판</title>');
+html=html.replace('</body>','  <script type="module" src="/rani/menu-compact.js"></script>\n  </body>');
 fs.writeFileSync(index,html);
 console.log('PASS Rani Next: existing coastal map, real 2.5D sprites, approved original assets, source UI');
