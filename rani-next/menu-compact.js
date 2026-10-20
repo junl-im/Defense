@@ -13,13 +13,13 @@ function enhance(menu) {
  art.src='/rani/rk_house.webp';art.alt='보유 중인 중세 주택 원본 일러스트';
  art.draggable=false;
  const desc=document.createElement('div');desc.className='rani-start-copy';
- const small=document.createElement('small');small.textContent='실제 2.5D 왕국 건설 게임';
+ const small=document.createElement('small');small.textContent='나만의 왕국을 건설하세요';
  const title=document.createElement('strong');
  const subtitle=document.createElement('p');
  desc.append(small,title,subtitle);feature.append(art,desc);
  const details=document.createElement('details');details.id='rani-map-picker';
  const summary=document.createElement('summary');
- summary.textContent='다른 실제 월드 지도 선택';
+ summary.textContent='다른 지역 선택';
  summary.setAttribute('aria-label','지도 선택 목록 펼치기');
  details.append(summary);grid.before(feature,details);details.append(grid);
  const update=()=>{
@@ -27,7 +27,7 @@ function enhance(menu) {
    const name=selected?.querySelector('h3')?.textContent||'왕국';
    title.textContent=(name==='The Salt Coast'||name==='푸른 해안')?'푸른 해안':name;
    subtitle.textContent=(name==='The Salt Coast'||name==='푸른 해안')
-    ? '숲과 해안이 만나는 진짜 건설 지도. 자원과 부대를 운영해 왕국을 발전시키세요.'
+    ? '푸른 해안에 성을 세우고 자원과 병력을 길러 왕국을 발전시키세요.'
     : selected?.querySelector('p')?.textContent||'지도에 건물을 배치하고 실제 생산과 군사를 발전시키세요.';
  };
  update();
@@ -137,9 +137,47 @@ function attachApprovedArt(ui) {
  if(done!==4)console.warn('[rani-next] Some source asset placement targets are absent',done);
 }
 
+function enhanceBuildDetails(ui){
+ const wrap=ui.querySelector('#buildwrap'),bar=ui.querySelector('#buildbar');
+ const build=ui.querySelector('#buildmenu');
+ if(!wrap||!bar||!build||wrap.dataset.rkDetails==='1')return;
+ wrap.dataset.rkDetails='1';
+ const pane=document.createElement('aside');pane.id='rk-build-detail';
+ pane.setAttribute('aria-label','건설 정보');pane.setAttribute('aria-live','polite');
+ const head=document.createElement('strong'),cost=document.createElement('p');
+ const desc=document.createElement('p'),status=document.createElement('p');
+ cost.className='rk-cost';desc.className='rk-description';status.className='rk-state';
+ pane.append(head,cost,desc,status);bar.after(pane);
+ const ko=s=>(s||'').replace(/\bwood\b/gi,'목재').replace(/\bstone\b/gi,'석재')
+  .replace(/\biron\b/gi,'철').replace(/\bfood\b/gi,'식량').replace(/\bwheat\b/gi,'밀')
+  .replace(/\bgold\b/gi,'금').replace(/\bfree\b/gi,'무료').replace(/\bplanks\b/gi,'판자')
+  .replace(/\bpitch\b/gi,'역청').replace(/\bbread\b/gi,'빵');
+ const cards=[...build.querySelectorAll('button[data-name]')];
+ const show=b=>{
+  if(!b){head.textContent='건설 안내';cost.textContent='';desc.textContent='건물을 선택하면 정보와 자원 비용을 확인할 수 있습니다.';status.textContent='';return;}
+  const lines=(b.title||'').split('\n'),price=b.querySelector('.c');
+  head.textContent=b.querySelector('span:not(.n):not(.t):not(.c)')?.textContent||lines[0]?.split(' — ')[0]||'건물';
+  cost.textContent='필요 자원 · '+ko(price?.textContent||lines[0]?.split(' — ')[1]||'');
+  desc.textContent=lines.slice(1).filter(Boolean)[0]||'왕국을 발전시키는 건물입니다.';
+  const poor=b.classList.contains('poor');
+  status.textContent=poor?'보유 자원이 부족합니다.':'건설할 위치를 선택하세요.';
+  status.classList.toggle('poor',poor);
+ };
+ show(null);
+ for(const b of cards){
+  const cost=b.querySelector('.c');if(cost)cost.textContent=ko(cost.textContent);
+  b.addEventListener('pointerenter',()=>show(b));
+  b.addEventListener('focus',()=>show(b));
+  b.addEventListener('click',()=>show(b));
+ }
+ bar.addEventListener('click',()=>queueMicrotask(()=>{
+  const first=[...build.querySelectorAll('.items')].find(x=>x.style.display!=='none')?.querySelector('button[data-name]');
+  show(first||null);
+ }));
+}
 const watch=()=>{
  const menu=document.getElementById('menu');if(menu)enhance(menu);
- const ui=document.getElementById('ui');if(ui){enhanceGameHud(ui);attachApprovedArt(ui);}
+ const ui=document.getElementById('ui');if(ui){enhanceGameHud(ui);attachApprovedArt(ui);enhanceBuildDetails(ui);}
 };
 // The title screen can be reopened after leaving the map editor.
 watch();setInterval(watch,700);

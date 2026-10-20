@@ -1,0 +1,39 @@
+// Browser QA v5.5: title, camera motion, hex details, real build details.
+import assert from 'node:assert/strict';
+import {CDP,getJSON} from '../engines/fiefdom/tools/e2e/cdp.mjs';
+const host=process.argv[2]||'http://127.0.0.1:8931/',port=process.argv[3]||'9341';
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const v=await getJSON('http://127.0.0.1:'+port+'/json/version');
+const c=new CDP();await c.connect(v.webSocketDebuggerUrl);
+const {targetId}=await c.send('Target.createTarget',{url:'about:blank'});
+const {sessionId:s}=await c.send('Target.attachToTarget',{targetId,flatten:true});
+await c.send('Page.enable',{},s);await c.send('Runtime.enable',{},s);
+await c.send('Emulation.setDeviceMetricsOverride',{width:1440,height:900,deviceScaleFactor:1,mobile:false},s);
+const evaluate=async expression=>{
+ const r=await c.send('Runtime.evaluate',{expression,awaitPromise:true,returnByValue:true},s);
+ if(r.exceptionDetails)throw Error(r.exceptionDetails.exception?.description);
+ return r.result.value;
+};
+async function wait(e){for(let i=0;i<260;i++){if(await evaluate(e))return;await sleep(350);}throw Error('Timeout '+e);}
+await c.send('Page.navigate',{url:host},s);
+await wait("!!document.querySelector('#rk-start-now')&&!!document.querySelector('#rani-map-picker')");
+const title=await evaluate("(()=>({version:document.querySelector('#menu .rk-public-version')?.textContent,note:document.querySelector('#menu .note'),bug:document.querySelector('#menu a[href*=issues]'),foot:document.querySelector('aside[aria-label=\"게임 정보\"]')}))()");
+assert.equal(title.version,'v5.5',title);assert.equal(title.note,null,title);
+assert.equal(title.bug,null,title);assert.equal(title.foot,null,title);
+await evaluate("document.querySelector('#rk-start-now').click()");
+await wait("!!window.__game&&!!document.querySelector('#ui')&&!document.querySelector('#lords')");
+await wait("!!document.querySelector('#rk-build-detail')");
+const before=await evaluate("(()=>{const g=window.__game,b=g.state.buildings.find(x=>x.name==='keep');return g.iso.worldToScreen(b.x,0,b.z)})()");
+await c.send('Input.dispatchMouseEvent',{type:'mouseMoved',x:680,y:415},s);
+await c.send('Input.dispatchMouseEvent',{type:'mousePressed',x:680,y:415,button:'left',clickCount:1},s);
+await c.send('Input.dispatchMouseEvent',{type:'mouseMoved',x:742,y:452,button:'left',buttons:1},s);
+await c.send('Input.dispatchMouseEvent',{type:'mouseReleased',x:742,y:452,button:'left',clickCount:1},s);
+const after=await evaluate("(()=>{const g=window.__game,b=g.state.buildings.find(x=>x.name==='keep');return g.iso.worldToScreen(b.x,0,b.z)})()");
+const delta=[after[0]-before[0],after[1]-before[1]];
+assert.ok(delta[0]>15&&delta[1]>12,{before,after,delta});
+const inspector=await evaluate("(()=>{const g=window.__game,b=g.state.buildings.find(x=>x.name==='keep');g.raniWheel.toggle({key:'building:'+b.id,name:b.name,label:b.def.label,x:b.x+b.def.footprint[0]/2,z:b.z+b.def.footprint[1]/2,building:b});document.querySelector('#rk-hex-menu button[data-action=info]').click();return {open:!document.querySelector('#rk-hex-menu').hidden,bar:!!document.querySelector('#rk-hex-info .rk-health-meter'),hp:document.querySelector('#rk-hex-info').textContent.includes('내구도')}})()");
+assert.ok(inspector.open&&inspector.bar&&inspector.hp,inspector);
+const builder=await evaluate("(()=>{window.__game.raniWheel.close();document.querySelector('#rani-build-toggle').click();const d=document.querySelector('#rk-build-detail'),b=document.querySelector('#buildmenu button[data-name]');b?.dispatchEvent(new Event('pointerenter'));return {detail:!!d,heading:d.querySelector('strong').textContent,info:d.querySelector('.rk-cost').textContent,desc:d.querySelector('.rk-description').textContent,amount:document.querySelectorAll('#buildmenu button[data-name]').length}})()");
+assert.ok(builder.detail&&builder.heading&&builder.info&&builder.desc&&builder.amount>3,builder);
+console.log('PASS v5.5 clean menu, true mouse drag direction, hp meter, native building details',{delta,inspector,builder});
+await c.send('Target.closeTarget',{targetId});process.exit(0);

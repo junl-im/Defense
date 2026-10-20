@@ -65,8 +65,8 @@ fs.writeFileSync(path.join(output,'SOURCE-AND-ATTRIBUTION.txt'),[
  'Previous v4 game and its existing browser-local saves remain accessible at /Defense/legacy/',
  'Existing v4 saves are not silently migrated into Fiefdom saves.'
 ].join('\n')+'\n');
-const footer='<aside aria-label="게임 정보" style="position:fixed;z-index:40;bottom:7px;left:50%;transform:translateX(-50%);display:flex;gap:12px;font:11px sans-serif;pointer-events:auto;background:#132b3de0;border-radius:8px;padding:5px 12px"><a style="color:#eccc8e" href="/Defense/legacy/" target="_blank" rel="noopener">기존 게임</a><a style="color:#eccc8e" href="/Defense/SOURCE-AND-ATTRIBUTION.txt" target="_blank" rel="noopener">원본·라이선스</a></aside>';
-fs.writeFileSync(path.join(output,'index.html'),site.replace('</body>',footer+'</body>'));
+// License and legacy kept at separate URLs; no dev footer on player screen.
+fs.writeFileSync(path.join(output,'index.html'),site);
 function size(folder){return fs.readdirSync(folder,{withFileTypes:true}).reduce((n,e)=>{
  const p=path.join(folder,e.name);return n+(e.isDirectory()?size(p):e.isFile()?fs.statSync(p).size:0);},0);}
 console.log(JSON.stringify({base:prefix,legacy:true,rewriteFiles:files,
