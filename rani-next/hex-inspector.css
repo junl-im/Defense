@@ -56,3 +56,98 @@
  #rani-hex .rani-hex-manage,#rani-hex .rani-hex-focus{top:105px}
  #rani-hex .rani-hex-info,#rani-hex .rani-hex-upgrade{top:7px}
 }
+
+
+/* Royal commander set-up: the EXISTING playable map-seat canvas and start
+   buttons are kept, but visually promoted into an art-directed pre-game page.
+   PNG/WebP only. No SVG icon libraries or fake screenshots. */
+html body #lords {
+  background:radial-gradient(85% 70% at 50% -20%,rgba(70,142,178,.46),transparent 70%),
+   radial-gradient(65% 55% at 10% 86%,rgba(38,78,101,.58),transparent),
+   linear-gradient(152deg,#0d283d,#071623 75%)!important;
+  padding:20px 14px 35px!important;color:#fff1d5!important;
+  font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif!important;
+}
+html body #lords::before{
+  content:'';display:block;flex:none;pointer-events:none;
+  width:min(340px,80vw);height:100px;margin:0 auto 0;
+  background:url('/rani/rk_logo.webp') center/contain no-repeat;
+  filter:drop-shadow(0 8px 12px #020917);
+}
+html body #lords h1{
+  font:bold clamp(19px,3vw,27px) 'Malgun Gothic',sans-serif!important;
+  letter-spacing:.04em!important;color:#ffe2a2!important;
+  margin:0 0 6px!important;text-shadow:0 2px 8px #000a;
+}
+html body #lords .sub{font-size:12px!important;font-weight:700;
+  letter-spacing:.06em!important;opacity:.95!important;
+  color:#bcdde6!important;margin:0 0 18px!important}
+html body #lords .board{
+  padding:17px;gap:17px!important;width:min(1020px,95vw);
+  border:2px solid #b99862!important;border-radius:19px!important;
+  background:linear-gradient(130deg,rgba(34,74,96,.92),rgba(9,27,44,.96));
+  box-shadow:inset 0 1px #ffe3a33b,0 16px 38px #0109169e;
+}
+html body #lords canvas{
+  max-width:100%!important;height:auto!important;
+  border:4px solid #c7a365!important;border-radius:12px!important;
+  box-shadow:0 5px 20px #01070dbd!important;
+  image-rendering:pixelated;
+}
+html body #lords .side{flex:1 1 265px!important;min-width:min(265px,100%)!important;
+  max-width:340px;padding:4px 0}
+html body #lords .seat{
+  border:1.5px solid #8c794f!important;border-radius:11px!important;
+  padding:10px 12px!important;
+  background:linear-gradient(140deg,#24465ce6,#112c42f2)!important;
+  box-shadow:inset 0 1px #f3d7aa24!important;
+}
+html body #lords .seat.on{
+  background:linear-gradient(140deg,#385d78,#1b344b)!important;
+  border-color:#ffdaa1!important;
+  box-shadow:0 0 0 1px #e7b870,inset 0 1px #ffeab557!important;
+}
+html body #lords .seat .nm{color:#ffe7b5;font-weight:800!important}
+html body #lords .seat button,
+html body #lords .diff button{
+  border:1.5px solid #b29154!important;border-radius:8px!important;
+  background:#203a50!important;color:#fbe7bd!important;
+  min-height:30px!important;font-weight:700!important;
+}
+html body #lords .diff button.on{
+  background:linear-gradient(#ae8550,#665031)!important;color:#fff2c9!important;
+  border-color:#ffdda4!important;
+}
+html body #lords .hint{opacity:.9!important;font-size:12px!important;
+  color:#cde2e6!important;line-height:1.7!important}
+html body #lords .warn{color:#ffc688!important;font-size:12px!important}
+html body #lords .acts{margin-top:19px!important;gap:14px!important;
+  display:flex;flex-wrap:wrap;justify-content:center}
+html body #lords .go{
+  padding:14px 38px!important;min-height:50px!important;
+  background:linear-gradient(#e8bf79,#957044)!important;
+  border:2px solid #ffe0a2!important;border-radius:11px!important;
+  color:#132435!important;font:bold 16px 'Malgun Gothic',sans-serif!important;
+  letter-spacing:.03em!important;box-shadow:0 6px 15px #0008!important;
+  transition:filter .16s,transform .16s;
+}
+html body #lords .go:hover{filter:brightness(1.15)}
+html body #lords .go:active{transform:scale(.98)}
+html body #lords .back{
+  border:1.5px solid #b69a65!important;color:#ffe5b8!important;
+  padding:12px 22px!important;border-radius:11px!important;
+  background:#17364ce8!important;min-height:50px!important;
+}
+html body #lords button:focus-visible,
+html body #lords canvas:focus-visible{outline:3px solid #fff2bd;outline-offset:2px}
+@media(max-width:720px){
+ html body #lords{padding:10px 8px 24px!important}
+ html body #lords::before{height:68px}
+ html body #lords .board{padding:9px;gap:10px!important;
+   flex-direction:column!important;align-items:stretch!important}
+ html body #lords canvas{width:100%!important;max-height:43vh!important;
+   object-fit:contain!important}
+ html body #lords .side{max-width:none!important}
+ html body #lords .seat{padding:8px!important}
+ html body #lords .go{flex:1!important;min-width:170px}
+}
