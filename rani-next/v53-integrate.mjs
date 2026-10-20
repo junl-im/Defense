@@ -12,7 +12,7 @@ function change(p,from,to){
 fs.copyFileSync(path.join(here,'v53-radial.ts'),file('src/ui/raniWheel.ts'));
 fs.appendFileSync(file('public/rani/skin.css'),'\n'+fs.readFileSync(path.join(here,'v53-wheel.css'),'utf8'));
 change('src/game/state.ts',
- '  hp: number;\n  /**\n   * A drawbridge that was raised.',
+ '  hp: number;\n  /**\n   * A drawbridge that is up.',
  '  hp: number;\n  /** Optional Rani defence level, defaults to 1 on old saves. */\n  lvl?: number;\n  /**\n   * A drawbridge that was raised.');
 change('src/game/save.ts',
  '  held: Record<string, number>;\n  /** A drawbridge that was raised.',
