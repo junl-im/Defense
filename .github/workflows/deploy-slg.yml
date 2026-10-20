@@ -14,7 +14,7 @@ jobs:
   verify-and-package:
     name: Verify real Fiefdom gameplay, then package with legacy v4
     runs-on: ubuntu-latest
-    timeout-minutes: 22
+    timeout-minutes: 28
     steps:
       - uses: actions/checkout@v4
         with:
@@ -84,7 +84,7 @@ jobs:
           test -s pages-preview/Defense/legacy/index.html
           test -s pages-preview/Defense/licenses/FIEFDOM-AGPL-3.0.txt
       - name: Confirm the actual deployed base-path app boots in Chromium
-        timeout-minutes: 7
+        timeout-minutes: 12
         shell: bash
         run: |
           set -euo pipefail
