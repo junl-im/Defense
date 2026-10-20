@@ -36,7 +36,7 @@ def upgrade(sheet:Path, gains, lifts):
     # Lossless output so no new muddy/blocky artefacts from generation loss.
     recoloured.save(sheet,format="WEBP",lossless=True,method=5,exact=True)
     with Image.open(sheet) as check:
-        assert check.size==img.size and check.getchannel("A").tobytes()==old_a.tobytes()
+        assert check.size==img.size and check.convert("RGBA").getchannel("A").tobytes()==old_a.tobytes()
     print(f"PASS terrain {sheet.stem}: rgb {tuple(round(n,1) for n in before)} -> {tuple(round(n,1) for n in after)}")
 def run(folder:Path):
     assert folder.is_dir()
