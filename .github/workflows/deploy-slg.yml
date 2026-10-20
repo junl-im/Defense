@@ -61,6 +61,7 @@ jobs:
           node rani-next/v58-precision.mjs engines/fiefdom
           node rani-next/v59-mobile-pages.mjs engines/fiefdom
           node rani-next/v510-world-port.mjs engines/fiefdom
+          node rani-next/v511-harbor.mjs engines/fiefdom
           node rani-next/check.mjs engines/fiefdom
           node rani-next/verify-art.mjs engines/fiefdom
           python -m pip install Pillow==11.3.0
@@ -68,6 +69,7 @@ jobs:
           python rani-next/royal-ground.py engines/fiefdom/public/assets/ground
           python rani-next/v52-building-polish.py engines/fiefdom/public/assets/sprites
           python rani-next/v52-forest-polish.py engines/fiefdom/public/assets/sprites
+          python rani-next/v511-harbor-sprites.py engines/fiefdom/public/assets/sprites
           python rani-next/v59-pack-sprites.py engines/fiefdom/public/assets/sprites
       - name: Compile actual game with project-path-aware Vite imports
         working-directory: engines/fiefdom
@@ -108,6 +110,7 @@ jobs:
           node rani-next/qa-v58-precision.mjs http://127.0.0.1:8940/Defense/ 9341
           node rani-next/qa-v59-mobile.mjs http://127.0.0.1:8940/Defense/ 9341
           node rani-next/qa-v510-port.mjs http://127.0.0.1:8940/Defense/ 9341
+          node rani-next/qa-v511-harbor.mjs http://127.0.0.1:8940/Defense/ 9341
           node engines/fiefdom/tools/e2e/smoke.mjs http://127.0.0.1:8940/Defense/ 9341 /tmp/rani-deploy-evidence/gameplay.png
       - name: Archive deploy-time gameplay QA images
         if: always()
