@@ -1,7 +1,7 @@
 name: Build Rani Next 2.5D Playable World
 on:
   push:
-    branches: [spike/rani-complete-isometric-base]
+    branches: [spike/rani-complete-isometric-base, feat/rani-korean-svg-free-v5]
     paths:
       - 'rani-next/**'
       - 'assets/rani/**'
@@ -45,7 +45,12 @@ jobs:
       - name: Convert actual world source and copy independent WebP assets
         run: |
           node rani-next/prepare.mjs engines/fiefdom
+          node rani-next/koreanize.mjs engines/fiefdom
+          node rani-next/ko-world.mjs engines/fiefdom
+          node rani-next/ko-hud.mjs engines/fiefdom
+          node rani-next/no-svg-chart.mjs engines/fiefdom
           node rani-next/check.mjs engines/fiefdom
+          node rani-next/verify-art.mjs engines/fiefdom
       - name: Recolour REAL castle sprites, four sides each (not HUD mockups)
         run: |
           python -m pip install Pillow==11.3.0
@@ -53,6 +58,8 @@ jobs:
       - name: Compile actual playable 2.5D kingdom
         working-directory: engines/fiefdom
         run: npm run build
+      - name: Enforce zero SVG files or SVG markup in compiled game
+        run: node rani-next/verify-art.mjs engines/fiefdom dist
       - name: Publish original copyright and complete reproducible source instructions
         shell: bash
         run: |

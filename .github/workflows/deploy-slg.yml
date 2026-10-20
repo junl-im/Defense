@@ -45,12 +45,19 @@ jobs:
       - name: Transform gameplay engine using approved raster art
         run: |
           node rani-next/prepare.mjs engines/fiefdom
+          node rani-next/koreanize.mjs engines/fiefdom
+          node rani-next/ko-world.mjs engines/fiefdom
+          node rani-next/ko-hud.mjs engines/fiefdom
+          node rani-next/no-svg-chart.mjs engines/fiefdom
           node rani-next/check.mjs engines/fiefdom
+          node rani-next/verify-art.mjs engines/fiefdom
           python -m pip install Pillow==11.3.0
           python rani-next/recolor_world.py engines/fiefdom/public/assets/sprites
       - name: Compile actual game with project-path-aware Vite imports
         working-directory: engines/fiefdom
         run: npm run build -- --base=/Defense/
+      - name: Enforce zero SVG files or SVG markup in compiled game
+        run: node rani-next/verify-art.mjs engines/fiefdom dist
       - name: Package playable game at /Defense/ and preserve v4 /legacy/
         run: |
           node rani-next/deploy-pack.mjs engines/fiefdom/dist pages-preview/Defense

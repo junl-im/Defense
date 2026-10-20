@@ -1,4 +1,4 @@
-"""Recolour real four-angle Fiefdom fortress sprites in a temporary build.
+"""Recolour real four-angle Fiefdom fortress, town, and marketplace sprites.
 
 No visual overlays: original game atlas PNGs and alpha/anchors are preserved.
 Fiefdom original code/art AGPL-3.0-only; third-party art is not touched.
@@ -9,7 +9,9 @@ from pathlib import Path
 from PIL import Image
 
 TARGETS = frozenset(('keep', 'gatehouse', 'gatehouse_shut', 'lookout_tower',
-                     'round_tower', 'tower', 'wall'))
+                     'round_tower', 'tower', 'wall', 'perimeter_turret',
+                     'chapel', 'church', 'cathedral', 'shrine', 'market',
+                     'barracks', 'armoury', 'well', 'inn', 'stables', 'hovel'))
 
 def recolor(r,g,b,a):
     if not a:
@@ -40,7 +42,7 @@ def run(folder):
         transformed+=sum(x!=y for x,y in zip(old,new))
         im.putdata(new)
         im.save(filename,format='PNG',optimize=True)
-    assert len(chosen)==28 and transformed>1000,(len(chosen),transformed)
+    assert len(chosen)==len(TARGETS)*4 and transformed>1000,(len(chosen),transformed)
     print(f'PASS: {len(chosen)} four-angle original world images recoloured; {transformed} pixels modified, placement anchors intact')
 
 if __name__=='__main__':
