@@ -67,7 +67,7 @@ await sleep(800);
 const state=await evaluate(`(()=>{
  const g=window.__game,ui=document.querySelector('#ui');
  const controls=document.querySelector('#controls');
- const info=document.querySelector('#stats2');
+ const info=document.querySelector('#rightpanel');
  return {game:!!g.state,buildings:g.state.buildings.length,
          zoom:g.iso.zoom,controlsHidden:getComputedStyle(controls).display==='none',
          infoHidden:getComputedStyle(info).display==='none',
@@ -80,7 +80,7 @@ assert.ok(state.controlsHidden&&state.infoHidden&&state.realRes>4&&state.nativeB
 await evaluate("document.getElementById('rani-controls-toggle').click()");
 assert.equal(await evaluate("getComputedStyle(document.getElementById('controls')).display==='none'"),false);
 await evaluate("document.getElementById('rani-info-toggle').click()");
-assert.equal(await evaluate("getComputedStyle(document.getElementById('stats2')).display==='none'"),false);
+assert.equal(await evaluate("getComputedStyle(document.getElementById('rightpanel')).display==='none'"),false);
 await evaluate("document.getElementById('rani-controls-toggle').click();document.getElementById('rani-info-toggle').click()");
 if(shot){
  const r=await c.send('Page.captureScreenshot',{format:'png'},s);
