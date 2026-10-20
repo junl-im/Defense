@@ -58,3 +58,5 @@ try{
 }finally{
  await c.send('Target.closeTarget',{targetId});
 }
+// CDP keeps an active WebSocket; terminate the QA process after success.
+process.exit(0);
