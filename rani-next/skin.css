@@ -163,3 +163,25 @@ padding:10px 3px!important;scrollbar-color:#b69462 #102a40;}
  #rani-approved-royal-panel{width:130px}
  #rani-market-art img{width:40px;height:40px;flex-basis:40px}
 }
+
+
+/* Readable by default: 5 TRUE native resource records, not fake labels.
+   The full original live stock ticker is one button away. */
+#rani-resource-toggle{display:none}
+@media(min-width:701px){
+#topbar{right:338px!important}
+#ui:not(.rani-res-expanded) #topbar .res:not([data-res="gold"]):not([data-res="wood"]):not([data-res="stone"]):not([data-res="bread"]):not([data-res="iron"]){display:none!important}
+#rani-resource-toggle{
+  display:block;position:fixed;right:280px;top:11px;z-index:100;
+  width:54px;height:35px;pointer-events:auto;cursor:pointer;
+  background:linear-gradient(155deg,#375975,#132b41);border:1px solid #c3a16a;
+  color:#f5dcaa;font:700 11px 'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+  border-radius:10px;box-shadow:0 2px 8px #030b10aa;
+}
+#rani-resource-toggle:focus-visible{outline:2px solid #ffe4a9;outline-offset:2px}
+#rani-resource-toggle[aria-expanded="true"]{border-color:#ffdc93;color:white}
+}
+@media(min-width:701px) and (max-width:1000px){
+#topbar{left:175px!important;right:276px!important}
+#rani-resource-toggle{right:220px}
+}
