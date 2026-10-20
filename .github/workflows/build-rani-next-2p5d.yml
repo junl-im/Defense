@@ -98,6 +98,8 @@ jobs:
                curl -fsS http://127.0.0.1:9341/json/version >/dev/null; then break; fi
             sleep 1
           done
+          node ../../rani-next/qa-ui.mjs http://127.0.0.1:8931/ 9341 qa/rani-next-royal-ux.png
+          test -s qa/rani-next-royal-ux.png
           node tools/e2e/smoke.mjs http://127.0.0.1:8931/ 9341 qa/rani-next-coast-and-royal-fortress.png
           test -s qa/rani-next-coast-and-royal-fortress.png
       - name: Keep real-world screenshot and browser evidence
