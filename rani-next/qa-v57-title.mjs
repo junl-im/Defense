@@ -27,6 +27,7 @@ assert.ok(mobile.buttonBottom<mobile.height&&mobile.buttonTop>mobile.logoBottom&
 await snap('mobile-title');
 await ev("document.querySelector('#rk-start-now').click()");
 await until("document.querySelector('#menu').classList.contains('rk-choose-region')");
+await until("Number(getComputedStyle(document.querySelector('#menu .rk-title-scene')).opacity)<0.4");
 const region=await ev("(()=>{const m=document.querySelector('#menu'),p=m.querySelector('#rani-map-picker');return {cards:p.querySelectorAll('.map').length,open:p.open,shown:getComputedStyle(p).display!=='none',hideStart:getComputedStyle(m.querySelector('#rk-start-now')).display==='none',action:m.querySelector('.rk-manual-start')?.textContent,muted:Number(getComputedStyle(m.querySelector('.rk-title-scene')).opacity)<.4}})()");
 assert.ok(region.cards>=10&&region.open&&region.shown&&region.hideStart&&region.action.includes('영주 선택')&&region.muted,JSON.stringify(region));
 await snap('mobile-regions');
