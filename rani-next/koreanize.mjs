@@ -57,6 +57,7 @@ const sourcePairs={
  ["'Your map'","'내가 만든 지도'"],["'Edit'","'수정'"],["'Delete'","'삭제'"],["'Really?'","'정말 삭제할까요?'"],["'Load'","'불러오기'"],
  ["'Or continue a saved game'","'저장한 왕국 이어하기'"],["'Sign out'","'로그아웃'"],
  ["'Autosave'","'자동 저장'"],["'MULTIPLAYER →'","'멀티플레이어 →'"],
+ ["'The first load takes a moment while the sprites are read.'","'최초 실행 시 그래픽 자료를 불러오는 데 시간이 조금 걸릴 수 있습니다.'"],
  ["'Esc in game to pause, save, load or leave. '","'게임에서 Esc를 누르면 일시정지·저장·불러오기·나가기를 할 수 있습니다. '"],
  ["'<h3>+ Draw your own</h3>'","'<h3>+ 직접 지도 만들기</h3>'"],
  ["'<p>Start from bare desert and paint the ground and hills yourself.</p>'","'<p>빈 땅부터 지형과 언덕을 직접 만들어 보세요.</p>'"]
@@ -97,6 +98,10 @@ const sourcePairs={
  'src/ui/gameover.ts':[
  ["'Return to title'","'시작 화면으로'"],["'Survey the field'","'전장 돌아보기'"],
  ["'Look on'","'계속 보기'"],["'VICTORY'","'승리'"],["'DEFEAT'","'패배'"]
+ ],
+ 'src/ui/bugreport.ts':[
+ ["'Report a bug'","'오류 제보'"],
+ ["'Opens a GitHub issue with the version and build already filled in'","'버전과 빌드 정보를 포함하여 GitHub 오류 제보 페이지를 엽니다.'"]
  ],
  'src/ui/whatsnew.ts':[
  ["'WHAT'","'변경 사항'"],["'CLOSE'","'닫기'"],["'What changed in this version'","'이번 버전 변경 사항'"]
