@@ -196,6 +196,18 @@ assert.ok(hexEvidence.available&&hexEvidence.visible&&hexEvidence.protectedKeep
  &&hexEvidence.woodSpent&&hexEvidence.confirm&&hexEvidence.cancelWorks,hexEvidence);
 assert.deepEqual(hexEvidence.actions,['info','upgrade','repair','manage','build','remove']);
 console.log('PASS real Rani hex UI, protected keep, click-toggle, saved upgrades, payment, demolition cancel',hexEvidence);
+
+await evaluate(`(()=>{
+ const g=window.__game,b=g.state.buildings.find(x=>x.name==='keep');
+ g.raniWheel.toggle({key:'building:'+b.id,name:b.name,label:b.def.label,
+   x:b.x+b.def.footprint[0]/2,z:b.z+b.def.footprint[1]/2,building:b});
+})()`);
+if(shot){
+ const pic=await c.send('Page.captureScreenshot',{format:'png'},s);
+ fs.writeFileSync(shot.replace(/\.png$/,'-hex-actions.png'),Buffer.from(pic.data,'base64'));
+}
+await evaluate("window.__game.raniWheel.close()");
+
 assert.equal(await evaluate("document.querySelectorAll('svg').length"),0);
 const sceneryEvidence=await evaluate(`(()=>{
  const g=window.__game,w=g.raniWheel;
