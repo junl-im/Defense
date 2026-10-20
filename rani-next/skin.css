@@ -103,7 +103,7 @@ padding:10px 3px!important;scrollbar-color:#b69462 #102a40;}
    default; never remove underlying resource, statistics or settings systems. */
 #rani-info-toggle,#rani-controls-toggle{display:none}
 @media(min-width:701px){
- #ui:not(.rani-info-open) #stats2{display:none!important}
+ #ui:not(.rani-info-open) #rightpanel{display:none!important}
  #ui:not(.rani-controls-open) #controls{display:none!important}
  #rani-info-toggle,#rani-controls-toggle{
   position:fixed;bottom:11px;z-index:100;display:block;pointer-events:auto;
