@@ -66,6 +66,16 @@ await wait("[...document.querySelectorAll('button')].some(b=>b.textContent.inclu
 await evaluate("[...document.querySelectorAll('button')].find(b=>b.textContent.includes('BEGIN')).click()");
 await wait("!!window.__game&&!!document.getElementById('rani-controls-toggle')",120);
 await wait("document.getElementById('ui')?.dataset.raniAssets==='1'",20);
+const placements=await evaluate(`(()=>{
+ const ui=document.getElementById('ui');
+ return {count:ui.dataset.raniAssetCount,
+   house:!!ui.querySelector('#buildmenu button[data-name="hovel"] img.rani-approved-building'),
+   market:!!ui.querySelector('#buildmenu button[data-name="market"] img.rani-approved-building'),
+   panel:!!ui.querySelector('#rani-approved-royal-panel'),
+   ship:!!ui.querySelector('#view-market #rani-market-art img')};
+})()`);
+console.log('Rani user asset placement',JSON.stringify(placements));
+assert.equal(placements.count,'4',placements);
 await sleep(800);
 const owned=await evaluate(`(()=>{
  const ui=document.getElementById('ui');
