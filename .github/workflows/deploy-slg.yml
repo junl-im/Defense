@@ -52,6 +52,7 @@ jobs:
           node rani-next/v52-scene.mjs engines/fiefdom
           node rani-next/v52-shore.mjs engines/fiefdom
           node rani-next/v53-integrate.mjs engines/fiefdom
+          node rani-next/v53-lords.mjs engines/fiefdom
           node rani-next/check.mjs engines/fiefdom
           node rani-next/verify-art.mjs engines/fiefdom
           python -m pip install Pillow==11.3.0

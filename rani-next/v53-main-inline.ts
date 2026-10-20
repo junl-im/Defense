@@ -105,7 +105,9 @@
       const ui=document.getElementById('ui');
       const native=document.getElementById('rani-build-toggle') as HTMLButtonElement|null;
       if(native&&ui&&!ui.classList.contains('rani-build-open'))native.click();
-      hud.toggleBuild();
+      // Only open a hidden native category; a second toggle would close it.
+      const panel=document.getElementById('buildmenu');
+      if(panel?.classList.contains('hidden'))hud.toggleBuild();
     },
     remove(t){
       if(t.building){

@@ -1,7 +1,7 @@
 name: Build Rani Next 2.5D Playable World
 on:
   push:
-    branches: [spike/rani-complete-isometric-base, feat/rani-korean-svg-free-v5, feat/rani-v5-1-world-polish, feat/rani-v52-biome-forest-render, feat/rani-v53-hex-building-interactions]
+    branches: [spike/rani-complete-isometric-base, feat/rani-korean-svg-free-v5, feat/rani-v5-1-world-polish, feat/rani-v52-biome-forest-render, feat/rani-v53-hex-building-interactions, feat/rani-v531-start-screen-fit]
     paths:
       - 'rani-next/**'
       - 'assets/rani/**'
@@ -52,6 +52,7 @@ jobs:
           node rani-next/v52-scene.mjs engines/fiefdom
           node rani-next/v52-shore.mjs engines/fiefdom
           node rani-next/v53-integrate.mjs engines/fiefdom
+          node rani-next/v53-lords.mjs engines/fiefdom
           node rani-next/check.mjs engines/fiefdom
           node rani-next/verify-art.mjs engines/fiefdom
       - name: Recolour REAL castle sprites, four sides each (not HUD mockups)
