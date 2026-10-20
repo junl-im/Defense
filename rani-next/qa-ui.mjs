@@ -69,6 +69,24 @@ await evaluate("document.querySelector('#rani-map-picker .map').click()");
 assert.equal(await evaluate("document.querySelector('#rani-start-hero strong').textContent"),'푸른 해안');
 await evaluate("[...document.querySelectorAll('#menu button')].find(b=>b.textContent.includes('영주 선택')).click()");
 await wait("[...document.querySelectorAll('button')].some(b=>b.textContent.includes('게임 시작'))");
+
+const lordStyle=await evaluate(`(()=>{
+ const root=document.getElementById('lords');
+ const canvas=root?.querySelector('canvas');
+ return {realMapCanvas:!!canvas&&canvas.width>350,
+   hero:getComputedStyle(root,'::before').backgroundImage.includes('rk_logo.webp'),
+   royalBegin:getComputedStyle(root.querySelector('.go')).backgroundImage.includes('rk_royal_button.webp'),
+   rows:root.querySelectorAll('.seat').length,
+   mapClick:typeof canvas?.onclick==='function'};
+})()`);
+assert.ok(lordStyle.realMapCanvas&&lordStyle.hero&&lordStyle.royalBegin
+  &&lordStyle.rows>0&&lordStyle.mapClick,lordStyle);
+console.log('PASS actual map-position screen: WebP branded layout and interactive roster',lordStyle);
+if(shot){
+ const screenshot=await c.send('Page.captureScreenshot',{format:'png'},s);
+ fs.writeFileSync(shot.replace(/\.png$/,'-choose-start.png'),Buffer.from(screenshot.data,'base64'));
+}
+
 await evaluate("[...document.querySelectorAll('button')].find(b=>b.textContent.includes('게임 시작')).click()");
 await wait("!!window.__game&&!!document.getElementById('rani-controls-toggle')",120);
 await wait("document.getElementById('ui')?.dataset.raniAssets==='1'",20);
@@ -116,6 +134,75 @@ const state=await evaluate(`(()=>{
          mini:!!document.querySelector('#minimap canvas')};
 })()`);
 assert.ok(state.game&&state.buildings>0&&Math.abs(state.zoom-1.5)<.05,state);
+
+const hexEvidence=await evaluate(`(()=>{
+ const g=window.__game,w=g.raniWheel;
+ const keep=g.state.buildings.find(b=>b.name==='keep');
+ if(!keep||!w)return {available:false};
+ const mk=b=>({key:'building:'+b.id,name:b.name,label:b.def.label,
+   x:b.x+b.def.footprint[0]/2,z:b.z+b.def.footprint[1]/2,building:b});
+ const target=mk(keep);
+ w.toggle(target);
+ const menu=document.querySelector('#rk-hex-menu');
+ const visible=!menu.hidden;
+ const actions=[...menu.querySelectorAll('button[data-action]')].map(b=>b.dataset.action);
+ const protectedKeep=menu.querySelector('[data-action="remove"]').disabled;
+ menu.querySelector('[data-action="info"]').click();
+ const hasInfo=!document.querySelector('#rk-hex-info').hidden;
+ w.toggle(target);
+ const toggledClosed=menu.hidden;
+ w.toggle(target);
+ const stoneBefore=g.state.stock.stone,woodBefore=g.state.stock.wood,hpBefore=keep.hp;
+ g.state.stock.stone+=400;g.state.stock.wood+=400;
+ menu.querySelector('[data-action="upgrade"]').click();
+ const increasedHp=keep.hp>hpBefore,upgraded=keep.lvl===2;
+ const persisted=g.snapshot().buildings.find(b=>b.n==='keep')?.lvl===2;
+ const stoneSpent=g.state.stock.stone<stoneBefore+400,
+       woodSpent=g.state.stock.wood<woodBefore+400;
+ const other=g.state.buildings.find(b=>b.name!=='keep'&&b.name!=='stockpile'&&b.name!=='granary');
+ let confirm=false,cancelWorks=false;
+ if(other){
+   w.toggle(mk(other));
+   menu.querySelector('[data-action="remove"]').click();
+   const modal=document.getElementById('rk-hex-confirm');
+   confirm=!!modal&&!!modal.querySelector('.rk-hex-danger');
+   modal.querySelector('.rk-hex-cancel').click();
+   cancelWorks=!document.getElementById('rk-hex-confirm')&&g.state.buildings.includes(other);
+ }
+ w.close();
+ return {available:true,visible,actions,protectedKeep,hasInfo,toggledClosed,
+    upgraded,increasedHp,persisted,stoneSpent,woodSpent,confirm,cancelWorks};
+})()`);
+assert.ok(hexEvidence.available&&hexEvidence.visible&&hexEvidence.protectedKeep
+ &&hexEvidence.hasInfo&&hexEvidence.toggledClosed&&hexEvidence.upgraded
+ &&hexEvidence.increasedHp&&hexEvidence.persisted&&hexEvidence.stoneSpent
+ &&hexEvidence.woodSpent&&hexEvidence.confirm&&hexEvidence.cancelWorks,hexEvidence);
+assert.deepEqual(hexEvidence.actions,['info','upgrade','repair','manage','build','remove']);
+console.log('PASS real Rani hex UI, protected keep, click-toggle, saved upgrades, payment, demolition cancel',hexEvidence);
+assert.equal(await evaluate("document.querySelectorAll('svg').length"),0);
+const sceneryEvidence=await evaluate(`(()=>{
+ const g=window.__game,w=g.raniWheel;
+ const i=g.decorations.findIndex(d=>d.alive);
+ if(i<0)return {available:false};
+ const d=g.decorations[i],old=g.state.buildings.length;
+ w.toggle({key:'nature:'+i,name:d.name,label:'자연물',
+   x:d.x+0.5,z:d.z+0.5,decorationIndex:i});
+ const menu=document.querySelector('#rk-hex-menu');
+ const hasControl=!menu.querySelector('[data-action="remove"]').disabled;
+ menu.querySelector('[data-action="remove"]').click();
+ const modal=document.querySelector('#rk-hex-confirm');
+ const asks=!!modal&&!!modal.querySelector('.rk-hex-danger');
+ modal.querySelector('.rk-hex-danger').click();
+ const gone=!d.alive,serial=g.snapshot().felled.some(([n,time])=>n===i&&time>=1e11);
+ const buildingsIntact=g.state.buildings.length===old;
+ const obstacleCleared=!g.paths.isBlocked(d.x,d.z);
+ return {available:true,hasControl,asks,gone,serial,buildingsIntact,obstacleCleared};
+})()`);
+assert.ok(sceneryEvidence.available&&sceneryEvidence.hasControl&&sceneryEvidence.asks
+  &&sceneryEvidence.gone&&sceneryEvidence.serial&&sceneryEvidence.buildingsIntact
+  &&sceneryEvidence.obstacleCleared,sceneryEvidence);
+console.log('PASS actual scenery removal: confirmation, persistent felled index, collision released',sceneryEvidence);
+
 const shoreProof=await evaluate(`(()=>{
  const t=window.__game.terrain, attr=t.mesh.geometry.getAttribute('aShore');
  if(!attr || attr.itemSize!==4) return {present:false};
