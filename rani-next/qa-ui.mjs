@@ -46,8 +46,9 @@ const initial=await evaluate(`(()=>{
          actualStart:!!menu?.querySelector('button.go')};
 })()`);
 assert.equal(initial.title,'라니킹덤');
-assert.ok(await evaluate("document.getElementById('menu').textContent.includes('오류 제보')"),'Error report link is not Korean');
-assert.ok(await evaluate("document.getElementById('menu').textContent.includes('최초 실행 시')"),'Start guidance still English');
+assert.ok(await evaluate("!document.getElementById('menu').textContent.includes('오류 제보')"),'Developer link visible on title');
+assert.ok(await evaluate("!document.getElementById('menu').textContent.includes('최초 실행 시')"),'Technical loading note still visible');
+assert.ok(await evaluate("document.querySelector('#menu .rk-public-version')?.textContent==='v5.5'"),'v5.5 marker missing');
 assert.equal(initial.chosen,'푸른 해안');
 assert.ok(initial.visible&&initial.closed&&initial.originalCards>=10&&initial.actualStart,initial);
 assert.equal(initial.mapDisplay,'none');
