@@ -208,8 +208,8 @@ function modify(p,a,b){const s=fs.readFileSync(file(p),'utf8');assert.equal(s.sp
  assert.ok(s.includes(oldText),'Smoke start changed');
  s=s.replace(oldText,"await ev("+BT+"document.querySelector('#rk-start-now').click()"+BT+");\n"+oldText);
  // The translated lord screen no longer says BEGIN; select its real go control.
- const oldBegin='await ev('+BT+"[...document.querySelectorAll('button')].find(b => /BEGIN/.test(b.textContent))?.click()"+BT+');';
- assert.ok(s.includes(oldBegin),'Original smoke BEGIN selector changed');
+ const oldBegin='await ev('+BT+"[...document.querySelectorAll('button')].find(b => /게임 시작/.test(b.textContent))?.click()"+BT+');';
+ assert.ok(s.includes(oldBegin),'Translated smoke start selector changed');
  s=s.replace(oldBegin,'await ev('+BT+"document.querySelector('#lords button.go')?.click()"+BT+');');
  fs.writeFileSync(file(p),s);
 }
