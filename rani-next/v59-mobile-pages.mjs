@@ -33,7 +33,11 @@ async function loadRaniOfflineAtlas(base:string,onProgress?: (n:number,total:num
    const rgba=context.getImageData(0,0,W,H).data;
    const row=W*4;
    for(let r=0;r<H;r++)bytes.set(rgba.subarray(r*row,(r+1)*row),p*layer+(H-1-r)*row);
-   canvases.push(canvas);
+   // Only SpriteBatch's DataArrayTexture is rendered; keeping the four
+   // massive staging canvases would duplicate hundreds of MB on phones.
+   canvas.width=1;canvas.height=1;
+   const spare=document.createElement('canvas');spare.width=1;spare.height=1;
+   canvases.push(spare);
    onProgress?.(p+1,count);
  }
  const texture=new THREE.DataArrayTexture(bytes,W,H,count);
