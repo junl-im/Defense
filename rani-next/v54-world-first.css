@@ -1,0 +1,26 @@
+/* Genuine 2.5D world opens in one click. Approved separate WebP button only. */
+#menu .acts{width:min(540px,96vw);flex-direction:column;gap:0!important}
+#menu .rk-start-now{
+ display:block;min-width:232px;width:232px;height:97px;flex:0 0 auto;
+ border:0;cursor:pointer;color:#fff4d1;
+ background:url('/rani/rk_royal_button.webp') center/contain no-repeat;
+ font:800 18px 'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+ text-shadow:0 2px 5px #000,0 0 8px #081622;
+ filter:drop-shadow(0 5px 10px #000b);
+ transition:filter .13s ease,transform .13s ease
+}
+#menu .rk-start-now:hover{filter:drop-shadow(0 5px 13px #f0c97688);transform:translateY(-2px)}
+#menu .rk-start-now:focus-visible{outline:3px solid #ffe8a1;outline-offset:2px}
+#menu .rk-start-now:disabled{opacity:.55;cursor:progress}
+#menu .go.rk-manual-start{
+ width:auto!important;height:auto!important;min-height:32px!important;
+ margin:0 auto!important;padding:6px 15px!important;
+ background:none!important;border:1px solid #a58555!important;border-radius:9px!important;
+ box-shadow:none!important;font-size:11px!important;color:#dfcfab!important;
+ filter:none!important
+}
+#menu .rk-start-warning{font-size:12px;color:#ffd7a2;text-align:center}
+@media(max-width:700px){
+ #menu .rk-start-now{width:190px;min-width:190px;height:78px;font-size:15px}
+ #menu .acts{margin:2px auto 12px!important}
+}
