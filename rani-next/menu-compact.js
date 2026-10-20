@@ -90,7 +90,7 @@ function attachApprovedArt(ui) {
      head.after(img);done++;
    }
  }
- const actualMarket=ui.querySelector('#view-market');
+ const actualMarket=ui.querySelector('#market');
  if(actualMarket){
    const section=document.createElement('section');
    section.id='rani-market-art';section.setAttribute('aria-label','왕국 상업 일러스트');
