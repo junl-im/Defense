@@ -58,6 +58,7 @@ jobs:
           node rani-next/v56-world-flow.mjs engines/fiefdom
           node rani-next/v57-title.mjs engines/fiefdom
           node rani-next/v57-construction.mjs engines/fiefdom
+          node rani-next/v58-precision.mjs engines/fiefdom
           node rani-next/check.mjs engines/fiefdom
           node rani-next/verify-art.mjs engines/fiefdom
           python -m pip install Pillow==11.3.0
@@ -101,6 +102,7 @@ jobs:
           node rani-next/qa-v56-flow.mjs http://127.0.0.1:8940/Defense/ 9341
           node rani-next/qa-v57-title.mjs http://127.0.0.1:8940/Defense/ 9341 /tmp/rani-deploy-evidence/rani-v57.png
           node rani-next/qa-v57-construction.mjs http://127.0.0.1:8940/Defense/ 9341
+          node rani-next/qa-v58-precision.mjs http://127.0.0.1:8940/Defense/ 9341
           node engines/fiefdom/tools/e2e/smoke.mjs http://127.0.0.1:8940/Defense/ 9341 /tmp/rani-deploy-evidence/gameplay.png
       - name: Archive deploy-time gameplay QA images
         if: always()
