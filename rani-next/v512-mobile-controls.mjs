@@ -70,6 +70,50 @@ replace('src/main.ts',
 "      document.body.appendChild(zoom);",
 "    }"
 ].join('\n'));
+// Keep the selected building as the anchor of its hex inspector on phones.
+// The existing v5.5 wheel pins the phone panel to a constant .43 screen height;
+// bind the real Fiefdom projection instead, clamped between HUD and thumb pad.
+replace('src/ui/raniWheel.ts',
+"    const narrow=window.innerWidth<=700;",
+"    const narrow=window.innerWidth<=700||document.documentElement.classList.contains('phone');");
+replace('src/ui/raniWheel.ts',
+"    const left=narrow?window.innerWidth/2:Math.max(165,Math.min(window.innerWidth-165,p.x));",
+"    const edge=Math.min(window.innerWidth/2,157);"+
+"\n    const left=narrow?Math.max(edge,Math.min(window.innerWidth-edge,p.x))"+
+":Math.max(165,Math.min(window.innerWidth-165,p.x));");
+replace('src/ui/raniWheel.ts',
+"    const top=narrow?Math.max(155,Math.min(window.innerHeight-180,window.innerHeight*.43))\n      :Math.max(150,Math.min(window.innerHeight-165,p.y-32));",
+[
+"    const phone=document.documentElement.classList.contains('phone');",
+"    const half=Math.max(92,host.getBoundingClientRect().height/2);",
+"    const upper=52+half;",
+"    const lower=window.innerHeight-(phone?72:15)-half;",
+"    const top=narrow?",
+"      (lower<upper?window.innerHeight/2:Math.max(upper,Math.min(lower,p.y-20))):",
+"      Math.max(150,Math.min(window.innerHeight-165,p.y-32));"
+].join('\n'));
+replace('src/ui/raniWheel.ts',
+"    host.style.left=left+'px';host.style.top=top+'px';",
+"    host.style.left=left+'px';host.style.top=top+'px';"+
+"\n    host.style.setProperty('--rk-anchor-left',left+'px');"+
+"\n    host.style.setProperty('--rk-anchor-top',top+'px');");
+// Use meaningful native button labels rather than English in the phone pad.
+replace('src/ui/touch.ts',
+"    mapBtn = btn('Map', () => hooks.openMap?.());",
+"    mapBtn = btn('지도', () => hooks.openMap?.());");
+replace('src/ui/touch.ts',
+"    infoBtn = btn('Info', () => hooks.openInfo?.());",
+"    infoBtn = btn('정보', () => hooks.openInfo?.());");
+{
+ const p=file('src/ui/touch.ts'),s=fs.readFileSync(p,'utf8');
+ assert.equal(s.split("cmd = btn('Move'").length,3,'native touch command drift');
+ assert.equal(s.split("buildBtn = btn('Build'").length,3,'native build label drift');
+ fs.writeFileSync(p,s.replaceAll("cmd = btn('Move'","cmd = btn('선택'")
+  .replaceAll("buildBtn = btn('Build'","buildBtn = btn('건설'")
+  .replace("cmd.textContent = m === 'command' ? 'Ordering' : 'Move';",
+           "cmd.textContent = m === 'command' ? '이동 지시' : '선택';"));
+}
+
 replace('src/ui/menu.ts',"version.textContent='v5.11';","version.textContent='v5.12';");
 fs.appendFileSync(file('public/rani/skin.css'),'\n'+fs.readFileSync(path.join(import.meta.dirname,'v512-mobile-hud.css'),'utf8'));
 console.log('PASS v5.12 mobile pinch guard, one-tap hex inspector, native continuous zoom, compact HUD');
