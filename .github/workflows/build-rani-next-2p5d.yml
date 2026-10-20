@@ -1,7 +1,7 @@
 name: Build Rani Next 2.5D Playable World
 on:
   push:
-    branches: [spike/rani-complete-isometric-base, feat/rani-korean-svg-free-v5]
+    branches: [spike/rani-complete-isometric-base, feat/rani-korean-svg-free-v5, feat/rani-v5-1-world-polish]
     paths:
       - 'rani-next/**'
       - 'assets/rani/**'
