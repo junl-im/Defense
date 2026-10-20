@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 const file=path.resolve(process.argv[2]||'engines/fiefdom','src/ui/lords.ts');
 let s=fs.readFileSync(file,'utf8');
 const pairs=[
- ["nm.textContent = plan ? c.name : (i === 0 ? 'You' : c.name);",
+ ["nm.textContent = plan ? c.name : (i === 0 ? '나' : c.name);",
   "nm.textContent = plan ? c.name : (['나','붉은 영주','푸른 영주','보라 영주'][i] ?? c.name);"],
  [" : 'not playing';"," : '참가 안 함';"]
 ];
