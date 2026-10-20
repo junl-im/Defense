@@ -70,7 +70,14 @@ const fragments=[
 ['Sell one now for','즉시 판매 가격:'],['Hide this panel','이 정보창 숨기기'],
 ['Too close to the edge of the world.','지도 끝에 너무 가깝습니다.'],
 ['Keep them at least','최소 거리:'],['Click to select','눌러서 선택'],
-['New save','새 저장'],['Not saved','저장 실패']
+['New save','새 저장'],['Not saved','저장 실패'],
+['Your rival:','적 영주:'],['the Red','붉은'],
+['to the north-east.','북동쪽에 있습니다.'],['to the north-west.','북서쪽에 있습니다.'],
+['to the south-east.','남동쪽에 있습니다.'],['to the south-west.','남서쪽에 있습니다.'],
+['to the north.','북쪽에 있습니다.'],['to the south.','남쪽에 있습니다.'],
+['to the east.','동쪽에 있습니다.'],['to the west.','서쪽에 있습니다.'],
+['Spoken messages: on','음성 안내 켜짐'],['Spoken messages: off','음성 안내 꺼짐'],
+['below','하한선'],['above','상한선']
 ];
 const patterns=[
  [/^([+-]?\d[\d,]*)\s+gold$/i,(m,n)=>n+' 금'],
@@ -111,7 +118,7 @@ function translateTree(root){
  }
 }
 function localize(){
- for(const selector of ['#menu','#ui','#pause','#lords','#editor','#over','#gameover']){
+ for(const selector of ['#menu','#ui','#pause','#lords','#editor','#over','#gameover','#chart']){
   translateTree(document.querySelector(selector));
  }
  for(const dialog of document.querySelectorAll('[role=dialog],.modal,.dialog')){
