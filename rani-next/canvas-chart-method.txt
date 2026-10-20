@@ -1,0 +1,55 @@
+  /** Native Canvas 2D chart; no SVG or HTML vector nodes. */
+  private paintChart(canvas: HTMLCanvasElement, series: { color: string; vals: number[] }[],
+                     fill: 'area' | 'between' | 'none', zero = false): void {
+    const W=540,H=250,PL=51,PR=14,PT=15,PB=30,iw=W-PL-PR,ih=H-PT-PB;
+    const times=this.histTimes;
+    if(!times.length||!series.length)return;
+    const n=times.length,all=series.flatMap(s=>s.vals);
+    let lo=Math.min(...all),hi=Math.max(...all);
+    if(fill==='between'||zero){lo=Math.min(lo,0);hi=Math.max(hi,0);}
+    if(hi===lo){hi+=1;lo-=1;}
+    const pad=(hi-lo)*0.1;lo-=pad;hi+=pad;
+    const span=hi-lo,t0=times[0],dt=(times[n-1]-t0)||1;
+    const px=(i:number)=>PL+((times[i]-t0)/dt)*iw;
+    const py=(v:number)=>PT+(1-(v-lo)/span)*ih;
+    const dpr=Math.min(window.devicePixelRatio||1,2);
+    canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);
+    canvas.style.width='100%';canvas.style.height='auto';
+    canvas.style.display='block';
+    const g=canvas.getContext('2d');if(!g)return;
+    g.scale(dpr,dpr);g.clearRect(0,0,W,H);
+    g.font="10px 'Malgun Gothic',sans-serif";g.textBaseline='middle';
+    for(const value of [lo,lo+span/2,hi]){
+      const y=py(value);g.strokeStyle='rgba(213,185,139,.26)';g.lineWidth=1;
+      g.beginPath();g.moveTo(PL,y);g.lineTo(PL+iw,y);g.stroke();
+      g.fillStyle='rgba(242,224,194,.85)';g.textAlign='right';
+      g.fillText(String(Math.round(value)),PL-8,y);
+    }
+    if(zero&&lo<0&&hi>0){
+      g.strokeStyle='rgba(242,224,194,.58)';g.lineWidth=1.5;
+      g.setLineDash([4,4]);g.beginPath();g.moveTo(PL,py(0));
+      g.lineTo(PL+iw,py(0));g.stroke();g.setLineDash([]);
+    }
+    if(fill==='between'&&series.length>=2){
+      g.beginPath();
+      series[0].vals.forEach((v,i)=>{if(!i)g.moveTo(px(i),py(v));else g.lineTo(px(i),py(v));});
+      for(let i=series[1].vals.length-1;i>=0;i--)g.lineTo(px(i),py(series[1].vals[i]));
+      g.closePath();g.fillStyle='rgba(143,191,106,.18)';g.fill();
+    } else if(fill==='area'){
+      g.beginPath();g.moveTo(px(0),PT+ih);
+      series[0].vals.forEach((v,i)=>g.lineTo(px(i),py(v)));
+      g.lineTo(px(n-1),PT+ih);g.closePath();
+      g.fillStyle='rgba(240,200,105,.14)';g.fill();
+    }
+    for(const line of series){
+      g.strokeStyle=line.color;g.lineWidth=2;
+      g.lineJoin='round';g.lineCap='round';g.beginPath();
+      line.vals.forEach((v,i)=>{if(!i)g.moveTo(px(i),py(v));else g.lineTo(px(i),py(v));});
+      g.stroke();
+    }
+    g.fillStyle='rgba(242,224,194,.85)';g.textAlign='left';
+    const sec=Math.max(0,dt),ago=sec>=60?Math.floor(sec/60)+'분':Math.round(sec)+'초';
+    g.fillText(ago+' 전',PL,H-14);g.textAlign='right';
+    g.fillText('현재',PL+iw,H-14);
+  }
+
