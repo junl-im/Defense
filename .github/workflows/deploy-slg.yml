@@ -14,7 +14,7 @@ jobs:
   verify-and-package:
     name: Verify real Fiefdom gameplay, then package with legacy v4
     runs-on: ubuntu-latest
-    timeout-minutes: 22
+    timeout-minutes: 28
     steps:
       - uses: actions/checkout@v4
         with:
@@ -62,6 +62,7 @@ jobs:
           node rani-next/v59-mobile-pages.mjs engines/fiefdom
           node rani-next/v510-world-port.mjs engines/fiefdom
           node rani-next/v511-harbor.mjs engines/fiefdom
+          node rani-next/v512-mobile-controls.mjs engines/fiefdom
           node rani-next/check.mjs engines/fiefdom
           node rani-next/verify-art.mjs engines/fiefdom
           python -m pip install Pillow==11.3.0
@@ -83,7 +84,7 @@ jobs:
           test -s pages-preview/Defense/legacy/index.html
           test -s pages-preview/Defense/licenses/FIEFDOM-AGPL-3.0.txt
       - name: Confirm the actual deployed base-path app boots in Chromium
-        timeout-minutes: 7
+        timeout-minutes: 12
         shell: bash
         run: |
           set -euo pipefail
@@ -111,6 +112,7 @@ jobs:
           node rani-next/qa-v59-mobile.mjs http://127.0.0.1:8940/Defense/ 9341
           node rani-next/qa-v510-port.mjs http://127.0.0.1:8940/Defense/ 9341
           node rani-next/qa-v511-harbor.mjs http://127.0.0.1:8940/Defense/ 9341
+          node rani-next/qa-v512-mobile.mjs http://127.0.0.1:8940/Defense/ 9341
           node engines/fiefdom/tools/e2e/smoke.mjs http://127.0.0.1:8940/Defense/ 9341 /tmp/rani-deploy-evidence/gameplay.png
       - name: Archive deploy-time gameplay QA images
         if: always()
