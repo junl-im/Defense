@@ -133,3 +133,26 @@ border-radius:10px!important}
  text-shadow:0 2px 3px #101b27!important
 }
 @media(max-width:680px){#lords::before{height:43px;width:135px}}
+
+/* v5.3.1: show the actual map AND lord roster together on desktop,
+   without hiding BEGIN below a scroll fold. Preserve phone scroll mode. */
+@media(min-width:900px){
+ #lords .board{
+  display:grid!important;
+  grid-template-columns:minmax(0,480px) minmax(275px,335px)!important;
+  justify-content:center!important;
+  align-items:start!important;
+  gap:17px!important;
+  max-width:850px!important;
+  width:calc(100% - 12px)!important;
+ }
+ #lords .board canvas{width:100%!important;height:auto!important;
+  aspect-ratio:1/1!important}
+ #lords .side{width:100%!important;min-width:0!important;
+  max-height:min(53vh,480px)!important;overflow:auto!important}
+ #lords .acts{margin-top:15px!important}
+}
+@media(min-width:681px) and (max-width:899px){
+ #lords .board{display:flex!important;flex-wrap:wrap!important}
+ #lords .side{max-width:480px!important;width:100%!important}
+}
