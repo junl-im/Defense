@@ -70,13 +70,16 @@ alter('src/main.ts',
 "      trade: JSON.parse(JSON.stringify(state.trade)),\n      harbor: {...state.harbor},");
 alter('src/main.ts',
 "    Object.assign(state.trade, sv.trade);\n    state.elapsed = sv.elapsed;",
-"    Object.assign(state.trade, sv.trade);\n    if(sv.harbor){",
+[
+"    Object.assign(state.trade, sv.trade);",
+"    if(sv.harbor){",
 "      state.harbor.mode=['off','export','import'].includes(sv.harbor.mode)?sv.harbor.mode:'off';",
 "      state.harbor.resource=['wood','stone','fish'].includes(sv.harbor.resource)?sv.harbor.resource:'fish';",
 "      state.harbor.clock=Math.max(0,Math.min(60,Number(sv.harbor.clock)||0));",
 "      state.harbor.voyages=Math.max(0,Math.floor(Number(sv.harbor.voyages)||0));",
 "    }else Object.assign(state.harbor,{mode:'off',resource:'fish',clock:0,voyages:0});",
-"    state.elapsed = sv.elapsed;");
+"    state.elapsed = sv.elapsed;"
+].join('\n'));
 // Visible controls have functional callbacks and real state + rate.
 // This is a small native DOM panel, not fake overlay game state.
 alter('src/main.ts',
