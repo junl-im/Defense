@@ -197,6 +197,23 @@ assert.ok(hexEvidence.available&&hexEvidence.visible&&hexEvidence.protectedKeep
 assert.deepEqual(hexEvidence.actions,['info','upgrade','repair','manage','build','remove']);
 console.log('PASS real Rani hex UI, protected keep, click-toggle, saved upgrades, payment, demolition cancel',hexEvidence);
 
+const hexBuild=await evaluate(`(()=>{
+ const g=window.__game,b=g.state.buildings.find(x=>x.name==='keep');
+ const w=g.raniWheel;
+ w.toggle({key:'building:'+b.id,name:b.name,label:b.def.label,
+   x:b.x+b.def.footprint[0]/2,z:b.z+b.def.footprint[1]/2,building:b});
+ document.querySelector('#rk-hex-menu [data-action="build"]').click();
+ const visible=getComputedStyle(document.getElementById('buildwrap')).display!=='none';
+ const category=getComputedStyle(document.getElementById('buildmenu')).display!=='none';
+ const closed=document.getElementById('rk-hex-menu').hidden;
+ if(visible)document.getElementById('rani-build-toggle').click();
+ return {visible,category,closed};
+})()`);
+assert.ok(hexBuild.visible&&hexBuild.category&&hexBuild.closed,
+ 'Six-hex build must open native catalog once without double-toggle: '+JSON.stringify(hexBuild));
+console.log('PASS six-hex action opens original real build categories',hexBuild);
+
+
 await evaluate(`(()=>{
  const g=window.__game,b=g.state.buildings.find(x=>x.name==='keep');
  g.raniWheel.toggle({key:'building:'+b.id,name:b.name,label:b.def.label,
