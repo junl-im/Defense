@@ -58,4 +58,15 @@ change('src/main.ts',
 change('src/main.ts',
  '    state, workers, placement, terrain, iso, stepSim,',
  '    state, workers, placement, terrain, iso, stepSim, raniWheel:rkWheel,');
+// Original engineer repairs must recognise strengthened structures. Damage,
+// garrison, production and original building metadata are unchanged.
+change('src/main.ts',
+ '          const full = buildingHp(b.def);',
+ '          const full = rkMaxHp(b);');
+change('src/main.ts',
+ '          if (!worst || b.hp / buildingHp(b.def) < worst.hp / buildingHp(worst.def)) worst = b;',
+ '          if (!worst || b.hp / rkMaxHp(b) < worst.hp / rkMaxHp(worst)) worst = b;');
+change('src/main.ts',
+ '          worst.hp = Math.min(buildingHp(worst.def), worst.hp + REPAIR_PER_SECOND * dt);',
+ '          worst.hp = Math.min(rkMaxHp(worst), worst.hp + REPAIR_PER_SECOND * dt);');
 console.log('PASS Rani v5.3 contextual building wheel: real upgrades, protected demolition, save-compatible levels, scenery');
