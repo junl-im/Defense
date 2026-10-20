@@ -80,52 +80,6 @@ alter('src/main.ts',
 "    }else Object.assign(state.harbor,{mode:'off',resource:'fish',clock:0,voyages:0});",
 "    state.elapsed = sv.elapsed;"
 ].join('\n'));
-// One real sprite vessel per owned harbor. Ship phase is keyed to the SAME
-// persisted route clock that commits 6-unit cargo after 60 simulation seconds.
-// Decorative coast vessels remain independent; no invented AI pathing.
-alter('src/main.ts',
-"  const rkPortDocks=new Map<number,THREE.Group>();",
-"  const rkPortDocks=new Map<number,THREE.Group>();\n  const rkHarborShips=new Map<number,THREE.Sprite>();");
-alter('src/main.ts',
-"        rkPortDocks.set(b.id,dock);}",
-[
-"        rkPortDocks.set(b.id,dock);",
-"        if(b.name==='harbor'&&rkSeaShips.length){",
-"          const material=rkSeaShips[0].material as THREE.SpriteMaterial;",
-"          const ship=new THREE.Sprite(material);ship.name='rk-harbor-cargo-ship';",
-"          let sx=near.x,sz=near.z,dist=Infinity;",
-"          for(let tz=Math.max(2,near.z-12);tz<=Math.min(MAP_H-3,near.z+12);tz++)",
-"            for(let tx=Math.max(2,near.x-12);tx<=Math.min(MAP_W-3,near.x+12);tx++){",
-"              if(!rkDeepWater(tx,tz))continue;",
-"              const d=Math.hypot(tx-near.x,tz-near.z);",
-"              if(d<dist){sx=tx;sz=tz;dist=d;}",
-"            }",
-"          const route=rkBoatCourse(sx,sz,0);",
-"          ship.userData.rkRoute=route;ship.scale.set(6.7,4.6,1);",
-"          ship.position.set(route.ax,terrain.heightAt(sx,sz)+2.1,route.az);",
-"          scene.add(ship);rkHarborShips.set(b.id,ship);",
-"        }",
-"      }"
-].join('\n'));
-alter('src/main.ts',
-"    for(const [id,pier] of rkPortDocks)if(!active.has(id)){scene.remove(pier);rkPortDocks.delete(id);}",
-"    for(const [id,pier] of rkPortDocks)if(!active.has(id)){scene.remove(pier);rkPortDocks.delete(id);}\n    for(const [id,ship] of rkHarborShips)if(!active.has(id)){scene.remove(ship);rkHarborShips.delete(id);}");
-alter('src/main.ts',
-"      if(now-rkLastDockSync>950){rkLastDockSync=now;rkSyncPortDocks();}",
-[
-"      if(now-rkLastDockSync>950){rkLastDockSync=now;rkSyncPortDocks();}",
-"      for(const ship of rkHarborShips.values()){",
-"        const route=ship.userData.rkRoute as {ax:number,az:number,bx:number,bz:number,tiles:number};",
-"        const fraction=state.harbor.mode==='off'?0:(1-Math.cos(state.harbor.clock/60*Math.PI*2))/2;",
-"        ship.position.x=route.ax+(route.bx-route.ax)*fraction;",
-"        ship.position.z=route.az+(route.bz-route.az)*fraction;",
-"        ship.position.y=terrain.heightAt(Math.floor(ship.position.x),Math.floor(ship.position.z))+2.1+Math.sin(now/1400)*.08;",
-"      }"
-].join('\n'));
-alter('src/main.ts',
-"    rkPortDocks,\n    rkSyncPortDocks,",
-"    rkPortDocks,\n    rkSyncPortDocks,\n    rkHarborShips,");
-
 // Visible controls have functional callbacks and real state + rate.
 // This is a small native DOM panel, not fake overlay game state.
 alter('src/main.ts',
@@ -194,6 +148,52 @@ alter('src/main.ts',"        rkPortDocks.set(b.id,rkMakePier(near.x,near.z,rotat
 "        rkPortDocks.set(b.id,dock);}");
 alter('src/main.ts',"    rkPortDocks,\n    rkSyncPortDocks,",
 "    rkPortDocks,\n    rkSyncPortDocks,\n    rkHarborPanel,");
+// One real sprite vessel per owned harbor. Ship phase is keyed to the SAME
+// persisted route clock that commits 6-unit cargo after 60 simulation seconds.
+// Decorative coast vessels remain independent; no invented AI pathing.
+alter('src/main.ts',
+"  const rkPortDocks=new Map<number,THREE.Group>();",
+"  const rkPortDocks=new Map<number,THREE.Group>();\n  const rkHarborShips=new Map<number,THREE.Sprite>();");
+alter('src/main.ts',
+"        rkPortDocks.set(b.id,dock);}",
+[
+"        rkPortDocks.set(b.id,dock);",
+"        if(b.name==='harbor'&&rkSeaShips.length){",
+"          const material=rkSeaShips[0].material as THREE.SpriteMaterial;",
+"          const ship=new THREE.Sprite(material);ship.name='rk-harbor-cargo-ship';",
+"          let sx=near.x,sz=near.z,dist=Infinity;",
+"          for(let tz=Math.max(2,near.z-12);tz<=Math.min(MAP_H-3,near.z+12);tz++)",
+"            for(let tx=Math.max(2,near.x-12);tx<=Math.min(MAP_W-3,near.x+12);tx++){",
+"              if(!rkDeepWater(tx,tz))continue;",
+"              const d=Math.hypot(tx-near.x,tz-near.z);",
+"              if(d<dist){sx=tx;sz=tz;dist=d;}",
+"            }",
+"          const route=rkBoatCourse(sx,sz,0);",
+"          ship.userData.rkRoute=route;ship.scale.set(6.7,4.6,1);",
+"          ship.position.set(route.ax,terrain.heightAt(sx,sz)+2.1,route.az);",
+"          scene.add(ship);rkHarborShips.set(b.id,ship);",
+"        }",
+"      }"
+].join('\n'));
+alter('src/main.ts',
+"    for(const [id,pier] of rkPortDocks)if(!active.has(id)){scene.remove(pier);rkPortDocks.delete(id);}",
+"    for(const [id,pier] of rkPortDocks)if(!active.has(id)){scene.remove(pier);rkPortDocks.delete(id);}\n    for(const [id,ship] of rkHarborShips)if(!active.has(id)){scene.remove(ship);rkHarborShips.delete(id);}");
+alter('src/main.ts',
+"      if(now-rkLastDockSync>950){rkLastDockSync=now;rkSyncPortDocks();}",
+[
+"      if(now-rkLastDockSync>950){rkLastDockSync=now;rkSyncPortDocks();}",
+"      for(const ship of rkHarborShips.values()){",
+"        const route=ship.userData.rkRoute as {ax:number,az:number,bx:number,bz:number,tiles:number};",
+"        const fraction=state.harbor.mode==='off'?0:(1-Math.cos(state.harbor.clock/60*Math.PI*2))/2;",
+"        ship.position.x=route.ax+(route.bx-route.ax)*fraction;",
+"        ship.position.z=route.az+(route.bz-route.az)*fraction;",
+"        ship.position.y=terrain.heightAt(Math.floor(ship.position.x),Math.floor(ship.position.z))+2.1+Math.sin(now/1400)*.08;",
+"      }"
+].join('\n'));
+alter('src/main.ts',
+"    rkPortDocks,\n    rkSyncPortDocks,",
+"    rkPortDocks,\n    rkSyncPortDocks,\n    rkHarborShips,");
+
 alter('src/ui/menu.ts',"version.textContent='v5.10';","version.textContent='v5.11';");
 fs.appendFileSync(path.join(root,'public/rani/skin.css'),'\n'+fs.readFileSync(path.join(import.meta.dirname,'v511-harbor.css'),'utf8'));
 console.log('PASS v5.11 original coastal construction + actual sea export/import + optional saved voyage + UI');
