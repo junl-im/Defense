@@ -72,7 +72,7 @@ const placements=await evaluate(`(()=>{
    house:!!ui.querySelector('#buildmenu button[data-name="hovel"] img.rani-approved-building'),
    market:!!ui.querySelector('#buildmenu button[data-name="market"] img.rani-approved-building'),
    panel:!!ui.querySelector('#rani-approved-royal-panel'),
-   ship:!!ui.querySelector('#view-market #rani-market-art img')};
+   ship:!!ui.querySelector('#market #rani-market-art img')};
 })()`);
 console.log('Rani user asset placement',JSON.stringify(placements));
 assert.equal(placements.count,'4',placements);
@@ -81,7 +81,7 @@ const owned=await evaluate(`(()=>{
  const ui=document.getElementById('ui');
  const house=ui.querySelector('#buildmenu button[data-name="hovel"]');
  const market=ui.querySelector('#buildmenu button[data-name="market"]');
- const trade=ui.querySelector('#view-market #rani-market-art img');
+ const trade=ui.querySelector('#market #rani-market-art img');
  const panel=ui.querySelector('#rani-approved-royal-panel');
  const images=[
   house?.querySelector('img.rani-approved-building'),
@@ -91,7 +91,7 @@ const owned=await evaluate(`(()=>{
    originalButtons:[house,market].map(x=>typeof x?.onclick==='function'),
    nativeCanvas:[house,market].map(x=>!!x?.querySelector('canvas')),
    fallbackReady:[house,market].map(x=>!!x?.querySelector('canvas.rani-hide-canvas')),
-   tradingControls:!!ui.querySelector('#view-market')};
+   tradingControls:!!ui.querySelector('#market')};
 })()`);
 assert.deepEqual(owned.loaded,[true,true,true,true],owned);
 assert.deepEqual(owned.originalButtons,[true,true],owned);
