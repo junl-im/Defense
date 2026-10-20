@@ -185,3 +185,21 @@ padding:10px 3px!important;scrollbar-color:#b69462 #102a40;}
 #topbar{left:175px!important;right:276px!important}
 #rani-resource-toggle{right:220px}
 }
+
+
+/* Gameplay-first layout: native build buttons hidden under ONE approved
+   image-backed toggle, never deleted, never replaced with fake cards. */
+#rani-build-toggle{display:none}
+@media(min-width:701px){
+#ui:not(.rani-build-open) #buildwrap{display:none!important}
+#ui.rani-build-open #leftcol{bottom:78px!important}
+#rani-build-toggle{
+ display:block;position:fixed;bottom:8px;left:12px;z-index:100;
+ width:112px;height:57px;pointer-events:auto;cursor:pointer;
+ border:0;background:url('/rani/rk_royal_button.webp') center/contain no-repeat;
+ color:#fff0cc;font:800 14px 'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+ text-shadow:0 2px 5px #050a10;filter:drop-shadow(0 4px 6px #0008)
+}
+#rani-build-toggle[aria-expanded="true"]{filter:drop-shadow(0 3px 10px #e9bd6f)}
+#rani-build-toggle:focus-visible{outline:2px solid #ffe9a6;outline-offset:1px}
+}
