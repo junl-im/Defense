@@ -14,7 +14,7 @@ const until=async(exp,n=80)=>{for(let i=0;i<n;i++){if(await ev(exp))return;await
 const viewport=(width,height,mobile)=>c.send('Emulation.setDeviceMetricsOverride',{width,height,mobile,deviceScaleFactor:1},s);
 const snap=async name=>{if(!shot)return;const v=await c.send('Page.captureScreenshot',{format:'png'},s);fs.writeFileSync(shot.replace(/\.png$/,'-'+name+'.png'),Buffer.from(v.data,'base64'));};
 await viewport(1440,900,false);await c.send('Page.navigate',{url:host},s);
-await until("!!document.querySelector('#menu.rk-title-v57 .rk-title-scene')&&!!document.querySelector('#rk-start-now')");
+await until("!!document.querySelector('#menu.rk-title-v57 .rk-title-scene')&&!!document.querySelector('#rk-start-now')&&!!document.querySelector('#rani-map-picker')");
 await until("[...document.querySelectorAll('#menu .rk-title-piece')].filter(x=>x.complete&&x.naturalWidth>0).length>=3",95);
 const desktop=await ev("(()=>{const m=document.querySelector('#menu'),b=m.querySelector('#rk-start-now'),r=b.getBoundingClientRect(),h=m.querySelector('h1');return {version:m.querySelector('.rk-public-version')?.textContent,text:b.textContent,loaded:[...m.querySelectorAll('.rk-title-piece')].filter(i=>i.naturalWidth>0).length,urls:[...m.querySelectorAll('.rk-title-piece')].map(i=>new URL(i.src).pathname),button:r.width>200&&r.top>50&&r.bottom<innerHeight,logo:h.getBoundingClientRect().bottom<r.top,hidden:getComputedStyle(m.querySelector('#rani-map-picker')).display==='none',image:getComputedStyle(h).backgroundImage.includes('rk_logo.webp'),buttonImage:getComputedStyle(b).backgroundImage.includes('rk_royal_button.webp')}})()");
 assert.equal(desktop.version,'v5.7',JSON.stringify(desktop));assert.equal(desktop.text,'게임 시작');
