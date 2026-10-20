@@ -44,6 +44,8 @@ const assets={
  'rk_house.webp':'assets/rani/buildings/housing/rk_building_house_a_v001.webp',
  'rk_market.webp':'assets/rani/buildings/economy/rk_building_market_v001.webp',
  'rk_ship.webp':'assets/rani/harbor/ships/rk_ship_trade_v001.webp',
+ 'rk_royal_button.webp':'assets/rani/ui/buttons/rk_btn_royal_primary_v001.webp',
+ 'rk_royal_panel.webp':'assets/rani/ui/panels/rk_panel_royal_hud_v001.webp',
  'rk_logo.webp':'assets/branding/rani-kingdom-logo.webp'
 };
 const dest=file('public/rani');fs.mkdirSync(dest,{recursive:true});
