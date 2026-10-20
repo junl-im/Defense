@@ -1,0 +1,66 @@
+/* Native placement legal origins are tinted by Fiefdom Terrain.setOverlay
+  using Placement.check(name, x, z); do NOT overlay a fake offset rectangle. */
+#rk-hex-menu{height:auto;min-height:0!important;max-width:min(342px,94vw)}
+#rk-hex-menu .rk-hex-buttons{
+ display:flex!important;flex-wrap:wrap!important;align-items:center;
+ justify-content:center;column-gap:5px;row-gap:4px;
+ height:auto!important;min-height:116px;width:290px!important;
+ padding:7px 3px!important;
+ background:linear-gradient(155deg,#16384fcf,#061b2fdb);
+ border:1px solid #bc9a658c;border-radius:17px;
+ box-shadow:0 6px 20px #000a;
+}
+#rk-hex-menu .rk-hex-option,#rk-hex-menu .rk-hex-core{
+ position:relative!important;left:auto!important;top:auto!important;
+ flex:0 0 82px;max-width:82px;height:69px!important;
+ font-size:12px!important;scale:1!important;
+}
+#rk-hex-menu .rk-hex-core{order:-1;flex:0 0 100%!important;max-width:100%!important;
+ width:auto!important;height:44px!important;flex-direction:row;gap:9px}
+#rk-hex-menu .rk-hex-core strong{max-width:160px;white-space:nowrap;overflow:hidden;
+ text-overflow:ellipsis;font-size:13px}
+#rk-hex-menu .rk-hex-option[hidden]{display:none!important}
+#rk-hex-menu .rk-hex-option:active{transform:scale(.96)}
+#rk-hex-menu .rk-hex-message{
+ max-width:295px;margin:5px auto 7px;padding:7px 9px;
+ border:1px solid #977c51;border-radius:10px;
+ background:#0b2238f5;font-size:11px;line-height:1.5;
+ color:#ffdca6;pointer-events:none;white-space:normal;word-break:keep-all;
+}
+#rk-hex-menu .rk-hex-option:disabled{filter:grayscale(.65);opacity:.48}
+@media(max-width:700px){
+ #rk-hex-menu{top:auto!important;bottom:calc(12px + env(safe-area-inset-bottom));
+ left:50%!important;transform:translateX(-50%)!important;width:298px!important}
+ #rk-hex-menu .rk-hex-buttons{transform:none!important;max-width:290px}
+ #rk-hex-menu .rk-hex-message{max-height:64px;overflow:auto}
+ #rk-hex-menu .rk-hex-close{display:inline-flex;margin:4px auto!important}
+}
+#rk-first-steps{
+ box-sizing:border-box;position:fixed;left:13px;bottom:clamp(14px,2.7vh,35px);
+ z-index:29;width:min(300px,calc(100vw - 26px));
+ padding:11px 13px 12px;border:1px solid #ccaa77;
+ border-radius:14px;background:linear-gradient(160deg,#264c63f5,#0b2439f6);
+ box-shadow:0 10px 28px #010b17b0,inset 0 1px #fff3c649;
+ color:#f6e9c7;font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+}
+#rk-first-steps .rk-step-head{display:flex;align-items:center;justify-content:space-between;
+ padding-bottom:5px;margin-bottom:7px;border-bottom:1px solid #e5c78b48}
+#rk-first-steps .rk-step-head strong{font-size:13px;color:#ffe3aa}
+#rk-first-steps .rk-step-close{font-size:20px;line-height:1;border:0;background:none;
+ color:#d9c49d;padding:2px 6px;cursor:pointer}
+#rk-first-steps .rk-step-progress{font-weight:800;color:#f5d69b;font-size:12px;margin:4px 0 7px}
+#rk-first-steps .rk-step-help{line-height:1.5;font-size:11px;
+ word-break:keep-all;color:#e7edf0;margin:3px 0 9px}
+#rk-first-steps .rk-step-actions{display:flex;gap:7px;flex-wrap:wrap}
+#rk-first-steps .rk-step-actions button{flex:1;min-height:32px;font-size:11px;
+ font-weight:800;cursor:pointer;color:#1b2e3a;border:1px solid #efce98;
+ background:linear-gradient(#f2d89f,#b28a4b);border-radius:8px}
+#rk-first-steps .rk-step-actions .rk-step-dismiss{background:#254258;color:#f2ddb5;border-color:#967d58}
+#rk-first-steps[data-complete="true"] .rk-step-progress{color:#9cdfb7}
+#rk-first-steps button:focus-visible{outline:3px solid #ffe8ab;outline-offset:2px}
+@media(max-width:700px){
+ #rk-first-steps{left:7px;bottom:calc(62px + env(safe-area-inset-bottom));
+ width:min(254px,calc(100vw - 20px));padding:9px 10px}
+ #rk-first-steps .rk-step-help{font-size:10px}
+ #rk-first-steps .rk-step-actions button{font-size:10px;min-height:30px}
+}
