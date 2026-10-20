@@ -66,8 +66,8 @@ await evaluate("document.querySelector('#rani-map-picker summary').click()");
 await evaluate("document.querySelector('#rani-map-picker .map').click()");
 assert.equal(await evaluate("document.querySelector('#rani-start-hero strong').textContent"),'푸른 해안');
 await evaluate("[...document.querySelectorAll('#menu button')].find(b=>b.textContent.includes('영주 선택')).click()");
-await wait("[...document.querySelectorAll('button')].some(b=>b.textContent.includes('BEGIN'))");
-await evaluate("[...document.querySelectorAll('button')].find(b=>b.textContent.includes('BEGIN')).click()");
+await wait("[...document.querySelectorAll('button')].some(b=>b.textContent.includes('게임 시작'))");
+await evaluate("[...document.querySelectorAll('button')].find(b=>b.textContent.includes('게임 시작')).click()");
 await wait("!!window.__game&&!!document.getElementById('rani-controls-toggle')",120);
 await wait("document.getElementById('ui')?.dataset.raniAssets==='1'",20);
 const placements=await evaluate(`(()=>{
