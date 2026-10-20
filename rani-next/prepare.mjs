@@ -14,6 +14,10 @@ function change(p,oldText,newText) {
 change('src/ui/menu.ts',"h1.textContent = 'FIEFDOM';","h1.textContent = '라니킹덤';");
 change('src/ui/menu.ts',"sub.textContent = 'HOLD THE LAND · WORK IT · KEEP IT';","sub.textContent = '푸른 왕국을 건설하고, 지키고, 발전시키세요';");
 change('src/main.ts','renderer.setClearColor(0x0d0c0a, 1);','renderer.setClearColor(0x10283b, 1);');
+// One level closer from first boot: a real game camera change (not CSS scale).
+// The sprite atlas is baked at scale 3, and zoom 1.5 stays within that detail.
+change('src/engine/camera.ts','zoom: number = ZOOM_LEVELS[0];','zoom: number = ZOOM_LEVELS[1];');
+change('src/engine/camera.ts','private targetZoom: number = ZOOM_LEVELS[0];','private targetZoom: number = ZOOM_LEVELS[1];');
 change('src/main.ts',"const use3d = flags.get('r3d') !== '0';",
  `// Rani Next defaults to the genuine 2.5D four-angle game world.
   // The upstream optional 3D renderer remains available with ?r3d=1.
