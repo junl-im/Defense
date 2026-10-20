@@ -105,7 +105,7 @@ if(shot){
  fs.writeFileSync(shot.replace(/\.png$/,'-choose-start.png'),Buffer.from(screenshot.data,'base64'));
 }
 
-await evaluate("[...document.querySelectorAll('button')].find(b=>b.textContent.includes('게임 시작')).click()");
+await evaluate("document.querySelector('#lords button.go').click()");
 await wait("!!window.__game&&!!document.getElementById('rani-controls-toggle')",120);
 await wait("document.getElementById('ui')?.dataset.raniAssets==='1'",20);
 const placements=await evaluate(`(()=>{
