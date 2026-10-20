@@ -69,4 +69,9 @@ change('src/main.ts',
 change('src/main.ts',
  '          worst.hp = Math.min(buildingHp(worst.def), worst.hp + REPAIR_PER_SECOND * dt);',
  '          worst.hp = Math.min(rkMaxHp(worst), worst.hp + REPAIR_PER_SECOND * dt);');
+// Subtle real-world GPU gold edging on upgraded 2.5D buildings, not UI art.
+// It is only a tint; 4-direction anchors, collisions and textures stay intact.
+change('src/main.ts',
+ '      push(b.name, b.x, b.z, w, d, undefined, b.turn);',
+ '      push(b.name, b.x, b.z, w, d,\n        b.lvl && b.lvl > 1 ? (b.lvl >= 3 ? [1.10,1.08,1.01] : [1.05,1.04,1.00]) : undefined, b.turn);');
 console.log('PASS Rani v5.3 contextual building wheel: real upgrades, protected demolition, save-compatible levels, scenery');
