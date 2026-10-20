@@ -33,8 +33,8 @@ function visit(dir){
   if(/\.(?:html|css|js|mjs)$/i.test(e.name)){
     codeFiles++;
     const s=fs.readFileSync(full,'utf8');
-    if(/<svg\b|data:image\/svg\+xml|\.svg(?:["'?#]|$)/i.test(s))
-      errors.push('SVG REFERENCED '+full);
+    const bad=/<svg\b|data:image\/svg\+xml|\.svg(?:["'?#]|$)/i.exec(s);
+    if(bad) errors.push('SVG REFERENCED '+full+' '+s.slice(Math.max(0,bad.index-90),bad.index+130).replace(/\s+/g,' '));
   }
  }
 }
