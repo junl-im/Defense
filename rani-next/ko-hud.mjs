@@ -68,7 +68,7 @@ const pairs=[
  ["'<b>F</b> lights your pitch ditches &nbsp; <b>Shift-F</b> fullscreen<br>'", "'<b>F</b> 역청 함정 점화 · <b>Shift+F</b> 전체 화면<br>'"],
  ["'push the pointer at a screen edge to scroll &nbsp; <b>Esc</b> pause / save'", "'마우스를 화면 끝으로 이동하면 지도 스크롤 · <b>Esc</b> 일시정지 / 저장'"],
  ["`Buy ${RESOURCE_LABELS[r]} whenever the stock falls below the level`", "`재고가 설정한 하한선 미만일 때 ${RESOURCE_LABELS[r]} 자동 구매`"],
- ["`Sell ${RESOURCE_LABELS[r]} whenever the stock rises above the level`", "`재고가 설정한 상한선을 초과하면 ${RESOURCE_LABELS[r]} 자동 판매`"]
+ ["`Sell ${RESOURCE_LABELS[r]} whenever the stock rises above the level`", "`재고가 설정한 상한선을 초과하면 ${RESOURCE_LABELS[r]} 자동 판매`"],
  ["label: 'You'","label: '나'"]
 ];
 let edits=0;
