@@ -35,6 +35,28 @@ function enhance(menu) {
    queueMicrotask(()=>{update();if(menu.isConnected)details.open=false;});
  });
 }
-const watch=()=>{const menu=document.getElementById('menu');if(menu)enhance(menu);};
+function enhanceGameHud(root){
+ if(root.dataset.raniHud==='1')return;
+ root.dataset.raniHud='1';
+ const createToggle=(id,text,cls,tip)=>{
+   const b=document.createElement('button');
+   b.type='button';b.id=id;b.textContent=text;b.title=tip;
+   b.setAttribute('aria-controls',cls==='rani-controls-open'?'controls':'stats2');
+   b.setAttribute('aria-expanded','false');
+   b.addEventListener('click',()=>{
+     const opened=root.classList.toggle(cls);
+     b.setAttribute('aria-expanded',String(opened));
+     b.setAttribute('aria-pressed',String(opened));
+   });
+   root.appendChild(b);
+ };
+ // Only collapse real PC game panels. Native Fiefdom mobile drawers stay intact.
+ createToggle('rani-info-toggle','왕국 정보','rani-info-open','식량·인구·병력·생산 현황');
+ createToggle('rani-controls-toggle','설정','rani-controls-open','속도·세금·사운드·전체화면');
+}
+const watch=()=>{
+ const menu=document.getElementById('menu');if(menu)enhance(menu);
+ const ui=document.getElementById('ui');if(ui)enhanceGameHud(ui);
+};
 // The title screen can be reopened after leaving the map editor.
 watch();setInterval(watch,700);
