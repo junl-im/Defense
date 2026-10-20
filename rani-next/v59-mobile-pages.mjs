@@ -56,7 +56,7 @@ replace('src/engine/assets.ts',
  'export async function buildCombinedAtlas(base: string, onProgress?: (n:number,total:number)=>void): Promise<CombinedAtlas> {',
  loader+'export async function buildCombinedAtlas(base: string, onProgress?: (n:number,total:number)=>void): Promise<CombinedAtlas> {\n  return loadRaniOfflineAtlas(base,onProgress);');
 replace('src/main.ts',"  const use3d = flags.get('r3d') === '1';",[
- "  const use3d=flags.get('r3d')==='1';",
+ "  const use3d = flags.get('r3d') === '1';",
  "  document.documentElement.dataset.rkSceneMode=use3d?'3d':'sprites';",
 ].join('\n'));
 replace('src/ui/menu.ts',"version.textContent='v5.8';","version.textContent='v5.9';");
