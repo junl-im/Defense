@@ -55,7 +55,7 @@ if(shot){
  const page=await c.send('Page.captureScreenshot',{format:'png'},s);
  fs.writeFileSync(shot.replace(/\.png$/,'-menu.png'),Buffer.from(page.data,'base64'));
 }
-assert.equal(await evaluate("getComputedStyle(document.querySelector('#menu .go')).backgroundImage.includes('rk_royal_button.webp')"),true);
+assert.equal(await evaluate("getComputedStyle(document.querySelector('#menu .rk-start-now')).backgroundImage.includes('rk_royal_button.webp')"),true);
 
 await evaluate("document.querySelector('#rani-map-picker summary').click()");
 assert.equal(await evaluate("document.querySelector('#rani-map-picker').open"),true);
