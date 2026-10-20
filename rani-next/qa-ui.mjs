@@ -135,7 +135,7 @@ const beforeBuild=await evaluate(`(()=>{
 assert.ok(beforeBuild.button&&beforeBuild.hidden&&beforeBuild.catalog,beforeBuild);
 await evaluate("document.getElementById('rani-build-toggle').click()");
 assert.equal(await evaluate("getComputedStyle(document.getElementById('buildwrap')).display==='none'"),false);
-await evaluate("document.querySelector('#buildbar button[data-group=2]').click()");
+await evaluate("[...document.querySelectorAll('#buildbar button')].find(e=>e.dataset.group==='2').click()");
 assert.equal(await evaluate("getComputedStyle(document.getElementById('buildmenu')).display==='none'"),false);
 await evaluate("document.getElementById('rani-build-toggle').click()");
 assert.equal(await evaluate("getComputedStyle(document.getElementById('buildwrap')).display==='none'"),true);
