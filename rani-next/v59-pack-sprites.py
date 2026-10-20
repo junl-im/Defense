@@ -30,10 +30,10 @@ def entries_from_meta():
         entries.append(dict(key=f'{m["clip"]}_{m["direction"]}_{m["frame"]}', file=f'{m["name"]}.png',
                             width=m["width"], height=m["height"], ax=m["anchor_x"],
                             ay=m["anchor_y"], scale=m["scale"]))
-    return entries, footprints, units["directions"], units["clips"]
+    return entries, footprints, units["directions"], units["clips"], buildings[0]["scale"]
 
 def pack():
-    entries, footprints, directions, clips = entries_from_meta()
+    entries, footprints, directions, clips, atlas_scale = entries_from_meta()
     if len(entries) < 5000:
         raise ValueError(f"Unexpected source sprite count: {len(entries)}")
     # JS Array.sort stability is guaranteed; Python sort also preserves ties.
@@ -90,7 +90,7 @@ def pack():
         names.append(name)
         print(f"[rani atlas] page {i+1}/{len(pages)}: {width}x{height}, {len(frames_on_page)} sprites, {size/1048576:.1f} MiB", flush=True)
         page_img.close()
-    manifest = dict(version=59, size=[width, height], scale=entries[0]["scale"],
+    manifest = dict(version=59, size=[width, height], scale=atlas_scale,
                     pages=names, frames=frames, footprints=footprints,
                     directions=directions, clips=clips, spriteCount=count)
     (ASSET_ROOT / "rani-atlas-v59.json").write_text(
