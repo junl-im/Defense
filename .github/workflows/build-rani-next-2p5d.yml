@@ -46,6 +46,8 @@ jobs:
         run: |
           node rani-next/prepare.mjs engines/fiefdom
           node rani-next/koreanize.mjs engines/fiefdom
+          node rani-next/ko-world.mjs engines/fiefdom
+          node rani-next/ko-hud.mjs engines/fiefdom
           node rani-next/no-svg-chart.mjs engines/fiefdom
           node rani-next/check.mjs engines/fiefdom
           node rani-next/verify-art.mjs engines/fiefdom
