@@ -49,6 +49,7 @@ jobs:
           node rani-next/ko-world.mjs engines/fiefdom
           node rani-next/ko-hud.mjs engines/fiefdom
           node rani-next/no-svg-chart.mjs engines/fiefdom
+          node rani-next/v52-scene.mjs engines/fiefdom
           node rani-next/check.mjs engines/fiefdom
           node rani-next/verify-art.mjs engines/fiefdom
       - name: Recolour REAL castle sprites, four sides each (not HUD mockups)
@@ -56,6 +57,7 @@ jobs:
           python -m pip install Pillow==11.3.0
           python rani-next/recolor_world.py engines/fiefdom/public/assets/sprites
           python rani-next/royal-ground.py engines/fiefdom/public/assets/ground
+          python rani-next/v52-building-polish.py engines/fiefdom/public/assets/sprites
       - name: Compile actual playable 2.5D kingdom
         working-directory: engines/fiefdom
         run: npm run build
