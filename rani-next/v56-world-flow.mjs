@@ -148,22 +148,26 @@ function modify(p,a,b){const s=fs.readFileSync(file(p),'utf8');assert.equal(s.sp
  [
  '  // Real-world, decorative approved WebP ships; no harbor economy yet.',
  '  const rkSeaShips: THREE.Sprite[]=[];',
- "  if(chosen.id==='coast'){",
+ "  if((chosen.id==='rani_coast'||chosen.id==='coast')){",
  '   try{',
  "    const texture=await new THREE.TextureLoader().loadAsync('/rani/rk_ship.webp');",
  '    texture.colorSpace=THREE.SRGBColorSpace;',
  '    const mat=new THREE.SpriteMaterial({map:texture,transparent:true,depthWrite:false,alphaTest:.05});',
  "    const waterType=GROUND_TYPES.indexOf('water');",
  '    const water=(x:number,z:number)=>x>=0&&x<MAP_W&&z>=0&&z<MAP_H&&groundType[z*MAP_W+x]===waterType;',
- '    for(const x of [36,99,160]){',
- '     let match=-1;',
- '     for(let z=115;z<MAP_H-8;z++){',
- '      if([[0,0],[-2,0],[2,0],[0,-2],[0,2]].every(([dx,dz])=>water(x+dx,z+dz))){match=z;break;}',
+ '    // Scan actual navigable water instead of guessing a fixed coastline.',
+ '    const sites:{x:number,z:number}[]=[];',
+ '    for(let z=MAP_H-10;z>=10&&sites.length<3;z-=2){',
+ '     for(let x=12;x<MAP_W-12&&sites.length<3;x+=2){',
+ '      if(![[0,0],[-2,0],[2,0],[0,-2],[0,2]].every(([dx,dz])=>water(x+dx,z+dz)))continue;',
+ '      if(sites.some(p=>Math.hypot(p.x-x,p.z-z)<32))continue;',
+ '      sites.push({x,z});',
  '     }',
- '     if(match<0)continue;',
+ '    }',
+ '    for(const {x,z} of sites){',
  '     const vessel=new THREE.Sprite(mat);',
- "     vessel.name='rk-coast-trade-ship';",
- '     vessel.position.set(x+.5,terrain.heightAt(x,match)+2.3,match+.5);',
+ '     vessel.name=\'rk-coast-trade-ship\';',
+ '     vessel.position.set(x+.5,terrain.heightAt(x,z)+2.3,z+.5);',
  '     vessel.scale.set(7.2,4.9,1);',
  '     vessel.userData.originalY=vessel.position.y;',
  '     vessel.userData.wavePhase=x*.31;',
@@ -174,7 +178,7 @@ function modify(p,a,b){const s=fs.readFileSync(file(p),'utf8');assert.equal(s.sp
  '  // ONE batch for the whole scene. Everything is drawn in a single'
  ].join('\n'));
  rep('  function frame() {\n    const now = performance.now();',
- "  function frame() {\n    const now = performance.now();\n    if(chosen.id==='coast'){\n      terrain.setRaniSeaTime(now/1000);\n      for(const ship of rkSeaShips){\n        ship.position.y=(ship.userData.originalY as number)+Math.sin(now/1550+(ship.userData.wavePhase as number))*.06;\n      }\n    }");
+ "  function frame() {\n    const now = performance.now();\n    if((chosen.id==='rani_coast'||chosen.id==='coast')){\n      terrain.setRaniSeaTime(now/1000);\n      for(const ship of rkSeaShips){\n        ship.position.y=(ship.userData.originalY as number)+Math.sin(now/1550+(ship.userData.wavePhase as number))*.06;\n      }\n    }");
  rep('    state, workers, placement, terrain, iso, stepSim,','    state, workers, placement, terrain, iso, stepSim,\n    rkSeaShips,');
  // Preserve original 3D diagnostics, but no longer overwrite nested loader DOM.
  let n=0;
