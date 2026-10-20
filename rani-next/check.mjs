@@ -6,7 +6,7 @@ const read=x=>fs.readFileSync(path.join(root,x),'utf8');
 const menu=read('src/ui/menu.ts'),main=read('src/main.ts'),maps=read('src/game/maps.ts');
 const html=read('index.html');
 assert.match(menu,/h1\.textContent = '라니킹덤'/);
-assert.match(menu,/CHOOSE LORDS →/); // true gameplay button preserved
+assert.match(menu,/영주 선택 →/); // true gameplay button preserved
 assert.match(main,/const use3d = flags\.get\('r3d'\) === '1'/);
 assert.match(main,/renderer\.setClearColor\(0x10283b, 1\)/);
 assert.match(read('src/engine/camera.ts'),/zoom: number = ZOOM_LEVELS\[1\]/);
