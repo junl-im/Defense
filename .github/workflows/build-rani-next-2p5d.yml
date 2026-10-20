@@ -80,6 +80,11 @@ jobs:
           and project settings are UNCHANGED by this preview build.
           EOF
           du -sh engines/fiefdom/dist
+      - name: Install Korean UI glyphs for pixel-verifiable Chrome screenshots
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk
+          fc-cache -f >/dev/null
       - name: Browser smoke (real menu, buildings, units and 600s gameplay)
         timeout-minutes: 7
         shell: bash
