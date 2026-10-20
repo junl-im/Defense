@@ -1,0 +1,33 @@
+// Real game world: trade vessels move through WATER; fishery docks follow
+// native GameState lifecycle. The dock fixture doesn't bypass construction QA.
+import assert from 'node:assert/strict';
+import {CDP,getJSON} from '../engines/fiefdom/tools/e2e/cdp.mjs';
+const host=process.argv[2]||'http://127.0.0.1:8931/',port=process.argv[3]||'9341';
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const c=new CDP();const v=await getJSON('http://127.0.0.1:'+port+'/json/version');
+await c.connect(v.webSocketDebuggerUrl);
+const {targetId}=await c.send('Target.createTarget',{url:'about:blank'});
+const {sessionId:s}=await c.send('Target.attachToTarget',{targetId,flatten:true});
+await c.send('Page.enable',{},s);await c.send('Runtime.enable',{},s);
+const ev=async x=>{const r=await c.send('Runtime.evaluate',{expression:x,awaitPromise:true,returnByValue:true},s);if(r.exceptionDetails)throw Error(r.exceptionDetails.exception?.description);return r.result.value};
+const wait=async x=>{for(let i=0;i<340;i++){if(await ev(x))return;await sleep(280)}throw Error('Timeout '+x)};
+await c.send('Page.navigate',{url:host},s);
+await wait("!!document.querySelector('#rk-start-now')&&!!document.querySelector('#rani-map-picker')");
+assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.10');
+await ev("document.querySelector('#rk-start-now').click()");
+await wait("document.querySelector('#menu').classList.contains('rk-choose-region')");
+await ev("document.querySelector('#menu .rk-manual-start').click()");
+await wait("!!document.querySelector('#lords .go')");
+await ev("document.querySelector('#lords .go').click()");
+await wait("!!window.__game&&window.__game.rkSeaShips?.length===3");
+const before=await ev("window.__game.rkSeaShips.map(s=>({x:s.position.x,z:s.position.z,route:s.userData.rkRoute,name:s.name}))");
+assert.equal(before.length,3);
+assert.ok(before.every(x=>x.name==='rk-coast-trade-ship'&&x.route&&x.route.tiles>=4),JSON.stringify(before));
+await sleep(1350);
+const after=await ev("window.__game.rkSeaShips.map(s=>({x:s.position.x,z:s.position.z,route:s.userData.rkRoute}))");
+const travel=before.map((b,i)=>Math.hypot(b.x-after[i].x,b.z-after[i].z));
+assert.ok(travel.some(x=>x>.05),JSON.stringify({travel,before,after}));
+const dock=await ev("(()=>{const g=window.__game,ship=g.rkSeaShips[0],x=Math.floor(ship.position.x),z=Math.floor(ship.position.z);const b=g.state.addBuilding('fishery',x,z);g.rkSyncPortDocks();const pier=g.rkPortDocks.get(b.id);const result={count:g.rkPortDocks.size,valid:!!pier,worldName:pier?.name,id:pier?.userData.buildingId,children:pier?.children.length,parent:pier?.parent?.type};g.state.removeBuilding(b);g.rkSyncPortDocks();return {...result,cleared:!g.rkPortDocks.has(b.id)}})()");
+assert.ok(dock.valid&&dock.worldName==='rk-world-fishery-pier'&&dock.id>0&&dock.children>=12&&dock.cleared&&dock.parent==='Scene',JSON.stringify(dock));
+console.log('PASS v5.10 moving true water ships and real-state fishery pier mesh',{travel,dock});
+await c.send('Target.closeTarget',{targetId});process.exit(0);

@@ -18,7 +18,7 @@ async function wait(e){for(let i=0;i<260;i++){if(await evaluate(e))return;await 
 await c.send('Page.navigate',{url:host},s);
 await wait("!!document.querySelector('#rk-start-now')&&!!document.querySelector('#rani-map-picker')");
 const title=await evaluate("(()=>({version:document.querySelector('#menu .rk-public-version')?.textContent,note:document.querySelector('#menu .note'),bug:document.querySelector('#menu a[href*=issues]'),foot:document.querySelector('aside[aria-label=\"게임 정보\"]')}))()");
-assert.equal(title.version,'v5.9',title);assert.equal(title.note,null,title);
+assert.equal(title.version,'v5.10',title);assert.equal(title.note,null,title);
 assert.equal(title.bug,null,title);assert.equal(title.foot,null,title);
 await evaluate("document.querySelector('#rk-start-now').click()");
 await wait("document.querySelector('#menu').classList.contains('rk-choose-region')");
