@@ -122,3 +122,35 @@ jobs:
           path: engines/fiefdom/dist/
           retention-days: 14
           if-no-files-found: error
+
+      - name: Build real GitHub Pages project-path package and preserve v4
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd engines/fiefdom
+          npm run build -- --base=/Defense/
+          cd ../..
+          node rani-next/deploy-pack.mjs engines/fiefdom/dist pages-preview/Defense
+          test -s pages-preview/Defense/index.html
+          test -s pages-preview/Defense/legacy/index.html
+          test -s pages-preview/Defense/SOURCE-AND-ATTRIBUTION.txt
+      - name: Browser verify new /Defense/ root and original /legacy/ paths
+        timeout-minutes: 6
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8940 --directory pages-preview --bind 127.0.0.1 >/tmp/rani-site-8940.log 2>&1 &
+          for i in {1..30}; do
+            curl -fsS http://127.0.0.1:8940/Defense/ >/dev/null && break
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:8940/Defense/legacy/ | grep -q 'src/main.js'
+          curl -fsS http://127.0.0.1:8940/Defense/SOURCE-AND-ATTRIBUTION.txt | grep -q 'AGPL'
+          node rani-next/qa-ui.mjs http://127.0.0.1:8940/Defense/ 9341 engines/fiefdom/qa/pages-path-root.png
+      - name: Preserve Pages candidate artifact separately
+        uses: actions/upload-artifact@v4
+        with:
+          name: rani-next-real-pages-candidate
+          path: pages-preview/Defense/
+          retention-days: 7
+          if-no-files-found: error
