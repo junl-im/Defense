@@ -180,7 +180,7 @@ function modify(p,a,b){const s=fs.readFileSync(file(p),'utf8');assert.equal(s.sp
  let n=0;
  s=s.replace(/loading\.textContent = ([^\n;]+);/g,(_all,expression)=>{
    n++;
-   if(expression.includes('loading models'))return "rkLoading('3D 건축 모델을 불러오는 중');";
+   if(expression.includes('loading models'))return "rkLoading('3D 건축 모델을 불러오는 중 '+done+'/'+total);";
    if(expression.includes('warming up the graphics'))return "rkLoading('빛과 그림자를 준비하는 중',0.95);";
    if(expression.includes('building '))return "rkLoading('선택한 왕국을 건설하는 중');";
    if(expression.includes('loading '))return "rkLoading('저장한 왕국을 불러오는 중');";
