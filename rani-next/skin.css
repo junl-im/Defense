@@ -1,0 +1,67 @@
+/* Royal graphical treatment applied to the actual Fiefdom game DOM.
+   Original source: halvar20000/fiefdom (AGPL-3.0-only).
+   No SVG art, HUD mock screenshot, static fake city, or gameplay replacement. */
+:root{color-scheme:dark}
+#app canvas{touch-action:none}
+#menu{background:radial-gradient(110% 85% at 50% 0%,#285873 0%,#132e45 44%,#081522 100%)!important;
+font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif!important}
+#menu h1{height:118px;width:min(420px,87vw);margin:0 auto 5px!important;
+background:url('/rani/rk_logo.webp') center/contain no-repeat;
+font-size:0!important;letter-spacing:0!important;color:transparent!important;
+filter:drop-shadow(0 9px 12px #020917)}
+#menu .sub{font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif!important;
+letter-spacing:.06em!important;color:#efdcad!important;opacity:1!important;font-weight:700}
+#menu .map{background:linear-gradient(150deg,#23465deb,#0b1c2bea)!important;
+border:2px solid #836539!important;border-radius:15px!important;
+box-shadow:inset 0 1px #ebc88128,0 8px 17px #06101770!important}
+#menu .map.on{border-color:#ffd38c!important;
+background:linear-gradient(150deg,#375b7b,#142e47)!important;
+box-shadow:0 0 0 1px #c99b53,0 0 18px #d0a86366!important}
+#menu .map h3{font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif!important;
+color:#ffe1a2!important;font-weight:800!important}
+#menu .go{background:linear-gradient(#bd985f,#694926)!important;
+color:#fff4d5!important;border:2px solid #f9d58d!important;
+border-radius:12px!important;box-shadow:0 4px 14px #040a0baa!important}
+#ui .panel{border:1.5px solid #b99559!important;border-radius:12px!important;
+background:linear-gradient(165deg,rgba(22,51,73,.95),rgba(8,24,37,.93))!important;
+box-shadow:inset 0 1px #ffdfa63b,0 6px 20px #02080b8c!important}
+#ui,#ui *{font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif!important}
+#topbar{flex-wrap:nowrap!important;overflow-x:auto!important;
+overflow-y:hidden!important;scrollbar-width:thin;scrollbar-color:#ae8b55 #152b40;
+justify-content:flex-start!important;padding:5px 7px!important;
+min-height:39px!important;max-height:49px!important}
+#topbar .res{flex:0 0 auto!important;white-space:nowrap!important;
+padding:0 5px!important;min-height:25px!important;display:flex!important;
+align-items:center!important;gap:5px!important}
+#topbar .res[data-res="gold"]::before,
+#topbar .res[data-res="wood"]::before,
+#topbar .res[data-res="stone"]::before,
+#topbar .res[data-res="wheat"]::before,
+#topbar .res[data-res="bread"]::before,
+#topbar .res[data-res="population"]::before{
+content:"";display:inline-block;flex:0 0 23px;width:23px;height:23px;
+background-size:contain;background-repeat:no-repeat;background-position:center;
+filter:drop-shadow(0 2px 3px #0009)}
+#topbar .res[data-res="gold"]::before{background-image:url('/rani/rk_gold.webp')}
+#topbar .res[data-res="wood"]::before{background-image:url('/rani/rk_wood.webp')}
+#topbar .res[data-res="stone"]::before{background-image:url('/rani/rk_stone.webp')}
+#topbar .res[data-res="wheat"]::before,
+#topbar .res[data-res="bread"]::before{background-image:url('/rani/rk_food.webp')}
+#topbar .res[data-res="population"]::before{background-image:url('/rani/rk_people.webp')}
+#buildbar button{border-radius:9px!important;border-color:#a68147!important;
+background:linear-gradient(145deg,#30495b,#122e42)!important;min-height:38px}
+#buildbar button.open{box-shadow:0 0 8px #f7cb794f!important}
+#buildmenu{border-color:#bd9856!important}
+#stats,#controls,#stats2,#minimap{color:#f7e9c8!important}
+#minimap canvas{border:2px solid #9b7440!important;border-radius:10px!important}
+#pad button{background:linear-gradient(160deg,#344b61,#122d42)!important;
+border-color:#b99a5b!important}
+#tip{border-radius:9px!important;background:rgba(9,26,41,.96)!important}
+@media(max-width:700px){
+#menu h1{height:86px;width:min(310px,92vw)}
+#menu .maps{grid-template-columns:minmax(0,1fr)!important}
+#ui .panel{border-radius:8px!important}
+#topbar{min-height:31px!important;max-height:39px!important;padding:4px!important}
+#topbar .res{font-size:10px!important;padding:0 3px!important}
+#topbar .res::before{width:17px!important;height:17px!important;flex-basis:17px!important}
+}
