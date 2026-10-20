@@ -116,6 +116,22 @@ const state=await evaluate(`(()=>{
          mini:!!document.querySelector('#minimap canvas')};
 })()`);
 assert.ok(state.game&&state.buildings>0&&Math.abs(state.zoom-1.5)<.05,state);
+const shoreProof=await evaluate(`(()=>{
+ const t=window.__game.terrain, attr=t.mesh.geometry.getAttribute('aShore');
+ if(!attr || attr.itemSize!==4) return {present:false};
+ const arr=attr.array;let waterEdges=0,dryEdges=0,waterTiles=0;
+ for(let i=0;i<t.layer.length;i++){
+   let e=0;const j=i*16;
+   for(let d=0;d<4;d++)e+=arr[j+d];
+   const water=Math.floor(t.layer[i]/4)===6;
+   if(water){waterTiles++;if(e>0)waterEdges++;}
+   else if(e>0)dryEdges++;
+ }
+ return {present:true,waterTiles,waterEdges,dryEdges,itemSize:attr.itemSize};
+})()`);
+assert.ok(shoreProof.present&&shoreProof.waterTiles>0&&shoreProof.waterEdges>0
+  &&shoreProof.dryEdges===0,shoreProof);
+console.log('PASS shoreline real GPU tile adjacency',JSON.stringify(shoreProof));
 const koHud=await evaluate("document.getElementById('stats').innerText");
 assert.ok(koHud.includes('인구')&&koHud.includes('미취업 주민')&&koHud.includes('식량 창고'),koHud);
 assert.ok(!/Population|Unemployed|Food stores|Stockpile|Enemies/.test(koHud),'HUD must be Korean');
