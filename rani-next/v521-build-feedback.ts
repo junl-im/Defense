@@ -69,6 +69,8 @@ export function createRaniBuildFeedback(project:(x:number,z:number)=>[number,num
  };
  const show=(kind:Kind,x:number,z:number,label:string,level?:number)=>{
    if(!ctx)return;
+   canvas.dataset.rkEvent=kind;
+   canvas.dataset.rkSerial=String(1+Number(canvas.dataset.rkSerial||0));
    active.push({kind,x,z,label:label.slice(0,25),level,start:performance.now(),
      ttl:reduce?1050:(kind==='upgrade'?2550:1900),seed:active.length*.7});
    if(active.length>9)active.shift();
