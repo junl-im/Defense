@@ -74,6 +74,17 @@ patch('src/main.ts',
  "        if (b.hp < full) bits.push(\`\${Math.max(0, Math.round(b.hp))}/\${full} hp\`);",
  "        if (b.hp < full) bits.push(\`내구도 \${Math.max(0, Math.round(b.hp))}/\${full}\`);");
 patch('src/main.ts',"productionOf, goodName, HAUL_RANGE,", "productionOf, HAUL_RANGE,"); // Native production hover now uses localized RESOURCE_LABELS
+// A persistent English stock-full alert is emitted by the trade/deposit core.
+// Localize it at source, avoiding generic client-side text rewriting.
+patch('src/game/state.ts',
+ "      const where = STORE_LABELS[needed];",
+ "      const where = needed === 'granary' ? '식량 창고' : needed === 'armoury' ? '무기고' : '자재 창고';");
+patch('src/game/state.ts',
+ "        `${where} is full — nowhere to put ${RESOURCE_LABELS[resource].toLowerCase()}`,",
+ "        `${where} 가득 참 · ${RESOURCE_LABELS[resource]} 보관 공간이 없습니다.`,");
+patch('src/game/state.ts',
+ "GRANARY_TILE_CAPACITY, ARMOURY_CAPACITY, WEAPON_RESOURCES, storeOf, STORE_LABELS,",
+ "GRANARY_TILE_CAPACITY, ARMOURY_CAPACITY, WEAPON_RESOURCES, storeOf,");
 // Existing seven mobile buttons are regrouped without duplicates.
 const touch=filename('src/ui/touch.ts');
 let s=fs.readFileSync(touch,'utf8');
