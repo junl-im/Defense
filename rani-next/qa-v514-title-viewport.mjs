@@ -26,6 +26,10 @@ try{
  await c.send('Emulation.setDeviceMetricsOverride',{width:1440,height:900,deviceScaleFactor:1,mobile:false},s);
  await c.send('Page.navigate',{url},s);
  await until("!!document.querySelector('#menu.rk-title-v57 .rk-public-version')");
+ // The original menu-compact.js moves a 10+ map grid into a hidden disclosure
+ // asynchronously; test the real settled landing stage, not the transient DOM.
+ await until("document.querySelector('#menu')?.dataset.raniCompact==='1'");
+ await sleep(180);
  assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.14');
  for(const [w,h,mobile,name] of sizes){
   await c.send('Emulation.setDeviceMetricsOverride',{width:w,height:h,mobile,deviceScaleFactor:mobile?2:1},s);
