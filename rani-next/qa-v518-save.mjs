@@ -25,7 +25,7 @@ try{
  await ev("document.querySelector('#menu .rk-manual-start').click()");
  await until("!!document.querySelector('#lords .go')");
  await ev("document.querySelector('#lords .go').click()");
- await until("!!window.__game && !!document.querySelector('#pad')");
+ await until("!!window.__game && !!document.querySelector('#rk-strategy-toggle')");
  await cd.send('Input.dispatchKeyEvent',{type:'keyDown',key:'Escape',code:'Escape',windowsVirtualKeyCode:27,nativeVirtualKeyCode:27},s);
  await cd.send('Input.dispatchKeyEvent',{type:'keyUp',key:'Escape',code:'Escape',windowsVirtualKeyCode:27,nativeVirtualKeyCode:27},s);
  await until("!!document.querySelector('#pause #rk-save-import')");
