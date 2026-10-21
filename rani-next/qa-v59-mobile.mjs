@@ -18,7 +18,7 @@ const ev=async expression=>{const r=await c.send('Runtime.evaluate',{expression,
 const until=async expression=>{for(let i=0;i<420;i++){if(await ev(expression))return;await sleep(280);}throw Error('Timeout '+expression);};
 await c.send('Page.navigate',{url:host},s);
 await until("!!document.querySelector('#rk-start-now')&&!!document.querySelector('#rani-map-picker')");
-assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.17');
+assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.18');
 await ev("document.querySelector('#rk-start-now').click()");
 await until("document.querySelector('#menu').classList.contains('rk-choose-region')");
 await ev("document.querySelector('#menu button.rk-manual-start').click()");
