@@ -85,6 +85,41 @@ patch('src/game/state.ts',
 patch('src/game/state.ts',
  "GRANARY_TILE_CAPACITY, ARMOURY_CAPACITY, WEAPON_RESOURCES, storeOf, STORE_LABELS,",
  "GRANARY_TILE_CAPACITY, ARMOURY_CAPACITY, WEAPON_RESOURCES, storeOf,");
+// Native per-frame English controls escaped earlier periodic translation.
+patch('src/main.ts',
+ "       loading.textContent = \`loading models \${done}/\${total}…\`;",
+ "       loading.textContent = \`게임 그래픽을 불러오는 중 \${done}/\${total}…\`;");
+patch('src/main.ts',
+ "    stanceBtn.textContent = holding ? '\\u{1F6E1} Holding — tap to attack'\n                                    : '⚔ Attacking — tap to hold';",
+ "    stanceBtn.textContent = holding ? '\\u{1F6E1} 위치 사수 · 누르면 공격'\n                                    : '⚔ 공격 중 · 누르면 위치 사수';");
+patch('src/ui/hud.ts',
+ "        fsBtn.textContent = on ? 'Leave fullscreen' : 'Fullscreen';",
+ "        fsBtn.textContent = on ? '전체 화면 해제' : '전체 화면';");
+patch('src/ui/hud.ts',
+ "      hd.querySelector('.tw')!.textContent = off ? 'show' : 'hide';",
+ "      hd.querySelector('.tw')!.textContent = off ? '펼치기' : '접기';");
+patch('src/ui/hud.ts',
+ "        w2.textContent = \`Build \${/^[aeiou]/.test(l) ? 'an' : 'a'} \${l} first.\`;",
+ "        w2.textContent = \`\${label} 건설이 먼저 필요합니다.\`;");
+patch('src/ui/hud.ts',
+ "      buy.title = \`Buy one now for \${price[0]} gold\`;",
+ "      buy.title = \`즉시 구매 · 금 \${price[0]}\`;");
+patch('src/ui/hud.ts',
+ "      sell.title = \`Sell one now for \${price[1]} gold\`;",
+ "      sell.title = \`즉시 판매 · 금 \${price[1]}\`;");
+const hud=filename('src/ui/hud.ts');
+let source=fs.readFileSync(hud,'utf8');
+// The keyboard hints previously referred to right-click despite the global
+// v5.20 right-click ban. Ctrl+left is the actual troop-order alternative.
+for(const [from,to] of [
+ ['우클릭으로 이동','Ctrl+클릭으로 이동'],
+ ['성벽 우클릭으로 병력 배치','성벽 Ctrl+클릭으로 병력 배치'],
+ ['우클릭으로 순찰 지정','Ctrl+클릭으로 순찰 지정']
+]) {
+ if(source.includes(from))source=source.split(from).join(to);
+}
+fs.writeFileSync(hud,source);
+
 // Existing seven mobile buttons are regrouped without duplicates.
 const touch=filename('src/ui/touch.ts');
 let s=fs.readFileSync(touch,'utf8');
