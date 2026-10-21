@@ -142,6 +142,7 @@ jobs:
             sleep 1
           done
           node ../../rani-next/qa-ui.mjs http://127.0.0.1:8931/ 9341 qa/rani-next-royal-ux.png
+          node ../../rani-next/qa-v521-visual.mjs http://127.0.0.1:8931/ 9341
           node ../../rani-next/qa-quickstart.mjs http://127.0.0.1:8931/ 9341 qa/rani-v54-direct-world.png
           node ../../rani-next/qa-polish.mjs http://127.0.0.1:8931/ 9341
           node ../../rani-next/qa-v56-flow.mjs http://127.0.0.1:8931/ 9341
@@ -160,7 +161,6 @@ jobs:
           node ../../rani-next/qa-v518-save.mjs http://127.0.0.1:8931/ 9341
           node ../../rani-next/qa-v519-build-cost.mjs http://127.0.0.1:8931/ 9341
           node ../../rani-next/qa-v520-shell.mjs http://127.0.0.1:8931/ 9341
-          node ../../rani-next/qa-v521-visual.mjs http://127.0.0.1:8931/ 9341
           test -s qa/rani-next-royal-ux.png
           node tools/e2e/smoke.mjs http://127.0.0.1:8931/ 9341 qa/rani-next-coast-and-royal-fortress.png
           test -s qa/rani-next-coast-and-royal-fortress.png
