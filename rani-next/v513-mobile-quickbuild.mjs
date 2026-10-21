@@ -105,8 +105,8 @@ edit('src/main.ts',
   "        if(!dbl && rkMobileTapBuilding(e.clientX,e.clientY,w.x,w.z)){\n"+
   "          rkQuickCloseNow();army.clearSelection();return;\n        }");
 edit('src/main.ts',
-  "        army.clearSelection();\n        return;\n      }\n      if (army.selectAt(w.x, w.z, e.shiftKey)) return;",
-  "        army.clearSelection();\n        if(!dbl)rkOpenGroundBuild(w.x,w.z);\n        return;\n      }\n      if (army.selectAt(w.x, w.z, e.shiftKey)) return;");
+  "        if (clickBuildingAt(w.x, w.z)) return;\n        army.clearSelection();\n        return;",
+  "        if (clickBuildingAt(w.x, w.z)) return;\n        army.clearSelection();\n        if(!dbl)rkOpenGroundBuild(w.x,w.z);\n        return;");
 edit('src/main.ts',
   "  canvas.addEventListener('pointerdown', e => {\n    if(e.pointerType==='touch'){",
   "  canvas.addEventListener('pointerdown', e => {\n    if(e.pointerType==='touch')rkQuickCloseNow();\n    if(e.pointerType==='touch'){");
