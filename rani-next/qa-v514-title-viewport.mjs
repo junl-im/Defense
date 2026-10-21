@@ -43,12 +43,8 @@ try{
   }
   assert.ok(layout.footer.bottom<=h-1&&layout.footer.bottom>h-45,'Footer not at bottom '+JSON.stringify({name,layout}));
   assert.ok(layout.start.top>=0&&layout.start.bottom<layout.footer.top-3,'Start overlaps footer '+JSON.stringify({name,layout}));
-  assert.ok(layout.info.width>=75&&layout.info.height>=28,'Version button too small '+JSON.stringify({name,layout}));
-  await ev("document.querySelector('#rk-version-info-toggle').click()");
-  const details=await ev("(()=>{const p=document.querySelector('#rk-version-info-panel'),b=document.querySelector('#rk-version-info-toggle'),r=p.getBoundingClientRect();return {expanded:b.getAttribute('aria-expanded'),hidden:p.hidden,top:r.top,bottom:r.bottom,left:r.left,right:r.right,link:p.querySelector('a')?.getAttribute('href')};})()");
-  assert.ok(!details.hidden&&details.expanded==='true'&&details.top>=0&&details.bottom<=h&&details.left>=0&&details.right<=w&&details.link.includes('SOURCE-AND-ATTRIBUTION'),'Version popover clipped '+JSON.stringify({name,details}));
-  await ev("document.querySelector('#rk-version-info-toggle').click()");
-  assert.equal(await ev("document.querySelector('#rk-version-info-panel').hidden"),true);
+  assert.equal(layout.info,null,'Version info button must be removed completely');
+  assert.equal(await ev("!!document.querySelector('#rk-version-info-panel')"),false,'Version popup must not exist');
   console.log('PASS one-screen title',name,w,h,{footerBottom:layout.footer.bottom,scroll:layout.menuScroll});
  }
  await c.send('Emulation.setDeviceMetricsOverride',{width:390,height:844,mobile:true,deviceScaleFactor:2},s);
@@ -59,7 +55,7 @@ try{
  await ev("document.querySelector('#rk-region-back').click()");
  await until("!document.querySelector('#menu').classList.contains('rk-choose-region')");
  assert.ok(await ev("document.querySelector('#rk-start-now').getBoundingClientRect().height>40"));
- console.log('PASS v5.14 title and bottom version-info UI, reversible region choice');
+ console.log('PASS v5.20 title with passive version text, region choice preserved');
 }finally{
  await c.send('Target.closeTarget',{targetId});
 }
