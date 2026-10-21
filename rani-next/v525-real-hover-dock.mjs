@@ -73,6 +73,7 @@ patch('src/main.ts',
 patch('src/main.ts',
  "        if (b.hp < full) bits.push(\`\${Math.max(0, Math.round(b.hp))}/\${full} hp\`);",
  "        if (b.hp < full) bits.push(\`내구도 \${Math.max(0, Math.round(b.hp))}/\${full}\`);");
+patch('src/main.ts',"productionOf, goodName, HAUL_RANGE,", "productionOf, HAUL_RANGE,"); // Native production hover now uses localized RESOURCE_LABELS
 // Existing seven mobile buttons are regrouped without duplicates.
 const touch=filename('src/ui/touch.ts');
 let s=fs.readFileSync(touch,'utf8');
