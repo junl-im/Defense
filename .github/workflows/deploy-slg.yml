@@ -23,6 +23,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Validate transform / test / raster CI parity
+        run: node rani-next/v518-pipeline-integrity.mjs
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
