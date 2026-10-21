@@ -59,7 +59,7 @@ for(const [name,src] of [
 fs.writeFileSync(path.join(output,'SOURCE-AND-ATTRIBUTION.txt'),[
  'Rani Kingdom Next: playable 2.5D kingdom (Fiefdom, AGPL-3.0-only)',
  'Upstream: https://github.com/halvar20000/fiefdom/tree/8bb66ceeb5a8ec1f77ec899130090061c25078b3',
- 'Corresponding source and conversion scripts: https://github.com/junl-im/Defense/tree/spike/rani-complete-isometric-base',
+ 'Corresponding source and conversion scripts: https://github.com/junl-im/Defense/tree/main',
  'Third-party copyright and license texts are provided at /Defense/licenses/',
  'Approved original Rani raster art remains separately owned.',
  'Previous v4 game and its existing browser-local saves remain accessible at /Defense/legacy/',

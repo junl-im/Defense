@@ -18,14 +18,14 @@ const ev=async expression=>{const r=await c.send('Runtime.evaluate',{expression,
 const until=async expression=>{for(let i=0;i<420;i++){if(await ev(expression))return;await sleep(280);}throw Error('Timeout '+expression);};
 await c.send('Page.navigate',{url:host},s);
 await until("!!document.querySelector('#rk-start-now')&&!!document.querySelector('#rani-map-picker')");
-assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.14');
+assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.15');
 await ev("document.querySelector('#rk-start-now').click()");
 await until("document.querySelector('#menu').classList.contains('rk-choose-region')");
 await ev("document.querySelector('#menu button.rk-manual-start').click()");
 await until("!!document.querySelector('#lords .go')");
 await ev("document.querySelector('#lords .go').click()");
 await until("!!window.__game&&!!window.__rkNetworkSavings&&document.querySelector('#loading').classList.contains('done')");
-const result=await ev("(()=>{const savings=window.__rkNetworkSavings;const requests=performance.getEntriesByType('resource').map(x=>new URL(x.name).pathname);const spritePNGs=requests.filter(x=>/\\/assets\\/sprites\\/.*\\.png$/i.test(x));const atlasPNGs=requests.filter(x=>/\\/assets\\/sprites\\/rani-atlas-v59-\\d+\\.png$/i.test(x));return {mode:document.documentElement.dataset.rkSceneMode,gameStarted:window.__game.state.buildings.some(b=>b.name==='keep'),savings,atlasPNGs:atlasPNGs.length,spritePNGs:spritePNGs.length,totalRequests:requests.length,atlasRequested:requests.some(x=>x.includes('rani-atlas-v59.json'))}})()");
+const result=await ev("(()=>{const savings=window.__rkNetworkSavings;const requests=performance.getEntriesByType('resource').map(x=>new URL(x.name).pathname);const spritePNGs=requests.filter(x=>/\\/assets\\/sprites\\/.*\\.png$/i.test(x));const atlasPNGs=requests.filter(x=>/\\/assets\\/sprites\\/rani-atlas-(?:v59|mobile-v515)-\\d+\\.png$/i.test(x));return {mode:document.documentElement.dataset.rkSceneMode,gameStarted:window.__game.state.buildings.some(b=>b.name==='keep'),savings,atlasPNGs:atlasPNGs.length,spritePNGs:spritePNGs.length,totalRequests:requests.length,atlasRequested:requests.some(x=>/rani-atlas-(?:v59|mobile-v515)\.json/.test(x))}})()");
 assert.equal(result.mode,'sprites',JSON.stringify(result));
 assert.ok(result.gameStarted&&result.atlasRequested&&result.savings.originalSpriteRequests>5000,JSON.stringify(result));
 assert.ok(result.atlasPNGs>0&&result.atlasPNGs<=12&&result.spritePNGs<=20,JSON.stringify(result));
