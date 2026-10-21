@@ -87,8 +87,8 @@ patch('src/game/state.ts',
  "GRANARY_TILE_CAPACITY, ARMOURY_CAPACITY, WEAPON_RESOURCES, storeOf,");
 // Native per-frame English controls escaped earlier periodic translation.
 patch('src/main.ts',
- "       loading.textContent = \`loading models \${done}/\${total}…\`;",
- "       loading.textContent = \`게임 그래픽을 불러오는 중 \${done}/\${total}…\`;");
+ "      loading.textContent = \`loading models \${done}/\${total}…\`;",
+ "      loading.textContent = \`게임 그래픽을 불러오는 중 \${done}/\${total}…\`;");
 patch('src/main.ts',
  "    stanceBtn.textContent = holding ? '\\u{1F6E1} Holding — tap to attack'\n                                    : '⚔ Attacking — tap to hold';",
  "    stanceBtn.textContent = holding ? '\\u{1F6E1} 위치 사수 · 누르면 공격'\n                                    : '⚔ 공격 중 · 누르면 위치 사수';");
