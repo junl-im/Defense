@@ -113,3 +113,13 @@ html.phone:has(#rk-quick-build:not([hidden])) #rk-placement-hint{
  html.phone #rk-hex-menu .rk-hex-buttons{--rk-wheel-scale:.67}
  html.phone #rk-placement-hint{bottom:calc(56px + env(safe-area-inset-bottom));font-size:10px;max-width:calc(100vw - 70px)}
 }
+
+/* Optional, real Placement.check failure reasons. Collapsed by default. */
+#rk-quick-build .rk-quick-reasons:empty{display:none}
+#rk-quick-build .rk-quick-reasons{margin:7px 0 0;color:#f5d5af;
+ border-top:1px solid rgba(211,176,121,.35);padding-top:5px}
+#rk-quick-build .rk-quick-reasons summary{font-size:11px;font-weight:700;
+ cursor:pointer;touch-action:manipulation}
+#rk-quick-build .rk-quick-reasons ul{margin:6px 0 3px;padding-left:16px;
+ font-size:10px;line-height:1.6;word-break:keep-all}
+#rk-hex-menu .rk-hex-unavailable{color:#eac8a1;font-size:11px;line-height:1.4}
