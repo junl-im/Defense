@@ -32,6 +32,12 @@ patch('src/main.ts',
 patch('src/main.ts',
 "      state.notify(b.def.label+' 강화 '+b.lvl+'단계 완료','info');",
 "      rkGrowthFx.upgraded(b.x+b.def.footprint[0]/2,b.z+b.def.footprint[1]/2,b.def.label,b.lvl);\n      state.notify(b.def.label+' 강화 '+b.lvl+'단계 완료','info');");
+// A successful upgrade should reveal its visual celebration instead of keeping
+// the radial inspector over the newly levelled building. On failure, keep the
+// inspector open with the existing specific resource error.
+patch('src/ui/raniWheel.ts',
+"    message.textContent=result.message;\n    update();",
+"    if(result.ok && id==='upgrade'){closeMenu();return;}\n    message.textContent=result.message;\n    update();");
 patch('src/ui/menu.ts',"version.textContent='v5.20';","version.textContent='v5.21';");
 patch('src/ui/menu.ts',"rkBuildName.textContent='라니킹덤 · v5.20';","rkBuildName.textContent='라니킹덤 · v5.21';");
 fs.appendFileSync(path.join(root,'public/rani/skin.css'),'\n'+fs.readFileSync(path.join(import.meta.dirname,'v521-scroll-hud.css'),'utf8'));
