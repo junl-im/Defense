@@ -115,6 +115,7 @@ jobs:
           curl -fsS http://127.0.0.1:8940/Defense/legacy/ | grep -q 'src/main.js'
           curl -fsS http://127.0.0.1:8940/Defense/SOURCE-AND-ATTRIBUTION.txt | grep -q 'AGPL'
           node rani-next/qa-ui.mjs http://127.0.0.1:8940/Defense/ 9341 /tmp/rani-deploy-evidence/kingdom-game.png
+          node rani-next/qa-v521-visual.mjs http://127.0.0.1:8940/Defense/ 9341
           node rani-next/qa-quickstart.mjs http://127.0.0.1:8940/Defense/ 9341 /tmp/rani-deploy-evidence/direct-world.png
           node rani-next/qa-polish.mjs http://127.0.0.1:8940/Defense/ 9341
           node rani-next/qa-v56-flow.mjs http://127.0.0.1:8940/Defense/ 9341
@@ -133,7 +134,6 @@ jobs:
           node rani-next/qa-v518-save.mjs http://127.0.0.1:8940/Defense/ 9341
           node rani-next/qa-v519-build-cost.mjs http://127.0.0.1:8940/Defense/ 9341
           node rani-next/qa-v520-shell.mjs http://127.0.0.1:8940/Defense/ 9341
-          node rani-next/qa-v521-visual.mjs http://127.0.0.1:8940/Defense/ 9341
           node engines/fiefdom/tools/e2e/smoke.mjs http://127.0.0.1:8940/Defense/ 9341 /tmp/rani-deploy-evidence/gameplay.png
       - name: Archive deploy-time gameplay QA images
         if: always()
