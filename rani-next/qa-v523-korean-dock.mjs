@@ -28,7 +28,7 @@ try{
  await until("!!document.querySelector('#lords .go')");
  await ev("document.querySelector('#lords .go').click()");
  await until("!!window.__game&&!!document.querySelector('#rk-actions')");
- const original=await ev(\`(()=>{
+ const original=await ev(`(()=>{
    const g=window.__game,dock=document.querySelector('#rk-actions');
    const wrap=document.querySelector('#buildwrap');
    const button=document.querySelector('#rk-build-toggle');
@@ -52,7 +52,7 @@ try{
    const tip=document.querySelector('#tip').textContent;
    return {starve,insufficient,timber,cost,before,after,open,closed,tip,
      parent:wrap.parentElement.id,version:document.querySelector('.rk-public-version')?.textContent};
- })()\`);
+ })()`);
  assert.equal(original.starve,'주민들이 굶주리고 있습니다!',JSON.stringify(original));
  assert.equal(original.insufficient,'목재·석재 부족',JSON.stringify(original));
  assert.ok(original.timber.includes('벌목장')&&original.timber.includes('나무'),JSON.stringify(original));
@@ -61,13 +61,13 @@ try{
  assert.ok(original.tip.includes('일꾼')&&original.tip.includes('목재')
  &&original.tip.includes('철')&&original.tip.includes('주거 수용')
  &&!/\b(workers?|wood|click|houses)\b/i.test(original.tip),JSON.stringify(original));
- const layout=await ev(\`(()=>{
+ const layout=await ev(`(()=>{
    const bar=document.querySelector('#rk-actions'),stats=document.querySelector('#stats');
    const a=bar.getBoundingClientRect(),b=stats.getBoundingClientRect();
    return {dock:{left:a.left,right:a.right,top:a.top,bottom:a.bottom},
      stats:{bottom:b.bottom},width:innerWidth,height:innerHeight,
      hidden:document.querySelector('#buildwrap').getBoundingClientRect().height===0};
- })()\`);
+ })()`);
  assert.ok(layout.dock.left>=0&&layout.dock.right<layout.width*.4
  &&layout.dock.bottom<=layout.height+2&&layout.hidden,JSON.stringify(layout));
  await ev("document.querySelector('#rk-pause-toggle').click()");
