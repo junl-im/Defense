@@ -36,8 +36,8 @@ patch('src/main.ts',
 // the radial inspector over the newly levelled building. On failure, keep the
 // inspector open with the existing specific resource error.
 patch('src/ui/raniWheel.ts',
-"    message.textContent=result.message;\n    update();",
-"    if(result.ok && id==='upgrade'){closeMenu();return;}\n    message.textContent=result.message;\n    update();");
+"    message.textContent=result.message;\n    message.dataset.rkManual='1';\n    update();",
+"    if(result.ok && id==='upgrade'){closeMenu();return;}\n    message.textContent=result.message;\n    message.dataset.rkManual='1';\n    update();");
 patch('src/ui/menu.ts',"version.textContent='v5.20';","version.textContent='v5.21';");
 patch('src/ui/menu.ts',"rkBuildName.textContent='라니킹덤 · v5.20';","rkBuildName.textContent='라니킹덤 · v5.21';");
 fs.appendFileSync(path.join(root,'public/rani/skin.css'),'\n'+fs.readFileSync(path.join(import.meta.dirname,'v521-scroll-hud.css'),'utf8'));
