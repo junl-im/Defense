@@ -1,0 +1,48 @@
+name: One-time cleanup obsolete Actions artifacts
+on:
+  push:
+    paths:
+      - .github/workflows/artifact-cleanup-20261021.yml
+  workflow_dispatch:
+permissions:
+  actions: write
+  contents: read
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Remove obsolete artifact copies (keep newest 2 per family)
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const {owner,repo} = context.repo;
+            const artifacts = await github.paginate(github.rest.actions.listArtifactsForRepo, {owner,repo,per_page:100});
+            artifacts.sort((a,b) => Date.parse(b.created_at)-Date.parse(a.created_at));
+            const family = (name) => name.toLowerCase()
+              .replace(/([._-])v\d+(?:\.\d+){1,4}(?:[-_.]\d+)?/g, '$1')
+              .replace(/([._-])\d{8,14}(?=[._-]|$)/g, '$1')
+              .replace(/([._-])[a-f0-9]{9,40}(?=[._-]|$)/g, '$1')
+              .replace(/[._-]+$/g,'');
+            const seen = new Map();
+            const olderThan = Date.now() - 6*60*60*1000;
+            let removed=0, freed=0, retained=0, errors=0;
+            for (const a of artifacts) {
+              const key=family(a.name);
+              const rank=seen.get(key)||0;
+              seen.set(key,rank+1);
+              if (rank<2 || Date.parse(a.created_at)>=olderThan) {retained++;continue;}
+              if (removed>=300) {core.warning('Deletion cap reached (300).');break;}
+              try {
+                await github.rest.actions.deleteArtifact({owner,repo,artifact_id:a.id});
+                removed++;freed+=a.size_in_bytes||0;
+                if (removed<=8) core.info('Deleted obsolete artifact '+a.id+' '+a.name);
+                await new Promise(r=>setTimeout(r,150));
+              } catch (e) {errors++;core.warning('Could not delete '+a.id+': '+e.message);}
+            }
+            core.info('CLEANUP_RESULT '+JSON.stringify({repo,found:artifacts.length,removed,freed_bytes:freed,retained,errors}));
+            await core.summary.addHeading('Artifact cleanup').addTable([
+              [{data:'Repository',header:true},{data:'Artifacts found',header:true},{data:'Deleted',header:true},{data:'Space freed',header:true}],
+              [repo,String(artifacts.length),String(removed),(freed/1048576).toFixed(1)+' MiB']
+            ]).write();
+            if (errors) core.setFailed(errors+' deletion errors');
