@@ -23,7 +23,7 @@ try{
  await c.send('Page.navigate',{url},s);
  await until("!!document.querySelector('#rk-start-now')");
  assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.15');
- const meta=await ev("(async()=>{const src=new URL('/Defense/assets/sprites/',location.origin);const [hi,lo]=await Promise.all(['rani-atlas-v59.json','rani-atlas-mobile-v515.json'].map(name=>fetch(new URL(name,src)).then(r=>{if(!r.ok)throw Error(name+' HTTP '+r.status);return r.json()})));const keys=Object.keys(hi.frames);const unchanged=keys.length===Object.keys(lo.frames).length&&keys.every(k=>{const a=hi.frames[k],b=lo.frames[k];return ['x','y','w','h','ax','ay','scale'].every(f=>Math.abs(a[f]/2-b[f])<1e-6)&&a.page===b.page;});return {high:hi.size,low:lo.size,hiVersion:hi.version,loVersion:lo.version,pages:lo.pages.length,frames:keys.length,unchanged};})()");
+ const meta=await ev("(async()=>{const src=new URL('assets/sprites/',location.href);const [hi,lo]=await Promise.all(['rani-atlas-v59.json','rani-atlas-mobile-v515.json'].map(name=>fetch(new URL(name,src)).then(r=>{if(!r.ok)throw Error(name+' HTTP '+r.status);return r.json()})));const keys=Object.keys(hi.frames);const unchanged=keys.length===Object.keys(lo.frames).length&&keys.every(k=>{const a=hi.frames[k],b=lo.frames[k];return ['x','y','w','h','ax','ay','scale'].every(f=>Math.abs(a[f]/2-b[f])<1e-6)&&a.page===b.page;});return {high:hi.size,low:lo.size,hiVersion:hi.version,loVersion:lo.version,pages:lo.pages.length,frames:keys.length,unchanged};})()");
  assert.equal(meta.hiVersion,59,JSON.stringify(meta));
  assert.equal(meta.loVersion,515,JSON.stringify(meta));
  assert.ok(meta.frames>5000&&meta.unchanged,JSON.stringify(meta));
