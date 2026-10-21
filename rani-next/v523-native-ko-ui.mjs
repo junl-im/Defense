@@ -34,6 +34,11 @@ patch('src/ui/hud.ts',
 patch('src/ui/hud.ts',
  "               + (sub ? \`<div class=\"s\">\${sub}</div>\` : '');",
  "               + (sub ? \`<div class=\"s\">\${raniKoTooltip(sub)}</div>\` : '');");
+// Any native entrypoint (including the 6-hex wheel and B shortcut) must
+// reveal the shared action dock. Otherwise an open native catalog stays hidden.
+patch('src/ui/hud.ts',
+ "    this.buildPanel.classList.toggle('hidden', gi === null);",
+ "    this.buildPanel.classList.toggle('hidden', gi === null);\n    const rkDock=document.querySelector<HTMLElement>('#rk-actions');\n    if(rkDock){rkDock.dataset.open=String(gi!==null);rkDock.querySelector('#rk-build-toggle')?.setAttribute('aria-expanded',String(gi!==null));}");
 patch('src/ui/hud.ts',"    this.ghost.textContent = text;",
  "    this.ghost.textContent = raniKoText(text);");
 patch('src/ui/hud.ts',
@@ -70,13 +75,6 @@ const dock = [
  "      row.append(construct,menu);dock.append(buildWrap,row);left.append(dock);",
  "      buildWrap.addEventListener('click',event=>{",
  "        if((event.target as HTMLElement).closest('#buildmenu button[data-name]'))shut();",
- "      });",
- "      document.addEventListener('keydown',event=>{",
- "        if(event.key.toLowerCase()!=='b'||event.ctrlKey||event.altKey)return;",
- "        const el=event.target as HTMLElement;",
- "        if(el.closest('input,textarea,select,[contenteditable=true]'))return;",
- "        const open=dock.dataset.open!=='true';dock.dataset.open=String(open);",
- "        construct.setAttribute('aria-expanded',String(open));",
  "      });",
  "    }",
  "  }"
