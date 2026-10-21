@@ -1,0 +1,115 @@
+/* v5.16 — clean contextual wheel: ONLY clickable hexagons, never a backing table.
+   The six approved functional positions use native HTML/CSS, zero SVG. */
+#rk-hex-menu{
+ width:min(320px,calc(100vw - 12px))!important;
+ height:266px!important;min-height:0!important;
+ max-width:320px!important;
+ background:none!important;border:0!important;
+ box-shadow:none!important;backdrop-filter:none!important;
+ padding:0!important;overflow:visible!important;
+ pointer-events:none!important;
+}
+#rk-hex-menu .rk-hex-buttons{
+ position:relative!important;display:block!important;
+ width:310px!important;max-width:100%!important;
+ height:266px!important;min-height:0!important;
+ margin:0 auto!important;padding:0!important;
+ background:transparent!important;background-image:none!important;
+ border:0!important;border-radius:0!important;
+ box-shadow:none!important;backdrop-filter:none!important;
+ filter:drop-shadow(0 3px 7px rgba(0,0,0,.5))!important;
+}
+#rk-hex-menu .rk-hex-core,#rk-hex-menu .rk-hex-option{
+ position:absolute!important;display:flex!important;flex-direction:column!important;
+ box-sizing:border-box!important;align-items:center!important;justify-content:center!important;
+ flex:none!important;max-width:none!important;
+ border-radius:0!important;padding:4px!important;white-space:normal!important;
+}
+#rk-hex-menu .rk-hex-option[hidden]{display:none!important}
+#rk-hex-menu .rk-hex-core{
+ left:102px!important;top:86px!important;
+ width:106px!important;height:94px!important;
+ max-width:106px!important;order:unset!important;
+ flex-direction:column!important;gap:2px!important;
+}
+#rk-hex-menu .rk-hex-core strong{
+ max-width:84px!important;white-space:normal!important;
+ overflow:hidden!important;text-overflow:clip!important;
+ font-size:12px!important;
+}
+#rk-hex-menu .rk-hex-info{left:113px!important;top:4px!important}
+#rk-hex-menu .rk-hex-upgrade{left:205px!important;top:48px!important}
+#rk-hex-menu .rk-hex-repair{left:205px!important;top:143px!important}
+#rk-hex-menu .rk-hex-manage{left:113px!important;top:190px!important}
+#rk-hex-menu .rk-hex-build{left:21px!important;top:143px!important}
+#rk-hex-menu .rk-hex-remove{left:21px!important;top:48px!important}
+#rk-hex-menu .rk-hex-option{
+ width:83px!important;height:75px!important;
+ flex-basis:auto!important;
+}
+#rk-hex-menu .rk-hex-message:empty{display:none!important}
+#rk-hex-menu .rk-hex-message{
+ position:absolute!important;top:263px;left:50%;
+ transform:translateX(-50%);width:max-content;max-width:min(280px,90vw);
+ min-height:0!important;margin:0!important;padding:6px 9px!important;
+ border:0!important;border-radius:8px;
+ background:rgba(7,29,41,.92)!important;
+ box-shadow:0 2px 8px #0007;color:#ffdea6;
+}
+#rk-hex-menu #rk-hex-info{
+ position:absolute!important;left:50%;top:266px;
+ transform:translateX(-50%);
+ width:min(296px,calc(100vw - 24px));max-width:none;
+ max-height:min(26dvh,155px);margin:0!important;
+ z-index:1;pointer-events:auto;
+}
+#rk-hex-menu .rk-hex-close{display:none!important}
+html.phone #rk-hex-menu:not([hidden]){
+ width:310px!important;max-width:calc(100vw - 12px)!important;
+ height:266px!important;overflow:visible!important;
+}
+html.phone #rk-hex-menu .rk-hex-buttons{
+ width:310px!important;max-width:310px!important;
+ transform:scale(var(--rk-wheel-scale,.84))!important;
+ transform-origin:center center!important;
+ padding:0!important;row-gap:0!important;
+}
+html.phone #rk-hex-menu .rk-hex-core{
+ left:102px!important;top:86px!important;height:94px!important;
+}
+html.phone #rk-hex-menu .rk-hex-option{height:75px!important;width:83px!important}
+html.phone #rk-hex-menu #rk-hex-info{
+ top:calc(133px + 133px * var(--rk-wheel-scale,.84));
+ max-height:130px;
+}
+html.phone #rk-hex-menu .rk-hex-message{top:calc(130px + 130px * var(--rk-wheel-scale,.84))}
+html.phone #rk-hex-menu .rk-hex-close{display:none!important}
+html.phone:has(#rk-hex-menu:not([hidden])) #rk-quick-build{
+ visibility:hidden!important;pointer-events:none!important;
+}
+/* Visible original placement truth, not a duplicate control table. */
+#rk-placement-hint[hidden]{display:none!important}
+html.phone #rk-placement-hint{
+ position:fixed;left:50%;bottom:calc(64px + env(safe-area-inset-bottom));
+ transform:translateX(-50%);z-index:44;
+ width:max-content;max-width:calc(100vw - 90px);box-sizing:border-box;
+ border:1px solid #79b89c;border-radius:20px;
+ color:#def5dc;background:rgba(17,53,47,.92);
+ text-align:center;font:700 11px/1.4 'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+ padding:5px 12px;pointer-events:none;box-shadow:0 3px 10px #0008;
+}
+html.phone #rk-placement-hint[data-ready="false"]{
+ border-color:#df9d84;color:#ffddd2;background:rgba(84,37,33,.94);
+}
+html.phone:has(#rk-hex-menu:not([hidden])) #rk-placement-hint,
+html.phone:has(#rk-quick-build:not([hidden])) #rk-placement-hint{
+ visibility:hidden;
+}
+@media (max-width:370px){
+ html.phone #rk-hex-menu .rk-hex-buttons{--rk-wheel-scale:.78}
+}
+@media (max-height:540px){
+ html.phone #rk-hex-menu:not([hidden]){max-height:none!important;overflow:visible!important}
+ html.phone #rk-hex-menu .rk-hex-buttons{--rk-wheel-scale:.67}
+ html.phone #rk-placement-hint{bottom:calc(56px + env(safe-area-inset-bottom));font-size:10px;max-width:calc(100vw - 70px)}
+}
