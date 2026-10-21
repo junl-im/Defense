@@ -64,6 +64,7 @@ export function createRaniBuildFeedback(project:(x:number,z:number)=>[number,num
      ctx.fill();ctx.stroke();ctx.fillStyle=bright;ctx.fillText(text,lx,ly,maxWidth-12);
      ctx.restore();
    }
+   canvas.dataset.rkPaints=String(Number(canvas.dataset.rkPaints||0)+1);
    canvas.hidden=active.length===0;
    if(active.length)frame=requestAnimationFrame(draw);
  };
@@ -75,7 +76,10 @@ export function createRaniBuildFeedback(project:(x:number,z:number)=>[number,num
      ttl:reduce?1050:(kind==='upgrade'?2550:1900),seed:active.length*.7});
    if(active.length>9)active.shift();
    canvas.hidden=false;
-   if(!frame)frame=requestAnimationFrame(draw);
+   // Paint the first visible frame synchronously: on heavy/mobile pages the
+   // browser can defer RAF behind terrain/sprite work for a noticeable time.
+   // Follow-up frames remain RAF-driven and stop when effects expire.
+   if(!frame)draw(performance.now()+38);
  };
  canvas.hidden=true;
  return {
