@@ -77,15 +77,14 @@ patch('src/main.ts',
 const touch=filename('src/ui/touch.ts');
 let s=fs.readFileSync(touch,'utf8');
 const sub=(a,b)=>{assert.ok(s.includes(a),'v5.25 touch anchor '+a);s=s.split(a).join(b)};
+// v5.12 already localized 지도/정보/선택/건설; never revert the original wording.
 sub("  let buildBtn: HTMLButtonElement;","  let buildBtn: HTMLButtonElement;\n  let menuBtn: HTMLButtonElement;");
-sub("btn('Map', () => hooks.openMap?.());","btn('지도', () => hooks.openMap?.());");
-sub("btn('Info', () => hooks.openInfo?.());","btn('정보', () => hooks.openInfo?.());");
-sub("btn('Move', () => setMode(mode === 'command' ? 'select' : 'command'), 'grow');",
-    "btn('이동', () => setMode(mode === 'command' ? 'select' : 'command'), 'grow');");
-sub("buildBtn = btn('Build', () => hooks.toggleBuild());","buildBtn = btn('건설', () => hooks.toggleBuild());");
+
+
+
+
 sub("btn('☰', () => hooks.pause());","menuBtn = btn('메뉴', () => hooks.pause());");
-sub("    cmd.textContent = m === 'command' ? 'Ordering' : 'Move';",
-    "    cmd.textContent = m === 'command' ? '명령 중' : '이동';");
+
 const start="  function setMode(m: PadMode) {";
 assert.ok(s.includes(start),'touch grouping point missing');
 s=s.replace(start,[
