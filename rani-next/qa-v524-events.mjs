@@ -33,7 +33,7 @@ try{
   ['Your people have no water to fight the fire — build a well','화재를 진압할 물이 없습니다. 우물을 건설하세요.'],
   ['벌목장 needs an ox tether nearby','벌목장 근처에 황소 운반 시설이 필요합니다.'],
   ['채석장 yard is full — the ox tether cannot keep up','채석장의 야적장이 가득 찼습니다. 운반 시설을 보강하세요.'],
-  ['제분소 is waiting for materials','제분소이(가) 재료를 기다리고 있습니다.'],
+  ['제분소 is waiting for materials','제분소가 재료를 기다리고 있습니다.'],
   ['The enemy lord marches on you — 13 strong!','적 영주가 공격해 옵니다! 적군 13명'],
   ['The enemy lord lays siege to your walls — 9 strong!','적 영주가 성벽을 포위했습니다! 적군 9명'],
   ['3 holding ground — they will not give chase','병사 3명이 위치를 사수합니다. 적을 추격하지 않습니다.'],
