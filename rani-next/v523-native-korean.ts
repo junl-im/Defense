@@ -51,7 +51,6 @@ const exact:Record<string,string>={
  'BURNING':'화재 발생','marked out — waiting to be dug':'굴착 대기 중',
  'shut — click to open':'닫힘 · 클릭하여 열기','open — click to shut':'열림 · 클릭하여 닫기',
  'Patrol: right-click the far end of their beat':'순찰할 반대편 위치를 선택하세요.',
- 'You have no drawbridges':'도개교가 없습니다.',
  'Autosave failed':'자동 저장 실패'
 };
 const direction:Record<string,string>={north:'북쪽',south:'남쪽',east:'동쪽',west:'서쪽', 'north-east':'북동쪽','north-west':'북서쪽','south-east':'남동쪽','south-west':'남서쪽'};
@@ -77,6 +76,7 @@ export function raniKoText(value:string):string {
  if((m=s.match(/^(\d+) selected$/i)))return m[1]+'명 선택';
  if((m=s.match(/^(\d+) on patrol$/i)))return m[1]+'명 순찰 시작';
  if((m=s.match(/^short (\d+)$/i)))return '일꾼 '+m[1]+'명 부족';
+ if((m=s.match(/^Pull down (.+)$/i)))return '철거: '+m[1];
  if((m=s.match(/^Speed: (.+)$/i)))return '게임 속도: '+({Slow:'느림',Normal:'보통',Fast:'빠름',Pause:'일시정지'}[m[1]]||m[1]);
  if((m=s.match(/^Autosave failed:\s*(.+)$/i)))return '자동 저장 실패: '+m[1];
  if((m=s.match(/^(.+?) only stands one way/i)))return m[1]+'은(는) 방향을 바꿀 수 없습니다.';
@@ -91,6 +91,7 @@ export function raniKoText(value:string):string {
  if((m=s.match(/^No (.+) in the armoury$/i)))return '무기고에 '+names(m[1]).replace(/\s+or\s+/g,'·')+'이(가) 없습니다.';
  // Hover sub-information from the native game, without touching identifiers.
  if((m=s.match(/^(\d+)\/(\d+) workers?$/i)))return '일꾼 '+m[1]+'/'+m[2]+'명';
+ if((m=s.match(/^([\d.,]+) (\w+) \/ (\d+)s$/i)))return names(m[2])+' '+m[1]+'개 / '+m[3]+'초';
  if((m=s.match(/^houses (\d+)$/i)))return '주거 수용 '+m[1]+'명';
  if((m=s.match(/^(\d+) \/ (\d+) weapons$/i)))return '무기 '+m[1]+'/'+m[2]+'개';
  if((m=s.match(/^shelf (\d+) \/ (\d+) — takes and gives out any good$/i)))return '공용 선반 '+m[1]+'/'+m[2]+' · 모든 자원 보관';
