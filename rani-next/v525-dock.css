@@ -53,3 +53,6 @@ html.phone #pad .rk-touch-actions button{
 html.phone #sheet-build .sheet-body{
   padding-bottom:calc(76px + env(safe-area-inset-bottom))
 }
+
+/* The earlier quick-build sheet assumed a 55px bottom bar. The grouped bar is 62px. */
+html.phone #rk-quick-build {bottom:calc(70px + env(safe-area-inset-bottom));max-height:calc(100dvh - 90px)}
