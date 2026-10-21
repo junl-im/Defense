@@ -23,6 +23,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Validate transform / test / raster CI parity
+        run: node rani-next/v518-pipeline-integrity.mjs
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -68,6 +70,7 @@ jobs:
           node rani-next/v515-mobile-reliability.mjs engines/fiefdom
           node rani-next/v516-precision-hex.mjs engines/fiefdom
           node rani-next/v517-economy-vision.mjs engines/fiefdom
+          node rani-next/v518-save-durability.mjs engines/fiefdom
           node rani-next/check.mjs engines/fiefdom
           node rani-next/verify-art.mjs engines/fiefdom
           python -m pip install Pillow==11.3.0
@@ -124,6 +127,7 @@ jobs:
           node rani-next/qa-v515-memory.mjs http://127.0.0.1:8940/Defense/ 9341
           node rani-next/qa-v516-hex.mjs http://127.0.0.1:8940/Defense/ 9341
           node rani-next/qa-v517-economy.mjs http://127.0.0.1:8940/Defense/ 9341
+          node rani-next/qa-v518-save.mjs http://127.0.0.1:8940/Defense/ 9341
           node engines/fiefdom/tools/e2e/smoke.mjs http://127.0.0.1:8940/Defense/ 9341 /tmp/rani-deploy-evidence/gameplay.png
       - name: Archive deploy-time gameplay QA images
         if: always()
