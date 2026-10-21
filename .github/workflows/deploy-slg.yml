@@ -73,6 +73,7 @@ jobs:
           node rani-next/v518-save-durability.mjs engines/fiefdom
           node rani-next/v519-construction-clarity.mjs engines/fiefdom
           node rani-next/v520-mobile-shell.mjs engines/fiefdom
+          node rani-next/v521-game-polish.mjs engines/fiefdom
           node rani-next/check.mjs engines/fiefdom
           node rani-next/verify-art.mjs engines/fiefdom
           python -m pip install Pillow==11.3.0
@@ -114,6 +115,7 @@ jobs:
           curl -fsS http://127.0.0.1:8940/Defense/legacy/ | grep -q 'src/main.js'
           curl -fsS http://127.0.0.1:8940/Defense/SOURCE-AND-ATTRIBUTION.txt | grep -q 'AGPL'
           node rani-next/qa-ui.mjs http://127.0.0.1:8940/Defense/ 9341 /tmp/rani-deploy-evidence/kingdom-game.png
+          node rani-next/qa-v521-visual.mjs http://127.0.0.1:8940/Defense/ 9341
           node rani-next/qa-quickstart.mjs http://127.0.0.1:8940/Defense/ 9341 /tmp/rani-deploy-evidence/direct-world.png
           node rani-next/qa-polish.mjs http://127.0.0.1:8940/Defense/ 9341
           node rani-next/qa-v56-flow.mjs http://127.0.0.1:8940/Defense/ 9341

@@ -1,0 +1,135 @@
+/* v5.21 -- scrollbars styled like the kingdom's dark iron / gilt UI.
+   CSS-only decoration: SVG is prohibited; never intercept scrolling. */
+#ui,#ui *,#menu,#menu *,#pause,#pause *,#rk-quick-build,#rk-quick-build *,
+#rk-hex-menu,#rk-hex-menu *,#rk-strategy-card,#rk-strategy-card *,
+#rk-harbor-panel,#rk-harbor-panel *,#rk-exit-dialog,#rk-exit-dialog *,
+.sheet,.sheet *{
+ scrollbar-width:thin;
+ scrollbar-color:#bf9964 #112b3a;
+}
+#ui ::-webkit-scrollbar,#menu ::-webkit-scrollbar,#pause ::-webkit-scrollbar,
+#rk-quick-build ::-webkit-scrollbar,#rk-hex-menu ::-webkit-scrollbar,
+#rk-strategy-card::-webkit-scrollbar,#rk-harbor-panel ::-webkit-scrollbar,
+#rk-exit-dialog ::-webkit-scrollbar,.sheet ::-webkit-scrollbar{
+ width:8px;height:8px;
+}
+#ui ::-webkit-scrollbar-track,#menu ::-webkit-scrollbar-track,
+#pause ::-webkit-scrollbar-track,#rk-quick-build ::-webkit-scrollbar-track,
+#rk-hex-menu ::-webkit-scrollbar-track,#rk-strategy-card::-webkit-scrollbar-track,
+#rk-harbor-panel ::-webkit-scrollbar-track,#rk-exit-dialog ::-webkit-scrollbar-track,
+.sheet ::-webkit-scrollbar-track{
+ border:1px solid #805f3e88;border-radius:10px;
+ background:linear-gradient(90deg,#071927,#18394a);
+}
+#ui ::-webkit-scrollbar-thumb,#menu ::-webkit-scrollbar-thumb,
+#pause ::-webkit-scrollbar-thumb,#rk-quick-build ::-webkit-scrollbar-thumb,
+#rk-hex-menu ::-webkit-scrollbar-thumb,#rk-strategy-card::-webkit-scrollbar-thumb,
+#rk-harbor-panel ::-webkit-scrollbar-thumb,#rk-exit-dialog ::-webkit-scrollbar-thumb,
+.sheet ::-webkit-scrollbar-thumb{
+ border:1px solid #efca87;border-radius:10px;
+ background:linear-gradient(90deg,#805d38,#e3b66e,#89643d);
+}
+#ui ::-webkit-scrollbar-thumb:hover,#menu ::-webkit-scrollbar-thumb:hover,
+#pause ::-webkit-scrollbar-thumb:hover,.sheet ::-webkit-scrollbar-thumb:hover{
+ background:linear-gradient(90deg,#b28242,#ffe0a1,#b28242);
+}
+#rk-construction-fx[hidden]{display:none!important}
+#rk-construction-fx{position:fixed;inset:0;z-index:22;pointer-events:none!important;
+ contain:strict;max-width:100vw;max-height:100dvh}
+/* World feedback must never float ABOVE focused popup controls. */
+html:has(#rk-hex-menu:not([hidden])) #rk-construction-fx,
+html:has(#rk-quick-build:not([hidden])) #rk-construction-fx,
+html:has(#pause) #rk-construction-fx,
+html:has(#rk-exit-dialog:not([hidden])) #rk-construction-fx{
+ visibility:hidden;
+}
+/* Phone panels: guarantee room for top HUD, thumb pad, and safe areas. */
+html.phone .sheet{box-sizing:border-box;max-height:calc(100dvh - 118px - env(safe-area-inset-bottom,0px))!important}
+html.phone .sheet .sheet-body{min-height:0;overflow-y:auto;overscroll-behavior:contain}
+html.phone #rk-quick-build:not([hidden]){box-sizing:border-box;
+ max-height:min(66dvh,calc(100dvh - 125px - env(safe-area-inset-bottom,0px)))!important;overflow-y:auto}
+html.phone #rk-hex-menu #rk-hex-info:not([hidden]){max-height:min(25dvh,146px);overflow:auto}
+html.phone #rk-harbor-panel:not([hidden]){max-height:min(43dvh,260px);overflow-y:auto}
+html.phone #rk-phone-zoom{
+ top:auto!important;
+ bottom:calc(75px + env(safe-area-inset-bottom,0px))!important;
+}
+/* Do not show second-tier HUD over the beginner guide, quick-build picker,
+   harbour overlay, or game popup. All functionality remains accessible. */
+html.phone:has(#rk-first-steps:not([hidden])) #rk-enter-fullscreen,
+html.phone:has(#rk-first-steps:not([hidden])) #rk-strategy-toggle,
+html.phone:has(#rk-first-steps:not([hidden])) #rk-strategy-card,
+html.phone:has(#rk-first-steps:not([hidden])) #rk-strategy-map,
+html.phone:has(#rk-harbor-body:not([hidden])) #rk-strategy-card,
+html.phone:has(#rk-harbor-body:not([hidden])) #rk-strategy-map,
+html.phone:has(#rk-harbor-body:not([hidden])) #rk-phone-zoom,
+html.phone:has(#rk-quick-build:not([hidden])) #rk-phone-zoom,
+html.phone:has(#rk-quick-build:not([hidden])) #rk-strategy-toggle,
+html.phone:has(#rk-hex-menu:not([hidden])) #rk-strategy-toggle{
+ visibility:hidden!important;pointer-events:none!important;
+}
+@media(max-height:540px){
+ html.phone #rk-phone-zoom{bottom:calc(58px + env(safe-area-inset-bottom,0px))!important}
+ html.phone .sheet{max-height:calc(100dvh - 95px - env(safe-area-inset-bottom,0px))!important}
+ html.phone #rk-quick-build:not([hidden]){max-height:calc(100dvh - 100px - env(safe-area-inset-bottom,0px))!important}
+ html.phone #rk-harbor-panel:not([hidden]){max-height:26dvh}
+}
+@media(prefers-reduced-motion:reduce){#rk-construction-fx{opacity:.9}}
+
+/* Visible world construction/upgrade theatre: pure CSS, no SVG or canvas.
+   Rings/scaffold animate with opacity/transform so mobile GPUs can composite. */
+#rk-construction-fx{overflow:hidden;isolation:isolate}
+#rk-construction-fx .rk-build-visual{position:absolute;width:0;height:0;
+ pointer-events:none;transform:translateZ(0)}
+#rk-construction-fx .rk-build-visual[hidden]{display:none!important}
+#rk-construction-fx .rk-build-ring{position:absolute;left:-38px;top:-21px;
+ width:76px;height:42px;box-sizing:border-box;border:3px solid #8bdfbd;
+ border-radius:50%;background:radial-gradient(ellipse,#4da98533,transparent 68%);
+ box-shadow:0 0 13px #8becb8aa,0 0 24px #48c9a350;
+ animation:rk-foundation-rise 1.75s ease-out forwards}
+#rk-construction-fx .rk-build-scaffold{position:absolute;left:-24px;top:-55px;
+ width:48px;height:48px;box-sizing:border-box;border:2px solid #a9e7ce;
+ border-bottom:0;box-shadow:inset 0 0 14px #90f3bf40,0 0 18px #6ccfaa70;
+ clip-path:polygon(0 20%,50% 0,100% 20%,100% 100%,0 100%);
+ transform-origin:center bottom;animation:rk-frame-grow 1.6s cubic-bezier(.18,.78,.27,1) forwards}
+#rk-construction-fx .rk-build-spark{position:absolute;left:-2px;top:-16px;
+ width:5px;height:5px;background:#b7f2cd;border-radius:40%;box-shadow:0 0 7px currentColor;
+ color:#b7f2cd;animation:rk-spark-fly 1.6s ease-out both;
+ transform-origin:0 0}
+#rk-construction-fx .rk-build-label{position:absolute;top:-95px;left:0;
+ display:block;max-width:min(245px,86vw);box-sizing:border-box;overflow:hidden;
+ padding:7px 12px;border:1px solid #b8dfbb;border-radius:9px;
+ color:#edffe9;background:linear-gradient(165deg,#264e4bf0,#122c39f5);
+ box-shadow:0 2px 0 #d5ffc140 inset,0 4px 20px #000b;
+ font:800 12px/1.4 'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+ white-space:nowrap;text-overflow:ellipsis;text-align:center;
+ animation:rk-float-label 1.85s ease-out both}
+#rk-construction-fx .rk-upgrade .rk-build-ring{
+ border-color:#ffd384;background:radial-gradient(ellipse,#ffda8540,transparent 70%);
+ box-shadow:0 0 17px #ffe09a,0 0 30px #dea94c99;
+ animation-duration:2.45s}
+#rk-construction-fx .rk-upgrade .rk-build-scaffold{
+ border-color:#ffdf9c;box-shadow:inset 0 0 15px #ffce6550,0 0 24px #f5cf8a;
+ animation-duration:2.3s}
+#rk-construction-fx .rk-upgrade .rk-build-spark{
+ background:#ffe0a0;color:#ffe0a0;animation-duration:2.3s}
+#rk-construction-fx .rk-upgrade .rk-build-label{
+ border-color:#ffe0a0;color:#fff0be;
+ background:linear-gradient(165deg,#69502ef4,#26394af5);
+ box-shadow:0 2px 0 #fff1b160 inset,0 5px 23px #000b;
+ animation-duration:2.5s}
+@keyframes rk-foundation-rise{0%{opacity:0;transform:scale(.28)}
+ 22%{opacity:1}75%{opacity:.85}100%{opacity:0;transform:scale(1.7)}}
+@keyframes rk-frame-grow{0%{opacity:0;transform:scaleY(.08)}
+ 28%{opacity:1}70%{opacity:.9;transform:scaleY(1)}
+ 100%{opacity:0;transform:scaleY(1.12)}}
+@keyframes rk-spark-fly{0%{opacity:0;transform:rotate(var(--rk-angle)) translateX(8px) scale(.3)}
+ 30%{opacity:1}100%{opacity:0;transform:rotate(var(--rk-angle)) translateX(var(--rk-distance)) translateY(-23px) scale(.7)}}
+@keyframes rk-float-label{0%{opacity:0;transform:translate(-50%,16px) scale(.87)}
+ 15%{opacity:1;transform:translate(-50%,0) scale(1)}
+ 78%{opacity:1}100%{opacity:0;transform:translate(-50%,-19px) scale(1)}}
+@media(prefers-reduced-motion:reduce){
+ #rk-construction-fx .rk-build-ring,#rk-construction-fx .rk-build-scaffold,
+ #rk-construction-fx .rk-build-spark{animation:none!important;opacity:.4}
+ #rk-construction-fx .rk-build-label{animation:none!important;opacity:1}
+}
