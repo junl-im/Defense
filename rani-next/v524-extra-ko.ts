@@ -26,6 +26,11 @@ const goods:Readonly<Record<string,string>>={
  stockpile:'자재 창고',granary:'식량 창고',armoury:'무기고'
 };
 const lang=(input:string)=>input.replace(/\b(?:wood|stone|iron|pitch|oil|wheat|flour|hops|ale|pigs|hides|bread|cheese|apples|meat|fish|bows|crossbows|spears|pikes|swords|maces|armour|stockpile|granary|armoury)\b/gi,t=>goods[t.toLowerCase()]||t);
+const subject=(name:string):string=>{
+ const last=name.trim().charCodeAt(name.trim().length-1);
+ const closed=last>=0xac00&&last<=0xd7a3&&(last-0xac00)%28!==0;
+ return name+(closed?'이':'가');
+};
 export function raniKoExtra(original:string):string|null{
  const s=original.trim();
  if(!s||!/[A-Za-z]/.test(s))return null;
@@ -41,10 +46,10 @@ export function raniKoExtra(original:string):string|null{
  if((m=s.match(/^(.+?) yard is full — the ox tether cannot keep up$/i)))return m[1]+'의 야적장이 가득 찼습니다. 운반 시설을 보강하세요.';
  if((m=s.match(/^(.+?) is full — (.+?) has stopped$/i)))return lang(m[1])+'이(가) 가득 차 '+m[2]+'의 생산이 멈췄습니다.';
  if((m=s.match(/^(.+?) has no stockpile to draw from$/i)))return m[1]+'에서 사용할 자재 창고가 없습니다.';
- if((m=s.match(/^(.+?) is waiting for materials$/i)))return m[1]+'이(가) 재료를 기다리고 있습니다.';
+ if((m=s.match(/^(.+?) is waiting for materials$/i)))return subject(m[1])+' 재료를 기다리고 있습니다.';
  if((m=s.match(/^(.+?) has no ale to fetch$/i)))return m[1]+'에 공급할 맥주가 없습니다.';
  if((m=s.match(/^(.+?) — nowhere for the (.+?) to deliver$/i)))return lang(m[1])+'에 '+m[2]+'의 생산품을 운반할 공간이 없습니다.';
- if((m=s.match(/^(.+?) is full — the ox is standing loaded$/i)))return lang(m[1])+'이(가) 가득 차 운반용 황소가 대기하고 있습니다.';
+ if((m=s.match(/^(.+?) is full — the ox is standing loaded$/i)))return subject(lang(m[1]))+' 가득 차 운반용 황소가 대기하고 있습니다.';
  // Enemy lord, battle and troop state messages.
  if((m=s.match(/^The enemy lord lays siege to your walls — (\d+) strong!$/i)))return '적 영주가 성벽을 포위했습니다! 적군 '+m[1]+'명';
  if((m=s.match(/^The enemy lord marches on you — (\d+) strong!$/i)))return '적 영주가 공격해 옵니다! 적군 '+m[1]+'명';
@@ -52,8 +57,8 @@ export function raniKoExtra(original:string):string|null{
  if((m=s.match(/^(\d+) on the attack$/i)))return '병사 '+m[1]+'명이 공격 태세로 전환했습니다.';
  if((m=s.match(/^(\d+) to the (.+)$/i)))return '병사 '+m[1]+'명이 '+m[2]+'(으)로 이동합니다.';
  if((m=s.match(/^(\d+) (.+?) selected$/i)))return '병사 '+m[1]+'명 선택 · '+m[2].replace(/(?<=[가-힣])s$/,'');
- if((m=s.match(/^(.+?) has won their war\.$/i)))return m[1]+'이(가) 전쟁에서 승리했습니다.';
- if((m=s.match(/^(.+?) has been beaten\.$/i)))return m[1]+'이(가) 전쟁에서 패배했습니다.';
+ if((m=s.match(/^(.+?) has won their war\.$/i)))return subject(m[1])+' 전쟁에서 승리했습니다.';
+ if((m=s.match(/^(.+?) has been beaten\.$/i)))return subject(m[1])+' 전쟁에서 패배했습니다.';
  if((m=s.match(/^No (.+?) to sell$/i)))return lang(m[1])+' 재고가 없어 판매할 수 없습니다.';
  // Intro notification retains the random proper names but localizes directions.
  if((m=s.match(/^Your rivals?: (.+)\.$/i))){
