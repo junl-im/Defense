@@ -44,7 +44,7 @@ export function raniKoExtra(original:string):string|null{
  if((m=s.match(/^(.+?) cannot reach its work$/i)))return m[1]+'의 작업 위치로 이동할 수 없습니다.';
  if((m=s.match(/^(.+?) needs an ox tether nearby$/i)))return m[1]+' 근처에 황소 운반 시설이 필요합니다.';
  if((m=s.match(/^(.+?) yard is full — the ox tether cannot keep up$/i)))return m[1]+'의 야적장이 가득 찼습니다. 운반 시설을 보강하세요.';
- if((m=s.match(/^(.+?) is full — (.+?) has stopped$/i)))return lang(m[1])+'이(가) 가득 차 '+m[2]+'의 생산이 멈췄습니다.';
+ if((m=s.match(/^(.+?) is full — (.+?) has stopped$/i)))return subject(lang(m[1]))+' 가득 차 '+m[2]+'의 생산이 멈췄습니다.';
  if((m=s.match(/^(.+?) has no stockpile to draw from$/i)))return m[1]+'에서 사용할 자재 창고가 없습니다.';
  if((m=s.match(/^(.+?) is waiting for materials$/i)))return subject(m[1])+' 재료를 기다리고 있습니다.';
  if((m=s.match(/^(.+?) has no ale to fetch$/i)))return m[1]+'에 공급할 맥주가 없습니다.';
