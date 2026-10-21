@@ -1,0 +1,55 @@
+/* v5.23: consolidate construction categories and game menu in one left-side cluster.
+   The original Fiefdom build buttons are MOVED here; there are no duplicate controls.
+   Phone retains the original bottom-right construction/pause pair. */
+html:not(.phone) #leftcol #rk-actions{
+  width:min(232px,calc(100vw - 20px));
+  margin-top:auto;flex:0 1 auto;min-height:0;
+  display:flex;flex-direction:column;align-items:stretch;gap:6px;
+  pointer-events:auto;z-index:30;
+}
+html:not(.phone) #rk-actions #buildwrap{
+  display:flex;flex-direction:column;align-items:stretch;
+  gap:5px;margin:0;min-height:0;max-height:min(64dvh,calc(100dvh - 174px));
+}
+html:not(.phone) #rk-actions[data-open="false"] #buildwrap{display:none!important}
+html:not(.phone) #rk-actions #buildmenu{
+  width:auto;max-width:none;flex:1 1 auto;min-height:0;
+  max-height:min(45dvh,330px);overflow:auto;
+}
+html:not(.phone) #rk-actions #buildbar{
+  width:auto;max-width:none;flex:0 0 auto;
+  box-shadow:0 5px 18px #0009;
+}
+html:not(.phone) #rk-actions .rk-action-row{
+  display:grid;grid-template-columns:1fr 1fr;gap:6px;
+  padding:6px;border:1px solid #a68250;border-radius:10px;
+  background:linear-gradient(150deg,#284251f2,#0d2334f8);
+  box-shadow:0 5px 18px #0009,0 1px 0 #fff2 inset;
+}
+html:not(.phone) #rk-actions .rk-action-row button{
+  min-height:42px;cursor:pointer;touch-action:manipulation;
+  font:800 13px/1.2 'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+  border:1px solid #b58d55;border-radius:7px;
+  color:#ffe7b9;background:linear-gradient(165deg,#4a6070,#203c4c);
+  box-shadow:0 2px 7px #0008;
+}
+html:not(.phone) #rk-actions #rk-build-toggle[aria-expanded="true"]{
+  background:linear-gradient(165deg,#b18a49,#805829);color:#fff9e3;
+}
+html:not(.phone) #rk-actions .rk-action-row button:active{
+  transform:translateY(1px);filter:brightness(1.14);
+}
+html.phone #pad button:nth-last-child(-n+2){
+  border-color:#c5a064;color:#fff0cf;
+  background:linear-gradient(150deg,#785e3a,#33485a);
+  font-weight:800;
+}
+@media(max-width:1000px){
+  html:not(.phone) #leftcol #rk-actions{width:186px}
+  html:not(.phone) #rk-actions .rk-action-row button{min-height:36px;font-size:12px}
+}
+@media(max-height:600px){
+  html:not(.phone) #rk-actions #buildwrap{max-height:calc(100dvh - 128px)}
+  html:not(.phone) #rk-actions #buildmenu{max-height:28dvh}
+  html:not(.phone) #rk-actions #buildbar button{padding:3px 2px}
+}
