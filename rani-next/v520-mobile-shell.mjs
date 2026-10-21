@@ -34,6 +34,11 @@ edit('src/main.ts',
 edit('src/ui/menu.ts',
 "    ver.prepend(rkVersionInfo);ver.append(rkVersionPanel);",
 "    // v5.20: keep only the version text. The popup and button are not mounted.");
+// Preserve desktop troop move/garrison orders WITHOUT re-enabling right-click.
+// Ctrl+left click orders selected troops; Shift+left still multi-selects.
+edit('src/main.ts',
+"      if (touchCommand() && army.selected.length) {",
+"      if ((touchCommand() || (e.pointerType!=='touch' && e.ctrlKey)) && army.selected.length) {");
 edit('src/ui/menu.ts',"version.textContent='v5.19';","version.textContent='v5.20';");
 edit('src/ui/menu.ts',"rkBuildName.textContent='라니킹덤 · v5.19';","rkBuildName.textContent='라니킹덤 · v5.20';");
 fs.appendFileSync(path.join(root,'public/rani/skin.css'),'\n'+fs.readFileSync(path.join(import.meta.dirname,'v520-game-shell.css'),'utf8'));
