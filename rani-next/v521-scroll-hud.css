@@ -59,9 +59,9 @@ html.phone #rk-phone-zoom{
 html.phone:has(#rk-first-steps:not([hidden])) #rk-strategy-toggle,
 html.phone:has(#rk-first-steps:not([hidden])) #rk-strategy-card,
 html.phone:has(#rk-first-steps:not([hidden])) #rk-strategy-map,
-html.phone:has(#rk-harbor-panel:not([hidden])) #rk-strategy-card,
-html.phone:has(#rk-harbor-panel:not([hidden])) #rk-strategy-map,
-html.phone:has(#rk-harbor-panel:not([hidden])) #rk-phone-zoom,
+html.phone:has(#rk-harbor-body:not([hidden])) #rk-strategy-card,
+html.phone:has(#rk-harbor-body:not([hidden])) #rk-strategy-map,
+html.phone:has(#rk-harbor-body:not([hidden])) #rk-phone-zoom,
 html.phone:has(#rk-quick-build:not([hidden])) #rk-phone-zoom,
 html.phone:has(#rk-quick-build:not([hidden])) #rk-strategy-toggle,
 html.phone:has(#rk-hex-menu:not([hidden])) #rk-strategy-toggle{
