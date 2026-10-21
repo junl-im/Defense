@@ -104,6 +104,7 @@ patch('src/ui/hud.ts',
 patch('src/ui/hud.ts',
  "      sell.title = \`Sell one now for \${price[1]} gold\`;",
  "      sell.title = \`즉시 판매 · 금 \${price[1]}\`;");
+patch('src/ui/hud.ts', "        const l = label.toLowerCase();\n", "");
 const hud=filename('src/ui/hud.ts');
 let source=fs.readFileSync(hud,'utf8');
 // The keyboard hints previously referred to right-click despite the global
