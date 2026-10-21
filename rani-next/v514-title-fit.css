@@ -1,5 +1,8 @@
 /* Rani v5.14: title fills exactly ONE visible viewport on PC and phones.
    Approved raster images only; no SVG or new background assets. */
+/* Hide the original grid during the first ~700 ms before menu-compact.js
+   moves it under the native region-selection disclosure. */
+#menu.rk-title-v57:not(.rk-choose-region) > .maps{display:none!important}
 #menu.rk-title-v57:not(.rk-choose-region){
  box-sizing:border-box!important;
  top:0!important;bottom:0!important;left:0!important;right:0!important;
