@@ -83,9 +83,6 @@ const dock = [
 ].join('\n');
 patch('src/main.ts',"  const hud = new Hud(state, placement);",
  "  const hud = new Hud(state, placement);\n"+dock);
-// Source-truth name/cost hover labels include raw native resource keys otherwise.
-patch('src/main.ts',"        text: want - b.staff === want ? 'no worker' : \`short \${want - b.staff}\`,",
- "        text: want - b.staff === want ? '일꾼 없음' : \`일꾼 \${want - b.staff}명 부족\`,");
 fs.appendFileSync(p('public/rani/skin.css'),
  '\n'+fs.readFileSync(path.join(import.meta.dirname,'v523-one-side-dock.css'),'utf8'));
 console.log('PASS v5.23 source Korean notices/build button/world tooltip + one-side controls');
