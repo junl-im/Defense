@@ -26,12 +26,15 @@ const goods:Readonly<Record<string,string>>={
  stockpile:'자재 창고',granary:'식량 창고',armoury:'무기고'
 };
 const lang=(input:string)=>input.replace(/\b(?:wood|stone|iron|pitch|oil|wheat|flour|hops|ale|pigs|hides|bread|cheese|apples|meat|fish|bows|crossbows|spears|pikes|swords|maces|armour|stockpile|granary|armoury)\b/gi,t=>goods[t.toLowerCase()]||t);
-const near=(input:string,term:string)=>input.replace(term,'').trim();
 export function raniKoExtra(original:string):string|null{
  const s=original.trim();
  if(!s||!/[A-Za-z]/.test(s))return null;
  if(Object.prototype.hasOwnProperty.call(fixed,s))return original.replace(s,fixed[s]);
  let m:RegExpMatchArray|null;
+ if((m=s.match(/^Must be built on (.+)$/i))){
+   const terra:Record<string,string>={sand:'모래',grass:'초원',rock:'암반',marsh:'늪',water:'물',shore:'해안',dry:'마른 땅',level:'평탄한 땅',hill:'언덕'};
+   return (terra[m[1].toLowerCase()]||m[1])+' 지형에 건설해야 합니다.';
+ }
  // The original per-worker scheduler emits these from game/workers.ts.
  if((m=s.match(/^(.+?) cannot reach its work$/i)))return m[1]+'의 작업 위치로 이동할 수 없습니다.';
  if((m=s.match(/^(.+?) needs an ox tether nearby$/i)))return m[1]+' 근처에 황소 운반 시설이 필요합니다.';
