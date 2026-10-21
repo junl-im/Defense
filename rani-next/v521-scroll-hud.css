@@ -56,6 +56,7 @@ html.phone #rk-phone-zoom{
 }
 /* Do not show second-tier HUD over the beginner guide, quick-build picker,
    harbour overlay, or game popup. All functionality remains accessible. */
+html.phone:has(#rk-first-steps:not([hidden])) #rk-enter-fullscreen,
 html.phone:has(#rk-first-steps:not([hidden])) #rk-strategy-toggle,
 html.phone:has(#rk-first-steps:not([hidden])) #rk-strategy-card,
 html.phone:has(#rk-first-steps:not([hidden])) #rk-strategy-map,
