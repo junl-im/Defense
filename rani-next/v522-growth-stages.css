@@ -1,0 +1,43 @@
+/* v5.22 additive world growth effects; CSS only, no SVG/images/canvas. */
+/* Large footprint: broader foundation and taller timbers, still bounded on phones. */
+#rk-construction-fx .rk-build-ring{
+ width:calc(76px * var(--rk-area-scale,1));
+ height:calc(42px * var(--rk-area-scale,1));
+ left:calc(-38px * var(--rk-area-scale,1));
+ top:calc(-21px * var(--rk-area-scale,1));
+}
+#rk-construction-fx .rk-build-scaffold{
+ width:calc(48px * var(--rk-area-scale,1));
+ height:calc(48px * var(--rk-area-scale,1));
+ left:calc(-24px * var(--rk-area-scale,1));
+ top:calc(-55px * var(--rk-area-scale,1));
+}
+/* Three discrete beats make a successful placement more legible than a flash.
+   Not construction time: gameplay remains immediate. */
+#rk-construction-fx .rk-growth-steps{
+ position:absolute;left:-28px;top:10px;width:56px;height:8px;
+ display:flex;gap:5px;justify-content:center;align-items:center;
+ opacity:.95;pointer-events:none;
+}
+#rk-construction-fx .rk-growth-step{
+ flex:0 0 11px;height:5px;border-radius:6px;background:#c2f0d3;
+ box-shadow:0 0 6px #8af0ce,0 0 11px #6de2bc66;
+ transform:scaleX(.1);opacity:0;
+ animation:rk-growth-beat 1.85s ease-out both;
+ animation-delay:calc(var(--rk-step) * 180ms);
+}
+#rk-construction-fx .rk-upgrade .rk-growth-step{
+ background:#ffe3a3;box-shadow:0 0 6px #f6d18c,0 0 11px #f6d18c88;
+ animation-duration:2.25s;
+ animation-delay:calc(var(--rk-step) * 230ms);
+}
+@keyframes rk-growth-beat{
+ 0%{opacity:0;transform:scaleX(.1)}
+ 25%{opacity:1;transform:scaleX(1)}
+ 76%{opacity:1;transform:scaleX(1)}
+ 100%{opacity:0;transform:scaleX(1)}
+}
+@media(prefers-reduced-motion:reduce){
+ #rk-construction-fx .rk-growth-step{animation:none!important;
+ opacity:.85;transform:none}
+}
