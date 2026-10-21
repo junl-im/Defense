@@ -10,14 +10,14 @@ const qa=s=>from(s,/^\s+node (?:\.\.\/\.\.\/)?(rani-next\/qa-[\w-]+\.mjs) http/g
 const assetBuild=s=>from(s,/^\s+python (rani-next\/[\w-]+\.py) engines\/fiefdom\/public\//gm);
 const a=transforms(build),b=transforms(deploy);
 assert.deepEqual(b,a,'Preview transform list drifted from the public deploy (order matters)');
-assert.ok(a.length>=29&&a.includes('rani-next/v518-save-durability.mjs')&&a.includes('rani-next/v519-construction-clarity.mjs')&&a.includes('rani-next/v520-mobile-shell.mjs')&&a.includes('rani-next/v521-game-polish.mjs'));
+assert.ok(a.length>=29&&a.includes('rani-next/v518-save-durability.mjs')&&a.includes('rani-next/v519-construction-clarity.mjs')&&a.includes('rani-next/v520-mobile-shell.mjs')&&a.includes('rani-next/v521-game-polish.mjs')&&a.includes('rani-next/v522-growth-theatre.mjs'));
 assert.equal(new Set(a).size,a.length,'Source patch applied twice');
 for(const file of a)assert.ok(fs.existsSync(file),'Missing engine patch '+file);
 const q1=qa(build),q2=qa(deploy);
 const first=q1.slice(0,q2.length);
 assert.deepEqual(first,q2,'Game test order drifted between preview and Pages build');
 assert.equal(new Set(q2).size,q2.length,'Duplicate release QA');
-assert.ok(q2.includes('rani-next/qa-v518-save.mjs')&&q2.includes('rani-next/qa-v519-build-cost.mjs')&&q2.includes('rani-next/qa-v520-shell.mjs')&&q2.includes('rani-next/qa-v521-visual.mjs'));
+assert.ok(q2.includes('rani-next/qa-v518-save.mjs')&&q2.includes('rani-next/qa-v519-build-cost.mjs')&&q2.includes('rani-next/qa-v520-shell.mjs')&&q2.includes('rani-next/qa-v521-visual.mjs')&&q2.includes('rani-next/qa-v522-growth.mjs'));
 for(const file of q2)assert.ok(fs.existsSync(file),'Missing QA '+file);
 const py1=assetBuild(build),py2=assetBuild(deploy);
 assert.deepEqual(py1,py2,'Original-art asset pipeline drifted');
@@ -26,4 +26,5 @@ assert.match(build,/feat\/rani-v518-save-durability/,'New branch is not CI prote
 assert.match(build,/feat\/rani-v519-quickbuild-cost-clarity/,'v5.19 branch is not CI protected');
 assert.match(build,/feat\/rani-v520-mobile-shell-navigation/,'v5.20 branch is not CI protected');
 assert.match(build,/feat\/rani-v521-build-feedback-scroll-hud/,'v5.21 branch is not CI protected');
+assert.match(build,/feat\/rani-v522-growth-feedback/,'v5.22 branch is not CI protected');
 console.log('PASS v5.18 release integrity:',a.length,'engine steps,',q2.length,'ordered Chromium QAs,',py2.length,'art transforms identical in preview and Pages.');
