@@ -77,7 +77,7 @@ export function raniKoText(value:string):string {
  if((m=s.match(/^(\d+) on patrol$/i)))return m[1]+'명 순찰 시작';
  if((m=s.match(/^short (\d+)$/i)))return '일꾼 '+m[1]+'명 부족';
  if((m=s.match(/^Pull down (.+)$/i)))return '철거: '+m[1];
- if((m=s.match(/^Speed: (.+)$/i)))return '게임 속도: '+({Slow:'느림',Normal:'보통',Fast:'빠름',Pause:'일시정지'}[m[1]]||m[1]);
+ if((m=s.match(/^Speed: (.+)$/i)))return '게임 속도: '+(({Slow:'느림',Normal:'보통',Fast:'빠름',Pause:'일시정지'} as Record<string,string>)[m[1]]||m[1]);
  if((m=s.match(/^Autosave failed:\s*(.+)$/i)))return '자동 저장 실패: '+m[1];
  if((m=s.match(/^(.+?) only stands one way/i)))return m[1]+'은(는) 방향을 바꿀 수 없습니다.';
  if((m=s.match(/^(\d+) drawbridges? (raised|dropped)$/i)))return '도개교 '+m[1]+'개 '+(m[2]==='raised'?'올림':'내림');
