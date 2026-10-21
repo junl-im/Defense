@@ -54,6 +54,32 @@ try{
  await sleep(150);
  const layout=await ev("(()=>{const wheel=document.querySelector('#rk-hex-menu'),r=wheel.getBoundingClientRect(),pad=document.querySelector('#pad').getBoundingClientRect(),guide=document.querySelector('#rk-first-steps');return {open:!wheel.hidden,wheel:r.toJSON(),pad:pad.toJSON(),guideHidden:!guide||getComputedStyle(guide).visibility==='hidden'};})()");
  assert.ok(layout.open&&layout.wheel.bottom<=layout.pad.top+3&&layout.guideHidden,JSON.stringify(layout));
+
+ if(!await ev("!!document.querySelector('#rk-first-steps')"))
+   await ev("document.querySelector('#rk-guide-toggle').click()");
+ const guide=await ev("(()=>{const g=document.querySelector('#rk-first-steps');return {compact:g.dataset.rkCompact,more:!!g.querySelector('.rk-step-more'),hiddenHarbor:getComputedStyle(document.querySelector('#rk-harbor-panel')).display==='none'};})()");
+ assert.equal(guide.compact,'true',JSON.stringify(guide));
+ assert.ok(guide.more&&guide.hiddenHarbor,JSON.stringify(guide));
+ await ev("document.querySelector('#rk-first-steps .rk-step-more').click()");
+ assert.equal(await ev("document.querySelector('#rk-first-steps').dataset.rkCompact"),'false');
+ await ev("document.querySelector('#rk-first-steps .rk-step-more').click()");
+ const candidates=await ev("(()=>{const g=window.__game,p=g.findSpot('hovel');if(!p)return {spot:null};const opened=g.rkOpenGroundBuild(p.x,p.z),q=document.querySelector('#rk-quick-build'),choices=[...q.querySelectorAll('.rk-quick-choice')].map(b=>b.dataset.name);return {spot:p,opened,visible:!q.hidden,origin:q.dataset.origin,choices,allLegal:choices.every(n=>g.placement.check(n,p.x,p.z).ok),built:g.state.buildings.length};})()");
+ assert.ok(candidates.spot&&candidates.opened&&candidates.visible&&candidates.allLegal,JSON.stringify(candidates));
+ assert.ok(candidates.choices.length>0&&candidates.choices.length<=4,JSON.stringify(candidates));
+ assert.equal(candidates.built,before,'quick picker built without confirmation');
+ const selected=await ev("(()=>{const g=window.__game,b=document.querySelector('#rk-quick-build .rk-quick-choice'),name=b.dataset.name;b.click();return {name,selected:g.placement.selected,closed:document.querySelector('#rk-quick-build').hidden};})()");
+ assert.ok(selected.selected===selected.name&&selected.closed,JSON.stringify(selected));
+ await ev("window.__game.placement.cancel()");
+ const roof=await ev("(()=>{const g=window.__game,b=g.state.buildings.find(x=>x.name==='keep');g.raniWheel.close();const cx=b.x+b.def.footprint[0]/2,cz=b.z+b.def.footprint[1]/2;const p=g.iso.worldToScreen(cx,0,cz),picked=g.rkMobileTapBuilding(p[0],p[1]-14,-10,-10);return {picked,menu:!document.querySelector('#rk-hex-menu').hidden,selected:g.raniWheel.target?.key};})()");
+ assert.ok(roof.picked&&roof.menu&&roof.selected?.startsWith('building:'),JSON.stringify(roof));
+ await ev("window.__game.raniWheel.close()");
+ await c.send('Emulation.setDeviceMetricsOverride',{width:844,height:390,deviceScaleFactor:2,mobile:true},s);
+ await sleep(500);
+ const landscape=await ev("(()=>{const g=window.__game,p=g.findSpot('hovel');g.rkOpenGroundBuild(p.x,p.z);const r=document.querySelector('#rk-quick-build').getBoundingClientRect(),pad=document.querySelector('#pad').getBoundingClientRect();return {bounds:r.toJSON(),pad:pad.toJSON(),viewport:{w:innerWidth,h:innerHeight},overflow:document.documentElement.scrollWidth-innerWidth};})()");
+ assert.ok(landscape.bounds.left>=0&&landscape.bounds.right<=landscape.viewport.w+1,JSON.stringify(landscape));
+ assert.ok(landscape.bounds.bottom<=landscape.pad.top+3&&landscape.overflow<=2,JSON.stringify(landscape));
+ await ev("document.querySelector('#rk-quick-build .rk-quick-close').click()");
+ console.log('PASS v5.13 native quick build, actual rules, roof hit, minimal guide, landscape',{guide,candidates,selected,roof,landscape});
  console.log('PASS v5.13 phone-first UI, gesture guard, mobile zoom, contextual hex',{initial,z,after,layout});
 }finally{
  await c.send('Target.closeTarget',{targetId});
