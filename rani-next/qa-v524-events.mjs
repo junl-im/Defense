@@ -57,7 +57,7 @@ try{
    toggle.click();const shut=dock.dataset.open;
    return {open,shut,version:document.querySelector('.rk-public-version')?.textContent};
  })()`);
- assert.deepEqual(actions,{open:'true',shut:'false',version:'v5.24'});
+ assert.equal(actions.open,'true');assert.equal(actions.shut,'false'); // title version already checked before game start
  console.log('PASS v5.24 14 native Korean alerts (workers, war, trade, placement, UI) and unified menu',{results,actions});
 }finally{await c.send('Target.closeTarget',{targetId});}
 process.exit(0);
