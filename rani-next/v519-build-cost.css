@@ -1,0 +1,8 @@
+/* v5.19: readable, source-truth costs within the EXISTING quick build cards. */
+#rk-quick-build .rk-quick-choice .rk-choice-name{font-weight:800;font-size:11px;line-height:1.25}
+#rk-quick-build .rk-quick-choice .rk-choice-size{font-size:10px;line-height:1.15;opacity:.88}
+#rk-quick-build .rk-quick-choice .rk-choice-cost{font-size:9px;line-height:1.23;color:#fbe1ac;overflow-wrap:anywhere;max-width:100%;text-align:center}
+#rk-quick-build .rk-quick-choice{gap:3px;padding:7px 2px;min-width:0;min-height:76px}
+#rk-quick-build .rk-quick-note[data-rk-invalid=true]{color:#ffb6a1;font-weight:700}
+@media(max-width:375px){#rk-quick-build .rk-quick-choice{padding:6px 1px;min-height:70px}#rk-quick-build .rk-quick-choice .rk-choice-cost{font-size:8px}}
+@media(max-height:540px){#rk-quick-build .rk-quick-choice{min-height:62px;padding:4px 1px;gap:2px}#rk-quick-build .rk-quick-choice img{height:23px}}
