@@ -30,25 +30,21 @@ try{
  // asynchronously; test the real settled landing stage, not the transient DOM.
  await until("document.querySelector('#menu')?.dataset.raniCompact==='1'");
  await sleep(180);
- assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.19');
+ assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.20');
  for(const [w,h,mobile,name] of sizes){
   await c.send('Emulation.setDeviceMetricsOverride',{width:w,height:h,mobile,deviceScaleFactor:mobile?2:1},s);
   await sleep(180);
   const layout=await ev("(()=>{const root=document.querySelector('#menu'),b=root.querySelector('#rk-start-now'),footer=root.querySelector('.ver'),info=root.querySelector('#rk-version-info-toggle');const spans=['.rk-title-kicker','h1','.sub','.rk-title-ribbon','.acts','.ver'];const measure=el=>{if(!el)return null;const r=el.getBoundingClientRect(),st=getComputedStyle(el);return {top:r.top,bottom:r.bottom,left:r.left,right:r.right,width:r.width,height:r.height,visible:st.display!=='none'&&st.visibility!=='hidden'};};return {width:innerWidth,height:innerHeight,bodyOverflow:document.documentElement.scrollWidth-innerWidth,menuScroll:root.scrollHeight-root.clientHeight,windowScroll:document.documentElement.scrollHeight-innerHeight,parts:Object.fromEntries(spans.map(x=>[x,measure(root.querySelector(x))])),start:measure(b),footer:measure(footer),info:measure(info),version:root.querySelector('.rk-public-version').textContent};})()");
   const visible=Object.entries(layout.parts).filter(([,p])=>p&&p.visible).map(([key,p])=>({key,...p}));
-  assert.equal(layout.version,'v5.19',JSON.stringify({name,layout}));
+  assert.equal(layout.version,'v5.20',JSON.stringify({name,layout}));
   assert.ok(layout.menuScroll<=3&&layout.bodyOverflow<=3&&layout.windowScroll<=3,'First screen scrolls: '+JSON.stringify({name,layout}));
   for(const item of visible){
    assert.ok(item.top>=-2&&item.bottom<=h+2&&item.left>=-2&&item.right<=w+2,'Offscreen title element '+JSON.stringify({name,item,layout}));
   }
   assert.ok(layout.footer.bottom<=h-1&&layout.footer.bottom>h-45,'Footer not at bottom '+JSON.stringify({name,layout}));
   assert.ok(layout.start.top>=0&&layout.start.bottom<layout.footer.top-3,'Start overlaps footer '+JSON.stringify({name,layout}));
-  assert.ok(layout.info.width>=75&&layout.info.height>=28,'Version button too small '+JSON.stringify({name,layout}));
-  await ev("document.querySelector('#rk-version-info-toggle').click()");
-  const details=await ev("(()=>{const p=document.querySelector('#rk-version-info-panel'),b=document.querySelector('#rk-version-info-toggle'),r=p.getBoundingClientRect();return {expanded:b.getAttribute('aria-expanded'),hidden:p.hidden,top:r.top,bottom:r.bottom,left:r.left,right:r.right,link:p.querySelector('a')?.getAttribute('href')};})()");
-  assert.ok(!details.hidden&&details.expanded==='true'&&details.top>=0&&details.bottom<=h&&details.left>=0&&details.right<=w&&details.link.includes('SOURCE-AND-ATTRIBUTION'),'Version popover clipped '+JSON.stringify({name,details}));
-  await ev("document.querySelector('#rk-version-info-toggle').click()");
-  assert.equal(await ev("document.querySelector('#rk-version-info-panel').hidden"),true);
+  assert.equal(layout.info,null,'Version info button must be removed completely');
+  assert.equal(await ev("!!document.querySelector('#rk-version-info-panel')"),false,'Version popup must not exist');
   console.log('PASS one-screen title',name,w,h,{footerBottom:layout.footer.bottom,scroll:layout.menuScroll});
  }
  await c.send('Emulation.setDeviceMetricsOverride',{width:390,height:844,mobile:true,deviceScaleFactor:2},s);
@@ -59,7 +55,7 @@ try{
  await ev("document.querySelector('#rk-region-back').click()");
  await until("!document.querySelector('#menu').classList.contains('rk-choose-region')");
  assert.ok(await ev("document.querySelector('#rk-start-now').getBoundingClientRect().height>40"));
- console.log('PASS v5.14 title and bottom version-info UI, reversible region choice');
+ console.log('PASS v5.20 title with passive version text, region choice preserved');
 }finally{
  await c.send('Target.closeTarget',{targetId});
 }
