@@ -17,7 +17,7 @@ try{
  await c.send('Page.navigate',{url:base},s);
  await until("!!document.querySelector('#rk-start-now')");
  const footer=await ev("(()=>({version:document.querySelector('.rk-public-version')?.textContent,button:!!document.querySelector('#rk-version-info-toggle'),panel:!!document.querySelector('#rk-version-info-panel'),popup:!!document.querySelector('#rk-exit-dialog'),guard:history.state?.rkBackGuard===true}))()");
- assert.deepEqual(footer,{version:'v5.24',button:false,panel:false,popup:true,guard:true},JSON.stringify(footer));
+ assert.deepEqual(footer,{version:'v5.25',button:false,panel:false,popup:true,guard:true},JSON.stringify(footer));
  // Verify mobile title back button is not forced off-site without confirmation.
  await ev("history.back()");
  await until("!document.querySelector('#rk-exit-dialog').hidden");
