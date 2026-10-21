@@ -29,7 +29,7 @@ patch('src/ui/hud.ts',
  "          b.title += '\\nTurns: press , or . with it in hand';",
  "          b.title += '\\n배치 중 , 또는 . 키로 건물 방향 전환';");
 patch('src/ui/hud.ts',
- "      const html = \`<div class=\"t\${foe ? ' foe' : ''}\">\${title}</div>\`",
+ "    const html = \`<div class=\"t\${foe ? ' foe' : ''}\">\${title}</div>\`",
  "      const html = \`<div class=\"t\${foe ? ' foe' : ''}\">\${raniKoText(title)}</div>\`");
 patch('src/ui/hud.ts',
  "               + (sub ? \`<div class=\"s\">\${sub}</div>\` : '');",
