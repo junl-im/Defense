@@ -27,11 +27,9 @@ try{
  const build=await ev("(()=>{const g=window.__game;g.state.stock.wood=3000;g.state.stock.stone=3000;const fx=document.querySelector('#rk-construction-fx'),where=g.findSpot('hovel');const old=g.state.buildings.length;const r=g.build('hovel',where.x,where.z);return {result:r,site:where,old,now:g.state.buildings.length,sequence:+fx.dataset.rkSerial||0,kind:fx.dataset.rkEvent,hidden:fx.hidden,screen:g.iso.worldToScreen(where.x+.5,g.terrain.heightAt(where.x+.5,where.z+.5),where.z+.5)};})()");
  assert.ok(build.result==='hovel'&&build.now===build.old+1&&build.sequence===1&&build.kind==='build'&&!build.hidden,JSON.stringify(build));
  await sleep(160);
- const pixels=await ev("(()=>{const c=document.querySelector('#rk-construction-fx'),x=c.getContext('2d'),p=x.getImageData(0,0,c.width,c.height).data;let n=0;for(let i=3;i<p.length;i+=4)if(p[i])n++;return {alpha:n,width:c.width,height:c.height};})()");
- const onscreen=build.screen[0]>=-120&&build.screen[0]<=390+120&&build.screen[1]>=-120&&build.screen[1]<=844+120;
- if(onscreen)assert.ok(pixels.alpha>250&&pixels.width>300,JSON.stringify({build,pixels}));
- else console.log('PASS off-screen construction effect culling',{screen:build.screen,viewport:[390,844]});
- const blocked=await ev("(()=>{const g=window.__game,fx=document.querySelector('#rk-construction-fx'),before=g.state.buildings.length,serial=+fx.dataset.rkSerial;const r=g.build('hovel',-5,-5);return{result:r,count:g.state.buildings.length,before,serialBefore:serial,serialAfter:+fx.dataset.rkSerial};})()");
+ const visual=await ev("(()=>{const fx=document.querySelector('#rk-construction-fx'),node=fx.querySelector('.rk-build-visual'),label=node?.querySelector('.rk-build-label'),style=label?getComputedStyle(label):null,r=label?.getBoundingClientRect();return {present:!!node,visible:!!node&&!node.hidden,label:label?.textContent,animation:style?.animationName,color:style?.color,rect:r?.toJSON(),count:fx.children.length};})()");
+ assert.ok(visual.present&&visual.visible&&visual.label.includes('건설 완료')&&visual.animation.includes('rk-float-label')&&visual.rect?.width>75,JSON.stringify({build,visual}));
+  const blocked=await ev("(()=>{const g=window.__game,fx=document.querySelector('#rk-construction-fx'),before=g.state.buildings.length,serial=+fx.dataset.rkSerial;const r=g.build('hovel',-5,-5);return{result:r,count:g.state.buildings.length,before,serialBefore:serial,serialAfter:+fx.dataset.rkSerial};})()");
  assert.ok(blocked.count===blocked.before&&blocked.serialBefore===blocked.serialAfter,JSON.stringify(blocked));
  const upgrade=await ev("(()=>{const g=window.__game,b=g.state.buildings.find(x=>x.name==='keep'),fx=document.querySelector('#rk-construction-fx');g.raniWheel.toggle({key:'building:'+b.id,name:b.name,label:b.def.label,x:b.x+b.def.footprint[0]/2,z:b.z+b.def.footprint[1]/2,building:b});const btn=document.querySelector('#rk-hex-menu [data-action=upgrade]');const was=b.lvl??1;if(btn&&!btn.hidden)btn.click();return {before:was,after:b.lvl??1,serial:+fx.dataset.rkSerial,event:fx.dataset.rkEvent,button:!!btn,hidden:!!btn?.hidden,wheelClosed:document.querySelector('#rk-hex-menu').hidden};})()");
  assert.ok(upgrade.button&&!upgrade.hidden&&upgrade.after===upgrade.before+1&&upgrade.serial===2&&upgrade.event==='upgrade'&&upgrade.wheelClosed,JSON.stringify(upgrade));
@@ -65,6 +63,6 @@ try{
  const mod=await ev("(()=>({visible:getComputedStyle(document.querySelector('#rk-construction-fx')).visibility,buttons:getComputedStyle(document.querySelector('#rk-strategy-toggle')).visibility,dialog:!document.querySelector('#rk-exit-dialog').hidden}))()");
  assert.ok(mod.dialog&&mod.visible==='hidden',JSON.stringify(mod));
  await ev("document.querySelector('#rk-exit-stay').click()");
- console.log('PASS v5.21 build upgrade animation only on success, golden scrollbars, modal layers, four phone layouts',{initial,build,pixels,blocked,upgrade,mod});
+ console.log('PASS v5.21 build upgrade animation only on success, golden scrollbars, modal layers, four phone layouts',{initial,build,visual,blocked,upgrade,mod});
 }finally{await c.send('Target.closeTarget',{targetId});}
 process.exit(0);
