@@ -36,7 +36,7 @@ try{
  assert.ok(!context.permitted&&!context.dragAllowed&&!context.downAllowed&&context.preserved,JSON.stringify(context));
  await ev("window.__game.placement.cancel()");
  const hud=await ev("(()=>{const top=document.querySelector('#topbar')?.getBoundingClientRect(),btn=document.querySelector('#rk-strategy-toggle').getBoundingClientRect(),full=document.querySelector('#rk-enter-fullscreen'),retry=full.hidden?null:full.getBoundingClientRect();return {topBottom:top?.bottom,top:btn.top,strategyRight:btn.right,fullscreenVisible:!!retry,retry:retry?.toJSON(),width:innerWidth,overflow:document.documentElement.scrollWidth-innerWidth,popupHidden:document.querySelector('#rk-exit-dialog').hidden};})()");
- assert.ok(hud.top>=Math.min(hud.topBottom||0,innerHeight)-1&&hud.overflow<=2&&hud.popupHidden,JSON.stringify(hud));
+ assert.ok(hud.top>=Math.min(hud.topBottom||0,844)-1&&hud.overflow<=2&&hud.popupHidden,JSON.stringify(hud));
  if(hud.fullscreenVisible)assert.ok(hud.retry.right<=hud.width+2&&hud.retry.left>=0&&hud.retry.left>=hud.strategyRight-2,JSON.stringify(hud));
  // Simulate Android system back via session history popstate.
  await ev("history.back()");
