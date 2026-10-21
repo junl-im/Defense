@@ -36,8 +36,7 @@ patch('src/engine/assets.ts',
 ].join('\n'));
 patch('src/engine/assets.ts',
 "  texturePages:count,atlasVersion:59",
-"  texturePages:count,atlasVersion:lite?515:59,",
-+"\n  quality:lite?'lite':'high',estimatedTextureBytes:estimatedBytes,deviceMemoryGB:memoryGB??null");
+"  texturePages:count,atlasVersion:lite?515:59,\n  quality:lite?'lite':'high',estimatedTextureBytes:estimatedBytes,deviceMemoryGB:memoryGB??null");
 patch('src/engine/assets.ts',
 " console.info('[rani] packed sprites',meta.spriteCount,'->',count,'images');",
 " console.info('[rani] packed sprites',meta.spriteCount,'->',count,'images',lite?'mobile-lite':'desktop-high',Math.round(estimatedBytes/1048576)+'MiB');");
