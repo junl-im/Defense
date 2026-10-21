@@ -1,0 +1,41 @@
+/* v5.13 phone-only direct build picker, valid Fiefdom tile selection. */
+#rk-quick-build[hidden]{display:none!important}
+#rk-quick-build{position:fixed;z-index:49;left:50%;bottom:calc(65px + env(safe-area-inset-bottom));
+ transform:translateX(-50%);box-sizing:border-box;width:min(316px,calc(100vw - 18px));
+ max-height:min(48dvh,330px);overflow-y:auto;overscroll-behavior:contain;
+ padding:9px;border-radius:13px;border:1px solid #ceae72;
+ background:linear-gradient(160deg,#21475ded,#081f31f8);
+ color:#f9e6bf;box-shadow:0 6px 28px #000c;
+ font:12px/1.35 'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+ pointer-events:auto}
+#rk-quick-build .rk-quick-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+#rk-quick-build .rk-quick-head strong{font-size:13px;color:#ffe8b3}
+#rk-quick-build .rk-quick-note{font-size:11px;line-height:1.45;margin:7px 0;word-break:keep-all}
+#rk-quick-build button{border:1px solid #bda06b;border-radius:8px;
+ background:linear-gradient(#31546a,#142b40);color:#fff0d0;
+ cursor:pointer;min-height:32px;padding:5px;touch-action:manipulation}
+#rk-quick-build button:active{transform:scale(.97)}
+#rk-quick-build .rk-quick-close{min-height:26px;padding:3px 8px;font-size:11px}
+#rk-quick-build .rk-quick-choices{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+#rk-quick-build .rk-quick-choice{display:flex;flex-direction:column;justify-content:center;
+ align-items:center;gap:2px;min-width:0;padding:5px 1px;font-size:11px;
+ background:linear-gradient(#45634c,#1b4134);border-color:#93af86}
+#rk-quick-build .rk-quick-choice img{max-width:43px;height:33px;object-fit:contain}
+#rk-quick-build .rk-quick-all{width:100%;margin-top:7px}
+html.phone #rk-harbor-panel[data-has-harbor="false"]{display:none!important}
+html.phone #rk-first-steps[data-rk-compact="true"] .rk-step-help,
+html.phone #rk-first-steps[data-rk-compact="true"] .rk-step-open,
+html.phone #rk-first-steps[data-rk-compact="true"] .rk-step-dismiss{display:none!important}
+html.phone #rk-first-steps .rk-step-more{
+ color:#f7dfb3;background:#21435a;border:1px solid #ba995e;border-radius:6px;
+ padding:3px 6px;font-size:10px;min-height:25px;margin-left:auto;margin-right:5px;
+ cursor:pointer}
+html.phone #rk-first-steps[data-rk-compact="true"]{width:min(225px,calc(100vw - 72px))}
+html.phone #rk-first-steps[data-rk-compact="true"] .rk-step-actions button{min-height:29px}
+html.phone:has(#rk-quick-build:not([hidden])) #rk-first-steps,
+html.phone:has(#rk-quick-build:not([hidden])) #rk-phone-zoom,
+html.phone:has(#rk-quick-build:not([hidden])) #rk-harbor-panel{visibility:hidden;pointer-events:none}
+@media(max-height:540px){
+ html.phone #rk-quick-build{max-height:calc(100dvh - 86px);bottom:calc(55px + env(safe-area-inset-bottom))}
+ html.phone #rk-first-steps[data-rk-compact="true"]{max-height:128px}
+}

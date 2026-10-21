@@ -1,7 +1,7 @@
 name: Build Rani Next 2.5D Playable World
 on:
   push:
-    branches: [spike/rani-complete-isometric-base, feat/rani-korean-svg-free-v5, feat/rani-v5-1-world-polish, feat/rani-v52-biome-forest-render, feat/rani-v53-hex-building-interactions, feat/rani-v531-start-screen-fit, feat/rani-v54-world-first-entry, feat/rani-v55-polish-ui-camera, feat/rani-v56-flow-ocean, feat/rani-v57-cinematic-title, feat/rani-v58-builder-precision-guide, fix/rani-v59-mobile-pages-request-pressure, feat/rani-v510-coastal-port-motion, feat/rani-v511-buildable-harbor-trade, feat/rani-v512-harbor-trade-clarity]
+    branches: [spike/rani-complete-isometric-base, feat/rani-korean-svg-free-v5, feat/rani-v5-1-world-polish, feat/rani-v52-biome-forest-render, feat/rani-v53-hex-building-interactions, feat/rani-v531-start-screen-fit, feat/rani-v54-world-first-entry, feat/rani-v55-polish-ui-camera, feat/rani-v56-flow-ocean, feat/rani-v57-cinematic-title, feat/rani-v58-builder-precision-guide, fix/rani-v59-mobile-pages-request-pressure, feat/rani-v510-coastal-port-motion, feat/rani-v511-buildable-harbor-trade, feat/rani-v512-harbor-trade-clarity, feat/rani-v513-mobile-tap-quickbuild]
     paths:
       - 'rani-next/**'
       - 'assets/rani/**'
@@ -63,6 +63,7 @@ jobs:
           node rani-next/v510-world-port.mjs engines/fiefdom
           node rani-next/v511-harbor.mjs engines/fiefdom
           node rani-next/v512-mobile-controls.mjs engines/fiefdom
+          node rani-next/v513-mobile-quickbuild.mjs engines/fiefdom
           node rani-next/check.mjs engines/fiefdom
           node rani-next/verify-art.mjs engines/fiefdom
       - name: Recolour REAL castle sprites, four sides each (not HUD mockups)
@@ -140,6 +141,7 @@ jobs:
           node ../../rani-next/qa-v510-port.mjs http://127.0.0.1:8931/ 9341
           node ../../rani-next/qa-v511-harbor.mjs http://127.0.0.1:8931/ 9341
           node ../../rani-next/qa-v512-mobile.mjs http://127.0.0.1:8931/ 9341
+          node ../../rani-next/qa-v513-mobile.mjs http://127.0.0.1:8931/ 9341
           test -s qa/rani-next-royal-ux.png
           node tools/e2e/smoke.mjs http://127.0.0.1:8931/ 9341 qa/rani-next-coast-and-royal-fortress.png
           test -s qa/rani-next-coast-and-royal-fortress.png
