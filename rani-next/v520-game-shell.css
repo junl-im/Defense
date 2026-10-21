@@ -73,3 +73,17 @@ html.phone:has(#rk-hex-menu:not([hidden])) #rk-enter-fullscreen{visibility:hidde
  #rk-exit-dialog .rk-exit-panel{padding:11px 14px}
  #rk-exit-dialog .rk-exit-copy{padding:6px 0 2px}
 }
+
+/* Never put mobile HUD buttons over the game's own pause/confirmation panes. */
+html.phone:has(#pause) #rk-strategy-toggle,
+html.phone:has(#pause) #rk-strategy-card,
+html.phone:has(#pause) #rk-strategy-map,
+html.phone:has(#pause) #rk-enter-fullscreen,
+html.phone:has(#pause) #rk-phone-zoom,
+html.phone:has(#pause) #rk-first-steps,
+html.phone:has(#pause) #rk-quick-build,
+html.phone:has(#pause) #rk-hex-menu,
+html.phone:has(#rk-exit-dialog:not([hidden])) #rk-hex-menu,
+html.phone:has(#rk-exit-dialog:not([hidden])) #rk-harbor-panel{
+ visibility:hidden!important;pointer-events:none!important;
+}
