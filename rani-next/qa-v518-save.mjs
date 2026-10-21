@@ -16,6 +16,9 @@ const ev=async expr=>{
 };
 const until=async expr=>{for(let i=0;i<360;i++){if(await ev(expr))return;await sleep(250);}throw Error('Timeout '+expr);};
 try{
+ // Reproduce the real GitHub Pages static site: no server /api/kv exists.
+ // The dev preview can serve an API and hide browser-only quota failures.
+ await cd.send('Page.addScriptToEvaluateOnNewDocument',{source:"(()=>{const f=window.fetch.bind(window);window.fetch=(input,options)=>{const u=typeof input==='string'?input:input?.url||'';if(/^\\/api\\/kv(?:\\/|$)/.test(u))return Promise.resolve(new Response('Not Found',{status:404,headers:{'content-type':'text/plain'}}));return f(input,options);};})();"},s);
  await cd.send('Emulation.setDeviceMetricsOverride',{width:390,height:844,mobile:true,deviceScaleFactor:2},s);
  await cd.send('Page.navigate',{url:origin},s);
  await until("!!document.querySelector('#rk-start-now')");
