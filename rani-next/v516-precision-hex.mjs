@@ -107,7 +107,7 @@ edit('src/main.ts',
 "    rkPlacementHint.hidden=!document.documentElement.classList.contains('phone');"
 ].join('\n'));
 // Preserve all v5.15 behavior, old saves, atlas selection and title screen.
-edit('src/ui/menu.ts',\"version.textContent='v5.15';\",\"version.textContent='v5.16';\");
-edit('src/ui/menu.ts',\"rkBuildName.textContent='라니킹덤 · v5.15';\",\"rkBuildName.textContent='라니킹덤 · v5.16';\");
-fs.appendFileSync(path.join(root,'public/rani/skin.css'),'\\n'+fs.readFileSync(path.join(import.meta.dirname,'v516-clean-hex.css'),'utf8'));
+edit('src/ui/menu.ts',"version.textContent='v5.15';","version.textContent='v5.16';");
+edit('src/ui/menu.ts',"rkBuildName.textContent='라니킹덤 · v5.15';","rkBuildName.textContent='라니킹덤 · v5.16';");
+fs.appendFileSync(path.join(root,'public/rani/skin.css'),'\n'+fs.readFileSync(path.join(import.meta.dirname,'v516-clean-hex.css'),'utf8'));
 console.log('PASS v5.16 clean 6-hex, accurate roof polygon and exact construction reasons');
