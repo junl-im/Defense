@@ -32,7 +32,7 @@ jobs:
               const rank=seen.get(key)||0;
               seen.set(key,rank+1);
               if (rank<2 || Date.parse(a.created_at)>=olderThan) {retained++;continue;}
-              if (removed>=300) {core.warning('Deletion cap reached (300).');break;}
+              if (removed>=1200) {core.warning('Deletion cap reached (1200).');break;}
               try {
                 await github.rest.actions.deleteArtifact({owner,repo,artifact_id:a.id});
                 removed++;freed+=a.size_in_bytes||0;
