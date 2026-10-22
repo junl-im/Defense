@@ -8,28 +8,22 @@ function replaceOne(file,from,to) {
  fs.writeFileSync(filename,src.replace(from,to));
 }
 replaceOne('src/ui/hud.ts',
- "        fsBtn.textContent = on ? 'Leave fullscreen' : 'Fullscreen';",
+ "        fsBtn.textContent = on ? '전체 화면 해제' : '전체 화면';",
  "        fsBtn.textContent = on ? '전체 화면 종료' : '전체 화면';");
 replaceOne('src/ui/hud.ts',
  "        esBtn.textContent = this.edgeScroll\n          ? 'Edge scrolling: on' : 'Edge scrolling: off';",
  "        esBtn.textContent = this.edgeScroll\n          ? '가장자리 스크롤 켜짐' : '가장자리 스크롤 꺼짐';");
 replaceOne('src/ui/hud.ts',
- "      hd.querySelector('.tw')!.textContent = off ? 'show' : 'hide';",
- "      hd.querySelector('.tw')!.textContent = off ? '펼치기' : '접기';");
-replaceOne('src/ui/hud.ts',
  "    rallyHint.textContent = 'New troops gather at the flag. '\n                          + 'Plant it on the map, or on the barracks to clear it.';",
  "    rallyHint.textContent = '새 병사는 집결 깃발로 이동합니다. 지도에서 위치를 선택하고 병영을 누르면 해제됩니다.';");
-replaceOne('src/ui/hud.ts',
- "        const l = label.toLowerCase();\n        w2.textContent = `Build ${/^[aeiou]/.test(l) ? 'an' : 'a'} ${l} first.`;",
- "        w2.textContent = label + ' 건설 후 병사를 모집할 수 있습니다.';");
 replaceOne('src/ui/hud.ts',
  "        b.textContent = kind === 'buy' ? 'Buy' : 'Sell';",
  "        b.textContent = kind === 'buy' ? '구매' : '판매';");
 replaceOne('src/ui/hud.ts',
- "      buy.title = `Buy one now for ${price[0]} gold`;",
+ "      buy.title = `즉시 구매 · 금 ${price[0]}`;",
  "      buy.title = `자원 1개 즉시 구매 · 금 ${price[0]}`;");
 replaceOne('src/ui/hud.ts',
- "      sell.title = `Sell one now for ${price[1]} gold`;",
+ "      sell.title = `즉시 판매 · 금 ${price[1]}`;",
  "      sell.title = `자원 1개 즉시 판매 · 금 ${price[1]}`;");
 replaceOne('src/main.ts',
  "        state.notify('Patrol: right-click the far end of their beat', 'info');",
