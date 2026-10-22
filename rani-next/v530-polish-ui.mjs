@@ -33,7 +33,7 @@ const newPlace=[
  "        if(d.width&&d.height&&left<d.right+145&&top>d.top-120){",
  "          const alternative=d.right+165;",
  "          if(alternative<=window.innerWidth-165)host.style.left=alternative+'px';",
- "          else top=Math.max(146,d.top-148);",
+ "          else {top=Math.max(146,d.top-148);host.style.left=left+'px';}",
  "        }else host.style.left=left+'px';",
  "      }else host.style.left=left+'px';",
  "    }",
