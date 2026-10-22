@@ -1,0 +1,163 @@
+/* v5.30: Remove legacy duplicate floating Build button; the REAL #rk-actions
+   dock is the only desktop Build/Menu/Guide group. No SVG and no fake controls. */
+html:not(.phone) #rani-build-toggle{display:none!important;visibility:hidden!important;pointer-events:none!important}
+html:not(.phone) #leftcol{
+  box-sizing:border-box;max-height:calc(100dvh - 14px);
+  min-height:0!important;overflow:visible!important;
+}
+html:not(.phone) #leftcol #stats{
+  flex:0 1 auto!important;min-height:0!important;
+  max-height:min(36dvh,265px)!important;overflow-y:auto!important;
+  scrollbar-color:#c19b60 #0c2335;scrollbar-width:thin;
+}
+html:not(.phone) #leftcol #rk-actions{
+  position:relative!important;inset:auto!important;
+  box-sizing:border-box!important;align-self:flex-start!important;
+  margin-top:auto!important;flex:0 1 auto!important;
+  min-width:0!important;min-height:0!important;
+  max-height:calc(100% - 7px)!important;overflow:visible!important;
+  display:flex!important;flex-direction:column!important;
+  width:clamp(180px,17vw,236px)!important;gap:5px!important;
+}
+html:not(.phone) #rk-actions .rk-action-row{
+  position:relative!important;box-sizing:border-box!important;
+  flex:0 0 auto!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:5px!important;padding:5px!important;
+  width:100%!important;
+}
+html:not(.phone) #rk-actions .rk-action-row>button{
+  width:100%!important;min-width:0!important;max-width:none!important;
+  height:42px!important;min-height:42px!important;
+  position:static!important;inset:auto!important;
+  padding:4px 2px!important;box-sizing:border-box!important;
+  font:800 12px/1.2 'Malgun Gothic','Apple SD Gothic Neo',sans-serif!important;
+  text-shadow:0 1px 2px #0009!important;letter-spacing:0!important;
+  border:1px solid #b8955d!important;border-radius:9px!important;
+  background:linear-gradient(160deg,#536979,#213c51 70%,#0d2538)!important;
+  box-shadow:inset 0 1px 0 #fff3,0 2px 7px #0008!important;
+  touch-action:manipulation;cursor:pointer!important;filter:none!important;
+}
+html:not(.phone) #rk-actions #rk-build-toggle{
+  color:#fff1c3!important;background:linear-gradient(158deg,#bf9a5a,#876331 65%,#554023)!important;
+  border-color:#ffe0a3!important;box-shadow:0 0 0 1px #edc68069,0 3px 9px #0009!important;
+}
+html:not(.phone) #rk-actions #rk-build-toggle[aria-expanded=true]{
+  background:linear-gradient(170deg,#f1d08b,#b68a44)!important;color:#253647!important;
+}
+html:not(.phone) #rk-actions .rk-action-row button:active{transform:translateY(1px)!important;filter:brightness(1.15)!important}
+html:not(.phone) #rk-actions .rk-action-row button:focus-visible{
+  outline:2px solid #fff0be!important;outline-offset:2px!important
+}
+/* Legacy v5.1 display gate must NOT hide the genuine native catalog opened
+   by the current dock/hex keyboard handlers. Old hidden button remains callable
+   by historic E2E, but is never a second on-screen Build action. */
+html:not(.phone) #ui #rk-actions[data-open=true] #buildwrap,
+html:not(.phone) #ui.rani-build-open #rk-actions #buildwrap{
+  display:flex!important;flex-direction:column!important;
+}
+html:not(.phone) #ui:not(.rani-build-open) #rk-actions[data-open=false] #buildwrap{
+  display:none!important;
+}
+html:not(.phone) #rk-actions #buildwrap{
+  box-sizing:border-box!important;width:100%!important;
+  max-height:min(53dvh,calc(100dvh - 260px))!important;
+  min-height:0!important;overflow:hidden!important;
+  margin:0!important;gap:4px!important;
+}
+html:not(.phone) #rk-actions #buildmenu{
+  box-sizing:border-box!important;width:100%!important;
+  max-height:min(31dvh,230px)!important;
+  overflow-y:auto!important;overscroll-behavior:contain!important;
+}
+html:not(.phone) #rk-actions #buildbar{
+  width:100%!important;min-width:0!important;
+  flex:0 0 auto!important;grid-template-columns:repeat(3,minmax(0,1fr));
+  padding:5px!important;gap:4px!important;
+}
+html:not(.phone) #rk-actions #buildbar button{
+  min-height:33px!important;padding:4px 2px!important;
+  font-size:10px!important;white-space:normal!important;line-height:1.15!important
+}
+html:not(.phone):has(#rk-actions[data-open=true]) #rk-first-steps{
+  visibility:hidden!important;pointer-events:none!important;
+}
+/* Selected radial wheel must always win over open dock. Dock remains in DOM
+   for keyboard/hex integration; never present two overlapping live layers. */
+html:not(.phone):has(#rk-hex-menu:not([hidden])) #rk-actions{
+  opacity:.32;pointer-events:none!important;filter:grayscale(.35);
+}
+html:not(.phone):has(#rk-hex-menu:not([hidden])) #rk-actions *{pointer-events:none!important}
+/* On touch devices the native group is already #rk-touch-actions:
+   remove legacy nth-last-child styling, reserve safe-area correctly. */
+html.phone #pad{box-sizing:border-box!important;min-height:0!important;
+ padding-bottom:calc(5px + env(safe-area-inset-bottom,0px))!important}
+html.phone #pad .rk-touch-actions{
+ margin-left:auto!important;align-self:center!important;flex-shrink:0!important;
+ border-radius:10px!important;padding:3px!important;gap:3px!important;
+}
+html.phone #pad .rk-touch-actions button{
+ border-radius:8px!important;min-height:40px!important;
+ transition:filter .12s ease,transform .12s ease;
+}
+html.phone #pad .rk-touch-actions #rk-touch-build{
+ background:linear-gradient(160deg,#bc9556,#78532b)!important;
+ color:#fff5d7!important;border-color:#f8d69a!important
+}
+html.phone #pad .rk-touch-actions #rk-touch-menu{
+ background:linear-gradient(160deg,#526d80,#152e43)!important;
+ color:#fff1d6!important
+}
+/* Hexagons: deeper navy centre, richly edged gold; preserve 6 REAL actions,
+   no decorative board, no backdrop covering the map, and no SVG. */
+#rk-hex-menu .rk-hex-core,#rk-hex-menu .rk-hex-option{
+ background:linear-gradient(145deg,#f4d89a 0%,#a37a41 5%,#4b6b82 12%,#17364e 32%,#0a2439 80%,#c7a267 95%,#eed29a 100%)!important;
+ box-shadow:inset 0 0 0 2px #b88f51,inset 0 2px 6px #ffe1a42e,0 6px 14px #0007!important;
+ text-shadow:0 1px 4px #000d!important;transition:filter .13s ease!important;
+}
+#rk-hex-menu .rk-hex-core{
+ background:linear-gradient(145deg,#fbe7b0,#9b7340 10%,#395e74 22%,#112e43 76%,#b9955d 94%)!important;
+}
+#rk-hex-menu .rk-hex-remove{
+ background:linear-gradient(145deg,#f7c79b,#994947 12%,#682f37 77%,#c37f68 95%)!important;
+}
+#rk-hex-menu .rk-hex-option:active:not(:disabled){filter:brightness(1.4)!important;scale:.96}
+#rk-hex-menu .rk-hex-option:disabled{
+ filter:grayscale(.65)!important;opacity:.46!important;
+ text-shadow:0 2px 3px #07121c!important
+}
+#rk-hex-menu .rk-hex-option:focus-visible,#rk-hex-menu .rk-hex-core:focus-visible{
+ outline:3px solid #fff0b6!important;outline-offset:2px!important;
+}
+#rk-hex-menu .rk-hex-core strong{color:#fff0c6;font-size:12px;line-height:1.2}
+#rk-hex-menu .rk-hex-core span{color:#f8d891;font-size:11px}
+#rk-hex-menu .rk-hex-message{box-sizing:border-box!important;line-height:1.3!important;
+ word-break:keep-all;max-height:62px;overflow:auto;scrollbar-width:thin}
+#rk-hex-menu #rk-hex-info{
+ background:linear-gradient(155deg,#2a526aef,#0a2437fa)!important;
+ border:1px solid #d6b27a!important;
+ box-shadow:0 9px 28px #000b,inset 0 1px 0 #fff3!important;
+ scrollbar-color:#b79a67 #122a3b;scrollbar-width:thin
+}
+html.phone:has(#rk-hex-menu:not([hidden])) #rk-guide-toggle,
+html.phone:has(#rk-hex-menu:not([hidden])) #rk-placement-hint,
+html.phone:has(#rk-hex-menu:not([hidden])) #rk-strategy-toggle,
+html.phone:has(#rk-hex-menu:not([hidden])) #rk-enter-fullscreen{
+ visibility:hidden!important;pointer-events:none!important
+}
+@media(max-width:1000px){
+ html:not(.phone) #leftcol #rk-actions{width:182px!important}
+ html:not(.phone) #rk-actions .rk-action-row>button{
+   height:37px!important;min-height:37px!important;font-size:10px!important}
+}
+@media(max-height:600px){
+ html:not(.phone) #leftcol #stats{max-height:30dvh!important}
+ html:not(.phone) #rk-actions #buildwrap{max-height:34dvh!important}
+ html:not(.phone) #rk-actions #buildmenu{max-height:19dvh!important}
+ html:not(.phone) #rk-actions .rk-action-row>button{height:32px!important;min-height:32px!important}
+}
+@media(max-height:440px){
+ html:not(.phone) #leftcol #stats{max-height:24dvh!important}
+ html:not(.phone) #rk-actions #buildwrap{max-height:25dvh!important}
+ html:not(.phone) #rk-actions #buildmenu{max-height:12dvh!important}
+}
