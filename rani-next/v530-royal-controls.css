@@ -161,3 +161,18 @@ html.phone:has(#rk-hex-menu:not([hidden])) #rk-enter-fullscreen{
  html:not(.phone) #rk-actions #buildwrap{max-height:25dvh!important}
  html:not(.phone) #rk-actions #buildmenu{max-height:12dvh!important}
 }
+
+/* Short landscape phones have only ~260px between HUD and the thumb dock.
+   Make opened hex details scroll inside that band, never over Build/Menu. */
+@media(max-height:540px){
+ html.phone #rk-hex-menu #rk-hex-info{
+   top:calc(106px + 106px * var(--rk-wheel-scale,.67))!important;
+   max-height:min(17dvh,68px)!important;
+   overflow:auto!important;overscroll-behavior:contain!important;
+   scrollbar-width:thin!important
+ }
+ html.phone #rk-hex-menu .rk-hex-message{
+   top:calc(106px + 106px * var(--rk-wheel-scale,.67))!important;
+   max-height:50px!important;overflow-y:auto!important
+ }
+}
