@@ -39,11 +39,7 @@ html:not(.phone) #rk-actions #rk-build-toggle[aria-expanded="true"]{
 html:not(.phone) #rk-actions .rk-action-row button:active{
   transform:translateY(1px);filter:brightness(1.14);
 }
-html.phone #pad button:nth-last-child(-n+2){
-  border-color:#c5a064;color:#fff0cf;
-  background:linear-gradient(150deg,#785e3a,#33485a);
-  font-weight:800;
-}
+/* v5.31: retired obsolete nth-last-child mobile selector; native controls are grouped in .rk-touch-actions. */
 @media(max-width:1000px){
   html:not(.phone) #leftcol #rk-actions{width:186px}
   html:not(.phone) #rk-actions .rk-action-row button{min-height:36px;font-size:12px}
