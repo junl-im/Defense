@@ -79,6 +79,7 @@ jobs:
           node rani-next/v524-events-and-loading.mjs engines/fiefdom
           node rani-next/v525-real-hover-dock.mjs engines/fiefdom
           node rani-next/v526-live-korean-hud.mjs engines/fiefdom
+          node rani-next/v527-install-pwa.mjs engines/fiefdom
           node rani-next/check.mjs engines/fiefdom
           node rani-next/verify-art.mjs engines/fiefdom
           python -m pip install Pillow==11.3.0
@@ -89,6 +90,7 @@ jobs:
           python rani-next/v511-harbor-sprites.py engines/fiefdom/public/assets/sprites
           python rani-next/v59-pack-sprites.py engines/fiefdom/public/assets/sprites
           python rani-next/v515-mobile-atlas.py engines/fiefdom/public/assets/sprites
+          python rani-next/v527-icon-generate.py engines/fiefdom/public/rani
       - name: Compile actual game with project-path-aware Vite imports
         working-directory: engines/fiefdom
         run: npm run build -- --base=/Defense/
@@ -126,6 +128,7 @@ jobs:
           node rani-next/qa-v524-events.mjs http://127.0.0.1:8940/Defense/ 9341
           node rani-next/qa-v525-real-hover-dock.mjs http://127.0.0.1:8940/Defense/ 9341
           node rani-next/qa-v526-live-korean-hud.mjs http://127.0.0.1:8940/Defense/ 9341
+          node rani-next/qa-v527-install.mjs http://127.0.0.1:8940/Defense/ 9341
           node rani-next/qa-quickstart.mjs http://127.0.0.1:8940/Defense/ 9341 /tmp/rani-deploy-evidence/direct-world.png
           node rani-next/qa-polish.mjs http://127.0.0.1:8940/Defense/ 9341
           node rani-next/qa-v56-flow.mjs http://127.0.0.1:8940/Defense/ 9341
