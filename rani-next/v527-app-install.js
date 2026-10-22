@@ -93,9 +93,13 @@ window.addEventListener('appinstalled',()=>{
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});
 else mount();
 const watch=new MutationObserver(()=>{
- if(root()&&!standalone())mount();
+ if(standalone()||document.getElementById('rk-install-shortcut')){watch.disconnect();return;}
+ if(root())mount();
+ if(document.getElementById('rk-install-shortcut'))watch.disconnect();
 });
-watch.observe(document.documentElement,{subtree:true,childList:true});
+// Do not run a document-wide observer during the full-speed simulation.
+if(!document.getElementById('rk-install-shortcut'))
+ watch.observe(document.documentElement,{subtree:true,childList:true});
 if('serviceWorker'in navigator&&isSecure()){
  window.addEventListener('load',()=>{
   navigator.serviceWorker.register(new URL('rani-sw.js',base()).href,{scope:base().pathname})
