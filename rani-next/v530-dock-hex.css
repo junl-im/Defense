@@ -1,0 +1,140 @@
+/* v5.30 — collision-first HUD, dock and blue/gold royal hex polish.
+   Style-only: existing HTML buttons, native action callbacks and saves preserved.
+   No SVG, no background action table. */
+html:not(.phone) #leftcol{
+  max-height:calc(100dvh - 20px)!important;min-height:0!important;
+  box-sizing:border-box!important;gap:6px!important;
+}
+html:not(.phone) #leftcol #stats{
+  flex:0 0 auto!important;max-height:min(34dvh,240px)!important;
+  overflow:auto!important;scrollbar-gutter:stable;
+}
+html:not(.phone) #leftcol #controls{
+  margin-top:0!important;flex:0 1 auto!important;min-height:0!important;
+  max-height:min(28dvh,205px)!important;overflow:auto!important;
+  border-radius:10px;
+}
+html:not(.phone) #leftcol #rk-actions{
+  flex:0 1 auto!important;min-height:0!important;max-height:min(63dvh,460px);
+  margin-top:auto!important;margin-bottom:0!important;
+  width:min(224px,calc(100vw - 18px))!important;
+  gap:5px!important;
+}
+html:not(.phone) #rk-actions #buildwrap{
+  min-height:0!important;overflow:hidden!important;
+  max-height:min(43dvh,calc(100dvh - 150px))!important;
+}
+html:not(.phone) #rk-actions #buildmenu{
+  max-height:min(28dvh,255px)!important;scrollbar-gutter:stable;
+}
+html:not(.phone) #rk-actions #buildbar{
+  width:100%!important;min-width:0!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:4px!important;box-sizing:border-box!important;
+}
+html:not(.phone) #rk-actions #buildbar button{min-width:0!important;min-height:37px;border-radius:7px!important;
+  border:1px solid #947649!important;background:linear-gradient(165deg,#365568,#172f43)!important;
+  color:#f8e5bc!important;box-shadow:inset 0 1px #fff2,0 2px 4px #0005!important}
+html:not(.phone) #rk-actions #buildbar button.open{
+  background:linear-gradient(145deg,#a98149,#5f482e)!important;
+  color:#fff6d7!important;border-color:#f5ce83!important}
+html:not(.phone) #rk-actions #buildmenu button{border-radius:8px!important;min-width:0!important;
+  border-color:#a78a5890!important;background:linear-gradient(165deg,#28495bcc,#10283be8)!important;
+  transition:filter .15s ease,border-color .15s ease}
+html:not(.phone) #rk-actions #buildmenu button:active{filter:brightness(1.16)}
+html:not(.phone) #rk-actions .rk-action-row{
+  display:grid!important;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)!important;
+  gap:6px!important;max-width:100%!important;box-sizing:border-box!important;
+  padding:6px!important;border:1px solid #c19d61!important;
+  border-radius:12px!important;
+  background:linear-gradient(145deg,#34546cf7,#122d41fb)!important;
+  box-shadow:0 5px 16px #0008,inset 0 1px #ffffff26!important;
+}
+html:not(.phone) #rk-actions #rk-build-toggle{
+  position:relative!important;min-width:0!important;
+  background:linear-gradient(160deg,#c9a466,#8c6836)!important;
+  color:#162a38!important;border:1px solid #ffe1a2!important;
+  font-weight:900!important;text-shadow:0 1px #fff5!important;
+  box-shadow:inset 0 1px #fff7,0 2px 6px #0008!important;
+}
+html:not(.phone) #rk-actions #rk-build-toggle[aria-expanded=true]{
+  background:linear-gradient(160deg,#f2d797,#ac8041)!important}
+html:not(.phone) #rk-actions #rk-pause-toggle{
+  min-width:0!important;background:linear-gradient(150deg,#4a687a,#233e54)!important;
+  color:#f8e8c7!important}
+html:not(.phone) #rk-actions .rk-action-row button:focus-visible{
+  outline:2px solid #fff2c1!important;outline-offset:2px!important}
+html:not(.phone):has(#rk-hex-menu:not([hidden])) #rk-actions{
+  opacity:.72;filter:saturate(.85)}
+html:not(.phone):has(#rk-quick-build:not([hidden])) #rk-actions{
+  visibility:hidden!important;pointer-events:none!important}
+@media(max-height:590px){
+ html:not(.phone) #leftcol #stats{max-height:22dvh!important}
+ html:not(.phone) #leftcol #controls{max-height:18dvh!important}
+ html:not(.phone) #leftcol #rk-actions{max-height:52dvh!important}
+ html:not(.phone) #rk-actions #buildwrap{max-height:32dvh!important}
+ html:not(.phone) #rk-actions .rk-action-row button{min-height:34px!important}
+}
+/* Actual mobile touch buttons are ONE flex item group: no duplicate fixed FAB. */
+html.touch #pad{isolation:isolate!important;z-index:44!important;max-width:100vw!important;box-sizing:border-box!important}
+html.touch #pad .rk-touch-actions{position:relative!important;z-index:1!important;
+  flex:0 0 auto!important;min-width:0!important;max-width:45vw!important;
+  border-radius:11px!important;background:linear-gradient(145deg,#38546a,#142d40)!important}
+html.touch #pad .rk-touch-actions button{box-sizing:border-box!important;
+  width:clamp(44px,13.5vw,66px)!important;min-width:0!important;max-width:70px!important;
+  border-radius:7px!important;white-space:nowrap!important;overflow:hidden!important;
+  color:#fbe8bd!important;box-shadow:inset 0 1px #fff3,0 2px 5px #0007}
+html.touch #pad #rk-touch-build{background:linear-gradient(145deg,#bf974f,#745126)!important;
+  color:#fff7dc!important;border-color:#f5d596!important}
+html.touch #pad > button{min-width:0!important;box-sizing:border-box!important;max-width:14vw}
+html.phone #pad .rk-touch-actions{margin-left:auto!important;gap:3px!important;padding:3px!important}
+html.phone #pad > button,html.phone #pad > button.grow{flex:1 1 0!important;max-width:none!important;min-width:0!important}
+html.phone #rk-quick-build{bottom:calc(74px + env(safe-area-inset-bottom,0px))!important;
+ max-height:calc(100dvh - 94px - env(safe-area-inset-bottom,0px))!important}
+html.phone:has(#rk-hex-menu:not([hidden])) #pad .rk-touch-actions{
+  opacity:.55!important;pointer-events:none!important}
+html.phone:has(#rk-hex-menu:not([hidden])) #rk-quick-build{visibility:hidden!important;pointer-events:none!important}
+@media(max-width:360px){html.phone #pad .rk-touch-actions button{width:42px!important;font-size:10px!important}
+ html.phone #pad{gap:2px!important}}
+@media(max-height:440px){
+ html.phone #pad{min-height:43px!important;padding-top:3px!important;padding-bottom:calc(3px + env(safe-area-inset-bottom,0px))!important}
+ html.phone #pad > button,html.phone #pad .rk-touch-actions button{height:34px!important}
+ html.phone #rk-quick-build{bottom:calc(52px + env(safe-area-inset-bottom,0px))!important}
+}
+/* Every actual hex is a royal plated button, not a square-backed table. */
+#rk-hex-menu{--rk-hex-line:#cba66c;--rk-hex-light:#fff0c1;z-index:55!important}
+#rk-hex-menu .rk-hex-buttons{filter:drop-shadow(0 5px 11px #000b)!important}
+#rk-hex-menu .rk-hex-core,#rk-hex-menu .rk-hex-option{
+  background:linear-gradient(143deg,#f2d99b 0%,#af864f 5%,#45677c 11%,#1b3b53 36%,#0c2339 74%,#a77e42 95%,#f0d59b 100%)!important;
+  color:#fce9c4!important;text-shadow:0 2px 3px #050e1e!important;
+  font-size:13px!important;font-weight:900!important;line-height:1.18!important;
+  transition:filter .15s ease,scale .12s ease!important;
+}
+#rk-hex-menu .rk-hex-core{
+  background:linear-gradient(148deg,#fff0be,#a57d46 9%,#355b6f 20%,#10273e 70%,#956c37 93%,#f1d59c)!important;
+  box-shadow:inset 0 0 0 2px #f1d29b99,0 0 11px #d6b47b35!important;
+  gap:5px!important}
+#rk-hex-menu .rk-hex-core strong{font-size:13px!important;line-height:1.2!important;color:#fff2cd!important}
+#rk-hex-menu .rk-hex-core span{font-size:10px!important;color:#efcf91!important}
+#rk-hex-menu .rk-hex-remove{
+  background:linear-gradient(145deg,#e4b889,#975d4e 12%,#693338 72%,#d18e68 97%)!important;
+  color:#fff0e4!important}
+#rk-hex-menu .rk-hex-option:hover:not(:disabled),
+#rk-hex-menu .rk-hex-core:hover{filter:brightness(1.24) saturate(1.13)!important}
+#rk-hex-menu .rk-hex-option:active:not(:disabled){scale:.93!important;filter:brightness(1.28)!important}
+#rk-hex-menu .rk-hex-option:disabled{opacity:.42!important;
+  filter:grayscale(.45) saturate(.6)!important;cursor:not-allowed!important}
+#rk-hex-menu .rk-hex-option:focus-visible,#rk-hex-menu .rk-hex-core:focus-visible{
+  outline:3px solid #fff5ce!important;outline-offset:3px!important}
+#rk-hex-menu .rk-hex-message:not(:empty){max-width:min(280px,90vw)!important;
+  border:1px solid #d3a968!important;color:#ffe8b7!important}
+#rk-hex-menu #rk-hex-info{border:1px solid #c9a267!important;
+  background:linear-gradient(155deg,#2d5068f5,#0c2439fa)!important;
+  border-radius:12px!important;box-shadow:inset 0 1px #ffffff3b,0 9px 23px #0009!important;
+  scrollbar-gutter:stable;overflow:auto!important}
+#rk-hex-menu #rk-hex-info p{line-height:1.45!important;word-break:keep-all!important}
+html.phone #rk-hex-menu #rk-hex-info{max-height:min(29dvh,145px)!important;overflow:auto!important}
+@media(max-height:540px){
+ html.phone #rk-hex-menu #rk-hex-info{max-height:100px!important;font-size:11px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #rk-hex-menu .rk-hex-core,#rk-hex-menu .rk-hex-option{transition:none!important}}
