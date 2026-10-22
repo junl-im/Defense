@@ -81,4 +81,11 @@ replaceOnce(
  "        ? \`게임 속도 \${lvl.mult}배\`\n        : '게임은 정지하지만 화면은 이동할 수 있습니다. (Space)';"
 );
 fs.writeFileSync(file,s);
+function versionReplace(from,to){
+ const f=path.join(root,'src/ui/menu.ts'),ms=fs.readFileSync(f,'utf8');
+ assert.equal(ms.split(from).length,2,'v5.26 menu version drift: '+from);
+ fs.writeFileSync(f,ms.replace(from,to));
+}
+versionReplace("version.textContent='v5.25';","version.textContent='v5.26';");
+versionReplace("rkBuildName.textContent='라니킹덤 · v5.25';","rkBuildName.textContent='라니킹덤 · v5.26';");
 console.log('PASS v5.26 native live popularity/production/recruitment UI in Korean',{edited});
