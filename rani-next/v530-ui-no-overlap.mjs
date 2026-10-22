@@ -88,7 +88,13 @@ const newPlace=[
  "    host.dataset.rkViewportFit='true';",
  "  }"
 ].join('\n');
-edit('src/ui/raniWheel.ts',oldPlace,newPlace);
+// Previous UI patches may have adjusted comments/spacing inside place().
+// Match the entire one function and preserve all neighbouring wheel handlers.
+const wheelFile=f('src/ui/raniWheel.ts');
+const wheelSource=fs.readFileSync(wheelFile,'utf8');
+const placePattern=/  function place\(\)\{[\s\S]*?\n  \}\n  function show\(/;
+assert.ok(placePattern.test(wheelSource),'v5.30 dynamic native wheel place() not found');
+fs.writeFileSync(wheelFile,wheelSource.replace(placePattern,newPlace+'\n  function show('));
 edit('src/ui/raniWheel.ts',
  "if(id==='info'){infoOpen=!infoOpen;lastInfo='';info.hidden=!infoOpen;update();return;}",
  "if(id==='info'){infoOpen=!infoOpen;lastInfo='';info.hidden=!infoOpen;update();place();return;}"
