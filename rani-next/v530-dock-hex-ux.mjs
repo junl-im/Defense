@@ -11,7 +11,7 @@ function patch(rel,old,next){
 }
 patch('src/main.ts',
  "row.append(construct,menu);dock.append(buildWrap,row);left.append(dock);",
- "row.append(construct,menu);dock.append(buildWrap,row);document.body.append(dock);");
+ "row.append(construct,menu);dock.append(buildWrap,row);document.querySelector<HTMLElement>('#ui')!.append(dock);");
 const filename=f('src/ui/raniWheel.ts');
 let s=fs.readFileSync(filename,'utf8');
 const start=s.indexOf('  function place(){');
