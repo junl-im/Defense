@@ -1,4 +1,4 @@
-// v5.29 Chromium: actual build/upgrade animation, palette scrollbars,
+// v5.30 Chromium: actual build/upgrade animation, palette scrollbars,
 // interactive rectangle overlap (phone landscape/portrait), no phantom success.
 import assert from 'node:assert/strict';
 import {CDP,getJSON} from '../engines/fiefdom/tools/e2e/cdp.mjs';
@@ -15,7 +15,7 @@ try{
  await c.send('Emulation.setTouchEmulationEnabled',{enabled:true,maxTouchPoints:3},s);
  await c.send('Page.navigate',{url},s);
  await until("!!document.querySelector('#rk-start-now')");
- assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.29');
+ assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.30');
  await ev("document.querySelector('#rk-start-now').click()");
  await until("document.querySelector('#menu').classList.contains('rk-choose-region')");
  await ev("document.querySelector('#menu .rk-manual-start').click()");
@@ -55,7 +55,7 @@ try{
      const y=Math.min(a.bottom,b.bottom)-Math.max(a.y,b.y);
      assert.ok(x<=4||y<=4,'Two mobile HUD controls overlap '+JSON.stringify({width,height,a,b,x,y}));
    }
-   console.log('PASS v5.29 responsive HUD',width,height,active.map(x=>x.id));
+   console.log('PASS v5.30 responsive HUD',width,height,active.map(x=>x.id));
  }
  // Clicking a modal must suppress the decorative canvas above it.
  await ev("window.dispatchEvent(new KeyboardEvent('keydown',{key:'Backspace',bubbles:true,cancelable:true}))");
@@ -63,6 +63,6 @@ try{
  const mod=await ev("(()=>({visible:getComputedStyle(document.querySelector('#rk-construction-fx')).visibility,buttons:getComputedStyle(document.querySelector('#rk-strategy-toggle')).visibility,dialog:!document.querySelector('#rk-exit-dialog').hidden}))()");
  assert.ok(mod.dialog&&mod.visible==='hidden',JSON.stringify(mod));
  await ev("document.querySelector('#rk-exit-stay').click()");
- console.log('PASS v5.29 build upgrade animation only on success, golden scrollbars, modal layers, four phone layouts',{initial,build,visual,blocked,upgrade,mod});
+ console.log('PASS v5.30 build upgrade animation only on success, golden scrollbars, modal layers, four phone layouts',{initial,build,visual,blocked,upgrade,mod});
 }finally{await c.send('Target.closeTarget',{targetId});}
 process.exit(0);
