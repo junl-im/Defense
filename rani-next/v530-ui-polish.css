@@ -173,3 +173,57 @@ html.phone:has(#rk-hex-menu:not([hidden])) #rk-quick-build,
 html.phone:has(#rk-hex-menu:not([hidden])) #rk-placement-hint{
  visibility:hidden!important;pointer-events:none!important;
 }
+
+/* One button language across royal strategy controls. The source class,
+   existing icon PNG/WebP and every original onClick/pointerup stay intact. */
+#rk-quick-build button,#rk-first-steps button,
+#rk-harbor-panel button,#rk-harbor-toggle,
+#rk-strategy-toggle,#rk-strategy-card button,
+#rk-phone-zoom button,#rk-enter-fullscreen,
+#controls button,#rk-exit-dialog button,
+#rk-install-dialog button,#rk-hex-confirm button{
+ font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif!important;
+ border-radius:8px!important;touch-action:manipulation;
+ -webkit-tap-highlight-color:transparent;
+ transition:filter .12s ease,transform .12s ease,border-color .12s ease;
+}
+#rk-quick-build button:focus-visible,#rk-first-steps button:focus-visible,
+#rk-harbor-panel button:focus-visible,#rk-harbor-toggle:focus-visible,
+#rk-strategy-toggle:focus-visible,#rk-strategy-card button:focus-visible,
+#rk-phone-zoom button:focus-visible,#rk-enter-fullscreen:focus-visible,
+#controls button:focus-visible,#rk-exit-dialog button:focus-visible,
+#rk-install-dialog button:focus-visible,#rk-hex-confirm button:focus-visible{
+ outline:2px solid #fff0b9!important;outline-offset:2px!important;
+}
+#rk-quick-build button:hover:not(:disabled),#rk-first-steps button:hover:not(:disabled),
+#rk-harbor-panel button:hover:not(:disabled),#rk-harbor-toggle:hover:not(:disabled),
+#rk-strategy-toggle:hover:not(:disabled),#controls button:hover:not(:disabled){
+ filter:brightness(1.12);
+}
+#rk-quick-build button:active:not(:disabled),#rk-first-steps button:active:not(:disabled),
+#rk-harbor-panel button:active:not(:disabled),#controls button:active:not(:disabled){
+ transform:translateY(1px);
+}
+#rk-quick-build button:disabled,#controls button:disabled{
+ opacity:.48;cursor:not-allowed;
+}
+#rk-quick-build,#rk-hex-info,#rk-strategy-card,#rk-harbor-panel,
+#rk-first-steps,html.phone .sheet .sheet-body{
+ scrollbar-width:thin;scrollbar-color:#ad8d60 #122c3e;
+}
+#rk-quick-build::-webkit-scrollbar,#rk-hex-info::-webkit-scrollbar,
+#rk-strategy-card::-webkit-scrollbar,#rk-harbor-panel::-webkit-scrollbar{
+ width:6px;
+}
+#rk-quick-build::-webkit-scrollbar-thumb,#rk-hex-info::-webkit-scrollbar-thumb,
+#rk-strategy-card::-webkit-scrollbar-thumb,#rk-harbor-panel::-webkit-scrollbar-thumb{
+ background:#ad8d60;border-radius:7px;
+}
+#rk-quick-build::-webkit-scrollbar-track,#rk-hex-info::-webkit-scrollbar-track,
+#rk-strategy-card::-webkit-scrollbar-track,#rk-harbor-panel::-webkit-scrollbar-track{
+ background:#132a3b;
+}
+@media(prefers-reduced-motion:reduce){
+ #rk-quick-build button,#rk-first-steps button,#rk-harbor-panel button,
+ #controls button,#rk-strategy-card button{transition:none!important}
+}
