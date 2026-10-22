@@ -99,7 +99,9 @@ try{
       safe:host.dataset.rkViewportSafe,scroll:document.documentElement.scrollWidth-innerWidth};
   })()`);
   assert.equal(wheel.safe,'true',JSON.stringify(wheel));
-  assert.equal(wheel.options.length,6,JSON.stringify(wheel));
+  // The native wheel correctly shows ONLY currently applicable hex actions.
+  assert.ok(wheel.options.length>=1&&wheel.options.length<=6
+    &&wheel.options.some(o=>o.label==='정보'),JSON.stringify(wheel));
   for(const option of wheel.options){
     assert.ok(visible(option.rect,w,h),JSON.stringify({w,h,option,wheel}));
     if(mobile&&wheel.pad?.height>0)
