@@ -1,4 +1,4 @@
-// v5.29 targeted, real-game Korean coverage for warnings and UI loading.
+// v5.30 targeted, real-game Korean coverage for warnings and UI loading.
 import assert from 'node:assert/strict';
 import {CDP,getJSON} from '../engines/fiefdom/tools/e2e/cdp.mjs';
 const url=process.argv[2]||'http://127.0.0.1:8931/';
@@ -21,7 +21,7 @@ try{
  await c.send('Emulation.setDeviceMetricsOverride',{width:1366,height:768,mobile:false,deviceScaleFactor:1},s);
  await c.send('Page.navigate',{url},s);
  await until("!!document.querySelector('#rk-start-now')");
- assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.29');
+ assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.30');
  await ev("document.querySelector('#rk-start-now').click()");
  await until("document.querySelector('#menu').classList.contains('rk-choose-region')");
  await ev("document.querySelector('#menu .rk-manual-start').click()");
@@ -58,6 +58,6 @@ try{
    return {open,shut,version:document.querySelector('.rk-public-version')?.textContent};
  })()`);
  assert.equal(actions.open,'true');assert.equal(actions.shut,'false'); // title version already checked before game start
- console.log('PASS v5.29 14 native Korean alerts (workers, war, trade, placement, UI) and unified menu',{results,actions});
+ console.log('PASS v5.30 14 native Korean alerts (workers, war, trade, placement, UI) and unified menu',{results,actions});
 }finally{await c.send('Target.closeTarget',{targetId});}
 process.exit(0);
