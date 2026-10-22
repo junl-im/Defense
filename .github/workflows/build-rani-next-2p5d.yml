@@ -1,7 +1,7 @@
 name: Build Rani Next 2.5D Playable World
 on:
   push:
-    branches: [spike/rani-complete-isometric-base, feat/rani-korean-svg-free-v5, feat/rani-v5-1-world-polish, feat/rani-v52-biome-forest-render, feat/rani-v53-hex-building-interactions, feat/rani-v531-start-screen-fit, feat/rani-v54-world-first-entry, feat/rani-v55-polish-ui-camera, feat/rani-v56-flow-ocean, feat/rani-v57-cinematic-title, feat/rani-v58-builder-precision-guide, fix/rani-v59-mobile-pages-request-pressure, feat/rani-v510-coastal-port-motion, feat/rani-v511-buildable-harbor-trade, feat/rani-v512-harbor-trade-clarity, feat/rani-v513-mobile-tap-quickbuild, feat/rani-v514-title-viewport-footer, feat/rani-v515-mobile-memory-reliability, feat/rani-v516-clean-hex-accurate-mobile, feat/rani-v517-real-economy-overlay, feat/rani-v518-save-durability, feat/rani-v519-quickbuild-cost-clarity, feat/rani-v520-mobile-shell-navigation, feat/rani-v521-build-feedback-scroll-hud, feat/rani-v522-growth-feedback, feat/rani-v523-ko-ui-dock, feat/rani-v524-korean-event-coverage, feat/rani-v525-real-hover-dock, feat/rani-v526-live-hud-korean, feat/rani-v527-install-icon-pwa, feat/rani-v528-building-whole-hit-growth, feat/rani-v529-visual-growth-stages]
+    branches: [spike/rani-complete-isometric-base, feat/rani-korean-svg-free-v5, feat/rani-v5-1-world-polish, feat/rani-v52-biome-forest-render, feat/rani-v53-hex-building-interactions, feat/rani-v531-start-screen-fit, feat/rani-v54-world-first-entry, feat/rani-v55-polish-ui-camera, feat/rani-v56-flow-ocean, feat/rani-v57-cinematic-title, feat/rani-v58-builder-precision-guide, fix/rani-v59-mobile-pages-request-pressure, feat/rani-v510-coastal-port-motion, feat/rani-v511-buildable-harbor-trade, feat/rani-v512-harbor-trade-clarity, feat/rani-v513-mobile-tap-quickbuild, feat/rani-v514-title-viewport-footer, feat/rani-v515-mobile-memory-reliability, feat/rani-v516-clean-hex-accurate-mobile, feat/rani-v517-real-economy-overlay, feat/rani-v518-save-durability, feat/rani-v519-quickbuild-cost-clarity, feat/rani-v520-mobile-shell-navigation, feat/rani-v521-build-feedback-scroll-hud, feat/rani-v522-growth-feedback, feat/rani-v523-ko-ui-dock, feat/rani-v524-korean-event-coverage, feat/rani-v525-real-hover-dock, feat/rani-v526-live-hud-korean, feat/rani-v527-install-icon-pwa, feat/rani-v528-building-whole-hit-growth, feat/rani-v529-visual-growth-stages, feat/rani-v530-ui-overlap-hex-polish]
     paths:
       - 'rani-next/**'
       - 'assets/rani/**'
@@ -82,6 +82,7 @@ jobs:
           node rani-next/v527-install-pwa.mjs engines/fiefdom
           node rani-next/v528-whole-building.mjs engines/fiefdom
           node rani-next/v529-visual-stages.mjs engines/fiefdom
+          node rani-next/v530-ui-reconcile.mjs engines/fiefdom
           node rani-next/check.mjs engines/fiefdom
           node rani-next/verify-art.mjs engines/fiefdom
       - name: Recolour REAL castle sprites, four sides each (not HUD mockups)
@@ -160,6 +161,7 @@ jobs:
           node ../../rani-next/qa-v527-install.mjs http://127.0.0.1:8931/ 9341
           node ../../rani-next/qa-v528-whole-building.mjs http://127.0.0.1:8931/ 9341
           node ../../rani-next/qa-v529-stages.mjs http://127.0.0.1:8931/ 9341
+          node ../../rani-next/qa-v530-overlap.mjs http://127.0.0.1:8931/ 9341
           node ../../rani-next/qa-quickstart.mjs http://127.0.0.1:8931/ 9341 qa/rani-v54-direct-world.png
           node ../../rani-next/qa-polish.mjs http://127.0.0.1:8931/ 9341
           node ../../rani-next/qa-v56-flow.mjs http://127.0.0.1:8931/ 9341
