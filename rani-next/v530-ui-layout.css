@@ -1,0 +1,190 @@
+/* v5.30 — true dock separation. Override prior fixed FAB + two auto margins.
+   One real construction control, one native catalog, no SVG assets. */
+html:not(.phone) #rani-build-toggle{display:none!important;pointer-events:none!important}
+html:not(.phone) #leftcol #rk-actions{
+ position:fixed!important;left:calc(9px + env(safe-area-inset-left,0px))!important;
+ bottom:calc(9px + env(safe-area-inset-bottom,0px))!important;top:auto!important;
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;
+ justify-content:flex-end!important;gap:7px!important;
+ width:clamp(176px,18vw,232px)!important;max-width:calc(100vw - 24px)!important;
+ max-height:calc(100dvh - var(--rk530-stat-bottom,150px) - 15px)!important;
+ margin:0!important;padding:0!important;flex:0 0 auto!important;z-index:45!important;
+ pointer-events:auto!important;
+}
+html:not(.phone) #ui:not(.rani-build-open) #rk-actions[data-open="true"] #buildwrap,
+html:not(.phone) #rk-actions[data-open="true"] #buildwrap{
+ display:flex!important;flex:0 1 auto!important;min-height:0!important;
+ max-height:min(49dvh,var(--rk530-build-limit,320px))!important;
+ overflow:hidden!important;
+}
+html:not(.phone) #rk-actions[data-open="false"] #buildwrap{display:none!important}
+html:not(.phone) #rk-actions #buildwrap{
+ width:100%!important;margin:0!important;min-height:0!important;align-items:stretch!important;
+}
+html:not(.phone) #rk-actions #buildmenu{
+ width:100%!important;box-sizing:border-box!important;max-height:min(34dvh,var(--rk530-build-limit,320px))!important;
+ flex:1 1 auto!important;overflow:auto!important;overscroll-behavior:contain!important;
+}
+html:not(.phone) #rk-actions #buildbar{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ width:100%!important;box-sizing:border-box!important;
+ max-height:min(22dvh,142px)!important;overflow:auto!important;
+}
+html:not(.phone) #rk-actions .rk-action-row{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:6px!important;margin:0!important;flex:0 0 auto!important;
+ border:1px solid #d1a666!important;border-radius:12px!important;
+ padding:6px!important;
+ background:linear-gradient(155deg,#304c60f7 0%,#12283af9 72%,#0b2235f9)!important;
+ box-shadow:0 7px 22px #000a,inset 0 1px #fce5b133!important;
+}
+html:not(.phone) #rk-actions .rk-action-row button{
+ position:relative!important;inset:auto!important;margin:0!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ min-width:0!important;height:44px!important;min-height:44px!important;max-width:none!important;
+ border:1px solid #d3ad70!important;border-radius:9px!important;
+ background:linear-gradient(170deg,#52748c,#17364b)!important;
+ color:#fff0ca!important;font:800 13px/1.2 'Malgun Gothic','Apple SD Gothic Neo',sans-serif!important;
+ box-shadow:inset 0 1px #ffffff35,0 3px 9px #0007!important;
+ letter-spacing:.02em!important;
+}
+html:not(.phone) #rk-actions #rk-build-toggle{
+ background:linear-gradient(160deg,#d6af71,#8b6234 42%,#4b3526)!important;
+ color:#fffbe9!important;border-color:#ffdda2!important;
+ text-shadow:0 1px 2px #302017!important;
+}
+html:not(.phone) #rk-actions #rk-build-toggle[aria-expanded=true]{
+ background:linear-gradient(160deg,#f0d493,#bc8442 56%,#70512d)!important;
+ color:#102334!important;
+ box-shadow:inset 0 1px #fff5cb,0 0 12px #eac478aa!important;
+}
+html:not(.phone) #rk-actions .rk-action-row button:hover{
+ filter:brightness(1.12);border-color:#fff0c1!important}
+html:not(.phone) #rk-actions .rk-action-row button:active{transform:translateY(2px)!important;filter:brightness(1.2)}
+html:not(.phone) #rk-actions .rk-action-row button:focus-visible{outline:2px solid #ffecb4!important;outline-offset:3px}
+html:not(.phone) #rk-actions #buildbar button{
+ border-radius:7px!important;color:#e6d5af!important;
+ background:linear-gradient(155deg,#35546b,#152e41)!important;
+}
+html:not(.phone) #rk-actions #buildbar button.open{
+ background:linear-gradient(145deg,#947444,#3b4f57)!important;color:#fff6d3!important}
+html:not(.phone) #rk-actions #buildmenu button{
+ border-radius:7px!important;min-width:0!important;
+ background:linear-gradient(150deg,#294559,#10283b)!important;
+ border:1px solid #80684b!important;
+}
+html:not(.phone) #rk-actions #buildmenu button.on{
+ background:linear-gradient(155deg,#997844,#344b53)!important;border-color:#e2bc75!important}
+html:not(.phone) #rk-actions #buildmenu button:focus-visible,
+html:not(.phone) #rk-actions #buildbar button:focus-visible{
+ outline:2px solid #ffe3ab!important;outline-offset:1px!important}
+/* Native toggles outside the left bottom dock only occupy the right.
+   Controls panel expands ABOVE, never on top of the dock. */
+html:not(.phone) #ui.rani-controls-open #controls{
+ margin-bottom:calc(76px + env(safe-area-inset-bottom,0px))!important;
+ max-height:min(30dvh,220px)!important;overflow:auto!important;
+}
+html:not(.phone) #ui:has(#rk-actions[data-open=true]) #controls{
+ display:none!important;
+}
+/* Touch: one real bottom row; grouped build/menu never floats over it. */
+html.phone #pad{
+ display:flex!important;align-items:center!important;
+ gap:3px!important;padding:4px 5px calc(5px + env(safe-area-inset-bottom,0px))!important;
+ box-sizing:border-box!important;max-width:100vw!important;overflow:hidden!important;
+}
+html.phone #pad > button,html.phone #pad > button.grow{
+ flex:1 1 0!important;min-width:0!important;height:40px!important;max-width:none!important;
+ padding:0 1px!important;border-radius:8px!important;font-size:10px!important;
+}
+html.phone #pad .rk-touch-actions{
+ display:flex!important;flex:0 0 auto!important;
+ min-width:0!important;margin-left:auto!important;gap:3px!important;
+ padding:3px!important;border:1px solid #c49b61!important;
+ border-radius:11px!important;box-sizing:border-box!important;
+}
+html.phone #pad .rk-touch-actions button{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ min-width:0!important;flex:0 0 auto!important;width:clamp(43px,13vw,62px)!important;
+ height:40px!important;margin:0!important;font-size:11px!important;
+ border:1px solid #d7b77a!important;border-radius:8px!important;
+ background:linear-gradient(165deg,#4a667e,#1c384c)!important;
+ color:#f8e6bb!important;box-sizing:border-box!important;
+}
+html.phone #pad .rk-touch-actions #rk-touch-build{
+ background:linear-gradient(165deg,#b8955c,#604930)!important;color:#fff8da!important;
+}
+html.phone #pad .rk-touch-actions button:active{
+ transform:translateY(1px)!important;filter:brightness(1.18)!important;
+}
+html.phone #pad .rk-touch-actions button:focus-visible{
+ outline:2px solid #ffebae;outline-offset:1px;
+}
+html.phone #pad .rk-touch-actions #rk-touch-build.on{
+ box-shadow:0 0 0 2px #ffe19d99!important;
+}
+/* Six-hex: same original functional buttons, richer crown-style finishes,
+   exact responsive geometry; no backing table or fake extra action. */
+#rk-hex-menu{
+ z-index:62!important;isolation:isolate;
+ --rk530-ink:#ffeac5;--rk530-edge:#dfb876;
+}
+#rk-hex-menu .rk-hex-option,#rk-hex-menu .rk-hex-core{
+ background:linear-gradient(145deg,#fce5a4 0%,#a67a40 5%,#44687b 13%,#173b55 25%,#0a2439 77%,#aa7e48 94%,#ffe0a1 100%)!important;
+ color:#fff1d6!important;text-shadow:0 1px 3px #03101c!important;
+ filter:drop-shadow(0 3px 4px #010a15aa);
+ transition:filter .13s ease,scale .13s ease!important;
+}
+#rk-hex-menu .rk-hex-core{
+ background:linear-gradient(145deg,#fff0bc,#bf924f 10%,#2d5269 24%,#071d31 76%,#bb8e4c 96%,#ffecb6)!important;
+ box-shadow:inset 0 0 0 3px #e3b86b66!important;
+}
+#rk-hex-menu .rk-hex-option:disabled{
+ filter:saturate(.45) brightness(.75)!important;
+ opacity:.64!important;cursor:not-allowed!important;
+}
+#rk-hex-menu .rk-hex-option[data-action=remove]{
+ background:linear-gradient(145deg,#eed19c 0%,#9b564d 9%,#6b3036 24%,#431b2b 76%,#ac6c4c 96%,#f1c99a)!important;
+}
+#rk-hex-menu .rk-hex-option:focus-visible,
+#rk-hex-menu .rk-hex-core:focus-visible{
+ outline:3px solid #ffe7aa!important;outline-offset:2px!important;
+}
+#rk-hex-menu .rk-hex-option:hover:not(:disabled){
+ filter:brightness(1.23)!important;
+}
+#rk-hex-menu .rk-hex-message:not(:empty){
+ border:1px solid #c19b68!important;border-radius:9px!important;
+ padding:5px 8px!important;background:#102a3bf5!important;color:#ffe6b7!important;
+ max-width:min(286px,92vw)!important;white-space:normal!important;
+}
+#rk-hex-menu #rk-hex-info{
+ box-sizing:border-box!important;border:1px solid #d3b078!important;
+ border-radius:11px!important;max-width:min(306px,calc(100vw - 18px))!important;
+ box-shadow:0 8px 24px #010a17cf,inset 0 1px #ffffff37!important;
+ background:linear-gradient(165deg,#2e5167f9,#0b263af8)!important;
+ overscroll-behavior:contain;
+}
+html.phone #rk-hex-menu:not([hidden]){
+ height:calc(266px * var(--rk-wheel-scale,.84))!important;
+ max-height:none!important;
+}
+html.phone #rk-hex-menu .rk-hex-buttons{
+ transform:scale(var(--rk-wheel-scale,.84))!important;
+ transform-origin:center top!important;
+}
+html.phone #rk-hex-menu #rk-hex-info{
+ top:calc(266px * var(--rk-wheel-scale,.84) + 6px)!important;
+ max-height:var(--rk530-info-height,112px)!important;
+ overflow:auto!important;
+}
+html.phone #rk-hex-menu .rk-hex-message:not(:empty){
+ top:calc(266px * var(--rk-wheel-scale,.84) + 6px)!important;
+}
+@media(max-height:500px){
+ html.phone #rk-hex-menu #rk-hex-info{font-size:10px!important;padding:6px 8px!important}
+ html.phone #rk-hex-menu .rk-hex-option{font-size:11px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #rk-hex-menu .rk-hex-option,#rk-hex-menu .rk-hex-core{transition:none!important}
+}
