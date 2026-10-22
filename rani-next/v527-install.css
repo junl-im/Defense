@@ -1,0 +1,54 @@
+/* v5.27 — self-contained Rani shortcut/install UX. Raster icons ONLY. */
+#menu .rk-install-shortcut{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ gap:7px!important;margin:4px auto 0!important;
+ padding:6px 13px!important;min-height:41px!important;
+ max-width:min(300px,88vw)!important;width:auto!important;
+ font:800 clamp(11px,1.6vw,13px)/1.15 'Malgun Gothic','Apple SD Gothic Neo',sans-serif!important;
+ color:#fbe5b2!important;background:linear-gradient(145deg,#214158ee,#122b3ddd)!important;
+ border:1px solid #caa76b!important;border-radius:10px!important;
+ box-shadow:0 3px 14px #0009,inset 0 1px 0 #ffffff24!important;
+ touch-action:manipulation!important;cursor:pointer!important;
+ letter-spacing:0!important;text-shadow:0 1px 4px #000a!important;
+ position:relative!important;z-index:3!important;
+}
+#menu .rk-install-shortcut img{
+ width:30px;height:30px;aspect-ratio:1/1;border-radius:7px;object-fit:contain;
+ border:1px solid #d1a9716e;flex:0 0 30px;pointer-events:none;
+}
+#menu .rk-install-shortcut:active{transform:translateY(1px);filter:brightness(1.1)}
+#menu .rk-install-shortcut:focus-visible{outline:2px solid #ffdc91;outline-offset:3px}
+#menu .rk-install-shortcut[hidden]{display:none!important}
+#rk-install-dialog[hidden]{display:none!important}
+#rk-install-dialog{
+ position:fixed;inset:0;z-index:20010;display:grid;place-items:center;
+ padding:calc(12px + env(safe-area-inset-top,0px)) 12px
+ calc(12px + env(safe-area-inset-bottom,0px));
+ background:#061827c9;backdrop-filter:blur(4px);box-sizing:border-box;
+ font:13px/1.55 'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+}
+#rk-install-dialog .rk-install-panel{
+ width:min(390px,calc(100vw - 24px));max-height:calc(100dvh - 24px);
+ overflow:auto;overscroll-behavior:contain;
+ display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;
+ background:linear-gradient(148deg,#34566a,#122b3e 65%,#0c1e30);
+ color:#f5e8d2;border:1px solid #cfad70;border-radius:16px;
+ padding:clamp(12px,3dvh,23px) 17px;
+ box-shadow:0 16px 50px #000b,inset 0 1px 0 #fff2;
+}
+#rk-install-dialog img{border-radius:16px;box-shadow:0 5px 14px #0008}
+#rk-install-dialog h2{font:900 20px/1.2 'Malgun Gothic','Apple SD Gothic Neo',sans-serif;color:#ffdf9d}
+#rk-install-dialog p{margin:0;word-break:keep-all;max-width:30em}
+#rk-install-dialog .rk-install-controls{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+#rk-install-dialog button{cursor:pointer;touch-action:manipulation;border-radius:8px;
+ background:linear-gradient(160deg,#ad8450,#67502f);color:#fff8e5;
+ border:1px solid #d7b578;font:bold 12px 'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+ min-height:42px;padding:8px 15px}
+#rk-install-dialog button[hidden]{display:none!important}
+#rk-install-dialog button:focus-visible{outline:2px solid #fff3c5;outline-offset:2px}
+@media(max-height:560px){
+ #menu .rk-install-shortcut{min-height:33px!important;margin-top:1px!important;padding:3px 11px!important}
+ #menu .rk-install-shortcut img{width:24px;height:24px;flex-basis:24px}
+ #rk-install-dialog .rk-install-panel{gap:6px;padding:10px}
+ #rk-install-dialog h2{font-size:17px}
+}
