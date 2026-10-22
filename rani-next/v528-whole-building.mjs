@@ -30,6 +30,11 @@ const next=[
 "  }"
 ].join('\n');
 source=source.replace(old,next);
+// v5.16 had a roof-only helper solely for the previous touch picker.
+// The single new silhouette picker replaces it; avoid unused duplicate geometry.
+const unused=/  function rkInProjectedFootprint\([\s\S]*?\n  }\n/;
+assert.ok(unused.test(source),'v5.28 old projected helper absent');
+source=source.replace(unused,'');
 const sub=(a,b)=>{assert.equal(source.split(a).length,2,'v5.28 main drift '+a.slice(0,93));source=source.replace(a,b);};
 sub("      const b = buildingAt(Math.floor(w.x), Math.floor(w.z));\n      if (b) {\n        rkWheel.confirmRemoval(rkTarget(b));",
     "      const b = rkHitWholeBuilding(e.clientX,e.clientY,w.x,w.z,e.pointerType==='touch');\n      if (b) {\n        rkWheel.confirmRemoval(rkTarget(b));");
