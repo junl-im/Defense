@@ -152,3 +152,9 @@ html.phone #rk-hex-menu[data-rk-layout=below] #rk-hex-info:not([hidden]){
 @media(prefers-reduced-motion:reduce){
  #rk-hex-menu button,#rk-actions button,.rk-touch-actions button,#buildmenu button{transition:none!important}
 }
+
+/* Keep build categories inside #ui for existing licensed raster assets.
+   The historical pre-v5.23 open class must not hide the new native catalog. */
+#ui:not(.rani-build-open) #rk-actions[data-open=true] #buildwrap{display:flex!important}
+html:has(#pause) #rk-actions,html:has(#rk-hex-confirm) #rk-actions,
+html:has(#rk-exit-dialog:not([hidden])) #rk-actions{visibility:hidden!important;pointer-events:none!important}
