@@ -43,14 +43,6 @@ replaceOnce(
  "          : s.idle < 1 ? 'No idle peasant to take up arms'",
  "          : s.idle < 1 ? '모집할 여유 주민이 없습니다.'"
 );
-replaceOnce(
- "          : s.gold < t.gold ? 'Not enough gold'",
- "          : s.gold < t.gold ? '모집할 금이 부족합니다.'"
-);
-replaceOnce(
- "          : !s.canAfford(t.cost) ? 'Not enough materials'",
- "          : !s.canAfford(t.cost) ? '모집할 장비·자원이 부족합니다.'"
-);
 // Recruitment cost is displayed as a string, so it must use visible resource
 // labels, NEVER a raw English singular/plural helper or gold shorthand "g".
 replaceOnce(
