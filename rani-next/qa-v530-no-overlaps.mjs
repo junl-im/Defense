@@ -30,6 +30,7 @@ async function start(w,h,mobile){
  await until("!!document.querySelector('#lords .go')");
  await ev("document.querySelector('#lords .go').click()");
  await until("!!window.__game?.raniWheel&&(!!document.querySelector('#pad')||!!document.querySelector('#rk-actions'))");
+ await ev("window.__rkRect=e=>e?.getBoundingClientRect()?.toJSON()");
 }
 function separate(a,b,gap=0){
  if(!a||!b)return true;
@@ -44,10 +45,10 @@ try{
  const menu=document.querySelector('#rk-pause-toggle'),dock=document.querySelector('#rk-actions');
  const visible=e=>!!e&&getComputedStyle(e).display!=='none'&&getComputedStyle(e).visibility!=='hidden'&&e.getBoundingClientRect().width>0;
  const one=[old,native].filter(visible).length;
- const start={one,oldHidden:!visible(old),dock:rect(dock),build:rect(native),menu:rect(menu)};
+ const start={one,oldHidden:!visible(old),dock:window.__rkRect(dock),build:window.__rkRect(native),menu:window.__rkRect(menu)};
  native.click();const open=dock.dataset.open==='true';
- const catalog=rect(document.querySelector('#buildwrap'));
- native.click();return {...start,open,closed:dock.dataset.open==='false',catalog,stats:rect(document.querySelector('#stats')),viewport:{w:innerWidth,h:innerHeight}};
+ const catalog=window.__rkRect(document.querySelector('#buildwrap'));
+ native.click();return {...start,open,closed:dock.dataset.open==='false',catalog,stats:window.__rkRect(document.querySelector('#stats')),viewport:{w:innerWidth,h:innerHeight}};
  })()`);
  assert.ok(desktop.one===1&&desktop.oldHidden&&desktop.open&&desktop.closed,JSON.stringify(desktop));
  assert.ok(separate(desktop.build,desktop.menu)
@@ -59,8 +60,8 @@ try{
    x:b.x+b.def.footprint[0]/2,z:b.z+b.def.footprint[1]/2,building:b});
   const node=document.querySelector('#rk-hex-menu');
   const opts=[...node.querySelectorAll('.rk-hex-option')];
-  return {menu:rect(node),dock:rect(document.querySelector('#rk-actions')),
-   buttons:opts.map(e=>({action:e.dataset.action,icon:e.dataset.rkIcon,rect:rect(e),disabled:e.disabled})),
+  return {menu:window.__rkRect(node),dock:window.__rkRect(document.querySelector('#rk-actions')),
+   buttons:opts.map(e=>({action:e.dataset.action,icon:e.dataset.rkIcon,rect:window.__rkRect(e),disabled:e.disabled})),
    visible:!node.hidden};
  })()`);
  assert.ok(wheel.visible&&wheel.buttons.length===6&&wheel.buttons.every(x=>x.icon)
@@ -68,7 +69,7 @@ try{
  const inspector=await ev(`(()=>{
  const node=document.querySelector('#rk-hex-menu');
  node.querySelector('[data-action=info]').click();
- return {mode:node.dataset.rkInfoOpen,body:rect(node.querySelector('#rk-hex-info')),
+ return {mode:node.dataset.rkInfoOpen,body:window.__rkRect(node.querySelector('#rk-hex-info')),
   exists:!node.querySelector('#rk-hex-info').hidden};
  })()`);
  assert.ok(inspector.mode==='true'&&inspector.exists
@@ -80,10 +81,10 @@ try{
   const phone=await ev(`(()=>{
     const pad=document.querySelector('#pad');
     const group=pad.querySelector('.rk-touch-actions');
-    const all=[...pad.querySelectorAll('button')].map(e=>({text:e.textContent||'',id:e.id,rect:rect(e),
+    const all=[...pad.querySelectorAll('button')].map(e=>({text:e.textContent||'',id:e.id,rect:window.__rkRect(e),
        visible:getComputedStyle(e).visibility!=='hidden'}));
     const legacy=document.querySelector('#rani-build-toggle');
-    return {w:innerWidth,h:innerHeight,pad:rect(pad),group:rect(group),
+    return {w:innerWidth,h:innerHeight,pad:window.__rkRect(pad),group:window.__rkRect(group),
       actions:[...group.querySelectorAll('button')].map(e=>e.id),
       buttons:all,oldHidden:!legacy||getComputedStyle(legacy).display==='none',
       overflow:document.documentElement.scrollWidth-innerWidth};
@@ -101,8 +102,8 @@ try{
    g.raniWheel.close();g.raniWheel.toggle({key:'building:'+b.id,name:b.name,label:b.def.label,
      x:b.x+b.def.footprint[0]/2,z:b.z+b.def.footprint[1]/2,building:b});
    const node=document.querySelector('#rk-hex-menu');
-   return {wheel:rect(node),pad:rect(document.querySelector('#pad')),
-     opts:[...node.querySelectorAll('.rk-hex-option')].map(e=>({id:e.dataset.action,icon:e.dataset.rkIcon,box:rect(e)}))};
+   return {wheel:window.__rkRect(node),pad:window.__rkRect(document.querySelector('#pad')),
+     opts:[...node.querySelectorAll('.rk-hex-option')].map(e=>({id:e.dataset.action,icon:e.dataset.rkIcon,box:window.__rkRect(e)}))};
   })()`);
   assert.ok(hex.wheel.left>=0&&hex.wheel.right<=w+1
     &&hex.wheel.top>=-2&&hex.wheel.bottom<=hex.pad.top+3
@@ -111,9 +112,9 @@ try{
     const node=document.querySelector('#rk-hex-menu');
     node.querySelector('[data-action=info]').click();
     const panel=node.querySelector('#rk-hex-info');
-    return {infoOpen:node.dataset.rkInfoOpen,panel:rect(panel),
-     exit:rect(node.querySelector('.rk-hex-close')),
-     pad:rect(document.querySelector('#pad')),
+    return {infoOpen:node.dataset.rkInfoOpen,panel:window.__rkRect(panel),
+     exit:window.__rkRect(node.querySelector('.rk-hex-close')),
+     pad:window.__rkRect(document.querySelector('#pad')),
      closed:getComputedStyle(node.querySelector('.rk-hex-buttons')).visibility};
   })()`);
   assert.ok(details.infoOpen==='true'&&details.closed==='hidden'
@@ -125,8 +126,8 @@ try{
     const spot=g.findSpot('hovel');if(!spot)return {spot:null};
     g.rkOpenGroundBuild(spot.x,spot.z);
     return {spot,open:!document.querySelector('#rk-quick-build').hidden,
-      tray:rect(document.querySelector('#rk-quick-build')),
-      pad:rect(document.querySelector('#pad'))};
+      tray:window.__rkRect(document.querySelector('#rk-quick-build')),
+      pad:window.__rkRect(document.querySelector('#pad'))};
   })()`);
   assert.ok(quick.spot&&quick.open&&quick.tray.left>=0&&quick.tray.right<=w+1
     &&quick.tray.bottom<=quick.pad.top+3,JSON.stringify({w,h,quick}));
