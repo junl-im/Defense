@@ -188,3 +188,53 @@ html.phone #rk-hex-menu .rk-hex-message:not(:empty){
 @media(prefers-reduced-motion:reduce){
  #rk-hex-menu .rk-hex-option,#rk-hex-menu .rk-hex-core{transition:none!important}
 }
+
+/* Remaining real HUD buttons share the same royal metal language. Do not
+   restyle map canvas or duplicate controls and never change click targets. */
+#rani-info-toggle,#rani-controls-toggle,#rani-resource-toggle,
+#rk-enter-fullscreen,#rk-strategy-toggle{
+ border:1px solid #c7a36a!important;border-radius:10px!important;
+ background:linear-gradient(155deg,#476a80,#1c3b52 62%,#112b3d)!important;
+ color:#f9e5ba!important;
+ box-shadow:inset 0 1px 0 #ffffff3b,0 3px 9px #0008!important;
+ font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif!important;
+ font-weight:800!important;
+ touch-action:manipulation!important;
+}
+#rani-info-toggle:hover,#rani-controls-toggle:hover,
+#rani-resource-toggle:hover,#rk-enter-fullscreen:hover,#rk-strategy-toggle:hover{
+ filter:brightness(1.13)!important;
+ border-color:#ffe7ad!important;
+}
+#rani-info-toggle:active,#rani-controls-toggle:active,
+#rani-resource-toggle:active,#rk-enter-fullscreen:active,#rk-strategy-toggle:active{
+ filter:brightness(1.25)!important;transform:translateY(1px)!important;
+}
+#rani-info-toggle:focus-visible,#rani-controls-toggle:focus-visible,
+#rani-resource-toggle:focus-visible,#rk-enter-fullscreen:focus-visible,
+#rk-strategy-toggle:focus-visible{
+ outline:2px solid #ffe6a4!important;outline-offset:3px!important;
+}
+#rani-info-toggle[aria-pressed=true],#rani-controls-toggle[aria-pressed=true],
+#rani-resource-toggle[aria-expanded=true],#rk-strategy-toggle[aria-expanded=true]{
+ color:#fffce6!important;border-color:#ffe4a3!important;
+ background:linear-gradient(150deg,#ad884e,#6d5737 60%,#34516a)!important;
+}
+#rk-quick-build button,#rk-harbor-panel button,
+#pause button,.sheet button{
+ transition:filter .12s ease,box-shadow .12s ease!important;
+ -webkit-tap-highlight-color:transparent;
+ touch-action:manipulation;
+}
+#rk-quick-build button:focus-visible,#rk-harbor-panel button:focus-visible,
+#pause button:focus-visible,.sheet button:focus-visible{
+ outline:2px solid #ffe3a2!important;outline-offset:2px!important;
+}
+#rk-quick-build button:active:not(:disabled),#rk-harbor-panel button:active:not(:disabled),
+#pause button:active:not(:disabled),.sheet button:active:not(:disabled){
+ filter:brightness(1.16)!important;transform:translateY(1px)!important;
+}
+#rk-quick-build button:disabled,#rk-harbor-panel button:disabled,
+#pause button:disabled,.sheet button:disabled{
+ cursor:not-allowed;filter:saturate(.56);opacity:.67;
+}
