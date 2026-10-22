@@ -31,8 +31,8 @@ const next=[
 ].join('\n');
 source=source.replace(old,next);
 const sub=(a,b)=>{assert.equal(source.split(a).length,2,'v5.28 main drift '+a.slice(0,93));source=source.replace(a,b);};
-sub("      const b = buildingAt(Math.floor(w.x), Math.floor(w.z));\n      if (b) {\n        demolish(b);",
-    "      const b = rkHitWholeBuilding(e.clientX,e.clientY,w.x,w.z,e.pointerType==='touch');\n      if (b) {\n        demolish(b);");
+sub("      const b = buildingAt(Math.floor(w.x), Math.floor(w.z));\n      if (b) {\n        rkWheel.confirmRemoval(rkTarget(b));",
+    "      const b = rkHitWholeBuilding(e.clientX,e.clientY,w.x,w.z,e.pointerType==='touch');\n      if (b) {\n        rkWheel.confirmRemoval(rkTarget(b));");
 sub("      if (clickBuildingAt(w.x, w.z)) return;\n      if (!e.shiftKey) army.clearSelection();",
     "      const pictured=rkHitWholeBuilding(e.clientX,e.clientY,w.x,w.z,false);\n      if(pictured){rkWheel.toggle(rkTarget(pictured));return;}\n      if (clickBuildingAt(w.x, w.z)) return;\n      if (!e.shiftKey) army.clearSelection();");
 sub("      const what = describeAt(t.x, t.z);",
