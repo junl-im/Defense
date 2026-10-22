@@ -18,12 +18,11 @@ replace('src/main.ts',
  "      row.append(construct,menu);dock.append(buildWrap,row);left.append(dock);\n      installRaniDockLayout(dock);");
 const wheelFile=f('src/ui/raniWheel.ts');
 let wheel=fs.readFileSync(wheelFile,'utf8');
-const before=[
- "    const narrow=window.innerWidth<=700;",
- "    const left=narrow?window.innerWidth/2:Math.max(165,Math.min(window.innerWidth-165,p.x));",
- "    const top=narrow?window.innerHeight-160:Math.max(150,Math.min(window.innerHeight-165,p.y-32));",
- "    host.style.left=left+'px';host.style.top=top+'px';"
-].join('\n');
+const start=wheel.indexOf("    const narrow=window.innerWidth<=700||document.documentElement.classList.contains('phone');");
+const marker="    host.style.setProperty('--rk-anchor-top',top+'px');";
+const finish=wheel.indexOf(marker,start);
+assert.ok(start>=0&&finish>start,'v5.30 original v5.12 responsive wheel anchor missing');
+const before=wheel.slice(start,finish+marker.length);
 const after=[
  "    const narrow=window.innerWidth<=700||document.documentElement.classList.contains('phone');",
  "    const vw=window.visualViewport?.width??window.innerWidth;",
