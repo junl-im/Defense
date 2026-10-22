@@ -1,4 +1,4 @@
-// v5.28: inspect actual, initialized kingdom buildings, not invented tooltip strings.
+// v5.29: inspect actual, initialized kingdom buildings, not invented tooltip strings.
 // Tests nullable empty store slot, real housing labels and real touch button placement.
 import assert from 'node:assert/strict';
 import {CDP,getJSON} from '../engines/fiefdom/tools/e2e/cdp.mjs';
@@ -22,7 +22,7 @@ async function until(expr){
 async function start(){
  await c.send('Page.navigate',{url},s);
  await until("!!document.querySelector('#rk-start-now')");
- assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.28');
+ assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.29');
  await ev("document.querySelector('#rk-start-now').click()");
  await until("document.querySelector('#menu').classList.contains('rk-choose-region')");
  await ev("document.querySelector('#menu .rk-manual-start').click()");
@@ -65,7 +65,7 @@ try {
  for(const store of real.stocks)assert.ok(!/\b(?:null|undefined)\b/i.test(store.sub),JSON.stringify(store));
  assert.ok(real.empty.includes('비어 있음')&&!/null|undefined|empty|\b0\s*null/i.test(real.empty),JSON.stringify(real));
  assert.ok(real.visible.includes('비어 있음')&&!/null|undefined/i.test(real.visible),JSON.stringify(real));
- console.log('PASS v5.28 true real-world housing and store tooltip/nullable stock',real);
+ console.log('PASS v5.29 true real-world housing and store tooltip/nullable stock',real);
  for(const [w,h] of [[320,568],[390,844],[844,390]]) {
    await c.send('Emulation.setDeviceMetricsOverride',{width:w,height:h,mobile:true,deviceScaleFactor:2},s);
    await c.send('Emulation.setTouchEmulationEnabled',{enabled:true,maxTouchPoints:3},s);
@@ -84,7 +84,7 @@ try {
    assert.deepEqual(layout.actions.map(x=>x.label),['건설','메뉴']);
    assert.ok(layout.dock.left>=0&&layout.dock.right<=layout.w+.5
     &&layout.pad.bottom<=layout.h+.5&&layout.dock.left>=layout.utils.at(-1).box.right-1,JSON.stringify(layout));
-   console.log('PASS v5.28 grouped mobile actions',w,h,layout.actions.map(x=>x.label));
+   console.log('PASS v5.29 grouped mobile actions',w,h,layout.actions.map(x=>x.label));
  }
 }finally{await c.send('Target.closeTarget',{targetId});}
 process.exit(0);
