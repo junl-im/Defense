@@ -1,4 +1,4 @@
-// v5.28 — real running game: rapidly regenerated popularity, production,
+// v5.29 — real running game: rapidly regenerated popularity, production,
 // recruitment costs and keyboard hints must be Korean in the rendered HUD.
 import assert from 'node:assert/strict';
 import {CDP,getJSON} from '../engines/fiefdom/tools/e2e/cdp.mjs';
@@ -23,7 +23,7 @@ try {
  await c.send('Emulation.setDeviceMetricsOverride',{width:1366,height:768,mobile:false,deviceScaleFactor:1},s);
  await c.send('Page.navigate',{url},s);
  await until("!!document.querySelector('#rk-start-now')");
- assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.28');
+ assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.29');
  await ev("document.querySelector('#rk-start-now').click()");
  await until("document.querySelector('#menu').classList.contains('rk-choose-region')");
  await ev("document.querySelector('#menu .rk-manual-start').click()");
@@ -63,6 +63,6 @@ try {
   'Speed buttons not localized '+JSON.stringify(results));
  assert.ok(results.speedTitles.every(t=>!/\b(speed|the world stops)\b/i.test(t)),
   'Speed hover title in English '+JSON.stringify(results));
- console.log('PASS v5.28 real popularity, production, recruitment, no-right-click and speed HUD',{results});
+ console.log('PASS v5.29 real popularity, production, recruitment, no-right-click and speed HUD',{results});
 }finally{await c.send('Target.closeTarget',{targetId});}
 process.exit(0);
