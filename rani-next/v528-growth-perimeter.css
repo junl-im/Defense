@@ -1,0 +1,48 @@
+/* v5.28: exact world-coordinate 4-edge outline, NOT center guessed circle.
+   Includes visible height wash across a real roof, and never intercepts taps. */
+#rk-construction-fx .rk-growth-outline{
+ position:absolute;display:block;pointer-events:none;z-index:3;
+ will-change:transform;overflow:visible;
+}
+#rk-construction-fx .rk-growth-edge{
+ position:absolute;display:block;transform-origin:0 50%;
+ height:3px;border-radius:5px;
+ background:linear-gradient(90deg,#f6d18e,#ffedb4,#bb834a);
+ box-shadow:0 0 8px #f6ca71,0 0 18px #e8ba66ae;
+ animation:rk-v528-edge-rise 1.95s ease-out both;
+}
+#rk-construction-fx .rk-growth-wash{
+ position:absolute;display:block;pointer-events:none;
+ background:radial-gradient(ellipse,#ffe4a049 0%,#efc57737 58%,transparent 80%);
+ mix-blend-mode:screen;
+ animation:rk-v528-wash 2.15s ease-out both;
+}
+#rk-construction-fx .rk-growth-tower{
+ position:absolute;display:block;pointer-events:none;
+ border-radius:30% 30% 40% 40%;
+ background:linear-gradient(0deg,#edb85a55,transparent 73%);
+ animation:rk-v528-tower 1.85s ease-out both;
+}
+#rk-construction-fx .rk-construction .rk-growth-edge{
+ background:linear-gradient(90deg,#7de8c1,#c8ffde,#4abfa9);
+ box-shadow:0 0 9px #62e8cc,0 0 16px #48d0b29c;
+}
+#rk-construction-fx .rk-construction .rk-growth-wash{
+ background:radial-gradient(ellipse,#8aefb94a 0%,#71ccad34 55%,transparent 82%);
+}
+#rk-construction-fx .rk-construction .rk-growth-tower{
+ background:linear-gradient(0deg,#84eac159,transparent 70%);
+}
+@keyframes rk-v528-edge-rise{0%{opacity:0;filter:brightness(.8)}
+ 26%{opacity:1;filter:brightness(1.6)}79%{opacity:1}100%{opacity:0}}
+@keyframes rk-v528-wash{0%{opacity:0;transform:scale(.72)}
+ 32%{opacity:1;transform:scale(1)}75%{opacity:.62}100%{opacity:0}}
+@keyframes rk-v528-tower{0%{opacity:0;transform:scaleY(.25);transform-origin:bottom}
+ 34%{opacity:.94;transform:scaleY(1);transform-origin:bottom}
+ 77%{opacity:.55}100%{opacity:0}}
+@media(prefers-reduced-motion:reduce){
+ #rk-construction-fx .rk-growth-edge,#rk-construction-fx .rk-growth-wash,
+ #rk-construction-fx .rk-growth-tower{animation:none!important;opacity:.42}
+}
+/* Neither the original polygon nor the new height pass may block game clicks. */
+#rk-construction-fx,#rk-construction-fx *{pointer-events:none!important}

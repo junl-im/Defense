@@ -13,7 +13,7 @@ const ev=async x=>{const r=await c.send('Runtime.evaluate',{expression:x,awaitPr
 const wait=async x=>{for(let i=0;i<340;i++){if(await ev(x))return;await sleep(280)}throw Error('Timeout '+x)};
 await c.send('Page.navigate',{url:host},s);
 await wait("!!document.querySelector('#rk-start-now')&&!!document.querySelector('#rani-map-picker')");
-assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.27');
+assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.28');
 await ev("document.querySelector('#rk-start-now').click()");
 await wait("document.querySelector('#menu').classList.contains('rk-choose-region')");
 await ev("document.querySelector('#menu .rk-manual-start').click()");

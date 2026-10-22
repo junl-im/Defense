@@ -1,4 +1,4 @@
-// v5.27: use actual native footprint/level and avoid phantom success.
+// v5.28: use actual native footprint/level and avoid phantom success.
 // Isolated CDP test, in addition to all existing v5.21 + 600s QAs.
 import assert from 'node:assert/strict';
 import {CDP,getJSON} from '../engines/fiefdom/tools/e2e/cdp.mjs';
@@ -23,7 +23,7 @@ try{
  await c.send('Emulation.setTouchEmulationEnabled',{enabled:true,maxTouchPoints:3},s);
  await c.send('Page.navigate',{url},s);
  await until("!!document.querySelector('#rk-start-now')");
- assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.27');
+ assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.28');
  await ev("document.querySelector('#rk-start-now').click()");
  await until("document.querySelector('#menu').classList.contains('rk-choose-region')");
  await ev("document.querySelector('#menu .rk-manual-start').click()");
@@ -74,6 +74,6 @@ try{
  assert.ok(upgrade.level===upgrade.previous+1&&upgrade.area===upgrade.expected
    &&upgrade.steps===3&&upgrade.label?.includes(upgrade.previous+' → '+upgrade.level+'단계')
    &&upgrade.closed,JSON.stringify(upgrade));
- console.log('PASS v5.27 footprint-aware real-world build/upgrade FX, stage cues and failed-build guard',{build,blocked,upgrade});
+ console.log('PASS v5.28 footprint-aware real-world build/upgrade FX, stage cues and failed-build guard',{build,blocked,upgrade});
 }finally{await c.send('Target.closeTarget',{targetId});}
 process.exit(0);
