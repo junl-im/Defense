@@ -37,7 +37,7 @@ const geometry=[
 "const overlap=(a,b)=>!a||!b?0:Math.max(0,Math.min(a.right,b.right)-Math.max(a.left,b.left))*Math.max(0,Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top));",
 "const at=s=>rect(document.querySelector(s));",
 "const hex=[...document.querySelectorAll('#rk-hex-menu .rk-hex-option')].filter(b=>!b.hidden).map(b=>({name:b.dataset.action,box:rect(b),background:getComputedStyle(b).backgroundImage}));",
-"return {w:innerWidth,h:innerHeight,dock:at('#rk-actions'),row:at('#rk-actions .rk-action-row'),build:at('#rk-build-toggle'),menu:at('#rk-pause-toggle'),",
+"return {w:innerWidth,h:innerHeight,dock:at('#rk-actions'),open:document.querySelector('#rk-actions')?.dataset.open,wrapDisplay:getComputedStyle(document.querySelector('#buildwrap')).display,row:at('#rk-actions .rk-action-row'),build:at('#rk-build-toggle'),menu:at('#rk-pause-toggle'),",
 "catalog:at('#buildwrap'),stats:at('#stats'),controls:at('#controls'),",
 "pad:at('#pad'),group:at('.rk-touch-actions'),touchBuild:at('#rk-touch-build'),touchMenu:at('#rk-touch-menu'),",
 "hex,overlapDockStats:overlap(at('#rk-actions'),at('#stats')),overlapDockControls:overlap(at('#rk-actions'),at('#controls')),",
@@ -51,7 +51,6 @@ try{
   await start(w,h,mobile);
   if(!mobile){
    await ev("document.querySelector('#rk-build-toggle').click()");
-   await sleep(100);
    const d=await ev(geometry);
    assert.ok(d.dock&&d.row&&d.build&&d.menu&&d.catalog,JSON.stringify(d));
    assert.ok(d.overlapDockStats<=1&&d.overlapDockControls<=1&&d.overlapCatalogRow<=1,JSON.stringify(d));
