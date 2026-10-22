@@ -10,14 +10,14 @@ const qa=s=>from(s,/^\s+node (?:\.\.\/\.\.\/)?(rani-next\/qa-[\w-]+\.mjs) http/g
 const assetBuild=s=>from(s,/^\s+python (rani-next\/[\w-]+\.py) engines\/fiefdom\/public\//gm);
 const a=transforms(build),b=transforms(deploy);
 assert.deepEqual(b,a,'Preview transform list drifted from the public deploy (order matters)');
-assert.ok(a.length>=29&&a.includes('rani-next/v518-save-durability.mjs')&&a.includes('rani-next/v519-construction-clarity.mjs')&&a.includes('rani-next/v520-mobile-shell.mjs')&&a.includes('rani-next/v521-game-polish.mjs')&&a.includes('rani-next/v522-growth-theatre.mjs')&&a.includes('rani-next/v523-native-ko-ui.mjs')&&a.includes('rani-next/v524-events-and-loading.mjs')&&a.includes('rani-next/v525-real-hover-dock.mjs')&&a.includes('rani-next/v526-live-korean-hud.mjs')&&a.includes('rani-next/v527-install-pwa.mjs'));
+assert.ok(a.length>=29&&a.includes('rani-next/v518-save-durability.mjs')&&a.includes('rani-next/v519-construction-clarity.mjs')&&a.includes('rani-next/v520-mobile-shell.mjs')&&a.includes('rani-next/v521-game-polish.mjs')&&a.includes('rani-next/v522-growth-theatre.mjs')&&a.includes('rani-next/v523-native-ko-ui.mjs')&&a.includes('rani-next/v524-events-and-loading.mjs')&&a.includes('rani-next/v525-real-hover-dock.mjs')&&a.includes('rani-next/v526-live-korean-hud.mjs')&&a.includes('rani-next/v527-install-pwa.mjs')&&a.includes('rani-next/v528-whole-building.mjs'));
 assert.equal(new Set(a).size,a.length,'Source patch applied twice');
 for(const file of a)assert.ok(fs.existsSync(file),'Missing engine patch '+file);
 const q1=qa(build),q2=qa(deploy);
 const first=q1.slice(0,q2.length);
 assert.deepEqual(first,q2,'Game test order drifted between preview and Pages build');
 assert.equal(new Set(q2).size,q2.length,'Duplicate release QA');
-assert.ok(q2.includes('rani-next/qa-v518-save.mjs')&&q2.includes('rani-next/qa-v519-build-cost.mjs')&&q2.includes('rani-next/qa-v520-shell.mjs')&&q2.includes('rani-next/qa-v521-visual.mjs')&&q2.includes('rani-next/qa-v522-growth.mjs')&&q2.includes('rani-next/qa-v523-korean-dock.mjs')&&q2.includes('rani-next/qa-v524-events.mjs')&&q2.includes('rani-next/qa-v525-real-hover-dock.mjs')&&q2.includes('rani-next/qa-v526-live-korean-hud.mjs')&&q2.includes('rani-next/qa-v527-install.mjs'));
+assert.ok(q2.includes('rani-next/qa-v518-save.mjs')&&q2.includes('rani-next/qa-v519-build-cost.mjs')&&q2.includes('rani-next/qa-v520-shell.mjs')&&q2.includes('rani-next/qa-v521-visual.mjs')&&q2.includes('rani-next/qa-v522-growth.mjs')&&q2.includes('rani-next/qa-v523-korean-dock.mjs')&&q2.includes('rani-next/qa-v524-events.mjs')&&q2.includes('rani-next/qa-v525-real-hover-dock.mjs')&&q2.includes('rani-next/qa-v526-live-korean-hud.mjs')&&q2.includes('rani-next/qa-v527-install.mjs')&&q2.includes('rani-next/qa-v528-whole-building.mjs'));
 for(const file of q2)assert.ok(fs.existsSync(file),'Missing QA '+file);
 const py1=assetBuild(build),py2=assetBuild(deploy);
 assert.deepEqual(py1,py2,'Original-art asset pipeline drifted');
@@ -32,4 +32,5 @@ assert.match(build,/feat\/rani-v524-korean-event-coverage/,'v5.24 branch is not 
 assert.match(build,/feat\/rani-v525-real-hover-dock/,'v5.25 branch is not CI protected');
 assert.match(build,/feat\/rani-v526-live-hud-korean/,'v5.26 branch is not CI protected');
 assert.match(build,/feat\/rani-v527-install-icon-pwa/,'v5.27 branch is not CI protected');
+assert.match(build,/feat\/rani-v528-building-whole-hit-growth/,'v5.28 branch is not CI protected');
 console.log('PASS v5.18 release integrity:',a.length,'engine steps,',q2.length,'ordered Chromium QAs,',py2.length,'art transforms identical in preview and Pages.');
