@@ -21,7 +21,7 @@ try{
  await c.send('Emulation.setDeviceMetricsOverride',{width:1366,height:768,mobile:false,deviceScaleFactor:1},s);
  await c.send('Page.navigate',{url},s);
  await until("!!document.querySelector('#rk-start-now')");
- assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.29');
+ assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.30');
  await ev("document.querySelector('#rk-start-now').click()");
  await until("document.querySelector('#menu').classList.contains('rk-choose-region')");
  await ev("document.querySelector('#menu .rk-manual-start').click()");
@@ -68,10 +68,10 @@ try{
      stats:{bottom:b.bottom},width:innerWidth,height:innerHeight,
      hidden:document.querySelector('#buildwrap').getBoundingClientRect().height===0};
  })()`);
- assert.ok(layout.dock.left>=0&&layout.dock.right<layout.width*.4
+ assert.ok(layout.dock.left>=0&&layout.dock.right<layout.width*.68
  &&layout.dock.bottom<=layout.height+2&&layout.hidden,JSON.stringify(layout));
  await ev("document.querySelector('#rk-pause-toggle').click()");
  await until("!!document.querySelector('#pause')");
- console.log('PASS v5.29 Korean native notices, building hover and left-side menu dock',{original,layout});
+ console.log('PASS v5.30 Korean native notices, building hover and left-side menu dock',{original,layout});
 }finally{await c.send('Target.closeTarget',{targetId});}
 process.exit(0);
