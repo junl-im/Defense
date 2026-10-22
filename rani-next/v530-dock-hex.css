@@ -20,6 +20,10 @@ html:not(.phone) #leftcol #rk-actions{
   width:min(224px,calc(100vw - 18px))!important;
   gap:5px!important;
 }
+/* Explicit OPEN overrides older display:none while the true dock is active. */
+html:not(.phone) #rk-actions[data-open="true"] #buildwrap{
+ display:flex!important;flex-direction:column!important;visibility:visible!important;
+}
 html:not(.phone) #rk-actions #buildwrap{
   min-height:0!important;overflow:hidden!important;
   max-height:min(43dvh,calc(100dvh - 150px))!important;
