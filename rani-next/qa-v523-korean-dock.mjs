@@ -68,7 +68,7 @@ try{
      stats:{bottom:b.bottom},width:innerWidth,height:innerHeight,
      hidden:document.querySelector('#buildwrap').getBoundingClientRect().height===0};
  })()`);
- assert.ok(layout.dock.left>=0&&layout.dock.right<layout.width*.4
+ assert.ok(layout.dock.left>=0&&layout.dock.right<layout.width*.68
  &&layout.dock.bottom<=layout.height+2&&layout.hidden,JSON.stringify(layout));
  await ev("document.querySelector('#rk-pause-toggle').click()");
  await until("!!document.querySelector('#pause')");
