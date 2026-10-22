@@ -282,18 +282,20 @@ await evaluate("document.getElementById('rani-resource-toggle').click()");
 const expanded=await evaluate("[...document.querySelectorAll('#topbar .res')].filter(e=>getComputedStyle(e).display!=='none').length");
 assert.ok(expanded>res.displayed,{expanded,res});
 await evaluate("document.getElementById('rani-resource-toggle').click()");
+await evaluate("window.__game.hud.openCategory(null)");
 const beforeBuild=await evaluate(`(()=>{
  const ui=document.getElementById('ui');
- return {button:!!document.getElementById('rani-build-toggle'),
+ return {button:!!document.getElementById('rk-build-toggle'),
+    legacyHidden:getComputedStyle(document.getElementById('rani-build-toggle')).display==='none',
    hidden:getComputedStyle(document.getElementById('buildwrap')).display==='none',
    catalog:!!document.querySelector('#buildbar button[data-group="2"]')};
 })()`);
-assert.ok(beforeBuild.button&&beforeBuild.hidden&&beforeBuild.catalog,beforeBuild);
-await evaluate("document.getElementById('rani-build-toggle').click()");
+assert.ok(beforeBuild.button&&beforeBuild.legacyHidden&&beforeBuild.hidden&&beforeBuild.catalog,beforeBuild);
+await evaluate("document.getElementById('rk-build-toggle').click()");
 assert.equal(await evaluate("getComputedStyle(document.getElementById('buildwrap')).display==='none'"),false);
 await evaluate("[...document.querySelectorAll('#buildbar button')].find(e=>e.dataset.group==='2').click()");
 assert.equal(await evaluate("getComputedStyle(document.getElementById('buildmenu')).display==='none'"),false);
-await evaluate("document.getElementById('rani-build-toggle').click()");
+await evaluate("document.getElementById('rk-build-toggle').click()");
 assert.equal(await evaluate("getComputedStyle(document.getElementById('buildwrap')).display==='none'"),true);
 
 await evaluate("document.getElementById('rani-controls-toggle').click()");
