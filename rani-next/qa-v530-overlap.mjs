@@ -117,6 +117,10 @@ try{
   })()`);
   assert.ok(more.open&&more.rect.left>=-2&&more.rect.right<=w+2,
     JSON.stringify({w,h,more}));
+  if(mobile&&wheel.pad?.height>0){
+    assert.ok(more.rect.bottom<=wheel.pad.top+2,
+      'Hex details must not obscure Build/Menu thumb dock: '+JSON.stringify({w,h,more,pad:wheel.pad}));
+  }
   console.log('PASS v5.30 no duplicate Build/dock overlap and premium six-hex responsive geometry',w,h);
  }
 }finally{await c.send('Target.closeTarget',{targetId});}
