@@ -27,14 +27,14 @@ patch('src/main.ts',
  "      // Keep the legacy hidden Build key handler for original game QA;",
  "      // do not display a second floating Build button over this dock.",
  "      const legacy=document.querySelector<HTMLButtonElement>('#rani-build-toggle');",
- "      if(legacy){",
- "        legacy.tabIndex=-1;legacy.setAttribute('aria-hidden','true');",
- "        legacy.addEventListener('click',()=>queueMicrotask(()=>{",
- "          const opened=document.querySelector('#ui')?.classList.contains('rani-build-open')===true;",
- "          dock.dataset.open=String(opened);",
- "          construct.setAttribute('aria-expanded',String(opened));",
- "        }));",
- "      }"
+ "      if(legacy){legacy.tabIndex=-1;legacy.setAttribute('aria-hidden','true');}",
+ "      // The hidden v5.1 shortcut must route to today's *real* native dock.",
+ "      // Capture before old handlers and prevent double-opening/invisible panels.",
+ "      document.addEventListener('click',event=>{",
+ "        if((event.target as Element)?.closest?.('#rani-build-toggle')){",
+ "          event.preventDefault();event.stopImmediatePropagation();construct.click();",
+ "        }",
+ "      },{capture:true});"
  ].join('\n'));
 const oldPlace=[
  "    const narrow=window.innerWidth<=700||document.documentElement.classList.contains('phone');",
