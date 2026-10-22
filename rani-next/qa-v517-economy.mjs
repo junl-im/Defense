@@ -16,7 +16,7 @@ try{
  await c.send('Emulation.setTouchEmulationEnabled',{enabled:true,maxTouchPoints:3},s);
  await c.send('Page.navigate',{url:root},s);
  await until("!!document.querySelector('#rk-start-now')");
- assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.28');
+ assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.29');
  await ev("document.querySelector('#rk-start-now').click()");
  await until("document.querySelector('#menu').classList.contains('rk-choose-region')");
  await ev("document.querySelector('#menu .rk-manual-start').click()");
