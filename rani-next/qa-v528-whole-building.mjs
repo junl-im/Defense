@@ -1,4 +1,4 @@
-// v5.30: whole 2.5D building roof picker and true-footprint growth effect.
+// v5.31: whole 2.5D building roof picker and true-footprint growth effect.
 // Runs on actual native Fiefdom world, no fabricated DOM/sprites or save schema.
 import assert from 'node:assert/strict';
 import {CDP,getJSON} from '../engines/fiefdom/tools/e2e/cdp.mjs';
@@ -19,7 +19,7 @@ try{
  await c.send('Emulation.setDeviceMetricsOverride',{width:1366,height:768,mobile:false,deviceScaleFactor:1},s);
  await c.send('Page.navigate',{url},s);
  await until("!!document.querySelector('#rk-start-now')");
- assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.30');
+ assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.31');
  await ev("document.querySelector('#rk-start-now').click()");
  await until("document.querySelector('#menu').classList.contains('rk-choose-region')");
  await ev("document.querySelector('#menu .rk-manual-start').click()");
@@ -97,6 +97,6 @@ try{
  assert.ok(upgrade.level===upgrade.previous+1&&upgrade.area===upgrade.actual
    &&upgrade.corners==='4'&&upgrade.edges===4&&upgrade.projectedWidth>build.projectedWidth,
   JSON.stringify(upgrade));
- console.log('PASS v5.30 real whole building hit + projected roof + physical 4-corner upgrade',geom,build,upgrade);
+ console.log('PASS v5.31 real whole building hit + projected roof + physical 4-corner upgrade',geom,build,upgrade);
 }finally{await c.send('Target.closeTarget',{targetId});}
 process.exit(0);
