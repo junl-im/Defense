@@ -163,3 +163,13 @@ html:not(.phone):has(#rk-hex-menu:not([hidden])) #rk-actions #buildwrap{
  #rk-hex-menu .rk-hex-option,#rk-hex-menu .rk-hex-core,
  #rk-actions button{transition:none!important}
 }
+
+/* A world-context wheel is modal to the build control. Never stack both
+   visually, including the original 2-button row. */
+html:not(.phone):has(#rk-hex-menu:not([hidden])) #rk-actions{
+ visibility:hidden!important;pointer-events:none!important;
+}
+html.phone:has(#rk-hex-menu:not([hidden])) #rk-quick-build,
+html.phone:has(#rk-hex-menu:not([hidden])) #rk-placement-hint{
+ visibility:hidden!important;pointer-events:none!important;
+}
