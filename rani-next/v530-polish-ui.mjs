@@ -8,12 +8,13 @@ function patch(rel,from,to){
  assert.equal(s.split(from).length,2,'v5.30 source drift '+rel+' '+from.slice(0,96));
  fs.writeFileSync(file,s.replace(from,to));
 }
-const oldPlace=[
- "    const narrow=window.innerWidth<=700;",
- "    const left=narrow?window.innerWidth/2:Math.max(165,Math.min(window.innerWidth-165,p.x));",
- "    const top=narrow?window.innerHeight-160:Math.max(150,Math.min(window.innerHeight-165,p.y-32));",
- "    host.style.left=left+'px';host.style.top=top+'px';"
-].join('\n');
+const wheelFile=path.join(root,'src/ui/raniWheel.ts');
+const wheelText=fs.readFileSync(wheelFile,'utf8');
+const marker="    const narrow=window.innerWidth<=700||document.documentElement.classList.contains('phone');";
+const tail="    host.style.setProperty('--rk-anchor-top',top+'px');";
+const a0=wheelText.indexOf(marker),b0=wheelText.indexOf(tail,a0);
+assert.ok(a0>=0&&b0>a0,'v5.30 cannot locate actual v5.12 wheel positioning');
+const oldPlace=wheelText.slice(a0,b0+tail.length);
 const newPlace=[
  "    const narrow=window.innerWidth<=700 || document.documentElement.classList.contains('phone');",
  "    const pad=document.querySelector<HTMLElement>('#pad');",
@@ -38,6 +39,8 @@ const newPlace=[
  "    }",
  "    if(narrow)host.style.left=left+'px';",
  "    host.style.top=top+'px';",
+ "    host.style.setProperty('--rk-anchor-left',host.style.left);",
+ "    host.style.setProperty('--rk-anchor-top',host.style.top);",
  "    host.dataset.rkInfoPlacement=narrow&&window.innerHeight<540?'compact':'above';"
 ].join('\n');
 patch('src/ui/raniWheel.ts',oldPlace,newPlace);
