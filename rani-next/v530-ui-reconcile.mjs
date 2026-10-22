@@ -78,7 +78,16 @@ const newPlace=[
  "    host.style.setProperty('--rk-anchor-left',left+'px');",
  "    host.style.setProperty('--rk-anchor-top',top+'px');"
 ].join('\n');
-patch('src/ui/raniWheel.ts',oldPlace,newPlace);
+// v5.12+ changed wheel placement repeatedly. Replace the local place()
+// function bounded by the next show(), not a brittle earlier version string.
+const wheelPath=filename('src/ui/raniWheel.ts');
+let wheelSource=fs.readFileSync(wheelPath,'utf8');
+const placeRule=/  function place\(\)\s*\{[\s\S]*?\n  \}(?=\n  function show\()/;
+assert.ok(placeRule.test(wheelSource),'v5.30 native place()/show() source boundary missing');
+const placed=['  function place(){','    if(!target)return;',
+ '    const p=callbacks.screen(target);',newPlace,'  }'].join('\n');
+wheelSource=wheelSource.replace(placeRule,placed);
+fs.writeFileSync(wheelPath,wheelSource);
 patch('src/ui/raniWheel.ts',
  [
  "    upgrade.disabled=!status.canUpgrade;upgrade.title=status.canUpgrade",
