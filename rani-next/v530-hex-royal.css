@@ -1,0 +1,152 @@
+/* v5.30 — the REAL six-action wheel, not a flat replacement panel.
+   Blue enamel, gold frame, better iconography and accessible state semantics.
+   Old gameplay button classes/data-action and callbacks all remain intact. */
+#rk-hex-menu{
+ --rk-hex-brass:#d8b676;--rk-hex-deep:#0d273e;
+ z-index:58!important;filter:drop-shadow(0 9px 18px #010b18ac);
+}
+#rk-hex-menu .rk-hex-buttons{
+ background:transparent!important;border:0!important;backdrop-filter:none!important;
+ filter:drop-shadow(0 5px 12px #000b)!important;
+}
+#rk-hex-menu .rk-hex-core,
+#rk-hex-menu .rk-hex-option{
+ text-shadow:0 1px 4px #030d18,0 2px 2px #020913!important;
+ color:#ffedc3!important;
+ background:linear-gradient(145deg,#e7ca90 0%,#9a7544 4%,
+   #416780 10%,#22445d 26%,#0b263d 74%,#38516a 90%,#9a733d 97%,#f5d28b 100%)!important;
+ border:0!important;border-radius:0!important;
+ clip-path:polygon(25% 3%,75% 3%,99% 50%,75% 97%,25% 97%,1% 50%)!important;
+ box-shadow:inset 0 0 0 2px #e5bb72!important;
+ text-align:center!important;
+ transition:filter .13s ease,scale .13s ease!important;
+}
+#rk-hex-menu .rk-hex-core{
+ background:linear-gradient(155deg,#f0d89d 0%,#ae7e43 6%,
+    #325b73 17%,#0c2942 73%,#79603b 94%,#e4ba6b 100%)!important;
+ padding:10px 11px!important;
+}
+#rk-hex-menu .rk-hex-core strong{
+ max-width:88px!important;font-size:12px!important;
+ letter-spacing:-.02em;line-height:1.25!important;
+}
+#rk-hex-menu .rk-hex-core span{
+ font-weight:900!important;font-size:11px!important;color:#f7d792!important;
+}
+#rk-hex-menu .rk-hex-option{
+ gap:1px!important;padding:3px!important;
+ font:900 12px/1.17 'Malgun Gothic','Apple SD Gothic Neo',sans-serif!important;
+}
+#rk-hex-menu .rk-hex-option::before{
+ content:attr(data-rk-icon);display:block;
+ font-family:'Segoe UI Symbol','Malgun Gothic',sans-serif;
+ font-size:19px;line-height:20px;color:#f4d89f;
+ filter:drop-shadow(0 1px 3px #051525);
+}
+#rk-hex-menu .rk-hex-build{
+ background:linear-gradient(155deg,#ebcd8e,#85653a 7%,#35536a 16%,#122e45 84%,#b78a4b 96%)!important;
+}
+#rk-hex-menu .rk-hex-remove{
+ background:linear-gradient(145deg,#e8bb83,#a46050 8%,#6c3940 21%,#461f30 82%,#9e5645 95%,#e0aa76 100%)!important;
+ color:#ffe4dc!important;
+}
+#rk-hex-menu .rk-hex-remove::before{color:#ffc0a8}
+#rk-hex-menu .rk-hex-option:disabled{
+ color:#b5b5b0!important;filter:grayscale(.62) brightness(.70)!important;
+ opacity:.75!important;cursor:not-allowed!important;
+}
+#rk-hex-menu .rk-hex-option:disabled::before{color:#ac9c87!important}
+#rk-hex-menu .rk-hex-option:hover:not(:disabled){
+ filter:brightness(1.23)!important;scale:1.045!important;
+}
+#rk-hex-menu .rk-hex-option:active:not(:disabled){
+ scale:.95!important;filter:brightness(1.35)!important;
+}
+#rk-hex-menu .rk-hex-option[data-rk-disabled=true]{
+ opacity:.7;
+}
+#rk-hex-menu .rk-hex-option[data-rk-disabled=true]::after{
+ content:'';position:absolute;right:21%;top:17%;width:7px;height:7px;
+ border-radius:50%;background:#d8a889;
+ box-shadow:0 0 4px #0009;
+}
+#rk-hex-menu .rk-hex-message{
+ min-height:0!important;max-width:min(280px,85vw)!important;
+ font:700 11px/1.4 'Malgun Gothic','Apple SD Gothic Neo',sans-serif!important;
+ color:#ffe0a9!important;
+ border:1px solid #b18e5d99!important;border-radius:8px!important;
+ background:#112d42e8!important;box-shadow:0 4px 10px #0007!important;
+ padding:5px 8px!important;
+}
+#rk-hex-menu .rk-hex-message:empty{display:none!important}
+#rk-hex-menu #rk-hex-info:not([hidden]){
+ color:#f6e4c5!important;
+ background:linear-gradient(155deg,#36586df9,#0a2236fc)!important;
+ border:1.5px solid #cea567!important;border-radius:12px!important;
+ box-shadow:0 10px 27px #000b,inset 0 1px #fff4!important;
+ overflow:auto!important;overscroll-behavior:contain!important;
+ padding:10px 12px!important;line-height:1.52!important;
+}
+#rk-hex-menu #rk-hex-info strong{color:#ffdf9c!important}
+#rk-hex-menu #rk-hex-info p{margin:4px 0!important;font-size:11px!important}
+#rk-hex-menu .rk-hex-unavailable{color:#ffcbad!important}
+/* Compact inspector mode on phones. The six hexes never overlap the
+   description, nor the permanent bottom game action dock. */
+html.phone #rk-hex-menu[data-rk-info-open=true] .rk-hex-buttons{
+ visibility:hidden!important;pointer-events:none!important;
+}
+html.phone #rk-hex-menu[data-rk-info-open=true] #rk-hex-info:not([hidden]){
+ position:absolute!important;
+ left:50%!important;top:12px!important;transform:translateX(-50%)!important;
+ width:min(288px,calc(100vw - 24px))!important;
+ max-height:calc(min(46dvh,225px) - 16px)!important;
+ overflow-y:auto!important;z-index:4!important;
+}
+html.phone #rk-hex-menu[data-rk-info-open=true] .rk-hex-close{
+ display:block!important;position:absolute!important;
+ top:calc(min(46dvh,225px) + 8px)!important;
+ left:50%!important;transform:translateX(-50%)!important;
+ min-height:35px!important;min-width:96px!important;
+ padding:6px 14px!important;color:#ffeaca!important;
+ background:linear-gradient(165deg,#496579,#1b354b)!important;
+ border:1px solid #d1a86c!important;border-radius:9px!important;
+ box-shadow:0 4px 13px #0009!important;
+}
+html.phone #rk-hex-menu[data-rk-info-open=true] .rk-hex-message{
+ display:none!important;
+}
+/* Radial remains free of the thumb pad: adjusted with its real DOM top,
+   not the previous hardcoded 'height - 160'. */
+html.phone #rk-hex-menu:not([hidden]){
+ max-width:calc(100vw - 10px)!important;
+ max-height:none!important;overflow:visible!important;
+ transform:translate(-50%,-50%)!important;
+}
+html.phone #rk-hex-menu .rk-hex-buttons{
+ transform-origin:center center!important;
+}
+html.phone #rk-hex-menu .rk-hex-close:focus-visible,
+#rk-hex-menu .rk-hex-option:focus-visible,
+#rk-hex-menu .rk-hex-core:focus-visible{
+ outline:2px solid #ffe9ae!important;outline-offset:2px!important;
+}
+html.phone:has(#rk-hex-menu:not([hidden])) #rk-phone-zoom,
+html.phone:has(#rk-hex-menu:not([hidden])) #rk-quick-build,
+html.phone:has(#rk-hex-menu:not([hidden])) #rk-strategy-toggle,
+html.phone:has(#rk-hex-menu:not([hidden])) #rk-placement-hint{
+ visibility:hidden!important;pointer-events:none!important;
+}
+@media(max-height:470px){
+ html.phone #rk-hex-menu .rk-hex-buttons{
+  --rk-wheel-scale:.66!important;
+ }
+ html.phone #rk-hex-menu[data-rk-info-open=true] #rk-hex-info:not([hidden]){
+  max-height:30dvh!important;top:8px!important;
+ }
+ html.phone #rk-hex-menu[data-rk-info-open=true] .rk-hex-close{
+  top:calc(30dvh + 15px)!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #rk-hex-menu .rk-hex-core,#rk-hex-menu .rk-hex-option{transition:none!important}
+}
