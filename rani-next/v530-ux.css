@@ -1,0 +1,154 @@
+/* v5.30 — ONE real construction control. Old v5.1 left-bottom
+   duplicate coexisted with the v5.23 dock and was visible in landscape. */
+#rani-build-toggle{display:none!important;pointer-events:none!important}
+html:not(.phone) #rk-actions{
+ position:fixed!important;left:calc(10px + env(safe-area-inset-left,0px))!important;
+ bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;
+ top:auto!important;right:auto!important;z-index:46!important;
+ display:flex!important;flex-direction:column!important;gap:5px!important;
+ width:clamp(180px,17vw,242px)!important;
+ max-width:calc(100vw - 20px)!important;max-height:calc(100dvh - 70px)!important;
+ pointer-events:auto!important;margin:0!important;
+ font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+}
+html:not(.phone) #rk-actions #buildwrap{
+ display:flex;flex-direction:column;gap:5px;min-height:0;
+ max-height:calc(100dvh - 92px)!important;margin:0!important;
+ overflow:hidden;isolation:isolate;
+}
+html:not(.phone) #rk-actions[data-open=false] #buildwrap{display:none!important}
+html:not(.phone) #rk-actions #buildmenu{
+ min-height:0;max-height:min(48dvh,370px)!important;overflow:auto!important;
+ border:1px solid #bd955c!important;border-radius:11px!important;
+ box-shadow:0 9px 23px #0009!important;
+}
+html:not(.phone) #rk-actions #buildbar{flex:0 0 auto;max-width:100%!important;overflow:auto}
+html:not(.phone) #rk-actions .rk-action-row{
+ display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);
+ gap:6px!important;padding:5px!important;min-width:0;
+ border:1px solid #c6a16e!important;border-radius:11px!important;
+ background:linear-gradient(155deg,#263d55,#081a30)!important;
+ box-shadow:0 7px 18px #0009,inset 0 1px #ffedb533!important;
+}
+html:not(.phone) #rk-actions .rk-action-row button{
+ min-width:0;min-height:46px;border-radius:8px!important;
+ color:#ffebc0!important;border:1px solid #c4a06b!important;
+ background:linear-gradient(145deg,#4a6172,#1a354a)!important;
+ box-shadow:inset 0 1px #ffffff25,0 2px 7px #0008!important;
+ text-shadow:0 1px 3px #000a;letter-spacing:0!important;
+ transition:filter .12s ease,transform .12s ease;
+}
+html:not(.phone) #rk-actions #rk-build-toggle{
+ background:linear-gradient(155deg,#caa76a,#815a2e 65%,#573e2a)!important;
+ color:#fff7d9!important;letter-spacing:.08em!important;
+}
+html:not(.phone) #rk-actions #rk-build-toggle[aria-expanded=true]{
+ border-color:#ffe4a2!important;box-shadow:0 0 12px #f4c47391!important;
+}
+html:not(.phone) #rk-actions .rk-action-row button:active{transform:translateY(1px);filter:brightness(1.17)}
+html:not(.phone) #rk-actions .rk-action-row button:focus-visible{
+ outline:2px solid #fff0b7!important;outline-offset:3px;
+}
+html:not(.phone) #leftcol{bottom:auto!important}
+html.phone #rk-actions,html.touch #rani-build-toggle{display:none!important}
+html.phone #pad{z-index:42!important;overflow:visible;max-width:100vw!important}
+html.phone #pad .rk-touch-actions{display:flex!important;position:relative;flex-wrap:nowrap;z-index:1}
+html.phone #pad #rk-touch-build,
+html.phone #pad #rk-touch-menu{
+ white-space:nowrap!important;border:1px solid #c8a56b!important;
+ background:linear-gradient(155deg,#4c6072,#1b3648)!important;
+ color:#ffecbf!important;box-shadow:inset 0 1px #ffffff23,0 3px 9px #0008!important;
+ border-radius:8px!important;
+}
+html.phone #pad #rk-touch-build{
+ background:linear-gradient(150deg,#bc9253,#654826)!important;color:#fff7d8!important
+}
+html.phone #pad #rk-touch-build.on{
+ box-shadow:0 0 0 2px #ffe4a68a,0 0 12px #ffdc8f89!important;
+}
+html.phone #pad .rk-touch-actions button:focus-visible{outline:2px solid #fff2b6;outline-offset:2px}
+/* The mobile bottom reserve belongs to the real bar, not a historical 55px guess. */
+html.phone #rk-quick-build{
+ bottom:calc(76px + env(safe-area-inset-bottom,0px))!important;
+ max-height:min(59dvh,calc(100dvh - 105px - env(safe-area-inset-bottom,0px)))!important;
+}
+html.phone:has(#rk-hex-menu:not([hidden])) #rk-quick-build,
+html.phone:has(#rk-quick-build:not([hidden])) #rk-hex-menu[hidden]{pointer-events:none!important}
+/* The original six HEX buttons remain at their exact positions; only their
+   materials, meaning, and disabled states get a cohesive royal finish. */
+#rk-hex-menu .rk-hex-buttons{
+ filter:drop-shadow(0 6px 15px #020d1abc)!important;
+}
+#rk-hex-menu .rk-hex-core,
+#rk-hex-menu .rk-hex-option{
+ background:linear-gradient(142deg,#f3d292 0%,#896b42 5%,#3c6579 8%,#173a51 23%,#0a2136 82%,#987248 96%,#f5d99d 100%)!important;
+ color:#fff1cb!important;text-shadow:0 2px 4px #020c18!important;
+ box-shadow:inset 0 0 0 2px #c29d65, inset 0 0 22px #0716259e!important;
+ filter:drop-shadow(0 2px 5px #0008);
+}
+#rk-hex-menu .rk-hex-option::before{
+ content:attr(data-rk-glyph);display:block;font:900 21px/1.05 Georgia,'Malgun Gothic',serif;
+ color:#f8d997;filter:drop-shadow(0 1px 2px #000b);
+ margin-bottom:4px;pointer-events:none;
+}
+#rk-hex-menu .rk-hex-option{font-size:12px!important;line-height:1.12!important}
+#rk-hex-menu .rk-hex-core{
+ background:linear-gradient(135deg,#f2d08c,#7a5d3a 8%,#335369 15%,#0a2038 83%,#d1ac67 95%,#f5d99d)!important;
+ border:0!important;filter:drop-shadow(0 0 9px #d9a4596b);
+}
+#rk-hex-menu .rk-hex-core strong{font-size:13px!important;line-height:1.2}
+#rk-hex-menu .rk-hex-core span{color:#f7da9e!important;font-size:11px!important}
+#rk-hex-menu .rk-hex-remove{
+ background:linear-gradient(140deg,#f4cd98,#965e56 9%,#642c33 26%,#401c2a 79%,#b78570 96%,#f4c99b)!important;
+}
+#rk-hex-menu .rk-hex-remove::before{color:#ffd0c7}
+#rk-hex-menu .rk-hex-option:disabled{filter:grayscale(.6) brightness(.72);opacity:.62!important}
+#rk-hex-menu .rk-hex-option:hover:not(:disabled){
+ filter:brightness(1.24) drop-shadow(0 0 7px #e6bb6799)!important;
+}
+#rk-hex-menu .rk-hex-option:active:not(:disabled){filter:brightness(1.32)}
+#rk-hex-menu button:focus-visible{outline:2px solid #fff1b8!important;outline-offset:3px}
+#rk-hex-info{border-color:#d6b371!important;background:linear-gradient(150deg,#365469,#0b2337 75%)!important}
+#rk-hex-menu #rk-hex-info:not([hidden]){z-index:6!important;box-shadow:0 9px 24px #000c!important}
+#rk-hex-menu .rk-hex-message:not(:empty){
+ background:linear-gradient(150deg,#304759f5,#091f31f5)!important;
+ border:1px solid #b88f5d!important;z-index:8;
+}
+html.phone #rk-hex-menu:not([hidden]){z-index:60!important}
+html.phone #rk-hex-menu[data-rk-layout=side] #rk-hex-info:not([hidden]){
+ left:calc(100% + 8px)!important;top:4px!important;transform:none!important;
+ width:240px!important;max-width:240px!important;max-height:210px!important;
+}
+html.phone #rk-hex-menu[data-rk-layout=side] .rk-hex-message:not(:empty){
+ left:calc(100% + 8px)!important;top:218px!important;
+ transform:none!important;max-width:240px!important;
+}
+html.phone #rk-hex-menu[data-rk-layout=below] #rk-hex-info:not([hidden]){
+ max-height:min(130px,23dvh)!important;
+}
+@media(max-height:560px) and (min-width:610px){
+ html.phone #rk-hex-menu[data-rk-layout=side] .rk-hex-buttons{
+ transform:scale(.72)!important;transform-origin:center center!important;
+ }
+}
+/* Native control skin: apply only to interactive game buttons, not raster buildings. */
+#buildbar button,#buildmenu button,#controls button,
+#rk-quick-build button,#rk-phone-zoom button,
+#rk-strategy-toggle,#rk-enter-fullscreen,.sheet button,#pause button{
+ border-radius:8px!important;border-color:#bfa06c!important;
+ color:#f8e4bd!important;
+ box-shadow:inset 0 1px #ffffff20,0 2px 7px #0007!important;
+ transition:filter .13s ease,transform .1s ease;
+}
+#buildbar button:active,#buildmenu button:active,#controls button:active,
+#rk-quick-build button:active,#rk-phone-zoom button:active,
+#rk-strategy-toggle:active,#rk-enter-fullscreen:active,.sheet button:active,#pause button:active{
+ filter:brightness(1.19);transform:translateY(1px)
+}
+#buildbar button:focus-visible,#buildmenu button:focus-visible,
+#rk-quick-build button:focus-visible,.sheet button:focus-visible,#pause button:focus-visible{
+ outline:2px solid #ffe9a2!important;outline-offset:2px
+}
+@media(prefers-reduced-motion:reduce){
+ #rk-hex-menu button,#rk-actions button,.rk-touch-actions button,#buildmenu button{transition:none!important}
+}
