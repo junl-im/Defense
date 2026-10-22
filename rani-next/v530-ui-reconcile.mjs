@@ -37,10 +37,19 @@ patch('src/main.ts',
  "      }"
  ].join('\n'));
 const oldPlace=[
- '    const narrow=window.innerWidth<=700;',
- '    const left=narrow?window.innerWidth/2:Math.max(165,Math.min(window.innerWidth-165,p.x));',
- '    const top=narrow?window.innerHeight-160:Math.max(150,Math.min(window.innerHeight-165,p.y-32));',
- "    host.style.left=left+'px';host.style.top=top+'px';"
+ "    const narrow=window.innerWidth<=700||document.documentElement.classList.contains('phone');",
+ "    const edge=Math.min(window.innerWidth/2,157);",
+ "    const left=narrow?Math.max(edge,Math.min(window.innerWidth-edge,p.x)):Math.max(165,Math.min(window.innerWidth-165,p.x));",
+ "    const phone=document.documentElement.classList.contains('phone');",
+ "    const half=Math.max(92,host.getBoundingClientRect().height/2);",
+ "    const upper=52+half;",
+ "    const lower=window.innerHeight-(phone?72:15)-half;",
+ "    const top=narrow?",
+ "      (lower<upper?window.innerHeight/2:Math.max(upper,Math.min(lower,p.y-20))):",
+ "      Math.max(150,Math.min(window.innerHeight-165,p.y-32));",
+ "    host.style.left=left+'px';host.style.top=top+'px';",
+ "    host.style.setProperty('--rk-anchor-left',left+'px');",
+ "    host.style.setProperty('--rk-anchor-top',top+'px');"
 ].join('\n');
 const newPlace=[
  "    const phone=document.documentElement.classList.contains('phone');",
@@ -65,7 +74,9 @@ const newPlace=[
  "    const preferred=phone?mid:p.y-32;",
  "    const top=Math.max(availableTop+halfHeight,Math.min(availableBottom-halfHeight,preferred));",
  "    host.style.left=left+'px';host.style.top=top+'px';",
- "    host.dataset.rkViewportSafe='true';"
+ "    host.dataset.rkViewportSafe='true';
+    host.style.setProperty('--rk-anchor-left',left+'px');
+    host.style.setProperty('--rk-anchor-top',top+'px');"
 ].join('\n');
 patch('src/ui/raniWheel.ts',oldPlace,newPlace);
 patch('src/ui/raniWheel.ts',
