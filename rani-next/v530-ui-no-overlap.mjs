@@ -85,6 +85,15 @@ const newPlace=[
  "        left=Math.min(w-165,Math.max(left,dr.right+170));",
  "    }",
  "    host.style.left=left+'px';host.style.top=top+'px';",
+ "    // A scaled wheel host and its absolute details can have different CSS",
+ "    // geometry on phone landscape. Use the REAL rectangle to finish fitting.",
+ "    if(phone&&infoOpen&&!info.hidden){",
+ "      const detail=info.getBoundingClientRect();",
+ "      if(detail.bottom>padTop-8){",
+ "        const shift=detail.bottom-(padTop-8);",
+ "        host.style.top=(top-shift)+'px';",
+ "      }",
+ "    }",
  "    host.dataset.rkViewportFit='true';",
  "  }"
 ].join('\n');
