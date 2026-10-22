@@ -37,7 +37,7 @@ try {
   assert.ok(first.glyphs.every(Boolean),JSON.stringify(first));
   assert.ok(first.scroll<=3,JSON.stringify(first));
   if(!mobile){
-   assert.equal(first.dockParent,'BODY',JSON.stringify(first));
+   assert.equal(first.dockParent,'DIV',JSON.stringify(first));
    assert.equal(first.wrapParent,'rk-actions');
    assert.equal(first.buttons.length,2);
    assert.ok(first.dock.left>=0&&first.dock.right<=width+1&&first.dock.bottom<=height+1,JSON.stringify(first));
