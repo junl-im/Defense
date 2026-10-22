@@ -72,7 +72,10 @@ const newPlace=[
  "    const halfHeight=narrow?Math.min(119,room/2-5):137;",
  "    const mid=(availableTop+availableBottom)/2;",
  "    const preferred=phone?mid:p.y-32;",
- "    const top=Math.max(availableTop+halfHeight,Math.min(availableBottom-halfHeight,preferred));",
+ "    // When the details sheet expands, reserve actual space below the hexes.",
+ "    const reserveInfo=infoOpen?(phone?140:175):0;",
+ "    const minTop=availableTop+halfHeight,maxTop=availableBottom-halfHeight-reserveInfo;",
+ "    const top=maxTop<minTop?minTop:Math.max(minTop,Math.min(maxTop,preferred));",
  "    host.style.left=left+'px';host.style.top=top+'px';",
  "    host.dataset.rkViewportSafe='true';",
  "    host.style.setProperty('--rk-anchor-left',left+'px');",
@@ -88,6 +91,9 @@ const placed=['  function place(){','    if(!target)return;',
  '    const p=callbacks.screen(target);',newPlace,'  }'].join('\n');
 wheelSource=wheelSource.replace(placeRule,placed);
 fs.writeFileSync(wheelPath,wheelSource);
+patch('src/ui/raniWheel.ts',
+ "    if(id==='info'){infoOpen=!infoOpen;lastInfo='';info.hidden=!infoOpen;update();return;}",
+ "    if(id==='info'){infoOpen=!infoOpen;lastInfo='';info.hidden=!infoOpen;update();place();return;}");
 patch('src/ui/raniWheel.ts',
  [
  "    upgrade.disabled=!status.canUpgrade;upgrade.title=status.canUpgrade",
