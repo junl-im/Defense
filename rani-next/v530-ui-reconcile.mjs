@@ -74,9 +74,9 @@ const newPlace=[
  "    const preferred=phone?mid:p.y-32;",
  "    const top=Math.max(availableTop+halfHeight,Math.min(availableBottom-halfHeight,preferred));",
  "    host.style.left=left+'px';host.style.top=top+'px';",
- "    host.dataset.rkViewportSafe='true';
-    host.style.setProperty('--rk-anchor-left',left+'px');
-    host.style.setProperty('--rk-anchor-top',top+'px');"
+ "    host.dataset.rkViewportSafe='true';",
+ "    host.style.setProperty('--rk-anchor-left',left+'px');",
+ "    host.style.setProperty('--rk-anchor-top',top+'px');"
 ].join('\n');
 patch('src/ui/raniWheel.ts',oldPlace,newPlace);
 patch('src/ui/raniWheel.ts',
