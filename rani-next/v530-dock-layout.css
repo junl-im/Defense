@@ -1,0 +1,157 @@
+/* v5.30: one TRUE construction trigger per platform.
+   Earlier v5.0 #rani-build-toggle and v5.23 #rk-build-toggle were both visible.
+   Keep old source handler untouched, but only current native dock is visible. */
+html:not(.phone) #rani-build-toggle{
+ display:none!important;visibility:hidden!important;pointer-events:none!important;
+}
+html:not(.phone) #leftcol{
+ pointer-events:none!important;
+ min-height:0!important;max-height:calc(100dvh - 18px)!important;
+}
+html:not(.phone) #leftcol #rk-actions{
+ pointer-events:auto!important;
+ position:relative!important;bottom:auto!important;left:auto!important;
+ flex:0 0 auto!important;width:clamp(178px,17vw,230px)!important;
+ max-width:calc(100vw - 22px)!important;margin:0 0 0 auto!important;
+ min-height:0!important;
+ z-index:21!important;
+}
+html:not(.phone) #rk-actions .rk-action-row{
+ display:grid!important;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr)!important;
+ gap:6px!important;padding:5px!important;min-width:0!important;
+ background:linear-gradient(165deg,#36586bec,#0b2034f8)!important;
+ border:1px solid #c09a62!important;border-radius:12px!important;
+ box-shadow:0 7px 17px #000a,inset 0 1px #ffe9bd30!important;
+}
+html:not(.phone) #rk-actions .rk-action-row button{
+ min-width:0!important;min-height:44px!important;
+ padding:7px 5px!important;white-space:nowrap!important;
+ font:800 12px/1.3 'Malgun Gothic','Apple SD Gothic Neo',sans-serif!important;
+ color:#f6e3bf!important;border:1px solid #ab8955!important;
+ border-radius:8px!important;background:linear-gradient(165deg,#385b72,#173349)!important;
+ box-shadow:inset 0 1px #fff3,0 2px 8px #0007!important;
+}
+html:not(.phone) #rk-build-toggle{
+ color:#fff0cb!important;border-color:#edc07c!important;
+ background:linear-gradient(180deg,#b18b51,#76542f 66%,#554026)!important;
+}
+html:not(.phone) #rk-build-toggle::before{
+ content:'▦';font-weight:900;font-size:18px;vertical-align:-1px;margin-right:6px;color:#ffedb9;
+}
+html:not(.phone) #rk-pause-toggle::before{
+ content:'☰';font-size:15px;margin-right:5px;color:#efcf96;
+}
+html:not(.phone) #rk-actions #rk-build-toggle[aria-expanded=true]{
+ background:linear-gradient(165deg,#d0a86a,#866138)!important;
+ box-shadow:0 0 0 1px #f8dca2aa,0 3px 12px #8f672a99!important;
+}
+html:not(.phone) #rk-actions .rk-action-row button:hover{
+ filter:brightness(1.12);border-color:#f9da97!important;
+}
+html:not(.phone) #rk-actions .rk-action-row button:active{
+ transform:translateY(1px) scale(.98);filter:brightness(1.2);
+}
+html:not(.phone) #rk-actions #buildwrap{
+ display:flex;flex-direction:column;width:100%!important;
+ max-height:min(52dvh,calc(100dvh - 180px))!important;
+ min-height:0!important;overflow:visible!important;margin:0 0 4px!important;
+}
+html:not(.phone) #rk-actions #buildwrap.hidden,
+html:not(.phone) #rk-actions[data-open=false] #buildwrap{display:none!important}
+html:not(.phone) #rk-actions[data-open=true] #buildwrap{
+ display:flex!important;
+}
+html:not(.phone) #rk-actions #buildmenu{
+ max-height:min(35dvh,320px)!important;overflow:auto!important;
+ width:100%!important;max-width:100%!important;min-height:0!important;
+}
+html:not(.phone) #rk-actions #buildbar{width:100%!important;max-width:100%!important}
+html:not(.phone) #rk-actions #buildmenu .items{
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+html:not(.phone) #leftcol #stats{
+ flex:0 1 auto!important;max-height:min(32dvh,230px)!important;overflow:auto!important;
+}
+html:not(.phone) #leftcol #minimap{
+ flex:0 1 auto!important;min-height:0!important;
+}
+html:not(.phone) #leftcol:has(#rk-actions[data-open=true]) #minimap{
+ max-height:min(19dvh,130px)!important;overflow:hidden!important;
+}
+html:not(.phone):has(#rk-actions[data-open=true]) #rani-info-toggle,
+html:not(.phone):has(#rk-actions[data-open=true]) #rani-controls-toggle{
+ /* Native right controls remain reachable: no left-dock collision. */
+ z-index:31!important;
+}
+/* Mobile: only original existing seven buttons; no overlaid duplicate.
+   The final pair stays in its dedicated action group to the right. */
+html.phone #rani-build-toggle,html.phone #rk-actions{display:none!important}
+html.phone #pad{
+ width:100%!important;max-width:100vw!important;
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ gap:3px!important;box-sizing:border-box!important;overflow:hidden!important;
+ padding:4px max(5px,env(safe-area-inset-right)) calc(5px + env(safe-area-inset-bottom))
+ max(5px,env(safe-area-inset-left))!important;
+ min-height:60px!important;
+ background:linear-gradient(180deg,#263f54f3,#081b2df6)!important;
+ border-top:1px solid #c09a6b!important;
+}
+html.phone #pad > button{
+ min-width:0!important;width:auto!important;flex:1 1 0!important;
+ height:40px!important;max-width:none!important;
+ padding:0 1px!important;font-size:10px!important;white-space:nowrap!important;
+ overflow:hidden!important;text-overflow:clip!important;
+}
+html.phone #pad > button.grow{flex:1.15 1 0!important}
+html.phone #pad .rk-touch-actions{
+ display:flex!important;flex:0 0 auto!important;min-width:0!important;
+ margin:0 0 0 auto!important;gap:3px!important;padding:3px!important;
+ max-width:43vw!important;border-radius:10px!important;
+ background:linear-gradient(160deg,#496373,#182d42)!important;
+ border:1px solid #c69c64!important;
+}
+html.phone #pad .rk-touch-actions button{
+ display:block!important;flex:1 1 0!important;min-width:0!important;
+ width:clamp(39px,13vw,68px)!important;max-width:68px!important;
+ height:40px!important;padding:0 3px!important;
+ font:800 11px/1.2 'Malgun Gothic','Apple SD Gothic Neo',sans-serif!important;
+ border:1px solid #b78e58!important;border-radius:7px!important;
+ color:#fbeac1!important;background:linear-gradient(160deg,#345976,#193148)!important;
+}
+html.phone #pad #rk-touch-build{
+ background:linear-gradient(160deg,#af8550,#69502f)!important;color:#fff6de!important;
+ border-color:#edc17d!important;
+}
+html.phone #pad button:active{transform:translateY(1px) scale(.98)!important;filter:brightness(1.16)}
+/* The build tray always sits ABOVE the actual active thumb bar. */
+html.phone #rk-quick-build{
+ bottom:calc(69px + env(safe-area-inset-bottom))!important;
+ max-height:calc(100dvh - 92px - env(safe-area-inset-bottom))!important;
+}
+html.phone:has(#rk-hex-menu:not([hidden])) #rk-quick-build{
+ visibility:hidden!important;pointer-events:none!important;
+}
+html.phone #rk-placement-hint{
+ bottom:calc(69px + env(safe-area-inset-bottom))!important;
+}
+/* Royal button language is shared across menus; no raster/SVG additions. */
+#ui button,#pad button,#rk-hex-menu button,#rk-quick-build button,
+#pause button,#rk-exit-dialog button{
+ -webkit-tap-highlight-color:transparent;
+ transition:filter .12s ease,border-color .12s ease,background .12s ease;
+}
+#ui button:focus-visible,#pad button:focus-visible,
+#rk-hex-menu button:focus-visible,#rk-quick-build button:focus-visible{
+ outline:2px solid #ffe1a1!important;outline-offset:2px!important;
+}
+@media(max-height:530px){
+ html:not(.phone) #leftcol #stats{max-height:20dvh!important}
+ html:not(.phone) #rk-actions #buildwrap{max-height:calc(100dvh - 117px)!important}
+ html:not(.phone) #rk-actions #buildmenu{max-height:20dvh!important}
+ html.phone #rk-quick-build{
+  max-height:calc(100dvh - 84px - env(safe-area-inset-bottom))!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #ui button,#pad button,#rk-hex-menu button{transition:none!important}
+}
