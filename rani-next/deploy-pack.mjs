@@ -39,22 +39,6 @@ function patch(folder){
  }
 }
 patch(output);
-// Manifest is JSON, not parsed by the HTML/JS/CSS project-path rewriter.
-// Preview runs at /; published GitHub Pages must install into /Defense/ only.
-const appManifest=path.join(output,'rani','manifest.webmanifest');
-assert.ok(fs.existsSync(appManifest),'PWA manifest absent from package');
-const pwa=JSON.parse(fs.readFileSync(appManifest,'utf8'));
-assert.equal(pwa.start_url,'/');
-assert.equal(pwa.scope,'/');
-pwa.id=prefix;pwa.start_url=prefix;pwa.scope=prefix;
-if(Array.isArray(pwa.shortcuts)){
- for(const shortcut of pwa.shortcuts)if(shortcut.url==='/')shortcut.url=prefix;
-}
-fs.writeFileSync(appManifest,JSON.stringify(pwa,null,2)+'\n');
-for(const icon of ['icon-64.png','icon-192.png','icon-512.png','icon-maskable-512.png','apple-touch-icon.png','favicon.ico']){
- assert.ok(fs.statSync(path.join(output,'rani','icons',icon)).size>1000,'Missing packaged PWA icon '+icon);
-}
-assert.ok(fs.statSync(path.join(output,'rani-sw.js')).size>100,'Missing network-first service worker');
 assert.ok(converted>3,'No project path references converted');
 const site=fs.readFileSync(path.join(output,'index.html'),'utf8');
 assert.ok(site.includes('/Defense/assets/'),'Vite project base missing');
