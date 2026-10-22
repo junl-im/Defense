@@ -79,7 +79,7 @@ const b=[
  "      left=clamp(p.x,safeLeft,width-168);",
  "      // Expanded inspector has a real card below the 266px hexes.",
  "      // Reserve this height so the inspector stays inside the viewport.",
- "      const lastCentre=height-(infoOpen?282:147);",
+ "      const lastCentre=height-(infoOpen?306:147);",
  "      top=clamp(p.y-32,146,lastCentre);",
  "      if(stat&&!infoOpen){",
  "        const stats=stat.getBoundingClientRect();",
