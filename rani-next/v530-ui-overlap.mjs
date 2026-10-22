@@ -91,9 +91,16 @@ const b=[
  "    const lx=Math.round(left)+'px',ty=Math.round(top)+'px';",
  "    if(host.style.left!==lx)host.style.left=lx;",
  "    if(host.style.top!==ty)host.style.top=ty;",
+ "    host.style.setProperty('--rk-anchor-left',lx);",
+ "    host.style.setProperty('--rk-anchor-top',ty);",
  "  }"
 ].join('\n');
-patch('src/ui/raniWheel.ts',a,b);
+{
+ const filepath=f('src/ui/raniWheel.ts'),source=fs.readFileSync(filepath,'utf8');
+ const blocks=source.match(/  function place\(\)\{[\s\S]*?\n  \}/g);
+ assert.equal(blocks?.length,1,'v5.30 original 6-hex place function changed');
+ fs.writeFileSync(filepath,source.replace(blocks[0],b));
+}
 patch('src/ui/raniWheel.ts',
  "    cleanModal();target=t;infoOpen=false;lastInfo='';info.hidden=true;",
  "    cleanModal();target=t;infoOpen=false;lastInfo='';info.hidden=true;host.dataset.rkInfoOpen='false';"
