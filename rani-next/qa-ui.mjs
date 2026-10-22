@@ -207,7 +207,7 @@ const hexBuild=await evaluate(`(()=>{
  const visible=getComputedStyle(document.getElementById('buildwrap')).display!=='none';
  const category=getComputedStyle(document.getElementById('buildmenu')).display!=='none';
  const closed=document.getElementById('rk-hex-menu').hidden;
- if(visible)document.getElementById('rani-build-toggle').click();
+ if(visible)document.getElementById('rk-build-toggle').click();
  return {visible,category,closed};
 })()`);
 assert.ok(hexBuild.visible&&hexBuild.category&&hexBuild.closed,
@@ -282,18 +282,19 @@ await evaluate("document.getElementById('rani-resource-toggle').click()");
 const expanded=await evaluate("[...document.querySelectorAll('#topbar .res')].filter(e=>getComputedStyle(e).display!=='none').length");
 assert.ok(expanded>res.displayed,{expanded,res});
 await evaluate("document.getElementById('rani-resource-toggle').click()");
+await evaluate("if(document.querySelector('#rk-actions')?.dataset.open==='true') document.querySelector('#rk-build-toggle').click()");
 const beforeBuild=await evaluate(`(()=>{
  const ui=document.getElementById('ui');
- return {button:!!document.getElementById('rani-build-toggle'),
+ return {button:!!document.getElementById('rk-build-toggle'),
    hidden:getComputedStyle(document.getElementById('buildwrap')).display==='none',
    catalog:!!document.querySelector('#buildbar button[data-group="2"]')};
 })()`);
 assert.ok(beforeBuild.button&&beforeBuild.hidden&&beforeBuild.catalog,beforeBuild);
-await evaluate("document.getElementById('rani-build-toggle').click()");
+await evaluate("document.getElementById('rk-build-toggle').click()");
 assert.equal(await evaluate("getComputedStyle(document.getElementById('buildwrap')).display==='none'"),false);
 await evaluate("[...document.querySelectorAll('#buildbar button')].find(e=>e.dataset.group==='2').click()");
 assert.equal(await evaluate("getComputedStyle(document.getElementById('buildmenu')).display==='none'"),false);
-await evaluate("document.getElementById('rani-build-toggle').click()");
+await evaluate("document.getElementById('rk-build-toggle').click()");
 assert.equal(await evaluate("getComputedStyle(document.getElementById('buildwrap')).display==='none'"),true);
 
 await evaluate("document.getElementById('rani-controls-toggle').click()");
