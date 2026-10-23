@@ -85,6 +85,8 @@ jobs:
           node rani-next/v530-ui-upgrade.mjs engines/fiefdom
           node rani-next/v531-native-ui-finalize.mjs engines/fiefdom
           node rani-next/v531-hud-language-polish.mjs engines/fiefdom
+          node rani-next/v532-map-resilience.mjs engines/fiefdom
+          node rani-next/qa-v532-maps.mjs engines/fiefdom
           node rani-next/check.mjs engines/fiefdom
           node rani-next/verify-art.mjs engines/fiefdom
           python -m pip install Pillow==11.3.0
