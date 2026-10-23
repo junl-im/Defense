@@ -9,6 +9,15 @@ on:
       - '.gitmodules'
       - 'engines/fiefdom'
       - '.github/workflows/build-rani-next-2p5d.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'rani-next/**'
+      - 'assets/rani/**'
+      - 'assets/branding/**'
+      - '.gitmodules'
+      - 'engines/fiefdom'
+      - '.github/workflows/build-rani-next-2p5d.yml'
   workflow_dispatch:
 permissions:
   contents: read
