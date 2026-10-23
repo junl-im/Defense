@@ -164,7 +164,7 @@ jobs:
         with:
           name: rani-2p5d-deployment-browser-proof
           path: /tmp/rani-deploy-evidence/
-          retention-days: 7
+          retention-days: 3
           if-no-files-found: warn
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
