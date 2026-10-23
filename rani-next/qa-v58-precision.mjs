@@ -12,7 +12,7 @@ const ev=async expression=>{const r=await c.send('Runtime.evaluate',{expression,
 const until=async e=>{for(let i=0;i<290;i++){if(await ev(e))return;await sleep(250);}throw Error('Timeout: '+e);};
 await c.send('Page.navigate',{url},s);
 await until("!!document.querySelector('#rk-start-now')");
-assert.equal(await ev("document.querySelector('#menu .rk-public-version').textContent"),'v5.30');
+assert.equal(await ev("document.querySelector('#menu .rk-public-version').textContent"),'v5.31');
 await ev("document.querySelector('#rk-start-now').click()");
 await until("document.querySelector('#menu').classList.contains('rk-choose-region')");
 await ev("document.querySelector('#menu .rk-manual-start').click()");

@@ -1,4 +1,4 @@
-// v5.30: actual game-world stage 1/2/3 appearance and click selection styling.
+// v5.31: actual game-world stage 1/2/3 appearance and click selection styling.
 import assert from 'node:assert/strict';
 import {CDP,getJSON} from '../engines/fiefdom/tools/e2e/cdp.mjs';
 const url=process.argv[2]||'http://127.0.0.1:8931/';
@@ -18,7 +18,7 @@ try{
  await c.send('Emulation.setDeviceMetricsOverride',{width:1366,height:768,mobile:false,deviceScaleFactor:1},s);
  await c.send('Page.navigate',{url},s);
  await until("!!document.querySelector('#rk-start-now')");
- assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.30');
+ assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.31');
  await ev("document.querySelector('#rk-start-now').click()");
  await until("document.querySelector('#menu').classList.contains('rk-choose-region')");
  await ev("document.querySelector('#menu .rk-manual-start').click()");
@@ -91,6 +91,6 @@ try{
    return {previous,after:b.lvl,stock,afterStock:g.state.stock.stone,disabled:control.disabled};
  })()`);
  assert.ok(blocked.disabled&&blocked.previous===blocked.after&&blocked.stock===blocked.afterStock,JSON.stringify(blocked));
- console.log('PASS v5.30 native selected footprint, persistent true Lv.2/3 crest + heraldry, camera tracking, no fourth stage',{stage1,stage2,stage3,camera,blocked});
+ console.log('PASS v5.31 native selected footprint, persistent true Lv.2/3 crest + heraldry, camera tracking, no fourth stage',{stage1,stage2,stage3,camera,blocked});
 }finally{await c.send('Target.closeTarget',{targetId});}
 process.exit(0);

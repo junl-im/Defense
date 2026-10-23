@@ -15,7 +15,7 @@ async function start(w,h,mobile){
  await c.send('Emulation.setTouchEmulationEnabled',{enabled:mobile,maxTouchPoints:mobile?3:1},s);
  await c.send('Page.navigate',{url},s);
  await until("!!document.querySelector('#rk-start-now')");
- assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.30');
+ assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.31');
  await ev("document.querySelector('#rk-start-now').click()");
  await until("document.querySelector('#menu').classList.contains('rk-choose-region')");
  await ev("document.querySelector('#menu .rk-manual-start').click()");
@@ -38,7 +38,7 @@ try{
   if(open.step)assert.ok(intersection(open.dock,open.step)<50,JSON.stringify(open));
   await ev("document.querySelector('#rk-build-toggle').click()");
   assert.equal(await ev("document.querySelector('#rk-actions').dataset.open"),'false');
-  console.log('PASS v5.30 desktop dock and onboarding no overlap',w,h);
+  console.log('PASS v5.31 desktop dock and onboarding no overlap',w,h);
  }
  for(const [w,h] of [[320,568],[390,844],[844,390]]){
   await start(w,h,true);await until("!!document.querySelector('#pad .rk-touch-actions')");
@@ -55,7 +55,7 @@ try{
   assert.ok(info.visible&&info.expanded==='true',JSON.stringify(info));
   await ev("document.querySelector('#rk-hex-menu .rk-hex-core').click()");
   assert.ok(await ev("document.querySelector('#rk-hex-menu').hidden"));
-  console.log('PASS v5.30 mobile real controls and themed safe-area hex',w,h);
+  console.log('PASS v5.31 mobile real controls and themed safe-area hex',w,h);
  }
 }finally{await c.send('Target.closeTarget',{targetId});}
 process.exit(0);

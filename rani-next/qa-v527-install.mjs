@@ -1,4 +1,4 @@
-// v5.30: real manifest/icons/installed shortcuts and native modal layout,
+// v5.31: real manifest/icons/installed shortcuts and native modal layout,
 // including GitHub Pages /Defense/ scope and preserved /legacy/.
 import assert from 'node:assert/strict';
 import {CDP,getJSON} from '../engines/fiefdom/tools/e2e/cdp.mjs';
@@ -21,7 +21,7 @@ try{
   await c.send('Emulation.setTouchEmulationEnabled',{enabled:mobile,maxTouchPoints:mobile?3:1},s);
   await c.send('Page.navigate',{url},s);
   await until("!!document.querySelector('#rk-start-now')&&!!document.querySelector('#rk-install-shortcut')");
-  assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.30');
+  assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.31');
   const snapshot=await ev("(()=>{const b=document.querySelector('#rk-install-shortcut'),game=document.querySelector('#rk-start-now'),footer=document.querySelector('#menu .ver'),rect=e=>e?.getBoundingClientRect()?.toJSON();return {install:b.textContent,icon:b.querySelector('img')?.src,link:document.querySelector('link[rel=manifest]')?.href,button:rect(b),game:rect(game),footer:rect(footer),width:innerWidth,height:innerHeight,scroll:document.documentElement.scrollWidth-innerWidth}})()");
   assert.ok(snapshot.install.includes('앱 설치')&&snapshot.icon.includes('icon-64.png'),JSON.stringify(snapshot));
   assert.ok(snapshot.button.left>=0&&snapshot.button.right<=width+1&&snapshot.button.top>=0&&snapshot.button.bottom<=height+1,JSON.stringify(snapshot));
@@ -44,7 +44,7 @@ try{
   assert.ok(modal.rect.left>=0&&modal.rect.right<=width+1&&modal.rect.top>=0&&modal.rect.bottom<=height+1,JSON.stringify(modal));
   await ev("document.querySelector('#rk-install-dialog button:last-child').click()");
   assert.ok(await ev("document.querySelector('#rk-install-dialog').hidden"));
-  console.log('PASS v5.30 Rani dedicated app icon, manifest, modal, safe viewport, PWA worker',width,height,expected);
+  console.log('PASS v5.31 Rani dedicated app icon, manifest, modal, safe viewport, PWA worker',width,height,expected);
  }
 }finally{await c.send('Target.closeTarget',{targetId});}
 process.exit(0);
