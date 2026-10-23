@@ -25,7 +25,7 @@ function enhance(menu) {
  // v5.32: five clear starting choices; the original twelve maps remain playable.
  // Only the picker presentation changes. Native card selection and save IDs stay intact.
  const nativeCards=[...grid.querySelectorAll(':scope > .map:not(.mine):not(.make)')];
- const featured=new Set([0,1,2,7,10]); // coast, wadi, valley, saltpan, reeds
+ const featured=new Set([0,2,3,8,11]); // royal coast, wadi, valley, saltpan, reeds
  const more=document.createElement('button');
  more.type='button';more.id='rk-region-all';more.className='rk-region-all';
  more.setAttribute('aria-controls','rani-map-picker');
@@ -46,7 +46,7 @@ function enhance(menu) {
    if(name){
      const hint=document.createElement('small');
      hint.className='rk-region-kind';
-     hint.textContent=(i===1||i===2)?'처음 추천':i===0?'해안':'';
+     hint.textContent=(i===2||i===3)?'처음 추천':i===0?'해안 추천':'';
      if(hint.textContent)name.after(hint);
    }
    card.setAttribute('role','button');card.tabIndex=0;
