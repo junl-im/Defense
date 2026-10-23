@@ -52,6 +52,10 @@ try{
   await ev("document.querySelector('#rk-start-now').click()");
   await until("document.querySelector('#menu').classList.contains('rk-choose-region')");
   assert.equal(await ev(visibleInstall),false,'Install action leaked into region choice');
+  // Region cards must be Korean from the native render (ratings and rival hints).
+  const regionCopy=await ev("(()=>{const cards=[...document.querySelectorAll('#menu .map:not(.make)')];return {count:cards.length,labels:[...(cards[0]?.querySelectorAll('.stat > span:first-child')||[])].map(x=>x.textContent.trim()),hints:cards.map(x=>x.querySelector('.foe')?.textContent.trim()).filter(Boolean)};})()");
+  assert.deepEqual(regionCopy.labels,['농지','석재','목재','습지','수원','지형'],'Region rating labels are not fully Korean '+JSON.stringify(regionCopy));
+  assert.ok(regionCopy.count>=8&&regionCopy.hints.length>=8&&regionCopy.hints.every(x=>x.startsWith('추천:')&&!/Suggested|rival|opposition|fight/i.test(x)),'Region opponent hints still contain English '+JSON.stringify(regionCopy));
   if(width===1366||width===390){
    await ev("document.querySelector('#menu .rk-manual-start').click()");
    await until("!!document.querySelector('#lords .go')");

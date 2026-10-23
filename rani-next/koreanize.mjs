@@ -45,6 +45,13 @@ defs+='for (const [id, desc] of Object.entries(RK_SOLDIER_DESCRIPTIONS)) { if (S
 write('src/game/defs.ts',defs);
 let maps=read('src/game/maps.ts');
 assert.ok(maps.includes('export const DEFAULT_MAP = MAPS[0]'));
+// The six region cards are derived from game statistics; translate only their
+// display labels, never their ratings, land-generation parameters or IDs.
+for(const [en,ko] of [['Farmland','농지'],['Stone','석재'],['Timber','목재'],['Marsh','습지'],['Water','수원'],['Relief','지형']]){
+ const before="{ label: '"+en+"',";
+ assert.equal(maps.split(before).length,2,'Region rating label drift: '+en);
+ maps=maps.replace(before,"{ label: '"+ko+"',");
+}
 maps+='\n// Korean map names and blurbs. id/seed/height/water/save rules are unchanged.\n';
 maps+='const RK_MAP_NAMES: Record<string, string> = '+JSON.stringify(ko.mapNames)+';\n';
 maps+='const RK_MAP_DESCRIPTIONS: Record<string, string> = '+JSON.stringify(ko.mapDescriptions)+';\n';
@@ -114,6 +121,24 @@ for(const [name,pairs] of Object.entries(sourcePairs)){
   if(s.includes(from)){s=s.split(from).join(to);edits++;}
  }
  write(name,s);
+}
+// Native region descriptions must be correct on their first render, without
+// depending on a delayed 650-ms DOM text sweep. Custom map data is untouched.
+{
+ const file='src/ui/menu.ts';
+ let menu=read(file);
+ const patches=[
+ ["'Suggested: <b>no opposition</b> — build in peace'","'추천: <b>적 영주 없음</b> · 자유롭게 건설'"],
+ ["'Suggested: <b>1 rival lord</b>'","'추천: <b>적 영주 1명</b>'"],
+ ["`Suggested: <b>${m.lords} rival lords</b> — and they fight each other`","`추천: <b>적 영주 ${m.lords}명</b> · 적 영주끼리 경쟁`"],
+ ["'Suggested: <b>no opposition</b>'","'추천: <b>적 영주 없음</b>'"],
+ ["`Suggested: <b>${m.lords} rival lord${m.lords > 1 ? 's' : ''}</b>`","`추천: <b>적 영주 ${m.lords}명</b>`"],
+ ];
+ for(const [from,to] of patches){
+  assert.equal(menu.split(from).length,2,'Region selection localization drift: '+from);
+  menu=menu.replace(from,to);
+ }
+ write(file,menu);
 }
 const smoke='tools/e2e/smoke.mjs';
 let tst=read(smoke);
