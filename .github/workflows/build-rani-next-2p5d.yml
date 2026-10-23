@@ -98,6 +98,7 @@ jobs:
           node rani-next/v533-boot-guard.mjs engines/fiefdom
           node rani-next/v533-korean-voice.mjs engines/fiefdom
           node rani-next/v534-placement-state.mjs engines/fiefdom
+          node rani-next/v535-construction-catalog.mjs engines/fiefdom
           node rani-next/qa-v532-maps.mjs engines/fiefdom
           node rani-next/qa-v533-voice.mjs engines/fiefdom
           node rani-next/check.mjs engines/fiefdom
@@ -183,6 +184,7 @@ jobs:
           node ../../rani-next/qa-v531-hud-language-polish.mjs http://127.0.0.1:8931/ 9341
           node ../../rani-next/qa-v533-boot-guard.mjs http://127.0.0.1:8931/ 9341
           node ../../rani-next/qa-v534-build-controls.mjs http://127.0.0.1:8931/ 9341
+          node ../../rani-next/qa-v535-construction-catalog.mjs http://127.0.0.1:8931/ 9341
           node ../../rani-next/qa-quickstart.mjs http://127.0.0.1:8931/ 9341 qa/rani-v54-direct-world.png
           node ../../rani-next/qa-polish.mjs http://127.0.0.1:8931/ 9341
           node ../../rani-next/qa-v56-flow.mjs http://127.0.0.1:8931/ 9341
