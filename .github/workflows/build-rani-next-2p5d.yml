@@ -202,14 +202,14 @@ jobs:
         with:
           name: rani-next-world-screenshot
           path: engines/fiefdom/qa/
-          retention-days: 14
+          retention-days: 3
           if-no-files-found: warn
       - name: Deliver complete playable build ZIP separately from main site
         uses: actions/upload-artifact@v4
         with:
           name: rani-next-2p5d-playable-build
           path: engines/fiefdom/dist/
-          retention-days: 14
+          retention-days: 3
           if-no-files-found: error
 
       - name: Build real GitHub Pages project-path package and preserve v4
@@ -245,5 +245,5 @@ jobs:
         with:
           name: rani-next-real-pages-candidate
           path: pages-preview/Defense/
-          retention-days: 7
+          retention-days: 1
           if-no-files-found: error

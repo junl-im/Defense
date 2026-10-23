@@ -71,6 +71,7 @@ jobs:
         if: always()
         with:
           name: korean-slg-desktop-mobile
+          retention-days: 3
           path: |
             qa/korean/
             qa/backup/

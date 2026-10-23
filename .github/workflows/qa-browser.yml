@@ -33,4 +33,5 @@ jobs:
         with:
           name: kingdom-browser-screenshots
           path: qa/screenshots/
+          retention-days: 3
           if-no-files-found: ignore
