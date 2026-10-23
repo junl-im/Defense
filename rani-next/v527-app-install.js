@@ -74,15 +74,16 @@ async function install(){
 }
 function mount(){
  if(standalone())return;
- const first=document.querySelector('#rk-start-now');
- if(!first||document.getElementById('rk-install-shortcut'))return;
+ const menu=root(),first=menu?.querySelector('#rk-start-now');
+ if(!menu||!first||document.getElementById('rk-install-shortcut'))return;
  const btn=document.createElement('button');
  btn.type='button';btn.id='rk-install-shortcut';btn.className='rk-install-shortcut';
  btn.setAttribute('aria-label','라니킹덤 홈 화면 바로가기 및 앱 설치');
  const img=document.createElement('img');img.src=icon();img.alt='';img.width=30;img.height=30;
  const text=document.createElement('span');text.textContent='앱 설치 · 바로가기';
  btn.append(img,text);btn.addEventListener('click',install);
- first.insertAdjacentElement('afterend',btn);button=btn;
+ // Keep the install affordance anchored to the title footer, never inside the start/actions group.
+ menu.appendChild(btn);button=btn;
 }
 window.addEventListener('beforeinstallprompt',event=>{
  event.preventDefault();pending=event;mount();
