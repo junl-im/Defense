@@ -22,10 +22,12 @@ try{
   await c.send('Page.navigate',{url},s);
   await until("!!document.querySelector('#rk-start-now')&&!!document.querySelector('#rk-install-shortcut')");
   assert.equal(await ev("document.querySelector('.rk-public-version').textContent"),'v5.31');
-  const snapshot=await ev("(()=>{const b=document.querySelector('#rk-install-shortcut'),game=document.querySelector('#rk-start-now'),footer=document.querySelector('#menu .ver'),rect=e=>e?.getBoundingClientRect()?.toJSON();return {install:b.textContent,icon:b.querySelector('img')?.src,link:document.querySelector('link[rel=manifest]')?.href,button:rect(b),game:rect(game),footer:rect(footer),width:innerWidth,height:innerHeight,scroll:document.documentElement.scrollWidth-innerWidth}})()");
+  const snapshot=await ev("(()=>{const b=document.querySelector('#rk-install-shortcut'),game=document.querySelector('#rk-start-now'),footer=document.querySelector('#menu .ver'),rect=e=>e?.getBoundingClientRect()?.toJSON();return {install:b.textContent,icon:b.querySelector('img')?.src,parent:b.parentElement?.id,link:document.querySelector('link[rel=manifest]')?.href,button:rect(b),game:rect(game),footer:rect(footer),width:innerWidth,height:innerHeight,scroll:document.documentElement.scrollWidth-innerWidth}})()");
   assert.ok(snapshot.install.includes('앱 설치')&&snapshot.icon.includes('icon-64.png'),JSON.stringify(snapshot));
   assert.ok(snapshot.button.left>=0&&snapshot.button.right<=width+1&&snapshot.button.top>=0&&snapshot.button.bottom<=height+1,JSON.stringify(snapshot));
-  assert.ok(snapshot.button.top>=snapshot.game.bottom-2&&snapshot.button.bottom<=snapshot.footer.top+2,JSON.stringify(snapshot));
+  assert.equal(snapshot.parent,'menu','Install action must not be part of game-start controls');
+  assert.ok(snapshot.button.top>=snapshot.game.bottom-2,'Install button overlaps game start '+JSON.stringify(snapshot));
+  assert.ok(snapshot.footer.top-snapshot.button.bottom>=2&&snapshot.footer.top-snapshot.button.bottom<=16,'Install button must sit just above version info '+JSON.stringify(snapshot));
   assert.ok(snapshot.scroll<=3,JSON.stringify(snapshot));
   const info=await ev("(async()=>{const manifestUrl=new URL('rani/manifest.webmanifest',new URL('./',document.baseURI));const response=await fetch(manifestUrl.href);const m=await response.json();const urls=m.icons.map(i=>new URL(i.src,manifestUrl));const checks=await Promise.all(urls.map(async u=>{const r=await fetch(u.href);const a=new Uint8Array(await r.arrayBuffer());return {status:r.status,bytes:a.length,png:a[0]===137&&a[1]===80&&a[2]===78&&a[3]===71}}));const sw=await fetch(new URL('rani-sw.js',new URL('./',document.baseURI)));return {manifestStatus:response.status,manifest:m,checks,workerStatus:sw.status,workerText:(await sw.text()).slice(0,200),url:manifestUrl.pathname};})()");
   const basePath=new URL(url).pathname;
@@ -44,7 +46,21 @@ try{
   assert.ok(modal.rect.left>=0&&modal.rect.right<=width+1&&modal.rect.top>=0&&modal.rect.bottom<=height+1,JSON.stringify(modal));
   await ev("document.querySelector('#rk-install-dialog button:last-child').click()");
   assert.ok(await ev("document.querySelector('#rk-install-dialog').hidden"));
-  console.log('PASS v5.31 Rani dedicated app icon, manifest, modal, safe viewport, PWA worker',width,height,expected);
+  // The install action belongs to the initial title ONLY, not selection or gameplay.
+  const visibleInstall="(()=>{const b=document.querySelector('#rk-install-shortcut');if(!b)return false;const c=getComputedStyle(b);return c.display!=='none'&&c.visibility!=='hidden'&&b.getClientRects().length>0;})()";
+  assert.equal(await ev(visibleInstall),true,'Install action missing from first screen');
+  await ev("document.querySelector('#rk-start-now').click()");
+  await until("document.querySelector('#menu').classList.contains('rk-choose-region')");
+  assert.equal(await ev(visibleInstall),false,'Install action leaked into region choice');
+  if(width===1366||width===390){
+   await ev("document.querySelector('#menu .rk-manual-start').click()");
+   await until("!!document.querySelector('#lords .go')");
+   assert.equal(await ev(visibleInstall),false,'Install action leaked into lord selection');
+   await ev("document.querySelector('#lords .go').click()");
+   await until("!!window.__game?.hud && !!document.querySelector('#controls')");
+   assert.equal(await ev(visibleInstall),false,'Install action leaked into active game');
+  }
+  console.log('PASS v5.31 title-footer install only, hidden on subsequent screens, modal, viewport and PWA worker',width,height,expected);
  }
 }finally{await c.send('Target.closeTarget',{targetId});}
 process.exit(0);

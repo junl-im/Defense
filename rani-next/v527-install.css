@@ -1,24 +1,45 @@
-/* v5.27 — self-contained Rani shortcut/install UX. Raster icons ONLY. */
-#menu .rk-install-shortcut{
+/* v5.31 title-only install affordance. The button is a DIRECT menu child. */
+/* The default is hidden: region/lord selection and the running game never surface it. */
+#menu .rk-install-shortcut{display:none!important}
+#menu.rk-title-v57:not(.rk-choose-region) > #rk-install-shortcut:not([hidden]){
+ box-sizing:border-box!important;
  display:inline-flex!important;align-items:center!important;justify-content:center!important;
- gap:7px!important;margin:4px auto 0!important;
- padding:6px 13px!important;min-height:41px!important;
- max-width:min(300px,88vw)!important;width:auto!important;
- font:800 clamp(11px,1.6vw,13px)/1.15 'Malgun Gothic','Apple SD Gothic Neo',sans-serif!important;
- color:#fbe5b2!important;background:linear-gradient(145deg,#214158ee,#122b3ddd)!important;
- border:1px solid #caa76b!important;border-radius:10px!important;
- box-shadow:0 3px 14px #0009,inset 0 1px 0 #ffffff24!important;
- touch-action:manipulation!important;cursor:pointer!important;
- letter-spacing:0!important;text-shadow:0 1px 4px #000a!important;
- position:relative!important;z-index:3!important;
+ position:absolute!important;left:50%!important;right:auto!important;
+ bottom:calc(45px + env(safe-area-inset-bottom,0px))!important;
+ transform:translateX(-50%)!important;
+ gap:6px!important;margin:0!important;padding:4px 12px!important;
+ width:max-content!important;max-width:calc(100vw - 24px)!important;
+ min-height:32px!important;z-index:7!important;
+ font:800 11px/1.25 'Malgun Gothic','Apple SD Gothic Neo',sans-serif!important;
+ letter-spacing:0!important;text-shadow:0 1px 3px #000a!important;
+ color:#fbe5b2!important;background:linear-gradient(145deg,#28475aeF,#132b3bdE)!important;
+ border:1px solid #caa76b!important;border-radius:9px!important;
+ box-shadow:0 2px 10px #0008,inset 0 1px 0 #ffffff24!important;
+ cursor:pointer!important;touch-action:manipulation!important;
+ white-space:nowrap!important;
 }
-#menu .rk-install-shortcut img{
- width:30px;height:30px;aspect-ratio:1/1;border-radius:7px;object-fit:contain;
- border:1px solid #d1a9716e;flex:0 0 30px;pointer-events:none;
+#menu #rk-install-shortcut img{
+ display:block;width:19px;height:19px;aspect-ratio:1/1;
+ border-radius:5px;object-fit:contain;flex:0 0 19px;
+ border:1px solid #d1a9716e;pointer-events:none;
 }
-#menu .rk-install-shortcut:active{transform:translateY(1px);filter:brightness(1.1)}
-#menu .rk-install-shortcut:focus-visible{outline:2px solid #ffdc91;outline-offset:3px}
-#menu .rk-install-shortcut[hidden]{display:none!important}
+#menu.rk-title-v57:not(.rk-choose-region) > #rk-install-shortcut:active{
+ transform:translateX(-50%) scale(.97)!important;filter:brightness(1.1)
+}
+#menu #rk-install-shortcut:focus-visible{outline:2px solid #ffdc91;outline-offset:3px}
+#menu #rk-install-shortcut[hidden]{display:none!important}
+@media(max-width:700px){
+ #menu.rk-title-v57:not(.rk-choose-region) > #rk-install-shortcut:not([hidden]){
+  bottom:calc(43px + env(safe-area-inset-bottom,0px))!important;
+ }
+}
+@media(max-height:580px){
+ #menu.rk-title-v57:not(.rk-choose-region) > #rk-install-shortcut:not([hidden]){
+  bottom:calc(39px + env(safe-area-inset-bottom,0px))!important;
+  min-height:28px!important;padding:3px 10px!important;font-size:10px!important;
+ }
+ #menu #rk-install-shortcut img{width:16px;height:16px;flex-basis:16px}
+}
 #rk-install-dialog[hidden]{display:none!important}
 #rk-install-dialog{
  position:fixed;inset:0;z-index:20010;display:grid;place-items:center;
@@ -47,8 +68,6 @@
 #rk-install-dialog button[hidden]{display:none!important}
 #rk-install-dialog button:focus-visible{outline:2px solid #fff3c5;outline-offset:2px}
 @media(max-height:560px){
- #menu .rk-install-shortcut{min-height:33px!important;margin-top:1px!important;padding:3px 11px!important}
- #menu .rk-install-shortcut img{width:24px;height:24px;flex-basis:24px}
  #rk-install-dialog .rk-install-panel{gap:6px;padding:10px}
  #rk-install-dialog h2{font-size:17px}
 }
