@@ -148,8 +148,12 @@ jobs:
           du -sh engines/fiefdom/dist
       - name: Install Korean UI glyphs for pixel-verifiable Chrome screenshots
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq fonts-noto-cjk
+          # Hosted runner mirrors may stall on apt update; the visual-only font
+          # must not block real gameplay/browser regression checks indefinitely.
+          if ! fc-list :lang=ko -f '%{family}\n' | grep -Eq 'Noto Sans CJK|Nanum'; then
+            timeout 75s sudo apt-get install -y -qq fonts-noto-cjk || \
+              echo 'WARN: CJK font unavailable; continue browser functional QA'
+          fi
           fc-cache -f >/dev/null
       - name: Browser smoke (real menu, buildings, units and 600s gameplay)
         timeout-minutes: 12
