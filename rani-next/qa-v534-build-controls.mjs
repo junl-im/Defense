@@ -32,6 +32,12 @@ const mouse=async selector=>{
  await c.send('Input.dispatchMouseEvent',{type:'mousePressed',x:p.x,y:p.y,button:'left',buttons:1,clickCount:1},s);
  await c.send('Input.dispatchMouseEvent',{type:'mouseReleased',x:p.x,y:p.y,button:'left',buttons:0,clickCount:1},s);
 };
+const touch=async selector=>{
+ const p=await point(selector);
+ assert.ok(p.w>25&&p.h>25&&p.hit,selector+' blocked on phone: '+JSON.stringify(p));
+ await c.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:p.x,y:p.y,id:1}]},s);
+ await c.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]},s);
+};
 async function start(w,h,mobile){
  await c.send('Emulation.setDeviceMetricsOverride',{width:w,height:h,mobile,deviceScaleFactor:mobile?2:1},s);
  await c.send('Emulation.setTouchEmulationEnabled',{enabled:mobile,maxTouchPoints:mobile?3:1},s);
@@ -77,7 +83,7 @@ try{
   await start(w,h,true);
   await until("!!document.querySelector('#rk-touch-build')");
   assert.equal(await ev("document.querySelectorAll('#rk-actions').length"),0);
-  await ev("document.querySelector('#rk-touch-build').click()");
+  await touch('#rk-touch-build');
   await until("!!document.querySelector('#sheet-build.open')");
   assert.ok(await ev("!document.querySelector('#buildmenu').classList.contains('hidden')"),'phone sheet opened empty');
   await ev("document.querySelector('#buildmenu button[data-name]').click()");
@@ -85,16 +91,16 @@ try{
   assert.ok(await ev("!document.querySelector('#rk-placement-cancel').hidden"),'phone placement cannot be cancelled');
   const p=await point('#rk-placement-cancel');
   assert.ok(p.hit&&p.x>=0&&p.y>=0&&p.x<=w&&p.y<=h,'phone cancel button blocked '+JSON.stringify(p));
-  await ev("document.querySelector('#rk-placement-cancel').click()");
+  await touch('#rk-placement-cancel');
   assert.equal(await ev("window.__game.placement.selected"),null);
-  await ev("document.querySelector('#rk-touch-build').click()");
+  await touch('#rk-touch-build');
   await until("!!document.querySelector('#sheet-build.open')");
   await ev("document.querySelector('#buildmenu button[data-name]').click()");
   await until("!!window.__game.placement.selected");
-  await ev("document.querySelector('#rk-touch-build').click()");
+  await touch('#rk-touch-build');
   assert.equal(await ev("window.__game.placement.selected"),null);
   await until("!!document.querySelector('#sheet-build.open')");
-  await ev("document.querySelector('#rk-touch-build').click()");
+  await touch('#rk-touch-build');
   assert.ok(await ev("!document.querySelector('#sheet-build').classList.contains('open')"),'second phone Build click must close sheet');
   console.log('PASS v5.34 phone build sheet, in-game cancel, no sticky ghost',w,h);
  }
