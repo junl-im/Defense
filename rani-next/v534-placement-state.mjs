@@ -24,6 +24,16 @@ patch('src/main.ts',
           hud.openCategory(0);
         }else hud.toggleBuild();
       };`);
+// The legacy compact skin also gates #buildwrap on #ui.rani-build-open.
+// Synchronize it from the same HUD category state as the new visible dock.
+patch('src/ui/hud.ts',
+`    this.buildPanel.classList.toggle('hidden', gi === null);
+    const rkDock=document.querySelector<HTMLElement>('#rk-actions');`,
+`    this.buildPanel.classList.toggle('hidden', gi === null);
+    const rkShell=document.getElementById('ui');
+    rkShell?.classList.toggle('rani-build-open',gi!==null);
+    rkShell?.querySelector('#rani-build-toggle')?.setAttribute('aria-expanded',String(gi!==null));
+    const rkDock=document.querySelector<HTMLElement>('#rk-actions');`);
 // The hex 'Build' command was opening the obsolete hidden legacy trigger;
 // remove that double-toggle and open the real HUD on desktop and phone.
 patch('src/main.ts',
