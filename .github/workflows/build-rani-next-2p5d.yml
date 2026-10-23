@@ -98,6 +98,7 @@ jobs:
           node rani-next/v533-boot-guard.mjs engines/fiefdom
           node rani-next/v533-korean-voice.mjs engines/fiefdom
           node rani-next/v534-placement-state.mjs engines/fiefdom
+          node rani-next/v535-construction-catalog.mjs engines/fiefdom
           node rani-next/qa-v532-maps.mjs engines/fiefdom
           node rani-next/qa-v533-voice.mjs engines/fiefdom
           node rani-next/check.mjs engines/fiefdom
@@ -147,8 +148,12 @@ jobs:
           du -sh engines/fiefdom/dist
       - name: Install Korean UI glyphs for pixel-verifiable Chrome screenshots
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq fonts-noto-cjk
+          # Hosted runner mirrors may stall on apt update; the visual-only font
+          # must not block real gameplay/browser regression checks indefinitely.
+          if ! fc-list :lang=ko -f '%{family}\n' | grep -Eq 'Noto Sans CJK|Nanum'; then
+            timeout 75s sudo apt-get install -y -qq fonts-noto-cjk || \
+              echo 'WARN: CJK font unavailable; continue browser functional QA'
+          fi
           fc-cache -f >/dev/null
       - name: Browser smoke (real menu, buildings, units and 600s gameplay)
         timeout-minutes: 12
@@ -183,6 +188,7 @@ jobs:
           node ../../rani-next/qa-v531-hud-language-polish.mjs http://127.0.0.1:8931/ 9341
           node ../../rani-next/qa-v533-boot-guard.mjs http://127.0.0.1:8931/ 9341
           node ../../rani-next/qa-v534-build-controls.mjs http://127.0.0.1:8931/ 9341
+          node ../../rani-next/qa-v535-construction-catalog.mjs http://127.0.0.1:8931/ 9341
           node ../../rani-next/qa-quickstart.mjs http://127.0.0.1:8931/ 9341 qa/rani-v54-direct-world.png
           node ../../rani-next/qa-polish.mjs http://127.0.0.1:8931/ 9341
           node ../../rani-next/qa-v56-flow.mjs http://127.0.0.1:8931/ 9341
