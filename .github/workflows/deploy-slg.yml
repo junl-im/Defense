@@ -84,6 +84,7 @@ jobs:
           node rani-next/v529-visual-stages.mjs engines/fiefdom
           node rani-next/v530-ui-upgrade.mjs engines/fiefdom
           node rani-next/v531-native-ui-finalize.mjs engines/fiefdom
+          node rani-next/v531-hud-language-polish.mjs engines/fiefdom
           node rani-next/check.mjs engines/fiefdom
           node rani-next/verify-art.mjs engines/fiefdom
           python -m pip install Pillow==11.3.0
@@ -137,6 +138,7 @@ jobs:
           node rani-next/qa-v529-stages.mjs http://127.0.0.1:8940/Defense/ 9341
           node rani-next/qa-v530-ui-collision.mjs http://127.0.0.1:8940/Defense/ 9341
           node rani-next/qa-v531-final-audit.mjs http://127.0.0.1:8940/Defense/ 9341
+          node rani-next/qa-v531-hud-language-polish.mjs http://127.0.0.1:8940/Defense/ 9341
           node rani-next/qa-quickstart.mjs http://127.0.0.1:8940/Defense/ 9341 /tmp/rani-deploy-evidence/direct-world.png
           node rani-next/qa-polish.mjs http://127.0.0.1:8940/Defense/ 9341
           node rani-next/qa-v56-flow.mjs http://127.0.0.1:8940/Defense/ 9341
