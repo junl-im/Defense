@@ -1,18 +1,24 @@
-name: One-time cleanup obsolete Actions artifacts
+name: Maintain Actions artifact storage
 on:
   push:
+    branches: [main]
     paths:
       - .github/workflows/artifact-cleanup-20261021.yml
   workflow_dispatch:
+  schedule:
+    - cron: '20 2 * * *'
 permissions:
   actions: write
   contents: read
+concurrency:
+  group: artifact-maintenance
+  cancel-in-progress: false
 jobs:
   cleanup:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
-      - name: Remove obsolete artifact copies (keep newest 2 per family)
+      - name: Prune obsolete builds, keep live deployment and two recent copies
         uses: actions/github-script@v7
         with:
           script: |
@@ -25,13 +31,21 @@ jobs:
               .replace(/([._-])[a-f0-9]{9,40}(?=[._-]|$)/g, '$1')
               .replace(/[._-]+$/g,'');
             const seen = new Map();
-            const olderThan = Date.now() - 6*60*60*1000;
+            // The currently deployed GitHub Pages archive is managed by Pages
+            // and expires after a day; leave it entirely untouched.
+            // A full day's safety window protects fresh PRs and active runs.
+            const olderThan = Date.now() - 24*60*60*1000;
+            const legacyCutover = Date.parse('2026-10-20T00:00:00Z');
             let removed=0, freed=0, retained=0, errors=0;
             for (const a of artifacts) {
               const key=family(a.name);
               const rank=seen.get(key)||0;
               seen.set(key,rank+1);
-              if (rank<2 || Date.parse(a.created_at)>=olderThan) {retained++;continue;}
+              const created=Date.parse(a.created_at);
+              const keepCount=created<legacyCutover ? 1 : 2;
+              if (a.name==='github-pages' || rank<keepCount || created>=olderThan) {
+                retained++;continue;
+              }
               if (removed>=1200) {core.warning('Deletion cap reached (1200).');break;}
               try {
                 await github.rest.actions.deleteArtifact({owner,repo,artifact_id:a.id});
