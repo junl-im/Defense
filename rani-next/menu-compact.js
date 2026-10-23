@@ -22,13 +22,100 @@ function enhance(menu) {
  summary.textContent='다른 지역 선택';
  summary.setAttribute('aria-label','지도 선택 목록 펼치기');
  details.append(summary);grid.before(feature,details);details.append(grid);
+ // v5.32: five clear starting choices; the original twelve maps remain playable.
+ // Only the picker presentation changes. Native card selection and save IDs stay intact.
+ const nativeCards=[...grid.querySelectorAll(':scope > .map:not(.mine):not(.make)')];
+ const featured=new Set([0,2,3,8,11]); // royal coast, wadi, valley, saltpan, reeds
+ const more=document.createElement('button');
+ more.type='button';more.id='rk-region-all';more.className='rk-region-all';
+ more.setAttribute('aria-controls','rani-map-picker');
+ more.setAttribute('aria-expanded','false');
+ const countHidden=nativeCards.filter((_,i)=>!featured.has(i)).length;
+ more.textContent='다른 지역 '+countHidden+'곳 보기 ＋';
+ grid.before(more);
+ more.addEventListener('click',()=>{
+   const expanded=grid.classList.toggle('rk-region-expanded');
+   more.setAttribute('aria-expanded',String(expanded));
+   more.textContent=expanded?'추천 지역만 보기 −':'다른 지역 '+countHidden+'곳 보기 ＋';
+ });
+ nativeCards.forEach((card,i)=>{
+   if(!featured.has(i))card.classList.add('rk-region-extra');
+   const diff=card.querySelector('.diff');
+   if(diff)diff.textContent=({Gentle:'쉬움',Fair:'보통',Harsh:'어려움'})[diff.textContent.trim()]||diff.textContent;
+   const name=card.querySelector('h3');
+   if(name){
+     const hint=document.createElement('small');
+     hint.className='rk-region-kind';
+     hint.textContent=(i===2||i===3)?'처음 추천':i===0?'해안 추천':'';
+     if(hint.textContent)name.after(hint);
+   }
+   card.setAttribute('role','button');card.tabIndex=0;
+   card.setAttribute('aria-pressed',String(card.classList.contains('on')));
+   card.addEventListener('keydown',e=>{
+     if(e.key==='Enter'||e.key===' '){e.preventDefault();card.click();}
+   });
+ });
+ const status=document.createElement('div');
+ status.className='rk-region-explain';status.textContent='지역을 누른 뒤 영주와 시작 위치를 정하세요.';
+ more.before(status);
+ if(!document.getElementById('rk-v532-region-style')){
+   const style=document.createElement('style');style.id='rk-v532-region-style';
+   style.textContent=`
+#menu.rk-choose-region #rani-map-picker{width:min(740px,96vw)!important;margin-inline:auto!important}
+#menu.rk-choose-region #rani-map-picker .maps{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}
+#menu.rk-choose-region #rani-map-picker .map.rk-region-extra:not(.on){display:none!important}
+#menu.rk-choose-region #rani-map-picker .maps.rk-region-expanded .map.rk-region-extra{display:flex!important}
+#menu.rk-choose-region #rani-map-picker .map.rk-region-extra.on{display:flex!important}
+#menu.rk-choose-region #rani-map-picker .map:not(.make){box-sizing:border-box!important;
+ min-width:0!important;min-height:60px!important;padding:11px 12px!important;
+ display:flex!important;flex-direction:column!important;align-items:flex-start!important;
+ justify-content:center!important;gap:4px!important;cursor:pointer!important}
+#menu.rk-choose-region #rani-map-picker .map:not(.make) h3{font:800 13px/1.35 'Malgun Gothic',sans-serif!important;
+ margin:0!important;letter-spacing:0!important;color:#fff0cd!important}
+#menu.rk-choose-region #rani-map-picker .map:not(.make) .diff{position:static!important;
+ font:700 10px/1.2 'Malgun Gothic',sans-serif!important;opacity:.86!important}
+#menu.rk-choose-region #rani-map-picker .map:not(.make)>p,
+#menu.rk-choose-region #rani-map-picker .map .stat,
+#menu.rk-choose-region #rani-map-picker .map .foe{display:none!important}
+#menu.rk-choose-region #rani-map-picker .map.mine .own{display:flex!important}
+#menu.rk-choose-region .rk-region-kind{font:700 9px/1.2 'Malgun Gothic',sans-serif;
+ color:#ffe1a6;letter-spacing:0}
+#menu.rk-choose-region #rani-start-hero{box-sizing:border-box!important;display:flex!important;
+ width:min(740px,96vw)!important;min-height:86px!important;margin:0 auto 8px!important;
+ padding:9px 15px!important;align-items:center!important;gap:12px!important}
+#menu.rk-choose-region #rani-start-hero img{width:70px!important;height:64px!important;object-fit:contain!important}
+#menu.rk-choose-region #rani-start-hero p{font-size:11px!important;line-height:1.45!important;
+ margin:4px 0 0!important;word-break:keep-all!important}
+#menu.rk-choose-region #rani-start-hero strong{font-size:17px!important}
+#menu.rk-choose-region .rk-region-all{display:block;margin:6px auto 9px;min-height:38px;
+ border:1px solid #bc9c69;border-radius:9px;color:#ffe2af;background:#17394d;
+ font:700 12px 'Malgun Gothic',sans-serif;padding:8px 20px;cursor:pointer;touch-action:manipulation}
+#menu.rk-choose-region .rk-region-all:active{transform:scale(.98)}
+#menu.rk-choose-region .rk-region-explain{font:500 11px/1.5 'Malgun Gothic',sans-serif;
+ text-align:center;color:#e9d6af;margin:5px auto 0;word-break:keep-all}
+#menu.rk-choose-region .map:focus-visible{outline:2px solid #f8d18b!important;outline-offset:2px}
+@media(max-width:700px){
+ #menu.rk-choose-region #rani-map-picker .maps{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important}
+ #menu.rk-choose-region #rani-map-picker .map:not(.make){padding:8px 9px!important;min-height:53px!important}
+ #menu.rk-choose-region #rani-start-hero{display:flex!important;min-height:62px!important;
+ padding:8px 10px!important}
+ #menu.rk-choose-region #rani-start-hero img{display:none!important}
+ #menu.rk-choose-region #rani-start-hero strong{font-size:14px!important}
+ #menu.rk-choose-region #rani-start-hero p{font-size:10px!important}
+ #menu.rk-choose-region .rk-region-explain{font-size:10px}
+ #menu.rk-choose-region .rk-region-all{min-height:35px;font-size:11px;margin:4px auto 7px}
+}
+`;
+   document.head.appendChild(style);
+ }
  const update=()=>{
    const selected=grid.querySelector('.map.on')||grid.querySelector('.map');
    const name=selected?.querySelector('h3')?.textContent||'왕국';
    title.textContent=(name==='The Salt Coast'||name==='푸른 해안')?'푸른 해안':name;
    subtitle.textContent=(name==='The Salt Coast'||name==='푸른 해안')
-    ? '푸른 해안에 성을 세우고 자원과 병력을 길러 왕국을 발전시키세요.'
-    : selected?.querySelector('p')?.textContent||'지도에 건물을 배치하고 실제 생산과 군사를 발전시키세요.';
+    ? '바다와 초원이 만나는 땅. 영주성을 세우고 왕국을 발전시키세요.'
+    : selected?.querySelector('p')?.textContent||'건설할 지역과 시작 위치를 정하세요.';
+   nativeCards.forEach(card=>card.setAttribute('aria-pressed',String(card===selected)));
  };
  update();
  grid.addEventListener('click',e=>{
