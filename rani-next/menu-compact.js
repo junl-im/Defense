@@ -63,9 +63,9 @@ function enhance(menu) {
    style.textContent=`
 #menu.rk-choose-region #rani-map-picker{width:min(740px,96vw)!important;margin-inline:auto!important}
 #menu.rk-choose-region #rani-map-picker .maps{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}
-#menu.rk-choose-region .map.rk-region-extra:not(.rk-region-force):not(.on){display:none!important}
-#menu.rk-choose-region .maps.rk-region-expanded .map.rk-region-extra{display:flex!important}
-#menu.rk-choose-region .map.rk-region-extra.on{display:flex!important}
+#menu.rk-choose-region #rani-map-picker .map.rk-region-extra:not(.on){display:none!important}
+#menu.rk-choose-region #rani-map-picker .maps.rk-region-expanded .map.rk-region-extra{display:flex!important}
+#menu.rk-choose-region #rani-map-picker .map.rk-region-extra.on{display:flex!important}
 #menu.rk-choose-region #rani-map-picker .map:not(.make){box-sizing:border-box!important;
  min-width:0!important;min-height:60px!important;padding:11px 12px!important;
  display:flex!important;flex-direction:column!important;align-items:flex-start!important;
