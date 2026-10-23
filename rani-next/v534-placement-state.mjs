@@ -37,7 +37,7 @@ patch('src/main.ts',
     },`,
 `    build(){
       if(placement.selected){placement.cancel();refreshOverlay(true);}
-      if(document.getElementById('buildmenu')?.classList.contains('hidden'))hud.openCategory(0);
+      hud.openCategory(0);
       if(document.documentElement.classList.contains('phone')
           &&hud.openDrawerName()!=='build')hud.openDrawer('build');
     },`);
