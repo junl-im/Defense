@@ -9,7 +9,9 @@ permissions:
 jobs:
   korean-game:
     runs-on: ubuntu-latest
-    timeout-minutes: 14
+    # The full 29-scenario legacy Chromium suite exceeded 14m on hosted runners.
+    # Keep every regression; extend the gate rather than skipping art/save QA.
+    timeout-minutes: 24
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
