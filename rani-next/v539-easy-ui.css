@@ -9,3 +9,17 @@
 #rk-quality-mode{pointer-events:auto;appearance:none;min-height:36px;padding:6px 12px;border:1px solid #b69a66;border-radius:8px;cursor:pointer;touch-action:manipulation;background:linear-gradient(145deg,#284b5d,#132c40);color:#f8e5bd;font:800 12px/1.2 'Malgun Gothic','Apple SD Gothic Neo',sans-serif}
 @media(max-width:375px){#rk-easy-hint{font-size:10px}#rk-easy-toggle{padding:6px 8px;font-size:10.5px}}
 @media(max-height:470px){html.phone #rk-build-guide{padding:3px 5px!important}html.phone #rk-easy-toggle{min-height:30px}}
+
+/* Native compact landscape hides #controls; quality stays in Info sheet. */
+html.phone #sheet-info #rk-quality-row.rk-phone-quality{
+ display:flex!important;position:sticky;top:0;z-index:2;
+ flex:0 0 auto;width:100%;box-sizing:border-box;
+ background:linear-gradient(155deg,#244454,#112a3b);
+ border:1px solid #b39461;border-radius:8px;margin:0 0 8px;
+ padding:7px 10px;pointer-events:auto;
+}
+@media(max-height:470px){
+ html.phone #sheet-info #rk-quality-row.rk-phone-quality{
+  padding:4px 9px;margin-bottom:4px;
+ }
+}
