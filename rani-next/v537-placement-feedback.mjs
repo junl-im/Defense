@@ -24,11 +24,12 @@ edit('src/main.ts',
 // The frame also uses mouse coordinates for ghost/cost preview. Touch input
 // must update these on press, rather than leaving the cursor on an old tile.
 edit('src/main.ts',
-`  canvas.addEventListener('pointerdown', e => {
-    // Left button only.`,
-`  canvas.addEventListener('pointerdown', e => {
+`  const canvas = renderer.domElement;`,
+`  const canvas = renderer.domElement;
+  // Record touch coordinates before the native release/preview handlers run.
+  canvas.addEventListener('pointerdown', e => {
     if(e.pointerType==='touch'){mouseX=e.clientX;mouseY=e.clientY;}
-    // Left button only.`);
+  },{capture:true,passive:true});`);
 // One fixed, noninteractive placement banner avoids multiple floating tips.
 edit('src/main.ts',
 `  rkCancelPlacement.addEventListener('click',()=>{
