@@ -82,7 +82,7 @@ export function installRaniEasyUi(renderer:WebGLRenderer):void{
         if(shouldHide)hidden++;else shown++;
       }
     }
-    hint.textContent=easy?'기본 건물부터 선택 → 지도에 배치':'전체 건물 보기 → 지도에 배치';
+    hint.textContent=easy?'종류 선택 → 기본 건물 → 지도에 배치':'종류 선택 → 전체 건물 → 지도에 배치';
     button.textContent=easy?'전체 보기':'간편 보기';
     button.setAttribute('aria-pressed',String(!easy));
     button.dataset.rkEasy=String(easy);
