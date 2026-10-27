@@ -8,7 +8,7 @@ const mod=path.join(root,'src/ui/raniEasyUi.ts');
 assert.ok(!fs.existsSync(mod),'duplicate v5.39');
 fs.copyFileSync(path.join(import.meta.dirname,'v539-easy-ui.ts'),mod);
 const main=path.join(root,'src/main.ts'),src=fs.readFileSync(main,'utf8');
-const imp="import { raniPixelRatio, installRaniEasyUi } from './ui/raniEasyUi';\n";
+const imp="import { raniPixelRatio, installRaniEasyUi, raniMountPhoneQuality } from './ui/raniEasyUi';\n";
 assert.ok(!src.includes(imp),'duplicate v5.39 import');fs.writeFileSync(main,imp+src);
 patch('src/main.ts',
 `  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));`,
@@ -17,5 +17,11 @@ patch('src/main.ts',
 `  const hud = new Hud(state, placement);`,
 `  const hud = new Hud(state, placement);
   installRaniEasyUi(renderer);`);
+patch('src/main.ts',
+`    if (phone) hud.enablePhoneLayout();`,
+`    if (phone) {
+      hud.enablePhoneLayout();
+      raniMountPhoneQuality(); // independent of collapsible #controls
+    }`);
 fs.appendFileSync(path.join(root,'public/rani/skin.css'),'\n'+fs.readFileSync(path.join(import.meta.dirname,'v539-easy-ui.css'),'utf8'));
 console.log('PASS v5.39 easy catalog, selectable render pixel ratio and local prefs');
