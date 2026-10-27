@@ -108,3 +108,14 @@ export function installRaniEasyUi(renderer:WebGLRenderer):void{
   onActivate(button,()=>{easy=!easy;write(EASY_KEY,easy?'easy':'all');apply();});
   apply();
 }
+
+/** Keep video quality visible even where legacy landscape skins collapse
+ * #controls. HUD.enablePhoneLayout() creates #sheet-info before this runs. */
+export function raniMountPhoneQuality():void{
+  const host=document.querySelector<HTMLElement>('#sheet-info .sheet-body');
+  const row=document.getElementById('rk-quality-row');
+  if(host&&row){
+    host.insertBefore(row,host.firstChild);
+    row.classList.add('rk-phone-quality');
+  }
+}
