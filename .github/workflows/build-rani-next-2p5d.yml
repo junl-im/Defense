@@ -177,6 +177,7 @@ jobs:
             sleep 1
           done
           node ../../rani-next/qa-ui.mjs http://127.0.0.1:8931/ 9341 qa/rani-next-royal-ux.png
+          node ../../rani-next/qa-v539-easy-mode.mjs http://127.0.0.1:8931/ 9341
           node ../../rani-next/qa-v521-visual.mjs http://127.0.0.1:8931/ 9341
           node ../../rani-next/qa-v522-growth.mjs http://127.0.0.1:8931/ 9341
           node ../../rani-next/qa-v523-korean-dock.mjs http://127.0.0.1:8931/ 9341
@@ -194,7 +195,6 @@ jobs:
           node ../../rani-next/qa-v535-construction-catalog.mjs http://127.0.0.1:8931/ 9341
           node ../../rani-next/qa-v537-placement-feedback.mjs http://127.0.0.1:8931/ 9341
           node ../../rani-next/qa-v538-stable-ghost.mjs http://127.0.0.1:8931/ 9341
-          node ../../rani-next/qa-v539-easy-mode.mjs http://127.0.0.1:8931/ 9341
           node ../../rani-next/qa-quickstart.mjs http://127.0.0.1:8931/ 9341 qa/rani-v54-direct-world.png
           node ../../rani-next/qa-polish.mjs http://127.0.0.1:8931/ 9341
           node ../../rani-next/qa-v56-flow.mjs http://127.0.0.1:8931/ 9341
