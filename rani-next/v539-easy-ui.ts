@@ -28,17 +28,30 @@ export function raniPixelRatio(mode:RaniQuality=currentQuality()):number {
 // so a single tap never cycles two settings at once.
 // A touch may emit pointer events AND a much later synthesized click.
 // Act on its first down event, then discard that click without a timeout.
+// Use one native touchend path for phones. preventDefault suppresses the
+// browser's delayed synthetic click; mouse/keyboard remain normal click.
 function onActivate(button:HTMLButtonElement, action:()=>void):void{
-  let suppressTouchClick=false;
-  button.addEventListener('pointerdown',e=>{
-    if(e.pointerType!=='touch'){suppressTouchClick=false;return;}
+  let didTouch=false;
+  let initial:{x:number;y:number}|null=null;
+  button.addEventListener('touchstart',e=>{
+    const t=e.touches[0];
+    initial=t?{x:t.clientX,y:t.clientY}:null;
+  },{passive:true});
+  button.addEventListener('touchend',e=>{
+    if(!initial)return;
+    const t=e.changedTouches[0],start=initial;
+    initial=null;
+    didTouch=true;
     e.preventDefault();e.stopPropagation();
-    suppressTouchClick=true;
-    action();
+    if(t&&Math.hypot(t.clientX-start.x,t.clientY-start.y)<=16)action();
+  },{passive:false});
+  button.addEventListener('touchcancel',()=>{initial=null;});
+  button.addEventListener('pointerdown',e=>{
+    if(e.pointerType!=='touch')didTouch=false;
   });
   button.addEventListener('click',e=>{
-    if(e.detail===0){suppressTouchClick=false;action();return;}
-    if(suppressTouchClick){suppressTouchClick=false;return;}
+    if(e.detail===0){didTouch=false;action();return;}
+    if(didTouch){didTouch=false;return;}
     action();
   });
 }
