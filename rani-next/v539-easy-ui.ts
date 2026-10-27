@@ -23,6 +23,22 @@ export function raniPixelRatio(mode:RaniQuality=currentQuality()):number {
     ((navigator.maxTouchPoints||0)>0 && Math.min(innerWidth,innerHeight)<=650);
   return mode==='saving'?1:mode==='sharp'?native:Math.min(native,mobile?1.25:1.5);
 }
+// The native phone HUD uses pointerup, not click: some touch UAs suppress
+// click after a scrollable bottom-sheet gesture. De-dupe a synthetic click
+// so a single tap never cycles two settings at once.
+function onActivate(button:HTMLButtonElement, action:()=>void):void{
+  let lastTouch=-10000;
+  button.addEventListener('pointerup',e=>{
+    if(e.pointerType!=='touch')return;
+    e.preventDefault();e.stopPropagation();
+    lastTouch=performance.now();
+    action();
+  });
+  button.addEventListener('click',()=>{
+    if(performance.now()-lastTouch>650)action();
+  });
+}
+
 const ESSENTIAL = new Set([
   // One screen of real, useful buildings per native category; never a fake build.
   'stockpile','granary','wall','gatehouse','barracks',
@@ -51,7 +67,7 @@ export function installRaniEasyUi(renderer:WebGLRenderer):void{
       button.dataset.rkDpr=ratio.toFixed(2);
       button.setAttribute('aria-label','현재 '+button.textContent+', 누르면 다음 화질');
     };
-    button.addEventListener('click',()=>{
+    onActivate(button,()=>{
       mode=ALLOWED[(ALLOWED.indexOf(mode)+1)%ALLOWED.length];
       write(QUALITY_KEY,mode);render();
     });
@@ -89,6 +105,6 @@ export function installRaniEasyUi(renderer:WebGLRenderer):void{
     button.title=easy?`숨겨진 고급 건물 ${hidden}개 보기`:'초반에 필요한 건물만 보기';
     guide.dataset.rkEasy=String(easy);
   };
-  button.addEventListener('click',()=>{easy=!easy;write(EASY_KEY,easy?'easy':'all');apply();});
+  onActivate(button,()=>{easy=!easy;write(EASY_KEY,easy?'easy':'all');apply();});
   apply();
 }
