@@ -26,16 +26,20 @@ export function raniPixelRatio(mode:RaniQuality=currentQuality()):number {
 // The native phone HUD uses pointerup, not click: some touch UAs suppress
 // click after a scrollable bottom-sheet gesture. De-dupe a synthetic click
 // so a single tap never cycles two settings at once.
+// A touch may emit pointer events AND a much later synthesized click.
+// Act on its first down event, then discard that click without a timeout.
 function onActivate(button:HTMLButtonElement, action:()=>void):void{
-  let lastTouch=-10000;
-  button.addEventListener('pointerup',e=>{
-    if(e.pointerType!=='touch')return;
+  let suppressTouchClick=false;
+  button.addEventListener('pointerdown',e=>{
+    if(e.pointerType!=='touch'){suppressTouchClick=false;return;}
     e.preventDefault();e.stopPropagation();
-    lastTouch=performance.now();
+    suppressTouchClick=true;
     action();
   });
-  button.addEventListener('click',()=>{
-    if(performance.now()-lastTouch>650)action();
+  button.addEventListener('click',e=>{
+    if(e.detail===0){suppressTouchClick=false;action();return;}
+    if(suppressTouchClick){suppressTouchClick=false;return;}
+    action();
   });
 }
 
