@@ -8,7 +8,8 @@ permissions:
   contents: read
 jobs:
   korean-game:
-    runs-on: ubuntu-latest
+    # Playwright 1.55 cannot install Chromium dependencies on Ubuntu 26.04.
+    runs-on: ubuntu-24.04
     # The full 29-scenario legacy Chromium suite exceeded 14m on hosted runners.
     # Keep every regression; extend the gate rather than skipping art/save QA.
     timeout-minutes: 24
