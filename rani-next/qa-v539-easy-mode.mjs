@@ -62,8 +62,10 @@ try{
   assert.equal((await stats()).visible,a.visible,'simple view did not restore');
   // These settings are in the info sheet on phones, not permanent map clutter.
   if(mobile){
-   await clickTouch('#rk-touch-info');
+   await clickTouch('#pad button:nth-child(4)');
    await until("!!document.querySelector('#sheet-info.open')");
+   await ev("document.querySelector('#rk-quality-mode').scrollIntoView({block:'center'})");
+   await nap(180);
    await clickTouch('#rk-quality-mode');
   }else await ev("document.querySelector('#rk-quality-mode').click()");
   const save=await stats();
