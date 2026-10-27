@@ -68,11 +68,11 @@ export function installRaniEasyUi(renderer:WebGLRenderer):void{
   button.id='rk-easy-toggle';button.type='button';
   button.title='자주 쓰는 건물만 보거나 전체 건물 목록을 확인합니다.';
   guide.append(hint,button);
-  const groups=[...menu.querySelectorAll<HTMLElement>('.items[data-group]')];
+  const groups=Array.from(menu.querySelectorAll<HTMLElement>('.items[data-group]'));
   const apply=()=>{
     let shown=0,hidden=0;
     for(const group of groups){
-      const all=[...group.querySelectorAll<HTMLButtonElement>('button[data-name]')];
+      const all=Array.from(group.querySelectorAll<HTMLButtonElement>('button[data-name]'));
       const picks=all.filter(b=>ESSENTIAL.has(b.dataset.name||''));
       // Unknown/new categories must never become empty in easy mode.
       const selected=picks.length?picks:all.slice(0,4);
