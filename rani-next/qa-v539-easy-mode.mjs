@@ -50,6 +50,9 @@ try{
   if(mobile){
    await clickTouch('#rk-touch-build');
    await until("!!document.querySelector('#sheet-build.open')");
+   // Wait for the 240ms opening animation: a moving button under a pressed
+   // finger can legitimately trigger pointercancel instead of a click.
+   await nap(320);
   }else{
    await ev("document.querySelector('#rk-build-toggle').click()");
    await until("document.querySelector('#rk-actions').dataset.open==='true'");
@@ -75,6 +78,7 @@ try{
   if(mobile){
    await clickTouch('#pad button:nth-child(4)');
    await until("!!document.querySelector('#sheet-info.open')");
+   await nap(320);
    await ev("document.querySelector('#rk-quality-mode').scrollIntoView({block:'center'})");
    await nap(180);
    await clickTouch('#rk-quality-mode');
