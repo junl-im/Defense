@@ -30,29 +30,21 @@ export function raniPixelRatio(mode:RaniQuality=currentQuality()):number {
 // Act on its first down event, then discard that click without a timeout.
 // Use one native touchend path for phones. preventDefault suppresses the
 // browser's delayed synthetic click; mouse/keyboard remain normal click.
-function onActivate(button:HTMLButtonElement, action:()=>void):void{
-  let didTouch=false;
-  let initial:{x:number;y:number}|null=null;
-  button.addEventListener('touchstart',e=>{
-    const t=e.touches[0];
-    initial=t?{x:t.clientX,y:t.clientY}:null;
-  },{passive:true});
-  button.addEventListener('touchend',e=>{
-    if(!initial)return;
-    const t=e.changedTouches[0],start=initial;
-    initial=null;
-    didTouch=true;
+// One browser-native click = one action on mouse, touch or keyboard.
+// Combining touchend/pointerup/click caused duplicated or swallowed taps
+// depending on PWA base path and the browser's synthesized click timing.
+// Use the same pointerup rule as the game's existing mobile thumb bar.
+// Chrome can suppress the synthetic click after a touch within scrollable
+// sheets. A keyboard activation fires click(detail=0) without pointerup.
+// This avoids double toggles without time windows or touchend heuristics.
+function onActivate(button:HTMLButtonElement,action:()=>void):void{
+  button.addEventListener('pointerup',e=>{
+    if(e.button!==0)return;
     e.preventDefault();e.stopPropagation();
-    if(t&&Math.hypot(t.clientX-start.x,t.clientY-start.y)<=16)action();
-  },{passive:false});
-  button.addEventListener('touchcancel',()=>{initial=null;});
-  button.addEventListener('pointerdown',e=>{
-    if(e.pointerType!=='touch')didTouch=false;
+    action();
   });
   button.addEventListener('click',e=>{
-    if(e.detail===0){didTouch=false;action();return;}
-    if(didTouch){didTouch=false;return;}
-    action();
+    if(e.detail===0)action();
   });
 }
 

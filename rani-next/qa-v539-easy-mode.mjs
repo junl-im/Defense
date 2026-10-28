@@ -15,12 +15,19 @@ const ev=async expression=>{
 };
 const until=async expression=>{
  for(let i=0;i<345;i++){if(await ev(expression))return;await nap(160)}
- throw Error('timeout '+expression);
+ const diagnostic=await ev("(()=>{const b=document.querySelector('#rk-easy-toggle'),q=document.querySelector('#rk-quality-mode');return {probe:window.__rkTouchProbe||[],easy:b?.dataset.rkEasy,quality:q?.dataset.rkQuality,open:!!document.querySelector('#sheet-build.open'),info:!!document.querySelector('#sheet-info.open')};})()");
+ throw Error('timeout '+expression+' diagnostic='+JSON.stringify(diagnostic));
 };
 const clickTouch=async selector=>{
  const p=await ev(`(()=>{const e=document.querySelector(${JSON.stringify(selector)}),r=e.getBoundingClientRect(),x=(r.left+r.right)/2,y=(r.top+r.bottom)/2;const hit=document.elementFromPoint(x,y);return {x,y,w:r.width,h:r.height,hit:hit===e||e.contains(hit)}})()`);
  assert.ok(p.w>20&&p.h>25&&p.hit,'touch blocked '+selector+' '+JSON.stringify(p));
+ if(selector==='#rk-easy-toggle'||selector==='#rk-quality-mode'){
+   await ev(`(()=>{window.__rkTouchProbe=[];const el=document.querySelector(${JSON.stringify(selector)});for(const type of ['pointerdown','pointerup','pointercancel','touchstart','touchend','touchcancel','click']){el.addEventListener(type,e=>{window.__rkTouchProbe.push({type,pointer:e.pointerType||'',detail:e.detail||0,defaultPrevented:e.defaultPrevented});},{capture:true});}})()`);
+ }
  await c.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:p.x,y:p.y,id:1}]},s);
+ // A physical tap has a press interval; same-tick CDP touchstart/end can be
+ // discarded by Chromium while a scrollable phone sheet settles.
+ await nap(80);
  await c.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]},s);
 };
 async function start(w,h,mobile){
@@ -43,6 +50,9 @@ try{
   if(mobile){
    await clickTouch('#rk-touch-build');
    await until("!!document.querySelector('#sheet-build.open')");
+   // Wait for the 240ms opening animation: a moving button under a pressed
+   // finger can legitimately trigger pointercancel instead of a click.
+   await nap(320);
   }else{
    await ev("document.querySelector('#rk-build-toggle').click()");
    await until("document.querySelector('#rk-actions').dataset.open==='true'");
@@ -55,22 +65,26 @@ try{
   if(mobile)await clickTouch('#rk-easy-toggle');
   else await ev("document.querySelector('#rk-easy-toggle').click()");
   await until("document.querySelector('#rk-easy-toggle')?.dataset.rkEasy==='false'");
+  if(mobile){await nap(320);assert.equal(await ev("document.querySelector('#rk-easy-toggle').dataset.rkEasy"),'false','one tap fired twice');}
   const b=await stats();
   assert.equal(b.visible,b.all,'all buildings not accessible '+JSON.stringify(b));
   assert.equal(b.easy,'false');
   if(mobile)await clickTouch('#rk-easy-toggle');
   else await ev("document.querySelector('#rk-easy-toggle').click()");
   await until("document.querySelector('#rk-easy-toggle')?.dataset.rkEasy==='true'");
+  if(mobile){await nap(320);assert.equal(await ev("document.querySelector('#rk-easy-toggle').dataset.rkEasy"),'true','second tap fired twice');}
   assert.equal((await stats()).visible,a.visible,'simple view did not restore');
   // These settings are in the info sheet on phones, not permanent map clutter.
   if(mobile){
    await clickTouch('#pad button:nth-child(4)');
    await until("!!document.querySelector('#sheet-info.open')");
+   await nap(320);
    await ev("document.querySelector('#rk-quality-mode').scrollIntoView({block:'center'})");
    await nap(180);
    await clickTouch('#rk-quality-mode');
   }else await ev("document.querySelector('#rk-quality-mode').click()");
   await until("document.querySelector('#rk-quality-mode')?.dataset.rkQuality==='saving'");
+  if(mobile){await nap(320);assert.equal(await ev("document.querySelector('#rk-quality-mode').dataset.rkQuality"),'saving','quality touch fired twice');}
   const save=await stats();
   assert.equal(save.q,'saving');
   assert.ok(Math.abs(save.dpr-1)<0.035,'saving must reduce render size '+JSON.stringify(save));
