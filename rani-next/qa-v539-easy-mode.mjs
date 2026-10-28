@@ -55,12 +55,14 @@ try{
   if(mobile)await clickTouch('#rk-easy-toggle');
   else await ev("document.querySelector('#rk-easy-toggle').click()");
   await until("document.querySelector('#rk-easy-toggle')?.dataset.rkEasy==='false'");
+  if(mobile){await nap(320);assert.equal(await ev("document.querySelector('#rk-easy-toggle').dataset.rkEasy"),'false','one tap fired twice');}
   const b=await stats();
   assert.equal(b.visible,b.all,'all buildings not accessible '+JSON.stringify(b));
   assert.equal(b.easy,'false');
   if(mobile)await clickTouch('#rk-easy-toggle');
   else await ev("document.querySelector('#rk-easy-toggle').click()");
   await until("document.querySelector('#rk-easy-toggle')?.dataset.rkEasy==='true'");
+  if(mobile){await nap(320);assert.equal(await ev("document.querySelector('#rk-easy-toggle').dataset.rkEasy"),'true','second tap fired twice');}
   assert.equal((await stats()).visible,a.visible,'simple view did not restore');
   // These settings are in the info sheet on phones, not permanent map clutter.
   if(mobile){
@@ -71,6 +73,7 @@ try{
    await clickTouch('#rk-quality-mode');
   }else await ev("document.querySelector('#rk-quality-mode').click()");
   await until("document.querySelector('#rk-quality-mode')?.dataset.rkQuality==='saving'");
+  if(mobile){await nap(320);assert.equal(await ev("document.querySelector('#rk-quality-mode').dataset.rkQuality"),'saving','quality touch fired twice');}
   const save=await stats();
   assert.equal(save.q,'saving');
   assert.ok(Math.abs(save.dpr-1)<0.035,'saving must reduce render size '+JSON.stringify(save));
