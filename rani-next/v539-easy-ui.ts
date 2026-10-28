@@ -33,8 +33,19 @@ export function raniPixelRatio(mode:RaniQuality=currentQuality()):number {
 // One browser-native click = one action on mouse, touch or keyboard.
 // Combining touchend/pointerup/click caused duplicated or swallowed taps
 // depending on PWA base path and the browser's synthesized click timing.
+// Use the same pointerup rule as the game's existing mobile thumb bar.
+// Chrome can suppress the synthetic click after a touch within scrollable
+// sheets. A keyboard activation fires click(detail=0) without pointerup.
+// This avoids double toggles without time windows or touchend heuristics.
 function onActivate(button:HTMLButtonElement,action:()=>void):void{
-  button.addEventListener('click',action);
+  button.addEventListener('pointerup',e=>{
+    if(e.button!==0)return;
+    e.preventDefault();e.stopPropagation();
+    action();
+  });
+  button.addEventListener('click',e=>{
+    if(e.detail===0)action();
+  });
 }
 
 const ESSENTIAL = new Set([
