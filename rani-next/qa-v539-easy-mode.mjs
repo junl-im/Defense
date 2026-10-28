@@ -21,6 +21,9 @@ const clickTouch=async selector=>{
  const p=await ev(`(()=>{const e=document.querySelector(${JSON.stringify(selector)}),r=e.getBoundingClientRect(),x=(r.left+r.right)/2,y=(r.top+r.bottom)/2;const hit=document.elementFromPoint(x,y);return {x,y,w:r.width,h:r.height,hit:hit===e||e.contains(hit)}})()`);
  assert.ok(p.w>20&&p.h>25&&p.hit,'touch blocked '+selector+' '+JSON.stringify(p));
  await c.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:p.x,y:p.y,id:1}]},s);
+ // A physical tap has a press interval; same-tick CDP touchstart/end can be
+ // discarded by Chromium while a scrollable phone sheet settles.
+ await nap(80);
  await c.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]},s);
 };
 async function start(w,h,mobile){
