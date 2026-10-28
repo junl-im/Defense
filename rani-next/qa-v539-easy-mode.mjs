@@ -54,11 +54,13 @@ try{
   if(mobile)assert.ok(Math.abs(a.dpr-1.25)<0.04,'mobile default still at full DPR: '+JSON.stringify(a));
   if(mobile)await clickTouch('#rk-easy-toggle');
   else await ev("document.querySelector('#rk-easy-toggle').click()");
+  await until("document.querySelector('#rk-easy-toggle')?.dataset.rkEasy==='false'");
   const b=await stats();
   assert.equal(b.visible,b.all,'all buildings not accessible '+JSON.stringify(b));
   assert.equal(b.easy,'false');
   if(mobile)await clickTouch('#rk-easy-toggle');
   else await ev("document.querySelector('#rk-easy-toggle').click()");
+  await until("document.querySelector('#rk-easy-toggle')?.dataset.rkEasy==='true'");
   assert.equal((await stats()).visible,a.visible,'simple view did not restore');
   // These settings are in the info sheet on phones, not permanent map clutter.
   if(mobile){
@@ -68,16 +70,19 @@ try{
    await nap(180);
    await clickTouch('#rk-quality-mode');
   }else await ev("document.querySelector('#rk-quality-mode').click()");
+  await until("document.querySelector('#rk-quality-mode')?.dataset.rkQuality==='saving'");
   const save=await stats();
   assert.equal(save.q,'saving');
   assert.ok(Math.abs(save.dpr-1)<0.035,'saving must reduce render size '+JSON.stringify(save));
   if(mobile)await clickTouch('#rk-quality-mode');
   else await ev("document.querySelector('#rk-quality-mode').click()");
+  await until("document.querySelector('#rk-quality-mode')?.dataset.rkQuality==='sharp'");
   const sharp=await stats();
   assert.equal(sharp.q,'sharp');
   if(mobile)assert.ok(Math.abs(sharp.dpr-2)<0.06,'sharp quality must be restorable '+JSON.stringify(sharp));
   if(mobile)await clickTouch('#rk-quality-mode');
   else await ev("document.querySelector('#rk-quality-mode').click()");
+  await until("document.querySelector('#rk-quality-mode')?.dataset.rkQuality==='balanced'");
   assert.equal((await stats()).q,'balanced');
   assert.equal(await ev("localStorage.getItem('rani.quality.v1')"),'balanced');
   assert.equal(await ev("localStorage.getItem('rani.easy-build.v1')"),'easy');
