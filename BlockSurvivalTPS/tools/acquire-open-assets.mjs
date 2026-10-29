@@ -11,12 +11,11 @@ import { fileURLToPath } from 'node:url';
 
 const base=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const registry=JSON.parse(fs.readFileSync(path.join(base,'research','source-lock.json'),'utf8'));
-const ids=new Set();
 function ensure(ok,msg){if(!ok)throw Error(msg);}
 function safeRelative(p){
  ensure(typeof p==='string' && p.length>0 && !p.startsWith('/') && !p.includes('\\') &&
   p.split('/').every(s=>s && s!=='.' && s!=='..'),'Unsafe source path: '+p);
- ensure(!/\\.svg$/i.test(p),'No SVG in the project');
+ ensure(!/\.svg$/i.test(p),'No SVG in the project');
  return p;
 }
 function sha256(file){return crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');}
@@ -26,21 +25,22 @@ function shell(args,cwd){
  return (r.stdout||'').trim();
 }
 export function validateRegistry(data=registry){
+ const ids=new Set();
  ensure(data.schema==='block-survival-tps-asset-intake/v1','Wrong registry schema');
  ensure(data.protected_archive==='archive/rani-kingdom-v539-20261029','Rani archive must remain protected');
  ensure(Array.isArray(data.packs)&&data.packs.length===4,'Expected 4 audited source repositories');
  let count=0;
  for(const pack of data.packs){
   ensure(!ids.has(pack.id),'Duplicate pack '+pack.id);ids.add(pack.id);
-  ensure(/^KayKit-Game-Assets\\/[A-Za-z0-9-]+$/.test(pack.repository),'Unapproved source '+pack.repository);
+  ensure(/^KayKit-Game-Assets\/[A-Za-z0-9-]+$/.test(pack.repository),'Unapproved source '+pack.repository);
   ensure(/^[a-f0-9]{40}$/.test(pack.commit),'Source must have a fixed 40-character commit');
   ensure(pack.license==='CC0-1.0' && pack.licenseFile==='LICENSE.txt','Non-CC0 pack rejected');
-  safeRelative(pack.prefix);
+  safeRelative(pack.prefix.replace(/\/$/,''));
   ensure(Array.isArray(pack.files)&&pack.files.length,'Empty source '+pack.id);
   const uniq=new Set();
   for(const file of pack.files){
    safeRelative(file);
-   ensure(/\\.(glb|gltf|bin|png|webp)$/i.test(file),'Unapproved asset type '+file);
+   ensure(/\.(glb|gltf|bin|png|webp)$/i.test(file),'Unapproved asset type '+file);
    ensure(!uniq.has(file),'Duplicate file '+file);uniq.add(file);count++;
   }
   for(const file of pack.files.filter(f=>f.endsWith('.gltf'))){
@@ -85,7 +85,7 @@ function acquire(dest){
    }
    console.log('OK '+pack.id+': '+pack.files.length+' selected files at '+actual.slice(0,12));
   }
-  fs.writeFileSync(path.join(dest,'PROVENANCE.json'),JSON.stringify(report,null,2)+'\\n');
+  fs.writeFileSync(path.join(dest,'PROVENANCE.json'),JSON.stringify(report,null,2)+'\n');
   console.log('INTAKE_OK '+report.files.length+' files; verified CC0; no SVG; no game source changes');
  }finally{fs.rmSync(temp,{recursive:true,force:true});}
 }
