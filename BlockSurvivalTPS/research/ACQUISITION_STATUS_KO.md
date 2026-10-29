@@ -23,6 +23,16 @@
 - [자산 전용 CI #40851948846](https://github.com/junl-im/Defense/actions/runs/40851948846) 성공.
 - `tps-next/`는 **원본 아카이브·출처 관리만 하는 격리된 자료실**이며 앞으로 플레이 코드를 두지 않는다. 전투/월드/조작 코드의 단일 작업 루트는 `BlockSurvivalTPS/`. 최종 채택분만 이관해 중복 런타임 파일을 만들지 않는다.
 
+### C. 추가 확보 — 5번째 KayKit City Builder Bits 7개 도시 모델
+
+- 입수/정적 검사: [Actions #40864857212](https://github.com/junl-im/Defense/actions/runs/40864857212) — **success**. 원본 Rani Kingdom 보존, 고정 SHA, 원 라이선스, SVG 금지 검사 통과.
+- 새 원본: [KayKit-City-Builder-Bits-1.0](https://github.com/KayKit-Game-Assets/KayKit-City-Builder-Bits-1.0) `63976910ca04d16f0fc531b9c614244be8128713`, 저장소 `LICENSE.txt` CC0 직접 확인.
+- 5개 공식 저장소·총 34개 선별 파일을 자동 취득하는 `source-lock.json`과 테스트를 적용. 이번 추가분은 7개 glTF 모델 + 종속 BIN + 텍스처: `building_A`, `car_police`, `road_straight`, `streetlight`, `dumpster`, `trash_A`, `trafficlight_A`.
+- GitHub [검증 아티팩트 #12892738994](https://github.com/junl-im/Defense/actions/runs/40864857212/artifacts/12892738994): 4,620,133 bytes, GitHub 표기 SHA256 `4f538cc0077e74a36e62ef8ca8279c636a3ee2492933e9929e90c1d2ac0c4fd2`. **GitHub 보존 기한 2026-11-01 11:22 UTC**.
+- [구글 드라이브 5팩 ZIP 영구 보관본](https://drive.google.com/file/d/1qDYe7rfrd97hQAivTX7pbeQLKpPuR5m4/view): 크기 **4,620,133 bytes**, 지정 폴더 소속 확인. Drive 자체 SHA256 해시를 재계산한 것은 아님.
+- 앞서 저장한 **4팩 4.54MB ZIP은 삭제하지 않고** 동일 폴더에 유지. 서로 다른 수집 단계의 재현용 체크포인트.
+- **검증/보관은 실제 게임 적용과 다름**: glTF→GLB, 종속 경로, 렌더링, 충돌·최적화·모바일 FPS 실측은 후속 작업.
+
 ## 공식 좀비·생존자 디자인의 1순위
 
 1. [Quaternius Zombie Apocalypse Kit](https://quaternius.com/packs/zombieapocalypsekit.html) — **해당 팩 페이지에 CC0 표시**, 총 60 모델, 4 생존자/4 적/2 개/생존자당 애니메이션 20개. FBX, OBJ, glTF, Blend. 첫 검수 대상.
@@ -51,6 +61,6 @@
 
 ## 단일 기준 파일
 
-- 우선 원본 아카이브/4개 공식 Github 저장소 수집 기준: `BlockSurvivalTPS/research/source-lock.json`
+- 우선 원본 아카이브/5개 공식 GitHub 저장소 수집 기준: `BlockSurvivalTPS/research/source-lock.json`
 - 전체 후보 및 라이선스 조사 확장: `tps-next/research/SOURCE_REGISTRY.json` 및 `tps-next/research/OPEN_SOURCE_MASTER_KO.md`
 - 게임 기획·코드·자산 통합 개발은 `BlockSurvivalTPS/`만 사용.
