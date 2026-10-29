@@ -32,7 +32,7 @@ export function validateRegistry(data=registry){
  let count=0;
  for(const pack of data.packs){
   ensure(!ids.has(pack.id),'Duplicate pack '+pack.id);ids.add(pack.id);
-  ensure(/^KayKit-Game-Assets\/[A-Za-z0-9-]+$/.test(pack.repository),'Unapproved source '+pack.repository);
+  ensure(/^KayKit-Game-Assets\/[A-Za-z0-9.-]+$/.test(pack.repository),'Unapproved source '+pack.repository);
   ensure(/^[a-f0-9]{40}$/.test(pack.commit),'Source must have a fixed 40-character commit');
   ensure(pack.license==='CC0-1.0' && pack.licenseFile==='LICENSE.txt','Non-CC0 pack rejected');
   safeRelative(pack.prefix.replace(/\/$/,''));
