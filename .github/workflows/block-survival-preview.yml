@@ -46,6 +46,7 @@ jobs:
           node BlockSurvivalTPS/tools/verify-preview.mjs
           node --check BlockSurvivalTPS/dist/game.bundle.js
           test -s BlockSurvivalTPS/dist/THREE_LICENSE.txt
+          test -s BlockSurvivalTPS/dist/BLOCK_SURVIVAL_TPS_바로실행.html
       - name: Quick static HTTP smoke
         shell: bash
         run: |

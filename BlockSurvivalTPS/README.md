@@ -32,6 +32,8 @@ cd dist
 python -m http.server 8000
 # http://localhost:8000/
 \`\`\`
+**더 간단한 실행:** 빌드 ZIP 안의 `BLOCK_SURVIVAL_TPS_바로실행.html`을 더블클릭하면 웹서버 설치 없이 기본 게임이 작동합니다. Chrome/Edge 같은 WebGL 지원 브라우저가 필요하며 선택 GLB 모델만 네트워크 연결 시 로드합니다.
+
 위의 GitHub Actions는 같은 빌드 후 \`block-survival-tps-playable-alpha-v01\` ZIP을 첨부합니다. 이를 다운로드·압축 해제한 뒤 \`START_HERE.txt\` 안내에 따라 로컬 서버를 실행할 수 있습니다. **CDN 없이 기본 게임 실행 가능**하며, 선택 원본 3D 모델은 인터넷이 연결될 때만 표시합니다.
 
 ## 현재 테스트와 제한
