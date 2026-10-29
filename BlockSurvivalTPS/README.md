@@ -1,6 +1,6 @@
 # 곰같은여우 — BLOCK SURVIVAL TPS
 
-**ALPHA 0.4 실제 리깅 모델을 적용한 웹 TPS 시제품.** 이전 라니킹덤은 `main`에서 정리했고 현재는 이 게임에 집중하여 개발·배포합니다. 최신 검증 결과와 빌드는 [Actions](https://github.com/junl-im/Defense/actions/workflows/block-survival-preview.yml) 참조. 브라우저에서 PC·모바일 실제 게임플레이 및 FPS 실측은 별도 검증이 필요합니다.
+**ALPHA 0.5 도심 환경·전투·보급품 개선 웹 TPS 시제품.** 이전 라니킹덤은 `main`에서 정리했고 현재는 이 게임에 집중하여 개발·배포합니다. 최신 검증 결과와 빌드는 [Actions](https://github.com/junl-im/Defense/actions/workflows/block-survival-preview.yml) 참조. 브라우저에서 PC·모바일 실제 게임플레이 및 FPS 실측은 별도 검증이 필요합니다.
 
 ## 보존 및 권리
 - 게임 실행 파일: \`BlockSurvivalTPS/index.html\`, \`src/game.mjs\`, \`src/sim.mjs\`, \`style.css\`
@@ -79,3 +79,11 @@ python -m http.server 8000
 - [공식 CC0 8개 출처 #40967123635](https://github.com/junl-im/Defense/actions/runs/40967123635): SUCCESS
 - 압축형 Knight 3,659,532→630,020바이트, Skeleton_Minion 4,814,296→611,076바이트. 모두 필수 애니메이션 6종 보존, 전체 빌드 9 GLB 포함
 - 현재 캐릭터는 CC0 판타지 아트 기반 임시 생존자·언데드 대역이며 현대식 최종 스타일은 아님
+
+## v0.5 — 2026-10-30 도시 생존 전투 강화
+
+- [실제 3D 폐허 디테일](./src/world-detail.mjs): 도로 균열, 잔해, 잡초, 녹슨 거리 소품, 외곽 폐차 배치. 대부분 인스턴싱으로 렌더링 호출 수 절감. 실제 이동 충돌을 가리지 않도록 격자 경계를 검사.
+- [보급품 게임 규칙](./src/sim.mjs): 3킬마다 탄약 +18, 5킬마다 체력 +24 응급키트 드롭. 자동 줍기 반경, 18초 만료, 최대 12개 보급품. 체력이 가득 찼으면 응급키트 보관 가능.
+- [피격·사격 연출](./src/game.mjs): 3D 탄도 궤적과 명중 섬광, 건물에 가려진 탄도는 실제 장면 벽까지 제한. 총구 FX 및 오리지널 Web Audio 단발 사격 효과.
+- 오래된 중앙 안내 메시지는 3초 후 자동으로 사라져 한 화면의 전투 시야 확보. 모든 소품 및 버튼은 SVG 0개.
+- [보급품 테스트](./tests/loot.test.mjs)와 PC/모바일 실제 Chromium WebGL 검증, 8출처·60 CC0 파일 원본 라이선스 검증을 기반으로 공개 반영. 현재 모델은 스타일화된 리깅 모델이며 실사형 그래픽은 별도 차기 작업.
