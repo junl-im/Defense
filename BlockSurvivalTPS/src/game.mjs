@@ -156,6 +156,7 @@ async function loadOptional(){
   const local='./assets/'+kind+'.glb';
   modelLoader.loadAsync(local).catch(()=>modelLoader.loadAsync(assetURLs[kind])).then(gltf=>{
    assetCache.set(kind,gltf);
+   if(kind==='hero'||kind==='undead')shell.dataset[kind+'Asset']='loaded';
    if(kind==='gun'){
     heroGunTemplate=gltf.scene;
     attachHeroGun();
@@ -201,8 +202,9 @@ function playRigClip(visual,name,fade=0.16){
 function installHero(gltf){
  if(!player||heroRig)return;
  heroRig=cloneSkinned(gltf.scene);
+ let skinnedParts=0;
  heroRig.traverse(child=>{
-  if(child.isSkinnedMesh)child.frustumCulled=false;
+  if(child.isSkinnedMesh){child.frustumCulled=false;skinnedParts++;}
   if(/Sword|Shield|Cape/i.test(child.name))child.visible=false;
  });
  normalize(heroRig,2.1);
@@ -211,6 +213,7 @@ function installHero(gltf){
  player.add(heroRig);heroMixer=new THREE.AnimationMixer(heroRig);
  for(const clip of gltf.animations)heroClips.set(clip.name,clip);
  heroAnimation='';
+ if(skinnedParts>0&&heroClips.size===6)shell.dataset.heroRig='loaded';
  attachHeroGun();
 }
 function attachHeroGun(){
@@ -255,6 +258,7 @@ function makeEnemyVisual(e){
   if(gltf.animations.length){
    visual.mixer=new THREE.AnimationMixer(model);
    visual.rigKind=kind;visual.clips=new Map(gltf.animations.map(clip=>[clip.name,clip]));
+   if(kind==='undead')shell.dataset.undeadRig='loaded';
    if(kind==='minion'){
     visual.clip=visual.mixer.clipAction(gltf.animations[0]);visual.clip.play();
    }else playRigClip(visual,'Walking_D_Skeletons');

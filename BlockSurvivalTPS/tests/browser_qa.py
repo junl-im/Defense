@@ -31,6 +31,10 @@ def start(page,label):
     check(page.locator("#overlay").is_hidden(),f"{label}: did not enter game")
     check(page.locator("#hud").is_visible(),f"{label}: HUD not visible")
     check(page.locator("#reticle").is_visible(),f"{label}: no center crosshair")
+    # Explicitly require two real animated GLBs; fallback-only UI must not pass v0.4.
+    page.wait_for_function("() => document.querySelector('#shell').dataset.heroRig==='loaded'",timeout=25000)
+    page.wait_for_function("() => document.querySelector('#shell').dataset.undeadAsset==='loaded'",timeout=25000)
+    page.wait_for_timeout(1500)
     check(not local_errors,f"{label}: JavaScript exceptions: {local_errors[:5]}")
     return local_errors
 
