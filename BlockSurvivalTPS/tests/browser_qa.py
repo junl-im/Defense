@@ -44,10 +44,25 @@ with sync_playwright() as p:
     err=start(page,"desktop")
     # Verify keyboard movement and actual fire consumption (not just a static canvas screenshot).
     before=page.locator("#ammo").inner_text().split()[0]
+    page.evaluate("""() => {
+      window.__qaCanvasDown=0;
+      document.querySelector('#stage').addEventListener('pointerdown',() => {window.__qaCanvasDown++});
+    }""")
+    element=page.evaluate("() => ({tag:document.elementFromPoint(640,360)?.tagName,id:document.elementFromPoint(640,360)?.id})")
     page.mouse.click(640,360)
-    page.wait_for_timeout(280)
+    page.wait_for_timeout(1300)
     after=page.locator("#ammo").inner_text().split()[0]
-    check(int(after)<int(before),"desktop: mouse click failed to fire")
+    diag=page.evaluate("""() => ({
+      canvasPointerDown:window.__qaCanvasDown,
+      canvasTarget:document.elementFromPoint(640,360)?.id,
+      overlayHidden:document.querySelector('#overlay').hidden,
+      visibleHud:!document.querySelector('#hud').hidden,
+      fps:document.querySelector('#fps')?.innerText
+    })""")
+    print("desktop pointer diagnostic",json.dumps({"element":element,"before":before,"after":after,**diag}),flush=True)
+    page.screenshot(path=str(OUT/"tps-desktop-diagnostic.png"))
+    check(diag["canvasPointerDown"]>=1,f"desktop: pointer event never hit canvas {diag}")
+    check(int(after)<int(before),f"desktop: mouse click failed to fire {diag}, errors {err}")
     page.keyboard.down("w")
     page.wait_for_timeout(400)
     page.keyboard.up("w")
