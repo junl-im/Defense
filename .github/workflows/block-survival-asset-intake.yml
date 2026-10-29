@@ -2,7 +2,7 @@ name: Block Survival TPS — CC0 asset intake
 on:
   push:
     branches:
-      - feature/block-survival-tps-v01-20261029
+      - feature/block-survival-tps-v02-post-cutover-20261029
       - main
     paths:
       - 'BlockSurvivalTPS/**'

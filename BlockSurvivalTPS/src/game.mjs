@@ -12,6 +12,7 @@ const keys=new Set();
 let state=newGame(),yaw=0,pitch=0,fireHeld=false,sprintHeld=false;
 let joystick={x:0,z:0},stickPointer=null,lookPointer=null,lastLook=null;
 let renderer,scene,camera,clock,player,playerParts,world,raycaster;
+const cameraShotVector=new THREE.Vector3();
 let lastFrame=performance.now(),fpsCount=0,fpsStart=lastFrame,fps=60,uiAt=0,modelStarted=false;
 const enemiesVisual=new Map(),assetCache=new Map(),collisionMeshes=[],modelLoader=new GLTFLoader();
 const named={minion:'minion-a01.glb',bat:'Bat.glb',gun:'blaster.glb'};
@@ -304,9 +305,23 @@ function localSound(hit=false){
   osc.connect(gain).connect(ctx.destination);osc.start(now);osc.stop(now+0.13);
  }catch{}
 }
+function getShotDirection(){
+ // Project the camera's real center reticle onto enemy mid-body height.
+ camera.getWorldDirection(cameraShotVector);
+ const targetHeight=1.3;
+ const travel=cameraShotVector.y < -0.03
+  ? clamp((targetHeight-camera.position.y)/cameraShotVector.y,4,34):28;
+ const targetX=camera.position.x+cameraShotVector.x*travel;
+ const targetZ=camera.position.z+cameraShotVector.z*travel;
+ const dx=targetX-state.x,dz=targetZ-state.z;
+ const length=Math.hypot(dx,dz);
+ if(length<0.001)return {dx:Math.sin(yaw),dz:-Math.cos(yaw)};
+ return {dx:dx/length,dz:dz/length};
+}
 function doFire(){
  if(state.status!=='playing')return;
- const result=shoot(state,Math.sin(yaw),-Math.cos(yaw));
+ const aim=getShotDirection();
+ const result=shoot(state,aim.dx,aim.dz);
  if(result.fired)localSound(result.hit);
  if(!result.fired&&result.reason==='empty')reload(state);
 }
