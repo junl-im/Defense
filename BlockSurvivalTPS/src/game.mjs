@@ -12,8 +12,10 @@ const keys=new Set();
 let state=newGame(),yaw=0,pitch=0,fireHeld=false,sprintHeld=false;
 let joystick={x:0,z:0},stickPointer=null,lookPointer=null,lastLook=null;
 let renderer,scene,camera,clock,player,playerParts,world,raycaster;
+let heroRig=null,heroMixer=null,heroAnimation='',heroGun=null,heroGunTemplate=null;
+const heroClips=new Map();
 const cameraShotVector=new THREE.Vector3();
-let lastFrame=performance.now(),fpsCount=0,fpsStart=lastFrame,fps=60,uiAt=0,modelStarted=false;
+let lastFrame=performance.now(),fpsCount=0,fpsStart=lastFrame,fps=60,uiAt=0,modelStarted=false,nowFrameDt=0.016;
 const enemiesVisual=new Map(),assetCache=new Map(),collisionMeshes=[],modelLoader=new GLTFLoader();
 const named={minion:'minion-a01.glb',bat:'Bat.glb',gun:'blaster.glb'};
 const assetURLs={
@@ -23,7 +25,9 @@ const assetURLs={
  ruin:'https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0/b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/wall_broken.gltf.glb',
  chest:'https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0/b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/chest.glb',
  barrel:'https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0/b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/barrel_large.gltf.glb',
- crates:'https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0/b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/crates_stacked.gltf.glb'
+ crates:'https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0/b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/crates_stacked.gltf.glb',
+ hero:'https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventurers-1.0/672074b73ba276876a19e8816ecdc5241817ab47/Characters/gltf/Knight.glb',
+ undead:'https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Skeletons-1.0/15b62b9bad122f72926c10fb14d622c73819fa54/Characters/gltf/Skeleton_Minion.glb'
 };
 const colors={ground:0x345044,road:0x26333c,roadLine:0xe1c07c,building:0x697a7f,brick:0x735f59,crate:0x8e7650,skin:0x9fc58b};
 const materials=new Map(),sharedBox=new THREE.BoxGeometry(1,1,1);
@@ -147,24 +151,24 @@ function makeZombie(type){
 }
 async function loadOptional(){
  if(modelStarted)return;modelStarted=true;
- for(const kind of ['minion','bat','gun','ruin','chest','barrel','crates']){
+ for(const kind of ['minion','bat','gun','ruin','chest','barrel','crates','hero','undead']){
   // Production assets ship beside the bundled game; the pinned official source is a dev fallback.
   const local='./assets/'+kind+'.glb';
   modelLoader.loadAsync(local).catch(()=>modelLoader.loadAsync(assetURLs[kind])).then(gltf=>{
    assetCache.set(kind,gltf);
    if(kind==='gun'){
-    const visual=player.userData.gun,clone=gltf.scene.clone(true);
-    normalize(clone,0.5);clone.position.set(0,-0.05,-0.4);
-    visual.add(clone);
+    heroGunTemplate=gltf.scene;
+    attachHeroGun();
    }
+   if(kind==='hero')installHero(gltf);
    if(['ruin','chest','barrel','crates'].includes(kind)){
     const config={ruin:[-12,-9,2.9],chest:[18,-3,0.9],barrel:[-8,2,1.25],crates:[9,4,1.4]}[kind];
     const clone=gltf.scene.clone(true);normalize(clone,config[2]);
     clone.position.set(config[0],0.06,config[1]);world.add(clone);
    }
-   if(kind==='minion'){
+   if(kind==='minion'||kind==='undead'){
     for(const [id,visual] of [...enemiesVisual]){
-     const e=state.enemies.find(enemy=>enemy.id===id && enemy.type==='minion' && enemy.hp>0);
+     const e=state.enemies.find(enemy=>enemy.id===id && (kind==='minion'?enemy.type==='minion':enemy.type!=='minion') && enemy.hp>0);
      if(!e || visual.mixer)continue;
      scene.remove(visual.root);enemiesVisual.delete(id);
      enemiesVisual.set(id,makeEnemyVisual(e));
@@ -184,10 +188,64 @@ function normalize(model,targetHeight){
  model.position.x-=c.x;model.position.z-=c.z;model.position.y-=b.min.y;
  return model;
 }
+function playRigClip(visual,name,fade=0.16){
+ if(!visual.mixer||visual.lastAnimation===name)return;
+ const clip=visual.clips?.get(name);
+ if(!clip)return;
+ const action=visual.mixer.clipAction(clip);
+ if(visual.activeAction){visual.activeAction.fadeOut(fade);}
+ action.reset().setEffectiveTimeScale(1).setEffectiveWeight(1).fadeIn(fade).play();
+ visual.activeAction=action;visual.lastAnimation=name;
+ if(name==='Death_A'){action.setLoop(THREE.LoopOnce,1);action.clampWhenFinished=true;}
+}
+function installHero(gltf){
+ if(!player||heroRig)return;
+ heroRig=cloneSkinned(gltf.scene);
+ heroRig.traverse(child=>{
+  if(child.isSkinnedMesh)child.frustumCulled=false;
+  if(/Sword|Shield|Cape/i.test(child.name))child.visible=false;
+ });
+ normalize(heroRig,2.1);
+ // Keep primitive fallback only until this correctly rigged hero is loaded.
+ for(const c of player.children)c.visible=false;
+ player.add(heroRig);heroMixer=new THREE.AnimationMixer(heroRig);
+ for(const clip of gltf.animations)heroClips.set(clip.name,clip);
+ heroAnimation='';
+ attachHeroGun();
+}
+function attachHeroGun(){
+ if(!heroGunTemplate||!player)return;
+ if(heroRig){
+  if(heroGun){heroGun.parent?.remove(heroGun);heroGun=null;}
+  let socket=null;
+  heroRig.traverse(o=>{if(o.name==='handslot.r')socket=o;});
+  if(socket){
+   const gun=heroGunTemplate.clone(true);
+   gun.position.set(0,0,0);gun.rotation.set(0,Math.PI/2,0);
+   // Inherit hand-bone transform from the imported walking/shooting animation.
+   gun.scale.setScalar(0.9);
+   socket.add(gun);heroGun=gun;
+  }
+ }else{
+  const placeholder=player.userData.gun;
+  if(!placeholder.userData.modelAttached){
+   const gun=heroGunTemplate.clone(true);normalize(gun,0.5);
+   gun.position.set(0,-0.05,-0.4);placeholder.add(gun);
+   placeholder.userData.modelAttached=true;
+  }
+ }
+}
+function playHeroClip(name){
+ if(!heroMixer||heroAnimation===name||!heroClips.has(name))return;
+ const visual={mixer:heroMixer,clips:heroClips,lastAnimation:heroAnimation,activeAction:playHeroClip.previous};
+ playRigClip(visual,name,0.14);
+ playHeroClip.previous=visual.activeAction;
+ heroAnimation=visual.lastAnimation;
+}
 function makeEnemyVisual(e){
  const root=new THREE.Group();scene.add(root);root.position.set(e.x,0,e.z);
  const visual={root,model:null,mixer:null,clip:null,lastAnimation:''};
- const kind=e.type==='minion'?'minion':null;
+ const kind=e.type==='minion'?'minion':'undead';
  if(kind&&assetCache.has(kind)){
   const gltf=assetCache.get(kind);
   const model=cloneSkinned(gltf.scene);
@@ -196,7 +254,10 @@ function makeEnemyVisual(e){
   root.add(model);visual.model=model;
   if(gltf.animations.length){
    visual.mixer=new THREE.AnimationMixer(model);
-   visual.clip=visual.mixer.clipAction(gltf.animations[0]);visual.clip.play();
+   visual.rigKind=kind;visual.clips=new Map(gltf.animations.map(clip=>[clip.name,clip]));
+   if(kind==='minion'){
+    visual.clip=visual.mixer.clipAction(gltf.animations[0]);visual.clip.play();
+   }else playRigClip(visual,'Walking_D_Skeletons');
   }
  }else{
   const model=makeZombie(e.type);root.add(model);visual.model=model;
@@ -210,10 +271,20 @@ function syncEnemies(t){
   const root=v.root;
   root.position.set(e.x,e.hp<=0?0:e.hitTime>0?0.06:0,e.z);
   const a=Math.atan2(state.x-e.x,state.z-e.z);
-  root.rotation.y=v.mixer?a:a+Math.PI;
+  root.rotation.y=(v.rigKind==='undead'?a+Math.PI:v.mixer?a:a+Math.PI);
   if(e.hp<=0){
-   root.rotation.z=Math.min(1.25,e.deadTime*4);
-   if(v.mixer)v.mixer.setTime(60/24+Math.min(e.deadTime,(89-60)/24));
+   if(v.rigKind==='undead'){
+    playRigClip(v,'Death_A',0.08);
+    v.mixer.update(Math.min(0.06,nowFrameDt));
+   }else{
+    root.rotation.z=Math.min(1.25,e.deadTime*4);
+    if(v.mixer)v.mixer.setTime(60/24+Math.min(e.deadTime,(89-60)/24));
+   }
+  }else if(v.rigKind==='undead'){
+   const attack=Math.hypot(e.x-state.x,e.z-state.z)<1.6;
+   const desired=e.hitTime>0?'Hit_A':attack?'Unarmed_Melee_Attack_Punch_A':e.type==='runner'?'Running_A':'Walking_D_Skeletons';
+   playRigClip(v,desired);
+   v.mixer.update(Math.min(0.06,Math.max(0,nowFrameDt)));
   }else if(v.mixer){
    const attack=Math.hypot(e.x-state.x,e.z-state.z)<1.6;
    const from=attack?30:0,len=29/24;
@@ -233,6 +304,12 @@ function syncEnemies(t){
 }
 function syncPlayer(t,moving){
  player.position.set(state.x,0,state.z);player.rotation.y=yaw;
+ if(heroMixer){
+  const name=state.reloadTime>0?'1H_Ranged_Reload':state.shotFlash>0?'1H_Ranged_Shoot':moving?(keys.has('shift')||sprintHeld?'Running_A':'Walking_A'):'Idle';
+  playHeroClip(name);
+  heroMixer.update(Math.min(0.06,nowFrameDt));
+  return;
+ }
  const parts=player.userData;
  const bob=moving?Math.sin(t*11)*0.05:Math.sin(t*2.5)*0.012;
  parts.legs.forEach((p,i)=>p.rotation.x=moving?Math.sin(t*11+i*Math.PI)*0.58:0);
@@ -327,7 +404,7 @@ function doFire(){
 }
 function frame(now){
  requestAnimationFrame(frame);
- const dt=Math.min(0.06,(now-lastFrame)/1000||0.016);lastFrame=now;
+ const dt=Math.min(0.06,(now-lastFrame)/1000||0.016);lastFrame=now;nowFrameDt=dt;
  if(state.status==='playing'){
   const f=(keys.has('w')||keys.has('arrowup')?1:0)-(keys.has('s')||keys.has('arrowdown')?1:0)-joystick.z;
   const strafe=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0)+joystick.x;
