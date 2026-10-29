@@ -21,6 +21,6 @@ if(/from\s+["']three(?:\/|["'])/.test(bundle))throw Error('Three.js must be bund
 if(!ready.includes('./game.bundle.js')||ready.includes('importmap'))throw Error('Preview should have no external code dependencies');
 if(/\.svg(?:["'\s?]|$)/i.test(ready))throw Error('SVG asset references forbidden');
 const direct=read('dist/BLOCK_SURVIVAL_TPS_바로실행.html');
-if(!direct.includes('<style>')||!direct.includes('type="module"')||direct.includes('./game.bundle.js'))throw Error('Direct-play HTML is not self-contained');
+if(!direct.includes('<style>')||!direct.includes('type="module"')||/(?:src|href)="\.\/game\.bundle\.js"/.test(direct))throw Error('Direct-play HTML is not self-contained');
 if(!bundle.includes('Gobkit')&&!bundle.includes('Ariescar'))throw Error('Missing optional pinned CC0 asset source');
 console.log('PASS: complete HTML UI bindings, no SVG, bundled Three.js, runtime fallbacks, static output.');
