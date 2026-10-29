@@ -19,7 +19,10 @@ const assetURLs={
  minion:'https://raw.githubusercontent.com/Ariescar/gobkit-free-assets/4e73c68fa6e8ca9d948fcc0ce7215c830a022c3b/minion/minion-a01.glb',
  bat:'https://raw.githubusercontent.com/Ariescar/gobkit-free-assets/4e73c68fa6e8ca9d948fcc0ce7215c830a022c3b/animal/Bat.glb',
  gun:'https://raw.githubusercontent.com/KenneyNL/Starter-Kit-FPS/185fd2326d74a5cf858cffc616f87cf9696f9cc0/models/blaster.glb',
- car:'https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-City-Builder-Bits-1.0/63976910ca04d16f0fc531b9c614244be8128713/addons/kaykit_city_builder_bits/Assets/gltf/car_police.gltf'
+ ruin:'https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0/b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/wall_broken.gltf.glb',
+ chest:'https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0/b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/chest.glb',
+ barrel:'https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0/b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/barrel_large.gltf.glb',
+ crates:'https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0/b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/crates_stacked.gltf.glb'
 };
 const colors={ground:0x345044,road:0x26333c,roadLine:0xe1c07c,building:0x697a7f,brick:0x735f59,crate:0x8e7650,skin:0x9fc58b};
 const materials=new Map(),sharedBox=new THREE.BoxGeometry(1,1,1);
@@ -143,17 +146,28 @@ function makeZombie(type){
 }
 async function loadOptional(){
  if(modelStarted)return;modelStarted=true;
- for(const kind of ['minion','bat','gun','car']){
-  modelLoader.loadAsync(assetURLs[kind]).then(gltf=>{
+ for(const kind of ['minion','bat','gun','ruin','chest','barrel','crates']){
+  // Production assets ship beside the bundled game; the pinned official source is a dev fallback.
+  const local='./assets/'+kind+'.glb';
+  modelLoader.loadAsync(local).catch(()=>modelLoader.loadAsync(assetURLs[kind])).then(gltf=>{
    assetCache.set(kind,gltf);
    if(kind==='gun'){
     const visual=player.userData.gun,clone=gltf.scene.clone(true);
     normalize(clone,0.5);clone.position.set(0,-0.05,-0.4);
     visual.add(clone);
    }
-   if(kind==='car'){
-    const clone=gltf.scene.clone(true);normalize(clone,1.25);
-    clone.position.set(-9,0,5);world.add(clone);
+   if(['ruin','chest','barrel','crates'].includes(kind)){
+    const config={ruin:[-12,-9,2.9],chest:[18,-3,0.9],barrel:[-8,2,1.25],crates:[9,4,1.4]}[kind];
+    const clone=gltf.scene.clone(true);normalize(clone,config[2]);
+    clone.position.set(config[0],0.06,config[1]);world.add(clone);
+   }
+   if(kind==='minion'){
+    for(const [id,visual] of [...enemiesVisual]){
+     const e=state.enemies.find(enemy=>enemy.id===id && enemy.type==='minion' && enemy.hp>0);
+     if(!e || visual.mixer)continue;
+     scene.remove(visual.root);enemiesVisual.delete(id);
+     enemiesVisual.set(id,makeEnemyVisual(e));
+    }
    }
   }).catch(e=>console.warn('선택 모델 실패, 기본 3D 모델 유지:',kind,e.message));
  }

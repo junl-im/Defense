@@ -1,6 +1,7 @@
 // © 2026 곰같은여우. Builds a standalone static preview without disturbing Defense Pages.
 import {build} from 'esbuild';
 import fs from 'node:fs';
+import crypto from 'node:crypto';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 const base=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
@@ -13,6 +14,40 @@ await build({
  outfile:path.join(dist,'game.bundle.js'),
  legalComments:'external',logLevel:'info'
 });
+// Ship selected CC0 models locally so 3D art does not depend on a third-party CDN at runtime.
+const sources=JSON.parse(fs.readFileSync(path.join(base,'research/source-lock.json'),'utf8'));
+const select=[
+ ['minion','gobkit-free-lowpoly','minion/minion-a01.glb'],
+ ['bat','gobkit-free-lowpoly','animal/Bat.glb'],
+ ['gun','kenney-fps-media','models/blaster.glb'],
+ ['ruin','kaykit-dungeon-remastered','Assets/gltf/wall_broken.gltf.glb'],
+ ['chest','kaykit-dungeon-remastered','Assets/gltf/chest.glb'],
+ ['barrel','kaykit-dungeon-remastered','Assets/gltf/barrel_large.gltf.glb'],
+ ['crates','kaykit-dungeon-remastered','Assets/gltf/crates_stacked.gltf.glb']
+];
+const assetDir=path.join(dist,'assets');
+fs.mkdirSync(assetDir,{recursive:true});
+const provenance={schema:'block-survival-tps-runtime-cc0/v1',assets:[]};
+for(const [id,packId,file] of select){
+ const pack=sources.packs.find(p=>p.id===packId);
+ if(!pack || !pack.files.includes(file)||pack.license!=='CC0-1.0')throw Error('Unapproved CC0 asset: '+id);
+ const url='https://raw.githubusercontent.com/'+pack.repository+'/'+pack.commit+'/'+pack.prefix+file;
+ let bytes;
+ for(let attempt=1;attempt<=3;attempt++){
+  try{
+   const response=await fetch(url,{signal:AbortSignal.timeout(25000)});
+   if(!response.ok)throw Error('HTTP '+response.status);
+   bytes=Buffer.from(await response.arrayBuffer());
+   if(bytes.length<28||bytes.length>8*1024*1024||bytes.toString('ascii',0,4)!=='glTF')
+    throw Error('Not a valid, bounded GLB: '+id);
+   break;
+  }catch(err){if(attempt===3)throw Error('Cannot acquire pinned CC0 runtime asset '+id+': '+err.message);}
+ }
+ fs.writeFileSync(path.join(assetDir,id+'.glb'),bytes);
+ provenance.assets.push({id,pack:packId,source:url,commit:pack.commit,license:pack.license,bytes:bytes.length,
+  sha256:crypto.createHash('sha256').update(bytes).digest('hex')});
+}
+fs.writeFileSync(path.join(assetDir,'PROVENANCE.json'),JSON.stringify(provenance,null,2)+'\n');
 const html=fs.readFileSync(path.join(base,'index.html'),'utf8')
  .replace(/<script type="importmap">[\s\S]*?<\/script>\s*/,'')
  .replace('./src/game.mjs','./game.bundle.js');
