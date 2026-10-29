@@ -34,7 +34,7 @@ jobs:
           set -euo pipefail
           git ls-remote --exit-code https://github.com/junl-im/Defense.git refs/heads/archive/rani-kingdom-v539-20261029
           test -s rani-next/v539-easy-mode.mjs
-          test -s engines/fiefdom/.git
+          test -s .gitmodules\n          test -d rani-next
       - name: Audit names, licenses, pinned commits and no SVG
         run: |
           node --test BlockSurvivalTPS/tests/*.test.mjs
