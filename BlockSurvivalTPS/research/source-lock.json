@@ -98,6 +98,30 @@
         "Assets/gltf/trafficlight_A.bin",
         "Assets/gltf/citybits_texture.png"
       ]
+    },
+    {
+      "id": "kenney-fps-media",
+      "owner": "Kenney",
+      "repository": "KenneyNL/Starter-Kit-FPS",
+      "commit": "185fd2326d74a5cf858cffc616f87cf9696f9cc0",
+      "license": "CC0-1.0",
+      "licenseFile": "README.md",
+      "licenseScope": "Only 3D models, 2D sprites and sound effects expressly declared CC0 in README; Godot code is MIT, fonts separate OFL",
+      "prefix": "",
+      "role": "lightweight weapons, reticle, hit markers and gun/zombie SFX; do not import Godot runtime or font/vector assets",
+      "files": [
+        "models/blaster-repeater.glb",
+        "models/blaster.glb",
+        "models/Textures/colormap.png",
+        "sounds/blaster.ogg",
+        "sounds/blaster_repeater.ogg",
+        "sounds/enemy_attack.ogg",
+        "sounds/enemy_hurt.ogg",
+        "sounds/enemy_destroy.ogg",
+        "sprites/crosshair.png",
+        "sprites/crosshair-repeater.png",
+        "sprites/hit.png"
+      ]
     }
   ],
   "pendingSources": [

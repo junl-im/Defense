@@ -3,12 +3,12 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {validateRegistry} from '../tools/acquire-open-assets.mjs';
 const source=JSON.parse(fs.readFileSync(new URL('../research/source-lock.json',import.meta.url),'utf8'));
-test('all five curated GitHub sources are pinned and CC0',()=>{
+test('all six curated GitHub sources are pinned and CC0',()=>{
  const x=validateRegistry(source);
- assert.equal(x.repositories,5);
+ assert.equal(x.repositories,6);
  assert.equal(x.license,'CC0-1.0');
  assert.equal(x.protectedArchive,'archive/rani-kingdom-v539-20261029');
- assert.ok(x.selectedFiles>=34);
+ assert.ok(x.selectedFiles>=45);
 });
 test('reject accidental AGPL asset or unknown license',()=>{
  const d=structuredClone(source);d.packs[0].license='AGPL-3.0';
@@ -27,4 +27,13 @@ test('glTF requires matching BIN and source identifiers may not repeat',()=>{
  assert.throws(()=>validateRegistry(d),/Missing glTF BIN/);
  d=structuredClone(source);d.packs[1].id=d.packs[0].id;
  assert.throws(()=>validateRegistry(d),/Duplicate pack/);
+});
+
+test('Kenney CC0 is scoped to models, sprites and sound, never Godot code or fonts',()=>{
+ let d=structuredClone(source);
+ const pack=d.packs.find(p=>p.id==='kenney-fps-media');
+ pack.files.push('scripts/player.gd');
+ assert.throws(()=>validateRegistry(d),/Unapproved asset type|Non-CC0 media/);
+ d=structuredClone(source);d.packs.find(p=>p.id==='kenney-fps-media').licenseFile='LICENSE.md';
+ assert.throws(()=>validateRegistry(d),/Non-CC0/);
 });

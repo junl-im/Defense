@@ -28,19 +28,23 @@ export function validateRegistry(data=registry){
  const ids=new Set();
  ensure(data.schema==='block-survival-tps-asset-intake/v1','Wrong registry schema');
  ensure(data.protected_archive==='archive/rani-kingdom-v539-20261029','Rani archive must remain protected');
- ensure(Array.isArray(data.packs)&&data.packs.length===5,'Expected 5 audited source repositories');
+ ensure(Array.isArray(data.packs)&&data.packs.length===6,'Expected 6 audited source repositories');
  let count=0;
  for(const pack of data.packs){
   ensure(!ids.has(pack.id),'Duplicate pack '+pack.id);ids.add(pack.id);
-  ensure(/^KayKit-Game-Assets\/[A-Za-z0-9.-]+$/.test(pack.repository),'Unapproved source '+pack.repository);
+  const isKenney=pack.id==='kenney-fps-media';
+  ensure(isKenney ? pack.repository==='KenneyNL/Starter-Kit-FPS' :
+   /^KayKit-Game-Assets\/[A-Za-z0-9.-]+$/.test(pack.repository),'Unapproved source '+pack.repository);
   ensure(/^[a-f0-9]{40}$/.test(pack.commit),'Source must have a fixed 40-character commit');
-  ensure(pack.license==='CC0-1.0' && pack.licenseFile==='LICENSE.txt','Non-CC0 pack rejected');
-  safeRelative(pack.prefix.replace(/\/$/,''));
+  ensure(pack.license==='CC0-1.0' && pack.licenseFile===(isKenney?'README.md':'LICENSE.txt'),'Non-CC0 pack rejected');
+  if(!isKenney) safeRelative(pack.prefix.replace(/\/$/,''));
+  else ensure(pack.prefix==='' && /Only 3D models, 2D sprites and sound effects/.test(pack.licenseScope),'Kenney CC0 media-only scope required');
   ensure(Array.isArray(pack.files)&&pack.files.length,'Empty source '+pack.id);
   const uniq=new Set();
   for(const file of pack.files){
    safeRelative(file);
-   ensure(/\.(glb|gltf|bin|png|webp)$/i.test(file),'Unapproved asset type '+file);
+   ensure(/\.(glb|gltf|bin|png|webp|ogg)$/i.test(file),'Unapproved asset type '+file);
+   if(isKenney) ensure(/^(models\/.*\.(glb|png)|sounds\/.*\.ogg|sprites\/.*\.png)$/.test(file),'Non-CC0 media or imported Godot source rejected: '+file);
    ensure(!uniq.has(file),'Duplicate file '+file);uniq.add(file);count++;
   }
   for(const file of pack.files.filter(f=>f.endsWith('.gltf'))){
@@ -64,13 +68,15 @@ function acquire(dest){
    const actual=shell(['rev-parse','HEAD'],folder);
    ensure(actual===pack.commit,'Upstream commit differs: '+pack.id);
    const licensePath=path.join(folder,pack.licenseFile);
-   ensure(fs.existsSync(licensePath)&&/Creative Commons Zero|CC0/i.test(fs.readFileSync(licensePath,'utf8')),
+   ensure(fs.existsSync(licensePath)&& (pack.id==='kenney-fps-media' ?
+    /Assets included in this package\s*\(2D sprites, 3D models and sound effects\)\s*are\s*\[CC0 licensed\]/i.test(fs.readFileSync(licensePath,'utf8')) :
+    /Creative Commons Zero|CC0/i.test(fs.readFileSync(licensePath,'utf8'))),
     'License document missing or not CC0: '+pack.id);
    const out=path.join(dest,pack.id);
    fs.mkdirSync(out,{recursive:true});
-   fs.copyFileSync(licensePath,path.join(out,'LICENSE.txt'));
+   fs.copyFileSync(licensePath,path.join(out,pack.id==='kenney-fps-media'?'MEDIA_CC0_EVIDENCE_README.md':'LICENSE.txt'));
    report.sources.push({id:pack.id,source:'https://github.com/'+pack.repository,commit:actual,
-    license:'CC0-1.0',licenseSha256:sha256(licensePath)});
+    license:'CC0-1.0',scope:pack.licenseScope||'full source asset pack',licenseSha256:sha256(licensePath)});
    for(const file of pack.files){
     const source=path.resolve(folder,pack.prefix,file);
     ensure(source.startsWith(folder+path.sep)&&fs.existsSync(source),'Source missing: '+file);
