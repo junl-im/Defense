@@ -1,0 +1,60 @@
+name: TPS CC0 source intake — SHA audited
+on:
+  push:
+    branches:
+      - feature/block-survival-tps-v01-20261029
+    paths:
+      - tps-next/tools/acquire-seed.mjs
+      - tps-next/tools/acquire-seed.test.mjs
+      - tps-next/research/SOURCE_REGISTRY.json
+      - .github/workflows/tps-asset-seed.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tps-seed-intake
+  cancel-in-progress: false
+
+jobs:
+  fetch-and-verify:
+    if: github.repository == 'junl-im/Defense' && github.ref == 'refs/heads/feature/block-survival-tps-v01-20261029'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - name: Checkout only feature branch; protect Rani Kingdom main
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Set Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify audit script and manifest SHA policy offline
+        run: node --test tps-next/tools/acquire-seed.test.mjs
+      - name: Fetch 3 CC0 environment models from official pinned KayKit GitHub
+        run: node tps-next/tools/acquire-seed.mjs --fetch
+      - name: Verify original binary data and local GLTF dependencies offline
+        run: node tps-next/tools/acquire-seed.mjs --verify
+      - name: Confirm no imported SVG or oversized asset
+        shell: bash
+        run: |
+          set -euo pipefail
+          find tps-next/assets/third_party -type f -iname '*.svg' | grep -q . && exit 1 || true
+          test -s tps-next/assets/third_party/kaykit-halloween-1.0/LICENSE.txt
+          test -s tps-next/assets/third_party/kaykit-halloween-1.0/gravestone.gltf
+          test -s tps-next/assets/third_party/kaykit-halloween-1.0/halloweenbits_texture.png
+          du -sh tps-next/assets/third_party/kaykit-halloween-1.0
+      - name: Preserve validated source assets permanently on isolated feature branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = "refs/heads/feature/block-survival-tps-v01-20261029"
+          git config user.name "tps-asset-audit[bot]"
+          git config user.email "tps-asset-audit@users.noreply.github.com"
+          git add tps-next/assets/third_party/kaykit-halloween-1.0/
+          if ! git diff --cached --quiet; then
+            git commit -m "assets(tps): preserve SHA-verified KayKit CC0 graveyard seed (3 models)"
+            git push origin HEAD:feature/block-survival-tps-v01-20261029
+          fi
