@@ -243,7 +243,7 @@ function updateCamera(dt){
 function pauseGame(message='일시정지'){
  if(state.status!=='playing')return;
  pause(state);showMenu(message,'게임으로 돌아가기',true);
- document.exitPointerLock?.().catch?.(()=>{});
+ try{document.exitPointerLock?.();}catch{}
  fireHeld=false;
 }
 function showMenu(title,button,secondary){
