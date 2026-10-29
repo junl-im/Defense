@@ -1,6 +1,6 @@
 # 곰같은여우 — BLOCK SURVIVAL TPS
 
-**ALPHA 0.3 공개 웹 TPS 시제품.** 이전 라니킹덤은 `main`에서 정리했고 현재는 이 게임에 집중하여 개발·배포합니다. 최신 검증 결과와 빌드는 [Actions](https://github.com/junl-im/Defense/actions/workflows/block-survival-preview.yml) 참조. 브라우저에서 PC·모바일 실제 게임플레이 및 FPS 실측은 별도 검증이 필요합니다.
+**ALPHA 0.4 (개발·검증 중) 웹 TPS 시제품.** 이전 라니킹덤은 `main`에서 정리했고 현재는 이 게임에 집중하여 개발·배포합니다. 최신 검증 결과와 빌드는 [Actions](https://github.com/junl-im/Defense/actions/workflows/block-survival-preview.yml) 참조. 브라우저에서 PC·모바일 실제 게임플레이 및 FPS 실측은 별도 검증이 필요합니다.
 
 ## 보존 및 권리
 - 게임 실행 파일: \`BlockSurvivalTPS/index.html\`, \`src/game.mjs\`, \`src/sim.mjs\`, \`style.css\`
@@ -63,3 +63,11 @@ python -m http.server 8000
 - [Chromium 브라우저 QA](../../.github/workflows/block-survival-browser-qa.yml) — WebGL, 1280×720 데스크톱 마우스 사격, 390×844 모바일 터치 사격, HUD 중첩·스크롤 여부, 스크린샷·실행 오류 검사.
 - [브라우저 QA 성공](https://github.com/junl-im/Defense/actions/runs/40963580690): PC/모바일 사격 시 탄약 12→11, 모바일 페이지 스크롤 0, HUD 겹침 0. 실제 소프트웨어 렌더러에서 프레임 성능은 낮을 수 있으므로 모바일 실기기 GPU FPS를 대표하지 않음.
 - **한계:** A*는 정적 장애물용. 이동형 문·차량, 좀비 간 군중 회피, 현대적 캐릭터·자연스러운 리그 애니메이션은 다음 패치. 실기기 발열과 웹브라우저 다양성은 별도 QA 필요.
+
+## v0.4 — 생존자·언데드 실제 3D 애니메이션 및 경량화
+
+- [KayKit Adventurers](https://github.com/KayKit-Game-Assets) 리깅된 Knight 모델을 생존자 임시 모델로 사용. Idle, Walking_A, Running_A, 1H_Ranged_Shoot, 1H_Ranged_Reload, Hit_A 클립 6종만 보존. 시대·현대 생존자 아트는 아직 대체 모델 단계.
+- KayKit Skeletons의 리깅된 Skeleton_Minion을 기본 좀비의 임시 언데드 모델로 사용. Idle_Combat, Walking_D_Skeletons, Running_A, Unarmed_Melee_Attack_Punch_A, Death_A, Hit_A 클립 6종만 사용. 기존 Gobkit minion은 개별 특별 몬스터로 유지.
+- [자체 GLB 클립 경량화 도구](./tools/compact-glb.mjs)로 메쉬·스킨·이미지·선택 애니메이션의 참조만 남겨 모델 크기 절감. 모든 런타임 GLB SHA256 PROVENANCE 기록.
+- Kenney blaster는 손뼈 `handslot.r`에 장착. 모델이 실패할 경우 종전 블록형 생존자·언데드 메시로 폴백.
+- v0.3의 A* 우회 AI, 조준 및 모바일 HUD 검증은 유지. v0.4 공개 반영 전에 실제 Chrome WebGL 브라우저에서 모델·애니메이션 로딩 검증.
