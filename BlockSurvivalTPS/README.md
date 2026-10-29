@@ -1,6 +1,6 @@
 # 곰같은여우 — BLOCK SURVIVAL TPS
 
-**ALPHA 0.1 공개 웹 TPS 시제품.** 이전 라니킹덤은 `main`에서 정리했고 현재는 이 게임에 집중하여 개발·배포합니다. 최신 검증 결과와 빌드는 [Actions](https://github.com/junl-im/Defense/actions/workflows/block-survival-preview.yml) 참조. 브라우저에서 PC·모바일 실제 게임플레이 및 FPS 실측은 별도 검증이 필요합니다.
+**ALPHA 0.3 공개 웹 TPS 시제품.** 이전 라니킹덤은 `main`에서 정리했고 현재는 이 게임에 집중하여 개발·배포합니다. 최신 검증 결과와 빌드는 [Actions](https://github.com/junl-im/Defense/actions/workflows/block-survival-preview.yml) 참조. 브라우저에서 PC·모바일 실제 게임플레이 및 FPS 실측은 별도 검증이 필요합니다.
 
 ## 보존 및 권리
 - 게임 실행 파일: \`BlockSurvivalTPS/index.html\`, \`src/game.mjs\`, \`src/sim.mjs\`, \`style.css\`
@@ -54,3 +54,12 @@ python -m http.server 8000
 - [TPS 공개 플레이](https://junl-im.github.io/Defense/) / [배포 Actions #40904114915](https://github.com/junl-im/Defense/actions/runs/40904114915) 성공
 - [8출처 60개 CC0 ZIP](https://drive.google.com/file/d/1PSCD6B5_5fV4-0T6AAla6452lsZTDqxB/view) / [7개 GLB 포함 실행 ZIP](https://drive.google.com/file/d/1ZeOdVjeQRfJpv5HZonvWl4uQwAvEN_ih/view)
 - 기존 라니킹덤 전체는 archive 브랜치에서만 복원 가능. 실제 PC/모바일 3D 렌더링·FPS 실측은 여전히 QA 필요.
+
+## v0.3 — 2026-10-30 장애물 우회·조준·브라우저 실전 검증
+
+- [경량 A* 경로탐색](./src/navigation.mjs): 경량 그리드, 캐싱, 벽·장애물 통과 방지, 재탐색. [회귀 테스트](./tests/navigation.test.mjs) 통과.
+- 실제 카메라 중앙 조준점에서 조준 방향을 계산하고 시야가 열려 있는 적에게만 소범위 조준 보정. PC 마우스·모바일 터치 공통.
+- 350~390px 좁은 모바일 화면에서 체력·탄약·웨이브 HUD 충돌 방지 및 터치 버튼 크기 개선.
+- [Chromium 브라우저 QA](../../.github/workflows/block-survival-browser-qa.yml) — WebGL, 1280×720 데스크톱 마우스 사격, 390×844 모바일 터치 사격, HUD 중첩·스크롤 여부, 스크린샷·실행 오류 검사.
+- [브라우저 QA 성공](https://github.com/junl-im/Defense/actions/runs/40963580690): PC/모바일 사격 시 탄약 12→11, 모바일 페이지 스크롤 0, HUD 겹침 0. 실제 소프트웨어 렌더러에서 프레임 성능은 낮을 수 있으므로 모바일 실기기 GPU FPS를 대표하지 않음.
+- **한계:** A*는 정적 장애물용. 이동형 문·차량, 좀비 간 군중 회피, 현대적 캐릭터·자연스러운 리그 애니메이션은 다음 패치. 실기기 발열과 웹브라우저 다양성은 별도 QA 필요.
