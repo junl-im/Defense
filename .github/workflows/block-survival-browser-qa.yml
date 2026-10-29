@@ -1,0 +1,61 @@
+name: Block Survival TPS — real desktop mobile browser QA
+on:
+  push:
+    branches: [feature/block-survival-tps-v02-post-cutover-20261029, main]
+    paths:
+      - 'BlockSurvivalTPS/**'
+      - '.github/workflows/block-survival-browser-qa.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'BlockSurvivalTPS/**'
+      - '.github/workflows/block-survival-browser-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser-qa:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test all gameplay and navigation rules
+        run: |
+          node --test BlockSurvivalTPS/tests/*.test.mjs
+          node BlockSurvivalTPS/tools/acquire-open-assets.mjs --check
+          if find BlockSurvivalTPS -iname '*.svg' | grep -q .; then echo "No SVG assets"; exit 1; fi
+      - name: Build playable standalone Three.js game and pinned CC0 GLBs
+        run: |
+          npm install --prefix BlockSurvivalTPS --no-audit --no-fund
+          npm run build --prefix BlockSurvivalTPS
+          node BlockSurvivalTPS/tools/verify-preview.mjs
+      - name: Install Chromium and Playwright
+        run: |
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium
+      - name: Serve game locally
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m http.server 8139 --bind 127.0.0.1 --directory BlockSurvivalTPS/dist >/tmp/tps-qa-http.log 2>&1 &
+          for i in {1..30}; do curl -fsS http://127.0.0.1:8139/ >/dev/null && exit 0; sleep 1; done
+          cat /tmp/tps-qa-http.log
+          exit 1
+      - name: Verify actual WebGL, clicks, keyboard, touch, viewport and screenshots
+        run: python BlockSurvivalTPS/tests/browser_qa.py
+      - name: Upload before-release desktop/mobile screenshots and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tps-v03-real-browser-qa
+          path: BlockSurvivalTPS/qa/screenshots/
+          retention-days: 7
+          if-no-files-found: ignore
