@@ -63,6 +63,23 @@
 - Meshy / TRELLIS.2: AI 3D 생성 도구. 생성 비용·이용 조건·최종 파일의 배포 권리를 별도 검토한 뒤 부족한 현대형 좀비·총기·생존자 자산을 보강하는 후보. 기존 공개 모델을 무단 재학습/복제하지 않는다.
 - 라니킹덤 Fiefdom 원본 AGPL-3.0 자산: **새 TPS에 소스·아트 직접 복사 금지**. 라니킹덤은 보관하고 독립 코드로 시작.
 
+## 4-A. 실제 완성형 브라우저 총격 게임 소스 검증
+
+> 아래는 **게임플레이 설계/코드 참고용**이다. 원작 이름·모델·맵·사운드·UI를 통째로 이식하지 않고, 코드 자체 MIT 표시와 별도 에셋 권리를 독립 확인한다.
+
+| 후보 | 기술과 쓸모 | 확인한 라이선스 | 채택 |
+|---|---|---|---|
+| [Thalvorn-FPS-Shooter](https://github.com/scaleto/Thalvorn-FPS-Shooter) | Babylon.js, FPS↔TPS 카메라, 모바일 조이스틱, 무기·재장전, 숲·도시 지형. 서버 멀티플레이 포함 | **LICENSE 파일 MIT 직접 확인**, GLB·기타 개별 자산 권리는 별도 | **코드 구조 P0**. TPS 시점 전환/모바일 입력을 독립 설계하는 참고. 기존 서버·모델 통째 이식 금지 |
+| [Claude Zombies](https://github.com/justinw916-sketch/claude-zombies) | 자산 0개/절차적 모델/합성 SFX, 웨이브/좀비 AI, 브라우저 실행 | **LICENSE 파일 MIT 직접 확인** | **경량 아키텍처 P0**. 다운로딩 3D 자산이 없어도 플레이 가능한 초기 구조/웨이브 타이머 참고 |
+| [SANDLINE](https://github.com/xilinnihao-afk/sandline-threejs-fps) | Three.js 모바일 FPS·터치·전투 테스트 | **LICENSE 파일 MIT 직접 확인**. ASSETS.md에 제3자 모델 분리 | **코드·QA P1**. 외부 아트 폴더 재배포 금지 |
+| [Ashworth Station](https://github.com/AUAggy/ashworth-station) | Three.js 단일 HTML 좀비 웨이브·태블릿 터치 | **LICENSE 파일 MIT 직접 확인** | **웨이브 전투 P1**. 단일 파일 구조는 이후 모듈 분할 필요 |
+| [Jungle Survival](https://github.com/weinsbergyuval/jungle-survival) | Three.js 기반 **3인칭** 몬스터 웨이브·사격·체력 | README에 MIT 표기, **루트 LICENSE 파일을 찾지 못함** | **설계 참고만**. 권리 근거 확인 전 코드 복사 금지. React/DB/Socket.io는 초기 목표에 과중 |
+| [Sketchbook](https://github.com/swift502/Sketchbook) | Three.js 3인칭 카메라/캡슐 충돌·캐릭터 AI | 저장소 MIT 표기 | **입력/카메라 참고**. 구형 Three.js/Cannon.js API 직접 복사 지양 |
+| [THREE.BasicThirdPersonGame](https://github.com/matthias-schuetz/THREE-BasicThirdPersonGame) | 3인칭 카메라·기본 이동 / Cannon.js | MIT 표기 | **역사적 참고만**. Three.js r61 등 오래된 버전 |
+| [threejs-games Graveyard Survival](https://threejs-games.github.io/) | 묘지 3인칭 TPS 예시 | **개별 소스 저장소·권리 추가 확인 필요** | 데모 참고, 코드 자동 수집 보류 |
+
+**결론:** 완성된 오픈소스 게임의 그래픽·네트워크·UI를 몽땅 가져오면 라니킹덤과 같은 복잡성이 반복된다. **Thalvorn의 TPS 입력·카메라 개념, Claude Zombies의 경량 웨이브 구조, Kenney/KayKit CC0 아트를 분리 채택**한다. 게임 엔진은 이후 Three.js와 PlayCanvas를 같은 장면에서 실제 초기 로딩·GPU 메모리로 비교한 다음 한 가지로 고정한다.
+
 ## 5. 모바일 성능·초기 개발 범위 (검증 목표, 실측 성능 아님)
 
 - 1차 로딩 크기 **8MB 이하 목표**, 첫 실전 플레이까지 가능하면 3MB 이하. 모델은 게임 중 지연 로드 및 개별 압축, 최고 기록은 브라우저 로컬만.
