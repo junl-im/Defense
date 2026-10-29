@@ -12,7 +12,7 @@ const keys=new Set();
 let state=newGame(),yaw=0,pitch=0,fireHeld=false,sprintHeld=false;
 let joystick={x:0,z:0},stickPointer=null,lookPointer=null,lastLook=null;
 let renderer,scene,camera,clock,player,playerParts,world,raycaster;
-let heroRig=null,heroMixer=null,heroAnimation='',heroGun=null,heroGunTemplate=null;
+let heroRig=null,heroMixer=null,heroAnimation='',heroGun=null,heroGunTemplate=null,muzzleEffect=null;
 const heroClips=new Map();
 const cameraShotVector=new THREE.Vector3();
 let lastFrame=performance.now(),fpsCount=0,fpsStart=lastFrame,fps=60,uiAt=0,modelStarted=false,nowFrameDt=0.016;
@@ -54,6 +54,8 @@ function init3D(){
  const sun=new THREE.DirectionalLight(0xffd7a2,1.75);sun.position.set(-25,48,-30);scene.add(sun);
  world=new THREE.Group();scene.add(world);raycaster=new THREE.Raycaster();
  constructWorld();player=makePlayer();scene.add(player);
+ muzzleEffect=box(player,0.35,1.5,-1.05,0.3,0.3,0.5,0xffd16e,'glow');
+ muzzleEffect.userData.fx=true;muzzleEffect.visible=false;
  size();window.addEventListener('resize',size,{passive:true});
  canvas.addEventListener('webglcontextlost',evt=>{evt.preventDefault();pauseGame('그래픽 연결이 중단됐습니다');});
  canvas.addEventListener('webglcontextrestored',()=>location.reload());
@@ -211,7 +213,7 @@ function installHero(gltf){
  // KayKit animated rigs face +Z, while our TPS camera assumes the hero faces -Z.
  heroRig.rotation.y=Math.PI;
  // Keep primitive fallback only until this correctly rigged hero is loaded.
- for(const c of player.children)c.visible=false;
+ for(const c of player.children)if(!c.userData.fx)c.visible=false;
  player.add(heroRig);heroMixer=new THREE.AnimationMixer(heroRig);
  for(const clip of gltf.animations)heroClips.set(clip.name,clip);
  heroAnimation='';
@@ -370,7 +372,7 @@ function updateHUD(){
  $('wave').textContent=state.wave;$('kills').textContent=state.kills;$('score').textContent=state.score;
  $('ammo').innerHTML=state.ammo+' <small>/ '+state.reserve+'</small>';
  $('hitScreen').style.opacity=Math.min(0.16,state.hitFlash*0.65);
- $('reticle').classList.toggle('hit',state.shotFlash>0);
+ $('reticle').classList.toggle('hit',state.hitMarker>0);
  $('fps').textContent='FPS '+fps+' · '+(renderer?.getPixelRatio()?.toFixed(2)||'1')+'x';
  $('message').textContent=state.toast;
 }
@@ -427,6 +429,7 @@ function frame(now){
   syncPlayer(now/1000,false);
   updateCamera(dt);
  }
+ if(muzzleEffect)muzzleEffect.visible=state.status==='playing'&&state.shotFlash>0;
  if(renderer&&scene)renderer.render(scene,camera);
  fpsCount++;
  if(now-fpsStart>1500){

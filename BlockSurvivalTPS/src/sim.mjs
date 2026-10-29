@@ -34,7 +34,7 @@ export function clearPath(x1,z1,x2,z2){
 }
 export function newGame(){
   return {status:"title",x:0,z:0,yaw:0,hp:100,maxHp:100,ammo:MAG_SIZE,
-    reserve:72,reloadTime:0,shotCooldown:0,wave:1,waveLeft:5,spawnDelay:0.6,
+    reserve:72,reloadTime:0,shotCooldown:0,hitMarker:0,wave:1,waveLeft:5,spawnDelay:0.6,
     nextWave:0,kills:0,score:0,elapsed:0,hitFlash:0,shotFlash:0,seed:93461,
     enemies:[],nextId:1,toast:"중앙을 조준해 살아남으세요"};
 }
@@ -107,7 +107,7 @@ export function shoot(s,dx,dz){
   const e=lineTarget(s,adjusted.dx,adjusted.dz);
   if(!e)return {fired:true,hit:false};
   e.hp-=e.type==="runner"?55:46;
-  e.hitTime=0.2;
+  e.hitTime=0.2;s.hitMarker=0.22;
   const killed=e.hp<=0;
   if(killed){s.kills++;s.score+=e.type==="runner"?125:100;
     if(s.kills%5===0)s.hp=Math.min(s.maxHp,s.hp+16);
@@ -136,6 +136,7 @@ export function tick(s,dt,controls={}){
   dt=clamp(dt,0,0.06);
   s.elapsed+=dt;s.shotCooldown=Math.max(0,s.shotCooldown-dt);
   s.shotFlash=Math.max(0,s.shotFlash-dt);
+  s.hitMarker=Math.max(0,s.hitMarker-dt);
   s.hitFlash=Math.max(0,s.hitFlash-dt);
   if(s.reloadTime>0){
     s.reloadTime-=dt;

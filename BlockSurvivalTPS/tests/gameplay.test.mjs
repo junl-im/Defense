@@ -38,3 +38,14 @@ test('enemies can hurt the player and game over is noninteractive',()=>{
  s.hp=5;tick(s,0.06);
  assert.equal(s.hp,0);assert.equal(s.status,'gameover');assert.equal(shoot(s,0,1).fired,false);
 });
+
+test('reticle feedback triggers only on real hits, not missed shots',()=>{
+ const s=newGame();start(s);
+ assert.equal(shoot(s,1,0).hit,false);assert.equal(s.hitMarker,0);
+ for(let i=0;i<4;i++)tick(s,0.06);
+ s.enemies=[{id:5,x:0,z:-6,type:'zombie',radius:0.7,hp:100,hitTime:0,walk:0,deadTime:0,speed:0,attackCD:1}];
+ assert.equal(shoot(s,0,-1).hit,true);
+ assert.ok(s.hitMarker>0);
+ for(let i=0;i<5;i++)tick(s,0.06);
+ assert.equal(s.hitMarker,0);
+});
