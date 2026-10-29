@@ -1,0 +1,43 @@
+{
+  "license": "CC0-1.0",
+  "creator": "Kenney",
+  "originalPage": "https://kenney.nl/assets/animated-characters-survivors",
+  "authorMirror": "https://opengameart.org/sites/default/files/kenney_animated-characters-1.zip",
+  "sourceZipSha256": "9cc53e82c941781f26aa8fb39d40887cf14b1d74cca2d10ccc6e7c140a68f820",
+  "conversion": "Blender 4.0.2 with original PNG atlas; no SVG extracted or distributed",
+  "assets": [
+    {
+      "id": "modernHero",
+      "bytes": 272284,
+      "sha256": "2c7816a16f0b77a72835d4f94e69323d77803e197280dc9f7dd091d20c0a847a",
+      "clips": [
+        "Idle",
+        "Run",
+        "Jump"
+      ],
+      "skinned": true
+    },
+    {
+      "id": "modernZombie",
+      "bytes": 292052,
+      "sha256": "ee8559db16f134bee636a156e7f6cf81f73ace4a112c696ad9958e78b802330c",
+      "clips": [
+        "Idle",
+        "Run",
+        "Jump"
+      ],
+      "skinned": true
+    },
+    {
+      "id": "modernRunner",
+      "bytes": 274008,
+      "sha256": "37f0672e80ce051430bce94abe19842830d49ee571cb1d4d1424e9f6fc79eace",
+      "clips": [
+        "Idle",
+        "Run",
+        "Jump"
+      ],
+      "skinned": true
+    }
+  ]
+}
