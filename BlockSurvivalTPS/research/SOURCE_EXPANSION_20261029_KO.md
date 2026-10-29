@@ -81,3 +81,15 @@ P1-1: Kenney Blaster/SFX/Nature/Survival 파일 10~20개만 우선 채택하고 
 P1-2: 서버 없이 GitHub Pages 싱글플레이, 모델 수요량 정량 측정 후에만 추가 자산 확대.
 
 **중간 단계의 출처 링크는 실제 게임 자산 확보 완료가 아니다.** 각 입수본은 원본 URL·버전·라이선스·해시·다운로드 시간·선택 파일·실제 게임 사용처가 기록될 때만 '확보'로 승격한다.
+
+## 7. 2차 실제 확보 체크포인트 — 도시 7모델 포함 KayKit 5팩
+
+- GitHub 취득 검증: https://github.com/junl-im/Defense/actions/runs/40864857212 — `success`, 5개 공식 GitHub CC0 원본 저장소, 총 34개 선별 파일, 보존된 Rani Kingdom 및 SVG 0개 QA 통과.
+- 신규 팩 출처: https://github.com/KayKit-Game-Assets/KayKit-City-Builder-Bits-1.0 @ `63976910ca04d16f0fc531b9c614244be8128713` — 소스 저장소 `LICENSE.txt` CC0 확인.
+- 7개 도심 모델 `building_A`, `car_police`, `road_straight`, `streetlight`, `dumpster`, `trash_A`, `trafficlight_A`; 각각 glTF/BIN, 공유 텍스처 PNG를 종속 파일로 함께 확보. 골격을 갖춘 첫 도시·엄폐 장면 후보이며 플레이 장면 적용 이전 상태.
+- 신규 GitHub 아티팩트 12892738994, **4,620,133 bytes**, GitHub 표시 SHA256 `4f538cc0077e74a36e62ef8ca8279c636a3ee2492933e9929e90c1d2ac0c4fd2`; 2026-11-01 11:22 UTC 만료 예정.
+- 별도 Drive 장기 보관 ZIP: https://drive.google.com/file/d/1qDYe7rfrd97hQAivTX7pbeQLKpPuR5m4/view — metadata 크기 **4,620,133 bytes** 및 전용 폴더 소속 확인. Drive SHA256 해시 자체 계산은 아직 안 함.
+- 첫 4팩 https://drive.google.com/file/d/1dyKI8ucFWQbKYKG-J1Cr8KBb9Col5AZC/view 은 비교 이력으로 보존. 둘은 버전이 다른 검증 ZIP이며 중복 파일을 런타임에 두 벌 넣지 않음.
+- 이 시점 `source-lock.json`, 취득 스크립트, 레지스트리 테스트, Actions 5팩 검사를 갱신하여 성공. 다음에는 **Kenney/Quaternius 공식 배포 파일의 권리 포함 원본 확보 → 1 생존자·2 좀비 애니메이션/무기 실사 → 실제 GLB 경량화** 순서.
+- 관련 노션 MASTER: https://app.notion.com/p/408fff243ec9818fb23dd6134fda816a
+- Google Docs 협업 기준본: https://docs.google.com/document/d/1RkaKR5uoOXD6cDf5yq8tMjpg3aiLSghlc9J5KoIHDWo/edit
