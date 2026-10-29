@@ -33,6 +33,18 @@
 - 앞서 저장한 **4팩 4.54MB ZIP은 삭제하지 않고** 동일 폴더에 유지. 서로 다른 수집 단계의 재현용 체크포인트.
 - **검증/보관은 실제 게임 적용과 다름**: glTF→GLB, 종속 경로, 렌더링, 충돌·최적화·모바일 FPS 실측은 후속 작업.
 
+
+
+### D. 6번째 공식 출처 — Kenney FPS Starter Kit의 CC0 **미디어만** 별도 확보
+
+- 공식 원본 [KenneyNL/Starter-Kit-FPS](https://github.com/KenneyNL/Starter-Kit-FPS) @ `185fd2326d74a5cf858cffc616f87cf9696f9cc0` — 해당 README에 **2D sprite·3D model·sound effect CC0**로 명시. **프로그램 Godot 소스는 MIT**, 동봉 폰트는 별도 OFL이므로 이 팩에서 제외.
+- 실제 추가 선택 **11개**: 총기 GLB 2, colormap PNG 1, 사격·적 공격·피격·사망 OGG 5, 조준점·피격 표시 PNG 3. SVG·Godot `.gd`·폰트·렌더 스크린샷은 수집하지 않음.
+- **6개 출처, 45개 선별 파일**의 SHA 고정·라이선스 증빙·원본 보존 검사 [Actions #40867270379](https://github.com/junl-im/Defense/actions/runs/40867270379) **success**.
+- [검증 GitHub 아티팩트 #12893428895](https://github.com/junl-im/Defense/actions/runs/40867270379/artifacts/12893428895) — 4,728,925 bytes, GitHub 표시 SHA256 `576b3d9da4bab9971600e1e0c8b70bc89375f0a1274715c78ddcef42db2a19b6`, 만료 2026-11-01 11:41 UTC.
+- [6출처 검증 ZIP Google Drive 보관본](https://drive.google.com/file/d/176G5mIHrMu0h_lrmjn-tej-kIv_lXDV8/view) — Drive 실제 저장 크기 **4,728,925 bytes** 및 지정 폴더 소속 검증. Drive 저장물의 SHA256은 별도 재계산하지 않음.
+- 이전 4팩/5팩 ZIP은 이력과 롤백용으로 모두 남김. 본 6출처가 현재 최신 선별 원본 묶음. **게임 런타임에 적용된 것은 아직 아님.**
+- [Kenney Mini Characters](https://kenney.nl/assets/mini-characters) (애니메이션), [Kenney Blocky Characters](https://kenney.nl/assets/blocky-characters) (블록형), [Vuena Blocky Characters CC0](https://vuena.itch.io/blocky-characters-free-sample) (좀비 포함 8종·6클립) 추가 후보. 공식 ZIP은 **미확보**, 다운로드 파일 라이선스·리깅 품질을 검수해야 함.
+
 ## 공식 좀비·생존자 디자인의 1순위
 
 1. [Quaternius Zombie Apocalypse Kit](https://quaternius.com/packs/zombieapocalypsekit.html) — **해당 팩 페이지에 CC0 표시**, 총 60 모델, 4 생존자/4 적/2 개/생존자당 애니메이션 20개. FBX, OBJ, glTF, Blend. 첫 검수 대상.
