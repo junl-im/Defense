@@ -76,3 +76,14 @@
 - 우선 원본 아카이브/5개 공식 GitHub 저장소 수집 기준: `BlockSurvivalTPS/research/source-lock.json`
 - 전체 후보 및 라이선스 조사 확장: `tps-next/research/SOURCE_REGISTRY.json` 및 `tps-next/research/OPEN_SOURCE_MASTER_KO.md`
 - 게임 기획·코드·자산 통합 개발은 `BlockSurvivalTPS/`만 사용.
+
+
+### E. 7번째 출처 — Gobkit 애니메이션·정적 GLB 7개 실물 검증
+
+- 공식 원본: [Ariescar/gobkit-free-assets](https://github.com/Ariescar/gobkit-free-assets) @ `4e73c68fa6e8ca9d948fcc0ce7215c830a022c3b`, 원본 `LICENSE`는 CC0-1.0.
+- [GitHub Actions #40897237246](https://github.com/junl-im/Defense/actions/runs/40897237246): **success**. 7개 고정 원본·52개 선별 파일 CC0 라이선스 검사 및 안전 경로·원본 라니킹덤 보호·SVG 0 검사 통과.
+- 실제 새로 확보한 7개 GLB: minion-a01, minion-b01, Bat, Corgi, Rock001, TreeLow001, Bush001. 정적 환경·동물/몬스터 대역이며 **최종 좀비/생존자 모델은 아님**.
+- [최신 ZIP GitHub artifact #12908086106](https://github.com/junl-im/Defense/actions/runs/40897237246/artifacts/12908086106): **5,114,543 bytes**, GitHub 표기 SHA256 `b25a8a423c04daaf217a177b13f876c38fa1ccf45ff652c9f720b8af77aba3ef`; 만료 2026-11-01 15:01 UTC. 작업 컨테이너에서 직접 계산한 ZIP SHA256과 동일.
+- [구글 드라이브 백업 ZIP](https://drive.google.com/file/d/1G4emqANIqFMo5YldZ2MmQkyi0K5gFxDX/view) — **5,114,543 bytes**, 전용 폴더 저장·크기 일치 확인. 구글 저장 객체 자체의 SHA256을 재해시한 것은 아님.
+- [실물 모델 구조 분석](./MODEL_AUDIT_20261029_KO.md): GLB 헤더·JSON 청크·애니메이션·트라이앵글 측정. Gobkit 미니언 240 tri / 단일 baked clip, KayKit Skeleton_Minion 5,288 tri / 95 clips. 전자는 8~12마리의 저비용 적 테스트, 후자는 주력 정예 적을 검토하기 좋음. 단, 실제 GPU FPS 미측정.
+- 최초 4팩, 5팩, 6팩 ZIP도 롤백 기록으로 보존. 7팩만 런타임에 적용하면 된다는 뜻 아님 — 7출처 **확보와 구조 검증**만 완료, TPS 장면 렌더링·사격·충돌·FPS 실측 미완료.
