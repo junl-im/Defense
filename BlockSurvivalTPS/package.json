@@ -1,0 +1,13 @@
+{
+  "name": "block-survival-tps",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "곰같은여우의 독립형 로우폴리 TPS 웨이브 생존 시제품",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "build": "node tools/build-preview.mjs"
+  },
+  "dependencies": {"three": "0.160.0"},
+  "devDependencies": {"esbuild": "0.25.12"}
+}

@@ -1,41 +1,48 @@
-# 블록 서바이벌 TPS — 새 게임 프로젝트
+# 곰같은여우 — BLOCK SURVIVAL TPS
 
-**현재 단계: 오픈소스 조사와 무료 자산 원본 확보. 게임 자체는 아직 플레이 가능한 상태가 아닙니다.**
+**ALPHA 0.1 플레이 가능한 독립형 웹 TPS 시제품.** 기존 라니킹덤과 완전히 분리하여 개발합니다. 최신 검증 결과와 빌드는 [Actions](https://github.com/junl-im/Defense/actions/workflows/block-survival-preview.yml) 참조. 브라우저에서 PC·모바일 실제 게임플레이 및 FPS 실측은 별도 검증이 필요합니다.
 
-- 공식 코드·기획 작업 루트: `BlockSurvivalTPS/`
-- GitHub: https://github.com/junl-im/Defense
-- 작업 브랜치: `feature/block-survival-tps-v01-20261029`
-- 라니킹덤 완전 보존: `archive/rani-kingdom-v539-20261029`
-- 기존 `main`/Pages는 아직 라니킹덤. 새 TPS 코드의 공개 배포·원본 제거 금지
-- 자체 제작 지식 자산 © 2026 **곰같은여우**. 외부 오픈소스/CC0는 각각의 라이선스와 출처가 별도로 적용됩니다.
+## 보존 및 권리
+- 게임 실행 파일: \`BlockSurvivalTPS/index.html\`, \`src/game.mjs\`, \`src/sim.mjs\`, \`style.css\`
+- 작업 브랜치: \`feature/block-survival-tps-v01-20261029\` ([PR #90](https://github.com/junl-im/Defense/pull/90))
+- 기존 라니킹덤 원본/배포: \`main\` 및 \`archive/rani-kingdom-v539-20261029\`. **덮어쓰거나 삭제하지 않습니다.**
+- 자체 게임 코드·기획: © 2026 곰같은여우. Three.js MIT / Gobkit·KayKit·Kenney CC0 원 라이선스는 각각 원 저작자에게 속합니다.
+- SVG 자산/아이콘 금지. PC/모바일 모두 스크롤 없는 단일 화면, 우클릭·드래그 금지.
 
-## 자산과 근거 찾아가기
+## 첫 플레이 범위
+폐허 도시 3D 지형/엄폐물, 블록 생존자, WASD 이동·마우스 카메라·좌클릭 사격, R 장전/Shift 질주/ESC 일시정지, 모바일 좌측 조이스틱+우측 시점·사격·장전·질주 버튼, 추적형 좀비·주자·특수몹, 체력·탄약·피격 표시·처치·웨이브·재시작. WebGL 렌더러가 실패하면 경고를 보여줍니다.
 
-1. [오픈소스 엔진·자산 대조 기준본](./research/OPEN_SOURCE_ASSET_MASTER_KO.md) — 후보 엔진, AI, TPS 조작, 3D 자료, 라이선스·성능 위험
-2. [원본 고정 목록](./research/source-lock.json) — **4개 KayKit 공식 GitHub 저장소**·원본 커밋·가져올 파일 목록
-3. [취득 상태·해시·실패 방지·추가 확보 목록](./research/ACQUISITION_STATUS_KO.md) — 실제 아티팩트와 영구 저장된 CC0 3D 소품 구분
-4. [취득 스크립트](./tools/acquire-open-assets.mjs) — 공식 GitHub 원본을 PIN 상태로 체크아웃해 라이선스 확인 후 선택 모델만 격리 수집
-5. [확장 후보 24개 출처·라이선스 목록](../tps-next/research/SOURCE_REGISTRY.json)
-6. [실물 CC0 묘지 자산 3종 및 라이선스](../tps-next/assets/third_party/kaykit-halloween-1.0/) — 원본 3D 모델 3개, 공통 PNG 텍스처, 데이터 검증
-7. [소형 자산의 재수집·SHA 검사](../tps-next/tools/acquire-seed.mjs)
+기본 3D 지형·캐릭터만으로 실행 가능. GLTFLoader를 통해 원본 SHA에 고정된 Gobkit 미니언과 Kenney 총기·KayKit 도시 소품을 **선택적으로** 다운로드하며 실패 시 기본 메시로 폴백. 애니메이션 해석은 [모델 실사 보고서](./research/MODEL_AUDIT_20261029_KO.md) 참조. **최종 인간형 좀비와 아트 퀄리티는 아직 미완료**입니다.
 
-`tps-next/`는 **재현 가능한 원본 자산·조사 자료만 보관하는 격리된 보조 공간**입니다. 프로토타입과 정식 게임의 코드·경량 런타임 파일은 `BlockSurvivalTPS/` 한 곳에만 작성하여 구현 중복을 방지합니다.
+## 간단 실행
+개발용 원본 (인터넷 필요, importmap과 CDN Three.js):
+\`\`\`sh
+cd BlockSurvivalTPS
+python -m http.server 8000
+# http://localhost:8000/
+\`\`\`
 
-## 먼저 구현할 플레이 루프
+외부 Three.js CDN을 포함하지 않는 **독립 빌드**:
+\`\`\`sh
+cd BlockSurvivalTPS
+npm install
+npm test
+npm run build
+cd dist
+python -m http.server 8000
+# http://localhost:8000/
+\`\`\`
+위의 GitHub Actions는 같은 빌드 후 \`block-survival-tps-playable-alpha-v01\` ZIP을 첨부합니다. 이를 다운로드·압축 해제한 뒤 \`START_HERE.txt\` 안내에 따라 로컬 서버를 실행할 수 있습니다. **CDN 없이 기본 게임 실행 가능**하며, 선택 원본 3D 모델은 인터넷이 연결될 때만 표시합니다.
 
-가벼운 블록형 숲/폐허 맵 → 3인칭 생존자 이동/카메라 → 권총 조준/사격 → 쫓아오는 좀비 2종 → 체력/회복/웨이브.
+## 현재 테스트와 제한
+- [전투 규칙 자동 테스트](./tests/gameplay.test.mjs): 탄약·엄폐·체력·적 상한·웨이브 및 게임오버.
+- [7개 CC0 원본 증빙](./research/source-lock.json) 및 [수집·라이선스 검사](./tools/acquire-open-assets.mjs): 7출처 52파일.
+- [GitHub CI](../.github/workflows/block-survival-preview.yml): ES 모듈 구문 검사, 전투 테스트, 실제 번들 생성, 최소 정적 HTTP 응답, SVG 배제. 완료 상태는 실행 결과 확인 필요.
+- AI는 단순 추적·가로막힘 시 X/Z 슬라이드 수준으로, 아직 경로탐색/정예 패턴 없음.
+- 모바일 실기기 FPS/발열, 본 무기 장착·헤드샷·고급 애니메이션, 로컬/클라우드 세이브, 원본 사이트 전환은 **아직 구현·검증되지 않음**.
+- 모바일 30FPS/PC 60FPS 및 초기 로딩 3–8MB는 **목표**일 뿐 실측 보장 없음.
 
-처음에는 싱글플레이, 정적 GitHub Pages 호스팅, 모바일 30FPS 목표, PC 60FPS 목표. 저장 키/서비스워커/아트는 라니킹덤과 완전 분리합니다.
-
-**성능 목표는 미측정 수치이므로 목표로만 기록합니다.** 자산 전체 팩을 앱 첫 실행에서 로드하지 않습니다.
-
-## 로컬 라이선스 및 소스 확인
-
-```bash
-node --test BlockSurvivalTPS/tests/*.test.mjs
-node BlockSurvivalTPS/tools/acquire-open-assets.mjs --check
-node --test tps-next/tools/acquire-seed.test.mjs
-node tps-next/tools/acquire-seed.mjs --verify
-```
-
-대용량 원본 모델은 임시 폴더/검수 자료만으로 보관하며 별도 최적화 없이 모바일 게임에 포함하지 않습니다.
+## 자료
+- [7개 공식 CC0 출처·취득 내역](./research/ACQUISITION_STATUS_KO.md)
+- [실물 GLB 구조 분석](./research/MODEL_AUDIT_20261029_KO.md)
+- [오픈소스 자료 연구](./research/OPEN_SOURCE_ASSET_MASTER_KO.md)
