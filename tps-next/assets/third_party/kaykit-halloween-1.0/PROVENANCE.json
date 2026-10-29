@@ -1,0 +1,62 @@
+{
+  "source": {
+    "owner": "KayKit-Game-Assets",
+    "repo": "KayKit-Halloween-Bits-1.0",
+    "commit": "6dc69bf6b2fa766a985754f35ec6a0324090e6c6",
+    "home": "https://github.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0",
+    "license": "CC0-1.0",
+    "author": "Kay Lousberg"
+  },
+  "files": [
+    {
+      "from": "LICENSE.txt",
+      "to": "LICENSE.txt",
+      "sha": "1c10d234eb090aa374f7fb3c23a7da71e74197e3",
+      "size": 877
+    },
+    {
+      "from": "addons/kaykit_halloween_bits/Assets/gltf/gravestone.gltf",
+      "to": "gravestone.gltf",
+      "sha": "7dd75f961293be878d6396873ece88801b8b5dd6",
+      "size": 3066
+    },
+    {
+      "from": "addons/kaykit_halloween_bits/Assets/gltf/gravestone.bin",
+      "to": "gravestone.bin",
+      "sha": "f033d9beb2bd56a80474ce2fd1987d650633506e",
+      "size": 12316
+    },
+    {
+      "from": "addons/kaykit_halloween_bits/Assets/gltf/fence.gltf",
+      "to": "fence.gltf",
+      "sha": "0dafdc846c869b195e5143f0751f566e0d074c21",
+      "size": 2976
+    },
+    {
+      "from": "addons/kaykit_halloween_bits/Assets/gltf/fence.bin",
+      "to": "fence.bin",
+      "sha": "6624621a9bf11eb5b2530014872dec2c09f1c523",
+      "size": 26728
+    },
+    {
+      "from": "addons/kaykit_halloween_bits/Assets/gltf/tree_dead_small.gltf",
+      "to": "tree_dead_small.gltf",
+      "sha": "8e39cea461e19e7267ea8758ae6497beebeadd1d",
+      "size": 3076
+    },
+    {
+      "from": "addons/kaykit_halloween_bits/Assets/gltf/tree_dead_small.bin",
+      "to": "tree_dead_small.bin",
+      "sha": "2869cc05c3fa15d376c0188df5aa9e43801f1619",
+      "size": 5072
+    },
+    {
+      "from": "addons/kaykit_halloween_bits/Assets/gltf/halloweenbits_texture.png",
+      "to": "halloweenbits_texture.png",
+      "sha": "82313b530486a944133d4aaacfeaf099f07218c3",
+      "size": 15093
+    }
+  ],
+  "verified_at": "2026-10-29T09:44:12.594Z",
+  "note": "CC0 original source, preserve author and license. NOT YET APPROVED for final game visual style."
+}
