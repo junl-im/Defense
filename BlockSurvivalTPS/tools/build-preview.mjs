@@ -25,7 +25,7 @@ const embeddedCss=fs.readFileSync(path.join(dist,'style.css'),'utf8').replace(/<
 const direct=html
  .replace('<link rel="stylesheet" href="./style.css">','<style>'+embeddedCss+'</style>')
  .replace('<script type="module" src="./game.bundle.js"></script>','<script type="module">'+embeddedJs+'</script>');
-if(direct.includes('./game.bundle.js')||direct.includes('./style.css'))throw Error('Direct HTML still needs local files');
+if(/(?:src|href)="\.\/(?:game\.bundle\.js|style\.css)"/.test(direct))throw Error('Direct HTML still needs local files');
 fs.writeFileSync(path.join(dist,'BLOCK_SURVIVAL_TPS_바로실행.html'),direct);
 const license=path.join(base,'node_modules/three/LICENSE');
 if(!fs.existsSync(license))throw Error('Three.js MIT license must be distributed');
