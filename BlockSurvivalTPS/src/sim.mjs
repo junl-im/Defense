@@ -35,8 +35,8 @@ export function clearPath(x1,z1,x2,z2){
 export function newGame(){
   return {status:"title",x:0,z:0,yaw:0,hp:100,maxHp:100,ammo:MAG_SIZE,
     reserve:72,reloadTime:0,shotCooldown:0,hitMarker:0,wave:1,waveLeft:5,spawnDelay:0.6,
-    nextWave:0,kills:0,score:0,elapsed:0,hitFlash:0,shotFlash:0,seed:93461,
-    enemies:[],nextId:1,toast:"중앙을 조준해 살아남으세요"};
+    nextWave:0,kills:0,score:0,elapsed:0,hitFlash:0,shotFlash:0,pickupFlash:0,seed:93461,
+    enemies:[],nextId:1,pickups:[],nextPickupId:1,toast:"중앙을 조준해 살아남으세요"};
 }
 export function random(s){
   s.seed=(Math.imul(s.seed,1664525)+1013904223)>>>0;
@@ -99,6 +99,28 @@ export function lineTarget(s,dx,dz){
   }
   return target;
 }
+export function dropPickup(s,x,z,kind){
+ if(!['ammo','medkit'].includes(kind))return null;
+ if(s.pickups.length>=12)s.pickups.shift();
+ const p={id:s.nextPickupId++,x,z,kind,ttl:18};
+ s.pickups.push(p);
+ return p;
+}
+export function collectPickups(s,dt){
+ for(const p of s.pickups){
+  p.ttl-=dt;
+  if(p.ttl<=0||Math.hypot(s.x-p.x,s.z-p.z)>1.35)continue;
+  if(p.kind==='medkit'){
+   if(s.hp>=s.maxHp)continue;
+   const before=s.hp;s.hp=Math.min(s.maxHp,s.hp+24);
+   s.toast='응급 치료 +'+(s.hp-before);
+  }else{
+   s.reserve+=18;s.toast='탄약 +18';
+  }
+  s.pickupFlash=0.25;p.ttl=0;
+ }
+ s.pickups=s.pickups.filter(p=>p.ttl>0);
+}
 export function shoot(s,dx,dz){
   if(s.status!=="playing"||s.reloadTime>0||s.shotCooldown>0)return {fired:false,reason:"cooldown"};
   if(s.ammo===0)return {fired:false,reason:"empty"};
@@ -109,8 +131,11 @@ export function shoot(s,dx,dz){
   e.hp-=e.type==="runner"?55:46;
   e.hitTime=0.2;s.hitMarker=0.22;
   const killed=e.hp<=0;
-  if(killed){s.kills++;s.score+=e.type==="runner"?125:100;
-    if(s.kills%5===0)s.hp=Math.min(s.maxHp,s.hp+16);
+  if(killed){
+    s.kills++;s.score+=e.type==="runner"?125:100;
+    // Deterministic, bounded supplies: avoid requiring ads, purchases or network.
+    if(s.kills%3===0)dropPickup(s,e.x,e.z,'ammo');
+    if(s.kills%5===0)dropPickup(s,e.x,e.z,'medkit');
   }
   return {fired:true,hit:true,killed,id:e.id};
 }
@@ -137,6 +162,8 @@ export function tick(s,dt,controls={}){
   s.elapsed+=dt;s.shotCooldown=Math.max(0,s.shotCooldown-dt);
   s.shotFlash=Math.max(0,s.shotFlash-dt);
   s.hitMarker=Math.max(0,s.hitMarker-dt);
+  s.pickupFlash=Math.max(0,s.pickupFlash-dt);
+  collectPickups(s,dt);
   s.hitFlash=Math.max(0,s.hitFlash-dt);
   if(s.reloadTime>0){
     s.reloadTime-=dt;
