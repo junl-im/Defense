@@ -208,6 +208,8 @@ function installHero(gltf){
   if(/Sword|Shield|Cape/i.test(child.name))child.visible=false;
  });
  normalize(heroRig,2.1);
+ // KayKit animated rigs face +Z, while our TPS camera assumes the hero faces -Z.
+ heroRig.rotation.y=Math.PI;
  // Keep primitive fallback only until this correctly rigged hero is loaded.
  for(const c of player.children)c.visible=false;
  player.add(heroRig);heroMixer=new THREE.AnimationMixer(heroRig);
@@ -275,7 +277,7 @@ function syncEnemies(t){
   const root=v.root;
   root.position.set(e.x,e.hp<=0?0:e.hitTime>0?0.06:0,e.z);
   const a=Math.atan2(state.x-e.x,state.z-e.z);
-  root.rotation.y=(v.rigKind==='undead'?a+Math.PI:v.mixer?a:a+Math.PI);
+  root.rotation.y=(v.rigKind==='undead'?a:v.mixer?a:a+Math.PI);
   if(e.hp<=0){
    if(v.rigKind==='undead'){
     playRigClip(v,'Death_A',0.08);
