@@ -36,6 +36,8 @@ def start(page,label):
           f"{label}: canvas viewport no longer fills browser")
     # Explicitly require two real animated GLBs; fallback-only UI must not pass v0.4.
     page.wait_for_function("() => document.querySelector('#shell').dataset.heroRig==='loaded'",timeout=25000)
+    check(page.evaluate("() => document.querySelector('#shell').dataset.dynamicResolution==='enabled'"),
+          f"{label}: adaptive resolution was not initialized")
     page.wait_for_function("() => document.querySelector('#shell').dataset.undeadAsset==='loaded'",timeout=25000)
     page.wait_for_timeout(1500)
     check(not local_errors,f"{label}: JavaScript exceptions: {local_errors[:5]}")
@@ -106,5 +108,28 @@ with sync_playwright() as p:
     check(not err,f"mobile errors: {err}")
     print("mobile PASS",json.dumps({"before":before,"after":after,**fit},ensure_ascii=False))
     mobile.close()
+
+    # Test landscape separately: one-screen HUD and thumb reach on a short mobile viewport.
+    landscape=browser.new_context(viewport={"width":844,"height":390},device_scale_factor=1,is_mobile=True,has_touch=True)
+    page=landscape.new_page()
+    err=start(page,"landscape")
+    check(page.locator("#mobileControls").is_visible(),"landscape touch controls missing")
+    fit=page.evaluate("""() => {
+       const left=document.querySelector('.healthWrap').getBoundingClientRect();
+       const right=document.querySelector('#ammo').getBoundingClientRect();
+       const fire=document.querySelector('#fire').getBoundingClientRect();
+       const stick=document.querySelector('#stickBase').getBoundingClientRect();
+       return {scrollW:document.documentElement.scrollWidth,scrollH:document.documentElement.scrollHeight,
+         width:innerWidth,height:innerHeight,noOverlap:left.right<right.left,
+         fireFits:fire.right<=innerWidth&&fire.bottom<=innerHeight,stickFits:stick.left>=0&&stick.bottom<=innerHeight};
+    }""")
+    check(fit["scrollW"]<=fit["width"]+1 and fit["scrollH"]<=fit["height"]+1,
+          f"landscape has unwanted scrolling: {fit}")
+    check(fit["noOverlap"] and fit["fireFits"] and fit["stickFits"],
+          f"landscape controls or HUD clipped: {fit}")
+    check(not err,f"landscape JavaScript errors {err}")
+    page.screenshot(path=str(OUT/"tps-landscape-844x390.png"))
+    print("landscape PASS",json.dumps(fit),flush=True)
+    landscape.close()
     browser.close()
 print("TPS browser QA passed both desktop and mobile.")

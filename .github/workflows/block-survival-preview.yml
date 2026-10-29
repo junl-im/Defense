@@ -1,7 +1,7 @@
 name: Block Survival TPS — standalone playable alpha
 on:
   push:
-    branches: [feature/block-survival-tps-v05-combat-environment-20261030, main]
+    branches: [feature/block-survival-tps-v06-crowd-performance-20261030, main]
     paths:
       - 'BlockSurvivalTPS/**'
       - '.github/workflows/block-survival-preview.yml'

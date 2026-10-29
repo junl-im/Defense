@@ -73,7 +73,7 @@ const license=path.join(base,'node_modules/three/LICENSE');
 if(!fs.existsSync(license))throw Error('Three.js MIT license must be distributed');
 fs.copyFileSync(license,path.join(dist,'THREE_LICENSE.txt'));
 fs.writeFileSync(path.join(dist,'START_HERE.txt'),[
- '곰같은여우 | Block Survival TPS Alpha 0.5',
+ '곰같은여우 | Block Survival TPS Alpha 0.6',
  '1. 가장 쉬운 실행: BLOCK_SURVIVAL_TPS_바로실행.html 파일을 더블클릭합니다.',
  '2. 브라우저가 최신 WebGL을 지원해야 3D가 표시됩니다.',
  '3. 웹서버 방식도 지원: python -m http.server 8000 후 http://localhost:8000/',

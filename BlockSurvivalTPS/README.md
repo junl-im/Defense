@@ -1,6 +1,6 @@
 # 곰같은여우 — BLOCK SURVIVAL TPS
 
-**ALPHA 0.5 도심 환경·전투·보급품 개선 웹 TPS 시제품.** 이전 라니킹덤은 `main`에서 정리했고 현재는 이 게임에 집중하여 개발·배포합니다. 최신 검증 결과와 빌드는 [Actions](https://github.com/junl-im/Defense/actions/workflows/block-survival-preview.yml) 참조. 브라우저에서 PC·모바일 실제 게임플레이 및 FPS 실측은 별도 검증이 필요합니다.
+**ALPHA 0.6 좀비 군중·모바일 성능·사격 모션 개선 웹 TPS 시제품.** 이전 라니킹덤은 `main`에서 정리했고 현재는 이 게임에 집중하여 개발·배포합니다. 최신 검증 결과와 빌드는 [Actions](https://github.com/junl-im/Defense/actions/workflows/block-survival-preview.yml) 참조. 브라우저에서 PC·모바일 실제 게임플레이 및 FPS 실측은 별도 검증이 필요합니다.
 
 ## 보존 및 권리
 - 게임 실행 파일: \`BlockSurvivalTPS/index.html\`, \`src/game.mjs\`, \`src/sim.mjs\`, \`style.css\`
@@ -87,3 +87,12 @@ python -m http.server 8000
 - [피격·사격 연출](./src/game.mjs): 3D 탄도 궤적과 명중 섬광, 건물에 가려진 탄도는 실제 장면 벽까지 제한. 총구 FX 및 오리지널 Web Audio 단발 사격 효과.
 - 오래된 중앙 안내 메시지는 3초 후 자동으로 사라져 한 화면의 전투 시야 확보. 모든 소품 및 버튼은 SVG 0개.
 - [보급품 테스트](./tests/loot.test.mjs)와 PC/모바일 실제 Chromium WebGL 검증, 8출처·60 CC0 파일 원본 라이선스 검증을 기반으로 공개 반영. 현재 모델은 스타일화된 리깅 모델이며 실사형 그래픽은 별도 차기 작업.
+
+## v0.6 — 경량 성능·군중 AI·반응형 전투
+
+- [군중 충돌 회피](./src/sim.mjs): 살아 있는 최대 12마리의 좀비가 겹쳐서 한 덩어리로 보이지 않도록 반경 기반 분리. 기존 벽/엄폐물 충돌은 그대로 적용, 사망한 적은 군중 계산에서 제외.
+- [적응형 해상도](./src/quality.mjs): 모바일·PC에서 FPS가 낮은 상태가 지속되면 렌더 해상도를 조금 줄이고, 성능이 회복되면 단계적으로 선명도를 복구. 즉시 변동을 억제해 화면 깜빡임 방지. 실제 기기 FPS 실측과 CPU 부하 최적화는 후속 작업.
+- [사격 리깅 모션](./src/game.mjs): 연사 중 애니메이션이 프레임마다 Idle로 끊어지는 현상 줄임. 적이 사라질 때 애니메이션 믹서의 재생 상태를 정리하여 장시간 실행 시 불필요한 참조 감소.
+- [모바일 가로 화면](./style.css): 낮은 높이 화면의 방향키·사격 버튼·HUD 간격 개선. [실제 Chromium 844×390 테스트](./tests/browser_qa.py) 추가.
+- [회귀 테스트](./tests/performance-and-crowd.test.mjs): 군중 중첩·엄폐물 침범·사망한 적의 영향·최저 화질·회복 화질·일시정지 확인.
+- 현대 생존자·좀비 CC0 모델 후보: Kenney Animated Characters Survivors. 공식 패키지는 FBX·PNG·SVG 혼합이므로 **라이선스 확인과 안전한 FBX→GLB 변환 및 SVG 제거 검증 전까지 게임에 포함하지 않음**.
