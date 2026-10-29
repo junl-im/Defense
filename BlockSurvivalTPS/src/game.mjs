@@ -217,6 +217,36 @@ function normalize(model,targetHeight){
  model.position.x-=c.x;model.position.z-=c.z;model.position.y-=b.min.y;
  return model;
 }
+// Solve the upper-arm direction after FBX skeletal clip sampling. This prevents
+// mismatched FBX rig rest orientation from rendering a permanent "hands up" pose.
+// Keep hands attached to the real 58-bone skeleton; no fake separate arms or SVG.
+const aimFrom=new THREE.Vector3(),aimTo=new THREE.Vector3(),aimDesired=new THREE.Vector3();
+const aimDelta=new THREE.Quaternion(),aimParent=new THREE.Quaternion(),aimRoot=new THREE.Quaternion();
+function alignArm(rig,side,mode){
+ const arm=rig.getObjectByName(side+'Arm'),hand=rig.getObjectByName(side+'Hand');
+ if(!arm||!hand)return;
+ rig.updateWorldMatrix(true,true);
+ arm.getWorldPosition(aimFrom);hand.getWorldPosition(aimTo);
+ aimTo.sub(aimFrom);
+ if(aimTo.lengthSq()<1e-5)return;
+ if(mode==='survivor'){
+  if(side==='Right')aimDesired.set(-0.1,-0.53,0.76);
+  else aimDesired.set(0.1,-0.88,0.18);
+ }else{
+  aimDesired.set(side==='Right'?-0.12:0.12,-0.48,0.76);
+ }
+ rig.getWorldQuaternion(aimRoot);
+ aimDesired.applyQuaternion(aimRoot).normalize();
+ aimDelta.setFromUnitVectors(aimTo.normalize(),aimDesired);
+ arm.parent.getWorldQuaternion(aimParent);
+ aimParent.invert().multiply(aimDelta).multiply(aimRoot.setFromRotationMatrix(arm.parent.matrixWorld)).multiply(arm.quaternion);
+ arm.quaternion.copy(aimParent);
+ arm.updateWorldMatrix(false,true);
+}
+function correctModernPose(rig,mode){
+ alignArm(rig,'Left',mode);
+ alignArm(rig,'Right',mode);
+}
 function playRigClip(visual,name,fade=0.16){
  if(!visual.mixer||visual.lastAnimation===name)return;
  const clip=visual.clips?.get(name);
@@ -248,7 +278,7 @@ function installHero(gltf,modern=false){
    for(const m of (Array.isArray(child.material)?child.material:[child.material]))m.color.multiply(new THREE.Color(tint));
   }
  });
- normalize(heroRig,2.1);
+ normalize(heroRig,modern?0.83:2.1);
  // KayKit animated rigs face +Z, while our TPS camera assumes the hero faces -Z.
  heroRig.rotation.y=Math.PI;
  // Keep primitive fallback only until this correctly rigged hero is loaded.
@@ -302,7 +332,7 @@ function makeEnemyVisual(e){
  if(kind&&assetCache.has(kind)){
   const gltf=assetCache.get(kind);
   const model=cloneSkinned(gltf.scene);
-  normalize(model,1.8);
+  normalize(model,kind.startsWith('modern')?0.92:1.8);
   model.traverse(child=>{if(child.isSkinnedMesh)child.frustumCulled=false;});
   root.add(model);visual.model=model;
   if(gltf.animations.length){
@@ -331,6 +361,7 @@ function syncEnemies(t){
     playRigClip(v,'Idle',0.05);
     root.rotation.z=Math.min(Math.PI*0.43,e.deadTime*4);
     v.mixer.update(Math.min(0.06,nowFrameDt));
+    correctModernPose(v.model,'undead');
    }else if(v.rigKind==='undead'){
     playRigClip(v,'Death_A',0.08);
     v.mixer.update(Math.min(0.06,nowFrameDt));
@@ -342,6 +373,7 @@ function syncEnemies(t){
    const attack=Math.hypot(e.x-state.x,e.z-state.z)<1.6;
    playRigClip(v,attack?'Idle':'Run',0.13);
    v.mixer.update(Math.min(0.06,nowFrameDt));
+   correctModernPose(v.model,'undead');
    // Lightweight attack lunge without inventing non-existent Kenney attack clips.
    v.model.position.z=attack?Math.sin(t*8+e.id)*0.08:0;
   }else if(v.rigKind==='undead'){
@@ -400,6 +432,7 @@ function syncPlayer(t,moving){
   playHeroClip(name);
   if(heroModern&&heroClips.has('Run'))heroMixer.clipAction(heroClips.get('Run')).timeScale=keys.has('shift')||sprintHeld?1.35:0.8;
   heroMixer.update(Math.min(0.06,nowFrameDt));
+  if(heroModern)correctModernPose(heroRig,'survivor');
   if(heroModern&&heroGun){
    heroGun.rotation.x=state.shotFlash>0?-0.17:0;
    heroGun.rotation.z=state.reloadTime>0?0.3:0;
