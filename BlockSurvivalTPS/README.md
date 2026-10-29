@@ -1,11 +1,11 @@
 # 곰같은여우 — BLOCK SURVIVAL TPS
 
-**ALPHA 0.1 플레이 가능한 독립형 웹 TPS 시제품.** 기존 라니킹덤과 완전히 분리하여 개발합니다. 최신 검증 결과와 빌드는 [Actions](https://github.com/junl-im/Defense/actions/workflows/block-survival-preview.yml) 참조. 브라우저에서 PC·모바일 실제 게임플레이 및 FPS 실측은 별도 검증이 필요합니다.
+**ALPHA 0.1 공개 웹 TPS 시제품.** 이전 라니킹덤은 `main`에서 정리했고 현재는 이 게임에 집중하여 개발·배포합니다. 최신 검증 결과와 빌드는 [Actions](https://github.com/junl-im/Defense/actions/workflows/block-survival-preview.yml) 참조. 브라우저에서 PC·모바일 실제 게임플레이 및 FPS 실측은 별도 검증이 필요합니다.
 
 ## 보존 및 권리
 - 게임 실행 파일: \`BlockSurvivalTPS/index.html\`, \`src/game.mjs\`, \`src/sim.mjs\`, \`style.css\`
-- 작업 브랜치: \`feature/block-survival-tps-v01-20261029\` ([PR #90](https://github.com/junl-im/Defense/pull/90))
-- 기존 라니킹덤 원본/배포: \`main\` 및 \`archive/rani-kingdom-v539-20261029\`. **덮어쓰거나 삭제하지 않습니다.**
+- 신규 개발 브랜치: `feature/block-survival-tps-v02-post-cutover-20261029`. 이전 [PR #90](https://github.com/junl-im/Defense/pull/90)은 병합하지 않고 종료
+- 라니킹덤 원본은 `archive/rani-kingdom-v539-20261029`에 백업. `main`과 GitHub Pages는 TPS로 전환했으며 구형 소스·워크플로는 제거
 - 자체 게임 코드·기획: © 2026 곰같은여우. Three.js MIT / Gobkit·KayKit·Kenney CC0 원 라이선스는 각각 원 저작자에게 속합니다.
 - SVG 자산/아이콘 금지. PC/모바일 모두 스크롤 없는 단일 화면, 우클릭·드래그 금지.
 
@@ -32,7 +32,7 @@ cd dist
 python -m http.server 8000
 # http://localhost:8000/
 \`\`\`
-**더 간단한 실행:** 빌드 ZIP 안의 `BLOCK_SURVIVAL_TPS_바로실행.html`을 더블클릭하면 웹서버 설치 없이 기본 게임이 작동합니다. Chrome/Edge 같은 WebGL 지원 브라우저가 필요하며 선택 GLB 모델만 네트워크 연결 시 로드합니다.
+**더 간단한 실행:** 빌드 ZIP 안의 `BLOCK_SURVIVAL_TPS_바로실행.html`을 더블클릭하면 웹서버 설치 없이 기본 게임이 작동합니다. Chrome/Edge 같은 WebGL 지원 브라우저가 필요하며 7개 GLB는 빌드 ZIP에 포함되며 원본 파일을 못 찾으면 공식 저장소를 폴백합니다.
 
 위의 GitHub Actions는 같은 빌드 후 \`block-survival-tps-playable-alpha-v01\` ZIP을 첨부합니다. 이를 다운로드·압축 해제한 뒤 \`START_HERE.txt\` 안내에 따라 로컬 서버를 실행할 수 있습니다. **CDN 없이 기본 게임 실행 가능**하며, 선택 원본 3D 모델은 인터넷이 연결될 때만 표시합니다.
 
@@ -41,10 +41,16 @@ python -m http.server 8000
 - [8개 CC0 원본 증빙](./research/source-lock.json) 및 [수집·라이선스 검사](./tools/acquire-open-assets.mjs): 8출처 60파일.
 - [GitHub CI](../.github/workflows/block-survival-preview.yml): ES 모듈 구문 검사, 전투 테스트, 실제 번들 생성, 최소 정적 HTTP 응답, SVG 배제. 완료 상태는 실행 결과 확인 필요.
 - AI는 단순 추적·가로막힘 시 X/Z 슬라이드 수준으로, 아직 경로탐색/정예 패턴 없음.
-- 모바일 실기기 FPS/발열, 본 무기 장착·헤드샷·고급 애니메이션, 로컬/클라우드 세이브, 원본 사이트 전환은 **아직 구현·검증되지 않음**.
+- 모바일 실기기 FPS/발열, 무기 손 장착·헤드샷·고급 애니메이션, 로컬/클라우드 세이브는 **아직 구현·검증되지 않음**. GitHub Pages 배포는 완료
 - 모바일 30FPS/PC 60FPS 및 초기 로딩 3–8MB는 **목표**일 뿐 실측 보장 없음.
 
 ## 자료
-- [7개 공식 CC0 출처·취득 내역](./research/ACQUISITION_STATUS_KO.md)
+- [8개 공식 CC0 출처·취득 내역](./research/ACQUISITION_STATUS_KO.md)
 - [실물 GLB 구조 분석](./research/MODEL_AUDIT_20261029_KO.md)
 - [오픈소스 자료 연구](./research/OPEN_SOURCE_ASSET_MASTER_KO.md)
+
+## 2026-10-30 공개 전환 기준
+
+- [TPS 공개 플레이](https://junl-im.github.io/Defense/) / [배포 Actions #40904114915](https://github.com/junl-im/Defense/actions/runs/40904114915) 성공
+- [8출처 60개 CC0 ZIP](https://drive.google.com/file/d/1PSCD6B5_5fV4-0T6AAla6452lsZTDqxB/view) / [7개 GLB 포함 실행 ZIP](https://drive.google.com/file/d/1ZeOdVjeQRfJpv5HZonvWl4uQwAvEN_ih/view)
+- 기존 라니킹덤 전체는 archive 브랜치에서만 복원 가능. 실제 PC/모바일 3D 렌더링·FPS 실측은 여전히 QA 필요.
