@@ -18,11 +18,16 @@ for(const p of ['dist/index.html','dist/game.bundle.js','dist/style.css','dist/T
 }
 const bundle=read('dist/game.bundle.js'),ready=read('dist/index.html');
 const runtime=JSON.parse(read('dist/assets/PROVENANCE.json'));
-if(runtime.assets.length!==7)throw Error('Expected 7 included runtime CC0 GLBs');
+if(runtime.assets.length!==9)throw Error('Expected 9 included runtime CC0 GLBs');
 for(const a of runtime.assets){
  const file=path.join(base,'dist/assets',a.id+'.glb');
  if(!fs.existsSync(file)||fs.statSync(file).size!==a.bytes)throw Error('Missing bundled GLB '+a.id);
  if(fs.readFileSync(file).toString('ascii',0,4)!=='glTF')throw Error('Bad GLB '+a.id);
+ if(['hero','undead'].includes(a.id)){
+  if(a.clips.length!==6)throw Error('Missing expected animation clip whitelist '+a.id);
+  if(a.bytes>a.originalBytes*0.76)throw Error('Animation compaction ineffective '+a.id);
+ }
+
 }
 if(/from\s+["']three(?:\/|["'])/.test(bundle))throw Error('Three.js must be bundled');
 if(!ready.includes('./game.bundle.js')||ready.includes('importmap'))throw Error('Preview should have no external code dependencies');
