@@ -24,6 +24,7 @@ test('loot is bounded to 12 objects and expires',()=>{
  const s=newGame();start(s);
  for(let i=0;i<18;i++)dropPickup(s,i+3,18,'ammo');
  assert.equal(s.pickups.length,12);
+ s.waveLeft=0;s.nextWave=1000;
  for(let i=0;i<305;i++)tick(s,0.06);
  assert.equal(s.pickups.length,0);
 });
@@ -34,7 +35,7 @@ test('every third kill drops ammo and fifth kill drops a medkit',()=>{
    attackCD:3,hitTime:0,deadTime:0,walk:0,speed:0}];
   const res=shoot(s,0,-1);
   assert.ok(res.hit&&res.killed);
-  tick(s,0.22);
+  for(let step=0;step<4;step++)tick(s,0.06);
  }
  assert.equal(s.kills,5);
  assert.deepEqual(s.pickups.map(x=>x.kind).sort(),['ammo','medkit']);
