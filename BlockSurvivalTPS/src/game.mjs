@@ -14,7 +14,7 @@ const keys=new Set();
 let state=newGame(),yaw=0,pitch=0,fireHeld=false,sprintHeld=false;
 let joystick={x:0,z:0},stickPointer=null,lookPointer=null,lastLook=null;
 let renderer,scene,camera,clock,player,playerParts,world,raycaster;
-let heroRig=null,heroMixer=null,heroAnimation='',heroGun=null,heroGunTemplate=null,muzzleEffect=null,tracer=null,impactSpark=null,fxExpires=0,heroShotUntil=0;
+let heroRig=null,heroMixer=null,heroAnimation='',heroGun=null,heroGunTemplate=null,muzzleEffect=null,tracer=null,impactSpark=null,fxExpires=0,heroShotUntil=0,heroModern=false;
 const pickupVisual=new Map();
 const heroClips=new Map();
 let quality=createQualityState({mobile,dpr:window.devicePixelRatio||1});
@@ -168,26 +168,37 @@ function makeZombie(type){
 }
 async function loadOptional(){
  if(modelStarted)return;modelStarted=true;
- for(const kind of ['minion','bat','gun','ruin','chest','barrel','crates','hero','undead']){
+ for(const kind of ['minion','bat','gun','ruin','chest','barrel','crates','hero','undead','modernHero','modernZombie','modernRunner']){
   // Production assets ship beside the bundled game; the pinned official source is a dev fallback.
   const local='./assets/'+kind+'.glb';
-  modelLoader.loadAsync(local).catch(()=>modelLoader.loadAsync(assetURLs[kind])).then(gltf=>{
+  const modern=kind.startsWith('modern');
+  (modern?modelLoader.loadAsync(local):modelLoader.loadAsync(local).catch(()=>modelLoader.loadAsync(assetURLs[kind]))).then(gltf=>{
    assetCache.set(kind,gltf);
    if(kind==='hero'||kind==='undead')shell.dataset[kind+'Asset']='loaded';
+   if(modern)shell.dataset[kind]='loaded';
    if(kind==='gun'){
     heroGunTemplate=gltf.scene;
     attachHeroGun();
    }
-   if(kind==='hero')installHero(gltf);
+   if(kind==='hero')installHero(gltf,false);
+   if(kind==='modernHero')installHero(gltf,true);
    if(['ruin','chest','barrel','crates'].includes(kind)){
     const config={ruin:[-12,-9,2.9],chest:[18,-3,0.9],barrel:[-8,2,1.25],crates:[9,4,1.4]}[kind];
     const clone=gltf.scene.clone(true);normalize(clone,config[2]);
     clone.position.set(config[0],0.06,config[1]);world.add(clone);
    }
-   if(kind==='minion'||kind==='undead'){
+   if(['minion','undead','modernZombie','modernRunner'].includes(kind)){
     for(const [id,visual] of [...enemiesVisual]){
-     const e=state.enemies.find(enemy=>enemy.id===id && (kind==='minion'?enemy.type==='minion':enemy.type!=='minion') && enemy.hp>0);
-     if(!e || visual.mixer)continue;
+     const e=state.enemies.find(enemy=>enemy.id===id && enemy.hp>0);
+     if(!e)continue;
+     const applies=kind==='minion'?e.type==='minion':
+       kind==='modernZombie'?e.type==='zombie':kind==='modernRunner'?e.type==='runner':e.type!=='minion';
+     if(!applies)continue;
+     // Never downgrade an already loaded modern model back to the previous CC0 fallback.
+     if(kind==='undead'&&visual.rigKind?.startsWith('modern'))continue;
+     if(kind==='undead'&&visual.mixer)continue;
+     visual.mixer?.stopAllAction();
+     if(visual.mixer)visual.mixer.uncacheRoot(visual.model);
      scene.remove(visual.root);enemiesVisual.delete(id);
      enemiesVisual.set(id,makeEnemyVisual(e));
     }
@@ -216,15 +227,22 @@ function playRigClip(visual,name,fade=0.16){
  visual.activeAction=action;visual.lastAnimation=name;
  if(name==='Death_A'){action.setLoop(THREE.LoopOnce,1);action.clampWhenFinished=true;}
 }
-function installHero(gltf){
- if(!player||heroRig)return;
+function installHero(gltf,modern=false){
+ if(!player||heroModern||(!modern&&heroRig))return;
+ if(modern&&heroRig){
+  heroMixer?.stopAllAction();
+  if(heroMixer)heroMixer.uncacheRoot(heroRig);
+  player.remove(heroRig);
+  heroRig=null;heroMixer=null;heroClips.clear();playHeroClip.previous=null;heroGun=null;
+ }
+ heroModern=modern;
  heroRig=cloneSkinned(gltf.scene);
  let skinnedParts=0;
  heroRig.traverse(child=>{
   if(child.isSkinnedMesh){child.frustumCulled=false;skinnedParts++;}
-  if(/Sword|Shield|Cape/i.test(child.name))child.visible=false;
+  if(!modern&&/Sword|Shield|Cape/i.test(child.name))child.visible=false;
   // Work toward an urban-survivor palette without altering the original CC0 source GLB.
-  if(child.isMesh&&/Knight_(Body|Arm|Leg|Helmet)/.test(child.name)){
+  if(!modern&&child.isMesh&&/Knight_(Body|Arm|Leg|Helmet)/.test(child.name)){
    child.material=Array.isArray(child.material)?child.material.map(m=>m.clone()):child.material.clone();
    const tint=/Helmet/.test(child.name)?0x748f77:/Body/.test(child.name)?0x76917c:0x929e8e;
    for(const m of (Array.isArray(child.material)?child.material:[child.material]))m.color.multiply(new THREE.Color(tint));
@@ -238,7 +256,8 @@ function installHero(gltf){
  player.add(heroRig);heroMixer=new THREE.AnimationMixer(heroRig);
  for(const clip of gltf.animations)heroClips.set(clip.name,clip);
  heroAnimation='';
- if(skinnedParts>0&&heroClips.size===6)shell.dataset.heroRig='loaded';
+ if(skinnedParts>0&&(heroClips.size===6||modern&&heroClips.size===3))shell.dataset.heroRig='loaded';
+ if(modern&&heroClips.has('Run'))shell.dataset.modernHeroRig='loaded';
  attachHeroGun();
 }
 function attachHeroGun(){
@@ -246,13 +265,16 @@ function attachHeroGun(){
  if(heroRig){
   if(heroGun){heroGun.parent?.remove(heroGun);heroGun=null;}
   let socket=null;
-  heroRig.traverse(o=>{if(o.name==='handslot.r')socket=o;});
+  heroRig.traverse(o=>{if(o.name===(heroModern?'RightHand':'handslot.r'))socket=o;});
   if(socket){
    const gun=heroGunTemplate.clone(true);
-   gun.position.set(0,0,0);gun.rotation.set(0,Math.PI/2,0);
-   // Inherit hand-bone transform from the imported walking/shooting animation.
-   gun.scale.setScalar(0.9);
+   // Kenney model hand is driven by the same imported 58-bone animation skeleton.
+   // These are local attachment transforms, not absolute world coordinates.
+   gun.position.set(0,0,-0.07);
+   gun.rotation.set(0,Math.PI/2,0);
+   gun.scale.setScalar(heroModern?0.48:0.9);
    socket.add(gun);heroGun=gun;
+   if(heroModern)shell.dataset.modernGun='attached';
   }
  }else{
   const placeholder=player.userData.gun;
@@ -274,7 +296,9 @@ function playHeroClip(name){
 function makeEnemyVisual(e){
  const root=new THREE.Group();scene.add(root);root.position.set(e.x,0,e.z);
  const visual={root,model:null,mixer:null,clip:null,lastAnimation:''};
- const kind=e.type==='minion'?'minion':'undead';
+ const kind=e.type==='minion'?'minion':
+   e.type==='runner'&&assetCache.has('modernRunner')?'modernRunner':
+   e.type==='zombie'&&assetCache.has('modernZombie')?'modernZombie':'undead';
  if(kind&&assetCache.has(kind)){
   const gltf=assetCache.get(kind);
   const model=cloneSkinned(gltf.scene);
@@ -284,10 +308,10 @@ function makeEnemyVisual(e){
   if(gltf.animations.length){
    visual.mixer=new THREE.AnimationMixer(model);
    visual.rigKind=kind;visual.clips=new Map(gltf.animations.map(clip=>[clip.name,clip]));
-   if(kind==='undead')shell.dataset.undeadRig='loaded';
+   if(kind==='undead'||kind.startsWith('modern'))shell.dataset.undeadRig='loaded';
    if(kind==='minion'){
     visual.clip=visual.mixer.clipAction(gltf.animations[0]);visual.clip.play();
-   }else playRigClip(visual,'Walking_D_Skeletons');
+   }else playRigClip(visual,kind.startsWith('modern')?'Run':'Walking_D_Skeletons');
   }
  }else{
   const model=makeZombie(e.type);root.add(model);visual.model=model;
@@ -301,15 +325,25 @@ function syncEnemies(t){
   const root=v.root;
   root.position.set(e.x,e.hp<=0?0:e.hitTime>0?0.06:0,e.z);
   const a=Math.atan2(state.x-e.x,state.z-e.z);
-  root.rotation.y=(v.rigKind==='undead'?a:v.mixer?a:a+Math.PI);
+  root.rotation.y=(v.rigKind==='undead'||v.rigKind?.startsWith('modern')?a:v.mixer?a:a+Math.PI);
   if(e.hp<=0){
-   if(v.rigKind==='undead'){
+   if(v.rigKind?.startsWith('modern')){
+    playRigClip(v,'Idle',0.05);
+    root.rotation.z=Math.min(Math.PI*0.43,e.deadTime*4);
+    v.mixer.update(Math.min(0.06,nowFrameDt));
+   }else if(v.rigKind==='undead'){
     playRigClip(v,'Death_A',0.08);
     v.mixer.update(Math.min(0.06,nowFrameDt));
    }else{
     root.rotation.z=Math.min(1.25,e.deadTime*4);
     if(v.mixer)v.mixer.setTime(60/24+Math.min(e.deadTime,(89-60)/24));
    }
+  }else if(v.rigKind?.startsWith('modern')){
+   const attack=Math.hypot(e.x-state.x,e.z-state.z)<1.6;
+   playRigClip(v,attack?'Idle':'Run',0.13);
+   v.mixer.update(Math.min(0.06,nowFrameDt));
+   // Lightweight attack lunge without inventing non-existent Kenney attack clips.
+   v.model.position.z=attack?Math.sin(t*8+e.id)*0.08:0;
   }else if(v.rigKind==='undead'){
    const attack=Math.hypot(e.x-state.x,e.z-state.z)<1.6;
    const desired=e.hitTime>0?'Hit_A':attack?'Unarmed_Melee_Attack_Punch_A':e.type==='runner'?'Running_A':'Walking_D_Skeletons';
@@ -360,9 +394,16 @@ function syncPickups(t){
 function syncPlayer(t,moving){
  player.position.set(state.x,0,state.z);player.rotation.y=yaw;
  if(heroMixer){
-  const name=state.reloadTime>0?'1H_Ranged_Reload':state.status==='playing'&&state.elapsed<heroShotUntil?'1H_Ranged_Shoot':moving?(keys.has('shift')||sprintHeld?'Running_A':'Walking_A'):'Idle';
+  const name=heroModern?(moving?'Run':'Idle'):
+    state.reloadTime>0?'1H_Ranged_Reload':state.status==='playing'&&state.elapsed<heroShotUntil?'1H_Ranged_Shoot':
+    moving?(keys.has('shift')||sprintHeld?'Running_A':'Walking_A'):'Idle';
   playHeroClip(name);
+  if(heroModern&&heroClips.has('Run'))heroMixer.clipAction(heroClips.get('Run')).timeScale=keys.has('shift')||sprintHeld?1.35:0.8;
   heroMixer.update(Math.min(0.06,nowFrameDt));
+  if(heroModern&&heroGun){
+   heroGun.rotation.x=state.shotFlash>0?-0.17:0;
+   heroGun.rotation.z=state.reloadTime>0?0.3:0;
+  }
   return;
  }
  const parts=player.userData;
