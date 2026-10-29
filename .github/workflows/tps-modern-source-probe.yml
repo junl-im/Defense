@@ -1,0 +1,25 @@
+name: TPS v0.7 — verify Kenney survivor FBX source
+on:
+  push:
+    branches: [feature/block-survival-tps-v07-modern-cc0-20261030]
+    paths: ['BlockSurvivalTPS/tools/inspect-modern-source.py','.github/workflows/tps-modern-source-probe.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect-cc0:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download official Kenney ZIP and inspect sources, exclude SVG
+        run: |
+          python3 BlockSurvivalTPS/tools/inspect-modern-source.py | tee source-manifest.log
+      - name: Save source evidence without SVG
+        uses: actions/upload-artifact@v4
+        with:
+          name: TPS-v07-Kenney-FBX-PNG-license-intake
+          path: |
+            /tmp/tps-modern-source/
+            source-manifest.log
+          retention-days: 3
