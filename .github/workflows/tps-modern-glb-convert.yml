@@ -1,0 +1,50 @@
+name: TPS v0.7 — convert verified CC0 modern characters to GLB
+on:
+  push:
+    branches: [feature/block-survival-tps-v07-modern-cc0-20261030]
+    paths:
+      - 'BlockSurvivalTPS/tools/convert-modern-blender.py'
+      - '.github/workflows/tps-modern-glb-convert.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  convert-and-verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install verified Blender and FBX import requirements
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq blender
+          blender --version | head -2
+      - name: Fetch CC0 originals, verify pinned author archive and strip SVG
+        run: |
+          set -euo pipefail
+          python3 BlockSurvivalTPS/tools/inspect-modern-source.py >/tmp/tps-source-inspection.log
+          python3 - <<'PY'
+          import json
+          p=json.load(open('/tmp/tps-modern-source/SOURCE_MANIFEST.json'))
+          expected='9cc53e82c941781f26aa8fb39d40887cf14b1d74cca2d10ccc6e7c140a68f820'
+          assert p['sha256']==expected,'Source archive checksum changed'
+          assert p['sourceLabel']=='opengameart-kenney-author','Unexpected source mirror'
+          assert len([f for f in p['files'] if f['extension']=='.fbx'])==4
+          print('PINNED AUTHOR CC0 ZIP VERIFIED',expected)
+          PY
+          if find /tmp/tps-modern-source -iname '*.svg' | grep -q .; then echo 'SVG leakage'; exit 1; fi
+      - name: Create animated modern survivor and zombie GLBs
+        run: |
+          blender -b -noaudio --python BlockSurvivalTPS/tools/convert-modern-blender.py -- /tmp/tps-modern-source /tmp/tps-modern-glb | tee /tmp/tps-blender-convert.log
+          test ${PIPESTATUS[0]} -eq 0
+      - name: Upload only verified GLB binaries, original license and provenance
+        uses: actions/upload-artifact@v4
+        with:
+          name: TPS-modern-CC0-GLB-prototype
+          path: |
+            /tmp/tps-modern-glb/*.glb
+            /tmp/tps-modern-source/License.txt
+            /tmp/tps-modern-source/SOURCE_MANIFEST.json
+            /tmp/tps-blender-convert.log
+          if-no-files-found: error
+          retention-days: 3
