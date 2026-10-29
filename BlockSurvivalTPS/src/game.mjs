@@ -239,8 +239,9 @@ function alignArm(rig,side,mode){
  aimDesired.applyQuaternion(aimRoot).normalize();
  aimDelta.setFromUnitVectors(aimTo.normalize(),aimDesired);
  arm.parent.getWorldQuaternion(aimParent);
- aimParent.invert().multiply(aimDelta).multiply(aimRoot.setFromRotationMatrix(arm.parent.matrixWorld)).multiply(arm.quaternion);
- arm.quaternion.copy(aimParent);
+ aimRoot.copy(aimParent);
+ aimParent.invert().multiply(aimDelta).multiply(aimRoot);
+ arm.quaternion.premultiply(aimParent);
  arm.updateWorldMatrix(false,true);
 }
 function correctModernPose(rig,mode){
