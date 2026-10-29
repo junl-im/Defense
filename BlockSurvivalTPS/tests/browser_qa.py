@@ -86,7 +86,11 @@ with sync_playwright() as p:
     box=page.locator("#fire").bounding_box()
     check(box is not None and box["width"]>=64,"mobile: fire target too small")
     page.touchscreen.tap(box["x"]+box["width"]/2,box["y"]+box["height"]/2)
-    page.wait_for_timeout(320)
+    # Software SwiftShader on hosted CI can render fewer than 5 frames/sec.
+    # Wait for an actual gameplay state change instead of guessing a 320 ms frame budget.
+    page.wait_for_function(
+        "(ammo) => parseInt(document.querySelector('#ammo').textContent,10)<ammo",
+        arg=int(before),timeout=12000)
     after=page.locator("#ammo").inner_text().split()[0]
     check(int(after)<int(before),"mobile: fire button did not consume ammo")
     fit=page.evaluate("""() => {
