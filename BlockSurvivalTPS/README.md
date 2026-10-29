@@ -38,7 +38,7 @@ python -m http.server 8000
 
 ## 현재 테스트와 제한
 - [전투 규칙 자동 테스트](./tests/gameplay.test.mjs): 탄약·엄폐·체력·적 상한·웨이브 및 게임오버.
-- [7개 CC0 원본 증빙](./research/source-lock.json) 및 [수집·라이선스 검사](./tools/acquire-open-assets.mjs): 7출처 52파일.
+- [8개 CC0 원본 증빙](./research/source-lock.json) 및 [수집·라이선스 검사](./tools/acquire-open-assets.mjs): 8출처 60파일.
 - [GitHub CI](../.github/workflows/block-survival-preview.yml): ES 모듈 구문 검사, 전투 테스트, 실제 번들 생성, 최소 정적 HTTP 응답, SVG 배제. 완료 상태는 실행 결과 확인 필요.
 - AI는 단순 추적·가로막힘 시 X/Z 슬라이드 수준으로, 아직 경로탐색/정예 패턴 없음.
 - 모바일 실기기 FPS/발열, 본 무기 장착·헤드샷·고급 애니메이션, 로컬/클라우드 세이브, 원본 사이트 전환은 **아직 구현·검증되지 않음**.

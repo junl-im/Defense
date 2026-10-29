@@ -142,6 +142,26 @@
         "nature/TreeLow001.glb",
         "nature/Bush001.glb"
       ]
+    },
+    {
+      "id": "kaykit-dungeon-remastered",
+      "owner": "Kay Lousberg",
+      "repository": "KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0",
+      "commit": "b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07",
+      "license": "CC0-1.0",
+      "licenseFile": "LICENSE.txt",
+      "prefix": "addons/kaykit_dungeon_remastered/",
+      "role": "post-apocalyptic ruined wall, cracked cover, loot chest, barricade crates, barrel and emergency light",
+      "files": [
+        "Assets/gltf/chest.glb",
+        "Assets/gltf/chest_gold.glb",
+        "Assets/gltf/wall_broken.gltf.glb",
+        "Assets/gltf/wall_cracked.gltf.glb",
+        "Assets/gltf/crates_stacked.gltf.glb",
+        "Assets/gltf/torch_lit.gltf.glb",
+        "Assets/gltf/barrel_large.gltf.glb",
+        "Assets/gltf/barrel_large_decorated.gltf.glb"
+      ]
     }
   ],
   "pendingSources": [

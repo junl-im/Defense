@@ -3,12 +3,12 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {validateRegistry} from '../tools/acquire-open-assets.mjs';
 const source=JSON.parse(fs.readFileSync(new URL('../research/source-lock.json',import.meta.url),'utf8'));
-test('all seven curated GitHub sources are pinned and CC0',()=>{
+test('all eight curated GitHub sources are pinned and CC0',()=>{
  const x=validateRegistry(source);
- assert.equal(x.repositories,7);
+ assert.equal(x.repositories,8);
  assert.equal(x.license,'CC0-1.0');
  assert.equal(x.protectedArchive,'archive/rani-kingdom-v539-20261029');
- assert.equal(x.selectedFiles,52);
+ assert.equal(x.selectedFiles,60);
 });
 test('reject accidental AGPL asset or unknown license',()=>{
  const d=structuredClone(source);d.packs[0].license='AGPL-3.0';

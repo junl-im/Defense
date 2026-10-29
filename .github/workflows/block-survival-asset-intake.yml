@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - feature/block-survival-tps-v01-20261029
+      - main
     paths:
       - 'BlockSurvivalTPS/**'
       - '.github/workflows/block-survival-asset-intake.yml'
@@ -18,7 +19,7 @@ permissions:
 
 jobs:
   source-audit:
-    name: Validate 7 pinned CC0 repositories and acquire selected models
+    name: Validate 8 pinned CC0 repositories and acquire selected models
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -33,9 +34,8 @@ jobs:
         run: |
           set -euo pipefail
           git ls-remote --exit-code https://github.com/junl-im/Defense.git refs/heads/archive/rani-kingdom-v539-20261029
-          test -s rani-next/v539-easy-mode.mjs
-          test -s .gitmodules
-          test -d rani-next
+          test -s BlockSurvivalTPS/src/sim.mjs
+          test -s BlockSurvivalTPS/src/game.mjs
       - name: Audit names, licenses, pinned commits and no SVG
         run: |
           node --test BlockSurvivalTPS/tests/*.test.mjs
@@ -44,7 +44,7 @@ jobs:
             echo "ERROR: SVG assets forbidden"
             exit 1
           fi
-      - name: Acquire curated model originals from exact 7 upstream commits
+      - name: Acquire curated model originals from exact 8 upstream commits
         shell: bash
         run: |
           node BlockSurvivalTPS/tools/acquire-open-assets.mjs --acquire /tmp/block-survival-cc0
@@ -63,6 +63,8 @@ jobs:
           test -s /tmp/block-survival-cc0/gobkit-free-lowpoly/Bat.glb
           test -s /tmp/block-survival-cc0/gobkit-free-lowpoly/TreeLow001.glb
           test -s /tmp/block-survival-cc0/gobkit-free-lowpoly/LICENSE_CC0.txt
+          test -s /tmp/block-survival-cc0/kaykit-dungeon-remastered/wall_broken.gltf.glb
+          test -s /tmp/block-survival-cc0/kaykit-dungeon-remastered/chest.glb
           echo "Selected CC0 asset files acquired for staging only"
       - name: Archive selected originals with provenance (not website deployment)
         uses: actions/upload-artifact@v4
