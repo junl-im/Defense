@@ -39,6 +39,12 @@ def start(page,label):
     check(page.evaluate("() => document.querySelector('#shell').dataset.dynamicResolution==='enabled'"),
           f"{label}: adaptive resolution was not initialized")
     page.wait_for_function("() => document.querySelector('#shell').dataset.undeadAsset==='loaded'",timeout=25000)
+    # v0.7 may never silently fall back to the old fantasy Knight or skeleton.
+    for key in ("modernHero","modernZombie","modernRunner","modernHeroRig","modernGun"):
+        page.wait_for_function("(key) => document.querySelector('#shell').dataset[key]==='loaded' || (key==='modernGun' && document.querySelector('#shell').dataset[key]==='attached')",
+                               arg=key,timeout=25000)
+    check(page.evaluate("() => ['Run','Idle'].includes(document.querySelector('#shell').dataset.heroAnimation)"),
+          f"{label}: modern skin animation clip never activated")
     page.wait_for_timeout(1500)
     check(not local_errors,f"{label}: JavaScript exceptions: {local_errors[:5]}")
     return local_errors

@@ -1,6 +1,6 @@
 # 곰같은여우 — BLOCK SURVIVAL TPS
 
-**ALPHA 0.6 좀비 군중·모바일 성능·사격 모션 개선 웹 TPS 시제품.** 이전 라니킹덤은 `main`에서 정리했고 현재는 이 게임에 집중하여 개발·배포합니다. 최신 검증 결과와 빌드는 [Actions](https://github.com/junl-im/Defense/actions/workflows/block-survival-preview.yml) 참조. 브라우저에서 PC·모바일 실제 게임플레이 및 FPS 실측은 별도 검증이 필요합니다.
+**ALPHA 0.7 현대 CC0 생존자·좀비 3D 모델로 교체한 경량 웹 TPS 시제품.** 이전 라니킹덤은 `main`에서 정리했고 현재는 이 게임에 집중하여 개발·배포합니다. 최신 검증 결과와 빌드는 [Actions](https://github.com/junl-im/Defense/actions/workflows/block-survival-preview.yml) 참조. 브라우저에서 PC·모바일 실제 게임플레이 및 FPS 실측은 별도 검증이 필요합니다.
 
 ## 보존 및 권리
 - 게임 실행 파일: \`BlockSurvivalTPS/index.html\`, \`src/game.mjs\`, \`src/sim.mjs\`, \`style.css\`
@@ -96,3 +96,11 @@ python -m http.server 8000
 - [모바일 가로 화면](./style.css): 낮은 높이 화면의 방향키·사격 버튼·HUD 간격 개선. [실제 Chromium 844×390 테스트](./tests/browser_qa.py) 추가.
 - [회귀 테스트](./tests/performance-and-crowd.test.mjs): 군중 중첩·엄폐물 침범·사망한 적의 영향·최저 화질·회복 화질·일시정지 확인.
 - 현대 생존자·좀비 CC0 모델 후보: Kenney Animated Characters Survivors. 공식 패키지는 FBX·PNG·SVG 혼합이므로 **라이선스 확인과 안전한 FBX→GLB 변환 및 SVG 제거 검증 전까지 게임에 포함하지 않음**.
+
+## v0.7 — Kenney 현대 생존자·좀비 원본 FBX의 게임용 GLB 직접 변환
+
+- 공식 [Kenney Animated Characters Survivors](https://kenney.nl/assets/animated-characters-survivors) CC0 자산을 Kenney 저자가 직접 공유한 [OpenGameArt 공식 게시물](https://opengameart.org/content/animated-characters-1)에서 원본 다운로드. 해당 ZIP SHA256 `9cc53e82c941781f26aa8fb39d40887cf14b1d74cca2d10ccc6e7c140a68f820` 고정.
+- [Blender 원본 변환 파이프라인](./tools/convert-modern-blender.py)으로 기존 FBX 리깅 58뼈·메쉬 826폴리곤·PNG 컬러 스킨을 손상 없이 변환. `modernHero.glb` 272,284B, `modernZombie.glb` 292,052B, `modernRunner.glb` 274,008B, 각각 Idle·Run·Jump 3개 애니메이션. 배포 전에 각 GLB SHA256과 스킨·애니메이션 무결성을 검증.
+- [검증된 바이너리와 출처](./runtime/PROVENANCE_MODERN.json)만 GitHub 저장, SVG 원본은 추출·배포하지 않음. 총 모델 12종 중 신형 3종을 게임에 우선 로드, 이전 KayKit 캐릭터는 로딩 장애 시 폴백.
+- 오른손 `RightHand` 본에 Kenney 블라스터를 연결. 달리기·대기 애니메이션과 총 발사 시 짧은 반동을 연결. 신형 Kenney 팩 자체에는 총 사격·피격·사망 전용 클립이 없으므로 이 세 동작은 간단한 절차적 효과로 보완하며, 향후 새 동작 제작 예정.
+- 기존 v0.6 좀비 군중 AI, A* 우회·보급품·PC/모바일 가로세로 HUD, 자동 렌더 품질을 모두 유지.
