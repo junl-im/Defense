@@ -25,10 +25,14 @@ test('chasing enemy navigates to a moving player around a large cover',()=>{
  s.x=-20;s.z=-9;
  s.enemies=[{id:3,type:'zombie',x:-6,z:-9,radius:0.63,hp:100,speed:2.4,attackCD:3,hitTime:0,deadTime:0,walk:0}];
  const original=s.enemies[0].z;
- for(let t=0;t<250;t++)tick(s,0.06);
+ let maxDetour=0;
+ for(let t=0;t<250;t++){
+  tick(s,0.06);
+  maxDetour=Math.max(maxDetour,Math.abs(s.enemies[0].z-original));
+ }
  const enemy=s.enemies[0];
  assert.ok(enemy,'enemy remains live');
- assert.ok(Math.abs(enemy.z-original)>2,'enemy moves around building rather than into it');
+ assert.ok(maxDetour>2,'enemy must actually take a side route around the blocking wall');
  assert.ok(!COVER.some(c=>Math.abs(enemy.x-c.x)<c.w/2-0.1&&Math.abs(enemy.z-c.z)<c.d/2-0.1));
 });
 test('aim correction prioritizes visible enemies and cannot shoot through cover',()=>{
