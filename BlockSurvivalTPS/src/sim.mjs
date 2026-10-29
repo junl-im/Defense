@@ -22,7 +22,7 @@ export function clearPath(x1,z1,x2,z2){
     const dx=x2-x1,dz=z2-z1;
     let lo=0,hi=1;
     for(const [p,q] of [[-dx,x1-(c.x-c.w/2)],[dx,(c.x+c.w/2)-x1],[-dz,z1-(c.z-c.d/2)],[dz,(c.z+c.d/2)-z1]]){
-      if(Math.abs(p)<1e-8){if(q<0)return false;continue;}
+      if(Math.abs(p)<1e-8){if(q<0){lo=2;break;}continue;}
       const t=q/p;
       if(p<0)lo=Math.max(lo,t);else hi=Math.min(hi,t);
       if(lo>hi)break;
