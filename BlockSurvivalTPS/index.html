@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#101822">
+<title>곰같은여우 | 블록 서바이벌 TPS</title>
+<link rel="stylesheet" href="./style.css">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<main id="shell">
+  <canvas id="stage" aria-label="블록 서바이벌 TPS 3D 전투장"></canvas>
+  <div id="hitScreen" aria-hidden="true"></div>
+  <header id="hud" hidden>
+    <div class="hudCluster">
+      <div class="healthWrap"><span class="hudTag">생존자</span><div class="health"><div id="healthFill"></div></div><strong id="healthText">100 / 100</strong></div>
+      <div class="stats"><span>WAVE <strong id="wave">1</strong></span><span>처치 <strong id="kills">0</strong></span><span>점수 <strong id="score">0</strong></span></div>
+    </div>
+    <div class="hudCluster right">
+      <div id="ammo" aria-label="탄약">12 <small>/ 72</small></div>
+      <button id="pause" class="smallButton" type="button" aria-label="일시정지">Ⅱ</button>
+    </div>
+  </header>
+  <div id="reticle" aria-hidden="true" hidden><span></span><i></i></div>
+  <div id="message" role="status" aria-live="polite" hidden>웨이브 1 시작</div>
+  <div id="fps" hidden>FPS --</div>
+  <div id="mobileControls" hidden>
+    <div id="stickZone" aria-label="이동 조이스틱"><div id="stickBase"><div id="stickNub"></div></div></div>
+    <div id="lookZone" aria-label="시점 조작"></div>
+    <div class="actions">
+      <button id="sprint" class="actionButton" type="button">달리기</button>
+      <button id="reload" class="actionButton" type="button">장전</button>
+      <button id="fire" class="actionButton fire" type="button">사격</button>
+    </div>
+  </div>
+  <section id="overlay" class="overlay" aria-label="게임 메뉴">
+    <div id="menuPanel" class="panel">
+      <div class="eyebrow">곰같은여우의 생존 실험장 <span>ALPHA 0.1</span></div>
+      <h1 id="menuTitle">BLOCK<br><em>SURVIVAL</em></h1>
+      <p id="menuDesc">폐허 도시에서 좀비들의 습격을 버티세요.<br>총알을 관리하고 장애물을 활용해 웨이브를 넘기세요.</p>
+      <button id="primary" class="mainButton" type="button">생존 시작</button>
+      <button id="secondary" class="ghostButton" type="button" hidden>처음부터 다시</button>
+      <div id="help"><strong>PC</strong> WASD 이동 · 마우스 조준 · 좌클릭 사격 · R 재장전 · Shift 달리기 · ESC 일시정지
+      <span><strong>모바일</strong> 좌측 이동 · 우측 화면 시점 · 사격/재장전 버튼</span></div>
+      <p class="disclaimer">싱글플레이 시제품 · 초기 로딩에 인터넷 연결 필요 · 기존 라니킹덤과 별도</p>
+    </div>
+  </section>
+  <div id="fatal" hidden role="alert">3D 화면을 시작하지 못했습니다. WebGL 사용이 가능한 브라우저인지 확인하세요.</div>
+</main>
+<script type="module" src="./src/game.mjs"></script>
+</body>
+</html>
