@@ -122,6 +122,26 @@
         "sprites/crosshair-repeater.png",
         "sprites/hit.png"
       ]
+    },
+    {
+      "id": "gobkit-free-lowpoly",
+      "owner": "Gobkit / Alsomind Tech Co., Ltd.",
+      "repository": "Ariescar/gobkit-free-assets",
+      "commit": "4e73c68fa6e8ca9d948fcc0ce7215c830a022c3b",
+      "license": "CC0-1.0",
+      "licenseFile": "LICENSE",
+      "prefix": "",
+      "role": "CC0 animated enemy placeholder (minions lack walk), airborne and animal threats (walk clip), low-memory trees and cover",
+      "animationNotes": "Repository release models contain one baked 24 fps timeline; minions idle/attack/dead and animals also walk. Dead must not loop. No final zombie rig or weapon attachment claimed.",
+      "files": [
+        "minion/minion-a01.glb",
+        "minion/minion-b01.glb",
+        "animal/Bat.glb",
+        "animal/Corgi.glb",
+        "nature/Rock001.glb",
+        "nature/TreeLow001.glb",
+        "nature/Bush001.glb"
+      ]
     }
   ],
   "pendingSources": [
