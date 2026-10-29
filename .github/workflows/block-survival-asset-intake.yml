@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   source-audit:
-    name: Validate 4 pinned CC0 repositories and acquire selected models
+    name: Validate 5 pinned CC0 repositories and acquire selected models
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -44,7 +44,7 @@ jobs:
             echo "ERROR: SVG assets forbidden"
             exit 1
           fi
-      - name: Acquire curated model originals from exact 4 upstream commits
+      - name: Acquire curated model originals from exact 5 upstream commits
         shell: bash
         run: |
           node BlockSurvivalTPS/tools/acquire-open-assets.mjs --acquire /tmp/block-survival-cc0
@@ -53,6 +53,8 @@ jobs:
           test -s /tmp/block-survival-cc0/kaykit-adventurers/Knight.glb
           test -s /tmp/block-survival-cc0/kaykit-halloween/gravestone.gltf
           test -s /tmp/block-survival-cc0/kaykit-prototype/Box_A.gltf
+          test -s /tmp/block-survival-cc0/kaykit-city-builder/car_police.gltf
+          test -s /tmp/block-survival-cc0/kaykit-city-builder/building_A.bin
           echo "Selected CC0 asset files acquired for staging only"
       - name: Archive selected originals with provenance (not website deployment)
         uses: actions/upload-artifact@v4

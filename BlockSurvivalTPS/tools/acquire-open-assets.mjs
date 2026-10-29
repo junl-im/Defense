@@ -28,7 +28,7 @@ export function validateRegistry(data=registry){
  const ids=new Set();
  ensure(data.schema==='block-survival-tps-asset-intake/v1','Wrong registry schema');
  ensure(data.protected_archive==='archive/rani-kingdom-v539-20261029','Rani archive must remain protected');
- ensure(Array.isArray(data.packs)&&data.packs.length===4,'Expected 4 audited source repositories');
+ ensure(Array.isArray(data.packs)&&data.packs.length===5,'Expected 5 audited source repositories');
  let count=0;
  for(const pack of data.packs){
   ensure(!ids.has(pack.id),'Duplicate pack '+pack.id);ids.add(pack.id);

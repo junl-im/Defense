@@ -71,6 +71,33 @@
         "Assets/gltf/Floor_Dirt.bin",
         "Assets/gltf/prototypebits_texture.png"
       ]
+    },
+    {
+      "id": "kaykit-city-builder",
+      "owner": "Kay Lousberg",
+      "repository": "KayKit-Game-Assets/KayKit-City-Builder-Bits-1.0",
+      "commit": "63976910ca04d16f0fc531b9c614244be8128713",
+      "license": "CC0-1.0",
+      "licenseFile": "LICENSE.txt",
+      "prefix": "addons/kaykit_city_builder_bits/",
+      "role": "ruined urban street, police car and cover props (first survival map)",
+      "files": [
+        "Assets/gltf/building_A.gltf",
+        "Assets/gltf/building_A.bin",
+        "Assets/gltf/car_police.gltf",
+        "Assets/gltf/car_police.bin",
+        "Assets/gltf/road_straight.gltf",
+        "Assets/gltf/road_straight.bin",
+        "Assets/gltf/streetlight.gltf",
+        "Assets/gltf/streetlight.bin",
+        "Assets/gltf/dumpster.gltf",
+        "Assets/gltf/dumpster.bin",
+        "Assets/gltf/trash_A.gltf",
+        "Assets/gltf/trash_A.bin",
+        "Assets/gltf/trafficlight_A.gltf",
+        "Assets/gltf/trafficlight_A.bin",
+        "Assets/gltf/citybits_texture.png"
+      ]
     }
   ],
   "pendingSources": [
