@@ -17,7 +17,7 @@ jobs:
       - name: Install verified Blender and FBX import requirements
         run: |
           sudo apt-get update -qq
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq blender
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq blender python3-numpy
           blender --version | head -2
       - name: Fetch CC0 originals, verify pinned author archive and strip SVG
         run: |
@@ -35,8 +35,11 @@ jobs:
           if find /tmp/tps-modern-source -iname '*.svg' | grep -q .; then echo 'SVG leakage'; exit 1; fi
       - name: Create animated modern survivor and zombie GLBs
         run: |
-          blender -b -noaudio --python BlockSurvivalTPS/tools/convert-modern-blender.py -- /tmp/tps-modern-source /tmp/tps-modern-glb | tee /tmp/tps-blender-convert.log
+          blender -b -noaudio --python-exit-code 42 --python BlockSurvivalTPS/tools/convert-modern-blender.py -- /tmp/tps-modern-source /tmp/tps-modern-glb | tee /tmp/tps-blender-convert.log
           test ${PIPESTATUS[0]} -eq 0
+          test -s /tmp/tps-modern-glb/modernHero.glb
+          test -s /tmp/tps-modern-glb/modernZombie.glb
+          test -s /tmp/tps-modern-glb/modernRunner.glb
       - name: Upload only verified GLB binaries, original license and provenance
         uses: actions/upload-artifact@v4
         with:
