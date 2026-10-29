@@ -1,0 +1,178 @@
+{
+  "schema": "block-survival-tps-asset-intake/v1",
+  "verified_on": "2026-10-29",
+  "status": "research-and-curated-intake-only",
+  "protected_archive": "archive/rani-kingdom-v539-20261029",
+  "note": "Game main remains Rani until separately reviewed switch. Never ship full donor repositories or source-only premium tiers.",
+  "packs": [
+    {
+      "id": "kaykit-skeletons",
+      "owner": "Kay Lousberg",
+      "repository": "KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0",
+      "commit": "15b62b9bad122f72926c10fb14d622c73819fa54",
+      "license": "CC0-1.0",
+      "licenseFile": "LICENSE.txt",
+      "prefix": "addons/kaykit_character_pack_skeletons/",
+      "role": "enemy temporary undead proxy",
+      "files": [
+        "Characters/gltf/Skeleton_Minion.glb",
+        "Characters/gltf/Skeleton_Rogue.glb"
+      ]
+    },
+    {
+      "id": "kaykit-adventurers",
+      "owner": "Kay Lousberg",
+      "repository": "KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+      "commit": "672074b73ba276876a19e8816ecdc5241817ab47",
+      "license": "CC0-1.0",
+      "licenseFile": "LICENSE.txt",
+      "prefix": "addons/kaykit_character_pack_adventures/",
+      "role": "player placeholder, not final modern clothing",
+      "files": [
+        "Characters/gltf/Knight.glb"
+      ]
+    },
+    {
+      "id": "kaykit-halloween",
+      "owner": "Kay Lousberg",
+      "repository": "KayKit-Game-Assets/KayKit-Halloween-Bits-1.0",
+      "commit": "6dc69bf6b2fa766a985754f35ec6a0324090e6c6",
+      "license": "CC0-1.0",
+      "licenseFile": "LICENSE.txt",
+      "prefix": "addons/kaykit_halloween_bits/",
+      "role": "graveyard props",
+      "files": [
+        "Assets/gltf/gravestone.gltf",
+        "Assets/gltf/gravestone.bin",
+        "Assets/gltf/grave_A.gltf",
+        "Assets/gltf/grave_A.bin",
+        "Assets/gltf/fence_broken.gltf",
+        "Assets/gltf/fence_broken.bin",
+        "Assets/gltf/tree_dead_large.gltf",
+        "Assets/gltf/tree_dead_large.bin",
+        "Assets/gltf/halloweenbits_texture.png"
+      ]
+    },
+    {
+      "id": "kaykit-prototype",
+      "owner": "Kay Lousberg",
+      "repository": "KayKit-Game-Assets/KayKit-Prototype-Bits-1.0",
+      "commit": "bb159596f4f5106b663741d002c8eb45c80c0f41",
+      "license": "CC0-1.0",
+      "licenseFile": "LICENSE.txt",
+      "prefix": "addons/kaykit_prototype_bits/",
+      "role": "block terrain and crates",
+      "files": [
+        "Assets/gltf/Barrel_A.gltf",
+        "Assets/gltf/Barrel_A.bin",
+        "Assets/gltf/Box_A.gltf",
+        "Assets/gltf/Box_A.bin",
+        "Assets/gltf/Floor_Dirt.gltf",
+        "Assets/gltf/Floor_Dirt.bin",
+        "Assets/gltf/prototypebits_texture.png"
+      ]
+    }
+  ],
+  "pendingSources": [
+    {
+      "name": "Kenney Animated Survivors",
+      "url": "https://kenney.nl/assets/animated-characters-survivors",
+      "license": "CC0-1.0",
+      "reason": "zombie/survivor style; download archive needs explicit site flow"
+    },
+    {
+      "name": "Kenney Blocky Characters",
+      "url": "https://kenney.nl/assets/blocky-characters",
+      "license": "CC0-1.0",
+      "reason": "Minecraft-adjacent silhouette"
+    },
+    {
+      "name": "Kenney Survival Kit",
+      "url": "https://kenney.nl/assets/survival-kit",
+      "license": "CC0-1.0",
+      "reason": "supplies/camp props"
+    },
+    {
+      "name": "Kenney Graveyard Kit",
+      "url": "https://kenney.nl/assets/graveyard-kit",
+      "license": "CC0-1.0",
+      "reason": "graveyard 90 models"
+    },
+    {
+      "name": "Kenney Nature Kit",
+      "url": "https://kenney.nl/assets/nature-kit",
+      "license": "CC0-1.0",
+      "reason": "low-poly trees and rocks"
+    },
+    {
+      "name": "Kenney Blaster Kit",
+      "url": "https://kenney.nl/assets/blaster-kit",
+      "license": "CC0-1.0",
+      "reason": "gun placeholders"
+    },
+    {
+      "name": "Kenney Crosshair Pack",
+      "url": "https://kenney.nl/assets/crosshair-pack",
+      "license": "CC0-1.0",
+      "reason": "use PNG only; no SVG"
+    },
+    {
+      "name": "Kenney Input Prompts",
+      "url": "https://kenney.nl/assets/input-prompts",
+      "license": "CC0-1.0",
+      "reason": "mobile key icons; PNG only"
+    },
+    {
+      "name": "Kenney Impact Sounds",
+      "url": "https://kenney.nl/assets/impact-sounds",
+      "license": "CC0-1.0",
+      "reason": "hits and impacts"
+    },
+    {
+      "name": "Kenney Interface Sounds",
+      "url": "https://kenney.nl/assets/interface-sounds",
+      "license": "CC0-1.0",
+      "reason": "menu clicks"
+    },
+    {
+      "name": "KayKit Character Animations",
+      "url": "https://kaylousberg.com/game-assets/character-animations",
+      "license": "CC0-1.0",
+      "reason": "shooting/reloading/movement clips"
+    },
+    {
+      "name": "Poly Haven",
+      "url": "https://polyhaven.com/license",
+      "license": "CC0-1.0",
+      "reason": "select and compress texture, do not live-load all"
+    },
+    {
+      "name": "ambientCG",
+      "url": "https://ambientcg.com",
+      "license": "CC0-1.0",
+      "reason": "select coarse ground surface textures"
+    }
+  ],
+  "specialReview": [
+    {
+      "name": "Quaternius Animated Zombie Pack",
+      "url": "https://quaternius.com/packs/animatedzombie.html",
+      "status": "per-pack CC0 displayed; Blender/FBX conversion needed, retain snapshot"
+    },
+    {
+      "name": "Quaternius Universal Animation Library",
+      "url": "https://quaternius.com/packs/universalanimationlibrary.html",
+      "status": "per-pack CC0 shown, Free Standard subset only, verify per revision"
+    },
+    {
+      "name": "Quaternius QAL 2026",
+      "url": "https://quaternius.com/license.html",
+      "status": "non-CC0 terms and standalone redistribution restriction; do not auto-clone under CC0"
+    },
+    {
+      "name": "Mixamo animations",
+      "url": "https://www.mixamo.com",
+      "status": "not an open-source CC0 library; avoid copying animation files to public GitHub"
+    }
+  ]
+}
