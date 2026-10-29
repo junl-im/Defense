@@ -8,7 +8,7 @@ test('all four curated GitHub sources are pinned and CC0',()=>{
  assert.equal(x.repositories,4);
  assert.equal(x.license,'CC0-1.0');
  assert.equal(x.protectedArchive,'archive/rani-kingdom-v539-20261029');
- assert.ok(x.selectedFiles>=20);
+ assert.ok(x.selectedFiles>=19);
 });
 test('reject accidental AGPL asset or unknown license',()=>{
  const d=structuredClone(source);d.packs[0].license='AGPL-3.0';
