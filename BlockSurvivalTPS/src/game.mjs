@@ -18,6 +18,7 @@ const pickupVisual=new Map();
 const heroClips=new Map();
 const cameraShotVector=new THREE.Vector3();
 let lastFrame=performance.now(),fpsCount=0,fpsStart=lastFrame,fps=60,uiAt=0,modelStarted=false,nowFrameDt=0.016;
+let lastToast='',toastUntil=0;
 const enemiesVisual=new Map(),assetCache=new Map(),collisionMeshes=[],modelLoader=new GLTFLoader();
 const named={minion:'minion-a01.glb',bat:'Bat.glb',gun:'blaster.glb'};
 const assetURLs={
@@ -415,20 +416,43 @@ function updateHUD(){
  $('hitScreen').style.opacity=Math.min(0.16,state.hitFlash*0.65);
  $('reticle').classList.toggle('hit',state.hitMarker>0);
  $('fps').textContent='FPS '+fps+' · '+(renderer?.getPixelRatio()?.toFixed(2)||'1')+'x';
+ if(lastToast!==state.toast){
+  lastToast=state.toast;toastUntil=performance.now()+3000;
+ }
  $('message').textContent=state.toast;
+ $('message').style.opacity=performance.now()<toastUntil?'1':'0';
+ $('message').style.pointerEvents='none';
 }
 function localSound(hit=false){
  try{
-  const Ctx=window.AudioContext||window.webkitAudioContext;
-  if(!Ctx)return;
-  localSound.ctx=localSound.ctx||new Ctx();
-  const ctx=localSound.ctx;
+  const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;
+  const ctx=localSound.ctx=localSound.ctx||new Ctx();
   if(ctx.state==='suspended')ctx.resume().catch(()=>{});
-  const osc=ctx.createOscillator(),gain=ctx.createGain(),now=ctx.currentTime;
-  osc.type='triangle';osc.frequency.setValueAtTime(hit?540:170,now);
-  osc.frequency.exponentialRampToValueAtTime(hit?220:75,now+0.09);
-  gain.gain.setValueAtTime(0.04,now);gain.gain.exponentialRampToValueAtTime(0.001,now+0.12);
-  osc.connect(gain).connect(ctx.destination);osc.start(now);osc.stop(now+0.13);
+  // Synthesized percussive blast, not a music file or third-party audio asset.
+  if(!localSound.noise){
+   const length=Math.floor(ctx.sampleRate*0.18),buffer=ctx.createBuffer(1,length,ctx.sampleRate),data=buffer.getChannelData(0);
+   let seed=1986127;
+   for(let i=0;i<length;i++){
+    seed=(Math.imul(seed,1664525)+1013904223)>>>0;
+    const decay=Math.pow(1-i/length,5);
+    data[i]=((seed/4294967296)*2-1)*decay;
+   }
+   localSound.noise=buffer;
+  }
+  const now=ctx.currentTime,src=ctx.createBufferSource(),gain=ctx.createGain(),filter=ctx.createBiquadFilter();
+  src.buffer=localSound.noise;filter.type='lowpass';filter.frequency.value=hit?2200:1700;
+  gain.gain.setValueAtTime(0.12,now);gain.gain.exponentialRampToValueAtTime(0.001,now+0.17);
+  src.connect(filter).connect(gain).connect(ctx.destination);
+  src.start(now);src.stop(now+0.18);
+  if(hit){
+   const osc=ctx.createOscillator(),click=ctx.createGain();
+   osc.type='sine';osc.frequency.setValueAtTime(650,now);
+   osc.frequency.exponentialRampToValueAtTime(300,now+0.06);
+   click.gain.setValueAtTime(0.025,now);
+   click.gain.exponentialRampToValueAtTime(0.001,now+0.07);
+   osc.connect(click).connect(ctx.destination);
+   osc.start(now);osc.stop(now+0.07);
+  }
  }catch{}
 }
 function getShotDirection(){
