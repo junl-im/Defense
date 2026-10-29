@@ -1,76 +1,25 @@
-# KINGDOM SLG (Defense repository reboot)
+# 곰같은여우 — BLOCK SURVIVAL TPS
 
-A playable **single-player 3D kingdom-building strategy game** for the browser, based on [Hexkingdom by Aleksandr (Leks2000)](https://github.com/Leks2000/Hexkingdom).
+**마인크래프트보다 한 단계 발전한 블록형 3인칭 몬스터·좀비 생존 슈팅게임** — 싱글플레이 웹 게임 ALPHA 0.1.
 
-**Play**: https://junl-im.github.io/Defense/
+**게임 플레이**: https://junl-im.github.io/Defense/
 
-## Implemented systems
+기존 라니킹덤은 이 저장소의 기본 브랜치·공개 배포 대상에서 제거했습니다. 이전 프로젝트 전체 소스와 원형은 [archive/rani-kingdom-v539-20261029](https://github.com/junl-im/Defense/tree/archive/rani-kingdom-v539-20261029) 브랜치에서 별도로 보존합니다. 새 게임은 `BlockSurvivalTPS/`만 개발 기준으로 합니다.
 
-- 3D hexagonal maps, animated building growth, field placement and frontier expansion.
-- Economy: wood, stone, food, gold, influence, production, trading and caravans.
-- Research and technologies; kingdom tiers and building unlocks.
-- Army recruitment, border battles, enemy expansion and raids.
-- Automatic local browser saves, game restart, desktop and touchscreen controls.
+## 조작 및 기능
+- PC: WASD 이동, 마우스 시점, 좌클릭 사격, R 장전, Shift 질주, ESC 일시정지
+- 모바일: 좌측 이동패드, 우측 시점 조작, 사격·장전·질주 버튼
+- 3D 폐허 도시, 체력/탄약/웨이브, 추적형 몬스터, 전리품 소품, 차폐물, 재시작
+- 처음 방문 시 무료 플레이. 실시간 멀티·클라우드 세이브는 미구현.
 
-**Not implemented**: online accounts, server-hosted saves, guilds, PvP matchmaking, simultaneous online wars, paid monetization. This is not a fully finished commercial SLG.
+## 개발 및 배포
+- [TPS 소스와 상세 검증 기준](./BlockSurvivalTPS/README.md)
+- [CC0 에셋 출처 잠금](./BlockSurvivalTPS/research/source-lock.json) — 8개 공식 출처, 60개 원본 선별 파일
+- [GitHub Pages 배포 액션](./.github/workflows/deploy-tps.yml): 테스트 → 원본 SHA 고정 3D GLB 7개 포함 → Three.js MIT 웹 번들 생성 → 정적 Pages 배포
+- [라이선스·외부 저작물 안내](./THIRD_PARTY_NOTICES.md)
 
-## Run locally
+시작하려면 `cd BlockSurvivalTPS && npm install && npm test && npm run build` 후 `dist/index.html`을 로컬 정적 서버로 실행합니다. 또는 CI에서 배포용 ZIP을 받아 내부 바로 실행 HTML을 사용하세요.
 
-```bash
-python -m http.server 8123
-# open http://localhost:8123/
-```
+**주의**: ALPHA 상태이며 일부 자산은 시제품용 대역입니다. 모바일 FPS·발열·GPU 렌더링과 완성형 좀비 행동은 별도 실기기 QA가 필요합니다.
 
-Three.js `0.160.0` is loaded using a version-pinned jsDelivr URL from the original page. A network connection is currently required. No package install or build needed to run.
-
-## QA and deployment
-
-```bash
-npm test
-```
-
-The source checks run on each push to `main`, then GitHub Actions deploys the static folder to Pages.
-
-## License, credits and change notice
-
-- Original **MIT** license (c) 2026 Aleksandr (Leks2000), preserved in [LICENSE](LICENSE).
-- Original upstream: https://github.com/Leks2000/Hexkingdom
-- Modified in this repository: site branding, SVG-free icon rendering, deployment policy and QA.
-- Temporary emoji pictograms are used in place of original inline SVG icons until verified PNG/WebP assets are prepared.
-- Former Defense projects are preserved as `archive/dokkaebi-defense-20261018` and `archive/anime-crowd-runner-20261018` branches.
-- GPL/AGPL games such as TravianZ and Pillage First! are references, not code combined into this project.
-
-## Local workspace and Firebase project
-
-- Windows source workspace: `D:\K-city-webgame\Defense` (user-owned local path; remote GitHub edits require a local `git pull`).
-- Firebase project display name: **Defense game**; project ID: **web-game2**.
-- `.firebaserc` identifies the project but does not initialize login or cloud saves. This v0.3 remains GitHub Pages + local browser saves.
-- See [개발 환경 및 Firebase 연결 안내](docs/LOCAL_FIREBASE_KO.md).
-
-## First-play growth missions (v0.3)
-
-Korean tutorial missions guide players through land expansion, forest, farmland, starting agriculture research, owning 8 tiles and starting the first kingdom promotion. Progress is **derived from existing game state**, compatible with pre-v0.3 saves and without changing game economics.
-
-## v0.4 왕국 세이브 백업·복원 (로컬 전용)
-
-화면 아래 **저장 관리** → **현재 왕국 백업** 버튼으로 현재 왕국을 JSON 파일로 내려받을 수 있습니다.
-**백업 파일 복원**에서 JSON을 선택하면 저장 형식과 범위를 검사한 뒤 교체 확인을 받습니다.
-복원 직전의 왕국은 브라우저에 임시 보관되며 **이전 왕국 되돌리기**로 1회 되돌릴 수 있습니다.
-
-- 기존 `kingdom-tiles-save-v2` 저장 키와 진행 형식은 유지합니다.
-- 불완전한 JSON·지원하지 않는 버전·잘못된 지형·중복 영토 좌표·2MB 초과 파일은 복원을 막습니다.
-- 사용자가 내려받은 JSON 백업 파일을 별도로 안전한 곳에 보관하세요. 브라우저 데이터를 삭제하면 로컬 되돌리기 기록도 사라집니다.
-- 파일 백업은 **Firebase 클라우드 세이브가 아닙니다**. 계정 로그인과 다른 기기 자동 동기화는 구현되지 않았습니다.
-- 고해상도 모바일 기기의 렌더링 픽셀 비율을 최대 1.25, 그림자 맵을 1024로 제한하며 PC 품질 설정은 유지합니다.
-
-## 라니킹덤 v0.5 — 마을과 필드 분리
-
-첫 시작은 3×3 마을 건설 화면입니다. 중심 건물 승격으로 4×4/5×5/6×6 확장하고, 필드 나가기 / 내 마을 버튼으로 3D 월드와 전환합니다. 마을 중에는 월드 3D 렌더링을 중단합니다. 건설 취소 시 자원 80% 반환, 진행 상태 한글화, 얇은 스크롤바 적용. 상세 구현 범위와 이식 후보의 라이선스는 [라니킹덤 MASTER](docs/RANI_KINGDOM_MASTER_KO.md)를 참조하세요.
-
-## 라니킹덤 v0.7 — 3D 건설 화면이 마을입니다
-
-v0.5의 별도 이모지/DIV 마을 화면을 철회했습니다. **원본 MIT Hexkingdom의 완성된 Three.js 3D 건설 화면**에서 마을을 발전시킵니다. 중심 건물 승격으로 건설 가능 좌표를 3×3→4×4→5×5→6×6 확장하고, 외부 세계는 실제 FactionSystem 세력을 표시하는 별도 전략 지도에서 확인합니다. 외부 소스 이식 판단과 세이브 보존 정책은 [3D 마을 MASTER](docs/RANI_KINGDOM_NATIVE_3D_MASTER_KO.md)를 보세요.
-
-## v0.8 — 고품질 3D 건물 선택 이식
-
-Quaternius Ultimate Fantasy RTS의 CC0 농장/시장/병영 glTF 모델을 기존 Three.js 게임에 추가했습니다. 기존 3D 건설·경제·전투·카메라 시스템을 유지하면서 완공된 건물만 지연 로드·외형 교체합니다. 로드 실패 시 원래 Hexkingdom 모델을 유지합니다. 건설 취소 직후 세이브를 확정하여 새로고침 시 취소된 작업이 되살아나는 문제도 방지합니다. [출처·라이선스](docs/THIRD_PARTY_ASSETS_KO.md).
+© 2026 곰같은여우. 자체 신규 소스·게임 디자인은 별도 권리 보호를 받으며, 사용된 외부 소스와 CC0 콘텐츠는 각각의 원 라이선스를 따릅니다. SVG 아이콘·자산 사용 금지.

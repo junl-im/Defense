@@ -1,0 +1,80 @@
+name: Deploy BLOCK SURVIVAL TPS to GitHub Pages
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'BlockSurvivalTPS/**'
+      - '.github/workflows/deploy-tps.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'BlockSurvivalTPS/**'
+      - '.github/workflows/deploy-tps.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  build-and-test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Ensure original Rani is safely archived
+        run: |
+          git ls-remote --exit-code https://github.com/junl-im/Defense.git refs/heads/archive/rani-kingdom-v539-20261029
+      - name: Check original CC0 evidence, game logic, and strict SVG ban
+        run: |
+          node --test BlockSurvivalTPS/tests/*.test.mjs
+          node BlockSurvivalTPS/tools/acquire-open-assets.mjs --check
+          node --check BlockSurvivalTPS/src/game.mjs
+          node --check BlockSurvivalTPS/src/sim.mjs
+          if find BlockSurvivalTPS -iname '*.svg' | grep -q .; then exit 1; fi
+      - name: Assemble pinned lightweight 3D assets and Three.js engine
+        run: |
+          npm install --prefix BlockSurvivalTPS --no-audit --no-fund
+          npm run build --prefix BlockSurvivalTPS
+          node BlockSurvivalTPS/tools/verify-preview.mjs
+          test -s BlockSurvivalTPS/dist/index.html
+          test -s BlockSurvivalTPS/dist/assets/PROVENANCE.json
+          test -s BlockSurvivalTPS/dist/assets/ruin.glb
+          test -s BlockSurvivalTPS/dist/BLOCK_SURVIVAL_TPS_바로실행.html
+      - name: Check static site responses
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8124 --directory BlockSurvivalTPS/dist >/tmp/block-tps-http.log 2>&1 &
+          server=$!
+          trap 'kill "$server" 2>/dev/null || true' EXIT
+          sleep 2
+          curl -fsS http://127.0.0.1:8124/ | grep -q '블록 서바이벌 TPS'
+          curl -fsS -o /tmp/tps-mini.glb http://127.0.0.1:8124/assets/minion.glb
+          test "$(wc -c < /tmp/tps-mini.glb)" -gt 1000
+      - name: Configure GitHub Pages
+        if: github.event_name != 'pull_request'
+        uses: actions/configure-pages@v5
+      - name: Stage TPS site artifact for Pages
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: BlockSurvivalTPS/dist
+  deploy:
+    if: github.event_name != 'pull_request'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-24.04
+    needs: build-and-test
+    steps:
+      - name: Publish TPS; no legacy Rani game in deployment
+        id: deployment
+        uses: actions/deploy-pages@v4
