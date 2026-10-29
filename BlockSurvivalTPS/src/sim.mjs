@@ -1,4 +1,5 @@
 // © 2026 곰같은여우 — independent Block Survival TPS game simulation.
+import {findGridPath,segmentWalkable} from './navigation.mjs';
 export const ARENA = 27;
 export const MAG_SIZE = 12;
 export const MAX_ACTIVE = 12;
@@ -49,6 +50,34 @@ export function moveCircle(x,z,dx,dz,r=0.52){
   if(circleHitsCover(nx,nz,r)) nz=z;
   return {x:nx,z:nz};
 }
+// Radius-aware movement path (different from the bullet ray, which hits solid walls).
+export function movementClear(from,to,radius=0.63){
+ const blocked=(x,z)=>Math.abs(x)>ARENA-radius||Math.abs(z)>ARENA-radius||circleHitsCover(x,z,radius+0.06);
+ return segmentWalkable(from,to,blocked);
+}
+export function findPath(from,to,radius=0.63){
+ const blocked=(x,z)=>Math.abs(x)>ARENA-radius||Math.abs(z)>ARENA-radius||circleHitsCover(x,z,radius+0.06);
+ return findGridPath(from,to,blocked);
+}
+// Reticle cone assistance is deliberately limited to unobstructed targets.
+export function assistedAim(s,dx,dz,cone=0.065){
+ const length=Math.hypot(dx,dz);if(length<0.001)return {dx:0,dz:-1};
+ dx/=length;dz/=length;
+ let candidate=null,score=Infinity;
+ for(const e of s.enemies){
+  if(e.hp<=0)continue;
+  const rx=e.x-s.x,rz=e.z-s.z,d=Math.hypot(rx,rz);
+  if(d<0.1||d>32||!clearPath(s.x,s.z,e.x,e.z))continue;
+  const angular=Math.abs(rx*dz-rz*dx)/d;
+  if(angular>cone+e.radius/d)continue;
+  if(rx*dx+rz*dz<=0)continue;
+  const rank=angular+(d/320);
+  if(rank<score){score=rank;candidate=e;}
+ }
+ if(!candidate)return {dx,dz};
+ const d=Math.hypot(candidate.x-s.x,candidate.z-s.z);
+ return {dx:(candidate.x-s.x)/d,dz:(candidate.z-s.z)/d,targetId:candidate.id};
+}
 export function start(s){if(s.status==="title"||s.status==="paused")s.status="playing";return s;}
 export function pause(s){if(s.status==="playing")s.status="paused";return s;}
 export function reload(s){
@@ -74,7 +103,8 @@ export function shoot(s,dx,dz){
   if(s.status!=="playing"||s.reloadTime>0||s.shotCooldown>0)return {fired:false,reason:"cooldown"};
   if(s.ammo===0)return {fired:false,reason:"empty"};
   s.ammo--;s.shotCooldown=0.19;s.shotFlash=0.13;
-  const e=lineTarget(s,dx,dz);
+  const adjusted=assistedAim(s,dx,dz);
+  const e=lineTarget(s,adjusted.dx,adjusted.dz);
   if(!e)return {fired:true,hit:false};
   e.hp-=e.type==="runner"?55:46;
   e.hitTime=0.2;
@@ -127,10 +157,31 @@ export function tick(s,dt,controls={}){
     e.walk+=dt;
     const ax=s.x-e.x,az=s.z-e.z,dist=Math.hypot(ax,az);
     e.attackCD=Math.max(0,e.attackCD-dt);
-    if(dist>1.24){
-      const mx=dist?ax/dist:0,mz=dist?az/dist:0;
-      const step=moveCircle(e.x,e.z,mx*e.speed*dt,mz*e.speed*dt,e.radius);
-      e.x=step.x;e.z=step.z;
+    if(dist>1.24||!clearPath(e.x,e.z,s.x,s.z)){
+      let destination={x:s.x,z:s.z};
+      const from={x:e.x,z:e.z};
+      // Reuse the corridor briefly to limit expensive A* work on low-end phones.
+      e.routeTimer=(e.routeTimer??0)-dt;
+      const targetMoved=Math.hypot((e.routeTargetX??s.x)-s.x,(e.routeTargetZ??s.z)-s.z)>2.5;
+      if(movementClear(from,destination,e.radius)){e.route=[];e.routeTimer=0.9;}
+      else{
+        if(!e.route?.length||e.routeTimer<=0||targetMoved){
+          e.route=findPath(from,destination,e.radius);
+          e.routeTargetX=s.x;e.routeTargetZ=s.z;e.routeTimer=0.85+(e.id%4)*0.12;
+        }
+        while(e.route?.length&&Math.hypot(e.route[0].x-e.x,e.route[0].z-e.z)<0.65)e.route.shift();
+        if(e.route?.length)destination=e.route[0];
+      }
+      const deltaX=destination.x-e.x,deltaZ=destination.z-e.z,stepLength=Math.hypot(deltaX,deltaZ);
+      if(stepLength>0.02){
+        const mx=deltaX/stepLength,mz=deltaZ/stepLength;
+        const step=moveCircle(e.x,e.z,mx*e.speed*dt,mz*e.speed*dt,e.radius);
+        if(Math.hypot(step.x-e.x,step.z-e.z)<0.005&&dt>0.01){
+          e.stuck=(e.stuck||0)+dt;
+          if(e.stuck>0.45){e.routeTimer=0;e.route=[];e.stuck=0;}
+        }else e.stuck=0;
+        e.x=step.x;e.z=step.z;
+      }
     }else if(e.attackCD===0){
       s.hp=Math.max(0,s.hp-(e.type==="runner"?9:12));
       s.hitFlash=0.24;e.attackCD=1.1;
