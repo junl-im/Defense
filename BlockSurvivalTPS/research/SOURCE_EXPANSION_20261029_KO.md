@@ -93,3 +93,15 @@ P1-2: 서버 없이 GitHub Pages 싱글플레이, 모델 수요량 정량 측정
 - 이 시점 `source-lock.json`, 취득 스크립트, 레지스트리 테스트, Actions 5팩 검사를 갱신하여 성공. 다음에는 **Kenney/Quaternius 공식 배포 파일의 권리 포함 원본 확보 → 1 생존자·2 좀비 애니메이션/무기 실사 → 실제 GLB 경량화** 순서.
 - 관련 노션 MASTER: https://app.notion.com/p/408fff243ec9818fb23dd6134fda816a
 - Google Docs 협업 기준본: https://docs.google.com/document/d/1RkaKR5uoOXD6cDf5yq8tMjpg3aiLSghlc9J5KoIHDWo/edit
+
+
+## 8. 3차 실제 확보 체크포인트 — Kenney 미디어를 더해 6출처 45파일
+
+- Kenney 제작자 공식 [FPS Starter Kit](https://github.com/KenneyNL/Starter-Kit-FPS) @ `185fd2326d74a5cf858cffc616f87cf9696f9cc0`; README는 코드 MIT, **2D/3D/효과음 미디어 CC0**로 범위를 따로 명시. 폰트 OFL, Godot `.gd` 코드, Vector/SVG는 선별 외.
+- 정확한 11개 신규 선별 파일: `models/blaster.glb`, `models/blaster-repeater.glb`, `models/Textures/colormap.png`, `sounds/{blaster,blaster_repeater,enemy_attack,enemy_hurt,enemy_destroy}.ogg`, `sprites/{crosshair,crosshair-repeater,hit}.png`. 복합 저작권 범위를 코드 검증으로 강제.
+- 6개 공인 GitHub 원본·45개 파일 취득: https://github.com/junl-im/Defense/actions/runs/40867270379 — `success`; `source-lock.json` 6 소스 SHA 고정.
+- GitHub artifact `12893428895` / **4,728,925 bytes** / artifact SHA256 `576b3d9da4bab9971600e1e0c8b70bc89375f0a1274715c78ddcef42db2a19b6` / 만료 2026-11-01 11:41 UTC.
+- **[최신 6출처·45파일 ZIP Google Drive](https://drive.google.com/file/d/176G5mIHrMu0h_lrmjn-tej-kIv_lXDV8/view)** — 저장 크기 **4,728,925 bytes** 일치, 전용 폴더 소속 확인. Google Drive 자체 SHA256은 미재계산. 구형 [4팩](https://drive.google.com/file/d/1dyKI8ucFWQbKYKG-J1Cr8KBb9Col5AZC/view)·[5팩](https://drive.google.com/file/d/1qDYe7rfrd97hQAivTX7pbeQLKpPuR5m4/view)도 함께 보관.
+- **애니메이션 후보 재평가**: Kenney [Mini Characters](https://kenney.nl/assets/mini-characters) 공식 CC0·애니메이션; [Blocky Characters](https://kenney.nl/assets/blocky-characters) 공식 CC0·블록 스타일; [Vuena 무료 블록 캐릭터](https://vuena.itch.io/blocky-characters-free-sample) CC0 표시·8종 중 좀비 포함/6 클립. 현재는 링크와 스펙 조사까지이며 원본 ZIP 미취득.
+- **개발 순서**: 최신 ZIP 속 총기/OGG/PNG 실제 렌더·청취·지연 실사, 좀비/생존자 다운로드 팩 원본 획득과 라이선스 확정, 캐릭터 IK/손 소켓/애니메이션 상용 웹 GLB 최적화, 모바일 실측.
+- **주의**: 연구·취득/검증 성공은 게임에서 작동했다는 뜻이 아님. 기존 main의 라니킹덤은 미변경.
