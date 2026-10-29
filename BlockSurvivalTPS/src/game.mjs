@@ -5,6 +5,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as cloneSkinned} from 'three/addons/utils/SkeletonUtils.js';
 import {ARENA,COVER,clamp,newGame,start,pause,reload,shoot,tick} from './sim.mjs';
 import {populateRuinedCity} from './world-detail.mjs';
+import {createQualityState,updateQuality} from './quality.mjs';
 
 const $=id=>document.getElementById(id);
 const shell=$('shell'),canvas=$('stage'),overlay=$('overlay');
@@ -13,9 +14,10 @@ const keys=new Set();
 let state=newGame(),yaw=0,pitch=0,fireHeld=false,sprintHeld=false;
 let joystick={x:0,z:0},stickPointer=null,lookPointer=null,lastLook=null;
 let renderer,scene,camera,clock,player,playerParts,world,raycaster;
-let heroRig=null,heroMixer=null,heroAnimation='',heroGun=null,heroGunTemplate=null,muzzleEffect=null,tracer=null,impactSpark=null,fxExpires=0;
+let heroRig=null,heroMixer=null,heroAnimation='',heroGun=null,heroGunTemplate=null,muzzleEffect=null,tracer=null,impactSpark=null,fxExpires=0,heroShotUntil=0;
 const pickupVisual=new Map();
 const heroClips=new Map();
+let quality=createQualityState({mobile,dpr:window.devicePixelRatio||1});
 const cameraShotVector=new THREE.Vector3();
 let lastFrame=performance.now(),fpsCount=0,fpsStart=lastFrame,fps=60,uiAt=0,modelStarted=false,nowFrameDt=0.016;
 let lastToast='',toastUntil=0;
@@ -47,7 +49,8 @@ function size(){
 function init3D(){
  try{
   renderer=new THREE.WebGLRenderer({canvas,antialias:!mobile,alpha:false,powerPreference:'high-performance'});
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,mobile?1:1.4));
+  renderer.setPixelRatio(quality.ratio);
+  shell.dataset.dynamicResolution='enabled';
   renderer.outputColorSpace=THREE.SRGBColorSpace;
   renderer.setClearColor(0x536c73);
  }catch(err){$('fatal').hidden=false;console.error(err);return false;}
@@ -266,6 +269,7 @@ function playHeroClip(name){
  playRigClip(visual,name,0.14);
  playHeroClip.previous=visual.activeAction;
  heroAnimation=visual.lastAnimation;
+ shell.dataset.heroAnimation=heroAnimation;
 }
 function makeEnemyVisual(e){
  const root=new THREE.Group();scene.add(root);root.position.set(e.x,0,e.z);
@@ -324,8 +328,9 @@ function syncEnemies(t){
   }
  }
  for(const [id,v] of enemiesVisual)if(!state.enemies.some(e=>e.id===id)){
+  if(v.mixer){v.mixer.stopAllAction();v.mixer.uncacheRoot(v.model);}
   scene.remove(v.root);enemiesVisual.delete(id);
-  // GLB geometries / textures belong to cached original and must remain reusable.
+  // Shared GLB geometry/textures remain in cache; only per-enemy mixers are cleared.
  }
 }
 function makePickupVisual(p){
@@ -355,7 +360,7 @@ function syncPickups(t){
 function syncPlayer(t,moving){
  player.position.set(state.x,0,state.z);player.rotation.y=yaw;
  if(heroMixer){
-  const name=state.reloadTime>0?'1H_Ranged_Reload':state.shotFlash>0?'1H_Ranged_Shoot':moving?(keys.has('shift')||sprintHeld?'Running_A':'Walking_A'):'Idle';
+  const name=state.reloadTime>0?'1H_Ranged_Reload':state.status==='playing'&&state.elapsed<heroShotUntil?'1H_Ranged_Shoot':moving?(keys.has('shift')||sprintHeld?'Running_A':'Walking_A'):'Idle';
   playHeroClip(name);
   heroMixer.update(Math.min(0.06,nowFrameDt));
   return;
@@ -399,7 +404,7 @@ function toggleHUD(on){
  $('mobileControls').hidden=!(on&&mobile);
 }
 function begin(reset=false){
- if(reset||state.status==='gameover'){state=newGame();for(const v of pickupVisual.values())world.remove(v);pickupVisual.clear();}
+ if(reset||state.status==='gameover'){state=newGame();heroShotUntil=0;for(const v of pickupVisual.values())world.remove(v);pickupVisual.clear();}
  state.status='playing';start(state);overlay.hidden=true;toggleHUD(true);
  yaw=state.yaw;fireHeld=false;updateHUD();
  if(mobile){
@@ -473,6 +478,7 @@ function doFire(){
  const aim=getShotDirection();
  const result=shoot(state,aim.dx,aim.dz);
  if(result.fired){
+  heroShotUntil=state.elapsed+0.32;
   const startPoint=new THREE.Vector3(state.x+Math.sin(yaw)*0.5,1.45,state.z-Math.cos(yaw)*0.5);
   const endpoint=new THREE.Vector3(startPoint.x+aim.dx*34,1.45,startPoint.z+aim.dz*34);
   if(result.hit){
@@ -524,13 +530,13 @@ function frame(now){
  if(now-fpsStart>1500){
   fps=Math.round(fpsCount*1000/(now-fpsStart));
   fpsCount=0;fpsStart=now;
-  // Lower mobile raster resolution only when repeated slow measurements indicate pressure.
-  if(mobile&&state.status==='playing'){
-   frame.slow= fps<27?(frame.slow||0)+1:0;
-   if(frame.slow>=3&&renderer.getPixelRatio()>0.73){
-    renderer.setPixelRatio(Math.max(0.72,renderer.getPixelRatio()-0.13));size();frame.slow=0;
-   }
+  // Symmetric adaptive resolution: sustained slow frames reduce GPU raster work,
+  // while stable recovery restores sharpness; never exceed the device-safe cap.
+  const proposed=updateQuality(quality,fps,{playing:state.status==='playing'});
+  if(Math.abs(proposed.ratio-quality.ratio)>0.001){
+   renderer.setPixelRatio(proposed.ratio);size();
   }
+  quality=proposed;
  }
  if(now-uiAt>110){uiAt=now;if(state.status==='playing')updateHUD();}
 }
