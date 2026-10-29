@@ -1,6 +1,6 @@
 # 곰같은여우 — BLOCK SURVIVAL TPS
 
-**ALPHA 0.4 (개발·검증 중) 웹 TPS 시제품.** 이전 라니킹덤은 `main`에서 정리했고 현재는 이 게임에 집중하여 개발·배포합니다. 최신 검증 결과와 빌드는 [Actions](https://github.com/junl-im/Defense/actions/workflows/block-survival-preview.yml) 참조. 브라우저에서 PC·모바일 실제 게임플레이 및 FPS 실측은 별도 검증이 필요합니다.
+**ALPHA 0.4 실제 리깅 모델을 적용한 웹 TPS 시제품.** 이전 라니킹덤은 `main`에서 정리했고 현재는 이 게임에 집중하여 개발·배포합니다. 최신 검증 결과와 빌드는 [Actions](https://github.com/junl-im/Defense/actions/workflows/block-survival-preview.yml) 참조. 브라우저에서 PC·모바일 실제 게임플레이 및 FPS 실측은 별도 검증이 필요합니다.
 
 ## 보존 및 권리
 - 게임 실행 파일: \`BlockSurvivalTPS/index.html\`, \`src/game.mjs\`, \`src/sim.mjs\`, \`style.css\`
@@ -71,3 +71,11 @@ python -m http.server 8000
 - [자체 GLB 클립 경량화 도구](./tools/compact-glb.mjs)로 메쉬·스킨·이미지·선택 애니메이션의 참조만 남겨 모델 크기 절감. 모든 런타임 GLB SHA256 PROVENANCE 기록.
 - Kenney blaster는 손뼈 `handslot.r`에 장착. 모델이 실패할 경우 종전 블록형 생존자·언데드 메시로 폴백.
 - v0.3의 A* 우회 AI, 조준 및 모바일 HUD 검증은 유지. v0.4 공개 반영 전에 실제 Chrome WebGL 브라우저에서 모델·애니메이션 로딩 검증.
+
+### v0.4 자동 검증
+
+- [실물 GLB·Three.js 빌드 #40967123760](https://github.com/junl-im/Defense/actions/runs/40967123760): SUCCESS
+- [Chromium WebGL·PC·모바일 #40967123674](https://github.com/junl-im/Defense/actions/runs/40967123674): SUCCESS. Knight와 언데드 GLB 실제 로딩, 사격, 한 화면 UI 검증. 소프트웨어 렌더러 FPS는 기기 GPU 성능 지표가 아님
+- [공식 CC0 8개 출처 #40967123635](https://github.com/junl-im/Defense/actions/runs/40967123635): SUCCESS
+- 압축형 Knight 3,659,532→630,020바이트, Skeleton_Minion 4,814,296→611,076바이트. 모두 필수 애니메이션 6종 보존, 전체 빌드 9 GLB 포함
+- 현재 캐릭터는 CC0 판타지 아트 기반 임시 생존자·언데드 대역이며 현대식 최종 스타일은 아님
