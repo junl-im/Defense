@@ -156,6 +156,44 @@ export function spawn(s){
   s.enemies.push(e);
   return e;
 }
+// Mob crowd steering: bounded pairwise separation after each navigation step.
+// At most MAX_ACTIVE mobs are alive, so this is < 144 pair checks per frame.
+// Never modify dead ragdolls or drag a mob through a solid wall.
+export function separateEnemies(s,passes=2){
+ const active=s.enemies.filter(e=>e.hp>0);
+ for(let pass=0;pass<passes;pass++){
+  for(let i=0;i<active.length;i++)for(let j=i+1;j<active.length;j++){
+   const a=active[i],b=active[j];
+   let dx=b.x-a.x,dz=b.z-a.z;
+   let distance=Math.hypot(dx,dz);
+   const minDist=(a.radius+b.radius)*0.92;
+   if(distance>=minDist)continue;
+   if(distance<0.0001){
+    // Stable ID-based direction avoids NaN and eliminates synchronized mob overlap.
+    const angle=(((a.id*41+b.id*127)>>>0)%360)*Math.PI/180;
+    dx=Math.cos(angle);dz=Math.sin(angle);distance=1;
+    // Here distance is only a normalization helper, not the true separation.
+    const push=Math.min(0.24,minDist/2);
+    const nextA=moveCircle(a.x,a.z,-dx*push,-dz*push,a.radius);
+    const nextB=moveCircle(b.x,b.z,dx*push,dz*push,b.radius);
+    a.x=nextA.x;a.z=nextA.z;b.x=nextB.x;b.z=nextB.z;
+    continue;
+   }
+   const nx=dx/distance,nz=dz/distance;
+   const push=Math.min(0.24,(minDist-distance)/2);
+   let next=moveCircle(a.x,a.z,-nx*push,-nz*push,a.radius);
+   const movedA=Math.hypot(next.x-a.x,next.z-a.z);
+   a.x=next.x;a.z=next.z;
+   next=moveCircle(b.x,b.z,nx*(push+(push-movedA)),nz*(push+(push-movedA)),b.radius);
+   const movedB=Math.hypot(next.x-b.x,next.z-b.z);
+   b.x=next.x;b.z=next.z;
+   if(movedB<push*0.5){
+    next=moveCircle(a.x,a.z,-nx*(push-movedB),-nz*(push-movedB),a.radius);
+    a.x=next.x;a.z=next.z;
+   }
+  }
+ }
+}
 export function tick(s,dt,controls={}){
   if(s.status!=="playing")return;
   dt=clamp(dt,0,0.06);
@@ -216,6 +254,7 @@ export function tick(s,dt,controls={}){
       if(s.hp===0){s.status="gameover";s.toast="생존 실패 — 다시 도전하세요";}
     }
   }
+  separateEnemies(s);
   s.enemies=s.enemies.filter(e=>e.hp>0||e.deadTime<0.8);
   if(s.status!=="playing")return;
   if(s.waveLeft>0){
