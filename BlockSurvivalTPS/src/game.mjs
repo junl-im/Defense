@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as cloneSkinned} from 'three/addons/utils/SkeletonUtils.js';
 import {ARENA,COVER,clamp,newGame,start,pause,reload,shoot,tick} from './sim.mjs';
+import {populateRuinedCity} from './world-detail.mjs';
 
 const $=id=>document.getElementById(id);
 const shell=$('shell'),canvas=$('stage'),overlay=$('overlay');
@@ -12,7 +13,8 @@ const keys=new Set();
 let state=newGame(),yaw=0,pitch=0,fireHeld=false,sprintHeld=false;
 let joystick={x:0,z:0},stickPointer=null,lookPointer=null,lastLook=null;
 let renderer,scene,camera,clock,player,playerParts,world,raycaster;
-let heroRig=null,heroMixer=null,heroAnimation='',heroGun=null,heroGunTemplate=null,muzzleEffect=null;
+let heroRig=null,heroMixer=null,heroAnimation='',heroGun=null,heroGunTemplate=null,muzzleEffect=null,tracer=null,impactSpark=null,fxExpires=0;
+const pickupVisual=new Map();
 const heroClips=new Map();
 const cameraShotVector=new THREE.Vector3();
 let lastFrame=performance.now(),fpsCount=0,fpsStart=lastFrame,fps=60,uiAt=0,modelStarted=false,nowFrameDt=0.016;
@@ -53,9 +55,18 @@ function init3D(){
  scene.add(new THREE.HemisphereLight(0xb7dbe5,0x28342e,2.15));
  const sun=new THREE.DirectionalLight(0xffd7a2,1.75);sun.position.set(-25,48,-30);scene.add(sun);
  world=new THREE.Group();scene.add(world);raycaster=new THREE.Raycaster();
- constructWorld();player=makePlayer();scene.add(player);
+ constructWorld();
+ const detail=populateRuinedCity(THREE,world,COVER,ARENA,{mobile});
+ shell.dataset.urbanDetails=String(detail.rubble+detail.roadDamage+detail.vegetation);
+ player=makePlayer();scene.add(player);
  muzzleEffect=box(player,0.35,1.5,-1.05,0.3,0.3,0.5,0xffd16e,'glow');
  muzzleEffect.userData.fx=true;muzzleEffect.visible=false;
+ const tracerGeometry=new THREE.BufferGeometry();
+ tracerGeometry.setAttribute('position',new THREE.BufferAttribute(new Float32Array(6),3));
+ tracer=new THREE.Line(tracerGeometry,new THREE.LineBasicMaterial({color:0xffdf99,transparent:true,opacity:0.88,depthWrite:false}));
+ tracer.visible=false;scene.add(tracer);
+ impactSpark=new THREE.Mesh(new THREE.OctahedronGeometry(0.22,0),new THREE.MeshBasicMaterial({color:0xe6ffc1,transparent:true,opacity:0.9,depthWrite:false}));
+ impactSpark.visible=false;scene.add(impactSpark);
  size();window.addEventListener('resize',size,{passive:true});
  canvas.addEventListener('webglcontextlost',evt=>{evt.preventDefault();pauseGame('그래픽 연결이 중단됐습니다');});
  canvas.addEventListener('webglcontextrestored',()=>location.reload());
@@ -208,6 +219,12 @@ function installHero(gltf){
  heroRig.traverse(child=>{
   if(child.isSkinnedMesh){child.frustumCulled=false;skinnedParts++;}
   if(/Sword|Shield|Cape/i.test(child.name))child.visible=false;
+  // Work toward an urban-survivor palette without altering the original CC0 source GLB.
+  if(child.isMesh&&/Knight_(Body|Arm|Leg|Helmet)/.test(child.name)){
+   child.material=Array.isArray(child.material)?child.material.map(m=>m.clone()):child.material.clone();
+   const tint=/Helmet/.test(child.name)?0x748f77:/Body/.test(child.name)?0x76917c:0x929e8e;
+   for(const m of (Array.isArray(child.material)?child.material:[child.material]))m.color.multiply(new THREE.Color(tint));
+  }
  });
  normalize(heroRig,2.1);
  // KayKit animated rigs face +Z, while our TPS camera assumes the hero faces -Z.
@@ -310,6 +327,30 @@ function syncEnemies(t){
   // GLB geometries / textures belong to cached original and must remain reusable.
  }
 }
+function makePickupVisual(p){
+ const root=new THREE.Group();world.add(root);
+ const ammo=p.kind==='ammo';
+ box(root,0,0,0,0.64,0.5,0.5,ammo?0xc7a66b:0xd9dad0);
+ if(ammo){
+  for(let x of [-0.15,0,0.15])box(root,x,0.26,0,0.1,0.22,0.13,0xe8d17c);
+ }else{
+  box(root,0,0,0.27,0.36,0.13,0.04,0x9f4445);
+  box(root,0,0,0.28,0.13,0.36,0.04,0x9f4445);
+ }
+ return root;
+}
+function syncPickups(t){
+ for(const p of state.pickups){
+  if(!pickupVisual.has(p.id))pickupVisual.set(p.id,makePickupVisual(p));
+  const v=pickupVisual.get(p.id);
+  v.position.set(p.x,0.5+Math.sin(t*3+p.id)*0.14,p.z);
+  v.rotation.y=t*0.8;
+ }
+ for(const [id,v] of pickupVisual){
+  if(state.pickups.some(p=>p.id===id))continue;
+  world.remove(v);pickupVisual.delete(id);
+ }
+}
 function syncPlayer(t,moving){
  player.position.set(state.x,0,state.z);player.rotation.y=yaw;
  if(heroMixer){
@@ -357,7 +398,7 @@ function toggleHUD(on){
  $('mobileControls').hidden=!(on&&mobile);
 }
 function begin(reset=false){
- if(reset||state.status==='gameover')state=newGame();
+ if(reset||state.status==='gameover'){state=newGame();for(const v of pickupVisual.values())world.remove(v);pickupVisual.clear();}
  state.status='playing';start(state);overlay.hidden=true;toggleHUD(true);
  yaw=state.yaw;fireHeld=false;updateHUD();
  if(mobile){
@@ -407,6 +448,28 @@ function doFire(){
  if(state.status!=='playing')return;
  const aim=getShotDirection();
  const result=shoot(state,aim.dx,aim.dz);
+ if(result.fired){
+  const startPoint=new THREE.Vector3(state.x+Math.sin(yaw)*0.5,1.45,state.z-Math.cos(yaw)*0.5);
+  const endpoint=new THREE.Vector3(startPoint.x+aim.dx*34,1.45,startPoint.z+aim.dz*34);
+  if(result.hit){
+   const e=state.enemies.find(x=>x.id===result.id);
+   if(e)endpoint.set(e.x,1.45,e.z);
+  }
+  // Occlusion clamping prevents tracer rays passing visually through solid buildings.
+  const delta=endpoint.clone().sub(startPoint),length=delta.length();
+  if(length>0.001){
+   raycaster.set(startPoint,delta.normalize());raycaster.far=length;
+   const hits=raycaster.intersectObjects(collisionMeshes,false);
+   if(hits.length)endpoint.copy(hits[0].point);
+  }
+  const positions=tracer.geometry.getAttribute('position');
+  positions.setXYZ(0,startPoint.x,startPoint.y,startPoint.z);
+  positions.setXYZ(1,endpoint.x,endpoint.y,endpoint.z);positions.needsUpdate=true;
+  tracer.geometry.computeBoundingSphere();tracer.visible=true;
+  impactSpark.visible=!!result.hit;
+  if(result.hit)impactSpark.position.copy(endpoint);
+  fxExpires=performance.now()+105;
+ }
  if(result.fired)localSound(result.hit);
  if(!result.fired&&result.reason==='empty')reload(state);
 }
@@ -421,14 +484,16 @@ function frame(now){
   const mv=Math.min(1,Math.hypot(dx,dz));
   tick(state,dt,{x:dx,z:dz,yaw,sprint:keys.has('shift')||sprintHeld});
   if(fireHeld&&state.shotCooldown<=0)doFire();
-  syncPlayer(now/1000,mv>0.02);syncEnemies(now/1000);
+  syncPlayer(now/1000,mv>0.02);syncEnemies(now/1000);syncPickups(now/1000);
   if(state.status==='gameover'){fireHeld=false;showMenu('생존 실패','다시 도전',true);}
   const moved=mv>0.02;
   updateCamera(dt);
  }else{
   syncPlayer(now/1000,false);
   updateCamera(dt);
+  syncPickups(now/1000);
  }
+ if(tracer&&now>fxExpires){tracer.visible=false;impactSpark.visible=false;}
  if(muzzleEffect)muzzleEffect.visible=state.status==='playing'&&state.shotFlash>0;
  if(renderer&&scene)renderer.render(scene,camera);
  fpsCount++;
