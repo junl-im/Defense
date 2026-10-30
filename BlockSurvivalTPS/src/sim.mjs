@@ -144,7 +144,7 @@ export function detonateBarrel(s,first){
    if(!clearPath(barrel.x,barrel.z,enemy.x,enemy.z))continue;
    const dealt=Math.min(enemy.hp,BLAST_DAMAGE);
    enemy.hp-=BLAST_DAMAGE;enemy.hitTime=0.22;damage+=dealt;
-   if(enemy.hp<=0){kills++;awardKill(s,enemy);emitCombatEffect(s,'kill',{enemyId:enemy.id,x:enemy.x,z:enemy.z,damage:dealt,points:0,combo:s.combo,blast:true});}
+   if(enemy.hp<=0){kills++;const points=awardKill(s,enemy);emitCombatEffect(s,'kill',{enemyId:enemy.id,x:enemy.x,z:enemy.z,damage:dealt,points,combo:s.combo,blast:true});}
    else emitCombatEffect(s,'hit',{enemyId:enemy.id,x:enemy.x,z:enemy.z,damage:dealt,blast:true});
   }
   const pd=Math.hypot(s.x-barrel.x,s.z-barrel.z);
@@ -214,7 +214,7 @@ export function shoot(s,dx,dz){
   const b=lineBarrel(s,adjusted.dx,adjusted.dz);
   const eDist=e?Math.hypot(e.x-s.x,e.z-s.z):Infinity;
   if(b&&b.distance<eDist){
-    b.barrel.hp-=46;
+    b.barrel.hp-=46;s.hitMarker=0.22;
     const blast=b.barrel.hp<=0?detonateBarrel(s,b.barrel):null;
     return {fired:true,hit:true,barrel:true,exploded:!!blast,blast,id:b.barrel.id,
       aim:{dx:adjusted.dx,dz:adjusted.dz},x:b.barrel.x,z:b.barrel.z};
