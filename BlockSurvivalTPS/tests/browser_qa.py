@@ -47,7 +47,11 @@ def start(page,label):
           f"{label}: combat feedback indicators were removed")
     check(page.evaluate("() => document.querySelector('#shell').dataset.combatFx==='ready'"),
           f"{label}: pooled 3D impact effects failed to initialize")
-    check(page.evaluate("() => document.querySelector('#shell').dataset.combatVersion==='v09'"),
+    check(page.evaluate("() => document.querySelector('#shell').dataset.destructibles==='3'"),
+          f"{label}: 3 visible destructible city barrels were not constructed")
+    check(page.evaluate("() => document.querySelector('#shell').dataset.explosionFx==='ready'"),
+          f"{label}: lightweight explosion renderer did not initialize")
+    check(page.evaluate("() => document.querySelector('#shell').dataset.combatVersion==='v010'"),
           f"{label}: modern combat pose pipeline not activated")
     check(page.evaluate("() => ['Run','Idle'].includes(document.querySelector('#shell').dataset.heroAnimation)"),
           f"{label}: modern skin animation clip never activated")
