@@ -1,0 +1,13 @@
+Animated Characters 1 (1.1)
+
+Created/distributed by Kenney (www.kenney.nl)
+
+License: (Creative Commons Zero, CC0)
+http://creativecommons.org/publicdomain/zero/1.0/
+
+You can use this content for personal, educational, and commercial purposes.
+Support by crediting 'Kenney' or 'www.kenney.nl' (this is not a requirement).
+
+Official source: https://kenney.nl/assets/animated-characters-survivors
+Original Kenney-authored mirror: https://opengameart.org/content/animated-characters-1
+Source package SHA256: 9cc53e82c941781f26aa8fb39d40887cf14b1d74cca2d10ccc6e7c140a68f820
