@@ -1,6 +1,6 @@
-# 곰같은여우 — BLOCK SURVIVAL TPS
+# 곰같은여우 — 라니블록 생존
 
-**ALPHA 0.12 방향별 피격·공격 저지·탄피·폭발 잔해·재장전 HUD가 연동되는 경량 웹 TPS.** 이전 라니킹덤은 `main`에서 정리했고 현재는 이 게임에 집중하여 개발·배포합니다. 최신 검증 결과와 빌드는 [Actions](https://github.com/junl-im/Defense/actions/workflows/block-survival-preview.yml) 참조. 브라우저에서 PC·모바일 실제 게임플레이 및 FPS 실측은 별도 검증이 필요합니다.
+**ALPHA 0.15 공식 게임명 ‘라니블록 생존’.** 방향별 피격·보행 모션·발자국 먼지·회피·재장전 HUD가 연동되는 경량 웹 TPS. 이전 라니킹덤은 `main`에서 정리했고 현재는 이 게임에 집중하여 개발·배포합니다. 최신 검증 결과와 빌드는 [Actions](https://github.com/junl-im/Defense/actions/workflows/block-survival-preview.yml) 참조. 브라우저에서 PC·모바일 실제 게임플레이 및 FPS 실측은 별도 검증이 필요합니다.
 
 ## 보존 및 권리
 - 게임 실행 파일: \`BlockSurvivalTPS/index.html\`, \`src/game.mjs\`, \`src/sim.mjs\`, \`style.css\`
@@ -32,7 +32,7 @@ cd dist
 python -m http.server 8000
 # http://localhost:8000/
 \`\`\`
-**더 간단한 실행:** 빌드 ZIP 안의 `BLOCK_SURVIVAL_TPS_바로실행.html`을 더블클릭하면 웹서버 설치 없이 기본 게임이 작동합니다. Chrome/Edge 같은 WebGL 지원 브라우저가 필요하며 7개 GLB는 빌드 ZIP에 포함되며 원본 파일을 못 찾으면 공식 저장소를 폴백합니다.
+**더 간단한 실행:** 빌드 ZIP 안의 `라니블록_생존_바로실행.html`을 더블클릭하면 웹서버 설치 없이 기본 게임이 작동합니다. Chrome/Edge 같은 WebGL 지원 브라우저가 필요하며 7개 GLB는 빌드 ZIP에 포함되며 원본 파일을 못 찾으면 공식 저장소를 폴백합니다.
 
 위의 GitHub Actions는 같은 빌드 후 \`block-survival-tps-playable-alpha-v01\` ZIP을 첨부합니다. 이를 다운로드·압축 해제한 뒤 \`START_HERE.txt\` 안내에 따라 로컬 서버를 실행할 수 있습니다. **CDN 없이 기본 게임 실행 가능**하며, 선택 원본 3D 모델은 인터넷이 연결될 때만 표시합니다.
 
@@ -145,3 +145,10 @@ python -m http.server 8000
 - 공격 저지: 공격 준비 중 유효 명중 시 공격 1회 취소, 0.48초 이상 재진입 지연. 적당 1.35초 저지 면역을 주어 속사 무한 경직 방지. 탄약/피해량 규칙은 유지.
 - 재장전 HUD: 탄약 하단에 1.35초 기준 진행률/퍼센트 표기, 일시정지 중 진행하지 않음.
 - 전부 기존 Three.js 저폴리/CSS 원본 효과, SVG 0개, CC0 GLB 12종 유지.
+
+## v0.15 — 2026-10-30 라니블록 생존 게임명 확정·발걸음 디테일
+
+- 공식 표기 **라니블록 생존**, 브라우저 제목, SNS 메타 제목, 첫 화면 한글 로고, 웹 실행 안내 파일을 통일.
+- 기존 BlockSurvivalTPS/ 개발 폴더와 https://junl-im.github.io/Defense/ 배포 주소를 유지해 링크·기존 배포 이력을 보호.
+- 실제 캐릭터 이동 중 대퇴골 보행 위상에 맞춰 밟는 발마다 작은 돌먼지 2개를 재활용 입자 풀에서 표시. 정지·벽 충돌·아직 걷지 않는 경우 먼지 없음.
+- [v0.15 발걸음 테스트](./tests/v015-footstep.test.mjs)와 PC 실제 이동 중 파티클 생성 브라우저 검증을 추가. SVG 사용 금지 및 Kenney/KayKit 원본 라이선스 유지.

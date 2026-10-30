@@ -1,4 +1,4 @@
-name: Deploy BLOCK SURVIVAL TPS to GitHub Pages
+name: 라니블록 생존 — GitHub Pages 배포
 on:
   push:
     branches: [main]
@@ -47,7 +47,7 @@ jobs:
           test -s BlockSurvivalTPS/dist/index.html
           test -s BlockSurvivalTPS/dist/assets/PROVENANCE.json
           test -s BlockSurvivalTPS/dist/assets/ruin.glb
-          test -s BlockSurvivalTPS/dist/BLOCK_SURVIVAL_TPS_바로실행.html
+          test -s BlockSurvivalTPS/dist/라니블록_생존_바로실행.html
       - name: Check static site responses
         shell: bash
         run: |
@@ -56,7 +56,7 @@ jobs:
           server=$!
           trap 'kill "$server" 2>/dev/null || true' EXIT
           sleep 2
-          curl -fsS http://127.0.0.1:8124/ | grep -q '블록 서바이벌 TPS'
+          curl -fsS http://127.0.0.1:8124/ | grep -q '라니블록 생존'
           curl -fsS -o /tmp/tps-mini.glb http://127.0.0.1:8124/assets/minion.glb
           test "$(wc -c < /tmp/tps-mini.glb)" -gt 1000
       - name: Configure GitHub Pages

@@ -1,4 +1,4 @@
-name: Block Survival TPS — real desktop mobile browser QA
+name: 라니블록 생존 — PC·모바일 WebGL 실전 검증
 on:
   push:
     branches: [feature/block-survival-tps-v012-impact-casings-20261030, main]

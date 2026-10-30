@@ -6,7 +6,7 @@ import {clone as cloneSkinned} from 'three/addons/utils/SkeletonUtils.js';
 import {ARENA,COVER,clamp,newGame,start,pause,reload,shoot,tick,drainCombatEffects,ENEMY_ATTACK,BLAST_RADIUS,FIRE_MODES,setFireMode,tryDodge,DODGE_DURATION} from './sim.mjs';
 import {populateRuinedCity} from './world-detail.mjs';
 import {createQualityState,updateQuality} from './quality.mjs';
-import {heroCombatPose,undeadCombatPose,heroStridePose} from './combat-pose.mjs';
+import {heroCombatPose,undeadCombatPose,heroStridePose,footstepCrossed} from './combat-pose.mjs';
 import {applyLookDelta,LOOK_SENSITIVITY} from './control-math.mjs';
 
 const $=id=>document.getElementById(id);
@@ -21,7 +21,7 @@ const pickupVisual=new Map(),barrelVisual=new Map(),blastVisual=[],shockVisual=[
 const casingPool=[],dustPool=[];let casingCursor=0,dustCursor=0,shotSerial=0;
 const heroClips=new Map();
 let heroLegBones=null,heroMotionBlend=0,heroStridePhase=0,heroRestHeight=0,heroPreviousLegX=null;
-let currentStrafe=0;
+let currentStrafe=0,footstepCount=0;
 let quality=createQualityState({mobile,dpr:window.devicePixelRatio||1});
 const cameraShotVector=new THREE.Vector3();
 let lastFrame=performance.now(),fpsCount=0,fpsStart=lastFrame,fps=60,uiAt=0,modelStarted=false,nowFrameDt=0.016;
@@ -568,7 +568,12 @@ function applyModernHeroStride(moving){
  const sprint=keys.has('shift')||sprintHeld;
  const step=Math.min(1,nowFrameDt*12);
  heroMotionBlend+=(Number(moving)-heroMotionBlend)*step;
+ const previousPhase=heroStridePhase;
  heroStridePhase+=nowFrameDt*(sprint?14.5:10.5)*Math.max(0.13,heroMotionBlend);
+ if(footstepCrossed({previousPhase,phase:heroStridePhase,blend:heroMotionBlend,moving})){
+  spawnFootstepDust(Math.floor(heroStridePhase/Math.PI)%2===0);
+  shell.dataset.footstepFx='active';shell.dataset.footstepCount=String(++footstepCount);
+ }
  const gait=heroStridePose({phase:heroStridePhase,blend:heroMotionBlend,sprint,strafe:currentStrafe});
  // Rig root mass transfer, independent of whether the source Run clip moves its bones.
  heroRig.position.y=heroRestHeight+gait.bob;
@@ -669,6 +674,7 @@ function begin(reset=false){
  state.status='playing';start(state);overlay.hidden=true;toggleHUD(true);
  yaw=state.yaw;fireHeld=false;combatPopupUntil=0;cameraKick=0;
  heroMotionBlend=0;heroStridePhase=0;heroPreviousLegX=null;shell.dataset.heroLegMotion='waiting';
+ footstepCount=0;shell.dataset.footstepCount='0';shell.dataset.footstepFx='ready';
  for(const f of [...impactPool,...casingPool,...dustPool]){f.ttl=0;f.mesh.visible=false;}
  $('combatPopup').style.opacity='0';updateHUD();
  syncBarrels();
@@ -752,6 +758,22 @@ function spawnCasing(){
  v.mesh.scale.setScalar(1);v.mesh.rotation.set(phase,phase,0);
  v.vx=rightX*(1.5+phase)+fwdX*0.35;v.vz=rightZ*(1.5+phase)+fwdZ*0.35;
  v.vy=1.25+phase;v.mesh.visible=true;
+}
+function spawnFootstepDust(leftFoot){
+ if(!dustPool.length)return;
+ const side=leftFoot?-1:1;
+ const rightX=Math.cos(yaw),rightZ=Math.sin(yaw);
+ const rearX=-Math.sin(yaw),rearZ=Math.cos(yaw);
+ for(let i=0;i<2;i++){
+  const p=dustPool[dustCursor++%dustPool.length];
+  const dispersion=(i===0?-0.08:0.08);
+  p.mesh.position.set(state.x+rightX*side*0.19+rearX*(0.1+dispersion),0.07,
+    state.z+rightZ*side*0.19+rearZ*(0.1+dispersion));
+  p.vx=rightX*side*0.11+rearX*0.20+i*0.05;
+  p.vz=rightZ*side*0.11+rearZ*0.20-i*0.04;
+  p.vy=0.09+i*0.06;p.ttl=0.2+i*0.07;
+  p.mesh.scale.setScalar(0.2+i*0.04);p.mesh.visible=true;
+ }
 }
 function spawnDodgeDust(evt){
  if(!dustPool.length)return;
