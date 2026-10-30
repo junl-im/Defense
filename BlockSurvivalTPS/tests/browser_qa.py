@@ -67,7 +67,7 @@ def start(page,label):
     page.wait_for_function("() => document.querySelector('#mode').textContent==='정밀'",timeout=12000)
     check(page.evaluate("() => document.querySelector('#shell').dataset.explosionFx==='ready'"),
           f"{label}: lightweight explosion renderer did not initialize")
-    check(page.evaluate("() => document.querySelector('#shell').dataset.combatVersion==='v013'"),
+    check(page.evaluate("() => document.querySelector('#shell').dataset.combatVersion==='v014'"),
           f"{label}: modern combat pose pipeline not activated")
     check(page.evaluate("() => ['Run','Idle'].includes(document.querySelector('#shell').dataset.heroAnimation)"),
           f"{label}: modern skin animation clip never activated")
@@ -109,7 +109,12 @@ with sync_playwright() as p:
     page.wait_for_function("() => !document.querySelector('#reloadTrack').hidden",timeout=12000)
     check(page.evaluate("() => document.querySelector('#reloadText').textContent.startsWith('장전')"),
           "desktop: pressing R did not display a live reload percentage")
+    check(page.evaluate("() => document.querySelector('#shell').dataset.heroLegRig==='bound'"),
+          'desktop: actual survivor leg bones are missing from the imported rig')
     page.keyboard.down("w")
+    page.wait_for_function("() => document.querySelector('#shell').dataset.heroLegMotion==='detected'",timeout=18000)
+    check(page.evaluate("() => document.querySelector('#shell').dataset.heroAnimation==='Run'"),
+          'desktop: imported Run animation did not activate while moving')
     page.keyboard.press("Space")
     page.wait_for_function("() => document.querySelector('#shell').dataset.dodgeReady==='false'",timeout=12000)
     page.wait_for_timeout(400)

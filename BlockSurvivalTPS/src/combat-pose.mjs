@@ -39,3 +39,22 @@ export function undeadCombatPose({hp=1,hitTime=0,deadTime=0,walk=0,id=0,type='zo
   attack
  };
 }
+
+// Frame-rate-independent ORIGINAL locomotion overlay on top of Kenney's Idle/Run clips.
+// A subtle weight transfer is visible even if a source action has very little leg travel.
+export function heroStridePose({phase=0,blend=0,sprint=false,strafe=0}={}){
+ const weight=clamp01(blend);
+ const p=Number.isFinite(phase)?phase:0;
+ const side=Math.max(-1,Math.min(1,Number.isFinite(strafe)?strafe:0));
+ const run=sprint?1.27:1;
+ const wave=Math.sin(p)*weight*run;
+ return {
+  leftThigh:0.32*wave,
+  rightThigh:-0.32*wave,
+  leftShin:0.12*Math.max(0,-wave),
+  rightShin:0.12*Math.max(0,wave),
+  bob:weight*(0.025+0.042*(1-Math.cos(p*2))*0.5),
+  lean:weight*(sprint?0.12:0.065),
+  sway:weight*(Math.sin(p)*0.022+side*0.055)
+ };
+}

@@ -6,7 +6,8 @@ import {clone as cloneSkinned} from 'three/addons/utils/SkeletonUtils.js';
 import {ARENA,COVER,clamp,newGame,start,pause,reload,shoot,tick,drainCombatEffects,ENEMY_ATTACK,BLAST_RADIUS,FIRE_MODES,setFireMode,tryDodge,DODGE_DURATION} from './sim.mjs';
 import {populateRuinedCity} from './world-detail.mjs';
 import {createQualityState,updateQuality} from './quality.mjs';
-import {heroCombatPose,undeadCombatPose} from './combat-pose.mjs';
+import {heroCombatPose,undeadCombatPose,heroStridePose} from './combat-pose.mjs';
+import {applyLookDelta,LOOK_SENSITIVITY} from './control-math.mjs';
 
 const $=id=>document.getElementById(id);
 const shell=$('shell'),canvas=$('stage'),overlay=$('overlay');
@@ -19,6 +20,8 @@ let heroRig=null,heroMixer=null,heroAnimation='',heroGun=null,heroGunTemplate=nu
 const pickupVisual=new Map(),barrelVisual=new Map(),blastVisual=[],shockVisual=[];
 const casingPool=[],dustPool=[];let casingCursor=0,dustCursor=0,shotSerial=0;
 const heroClips=new Map();
+let heroLegBones=null,heroMotionBlend=0,heroStridePhase=0,heroRestHeight=0,heroPreviousLegX=null;
+let currentStrafe=0;
 let quality=createQualityState({mobile,dpr:window.devicePixelRatio||1});
 const cameraShotVector=new THREE.Vector3();
 let lastFrame=performance.now(),fpsCount=0,fpsStart=lastFrame,fps=60,uiAt=0,modelStarted=false,nowFrameDt=0.016;
@@ -315,13 +318,25 @@ function playRigClip(visual,name,fade=0.16){
  visual.activeAction=action;visual.lastAnimation=name;
  if(name==='Death_A'){action.setLoop(THREE.LoopOnce,1);action.clampWhenFinished=true;}
 }
+function findModernLegBone(root,side,part){
+ let match=null;
+ root.traverse(o=>{
+  if(match||!o.isBone)return;
+  const n=o.name.replace(/[^a-z\d]/gi,'').toLowerCase();
+  const isSide=n.includes(side);
+  const isThigh=/(upleg|upperleg|thigh|hip)/.test(n);
+  const isShin=/(lowleg|lowerleg|calf|shin)/.test(n);
+  if(isSide&&(part==='thigh'?isThigh:isShin))match=o;
+ });
+ return match;
+}
 function installHero(gltf,modern=false){
  if(!player||heroModern||(!modern&&heroRig))return;
  if(modern&&heroRig){
   heroMixer?.stopAllAction();
   if(heroMixer)heroMixer.uncacheRoot(heroRig);
   player.remove(heroRig);
-  heroRig=null;heroMixer=null;heroClips.clear();playHeroClip.previous=null;heroGun=null;
+  heroRig=null;heroMixer=null;heroClips.clear();playHeroClip.previous=null;heroGun=null;heroLegBones=null;
  }
  heroModern=modern;
  heroRig=cloneSkinned(gltf.scene);
@@ -339,13 +354,21 @@ function installHero(gltf,modern=false){
  normalize(heroRig,modern?0.83:2.1);
  // KayKit animated rigs face +Z, while our TPS camera assumes the hero faces -Z.
  heroRig.rotation.y=Math.PI;
+ heroRestHeight=heroRig.position.y;
+ heroMotionBlend=0;heroStridePhase=0;heroPreviousLegX=null;
+ heroLegBones=modern?{
+  leftThigh:findModernLegBone(heroRig,'left','thigh'),rightThigh:findModernLegBone(heroRig,'right','thigh'),
+  leftShin:findModernLegBone(heroRig,'left','shin'),rightShin:findModernLegBone(heroRig,'right','shin')
+ }:null;
+ shell.dataset.heroLegRig=heroLegBones?.leftThigh&&heroLegBones?.rightThigh?'bound':'missing';
+ shell.dataset.heroLegMotion='waiting';
  // Keep primitive fallback only until this correctly rigged hero is loaded.
  for(const c of player.children)if(!c.userData.fx)c.visible=false;
  player.add(heroRig);heroMixer=new THREE.AnimationMixer(heroRig);
  for(const clip of gltf.animations)heroClips.set(clip.name,clip);
  heroAnimation='';
  if(skinnedParts>0&&(heroClips.size===6||modern&&heroClips.size===3))shell.dataset.heroRig='loaded';
- if(modern&&heroClips.has('Run')){shell.dataset.modernHeroRig='loaded';shell.dataset.combatVersion='v013';}
+ if(modern&&heroClips.has('Run')){shell.dataset.modernHeroRig='loaded';shell.dataset.combatVersion='v014';}
  attachHeroGun();
 }
 function attachHeroGun(){
@@ -541,6 +564,26 @@ function syncPickups(t){
   world.remove(v);pickupVisual.delete(id);
  }
 }
+function applyModernHeroStride(moving){
+ const sprint=keys.has('shift')||sprintHeld;
+ const step=Math.min(1,nowFrameDt*12);
+ heroMotionBlend+=(Number(moving)-heroMotionBlend)*step;
+ heroStridePhase+=nowFrameDt*(sprint?14.5:10.5)*Math.max(0.13,heroMotionBlend);
+ const gait=heroStridePose({phase:heroStridePhase,blend:heroMotionBlend,sprint,strafe:currentStrafe});
+ // Rig root mass transfer, independent of whether the source Run clip moves its bones.
+ heroRig.position.y=heroRestHeight+gait.bob;
+ heroRig.rotation.x=gait.lean;
+ heroRig.rotation.z=gait.sway;
+ if(!heroLegBones?.leftThigh||!heroLegBones?.rightThigh)return;
+ // AnimationMixer samples the imported clip first, then the lightweight stride
+ // adjusts real skeletal joints. The original CC0 model and textures stay intact.
+ for(const key of ['leftThigh','rightThigh','leftShin','rightShin']){
+  const bone=heroLegBones[key];if(bone)bone.rotation.x+=gait[key];
+ }
+ const legX=[heroLegBones.leftThigh.rotation.x,heroLegBones.rightThigh.rotation.x];
+ if(moving&&heroPreviousLegX&&legX.some((a,i)=>Math.abs(a-heroPreviousLegX[i])>0.012))shell.dataset.heroLegMotion='detected';
+ heroPreviousLegX=legX;
+}
 function syncPlayer(t,moving){
  player.position.set(state.x,0,state.z);player.rotation.y=yaw;
  const dodgePhase=state.dodgeTime>0?Math.sin(Math.PI*(1-state.dodgeTime/DODGE_DURATION)):0;
@@ -553,6 +596,7 @@ function syncPlayer(t,moving){
   if(heroModern&&heroClips.has('Run'))heroMixer.clipAction(heroClips.get('Run')).timeScale=keys.has('shift')||sprintHeld?1.35:0.8;
   heroMixer.update(Math.min(0.06,nowFrameDt));
   if(heroModern){
+   applyModernHeroStride(moving);
    const pose=heroCombatPose({shotFlash:state.shotFlash,reloadTime:state.reloadTime,
      elapsed:state.elapsed,shotUntil:heroShotUntil,moving,sprint:keys.has('shift')||sprintHeld});
    correctModernPose(heroRig,'survivor',pose);
@@ -624,6 +668,7 @@ function begin(reset=false){
  }
  state.status='playing';start(state);overlay.hidden=true;toggleHUD(true);
  yaw=state.yaw;fireHeld=false;combatPopupUntil=0;cameraKick=0;
+ heroMotionBlend=0;heroStridePhase=0;heroPreviousLegX=null;shell.dataset.heroLegMotion='waiting';
  for(const f of [...impactPool,...casingPool,...dustPool]){f.ttl=0;f.mesh.visible=false;}
  $('combatPopup').style.opacity='0';updateHUD();
  syncBarrels();
@@ -909,12 +954,12 @@ function frame(now){
   const strafe=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0)+joystick.x;
   const ahead=Math.sin(yaw),side=Math.cos(yaw);
   const dx=ahead*f+side*strafe,dz=-side*f+ahead*strafe;
-  const mv=Math.min(1,Math.hypot(dx,dz));
+  const prevX=state.x,prevZ=state.z;
+  currentStrafe=strafe;
   tick(state,dt,{x:dx,z:dz,yaw,sprint:keys.has('shift')||sprintHeld});
   if(fireHeld&&state.shotCooldown<=0)doFire();
-  syncPlayer(now/1000,mv>0.02);syncEnemies(now/1000);syncPickups(now/1000);syncBarrels();
+  syncPlayer(now/1000,Math.hypot(state.x-prevX,state.z-prevZ)>0.001);syncEnemies(now/1000);syncPickups(now/1000);syncBarrels();
   if(state.status==='gameover'){fireHeld=false;showMenu('생존 실패','다시 도전',true);}
-  const moved=mv>0.02;
   updateCamera(dt);
  }else{
   syncPlayer(now/1000,false);
@@ -965,7 +1010,9 @@ function initInputs(){
  });
  document.addEventListener('mousemove',e=>{
   if(document.pointerLockElement===canvas&&state.status==='playing'){
-   yaw-=e.movementX*0.0027;pitch=clamp(pitch-e.movementY*0.0018,-0.58,0.6);
+   const look=applyLookDelta(yaw,pitch,e.movementX,e.movementY,
+     {horizontal:LOOK_SENSITIVITY.mouseX,vertical:LOOK_SENSITIVITY.mouseY});
+   yaw=look.yaw;pitch=look.pitch;shell.dataset.lookDirection='normal';
   }
  });
  canvas.addEventListener('pointerdown',e=>{
@@ -1011,8 +1058,9 @@ function initInputs(){
  look.addEventListener('pointerdown',e=>{if(state.status!=='playing')return;lookPointer=e.pointerId;lastLook={x:e.clientX,y:e.clientY};look.setPointerCapture(e.pointerId);});
  look.addEventListener('pointermove',e=>{
   if(lookPointer!==e.pointerId||!lastLook)return;
-  yaw-=(e.clientX-lastLook.x)*0.007;
-  pitch=clamp(pitch-(e.clientY-lastLook.y)*0.005,-0.58,0.6);
+  const next=applyLookDelta(yaw,pitch,e.clientX-lastLook.x,e.clientY-lastLook.y,
+    {horizontal:LOOK_SENSITIVITY.touchX,vertical:LOOK_SENSITIVITY.touchY});
+  yaw=next.yaw;pitch=next.pitch;shell.dataset.lookDirection='normal';
   lastLook={x:e.clientX,y:e.clientY};
  });
  for(const ev of ['pointerup','pointercancel','lostpointercapture'])look.addEventListener(ev,e=>{if(lookPointer===e.pointerId){lookPointer=null;lastLook=null;}});
