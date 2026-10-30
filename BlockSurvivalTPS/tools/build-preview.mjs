@@ -87,13 +87,13 @@ const direct=html
  .replace('<link rel="stylesheet" href="./style.css">','<style>'+embeddedCss+'</style>')
  .replace('<script type="module" src="./game.bundle.js"></script>','<script type="module">'+embeddedJs+'</script>');
 if(!direct.includes('<script type="module">')||!direct.includes('<style>')||direct.length<embeddedJs.length)throw Error('Direct HTML was not fully embedded');
-fs.writeFileSync(path.join(dist,'BLOCK_SURVIVAL_TPS_바로실행.html'),direct);
+fs.writeFileSync(path.join(dist,'라니블록_생존_바로실행.html'),direct);
 const license=path.join(base,'node_modules/three/LICENSE');
 if(!fs.existsSync(license))throw Error('Three.js MIT license must be distributed');
 fs.copyFileSync(license,path.join(dist,'THREE_LICENSE.txt'));
 fs.writeFileSync(path.join(dist,'START_HERE.txt'),[
- '곰같은여우 | Block Survival TPS Alpha 0.12',
- '1. 가장 쉬운 실행: BLOCK_SURVIVAL_TPS_바로실행.html 파일을 더블클릭합니다.',
+ '곰같은여우 | 라니블록 생존 Alpha 0.15',
+ '1. 가장 쉬운 실행: 라니블록_생존_바로실행.html 파일을 더블클릭합니다.',
  '2. 브라우저가 최신 WebGL을 지원해야 3D가 표시됩니다.',
  '3. 웹서버 방식도 지원: python -m http.server 8000 후 http://localhost:8000/',
  '4. PC: WASD, 마우스 시점, 좌클릭 사격, R 재장전, Shift 질주, ESC 일시정지',
