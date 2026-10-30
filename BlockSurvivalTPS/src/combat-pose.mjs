@@ -58,3 +58,9 @@ export function heroStridePose({phase=0,blend=0,sprint=false,strafe=0}={}){
   sway:weight*(Math.sin(p)*0.022+side*0.055)
  };
 }
+
+// Trigger one subtle shoe-contact response per half-stride, never while idle.
+export function footstepCrossed({previousPhase=0,phase=0,blend=0,moving=false}={}){
+ if(!moving||clamp01(blend)<0.6||!Number.isFinite(previousPhase)||!Number.isFinite(phase)||phase<=previousPhase)return false;
+ return Math.floor(phase/Math.PI)>Math.floor(previousPhase/Math.PI);
+}
