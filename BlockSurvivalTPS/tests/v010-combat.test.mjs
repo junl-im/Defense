@@ -84,3 +84,21 @@ test('paused and gameover players cannot fire explosive props',()=>{
  assert.equal(shoot(s,b.x/d,b.z/d).fired,false);assert.equal(b.exploded,false);
  s.status='gameover';assert.equal(shoot(s,b.x/d,b.z/d).fired,false);
 });
+
+test('barrel aimed manually takes priority over assisted aim to an enemy behind it',()=>{
+ const s=ready(),b=s.barrels[0];
+ s.enemies=[makeEnemy(81,b.x-0.1,b.z-2.8)];
+ const d=Math.hypot(b.x-s.x,b.z-s.z);
+ const result=shoot(s,b.x/d,b.z/d);
+ assert.equal(result.barrel,true,'physical direct shot should detonate prop before assisted aim');
+ assert.equal(result.exploded,true);
+});
+test('an enemy directly in front of a destructible prop absorbs bullet first',()=>{
+ const s=ready(),b=s.barrels[0];
+ s.enemies=[makeEnemy(82,b.x*0.53,b.z*0.53)];s.enemies[0].hp=200;
+ const d=Math.hypot(b.x-s.x,b.z-s.z);
+ const result=shoot(s,b.x/d,b.z/d);
+ assert.equal(result.barrel,undefined);
+ assert.equal(result.hit,true);
+ assert.equal(b.exploded,false);
+});

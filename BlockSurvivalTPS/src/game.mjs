@@ -24,7 +24,7 @@ let lastFrame=performance.now(),fpsCount=0,fpsStart=lastFrame,fps=60,uiAt=0,mode
 let lastToast='',toastUntil=0,combatPopupUntil=0,fxCursor=0,lastWarningCue=0;
 const impactPool=[];
 let fragmentStone,fragmentGold;
-let attackRingGeometry,attackRingMaterials,blastGeometry;
+let attackRingGeometry,attackRingMaterials,blastGeometry,barrelBodyGeometry,barrelBandGeometry,barrelTopGeometry;
 const enemiesVisual=new Map(),assetCache=new Map(),collisionMeshes=[],modelLoader=new GLTFLoader();
 const named={minion:'minion-a01.glb',bat:'Bat.glb',gun:'blaster.glb'};
 const assetURLs={
@@ -71,6 +71,9 @@ function init3D(){
   runner:new THREE.MeshBasicMaterial({color:0xff9663,transparent:true,opacity:0.75,side:THREE.DoubleSide,depthWrite:false}),
   minion:new THREE.MeshBasicMaterial({color:0xd16b82,transparent:true,opacity:0.72,side:THREE.DoubleSide,depthWrite:false})
  };
+ barrelBodyGeometry=new THREE.CylinderGeometry(0.47,0.49,1.1,9);
+ barrelBandGeometry=new THREE.CylinderGeometry(0.51,0.51,0.12,9);
+ barrelTopGeometry=new THREE.CylinderGeometry(0.32,0.32,0.045,9);
  blastGeometry=new THREE.SphereGeometry(1,12,8);
  for(let i=0;i<3;i++){
   const mesh=new THREE.Mesh(blastGeometry,new THREE.MeshBasicMaterial({color:0xffb65d,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending}));
@@ -446,14 +449,13 @@ function syncBarrels(){
   if(!view){
    // Original low-poly prop, no SVG or new network asset.
    const root=new THREE.Group();scene.add(root);root.position.set(barrel.x,0,barrel.z);
-   const cylinder=new THREE.CylinderGeometry(0.47,0.49,1.1,9);
-   const body=new THREE.Mesh(cylinder,new THREE.MeshLambertMaterial({color:0xa64b36}));
+   const body=new THREE.Mesh(barrelBodyGeometry,mat(0xa64b36));
    body.position.y=0.59;root.add(body);
    for(const y of [0.21,0.97]){
-    const band=new THREE.Mesh(new THREE.CylinderGeometry(0.51,0.51,0.12,9),mat(0x444e51));
+    const band=new THREE.Mesh(barrelBandGeometry,mat(0x444e51));
     band.position.y=y;root.add(band);
    }
-   const top=new THREE.Mesh(new THREE.CylinderGeometry(0.32,0.32,0.045,9),mat(0xf0b65a));
+   const top=new THREE.Mesh(barrelTopGeometry,mat(0xf0b65a));
    top.position.y=1.17;root.add(top);
    view=root;barrelVisual.set(barrel.id,view);
   }

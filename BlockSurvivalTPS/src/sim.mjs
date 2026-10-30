@@ -209,15 +209,21 @@ export function shoot(s,dx,dz){
   if(s.status!=="playing"||s.reloadTime>0||s.shotCooldown>0)return {fired:false,reason:"cooldown"};
   if(s.ammo===0)return {fired:false,reason:"empty"};
   s.ammo--;s.shotCooldown=0.19;s.shotFlash=0.13;
+  const directBarrel=lineBarrel(s,dx,dz);
+  const directEnemy=lineTarget(s,dx,dz);
+  // A deliberate direct shot at a barrel must not be magnetized away to a zombie
+  // behind it, but a zombie in front of the barrel still absorbs the bullet.
+  const rawEnemyDistance=directEnemy?Math.hypot(directEnemy.x-s.x,directEnemy.z-s.z):Infinity;
+  const directFirst=directBarrel&&directBarrel.distance<rawEnemyDistance;
   const adjusted=assistedAim(s,dx,dz);
   const e=lineTarget(s,adjusted.dx,adjusted.dz);
-  const b=lineBarrel(s,adjusted.dx,adjusted.dz);
+  const b=directFirst?directBarrel:lineBarrel(s,adjusted.dx,adjusted.dz);
   const eDist=e?Math.hypot(e.x-s.x,e.z-s.z):Infinity;
-  if(b&&b.distance<eDist){
+  if(b&&(directFirst||b.distance<eDist)){
     b.barrel.hp-=46;s.hitMarker=0.22;
     const blast=b.barrel.hp<=0?detonateBarrel(s,b.barrel):null;
     return {fired:true,hit:true,barrel:true,exploded:!!blast,blast,id:b.barrel.id,
-      aim:{dx:adjusted.dx,dz:adjusted.dz},x:b.barrel.x,z:b.barrel.z};
+      aim:directFirst?{dx:dx/Math.hypot(dx,dz),dz:dz/Math.hypot(dx,dz)}:{dx:adjusted.dx,dz:adjusted.dz},x:b.barrel.x,z:b.barrel.z};
   }
   if(!e)return {fired:true,hit:false,aim:{dx:adjusted.dx,dz:adjusted.dz}};
   const damage=e.type==="runner"?55:46;
