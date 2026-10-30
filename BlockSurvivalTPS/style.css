@@ -28,3 +28,6 @@
 .modeButton{font-size:11px;font-weight:800;letter-spacing:0;min-width:42px;white-space:nowrap;touch-action:manipulation}
 @media (max-width:410px){.modeButton{min-width:36px;padding:4px 5px;font-size:10px}}
 @media (max-height:460px) and (pointer:coarse){.modeButton{font-size:10px;min-width:35px;padding:3px 4px}}
+
+/* v0.11 browser-verified touch fix: header controls above right-look touch layer, menus remain topmost. */
+#hud{z-index:5}
