@@ -329,7 +329,7 @@ function installHero(gltf,modern=false){
  for(const clip of gltf.animations)heroClips.set(clip.name,clip);
  heroAnimation='';
  if(skinnedParts>0&&(heroClips.size===6||modern&&heroClips.size===3))shell.dataset.heroRig='loaded';
- if(modern&&heroClips.has('Run')){shell.dataset.modernHeroRig='loaded';shell.dataset.combatVersion='v010';}
+ if(modern&&heroClips.has('Run')){shell.dataset.modernHeroRig='loaded';shell.dataset.combatVersion='v011';}
  attachHeroGun();
 }
 function attachHeroGun(){
