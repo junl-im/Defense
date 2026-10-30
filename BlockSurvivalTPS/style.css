@@ -5,3 +5,6 @@
 
 /* v0.6: short landscape phones keep separate HUD and both thumb control groups. */
 @media (max-height:460px) and (pointer:coarse){#hud{padding-top:max(6px,env(safe-area-inset-top));padding-left:max(10px,env(safe-area-inset-left));padding-right:max(10px,env(safe-area-inset-right))}.hudCluster{gap:4px}.healthWrap{padding:5px 8px}.stats{padding:3px 7px}#stickBase{width:84px;height:84px;left:max(22px,env(safe-area-inset-left));bottom:max(14px,env(safe-area-inset-bottom))}#stickNub{width:38px;height:38px}.actions{bottom:max(12px,env(safe-area-inset-bottom));gap:8px}.actionButton{width:47px;height:47px;min-width:47px;min-height:47px}.actionButton.fire{width:65px;height:65px}#fps{bottom:5px;left:7px}#message{top:12%;font-size:12px}}
+
+/* v0.8: keep Korean mobile-landscape action labels on one line. */
+@media (max-height:460px) and (pointer:coarse){.actionButton{white-space:nowrap;padding:0 2px;font-size:11px}}
