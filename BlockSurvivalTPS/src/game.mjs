@@ -3,7 +3,7 @@
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as cloneSkinned} from 'three/addons/utils/SkeletonUtils.js';
-import {ARENA,COVER,clamp,newGame,start,pause,reload,shoot,tick} from './sim.mjs';
+import {ARENA,COVER,clamp,newGame,start,pause,reload,shoot,tick,drainCombatEffects} from './sim.mjs';
 import {populateRuinedCity} from './world-detail.mjs';
 import {createQualityState,updateQuality} from './quality.mjs';
 import {heroCombatPose,undeadCombatPose} from './combat-pose.mjs';
@@ -21,7 +21,9 @@ const heroClips=new Map();
 let quality=createQualityState({mobile,dpr:window.devicePixelRatio||1});
 const cameraShotVector=new THREE.Vector3();
 let lastFrame=performance.now(),fpsCount=0,fpsStart=lastFrame,fps=60,uiAt=0,modelStarted=false,nowFrameDt=0.016;
-let lastToast='',toastUntil=0;
+let lastToast='',toastUntil=0,combatPopupUntil=0,fxCursor=0;
+const impactPool=[];
+let fragmentStone,fragmentGold;
 const enemiesVisual=new Map(),assetCache=new Map(),collisionMeshes=[],modelLoader=new GLTFLoader();
 const named={minion:'minion-a01.glb',bat:'Bat.glb',gun:'blaster.glb'};
 const assetURLs={
@@ -72,6 +74,17 @@ function init3D(){
  tracer.visible=false;scene.add(tracer);
  impactSpark=new THREE.Mesh(new THREE.OctahedronGeometry(0.22,0),new THREE.MeshBasicMaterial({color:0xe6ffc1,transparent:true,opacity:0.9,depthWrite:false}));
  impactSpark.visible=false;scene.add(impactSpark);
+ // Twelve pooled impact fragments: no per-shot geometry creation, no SVG, no textures.
+ const fragmentGeometry=new THREE.OctahedronGeometry(0.065,0);
+ const fragmentMaterials=[new THREE.MeshBasicMaterial({color:0xdccdb5,depthWrite:false}),
+  new THREE.MeshBasicMaterial({color:0xffd274,depthWrite:false})];
+ [fragmentStone,fragmentGold]=fragmentMaterials;
+ for(let i=0;i<12;i++){
+  const mesh=new THREE.Mesh(fragmentGeometry,fragmentMaterials[0]);
+  mesh.visible=false;scene.add(mesh);
+  impactPool.push({mesh,ttl:0,vx:0,vy:0,vz:0});
+ }
+ shell.dataset.combatFx='ready';
  size();window.addEventListener('resize',size,{passive:true});
  canvas.addEventListener('webglcontextlost',evt=>{evt.preventDefault();pauseGame('그래픽 연결이 중단됐습니다');});
  canvas.addEventListener('webglcontextrestored',()=>location.reload());
@@ -384,13 +397,12 @@ function syncEnemies(t){
    root.rotation.x=pose.leanX;root.rotation.z=pose.leanZ;
    v.model.position.z=pose.offsetZ;
   }else if(v.rigKind==='undead'){
-   const attack=Math.hypot(e.x-state.x,e.z-state.z)<1.6;
-   const desired=e.hitTime>0?'Hit_A':attack?'Unarmed_Melee_Attack_Punch_A':e.type==='runner'?'Running_A':'Walking_D_Skeletons';
+   const attacking=e.attackWindup>0;
+   const desired=e.hitTime>0?'Hit_A':attacking?'Unarmed_Melee_Attack_Punch_A':e.type==='runner'?'Running_A':'Walking_D_Skeletons';
    playRigClip(v,desired);
    v.mixer.update(Math.min(0.06,Math.max(0,nowFrameDt)));
   }else if(v.mixer){
-   const attack=Math.hypot(e.x-state.x,e.z-state.z)<1.6;
-   const from=attack?30:0,len=29/24;
+   const from=e.attackWindup>0?30:0,len=29/24;
    v.mixer.setTime(from/24+(e.walk%len));
   }else{
    const parts=v.model.userData,phase=e.walk*e.speed*3;
@@ -469,6 +481,12 @@ function updateCamera(dt){
  const hits=raycaster.intersectObjects(collisionMeshes,false);
  if(hits.length)desired.copy(focus).addScaledVector(dir,Math.max(0.75,hits[0].distance-0.45));
  camera.position.lerp(desired,Math.min(1,dt*12));
+ // Short, subtle local camera response to *actual* damage, not to mere proximity.
+ if(state.hitFlash>0&&state.status==='playing'){
+  const strength=Math.min(0.09,state.hitFlash*0.22);
+  camera.position.x+=Math.sin(state.elapsed*97)*strength;
+  camera.position.y+=Math.cos(state.elapsed*109)*strength*0.65;
+ }
  const look=focus.clone().addScaledVector(forward,9);
  look.y+=pitch*6;
  camera.lookAt(look);
@@ -488,11 +506,15 @@ function showMenu(title,button,secondary){
 function toggleHUD(on){
  $('hud').hidden=!on;$('reticle').hidden=!on;$('message').hidden=!on;$('fps').hidden=!on;
  $('mobileControls').hidden=!(on&&mobile);
+ $('combatPopup').hidden=!on;
+ $('attackCue').hidden=!on;
 }
 function begin(reset=false){
  if(reset||state.status==='gameover'){state=newGame();heroShotUntil=0;for(const v of pickupVisual.values())world.remove(v);pickupVisual.clear();}
  state.status='playing';start(state);overlay.hidden=true;toggleHUD(true);
- yaw=state.yaw;fireHeld=false;updateHUD();
+ yaw=state.yaw;fireHeld=false;combatPopupUntil=0;
+ for(const f of impactPool){f.ttl=0;f.mesh.visible=false;}
+ $('combatPopup').style.opacity='0';updateHUD();
  if(mobile){
   if(!document.fullscreenElement&&shell.requestFullscreen) shell.requestFullscreen().catch(()=>{});
   if(!history.state?.blockSurvivalTPS)history.pushState({blockSurvivalTPS:true},'',location.href);
@@ -506,6 +528,11 @@ function updateHUD(){
  $('ammo').innerHTML=state.ammo+' <small>/ '+state.reserve+'</small>';
  $('hitScreen').style.opacity=Math.min(0.16,state.hitFlash*0.65);
  $('reticle').classList.toggle('hit',state.hitMarker>0);
+ $('reticle').classList.toggle('kill',state.killMarker>0);
+ $('combatPopup').style.opacity=performance.now()<combatPopupUntil?'1':'0';
+ const danger=state.enemies.some(e=>e.hp>0&&e.attackWindup>0&&
+   Math.hypot(e.x-state.x,e.z-state.z)<2.2);
+ $('attackCue').style.opacity=danger&&state.status==='playing'?'1':'0';
  $('fps').textContent='FPS '+fps+' · '+(renderer?.getPixelRatio()?.toFixed(2)||'1')+'x';
  if(lastToast!==state.toast){
   lastToast=state.toast;toastUntil=performance.now()+3000;
@@ -545,6 +572,73 @@ function localSound(hit=false){
    osc.start(now);osc.stop(now+0.07);
   }
  }catch{}
+}
+function spawnCombatFragments(event){
+ if(!scene||!event||!Number.isFinite(event.x)||!Number.isFinite(event.z))return;
+ const count=event.type==='kill'?7:4;
+ for(let i=0;i<count;i++){
+  const slot=impactPool[fxCursor++%impactPool.length];
+  const angle=(event.id*2.39996+i*1.61803)*1.3;
+  const power=0.65+(i%3)*0.22;
+  slot.vx=Math.cos(angle)*power;slot.vz=Math.sin(angle)*power;
+  slot.vy=0.8+(i%4)*0.22;
+  slot.ttl=event.type==='kill'?0.46:0.31;
+  slot.mesh.material=event.type==='kill'?fragmentGold:fragmentStone;
+  slot.mesh.position.set(event.x,1.3,event.z);
+  slot.mesh.scale.setScalar(event.type==='kill'?1.15:0.82);
+  slot.mesh.visible=true;
+ }
+}
+function stepCombatFragments(dt){
+ if(state.status!=='playing')return;
+ for(const f of impactPool){
+  if(f.ttl<=0)continue;
+  f.ttl=Math.max(0,f.ttl-dt);
+  f.mesh.position.x+=f.vx*dt;f.mesh.position.z+=f.vz*dt;
+  f.mesh.position.y+=f.vy*dt;
+  f.vy-=4.5*dt;
+  f.mesh.scale.multiplyScalar(Math.max(0.7,1-dt*2));
+  if(f.ttl===0)f.mesh.visible=false;
+ }
+}
+function cueSound(type){
+ // User-gesture audio context is created by shooting; keep secondary cues understated.
+ try{
+  const ctx=localSound.ctx;
+  if(!ctx||ctx.state!=='running')return;
+  const now=ctx.currentTime,osc=ctx.createOscillator(),gain=ctx.createGain();
+  const base=type==='kill'?600:type==='damage'?175:type==='warning'?420:470;
+  osc.type=type==='damage'?'triangle':'sine';
+  osc.frequency.setValueAtTime(base,now);
+  osc.frequency.exponentialRampToValueAtTime(type==='kill'?880:type==='damage'?78:base*0.72,now+0.12);
+  const volume=type==='damage'?0.032:type==='kill'?0.018:0.008;
+  gain.gain.setValueAtTime(volume,now);gain.gain.exponentialRampToValueAtTime(0.001,now+0.13);
+  osc.connect(gain).connect(ctx.destination);osc.start(now);osc.stop(now+0.14);
+ }catch{}
+}
+function dispatchCombatEffects(now){
+ for(const event of drainCombatEffects(state)){
+  if(event.type==='hit'||event.type==='kill'){
+   spawnCombatFragments(event);
+   const label=event.type==='kill'
+     ?'처치 +'+event.points+(event.combo>1?' · '+event.combo+'연속':'')
+     :'명중 −'+event.damage;
+   $('combatPopup').textContent=label;
+   $('combatPopup').classList.toggle('kill',event.type==='kill');
+   combatPopupUntil=now+(event.type==='kill'?1350:520);
+   if(event.type==='kill')cueSound('kill');
+  }else if(event.type==='damage'){
+   cueSound('damage');
+   combatPopupUntil=Math.max(combatPopupUntil,now+650);
+   $('combatPopup').textContent='피격 −'+event.amount;
+   $('combatPopup').classList.remove('kill');
+  }else if(event.type==='warning'){
+   // Warnings are also exposed through the persistent short-lived on-screen cue.
+   cueSound('warning');
+  }else if(['reload','reloadDone','pickup','wave'].includes(event.type)){
+   cueSound(event.type==='wave'?'kill':'reload');
+  }
+ }
 }
 function getShotDirection(){
  // Project the camera's real center reticle onto enemy mid-body height.
@@ -609,6 +703,8 @@ function frame(now){
   updateCamera(dt);
   syncPickups(now/1000);
  }
+ dispatchCombatEffects(now);
+ stepCombatFragments(dt);
  if(tracer&&now>fxExpires){tracer.visible=false;impactSpark.visible=false;}
  if(muzzleEffect)muzzleEffect.visible=state.status==='playing'&&state.shotFlash>0;
  if(renderer&&scene)renderer.render(scene,camera);
