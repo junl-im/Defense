@@ -69,7 +69,7 @@ def start(page,label):
     page.wait_for_function("() => document.querySelector('#mode').textContent==='정밀'",timeout=12000)
     check(page.evaluate("() => document.querySelector('#shell').dataset.explosionFx==='ready'"),
           f"{label}: lightweight explosion renderer did not initialize")
-    check(page.evaluate("() => document.querySelector('#shell').dataset.combatVersion==='v016'"),
+    check(page.evaluate("() => document.querySelector('#shell').dataset.combatVersion==='v017'"),
           f"{label}: modern combat pose pipeline not activated")
     check(page.evaluate("() => ['Run','Idle'].includes(document.querySelector('#shell').dataset.heroAnimation)"),
           f"{label}: modern skin animation clip never activated")
@@ -125,8 +125,13 @@ with sync_playwright() as p:
           'desktop: imported Run animation did not activate while moving')
     page.keyboard.press("Space")
     page.wait_for_function("() => document.querySelector('#shell').dataset.dodgeReady==='false'",timeout=12000)
-    page.wait_for_timeout(400)
+    page.wait_for_function("() => document.querySelector('#shell').dataset.heroDodgeClip==='detected'",timeout=12000)
+    page.wait_for_function("() => document.querySelector('#shell').dataset.heroDodgeRig==='detected'",timeout=12000)
+    page.wait_for_function("() => document.querySelector('#shell').dataset.dodgeLanding==='detected'",timeout=15000)
     page.keyboard.up("w")
+    page.keyboard.down("d")
+    page.wait_for_function("() => document.querySelector('#shell').dataset.heroStrafeTurn==='detected'",timeout=18000)
+    page.keyboard.up("d")
     page.screenshot(path=str(OUT/"tps-desktop-1280x720.png"))
     check(not err,f"desktop errors: {err}")
     print("desktop PASS",json.dumps({"before":before,"after":after,"canvas":page.locator("#stage").evaluate("(e)=>[e.width,e.height]")}))

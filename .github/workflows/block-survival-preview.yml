@@ -60,7 +60,7 @@ jobs:
       - name: Upload isolated playable preview only (not Pages deployment)
         uses: actions/upload-artifact@v4
         with:
-          name: raniblock-survival-playable-alpha-v016
+          name: raniblock-survival-playable-alpha-v017
           path: BlockSurvivalTPS/dist/
           retention-days: 7
           if-no-files-found: error
