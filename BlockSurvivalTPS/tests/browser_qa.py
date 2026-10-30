@@ -55,6 +55,7 @@ def start(page,label):
     check(page.evaluate("() => document.querySelector('#shell').dataset.dustFx==='ready'"),
           f"{label}: bounded blast dust geometry was not initialized")
     check(page.locator("#mode").count()==1, f"{label}: firing mode switch is missing")
+    check(page.locator("#dodge").count()==1, f"{label}: dodge button is missing")
     check(page.evaluate("() => document.querySelector('#shell').dataset.shockwaveFx==='ready'"),
           f"{label}: pooled blast ground shockwave failed to initialize")
     # Interactive mode change: not just a decorative text label.
@@ -66,7 +67,7 @@ def start(page,label):
     page.wait_for_function("() => document.querySelector('#mode').textContent==='정밀'",timeout=12000)
     check(page.evaluate("() => document.querySelector('#shell').dataset.explosionFx==='ready'"),
           f"{label}: lightweight explosion renderer did not initialize")
-    check(page.evaluate("() => document.querySelector('#shell').dataset.combatVersion==='v012'"),
+    check(page.evaluate("() => document.querySelector('#shell').dataset.combatVersion==='v013'"),
           f"{label}: modern combat pose pipeline not activated")
     check(page.evaluate("() => ['Run','Idle'].includes(document.querySelector('#shell').dataset.heroAnimation)"),
           f"{label}: modern skin animation clip never activated")
@@ -109,6 +110,8 @@ with sync_playwright() as p:
     check(page.evaluate("() => document.querySelector('#reloadText').textContent.startsWith('장전')"),
           "desktop: pressing R did not display a live reload percentage")
     page.keyboard.down("w")
+    page.keyboard.press("Space")
+    page.wait_for_function("() => document.querySelector('#shell').dataset.dodgeReady==='false'",timeout=12000)
     page.wait_for_timeout(400)
     page.keyboard.up("w")
     page.screenshot(path=str(OUT/"tps-desktop-1280x720.png"))
@@ -140,6 +143,12 @@ with sync_playwright() as p:
     }""")
     check(fit["scrollW"]<=fit["viewport"]+1 and fit["scrollH"]<=fit["viewH"]+1,f"mobile: unwanted scrolling {fit}")
     check(fit["hudFit"] and fit["fireVisible"],f"mobile: HUD overlap or clipped fire button {fit}")
+    dodge=page.locator("#dodge").bounding_box()
+    stick=page.locator("#stickBase").bounding_box()
+    check(dodge and stick and dodge["x"]>stick["x"]+stick["width"],
+          f"mobile: dodge button overlaps the movement stick: {dodge}, {stick}")
+    page.touchscreen.tap(dodge["x"]+dodge["width"]/2,dodge["y"]+dodge["height"]/2)
+    page.wait_for_function("() => document.querySelector('#shell').dataset.dodgeReady==='false'",timeout=12000)
     page.screenshot(path=str(OUT/"tps-mobile-390x844.png"))
     check(not err,f"mobile errors: {err}")
     print("mobile PASS",json.dumps({"before":before,"after":after,**fit},ensure_ascii=False))
@@ -163,6 +172,11 @@ with sync_playwright() as p:
           f"landscape has unwanted scrolling: {fit}")
     check(fit["noOverlap"] and fit["fireFits"] and fit["stickFits"],
           f"landscape controls or HUD clipped: {fit}")
+    dodge=page.locator("#dodge").bounding_box()
+    check(dodge and dodge["x"]>=0 and dodge["y"]>=0 and dodge["x"]+dodge["width"]<=844,
+          f"landscape dodge button is clipped: {dodge}")
+    page.touchscreen.tap(dodge["x"]+dodge["width"]/2,dodge["y"]+dodge["height"]/2)
+    page.wait_for_function("() => document.querySelector('#shell').dataset.dodgeReady==='false'",timeout=12000)
     check(not err,f"landscape JavaScript errors {err}")
     page.screenshot(path=str(OUT/"tps-landscape-844x390.png"))
     print("landscape PASS",json.dumps(fit),flush=True)

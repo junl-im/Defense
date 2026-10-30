@@ -11,6 +11,10 @@ export function setFireMode(s,mode){
  s.fireMode=mode;emitCombatEffect(s,'mode',{mode});return true;
 }
 
+export const DODGE_DURATION=0.25;
+export const DODGE_COOLDOWN=3.2;
+export const DODGE_INVULNERABLE=0.20;
+export const DODGE_SPEED=14.5;
 export const MAX_ACTIVE = 12;
 export const COVER = [
   {x:-12,z:-9,w:7,d:7,h:7},{x:12,z:-9,w:7,d:7,h:8},
@@ -43,7 +47,8 @@ export function clearPath(x1,z1,x2,z2){
 }
 export function newGame(){
   return {status:"title",x:0,z:0,yaw:0,hp:100,maxHp:100,ammo:MAG_SIZE,
-    reserve:72,reloadTime:0,shotCooldown:0,fireMode:'precision',hitMarker:0,wave:1,waveLeft:5,spawnDelay:0.6,
+    reserve:72,reloadTime:0,shotCooldown:0,fireMode:'precision',hitMarker:0,
+    dodgeTime:0,dodgeCooldown:0,dodgeInvuln:0,dodgeX:0,dodgeZ:0,wave:1,waveLeft:5,spawnDelay:0.6,
     nextWave:0,kills:0,score:0,combo:0,comboTime:0,elapsed:0,hitFlash:0,killMarker:0,shotFlash:0,pickupFlash:0,seed:93461,
     enemies:[],nextId:1,pickups:[],nextPickupId:1,barrels:freshBarrels(),effects:[],nextEffectId:1,toast:"중앙을 조준해 살아남으세요"};
 }
@@ -58,6 +63,20 @@ export function moveCircle(x,z,dx,dz,r=0.52){
   let nz=clamp(z+dz,-bound,bound);
   if(circleHitsCover(nx,nz,r)) nz=z;
   return {x:nx,z:nz};
+}
+// Collision-aware side-step; keyboard and touch use identical game rules.
+export function tryDodge(s,dx=0,dz=0){
+ if(s.status!=='playing'||s.dodgeTime>0||s.dodgeCooldown>0)return false;
+ if(!Number.isFinite(dx))dx=0;if(!Number.isFinite(dz))dz=0;
+ let magnitude=Math.hypot(dx,dz);
+ if(magnitude<0.01){dx=Math.sin(s.yaw||0);dz=-Math.cos(s.yaw||0);magnitude=1;}
+ dx/=magnitude;dz/=magnitude;
+ const probe=moveCircle(s.x,s.z,dx*0.3,dz*0.3);
+ if(Math.hypot(probe.x-s.x,probe.z-s.z)<0.04)return false;
+ s.dodgeX=dx;s.dodgeZ=dz;s.dodgeTime=DODGE_DURATION;
+ s.dodgeCooldown=DODGE_COOLDOWN;s.dodgeInvuln=DODGE_INVULNERABLE;
+ emitCombatEffect(s,'dodge',{x:s.x,z:s.z,dx,dz});
+ return true;
 }
 // Radius-aware movement path (different from the bullet ray, which hits solid walls).
 export function movementClear(from,to,radius=0.63){
@@ -163,8 +182,11 @@ export function detonateBarrel(s,first){
   if(pd<=BLAST_RADIUS&&clearPath(barrel.x,barrel.z,s.x,s.z)){
    const dealt=Math.min(s.hp,Math.round(22*(1-pd/(BLAST_RADIUS+0.01))));
    if(dealt>0){
-    s.hp=Math.max(0,s.hp-dealt);s.hitFlash=0.3;
-    emitCombatEffect(s,'damage',{amount:dealt,x:barrel.x,z:barrel.z,blast:true});
+    if(s.dodgeInvuln>0)emitCombatEffect(s,'evade',{x:s.x,z:s.z,blast:true});
+    else{
+     s.hp=Math.max(0,s.hp-dealt);s.hitFlash=0.3;
+     emitCombatEffect(s,'damage',{amount:dealt,x:barrel.x,z:barrel.z,blast:true});
+    }
    }
   }
   for(const other of s.barrels){
@@ -219,6 +241,7 @@ export function collectPickups(s,dt){
 }
 export function shoot(s,dx,dz){
   if(s.status!=="playing"||s.reloadTime>0||s.shotCooldown>0)return {fired:false,reason:"cooldown"};
+  if(s.dodgeTime>0)return {fired:false,reason:"dodge"};
   if(s.ammo===0)return {fired:false,reason:"empty"};
   const spec=FIRE_MODES[s.fireMode]||FIRE_MODES.precision;
   s.ammo--;s.shotCooldown=spec.cooldown;s.shotFlash=spec.flash;
@@ -318,6 +341,8 @@ export function tick(s,dt,controls={}){
   if(s.status!=="playing")return;
   dt=clamp(dt,0,0.06);
   s.elapsed+=dt;s.shotCooldown=Math.max(0,s.shotCooldown-dt);
+  s.dodgeCooldown=Math.max(0,s.dodgeCooldown-dt);
+  s.dodgeInvuln=Math.max(0,s.dodgeInvuln-dt);
   s.shotFlash=Math.max(0,s.shotFlash-dt);
   s.hitMarker=Math.max(0,s.hitMarker-dt);
   s.killMarker=Math.max(0,s.killMarker-dt);
@@ -337,9 +362,19 @@ export function tick(s,dt,controls={}){
   let dx=clamp(controls.x||0,-1,1),dz=clamp(controls.z||0,-1,1);
   const m=Math.hypot(dx,dz);
   if(m>1){dx/=m;dz/=m;}
-  const speed=controls.sprint?7:5;
-  const moved=moveCircle(s.x,s.z,dx*speed*dt,dz*speed*dt);
-  s.x=moved.x;s.z=moved.z;
+  if(s.dodgeTime>0){
+   const step=Math.min(dt,s.dodgeTime);
+   const moved=moveCircle(s.x,s.z,s.dodgeX*DODGE_SPEED*step,s.dodgeZ*DODGE_SPEED*step);
+   const travelled=Math.hypot(moved.x-s.x,moved.z-s.z);
+   s.x=moved.x;s.z=moved.z;
+   s.dodgeTime=Math.max(0,s.dodgeTime-step);
+   if(s.dodgeTime<1e-7)s.dodgeTime=0;
+   if(travelled<0.015){s.dodgeTime=0;s.dodgeInvuln=0;}
+  }else{
+   const speed=controls.sprint?7:5;
+   const moved=moveCircle(s.x,s.z,dx*speed*dt,dz*speed*dt);
+   s.x=moved.x;s.z=moved.z;
+  }
   for(const e of s.enemies){
     if(s.status!=='playing')break;
     if(e.hp<=0){e.deadTime+=dt;continue;}
@@ -361,11 +396,15 @@ export function tick(s,dt,controls={}){
       }else{
         e.attackWindup=Math.max(0,e.attackWindup-dt);
         if(e.attackWindup===0){
-          const damage=attack.damage;
-          s.hp=Math.max(0,s.hp-damage);
-          s.hitFlash=0.30;e.attackPulse=0.26;e.attackCD=attack.recover;
-          emitCombatEffect(s,'damage',{enemyId:e.id,amount:damage,x:e.x,z:e.z});
-          if(s.hp===0){s.status="gameover";s.toast="생존 실패 — 다시 도전하세요";}
+          e.attackPulse=0.26;e.attackCD=attack.recover;
+          if(s.dodgeInvuln>0){
+           emitCombatEffect(s,'evade',{enemyId:e.id,x:e.x,z:e.z});
+          }else{
+           const damage=attack.damage;
+           s.hp=Math.max(0,s.hp-damage);s.hitFlash=0.30;
+           emitCombatEffect(s,'damage',{enemyId:e.id,amount:damage,x:e.x,z:e.z});
+           if(s.hp===0){s.status="gameover";s.toast="생존 실패 — 다시 도전하세요";}
+          }
         }
       }
       continue;

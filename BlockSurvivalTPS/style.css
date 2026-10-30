@@ -41,3 +41,10 @@
 #ammo.empty{border-color:#b76652}
 @media (max-height:460px){#reloadTrack{height:11px}#reloadText{line-height:9px;font-size:8px}}
 @media (prefers-reduced-motion:reduce){#reloadFill{transition:none}}
+
+/* v0.13: independent evasive-action thumb target above the existing three
+   buttons. No SVG and no fourth button squeezed into the horizontal row. */
+#dodge{position:absolute;right:calc(max(15px,env(safe-area-inset-right)) + 87px);bottom:calc(max(26px,env(safe-area-inset-bottom)) + 86px);z-index:1;pointer-events:auto;width:55px;height:55px;background:#315460df;border-color:#9bc6c6a8}
+#dodge:disabled{opacity:.59;filter:saturate(.55);cursor:default}
+@media (max-width:390px){#dodge{width:50px;height:50px;right:calc(max(15px,env(safe-area-inset-right)) + 82px);bottom:calc(max(26px,env(safe-area-inset-bottom)) + 82px)}}
+@media (max-height:460px) and (pointer:coarse){#dodge{width:48px;height:48px;right:calc(max(12px,env(safe-area-inset-right)) + 76px);bottom:calc(max(12px,env(safe-area-inset-bottom)) + 76px);font-size:10px}}
