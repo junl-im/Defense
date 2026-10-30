@@ -3,7 +3,7 @@
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as cloneSkinned} from 'three/addons/utils/SkeletonUtils.js';
-import {ARENA,COVER,clamp,newGame,start,pause,reload,shoot,tick,drainCombatEffects,ENEMY_ATTACK,BLAST_RADIUS,FIRE_MODES,setFireMode} from './sim.mjs';
+import {ARENA,COVER,clamp,newGame,start,pause,reload,shoot,tick,drainCombatEffects,ENEMY_ATTACK,BLAST_RADIUS,FIRE_MODES,setFireMode,tryDodge,DODGE_DURATION} from './sim.mjs';
 import {populateRuinedCity} from './world-detail.mjs';
 import {createQualityState,updateQuality} from './quality.mjs';
 import {heroCombatPose,undeadCombatPose} from './combat-pose.mjs';
@@ -345,7 +345,7 @@ function installHero(gltf,modern=false){
  for(const clip of gltf.animations)heroClips.set(clip.name,clip);
  heroAnimation='';
  if(skinnedParts>0&&(heroClips.size===6||modern&&heroClips.size===3))shell.dataset.heroRig='loaded';
- if(modern&&heroClips.has('Run')){shell.dataset.modernHeroRig='loaded';shell.dataset.combatVersion='v012';}
+ if(modern&&heroClips.has('Run')){shell.dataset.modernHeroRig='loaded';shell.dataset.combatVersion='v013';}
  attachHeroGun();
 }
 function attachHeroGun(){
@@ -543,6 +543,8 @@ function syncPickups(t){
 }
 function syncPlayer(t,moving){
  player.position.set(state.x,0,state.z);player.rotation.y=yaw;
+ const dodgePhase=state.dodgeTime>0?Math.sin(Math.PI*(1-state.dodgeTime/DODGE_DURATION)):0;
+ player.rotation.z=dodgePhase*0.17;
  if(heroMixer){
   const name=heroModern?(moving?'Run':'Idle'):
     state.reloadTime>0?'1H_Ranged_Reload':state.status==='playing'&&state.elapsed<heroShotUntil?'1H_Ranged_Shoot':
@@ -580,6 +582,11 @@ function updateCamera(dt){
  const hits=raycaster.intersectObjects(collisionMeshes,false);
  if(hits.length)desired.copy(focus).addScaledVector(dir,Math.max(0.75,hits[0].distance-0.45));
  camera.position.lerp(desired,Math.min(1,dt*12));
+ const dodgePulse=state.status==='playing'&&state.dodgeTime>0
+   ?Math.sin(Math.PI*(1-state.dodgeTime/DODGE_DURATION)):0;
+ const targetFov=70+5.5*dodgePulse;
+ const nextFov=camera.fov+(targetFov-camera.fov)*Math.min(1,dt*15);
+ if(Math.abs(nextFov-camera.fov)>0.02){camera.fov=nextFov;camera.updateProjectionMatrix();}
  if(state.status==='playing'&&cameraKick>0){camera.position.y+=cameraKick*0.55;cameraKick=Math.max(0,cameraKick-dt*0.28);}
  // Short, subtle local camera response to *actual* damage, not to mere proximity.
  if(state.hitFlash>0&&state.status==='playing'){
@@ -638,6 +645,11 @@ function updateHUD(){
  $('ammo').classList.toggle('empty',state.ammo===0&&!loading);
  $('mode').textContent=FIRE_MODES[state.fireMode].label;
  $('mode').setAttribute('aria-label','사격 모드 '+FIRE_MODES[state.fireMode].label+' 전환');
+ const dodgeRemaining=Math.max(0,state.dodgeCooldown||0);
+ $('dodge').disabled=dodgeRemaining>0;
+ $('dodge').textContent=dodgeRemaining>0?Math.ceil(dodgeRemaining)+'초':'회피';
+ $('dodge').setAttribute('aria-label',dodgeRemaining>0?'회피 대기 '+dodgeRemaining.toFixed(1)+'초':'회피 준비');
+ shell.dataset.dodgeReady=dodgeRemaining<=0?'true':'false';
  $('hitScreen').style.opacity=Math.min(0.16,state.hitFlash*0.65);
  $('reticle').classList.toggle('hit',state.hitMarker>0);
  $('reticle').classList.toggle('kill',state.killMarker>0);
@@ -695,6 +707,18 @@ function spawnCasing(){
  v.mesh.scale.setScalar(1);v.mesh.rotation.set(phase,phase,0);
  v.vx=rightX*(1.5+phase)+fwdX*0.35;v.vz=rightZ*(1.5+phase)+fwdZ*0.35;
  v.vy=1.25+phase;v.mesh.visible=true;
+}
+function spawnDodgeDust(evt){
+ if(!dustPool.length)return;
+ for(let i=0;i<4;i++){
+  const part=dustPool[dustCursor++%dustPool.length];
+  const side=i%2?1:-1;
+  part.mesh.position.set(evt.x+side*0.26,0.11,evt.z+(i-1.5)*0.13);
+  part.vx=-evt.dx*(0.8+i*0.12)+side*0.48;
+  part.vz=-evt.dz*(0.8+i*0.12)-side*0.36;
+  part.vy=0.35+i*0.13;part.ttl=0.32+i*0.025;
+  part.mesh.scale.setScalar(0.45+i*0.08);part.mesh.visible=true;
+ }
 }
 function spawnBlastDust(evt){
  if(!dustPool.length)return;
@@ -795,7 +819,16 @@ function dispatchCombatEffects(now){
    $('combatPopup').textContent='폭발!';
    $('combatPopup').classList.add('kill');
    combatPopupUntil=now+600;
-  }else if(event.type==='damage'){
+  }else if(event.type==='dodge'){
+    spawnDodgeDust(event);cameraKick=Math.min(0.09,cameraKick+0.03);
+    $('combatPopup').textContent='회피!';
+    $('combatPopup').classList.remove('kill');combatPopupUntil=now+430;
+    cueSound('dodge');
+   }else if(event.type==='evade'){
+    $('combatPopup').textContent='완벽 회피!';
+    $('combatPopup').classList.remove('kill');combatPopupUntil=now+700;
+    cueSound('kill');
+   }else if(event.type==='damage'){
    cueSound('damage');
    if(mobile&&typeof navigator.vibrate==='function')navigator.vibrate(20);
    combatPopupUntil=Math.max(combatPopupUntil,now+650);
@@ -824,6 +857,15 @@ function getShotDirection(){
  const length=Math.hypot(dx,dz);
  if(length<0.001)return {dx:Math.sin(yaw),dz:-Math.cos(yaw)};
  return {dx:dx/length,dz:dz/length};
+}
+function attemptPlayerDodge(){
+ if(state.status!=='playing')return false;
+ const forward=(keys.has('w')||keys.has('arrowup')?1:0)-(keys.has('s')||keys.has('arrowdown')?1:0)-joystick.z;
+ const side=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0)+joystick.x;
+ const dx=Math.sin(yaw)*forward+Math.cos(yaw)*side;
+ const dz=-Math.cos(yaw)*forward+Math.sin(yaw)*side;
+ state.yaw=yaw;
+ return tryDodge(state,dx,dz);
 }
 function doFire(){
  if(state.status!=='playing')return;
@@ -910,6 +952,7 @@ function initInputs(){
    setFireMode(state,key==='1'?'precision':key==='2'?'rapid':state.fireMode==='precision'?'rapid':'precision');
   }
   if([' ','arrowup','arrowdown','arrowleft','arrowright'].includes(key))e.preventDefault();
+  if(key===' '&&!e.repeat)attemptPlayerDodge();
   if(key==='escape'){e.preventDefault();if(state.status==='playing')pauseGame();return;}
   keys.add(key);
   if(key==='r'){reload(state);}
@@ -938,6 +981,9 @@ function initInputs(){
  $('secondary').addEventListener('click',()=>begin(true));
  $('reload').addEventListener('click',()=>reload(state));
  $('mode').addEventListener('click',()=>setFireMode(state,state.fireMode==='precision'?'rapid':'precision'));
+ $('dodge').addEventListener('pointerdown',e=>{
+  e.preventDefault();e.stopPropagation();attemptPlayerDodge();
+ });
  $('fire').addEventListener('pointerdown',e=>{
   e.preventDefault();e.stopPropagation();$('fire').classList.add('pressed');fireHeld=true;doFire();
   $('fire').setPointerCapture(e.pointerId);
