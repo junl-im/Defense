@@ -17,7 +17,7 @@ export function heroCombatPose({shotFlash=0,reloadTime=0,elapsed=0,shotUntil=0,m
   stance: moving?(sprint?1:0.64):0
  };
 }
-export function undeadCombatPose({hp=1,hitTime=0,deadTime=0,walk=0,id=0,type='zombie',attackWindup=0,attackWindupTotal=0.36,attackPulse=0,distance=99}={}){
+export function undeadCombatPose({hp=1,hitTime=0,deadTime=0,walk=0,id=0,type='zombie',attackWindup=0,attackWindupTotal=0.36,attackPulse=0,hitSide=0,hitFront=0,distance=99}={}){
  const dead=hp<=0;
  const fall=dead?clamp01(deadTime/0.58):0;
  const hit=dead?0:clamp01(hitTime/0.2);
@@ -32,8 +32,8 @@ export function undeadCombatPose({hp=1,hitTime=0,deadTime=0,walk=0,id=0,type='zo
  return {
   clip:dead?'Idle':attack||distance<1.35?'Idle':'Run',
   hit,fall,lunge,windup,impact,
-  leanX:-1.32*fall+0.1*hit-(attack?(0.37*t+0.2*impact)*multiplier:0),
-  leanZ:sign*(0.22*fall+0.14*hit+0.06*t),
+  leanX:-1.32*fall+(0.1+0.14*Math.max(-1,Math.min(1,hitFront)))*hit-(attack?(0.37*t+0.2*impact)*multiplier:0),
+  leanZ:sign*(0.22*fall+0.035*hit+0.06*t)+Math.max(-1,Math.min(1,hitSide))*0.24*hit,
   offsetZ:lunge-0.10*hit,
   fallY:-0.27*fall,
   attack
