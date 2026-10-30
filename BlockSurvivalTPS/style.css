@@ -23,3 +23,8 @@
 #reticle.kill span{border-color:#ffd58b;background:rgba(255,213,139,.22);box-shadow:0 0 3px #593c22}
 @media (max-height:460px) and (pointer:coarse){#combatPopup{top:60%;font-size:12px;padding:3px 10px}#attackCue{bottom:24%;font-size:10px;padding:3px 8px}}
 @media (prefers-reduced-motion:reduce){#combatPopup,#attackCue{transition:none}}
+
+/* v0.11: compact firing-mode switch shares the HUD rather than covering the mobile field. */
+.modeButton{font-size:11px;font-weight:800;letter-spacing:0;min-width:42px;white-space:nowrap;touch-action:manipulation}
+@media (max-width:410px){.modeButton{min-width:36px;padding:4px 5px;font-size:10px}}
+@media (max-height:460px) and (pointer:coarse){.modeButton{font-size:10px;min-width:35px;padding:3px 4px}}

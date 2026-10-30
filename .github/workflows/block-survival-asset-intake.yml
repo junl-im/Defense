@@ -2,7 +2,7 @@ name: Block Survival TPS — CC0 asset intake
 on:
   push:
     branches:
-      - feature/block-survival-tps-v010-enemy-explosion-20261030
+      - feature/block-survival-tps-v011-firing-modes-20261030
       - main
     paths:
       - 'BlockSurvivalTPS/**'

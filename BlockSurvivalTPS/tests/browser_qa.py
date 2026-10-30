@@ -49,6 +49,9 @@ def start(page,label):
           f"{label}: pooled 3D impact effects failed to initialize")
     check(page.evaluate("() => document.querySelector('#shell').dataset.destructibles==='3'"),
           f"{label}: 3 visible destructible city barrels were not constructed")
+    check(page.locator("#mode").count()==1, f"{label}: firing mode switch is missing")
+    check(page.evaluate("() => document.querySelector('#shell').dataset.shockwaveFx==='ready'"),
+          f"{label}: pooled blast ground shockwave failed to initialize")
     check(page.evaluate("() => document.querySelector('#shell').dataset.explosionFx==='ready'"),
           f"{label}: lightweight explosion renderer did not initialize")
     check(page.evaluate("() => document.querySelector('#shell').dataset.combatVersion==='v010'"),
