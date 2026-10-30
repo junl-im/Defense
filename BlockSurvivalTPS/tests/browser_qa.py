@@ -103,6 +103,11 @@ with sync_playwright() as p:
     page.screenshot(path=str(OUT/"tps-desktop-diagnostic.png"))
     check(diag["canvasPointerDown"]>=1,f"desktop: pointer event never hit canvas {diag}")
     check(int(after)<int(before),f"desktop: mouse click failed to fire {diag}, errors {err}")
+    # A real reload must show progress after a successful shot, not just ship an inert DOM element.
+    page.keyboard.press("r")
+    page.wait_for_function("() => !document.querySelector('#reloadTrack').hidden",timeout=12000)
+    check(page.evaluate("() => document.querySelector('#reloadText').textContent.startsWith('장전')"),
+          "desktop: pressing R did not display a live reload percentage")
     page.keyboard.down("w")
     page.wait_for_timeout(400)
     page.keyboard.up("w")
