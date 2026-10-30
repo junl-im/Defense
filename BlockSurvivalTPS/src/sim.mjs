@@ -36,7 +36,7 @@ export function newGame(){
   return {status:"title",x:0,z:0,yaw:0,hp:100,maxHp:100,ammo:MAG_SIZE,
     reserve:72,reloadTime:0,shotCooldown:0,hitMarker:0,wave:1,waveLeft:5,spawnDelay:0.6,
     nextWave:0,kills:0,score:0,combo:0,comboTime:0,elapsed:0,hitFlash:0,killMarker:0,shotFlash:0,pickupFlash:0,seed:93461,
-    enemies:[],nextId:1,pickups:[],nextPickupId:1,effects:[],nextEffectId:1,toast:"중앙을 조준해 살아남으세요"};
+    enemies:[],nextId:1,pickups:[],nextPickupId:1,barrels:freshBarrels(),effects:[],nextEffectId:1,toast:"중앙을 조준해 살아남으세요"};
 }
 export function random(s){
   s.seed=(Math.imul(s.seed,1664525)+1013904223)>>>0;
@@ -91,6 +91,79 @@ export function drainCombatEffects(s){
  return s.effects.splice(0);
 }
 export const ATTACK_WINDUP=0.36;
+// Three enemy archetypes with independent attack telegraphs and recovery windows.
+export const ENEMY_ATTACK={
+ zombie:{start:1.24,range:1.58,windup:0.36,recover:1.05,damage:12},
+ runner:{start:1.18,range:1.47,windup:0.24,recover:0.84,damage:9},
+ minion:{start:1.38,range:1.73,windup:0.56,recover:1.42,damage:17}
+};
+// Fixed placements are away from spawn and solid buildings; no random pay-to-win items.
+// Destructible prop is non-colliding for movement to preserve established pathfinding.
+export const BARREL_PLACEMENTS=[{x:-4.8,z:-7.5},{x:4.9,z:11.5},{x:-18,z:0}];
+export const BARREL_RADIUS=0.72;
+export const BLAST_RADIUS=4.25;
+export const BLAST_DAMAGE=135;
+export const BARREL_HP=35;
+export function freshBarrels(){
+ return BARREL_PLACEMENTS.map((p,i)=>({id:i+1,x:p.x,z:p.z,hp:BARREL_HP,exploded:false}));
+}
+export function awardKill(s,e){
+ s.kills++;s.combo=s.comboTime>0?s.combo+1:1;s.comboTime=5.2;
+ const points=(e.type==="runner"?125:100)+Math.min(5,s.combo-1)*20;
+ s.score+=points;s.killMarker=0.35;
+ if(s.kills%3===0)dropPickup(s,e.x,e.z,'ammo');
+ if(s.kills%5===0)dropPickup(s,e.x,e.z,'medkit');
+ return points;
+}
+// Query the nearest truly unobstructed 2D hit along the *actual* shot direction.
+export function lineBarrel(s,dx,dz){
+ const len=Math.hypot(dx,dz);if(len<0.01)return null;
+ dx/=len;dz/=len;let closest=null,nearest=36;
+ for(const b of s.barrels){
+  if(b.exploded)continue;
+  const rx=b.x-s.x,rz=b.z-s.z,dist=rx*dx+rz*dz;
+  if(dist<0||dist>nearest)continue;
+  if(Math.abs(rx*dz-rz*dx)>BARREL_RADIUS+0.12)continue;
+  if(!clearPath(s.x,s.z,b.x,b.z))continue;
+  closest=b;nearest=dist;
+ }
+ return closest?{barrel:closest,distance:nearest}:null;
+}
+export function detonateBarrel(s,first){
+ const queue=[first],seen=new Set();
+ let exploded=0,kills=0,damage=0;
+ while(queue.length){
+  const barrel=queue.shift();
+  if(!barrel||seen.has(barrel.id)||barrel.exploded)continue;
+  seen.add(barrel.id);barrel.hp=0;barrel.exploded=true;exploded++;
+  emitCombatEffect(s,'explosion',{barrelId:barrel.id,x:barrel.x,z:barrel.z,radius:BLAST_RADIUS});
+  // Blast effect and actual damage share one authoritative origin and radius.
+  for(const enemy of s.enemies){
+   if(enemy.hp<=0)continue;
+   if(Math.hypot(enemy.x-barrel.x,enemy.z-barrel.z)>BLAST_RADIUS+enemy.radius)continue;
+   if(!clearPath(barrel.x,barrel.z,enemy.x,enemy.z))continue;
+   const dealt=Math.min(enemy.hp,BLAST_DAMAGE);
+   enemy.hp-=BLAST_DAMAGE;enemy.hitTime=0.22;damage+=dealt;
+   if(enemy.hp<=0){kills++;awardKill(s,enemy);emitCombatEffect(s,'kill',{enemyId:enemy.id,x:enemy.x,z:enemy.z,damage:dealt,points:0,combo:s.combo,blast:true});}
+   else emitCombatEffect(s,'hit',{enemyId:enemy.id,x:enemy.x,z:enemy.z,damage:dealt,blast:true});
+  }
+  const pd=Math.hypot(s.x-barrel.x,s.z-barrel.z);
+  if(pd<=BLAST_RADIUS&&clearPath(barrel.x,barrel.z,s.x,s.z)){
+   const dealt=Math.min(s.hp,Math.round(22*(1-pd/(BLAST_RADIUS+0.01))));
+   if(dealt>0){
+    s.hp=Math.max(0,s.hp-dealt);s.hitFlash=0.3;
+    emitCombatEffect(s,'damage',{amount:dealt,x:barrel.x,z:barrel.z,blast:true});
+   }
+  }
+  for(const other of s.barrels){
+   if(other.exploded||seen.has(other.id))continue;
+   if(Math.hypot(other.x-barrel.x,other.z-barrel.z)<=BLAST_RADIUS&&clearPath(barrel.x,barrel.z,other.x,other.z))queue.push(other);
+  }
+ }
+ if(s.hp===0&&s.status==='playing'){s.status='gameover';s.toast='생존 실패 — 다시 도전하세요';}
+ return {exploded,kills,damage};
+}
+
 export function reload(s){
   if(s.status!=="playing"||s.reloadTime>0||s.ammo===MAG_SIZE||s.reserve<=0)return false;
   s.reloadTime=1.35;s.toast="재장전 중";emitCombatEffect(s,"reload");return true;
@@ -138,20 +211,21 @@ export function shoot(s,dx,dz){
   s.ammo--;s.shotCooldown=0.19;s.shotFlash=0.13;
   const adjusted=assistedAim(s,dx,dz);
   const e=lineTarget(s,adjusted.dx,adjusted.dz);
+  const b=lineBarrel(s,adjusted.dx,adjusted.dz);
+  const eDist=e?Math.hypot(e.x-s.x,e.z-s.z):Infinity;
+  if(b&&b.distance<eDist){
+    b.barrel.hp-=46;
+    const blast=b.barrel.hp<=0?detonateBarrel(s,b.barrel):null;
+    return {fired:true,hit:true,barrel:true,exploded:!!blast,blast,id:b.barrel.id,
+      aim:{dx:adjusted.dx,dz:adjusted.dz},x:b.barrel.x,z:b.barrel.z};
+  }
   if(!e)return {fired:true,hit:false,aim:{dx:adjusted.dx,dz:adjusted.dz}};
   const damage=e.type==="runner"?55:46;
   e.hp-=damage;
   e.hitTime=0.2;s.hitMarker=0.22;
   const killed=e.hp<=0;
   let points=0;
-  if(killed){
-    s.kills++;s.combo=s.comboTime>0?s.combo+1:1;s.comboTime=5.2;
-    points=(e.type==="runner"?125:100)+Math.min(5,s.combo-1)*20;
-    s.score+=points;s.killMarker=0.35;
-    // Deterministic, bounded supplies: avoid requiring ads, purchases or network.
-    if(s.kills%3===0)dropPickup(s,e.x,e.z,'ammo');
-    if(s.kills%5===0)dropPickup(s,e.x,e.z,'medkit');
-  }
+  if(killed)points=awardKill(s,e);
   emitCombatEffect(s,killed?'kill':'hit',{enemyId:e.id,x:e.x,z:e.z,damage,points,combo:s.combo});
   return {fired:true,hit:true,killed,id:e.id,damage,points,aim:{dx:adjusted.dx,dz:adjusted.dz}};
 }
@@ -168,7 +242,7 @@ export function spawn(s){
   const kind=random(s),type=kind<0.16?"runner":kind<0.27?"minion":"zombie";
   const e={...p,id:s.nextId++,type,radius:type==="minion"?0.78:0.63,
     hp:type==="runner"?52:76+Math.min(s.wave*6,60),speed:type==="runner"?3.2:type==="minion"?1.1:1.9,
-    attackCD:0.6+random(s),attackWindup:0,attackPulse:0,hitTime:0,deadTime:0,walk:random(s)*10};
+    attackCD:0.6+random(s),attackWindup:0,attackWindupTotal:0,attackPulse:0,hitTime:0,deadTime:0,walk:random(s)*10};
   s.enemies.push(e);
   return e;
 }
@@ -242,29 +316,30 @@ export function tick(s,dt,controls={}){
     e.hitTime=Math.max(0,e.hitTime-dt);
     e.walk+=dt;
     const ax=s.x-e.x,az=s.z-e.z,dist=Math.hypot(ax,az);
+    const attack=ENEMY_ATTACK[e.type]||ENEMY_ATTACK.zombie;
     if(!Number.isFinite(e.attackCD))e.attackCD=0.6;
     e.attackCD=Math.max(0,e.attackCD-dt);
     e.attackPulse=Math.max(0,(e.attackPulse||0)-dt);
     // Telegraph -> strike -> recover. Animation and damage share attackWindup.
     // Every strike re-checks distance AND solid cover so dodging is meaningful.
     if(e.attackWindup>0){
-      const valid=dist<=1.58&&clearPath(e.x,e.z,s.x,s.z);
+      const valid=dist<=attack.range&&clearPath(e.x,e.z,s.x,s.z);
       if(!valid){
         e.attackWindup=0;e.attackCD=Math.max(e.attackCD,0.42);
         emitCombatEffect(s,'cancel',{enemyId:e.id});
       }else{
         e.attackWindup=Math.max(0,e.attackWindup-dt);
         if(e.attackWindup===0){
-          const damage=e.type==="runner"?9:12;
+          const damage=attack.damage;
           s.hp=Math.max(0,s.hp-damage);
-          s.hitFlash=0.30;e.attackPulse=0.26;e.attackCD=1.05;
+          s.hitFlash=0.30;e.attackPulse=0.26;e.attackCD=attack.recover;
           emitCombatEffect(s,'damage',{enemyId:e.id,amount:damage,x:e.x,z:e.z});
           if(s.hp===0){s.status="gameover";s.toast="생존 실패 — 다시 도전하세요";}
         }
       }
       continue;
     }
-    if(dist>1.24||!clearPath(e.x,e.z,s.x,s.z)){
+    if(dist>attack.start||!clearPath(e.x,e.z,s.x,s.z)){
       let destination={x:s.x,z:s.z};
       const from={x:e.x,z:e.z};
       // Reuse the corridor briefly to limit expensive A* work on low-end phones.
@@ -290,8 +365,9 @@ export function tick(s,dt,controls={}){
         e.x=step.x;e.z=step.z;
       }
     }else if(e.attackCD===0){
-      e.attackWindup=ATTACK_WINDUP;
-      emitCombatEffect(s,'warning',{enemyId:e.id,x:e.x,z:e.z});
+      e.attackWindup=attack.windup;
+      e.attackWindupTotal=attack.windup;
+      emitCombatEffect(s,'warning',{enemyId:e.id,x:e.x,z:e.z,enemyType:e.type,windup:attack.windup});
     }
   }
   separateEnemies(s);
