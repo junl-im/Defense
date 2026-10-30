@@ -36,6 +36,8 @@ test('enemies can hurt the player and game over is noninteractive',()=>{
  const s=newGame();start(s);s.waveLeft=0;
  s.enemies=[{id:1,x:0,z:0.9,radius:0.6,hp:200,speed:0,attackCD:0,type:'zombie',walk:0,hitTime:0,deadTime:0}];
  s.hp=5;tick(s,0.06);
+ assert.equal(s.hp,5,'windup should not cause immediate damage');
+ for(let i=0;i<7;i++)tick(s,0.06);
  assert.equal(s.hp,0);assert.equal(s.status,'gameover');assert.equal(shoot(s,0,1).fired,false);
 });
 

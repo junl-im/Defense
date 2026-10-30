@@ -36,7 +36,7 @@ test('modern zombie fall smoothly approaches a fixed terminal pose',()=>{
 });
 test('undead attack lunge exists only inside melee range and stops on death',()=>{
  const far=undeadCombatPose({hp:10,distance:10,walk:0.13,id:2});
- const near=undeadCombatPose({hp:10,distance:1.2,walk:0.13,id:2,attackCD:0.4});
+ const near=undeadCombatPose({hp:10,distance:1.2,walk:0.13,id:2,attackWindup:0.11});
  const dead=undeadCombatPose({hp:0,distance:1.2,walk:0.13,id:2});
  assert.equal(far.clip,'Run');assert.equal(near.clip,'Idle');assert.equal(near.attack,true);
  assert.ok(near.lunge>0);close(dead.lunge,0);
