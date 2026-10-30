@@ -49,6 +49,11 @@ def start(page,label):
           f"{label}: pooled 3D impact effects failed to initialize")
     check(page.evaluate("() => document.querySelector('#shell').dataset.destructibles==='3'"),
           f"{label}: 3 visible destructible city barrels were not constructed")
+    check(page.locator("#reloadTrack").count()==1, f"{label}: reload HUD progress meter missing")
+    check(page.evaluate("() => document.querySelector('#shell').dataset.casingFx==='ready'"),
+          f"{label}: pooled cartridge casing geometry was not initialized")
+    check(page.evaluate("() => document.querySelector('#shell').dataset.dustFx==='ready'"),
+          f"{label}: bounded blast dust geometry was not initialized")
     check(page.locator("#mode").count()==1, f"{label}: firing mode switch is missing")
     check(page.evaluate("() => document.querySelector('#shell').dataset.shockwaveFx==='ready'"),
           f"{label}: pooled blast ground shockwave failed to initialize")
@@ -61,7 +66,7 @@ def start(page,label):
     page.wait_for_function("() => document.querySelector('#mode').textContent==='정밀'",timeout=12000)
     check(page.evaluate("() => document.querySelector('#shell').dataset.explosionFx==='ready'"),
           f"{label}: lightweight explosion renderer did not initialize")
-    check(page.evaluate("() => document.querySelector('#shell').dataset.combatVersion==='v011'"),
+    check(page.evaluate("() => document.querySelector('#shell').dataset.combatVersion==='v012'"),
           f"{label}: modern combat pose pipeline not activated")
     check(page.evaluate("() => ['Run','Idle'].includes(document.querySelector('#shell').dataset.heroAnimation)"),
           f"{label}: modern skin animation clip never activated")

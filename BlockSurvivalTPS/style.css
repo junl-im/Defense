@@ -31,3 +31,13 @@
 
 /* v0.11 browser-verified touch fix: header controls above right-look touch layer, menus remain topmost. */
 #hud{z-index:5}
+
+/* v0.12: unobtrusive reload meter anchored to ammo HUD without growing its footprint. */
+.ammoCluster{position:relative;display:flex;flex-direction:column;flex-shrink:0}
+#reloadTrack{position:absolute;top:calc(100% + 3px);left:0;right:0;height:14px;overflow:hidden;border-radius:4px;border:1px solid #93aeac5c;background:#101e2ae8;color:#f0e7cb;text-align:center;pointer-events:none}
+#reloadTrack[hidden]{display:none!important}
+#reloadFill{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,#5a9e9b,#d8c78b);transition:width .08s linear}
+#reloadText{position:relative;display:block;font-size:9px;font-weight:800;line-height:12px;text-shadow:0 1px 2px #11212b}
+#ammo.empty{border-color:#b76652}
+@media (max-height:460px){#reloadTrack{height:11px}#reloadText{line-height:9px;font-size:8px}}
+@media (prefers-reduced-motion:reduce){#reloadFill{transition:none}}
