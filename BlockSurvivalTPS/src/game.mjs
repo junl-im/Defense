@@ -6,6 +6,7 @@ import {clone as cloneSkinned} from 'three/addons/utils/SkeletonUtils.js';
 import {ARENA,COVER,clamp,newGame,start,pause,reload,shoot,tick} from './sim.mjs';
 import {populateRuinedCity} from './world-detail.mjs';
 import {createQualityState,updateQuality} from './quality.mjs';
+import {heroCombatPose,undeadCombatPose} from './combat-pose.mjs';
 
 const $=id=>document.getElementById(id);
 const shell=$('shell'),canvas=$('stage'),overlay=$('overlay');
@@ -222,7 +223,7 @@ function normalize(model,targetHeight){
 // Keep hands attached to the real 58-bone skeleton; no fake separate arms or SVG.
 const aimFrom=new THREE.Vector3(),aimTo=new THREE.Vector3(),aimDesired=new THREE.Vector3();
 const aimDelta=new THREE.Quaternion(),aimParent=new THREE.Quaternion(),aimRoot=new THREE.Quaternion();
-function alignArm(rig,side,mode){
+function alignArm(rig,side,mode,pose=null){
  const arm=rig.getObjectByName(side+'Arm'),hand=rig.getObjectByName(side+'Hand');
  if(!arm||!hand)return;
  rig.updateWorldMatrix(true,true);
@@ -230,8 +231,10 @@ function alignArm(rig,side,mode){
  aimTo.sub(aimFrom);
  if(aimTo.lengthSq()<1e-5)return;
  if(mode==='survivor'){
-  if(side==='Right')aimDesired.set(-0.1,-0.53,0.76);
-  else aimDesired.set(0.1,-0.88,0.18);
+  // Keep the weapon arm forward, with the support hand following the barrel.
+  // The blend values are sampled AFTER imported Kenney FBX/GLB animation.
+  if(side==='Right')aimDesired.set(-0.13,-0.46+(pose?.shoulderLift||0),0.86);
+  else aimDesired.set(0.16,-0.55+(pose?.supportLift||0),0.78);
  }else{
   aimDesired.set(side==='Right'?-0.12:0.12,-0.48,0.76);
  }
@@ -244,9 +247,9 @@ function alignArm(rig,side,mode){
  arm.quaternion.premultiply(aimParent);
  arm.updateWorldMatrix(false,true);
 }
-function correctModernPose(rig,mode){
- alignArm(rig,'Left',mode);
- alignArm(rig,'Right',mode);
+function correctModernPose(rig,mode,pose=null){
+ alignArm(rig,'Left',mode,pose);
+ alignArm(rig,'Right',mode,pose);
 }
 function playRigClip(visual,name,fade=0.16){
  if(!visual.mixer||visual.lastAnimation===name)return;
@@ -288,7 +291,7 @@ function installHero(gltf,modern=false){
  for(const clip of gltf.animations)heroClips.set(clip.name,clip);
  heroAnimation='';
  if(skinnedParts>0&&(heroClips.size===6||modern&&heroClips.size===3))shell.dataset.heroRig='loaded';
- if(modern&&heroClips.has('Run'))shell.dataset.modernHeroRig='loaded';
+ if(modern&&heroClips.has('Run')){shell.dataset.modernHeroRig='loaded';shell.dataset.combatVersion='v08';}
  attachHeroGun();
 }
 function attachHeroGun(){
@@ -359,10 +362,13 @@ function syncEnemies(t){
   root.rotation.y=(v.rigKind==='undead'||v.rigKind?.startsWith('modern')?a:v.mixer?a:a+Math.PI);
   if(e.hp<=0){
    if(v.rigKind?.startsWith('modern')){
-    playRigClip(v,'Idle',0.05);
-    root.rotation.z=Math.min(Math.PI*0.43,e.deadTime*4);
+    const pose=undeadCombatPose({...e,distance:Math.hypot(e.x-state.x,e.z-state.z)});
+    playRigClip(v,pose.clip,0.05);
     v.mixer.update(Math.min(0.06,nowFrameDt));
     correctModernPose(v.model,'undead');
+    root.rotation.x=pose.leanX;root.rotation.z=pose.leanZ;
+    root.position.y=pose.fallY;
+    v.model.position.z=0;
    }else if(v.rigKind==='undead'){
     playRigClip(v,'Death_A',0.08);
     v.mixer.update(Math.min(0.06,nowFrameDt));
@@ -371,12 +377,12 @@ function syncEnemies(t){
     if(v.mixer)v.mixer.setTime(60/24+Math.min(e.deadTime,(89-60)/24));
    }
   }else if(v.rigKind?.startsWith('modern')){
-   const attack=Math.hypot(e.x-state.x,e.z-state.z)<1.6;
-   playRigClip(v,attack?'Idle':'Run',0.13);
+   const pose=undeadCombatPose({...e,distance:Math.hypot(e.x-state.x,e.z-state.z)});
+   playRigClip(v,pose.clip,0.13);
    v.mixer.update(Math.min(0.06,nowFrameDt));
    correctModernPose(v.model,'undead');
-   // Lightweight attack lunge without inventing non-existent Kenney attack clips.
-   v.model.position.z=attack?Math.sin(t*8+e.id)*0.08:0;
+   root.rotation.x=pose.leanX;root.rotation.z=pose.leanZ;
+   v.model.position.z=pose.offsetZ;
   }else if(v.rigKind==='undead'){
    const attack=Math.hypot(e.x-state.x,e.z-state.z)<1.6;
    const desired=e.hitTime>0?'Hit_A':attack?'Unarmed_Melee_Attack_Punch_A':e.type==='runner'?'Running_A':'Walking_D_Skeletons';
@@ -433,10 +439,15 @@ function syncPlayer(t,moving){
   playHeroClip(name);
   if(heroModern&&heroClips.has('Run'))heroMixer.clipAction(heroClips.get('Run')).timeScale=keys.has('shift')||sprintHeld?1.35:0.8;
   heroMixer.update(Math.min(0.06,nowFrameDt));
-  if(heroModern)correctModernPose(heroRig,'survivor');
-  if(heroModern&&heroGun){
-   heroGun.rotation.x=state.shotFlash>0?-0.17:0;
-   heroGun.rotation.z=state.reloadTime>0?0.3:0;
+  if(heroModern){
+   const pose=heroCombatPose({shotFlash:state.shotFlash,reloadTime:state.reloadTime,
+     elapsed:state.elapsed,shotUntil:heroShotUntil,moving,sprint:keys.has('shift')||sprintHeld});
+   correctModernPose(heroRig,'survivor',pose);
+   if(heroGun){
+    heroGun.rotation.x=pose.gunPitch;
+    heroGun.rotation.z=pose.gunRoll;
+    heroGun.position.z=-0.07+pose.recoil*0.055;
+   }
   }
   return;
  }
