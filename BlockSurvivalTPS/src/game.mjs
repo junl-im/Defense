@@ -3,7 +3,7 @@
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as cloneSkinned} from 'three/addons/utils/SkeletonUtils.js';
-import {ARENA,COVER,clamp,newGame,start,pause,reload,shoot,tick,drainCombatEffects} from './sim.mjs';
+import {ARENA,COVER,clamp,newGame,start,pause,reload,shoot,tick,drainCombatEffects,ENEMY_ATTACK,BLAST_RADIUS} from './sim.mjs';
 import {populateRuinedCity} from './world-detail.mjs';
 import {createQualityState,updateQuality} from './quality.mjs';
 import {heroCombatPose,undeadCombatPose} from './combat-pose.mjs';
@@ -16,7 +16,7 @@ let state=newGame(),yaw=0,pitch=0,fireHeld=false,sprintHeld=false;
 let joystick={x:0,z:0},stickPointer=null,lookPointer=null,lastLook=null;
 let renderer,scene,camera,clock,player,playerParts,world,raycaster;
 let heroRig=null,heroMixer=null,heroAnimation='',heroGun=null,heroGunTemplate=null,muzzleEffect=null,tracer=null,impactSpark=null,fxExpires=0,heroShotUntil=0,heroModern=false;
-const pickupVisual=new Map();
+const pickupVisual=new Map(),barrelVisual=new Map(),blastVisual=[];
 const heroClips=new Map();
 let quality=createQualityState({mobile,dpr:window.devicePixelRatio||1});
 const cameraShotVector=new THREE.Vector3();
@@ -24,6 +24,7 @@ let lastFrame=performance.now(),fpsCount=0,fpsStart=lastFrame,fps=60,uiAt=0,mode
 let lastToast='',toastUntil=0,combatPopupUntil=0,fxCursor=0,lastWarningCue=0;
 const impactPool=[];
 let fragmentStone,fragmentGold;
+let attackRingGeometry,attackRingMaterials,blastGeometry;
 const enemiesVisual=new Map(),assetCache=new Map(),collisionMeshes=[],modelLoader=new GLTFLoader();
 const named={minion:'minion-a01.glb',bat:'Bat.glb',gun:'blaster.glb'};
 const assetURLs={
@@ -63,6 +64,19 @@ function init3D(){
  const sun=new THREE.DirectionalLight(0xffd7a2,1.75);sun.position.set(-25,48,-30);scene.add(sun);
  world=new THREE.Group();scene.add(world);raycaster=new THREE.Raycaster();
  constructWorld();
+ // Shared attack marker geometry avoids per-mob geometry creation.
+ attackRingGeometry=new THREE.RingGeometry(0.77,0.89,20);
+ attackRingMaterials={
+  zombie:new THREE.MeshBasicMaterial({color:0xeab86b,transparent:true,opacity:0.7,side:THREE.DoubleSide,depthWrite:false}),
+  runner:new THREE.MeshBasicMaterial({color:0xff9663,transparent:true,opacity:0.75,side:THREE.DoubleSide,depthWrite:false}),
+  minion:new THREE.MeshBasicMaterial({color:0xd16b82,transparent:true,opacity:0.72,side:THREE.DoubleSide,depthWrite:false})
+ };
+ blastGeometry=new THREE.SphereGeometry(1,12,8);
+ for(let i=0;i<3;i++){
+  const mesh=new THREE.Mesh(blastGeometry,new THREE.MeshBasicMaterial({color:0xffb65d,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending}));
+  mesh.visible=false;scene.add(mesh);blastVisual.push({mesh,ttl:0,total:0.38});
+ }
+ shell.dataset.explosionFx='ready';
  const detail=populateRuinedCity(THREE,world,COVER,ARENA,{mobile});
  shell.dataset.urbanDetails=String(detail.rubble+detail.roadDamage+detail.vegetation);
  player=makePlayer();scene.add(player);
@@ -343,6 +357,9 @@ function playHeroClip(name){
 function makeEnemyVisual(e){
  const root=new THREE.Group();scene.add(root);root.position.set(e.x,0,e.z);
  const visual={root,model:null,mixer:null,clip:null,lastAnimation:''};
+ const warning=new THREE.Mesh(attackRingGeometry,attackRingMaterials[e.type]||attackRingMaterials.zombie);
+ warning.rotation.x=-Math.PI/2;warning.position.y=0.075;warning.visible=false;
+ root.add(warning);visual.warning=warning;
  const kind=e.type==='minion'?'minion':
    e.type==='runner'&&assetCache.has('modernRunner')?'modernRunner':
    e.type==='zombie'&&assetCache.has('modernZombie')?'modernZombie':'undead';
@@ -371,6 +388,11 @@ function syncEnemies(t){
   if(!v){v=makeEnemyVisual(e);enemiesVisual.set(e.id,v);}
   const root=v.root;
   root.position.set(e.x,e.hp<=0?0:e.hitTime>0?0.06:0,e.z);
+  v.warning.visible=e.hp>0&&e.attackWindup>0;
+  if(v.warning.visible){
+   const t=1-e.attackWindup/Math.max(0.1,e.attackWindupTotal||0.36);
+   v.warning.scale.setScalar(1.16-0.27*t);
+  }
   const a=Math.atan2(state.x-e.x,state.z-e.z);
   root.rotation.y=(v.rigKind==='undead'||v.rigKind?.startsWith('modern')?a:v.mixer?a:a+Math.PI);
   if(e.hp<=0){
@@ -416,6 +438,43 @@ function syncEnemies(t){
   if(v.mixer){v.mixer.stopAllAction();v.mixer.uncacheRoot(v.model);}
   scene.remove(v.root);enemiesVisual.delete(id);
   // Shared GLB geometry/textures remain in cache; only per-enemy mixers are cleared.
+ }
+}
+function syncBarrels(){
+ for(const barrel of state.barrels){
+  let view=barrelVisual.get(barrel.id);
+  if(!view){
+   // Original low-poly prop, no SVG or new network asset.
+   const root=new THREE.Group();scene.add(root);root.position.set(barrel.x,0,barrel.z);
+   const cylinder=new THREE.CylinderGeometry(0.47,0.49,1.1,9);
+   const body=new THREE.Mesh(cylinder,new THREE.MeshLambertMaterial({color:0xa64b36}));
+   body.position.y=0.59;root.add(body);
+   for(const y of [0.21,0.97]){
+    const band=new THREE.Mesh(new THREE.CylinderGeometry(0.51,0.51,0.12,9),mat(0x444e51));
+    band.position.y=y;root.add(band);
+   }
+   const top=new THREE.Mesh(new THREE.CylinderGeometry(0.32,0.32,0.045,9),mat(0xf0b65a));
+   top.position.y=1.17;root.add(top);
+   view=root;barrelVisual.set(barrel.id,view);
+  }
+  view.visible=!barrel.exploded;
+ }
+}
+function spawnBlastEffect(evt){
+ let fx=blastVisual.find(x=>x.ttl<=0)||blastVisual[0];
+ fx.ttl=fx.total=0.40;fx.mesh.visible=true;
+ fx.mesh.position.set(evt.x,0.85,evt.z);fx.mesh.scale.setScalar(0.15);
+ fx.mesh.material.opacity=0.46;
+}
+function stepBlastEffects(dt){
+ if(state.status!=='playing')return;
+ for(const f of blastVisual){
+  if(f.ttl<=0)continue;
+  f.ttl=Math.max(0,f.ttl-dt);
+  const t=1-f.ttl/f.total;
+  f.mesh.scale.setScalar(0.15+BLAST_RADIUS*t*0.83);
+  f.mesh.material.opacity=0.32*(1-t)*(1-t);
+  if(f.ttl===0)f.mesh.visible=false;
  }
 }
 function makePickupVisual(p){
@@ -510,11 +569,16 @@ function toggleHUD(on){
  $('attackCue').hidden=!on;
 }
 function begin(reset=false){
- if(reset||state.status==='gameover'){state=newGame();heroShotUntil=0;for(const v of pickupVisual.values())world.remove(v);pickupVisual.clear();}
+ if(reset||state.status==='gameover'){state=newGame();heroShotUntil=0;
+  for(const v of pickupVisual.values())world.remove(v);pickupVisual.clear();
+  for(const v of barrelVisual.values())scene.remove(v);barrelVisual.clear();
+  for(const f of blastVisual){f.ttl=0;f.mesh.visible=false;}
+ }
  state.status='playing';start(state);overlay.hidden=true;toggleHUD(true);
  yaw=state.yaw;fireHeld=false;combatPopupUntil=0;
  for(const f of impactPool){f.ttl=0;f.mesh.visible=false;}
  $('combatPopup').style.opacity='0';updateHUD();
+ syncBarrels();
  if(mobile){
   if(!document.fullscreenElement&&shell.requestFullscreen) shell.requestFullscreen().catch(()=>{});
   if(!history.state?.blockSurvivalTPS)history.pushState({blockSurvivalTPS:true},'',location.href);
@@ -621,12 +685,17 @@ function dispatchCombatEffects(now){
   if(event.type==='hit'||event.type==='kill'){
    spawnCombatFragments(event);
    const label=event.type==='kill'
-     ?'처치 +'+event.points+(event.combo>1?' · '+event.combo+'연속':'')
+     ?(event.blast?'폭발 처치 +':'처치 +')+event.points+(event.combo>1?' · '+event.combo+'연속':'')
      :'명중 −'+event.damage;
    $('combatPopup').textContent=label;
    $('combatPopup').classList.toggle('kill',event.type==='kill');
    combatPopupUntil=now+(event.type==='kill'?1350:520);
    if(event.type==='kill')cueSound('kill');
+  }else if(event.type==='explosion'){
+   spawnBlastEffect(event);cueSound('damage');
+   $('combatPopup').textContent='폭발!';
+   $('combatPopup').classList.add('kill');
+   combatPopupUntil=now+600;
   }else if(event.type==='damage'){
    cueSound('damage');
    combatPopupUntil=Math.max(combatPopupUntil,now+650);
@@ -663,8 +732,11 @@ function doFire(){
   const trueAim=result.aim||aim;
   const endpoint=new THREE.Vector3(startPoint.x+trueAim.dx*34,1.45,startPoint.z+trueAim.dz*34);
   if(result.hit){
-   const e=state.enemies.find(x=>x.id===result.id);
-   if(e)endpoint.set(e.x,1.45,e.z);
+   if(result.barrel)endpoint.set(result.x,1.0,result.z);
+   else {
+    const e=state.enemies.find(x=>x.id===result.id);
+    if(e)endpoint.set(e.x,1.45,e.z);
+   }
   }
   // Occlusion clamping prevents tracer rays passing visually through solid buildings.
   const delta=endpoint.clone().sub(startPoint),length=delta.length();
@@ -695,7 +767,7 @@ function frame(now){
   const mv=Math.min(1,Math.hypot(dx,dz));
   tick(state,dt,{x:dx,z:dz,yaw,sprint:keys.has('shift')||sprintHeld});
   if(fireHeld&&state.shotCooldown<=0)doFire();
-  syncPlayer(now/1000,mv>0.02);syncEnemies(now/1000);syncPickups(now/1000);
+  syncPlayer(now/1000,mv>0.02);syncEnemies(now/1000);syncPickups(now/1000);syncBarrels();
   if(state.status==='gameover'){fireHeld=false;showMenu('생존 실패','다시 도전',true);}
   const moved=mv>0.02;
   updateCamera(dt);
@@ -706,6 +778,7 @@ function frame(now){
  }
  dispatchCombatEffects(now);
  stepCombatFragments(dt);
+ stepBlastEffects(dt);
  if(tracer&&now>fxExpires){tracer.visible=false;impactSpark.visible=false;}
  if(muzzleEffect)muzzleEffect.visible=state.status==='playing'&&state.shotFlash>0;
  if(renderer&&scene)renderer.render(scene,camera);
