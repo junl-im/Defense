@@ -81,3 +81,16 @@ test('shot, reload, medkit and warning events stay bounded and have unique seque
  assert.ok(taken.some(e=>e.type==='reload'));
  assert.equal(drainCombatEffects(s).length,0);
 });
+
+test('shot tracer orientation reflects authoritative assisted impact, not raw reticle vector',()=>{
+ const s=make();s.enemies=[{...testEnemy(0.3,-6),id:8,hp:120}];
+ const hit=shoot(s,0,-1);
+ assert.equal(hit.hit,true);
+ assert.ok(Math.abs(hit.aim.dx-0.3/Math.hypot(0.3,-6))<0.00001);
+ assert.ok(Math.abs(hit.aim.dz-(-6)/Math.hypot(0.3,-6))<0.00001);
+ for(let i=0;i<4;i++)tick(s,0.06);
+ s.enemies=[];
+ const missed=shoot(s,1,0);
+ assert.equal(missed.fired,true);assert.equal(missed.hit,false);
+ assert.deepEqual(missed.aim,{dx:1,dz:0});
+});
