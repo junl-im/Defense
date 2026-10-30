@@ -24,6 +24,7 @@ let heroLegBones=null,heroMotionBlend=0,heroStridePhase=0,heroRestHeight=0,heroP
 let currentStrafe=0,footstepCount=0;
 let quality=createQualityState({mobile,dpr:window.devicePixelRatio||1});
 const cameraShotVector=new THREE.Vector3();
+const enemyHitTint=new THREE.Color(0xff562e);
 let lastFrame=performance.now(),fpsCount=0,fpsStart=lastFrame,fps=60,uiAt=0,modelStarted=false,nowFrameDt=0.016;
 let lastToast='',toastUntil=0,combatPopupUntil=0,fxCursor=0,lastWarningCue=0,cameraKick=0;
 const impactPool=[];
@@ -257,6 +258,7 @@ async function loadOptional(){
      if(kind==='undead'&&visual.mixer)continue;
      visual.mixer?.stopAllAction();
      if(visual.mixer)visual.mixer.uncacheRoot(visual.model);
+     disposeEnemyHitVisual(visual);
      scene.remove(visual.root);enemiesVisual.delete(id);
      enemiesVisual.set(id,makeEnemyVisual(e));
     }
@@ -368,7 +370,7 @@ function installHero(gltf,modern=false){
  for(const clip of gltf.animations)heroClips.set(clip.name,clip);
  heroAnimation='';
  if(skinnedParts>0&&(heroClips.size===6||modern&&heroClips.size===3))shell.dataset.heroRig='loaded';
- if(modern&&heroClips.has('Run')){shell.dataset.modernHeroRig='loaded';shell.dataset.combatVersion='v014';}
+ if(modern&&heroClips.has('Run')){shell.dataset.modernHeroRig='loaded';shell.dataset.combatVersion='v016';}
  attachHeroGun();
 }
 function attachHeroGun(){
@@ -417,7 +419,25 @@ function makeEnemyVisual(e){
   const gltf=assetCache.get(kind);
   const model=cloneSkinned(gltf.scene);
   normalize(model,kind.startsWith('modern')?0.92:1.8);
-  model.traverse(child=>{if(child.isSkinnedMesh)child.frustumCulled=false;});
+  visual.hitMaterials=[];
+  model.traverse(child=>{
+   if(!child.isSkinnedMesh)return;
+   child.frustumCulled=false;
+   if(!kind.startsWith('modern'))return;
+   const sources=Array.isArray(child.material)?child.material:[child.material];
+   const copies=sources.map(m=>m.clone());
+   child.material=Array.isArray(child.material)?copies:copies[0];
+   for(const m of copies){
+    if(!m.emissive)continue;
+    m.userData.raniEmissiveBase=m.emissive.clone();
+    m.userData.raniEmissiveLevel=m.emissiveIntensity||0;
+    visual.hitMaterials.push(m);
+   }
+  });
+  if(kind.startsWith('modern')){
+   visual.headBone=model.getObjectByName('Head');
+   if(visual.hitMaterials.length)shell.dataset.enemyHitShader='ready';
+  }
   root.add(model);visual.model=model;
   if(gltf.animations.length){
    visual.mixer=new THREE.AnimationMixer(model);
@@ -431,6 +451,18 @@ function makeEnemyVisual(e){
   const model=makeZombie(e.type);root.add(model);visual.model=model;
  }
  return visual;
+}
+function applyEnemyHitVisual(visual,pose){
+ if(visual.headBone&&pose.headSnap>0.001)visual.headBone.rotation.z+=pose.headSnap;
+ for(const m of visual.hitMaterials||[]){
+  m.emissive.copy(m.userData.raniEmissiveBase).lerp(enemyHitTint,pose.hit);
+  m.emissiveIntensity=m.userData.raniEmissiveLevel+pose.hitGlow;
+ }
+ if(pose.hit>0.01)shell.dataset.enemyHitFlash='detected';
+}
+function disposeEnemyHitVisual(visual){
+ for(const m of visual.hitMaterials||[])m.dispose();
+ visual.hitMaterials=[];
 }
 function syncEnemies(t){
  for(const e of state.enemies){
@@ -453,6 +485,7 @@ function syncEnemies(t){
     playRigClip(v,pose.clip,0.05);
     v.mixer.update(Math.min(0.06,nowFrameDt));
     correctModernPose(v.model,'undead');
+    applyEnemyHitVisual(v,pose);
     root.rotation.x=pose.leanX;root.rotation.z=pose.leanZ;
     root.position.y=pose.fallY;
     v.model.position.z=0;
@@ -468,6 +501,7 @@ function syncEnemies(t){
    playRigClip(v,pose.clip,0.13);
    v.mixer.update(Math.min(0.06,nowFrameDt));
    correctModernPose(v.model,'undead');
+   applyEnemyHitVisual(v,pose);
    root.rotation.x=pose.leanX;root.rotation.z=pose.leanZ;
    v.model.position.z=pose.offsetZ;
   }else if(v.rigKind==='undead'){
@@ -488,6 +522,7 @@ function syncEnemies(t){
  }
  for(const [id,v] of enemiesVisual)if(!state.enemies.some(e=>e.id===id)){
   if(v.mixer){v.mixer.stopAllAction();v.mixer.uncacheRoot(v.model);}
+  disposeEnemyHitVisual(v);
   scene.remove(v.root);enemiesVisual.delete(id);
   // Shared GLB geometry/textures remain in cache; only per-enemy mixers are cleared.
  }
@@ -604,12 +639,18 @@ function syncPlayer(t,moving){
    applyModernHeroStride(moving);
    const pose=heroCombatPose({shotFlash:state.shotFlash,reloadTime:state.reloadTime,
      elapsed:state.elapsed,shotUntil:heroShotUntil,moving,sprint:keys.has('shift')||sprintHeld});
+   heroRig.rotation.x+=pose.torsoKick;
+   heroRig.rotation.z+=pose.torsoRoll;
    correctModernPose(heroRig,'survivor',pose);
    if(heroGun){
     heroGun.rotation.x=pose.gunPitch;
+    heroGun.rotation.y=Math.PI/2+pose.gunYaw;
     heroGun.rotation.z=pose.gunRoll;
-    heroGun.position.z=-0.07+pose.recoil*0.055;
+    heroGun.position.y=-pose.gunLower;
+    heroGun.position.z=-0.07+pose.gunSlide;
    }
+   if(pose.recoil>0.14)shell.dataset.shotPoseSeen='true';
+   if(pose.reloadDip>0.25)shell.dataset.reloadPoseSeen='true';
   }
   return;
  }
@@ -675,6 +716,7 @@ function begin(reset=false){
  yaw=state.yaw;fireHeld=false;combatPopupUntil=0;cameraKick=0;
  heroMotionBlend=0;heroStridePhase=0;heroPreviousLegX=null;shell.dataset.heroLegMotion='waiting';
  footstepCount=0;shell.dataset.footstepCount='0';shell.dataset.footstepFx='ready';
+ shell.dataset.shotPoseSeen='false';shell.dataset.reloadPoseSeen='false';
  for(const f of [...impactPool,...casingPool,...dustPool]){f.ttl=0;f.mesh.visible=false;}
  $('combatPopup').style.opacity='0';updateHUD();
  syncBarrels();

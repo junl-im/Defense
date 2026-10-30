@@ -69,7 +69,7 @@ def start(page,label):
     page.wait_for_function("() => document.querySelector('#mode').textContent==='정밀'",timeout=12000)
     check(page.evaluate("() => document.querySelector('#shell').dataset.explosionFx==='ready'"),
           f"{label}: lightweight explosion renderer did not initialize")
-    check(page.evaluate("() => document.querySelector('#shell').dataset.combatVersion==='v014'"),
+    check(page.evaluate("() => document.querySelector('#shell').dataset.combatVersion==='v016'"),
           f"{label}: modern combat pose pipeline not activated")
     check(page.evaluate("() => ['Run','Idle'].includes(document.querySelector('#shell').dataset.heroAnimation)"),
           f"{label}: modern skin animation clip never activated")
@@ -106,9 +106,12 @@ with sync_playwright() as p:
     page.screenshot(path=str(OUT/"tps-desktop-diagnostic.png"))
     check(diag["canvasPointerDown"]>=1,f"desktop: pointer event never hit canvas {diag}")
     check(int(after)<int(before),f"desktop: mouse click failed to fire {diag}, errors {err}")
+    check(page.evaluate("() => document.querySelector('#shell').dataset.shotPoseSeen==='true'"),
+          'desktop: firing moved ammunition but the rigged shoulder / recoil action was never rendered')
     # A real reload must show progress after a successful shot, not just ship an inert DOM element.
     page.keyboard.press("r")
     page.wait_for_function("() => !document.querySelector('#reloadTrack').hidden",timeout=12000)
+    page.wait_for_function("() => document.querySelector('#shell').dataset.reloadPoseSeen==='true'",timeout=12000)
     check(page.evaluate("() => document.querySelector('#reloadText').textContent.startsWith('장전')"),
           "desktop: pressing R did not display a live reload percentage")
     check(page.evaluate("() => document.querySelector('#shell').dataset.heroLegRig==='bound'"),
