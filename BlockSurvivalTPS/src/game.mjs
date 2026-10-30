@@ -17,6 +17,7 @@ let joystick={x:0,z:0},stickPointer=null,lookPointer=null,lastLook=null;
 let renderer,scene,camera,clock,player,playerParts,world,raycaster;
 let heroRig=null,heroMixer=null,heroAnimation='',heroGun=null,heroGunTemplate=null,muzzleEffect=null,tracer=null,impactSpark=null,fxExpires=0,heroShotUntil=0,heroModern=false;
 const pickupVisual=new Map(),barrelVisual=new Map(),blastVisual=[],shockVisual=[];
+const casingPool=[],dustPool=[];let casingCursor=0,dustCursor=0,shotSerial=0;
 const heroClips=new Map();
 let quality=createQualityState({mobile,dpr:window.devicePixelRatio||1});
 const cameraShotVector=new THREE.Vector3();
@@ -109,7 +110,22 @@ function init3D(){
   mesh.visible=false;scene.add(mesh);
   impactPool.push({mesh,ttl:0,vx:0,vy:0,vz:0});
  }
+ // Original, tiny low-poly particles: fixed reusable pools, no textures or SVG.
+ const brassGeo=new THREE.CylinderGeometry(0.035,0.035,0.16,6);
+ const dustGeo=new THREE.IcosahedronGeometry(0.115,0);
+ const brassMat=new THREE.MeshLambertMaterial({color:0xe5bf72});
+ const dustMats=[0x879093,0x6a716c,0x968470].map(color=>new THREE.MeshLambertMaterial({color}));
+ for(let i=0;i<12;i++){
+  const mesh=new THREE.Mesh(brassGeo,brassMat);mesh.visible=false;scene.add(mesh);
+  casingPool.push({mesh,ttl:0,vx:0,vy:0,vz:0,bounced:false});
+ }
+ for(let i=0;i<24;i++){
+  const mesh=new THREE.Mesh(dustGeo,dustMats[i%3]);mesh.visible=false;scene.add(mesh);
+  dustPool.push({mesh,ttl:0,vx:0,vy:0,vz:0});
+ }
  shell.dataset.combatFx='ready';
+ shell.dataset.casingFx='ready';
+ shell.dataset.dustFx='ready';
  size();window.addEventListener('resize',size,{passive:true});
  canvas.addEventListener('webglcontextlost',evt=>{evt.preventDefault();pauseGame('그래픽 연결이 중단됐습니다');});
  canvas.addEventListener('webglcontextrestored',()=>location.reload());
@@ -405,10 +421,12 @@ function syncEnemies(t){
    v.warning.scale.setScalar(1.16-0.27*t);
   }
   const a=Math.atan2(state.x-e.x,state.z-e.z);
+  const hitSide=(e.impactX||0)*Math.cos(a)-(e.impactZ||0)*Math.sin(a);
+  const hitFront=(e.impactX||0)*Math.sin(a)+(e.impactZ||0)*Math.cos(a);
   root.rotation.y=(v.rigKind==='undead'||v.rigKind?.startsWith('modern')?a:v.mixer?a:a+Math.PI);
   if(e.hp<=0){
    if(v.rigKind?.startsWith('modern')){
-    const pose=undeadCombatPose({...e,distance:Math.hypot(e.x-state.x,e.z-state.z)});
+    const pose=undeadCombatPose({...e,hitSide,hitFront,distance:Math.hypot(e.x-state.x,e.z-state.z)});
     playRigClip(v,pose.clip,0.05);
     v.mixer.update(Math.min(0.06,nowFrameDt));
     correctModernPose(v.model,'undead');
@@ -423,7 +441,7 @@ function syncEnemies(t){
     if(v.mixer)v.mixer.setTime(60/24+Math.min(e.deadTime,(89-60)/24));
    }
   }else if(v.rigKind?.startsWith('modern')){
-   const pose=undeadCombatPose({...e,distance:Math.hypot(e.x-state.x,e.z-state.z)});
+   const pose=undeadCombatPose({...e,hitSide,hitFront,distance:Math.hypot(e.x-state.x,e.z-state.z)});
    playRigClip(v,pose.clip,0.13);
    v.mixer.update(Math.min(0.06,nowFrameDt));
    correctModernPose(v.model,'undead');
@@ -472,6 +490,7 @@ function syncBarrels(){
  shell.dataset.destructibles=String(barrelVisual.size);
 }
 function spawnBlastEffect(evt){
+ spawnBlastDust(evt);
  let fx=blastVisual.find(x=>x.ttl<=0)||blastVisual[0];
  fx.ttl=fx.total=0.40;fx.mesh.visible=true;
  fx.mesh.position.set(evt.x,0.85,evt.z);fx.mesh.scale.setScalar(0.15);
@@ -598,7 +617,7 @@ function begin(reset=false){
  }
  state.status='playing';start(state);overlay.hidden=true;toggleHUD(true);
  yaw=state.yaw;fireHeld=false;combatPopupUntil=0;cameraKick=0;
- for(const f of impactPool){f.ttl=0;f.mesh.visible=false;}
+ for(const f of [...impactPool,...casingPool,...dustPool]){f.ttl=0;f.mesh.visible=false;}
  $('combatPopup').style.opacity='0';updateHUD();
  syncBarrels();
  if(mobile){
@@ -612,6 +631,11 @@ function updateHUD(){
  $('healthText').textContent=state.hp+' / 100';
  $('wave').textContent=state.wave;$('kills').textContent=state.kills;$('score').textContent=state.score;
  $('ammo').innerHTML=state.ammo+' <small>/ '+state.reserve+'</small>';
+ const loading=state.reloadTime>0;
+ $('reloadTrack').hidden=!loading;
+ $('reloadFill').style.width=(loading?Math.max(0,Math.min(100,(1-state.reloadTime/1.35)*100)):100)+'%';
+ $('reloadText').textContent=loading?'장전 '+Math.round((1-state.reloadTime/1.35)*100)+'%':'';
+ $('ammo').classList.toggle('empty',state.ammo===0&&!loading);
  $('mode').textContent=FIRE_MODES[state.fireMode].label;
  $('mode').setAttribute('aria-label','사격 모드 '+FIRE_MODES[state.fireMode].label+' 전환');
  $('hitScreen').style.opacity=Math.min(0.16,state.hitFlash*0.65);
@@ -660,6 +684,52 @@ function localSound(hit=false){
    osc.start(now);osc.stop(now+0.07);
   }
  }catch{}
+}
+function spawnCasing(){
+ if(!casingPool.length)return;
+ const v=casingPool[casingCursor++%casingPool.length];
+ const rightX=Math.cos(yaw),rightZ=Math.sin(yaw),fwdX=Math.sin(yaw),fwdZ=-Math.cos(yaw);
+ const phase=(++shotSerial%7)*0.11;
+ v.ttl=0.95;v.bounced=false;
+ v.mesh.position.set(state.x+rightX*0.39+fwdX*0.24,1.55,state.z+rightZ*0.39+fwdZ*0.24);
+ v.mesh.scale.setScalar(1);v.mesh.rotation.set(phase,phase,0);
+ v.vx=rightX*(1.5+phase)+fwdX*0.35;v.vz=rightZ*(1.5+phase)+fwdZ*0.35;
+ v.vy=1.25+phase;v.mesh.visible=true;
+}
+function spawnBlastDust(evt){
+ if(!dustPool.length)return;
+ for(let i=0;i<12;i++){
+  const part=dustPool[dustCursor++%dustPool.length];
+  const angle=(i/12)*Math.PI*2+evt.barrelId*0.31;
+  const power=1.4+(i%3)*0.6;
+  part.mesh.position.set(evt.x+Math.sin(angle)*0.16,0.34,evt.z+Math.cos(angle)*0.16);
+  part.vx=Math.sin(angle)*power;part.vz=Math.cos(angle)*power;part.vy=1.6+(i%4)*0.25;
+  part.ttl=0.73+(i%4)*0.1;part.mesh.scale.setScalar(0.68+(i%3)*0.23);
+  part.mesh.visible=true;
+ }
+}
+function stepPhysicalParticles(dt){
+ if(state.status!=='playing')return;
+ for(const c of casingPool){
+  if(c.ttl<=0)continue;
+  c.ttl=Math.max(0,c.ttl-dt);
+  c.mesh.position.x+=c.vx*dt;c.mesh.position.z+=c.vz*dt;
+  c.vy-=9.5*dt;c.mesh.position.y+=c.vy*dt;
+  if(c.mesh.position.y<0.065){
+   c.mesh.position.y=0.065;c.vy=c.bounced?0:Math.max(0.13,-c.vy*0.26);
+   c.vx*=0.76;c.vz*=0.76;c.bounced=true;
+  }
+  c.mesh.rotation.x+=dt*13;c.mesh.rotation.z+=dt*9;
+  if(c.ttl===0)c.mesh.visible=false;
+ }
+ for(const d of dustPool){
+  if(d.ttl<=0)continue;
+  d.ttl=Math.max(0,d.ttl-dt);
+  d.mesh.position.x+=d.vx*dt;d.mesh.position.z+=d.vz*dt;
+  d.vy-=6*dt;d.mesh.position.y=Math.max(0.08,d.mesh.position.y+d.vy*dt);
+  d.mesh.rotation.y+=dt*3;d.mesh.scale.multiplyScalar(Math.max(0.75,1-dt*1.5));
+  if(d.ttl===0)d.mesh.visible=false;
+ }
 }
 function spawnCombatFragments(event){
  if(!scene||!event||!Number.isFinite(event.x)||!Number.isFinite(event.z))return;
@@ -715,6 +785,10 @@ function dispatchCombatEffects(now){
    $('combatPopup').classList.toggle('kill',event.type==='kill');
    combatPopupUntil=now+(event.type==='kill'?1350:520);
    if(event.type==='kill')cueSound('kill');
+  }else if(event.type==='stagger'){
+   $('combatPopup').textContent='공격 저지!';
+   $('combatPopup').classList.remove('kill');combatPopupUntil=now+620;
+   cueSound('warning');
   }else if(event.type==='explosion'){
    spawnBlastEffect(event);cueSound('explosion');
    if(mobile&&typeof navigator.vibrate==='function')navigator.vibrate(35);
@@ -782,7 +856,7 @@ function doFire(){
   if(result.hit)impactSpark.position.copy(endpoint);
   fxExpires=performance.now()+105;
  }
- if(result.fired){localSound(result.hit);cameraKick=Math.min(0.1,cameraKick+(state.fireMode==='rapid'?0.012:0.025));}
+ if(result.fired){spawnCasing();localSound(result.hit);cameraKick=Math.min(0.1,cameraKick+(state.fireMode==='rapid'?0.012:0.025));}
  if(!result.fired&&result.reason==='empty')reload(state);
 }
 function frame(now){
@@ -808,6 +882,7 @@ function frame(now){
  dispatchCombatEffects(now);
  stepCombatFragments(dt);
  stepBlastEffects(dt);
+ stepPhysicalParticles(dt);
  if(tracer&&now>fxExpires){tracer.visible=false;impactSpark.visible=false;}
  if(muzzleEffect)muzzleEffect.visible=state.status==='playing'&&state.shotFlash>0;
  if(renderer&&scene)renderer.render(scene,camera);
