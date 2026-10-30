@@ -35,8 +35,8 @@ export function clearPath(x1,z1,x2,z2){
 export function newGame(){
   return {status:"title",x:0,z:0,yaw:0,hp:100,maxHp:100,ammo:MAG_SIZE,
     reserve:72,reloadTime:0,shotCooldown:0,hitMarker:0,wave:1,waveLeft:5,spawnDelay:0.6,
-    nextWave:0,kills:0,score:0,elapsed:0,hitFlash:0,shotFlash:0,pickupFlash:0,seed:93461,
-    enemies:[],nextId:1,pickups:[],nextPickupId:1,toast:"중앙을 조준해 살아남으세요"};
+    nextWave:0,kills:0,score:0,combo:0,comboTime:0,elapsed:0,hitFlash:0,killMarker:0,shotFlash:0,pickupFlash:0,seed:93461,
+    enemies:[],nextId:1,pickups:[],nextPickupId:1,effects:[],nextEffectId:1,toast:"중앙을 조준해 살아남으세요"};
 }
 export function random(s){
   s.seed=(Math.imul(s.seed,1664525)+1013904223)>>>0;
@@ -80,9 +80,20 @@ export function assistedAim(s,dx,dz,cone=0.065){
 }
 export function start(s){if(s.status==="title"||s.status==="paused")s.status="playing";return s;}
 export function pause(s){if(s.status==="playing")s.status="paused";return s;}
+// Bounded visual/audio event stream; gameplay is authoritative, renderer is a subscriber.
+export function emitCombatEffect(s,type,fields={}){
+ const event={id:s.nextEffectId++,type,...fields};
+ s.effects.push(event);
+ if(s.effects.length>32)s.effects.splice(0,s.effects.length-32);
+ return event;
+}
+export function drainCombatEffects(s){
+ return s.effects.splice(0);
+}
+export const ATTACK_WINDUP=0.36;
 export function reload(s){
   if(s.status!=="playing"||s.reloadTime>0||s.ammo===MAG_SIZE||s.reserve<=0)return false;
-  s.reloadTime=1.35;s.toast="재장전 중";return true;
+  s.reloadTime=1.35;s.toast="재장전 중";emitCombatEffect(s,"reload");return true;
 }
 export function lineTarget(s,dx,dz){
   const len=Math.hypot(dx,dz);if(len<0.01)return null;dx/=len;dz/=len;
@@ -117,7 +128,7 @@ export function collectPickups(s,dt){
   }else{
    s.reserve+=18;s.toast='탄약 +18';
   }
-  s.pickupFlash=0.25;p.ttl=0;
+  s.pickupFlash=0.25;p.ttl=0;emitCombatEffect(s,'pickup',{kind:p.kind});
  }
  s.pickups=s.pickups.filter(p=>p.ttl>0);
 }
@@ -128,16 +139,21 @@ export function shoot(s,dx,dz){
   const adjusted=assistedAim(s,dx,dz);
   const e=lineTarget(s,adjusted.dx,adjusted.dz);
   if(!e)return {fired:true,hit:false};
-  e.hp-=e.type==="runner"?55:46;
+  const damage=e.type==="runner"?55:46;
+  e.hp-=damage;
   e.hitTime=0.2;s.hitMarker=0.22;
   const killed=e.hp<=0;
+  let points=0;
   if(killed){
-    s.kills++;s.score+=e.type==="runner"?125:100;
+    s.kills++;s.combo=s.comboTime>0?s.combo+1:1;s.comboTime=5.2;
+    points=(e.type==="runner"?125:100)+Math.min(5,s.combo-1)*20;
+    s.score+=points;s.killMarker=0.35;
     // Deterministic, bounded supplies: avoid requiring ads, purchases or network.
     if(s.kills%3===0)dropPickup(s,e.x,e.z,'ammo');
     if(s.kills%5===0)dropPickup(s,e.x,e.z,'medkit');
   }
-  return {fired:true,hit:true,killed,id:e.id};
+  emitCombatEffect(s,killed?'kill':'hit',{enemyId:e.id,x:e.x,z:e.z,damage,points,combo:s.combo});
+  return {fired:true,hit:true,killed,id:e.id,damage,points};
 }
 export function spawn(s){
   if(s.enemies.filter(e=>e.hp>0).length>=MAX_ACTIVE)return null;
@@ -152,7 +168,7 @@ export function spawn(s){
   const kind=random(s),type=kind<0.16?"runner":kind<0.27?"minion":"zombie";
   const e={...p,id:s.nextId++,type,radius:type==="minion"?0.78:0.63,
     hp:type==="runner"?52:76+Math.min(s.wave*6,60),speed:type==="runner"?3.2:type==="minion"?1.1:1.9,
-    attackCD:0.6+random(s),hitTime:0,deadTime:0,walk:random(s)*10};
+    attackCD:0.6+random(s),attackWindup:0,attackPulse:0,hitTime:0,deadTime:0,walk:random(s)*10};
   s.enemies.push(e);
   return e;
 }
@@ -200,6 +216,9 @@ export function tick(s,dt,controls={}){
   s.elapsed+=dt;s.shotCooldown=Math.max(0,s.shotCooldown-dt);
   s.shotFlash=Math.max(0,s.shotFlash-dt);
   s.hitMarker=Math.max(0,s.hitMarker-dt);
+  s.killMarker=Math.max(0,s.killMarker-dt);
+  s.comboTime=Math.max(0,s.comboTime-dt);
+  if(s.comboTime===0)s.combo=0;
   s.pickupFlash=Math.max(0,s.pickupFlash-dt);
   collectPickups(s,dt);
   s.hitFlash=Math.max(0,s.hitFlash-dt);
@@ -207,7 +226,7 @@ export function tick(s,dt,controls={}){
     s.reloadTime-=dt;
     if(s.reloadTime<=0){
       const n=Math.min(MAG_SIZE-s.ammo,s.reserve);
-      s.ammo+=n;s.reserve-=n;s.reloadTime=0;s.toast="재장전 완료";
+      s.ammo+=n;s.reserve-=n;s.reloadTime=0;s.toast="재장전 완료";emitCombatEffect(s,"reloadDone");
     }
   }
   if(Number.isFinite(controls.yaw))s.yaw=controls.yaw;
@@ -218,11 +237,33 @@ export function tick(s,dt,controls={}){
   const moved=moveCircle(s.x,s.z,dx*speed*dt,dz*speed*dt);
   s.x=moved.x;s.z=moved.z;
   for(const e of s.enemies){
+    if(s.status!=='playing')break;
     if(e.hp<=0){e.deadTime+=dt;continue;}
     e.hitTime=Math.max(0,e.hitTime-dt);
     e.walk+=dt;
     const ax=s.x-e.x,az=s.z-e.z,dist=Math.hypot(ax,az);
+    if(!Number.isFinite(e.attackCD))e.attackCD=0.6;
     e.attackCD=Math.max(0,e.attackCD-dt);
+    e.attackPulse=Math.max(0,(e.attackPulse||0)-dt);
+    // Telegraph -> strike -> recover. Animation and damage share attackWindup.
+    // Every strike re-checks distance AND solid cover so dodging is meaningful.
+    if(e.attackWindup>0){
+      const valid=dist<=1.58&&clearPath(e.x,e.z,s.x,s.z);
+      if(!valid){
+        e.attackWindup=0;e.attackCD=Math.max(e.attackCD,0.42);
+        emitCombatEffect(s,'cancel',{enemyId:e.id});
+      }else{
+        e.attackWindup=Math.max(0,e.attackWindup-dt);
+        if(e.attackWindup===0){
+          const damage=e.type==="runner"?9:12;
+          s.hp=Math.max(0,s.hp-damage);
+          s.hitFlash=0.30;e.attackPulse=0.26;e.attackCD=1.05;
+          emitCombatEffect(s,'damage',{enemyId:e.id,amount:damage,x:e.x,z:e.z});
+          if(s.hp===0){s.status="gameover";s.toast="생존 실패 — 다시 도전하세요";}
+        }
+      }
+      continue;
+    }
     if(dist>1.24||!clearPath(e.x,e.z,s.x,s.z)){
       let destination={x:s.x,z:s.z};
       const from={x:e.x,z:e.z};
@@ -249,9 +290,8 @@ export function tick(s,dt,controls={}){
         e.x=step.x;e.z=step.z;
       }
     }else if(e.attackCD===0){
-      s.hp=Math.max(0,s.hp-(e.type==="runner"?9:12));
-      s.hitFlash=0.24;e.attackCD=1.1;
-      if(s.hp===0){s.status="gameover";s.toast="생존 실패 — 다시 도전하세요";}
+      e.attackWindup=ATTACK_WINDUP;
+      emitCombatEffect(s,'warning',{enemyId:e.id,x:e.x,z:e.z});
     }
   }
   separateEnemies(s);
@@ -269,7 +309,7 @@ export function tick(s,dt,controls={}){
     if(s.nextWave<=0){
       s.wave++;s.waveLeft=Math.min(4+s.wave*2,18);s.nextWave=0;
       s.spawnDelay=0.6;s.reserve+=20;s.hp=Math.min(100,s.hp+12);
-      s.toast="웨이브 "+s.wave+" 시작";
+      s.toast="웨이브 "+s.wave+" 시작";emitCombatEffect(s,"wave",{wave:s.wave});
     }
   }
 }
