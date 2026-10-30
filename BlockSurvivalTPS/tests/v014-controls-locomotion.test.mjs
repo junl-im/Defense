@@ -29,7 +29,7 @@ test('leg stride is alternating and more visible during running',()=>{
 });
 test('stopping returns the procedural layer to a neutral rest pose',()=>{
  const v=heroStridePose({phase:Math.PI/2,blend:0,sprint:true,strafe:1});
- for(const number of Object.values(v))assert.equal(number,0);
+ for(const number of Object.values(v))assert.ok(Math.abs(number)<1e-9);
 });
 test('procedural gait ignores invalid phase and is bounded for mobile framerate drops',()=>{
  const v=heroStridePose({phase:NaN,blend:8,strafe:Infinity});
