@@ -26,6 +26,8 @@ def start(page,label):
     check(fatal.is_hidden(),f"{label}: WebGL init failure; cannot render TPS: {fatal.inner_text() if not fatal.is_hidden() else ''}")
     check(page.locator("#stage").evaluate("(c)=>c.width>0&&c.height>0"),f"{label}: canvas has no render surface")
     check(page.locator("#menuTitle").is_visible(),f"{label}: no start menu")
+    check('라니블록 생존' in page.title(),f'{label}: browser title still uses previous project name')
+    check('라니블록' in page.locator('#menuTitle').inner_text(),f'{label}: in-game title did not rename')
     page.locator("#primary").click()
     page.wait_for_timeout(900)
     check(page.locator("#overlay").is_hidden(),f"{label}: did not enter game")
@@ -113,6 +115,9 @@ with sync_playwright() as p:
           'desktop: actual survivor leg bones are missing from the imported rig')
     page.keyboard.down("w")
     page.wait_for_function("() => document.querySelector('#shell').dataset.heroLegMotion==='detected'",timeout=18000)
+    page.wait_for_function("() => Number(document.querySelector('#shell').dataset.footstepCount)>0",timeout=18000)
+    check(page.evaluate("() => document.querySelector('#shell').dataset.footstepFx==='active'"),
+          'desktop: walking did not spawn the pooled footstep dust effect')
     check(page.evaluate("() => document.querySelector('#shell').dataset.heroAnimation==='Run'"),
           'desktop: imported Run animation did not activate while moving')
     page.keyboard.press("Space")
