@@ -1,4 +1,4 @@
-name: Block Survival TPS — standalone playable alpha
+name: 라니블록 생존 — 독립 실행 게임 검증
 on:
   push:
     branches: [feature/block-survival-tps-v012-impact-casings-20261030, main]
@@ -46,7 +46,7 @@ jobs:
           node BlockSurvivalTPS/tools/verify-preview.mjs
           node --check BlockSurvivalTPS/dist/game.bundle.js
           test -s BlockSurvivalTPS/dist/THREE_LICENSE.txt
-          test -s BlockSurvivalTPS/dist/BLOCK_SURVIVAL_TPS_바로실행.html
+          test -s BlockSurvivalTPS/dist/라니블록_생존_바로실행.html
       - name: Quick static HTTP smoke
         shell: bash
         run: |
@@ -55,12 +55,12 @@ jobs:
           server=$!
           trap 'kill "$server" 2>/dev/null || true' EXIT
           sleep 2
-          curl --fail --silent --show-error http://localhost:8765/ | grep -q '블록 서바이벌 TPS'
+          curl --fail --silent --show-error http://localhost:8765/ | grep -q '라니블록 생존'
           curl --fail --silent --show-error http://localhost:8765/game.bundle.js | head -c 8 >/dev/null || :
       - name: Upload isolated playable preview only (not Pages deployment)
         uses: actions/upload-artifact@v4
         with:
-          name: block-survival-tps-playable-alpha-v01
+          name: raniblock-survival-playable-alpha-v015
           path: BlockSurvivalTPS/dist/
           retention-days: 7
           if-no-files-found: error
