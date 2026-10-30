@@ -1,6 +1,6 @@
 # 곰같은여우 — BLOCK SURVIVAL TPS
 
-**ALPHA 0.7 현대 CC0 생존자·좀비 3D 모델로 교체한 경량 웹 TPS 시제품.** 이전 라니킹덤은 `main`에서 정리했고 현재는 이 게임에 집중하여 개발·배포합니다. 최신 검증 결과와 빌드는 [Actions](https://github.com/junl-im/Defense/actions/workflows/block-survival-preview.yml) 참조. 브라우저에서 PC·모바일 실제 게임플레이 및 FPS 실측은 별도 검증이 필요합니다.
+**ALPHA 0.8 현대 캐릭터의 사격·장전·피격·사망 모션을 강화한 경량 웹 TPS.** 이전 라니킹덤은 `main`에서 정리했고 현재는 이 게임에 집중하여 개발·배포합니다. 최신 검증 결과와 빌드는 [Actions](https://github.com/junl-im/Defense/actions/workflows/block-survival-preview.yml) 참조. 브라우저에서 PC·모바일 실제 게임플레이 및 FPS 실측은 별도 검증이 필요합니다.
 
 ## 보존 및 권리
 - 게임 실행 파일: \`BlockSurvivalTPS/index.html\`, \`src/game.mjs\`, \`src/sim.mjs\`, \`style.css\`
@@ -104,3 +104,11 @@ python -m http.server 8000
 - [검증된 바이너리와 출처](./runtime/PROVENANCE_MODERN.json)만 GitHub 저장, SVG 원본은 추출·배포하지 않음. 총 모델 12종 중 신형 3종을 게임에 우선 로드, 이전 KayKit 캐릭터는 로딩 장애 시 폴백.
 - 오른손 `RightHand` 본에 Kenney 블라스터를 연결. 달리기·대기 애니메이션과 총 발사 시 짧은 반동을 연결. 신형 Kenney 팩 자체에는 총 사격·피격·사망 전용 클립이 없으므로 이 세 동작은 간단한 절차적 효과로 보완하며, 향후 새 동작 제작 예정.
 - 기존 v0.6 좀비 군중 AI, A* 우회·보급품·PC/모바일 가로세로 HUD, 자동 렌더 품질을 모두 유지.
+
+## v0.8 — 현대 생존자·좀비의 자체 절차적 전투 동작
+
+- [애니메이션 계산기](./src/combat-pose.mjs): 원본 Kenney 팩이 제공하지 않는 동작에 대해 **독자적인 절차적 전투 연출**을 추가. 기존 FBX 애니메이션을 실제 사격·사망 클립인 것처럼 표기하지 않음.
+- [리깅 캐릭터 연결](./src/game.mjs): 사격 직후 오른손의 총 반동, 재장전 중간에 총을 낮추는 효과, 양팔 견착 자세, 좀비 피격 순간 상체 흔들림·공격 시 전방 기울임·사망 시 부드러운 넘어짐.
+- 상태 계산은 프레임 시간보다 시뮬레이션 속성 `shotFlash`·`reloadTime`·`hitTime`·`deadTime`에 의존. 이전 Kenney CC0 현대 모델 3종, 구 KayKit 폴백, 12 GLB, SVG 금지 유지.
+- [회귀 테스트](./tests/combat-pose.test.mjs): 사격 이후 복구·장전 중간 동작·이상 입력·좀비 피격·사망/공격·상태 해제를 자동 검증. [브라우저 QA](./tests/browser_qa.py)에서 현대 리깅 및 전투 파이프라인 로딩 추가 확인.
+- 휴대전화 실제 GPU FPS/발열은 미측정. 소프트웨어 WebGL CI 결과만으로 실기기 성능을 보증하지 않음.

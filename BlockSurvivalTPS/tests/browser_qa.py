@@ -43,6 +43,8 @@ def start(page,label):
     for key in ("modernHero","modernZombie","modernRunner","modernHeroRig","modernGun"):
         page.wait_for_function("(key) => document.querySelector('#shell').dataset[key]==='loaded' || (key==='modernGun' && document.querySelector('#shell').dataset[key]==='attached')",
                                arg=key,timeout=25000)
+    check(page.evaluate("() => document.querySelector('#shell').dataset.combatVersion==='v08'"),
+          f"{label}: modern combat pose pipeline not activated")
     check(page.evaluate("() => ['Run','Idle'].includes(document.querySelector('#shell').dataset.heroAnimation)"),
           f"{label}: modern skin animation clip never activated")
     page.wait_for_timeout(1500)
