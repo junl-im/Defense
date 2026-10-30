@@ -6,7 +6,7 @@ import {clone as cloneSkinned} from 'three/addons/utils/SkeletonUtils.js';
 import {ARENA,COVER,clamp,newGame,start,pause,reload,shoot,tick,drainCombatEffects,ENEMY_ATTACK,BLAST_RADIUS,FIRE_MODES,setFireMode,tryDodge,DODGE_DURATION} from './sim.mjs';
 import {populateRuinedCity} from './world-detail.mjs';
 import {createQualityState,updateQuality} from './quality.mjs';
-import {heroCombatPose,undeadCombatPose,heroStridePose,footstepCrossed} from './combat-pose.mjs';
+import {heroCombatPose,undeadCombatPose,heroStridePose,heroDodgePose,footstepCrossed} from './combat-pose.mjs';
 import {applyLookDelta,LOOK_SENSITIVITY} from './control-math.mjs';
 
 const $=id=>document.getElementById(id);
@@ -21,7 +21,8 @@ const pickupVisual=new Map(),barrelVisual=new Map(),blastVisual=[],shockVisual=[
 const casingPool=[],dustPool=[];let casingCursor=0,dustCursor=0,shotSerial=0;
 const heroClips=new Map();
 let heroLegBones=null,heroMotionBlend=0,heroStridePhase=0,heroRestHeight=0,heroPreviousLegX=null;
-let currentStrafe=0,footstepCount=0;
+let heroDodgeWasActive=false,heroLandingTimer=0;
+let currentStrafe=0,currentForward=0,footstepCount=0;
 let quality=createQualityState({mobile,dpr:window.devicePixelRatio||1});
 const cameraShotVector=new THREE.Vector3();
 const enemyHitTint=new THREE.Color(0xff562e);
@@ -295,7 +296,11 @@ function alignArm(rig,side,mode,pose=null){
   if(side==='Right')aimDesired.set(-0.13,-0.46+(pose?.shoulderLift||0),0.86);
   else aimDesired.set(0.16,-0.55+(pose?.supportLift||0),0.78);
  }else{
-  aimDesired.set(side==='Right'?-0.12:0.12,-0.48,0.76);
+  // Raise both real skinned arms during the warning and push the leading claw
+  // through the attack impact, rather than leaving an idle, frozen zombie pose.
+  const swipe=pose?.clawSwipe||0;
+  aimDesired.set(side==='Right'?-0.12-swipe:0.12+swipe,
+   -0.48+(pose?.clawRaise||0),0.76+(pose?.clawReach||0));
  }
  rig.getWorldQuaternion(aimRoot);
  aimDesired.applyQuaternion(aimRoot).normalize();
@@ -370,7 +375,7 @@ function installHero(gltf,modern=false){
  for(const clip of gltf.animations)heroClips.set(clip.name,clip);
  heroAnimation='';
  if(skinnedParts>0&&(heroClips.size===6||modern&&heroClips.size===3))shell.dataset.heroRig='loaded';
- if(modern&&heroClips.has('Run')){shell.dataset.modernHeroRig='loaded';shell.dataset.combatVersion='v016';}
+ if(modern&&heroClips.has('Run')){shell.dataset.modernHeroRig='loaded';shell.dataset.combatVersion='v017';}
  attachHeroGun();
 }
 function attachHeroGun(){
@@ -454,6 +459,8 @@ function makeEnemyVisual(e){
 }
 function applyEnemyHitVisual(visual,pose){
  if(visual.headBone&&pose.headSnap>0.001)visual.headBone.rotation.z+=pose.headSnap;
+ if(visual.headBone&&pose.attack)visual.headBone.rotation.x-=pose.windup*0.12;
+ if(pose.clawRaise>0.25)shell.dataset.enemyClawPose='detected';
  for(const m of visual.hitMaterials||[]){
   m.emissive.copy(m.userData.raniEmissiveBase).lerp(enemyHitTint,pose.hit);
   m.emissiveIntensity=m.userData.raniEmissiveLevel+pose.hitGlow;
@@ -484,7 +491,7 @@ function syncEnemies(t){
     const pose=undeadCombatPose({...e,hitSide,hitFront,distance:Math.hypot(e.x-state.x,e.z-state.z)});
     playRigClip(v,pose.clip,0.05);
     v.mixer.update(Math.min(0.06,nowFrameDt));
-    correctModernPose(v.model,'undead');
+    correctModernPose(v.model,'undead',pose);
     applyEnemyHitVisual(v,pose);
     root.rotation.x=pose.leanX;root.rotation.z=pose.leanZ;
     root.position.y=pose.fallY;
@@ -500,7 +507,7 @@ function syncEnemies(t){
    const pose=undeadCombatPose({...e,hitSide,hitFront,distance:Math.hypot(e.x-state.x,e.z-state.z)});
    playRigClip(v,pose.clip,0.13);
    v.mixer.update(Math.min(0.06,nowFrameDt));
-   correctModernPose(v.model,'undead');
+   correctModernPose(v.model,'undead',pose);
    applyEnemyHitVisual(v,pose);
    root.rotation.x=pose.leanX;root.rotation.z=pose.leanZ;
    v.model.position.z=pose.offsetZ;
@@ -609,16 +616,28 @@ function applyModernHeroStride(moving){
   spawnFootstepDust(Math.floor(heroStridePhase/Math.PI)%2===0);
   shell.dataset.footstepFx='active';shell.dataset.footstepCount=String(++footstepCount);
  }
- const gait=heroStridePose({phase:heroStridePhase,blend:heroMotionBlend,sprint,strafe:currentStrafe});
- // Rig root mass transfer, independent of whether the source Run clip moves its bones.
- heroRig.position.y=heroRestHeight+gait.bob;
- heroRig.rotation.x=gait.lean;
- heroRig.rotation.z=gait.sway;
+ const dodging=state.dodgeTime>0;
+ if(heroDodgeWasActive&&!dodging){
+  heroLandingTimer=0.20;
+  spawnFootstepDust(true);spawnFootstepDust(false);
+  shell.dataset.dodgeLanding='detected';
+ }
+ heroDodgeWasActive=dodging;
+ heroLandingTimer=Math.max(0,heroLandingTimer-nowFrameDt);
+ const gait=heroStridePose({phase:heroStridePhase,blend:heroMotionBlend,sprint,strafe:currentStrafe,forward:currentForward});
+ const dodge=heroDodgePose({dodgeTime:state.dodgeTime,duration:DODGE_DURATION,landingTime:heroLandingTimer});
+ // Rig root mass transfer and lateral direction change on the actual skinned model.
+ heroRig.position.y=heroRestHeight+gait.bob+dodge.hop-dodge.crouch*0.18;
+ heroRig.rotation.x=gait.lean+gait.braking-dodge.crouch*0.25;
+ heroRig.rotation.y=Math.PI+gait.pivotYaw;
+ heroRig.rotation.z=gait.sway+gait.lateralLean+dodge.roll;
+ if(Math.abs(gait.pivotYaw)>0.04)shell.dataset.heroStrafeTurn='detected';
+ if(dodge.airborne)shell.dataset.heroDodgeRig='detected';
  if(!heroLegBones?.leftThigh||!heroLegBones?.rightThigh)return;
  // AnimationMixer samples the imported clip first, then the lightweight stride
  // adjusts real skeletal joints. The original CC0 model and textures stay intact.
  for(const key of ['leftThigh','rightThigh','leftShin','rightShin']){
-  const bone=heroLegBones[key];if(bone)bone.rotation.x+=gait[key];
+  const bone=heroLegBones[key];if(bone)bone.rotation.x+=gait[key]+(key.endsWith('Thigh')?dodge.tuck:0);
  }
  const legX=[heroLegBones.leftThigh.rotation.x,heroLegBones.rightThigh.rotation.x];
  if(moving&&heroPreviousLegX&&legX.some((a,i)=>Math.abs(a-heroPreviousLegX[i])>0.012))shell.dataset.heroLegMotion='detected';
@@ -629,10 +648,11 @@ function syncPlayer(t,moving){
  const dodgePhase=state.dodgeTime>0?Math.sin(Math.PI*(1-state.dodgeTime/DODGE_DURATION)):0;
  player.rotation.z=dodgePhase*0.17;
  if(heroMixer){
-  const name=heroModern?(moving?'Run':'Idle'):
+  const name=heroModern?(state.dodgeTime>0&&heroClips.has('Jump')?'Jump':moving?'Run':'Idle'):
     state.reloadTime>0?'1H_Ranged_Reload':state.status==='playing'&&state.elapsed<heroShotUntil?'1H_Ranged_Shoot':
     moving?(keys.has('shift')||sprintHeld?'Running_A':'Walking_A'):'Idle';
   playHeroClip(name);
+  if(heroModern&&name==='Jump')shell.dataset.heroDodgeClip='detected';
   if(heroModern&&heroClips.has('Run'))heroMixer.clipAction(heroClips.get('Run')).timeScale=keys.has('shift')||sprintHeld?1.35:0.8;
   heroMixer.update(Math.min(0.06,nowFrameDt));
   if(heroModern){
@@ -714,7 +734,8 @@ function begin(reset=false){
  }
  state.status='playing';start(state);overlay.hidden=true;toggleHUD(true);
  yaw=state.yaw;fireHeld=false;combatPopupUntil=0;cameraKick=0;
- heroMotionBlend=0;heroStridePhase=0;heroPreviousLegX=null;shell.dataset.heroLegMotion='waiting';
+ heroMotionBlend=0;heroStridePhase=0;heroPreviousLegX=null;heroDodgeWasActive=false;heroLandingTimer=0;shell.dataset.heroLegMotion='waiting';
+ shell.dataset.heroDodgeClip='waiting';shell.dataset.heroDodgeRig='waiting';shell.dataset.dodgeLanding='waiting';shell.dataset.heroStrafeTurn='waiting';shell.dataset.enemyClawPose='waiting';
  footstepCount=0;shell.dataset.footstepCount='0';shell.dataset.footstepFx='ready';
  shell.dataset.shotPoseSeen='false';shell.dataset.reloadPoseSeen='false';
  for(const f of [...impactPool,...casingPool,...dustPool]){f.ttl=0;f.mesh.visible=false;}
@@ -1019,7 +1040,7 @@ function frame(now){
   const ahead=Math.sin(yaw),side=Math.cos(yaw);
   const dx=ahead*f+side*strafe,dz=-side*f+ahead*strafe;
   const prevX=state.x,prevZ=state.z;
-  currentStrafe=strafe;
+  currentStrafe=strafe;currentForward=f;
   tick(state,dt,{x:dx,z:dz,yaw,sprint:keys.has('shift')||sprintHeld});
   if(fireHeld&&state.shotCooldown<=0)doFire();
   syncPlayer(now/1000,Math.hypot(state.x-prevX,state.z-prevZ)>0.001);syncEnemies(now/1000);syncPickups(now/1000);syncBarrels();
