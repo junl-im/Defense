@@ -152,7 +152,10 @@ export function detonateBarrel(s,first){
    if(Math.hypot(enemy.x-barrel.x,enemy.z-barrel.z)>BLAST_RADIUS+enemy.radius)continue;
    if(!clearPath(barrel.x,barrel.z,enemy.x,enemy.z))continue;
    const dealt=Math.min(enemy.hp,BLAST_DAMAGE);
-   enemy.hp-=BLAST_DAMAGE;enemy.hitTime=0.22;damage+=dealt;
+   enemy.hp-=BLAST_DAMAGE;enemy.hitTime=0.22;
+   const length=Math.max(0.01,Math.hypot(enemy.x-barrel.x,enemy.z-barrel.z));
+   enemy.impactX=(enemy.x-barrel.x)/length;enemy.impactZ=(enemy.z-barrel.z)/length;
+   damage+=dealt;
    if(enemy.hp<=0){kills++;const points=awardKill(s,enemy);emitCombatEffect(s,'kill',{enemyId:enemy.id,x:enemy.x,z:enemy.z,damage:dealt,points,combo:s.combo,blast:true});}
    else emitCombatEffect(s,'hit',{enemyId:enemy.id,x:enemy.x,z:enemy.z,damage:dealt,blast:true});
   }
@@ -239,6 +242,17 @@ export function shoot(s,dx,dz){
   const damage=e.type==='runner'?spec.runnerDamage:spec.damage;
   e.hp-=damage;
   e.hitTime=0.2;s.hitMarker=0.22;
+  // Every impact has a physical incoming direction for animation.
+  e.impactX=adjusted.dx;e.impactZ=adjusted.dz;
+  // A well-timed shot interrupts a telegraphed attack ONCE, with cooldown to
+  // prevent rapid-fire from permanently stun-locking any zombie.
+  const interrupted=e.hp>0&&e.attackWindup>0&&(e.staggerCooldown||0)<=0;
+  if(interrupted){
+   e.attackWindup=0;
+   e.attackCD=Math.max(e.attackCD,0.48);
+   e.staggerCooldown=1.35;
+   emitCombatEffect(s,'stagger',{enemyId:e.id,x:e.x,z:e.z});
+  }
   const killed=e.hp<=0;
   let points=0;
   if(killed)points=awardKill(s,e);
@@ -258,7 +272,7 @@ export function spawn(s){
   const kind=random(s),type=kind<0.16?"runner":kind<0.27?"minion":"zombie";
   const e={...p,id:s.nextId++,type,radius:type==="minion"?0.78:0.63,
     hp:type==="runner"?52:76+Math.min(s.wave*6,60),speed:type==="runner"?3.2:type==="minion"?1.1:1.9,
-    attackCD:0.6+random(s),attackWindup:0,attackWindupTotal:0,attackPulse:0,hitTime:0,deadTime:0,walk:random(s)*10};
+    attackCD:0.6+random(s),attackWindup:0,attackWindupTotal:0,attackPulse:0,hitTime:0,staggerCooldown:0,impactX:0,impactZ:0,deadTime:0,walk:random(s)*10};
   s.enemies.push(e);
   return e;
 }
@@ -330,6 +344,7 @@ export function tick(s,dt,controls={}){
     if(s.status!=='playing')break;
     if(e.hp<=0){e.deadTime+=dt;continue;}
     e.hitTime=Math.max(0,e.hitTime-dt);
+    e.staggerCooldown=Math.max(0,(e.staggerCooldown||0)-dt);
     e.walk+=dt;
     const ax=s.x-e.x,az=s.z-e.z,dist=Math.hypot(ax,az);
     const attack=ENEMY_ATTACK[e.type]||ENEMY_ATTACK.zombie;
