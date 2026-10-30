@@ -318,7 +318,7 @@ function installHero(gltf,modern=false){
  for(const clip of gltf.animations)heroClips.set(clip.name,clip);
  heroAnimation='';
  if(skinnedParts>0&&(heroClips.size===6||modern&&heroClips.size===3))shell.dataset.heroRig='loaded';
- if(modern&&heroClips.has('Run')){shell.dataset.modernHeroRig='loaded';shell.dataset.combatVersion='v09';}
+ if(modern&&heroClips.has('Run')){shell.dataset.modernHeroRig='loaded';shell.dataset.combatVersion='v010';}
  attachHeroGun();
 }
 function attachHeroGun(){
@@ -459,6 +459,7 @@ function syncBarrels(){
   }
   view.visible=!barrel.exploded;
  }
+ shell.dataset.destructibles=String(barrelVisual.size);
 }
 function spawnBlastEffect(evt){
  let fx=blastVisual.find(x=>x.ttl<=0)||blastVisual[0];
@@ -671,11 +672,11 @@ function cueSound(type){
   const ctx=localSound.ctx;
   if(!ctx||ctx.state!=='running')return;
   const now=ctx.currentTime,osc=ctx.createOscillator(),gain=ctx.createGain();
-  const base=type==='kill'?600:type==='damage'?175:type==='warning'?420:470;
-  osc.type=type==='damage'?'triangle':'sine';
+  const base=type==='kill'?600:type==='explosion'?90:type==='damage'?175:type==='warning'?420:470;
+  osc.type=type==='damage'||type==='explosion'?'triangle':'sine';
   osc.frequency.setValueAtTime(base,now);
   osc.frequency.exponentialRampToValueAtTime(type==='kill'?880:type==='damage'?78:base*0.72,now+0.12);
-  const volume=type==='damage'?0.032:type==='kill'?0.018:0.008;
+  const volume=type==='explosion'?0.05:type==='damage'?0.032:type==='kill'?0.018:0.008;
   gain.gain.setValueAtTime(volume,now);gain.gain.exponentialRampToValueAtTime(0.001,now+0.13);
   osc.connect(gain).connect(ctx.destination);osc.start(now);osc.stop(now+0.14);
  }catch{}
@@ -692,12 +693,14 @@ function dispatchCombatEffects(now){
    combatPopupUntil=now+(event.type==='kill'?1350:520);
    if(event.type==='kill')cueSound('kill');
   }else if(event.type==='explosion'){
-   spawnBlastEffect(event);cueSound('damage');
+   spawnBlastEffect(event);cueSound('explosion');
+   if(mobile&&typeof navigator.vibrate==='function')navigator.vibrate(35);
    $('combatPopup').textContent='폭발!';
    $('combatPopup').classList.add('kill');
    combatPopupUntil=now+600;
   }else if(event.type==='damage'){
    cueSound('damage');
+   if(mobile&&typeof navigator.vibrate==='function')navigator.vibrate(20);
    combatPopupUntil=Math.max(combatPopupUntil,now+650);
    $('combatPopup').textContent='피격 −'+event.amount;
    $('combatPopup').classList.remove('kill');
