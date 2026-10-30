@@ -2,6 +2,15 @@
 import {findGridPath,segmentWalkable} from './navigation.mjs';
 export const ARENA = 27;
 export const MAG_SIZE = 12;
+export const FIRE_MODES=Object.freeze({
+ precision:Object.freeze({label:'정밀',cooldown:0.19,damage:46,runnerDamage:55,barrelDamage:46,flash:0.13,recoil:1}),
+ rapid:Object.freeze({label:'속사',cooldown:0.105,damage:27,runnerDamage:31,barrelDamage:27,flash:0.09,recoil:0.58})
+});
+export function setFireMode(s,mode){
+ if(s.status!=='playing'||!Object.hasOwn(FIRE_MODES,mode)||s.fireMode===mode)return false;
+ s.fireMode=mode;emitCombatEffect(s,'mode',{mode});return true;
+}
+
 export const MAX_ACTIVE = 12;
 export const COVER = [
   {x:-12,z:-9,w:7,d:7,h:7},{x:12,z:-9,w:7,d:7,h:8},
@@ -34,7 +43,7 @@ export function clearPath(x1,z1,x2,z2){
 }
 export function newGame(){
   return {status:"title",x:0,z:0,yaw:0,hp:100,maxHp:100,ammo:MAG_SIZE,
-    reserve:72,reloadTime:0,shotCooldown:0,hitMarker:0,wave:1,waveLeft:5,spawnDelay:0.6,
+    reserve:72,reloadTime:0,shotCooldown:0,fireMode:'precision',hitMarker:0,wave:1,waveLeft:5,spawnDelay:0.6,
     nextWave:0,kills:0,score:0,combo:0,comboTime:0,elapsed:0,hitFlash:0,killMarker:0,shotFlash:0,pickupFlash:0,seed:93461,
     enemies:[],nextId:1,pickups:[],nextPickupId:1,barrels:freshBarrels(),effects:[],nextEffectId:1,toast:"중앙을 조준해 살아남으세요"};
 }
@@ -208,7 +217,8 @@ export function collectPickups(s,dt){
 export function shoot(s,dx,dz){
   if(s.status!=="playing"||s.reloadTime>0||s.shotCooldown>0)return {fired:false,reason:"cooldown"};
   if(s.ammo===0)return {fired:false,reason:"empty"};
-  s.ammo--;s.shotCooldown=0.19;s.shotFlash=0.13;
+  const spec=FIRE_MODES[s.fireMode]||FIRE_MODES.precision;
+  s.ammo--;s.shotCooldown=spec.cooldown;s.shotFlash=spec.flash;
   const directBarrel=lineBarrel(s,dx,dz);
   const directEnemy=lineTarget(s,dx,dz);
   // A deliberate direct shot at a barrel must not be magnetized away to a zombie
@@ -220,13 +230,13 @@ export function shoot(s,dx,dz){
   const b=directFirst?directBarrel:lineBarrel(s,adjusted.dx,adjusted.dz);
   const eDist=e?Math.hypot(e.x-s.x,e.z-s.z):Infinity;
   if(b&&(directFirst||b.distance<eDist)){
-    b.barrel.hp-=46;s.hitMarker=0.22;
+    b.barrel.hp-=spec.barrelDamage;s.hitMarker=0.22;
     const blast=b.barrel.hp<=0?detonateBarrel(s,b.barrel):null;
     return {fired:true,hit:true,barrel:true,exploded:!!blast,blast,id:b.barrel.id,
       aim:directFirst?{dx:dx/Math.hypot(dx,dz),dz:dz/Math.hypot(dx,dz)}:{dx:adjusted.dx,dz:adjusted.dz},x:b.barrel.x,z:b.barrel.z};
   }
   if(!e)return {fired:true,hit:false,aim:{dx:adjusted.dx,dz:adjusted.dz}};
-  const damage=e.type==="runner"?55:46;
+  const damage=e.type==='runner'?spec.runnerDamage:spec.damage;
   e.hp-=damage;
   e.hitTime=0.2;s.hitMarker=0.22;
   const killed=e.hp<=0;
