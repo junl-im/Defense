@@ -21,7 +21,7 @@ const heroClips=new Map();
 let quality=createQualityState({mobile,dpr:window.devicePixelRatio||1});
 const cameraShotVector=new THREE.Vector3();
 let lastFrame=performance.now(),fpsCount=0,fpsStart=lastFrame,fps=60,uiAt=0,modelStarted=false,nowFrameDt=0.016;
-let lastToast='',toastUntil=0,combatPopupUntil=0,fxCursor=0;
+let lastToast='',toastUntil=0,combatPopupUntil=0,fxCursor=0,lastWarningCue=0;
 const impactPool=[];
 let fragmentStone,fragmentGold;
 const enemiesVisual=new Map(),assetCache=new Map(),collisionMeshes=[],modelLoader=new GLTFLoader();
@@ -633,8 +633,8 @@ function dispatchCombatEffects(now){
    $('combatPopup').textContent='피격 −'+event.amount;
    $('combatPopup').classList.remove('kill');
   }else if(event.type==='warning'){
-   // Warnings are also exposed through the persistent short-lived on-screen cue.
-   cueSound('warning');
+   // Avoid 12 nearby zombies playing an overlapping wall of warning beeps.
+   if(now-lastWarningCue>850){cueSound('warning');lastWarningCue=now;}
   }else if(['reload','reloadDone','pickup','wave'].includes(event.type)){
    cueSound(event.type==='wave'?'kill':'reload');
   }
@@ -660,7 +660,8 @@ function doFire(){
  if(result.fired){
   heroShotUntil=state.elapsed+0.32;
   const startPoint=new THREE.Vector3(state.x+Math.sin(yaw)*0.5,1.45,state.z-Math.cos(yaw)*0.5);
-  const endpoint=new THREE.Vector3(startPoint.x+aim.dx*34,1.45,startPoint.z+aim.dz*34);
+  const trueAim=result.aim||aim;
+  const endpoint=new THREE.Vector3(startPoint.x+trueAim.dx*34,1.45,startPoint.z+trueAim.dz*34);
   if(result.hit){
    const e=state.enemies.find(x=>x.id===result.id);
    if(e)endpoint.set(e.x,1.45,e.z);
