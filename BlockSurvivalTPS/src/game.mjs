@@ -3,7 +3,7 @@
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as cloneSkinned} from 'three/addons/utils/SkeletonUtils.js';
-import {ARENA,COVER,clamp,newGame,start,pause,reload,shoot,tick,drainCombatEffects,ENEMY_ATTACK,BLAST_RADIUS} from './sim.mjs';
+import {ARENA,COVER,clamp,newGame,start,pause,reload,shoot,tick,drainCombatEffects,ENEMY_ATTACK,BLAST_RADIUS,FIRE_MODES,setFireMode} from './sim.mjs';
 import {populateRuinedCity} from './world-detail.mjs';
 import {createQualityState,updateQuality} from './quality.mjs';
 import {heroCombatPose,undeadCombatPose} from './combat-pose.mjs';
@@ -16,15 +16,15 @@ let state=newGame(),yaw=0,pitch=0,fireHeld=false,sprintHeld=false;
 let joystick={x:0,z:0},stickPointer=null,lookPointer=null,lastLook=null;
 let renderer,scene,camera,clock,player,playerParts,world,raycaster;
 let heroRig=null,heroMixer=null,heroAnimation='',heroGun=null,heroGunTemplate=null,muzzleEffect=null,tracer=null,impactSpark=null,fxExpires=0,heroShotUntil=0,heroModern=false;
-const pickupVisual=new Map(),barrelVisual=new Map(),blastVisual=[];
+const pickupVisual=new Map(),barrelVisual=new Map(),blastVisual=[],shockVisual=[];
 const heroClips=new Map();
 let quality=createQualityState({mobile,dpr:window.devicePixelRatio||1});
 const cameraShotVector=new THREE.Vector3();
 let lastFrame=performance.now(),fpsCount=0,fpsStart=lastFrame,fps=60,uiAt=0,modelStarted=false,nowFrameDt=0.016;
-let lastToast='',toastUntil=0,combatPopupUntil=0,fxCursor=0,lastWarningCue=0;
+let lastToast='',toastUntil=0,combatPopupUntil=0,fxCursor=0,lastWarningCue=0,cameraKick=0;
 const impactPool=[];
 let fragmentStone,fragmentGold;
-let attackRingGeometry,attackRingMaterials,blastGeometry,barrelBodyGeometry,barrelBandGeometry,barrelTopGeometry;
+let attackRingGeometry,attackRingMaterials,blastGeometry,shockRingGeometry,barrelBodyGeometry,barrelBandGeometry,barrelTopGeometry;
 const enemiesVisual=new Map(),assetCache=new Map(),collisionMeshes=[],modelLoader=new GLTFLoader();
 const named={minion:'minion-a01.glb',bat:'Bat.glb',gun:'blaster.glb'};
 const assetURLs={
@@ -74,6 +74,14 @@ function init3D(){
  barrelBodyGeometry=new THREE.CylinderGeometry(0.47,0.49,1.1,9);
  barrelBandGeometry=new THREE.CylinderGeometry(0.51,0.51,0.12,9);
  barrelTopGeometry=new THREE.CylinderGeometry(0.32,0.32,0.045,9);
+ shockRingGeometry=new THREE.RingGeometry(0.82,1,24);
+ const shockMaterial=new THREE.MeshBasicMaterial({color:0xf2b77a,transparent:true,opacity:0,side:THREE.DoubleSide,depthWrite:false});
+ for(let i=0;i<3;i++){
+  const mesh=new THREE.Mesh(shockRingGeometry,shockMaterial.clone());
+  mesh.rotation.x=-Math.PI/2;mesh.visible=false;mesh.position.y=0.10;scene.add(mesh);
+  shockVisual.push({mesh,ttl:0,total:0.46});
+ }
+ shell.dataset.shockwaveFx='ready';
  blastGeometry=new THREE.SphereGeometry(1,12,8);
  for(let i=0;i<3;i++){
   const mesh=new THREE.Mesh(blastGeometry,new THREE.MeshBasicMaterial({color:0xffb65d,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending}));
@@ -468,6 +476,8 @@ function spawnBlastEffect(evt){
  fx.ttl=fx.total=0.40;fx.mesh.visible=true;
  fx.mesh.position.set(evt.x,0.85,evt.z);fx.mesh.scale.setScalar(0.15);
  fx.mesh.material.opacity=0.46;
+ const ring=shockVisual.find(x=>x.ttl<=0)||shockVisual[0];
+ ring.ttl=ring.total=0.46;ring.mesh.visible=true;ring.mesh.position.x=evt.x;ring.mesh.position.z=evt.z;ring.mesh.scale.setScalar(0.12);
 }
 function stepBlastEffects(dt){
  if(state.status!=='playing')return;
@@ -477,6 +487,14 @@ function stepBlastEffects(dt){
   const t=1-f.ttl/f.total;
   f.mesh.scale.setScalar(0.15+BLAST_RADIUS*t*0.83);
   f.mesh.material.opacity=0.32*(1-t)*(1-t);
+  if(f.ttl===0)f.mesh.visible=false;
+ }
+ for(const f of shockVisual){
+  if(f.ttl<=0)continue;
+  f.ttl=Math.max(0,f.ttl-dt);
+  const t=1-f.ttl/f.total;
+  f.mesh.scale.setScalar(0.12+BLAST_RADIUS*t);
+  f.mesh.material.opacity=0.55*(1-t)*(1-t);
   if(f.ttl===0)f.mesh.visible=false;
  }
 }
@@ -543,6 +561,7 @@ function updateCamera(dt){
  const hits=raycaster.intersectObjects(collisionMeshes,false);
  if(hits.length)desired.copy(focus).addScaledVector(dir,Math.max(0.75,hits[0].distance-0.45));
  camera.position.lerp(desired,Math.min(1,dt*12));
+ if(state.status==='playing'&&cameraKick>0){camera.position.y+=cameraKick*0.55;cameraKick=Math.max(0,cameraKick-dt*0.28);}
  // Short, subtle local camera response to *actual* damage, not to mere proximity.
  if(state.hitFlash>0&&state.status==='playing'){
   const strength=Math.min(0.09,state.hitFlash*0.22);
@@ -575,10 +594,10 @@ function begin(reset=false){
  if(reset||state.status==='gameover'){state=newGame();heroShotUntil=0;
   for(const v of pickupVisual.values())world.remove(v);pickupVisual.clear();
   for(const v of barrelVisual.values())scene.remove(v);barrelVisual.clear();
-  for(const f of blastVisual){f.ttl=0;f.mesh.visible=false;}
+  for(const f of [...blastVisual,...shockVisual]){f.ttl=0;f.mesh.visible=false;}
  }
  state.status='playing';start(state);overlay.hidden=true;toggleHUD(true);
- yaw=state.yaw;fireHeld=false;combatPopupUntil=0;
+ yaw=state.yaw;fireHeld=false;combatPopupUntil=0;cameraKick=0;
  for(const f of impactPool){f.ttl=0;f.mesh.visible=false;}
  $('combatPopup').style.opacity='0';updateHUD();
  syncBarrels();
@@ -593,6 +612,8 @@ function updateHUD(){
  $('healthText').textContent=state.hp+' / 100';
  $('wave').textContent=state.wave;$('kills').textContent=state.kills;$('score').textContent=state.score;
  $('ammo').innerHTML=state.ammo+' <small>/ '+state.reserve+'</small>';
+ $('mode').textContent=FIRE_MODES[state.fireMode].label;
+ $('mode').setAttribute('aria-label','사격 모드 '+FIRE_MODES[state.fireMode].label+' 전환');
  $('hitScreen').style.opacity=Math.min(0.16,state.hitFlash*0.65);
  $('reticle').classList.toggle('hit',state.hitMarker>0);
  $('reticle').classList.toggle('kill',state.killMarker>0);
@@ -626,7 +647,7 @@ function localSound(hit=false){
   }
   const now=ctx.currentTime,src=ctx.createBufferSource(),gain=ctx.createGain(),filter=ctx.createBiquadFilter();
   src.buffer=localSound.noise;filter.type='lowpass';filter.frequency.value=hit?2200:1700;
-  gain.gain.setValueAtTime(0.12,now);gain.gain.exponentialRampToValueAtTime(0.001,now+0.17);
+  gain.gain.setValueAtTime(state.fireMode==='rapid'?0.075:0.12,now);gain.gain.exponentialRampToValueAtTime(0.001,now+0.17);
   src.connect(filter).connect(gain).connect(ctx.destination);
   src.start(now);src.stop(now+0.18);
   if(hit){
@@ -709,6 +730,9 @@ function dispatchCombatEffects(now){
   }else if(event.type==='warning'){
    // Avoid 12 nearby zombies playing an overlapping wall of warning beeps.
    if(now-lastWarningCue>850){cueSound('warning');lastWarningCue=now;}
+  }else if(event.type==='mode'){
+   $('combatPopup').textContent=FIRE_MODES[event.mode].label+' 사격';
+   $('combatPopup').classList.remove('kill');combatPopupUntil=now+900;
   }else if(['reload','reloadDone','pickup','wave'].includes(event.type)){
    cueSound(event.type==='wave'?'kill':'reload');
   }
@@ -732,7 +756,7 @@ function doFire(){
  const aim=getShotDirection();
  const result=shoot(state,aim.dx,aim.dz);
  if(result.fired){
-  heroShotUntil=state.elapsed+0.32;
+  heroShotUntil=state.elapsed+(state.fireMode==='rapid'?0.18:0.32);
   const startPoint=new THREE.Vector3(state.x+Math.sin(yaw)*0.5,1.45,state.z-Math.cos(yaw)*0.5);
   const trueAim=result.aim||aim;
   const endpoint=new THREE.Vector3(startPoint.x+trueAim.dx*34,1.45,startPoint.z+trueAim.dz*34);
@@ -758,7 +782,7 @@ function doFire(){
   if(result.hit)impactSpark.position.copy(endpoint);
   fxExpires=performance.now()+105;
  }
- if(result.fired)localSound(result.hit);
+ if(result.fired){localSound(result.hit);cameraKick=Math.min(0.1,cameraKick+(state.fireMode==='rapid'?0.012:0.025));}
  if(!result.fired&&result.reason==='empty')reload(state);
 }
 function frame(now){
@@ -807,6 +831,9 @@ function initInputs(){
  document.addEventListener('selectstart',e=>{if(e.target.closest('#shell'))e.preventDefault();});
  document.addEventListener('keydown',e=>{
   const key=e.key.toLowerCase();
+  if((key==='1'||key==='2'||key==='q')&&!e.repeat&&state.status==='playing'){
+   setFireMode(state,key==='1'?'precision':key==='2'?'rapid':state.fireMode==='precision'?'rapid':'precision');
+  }
   if([' ','arrowup','arrowdown','arrowleft','arrowright'].includes(key))e.preventDefault();
   if(key==='escape'){e.preventDefault();if(state.status==='playing')pauseGame();return;}
   keys.add(key);
@@ -835,6 +862,7 @@ function initInputs(){
  });
  $('secondary').addEventListener('click',()=>begin(true));
  $('reload').addEventListener('click',()=>reload(state));
+ $('mode').addEventListener('click',()=>setFireMode(state,state.fireMode==='precision'?'rapid':'precision'));
  $('fire').addEventListener('pointerdown',e=>{
   e.preventDefault();e.stopPropagation();$('fire').classList.add('pressed');fireHeld=true;doFire();
   $('fire').setPointerCapture(e.pointerId);
