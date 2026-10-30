@@ -10,7 +10,7 @@ test('melee attack warns before any HP loss, connects precisely after windup',()
  tick(s,0.06);
  assert.equal(s.hp,100);assert.equal(s.enemies[0].attackWindup,ATTACK_WINDUP);
  assert.deepEqual(drainCombatEffects(s).map(e=>e.type),['warning']);
- for(let i=0;i<5;i++)tick(s,0.06);
+ for(let i=0;i<4;i++)tick(s,0.06);
  assert.equal(s.hp,100,'no pre-telegraph instant damage');
  tick(s,0.06);assert.equal(s.hp,100);
  tick(s,0.06);assert.equal(s.hp,88);
