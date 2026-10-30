@@ -17,20 +17,24 @@ export function heroCombatPose({shotFlash=0,reloadTime=0,elapsed=0,shotUntil=0,m
   stance: moving?(sprint?1:0.64):0
  };
 }
-export function undeadCombatPose({hp=1,hitTime=0,deadTime=0,walk=0,id=0,attackCD=1,distance=99}={}){
+export function undeadCombatPose({hp=1,hitTime=0,deadTime=0,walk=0,id=0,attackWindup=0,attackPulse=0,distance=99}={}){
  const dead=hp<=0;
  const fall=dead?clamp01(deadTime/0.58):0;
  const hit=dead?0:clamp01(hitTime/0.2);
- const attacking=!dead&&distance<1.6;
- const lunge=attacking?Math.max(0,Math.sin(walk*9+id*0.53))*0.11:0;
+ // The damaging frame occurs when the 0.36s warning reaches zero.
+ const windup=dead?0:attackWindup>0?clamp01(1-attackWindup/0.36):0;
+ const impact=dead?0:clamp01(attackPulse/0.26);
+ const attack=!dead&&(attackWindup>0||attackPulse>0);
+ const t=windup*windup*(3-2*windup);
+ const lunge=attack?0.22*t+0.10*impact:0;
  const sign=id%2===0?1:-1;
  return {
-  clip:dead?'Idle':attacking?'Idle':'Run',
-  hit,fall,lunge,
-  leanX:-1.32*fall+0.1*hit+(attacking?-0.08:0),
-  leanZ:sign*(0.22*fall+0.14*hit),
+  clip:dead?'Idle':attack||distance<1.35?'Idle':'Run',
+  hit,fall,lunge,windup,impact,
+  leanX:-1.32*fall+0.1*hit-(attack?0.37*t+0.2*impact:0),
+  leanZ:sign*(0.22*fall+0.14*hit+0.06*t),
   offsetZ:lunge-0.10*hit,
   fallY:-0.27*fall,
-  attack:attacking&&attackCD<0.5
+  attack
  };
 }
