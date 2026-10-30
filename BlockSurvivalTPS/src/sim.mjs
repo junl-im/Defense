@@ -138,7 +138,7 @@ export function shoot(s,dx,dz){
   s.ammo--;s.shotCooldown=0.19;s.shotFlash=0.13;
   const adjusted=assistedAim(s,dx,dz);
   const e=lineTarget(s,adjusted.dx,adjusted.dz);
-  if(!e)return {fired:true,hit:false};
+  if(!e)return {fired:true,hit:false,aim:{dx:adjusted.dx,dz:adjusted.dz}};
   const damage=e.type==="runner"?55:46;
   e.hp-=damage;
   e.hitTime=0.2;s.hitMarker=0.22;
@@ -153,7 +153,7 @@ export function shoot(s,dx,dz){
     if(s.kills%5===0)dropPickup(s,e.x,e.z,'medkit');
   }
   emitCombatEffect(s,killed?'kill':'hit',{enemyId:e.id,x:e.x,z:e.z,damage,points,combo:s.combo});
-  return {fired:true,hit:true,killed,id:e.id,damage,points};
+  return {fired:true,hit:true,killed,id:e.id,damage,points,aim:{dx:adjusted.dx,dz:adjusted.dz}};
 }
 export function spawn(s){
   if(s.enemies.filter(e=>e.hp>0).length>=MAX_ACTIVE)return null;
