@@ -52,9 +52,16 @@ def start(page,label):
     check(page.locator("#mode").count()==1, f"{label}: firing mode switch is missing")
     check(page.evaluate("() => document.querySelector('#shell').dataset.shockwaveFx==='ready'"),
           f"{label}: pooled blast ground shockwave failed to initialize")
+    # Interactive mode change: not just a decorative text label.
+    check(page.locator("#mode").inner_text()=="정밀",f"{label}: default firing mode is wrong")
+    page.locator("#mode").click()
+    page.wait_for_function("() => document.querySelector('#mode').textContent==='속사'",timeout=12000)
+    check(page.locator("#mode").inner_text()=="속사",f"{label}: firing mode click had no effect")
+    page.locator("#mode").click()
+    page.wait_for_function("() => document.querySelector('#mode').textContent==='정밀'",timeout=12000)
     check(page.evaluate("() => document.querySelector('#shell').dataset.explosionFx==='ready'"),
           f"{label}: lightweight explosion renderer did not initialize")
-    check(page.evaluate("() => document.querySelector('#shell').dataset.combatVersion==='v010'"),
+    check(page.evaluate("() => document.querySelector('#shell').dataset.combatVersion==='v011'"),
           f"{label}: modern combat pose pipeline not activated")
     check(page.evaluate("() => ['Run','Idle'].includes(document.querySelector('#shell').dataset.heroAnimation)"),
           f"{label}: modern skin animation clip never activated")
