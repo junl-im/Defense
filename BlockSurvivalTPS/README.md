@@ -1,6 +1,6 @@
 # 곰같은여우 — BLOCK SURVIVAL TPS
 
-**ALPHA 0.8 현대 캐릭터의 사격·장전·피격·사망 모션을 강화한 경량 웹 TPS.** 이전 라니킹덤은 `main`에서 정리했고 현재는 이 게임에 집중하여 개발·배포합니다. 최신 검증 결과와 빌드는 [Actions](https://github.com/junl-im/Defense/actions/workflows/block-survival-preview.yml) 참조. 브라우저에서 PC·모바일 실제 게임플레이 및 FPS 실측은 별도 검증이 필요합니다.
+**ALPHA 0.9 실제 타격 시점과 액션 피드백이 연동되는 경량 웹 TPS.** 이전 라니킹덤은 `main`에서 정리했고 현재는 이 게임에 집중하여 개발·배포합니다. 최신 검증 결과와 빌드는 [Actions](https://github.com/junl-im/Defense/actions/workflows/block-survival-preview.yml) 참조. 브라우저에서 PC·모바일 실제 게임플레이 및 FPS 실측은 별도 검증이 필요합니다.
 
 ## 보존 및 권리
 - 게임 실행 파일: \`BlockSurvivalTPS/index.html\`, \`src/game.mjs\`, \`src/sim.mjs\`, \`style.css\`
@@ -112,3 +112,12 @@ python -m http.server 8000
 - 상태 계산은 프레임 시간보다 시뮬레이션 속성 `shotFlash`·`reloadTime`·`hitTime`·`deadTime`에 의존. 이전 Kenney CC0 현대 모델 3종, 구 KayKit 폴백, 12 GLB, SVG 금지 유지.
 - [회귀 테스트](./tests/combat-pose.test.mjs): 사격 이후 복구·장전 중간 동작·이상 입력·좀비 피격·사망/공격·상태 해제를 자동 검증. [브라우저 QA](./tests/browser_qa.py)에서 현대 리깅 및 전투 파이프라인 로딩 추가 확인.
 - 휴대전화 실제 GPU FPS/발열은 미측정. 소프트웨어 WebGL CI 결과만으로 실기기 성능을 보증하지 않음.
+
+## v0.9 — 공격 예고·타격 판정·피격 이펙트 연동
+
+- [sim.mjs](./src/sim.mjs): 좀비 접근 후 즉시 체력 감소하는 문제를 변경. 근접 공격에 0.36초 예고, 타격 1회, 1.05초 후속 쿨다운 부여. 예고 도중 회피하거나 벽으로 시야가 차단되면 타격 취소.
+- 원본 3종 현대 생존자/좀비 GLB를 유지하면서 [combat-pose.mjs](./src/combat-pose.mjs)의 공격 동작을 `attackWindup` / `attackPulse`와 동기화. 애니메이션과 실제 체력 감소 프레임 연결.
+- [game.mjs](./src/game.mjs): 총알 명중 시 재사용 3D 파편, 적 처치 시 황금색 파편, 실제 피해 발생 시 카메라 소폭 흔들림/화면 빨강, 사격 명중과 처치 연속 보너스, 재장전·피격·경고 관련 WebAudio 효과 연결.
+- UI는 SVG 없이 CSS 텍스트만으로 처치 점수/연속 콤보와 공격 경고 표시. 모바일에서는 경고가 버튼을 가리지 않도록 위치 조절. 시각 효과와 오디오 이벤트는 최대 32건 큐로 제한하고 소스 렌더링은 재사용.
+- 처치 후 5.2초 동안 추가 처치하면 연속 점수 상승(최대 +100 보너스). 단위 시험에서 피격 타이밍, 회피 취소, 벽 충돌, 정지, 처치 중 공격 취소, 콤보 만료를 검사.
+- Kenney·KayKit·Gobkit CC0 12 GLB / Three.js MIT 그대로, SVG 0개. Chrome SwiftShader PC/모바일 회귀 테스트를 진행하며 실기기 GPU 장시간 FPS는 별도 검사 대상.

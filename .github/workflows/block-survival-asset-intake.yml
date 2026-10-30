@@ -2,7 +2,7 @@ name: Block Survival TPS — CC0 asset intake
 on:
   push:
     branches:
-      - feature/block-survival-tps-v08-combat-pose-20261030
+      - feature/block-survival-tps-v09-synced-combat-20261030
       - main
     paths:
       - 'BlockSurvivalTPS/**'

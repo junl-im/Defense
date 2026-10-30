@@ -43,6 +43,10 @@ def start(page,label):
     for key in ("modernHero","modernZombie","modernRunner","modernHeroRig","modernGun"):
         page.wait_for_function("(key) => document.querySelector('#shell').dataset[key]==='loaded' || (key==='modernGun' && document.querySelector('#shell').dataset[key]==='attached')",
                                arg=key,timeout=25000)
+    check(page.locator("#combatPopup").count()==1 and page.locator("#attackCue").count()==1,
+          f"{label}: combat feedback indicators were removed")
+    check(page.evaluate("() => document.querySelector('#shell').dataset.combatFx==='ready'"),
+          f"{label}: pooled 3D impact effects failed to initialize")
     check(page.evaluate("() => document.querySelector('#shell').dataset.combatVersion==='v08'"),
           f"{label}: modern combat pose pipeline not activated")
     check(page.evaluate("() => ['Run','Idle'].includes(document.querySelector('#shell').dataset.heroAnimation)"),
